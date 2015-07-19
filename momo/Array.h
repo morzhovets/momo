@@ -1,0 +1,966 @@
+/**********************************************************\
+
+  momo/Array.h
+
+  namespace momo:
+    struct ArrayItemTraits
+    enum class ArrayGrowCause
+    struct ArraySettings
+    class Array
+
+\**********************************************************/
+
+#pragma once
+
+#include "ArrayUtility.h"
+#include "MemManager.h"
+
+namespace momo
+{
+
+template<typename TItem>
+struct ArrayItemTraits
+{
+	typedef TItem Item;
+
+	typedef internal::ObjectManager<Item> ItemManager;
+
+	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
+	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
+	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+
+	typedef typename ItemManager::Creator Creator;
+	typedef typename ItemManager::MoveCreator MoveCreator;
+	typedef typename ItemManager::CopyCreator CopyCreator;
+
+	template<typename Argument>
+	static void Create(Argument&& arg, void* pitem)
+	{
+		ItemManager::Create(std::forward<Argument>(arg), pitem);
+	}
+
+	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+	{
+		ItemManager::Destroy(items, count);
+	}
+
+	template<typename Argument>
+	static void Assign(Argument&& arg, Item& item)
+	{
+		item = std::forward<Argument>(arg);
+	}
+
+	static void Relocate(Item* srcItems, Item* dstItems, size_t count)
+		MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+	{
+		ItemManager::Relocate(srcItems, dstItems, count);
+	}
+
+	template<typename ItemCreator>
+	static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
+		const ItemCreator& itemCreator)
+	{
+		ItemManager::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+	}
+};
+
+enum class ArrayGrowCause
+{
+	add = 0,
+	reserve = 1,
+};
+
+template<size_t tInternalCapacity = 0,
+	bool tGrowOnReserve = true,
+	CheckMode tCheckMode = CheckMode::assertion>
+struct ArraySettings
+{
+	static const CheckMode checkMode = tCheckMode;
+
+	static const size_t internalCapacity = tInternalCapacity;
+	static const bool growOnReserve = tGrowOnReserve;
+
+	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
+		ArrayGrowCause growCause, bool realloc)
+	{
+		assert(capacity < minNewCapacity);
+		if (growCause == ArrayGrowCause::reserve && !growOnReserve)
+			return minNewCapacity;
+		size_t newCapacity;
+		if (capacity <= 2)
+			newCapacity = 4;
+		else if (capacity < 256)
+			newCapacity = capacity * 2;
+		else if (capacity < 8192)
+			newCapacity = capacity + capacity / 2;
+		else if (realloc && capacity <= SIZE_MAX - 4096)
+			newCapacity = capacity + 4096;
+		else if (!realloc && capacity <= (SIZE_MAX / 146) * 100 + 99)
+			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
+		else
+			throw std::length_error("momo::ArraySettings length error");
+		if (newCapacity < minNewCapacity)
+			newCapacity = minNewCapacity;
+		return newCapacity;
+	}
+};
+
+template<typename TItem,
+	typename TMemManager = MemManagerDefault,
+	typename TItemTraits = ArrayItemTraits<TItem>,
+	typename TSettings = ArraySettings<>>
+class Array
+{
+public:
+	typedef TItem Item;
+	typedef TMemManager MemManager;
+	typedef TItemTraits ItemTraits;
+	typedef TSettings Settings;
+
+	static const size_t internalCapacity = Settings::internalCapacity;
+	//static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
+	//	: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
+	//MOMO_STATIC_ASSERT(internalCapacity <= maxCapacity);
+
+private:
+	class Data : private internal::MemManagerWrapper<MemManager>
+	{
+	private:
+		typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
+
+		static const bool hasInternalCapacity = (internalCapacity > 0);
+		static const size_t maskInternal = hasInternalCapacity
+			? (size_t)1 << (8 * sizeof(size_t) - 1) : 0;
+
+		typedef std::integral_constant<bool, hasInternalCapacity> HasInternalCapacity;
+
+	public:
+		Data()
+			: MemManagerWrapper(MemManager())
+		{
+			_Create(HasInternalCapacity());
+		}
+
+		explicit Data(MemManager&& memManager) MOMO_NOEXCEPT
+			: MemManagerWrapper(std::move(memManager))
+		{
+			_Create(HasInternalCapacity());
+		}
+
+		explicit Data(size_t capacity, MemManager&& memManager = MemManager())
+			: MemManagerWrapper(std::move(memManager))
+		{
+			_CheckCapacity(capacity);
+			if (capacity > internalCapacity)
+			{
+				mCount = 0;
+				mExternalData.items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
+				mExternalData.capacity = capacity;
+			}
+			else
+			{
+				_Create(HasInternalCapacity());
+			}
+		}
+
+		Data(Data&& data) MOMO_NOEXCEPT
+			: MemManagerWrapper(std::move(data._GetMemManagerWrapper()))
+		{
+			_CreateMove(std::move(data));
+		}
+
+		~Data() MOMO_NOEXCEPT
+		{
+			_Destroy();
+		}
+
+		Data& operator=(Data&& data) MOMO_NOEXCEPT
+		{
+			if (this != &data)
+			{
+				_Destroy();
+				_GetMemManagerWrapper() = std::move(data._GetMemManagerWrapper());
+				_CreateMove(std::move(data));
+			}
+			return *this;
+		}
+
+		const Item* GetItems() const MOMO_NOEXCEPT
+		{
+			return _GetItems(&mInternalData, HasInternalCapacity());
+		}
+
+		Item* GetItems() MOMO_NOEXCEPT
+		{
+			return _GetItems(&mInternalData, HasInternalCapacity());
+		}
+
+		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		{
+			return _GetMemManagerWrapper().GetMemManager();
+		}
+
+		MemManager& GetMemManager() MOMO_NOEXCEPT
+		{
+			return _GetMemManagerWrapper().GetMemManager();
+		}
+
+		size_t GetCapacity() const MOMO_NOEXCEPT
+		{
+			return _IsInternal() ? internalCapacity : mExternalData.capacity;
+		}
+
+		bool SetCapacity(size_t capacity)
+		{
+			_CheckCapacity(capacity);
+			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
+				return false;
+			static std::integral_constant<bool, ItemTraits::isTriviallyRelocatable
+				&& MemManager::canReallocate> canReallocate;
+			static std::integral_constant<bool,
+				MemManager::canReallocateInplace> canReallocateInplace;
+			return _SetCapacity(capacity, canReallocate, &canReallocateInplace);
+		}
+
+		size_t GetCount() const MOMO_NOEXCEPT
+		{
+			return mCount & (maskInternal - 1);
+		}
+
+		void SetCount(size_t count) MOMO_NOEXCEPT
+		{
+			assert(count <= GetCapacity());
+			mCount &= maskInternal;
+			mCount |= count;
+		}
+
+		void Clear() MOMO_NOEXCEPT
+		{
+			_Destroy();
+			_Create(HasInternalCapacity());
+		}
+
+		template<typename RelocateFunc>
+		void Reset(size_t capacity, size_t count, RelocateFunc relocateFunc)
+		{
+			assert(count <= capacity);
+			_CheckCapacity(capacity);
+			if (capacity > internalCapacity)
+			{
+				Item* items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
+				try
+				{
+					relocateFunc(items);
+				}
+				catch (...)
+				{
+					GetMemManager().Deallocate(items, capacity * sizeof(Item));
+					throw;
+				}
+				_Deallocate();
+				mExternalData.items = items;
+				mExternalData.capacity = capacity;
+				mCount = count;
+			}
+			else
+			{
+				_Reset(count, relocateFunc, HasInternalCapacity());
+			}
+		}
+
+	private:
+		const MemManagerWrapper& _GetMemManagerWrapper() const MOMO_NOEXCEPT
+		{
+			return *this;
+		}
+
+		MemManagerWrapper& _GetMemManagerWrapper() MOMO_NOEXCEPT
+		{
+			return *this;
+		}
+
+		static void _CheckCapacity(size_t capacity)
+		{
+			static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
+				: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
+			if (capacity > maxCapacity)
+				throw std::length_error("momo::Array length error");
+		}
+
+		void _Create(std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			mCount = maskInternal;
+		}
+
+		void _Create(std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			mCount = 0;
+			mExternalData.items = nullptr;
+			mExternalData.capacity = 0;
+		}
+
+		void _CreateMove(Data&& data) MOMO_NOEXCEPT
+		{
+			_MoveData(std::move(data), HasInternalCapacity());
+			mCount = data.mCount;
+			data.mCount = maskInternal;
+		}
+
+		void _Destroy() MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(GetItems(), GetCount());
+			_Deallocate();
+		}
+
+		void _Deallocate() MOMO_NOEXCEPT
+		{
+			if (GetCapacity() > internalCapacity)
+			{
+				GetMemManager().Deallocate(mExternalData.items,
+					mExternalData.capacity * sizeof(Item));
+			}
+		}
+
+		void _MoveData(Data&& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			if (data._IsInternal())
+				ItemTraits::Relocate(&data.mInternalData, &mInternalData, data.GetCount());
+			else
+				_MoveData(std::move(data), std::false_type());
+		}
+
+		void _MoveData(Data&& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			mExternalData = data.mExternalData;
+			data.mExternalData.items = nullptr;
+			data.mExternalData.capacity = 0;
+		}
+
+		bool _IsInternal() const MOMO_NOEXCEPT
+		{
+			return (mCount & maskInternal) != 0;
+		}
+
+		template<typename Item>
+		Item* _GetItems(Item* internalData,
+			std::true_type /*hasInternalCapacity*/) const MOMO_NOEXCEPT
+		{
+			return _IsInternal() ? internalData : mExternalData.items;
+		}
+
+		Item* _GetItems(const void* /*internalData*/,
+			std::false_type /*hasInternalCapacity*/) const MOMO_NOEXCEPT
+		{
+			return mExternalData.items;
+		}
+
+		bool _SetCapacity(size_t capacity, std::true_type /*canReallocate*/,
+			void* /*canReallocateInplace*/)
+		{
+			mExternalData.items = (Item*)GetMemManager().Reallocate(mExternalData.items,
+				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
+			mExternalData.capacity = capacity;
+			return true;
+		}
+
+		bool _SetCapacity(size_t capacity, std::false_type /*canReallocate*/,
+			std::true_type* /*canReallocateInplace*/) MOMO_NOEXCEPT
+		{
+			bool reallocDone = GetMemManager().ReallocateInplace(mExternalData.items,
+				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
+			if (!reallocDone)
+				return false;
+			mExternalData.capacity = capacity;
+			return true;
+		}
+
+		bool _SetCapacity(size_t /*capacity*/, std::false_type /*canReallocate*/,
+			std::false_type* /*canReallocateInplace*/) MOMO_NOEXCEPT
+		{
+			return false;
+		}
+
+		template<typename RelocateFunc>
+		void _Reset(size_t count, RelocateFunc relocateFunc,
+			std::true_type /*hasInternalCapacity*/)
+		{
+			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			internal::ObjectBuffer<Item, internalCapacity> internalData;
+			relocateFunc(&internalData);
+			_Deallocate();
+			ItemTraits::Relocate(&internalData, &mInternalData, count);
+			mCount = maskInternal | count;
+		}
+
+		template<typename RelocateFunc>
+		void _Reset(size_t count, RelocateFunc /*relocateFunc*/,
+			std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			(void)count;
+			assert(count == 0);
+			_Deallocate();
+			_Create(std::false_type());
+		}
+
+	private:
+		MOMO_DISABLE_COPY_CONSTRUCTOR(Data);
+		MOMO_DISABLE_COPY_OPERATOR(Data);
+
+	private:
+		size_t mCount;
+		union
+		{
+			struct
+			{
+				Item* items;
+				size_t capacity;
+			} mExternalData;
+			internal::ObjectBuffer<Item, internalCapacity> mInternalData;
+		};
+	};
+
+	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
+	typedef internal::ArrayShifter<Array> ArrayShifter;
+
+public:
+	typedef internal::ArrayIterator<Array, Item> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
+
+public:
+	Array()
+	{
+	}
+
+	explicit Array(MemManager&& memManager) MOMO_NOEXCEPT
+		: mData(std::move(memManager))
+	{
+	}
+
+	explicit Array(size_t count, MemManager&& memManager = MemManager())
+		: mData(_CreateData(count, typename ItemTraits::Creator(), std::move(memManager)))
+	{
+	}
+
+	Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
+		: mData(_CreateData(count, typename ItemTraits::CopyCreator(item), std::move(memManager)))
+	{
+	}
+
+	template<typename Iterator>
+	Array(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
+		: mData(internal::IsForwardIterator<Iterator>::value ? std::distance(begin, end) : 0,
+			std::move(memManager))
+	{
+		_Fill(begin, end, internal::IsForwardIterator<Iterator>());
+	}
+
+	Array(Array&& array) MOMO_NOEXCEPT
+		: mData(std::move(array.mData))
+	{
+	}
+
+	Array(const Array& array, bool shrink = true)
+		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
+	{
+		for (const Item& item : array)
+			AddBackNogrow(item);
+	}
+
+	static Array CreateCap(size_t capacity, MemManager&& memManager = MemManager())
+	{
+		return Array(Data(capacity, std::move(memManager)));
+	}
+
+	template<typename ItemCreator>
+	static Array CreateEmpl(size_t count, const ItemCreator& itemCreator,
+		MemManager&& memManager = MemManager())
+	{
+		return Array(_CreateData(count, itemCreator, std::move(memManager)));
+	}
+
+	~Array() MOMO_NOEXCEPT
+	{
+	}
+
+	Array& operator=(Array&& array) MOMO_NOEXCEPT
+	{
+		mData = std::move(array.mData);
+		return *this;
+	}
+
+	Array& operator=(const Array& array)
+	{
+		if (this != &array)
+			Array(array).Swap(*this);
+		return *this;
+	}
+
+	void Swap(Array& array) MOMO_NOEXCEPT
+	{
+		std::swap(mData, array.mData);
+	}
+
+	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	{
+		return ConstIterator(this, 0);
+	}
+
+	Iterator GetBegin() MOMO_NOEXCEPT
+	{
+		return Iterator(this, 0);
+	}
+
+	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	{
+		return ConstIterator(this, GetCount());
+	}
+
+	Iterator GetEnd() MOMO_NOEXCEPT
+	{
+		return Iterator(this, GetCount());
+	}
+
+	MOMO_FRIEND_SWAP(Array)
+	MOMO_FRIENDS_BEGIN_END(const Array&, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(Array&, Iterator)
+
+	const Item* GetItems() const MOMO_NOEXCEPT
+	{
+		return mData.GetItems();
+	}
+
+	Item* GetItems() MOMO_NOEXCEPT
+	{
+		return mData.GetItems();
+	}
+
+	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	{
+		return mData.GetMemManager();
+	}
+
+	MemManager& GetMemManager() MOMO_NOEXCEPT
+	{
+		return mData.GetMemManager();
+	}
+
+	size_t GetCount() const MOMO_NOEXCEPT
+	{
+		return mData.GetCount();
+	}
+
+	template<typename ItemCreator>
+	void SetCountEmpl(size_t count, const ItemCreator& itemCreator)
+	{
+		_SetCount(count, itemCreator);
+	}
+
+	void SetCount(size_t count)
+	{
+		_SetCount(count, typename ItemTraits::Creator());
+	}
+
+	void SetCount(size_t count, const Item& item)
+	{
+		_SetCount(count, typename ItemTraits::CopyCreator(item));
+	}
+
+	bool IsEmpty() const MOMO_NOEXCEPT
+	{
+		return GetCount() == 0;
+	}
+
+	void Clear(bool shrink = false) MOMO_NOEXCEPT
+	{
+		if (shrink)
+			mData.Clear();
+		else
+			_RemoveBack(GetCount());
+	}
+
+	size_t GetCapacity() const MOMO_NOEXCEPT
+	{
+		return mData.GetCapacity();
+	}
+
+	void Reserve(size_t capacity)
+	{
+		if (capacity > GetCapacity())
+			_Grow(capacity, ArrayGrowCause::reserve);
+	}
+
+	void Shrink()
+	{
+		size_t count = GetCount();
+		size_t initCapacity = GetCapacity();
+		if (initCapacity > count && initCapacity > Settings::internalCapacity)
+		{
+			size_t newCapacity = count;
+			if (!mData.SetCapacity(newCapacity))
+			{
+				Item* items = GetItems();
+				auto relocateFunc = [items, count] (Item* newItems)
+					{ ItemTraits::Relocate(items, newItems, count); };
+				mData.Reset(newCapacity, count, relocateFunc);
+			}
+		}
+	}
+
+	const Item& operator[](size_t index) const
+	{
+		return _GetItem(GetItems(), index);
+	}
+
+	Item& operator[](size_t index)
+	{
+		return _GetItem(GetItems(), index);
+	}
+
+	const Item& GetBackItem() const
+	{
+		return _GetItem(GetItems(), GetCount() - 1);
+	}
+
+	Item& GetBackItem()
+	{
+		return _GetItem(GetItems(), GetCount() - 1);
+	}
+
+	template<typename ItemCreator>
+	void AddBackNogrowEmpl(const ItemCreator& itemCreator)
+	{
+		MOMO_CHECK(GetCount() < GetCapacity());
+		_AddBackNogrow(itemCreator);
+	}
+
+	void AddBackNogrow(Item&& item)
+	{
+		AddBackNogrowEmpl(typename ItemTraits::MoveCreator(std::move(item)));
+	}
+
+	void AddBackNogrow(const Item& item)
+	{
+		AddBackNogrowEmpl(typename ItemTraits::CopyCreator(item));
+	}
+
+	template<typename ItemCreator>
+	void AddBackEmpl(const ItemCreator& itemCreator)
+	{
+		if (GetCount() < GetCapacity())
+			_AddBackNogrow(itemCreator);
+		else
+			_AddBackGrow(itemCreator);
+	}
+
+	void AddBack(Item&& item)
+	{
+		if (GetCount() < GetCapacity())
+			_AddBackNogrow(typename ItemTraits::MoveCreator(std::move(item)));
+		else
+			_AddBackGrow(std::move(item));
+	}
+
+	void AddBack(const Item& item)
+	{
+		if (GetCount() < GetCapacity())
+			_AddBackNogrow(typename ItemTraits::CopyCreator(item));
+		else
+			_AddBackGrow(item);
+	}
+
+	// basic exception safety
+	template<typename ItemCreator>
+	void AddEmpl(size_t index, const ItemCreator& itemCreator)
+	{
+		ItemHandler itemHandler(itemCreator);
+		std::move_iterator<Item*> begin(&itemHandler);
+		Add(index, begin, begin + 1);
+	}
+
+	// basic exception safety
+	void Add(size_t index, Item&& item)
+	{
+		size_t initCount = GetCount();
+		size_t grow = (initCount + 1 > GetCapacity());
+		size_t itemIndex = _IndexOf(item);
+		if (grow || (index <= itemIndex && itemIndex < initCount))
+		{
+			AddEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
+		}
+		else
+		{
+			std::move_iterator<Item*> begin(std::addressof(item));
+			ArrayShifter::Add(*this, index, begin, begin + 1,
+				internal::IsForwardIterator<Iterator>());
+		}
+	}
+
+	// basic exception safety
+	void Add(size_t index, const Item& item)
+	{
+		return Add(index, (size_t)1, item);	//?
+	}
+
+	// basic exception safety
+	void Add(size_t index, size_t count, const Item& item)
+	{
+		size_t initCount = GetCount();
+		size_t newCount = initCount + count;
+		size_t grow = (newCount > GetCapacity());
+		size_t itemIndex = _IndexOf(item);
+		if (grow || (index <= itemIndex && itemIndex < initCount))
+		{
+			typename ItemTraits::CopyCreator itemCreator(item);
+			ItemHandler itemHandler(itemCreator);
+			if (grow)
+				_Grow(newCount, ArrayGrowCause::add);
+			ArrayShifter::Add(*this, index, count, *&itemHandler);
+		}
+		else
+		{
+			ArrayShifter::Add(*this, index, count, item);
+		}
+	}
+
+	// basic exception safety
+	template<typename Iterator>
+	void Add(size_t index, Iterator begin, Iterator end)
+	{
+		if (internal::IsForwardIterator<Iterator>::value)
+		{
+			size_t count = std::distance(begin, end);
+			size_t newCount = GetCount() + count;
+			if (newCount > GetCapacity())
+				_Grow(newCount, ArrayGrowCause::add);
+		}
+		ArrayShifter::Add(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
+	}
+
+	void RemoveBack(size_t count = 1)
+	{
+		MOMO_CHECK(count <= GetCount());
+		_RemoveBack(count);
+	}
+
+	// !std::is_nothrow_move_assignable<Item>::value -> basic exception safety
+	void Remove(size_t index, size_t count)
+	{
+		ArrayShifter::Remove(*this, index, count);
+	}
+
+private:
+	explicit Array(Data&& data) MOMO_NOEXCEPT
+		: mData(std::move(data))
+	{
+	}
+
+	template<typename ItemCreator>
+	static Data _CreateData(size_t count, const ItemCreator& itemCreator,
+		MemManager&& memManager)
+	{
+		Data data(count, std::move(memManager));
+		Item* items = data.GetItems();
+		for (size_t i = 0; i < count; ++i)
+		{
+			itemCreator(items + i);
+			data.SetCount(i + 1);
+		}
+		return data;
+	}
+
+	template<typename Iterator>
+	void _Fill(Iterator begin, Iterator end, std::true_type /*isForwardIterator*/)
+	{
+		for (Iterator iter = begin; iter != end; ++iter)
+		{
+			auto itemCreator = [iter] (void* pitem)
+				{ ItemTraits::Create(*iter, pitem); };
+			AddBackNogrowEmpl(itemCreator);
+		}
+	}
+
+	template<typename Iterator>
+	void _Fill(Iterator begin, Iterator end, std::false_type /*isForwardIterator*/)
+	{
+		for (Iterator iter = begin; iter != end; ++iter)
+		{
+			auto itemCreator = [iter] (void* pitem)
+				{ ItemTraits::Create(*iter, pitem); };
+			AddBackEmpl(itemCreator);
+		}
+	}
+
+	static size_t _GrowCapacity(size_t capacity, size_t minNewCapacity,
+		ArrayGrowCause growCause, bool realloc)
+	{
+		size_t newCapacity = Settings::GrowCapacity(capacity, minNewCapacity, growCause, realloc);
+		assert(newCapacity >= minNewCapacity);
+		return newCapacity;
+	}
+
+	void _Grow(size_t minNewCapacity, ArrayGrowCause growCause)
+	{
+		size_t initCapacity = GetCapacity();
+		if (!mData.SetCapacity(_GrowCapacity(initCapacity, minNewCapacity, growCause, true)))
+		{
+			Item* items = GetItems();
+			size_t count = GetCount();
+			auto relocateFunc = [items, count] (Item* newItems)
+				{ ItemTraits::Relocate(items, newItems, count); };
+			mData.Reset(_GrowCapacity(initCapacity, minNewCapacity, growCause, false),
+				count, relocateFunc);
+		}
+	}
+
+	template<typename ItemCreator>
+	void _SetCount(size_t count, const ItemCreator& itemCreator)
+	{
+		size_t newCount = count;
+		size_t initCount = GetCount();
+		size_t initCapacity = GetCapacity();
+		if (newCount <= initCount)
+		{
+			_RemoveBack(initCount - newCount);
+		}
+		else if (newCount <= initCapacity)
+		{
+			Item* items = GetItems();
+			size_t index = initCount;
+			try
+			{
+				for (; index < newCount; ++index)
+					itemCreator(items + index);
+			}
+			catch (...)
+			{
+				ItemTraits::Destroy(items + initCount, index - initCount);
+				throw;
+			}
+			mData.SetCount(newCount);
+		}
+		else
+		{
+			size_t newCapacity = _GrowCapacity(initCapacity, newCount,
+				ArrayGrowCause::reserve, false);
+			Item* items = GetItems();
+			auto relocateFunc = [items, initCount, newCount, &itemCreator] (Item* newItems)
+			{
+				size_t index = initCount;
+				try
+				{
+					for (; index < newCount; ++index)
+						itemCreator(newItems + index);
+					ItemTraits::Relocate(items, newItems, initCount);
+				}
+				catch (...)
+				{
+					ItemTraits::Destroy(newItems + initCount, index - initCount);
+					throw;
+				}
+			};
+			mData.Reset(newCapacity, newCount, relocateFunc);
+		}
+	}
+
+	template<typename Item>
+	Item& _GetItem(Item* items, size_t index) const
+	{
+		MOMO_CHECK(index < GetCount());
+		return items[index];
+	}
+
+	template<typename ItemCreator>
+	void _AddBackNogrow(const ItemCreator& itemCreator)
+	{
+		size_t count = GetCount();
+		itemCreator(GetItems() + count);
+		mData.SetCount(count + 1);
+	}
+
+	template<typename ItemCreator>
+	void _AddBackGrow(const ItemCreator& itemCreator)
+	{
+		size_t initCount = GetCount();
+		size_t newCount = initCount + 1;
+		size_t newCapacity = _GrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
+		Item* items = GetItems();
+		auto relocateFunc = [items, initCount, &itemCreator] (Item* newItems)
+			{ ItemTraits::RelocateAddBack(items, newItems, initCount, itemCreator); };
+		mData.Reset(newCapacity, newCount, relocateFunc);
+	}
+
+	void _AddBackGrow(Item&& item)
+	{
+		_AddBackGrow(std::move(item),
+			std::integral_constant<bool, ItemTraits::isNothrowMoveConstructible>());
+	}
+
+	void _AddBackGrow(Item&& item, std::true_type /*isNothrowMoveConstructible*/)
+	{
+		size_t initCount = GetCount();
+		size_t newCount = initCount + 1;
+		size_t itemIndex = _IndexOf((const Item&)item);
+		_Grow(newCount, ArrayGrowCause::add);
+		Item* items = GetItems();
+		if (itemIndex == SIZE_MAX)	//?
+			typename ItemTraits::MoveCreator(std::move(item))(items + initCount);
+		else
+			typename ItemTraits::MoveCreator(std::move(items[itemIndex]))(items + initCount);
+		mData.SetCount(newCount);
+	}
+
+	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
+	{
+		_AddBackGrow((const Item&)item);
+	}
+
+	void _AddBackGrow(const Item& item)
+	{
+		_AddBackGrow(item,
+			std::integral_constant<bool, ItemTraits::isTriviallyRelocatable>());
+	}
+
+	void _AddBackGrow(const Item& item, std::true_type /*isTriviallyRelocatable*/)
+	{
+		size_t initCount = GetCount();
+		size_t newCount = initCount + 1;
+		internal::ObjectBuffer<Item> itemBuffer;
+		(typename ItemTraits::CopyCreator(item))(&itemBuffer);
+		try
+		{
+			_Grow(newCount, ArrayGrowCause::add);
+		}
+		catch (...)
+		{
+			ItemTraits::Destroy(&itemBuffer, 1);
+			throw;
+		}
+		ItemTraits::Relocate(&itemBuffer, GetItems() + initCount, 1);
+		mData.SetCount(newCount);
+	}
+
+	void _AddBackGrow(const Item& item, std::false_type /*isTriviallyRelocatable*/)
+	{
+		_AddBackGrow(typename ItemTraits::CopyCreator(item));
+	}
+
+	void _RemoveBack(size_t count) MOMO_NOEXCEPT
+	{
+		size_t initCount = GetCount();
+		ItemTraits::Destroy(GetItems() + initCount - count, count);
+		mData.SetCount(initCount - count);
+	}
+
+	size_t _IndexOf(const Item& item) const MOMO_NOEXCEPT
+	{
+		const Item* pitem = std::addressof(item);
+		const Item* items = GetItems();
+		return (items <= pitem && pitem < items + GetCount()) ? pitem - items : SIZE_MAX;
+	}
+
+private:
+	Data mData;
+};
+
+} // namespace momo

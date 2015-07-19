@@ -1,0 +1,352 @@
+/**********************************************************\
+
+  momo/HashBuckets/ArrayBucket.h
+
+\**********************************************************/
+
+#pragma once
+
+#include "BucketUtility.h"
+#include "../MemPool.h"
+#include "../Array.h"
+
+namespace momo
+{
+
+namespace internal
+{
+	template<typename TItemTraits, typename TMemManager,
+		size_t tMaxFastCount, size_t tMemPoolBlockCount, typename TArraySettings>
+	class ArrayBucket
+	{
+	public:
+		typedef TItemTraits ItemTraits;
+		typedef TMemManager MemManager;
+		typedef TArraySettings ArraySettings;
+		typedef typename ItemTraits::Item Item;
+
+		static const size_t maxFastCount = tMaxFastCount;
+		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);
+
+		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+
+		typedef BucketBounds<Item> Bounds;
+		typedef typename Bounds::ConstBounds ConstBounds;
+
+	private:
+		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
+
+		typedef BucketMemory<MemPool, unsigned char*> Memory;
+
+	public:
+		class Params
+		{
+		private:
+			typedef momo::Array<MemPool, MemManagerPtr> MemPools;
+
+		public:
+			Params(MemManager& memManager)
+				: mMemPools(MemManagerPtr(memManager))
+			{
+				mMemPools.Reserve(maxFastCount + 1);
+				mMemPools.AddBackNogrow(MemPool(sizeof(Array) + 1,
+					MemManagerPtr(memManager)));
+				for (size_t i = 1; i <= maxFastCount; ++i)
+				{
+					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + 1,
+						MemManagerPtr(memManager)));
+				}
+			}
+
+			MemPool& operator[](size_t index) MOMO_NOEXCEPT
+			{
+				return mMemPools[index];
+			}
+
+		private:
+			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
+			MOMO_DISABLE_COPY_OPERATOR(Params);
+
+		private:
+			MemPools mMemPools;
+		};
+
+	private:
+		struct ArrayItemTraits
+		{
+			typedef typename ItemTraits::Item Item;
+
+			template<typename Argument>
+			static void Create(Argument&& arg, void* pitem)
+			{
+				MOMO_CHECK_TYPE(Item, arg);
+				ItemTraits::Create(std::forward<Argument>(arg), pitem);
+			}
+
+			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+			{
+				ItemTraits::Destroy(items, count);
+			}
+
+			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
+			{
+				assert(false);	//?
+			}
+
+			template<typename ItemCreator>
+			static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
+				const ItemCreator& itemCreator)
+			{
+				ItemTraits::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+			}
+		};
+
+		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits, ArraySettings> Array;
+
+	public:
+		ArrayBucket() MOMO_NOEXCEPT
+			: mPtr(nullptr)
+		{
+		}
+
+		ArrayBucket(ArrayBucket&& bucket) MOMO_NOEXCEPT
+			: mPtr(nullptr)
+		{
+			Swap(bucket);
+		}
+
+		ArrayBucket(Params& params, const ArrayBucket& bucket)
+		{
+			ConstBounds bounds = bucket.GetBounds();
+			size_t count = bounds.GetCount();
+			if (count == 0)
+			{
+				mPtr = nullptr;
+			}
+			else if (count <= maxFastCount)
+			{
+				size_t memPoolIndex = _GetFastMemPoolIndex(count);
+				Memory memory(params[memPoolIndex]);
+				Item* begin = _GetFastBegin(memory.GetPointer());
+				size_t index = 0;
+				try
+				{
+					for (; index < count; ++index)
+						ItemTraits::Create(bounds[index], begin + index);
+				}
+				catch (...)
+				{
+					ItemTraits::Destroy(begin, index);
+					throw;
+				}
+				_Set(memory.Extract(), _MakeState(memPoolIndex, count));
+			}
+			else
+			{
+				size_t memPoolIndex = 0;
+				Memory memory(params[memPoolIndex]);
+				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(),
+					bounds.GetEnd(), MemManagerPtr(params[memPoolIndex].GetMemManager()));
+				_Set(memory.Extract(), (unsigned char)0);
+			}
+		}
+
+		~ArrayBucket() MOMO_NOEXCEPT
+		{
+			assert(mPtr == nullptr);
+		}
+
+		ArrayBucket& operator=(ArrayBucket&& bucket) MOMO_NOEXCEPT
+		{
+			ArrayBucket(std::move(bucket)).Swap(*this);
+			return *this;
+		}
+
+		void Swap(ArrayBucket& bucket) MOMO_NOEXCEPT
+		{
+			std::swap(mPtr, bucket.mPtr);
+		}
+
+		ConstBounds GetBounds() const MOMO_NOEXCEPT
+		{
+			return _GetBounds();
+		}
+
+		Bounds GetBounds() MOMO_NOEXCEPT
+		{
+			return _GetBounds();
+		}
+
+		void Clear(Params& params) MOMO_NOEXCEPT
+		{
+			if (mPtr != nullptr)
+			{
+				if (_GetMemPoolIndex() > 0)
+					ItemTraits::Destroy(_GetFastBegin(), _GetFastCount());
+				else
+					_GetArray().~Array();
+				params[_GetMemPoolIndex()].FreeMemory(mPtr);
+			}
+			mPtr = nullptr;
+		}
+
+		template<typename ItemCreator>
+		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		{
+			if (mPtr == nullptr)
+			{
+				size_t newCount = 1;
+				size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
+				Memory memory(params[newMemPoolIndex]);
+				itemCreator(_GetFastBegin(memory.GetPointer()));
+				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+			}
+			else
+			{
+				size_t memPoolIndex = _GetMemPoolIndex();
+				if (memPoolIndex > 0)
+				{
+					size_t count = _GetFastCount();
+					assert(count <= memPoolIndex);
+					if (count == memPoolIndex)
+					{
+						size_t newCount = count + 1;
+						Item* begin = _GetFastBegin();
+						if (newCount <= maxFastCount)
+						{
+							size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
+							Memory memory(params[newMemPoolIndex]);
+							ItemTraits::RelocateAddBack(begin,
+								_GetFastBegin(memory.GetPointer()), count, itemCreator);
+							params[memPoolIndex].FreeMemory(mPtr);
+							_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+						}
+						else
+						{
+							size_t newMemPoolIndex = 0;
+							Memory memory(params[newMemPoolIndex]);
+							Array array = Array::CreateCap(maxFastCount * 2,
+								MemManagerPtr(params[newMemPoolIndex].GetMemManager()));
+							ItemTraits::RelocateAddBack(begin, array.GetItems(),
+								count, itemCreator);
+							array.SetCountEmpl(newCount, [] (void* /*pitem*/) { });
+							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
+							params[memPoolIndex].FreeMemory(mPtr);
+							_Set(memory.Extract(), (unsigned char)0);
+						}
+					}
+					else
+					{
+						itemCreator(_GetFastBegin() + count);
+						++*mPtr;
+					}
+				}
+				else
+				{
+					_GetArray().AddBackEmpl(itemCreator);
+				}
+			}
+		}
+
+		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		{
+			size_t count = GetBounds().GetCount();
+			assert(count > 0);
+			size_t memPoolIndex = _GetMemPoolIndex();
+			if (memPoolIndex > 0)
+			{
+				ItemTraits::Destroy(_GetFastBegin() + count - 1, 1);
+				--*mPtr;
+			}
+			else
+			{
+				_GetArray().RemoveBack();
+			}
+			if (count == 1)
+			{
+				params[memPoolIndex].FreeMemory(mPtr);
+				mPtr = nullptr;
+			}
+		}
+
+	private:
+		void _Set(unsigned char* ptr, unsigned char state) MOMO_NOEXCEPT
+		{
+			assert(ptr != nullptr);
+			mPtr = ptr;
+			*mPtr = state;
+		}
+
+		static unsigned char _MakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		{
+			return (unsigned char)((memPoolIndex << 4) | count);
+		}
+
+		static size_t _GetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		{
+			assert(0 < count && count <= maxFastCount);
+			return count;
+		}
+
+		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
+		{
+			assert(mPtr != nullptr);
+			return (size_t)(*mPtr >> 4);
+		}
+
+		size_t _GetFastCount() const MOMO_NOEXCEPT
+		{
+			assert(_GetMemPoolIndex() > 0);
+			return (size_t)(*mPtr & 15);
+		}
+
+		Item* _GetFastBegin() const MOMO_NOEXCEPT
+		{
+			assert(_GetMemPoolIndex() > 0);
+			return _GetFastBegin(mPtr);
+		}
+
+		static Item* _GetFastBegin(unsigned char* ptr) MOMO_NOEXCEPT
+		{
+			return (Item*)(ptr + 1);
+		}
+
+		Array& _GetArray() const MOMO_NOEXCEPT
+		{
+			assert(_GetMemPoolIndex() == 0);
+			return _GetArray(mPtr);
+		}
+
+		static Array& _GetArray(unsigned char* ptr) MOMO_NOEXCEPT
+		{
+			return *(Array*)(ptr + 1);
+		}
+
+		Bounds _GetBounds() const MOMO_NOEXCEPT
+		{
+			if (mPtr == nullptr)
+			{
+				return Bounds(nullptr, nullptr);
+			}
+			else if (_GetMemPoolIndex() > 0)
+			{
+				return Bounds(_GetFastBegin(), _GetFastCount());
+			}
+			else
+			{
+				Array& array = _GetArray();
+				return Bounds(array.GetItems(), array.GetCount());
+			}
+		}
+
+	private:
+		MOMO_DISABLE_COPY_CONSTRUCTOR(ArrayBucket);
+		MOMO_DISABLE_COPY_OPERATOR(ArrayBucket);
+
+	private:
+		unsigned char* mPtr;
+	};
+}
+
+} // namespace momo
