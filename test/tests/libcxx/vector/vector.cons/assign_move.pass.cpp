@@ -1,0 +1,107 @@
+//===----------------------------------------------------------------------===//
+//
+//                     The LLVM Compiler Infrastructure
+//
+// This file is dual licensed under the MIT and the University of Illinois Open
+// Source Licenses. See LICENSE.TXT for details.
+//
+//===----------------------------------------------------------------------===//
+
+// <vector>
+
+// vector& operator=(vector&& c);
+
+//#include <vector>
+//#include <cassert>
+//#include "MoveOnly.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
+//#include "asan_testing.h"
+
+void main()
+{
+#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+    {
+        vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+        vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+        for (int i = 1; i <= 3; ++i)
+        {
+            l.push_back(i);
+            lo.push_back(i);
+        }
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        vector<MoveOnly, test_allocator<MoveOnly> > l2(test_allocator<MoveOnly>(5));
+        l2 = std::move(l);
+        assert(l2 == lo);
+        assert(l.empty());
+        assert(l2.get_allocator() == lo.get_allocator());
+        //assert(is_contiguous_container_asan_correct(l2));
+    }
+    {
+        vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+        vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        for (int i = 1; i <= 3; ++i)
+        {
+            l.push_back(i);
+            lo.push_back(i);
+        }
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        vector<MoveOnly, test_allocator<MoveOnly> > l2(test_allocator<MoveOnly>(6));
+        l2 = std::move(l);
+        assert(l2 == lo);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        assert(!l.empty());
+        assert(l2.get_allocator() == test_allocator<MoveOnly>(6));
+#else
+        assert(l.empty());
+        assert(l2.get_allocator() == test_allocator<MoveOnly>(5));
+#endif
+        //assert(is_contiguous_container_asan_correct(l2));
+    }
+    {
+        vector<MoveOnly, other_allocator<MoveOnly> > l(other_allocator<MoveOnly>(5));
+        vector<MoveOnly, other_allocator<MoveOnly> > lo(other_allocator<MoveOnly>(5));
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        for (int i = 1; i <= 3; ++i)
+        {
+            l.push_back(i);
+            lo.push_back(i);
+        }
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        vector<MoveOnly, other_allocator<MoveOnly> > l2(other_allocator<MoveOnly>(6));
+        l2 = std::move(l);
+        assert(l2 == lo);
+        assert(l.empty());
+        assert(l2.get_allocator() == lo.get_allocator());
+        //assert(is_contiguous_container_asan_correct(l2));
+    }
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+    {
+        vector<MoveOnly, min_allocator<MoveOnly> > l(min_allocator<MoveOnly>{});
+        vector<MoveOnly, min_allocator<MoveOnly> > lo(min_allocator<MoveOnly>{});
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        for (int i = 1; i <= 3; ++i)
+        {
+            l.push_back(i);
+            lo.push_back(i);
+        }
+        //assert(is_contiguous_container_asan_correct(l));
+        //assert(is_contiguous_container_asan_correct(lo));
+        vector<MoveOnly, min_allocator<MoveOnly> > l2(min_allocator<MoveOnly>{});
+        l2 = std::move(l);
+        assert(l2 == lo);
+        assert(l.empty());
+        assert(l2.get_allocator() == lo.get_allocator());
+        //assert(is_contiguous_container_asan_correct(l2));
+    }
+#endif
+#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+}
