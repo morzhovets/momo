@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="momo" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-Wno-unused-local-typedefs" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug LLVM">
+				<Option output="bin/Debug LLVM/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug LLVM/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add option="-Wno-unused-local-typedefs" />
+				</Compiler>
+			</Target>
+			<Target title="Release LLVM">
+				<Option output="bin/Release LLVM/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release LLVM/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../../momo/Array.h" />
+		<Unit filename="../../../momo/ArrayUtility.h" />
+		<Unit filename="../../../momo/HashBuckets/ArrayBucket.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketFewP.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketLim4.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketLimP.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketLimP1.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketOneI1.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketUnlimP.h" />
+		<Unit filename="../../../momo/HashBuckets/BucketUtility.h" />
+		<Unit filename="../../../momo/HashMap.h" />
+		<Unit filename="../../../momo/HashMultiMap.h" />
+		<Unit filename="../../../momo/HashSet.h" />
+		<Unit filename="../../../momo/HashTraits.h" />
+		<Unit filename="../../../momo/HashUtility.h" />
+		<Unit filename="../../../momo/MemManager.h" />
+		<Unit filename="../../../momo/MemPool.h" />
+		<Unit filename="../../../momo/ObjectManager.h" />
+		<Unit filename="../../../momo/SegmentedArray.h" />
+		<Unit filename="../../../momo/Settings.h" />
+		<Unit filename="../../../momo/Utility.h" />
+		<Unit filename="../../../momo/stdish/unordered_map.h" />
+		<Unit filename="../../../momo/stdish/unordered_multimap.h" />
+		<Unit filename="../../../momo/stdish/unordered_set.h" />
+		<Unit filename="../../../momo/stdish/vector.h" />
+		<Unit filename="../../main.cpp" />
+		<Unit filename="../../tests/GoogleHashTester.cpp" />
+		<Unit filename="../../tests/LibcxxArrayTester.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTester.h" />
+		<Unit filename="../../tests/LibcxxHashMapTesterFewP.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterLim4.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterLimP.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterLimP1.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterOneI1.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterUnlimP.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTester.h" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterFewP.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterLim4.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterLimP.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterLimP1.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterOneI1.cpp" />
+		<Unit filename="../../tests/LibcxxHashMultiMapTesterUnlimP.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTester.h" />
+		<Unit filename="../../tests/LibcxxHashSetTesterFewP.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterLim4.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterLimP.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterLimP1.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterOneI1.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterUnlimP.cpp" />
+		<Unit filename="../../tests/LibcxxTester.cpp" />
+		<Unit filename="../../tests/LibcxxTester.h" />
+		<Unit filename="../../tests/LibcxxUnorderedMapTests.h" />
+		<Unit filename="../../tests/LibcxxUnorderedMultiMapTests.h" />
+		<Unit filename="../../tests/LibcxxUnorderedSetTests.h" />
+		<Unit filename="../../tests/LibcxxVectorTests.h" />
+		<Unit filename="../../tests/SimpleArrayTester.cpp" />
+		<Unit filename="../../tests/SimpleHashTester.cpp" />
+		<Unit filename="../../tests/SpeedHashMapTester.cpp" />
+		<Unit filename="../../tests/TestSettings.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
