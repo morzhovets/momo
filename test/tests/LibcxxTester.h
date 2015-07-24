@@ -60,7 +60,7 @@ struct LibcppIntHash
 	void main(); \
 	int TestLibcxx() \
 	{ \
-		std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": "; \
+		std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
 		main(); \
 		std::cout << "ok" << std::endl; \
 		return 0; \

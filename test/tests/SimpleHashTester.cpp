@@ -36,17 +36,17 @@ public:
 	{
 		typedef momo::HashTraits<std::string, HashBucket> HashTraits;
 
-		std::cout << bucketName << ": HashSet<std::string>: ";
+		std::cout << bucketName << ": HashSet<std::string>: " << std::flush;
 		typedef momo::HashSet<std::string, HashTraits> HashSet;
 		TestHashSet<HashSet>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMap<std::string, std::string>: ";
+		std::cout << bucketName << ": HashMap<std::string, std::string>: " << std::flush;
 		typedef momo::HashMap<std::string, std::string, HashTraits> HashMap;
 		TestHashMap<HashMap>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMultiMap<std::string, std::string>: ";
+		std::cout << bucketName << ": HashMultiMap<std::string, std::string>: " << std::flush;
 		typedef momo::HashMultiMap<std::string, std::string, HashTraits> HashMultiMap;
 		TestHashMultiMap<HashMultiMap>();
 		std::cout << "ok" << std::endl;

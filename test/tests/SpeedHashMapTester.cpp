@@ -31,7 +31,7 @@ private:
 		Timer(const std::string& title, std::ostream& stream)
 			: mStream(stream)
 		{
-			mStream << title;
+			mStream << title << std::flush;
 			mStartTime = clock();
 		}
 

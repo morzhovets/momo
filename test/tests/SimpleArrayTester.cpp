@@ -21,13 +21,13 @@ class SimpleArrayTester
 public:
 	static void TestAll()
 	{
-		std::cout << "momo::Array<std::string>: ";
+		std::cout << "momo::Array<std::string>: " << std::flush;
 		typedef momo::Array<std::string, momo::MemManagerC, momo::ArrayItemTraits<std::string>,
 			momo::ArraySettings<std::is_nothrow_move_constructible<std::string>::value ? 2 : 0>> Array;
 		TestArray<Array>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::SegmentedArray<std::string>: ";
+		std::cout << "momo::SegmentedArray<std::string>: " << std::flush;
 		typedef momo::SegmentedArray<std::string> SegmentedArray;
 		TestArray<SegmentedArray>();
 		std::cout << "ok" << std::endl;
