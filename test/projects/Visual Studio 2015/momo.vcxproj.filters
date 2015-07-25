@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\momo">
+      <UniqueIdentifier>{52345af6-8c65-4a49-a4f3-e6ef5586d4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\momo\HashBuckets">
+      <UniqueIdentifier>{2b1f4fb8-d24b-4fe7-9f02-d5b2bf219cec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests">
+      <UniqueIdentifier>{c9a95909-a5fa-4f86-b444-c4758e13ebc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\momo\stdish">
+      <UniqueIdentifier>{72bcd55a-68a5-4ffa-9c2b-c3dcacdff214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tests">
+      <UniqueIdentifier>{6ca8c7e6-94de-40ff-a346-e821505b24af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\GoogleHashTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\SimpleArrayTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\SimpleHashTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\SpeedHashMapTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxArrayTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterFewP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterLim4.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneI1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterFewP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLim4.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterOneI1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterUnlimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterFewP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\momo\HashMap.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashMultiMap.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashTraits.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashSet.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUtility.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\Array.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\Utility.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\ObjectManager.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\SegmentedArray.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\vector.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\unordered_map.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashUtility.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\unordered_set.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\ArrayUtility.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\MemManager.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\MemPool.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\ArrayBucket.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP1.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketOneI1.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUnlimP.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketFewP.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLim4.h">
+      <Filter>Header Files\momo\HashBuckets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\Settings.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxVectorTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxUnorderedMapTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxUnorderedSetTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxTester.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\TestSettings.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\unordered_multimap.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxUnorderedMultiMapTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxHashMapTester.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxHashMultiMapTester.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxHashSetTester.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+ </ItemGroup>
+</Project>
