@@ -119,13 +119,13 @@ public:
 		map.Shrink();
 		std::pair<std::string, std::string> pair("s4", s4);
 		map.InsertFS(&pair, &pair + 1);
-		map.InsertKV(map.Find(s2), ++map.Find(s2));	//?
+		map.InsertKV(map.Find(s2), std::next(map.Find(s2)));	//?
 		assert(map.GetCount() == 3);
 		map.Remove(s4);
-		for (auto pair : map)
-			assert(pair.value == "s2" || pair.value == "s6");
-		for (auto pair : (const HashMap&)map)
-			assert(pair.value == "s2" || pair.value == "s6");
+		for (auto ref : map)
+			assert(ref.value == "s2" || ref.value == "s6");
+		for (auto ref : (const HashMap&)map)
+			assert(ref.value == "s2" || ref.value == "s6");
 		assert(map.GetCount() == 2);
 		map.Clear();
 		assert(map.IsEmpty());
@@ -157,20 +157,20 @@ public:
 		assert(keyIter->values.GetCount() == 1);
 		for (const std::string& v : keyIter->values)
 			assert(v == v2);
-		for (auto pair : mmap.GetKeyBounds())
-			assert(pair.key == k2 || pair.key == k3);
-		for (auto pair : ((const HashMultiMap&)mmap).GetKeyBounds())
-			assert(pair.key == k2 || pair.key == k3);
+		for (auto ref : mmap.GetKeyBounds())
+			assert(ref.key == k2 || ref.key == k3);
+		for (auto ref : ((const HashMultiMap&)mmap).GetKeyBounds())
+			assert(ref.key == k2 || ref.key == k3);
 		mmap.RemoveValues(keyIter);
 		mmap.RemoveKey(keyIter);
 		mmap.Shrink();
 		std::pair<std::string, std::string> pair("k3", v3);
 		mmap.AddFS(&pair, &pair + 1);
 		mmap.AddKV(mmap.GetBegin(), mmap.GetBegin());	//?
-		for (auto pair : mmap)
-			assert(pair.key == "k3");
-		for (auto pair : (const HashMultiMap&)mmap)
-			assert(pair.value == "v3");
+		for (auto ref : mmap)
+			assert(ref.key == "k3");
+		for (auto ref : (const HashMultiMap&)mmap)
+			assert(ref.value == "v3");
 		assert(mmap.GetKeyCount() == 1);
 		assert(mmap.GetValueCount() == 3);
 		mmap.Clear();
