@@ -119,20 +119,20 @@ namespace internal
 	};
 
 #ifdef MOMO_USE_VARIADIC_TEMPLATES
-	template<size_t... S>
+	template<size_t... sequence>
 	struct Sequence
 	{
 	};
 
-	template<size_t N, size_t... S>
-	struct MakeSequence : public MakeSequence<N - 1, N - 1, S...>
+	template<size_t count, size_t... sequence>
+	struct MakeSequence : public MakeSequence<count - 1, count - 1, sequence...>
 	{
 	};
 
-	template<size_t... S>
-	struct MakeSequence<0, S...>
+	template<size_t... sequence>
+	struct MakeSequence<0, sequence...>
 	{
-		typedef Sequence<S...> sequence;
+		typedef Sequence<sequence...> Sequence;
 	};
 #endif
 

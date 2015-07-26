@@ -630,14 +630,14 @@ private:
 	void _create(Object* pobject, const std::tuple<Args...>& args)
 	{
 		_create(pobject, args,
-			typename internal::MakeSequence<sizeof...(Args)>::sequence());
+			typename internal::MakeSequence<sizeof...(Args)>::Sequence());
 	}
 
-	template<typename Object, typename... Args, size_t... S>
-	void _create(Object* pobject, const std::tuple<Args...>& args, internal::Sequence<S...>)
+	template<typename Object, typename... Args, size_t... sequence>
+	void _create(Object* pobject, const std::tuple<Args...>& args, internal::Sequence<sequence...>)
 	{
 		(void)args;	// vs bug
-		new(pobject) Object(std::get<S>(args)...);
+		new(pobject) Object(std::get<sequence>(args)...);
 	}
 #endif
 
