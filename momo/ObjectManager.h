@@ -163,27 +163,24 @@ namespace internal
 
 		static void AssignNothrowAnyway(Object&& srcObject, Object& dstObject) MOMO_NOEXCEPT
 		{
-			static std::is_nothrow_move_assignable<Object> isNothrowMoveAssignable;
-			static std::is_nothrow_move_constructible<Object> isNothrowMoveConstructible;
 			_AssignNothrowAnyway(std::move(srcObject), dstObject,
-				isNothrowMoveAssignable, &isNothrowMoveConstructible);
+				std::is_nothrow_move_assignable<Object>(),
+				std::is_nothrow_move_constructible<Object>());
 		}
 
 		static void AssignNothrowAnyway(const Object& srcObject, Object& dstObject) MOMO_NOEXCEPT
 		{
-			static std::is_nothrow_copy_assignable<Object> isNothrowCopyAssignable;
-			static std::is_nothrow_copy_constructible<Object> isNothrowCopyConstructible;
 			_AssignNothrowAnyway(srcObject, dstObject,
-				isNothrowCopyAssignable, &isNothrowCopyConstructible);
+				std::is_nothrow_copy_assignable<Object>(),
+				std::is_nothrow_copy_constructible<Object>());
 		}
 
 		static void Relocate(Object* srcObjects, Object* dstObjects, size_t count)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			static std::integral_constant<bool, isNothrowMoveConstructible> isNothrowMoveConstructible;
 			_Relocate(srcObjects, dstObjects, count,
-				std::integral_constant<bool, isTriviallyRelocatable>(),
-				&isNothrowMoveConstructible);
+				internal::BoolConstant<isTriviallyRelocatable>(),
+				internal::BoolConstant<isNothrowMoveConstructible>());
 		}
 
 		template<typename ObjectCreator>
@@ -191,7 +188,7 @@ namespace internal
 			const ObjectCreator& objectCreator)
 		{
 			_RelocateAddBack(srcObjects, dstObjects, srcCount, objectCreator,
-				std::integral_constant<bool, isNothrowRelocatable>());
+				internal::BoolConstant<isNothrowRelocatable>());
 		}
 
 	private:
@@ -220,16 +217,17 @@ namespace internal
 			}
 		}
 
+		template<bool isNothrowMoveConstructible>
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/,
-			void* /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			std::integral_constant<bool, isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			dstObject = std::move(srcObject);
 		}
 
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/,
-			std::true_type* /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
@@ -240,21 +238,22 @@ namespace internal
 
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/,
-			std::false_type* /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			std::false_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			AssignNothrowAnyway((const Object&)srcObject, dstObject);
 		}
 
+		template<bool isNothrowCopyConstructible>
 		static void _AssignNothrowAnyway(const Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowCopyAssignable*/,
-			void* /*isNothrowCopyConstructible*/) MOMO_NOEXCEPT
+			std::integral_constant<bool, isNothrowCopyConstructible>) MOMO_NOEXCEPT
 		{
 			dstObject = srcObject;
 		}
 
 		static void _AssignNothrowAnyway(const Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowCopyAssignable*/,
-			std::true_type* /*isNothrowCopyConstructible*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowCopyConstructible*/) MOMO_NOEXCEPT
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
@@ -263,16 +262,17 @@ namespace internal
 			}
 		}
 
+		template<bool isNothrowMoveConstructible>
 		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
 			std::true_type /*isTriviallyRelocatable*/,
-			void* /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			memcpy(dstObjects, srcObjects, count * sizeof(Object));
 		}
 
 		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
 			std::false_type /*isTriviallyRelocatable*/,
-			std::true_type* /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			if (count > 0)	// vs bug
 				std::uninitialized_copy_n(std::make_move_iterator(srcObjects), count, dstObjects);
@@ -281,7 +281,7 @@ namespace internal
 
 		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
 			std::false_type /*isTriviallyRelocatable*/,
-			std::false_type* /*isNothrowMoveConstructible*/)
+			std::false_type /*isNothrowMoveConstructible*/)
 		{
 			if (count > 0)
 			{

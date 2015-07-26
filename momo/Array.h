@@ -132,7 +132,7 @@ private:
 		static const size_t maskInternal = hasInternalCapacity
 			? (size_t)1 << (8 * sizeof(size_t) - 1) : 0;
 
-		typedef std::integral_constant<bool, hasInternalCapacity> HasInternalCapacity;
+		typedef internal::BoolConstant<hasInternalCapacity> HasInternalCapacity;
 
 	public:
 		Data()
@@ -215,11 +215,9 @@ private:
 			_CheckCapacity(capacity);
 			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
 				return false;
-			static std::integral_constant<bool, ItemTraits::isTriviallyRelocatable
-				&& MemManager::canReallocate> canReallocate;
-			static std::integral_constant<bool,
-				MemManager::canReallocateInplace> canReallocateInplace;
-			return _SetCapacity(capacity, canReallocate, &canReallocateInplace);
+			return _SetCapacity(capacity,
+				internal::BoolConstant<ItemTraits::isTriviallyRelocatable && MemManager::canReallocate>(),
+				internal::BoolConstant<MemManager::canReallocateInplace>());
 		}
 
 		size_t GetCount() const MOMO_NOEXCEPT
@@ -355,8 +353,9 @@ private:
 			return mExternalData.items;
 		}
 
+		template<bool canReallocateInplace>
 		bool _SetCapacity(size_t capacity, std::true_type /*canReallocate*/,
-			void* /*canReallocateInplace*/)
+			internal::BoolConstant<canReallocateInplace>)
 		{
 			mExternalData.items = (Item*)GetMemManager().Reallocate(mExternalData.items,
 				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
@@ -365,7 +364,7 @@ private:
 		}
 
 		bool _SetCapacity(size_t capacity, std::false_type /*canReallocate*/,
-			std::true_type* /*canReallocateInplace*/) MOMO_NOEXCEPT
+			std::true_type /*canReallocateInplace*/) MOMO_NOEXCEPT
 		{
 			bool reallocDone = GetMemManager().ReallocateInplace(mExternalData.items,
 				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
@@ -376,7 +375,7 @@ private:
 		}
 
 		bool _SetCapacity(size_t /*capacity*/, std::false_type /*canReallocate*/,
-			std::false_type* /*canReallocateInplace*/) MOMO_NOEXCEPT
+			std::false_type /*canReallocateInplace*/) MOMO_NOEXCEPT
 		{
 			return false;
 		}
@@ -893,7 +892,7 @@ private:
 	void _AddBackGrow(Item&& item)
 	{
 		_AddBackGrow(std::move(item),
-			std::integral_constant<bool, ItemTraits::isNothrowMoveConstructible>());
+			internal::BoolConstant<ItemTraits::isNothrowMoveConstructible>());
 	}
 
 	void _AddBackGrow(Item&& item, std::true_type /*isNothrowMoveConstructible*/)
@@ -918,7 +917,7 @@ private:
 	void _AddBackGrow(const Item& item)
 	{
 		_AddBackGrow(item,
-			std::integral_constant<bool, ItemTraits::isTriviallyRelocatable>());
+			internal::BoolConstant<ItemTraits::isTriviallyRelocatable>());
 	}
 
 	void _AddBackGrow(const Item& item, std::true_type /*isTriviallyRelocatable*/)

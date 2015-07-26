@@ -113,6 +113,11 @@ namespace internal
 	{
 	};
 
+	template<bool value>
+	struct BoolConstant : public std::integral_constant<bool, value>
+	{
+	};
+
 #ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<size_t... S>
 	struct Sequence

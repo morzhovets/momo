@@ -162,12 +162,9 @@ struct HashMapKeyValueTraits
 
 	static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
 	{
-		static std::integral_constant<bool, KeyManager::isNothrowAnywayMoveAssignable>
-			isKeyNothrowAnywayMoveAssignable;
-		static std::integral_constant<bool, ValueManager::isNothrowAnywayMoveAssignable>
-			isValueNothrowAnywayMoveAssignable;
 		_AssignPair(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
-			isKeyNothrowAnywayMoveAssignable, &isValueNothrowAnywayMoveAssignable);
+			internal::BoolConstant<KeyManager::isNothrowAnywayMoveAssignable>(),
+			internal::BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -183,9 +180,10 @@ struct HashMapKeyValueTraits
 #endif
 
 private:
+	template<bool isValueNothrowAnywayMoveAssignable>
 	static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 		std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
-		void* /*isValueNothrowAnywayMoveAssignable*/)
+		internal::BoolConstant<isValueNothrowAnywayMoveAssignable>)
 	{
 		dstValue = std::move(srcValue);
 		KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
@@ -193,7 +191,7 @@ private:
 
 	static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 		std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
-		std::true_type* /*isValueNothrowAnywayMoveAssignable*/)
+		std::true_type /*isValueNothrowAnywayMoveAssignable*/)
 	{
 		dstKey = std::move(srcKey);
 		ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
@@ -202,7 +200,7 @@ private:
 	// basic exception safety
 	static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 		std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
-		std::false_type* /*isValueNothrowAnywayMoveAssignable*/)
+		std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 	{
 		dstValue = (const Value&)srcValue;
 		dstKey = std::move(srcKey);
@@ -295,8 +293,8 @@ private:
 			size_t srcCount, const PairCreator& pairCreator)
 		{
 			_RelocateAddBack(srcPairs, dstPairs, srcCount, pairCreator,
-				std::integral_constant<bool, KeyValueTraits::isKeyNothrowRelocatable>(),
-				std::integral_constant<bool, KeyValueTraits::isValueNothrowRelocatable>());
+				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
+				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
 
 		static void Assign(KeyValuePair&& srcPair, KeyValuePair& dstPair)

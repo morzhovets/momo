@@ -458,7 +458,7 @@ private:
 		if (right.get_allocator() == alloc)
 			return std::move(right.mArray);
 		return _create_array(right, MemManager(alloc),
-			std::integral_constant<bool, Array::ItemTraits::isNothrowMoveConstructible>());
+			internal::BoolConstant<Array::ItemTraits::isNothrowMoveConstructible>());
 	}
 
 	static Array _create_array(vector& right, MemManager&& memManager,

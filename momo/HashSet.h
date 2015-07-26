@@ -324,13 +324,13 @@ struct HashSetItemTraits
 	static void Assign(Item&& srcItem, Item& midItem, Item& dstItem)
 	{
 		_Assign(std::move(srcItem), midItem, dstItem,
-			std::integral_constant<bool, ItemManager::isNothrowAnywayMoveAssignable>());
+			internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 	}
 
 	static void Assign(const Item& srcItem, Item& midItem, Item& dstItem)
 	{
 		_Assign(srcItem, midItem, dstItem,
-			std::integral_constant<bool, ItemManager::isNothrowAnywayCopyAssignable>());
+			internal::BoolConstant<ItemManager::isNothrowAnywayCopyAssignable>());
 	}
 
 	template<typename ItemCreator>
