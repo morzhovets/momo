@@ -132,7 +132,7 @@ namespace internal
 	template<size_t... sequence>
 	struct MakeSequence<0, sequence...>
 	{
-		typedef Sequence<sequence...> Sequence;
+		typedef internal::Sequence<sequence...> Sequence;
 	};
 #endif
 
