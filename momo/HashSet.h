@@ -745,6 +745,11 @@ public:
 		return ConstIterator(*mBuckets, hashCode, mCrew.GetVersion());
 	}
 
+	bool HasKey(const Key& key) const
+	{
+		return !!Find(key);
+	}
+
 	template<typename ItemCreator>
 	InsertResult InsertEmpl(const Key& key, const ItemCreator& itemCreator)
 	{

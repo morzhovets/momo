@@ -662,6 +662,11 @@ public:
 		return KeyIterator(mHashMap.Find(key));
 	}
 
+	bool HasKey(const Key& key) const
+	{
+		return mHashMap.HasKey(key);
+	}
+
 	template<typename ValueCreator>
 	Iterator AddEmpl(Key&& key, const ValueCreator& valueCreator)
 	{

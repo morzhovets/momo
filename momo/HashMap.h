@@ -675,6 +675,11 @@ public:
 		return Iterator(mHashSet.Find(key));
 	}
 
+	bool HasKey(const Key& key) const
+	{
+		return mHashSet.HasKey(key);
+	}
+
 	template<typename ValueCreator>
 	InsertResult InsertEmpl(Key&& key, const ValueCreator& valueCreator)
 	{
