@@ -67,15 +67,15 @@ namespace internal
 		typedef TObject Object;
 
 		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
-		static const bool isNothrowAnywayCopyAssignable =
-			std::is_nothrow_copy_assignable<Object>::value
-			|| std::is_nothrow_copy_constructible<Object>::value;
-		static const bool isNothrowAnywayMoveAssignable = isNothrowAnywayCopyAssignable
-			|| std::is_nothrow_move_assignable<Object>::value
-			|| std::is_nothrow_move_constructible<Object>::value;
 		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 		static const bool isNothrowRelocatable = isNothrowMoveConstructible
 			|| isTriviallyRelocatable;
+		static const bool isNothrowAnywayCopyAssignable =
+			std::is_nothrow_copy_assignable<Object>::value
+			|| std::is_nothrow_copy_constructible<Object>::value;
+		static const bool isNothrowAnywayMoveAssignable =
+			std::is_nothrow_move_assignable<Object>::value || isTriviallyRelocatable
+			|| isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
 		class Creator
 		{
@@ -165,7 +165,8 @@ namespace internal
 		{
 			_AssignNothrowAnyway(std::move(srcObject), dstObject,
 				std::is_nothrow_move_assignable<Object>(),
-				std::is_nothrow_move_constructible<Object>());
+				internal::BoolConstant<isTriviallyRelocatable>(),
+				internal::BoolConstant<isNothrowMoveConstructible>());
 		}
 
 		static void AssignNothrowAnyway(const Object& srcObject, Object& dstObject) MOMO_NOEXCEPT
@@ -217,16 +218,31 @@ namespace internal
 			}
 		}
 
-		template<bool isNothrowMoveConstructible>
+		template<bool isTriviallyRelocatable, bool isNothrowMoveConstructible>
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/,
-			std::integral_constant<bool, isNothrowMoveConstructible>) MOMO_NOEXCEPT
+			internal::BoolConstant<isTriviallyRelocatable>,
+			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			dstObject = std::move(srcObject);
 		}
 
+		template<bool isNothrowMoveConstructible>
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/,
+			std::true_type /*isTriviallyRelocatable*/,
+			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
+		{
+			static const size_t objectSize = sizeof(Object);
+			char buf[objectSize];
+			memcpy(buf, std::addressof(dstObject), objectSize);
+			memcpy(std::addressof(dstObject), std::addressof(srcObject), objectSize);
+			memcpy(std::addressof(srcObject), buf, objectSize);
+		}
+
+		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
+			std::false_type /*isNothrowMoveAssignable*/,
+			std::false_type /*isTriviallyRelocatable*/,
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
@@ -238,6 +254,7 @@ namespace internal
 
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/,
+			std::false_type /*isTriviallyRelocatable*/,
 			std::false_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			AssignNothrowAnyway((const Object&)srcObject, dstObject);
