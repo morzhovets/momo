@@ -43,13 +43,12 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef momo::Array<MemPool, MemManagerPtr> MemPools;
+			typedef momo::Array<MemPool, MemManagerDummy, momo::ArrayItemTraits<MemPool>,
+				momo::ArraySettings<maxFastCount + 1>> MemPools;
 
 		public:
 			Params(MemManager& memManager)
-				: mMemPools(MemManagerPtr(memManager))
 			{
-				mMemPools.Reserve(maxFastCount + 1);
 				mMemPools.AddBackNogrow(MemPool(sizeof(Array) + 1,
 					MemManagerPtr(memManager)));
 				for (size_t i = 1; i <= maxFastCount; ++i)

@@ -50,11 +50,11 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef momo::Array<MemPool, MemManagerPtr> MemPools;
+			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
+				ArraySettings<maxCount>> MemPools;
 
 		public:
 			Params(MemManager& memManager)
-				: mMemPools(MemPools::CreateCap(maxCount, MemManagerPtr(memManager)))
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
