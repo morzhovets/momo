@@ -16,7 +16,6 @@ namespace momo
 
 namespace internal
 {
-#pragma pack(push, 1)
 	template<typename TItemTraits, typename TMemManager>
 	class BucketOneI1
 	{
@@ -106,7 +105,6 @@ namespace internal
 		internal::ObjectBuffer<Item> mItemBuffer;
 		unsigned char mState;
 	};
-#pragma pack(pop)
 }
 
 struct HashBucketOneI1

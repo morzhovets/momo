@@ -20,7 +20,7 @@ namespace internal
 {
 #pragma pack(push, 1)
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount>
+		size_t tMaxCount, size_t tMemPoolBlockCount, bool tPacked>
 	class BucketLimP1
 	{
 	public:
@@ -32,6 +32,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+		static const bool packed = tPacked;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -200,17 +201,23 @@ namespace internal
 
 	private:
 		Item* mItems;
-		unsigned char mState;
+		union
+		{
+			unsigned char mState;
+			char mPadding[packed ? 1 : sizeof(void*)];
+		};
 	};
 #pragma pack(pop)
 }
 
 template<size_t tMaxCount = 7,
-	size_t tMemPoolBlockCount = 32>
+	size_t tMemPoolBlockCount = 32,
+	bool tPacked = true>
 struct HashBucketLimP1
 {
 	static const size_t maxCount = tMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
+	static const size_t packed = tPacked;
 
 	static const size_t logStartBucketCount = 4;
 
@@ -228,7 +235,7 @@ struct HashBucketLimP1
 	struct Bucketer
 	{
 		typedef internal::BucketLimP1<ItemTraits, MemManager,
-			maxCount, memPoolBlockCount> Bucket;
+			maxCount, memPoolBlockCount, packed> Bucket;
 	};
 };
 

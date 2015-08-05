@@ -13,7 +13,7 @@
 #include "../../momo/Utility.h"
 
 #undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<1, 1>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<1, 1, false>
 
 #define LIBCXX_TEST_BUCKET "limp1"
 

@@ -231,7 +231,6 @@ public:
 	typedef TSettings Settings;
 
 private:
-#pragma pack(push, 1)
 	class KeyValuePair
 	{
 	public:
@@ -422,7 +421,6 @@ private:
 		internal::ObjectBuffer<Key> mKeyBuffer;
 		mutable internal::ObjectBuffer<Value> mValueBuffer;
 	};
-#pragma pack(pop)
 
 	struct HashSetItemTraits
 	{
