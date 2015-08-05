@@ -125,10 +125,7 @@ namespace internal
 		static const bool canReallocateInplace = false;
 	
 	public:
-		void* Allocate(size_t /*size*/)
-		{
-			assert(false);
-		}
+		//void* Allocate(size_t size);
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
 		{
