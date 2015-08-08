@@ -77,6 +77,12 @@ namespace internal
 			std::is_nothrow_move_assignable<Object>::value || isTriviallyRelocatable
 			|| isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
+#ifdef MOMO_PACK_ALL
+		static const size_t alignment = 1;
+#else
+		static const size_t alignment = std::alignment_of<Object>::value;
+#endif
+
 		class Creator
 		{
 		public:

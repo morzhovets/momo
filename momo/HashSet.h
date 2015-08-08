@@ -297,6 +297,8 @@ struct HashSetItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
+	static const size_t alignment = ItemManager::alignment;
+
 	typedef typename ItemManager::MoveCreator MoveCreator;
 	typedef typename ItemManager::CopyCreator CopyCreator;
 
@@ -397,6 +399,8 @@ private:
 	struct BucketItemTraits
 	{
 		typedef typename HashSet::Item Item;
+
+		static const size_t alignment = ItemTraits::alignment;
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{

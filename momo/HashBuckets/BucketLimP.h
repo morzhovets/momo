@@ -41,6 +41,8 @@ namespace internal
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
+		static const size_t itemAlignment = ItemTraits::alignment;
+
 	public:
 		class Params
 		{
@@ -53,7 +55,7 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + 1,
+					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + itemAlignment,
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -201,7 +203,7 @@ namespace internal
 
 		static Item* _GetBegin(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return (Item*)(ptr + 1);
+			return (Item*)(ptr + itemAlignment);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT

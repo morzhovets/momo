@@ -238,6 +238,9 @@ struct HashMultiMapKeyValueTraits
 
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 
+	static const size_t keyAlignment = KeyManager::alignment;
+	static const size_t valueAlignment = ValueManager::alignment;
+
 	typedef typename ValueManager::MoveCreator MoveValueCreator;
 	typedef typename ValueManager::CopyCreator CopyValueCreator;
 
@@ -321,6 +324,8 @@ private:
 	{
 		typedef typename HashMultiMap::Value Item;
 
+		static const size_t alignment = KeyValueTraits::valueAlignment;
+
 		static void Create(const Item& item, void* pitem)
 		{
 			(typename KeyValueTraits::CopyValueCreator(item))(pitem);
@@ -340,7 +345,7 @@ private:
 	};
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
-		5, 32, ArraySettings<0, true, CheckMode::assertion>> ValueArray;
+		7, 32, ArraySettings<0, true, CheckMode::assertion>> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 
@@ -439,12 +444,15 @@ private:
 	struct HashMapKeyValueTraits
 	{
 		typedef typename HashMultiMap::Key Key;
-		typedef ValueArray Value;
+		typedef typename HashMultiMap::ValueArray Value;
 
 		typedef internal::ObjectManager<Value> ValueManager;
 
 		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = true;
+		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+
+		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
+		static const size_t valueAlignment = ValueManager::alignment;
 
 		typedef typename ValueManager::MoveCreator MoveValueCreator;
 

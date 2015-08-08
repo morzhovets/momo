@@ -212,7 +212,12 @@ namespace internal
 
 template<size_t tMaxCount = 7,
 	size_t tMemPoolBlockCount = 32,
-	bool tPacked = true>
+#ifdef MOMO_PACK_ALL
+	bool tPacked = true
+#else
+	bool tPacked = false
+#endif
+	>
 struct HashBucketLimP1
 {
 	static const size_t maxCount = tMaxCount;

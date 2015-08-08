@@ -27,6 +27,14 @@ namespace internal
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
 
+	private:
+		static const size_t itemAlignment = ItemTraits::alignment;
+
+		static const unsigned char stateEmpty = 0;
+		static const unsigned char stateFull = 1;
+		static const unsigned char stateRemoved = 2;
+
+	public:
 		class Params
 		{
 		public:
@@ -38,11 +46,6 @@ namespace internal
 			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
 			MOMO_DISABLE_COPY_OPERATOR(Params);
 		};
-
-	private:
-		static const unsigned char stateEmpty = 0;
-		static const unsigned char stateFull = 1;
-		static const unsigned char stateRemoved = 2;
 
 	public:
 		BucketOneI1() MOMO_NOEXCEPT
@@ -103,7 +106,11 @@ namespace internal
 
 	private:
 		internal::ObjectBuffer<Item> mItemBuffer;
-		unsigned char mState;
+		union
+		{
+			unsigned char mState;
+			char mPadding[itemAlignment];
+		};
 	};
 }
 

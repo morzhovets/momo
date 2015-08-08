@@ -447,14 +447,8 @@ public:
 
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
-		struct BucketItemTraits
-		{
-			typedef key_type Item;
-		};
-		typedef typename HashTraits::HashBucket HashBucket;
-		typedef typename HashBucket::template Bucketer<BucketItemTraits,
-			MemManager>::Bucket Bucket;
-		return internal::HashSetBuckets<Bucket>::maxBucketCount;
+		return SIZE_MAX;
+		//return internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 
 	size_type bucket_count() const MOMO_NOEXCEPT

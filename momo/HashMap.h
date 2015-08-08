@@ -112,6 +112,9 @@ struct HashMapKeyValueTraits
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 	static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
+	static const size_t keyAlignment = KeyManager::alignment;
+	static const size_t valueAlignment = ValueManager::alignment;
+
 #ifndef MOMO_USE_SAFE_MAP_BRACKETS
 	typedef typename ValueManager::Creator ValueCreator;
 #endif
@@ -233,6 +236,14 @@ public:
 private:
 	class KeyValuePair
 	{
+	private:
+		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
+		static const size_t valueAlignment = KeyValueTraits::valueAlignment;
+
+	public:
+		static const size_t alignment = keyAlignment < valueAlignment
+			? valueAlignment : keyAlignment;
+
 	public:
 		template<typename KeyValueCreator>
 		explicit KeyValuePair(const KeyValueCreator& keyValueCreator)
@@ -418,8 +429,16 @@ private:
 		MOMO_DISABLE_COPY_OPERATOR(KeyValuePair);
 
 	private:
-		internal::ObjectBuffer<Key> mKeyBuffer;
-		mutable internal::ObjectBuffer<Value> mValueBuffer;
+		union
+		{
+			internal::ObjectBuffer<Key> mKeyBuffer;
+			char mKeyPadding[((sizeof(Key) - 1) / valueAlignment + 1) * valueAlignment];
+		};
+		union
+		{
+			mutable internal::ObjectBuffer<Value> mValueBuffer;
+			char mValuePadding[((sizeof(Value) - 1) / keyAlignment + 1) * keyAlignment];
+		};
 	};
 
 	struct HashSetItemTraits
@@ -428,6 +447,8 @@ private:
 		typedef KeyValuePair Item;
 
 		typedef internal::ObjectManager<Item> ItemManager;
+
+		static const size_t alignment = KeyValuePair::alignment;
 
 		typedef typename ItemManager::MoveCreator MoveCreator;
 		typedef typename ItemManager::CopyCreator CopyCreator;

@@ -35,43 +35,7 @@ namespace internal
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
 
-		typedef BucketMemory<MemPool, unsigned char*> Memory;
-
-	public:
-		class Params
-		{
-		private:
-			typedef momo::Array<MemPool, MemManagerDummy, momo::ArrayItemTraits<MemPool>,
-				momo::ArraySettings<maxFastCount + 1>> MemPools;
-
-		public:
-			Params(MemManager& memManager)
-			{
-				mMemPools.AddBackNogrow(MemPool(sizeof(Array) + 1,
-					MemManagerPtr(memManager)));
-				for (size_t i = 1; i <= maxFastCount; ++i)
-				{
-					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + 1,
-						MemManagerPtr(memManager)));
-				}
-			}
-
-			MemPool& operator[](size_t index) MOMO_NOEXCEPT
-			{
-				return mMemPools[index];
-			}
-
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
-
-		private:
-			MemPools mMemPools;
-		};
-
-	private:
 		struct ArrayItemTraits
 		{
 			typedef typename ItemTraits::Item Item;
@@ -102,6 +66,45 @@ namespace internal
 		};
 
 		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits, ArraySettings> Array;
+
+		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
+
+		typedef BucketMemory<MemPool, unsigned char*> Memory;
+
+		static const size_t itemAlignment = ItemTraits::alignment;
+		static const size_t arrayAlignment = 8; //ObjectManager<Array>::alignment;	//?
+
+	public:
+		class Params
+		{
+		private:
+			typedef momo::Array<MemPool, MemManagerDummy, momo::ArrayItemTraits<MemPool>,
+				momo::ArraySettings<maxFastCount + 1>> MemPools;
+
+		public:
+			Params(MemManager& memManager)
+			{
+				mMemPools.AddBackNogrow(MemPool(sizeof(Array) + arrayAlignment,
+					MemManagerPtr(memManager)));
+				for (size_t i = 1; i <= maxFastCount; ++i)
+				{
+					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + itemAlignment,
+						MemManagerPtr(memManager)));
+				}
+			}
+
+			MemPool& operator[](size_t index) MOMO_NOEXCEPT
+			{
+				return mMemPools[index];
+			}
+
+		private:
+			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
+			MOMO_DISABLE_COPY_OPERATOR(Params);
+
+		private:
+			MemPools mMemPools;
+		};
 
 	public:
 		ArrayBucket() MOMO_NOEXCEPT
@@ -308,7 +311,7 @@ namespace internal
 
 		static Item* _GetFastBegin(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return (Item*)(ptr + 1);
+			return (Item*)(ptr + itemAlignment);
 		}
 
 		Array& _GetArray() const MOMO_NOEXCEPT
@@ -319,7 +322,7 @@ namespace internal
 
 		static Array& _GetArray(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return *(Array*)(ptr + 1);
+			return *(Array*)(ptr + arrayAlignment);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT
