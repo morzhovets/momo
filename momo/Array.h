@@ -207,7 +207,11 @@ private:
 
 		size_t GetCapacity() const MOMO_NOEXCEPT
 		{
-			return _IsInternal() ? internalCapacity : mExternalData.capacity;
+			//return _IsInternal() ? internalCapacity : mExternalData.capacity;	// for gcc 4.7
+			if (_IsInternal())
+				return internalCapacity;
+			else
+				return mExternalData.capacity;
 		}
 
 		bool SetCapacity(size_t capacity)
