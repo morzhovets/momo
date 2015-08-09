@@ -18,7 +18,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		intptr_t tRemovedPtr, size_t tMemPoolBlockCount>
+		intptr_t tRemovedPtr, size_t tMemPoolBlockCount, size_t tMemAlignment>
 	class BucketFewP
 	{
 	public:
@@ -28,14 +28,15 @@ namespace internal
 
 		static const intptr_t removedPtr = tRemovedPtr;
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+		static const size_t memAlignment = tMemAlignment;
 
 		static const intptr_t nullPtr = (intptr_t)nullptr;
 		//MOMO_STATIC_ASSERT(removedPtr != nullPtr);	// llvm bug
 		MOMO_STATIC_ASSERT(nullptr == (void*)0 && removedPtr != 0);
 
-		MOMO_STATIC_ASSERT(sizeof(void*) == 4 || sizeof(void*) == 8);
-		static const size_t maxCount = (sizeof(void*) == 4) ? 2 : 3;
-		static const intptr_t maskState = (sizeof(void*) == 4) ? 3 : 7;
+		MOMO_STATIC_ASSERT(memAlignment <= 8 && ((memAlignment - 1) & memAlignment) == 0);
+		static const size_t maxCount = (memAlignment == 8) ? 3 : (memAlignment == 4) ? 2 : 1;
+		static const intptr_t maskState = (memAlignment == 8) ? 7 : (memAlignment == 4) ? 3 : 0;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -60,7 +61,7 @@ namespace internal
 				{
 					size_t blockSize = i * sizeof(Item);
 					if (memPoolBlockCount > 0)
-						blockSize = ((blockSize - 1) / sizeof(void*) + 1) * sizeof(void*);
+						blockSize = ((blockSize - 1) / memAlignment + 1) * memAlignment;
 					mMemPools.AddBackNogrow(MemPool(blockSize, MemManagerPtr(memManager)));
 				}
 			}
@@ -224,11 +225,13 @@ namespace internal
 }
 
 template<intptr_t tRemovedPtr,
-	size_t tMemPoolBlockCount = 32>
+	size_t tMemPoolBlockCount = 32,
+	size_t tMemAlignment = 8>
 struct HashBucketFewP
 {
 	static const intptr_t removedPtr = tRemovedPtr;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
+	static const size_t memAlignment = tMemAlignment;
 
 	static const size_t logStartBucketCount = 4;
 
@@ -246,7 +249,7 @@ struct HashBucketFewP
 	struct Bucketer
 	{
 		typedef internal::BucketFewP<ItemTraits, MemManager,
-			removedPtr, memPoolBlockCount> Bucket;
+			removedPtr, memPoolBlockCount, memAlignment> Bucket;
 	};
 };
 

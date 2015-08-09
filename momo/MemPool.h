@@ -25,7 +25,7 @@ public:
 	static const size_t blockCount = tBlockCount;
 
 	static const size_t minBlockSize = sizeof(void*);
-	static const size_t maxBlockSize = (SIZE_MAX - sizeof(void*)) / blockCount;
+	static const size_t maxBlockSize = (SIZE_MAX - 8) / blockCount;
 	MOMO_STATIC_ASSERT(minBlockSize <= maxBlockSize);
 
 private:
@@ -135,17 +135,17 @@ private:
 		char* buffer = (char*)GetMemManager().Allocate(_GetBufferSize());
 		for (size_t i = 0; i < blockCount; ++i)
 		{
-			char* ptr = buffer + sizeof(void*) + mBlockSize * i;
+			char* ptr = buffer + 8 + mBlockSize * i;
 			*(void**)ptr = (i + 1 < blockCount) ? ptr + mBlockSize : nullptr;
 		}
-		mBlockHead = buffer + sizeof(void*);
+		mBlockHead = buffer + 8;
 		*(void**)buffer = mBufferHead;
 		mBufferHead = buffer;
 	}
 
 	size_t _GetBufferSize() const MOMO_NOEXCEPT
 	{
-		return sizeof(void*) + blockCount * mBlockSize;
+		return blockCount * mBlockSize + 8;
 	}
 
 private:

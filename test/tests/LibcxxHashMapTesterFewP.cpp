@@ -12,11 +12,13 @@
 
 #include "../../momo/Utility.h"
 
+#undef MOMO_PACK_ALL
+
 #undef MOMO_DEFAULT_MEM_MANAGER
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 
 #undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1, 32, 8>
 
 #define LIBCXX_TEST_BUCKET "fewp"
 

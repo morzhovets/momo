@@ -411,7 +411,6 @@ private:
 		MOMO_DISABLE_COPY_OPERATOR(Data);
 
 	private:
-		size_t mCount;
 		union
 		{
 			struct
@@ -421,6 +420,7 @@ private:
 			} mExternalData;
 			internal::ObjectBuffer<Item, internalCapacity> mInternalData;
 		};
+		size_t mCount;
 	};
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;

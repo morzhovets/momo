@@ -12,6 +12,8 @@
 
 #include "../../momo/Utility.h"
 
+#undef MOMO_PACK_ALL
+
 #undef MOMO_DEFAULT_MEM_MANAGER
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerC
 

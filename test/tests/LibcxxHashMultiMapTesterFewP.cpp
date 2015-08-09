@@ -13,7 +13,7 @@
 #include "../../momo/Utility.h"
 
 #undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1, 0>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1, 0, 4>
 
 #define LIBCXX_TEST_BUCKET "fewp"
 
