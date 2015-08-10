@@ -98,7 +98,7 @@ public:
 		: mHashFunc(hashFunc),
 		mEqualFunc(equalFunc)
 	{
-		startBucketCount = std::minmax(startBucketCount, (size_t)2).second;
+		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
 		mLogStartBucketCount = internal::Log2<size_t>::Calc(startBucketCount - 1) + 1;
 		startBucketCount = (size_t)1 << mLogStartBucketCount;
 		size_t startCapacity = HashBucket::CalcCapacity(startBucketCount);

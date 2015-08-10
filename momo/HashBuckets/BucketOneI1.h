@@ -116,16 +116,16 @@ namespace internal
 
 struct HashBucketOneI1
 {
-	static const size_t logStartBucketCount = 5;
+	static const size_t logStartBucketCount = 4;
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return ((bucketCount + 3) / 4) * 3;
+		return internal::BucketFunctions::CalcCapacity(1, bucketCount);
 	}
 
-	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
+	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return 1;
+		return internal::BucketFunctions::GetBucketCountShift(1, bucketCount);
 	}
 
 	template<typename ItemTraits, typename MemManager>

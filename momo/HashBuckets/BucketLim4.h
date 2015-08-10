@@ -266,12 +266,12 @@ struct HashBucketLim4
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount + bucketCount / 2;
+		return internal::BucketFunctions::CalcCapacity(1 << logMaxCount, bucketCount);
 	}
 
 	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount < (1 << 20) ? 2 : 1;
+		return internal::BucketFunctions::GetBucketCountShift(1 << logMaxCount, bucketCount);
 	}
 
 	template<typename ItemTraits, typename MemManager>

@@ -234,12 +234,12 @@ struct HashBucketLimP
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount + bucketCount / 2;
+		return internal::BucketFunctions::CalcCapacity(maxCount, bucketCount);
 	}
 
 	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount < (1 << 20) ? 2 : 1;
+		return internal::BucketFunctions::GetBucketCountShift(maxCount, bucketCount);
 	}
 
 	template<typename ItemTraits, typename MemManager>

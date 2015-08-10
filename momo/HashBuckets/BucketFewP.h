@@ -235,14 +235,16 @@ struct HashBucketFewP
 
 	static const size_t logStartBucketCount = 4;
 
+	static const size_t maxCount = (memAlignment == 8) ? 3 : (memAlignment == 4) ? 2 : 1;
+
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount;
+		return internal::BucketFunctions::CalcCapacity(maxCount, bucketCount);
 	}
 
 	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return bucketCount < (1 << 16) ? 2 : 1;
+		return internal::BucketFunctions::GetBucketCountShift(maxCount, bucketCount);
 	}
 
 	template<typename ItemTraits, typename MemManager>

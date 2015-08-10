@@ -135,6 +135,31 @@ namespace internal
 	private:
 		MOMO_DISABLE_COPY_OPERATOR(MemManagerDummy);
 	};
+
+	struct BucketFunctions
+	{
+		static size_t CalcCapacity(size_t maxCount, size_t bucketCount) MOMO_NOEXCEPT
+		{
+			assert(maxCount > 0 && bucketCount > 0);
+			if (maxCount == 1)
+				return (bucketCount / 4) * 3;
+			else if (maxCount == 2)
+				return bucketCount;
+			else
+				return bucketCount + bucketCount / 2;
+		}
+
+		static size_t GetBucketCountShift(size_t maxCount, size_t bucketCount) MOMO_NOEXCEPT
+		{
+			assert(maxCount > 0 && bucketCount > 0);
+			if (maxCount == 1)
+				return 1;
+			else if (maxCount == 2)
+				return bucketCount < (1 << 16) ? 2 : 1;
+			else
+				return bucketCount < (1 << 20) ? 2 : 1;
+		}
+	};
 }
 
 } // namespace momo
