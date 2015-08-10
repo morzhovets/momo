@@ -120,7 +120,7 @@ struct HashBucketOneI1
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return (size_t)((double)bucketCount * 0.75);
+		return ((bucketCount + 3) / 4) * 3;
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT

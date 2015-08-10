@@ -237,7 +237,7 @@ struct HashBucketFewP
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return (size_t)((double)bucketCount * 1.0);
+		return bucketCount;
 	}
 
 	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT

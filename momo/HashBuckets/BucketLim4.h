@@ -266,7 +266,7 @@ struct HashBucketLim4
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return (size_t)((double)bucketCount * 1.46);
+		return bucketCount + bucketCount / 2;
 	}
 
 	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
