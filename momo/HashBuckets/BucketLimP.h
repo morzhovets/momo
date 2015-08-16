@@ -225,22 +225,10 @@ namespace internal
 
 template<size_t tMaxCount = 7,
 	size_t tMemPoolBlockCount = 32>
-struct HashBucketLimP
+struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
-
-	static const size_t logStartBucketCount = 4;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::CalcCapacity(maxCount, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(maxCount, bucketCount);
-	}
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer

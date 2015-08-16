@@ -24,11 +24,11 @@ public:
 	static void TestAll()
 	{
 		TestHashBucket<momo::HashBucketFewP<1>>("momo::HashBucketFewP");
-		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
-		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
-		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
+		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4");
+		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP");
+		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1");
 		TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+		TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP");
 	}
 
 	template<typename HashBucket>
@@ -136,7 +136,7 @@ public:
 	template<typename HashMultiMap>
 	static void TestHashMultiMap()
 	{
-		HashMultiMap mmap;
+		HashMultiMap mmap(typename HashMultiMap::HashTraits(1));
 		std::string k1 = "k1";
 		std::string v1 = "v1";
 		std::string k2 = "k2";

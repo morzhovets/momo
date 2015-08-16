@@ -68,9 +68,9 @@ public:
 
 	void TestAll()
 	{
-		TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1<>");
-		TestHashMap<momo::HashBucketLim4<>>("HashMapLim4<>");
-		TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP<>");
+		TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
+		TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
+		TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
 		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
 		TestHashMap<momo::HashBucketFewP<1>>("HashBucketFewP");
 		TestUnorderedMap();

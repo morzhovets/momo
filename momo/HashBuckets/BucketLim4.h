@@ -257,22 +257,10 @@ namespace internal
 
 template<size_t tLogMaxCount = 2,
 	size_t tMemPoolBlockCount = 32>
-struct HashBucketLim4
+struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
 {
 	static const size_t logMaxCount = tLogMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
-
-	static const size_t logStartBucketCount = 4;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::CalcCapacity(1 << logMaxCount, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(1 << logMaxCount, bucketCount);
-	}
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer

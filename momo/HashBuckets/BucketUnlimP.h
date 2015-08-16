@@ -96,23 +96,17 @@ namespace internal
 template<size_t tMaxFastCount = 7,
 	size_t tMemPoolBlockCount = 32,
 	typename TArraySettings = ArraySettings<>>
-struct HashBucketUnlimP
+struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 {
 	static const size_t maxFastCount = tMaxFastCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	typedef TArraySettings ArraySettings;
 
-	static const size_t logStartBucketCount = 4;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
+	static size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) MOMO_NOEXCEPT
 	{
-		return internal::BucketFunctions::CalcCapacity(SIZE_MAX, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(SIZE_MAX, bucketCount);
+		assert(probe == 0);
+		return hashCode & (bucketCount - 1);
 	}
 
 	template<typename ItemTraits, typename MemManager>

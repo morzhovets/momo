@@ -10,6 +10,7 @@
 #pragma once
 
 #include "BucketUtility.h"
+#include "../ObjectManager.h"
 
 namespace momo
 {
@@ -114,20 +115,8 @@ namespace internal
 	};
 }
 
-struct HashBucketOneI1
+struct HashBucketOneI1 : public internal::HashBucketBase<1>
 {
-	static const size_t logStartBucketCount = 4;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::CalcCapacity(1, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(1, bucketCount);
-	}
-
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{

@@ -218,23 +218,11 @@ template<size_t tMaxCount = 7,
 	bool tPacked = false
 #endif
 	>
-struct HashBucketLimP1
+struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const size_t packed = tPacked;
-
-	static const size_t logStartBucketCount = 4;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::CalcCapacity(maxCount, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(maxCount, bucketCount);
-	}
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer

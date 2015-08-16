@@ -42,9 +42,12 @@ void main()
         C c;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
-#endif
         c.max_load_factor(2.5);
         assert(c.max_load_factor() == 2.5);
+#else
+        c.max_load_factor(0.5);
+        assert(c.max_load_factor() == 0.5);
+#endif
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

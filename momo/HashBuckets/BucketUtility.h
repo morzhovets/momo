@@ -136,11 +136,17 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(MemManagerDummy);
 	};
 
-	struct BucketFunctions
+	template<size_t tMaxCount>
+	struct HashBucketBase
 	{
-		static size_t CalcCapacity(size_t maxCount, size_t bucketCount) MOMO_NOEXCEPT
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(maxCount > 0);
+
+		static const size_t logStartBucketCount = 4;
+
+		static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 		{
-			assert(maxCount > 0 && bucketCount > 0);
+			assert(bucketCount > 0);
 			if (maxCount == 1)
 				return (bucketCount / 4) * 3;
 			else if (maxCount == 2)
@@ -149,15 +155,27 @@ namespace internal
 				return bucketCount + bucketCount / 2;
 		}
 
-		static size_t GetBucketCountShift(size_t maxCount, size_t bucketCount) MOMO_NOEXCEPT
+		static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 		{
-			assert(maxCount > 0 && bucketCount > 0);
+			assert(bucketCount > 0);
 			if (maxCount == 1)
 				return 1;
 			else if (maxCount == 2)
 				return bucketCount < (1 << 16) ? 2 : 1;
 			else
 				return bucketCount < (1 << 20) ? 2 : 1;
+		}
+
+		static size_t GetBucketIndex(size_t hashCode, size_t bucketCount,
+			size_t probe) MOMO_NOEXCEPT
+		{
+			return (hashCode + probe) & (bucketCount - 1);	// linear probing
+		}
+
+		static void CheckMaxLoadFactor(float maxLoadFactor)
+		{
+			if (maxLoadFactor <= 0 /*|| maxLoadFactor > (float)maxCount*/)
+				throw std::out_of_range("invalid hash load factor");
 		}
 	};
 }

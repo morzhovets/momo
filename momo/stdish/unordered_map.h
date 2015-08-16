@@ -315,8 +315,6 @@ public:
 
 	void max_load_factor(float maxLoadFactor)
 	{
-		if (maxLoadFactor != maxLoadFactor || maxLoadFactor <= 0)
-			throw std::out_of_range("invalid hash load factor");
 		size_t logStartBucketCount = internal::Log2<size_t>::Calc(bucket_count());
 		HashTraits hashTraits(hash_function(), key_eq(), logStartBucketCount, maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));

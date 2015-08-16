@@ -228,24 +228,11 @@ template<intptr_t tRemovedPtr,
 	size_t tMemPoolBlockCount = 32,
 	size_t tMemAlignment = 8>
 struct HashBucketFewP
+	: public internal::HashBucketBase<(tMemAlignment == 8) ? 3 : (tMemAlignment == 4) ? 2 : 1>
 {
 	static const intptr_t removedPtr = tRemovedPtr;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const size_t memAlignment = tMemAlignment;
-
-	static const size_t logStartBucketCount = 4;
-
-	static const size_t maxCount = (memAlignment == 8) ? 3 : (memAlignment == 4) ? 2 : 1;
-
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::CalcCapacity(maxCount, bucketCount);
-	}
-
-	static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
-	{
-		return internal::BucketFunctions::GetBucketCountShift(maxCount, bucketCount);
-	}
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer

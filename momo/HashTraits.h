@@ -34,13 +34,24 @@ public:
 	typedef std::function<size_t(size_t)> GetBucketCountShiftFunc;
 
 public:
-	HashTraits(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
+	explicit HashTraits(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
 		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
 		size_t logStartBucketCount = HashBucket::logStartBucketCount)
 		: mCalcCapacityFunc(calcCapacityFunc),
 		mGetBucketCountShiftFunc(getBucketCountShiftFunc),
 		mLogStartBucketCount(logStartBucketCount)
 	{
+	}
+
+	explicit HashTraits(float maxLoadFactor,
+		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
+		size_t logStartBucketCount = HashBucket::logStartBucketCount)
+		: mGetBucketCountShiftFunc(getBucketCountShiftFunc),
+		mLogStartBucketCount(logStartBucketCount)
+	{
+		HashBucket::CheckMaxLoadFactor(maxLoadFactor);
+		mCalcCapacityFunc = [maxLoadFactor] (size_t bucketCount)
+			{ return (size_t)((float)bucketCount * maxLoadFactor); };
 	}
 
 	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
@@ -70,7 +81,7 @@ public:
 
 	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
 	{
-		return (hashCode + probe) & (bucketCount - 1);	// linear probing
+		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 	}
 
 private:
@@ -92,7 +103,7 @@ public:
 	typedef THashBucket HashBucket;
 
 public:
-	HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
+	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
 		const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 		: mHashFunc(hashFunc),
@@ -103,16 +114,17 @@ public:
 		startBucketCount = (size_t)1 << mLogStartBucketCount;
 		size_t startCapacity = HashBucket::CalcCapacity(startBucketCount);
 		mMaxLoadFactor = (float)startCapacity / (float)startBucketCount;
+		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
 	HashTraitsStd(const HashFunc& hashFunc, const EqualFunc& equalFunc,
 		size_t logStartBucketCount, float maxLoadFactor)
 		: mHashFunc(hashFunc),
 		mEqualFunc(equalFunc),
-		mLogStartBucketCount(logStartBucketCount),
-		mMaxLoadFactor(maxLoadFactor)
+		mLogStartBucketCount(logStartBucketCount)
 	{
-		assert(mMaxLoadFactor > 0);
+		HashBucket::CheckMaxLoadFactor(maxLoadFactor);
+		mMaxLoadFactor = maxLoadFactor;
 	}
 
 	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
@@ -142,7 +154,7 @@ public:
 
 	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
 	{
-		return (hashCode + probe) & (bucketCount - 1);
+		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 	}
 
 	const HashFunc& GetHashFunc() const MOMO_NOEXCEPT
