@@ -174,7 +174,7 @@ namespace internal
 
 		static void CheckMaxLoadFactor(float maxLoadFactor)
 		{
-			if (maxLoadFactor <= 0 /*|| maxLoadFactor > (float)maxCount*/)
+			if (maxLoadFactor <= 0 || maxLoadFactor > (float)maxCount)
 				throw std::out_of_range("invalid hash load factor");
 		}
 	};

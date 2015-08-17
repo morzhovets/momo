@@ -33,7 +33,11 @@ void main()
         typedef int P;
         C c1(0, Hash(1), Compare(1), Alloc(1));
         C c2(0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -49,7 +53,11 @@ void main()
 #endif
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
@@ -87,7 +95,11 @@ void main()
         };
         C c1(0, Hash(1), Compare(1), Alloc(1));
         C c2(std::begin(a2), std::end(a2), 0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -111,7 +123,11 @@ void main()
 #endif
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
@@ -147,7 +163,11 @@ void main()
         };
         C c1(std::begin(a1), std::end(a1), 0, Hash(1), Compare(1), Alloc(1));
         C c2(0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -163,7 +183,11 @@ void main()
 #endif
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
         assert(c2.bucket_count() >= 5);
         assert(c2.size() == 4);
@@ -212,7 +236,11 @@ void main()
         };
         C c1(std::begin(a1), std::end(a1), 0, Hash(1), Compare(1), Alloc(1));
         C c2(std::begin(a2), std::end(a2), 0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -236,7 +264,11 @@ void main()
 #endif
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
         assert(c2.bucket_count() >= 5);
         assert(c2.size() == 4);
@@ -266,7 +298,11 @@ void main()
         typedef int P;
         C c1(0, Hash(1), Compare(1), Alloc(1));
         C c2(0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -278,7 +314,11 @@ void main()
         assert(c1.get_allocator() == Alloc(2));
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
@@ -312,7 +352,11 @@ void main()
         };
         C c1(0, Hash(1), Compare(1), Alloc(1));
         C c2(std::begin(a2), std::end(a2), 0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -332,7 +376,11 @@ void main()
         assert(c1.get_allocator() == Alloc(2));
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
@@ -364,7 +412,11 @@ void main()
         };
         C c1(std::begin(a1), std::end(a1), 0, Hash(1), Compare(1), Alloc(1));
         C c2(0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -376,7 +428,11 @@ void main()
         assert(c1.get_allocator() == Alloc(2));
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
         assert(c2.bucket_count() >= 5);
         assert(c2.size() == 4);
@@ -421,7 +477,11 @@ void main()
         };
         C c1(std::begin(a1), std::end(a1), 0, Hash(1), Compare(1), Alloc(1));
         C c2(std::begin(a2), std::end(a2), 0, Hash(2), Compare(2), Alloc(2));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c2.max_load_factor(2);
+#else
+        c2.max_load_factor(0.5);
+#endif
         c1.swap(c2);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -441,7 +501,11 @@ void main()
         assert(c1.get_allocator() == Alloc(2));
         assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
         assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.max_load_factor() == 2);
+#else
+        assert(c1.max_load_factor() == 0.5);
+#endif
 
         assert(c2.bucket_count() >= 5);
         assert(c2.size() == 4);
