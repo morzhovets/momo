@@ -25,6 +25,8 @@ struct ArrayItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
+	static const size_t alignment = ItemManager::alignment;
+
 	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
 	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
 	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
@@ -389,7 +391,7 @@ private:
 			std::true_type /*hasInternalCapacity*/)
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
-			internal::ObjectBuffer<Item, internalCapacity> internalData;
+			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
 			relocateFunc(&internalData);
 			_Deallocate();
 			ItemTraits::Relocate(&internalData, &mInternalData, count);
@@ -411,6 +413,7 @@ private:
 		MOMO_DISABLE_COPY_OPERATOR(Data);
 
 	private:
+		size_t mCount;
 		union
 		{
 			struct
@@ -418,9 +421,8 @@ private:
 				Item* items;
 				size_t capacity;
 			} mExternalData;
-			internal::ObjectBuffer<Item, internalCapacity> mInternalData;
+			internal::ArrayBuffer<ItemTraits, internalCapacity> mInternalData;
 		};
-		size_t mCount;
 	};
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;

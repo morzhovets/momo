@@ -165,6 +165,51 @@ namespace internal
 		size_t mIndex;
 	};
 
+	template<typename TItemTraits, size_t tCount>
+	class ArrayBuffer
+	{
+	public:
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+		static const size_t count = tCount;
+
+	public:
+		const Item* operator&() const MOMO_NOEXCEPT
+		{
+			return &*mItems;
+		}
+
+		Item* operator&() MOMO_NOEXCEPT
+		{
+			return &*mItems;
+		}
+
+	private:
+		ObjectBuffer<Item, ItemTraits::alignment> mItems[count];
+	};
+
+	template<typename TItemTraits>
+	class ArrayBuffer<TItemTraits, 0>
+	{
+	public:
+		typedef TItemTraits ItemTraits;
+		//typedef typename ItemTraits::Item Item;
+
+		static const size_t count = 0;
+
+	public:
+		const void* operator&() const MOMO_NOEXCEPT
+		{
+			return this;
+		}
+
+		void* operator&() MOMO_NOEXCEPT
+		{
+			return this;
+		}
+	};
+
 	template<typename TItemTraits>
 	class ArrayItemHandler
 	{
@@ -194,7 +239,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(ArrayItemHandler);
 
 	private:
-		ObjectBuffer<Item> mItemBuffer;
+		ObjectBuffer<Item> mItemBuffer;	// unaligned
 	};
 
 	template<typename TArray>

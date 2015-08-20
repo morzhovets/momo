@@ -429,16 +429,8 @@ private:
 		MOMO_DISABLE_COPY_OPERATOR(KeyValuePair);
 
 	private:
-		union
-		{
-			internal::ObjectBuffer<Key> mKeyBuffer;
-			char mKeyPadding[((sizeof(Key) - 1) / valueAlignment + 1) * valueAlignment];
-		};
-		union
-		{
-			mutable internal::ObjectBuffer<Value> mValueBuffer;
-			char mValuePadding[((sizeof(Value) - 1) / keyAlignment + 1) * keyAlignment];
-		};
+		internal::ObjectBuffer<Key, keyAlignment> mKeyBuffer;
+		mutable internal::ObjectBuffer<Value, valueAlignment> mValueBuffer;
 	};
 
 	struct HashSetItemTraits

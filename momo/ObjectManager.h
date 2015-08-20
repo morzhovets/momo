@@ -14,51 +14,27 @@ namespace momo
 namespace internal
 {
 	template<typename TObject,
-		size_t tObjectCount = 1>
+		size_t tAlignment = 1>
 	class ObjectBuffer
 	{
 	public:
 		typedef TObject Object;
 
-		static const size_t objectCount = tObjectCount;
+		static const size_t alignment = tAlignment;
 
 	public:
 		const Object* operator&() const MOMO_NOEXCEPT
 		{
-			return (const Object*)mBuffer;
+			return (const Object*)&mBuffer;
 		}
 
 		Object* operator&() MOMO_NOEXCEPT
 		{
-			return (Object*)mBuffer;
+			return (Object*)&mBuffer;
 		}
-
-	//private:
-	//	MOMO_DISABLE_COPY_CONSTRUCTOR(ObjectBuffer);
-	//	MOMO_DISABLE_COPY_OPERATOR(ObjectBuffer);
 
 	private:
-		char mBuffer[objectCount * sizeof(Object)];
-	};
-
-	template<typename TObject>
-	class ObjectBuffer<TObject, 0>
-	{
-	public:
-		typedef TObject Object;
-
-		static const size_t objectCount = 0;
-
-	public:
-		const void* operator&() const MOMO_NOEXCEPT
-		{
-			return this;
-		}
-
-		void* operator&() MOMO_NOEXCEPT
-		{
-			return this;
-		}
+		typename std::aligned_storage<sizeof(Object), alignment>::type mBuffer;
 	};
 
 	template<typename TObject>
