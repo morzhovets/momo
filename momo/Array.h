@@ -923,10 +923,10 @@ private:
 	void _AddBackGrow(const Item& item)
 	{
 		_AddBackGrow(item,
-			internal::BoolConstant<ItemTraits::isTriviallyRelocatable>());
+			internal::BoolConstant<ItemTraits::isNothrowRelocatable>());
 	}
 
-	void _AddBackGrow(const Item& item, std::true_type /*isTriviallyRelocatable*/)
+	void _AddBackGrow(const Item& item, std::true_type /*isNothrowRelocatable*/)
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
@@ -945,7 +945,7 @@ private:
 		mData.SetCount(newCount);
 	}
 
-	void _AddBackGrow(const Item& item, std::false_type /*isTriviallyRelocatable*/)
+	void _AddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
 	{
 		_AddBackGrow(typename ItemTraits::CopyCreator(item));
 	}
