@@ -429,8 +429,8 @@ private:
 		{
 			size_t version;
 			HashTraits hashTraits;
-			MemManager memManager;
 			BucketParams bucketParams;
+			MemManager memManager;
 		};
 
 	public:
@@ -471,9 +471,11 @@ private:
 		{
 			if (!_IsNull())
 			{
-				MemManager dataMemManager = std::move(mData->memManager);
-				mData->~Data();
-				dataMemManager.Deallocate(mData, sizeof(Data));
+				mData->bucketParams.~BucketParams();
+				mData->hashTraits.~HashTraits();
+				MemManager memManager = std::move(mData->memManager);
+				mData->memManager.~MemManager();
+				memManager.Deallocate(mData, sizeof(Data));
 			}
 		}
 
