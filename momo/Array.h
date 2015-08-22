@@ -908,16 +908,14 @@ private:
 		size_t itemIndex = _IndexOf((const Item&)item);
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		if (itemIndex == SIZE_MAX)	//?
-			typename ItemTraits::MoveCreator(std::move(item))(items + initCount);
-		else
-			typename ItemTraits::MoveCreator(std::move(items[itemIndex]))(items + initCount);
+		typename ItemTraits::MoveCreator(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))
+			(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		_AddBackGrow((const Item&)item);
+		_AddBackGrow(typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	void _AddBackGrow(const Item& item)
