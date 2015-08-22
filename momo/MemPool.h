@@ -36,7 +36,8 @@ public:
 		: MemManagerWrapper(std::move(memManager)),
 		mBlockHead(nullptr),
 		mBufferHead(nullptr),
-		mBlockSize(blockSize)
+		mBlockSize(blockSize),
+		mAllocCount(0)
 	{
 		if (mBlockSize < minBlockSize)
 			mBlockSize = minBlockSize;
@@ -48,15 +49,18 @@ public:
 		: MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
 		mBlockHead(memPool.mBlockHead),
 		mBufferHead(memPool.mBufferHead),
-		mBlockSize(memPool.mBlockSize)
+		mBlockSize(memPool.mBlockSize),
+		mAllocCount(memPool.mAllocCount)
 	{
 		memPool.mBlockHead = nullptr;
 		memPool.mBufferHead = nullptr;
+		memPool.mAllocCount = 0;
 	}
 
 	~MemPool() MOMO_NOEXCEPT
 	{
-		Clear();
+		assert(mAllocCount == 0);
+		_Clear();
 	}
 
 	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
@@ -71,6 +75,7 @@ public:
 		std::swap(mBlockHead, memPool.mBlockHead);
 		std::swap(mBufferHead, memPool.mBufferHead);
 		std::swap(mBlockSize, memPool.mBlockSize);
+		std::swap(mAllocCount, memPool.mAllocCount);
 	}
 
 	MOMO_FRIEND_SWAP(MemPool)
@@ -90,33 +95,35 @@ public:
 		return mBlockSize;
 	}
 
-	void Clear() MOMO_NOEXCEPT
-	{
-		MemManager& memManager = GetMemManager();
-		size_t bufferSize = _GetBufferSize();
-		while (mBufferHead != nullptr)
-		{
-			char* ptr = (char*)mBufferHead;
-			mBufferHead = *(void**)mBufferHead;
-			memManager.Deallocate(ptr, bufferSize);
-		}
-		mBlockHead = nullptr;
-	}
-
 	void* GetMemory()
 	{
 		if (mBlockHead == nullptr)
-			_NewBuffer();
+		{
+			char* buffer = (char*)GetMemManager().Allocate(_GetBufferSize());
+			_NewBuffer(buffer);
+		}
 		void* ptr = mBlockHead;
 		mBlockHead = *(void**)mBlockHead;
+		++mAllocCount;
 		return ptr;
 	}
 
 	void FreeMemory(void* ptr) MOMO_NOEXCEPT
 	{
 		assert(ptr != nullptr);
+		assert(mAllocCount > 0);
 		*(void**)ptr = mBlockHead;
 		mBlockHead = ptr;
+		--mAllocCount;
+		if (mAllocCount == 0)
+			_Shrink();
+	}
+
+	void FreeAll() MOMO_NOEXCEPT	//?
+	{
+		if (mAllocCount > 0)
+			_Shrink();
+		mAllocCount = 0;
 	}
 
 private:
@@ -130,9 +137,8 @@ private:
 		return *this;
 	}
 
-	void _NewBuffer()
+	void _NewBuffer(char* buffer) MOMO_NOEXCEPT
 	{
-		char* buffer = (char*)GetMemManager().Allocate(_GetBufferSize());
 		for (size_t i = 0; i < blockCount; ++i)
 		{
 			char* ptr = buffer + 8 + mBlockSize * i;
@@ -141,6 +147,30 @@ private:
 		mBlockHead = buffer + 8;
 		*(void**)buffer = mBufferHead;
 		mBufferHead = buffer;
+	}
+
+	void _Shrink() MOMO_NOEXCEPT
+	{
+		void* bufferNext = *(void**)mBufferHead;
+		if (bufferNext != nullptr)
+		{
+			char* buffer = (char*)mBufferHead;
+			mBufferHead = bufferNext;
+			_Clear();
+			_NewBuffer(buffer);
+		}
+	}
+
+	void _Clear() MOMO_NOEXCEPT
+	{
+		MemManager& memManager = GetMemManager();
+		size_t bufferSize = _GetBufferSize();
+		while (mBufferHead != nullptr)
+		{
+			void* buffer = mBufferHead;
+			mBufferHead = *(void**)mBufferHead;
+			memManager.Deallocate(buffer, bufferSize);
+		}
 	}
 
 	size_t _GetBufferSize() const MOMO_NOEXCEPT
@@ -156,6 +186,7 @@ private:
 	void* mBlockHead;
 	void* mBufferHead;
 	size_t mBlockSize;
+	size_t mAllocCount;
 };
 
 template<typename TMemManager>
@@ -192,7 +223,7 @@ public:
 
 	~MemPool() MOMO_NOEXCEPT
 	{
-		Clear();
+		assert(_GetAllocCount() == 0);
 	}
 
 	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
@@ -223,11 +254,6 @@ public:
 	size_t GetBlockSize() const MOMO_NOEXCEPT
 	{
 		return mBlockSize;
-	}
-
-	void Clear() MOMO_NOEXCEPT
-	{
-		assert(_GetAllocCount() == 0);
 	}
 
 	void* GetMemory()
@@ -302,7 +328,8 @@ namespace internal
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),
-			mBlockSize(blockSize)
+			mBlockSize(blockSize),
+			mAllocCount(0)
 		{
 			assert(maxTotalBlockCount < (size_t)UINT32_MAX);
 			if (mBlockSize < minBlockSize)
@@ -313,7 +340,8 @@ namespace internal
 
 		~MemPoolUInt32() MOMO_NOEXCEPT
 		{
-			Clear();
+			assert(mAllocCount == 0);
+			_Clear();
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -336,30 +364,25 @@ namespace internal
 			return _GetRealPointer(ptr);
 		}
 
-		void Clear() MOMO_NOEXCEPT
-		{
-			MemManager& memManager = GetMemManager();
-			size_t bufferSize = _GetBufferSize();
-			for (void* buffer : mBuffers)
-				memManager.Deallocate(buffer, bufferSize);
-			mBuffers.Clear(true);
-			mBlockHead = nullPtr;
-		}
-
 		uint32_t GetMemory()
 		{
 			if (mBlockHead == nullPtr)
 				_NewBuffer();
 			uint32_t ptr = mBlockHead;
 			mBlockHead = *(uint32_t*)GetRealPointer(mBlockHead);
+			++mAllocCount;
 			return ptr;
 		}
 
 		void FreeMemory(uint32_t ptr) MOMO_NOEXCEPT
 		{
 			assert(ptr != nullPtr);
+			assert(mAllocCount > 0);
 			*(uint32_t*)GetRealPointer(ptr) = mBlockHead;
 			mBlockHead = ptr;
+			--mAllocCount;
+			if (mAllocCount == 0)
+				_Shrink();
 		}
 
 	private:
@@ -388,6 +411,24 @@ namespace internal
 			mBuffers.AddBackNogrow(buffer);
 		}
 
+		void _Shrink() MOMO_NOEXCEPT
+		{
+			if (mBuffers.GetCount() > 2)
+			{
+				_Clear();
+				mBlockHead = nullPtr;
+				mBuffers.Clear(true);
+			}
+		}
+
+		void _Clear() MOMO_NOEXCEPT
+		{
+			MemManager& memManager = GetMemManager();
+			size_t bufferSize = _GetBufferSize();
+			for (void* buffer : mBuffers)
+				memManager.Deallocate(buffer, bufferSize);
+		}
+
 		size_t _GetBufferSize() const MOMO_NOEXCEPT
 		{
 			return blockCount * mBlockSize;
@@ -402,6 +443,7 @@ namespace internal
 		uint32_t mBlockHead;
 		size_t mMaxBufferCount;
 		size_t mBlockSize;
+		size_t mAllocCount;
 	};
 }
 
