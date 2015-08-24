@@ -98,10 +98,7 @@ public:
 	void* GetMemory()
 	{
 		if (mBlockHead == nullptr)
-		{
-			char* buffer = (char*)GetMemManager().Allocate(_GetBufferSize());
-			_NewBuffer(buffer);
-		}
+			_NewBuffer(GetMemManager().Allocate(_GetBufferSize()));
 		void* ptr = mBlockHead;
 		mBlockHead = *(void**)mBlockHead;
 		++mAllocCount;
@@ -137,11 +134,11 @@ private:
 		return *this;
 	}
 
-	void _NewBuffer(char* buffer) MOMO_NOEXCEPT
+	void _NewBuffer(void* buffer) MOMO_NOEXCEPT
 	{
 		for (size_t i = 0; i < blockCount; ++i)
 		{
-			char* ptr = buffer + mBlockSize * i;
+			char* ptr = (char*)buffer + mBlockSize * i;
 			*(void**)ptr = (i + 1 < blockCount) ? ptr + mBlockSize : nullptr;
 		}
 		_GetNextBuffer(buffer) = mBufferHead;
@@ -154,10 +151,10 @@ private:
 		void* bufferNext = _GetNextBuffer(mBufferHead);
 		if (bufferNext != nullptr)
 		{
-			char* buffer = (char*)mBufferHead;
+			void* bufferHead = mBufferHead;
 			mBufferHead = bufferNext;
 			_Clear();
-			_NewBuffer(buffer);
+			_NewBuffer(bufferHead);
 		}
 	}
 
