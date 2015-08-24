@@ -105,6 +105,7 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 
 	static size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) MOMO_NOEXCEPT
 	{
+		(void)probe;
 		assert(probe == 0);
 		return hashCode & (bucketCount - 1);
 	}
