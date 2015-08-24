@@ -25,7 +25,7 @@ public:
 	static const size_t blockCount = tBlockCount;
 
 	static const size_t minBlockSize = sizeof(void*);
-	static const size_t maxBlockSize = (SIZE_MAX - 8) / blockCount;
+	static const size_t maxBlockSize = (SIZE_MAX - 2 * sizeof(void*)) / blockCount;
 	MOMO_STATIC_ASSERT(minBlockSize <= maxBlockSize);
 
 private:
@@ -141,17 +141,17 @@ private:
 	{
 		for (size_t i = 0; i < blockCount; ++i)
 		{
-			char* ptr = buffer + 8 + mBlockSize * i;
+			char* ptr = buffer + mBlockSize * i;
 			*(void**)ptr = (i + 1 < blockCount) ? ptr + mBlockSize : nullptr;
 		}
-		mBlockHead = buffer + 8;
-		*(void**)buffer = mBufferHead;
+		_GetNextBuffer(buffer) = mBufferHead;
 		mBufferHead = buffer;
+		mBlockHead = buffer;
 	}
 
 	void _Shrink() MOMO_NOEXCEPT
 	{
-		void* bufferNext = *(void**)mBufferHead;
+		void* bufferNext = _GetNextBuffer(mBufferHead);
 		if (bufferNext != nullptr)
 		{
 			char* buffer = (char*)mBufferHead;
@@ -168,14 +168,19 @@ private:
 		while (mBufferHead != nullptr)
 		{
 			void* buffer = mBufferHead;
-			mBufferHead = *(void**)mBufferHead;
+			mBufferHead = _GetNextBuffer(mBufferHead);
 			memManager.Deallocate(buffer, bufferSize);
 		}
 	}
 
+	void*& _GetNextBuffer(void* buffer) MOMO_NOEXCEPT
+	{
+		return *((void**)((char*)buffer + _GetBufferSize()) - 1);
+	}
+
 	size_t _GetBufferSize() const MOMO_NOEXCEPT
 	{
-		return blockCount * mBlockSize + 8;
+		return ((blockCount * mBlockSize - 1) / sizeof(void*) + 2) * sizeof(void*);
 	}
 
 private:
