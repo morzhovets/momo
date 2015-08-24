@@ -239,7 +239,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(ArrayItemHandler);
 
 	private:
-		ObjectBuffer<Item> mItemBuffer;	// unaligned
+		ObjectBuffer<Item> mItemBuffer;
 	};
 
 	template<typename TArray>

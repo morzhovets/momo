@@ -446,7 +446,7 @@ private:
 		typedef typename HashMultiMap::Key Key;
 		typedef typename HashMultiMap::ValueArray Value;
 
-		typedef internal::ObjectManager<Value> ValueManager;
+		typedef internal::ObjectManager<Value> ValueManager;	//?
 
 		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
 		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
@@ -466,14 +466,14 @@ private:
 		static void CreatePair(Key&& key, const ValueCreator& valueCreator,
 			void* pkey, void* pvalue)
 		{
-			KeyValueTraits::CreatePair(std::move(key), valueCreator, pkey, pvalue);	//?
+			KeyValueTraits::CreatePair(std::move(key), valueCreator, pkey, pvalue);
 		}
 
 		template<typename ValueCreator>
 		static void CreatePair(const Key& key, const ValueCreator& valueCreator,
 			void* pkey, void* pvalue)
 		{
-			KeyValueTraits::CreatePair(key, valueCreator, pkey, pvalue);	//?
+			KeyValueTraits::CreatePair(key, valueCreator, pkey, pvalue);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT

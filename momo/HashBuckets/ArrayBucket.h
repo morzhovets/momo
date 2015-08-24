@@ -72,7 +72,7 @@ namespace internal
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
 		static const size_t itemAlignment = ItemTraits::alignment;
-		static const size_t arrayAlignment = 8; //ObjectManager<Array>::alignment;	//?
+		static const size_t arrayAlignment = sizeof(void*);
 
 	public:
 		class Params

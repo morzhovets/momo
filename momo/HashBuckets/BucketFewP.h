@@ -34,9 +34,9 @@ namespace internal
 		//MOMO_STATIC_ASSERT(removedPtr != nullPtr);	// llvm bug
 		MOMO_STATIC_ASSERT(nullptr == (void*)0 && removedPtr != 0);
 
-		MOMO_STATIC_ASSERT(memAlignment <= 8 && ((memAlignment - 1) & memAlignment) == 0);
-		static const size_t maxCount = (memAlignment == 8) ? 3 : (memAlignment == 4) ? 2 : 1;
-		static const intptr_t maskState = (memAlignment == 8) ? 7 : (memAlignment == 4) ? 3 : 0;
+		MOMO_STATIC_ASSERT(memAlignment > 0 && ((memAlignment - 1) & memAlignment) == 0);
+		static const size_t maxCount = (memAlignment >= 8) ? 3 : (memAlignment >= 4) ? 2 : 1;
+		static const intptr_t maskState = (memAlignment >= 8) ? 7 : (memAlignment >= 4) ? 3 : 0;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -228,7 +228,7 @@ template<intptr_t tRemovedPtr,
 	size_t tMemPoolBlockCount = 32,
 	size_t tMemAlignment = 8>
 struct HashBucketFewP
-	: public internal::HashBucketBase<(tMemAlignment == 8) ? 3 : (tMemAlignment == 4) ? 2 : 1>
+	: public internal::HashBucketBase<(tMemAlignment >= 8) ? 3 : (tMemAlignment >= 4) ? 2 : 1>
 {
 	static const intptr_t removedPtr = tRemovedPtr;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;

@@ -26,7 +26,7 @@ namespace internal
 		typedef TBucket Bucket;
 
 		static const size_t maxBucketCount =
-			(SIZE_MAX - sizeof(void*) - sizeof(size_t)) / sizeof(Bucket);
+			(SIZE_MAX - 2 * sizeof(void*)) / sizeof(Bucket);
 
 	public:
 		template<typename MemManager>
@@ -119,7 +119,7 @@ namespace internal
 	private:
 		Bucket* _GetBuckets() const MOMO_NOEXCEPT
 		{
-			return (Bucket*)((char*)this + sizeof(HashSetBuckets));
+			return (Bucket*)(this + 1);	//?
 		}
 
 		static size_t _GetBufferSize(size_t bucketCount) MOMO_NOEXCEPT
