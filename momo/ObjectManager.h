@@ -21,6 +21,7 @@ namespace internal
 		typedef TObject Object;
 
 		static const size_t alignment = tAlignment;
+		MOMO_STATIC_ASSERT(alignment > 0 && ((alignment - 1) & alignment) == 0);
 
 	public:
 		const Object* operator&() const MOMO_NOEXCEPT
@@ -53,7 +54,7 @@ namespace internal
 			std::is_nothrow_move_assignable<Object>::value || isTriviallyRelocatable
 			|| isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
-		static const size_t alignment = std::alignment_of<Object>::value < MOMO_MAX_ALIGNMENT
+		static const size_t alignment = (std::alignment_of<Object>::value < MOMO_MAX_ALIGNMENT)
 			? std::alignment_of<Object>::value : MOMO_MAX_ALIGNMENT;
 
 		class Creator

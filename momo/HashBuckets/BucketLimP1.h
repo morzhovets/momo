@@ -18,9 +18,8 @@ namespace momo
 
 namespace internal
 {
-#pragma pack(push, 1)
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount, bool tPacked>
+		size_t tMaxCount, size_t tMemPoolBlockCount, size_t tAlignment>
 	class BucketLimP1
 	{
 	public:
@@ -32,7 +31,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
-		static const bool packed = tPacked;
+		static const size_t alignment = tAlignment;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -76,24 +75,23 @@ namespace internal
 
 	public:
 		BucketLimP1() MOMO_NOEXCEPT
-			: mItems(nullptr),
-			mState(0)
 		{
+			_Set(nullptr, (unsigned char)0);
 		}
 
 		~BucketLimP1() MOMO_NOEXCEPT
 		{
-			assert(mItems == nullptr);
+			assert(_GetItems() == nullptr);
 		}
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return ConstBounds(mItems, _GetCount());
+			return ConstBounds(_GetItems(), _GetCount());
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(mItems, _GetCount());
+			return Bounds(_GetItems(), _GetCount());
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -108,10 +106,11 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (mItems != nullptr)
+			Item* items = _GetItems();
+			if (items != nullptr)
 			{
-				ItemTraits::Destroy(mItems, _GetCount());
-				params[_GetMemPoolIndex()].FreeMemory(mItems);
+				ItemTraits::Destroy(items, _GetCount());
+				params[_GetMemPoolIndex()].FreeMemory(items);
 			}
 			_Set(nullptr, (unsigned char)0);
 		}
@@ -119,7 +118,8 @@ namespace internal
 		template<typename ItemCreator>
 		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
 		{
-			if (mItems == nullptr)
+			Item* items = _GetItems();
+			if (items == nullptr)
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
@@ -138,14 +138,14 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params[newMemPoolIndex]);
-					ItemTraits::RelocateAddBack(mItems,
+					ItemTraits::RelocateAddBack(items,
 						memory.GetPointer(), count, itemCreator);
-					params[memPoolIndex].FreeMemory(mItems);
+					params[memPoolIndex].FreeMemory(items);
 					_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 				}
 				else
 				{
-					itemCreator(mItems + count);
+					itemCreator(items + count);
 					++mState;
 				}
 			}
@@ -155,10 +155,11 @@ namespace internal
 		{
 			size_t count = _GetCount();
 			assert(count > 0);
-			ItemTraits::Destroy(mItems + count - 1, 1);
+			Item* items = _GetItems();
+			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1 && !WasFull())
 			{
-				params[_GetMemPoolIndex()].FreeMemory(mItems);
+				params[_GetMemPoolIndex()].FreeMemory(items);
 				_Set(nullptr, (unsigned char)0);
 			}
 			else
@@ -170,7 +171,7 @@ namespace internal
 	private:
 		void _Set(Item* items, unsigned char state) MOMO_NOEXCEPT
 		{
-			mItems = items;
+			*&mItemPtrBuffer = items;
 			mState = state;
 		}
 
@@ -195,35 +196,35 @@ namespace internal
 			return (size_t)(mState & 15);
 		}
 
+		Item* _GetItems() const MOMO_NOEXCEPT
+		{
+			return *&mItemPtrBuffer;
+		}
+
 	private:
 		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketLimP1);
 		MOMO_DISABLE_COPY_OPERATOR(BucketLimP1);
 
 	private:
-		Item* mItems;
-		union
-		{
-			unsigned char mState;
-			char mPadding[packed ? 1 : sizeof(void*)];
-		};
+		ObjectBuffer<Item*, alignment> mItemPtrBuffer;
+		unsigned char mState;
 	};
-#pragma pack(pop)
 }
 
 template<size_t tMaxCount = 7,
 	size_t tMemPoolBlockCount = 32,
-	bool tPacked = true>
+	size_t tAlignment = (sizeof(void*) < MOMO_MAX_ALIGNMENT) ? sizeof(void*) : MOMO_MAX_ALIGNMENT>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
-	static const size_t packed = tPacked;
+	static const size_t alignment = tAlignment;
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
 		typedef internal::BucketLimP1<ItemTraits, MemManager,
-			maxCount, memPoolBlockCount, packed> Bucket;
+			maxCount, memPoolBlockCount, alignment> Bucket;
 	};
 };
 

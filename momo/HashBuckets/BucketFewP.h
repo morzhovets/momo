@@ -28,13 +28,14 @@ namespace internal
 
 		static const intptr_t removedPtr = tRemovedPtr;
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+
 		static const size_t memAlignment = tMemAlignment;
+		MOMO_STATIC_ASSERT(memAlignment > 0 && ((memAlignment - 1) & memAlignment) == 0);
 
 		static const intptr_t nullPtr = (intptr_t)nullptr;
 		//MOMO_STATIC_ASSERT(removedPtr != nullPtr);	// llvm bug
 		MOMO_STATIC_ASSERT(nullptr == (void*)0 && removedPtr != 0);
 
-		MOMO_STATIC_ASSERT(memAlignment > 0 && ((memAlignment - 1) & memAlignment) == 0);
 		static const size_t maxCount = (memAlignment >= 8) ? 3 : (memAlignment >= 4) ? 2 : 1;
 		static const intptr_t maskState = (memAlignment >= 8) ? 7 : (memAlignment >= 4) ? 3 : 0;
 
