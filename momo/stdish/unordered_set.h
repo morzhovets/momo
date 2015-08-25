@@ -329,7 +329,7 @@ public:
 
 	size_type count(const key_type& key) const
 	{
-		return find(key) != end() ? 1 : 0;
+		return (find(key) != end()) ? 1 : 0;
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const

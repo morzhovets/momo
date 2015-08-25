@@ -161,9 +161,9 @@ namespace internal
 			if (maxCount == 1)
 				return 1;
 			else if (maxCount == 2)
-				return bucketCount < (1 << 16) ? 2 : 1;
+				return (bucketCount < (1 << 16)) ? 2 : 1;
 			else
-				return bucketCount < (1 << 20) ? 2 : 1;
+				return (bucketCount < (1 << 20)) ? 2 : 1;
 		}
 
 		static size_t GetBucketIndex(size_t hashCode, size_t bucketCount,

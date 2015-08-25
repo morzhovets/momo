@@ -241,7 +241,7 @@ private:
 		static const size_t valueAlignment = KeyValueTraits::valueAlignment;
 
 	public:
-		static const size_t alignment = keyAlignment < valueAlignment
+		static const size_t alignment = (keyAlignment < valueAlignment)
 			? valueAlignment : keyAlignment;
 
 	public:

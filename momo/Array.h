@@ -228,7 +228,7 @@ private:
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
-			return mCount & (maskInternal - 1);
+			return mCount & ~maskInternal;
 		}
 
 		void SetCount(size_t count) MOMO_NOEXCEPT
