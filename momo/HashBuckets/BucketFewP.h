@@ -94,12 +94,12 @@ namespace internal
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return ConstBounds(_GetBegin(), _GetCount());
+			return ConstBounds(_GetItems(), _GetCount());
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(_GetBegin(), _GetCount());
+			return Bounds(_GetItems(), _GetCount());
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -120,7 +120,7 @@ namespace internal
 		{
 			if (mPtr != nullPtr && mPtr != removedPtr)
 			{
-				Item* items = _GetBegin();
+				Item* items = _GetItems();
 				ItemTraits::Destroy(items, _GetCount());
 				params[_GetMemPoolIndex()].FreeMemory(items);
 			}
@@ -151,7 +151,7 @@ namespace internal
 					size_t newMemPoolIndex = newCount;
 					Memory memory(params[newMemPoolIndex]);
 					_CheckMemory(memory);
-					Item* items = _GetBegin();
+					Item* items = _GetItems();
 					ItemTraits::RelocateAddBack(items, memory.GetPointer(),
 						count, itemCreator);
 					params[memPoolIndex].FreeMemory(items);
@@ -159,7 +159,7 @@ namespace internal
 				}
 				else
 				{
-					itemCreator(_GetBegin() + count);
+					itemCreator(_GetItems() + count);
 					++mPtr;
 				}
 			}
@@ -169,7 +169,7 @@ namespace internal
 		{
 			size_t count = _GetCount();
 			assert(count > 0);
-			Item* items = _GetBegin();
+			Item* items = _GetItems();
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
 			{
@@ -209,7 +209,7 @@ namespace internal
 			return (size_t)(mPtr & maskState) % maxCount + 1;
 		}
 
-		Item* _GetBegin() const MOMO_NOEXCEPT
+		Item* _GetItems() const MOMO_NOEXCEPT
 		{
 			if (mPtr == nullPtr || mPtr == removedPtr)
 				return nullptr;

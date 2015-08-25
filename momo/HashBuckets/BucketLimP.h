@@ -113,7 +113,7 @@ namespace internal
 		{
 			if (mPtr == nullptr)
 				return;
-			ItemTraits::Destroy(_GetBegin(), _GetCount());
+			ItemTraits::Destroy(_GetItems(), _GetCount());
 			params[_GetMemPoolIndex()].FreeMemory(mPtr);
 			mPtr = nullptr;
 		}
@@ -126,7 +126,7 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 				Memory memory(params[newMemPoolIndex]);
-				itemCreator(_GetBegin(memory.GetPointer()));
+				itemCreator(_GetItems(memory.GetPointer()));
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
 			}
 			else
@@ -140,14 +140,14 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params[newMemPoolIndex]);
-					ItemTraits::RelocateAddBack(_GetBegin(), _GetBegin(memory.GetPointer()),
+					ItemTraits::RelocateAddBack(_GetItems(), _GetItems(memory.GetPointer()),
 						count, itemCreator);
 					params[memPoolIndex].FreeMemory(mPtr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 				}
 				else
 				{
-					itemCreator(_GetBegin() + count);
+					itemCreator(_GetItems() + count);
 					++*mPtr;
 				}
 			}
@@ -157,7 +157,7 @@ namespace internal
 		{
 			size_t count = _GetCount();
 			assert(count > 0);
-			ItemTraits::Destroy(_GetBegin() + count - 1, 1);
+			ItemTraits::Destroy(_GetItems() + count - 1, 1);
 			if (count == 1 && !WasFull())
 			{
 				params[_GetMemPoolIndex()].FreeMemory(mPtr);
@@ -195,13 +195,13 @@ namespace internal
 			return (size_t)(*mPtr & 15);
 		}
 
-		Item* _GetBegin() const MOMO_NOEXCEPT
+		Item* _GetItems() const MOMO_NOEXCEPT
 		{
 			assert(_GetMemPoolIndex() > 0);
-			return _GetBegin(mPtr);
+			return _GetItems(mPtr);
 		}
 
-		static Item* _GetBegin(unsigned char* ptr) MOMO_NOEXCEPT
+		static Item* _GetItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
 			return (Item*)(ptr + itemAlignment);
 		}
@@ -211,7 +211,7 @@ namespace internal
 			if (mPtr == nullptr)
 				return Bounds(nullptr, nullptr);
 			else
-				return Bounds(_GetBegin(), _GetCount());
+				return Bounds(_GetItems(), _GetCount());
 		}
 
 	private:
