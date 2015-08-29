@@ -10,7 +10,7 @@
 
 #undef NDEBUG
 
-#include "../../momo/Utility.h"
+#include "../../momo/Settings.h"
 
 #undef MOMO_MAX_ALIGNMENT
 #define MOMO_MAX_ALIGNMENT 1
