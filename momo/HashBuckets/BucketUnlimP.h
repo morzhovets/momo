@@ -94,7 +94,7 @@ namespace internal
 }
 
 template<size_t tMaxFastCount = 7,
-	size_t tMemPoolBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT,
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
 	typename TArraySettings = ArraySettings<>>
 struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 {

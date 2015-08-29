@@ -226,7 +226,7 @@ namespace internal
 }
 
 template<intptr_t tRemovedPtr,
-	size_t tMemPoolBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT,
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tMemAlignment = 8>
 struct HashBucketFewP
 	: public internal::HashBucketBase<(tMemAlignment >= 8) ? 3 : (tMemAlignment >= 4) ? 2 : 1>

@@ -3,6 +3,7 @@
   momo/MemPool.h
 
   namespace momo:
+    struct MemPoolConst
     class MemPool
 
 \**********************************************************/
@@ -15,7 +16,12 @@
 namespace momo
 {
 
-template<size_t tBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT,
+struct MemPoolConst
+{
+	static const size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
+};
+
+template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	typename TMemManager = MemManagerDefault>
 class MemPool : private internal::MemManagerWrapper<TMemManager>
 {

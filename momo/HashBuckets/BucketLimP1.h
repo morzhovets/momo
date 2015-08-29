@@ -212,7 +212,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = 7,
-	size_t tMemPoolBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT,
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tAlignment = (sizeof(void*) < MOMO_MAX_ALIGNMENT) ? sizeof(void*) : MOMO_MAX_ALIGNMENT>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {

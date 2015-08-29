@@ -256,7 +256,7 @@ namespace internal
 }
 
 template<size_t tLogMaxCount = 2,
-	size_t tMemPoolBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT>
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
 struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
 {
 	static const size_t logMaxCount = tLogMaxCount;

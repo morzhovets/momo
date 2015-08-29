@@ -297,7 +297,7 @@ struct HashMultiMapKeyValueTraits
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::default>
+template<CheckMode tCheckMode = CheckMode::usual>
 struct HashMultiMapSettings
 {
 	static const CheckMode checkMode = tCheckMode;
@@ -345,7 +345,7 @@ private:
 	};
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT, ArraySettings<0, true, CheckMode::assertion>> ValueArray;
+		MemPoolConst::defaultBlockCount, ArraySettings<0, true, CheckMode::assertion>> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 

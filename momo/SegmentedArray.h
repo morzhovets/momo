@@ -73,7 +73,7 @@ namespace internal
 template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::sqrt,
 	size_t tLogFirstItemCount =
 		internal::SegmentedArrayLogFirstItemCounter<tItemCountFunc>::defaultLogFirstItemCount,
-	CheckMode tCheckMode = CheckMode::default>
+	CheckMode tCheckMode = CheckMode::usual>
 struct SegmentedArraySettings;
 
 template<size_t tLogFirstItemCount, CheckMode tCheckMode>
