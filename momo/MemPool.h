@@ -15,7 +15,7 @@
 namespace momo
 {
 
-template<size_t tBlockCount = 32,
+template<size_t tBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT,
 	typename TMemManager = MemManagerDefault>
 class MemPool : private internal::MemManagerWrapper<TMemManager>
 {

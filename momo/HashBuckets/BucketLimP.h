@@ -224,7 +224,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = 7,
-	size_t tMemPoolBlockCount = 32>
+	size_t tMemPoolBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT>
 struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;

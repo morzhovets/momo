@@ -8,7 +8,22 @@
 
 //#define MOMO_USE_SAFE_MAP_BRACKETS
 #define MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS 1
+
 #define MOMO_MAX_ALIGNMENT 1
+#define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
+#define MOMO_DEFAULT_CHECK_MODE assertion
+#define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<>
+
+#if defined(_WIN32)
+#define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
+//#define MOMO_USE_MEM_MANAGER_WIN
+//#define MOMO_DEFAULT_MEM_MANAGER MemManagerWin
+#elif defined(__linux__)
+#define MOMO_DEFAULT_MEM_MANAGER MemManagerC	// linux has fast realloc
+#else
+#define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
+#endif
 
 #define MOMO_USE_NOEXCEPT
 #define MOMO_USE_DELETE_FUNCS
@@ -40,18 +55,6 @@
 #else
 #define MOMO_REBIND_TO_CHAR_ALLOC(Allocator) \
 	std::allocator_traits<Allocator>::template rebind_alloc<char>
-#endif
-
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<>
-
-#if defined(_WIN32)
-#define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
-//#define MOMO_USE_MEM_MANAGER_WIN
-//#define MOMO_DEFAULT_MEM_MANAGER MemManagerWin
-#elif defined(__linux__)
-#define MOMO_DEFAULT_MEM_MANAGER MemManagerC	// linux has fast realloc
-#else
-#define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
 #ifdef _MSC_VER

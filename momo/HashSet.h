@@ -372,8 +372,8 @@ private:
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::assertion,
-	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::assertion>
+template<CheckMode tCheckMode = CheckMode::default,
+	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::default>
 struct HashSetSettings
 {
 	static const CheckMode checkMode = tCheckMode;

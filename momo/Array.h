@@ -74,7 +74,7 @@ enum class ArrayGrowCause
 
 template<size_t tInternalCapacity = 0,
 	bool tGrowOnReserve = true,
-	CheckMode tCheckMode = CheckMode::assertion>
+	CheckMode tCheckMode = CheckMode::default>
 struct ArraySettings
 {
 	static const CheckMode checkMode = tCheckMode;
