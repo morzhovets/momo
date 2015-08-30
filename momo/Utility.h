@@ -92,14 +92,14 @@ enum class CheckMode
 {
 	assertion = 1,
 	exception = 2,
-	usual = MOMO_DEFAULT_CHECK_MODE,
+	bydefault = MOMO_DEFAULT_CHECK_MODE,
 };
 
 enum class ExtraCheckMode
 {
 	nothing = 0,
 	assertion = 1,
-	usual = MOMO_DEFAULT_EXTRA_CHECK_MODE,
+	bydefault = MOMO_DEFAULT_EXTRA_CHECK_MODE,
 };
 
 template<typename Object>

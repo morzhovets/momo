@@ -210,8 +210,8 @@ private:
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::usual,
-	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::usual>
+template<CheckMode tCheckMode = CheckMode::bydefault,
+	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::bydefault>
 struct HashMapSettings
 {
 	static const CheckMode checkMode = tCheckMode;

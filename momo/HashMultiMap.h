@@ -297,7 +297,7 @@ struct HashMultiMapKeyValueTraits
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::usual>
+template<CheckMode tCheckMode = CheckMode::bydefault>
 struct HashMultiMapSettings
 {
 	static const CheckMode checkMode = tCheckMode;
