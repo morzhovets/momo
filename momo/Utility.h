@@ -32,6 +32,20 @@
 #include <Windows.h>
 #endif
 
+#if MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 1
+#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
+	std::is_nothrow_move_constructible<Object>::value \
+	|| !std::is_copy_constructible<Object>::value
+#elif MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 2
+#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) true
+#else
+#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
+	std::is_nothrow_move_constructible<Object>::value
+#endif
+
+#define MOMO_ALIGNMENT_OF(Object) ((MOMO_MAX_ALIGNMENT < std::alignment_of<Object>::value) \
+	? MOMO_MAX_ALIGNMENT : std::alignment_of<Object>::value)
+
 #ifdef MOMO_USE_NOEXCEPT
 #define MOMO_NOEXCEPT noexcept
 #define MOMO_NOEXCEPT_IF(expr) noexcept(expr)
@@ -46,17 +60,6 @@
 #else
 #define MOMO_DISABLE_COPY_CONSTRUCTOR(Class) Class(const Class&);
 #define MOMO_DISABLE_COPY_OPERATOR(Class) Class& operator=(const Class&);
-#endif
-
-#if MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 1
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	std::is_nothrow_move_constructible<Object>::value \
-	|| !std::is_copy_constructible<Object>::value
-#elif MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 2
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) true
-#else
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	std::is_nothrow_move_constructible<Object>::value
 #endif
 
 #define MOMO_FRIEND_SWAP(Container) \

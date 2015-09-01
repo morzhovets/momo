@@ -14,7 +14,7 @@ namespace momo
 namespace internal
 {
 	template<typename TObject,
-		size_t tAlignment = MOMO_MAX_ALIGNMENT>
+		size_t tAlignment = std::alignment_of<std::max_align_t>::value>
 	class ObjectBuffer
 	{
 	public:
@@ -54,8 +54,7 @@ namespace internal
 			std::is_nothrow_move_assignable<Object>::value || isTriviallyRelocatable
 			|| isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
-		static const size_t alignment = (std::alignment_of<Object>::value < MOMO_MAX_ALIGNMENT)
-			? std::alignment_of<Object>::value : MOMO_MAX_ALIGNMENT;
+		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
 		class Creator
 		{
