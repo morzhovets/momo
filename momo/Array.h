@@ -959,7 +959,8 @@ private:
 	{
 		const Item* pitem = std::addressof(item);
 		const Item* items = GetItems();
-		return (items <= pitem && pitem < items + GetCount()) ? pitem - items : SIZE_MAX;
+		std::less<const Item*> less;
+		return (!less(pitem, items) && less(pitem, items + GetCount())) ? pitem - items : SIZE_MAX;
 	}
 
 private:
