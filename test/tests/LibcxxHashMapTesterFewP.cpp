@@ -19,7 +19,7 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 
 #undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1, 32, 8>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketFewP<1, 8, 32>
 
 #define LIBCXX_TEST_BUCKET "fewp"
 

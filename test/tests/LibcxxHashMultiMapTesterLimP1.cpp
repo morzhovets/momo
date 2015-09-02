@@ -16,7 +16,7 @@
 #define MOMO_MAX_ALIGNMENT (2 * sizeof(void*))
 
 #undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<1, 1>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<1, sizeof(void*), 1>
 
 #define LIBCXX_TEST_BUCKET "limp1"
 

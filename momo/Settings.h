@@ -9,11 +9,11 @@
 //#define MOMO_USE_SAFE_MAP_BRACKETS
 #define MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS 1
 
-#define MOMO_MAX_ALIGNMENT 1
+#define MOMO_MAX_ALIGNMENT (std::alignment_of<std::max_align_t>::value)
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
 #define MOMO_DEFAULT_CHECK_MODE assertion
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<7, 1>
 
 #if defined(_WIN32)
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp

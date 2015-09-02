@@ -19,7 +19,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount, size_t tAlignment>
+		size_t tMaxCount, size_t tAlignment, size_t tMemPoolBlockCount>
 	class BucketLimP1
 	{
 	public:
@@ -30,8 +30,8 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 		static const size_t alignment = tAlignment;
+		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -212,19 +212,19 @@ namespace internal
 }
 
 template<size_t tMaxCount = 7,
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
-	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
+	size_t tAlignment = MOMO_ALIGNMENT_OF(void*),
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const size_t alignment = tAlignment;
+	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
 		typedef internal::BucketLimP1<ItemTraits, MemManager,
-			maxCount, memPoolBlockCount, alignment> Bucket;
+			maxCount, alignment, memPoolBlockCount> Bucket;
 	};
 };
 

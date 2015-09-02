@@ -18,7 +18,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		intptr_t tRemovedPtr, size_t tMemPoolBlockCount, size_t tMemAlignment>
+		intptr_t tRemovedPtr, size_t tMemAlignment, size_t tMemPoolBlockCount>
 	class BucketFewP
 	{
 	public:
@@ -226,20 +226,20 @@ namespace internal
 }
 
 template<intptr_t tRemovedPtr,
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
-	size_t tMemAlignment = 8>
+	size_t tMemAlignment = 8,
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
 struct HashBucketFewP
 	: public internal::HashBucketBase<(tMemAlignment >= 8) ? 3 : (tMemAlignment >= 4) ? 2 : 1>
 {
 	static const intptr_t removedPtr = tRemovedPtr;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const size_t memAlignment = tMemAlignment;
+	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
 		typedef internal::BucketFewP<ItemTraits, MemManager,
-			removedPtr, memPoolBlockCount, memAlignment> Bucket;
+			removedPtr, memAlignment, memPoolBlockCount> Bucket;
 	};
 };
 
