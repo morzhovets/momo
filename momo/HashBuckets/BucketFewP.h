@@ -18,7 +18,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		intptr_t tRemovedPtr, size_t tMemAlignment, size_t tMemPoolBlockCount>
+		uintptr_t tRemovedPtr, size_t tMemAlignment, size_t tMemPoolBlockCount>
 	class BucketFewP
 	{
 	public:
@@ -26,18 +26,18 @@ namespace internal
 		typedef TMemManager MemManager;
 		typedef typename ItemTraits::Item Item;
 
-		static const intptr_t removedPtr = tRemovedPtr;
+		static const uintptr_t removedPtr = tRemovedPtr;
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 		static const size_t memAlignment = tMemAlignment;
 		MOMO_STATIC_ASSERT(memAlignment > 0 && ((memAlignment - 1) & memAlignment) == 0);
 
-		static const intptr_t nullPtr = (intptr_t)nullptr;
+		static const uintptr_t nullPtr = (uintptr_t)nullptr;
 		//MOMO_STATIC_ASSERT(removedPtr != nullPtr);	// llvm bug
 		MOMO_STATIC_ASSERT(nullptr == (void*)0 && removedPtr != 0);
 
 		static const size_t maxCount = (memAlignment >= 8) ? 3 : (memAlignment >= 4) ? 2 : 1;
-		static const intptr_t maskState = (memAlignment >= 8) ? 7 : (memAlignment >= 4) ? 3 : 0;
+		static const uintptr_t maskState = (memAlignment >= 8) ? 7 : (memAlignment >= 4) ? 3 : 0;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -186,14 +186,14 @@ namespace internal
 	private:
 		static void _CheckMemory(const Memory& memory)
 		{
-			if (((intptr_t)memory.GetPointer() & maskState) != 0)
+			if (((uintptr_t)memory.GetPointer() & maskState) != 0)
 				throw std::bad_alloc();
 		}
 
 		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			mPtr = (intptr_t)items;
-			mPtr |= (maxCount - memPoolIndex) * maxCount + count - 1;
+			mPtr = (uintptr_t)items;
+			mPtr |= (uintptr_t)((maxCount - memPoolIndex) * maxCount + count - 1);
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
@@ -221,17 +221,17 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketFewP);
 
 	private:
-		intptr_t mPtr;
+		uintptr_t mPtr;
 	};
 }
 
-template<intptr_t tRemovedPtr,
+template<uintptr_t tRemovedPtr,
 	size_t tMemAlignment = 8,
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
 struct HashBucketFewP
 	: public internal::HashBucketBase<(tMemAlignment >= 8) ? 3 : (tMemAlignment >= 4) ? 2 : 1>
 {
-	static const intptr_t removedPtr = tRemovedPtr;
+	static const uintptr_t removedPtr = tRemovedPtr;
 	static const size_t memAlignment = tMemAlignment;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
