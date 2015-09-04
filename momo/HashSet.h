@@ -945,7 +945,7 @@ private:
 			if (!buckets[bucketIndex].IsFull())
 				return bucketIndex;
 		}
-		throw std::logic_error("momo::HashSet is full");
+		throw std::runtime_error("momo::HashSet is full");
 	}
 
 	Item& _GetItemForReset(ConstIterator iter, const Item& newItem)
@@ -1012,20 +1012,28 @@ private:
 		size_t newBucketCount = bucketCount << shift;
 		size_t newCapacity = hashTraits.CalcCapacity(newBucketCount);
 		MOMO_CHECK(newCapacity > mCount);
-		Buckets& newBuckets = Buckets::Create(GetMemManager(), newBucketCount);
+		Buckets* newBuckets;
+		try
+		{
+			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount);
+		}
+		catch (...)	// std::bad_alloc&
+		{
+			return _AddNogrow(hashCode, itemCreator);
+		}
 		size_t bucketIndex;
 		try
 		{
-			bucketIndex = _GetBucketIndexForAdd(newBuckets, hashCode);
-			newBuckets[bucketIndex].AddBackEmpl(mCrew.GetBucketParams(), itemCreator);
+			bucketIndex = _GetBucketIndexForAdd(*newBuckets, hashCode);
+			(*newBuckets)[bucketIndex].AddBackEmpl(mCrew.GetBucketParams(), itemCreator);
 		}
 		catch (...)
 		{
-			newBuckets.Destroy(GetMemManager());
+			newBuckets->Destroy(GetMemManager());
 			throw;
 		}
-		newBuckets.SetNextBuckets(mBuckets);
-		mBuckets = &newBuckets;
+		newBuckets->SetNextBuckets(mBuckets);
+		mBuckets = newBuckets;
 		mCapacity = newCapacity;
 		return bucketIndex;
 	}
