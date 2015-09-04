@@ -64,7 +64,7 @@ namespace internal
 					if (memPoolBlockCount > 1)
 						blockSize = ((blockSize - 1) / memAlignment + 1) * memAlignment;
 					else
-						blockSize = std::minmax(blockSize, memAlignment).second;
+						blockSize = std::minmax(blockSize, (size_t)memAlignment).second;	// gcc & llvm
 					mMemPools.AddBackNogrow(MemPool(blockSize, MemManagerPtr(memManager)));
 				}
 			}
