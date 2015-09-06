@@ -267,6 +267,8 @@ namespace internal
 			}
 			if (count == 1)
 			{
+				if (memPoolIndex == 0)
+					_GetArray().~Array();
 				params[memPoolIndex].FreeMemory(mPtr);
 				mPtr = nullptr;
 			}
