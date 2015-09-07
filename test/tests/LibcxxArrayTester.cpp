@@ -34,11 +34,15 @@ struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TV
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
 namespace libcxx_test_array_0
 {
+struct LibcxxArraySettings : public momo::ArraySettings<0, false>
+{
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::Array<TValue, momo::MemManagerStd<TAllocator>, momo::ArrayItemTraits<TValue>,
-		momo::ArraySettings<0, false, momo::CheckMode::exception>>>;
+		LibcxxArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
@@ -47,11 +51,15 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_5"
 namespace libcxx_test_array_5
 {
+struct LibcxxArraySettings : public momo::ArraySettings<5, false>
+{
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::Array<TValue, momo::MemManagerStd<TAllocator>, momo::ArrayItemTraits<TValue>,
-		momo::ArraySettings<5, false, momo::CheckMode::exception>>>;
+		LibcxxArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
@@ -64,11 +72,16 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
 namespace libcxx_test_segmented_array_sqrt
 {
+struct LibcxxSegmentedArraySettings
+	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 3>
+{
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>, LibcxxSegmentedArrayItemTraits<TValue>,
-		momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 3, momo::CheckMode::exception>>>;
+		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
@@ -76,11 +89,16 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
 namespace libcxx_test_segmented_array_cnst
 {
+struct LibcxxSegmentedArraySettings
+	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0>
+{
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>, LibcxxSegmentedArrayItemTraits<TValue>,
-		momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0, momo::CheckMode::exception>>>;
+		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX

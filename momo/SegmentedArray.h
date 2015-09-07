@@ -72,19 +72,18 @@ namespace internal
 
 template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::sqrt,
 	size_t tLogFirstItemCount =
-		internal::SegmentedArrayLogFirstItemCounter<tItemCountFunc>::defaultLogFirstItemCount,
-	CheckMode tCheckMode = CheckMode::bydefault>
+		internal::SegmentedArrayLogFirstItemCounter<tItemCountFunc>::defaultLogFirstItemCount>
 struct SegmentedArraySettings;
 
-template<size_t tLogFirstItemCount, CheckMode tCheckMode>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCount, tCheckMode>
+template<size_t tLogFirstItemCount>
+struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCount>
 {
+	static const CheckMode checkMode = CheckMode::bydefault;
+
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
 	static const size_t logFirstItemCount = tLogFirstItemCount;
 
-	static const CheckMode checkMode = tCheckMode;
-
-	typedef ArraySettings<0, true, CheckMode::assertion> SegmentsSettings;
+	typedef ArraySettings<> SegmentsSettings;
 
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
@@ -126,15 +125,15 @@ private:
 	}
 };
 
-template<size_t tLogFirstItemCount, CheckMode tCheckMode>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogFirstItemCount, tCheckMode>
+template<size_t tLogFirstItemCount>
+struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogFirstItemCount>
 {
+	static const CheckMode checkMode = CheckMode::bydefault;
+
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
 	static const size_t logFirstItemCount = tLogFirstItemCount;
 
-	static const CheckMode checkMode = tCheckMode;
-
-	typedef ArraySettings<0, true, CheckMode::assertion> SegmentsSettings;
+	typedef ArraySettings<> SegmentsSettings;
 
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
@@ -169,8 +168,12 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
-	typedef Array<Item*, MemManager, ArrayItemTraits<Item*>,
-		typename Settings::SegmentsSettings> Segments;
+	struct SegmentsSettings : public Settings::SegmentsSettings
+	{
+		static const CheckMode checkMode = CheckMode::assertion;
+	};
+
+	typedef Array<Item*, MemManager, ArrayItemTraits<Item*>, SegmentsSettings> Segments;
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;

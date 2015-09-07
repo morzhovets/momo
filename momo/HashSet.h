@@ -372,19 +372,17 @@ private:
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::bydefault,
-	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::bydefault>
 struct HashSetSettings
 {
-	static const CheckMode checkMode = tCheckMode;
-	static const ExtraCheckMode extraCheckMode = tExtraCheckMode;
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
 template<typename TKey,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
 	typename TItemTraits = HashSetItemTraits<TKey>,
-	typename TSettings = HashSetSettings<>>
+	typename TSettings = HashSetSettings>
 class HashSet
 {
 public:

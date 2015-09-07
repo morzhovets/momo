@@ -210,19 +210,17 @@ private:
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::bydefault,
-	ExtraCheckMode tExtraCheckMode = ExtraCheckMode::bydefault>
 struct HashMapSettings
 {
-	static const CheckMode checkMode = tCheckMode;
-	static const ExtraCheckMode extraCheckMode = tExtraCheckMode;
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
 template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue>,
-	typename TSettings = HashMapSettings<>>
+	typename TSettings = HashMapSettings>
 class HashMap
 {
 public:
@@ -468,8 +466,13 @@ private:
 		}
 	};
 
-	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits,
-		HashSetSettings<Settings::checkMode, ExtraCheckMode::nothing>> HashSet;
+	struct HashSetSettings : public momo::HashSetSettings
+	{
+		static const CheckMode checkMode = Settings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+	};
+
+	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSetConstIterator::Reference HashSetConstReference;

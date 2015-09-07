@@ -297,10 +297,9 @@ struct HashMultiMapKeyValueTraits
 	}
 };
 
-template<CheckMode tCheckMode = CheckMode::bydefault>
 struct HashMultiMapSettings
 {
-	static const CheckMode checkMode = tCheckMode;
+	static const CheckMode checkMode = CheckMode::bydefault;
 	//? ValueArray
 };
 
@@ -308,7 +307,7 @@ template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue>,
-	typename TSettings = HashMultiMapSettings<>>
+	typename TSettings = HashMultiMapSettings>
 class HashMultiMap
 {
 public:
@@ -344,8 +343,13 @@ private:
 		}
 	};
 
+	struct ValueArraySettings : public ArraySettings<>
+	{
+		static const CheckMode checkMode = CheckMode::assertion;
+	};
+
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MemPoolConst::defaultBlockCount, ArraySettings<0, true, CheckMode::assertion>> ValueArray;
+		MemPoolConst::defaultBlockCount, ValueArraySettings> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 
@@ -503,8 +507,14 @@ private:
 		}
 	};
 
-	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager, HashMapKeyValueTraits,
-		HashMapSettings<Settings::checkMode, ExtraCheckMode::nothing>> HashMap;
+	struct HashMapSettings : public momo::HashMapSettings
+	{
+		static const CheckMode checkMode = Settings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+	};
+
+	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager,
+		HashMapKeyValueTraits, HashMapSettings> HashMap;
 
 	typedef typename HashMap::Iterator HashMapIterator;
 	typedef typename HashMapIterator::Reference HashMapReference;

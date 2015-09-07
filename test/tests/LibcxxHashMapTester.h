@@ -19,6 +19,10 @@ namespace
 #define _LIBCPP_DEBUG_LEVEL 1
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_unordered_map_" LIBCXX_TEST_BUCKET
+struct LibcxxHashMapSettings : public momo::HashMapSettings
+{
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -26,7 +30,7 @@ template<typename TKey, typename TMapped,
 using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
 	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
 		momo::MemManagerStd<TAllocator>, momo::HashMapKeyValueTraits<TKey, TMapped>,
-		momo::HashMapSettings<momo::CheckMode::exception>>>;
+		LibcxxHashMapSettings>>;
 #include "LibcxxUnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
