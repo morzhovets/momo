@@ -110,6 +110,9 @@ private:
 		Arg&& mArg;
 	};
 
+	typedef internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keySize,
+		HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
+
 public:
 	unordered_map()
 	{
@@ -505,7 +508,7 @@ public:
 	std::pair<iterator, bool> emplace(std::piecewise_construct_t,
 		const std::tuple<Args1...>& args1, const std::tuple<Args2...>& args2)
 	{
-		internal::ObjectBuffer<key_type> keyBuffer;
+		KeyBuffer keyBuffer;
 		_create(&keyBuffer, args1);
 		std::pair<iterator, bool> res;
 		try
@@ -665,7 +668,7 @@ private:
 	template<typename Key, typename MappedCreator>
 	std::pair<iterator, bool> _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
-		internal::ObjectBuffer<key_type> keyBuffer;
+		KeyBuffer keyBuffer;
 		new(&keyBuffer) key_type(std::forward<Key>(key));
 		std::pair<iterator, bool> res;
 		try

@@ -109,6 +109,9 @@ private:
 		Arg&& mArg;
 	};
 
+	typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keySize,
+		HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
+
 public:
 	unordered_multimap()
 	{
@@ -491,7 +494,7 @@ public:
 	iterator emplace(std::piecewise_construct_t,
 		const std::tuple<Args1...>& args1, const std::tuple<Args2...>& args2)
 	{
-		internal::ObjectBuffer<key_type> keyBuffer;
+		KeyBuffer keyBuffer;
 		_create(&keyBuffer, args1);
 		iterator resIter;
 		try
@@ -597,7 +600,7 @@ private:
 	template<typename Key, typename MappedCreator>
 	iterator _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
-		internal::ObjectBuffer<key_type> keyBuffer;
+		KeyBuffer keyBuffer;
 		new(&keyBuffer) key_type(std::forward<Key>(key));
 		iterator resIter;
 		try

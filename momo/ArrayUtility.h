@@ -186,7 +186,7 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Item, ItemTraits::alignment> mItems[count];
+		ObjectBuffer<Item, ItemTraits::size, ItemTraits::alignment> mItems[count];
 	};
 
 	template<typename TItemTraits>
@@ -239,7 +239,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(ArrayItemHandler);
 
 	private:
-		ObjectBuffer<Item> mItemBuffer;
+		ObjectBuffer<Item, ItemTraits::size, ItemTraits::alignment> mItemBuffer;
 	};
 
 	template<typename TArray>

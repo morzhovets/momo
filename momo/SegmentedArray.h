@@ -24,6 +24,9 @@ struct SegmentedArrayItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
+	static const size_t size = ItemManager::size;
+	static const size_t alignment = ItemManager::alignment;
+
 	typedef typename ItemManager::Creator Creator;
 	typedef typename ItemManager::MoveCreator MoveCreator;
 	typedef typename ItemManager::CopyCreator CopyCreator;
@@ -506,15 +509,15 @@ private:
 	Item* _GetSegMemory(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
-		if (itemCount > SIZE_MAX / sizeof(Item))
+		if (itemCount > SIZE_MAX / ItemTraits::size)
 			throw std::length_error("momo::SegmentedArray length error");
-		return (Item*)GetMemManager().Allocate(itemCount * sizeof(Item));
+		return (Item*)GetMemManager().Allocate(itemCount * ItemTraits::size);
 	}
 
 	void _FreeSegMemory(size_t segIndex, Item* segMemory) MOMO_NOEXCEPT
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
-		GetMemManager().Deallocate(segMemory, itemCount * sizeof(Item));
+		GetMemManager().Deallocate(segMemory, itemCount * ItemTraits::size);
 	}
 
 	Item& _GetItem(size_t index) const

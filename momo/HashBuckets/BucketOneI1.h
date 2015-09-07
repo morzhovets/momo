@@ -29,8 +29,6 @@ namespace internal
 		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
-		static const size_t itemAlignment = ItemTraits::alignment;
-
 		static const unsigned char stateEmpty = 0;
 		static const unsigned char stateFull = 1;
 		static const unsigned char stateRemoved = 2;
@@ -106,7 +104,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketOneI1);
 
 	private:
-		internal::ObjectBuffer<Item, itemAlignment> mItemBuffer;
+		internal::ObjectBuffer<Item, ItemTraits::size, ItemTraits::alignment> mItemBuffer;
 		unsigned char mState;
 	};
 }

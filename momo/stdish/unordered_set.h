@@ -56,6 +56,10 @@ public:
 	typedef typename HashSet::ConstBucketBounds::Iterator const_local_iterator;
 	typedef const_local_iterator local_iterator;
 
+private:
+	typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::size,
+		HashSet::ItemTraits::alignment> ValueBuffer;
+
 public:
 	unordered_set()
 	{
@@ -392,19 +396,19 @@ public:
 	template<typename... Args>
 	std::pair<iterator, bool> emplace(Args&&... args)
 	{
-		momo::internal::ObjectBuffer<value_type> buffer;
-		new(&buffer) value_type(std::forward<Args>(args)...);
+		ValueBuffer valueBuffer;
+		new(&valueBuffer) value_type(std::forward<Args>(args)...);
 		std::pair<iterator, bool> res;
 		try
 		{
-			res = insert(std::move(*&buffer));
+			res = insert(std::move(*&valueBuffer));
 		}
 		catch (...)
 		{
-			HashSet::ItemTraits::Destroy(&buffer, 1);
+			HashSet::ItemTraits::Destroy(&valueBuffer, 1);
 			throw;
 		}
-		HashSet::ItemTraits::Destroy(&buffer, 1);
+		HashSet::ItemTraits::Destroy(&valueBuffer, 1);
 		return res;
 	}
 

@@ -60,7 +60,7 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					size_t blockSize = i * sizeof(Item);
+					size_t blockSize = i * ItemTraits::size;
 					if (memPoolBlockCount > 1)
 						blockSize = ((blockSize - 1) / memAlignment + 1) * memAlignment;
 					else

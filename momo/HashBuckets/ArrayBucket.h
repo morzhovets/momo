@@ -40,6 +40,8 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
+			static const size_t size = ItemTraits::size;
+
 			template<typename Argument>
 			static void Create(Argument&& arg, void* pitem)
 			{
@@ -67,12 +69,11 @@ namespace internal
 
 		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits, ArraySettings> Array;
 
+		static const size_t arrayAlignment = std::alignment_of<Array>::value;
+
 		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
-
-		static const size_t itemAlignment = ItemTraits::alignment;
-		static const size_t arrayAlignment = std::alignment_of<Array>::value;
 
 	public:
 		class Params
@@ -88,7 +89,7 @@ namespace internal
 					MemManagerPtr(memManager)));
 				for (size_t i = 1; i <= maxFastCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + itemAlignment,
+					mMemPools.AddBackNogrow(MemPool(i * ItemTraits::size + ItemTraits::alignment,
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -313,7 +314,7 @@ namespace internal
 
 		static Item* _GetFastItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return (Item*)(ptr + itemAlignment);
+			return (Item*)(ptr + ItemTraits::alignment);
 		}
 
 		Array& _GetArray() const MOMO_NOEXCEPT
