@@ -40,8 +40,6 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
-			static const size_t size = ItemTraits::size;
-
 			template<typename Argument>
 			static void Create(Argument&& arg, void* pitem)
 			{
@@ -89,7 +87,7 @@ namespace internal
 					MemManagerPtr(memManager)));
 				for (size_t i = 1; i <= maxFastCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * ItemTraits::size + ItemTraits::alignment,
+					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + ItemTraits::alignment,
 						MemManagerPtr(memManager)));
 				}
 			}

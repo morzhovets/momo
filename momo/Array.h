@@ -25,7 +25,6 @@ struct ArrayItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
-	static const size_t size = ItemManager::size;
 	static const size_t alignment = ItemManager::alignment;
 
 	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
@@ -120,7 +119,7 @@ public:
 	typedef TSettings Settings;
 
 	static const size_t internalCapacity = Settings::internalCapacity;
-	//static const size_t maxCapacity = (ItemTraits::size > 1) ? SIZE_MAX / ItemTraits::size
+	//static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
 	//	: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
 	//MOMO_STATIC_ASSERT(internalCapacity <= maxCapacity);
 
@@ -156,7 +155,7 @@ private:
 			if (capacity > internalCapacity)
 			{
 				mCount = 0;
-				mExternalData.items = (Item*)GetMemManager().Allocate(capacity * ItemTraits::size);
+				mExternalData.items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
 				mExternalData.capacity = capacity;
 			}
 			else
@@ -251,14 +250,14 @@ private:
 			_CheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				Item* items = (Item*)GetMemManager().Allocate(capacity * ItemTraits::size);
+				Item* items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
 				try
 				{
 					relocateFunc(items);
 				}
 				catch (...)
 				{
-					GetMemManager().Deallocate(items, capacity * ItemTraits::size);
+					GetMemManager().Deallocate(items, capacity * sizeof(Item));
 					throw;
 				}
 				_Deallocate();
@@ -285,7 +284,7 @@ private:
 
 		static void _CheckCapacity(size_t capacity)
 		{
-			static const size_t maxCapacity = (ItemTraits::size > 1) ? SIZE_MAX / ItemTraits::size
+			static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
 				: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
 			if (capacity > maxCapacity)
 				throw std::length_error("momo::Array length error");
@@ -321,7 +320,7 @@ private:
 			if (GetCapacity() > internalCapacity)
 			{
 				GetMemManager().Deallocate(mExternalData.items,
-					mExternalData.capacity * ItemTraits::size);
+					mExternalData.capacity * sizeof(Item));
 			}
 		}
 
@@ -364,7 +363,7 @@ private:
 			internal::BoolConstant<canReallocateInplace>)
 		{
 			mExternalData.items = (Item*)GetMemManager().Reallocate(mExternalData.items,
-				mExternalData.capacity * ItemTraits::size, capacity * ItemTraits::size);
+				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
 			mExternalData.capacity = capacity;
 			return true;
 		}
@@ -373,7 +372,7 @@ private:
 			std::true_type /*canReallocateInplace*/) MOMO_NOEXCEPT
 		{
 			bool reallocDone = GetMemManager().ReallocateInplace(mExternalData.items,
-				mExternalData.capacity * ItemTraits::size, capacity * ItemTraits::size);
+				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
 			if (!reallocDone)
 				return false;
 			mExternalData.capacity = capacity;
@@ -928,7 +927,7 @@ private:
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
-		internal::ObjectBuffer<Item, ItemTraits::size, ItemTraits::alignment> itemBuffer;
+		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
 		(typename ItemTraits::CopyCreator(item))(&itemBuffer);
 		try
 		{

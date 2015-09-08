@@ -109,8 +109,7 @@ private:
 		Arg&& mArg;
 	};
 
-	typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keySize,
-		HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
+	typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 
 public:
 	unordered_multimap()

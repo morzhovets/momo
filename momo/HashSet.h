@@ -297,7 +297,6 @@ struct HashSetItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
-	static const size_t size = ItemManager::size;
 	static const size_t alignment = ItemManager::alignment;
 
 	typedef typename ItemManager::MoveCreator MoveCreator;
@@ -399,7 +398,6 @@ private:
 	{
 		typedef typename HashSet::Item Item;
 
-		static const size_t size = ItemTraits::size;
 		static const size_t alignment = ItemTraits::alignment;
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT

@@ -13,13 +13,12 @@ namespace momo
 
 namespace internal
 {
-	template<typename TObject, size_t tSize, size_t tAlignment>
+	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
 	public:
 		typedef TObject Object;
 
-		static const size_t size = tSize;
 		static const size_t alignment = tAlignment;
 		//MOMO_STATIC_ASSERT(alignment > 0 && ((alignment - 1) & alignment) == 0);
 
@@ -35,7 +34,7 @@ namespace internal
 		}
 
 	private:
-		typename std::aligned_storage<size, alignment>::type mBuffer;
+		typename std::aligned_storage<sizeof(Object), alignment>::type mBuffer;
 	};
 
 	template<typename TObject>
@@ -54,7 +53,6 @@ namespace internal
 			std::is_nothrow_move_assignable<Object>::value || isTriviallyRelocatable
 			|| isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
-		static const size_t size = sizeof(Object);
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
 		class Creator
@@ -213,6 +211,7 @@ namespace internal
 			std::true_type /*isTriviallyRelocatable*/,
 			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
+			static const size_t size = sizeof(Object);
 			char buf[size];
 			memcpy(buf, std::addressof(dstObject), size);
 			memcpy(std::addressof(dstObject), std::addressof(srcObject), size);
@@ -263,7 +262,7 @@ namespace internal
 			std::true_type /*isTriviallyRelocatable*/,
 			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
-			memcpy(dstObjects, srcObjects, count * size);
+			memcpy(dstObjects, srcObjects, count * sizeof(Object));
 		}
 
 		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,

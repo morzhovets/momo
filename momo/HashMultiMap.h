@@ -236,8 +236,6 @@ struct HashMultiMapKeyValueTraits
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
-	static const size_t keySize = KeyManager::size;
-	static const size_t valueSize = ValueManager::size;
 	static const size_t keyAlignment = KeyManager::alignment;
 	static const size_t valueAlignment = ValueManager::alignment;
 
@@ -325,7 +323,6 @@ private:
 	{
 		typedef typename HashMultiMap::Value Item;
 
-		static const size_t size = KeyValueTraits::valueSize;
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
 		static void Create(const Item& item, void* pitem)
@@ -458,8 +455,6 @@ private:
 		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
 		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
-		static const size_t keySize = KeyValueTraits::keySize;
-		static const size_t valueSize = ValueManager::size;
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 

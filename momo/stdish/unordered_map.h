@@ -110,8 +110,7 @@ private:
 		Arg&& mArg;
 	};
 
-	typedef internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keySize,
-		HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
+	typedef internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
 
 public:
 	unordered_map()

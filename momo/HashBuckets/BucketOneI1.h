@@ -104,7 +104,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketOneI1);
 
 	private:
-		internal::ObjectBuffer<Item, ItemTraits::size, ItemTraits::alignment> mItemBuffer;
+		internal::ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 		unsigned char mState;
 	};
 }

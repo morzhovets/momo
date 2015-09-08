@@ -63,7 +63,7 @@ namespace internal
 						size_t maxTotalBlockCount = (i == 1)
 							? ((size_t)1 << (32 - logMaxCount)) - 2
 							: ((size_t)1 << (32 - logMaxCount)) / i;
-						new(pmemPool) MemPool(i * ItemTraits::size, MemManagerPtr(memManager),
+						new(pmemPool) MemPool(i * sizeof(Item), MemManagerPtr(memManager),
 							maxTotalBlockCount);
 					};
 					mMemPools.AddBackNogrowEmpl(memPoolCreator);

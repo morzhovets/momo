@@ -54,7 +54,7 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * ItemTraits::size,
+					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -206,7 +206,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketLimP1);
 
 	private:
-		ObjectBuffer<Item*, sizeof(Item*), alignment> mItemPtrBuffer;
+		ObjectBuffer<Item*, alignment> mItemPtrBuffer;
 		unsigned char mState;
 	};
 }

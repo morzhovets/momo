@@ -57,8 +57,7 @@ public:
 	typedef const_local_iterator local_iterator;
 
 private:
-	typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::size,
-		HashSet::ItemTraits::alignment> ValueBuffer;
+	typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
 
 public:
 	unordered_set()
