@@ -110,7 +110,7 @@ public:
 		mEqualFunc(equalFunc)
 	{
 		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
-		mLogStartBucketCount = internal::Log2<size_t>::Calc(startBucketCount - 1) + 1;
+		mLogStartBucketCount = internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
 		startBucketCount = (size_t)1 << mLogStartBucketCount;
 		size_t startCapacity = HashBucket::CalcCapacity(startBucketCount);
 		mMaxLoadFactor = (float)startCapacity / (float)startBucketCount;

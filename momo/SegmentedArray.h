@@ -118,12 +118,12 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCo
 private:
 	static size_t _IndexToLogItemCount(size_t index1) MOMO_NOEXCEPT
 	{
-		return (internal::Log2<size_t>::Calc(index1) + 1) / 2;
+		return (internal::UIntMath<size_t>::Log2(index1) + 1) / 2;
 	}
 
 	static size_t _SegIndexToLogItemCount(size_t segIndex) MOMO_NOEXCEPT
 	{
-		return internal::Log2<size_t>::Calc((segIndex * 2 + 4) / 3);
+		return internal::UIntMath<size_t>::Log2((segIndex * 2 + 4) / 3);
 	}
 };
 

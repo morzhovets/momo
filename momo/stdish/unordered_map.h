@@ -317,7 +317,7 @@ public:
 
 	void max_load_factor(float maxLoadFactor)
 	{
-		size_t logStartBucketCount = internal::Log2<size_t>::Calc(bucket_count());
+		size_t logStartBucketCount = internal::UIntMath<size_t>::Log2(bucket_count());
 		HashTraits hashTraits(hash_function(), key_eq(), logStartBucketCount, maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
 		hashMap.Reserve(size());
@@ -363,7 +363,7 @@ public:
 	void rehash(size_type bucketCount)
 	{
 		bucketCount = std::minmax(bucketCount, (size_t)2).second;
-		size_t logBucketCount = internal::Log2<size_t>::Calc(bucketCount - 1) + 1;
+		size_t logBucketCount = internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
 		bucketCount = (size_t)1 << logBucketCount;
 		reserve(mHashMap.GetHashTraits().CalcCapacity(bucketCount));
 	}
