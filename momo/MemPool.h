@@ -4,6 +4,10 @@
 
   namespace momo:
     struct MemPoolConst
+    class MemPool2Params
+    class MemPool2ParamsVarSize
+    class MemPool2Settings
+    class MemPool2
     class MemPool
 
 \**********************************************************/
@@ -19,6 +23,372 @@ namespace momo
 struct MemPoolConst
 {
 	static const size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
+};
+
+template<size_t tBlockSize,
+	size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,	//?
+	size_t tBlockCount = MemPoolConst::defaultBlockCount>
+class MemPool2Params
+{
+public:
+	static const size_t blockCount = tBlockCount;
+	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+
+	static const size_t blockAlignment = tBlockAlignment;
+	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
+
+	static const size_t blockSize = (tBlockSize <= blockAlignment) ? 2 * blockAlignment
+		: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment;
+};
+
+template<size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,
+	size_t tBlockCount = MemPoolConst::defaultBlockCount>
+class MemPool2ParamsVarSize
+{
+public:
+	static const size_t blockCount = tBlockCount;
+	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+
+	static const size_t blockAlignment = tBlockAlignment;
+	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
+
+public:
+	explicit MemPool2ParamsVarSize(size_t blockSize) MOMO_NOEXCEPT
+		: blockSize((blockSize <= blockAlignment) ? 2 * blockAlignment
+			: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment))
+	{
+	}
+
+protected:
+	size_t blockSize;
+};
+
+struct MemPool2Settings
+{
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+};
+
+template<typename TParams = MemPool2ParamsVarSize<>,
+	typename TMemManager = MemManagerDefault,
+	typename TSettings = MemPool2Settings>
+class MemPool2 : private TParams, private internal::MemManagerWrapper<TMemManager>
+{
+public:
+	typedef TParams Params;
+	typedef TMemManager MemManager;
+	typedef TSettings Settings;
+
+	//MOMO_STATIC_ASSERT(std::is_trivially_copyable<Params>::value);
+	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
+	//MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
+
+private:
+	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
+
+	typedef internal::UIntMath<size_t> SMath;
+	typedef internal::UIntMath<uintptr_t> PMath;
+
+	static const uintptr_t nullPtr = (uintptr_t)nullptr;
+
+public:
+	explicit MemPool2(const Params& params = Params(), MemManager&& memManager = MemManager())
+		: Params(params),
+		MemManagerWrapper(std::move(memManager)),
+		mBufferHead(nullPtr),
+		mFreeBlockCount(0)
+	{
+		_CheckParams();
+	}
+
+	MemPool2(MemPool2&& memPool) MOMO_NOEXCEPT
+		: Params(std::move(memPool._GetParams())),
+		MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
+		mBufferHead(memPool.mBufferHead),
+		mFreeBlockCount(memPool.mFreeBlockCount)
+	{
+		memPool.mBufferHead = nullPtr;
+		memPool.mFreeBlockCount = 0;
+	}
+
+	MemPool2& operator=(MemPool2&& memPool) MOMO_NOEXCEPT
+	{
+		MemPool2(std::move(memPool)).Swap(*this);
+		return *this;
+	}
+
+	void Swap(MemPool2& memPool) MOMO_NOEXCEPT
+	{
+		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
+		std::swap(_GetParams(), memPool._GetParams());
+		std::swap(mBufferHead, memPool.mBufferHead);
+		std::swap(mFreeBlockCount, memPool.mFreeBlockCount);
+	}
+
+	MOMO_FRIEND_SWAP(MemPool2)
+
+	~MemPool2() MOMO_NOEXCEPT
+	{
+		if (mBufferHead != nullPtr)
+		{
+			MOMO_EXTRA_CHECK(_GetPrevBuffer(mBufferHead) == nullPtr);
+			MOMO_EXTRA_CHECK(_GetNextBuffer(mBufferHead) == nullPtr);
+			MOMO_EXTRA_CHECK(mFreeBlockCount == Params::blockCount);
+			_FreeBuffer(mBufferHead);
+		}
+	}
+
+	size_t GetBlockSize() const MOMO_NOEXCEPT
+	{
+		return Params::blockSize;
+	}
+
+	size_t GetBlockAlignment() const MOMO_NOEXCEPT
+	{
+		return Params::blockAlignment;
+	}
+
+	size_t GetBlockCount() const MOMO_NOEXCEPT
+	{
+		return Params::blockCount;
+	}
+
+	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	{
+		return _GetMemManagerWrapper().GetMemManager();
+	}
+
+	MemManager& GetMemManager() MOMO_NOEXCEPT
+	{
+		return _GetMemManagerWrapper().GetMemManager();
+	}
+
+	void* GetMemory()
+	{
+		if (mBufferHead == nullPtr)
+		{
+			mBufferHead = _NewBuffer();
+			mFreeBlockCount += Params::blockCount;
+		}
+		uintptr_t block = _NewBlock(mBufferHead);
+		--mFreeBlockCount;
+		if ((size_t)_GetFreeBlockCount(mBufferHead) == 0)
+			_RemoveBuffer(mBufferHead);
+		return (void*)block;
+	}
+
+	void FreeMemory(void* pblock) MOMO_NOEXCEPT
+	{
+		assert(pblock != nullptr);
+		uintptr_t block = (uintptr_t)pblock;
+		uintptr_t buffer = _GetBuffer(block);
+		_FreeBlock(buffer, block);
+		++mFreeBlockCount;
+		size_t freeBlockCount = (size_t)_GetFreeBlockCount(buffer);
+		if (freeBlockCount == Params::blockCount && mFreeBlockCount >= 2 * Params::blockCount)
+		{
+			_RemoveBuffer(buffer);
+			_FreeBuffer(buffer);
+			mFreeBlockCount -= Params::blockCount;
+		}
+		else if (freeBlockCount == 1)
+		{
+			_GetPrevBuffer(buffer) = nullPtr;
+			_GetNextBuffer(buffer) = mBufferHead;
+			if (mBufferHead != nullPtr)
+				_GetPrevBuffer(mBufferHead) = buffer;
+			mBufferHead = buffer;
+		}
+	}
+
+private:
+	Params& _GetParams() MOMO_NOEXCEPT
+	{
+		return *this;
+	}
+
+	const MemManagerWrapper& _GetMemManagerWrapper() const MOMO_NOEXCEPT
+	{
+		return *this;
+	}
+
+	MemManagerWrapper& _GetMemManagerWrapper() MOMO_NOEXCEPT
+	{
+		return *this;
+	}
+
+	void _CheckParams() const
+	{
+		MOMO_CHECK(0 < Params::blockCount && Params::blockCount < 128);
+		MOMO_CHECK(0 < Params::blockAlignment && Params::blockAlignment <= 1024);
+		MOMO_CHECK(Params::blockSize % Params::blockAlignment == 0);
+		MOMO_CHECK(Params::blockSize / Params::blockAlignment >= 2);
+		size_t maxBlockSize = (SIZE_MAX - 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment)
+			/ Params::blockCount;
+		if (Params::blockSize > maxBlockSize)
+			throw std::length_error("momo::MemPool length error");
+	}
+
+	uintptr_t _GetBuffer(uintptr_t block) const MOMO_NOEXCEPT
+	{
+		assert(block % Params::blockAlignment == 0);
+		uintptr_t buffer = PMath::Ceil(block, Params::blockSize * Params::blockCount)
+			+ (block % Params::blockSize);
+		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
+			buffer -= Params::blockSize * Params::blockCount + Params::blockAlignment;
+		return buffer;
+	}
+
+	uintptr_t _NewBlock(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		signed char& firstFreeBlockIndex = _GetFirstFreeBlockIndex(buffer);
+		uintptr_t block = _GetBlock(buffer, firstFreeBlockIndex);
+		firstFreeBlockIndex = _GetNextFreeBlockIndex(block);
+		--_GetFreeBlockCount(buffer);
+		return block;
+	}
+
+	void _FreeBlock(uintptr_t buffer, uintptr_t block) MOMO_NOEXCEPT
+	{
+		signed char& firstFreeBlockIndex = _GetFirstFreeBlockIndex(buffer);
+		_GetNextFreeBlockIndex(block) = firstFreeBlockIndex;
+		firstFreeBlockIndex = _GetBlockIndex(buffer, block);
+		++_GetFreeBlockCount(buffer);
+	}
+
+	signed char& _GetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
+	{
+		return *(signed char*)block;
+	}
+
+	uintptr_t _GetBlock(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
+	{
+		if (index < 0)
+			return buffer - (size_t)(-index) * Params::blockSize;
+		else
+			return buffer + (size_t)index * Params::blockSize + Params::blockAlignment;
+	}
+
+	signed char _GetBlockIndex(uintptr_t buffer, uintptr_t block) const MOMO_NOEXCEPT
+	{
+		if (block < buffer)
+			return -(signed char)((buffer - block) / Params::blockSize);
+		else
+			return (signed char)((block - buffer) / Params::blockSize);
+	}
+
+	uintptr_t _NewBuffer()
+	{
+		uintptr_t begin = (uintptr_t)GetMemManager().Allocate(_GetBufferSize());
+		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
+		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
+			block += Params::blockAlignment;
+		if ((block + Params::blockAlignment) % Params::blockSize == 0)
+			block += Params::blockAlignment;
+		if (((block / Params::blockSize) % Params::blockCount) == 0)
+			block += Params::blockAlignment;
+		uintptr_t buffer = _GetBuffer(block);
+		signed char index = _GetBlockIndex(buffer, block);
+		_GetFirstBlockIndex(buffer) = index;
+		_GetFirstFreeBlockIndex(buffer) = index;
+		_GetFreeBlockCount(buffer) = (signed char)Params::blockCount;
+		_GetPrevBuffer(buffer) = nullPtr;
+		_GetNextBuffer(buffer) = nullPtr;
+		_GetBufferBegin(buffer) = begin;
+		for (size_t i = 1; i < Params::blockCount; ++i)
+		{
+			++index;
+			_GetNextFreeBlockIndex(block) = index;
+			block = _GetBlock(buffer, index);
+		}
+		_GetNextFreeBlockIndex(block) = (signed char)(-128);
+		return buffer;
+	}
+
+	void _FreeBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		GetMemManager().Deallocate((void*)_GetBufferBegin(buffer), _GetBufferSize());
+	}
+
+	void _RemoveBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		uintptr_t prevBuffer = _GetPrevBuffer(buffer);
+		uintptr_t nextBuffer = _GetNextBuffer(buffer);
+		if (prevBuffer != nullPtr)
+			_GetNextBuffer(prevBuffer) = nextBuffer;
+		if (nextBuffer != nullPtr)
+			_GetPrevBuffer(nextBuffer) = prevBuffer;
+		if (mBufferHead == buffer)
+			mBufferHead = nextBuffer;
+	}
+
+	size_t _GetBufferSize() const MOMO_NOEXCEPT
+	{
+		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
+			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
+		static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
+		if ((Params::blockAlignment & (Params::blockAlignment - 1)) == 0)
+			bufferUsefulSize -= std::minmax(maxAlignment, (size_t)Params::blockAlignment).first;	// gcc & llvm
+		else
+			bufferUsefulSize -= SMath::GCD(maxAlignment, Params::blockAlignment);
+		size_t bufferSize = SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
+			+ ((Params::blockAlignment <= 2) ? 2 : 0);
+		return bufferSize;
+	}
+
+	signed char& _GetFreeBlockCount(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return _GetBufferChars(buffer)[0];
+	}
+
+	signed char& _GetFirstFreeBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return _GetBufferChars(buffer)[1];
+	}
+
+	signed char& _GetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return *(signed char*)buffer;
+	}
+
+	uintptr_t& _GetPrevBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return _GetBufferPointers(buffer)[0];
+	}
+
+	uintptr_t& _GetNextBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return _GetBufferPointers(buffer)[1];
+	}
+
+	uintptr_t& _GetBufferBegin(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		return _GetBufferPointers(buffer)[2];
+	}
+
+	signed char* _GetBufferChars(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		if (Params::blockAlignment > 2)
+			return (signed char*)(buffer + 1);
+		else
+			return (signed char*)(_GetBufferPointers(buffer) + 3);
+	}
+
+	uintptr_t* _GetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
+	{
+		size_t offset = Params::blockCount - (size_t)(-_GetFirstBlockIndex(buffer));
+		uintptr_t ptrs = buffer + Params::blockAlignment + Params::blockSize * offset;
+		ptrs = PMath::Ceil(ptrs, (uintptr_t)sizeof(void*));
+		return (uintptr_t*)ptrs;
+	}
+
+private:
+	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool2);
+	MOMO_DISABLE_COPY_OPERATOR(MemPool2);
+
+private:
+	uintptr_t mBufferHead;
+	size_t mFreeBlockCount;
 };
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
@@ -183,7 +553,8 @@ private:
 
 	size_t _GetBufferSize() const MOMO_NOEXCEPT
 	{
-		return ((blockCount * mBlockSize - 1) / sizeof(void*) + 2) * sizeof(void*);
+		return internal::UIntMath<size_t>::Ceil(blockCount * mBlockSize, sizeof(void*))
+			+ sizeof(void*);
 	}
 
 private:
