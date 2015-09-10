@@ -131,7 +131,7 @@ namespace internal
 			{
 				Item* items = _GetItems<Item>(params);
 				ItemTraits::Destroy(items, _GetCount());
-				params[_GetMemPoolIndex()].FreeMemory(_GetPointer());
+				params[_GetMemPoolIndex()].Deallocate(_GetPointer());
 			}
 			mState = stateNull;
 		}
@@ -166,7 +166,7 @@ namespace internal
 					uint32_t ptr = _GetPointer();
 					Item* items = (Item*)memPool.GetRealPointer(ptr);
 					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
-					params[memPoolIndex].FreeMemory(ptr);
+					params[memPoolIndex].Deallocate(ptr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 				}
 				else
@@ -186,7 +186,7 @@ namespace internal
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
-				params[memPoolIndex].FreeMemory(_GetPointer());
+				params[memPoolIndex].Deallocate(_GetPointer());
 				mState = (memPoolIndex < maxCount - 1) ? stateNull : stateNullWasFull;
 			}
 			else

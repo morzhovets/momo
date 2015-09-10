@@ -110,7 +110,7 @@ namespace internal
 			if (items != nullptr)
 			{
 				ItemTraits::Destroy(items, _GetCount());
-				params[_GetMemPoolIndex()].FreeMemory(items);
+				params[_GetMemPoolIndex()].Deallocate(items);
 			}
 			_Set(nullptr, (unsigned char)0);
 		}
@@ -140,7 +140,7 @@ namespace internal
 					Memory memory(params[newMemPoolIndex]);
 					ItemTraits::RelocateAddBack(items,
 						memory.GetPointer(), count, itemCreator);
-					params[memPoolIndex].FreeMemory(items);
+					params[memPoolIndex].Deallocate(items);
 					_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 				}
 				else
@@ -159,7 +159,7 @@ namespace internal
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1 && !WasFull())
 			{
-				params[_GetMemPoolIndex()].FreeMemory(items);
+				params[_GetMemPoolIndex()].Deallocate(items);
 				_Set(nullptr, (unsigned char)0);
 			}
 			else

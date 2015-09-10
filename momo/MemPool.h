@@ -80,8 +80,8 @@ public:
 	typedef TSettings Settings;
 
 	//MOMO_STATIC_ASSERT(std::is_trivially_copyable<Params>::value);
-	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
-	//MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
+	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
+	MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
 
 private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
@@ -163,7 +163,7 @@ public:
 		return _GetMemManagerWrapper().GetMemManager();
 	}
 
-	void* GetMemory()
+	void* Allocate()
 	{
 		if (mBufferHead == nullPtr)
 		{
@@ -177,7 +177,7 @@ public:
 		return (void*)block;
 	}
 
-	void FreeMemory(void* pblock) MOMO_NOEXCEPT
+	void Deallocate(void* pblock) MOMO_NOEXCEPT
 	{
 		assert(pblock != nullptr);
 		uintptr_t block = (uintptr_t)pblock;
@@ -471,7 +471,7 @@ public:
 		return mBlockSize;
 	}
 
-	void* GetMemory()
+	void* Allocate()
 	{
 		if (mBlockHead == nullptr)
 			_NewBuffer(GetMemManager().Allocate(_GetBufferSize()));
@@ -481,7 +481,7 @@ public:
 		return ptr;
 	}
 
-	void FreeMemory(void* ptr) MOMO_NOEXCEPT
+	void Deallocate(void* ptr) MOMO_NOEXCEPT
 	{
 		assert(ptr != nullptr);
 		assert(mAllocCount > 0);
@@ -490,13 +490,6 @@ public:
 		--mAllocCount;
 		if (mAllocCount == 0)
 			_Shrink();
-	}
-
-	void FreeAll() MOMO_NOEXCEPT	//?
-	{
-		if (mAllocCount > 0)
-			_Shrink();
-		mAllocCount = 0;
 	}
 
 private:
@@ -635,14 +628,14 @@ public:
 		return mBlockSize;
 	}
 
-	void* GetMemory()
+	void* Allocate()
 	{
 		void* ptr = GetMemManager().Allocate(mBlockSize);
 		++_GetAllocCount();
 		return ptr;
 	}
 
-	void FreeMemory(void* ptr) MOMO_NOEXCEPT
+	void Deallocate(void* ptr) MOMO_NOEXCEPT
 	{
 		assert(ptr != nullptr);
 		assert(_GetAllocCount() > 0);
@@ -743,7 +736,7 @@ namespace internal
 			return _GetRealPointer(ptr);
 		}
 
-		uint32_t GetMemory()
+		uint32_t Allocate()
 		{
 			if (mBlockHead == nullPtr)
 				_NewBuffer();
@@ -753,7 +746,7 @@ namespace internal
 			return ptr;
 		}
 
-		void FreeMemory(uint32_t ptr) MOMO_NOEXCEPT
+		void Deallocate(uint32_t ptr) MOMO_NOEXCEPT
 		{
 			assert(ptr != nullPtr);
 			assert(mAllocCount > 0);

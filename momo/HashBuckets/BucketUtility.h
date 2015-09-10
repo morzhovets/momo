@@ -86,7 +86,7 @@ namespace internal
 	public:
 		explicit BucketMemory(MemPool& memPool)
 			: mMemPool(memPool),
-			mPtr((Pointer)memPool.GetMemory())
+			mPtr((Pointer)memPool.Allocate())
 		{
 			assert(mPtr != nullPtr);
 		}
@@ -94,7 +94,7 @@ namespace internal
 		~BucketMemory() MOMO_NOEXCEPT
 		{
 			if (mPtr != nullPtr)
-				mMemPool.FreeMemory(mPtr);
+				mMemPool.Deallocate(mPtr);
 		}
 
 		Pointer GetPointer() const MOMO_NOEXCEPT

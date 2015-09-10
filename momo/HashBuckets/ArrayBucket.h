@@ -187,7 +187,7 @@ namespace internal
 					ItemTraits::Destroy(_GetFastItems(), _GetFastCount());
 				else
 					_GetArray().~Array();
-				params[_GetMemPoolIndex()].FreeMemory(mPtr);
+				params[_GetMemPoolIndex()].Deallocate(mPtr);
 			}
 			mPtr = nullptr;
 		}
@@ -220,7 +220,7 @@ namespace internal
 							Memory memory(params[newMemPoolIndex]);
 							ItemTraits::RelocateAddBack(items,
 								_GetFastItems(memory.GetPointer()), count, itemCreator);
-							params[memPoolIndex].FreeMemory(mPtr);
+							params[memPoolIndex].Deallocate(mPtr);
 							_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 						}
 						else
@@ -233,7 +233,7 @@ namespace internal
 								count, itemCreator);
 							array.SetCountEmpl(newCount, [] (void* /*pitem*/) { });
 							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
-							params[memPoolIndex].FreeMemory(mPtr);
+							params[memPoolIndex].Deallocate(mPtr);
 							_Set(memory.Extract(), (unsigned char)0);
 						}
 					}
@@ -268,7 +268,7 @@ namespace internal
 			{
 				if (memPoolIndex == 0)
 					_GetArray().~Array();
-				params[memPoolIndex].FreeMemory(mPtr);
+				params[memPoolIndex].Deallocate(mPtr);
 				mPtr = nullptr;
 			}
 		}
