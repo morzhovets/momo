@@ -62,20 +62,20 @@
 #define MOMO_DISABLE_COPY_OPERATOR(Class) Class& operator=(const Class&);
 #endif
 
-#define MOMO_FRIEND_SWAP(Container) \
-	friend void swap(Container& cont1, Container& cont2) MOMO_NOEXCEPT \
+#define MOMO_FRIEND_SWAP(Object) \
+	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
 	{ \
-		cont1.Swap(cont2); \
+		object1.Swap(object2); \
 	}
 
-#define MOMO_FRIENDS_BEGIN_END(ContainerRef, Iterator) \
-	friend Iterator begin(ContainerRef contRef) MOMO_NOEXCEPT \
+#define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
+	friend Iterator begin(Reference ref) MOMO_NOEXCEPT \
 	{ \
-		return contRef.GetBegin(); \
+		return ref.GetBegin(); \
 	} \
-	friend Iterator end(ContainerRef contRef) MOMO_NOEXCEPT \
+	friend Iterator end(Reference ref) MOMO_NOEXCEPT \
 	{ \
-		return contRef.GetEnd(); \
+		return ref.GetEnd(); \
 	}
 
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr);
@@ -140,6 +140,29 @@ namespace internal
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 #endif
+
+	template<typename TUInt>
+	struct UIntMath
+	{
+		typedef TUInt UInt;
+
+		static UInt Ceil(UInt value, UInt mod) MOMO_NOEXCEPT
+		{
+			assert(value != 0 && mod != 0);
+			return (((value - 1) / mod) + 1) * mod;
+		}
+
+		static UInt GCD(UInt value1, UInt value2) MOMO_NOEXCEPT
+		{
+			while (value2 != 0)
+			{
+				size_t value3 = value1 % value2;
+				value1 = value2;
+				value2 = value3;
+			}
+			return value1;
+		}
+	};
 
 	template<typename TValue>
 	struct Log2;
