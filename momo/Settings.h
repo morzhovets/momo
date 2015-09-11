@@ -30,6 +30,7 @@
 #define MOMO_USE_VARIADIC_TEMPLATES
 #define MOMO_USE_TYPE_ALIASES
 #define MOMO_USE_INIT_LISTS
+#define MOMO_USE_TRIVIALLY_COPIABLE
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_USE_NOEXCEPT
@@ -43,10 +44,8 @@
 #undef MOMO_USE_INIT_LISTS
 #endif
 
-#ifdef __GNUC__
-#define MOMO_IS_TRIVIALLY_COPYABLE std::is_trivial
-#else
-#define MOMO_IS_TRIVIALLY_COPYABLE std::is_trivially_copyable
+#if defined(__GNUC__) && __GNUC__ < 5
+#undef MOMO_USE_TRIVIALLY_COPIABLE
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1800

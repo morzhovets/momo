@@ -106,7 +106,12 @@ enum class ExtraCheckMode
 };
 
 template<typename Object>
-struct IsTriviallyRelocatable : public MOMO_IS_TRIVIALLY_COPYABLE<Object>
+struct IsTriviallyRelocatable
+#ifdef MOMO_USE_TRIVIALLY_COPIABLE
+	: public std::is_trivially_copyable<Object>
+#else
+	: public std::is_trivial<Object>
+#endif
 {
 };
 

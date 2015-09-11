@@ -80,9 +80,12 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-	//MOMO_STATIC_ASSERT(std::is_trivially_copyable<Params>::value);
+#ifdef MOMO_USE_TRIVIALLY_COPIABLE
+	MOMO_STATIC_ASSERT(std::is_trivially_copyable<Params>::value);
+#else
 	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
 	MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
+#endif
 
 private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
