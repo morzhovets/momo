@@ -44,7 +44,9 @@ namespace internal
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
+
+		typedef momo::MemPool<MemPoolParamsVarSize<(memAlignment > ItemTraits::alignment)
+			? memAlignment : ItemTraits::alignment, memPoolBlockCount>, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 
@@ -61,11 +63,8 @@ namespace internal
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item);
-					if (memPoolBlockCount > 1)
-						blockSize = ((blockSize - 1) / memAlignment + 1) * memAlignment;
-					else
-						blockSize = std::minmax(blockSize, (size_t)memAlignment).second;	// gcc & llvm
-					mMemPools.AddBackNogrow(MemPool(blockSize, MemManagerPtr(memManager)));
+					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
+						MemManagerPtr(memManager)));
 				}
 			}
 

@@ -4,10 +4,9 @@
 
   namespace momo:
     struct MemPoolConst
-    class MemPool2Params
-    class MemPool2ParamsVarSize
-    class MemPool2Settings
-    class MemPool2
+    class MemPoolParams
+    class MemPoolParamsVarSize
+    class MemPoolSettings
     class MemPool
 
 \**********************************************************/
@@ -27,8 +26,8 @@ struct MemPoolConst
 
 template<size_t tBlockSize,
 	size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,	//?
-	size_t tBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT>
-class MemPool2Params
+	size_t tBlockCount = MemPoolConst::defaultBlockCount>
+class MemPoolParams
 {
 public:
 	static const size_t blockCount = tBlockCount;
@@ -42,8 +41,8 @@ public:
 };
 
 template<size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,
-	size_t tBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT>
-class MemPool2ParamsVarSize
+	size_t tBlockCount = MemPoolConst::defaultBlockCount>
+class MemPoolParamsVarSize
 {
 public:
 	static const size_t blockCount = tBlockCount;
@@ -53,7 +52,7 @@ public:
 	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
 
 public:
-	explicit MemPool2ParamsVarSize(size_t blockSize) MOMO_NOEXCEPT
+	explicit MemPoolParamsVarSize(size_t blockSize) MOMO_NOEXCEPT
 		: blockSize((blockSize <= blockAlignment) ? 2 * blockAlignment
 			: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment))
 	{
@@ -63,7 +62,7 @@ protected:
 	size_t blockSize;
 };
 
-struct MemPool2Settings
+struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
@@ -71,10 +70,10 @@ struct MemPool2Settings
 	static const size_t cachedFreeBlockCount = 32;
 };
 
-template<typename TParams = MemPool2ParamsVarSize<>,
+template<typename TParams = MemPoolParamsVarSize<>,
 	typename TMemManager = MemManagerDefault,
-	typename TSettings = MemPool2Settings>
-class MemPool2 : private TParams, private internal::MemManagerWrapper<TMemManager>
+	typename TSettings = MemPoolSettings>
+class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
 	typedef TParams Params;
@@ -97,7 +96,7 @@ private:
 	static const uintptr_t nullPtr = (uintptr_t)nullptr;
 
 public:
-	explicit MemPool2(const Params& params = Params(), MemManager&& memManager = MemManager())
+	explicit MemPool(const Params& params = Params(), MemManager&& memManager = MemManager())
 		: Params(params),
 		MemManagerWrapper(std::move(memManager)),
 		mBufferHead(nullPtr)
@@ -105,7 +104,7 @@ public:
 		_CheckParams();
 	}
 
-	MemPool2(MemPool2&& memPool) MOMO_NOEXCEPT
+	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
 		: Params(std::move(memPool._GetParams())),
 		MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
@@ -114,13 +113,13 @@ public:
 		memPool.mBufferHead = nullPtr;
 	}
 
-	MemPool2& operator=(MemPool2&& memPool) MOMO_NOEXCEPT
+	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
 	{
-		MemPool2(std::move(memPool)).Swap(*this);
+		MemPool(std::move(memPool)).Swap(*this);
 		return *this;
 	}
 
-	void Swap(MemPool2& memPool) MOMO_NOEXCEPT
+	void Swap(MemPool& memPool) MOMO_NOEXCEPT
 	{
 		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
 		std::swap(_GetParams(), memPool._GetParams());
@@ -128,9 +127,9 @@ public:
 		mCachedFreeBlocks.Swap(memPool.mCachedFreeBlocks);
 	}
 
-	MOMO_FRIEND_SWAP(MemPool2)
+	MOMO_FRIEND_SWAP(MemPool)
 
-	~MemPool2() MOMO_NOEXCEPT
+	~MemPool() MOMO_NOEXCEPT
 	{
 		_FlushDeallocate();
 		if (mBufferHead != nullPtr)
@@ -416,296 +415,12 @@ private:
 	}
 
 private:
-	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool2);
-	MOMO_DISABLE_COPY_OPERATOR(MemPool2);
+	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool);
+	MOMO_DISABLE_COPY_OPERATOR(MemPool);
 
 private:
 	uintptr_t mBufferHead;
 	CachedFreeBlocks mCachedFreeBlocks;
-};
-
-template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
-	typename TMemManager = MemManagerDefault>
-class MemPool : private internal::MemManagerWrapper<TMemManager>
-{
-public:
-	typedef TMemManager MemManager;
-
-	static const size_t blockCount = tBlockCount;
-
-	static const size_t minBlockSize = sizeof(void*);
-	static const size_t maxBlockSize = (SIZE_MAX - 2 * sizeof(void*)) / blockCount;
-	MOMO_STATIC_ASSERT(minBlockSize <= maxBlockSize);
-
-private:
-	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
-
-public:
-	explicit MemPool(size_t blockSize, MemManager&& memManager = MemManager())
-		: MemManagerWrapper(std::move(memManager)),
-		mBlockHead(nullptr),
-		mBufferHead(nullptr),
-		mBlockSize(blockSize),
-		mAllocCount(0)
-	{
-		if (mBlockSize < minBlockSize)
-			mBlockSize = minBlockSize;
-		if (mBlockSize > maxBlockSize)
-			throw std::length_error("momo::MemPool length error");
-	}
-
-	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
-		: MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
-		mBlockHead(memPool.mBlockHead),
-		mBufferHead(memPool.mBufferHead),
-		mBlockSize(memPool.mBlockSize),
-		mAllocCount(memPool.mAllocCount)
-	{
-		memPool.mBlockHead = nullptr;
-		memPool.mBufferHead = nullptr;
-		memPool.mAllocCount = 0;
-	}
-
-	~MemPool() MOMO_NOEXCEPT
-	{
-		assert(mAllocCount == 0);
-		_Clear();
-	}
-
-	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
-	{
-		MemPool(std::move(memPool)).Swap(*this);
-		return *this;
-	}
-
-	void Swap(MemPool& memPool) MOMO_NOEXCEPT
-	{
-		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
-		std::swap(mBlockHead, memPool.mBlockHead);
-		std::swap(mBufferHead, memPool.mBufferHead);
-		std::swap(mBlockSize, memPool.mBlockSize);
-		std::swap(mAllocCount, memPool.mAllocCount);
-	}
-
-	MOMO_FRIEND_SWAP(MemPool)
-
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
-	{
-		return _GetMemManagerWrapper().GetMemManager();
-	}
-
-	MemManager& GetMemManager() MOMO_NOEXCEPT
-	{
-		return _GetMemManagerWrapper().GetMemManager();
-	}
-
-	size_t GetBlockSize() const MOMO_NOEXCEPT
-	{
-		return mBlockSize;
-	}
-
-	void* Allocate()
-	{
-		if (mBlockHead == nullptr)
-			_NewBuffer(GetMemManager().Allocate(_GetBufferSize()));
-		void* ptr = mBlockHead;
-		mBlockHead = *(void**)mBlockHead;
-		++mAllocCount;
-		return ptr;
-	}
-
-	void Deallocate(void* ptr) MOMO_NOEXCEPT
-	{
-		assert(ptr != nullptr);
-		assert(mAllocCount > 0);
-		*(void**)ptr = mBlockHead;
-		mBlockHead = ptr;
-		--mAllocCount;
-		if (mAllocCount == 0)
-			_Shrink();
-	}
-
-private:
-	const MemManagerWrapper& _GetMemManagerWrapper() const MOMO_NOEXCEPT
-	{
-		return *this;
-	}
-
-	MemManagerWrapper& _GetMemManagerWrapper() MOMO_NOEXCEPT
-	{
-		return *this;
-	}
-
-	void _NewBuffer(void* buffer) MOMO_NOEXCEPT
-	{
-		for (size_t i = 0; i < blockCount; ++i)
-		{
-			char* ptr = (char*)buffer + mBlockSize * i;
-			*(void**)ptr = (i + 1 < blockCount) ? ptr + mBlockSize : nullptr;
-		}
-		_GetNextBuffer(buffer) = mBufferHead;
-		mBufferHead = buffer;
-		mBlockHead = buffer;
-	}
-
-	void _Shrink() MOMO_NOEXCEPT
-	{
-		void* bufferNext = _GetNextBuffer(mBufferHead);
-		if (bufferNext != nullptr)
-		{
-			void* bufferHead = mBufferHead;
-			mBufferHead = bufferNext;
-			_Clear();
-			_NewBuffer(bufferHead);
-		}
-	}
-
-	void _Clear() MOMO_NOEXCEPT
-	{
-		MemManager& memManager = GetMemManager();
-		size_t bufferSize = _GetBufferSize();
-		while (mBufferHead != nullptr)
-		{
-			void* buffer = mBufferHead;
-			mBufferHead = _GetNextBuffer(mBufferHead);
-			memManager.Deallocate(buffer, bufferSize);
-		}
-	}
-
-	void*& _GetNextBuffer(void* buffer) MOMO_NOEXCEPT
-	{
-		return *((void**)((char*)buffer + _GetBufferSize()) - 1);
-	}
-
-	size_t _GetBufferSize() const MOMO_NOEXCEPT
-	{
-		return internal::UIntMath<size_t>::Ceil(blockCount * mBlockSize, sizeof(void*))
-			+ sizeof(void*);
-	}
-
-private:
-	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool);
-	MOMO_DISABLE_COPY_OPERATOR(MemPool);
-
-private:
-	void* mBlockHead;
-	void* mBufferHead;
-	size_t mBlockSize;
-	size_t mAllocCount;
-};
-
-template<typename TMemManager>
-class MemPool<0, TMemManager> : private internal::MemManagerWrapper<TMemManager>
-{
-public:
-	typedef TMemManager MemManager;
-
-	static const size_t blockCount = 0;
-
-	static const size_t minBlockSize = 1;
-	static const size_t maxBlockSize = SIZE_MAX;
-
-private:
-	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
-
-public:
-	explicit MemPool(size_t blockSize, MemManager&& memManager = MemManager())
-		: MemManagerWrapper(std::move(memManager)),
-		mBlockSize(blockSize)
-	{
-		if (mBlockSize < minBlockSize)
-			mBlockSize = minBlockSize;
-		_GetAllocCount() = 0;
-	}
-
-	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
-		: MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
-		mBlockSize(memPool.mBlockSize)
-	{
-		_GetAllocCount() = memPool._GetAllocCount();
-		memPool._GetAllocCount() = 0;
-	}
-
-	~MemPool() MOMO_NOEXCEPT
-	{
-		assert(_GetAllocCount() == 0);
-	}
-
-	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
-	{
-		MemPool(std::move(memPool)).Swap(*this);
-		return *this;
-	}
-
-	void Swap(MemPool& memPool) MOMO_NOEXCEPT
-	{
-		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
-		std::swap(mBlockSize, memPool.mBlockSize);
-		std::swap(_GetAllocCount(), memPool._GetAllocCount());
-	}
-
-	MOMO_FRIEND_SWAP(MemPool)
-
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
-	{
-		return _GetMemManagerWrapper().GetMemManager();
-	}
-
-	MemManager& GetMemManager() MOMO_NOEXCEPT
-	{
-		return _GetMemManagerWrapper().GetMemManager();
-	}
-
-	size_t GetBlockSize() const MOMO_NOEXCEPT
-	{
-		return mBlockSize;
-	}
-
-	void* Allocate()
-	{
-		void* ptr = GetMemManager().Allocate(mBlockSize);
-		++_GetAllocCount();
-		return ptr;
-	}
-
-	void Deallocate(void* ptr) MOMO_NOEXCEPT
-	{
-		assert(ptr != nullptr);
-		assert(_GetAllocCount() > 0);
-		GetMemManager().Deallocate(ptr, mBlockSize);
-		--_GetAllocCount();
-	}
-
-private:
-	const MemManagerWrapper& _GetMemManagerWrapper() const MOMO_NOEXCEPT
-	{
-		return *this;
-	}
-
-	MemManagerWrapper& _GetMemManagerWrapper() MOMO_NOEXCEPT
-	{
-		return *this;
-	}
-
-	size_t& _GetAllocCount() MOMO_NOEXCEPT
-	{
-#ifndef NDEBUG
-		return mAllocCount;
-#else
-		static size_t allocCount = 0;
-		return allocCount;
-#endif
-	}
-
-private:
-	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool);
-	MOMO_DISABLE_COPY_OPERATOR(MemPool);
-
-private:
-	size_t mBlockSize;
-#ifndef NDEBUG
-	size_t mAllocCount;
-#endif
 };
 
 namespace internal

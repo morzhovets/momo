@@ -37,7 +37,9 @@ namespace internal
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
+
+		typedef momo::MemPool<MemPoolParamsVarSize<ItemTraits::alignment, memPoolBlockCount>,
+			MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
@@ -53,7 +55,8 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + ItemTraits::alignment,
+					size_t blockSize = i * sizeof(Item) + ItemTraits::alignment;
+					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
 						MemManagerPtr(memManager)));
 				}
 			}

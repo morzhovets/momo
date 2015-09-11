@@ -69,7 +69,8 @@ namespace internal
 
 		static const size_t arrayAlignment = std::alignment_of<Array>::value;
 
-		typedef momo::MemPool<memPoolBlockCount, MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParamsVarSize<(arrayAlignment > ItemTraits::alignment)
+			? arrayAlignment : ItemTraits::alignment, memPoolBlockCount>, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
@@ -83,11 +84,12 @@ namespace internal
 		public:
 			Params(MemManager& memManager)
 			{
-				mMemPools.AddBackNogrow(MemPool(sizeof(Array) + arrayAlignment,
+				mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(sizeof(Array) + arrayAlignment),
 					MemManagerPtr(memManager)));
 				for (size_t i = 1; i <= maxFastCount; ++i)
 				{
-					mMemPools.AddBackNogrow(MemPool(i * sizeof(Item) + ItemTraits::alignment,
+					size_t blockSize = i * sizeof(Item) + ItemTraits::alignment;
+					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
 						MemManagerPtr(memManager)));
 				}
 			}
