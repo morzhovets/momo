@@ -12,9 +12,6 @@
 
 #include "../../momo/Settings.h"
 
-#undef MOMO_MAX_ALIGNMENT
-#define MOMO_MAX_ALIGNMENT 1
-
 #undef MOMO_DEFAULT_HASH_BUCKET
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketOneI1
 
