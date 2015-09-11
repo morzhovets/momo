@@ -62,17 +62,18 @@ protected:
 	size_t blockSize;
 };
 
+template<size_t tCachedFreeBlockCount = 16>
 struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 
-	static const size_t cachedFreeBlockCount = 32;
+	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 };
 
 template<typename TParams = MemPoolParamsVarSize<>,
 	typename TMemManager = MemManagerDefault,
-	typename TSettings = MemPoolSettings>
+	typename TSettings = MemPoolSettings<>>
 class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
@@ -209,7 +210,7 @@ public:
 	void Deallocate(void* pblock) MOMO_NOEXCEPT
 	{
 		assert(pblock != nullptr);
-		MOMO_EXTRA_CHECK(mAllocCount > 0);
+		assert(mAllocCount > 0);
 		if (Settings::cachedFreeBlockCount > 0)
 		{
 			if (mCachedFreeBlocks.GetCount() == Settings::cachedFreeBlockCount)
@@ -302,7 +303,7 @@ private:
 		uintptr_t block;
 		size_t freeBlockCount = (size_t)_NewBlock(mBufferHead, block);
 		if (freeBlockCount == 0)
-			_RemoveBuffer(mBufferHead);
+			_RemoveBuffer(mBufferHead, false);
 		return block;
 	}
 
@@ -320,10 +321,7 @@ private:
 			mBufferHead = buffer;
 		}
 		if (freeBlockCount == Params::blockCount)
-		{
-			_RemoveBuffer(buffer);
-			_DeleteBuffer(buffer);
-		}
+			_RemoveBuffer(buffer, true);
 	}
 
 	uintptr_t _GetBuffer(uintptr_t block) const MOMO_NOEXCEPT
@@ -405,13 +403,7 @@ private:
 		return buffer;
 	}
 
-	void _DeleteBuffer(uintptr_t buffer) MOMO_NOEXCEPT
-	{
-		uintptr_t begin = _GetBufferPointers(buffer).begin;
-		GetMemManager().Deallocate((void*)begin, _GetBufferSize());
-	}
-
-	void _RemoveBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	void _RemoveBuffer(uintptr_t buffer, bool deallocate) MOMO_NOEXCEPT
 	{
 		BufferPointers& pointers = _GetBufferPointers(buffer);
 		if (pointers.prevBuffer != nullPtr)
@@ -420,6 +412,8 @@ private:
 			_GetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
 		if (mBufferHead == buffer)
 			mBufferHead = pointers.nextBuffer;
+		if (deallocate)
+			GetMemManager().Deallocate((void*)pointers.begin, _GetBufferSize());
 	}
 
 	size_t _GetBufferSize() const MOMO_NOEXCEPT

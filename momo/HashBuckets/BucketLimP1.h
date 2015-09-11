@@ -47,14 +47,20 @@ namespace internal
 	public:
 		class Params
 		{
+		public:
+			static const bool skipFirstMemPool =
+				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));
+
 		private:
 			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<maxCount>> MemPools;
 
+			static const size_t minIndex = (skipFirstMemPool ? 2 : 1);
+
 		public:
 			Params(MemManager& memManager)
 			{
-				for (size_t i = 1; i <= maxCount; ++i)
+				for (size_t i = minIndex; i <= maxCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item);
 					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
@@ -64,8 +70,8 @@ namespace internal
 
 			MemPool& operator[](size_t index) MOMO_NOEXCEPT
 			{
-				assert(index > 0);
-				return mMemPools[index - 1];
+				assert(index >= minIndex);
+				return mMemPools[index - minIndex];
 			}
 
 		private:
@@ -186,6 +192,8 @@ namespace internal
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			assert(0 < count && count <= maxCount);
+			if (Params::skipFirstMemPool && count == 1)
+				return 2;
 			return count;
 		}
 
