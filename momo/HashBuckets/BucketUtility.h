@@ -118,24 +118,6 @@ namespace internal
 		Pointer mPtr;
 	};
 
-	class MemManagerDummy
-	{
-	public:
-		static const bool canReallocate = false;
-		static const bool canReallocateInplace = false;
-	
-	public:
-		//void* Allocate(size_t size);
-
-		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
-		{
-			assert(false);
-		}
-	
-	private:
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerDummy);
-	};
-
 	template<size_t tMaxCount>
 	struct HashBucketBase
 	{
