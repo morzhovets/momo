@@ -14,6 +14,7 @@
 #include "../../momo/HashMap.h"
 #include "../../momo/HashMultiMap.h"
 #include "../../momo/HashBuckets/BucketFewP.h"
+#include "../../momo/HashBuckets/BucketLim4.h"
 
 #include <string>
 #include <iostream>

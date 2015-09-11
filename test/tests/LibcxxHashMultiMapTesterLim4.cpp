@@ -20,6 +20,8 @@
 
 #define LIBCXX_TEST_BUCKET "lim4"
 
+#include "../../momo/HashBuckets/BucketLim4.h"
+
 #include "LibcxxHashMultiMapTester.h"
 
 #endif // TEST_LIBCXX_HASH_MULTI_MAP

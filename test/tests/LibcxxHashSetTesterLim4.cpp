@@ -23,6 +23,8 @@
 
 #define LIBCXX_TEST_BUCKET "lim4"
 
+#include "../../momo/HashBuckets/BucketLim4.h"
+
 #include "LibcxxHashSetTester.h"
 
 #endif // TEST_LIBCXX_HASH_SET
