@@ -6,7 +6,7 @@
     struct MemPoolConst
     class MemPoolParams
     class MemPoolParamsVarSize
-    class MemPoolSettings
+    struct MemPoolSettings
     class MemPool
 
 \**********************************************************/
@@ -95,11 +95,15 @@ private:
 
 	static const uintptr_t nullPtr = (uintptr_t)nullptr;
 
+	static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
+	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
+
 public:
 	explicit MemPool(const Params& params = Params(), MemManager&& memManager = MemManager())
 		: Params(params),
 		MemManagerWrapper(std::move(memManager)),
-		mBufferHead(nullPtr)
+		mBufferHead(nullPtr),
+		mAllocCount(0)
 	{
 		_CheckParams();
 	}
@@ -108,9 +112,11 @@ public:
 		: Params(std::move(memPool._GetParams())),
 		MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
+		mAllocCount(memPool.mAllocCount),
 		mCachedFreeBlocks(std::move(memPool.mCachedFreeBlocks))
 	{
 		memPool.mBufferHead = nullPtr;
+		memPool.mAllocCount = 0;
 	}
 
 	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
@@ -124,6 +130,7 @@ public:
 		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
 		std::swap(_GetParams(), memPool._GetParams());
 		std::swap(mBufferHead, memPool.mBufferHead);
+		std::swap(mAllocCount, memPool.mAllocCount);
 		mCachedFreeBlocks.Swap(memPool.mCachedFreeBlocks);
 	}
 
@@ -131,13 +138,15 @@ public:
 
 	~MemPool() MOMO_NOEXCEPT
 	{
-		_FlushDeallocate();
-		if (mBufferHead != nullPtr)
+		MOMO_EXTRA_CHECK(mAllocCount == 0);
+		if (Settings::cachedFreeBlockCount > 0)
+			_FlushDeallocate();
+		if (Params::blockCount > 1 && mBufferHead != nullPtr)
 		{
-			MOMO_EXTRA_CHECK(_GetPrevBuffer(mBufferHead) == nullPtr);
-			MOMO_EXTRA_CHECK(_GetNextBuffer(mBufferHead) == nullPtr);
-			MOMO_EXTRA_CHECK((size_t)_GetFreeBlockCount(mBufferHead) == Params::blockCount);
-			_FreeBuffer(mBufferHead);
+			assert(_GetPrevBuffer(mBufferHead) == nullPtr);
+			assert(_GetNextBuffer(mBufferHead) == nullPtr);
+			assert((size_t)_GetFreeBlockCount(mBufferHead) == Params::blockCount);
+			_DeleteBuffer(mBufferHead);
 		}
 	}
 
@@ -168,21 +177,29 @@ public:
 
 	void* Allocate()
 	{
+		void* pblock;
 		if (Settings::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
 		{
-			void* pblock = mCachedFreeBlocks.GetBackItem();
+			pblock = mCachedFreeBlocks.GetBackItem();
 			mCachedFreeBlocks.RemoveBack();
-			return pblock;
 		}
 		else
 		{
-			return (void*)_NewBlock();
+			if (Params::blockCount > 1)
+				pblock = (void*)_NewBlock();
+			else if (maxAlignment % Params::blockAlignment == 0)
+				pblock = GetMemManager().Allocate(Params::blockSize);
+			else
+				pblock = (void*)_NewBlock1();
 		}
+		++mAllocCount;
+		return pblock;
 	}
 
 	void Deallocate(void* pblock) MOMO_NOEXCEPT
 	{
 		assert(pblock != nullptr);
+		MOMO_EXTRA_CHECK(mAllocCount > 0);
 		if (Settings::cachedFreeBlockCount > 0)
 		{
 			if (mCachedFreeBlocks.GetCount() == Settings::cachedFreeBlockCount)
@@ -191,8 +208,9 @@ public:
 		}
 		else
 		{
-			_FreeBlock((uintptr_t)pblock);
+			_DeleteBlock(pblock);
 		}
+		--mAllocCount;
 	}
 
 private:
@@ -226,8 +244,44 @@ private:
 	void _FlushDeallocate() MOMO_NOEXCEPT
 	{
 		for (void* pblock : mCachedFreeBlocks)
-			_FreeBlock((uintptr_t)pblock);
+			_DeleteBlock(pblock);
 		mCachedFreeBlocks.Clear();
+	}
+
+	void _DeleteBlock(void* pblock) MOMO_NOEXCEPT
+	{
+		if (Params::blockCount > 1)
+			_DeleteBlock((uintptr_t)pblock);
+		else if (maxAlignment % Params::blockAlignment == 0)
+			GetMemManager().Deallocate(pblock, Params::blockSize);
+		else
+			_DeleteBlock1((uintptr_t)pblock);
+	}
+
+	uintptr_t _NewBlock1()
+	{
+		uintptr_t begin = (uintptr_t)GetMemManager().Allocate(_GetBufferSize1());
+		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
+		_GetBufferBegin1(block) = begin;
+		return block;
+	}
+
+	void _DeleteBlock1(uintptr_t block) MOMO_NOEXCEPT
+	{
+		GetMemManager().Deallocate((void*)_GetBufferBegin1(block), _GetBufferSize1());
+	}
+
+	size_t _GetBufferSize1() const MOMO_NOEXCEPT
+	{
+		size_t bufferUsefulSize = Params::blockSize + Params::blockAlignment
+			- SMath::GCD(maxAlignment, Params::blockAlignment);
+		size_t bufferSize = SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
+		return bufferSize;
+	}
+
+	uintptr_t& _GetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
+	{
+		return *(uintptr_t*)PMath::Ceil(block + Params::blockSize, (uintptr_t)sizeof(void*));
 	}
 
 	uintptr_t _NewBlock()
@@ -240,10 +294,10 @@ private:
 		return block;
 	}
 
-	void _FreeBlock(uintptr_t block) MOMO_NOEXCEPT
+	void _DeleteBlock(uintptr_t block) MOMO_NOEXCEPT
 	{
 		uintptr_t buffer = _GetBuffer(block);
-		_FreeBlock(buffer, block);
+		_DeleteBlock(buffer, block);
 		size_t freeBlockCount = (size_t)_GetFreeBlockCount(buffer);
 		if (freeBlockCount == 1)
 		{
@@ -256,14 +310,14 @@ private:
 		if (freeBlockCount == Params::blockCount)
 		{
 			_RemoveBuffer(buffer);
-			_FreeBuffer(buffer);
+			_DeleteBuffer(buffer);
 		}
 	}
 
 	uintptr_t _GetBuffer(uintptr_t block) const MOMO_NOEXCEPT
 	{
 		assert(block % Params::blockAlignment == 0);
-		uintptr_t buffer = PMath::Ceil(block, Params::blockSize * Params::blockCount)
+		uintptr_t buffer = PMath::Ceil(block, (uintptr_t)(Params::blockSize * Params::blockCount))
 			+ (block % Params::blockSize);
 		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
 			buffer -= Params::blockSize * Params::blockCount + Params::blockAlignment;
@@ -279,7 +333,7 @@ private:
 		return block;
 	}
 
-	void _FreeBlock(uintptr_t buffer, uintptr_t block) MOMO_NOEXCEPT
+	void _DeleteBlock(uintptr_t buffer, uintptr_t block) MOMO_NOEXCEPT
 	{
 		signed char& firstFreeBlockIndex = _GetFirstFreeBlockIndex(buffer);
 		_GetNextFreeBlockIndex(block) = firstFreeBlockIndex;
@@ -336,7 +390,7 @@ private:
 		return buffer;
 	}
 
-	void _FreeBuffer(uintptr_t buffer) MOMO_NOEXCEPT
+	void _DeleteBuffer(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		GetMemManager().Deallocate((void*)_GetBufferBegin(buffer), _GetBufferSize());
 	}
@@ -357,8 +411,6 @@ private:
 	{
 		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
 			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
-		static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
-		MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
 		if ((Params::blockAlignment & (Params::blockAlignment - 1)) == 0)
 			bufferUsefulSize -= std::minmax(maxAlignment, (size_t)Params::blockAlignment).first;	// gcc & llvm
 		else
@@ -420,6 +472,7 @@ private:
 
 private:
 	uintptr_t mBufferHead;
+	size_t mAllocCount;
 	CachedFreeBlocks mCachedFreeBlocks;
 };
 
