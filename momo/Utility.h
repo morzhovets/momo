@@ -169,11 +169,11 @@ namespace internal
 	template<>
 	inline uint32_t UIntMath<uint32_t>::Log2(uint32_t value) MOMO_NOEXCEPT
 	{
-		static const size_t tab32[32] =
+		static const uint32_t tab32[32] =
 		{
-				0,  9,  1, 10, 13, 21,  2, 29,
+			 0,  9,  1, 10, 13, 21,  2, 29,
 			11, 14, 16, 18, 22, 25,  3, 30,
-				8, 12, 20, 28, 15, 17, 24,  7,
+			 8, 12, 20, 28, 15, 17, 24,  7,
 			19, 27, 23,  6, 26,  5,  4, 31,
 		};
 		value |= value >> 1;
@@ -187,7 +187,7 @@ namespace internal
 	template<>
 	inline uint64_t UIntMath<uint64_t>::Log2(uint64_t value) MOMO_NOEXCEPT
 	{
-		static const size_t tab64[64] =
+		static const uint64_t tab64[64] =
 		{
 			63,  0, 58,  1, 59, 47, 53,  2,
 			60, 39, 48, 27, 54, 33, 42,  3,
