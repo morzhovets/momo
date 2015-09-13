@@ -70,14 +70,14 @@ namespace internal
 				}
 			}
 
-			const MemPool& operator[](size_t index) const MOMO_NOEXCEPT
+			const MemPool& GetMemPool(size_t memPoolIndex) const MOMO_NOEXCEPT
 			{
-				return mMemPools[index];
+				return mMemPools[memPoolIndex];
 			}
 
-			MemPool& operator[](size_t index) MOMO_NOEXCEPT
+			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				return mMemPools[index];
+				return mMemPools[memPoolIndex];
 			}
 
 		private:
@@ -131,7 +131,7 @@ namespace internal
 			{
 				Item* items = _GetItems<Item>(params);
 				ItemTraits::Destroy(items, _GetCount());
-				params[_GetMemPoolIndex()].Deallocate(_GetPointer());
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(_GetPointer());
 			}
 			mState = stateNull;
 		}
@@ -143,7 +143,7 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = WasFull() ? maxCount - 1 : _GetMemPoolIndex(newCount);
-				MemPool& newMemPool = params[newMemPoolIndex];
+				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
 				Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
 				itemCreator(newItems);
@@ -159,14 +159,14 @@ namespace internal
 				{
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
-					MemPool& newMemPool = params[newMemPoolIndex];
+					MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 					Memory memory(newMemPool);
 					Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
-					MemPool& memPool = params[memPoolIndex];
+					MemPool& memPool = params.GetMemPool(memPoolIndex);
 					uint32_t ptr = _GetPointer();
 					Item* items = (Item*)memPool.GetRealPointer(ptr);
 					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
-					params[memPoolIndex].Deallocate(ptr);
+					memPool.Deallocate(ptr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 				}
 				else
@@ -186,7 +186,7 @@ namespace internal
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
-				params[memPoolIndex].Deallocate(_GetPointer());
+				params.GetMemPool(memPoolIndex).Deallocate(_GetPointer());
 				mState = (memPoolIndex < maxCount - 1) ? stateNull : stateNullWasFull;
 			}
 			else
@@ -241,7 +241,7 @@ namespace internal
 		{
 			if (_IsNull())
 				return nullptr;
-			auto& memPool = params[_GetMemPoolIndex()];
+			auto& memPool = params.GetMemPool(_GetMemPoolIndex());
 			auto* realPtr = memPool.GetRealPointer(_GetPointer());
 			return (Item*)realPtr;
 		}

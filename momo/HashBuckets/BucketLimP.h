@@ -61,10 +61,10 @@ namespace internal
 				}
 			}
 
-			MemPool& operator[](size_t index) MOMO_NOEXCEPT
+			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(index > 0);
-				return mMemPools[index - 1];
+				assert(memPoolIndex > 0);
+				return mMemPools[memPoolIndex - 1];
 			}
 
 		private:
@@ -115,7 +115,7 @@ namespace internal
 			if (mPtr == nullptr)
 				return;
 			ItemTraits::Destroy(_GetItems(), _GetCount());
-			params[_GetMemPoolIndex()].Deallocate(mPtr);
+			params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
 			mPtr = nullptr;
 		}
 
@@ -126,7 +126,7 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
-				Memory memory(params[newMemPoolIndex]);
+				Memory memory(params.GetMemPool(newMemPoolIndex));
 				itemCreator(_GetItems(memory.GetPointer()));
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
 			}
@@ -140,10 +140,10 @@ namespace internal
 				{
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
-					Memory memory(params[newMemPoolIndex]);
+					Memory memory(params.GetMemPool(newMemPoolIndex));
 					ItemTraits::RelocateAddBack(_GetItems(), _GetItems(memory.GetPointer()),
 						count, itemCreator);
-					params[memPoolIndex].Deallocate(mPtr);
+					params.GetMemPool(memPoolIndex).Deallocate(mPtr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 				}
 				else
@@ -161,7 +161,7 @@ namespace internal
 			ItemTraits::Destroy(_GetItems() + count - 1, 1);
 			if (count == 1 && !WasFull())
 			{
-				params[_GetMemPoolIndex()].Deallocate(mPtr);
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
 				mPtr = nullptr;
 			}
 			else

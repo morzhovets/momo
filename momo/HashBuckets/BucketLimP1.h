@@ -49,18 +49,18 @@ namespace internal
 		{
 		public:
 			static const bool skipFirstMemPool =
-				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));
+				(maxCount > 1 && memPoolBlockCount > 1 && ItemTraits::alignment == sizeof(Item));
 
 		private:
 			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<maxCount>> MemPools;
 
-			static const size_t minIndex = (skipFirstMemPool ? 2 : 1);
+			static const size_t minMemPoolIndex = (skipFirstMemPool ? 2 : 1);
 
 		public:
 			Params(MemManager& memManager)
 			{
-				for (size_t i = minIndex; i <= maxCount; ++i)
+				for (size_t i = minMemPoolIndex; i <= maxCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item);
 					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
@@ -68,10 +68,10 @@ namespace internal
 				}
 			}
 
-			MemPool& operator[](size_t index) MOMO_NOEXCEPT
+			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(index >= minIndex);
-				return mMemPools[index - minIndex];
+				assert(memPoolIndex >= minMemPoolIndex);
+				return mMemPools[memPoolIndex - minMemPoolIndex];
 			}
 
 		private:
@@ -119,7 +119,7 @@ namespace internal
 			if (items != nullptr)
 			{
 				ItemTraits::Destroy(items, _GetCount());
-				params[_GetMemPoolIndex()].Deallocate(items);
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
 			_Set(nullptr, (unsigned char)0);
 		}
@@ -132,7 +132,7 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
-				Memory memory(params[newMemPoolIndex]);
+				Memory memory(params.GetMemPool(newMemPoolIndex));
 				itemCreator(memory.GetPointer());
 				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 			}
@@ -146,10 +146,10 @@ namespace internal
 				{
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
-					Memory memory(params[newMemPoolIndex]);
+					Memory memory(params.GetMemPool(newMemPoolIndex));
 					ItemTraits::RelocateAddBack(items,
 						memory.GetPointer(), count, itemCreator);
-					params[memPoolIndex].Deallocate(items);
+					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 				}
 				else
@@ -168,7 +168,7 @@ namespace internal
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1 && !WasFull())
 			{
-				params[_GetMemPoolIndex()].Deallocate(items);
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 				_Set(nullptr, (unsigned char)0);
 			}
 			else
