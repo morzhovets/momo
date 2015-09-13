@@ -36,8 +36,11 @@ public:
 	static const size_t blockAlignment = tBlockAlignment;
 	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
 
-	static const size_t blockSize = (tBlockSize <= blockAlignment) ? 2 * blockAlignment
-		: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment;
+	static const size_t blockSize = (blockCount == 1)
+		? ((tBlockSize > 0) ? tBlockSize : 1)
+		: ((tBlockSize <= blockAlignment)
+			? 2 * blockAlignment
+			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
 };
 
 template<size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,
@@ -53,9 +56,12 @@ public:
 
 public:
 	explicit MemPoolParamsVarSize(size_t blockSize) MOMO_NOEXCEPT
-		: blockSize((blockSize <= blockAlignment) ? 2 * blockAlignment
-			: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment))
 	{
+		this->blockSize = (blockCount == 1)
+			? ((blockSize > 0) ? blockSize : 1)
+			: ((blockSize <= blockAlignment)
+				? 2 * blockAlignment
+				: ((blockSize - 1) / blockAlignment + 1) * blockAlignment);
 	}
 
 protected:
@@ -244,8 +250,9 @@ private:
 	{
 		MOMO_CHECK(0 < Params::blockCount && Params::blockCount < 128);
 		MOMO_CHECK(0 < Params::blockAlignment && Params::blockAlignment <= 1024);
-		MOMO_CHECK(Params::blockSize % Params::blockAlignment == 0);
-		MOMO_CHECK(Params::blockSize / Params::blockAlignment >= 2);
+		MOMO_CHECK(Params::blockSize > 0);
+		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
+		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
 		size_t maxBlockSize =
 			(SIZE_MAX - 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment) / Params::blockCount;
 		if (Params::blockSize > maxBlockSize)
