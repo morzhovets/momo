@@ -217,8 +217,6 @@ namespace internal
 				return 0;
 			return (size_t)internal::UIntMath<uintptr_t>::ModSmall(
 				mPtr / (uintptr_t)ItemTraits::alignment, (uintptr_t)_GetMemPoolIndex()) + 1;
-			//return (size_t)((mPtr / (uintptr_t)ItemTraits::alignment)
-			//	% (uintptr_t)_GetMemPoolIndex()) + 1;
 		}
 
 		Item* _GetItems() const MOMO_NOEXCEPT
@@ -229,8 +227,6 @@ namespace internal
 			return (Item*)(internal::UIntMath<uintptr_t>::DivSmall(
 				mPtr / (uintptr_t)ItemTraits::alignment, (uintptr_t)memPoolIndex)
 				* (uintptr_t)(ItemTraits::alignment * memPoolIndex));
-			//uintptr_t mod = (uintptr_t)(ItemTraits::alignment * _GetMemPoolIndex());
-			//return (Item*)((mPtr / mod) * mod);
 		}
 
 	private:

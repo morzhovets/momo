@@ -223,17 +223,15 @@ namespace internal
 		{
 			if (_IsNull())
 				return 0;
-			size_t memPoolIndex = _GetMemPoolIndex();
-			size_t count = (size_t)(mState & stateNull) % (memPoolIndex + 1) + 1;
-			return count;
+			return internal::UIntMath<size_t>::ModSmall((size_t)(mState & stateNull),
+				_GetMemPoolIndex() + 1) + 1;
 		}
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			size_t memPoolIndex = _GetMemPoolIndex();
-			uint32_t ptr = (mState & stateNull) / (uint32_t)(memPoolIndex + 1);
-			return ptr;
+			return internal::UIntMath<uint32_t>::DivSmall(mState & stateNull,
+				(uint32_t)(_GetMemPoolIndex() + 1));
 		}
 
 		template<typename Item, typename Params>
