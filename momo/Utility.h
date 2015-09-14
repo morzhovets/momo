@@ -168,6 +168,38 @@ namespace internal
 			return value1;
 		}
 
+		static UInt DivSmall(UInt value, UInt mod) MOMO_NOEXCEPT
+		{
+			switch (mod)
+			{
+			case 1: return value / 1;
+			case 2: return value / 2;
+			case 3: return value / 3;
+			case 4: return value / 4;
+			case 5: return value / 5;
+			case 6: return value / 6;
+			case 7: return value / 7;
+			case 8: return value / 8;
+			default: return value / mod;
+			}
+		}
+
+		static UInt ModSmall(UInt value, UInt mod) MOMO_NOEXCEPT
+		{
+			switch (mod)
+			{
+			case 1: return value - (value / 1) * 1;
+			case 2: return value - (value / 2) * 2;
+			case 3: return value - (value / 3) * 3;
+			case 4: return value - (value / 4) * 4;
+			case 5: return value - (value / 5) * 5;
+			case 6: return value - (value / 6) * 6;
+			case 7: return value - (value / 7) * 7;
+			case 8: return value - (value / 8) * 8;
+			default: return value % mod;
+			}
+		}
+
 		static UInt Log2(UInt value) MOMO_NOEXCEPT;
 	};
 
