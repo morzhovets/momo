@@ -18,7 +18,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		uintptr_t tRemovedPtr, size_t tMemAlignment, size_t tMemPoolBlockCount>
+		size_t tMaxCount, size_t tMemPoolBlockCount>
 	class BucketFewP
 	{
 	public:
@@ -26,18 +26,13 @@ namespace internal
 		typedef TMemManager MemManager;
 		typedef typename ItemTraits::Item Item;
 
-		static const uintptr_t removedPtr = tRemovedPtr;
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(maxCount <= ItemTraits::alignment);
+
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
-		static const size_t memAlignment = tMemAlignment;
-		MOMO_STATIC_ASSERT(memAlignment > 0 && ((memAlignment - 1) & memAlignment) == 0);
-
-		static const uintptr_t nullPtr = (uintptr_t)nullptr;
-		//MOMO_STATIC_ASSERT(removedPtr != nullPtr);	// llvm bug
-		MOMO_STATIC_ASSERT(nullptr == (void*)0 && removedPtr != 0);
-
-		static const size_t maxCount = (memAlignment >= 8) ? 3 : (memAlignment >= 4) ? 2 : 1;
-		static const uintptr_t maskState = (memAlignment >= 8) ? 7 : (memAlignment >= 4) ? 3 : 0;
+		static const uintptr_t nullPtr = 0;
+		static const uintptr_t removedPtr = 1;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -45,8 +40,29 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParamsVarSize<(memAlignment > ItemTraits::alignment)
-			? memAlignment : ItemTraits::alignment, memPoolBlockCount>, MemManagerPtr> MemPool;
+		class MemPoolParams
+		{
+		public:
+			static const size_t blockCount = memPoolBlockCount;
+			MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+
+		public:
+			MemPoolParams(size_t blockAlignment, size_t blockSize) MOMO_NOEXCEPT
+			{
+				this->blockAlignment = blockAlignment;
+				this->blockSize = (blockCount == 1)
+					? ((blockSize > 0) ? blockSize : 1)
+					: ((blockSize <= blockAlignment)
+						? 2 * blockAlignment
+						: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment));
+			}
+
+		protected:
+			size_t blockAlignment;
+			size_t blockSize;
+		};
+
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 
@@ -62,9 +78,8 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					size_t blockSize = i * sizeof(Item);
-					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
-						MemManagerPtr(memManager)));
+					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * ItemTraits::alignment,
+						i * sizeof(Item)), MemManagerPtr(memManager)));
 				}
 			}
 
@@ -136,7 +151,6 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = (mPtr == nullPtr) ? 1 : maxCount;
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				_CheckMemory(memory);
 				itemCreator(memory.GetPointer());
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
 			}
@@ -151,7 +165,6 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = newCount;
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					_CheckMemory(memory);
 					Item* items = _GetItems();
 					ItemTraits::RelocateAddBack(items, memory.GetPointer(),
 						count, itemCreator);
@@ -161,7 +174,7 @@ namespace internal
 				else
 				{
 					itemCreator(_GetItems() + count);
-					++mPtr;
+					mPtr += (size_t)ItemTraits::alignment;
 				}
 			}
 		}
@@ -180,41 +193,44 @@ namespace internal
 			}
 			else
 			{
-				--mPtr;
+				mPtr -= (size_t)ItemTraits::alignment;
 			}
 		}
 
 	private:
-		static void _CheckMemory(const Memory& memory)
-		{
-			if (((uintptr_t)memory.GetPointer() & maskState) != 0)
-				throw std::bad_alloc();
-		}
-
 		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			mPtr = (uintptr_t)items;
-			mPtr |= (uintptr_t)((maxCount - memPoolIndex) * maxCount + count - 1);
+			assert(mPtr % (uintptr_t)(ItemTraits::alignment * memPoolIndex) == 0);
+			mPtr += (uintptr_t)((count - 1) * ItemTraits::alignment + memPoolIndex - 1);
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			assert(mPtr != nullPtr && mPtr != removedPtr);
-			return maxCount - (size_t)(mPtr & maskState) / maxCount;
+			return (size_t)(mPtr % (uintptr_t)ItemTraits::alignment) + 1;
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
 			if (mPtr == nullPtr || mPtr == removedPtr)
 				return 0;
-			return (size_t)(mPtr & maskState) % maxCount + 1;
+			return (size_t)internal::UIntMath<uintptr_t>::ModSmall(
+				mPtr / (uintptr_t)ItemTraits::alignment, (uintptr_t)_GetMemPoolIndex()) + 1;
+			//return (size_t)((mPtr / (uintptr_t)ItemTraits::alignment)
+			//	% (uintptr_t)_GetMemPoolIndex()) + 1;
 		}
 
 		Item* _GetItems() const MOMO_NOEXCEPT
 		{
 			if (mPtr == nullPtr || mPtr == removedPtr)
 				return nullptr;
-			return (Item*)(mPtr & ~maskState);
+			size_t memPoolIndex = _GetMemPoolIndex();
+			return (Item*)(internal::UIntMath<uintptr_t>::DivSmall(
+				mPtr / (uintptr_t)ItemTraits::alignment, (uintptr_t)memPoolIndex)
+				* (uintptr_t)(ItemTraits::alignment * memPoolIndex));
+			//uintptr_t mod = (uintptr_t)(ItemTraits::alignment * _GetMemPoolIndex());
+			//return (Item*)((mPtr / mod) * mod);
 		}
 
 	private:
@@ -226,21 +242,18 @@ namespace internal
 	};
 }
 
-template<uintptr_t tRemovedPtr,
-	size_t tMemAlignment = 8,
+template<size_t tMaxCount = sizeof(void*),
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
-struct HashBucketFewP
-	: public internal::HashBucketBase<(tMemAlignment >= 8) ? 3 : (tMemAlignment >= 4) ? 2 : 1>
+struct HashBucketFewP : public internal::HashBucketBase<tMaxCount>
 {
-	static const uintptr_t removedPtr = tRemovedPtr;
-	static const size_t memAlignment = tMemAlignment;
+	static const size_t maxCount = tMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
 		typedef internal::BucketFewP<ItemTraits, MemManager,
-			removedPtr, memAlignment, memPoolBlockCount> Bucket;
+			maxCount, memPoolBlockCount> Bucket;
 	};
 };
 

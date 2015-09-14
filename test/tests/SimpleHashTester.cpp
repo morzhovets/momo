@@ -24,7 +24,7 @@ class SimpleHashTester
 public:
 	static void TestAll()
 	{
-		TestHashBucket<momo::HashBucketFewP<1>>("momo::HashBucketFewP");
+		TestHashBucket<momo::HashBucketFewP<>>("momo::HashBucketFewP");
 		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4");
 		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP");
 		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1");

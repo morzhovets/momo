@@ -73,7 +73,7 @@ public:
 		TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
 		//TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
 		TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
-		TestHashMap<momo::HashBucketFewP<1>>("HashBucketFewP");
+		TestHashMap<momo::HashBucketFewP<>>("HashBucketFewP");
 		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 	}
