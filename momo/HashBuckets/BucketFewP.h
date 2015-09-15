@@ -71,6 +71,10 @@ namespace internal
 	public:
 		class Params
 		{
+		public:
+			static const bool skipOddMemPools =
+				(memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+
 		private:
 			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<maxCount>> MemPools;
@@ -80,6 +84,8 @@ namespace internal
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
+					if (skipOddMemPools && i % 2 == 1 && i != maxCount)
+						continue;
 					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * (size_t)itemAlignment,
 						i * sizeof(Item)), MemManagerPtr(memManager)));
 				}
@@ -88,7 +94,7 @@ namespace internal
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				assert(memPoolIndex > 0);
-				return mMemPools[memPoolIndex - 1];
+				return mMemPools[(memPoolIndex - 1) / (skipOddMemPools ? 2 : 1)];
 			}
 
 		private:
@@ -215,6 +221,8 @@ namespace internal
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			assert(0 < count && count <= maxCount);
+			if (Params::skipOddMemPools && count % 2 == 1 && count != maxCount)
+				return count + 1;
 			return count;
 		}
 
@@ -250,7 +258,7 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = sizeof(void*),
+template<size_t tMaxCount = 4,
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
 struct HashBucketFewP : public internal::HashBucketBase<tMaxCount>
 {
