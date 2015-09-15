@@ -37,6 +37,7 @@ namespace internal
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
 		typedef MemPoolUInt32<memPoolBlockCount, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
@@ -72,12 +73,14 @@ namespace internal
 
 			const MemPool& GetMemPool(size_t memPoolIndex) const MOMO_NOEXCEPT
 			{
-				return mMemPools[memPoolIndex];
+				assert(memPoolIndex > 0);
+				return mMemPools[memPoolIndex - 1];
 			}
 
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				return mMemPools[memPoolIndex];
+				assert(memPoolIndex > 0);
+				return mMemPools[memPoolIndex - 1];
 			}
 
 		private:
@@ -111,8 +114,6 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			if (_IsNull())
-				return false;
 			return _GetCount() == maxCount;
 		}
 
@@ -122,7 +123,7 @@ namespace internal
 				return false;
 			if (mState == stateNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == maxCount - 1;
+			return _GetMemPoolIndex() == maxCount;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -142,7 +143,7 @@ namespace internal
 			if (_IsNull())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = WasFull() ? maxCount - 1 : _GetMemPoolIndex(newCount);
+				size_t newMemPoolIndex = (mState == stateNull) ? _GetMemPoolIndex(newCount) : maxCount;
 				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
 				Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
@@ -153,9 +154,9 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				size_t count = _GetCount();
-				assert(count <= memPoolIndex + 1);
+				assert(count <= memPoolIndex);
 				assert(count < maxCount);
-				if (count == memPoolIndex + 1)
+				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
@@ -187,7 +188,7 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(_GetPointer());
-				mState = (memPoolIndex < maxCount - 1) ? stateNull : stateNullWasFull;
+				mState = (memPoolIndex < maxCount) ? stateNull : stateNullWasFull;
 			}
 			else
 			{
@@ -203,20 +204,20 @@ namespace internal
 
 		void _Set(uint32_t ptr, size_t memPoolIndex, size_t count)
 		{
-			mState = (uint32_t)(memPoolIndex << (32 - logMaxCount))
-				| (uint32_t)(ptr * (memPoolIndex + 1) + count - 1);
+			mState = (uint32_t)(((memPoolIndex - 1) << (32 - logMaxCount))
+				+ (size_t)ptr * memPoolIndex + count - 1);
 		}
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			assert(0 < count && count <= maxCount);
-			return count - 1;
+			return count;
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return (size_t)(mState >> (32 - logMaxCount));
+			return (size_t)(mState >> (32 - logMaxCount)) + 1;
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
@@ -224,14 +225,14 @@ namespace internal
 			if (_IsNull())
 				return 0;
 			return internal::UIntMath<size_t>::ModSmall((size_t)(mState & stateNull),
-				_GetMemPoolIndex() + 1) + 1;
+				_GetMemPoolIndex()) + 1;
 		}
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
 			return internal::UIntMath<uint32_t>::DivSmall(mState & stateNull,
-				(uint32_t)(_GetMemPoolIndex() + 1));
+				(uint32_t)_GetMemPoolIndex());
 		}
 
 		template<typename Item, typename Params>
