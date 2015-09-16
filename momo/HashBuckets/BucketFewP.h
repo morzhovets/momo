@@ -66,7 +66,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(maxCount <= itemAlignment);
 
 		static const bool skipOddMemPools =
-			(maxCount > 1 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+			(maxCount % 2 == 0 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
 		static const uintptr_t modMemPoolIndex = (uintptr_t)itemAlignment / (skipOddMemPools ? 2 : 1);
 
 		static const uintptr_t ptrNull = 0;
@@ -82,21 +82,12 @@ namespace internal
 		public:
 			Params(MemManager& memManager)
 			{
-				if (skipOddMemPools)
+				for (size_t i = 1; i <= maxCount; ++i)
 				{
-					for (size_t i = 2; i <= maxCount + 1; i += 2)
-					{
-						mMemPools.AddBackNogrow(MemPool(MemPoolParams((i / 2) * itemAlignment,
-							i * sizeof(Item)), MemManagerPtr(memManager)));
-					}
-				}
-				else
-				{
-					for (size_t i = 1; i <= maxCount; ++i)
-					{
-						mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * itemAlignment,
-							i * sizeof(Item)), MemManagerPtr(memManager)));
-					}
+					if (skipOddMemPools && i % 2 == 1)
+						continue;
+					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * (size_t)modMemPoolIndex,
+						i * sizeof(Item)), MemManagerPtr(memManager)));
 				}
 			}
 
@@ -127,17 +118,17 @@ namespace internal
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return ConstBounds(_GetItems(), _GetCount());
+			return _GetBounds();
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(_GetItems(), _GetCount());
+			return _GetBounds();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return _GetCount() == maxCount;
+			return _GetBounds().GetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -146,15 +137,16 @@ namespace internal
 				return false;
 			if (mPtr == ptrNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
+			return _GetMemPoolIndex() == maxCount;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (!_IsNull())
 			{
-				Item* items = _GetItems();
-				ItemTraits::Destroy(items, _GetCount());
+				Bounds bounds = _GetBounds();
+				Item* items = bounds.GetBegin();
+				ItemTraits::Destroy(items, bounds.GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
 			mPtr = ptrNull;
@@ -174,7 +166,9 @@ namespace internal
 			else
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
-				size_t count = _GetCount();
+				Bounds bounds = _GetBounds();
+				size_t count = bounds.GetCount();
+				Item* items = bounds.GetBegin();
 				assert(count <= memPoolIndex);
 				assert(count < maxCount);
 				if (count == memPoolIndex)
@@ -182,7 +176,6 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					Item* items = _GetItems();
 					ItemTraits::RelocateAddBack(items, memory.GetPointer(),
 						count, itemCreator);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
@@ -190,7 +183,7 @@ namespace internal
 				}
 				else
 				{
-					itemCreator(_GetItems() + count);
+					itemCreator(items + count);
 					mPtr += modMemPoolIndex;
 				}
 			}
@@ -198,15 +191,16 @@ namespace internal
 
 		void RemoveBack(Params& params) MOMO_NOEXCEPT
 		{
-			size_t count = _GetCount();
+			Bounds bounds = _GetBounds();
+			size_t count = bounds.GetCount();
 			assert(count > 0);
-			Item* items = _GetItems();
+			Item* items = bounds.GetBegin();
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
-				mPtr = (memPoolIndex < _GetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
+				mPtr = (memPoolIndex < maxCount) ? ptrNull : ptrNullWasFull;
 			}
 			else
 			{
@@ -240,21 +234,16 @@ namespace internal
 			return (size_t)(mPtr % modMemPoolIndex + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
-		size_t _GetCount() const MOMO_NOEXCEPT
+		Bounds _GetBounds() const MOMO_NOEXCEPT
 		{
 			if (_IsNull())
-				return 0;
-			return (size_t)internal::UIntMath<uintptr_t>::ModSmall(mPtr / modMemPoolIndex,
-				(uintptr_t)_GetMemPoolIndex()) + 1;
-		}
-
-		Item* _GetItems() const MOMO_NOEXCEPT
-		{
-			if (_IsNull())
-				return nullptr;
+				return Bounds();
 			size_t memPoolIndex = _GetMemPoolIndex();
-			return (Item*)(internal::UIntMath<uintptr_t>::DivSmall(mPtr / modMemPoolIndex,
-				(uintptr_t)memPoolIndex) * (modMemPoolIndex * (uintptr_t)memPoolIndex));
+			uintptr_t ptrCount = mPtr / modMemPoolIndex;
+			uintptr_t ptr = internal::UIntMath<uintptr_t>::DivSmall(ptrCount, (uintptr_t)memPoolIndex);
+			size_t count = (size_t)(ptrCount - ptr * (uintptr_t)memPoolIndex) + 1;
+			Item* items = (Item*)(ptr * modMemPoolIndex * (uintptr_t)memPoolIndex);
+			return Bounds(items, count);
 		}
 
 	private:
