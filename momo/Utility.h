@@ -151,6 +151,12 @@ namespace internal
 	{
 		typedef TUInt UInt;
 
+		struct DivResult
+		{
+			UInt quotient;
+			UInt remainder;
+		};
+
 		static UInt Ceil(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
 			assert(value != 0 && mod != 0);
@@ -168,36 +174,32 @@ namespace internal
 			return value1;
 		}
 
-		static UInt DivSmall(UInt value, UInt mod) MOMO_NOEXCEPT
+		template<UInt mod>
+		static DivResult DivByConst(UInt value) MOMO_NOEXCEPT
 		{
-			switch (mod)
-			{
-			case 1: return value / 1;
-			case 2: return value / 2;
-			case 3: return value / 3;
-			case 4: return value / 4;
-			case 5: return value / 5;
-			case 6: return value / 6;
-			case 7: return value / 7;
-			case 8: return value / 8;
-			default: return value / mod;
-			}
+			DivResult result;
+			result.quotient = value / mod;
+			result.remainder = value - result.quotient * mod;
+			return result;
 		}
 
-		static UInt ModSmall(UInt value, UInt mod) MOMO_NOEXCEPT
+		static DivResult DivBySmall(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
 			switch (mod)
 			{
-			case 1: return value - (value / 1) * 1;
-			case 2: return value - (value / 2) * 2;
-			case 3: return value - (value / 3) * 3;
-			case 4: return value - (value / 4) * 4;
-			case 5: return value - (value / 5) * 5;
-			case 6: return value - (value / 6) * 6;
-			case 7: return value - (value / 7) * 7;
-			case 8: return value - (value / 8) * 8;
-			default: return value % mod;
+			case 1: return DivByConst<1>(value);
+			case 2: return DivByConst<2>(value);
+			case 3: return DivByConst<3>(value);
+			case 4: return DivByConst<4>(value);
+			case 5: return DivByConst<5>(value);
+			case 6: return DivByConst<6>(value);
+			case 7: return DivByConst<7>(value);
+			case 8: return DivByConst<8>(value);
 			}
+			DivResult result;
+			result.quotient = value / mod;
+			result.remainder = value % mod;
+			return result;
 		}
 
 		static UInt Log2(UInt value) MOMO_NOEXCEPT;

@@ -240,8 +240,9 @@ namespace internal
 				return Bounds();
 			size_t memPoolIndex = _GetMemPoolIndex();
 			uintptr_t ptrCount = mPtr / modMemPoolIndex;
-			uintptr_t ptr = internal::UIntMath<uintptr_t>::DivSmall(ptrCount, (uintptr_t)memPoolIndex);
-			size_t count = (size_t)(ptrCount - ptr * (uintptr_t)memPoolIndex) + 1;
+			auto divResult = internal::UIntMath<uintptr_t>::DivBySmall(ptrCount, (uintptr_t)memPoolIndex);
+			uintptr_t ptr = divResult.quotient;
+			size_t count = (size_t)divResult.remainder + 1;
 			Item* items = (Item*)(ptr * modMemPoolIndex * (uintptr_t)memPoolIndex);
 			return Bounds(items, count);
 		}
