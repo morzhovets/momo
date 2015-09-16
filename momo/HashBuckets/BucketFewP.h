@@ -61,9 +61,13 @@ namespace internal
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 
-		static const uintptr_t itemAlignment =
-			(ItemTraits::alignment > 4) ? ItemTraits::alignment : 4;
-		MOMO_STATIC_ASSERT(maxCount <= (size_t)itemAlignment);
+		static const size_t itemAlignment = (ItemTraits::alignment > 4) ? ItemTraits::alignment
+			: (maxCount > 2) ? 4 : (maxCount > 1) ? 2 : 1;
+		MOMO_STATIC_ASSERT(maxCount <= itemAlignment);
+
+		static const bool skipOddMemPools =
+			(maxCount > 1 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+		static const uintptr_t modMemPoolIndex = (uintptr_t)itemAlignment / (skipOddMemPools ? 2 : 1);
 
 		static const uintptr_t ptrNull = 0;
 		static const uintptr_t ptrNullWasFull = 1;
@@ -71,10 +75,6 @@ namespace internal
 	public:
 		class Params
 		{
-		public:
-			static const bool skipOddMemPools =
-				(memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
-
 		private:
 			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<maxCount>> MemPools;
@@ -82,12 +82,21 @@ namespace internal
 		public:
 			Params(MemManager& memManager)
 			{
-				for (size_t i = 1; i <= maxCount; ++i)
+				if (skipOddMemPools)
 				{
-					if (skipOddMemPools && i % 2 == 1 && i != maxCount)
-						continue;
-					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * (size_t)itemAlignment,
-						i * sizeof(Item)), MemManagerPtr(memManager)));
+					for (size_t i = 2; i <= maxCount + 1; i += 2)
+					{
+						mMemPools.AddBackNogrow(MemPool(MemPoolParams((i / 2) * itemAlignment,
+							i * sizeof(Item)), MemManagerPtr(memManager)));
+					}
+				}
+				else
+				{
+					for (size_t i = 1; i <= maxCount; ++i)
+					{
+						mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * itemAlignment,
+							i * sizeof(Item)), MemManagerPtr(memManager)));
+					}
 				}
 			}
 
@@ -137,7 +146,7 @@ namespace internal
 				return false;
 			if (mPtr == ptrNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == maxCount;
+			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -157,7 +166,7 @@ namespace internal
 			if (_IsNull())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = (mPtr == ptrNull) ? _GetMemPoolIndex(newCount) : maxCount;
+				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == ptrNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				itemCreator(memory.GetPointer());
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
@@ -182,7 +191,7 @@ namespace internal
 				else
 				{
 					itemCreator(_GetItems() + count);
-					mPtr += itemAlignment;
+					mPtr += modMemPoolIndex;
 				}
 			}
 		}
@@ -197,11 +206,11 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
-				mPtr = (memPoolIndex < maxCount) ? ptrNull : ptrNullWasFull;
+				mPtr = (memPoolIndex < _GetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
 			}
 			else
 			{
-				mPtr -= itemAlignment;
+				mPtr -= modMemPoolIndex;
 			}
 		}
 
@@ -214,29 +223,28 @@ namespace internal
 		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			mPtr = (uintptr_t)items;
-			assert(mPtr % (itemAlignment * (uintptr_t)memPoolIndex) == 0);
-			mPtr += (uintptr_t)(count - 1) * itemAlignment + (uintptr_t)memPoolIndex - 1;
+			assert(mPtr % (modMemPoolIndex * (uintptr_t)memPoolIndex) == 0);
+			mPtr += (uintptr_t)(count - 1) * modMemPoolIndex
+				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			assert(0 < count && count <= maxCount);
-			if (Params::skipOddMemPools && count % 2 == 1 && count != maxCount)
-				return count + 1;
-			return count;
+			return count + (skipOddMemPools ? count % 2 : 0);
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return (size_t)(mPtr % itemAlignment) + 1;
+			return (size_t)(mPtr % modMemPoolIndex + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
 			if (_IsNull())
 				return 0;
-			return (size_t)internal::UIntMath<uintptr_t>::ModSmall(mPtr / itemAlignment,
+			return (size_t)internal::UIntMath<uintptr_t>::ModSmall(mPtr / modMemPoolIndex,
 				(uintptr_t)_GetMemPoolIndex()) + 1;
 		}
 
@@ -245,8 +253,8 @@ namespace internal
 			if (_IsNull())
 				return nullptr;
 			size_t memPoolIndex = _GetMemPoolIndex();
-			return (Item*)(internal::UIntMath<uintptr_t>::DivSmall(mPtr / itemAlignment,
-				(uintptr_t)memPoolIndex) * (itemAlignment * (uintptr_t)memPoolIndex));
+			return (Item*)(internal::UIntMath<uintptr_t>::DivSmall(mPtr / modMemPoolIndex,
+				(uintptr_t)memPoolIndex) * (modMemPoolIndex * (uintptr_t)memPoolIndex));
 		}
 
 	private:
@@ -268,8 +276,7 @@ struct HashBucketFewP : public internal::HashBucketBase<tMaxCount>
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
-		typedef internal::BucketFewP<ItemTraits, MemManager,
-			maxCount, memPoolBlockCount> Bucket;
+		typedef internal::BucketFewP<ItemTraits, MemManager, maxCount, memPoolBlockCount> Bucket;
 	};
 };
 
