@@ -61,7 +61,7 @@ public:
 			? ((blockSize > 0) ? blockSize : 1)
 			: ((blockSize <= blockAlignment)
 				? 2 * blockAlignment
-				: ((blockSize - 1) / blockAlignment + 1) * blockAlignment);
+				: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment));
 	}
 
 protected:
@@ -294,8 +294,7 @@ private:
 	{
 		size_t bufferUsefulSize = Params::blockSize + Params::blockAlignment
 			- SMath::GCD(maxAlignment, Params::blockAlignment);
-		size_t bufferSize = SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
-		return bufferSize;
+		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
 	}
 
 	uintptr_t& _GetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
@@ -431,9 +430,8 @@ private:
 			bufferUsefulSize -= std::minmax((size_t)maxAlignment, (size_t)Params::blockAlignment).first;	// gcc & llvm
 		else
 			bufferUsefulSize -= SMath::GCD(maxAlignment, Params::blockAlignment);
-		size_t bufferSize = SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
+		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
 			+ ((Params::blockAlignment <= 2) ? 2 : 0);
-		return bufferSize;
 	}
 
 	signed char& _GetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
@@ -477,10 +475,6 @@ namespace internal
 		static const size_t blockCount = tBlockCount;
 		MOMO_STATIC_ASSERT(blockCount > 0);
 
-		static const size_t minBlockSize = sizeof(uint32_t);
-		static const size_t maxBlockSize = SIZE_MAX / blockCount;
-		MOMO_STATIC_ASSERT(minBlockSize <= maxBlockSize);
-
 		static const uint32_t nullPtr = UINT32_MAX;
 
 	private:
@@ -491,13 +485,11 @@ namespace internal
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),
-			mBlockSize(blockSize),
+			mBlockSize(internal::UIntMath<size_t>::Ceil(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
 			assert(maxTotalBlockCount < (size_t)UINT32_MAX);
-			if (mBlockSize < minBlockSize)
-				mBlockSize = minBlockSize;
-			if (mBlockSize > maxBlockSize)
+			if (mBlockSize > SIZE_MAX / blockCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 		}
 
@@ -532,7 +524,7 @@ namespace internal
 			if (mBlockHead == nullPtr)
 				_NewBuffer();
 			uint32_t ptr = mBlockHead;
-			mBlockHead = *(uint32_t*)GetRealPointer(mBlockHead);
+			mBlockHead = _GetNextBlock(GetRealPointer(mBlockHead));
 			++mAllocCount;
 			return ptr;
 		}
@@ -541,7 +533,7 @@ namespace internal
 		{
 			assert(ptr != nullPtr);
 			assert(mAllocCount > 0);
-			*(uint32_t*)GetRealPointer(ptr) = mBlockHead;
+			_GetNextBlock(GetRealPointer(ptr)) = mBlockHead;
 			mBlockHead = ptr;
 			--mAllocCount;
 			if (mAllocCount == 0)
@@ -557,6 +549,11 @@ namespace internal
 			return realPtr;
 		}
 
+		uint32_t& _GetNextBlock(void* realPtr) MOMO_NOEXCEPT
+		{
+			return *(uint32_t*)realPtr;
+		}
+
 		void _NewBuffer()
 		{
 			size_t bufferCount = mBuffers.GetCount();
@@ -567,7 +564,7 @@ namespace internal
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				void* realPtr = buffer + mBlockSize * i;
-				*(uint32_t*)realPtr = (i + 1 < blockCount)
+				_GetNextBlock(realPtr) = (i + 1 < blockCount)
 					? (uint32_t)(bufferCount * blockCount + i + 1) : nullPtr;
 			}
 			mBlockHead = (uint32_t)(bufferCount * blockCount);
