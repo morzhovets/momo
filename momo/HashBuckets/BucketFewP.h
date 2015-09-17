@@ -69,8 +69,8 @@ namespace internal
 			(maxCount % 2 == 0 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
 		static const uintptr_t modMemPoolIndex = (uintptr_t)itemAlignment / (skipOddMemPools ? 2 : 1);
 
-		static const uintptr_t ptrNull = 0;
-		static const uintptr_t ptrNullWasFull = 1;
+		static const uintptr_t stateNull = 0;
+		static const uintptr_t stateNullWasFull = 1;
 
 	public:
 		class Params
@@ -107,13 +107,13 @@ namespace internal
 
 	public:
 		BucketFewP() MOMO_NOEXCEPT
-			: mPtr(ptrNull)
+			: mPtrState(stateNull)
 		{
 		}
 
 		~BucketFewP() MOMO_NOEXCEPT
 		{
-			assert(mPtr == ptrNull);
+			assert(mPtrState == stateNull);
 		}
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
@@ -133,9 +133,9 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			if (mPtr == ptrNull)
+			if (mPtrState == stateNull)
 				return false;
-			if (mPtr == ptrNullWasFull)
+			if (mPtrState == stateNullWasFull)
 				return true;
 			return _GetMemPoolIndex() == maxCount;
 		}
@@ -149,7 +149,7 @@ namespace internal
 				ItemTraits::Destroy(items, bounds.GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
-			mPtr = ptrNull;
+			mPtrState = stateNull;
 		}
 
 		template<typename ItemCreator>
@@ -158,7 +158,7 @@ namespace internal
 			if (_IsNull())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == ptrNull) ? newCount : maxCount);
+				size_t newMemPoolIndex = (mPtrState == stateNull) ? _GetMemPoolIndex(newCount) : maxCount;
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				itemCreator(memory.GetPointer());
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
@@ -184,7 +184,7 @@ namespace internal
 				else
 				{
 					itemCreator(items + count);
-					mPtr += modMemPoolIndex;
+					mPtrState += modMemPoolIndex;
 				}
 			}
 		}
@@ -200,25 +200,25 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
-				mPtr = (memPoolIndex < maxCount) ? ptrNull : ptrNullWasFull;
+				mPtrState = (memPoolIndex < maxCount) ? stateNull : stateNullWasFull;
 			}
 			else
 			{
-				mPtr -= modMemPoolIndex;
+				mPtrState -= modMemPoolIndex;
 			}
 		}
 
 	private:
 		bool _IsNull() const MOMO_NOEXCEPT
 		{
-			return mPtr == ptrNull || mPtr == ptrNullWasFull;
+			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
 
 		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			mPtr = (uintptr_t)items;
-			assert(mPtr % (modMemPoolIndex * (uintptr_t)memPoolIndex) == 0);
-			mPtr += (uintptr_t)(count - 1) * modMemPoolIndex
+			mPtrState = (uintptr_t)items;
+			assert(mPtrState % (modMemPoolIndex * (uintptr_t)memPoolIndex) == 0);
+			mPtrState += (uintptr_t)(count - 1) * modMemPoolIndex
 				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
@@ -231,20 +231,18 @@ namespace internal
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return (size_t)(mPtr % modMemPoolIndex + 1) * (skipOddMemPools ? 2 : 1);
+			return (size_t)(mPtrState % modMemPoolIndex + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT
 		{
 			if (_IsNull())
 				return Bounds();
-			size_t memPoolIndex = _GetMemPoolIndex();
-			uintptr_t ptrCount = mPtr / modMemPoolIndex;
-			auto divResult = internal::UIntMath<uintptr_t>::DivBySmall(ptrCount, (uintptr_t)memPoolIndex);
-			uintptr_t ptr = divResult.quotient;
-			size_t count = (size_t)divResult.remainder + 1;
-			Item* items = (Item*)(ptr * modMemPoolIndex * (uintptr_t)memPoolIndex);
-			return Bounds(items, count);
+			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
+			uintptr_t count1 = internal::UIntMath<uintptr_t>::DivBySmall(ptrCount,
+				(uintptr_t)_GetMemPoolIndex()).remainder;
+			Item* items = (Item*)((ptrCount - count1) * modMemPoolIndex);
+			return Bounds(items, (size_t)count1 + 1);
 		}
 
 	private:
@@ -252,7 +250,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketFewP);
 
 	private:
-		uintptr_t mPtr;
+		uintptr_t mPtrState;
 	};
 }
 
