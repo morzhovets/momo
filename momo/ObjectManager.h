@@ -126,13 +126,13 @@ namespace internal
 
 		static void Destroy(Object& object) MOMO_NOEXCEPT
 		{
-			(void)object;	// vs bug
+			(void)object;	// vs warning
 			object.~Object();
 		}
 
 		static void Destroy(Object* objects, size_t count) MOMO_NOEXCEPT
 		{
-			//if (!std::is_trivially_destructible<Object>::value)	// for gcc 4.7
+			//if (!std::is_trivially_destructible<Object>::value)	// gcc 4.7
 			{
 				for (size_t i = 0; i < count; ++i)
 					Destroy(objects[i]);
@@ -269,7 +269,7 @@ namespace internal
 			std::false_type /*isTriviallyRelocatable*/,
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
-			if (count > 0)	// vs bug
+			if (count > 0)	// vs
 				std::uninitialized_copy_n(std::make_move_iterator(srcObjects), count, dstObjects);
 			Destroy(srcObjects, count);
 		}
@@ -297,7 +297,7 @@ namespace internal
 		static void _RelocateAddBack(Object* srcObjects, Object* dstObjects, size_t srcCount,
 			const ObjectCreator& objectCreator, std::false_type /*isNothrowRelocatable*/)
 		{
-			if (srcCount > 0)	// vs bug
+			if (srcCount > 0)	// vs
 				std::uninitialized_copy_n(srcObjects, srcCount, dstObjects);
 			try
 			{

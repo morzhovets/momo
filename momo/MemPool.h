@@ -116,7 +116,7 @@ private:
 		uintptr_t begin;
 	};
 
-	static const uintptr_t nullPtr = (uintptr_t)nullptr;
+	static const uintptr_t nullPtr = (uintptr_t)(void*)nullptr;	// c++/cli
 
 	static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
 	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);

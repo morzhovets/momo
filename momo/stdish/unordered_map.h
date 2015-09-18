@@ -710,7 +710,7 @@ private:
 	template<typename Object, typename... Args, size_t... sequence>
 	void _create(Object* pobject, const std::tuple<Args...>& args, internal::Sequence<sequence...>)
 	{
-		(void)args;	// vs bug
+		(void)args;	// vs warning
 		new(pobject) Object(std::get<sequence>(args)...);
 	}
 #endif
