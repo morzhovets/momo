@@ -15,7 +15,7 @@
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<7, 1>
 
-#if defined(_WIN32)
+#if defined(_MSC_VER) //defined(_WIN32)
 #define MOMO_USE_MEM_MANAGER_WIN
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerWin
 #elif defined(__linux__)
