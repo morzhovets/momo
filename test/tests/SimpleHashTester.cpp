@@ -13,7 +13,6 @@
 #include "../../momo/HashSet.h"
 #include "../../momo/HashMap.h"
 #include "../../momo/HashMultiMap.h"
-#include "../../momo/HashBuckets/BucketFewP.h"
 #include "../../momo/HashBuckets/BucketLim4.h"
 
 #include <string>
@@ -24,7 +23,6 @@ class SimpleHashTester
 public:
 	static void TestAll()
 	{
-		TestHashBucket<momo::HashBucketFewP<>>("momo::HashBucketFewP");
 		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4");
 		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP");
 		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1");

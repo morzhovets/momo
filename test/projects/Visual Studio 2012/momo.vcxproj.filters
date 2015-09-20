@@ -51,9 +51,6 @@
     <ClCompile Include="..\..\tests\LibcxxArrayTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterFewP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLim4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -69,9 +66,6 @@
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterFewP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLim4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -85,9 +79,6 @@
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterUnlimP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterFewP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp">
@@ -190,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="..\..\tests\TestSettings.h">
       <Filter>Header Files\tests</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketFewP.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\stdish\unordered_multimap.h">
       <Filter>Header Files\momo\stdish</Filter>

@@ -146,19 +146,16 @@
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\tests\GoogleHashTester.cpp" />
     <ClCompile Include="..\..\tests\LibcxxArrayTester.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterFewP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneI1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterFewP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterOneI1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterUnlimP.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterFewP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP1.cpp" />
@@ -181,7 +178,6 @@
     <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP.h" />
     <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP1.h" />
     <ClInclude Include="..\..\..\momo\HashBuckets\BucketOneI1.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketFewP.h" />
     <ClInclude Include="..\..\..\momo\HashBuckets\BucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\HashUtility.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />

@@ -9,7 +9,6 @@
 #ifdef TEST_SPEED_HASH_MAP
 
 #include "../../momo/HashMap.h"
-#include "../../momo/HashBuckets/BucketFewP.h"
 #include "../../momo/HashBuckets/BucketLim4.h"
 
 #include <string>
@@ -71,9 +70,8 @@ public:
 	{
 		TestUnorderedMap();
 		TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
-		//TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
+		TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
 		TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
-		TestHashMap<momo::HashBucketFewP<>>("HashBucketFewP");
 		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 	}
