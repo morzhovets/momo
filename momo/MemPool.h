@@ -68,7 +68,7 @@ protected:
 	size_t blockSize;
 };
 
-template<size_t tCachedFreeBlockCount = 16>
+template<size_t tCachedFreeBlockCount = 16>	//?
 struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
@@ -205,7 +205,7 @@ public:
 			if (Params::blockCount > 1)
 				pblock = (void*)_NewBlock();
 			else if (maxAlignment % Params::blockAlignment == 0)
-				pblock = GetMemManager().Allocate(Params::blockSize);
+				pblock = GetMemManager().Allocate(_GetBufferSize0());
 			else
 				pblock = (void*)_NewBlock1();
 		}
@@ -271,9 +271,14 @@ private:
 		if (Params::blockCount > 1)
 			_DeleteBlock((uintptr_t)pblock);
 		else if (maxAlignment % Params::blockAlignment == 0)
-			GetMemManager().Deallocate(pblock, Params::blockSize);
+			GetMemManager().Deallocate(pblock, _GetBufferSize0());
 		else
 			_DeleteBlock1((uintptr_t)pblock);
+	}
+
+	size_t _GetBufferSize0() const MOMO_NOEXCEPT
+	{
+		return std::minmax((size_t)Params::blockSize, (size_t)Params::blockAlignment).second;	// gcc & llvm
 	}
 
 	uintptr_t _NewBlock1()
@@ -307,7 +312,7 @@ private:
 		if (mBufferHead == nullPtr)
 			mBufferHead = _NewBuffer();
 		uintptr_t block;
-		size_t freeBlockCount = (size_t)_NewBlock(mBufferHead, block);
+		size_t freeBlockCount = _NewBlock(mBufferHead, block);
 		if (freeBlockCount == 0)
 			_RemoveBuffer(mBufferHead, false);
 		return block;
@@ -315,8 +320,8 @@ private:
 
 	void _DeleteBlock(uintptr_t block) MOMO_NOEXCEPT
 	{
-		uintptr_t buffer = _GetBuffer(block);
-		size_t freeBlockCount = (size_t)_DeleteBlock(buffer, block);
+		uintptr_t buffer;
+		size_t freeBlockCount = _DeleteBlock(block, buffer);
 		if (freeBlockCount == 1)
 		{
 			BufferPointers& pointers = _GetBufferPointers(buffer);
@@ -330,32 +335,23 @@ private:
 			_RemoveBuffer(buffer, true);
 	}
 
-	uintptr_t _GetBuffer(uintptr_t block) const MOMO_NOEXCEPT
-	{
-		assert(block % Params::blockAlignment == 0);
-		uintptr_t buffer = PMath::Ceil(block, (uintptr_t)(Params::blockSize * Params::blockCount))
-			+ (block % Params::blockSize);
-		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
-			buffer -= Params::blockSize * Params::blockCount + Params::blockAlignment;
-		return buffer;
-	}
-
-	signed char _NewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
+	size_t _NewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
 	{
 		BufferChars& chars = _GetBufferChars(buffer);
 		block = _GetBlock(buffer, chars.firstFreeBlockIndex);
 		chars.firstFreeBlockIndex = _GetNextFreeBlockIndex(block);
 		--chars.freeBlockCount;
-		return chars.freeBlockCount;
+		return (size_t)chars.freeBlockCount;
 	}
 
-	signed char _DeleteBlock(uintptr_t buffer, uintptr_t block) MOMO_NOEXCEPT
+	size_t _DeleteBlock(uintptr_t block, uintptr_t& buffer) MOMO_NOEXCEPT
 	{
+		signed char blockIndex = _GetBlockIndex(block, buffer);
 		BufferChars& chars = _GetBufferChars(buffer);
 		_GetNextFreeBlockIndex(block) = chars.firstFreeBlockIndex;
-		chars.firstFreeBlockIndex = _GetBlockIndex(buffer, block);
+		chars.firstFreeBlockIndex = blockIndex;
 		++chars.freeBlockCount;
-		return chars.freeBlockCount;
+		return (size_t)chars.freeBlockCount;
 	}
 
 	signed char& _GetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
@@ -371,12 +367,20 @@ private:
 			return buffer + (size_t)index * Params::blockSize + Params::blockAlignment;
 	}
 
-	signed char _GetBlockIndex(uintptr_t buffer, uintptr_t block) const MOMO_NOEXCEPT
+	signed char _GetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
 	{
-		if (block < buffer)
-			return -(signed char)((buffer - block) / Params::blockSize);
+		assert(block % Params::blockAlignment == 0);
+		size_t index = (block / Params::blockSize) % Params::blockCount;
+		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
+		{
+			buffer = block - index * Params::blockSize - Params::blockAlignment;
+			return (signed char)index;
+		}
 		else
-			return (signed char)((block - buffer) / Params::blockSize);
+		{
+			buffer = block + (Params::blockCount - index) * Params::blockSize;
+			return (signed char)index - (signed char)Params::blockCount;
+		}
 	}
 
 	uintptr_t _NewBuffer()
@@ -389,11 +393,11 @@ private:
 			block += Params::blockAlignment;
 		if (((block / Params::blockSize) % Params::blockCount) == 0)
 			block += Params::blockAlignment;
-		uintptr_t buffer = _GetBuffer(block);
-		signed char index = _GetBlockIndex(buffer, block);
-		_GetFirstBlockIndex(buffer) = index;
+		uintptr_t buffer;
+		signed char blockIndex = _GetBlockIndex(block, buffer);
+		_GetFirstBlockIndex(buffer) = blockIndex;
 		BufferChars& chars = _GetBufferChars(buffer);
-		chars.firstFreeBlockIndex = index;
+		chars.firstFreeBlockIndex = blockIndex;
 		chars.freeBlockCount = (signed char)Params::blockCount;
 		BufferPointers& pointers = _GetBufferPointers(buffer);
 		pointers.prevBuffer = nullPtr;
@@ -401,9 +405,9 @@ private:
 		pointers.begin = begin;
 		for (size_t i = 1; i < Params::blockCount; ++i)
 		{
-			++index;
-			_GetNextFreeBlockIndex(block) = index;
-			block = _GetBlock(buffer, index);
+			++blockIndex;
+			_GetNextFreeBlockIndex(block) = blockIndex;
+			block = _GetBlock(buffer, blockIndex);
 		}
 		_GetNextFreeBlockIndex(block) = (signed char)(-128);
 		return buffer;
