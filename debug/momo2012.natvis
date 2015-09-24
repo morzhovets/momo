@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+<Type Name="momo::Array&lt;*&gt;">
+    <DisplayString>{{ Count={mData.mCount &amp; (Data::maskInternal - 1)} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">mData.mCount &amp; (Data::maskInternal - 1)</Item>
+        <Item Condition="(mData.mCount &amp; Data::maskInternal) == 0" Name="[Capacity]">mData.mExternalData.capacity</Item>
+        <Item Condition="(mData.mCount &amp; Data::maskInternal) != 0" Name="[Capacity]">internalCapacity</Item>
+        <ArrayItems>
+            <Size>mData.mCount &amp; (Data::maskInternal - 1)</Size>
+            <ValuePointer Condition="(mData.mCount &amp; Data::maskInternal) == 0">mData.mExternalData.items</ValuePointer>
+            <ValuePointer Condition="(mData.mCount &amp; Data::maskInternal) != 0">(Item*)&amp;mData.mInternalData</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::HashSetBuckets&lt;*&gt;">
+    <DisplayString>{{ BucketCount={mCount} }}</DisplayString>
+    <Expand>
+        <Item Name="[BucketCount]">mCount</Item>
+        <Item Name="[NextBuckets]">mNextBuckets</Item>
+        <ArrayItems>
+            <Size>mCount</Size>
+            <ValuePointer>(Bucket*)(this + 1)</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::ObjectBuffer&lt;*&gt;">
+    <DisplayString>{{ {*(Object*)this} }}</DisplayString>
+    <Expand>
+        <Item Name="[Object]">*(Object*)this</Item>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::ArrayBucket&lt;*&gt;">
+    <DisplayString Condition="mPtr == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0">{{ Count={(size_t)(*mPtr &amp; 15)} }}</DisplayString>
+    <DisplayString Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">{{ Count={((Array*)(mPtr + sizeof(void*)))->mData.mCount} }}</DisplayString>
+    <Expand>
+        <Item Condition="mPtr == 0" Name="[Count]">0</Item>
+        <Item Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0" Name="[Count]">(size_t)(*mPtr &amp; 15)</Item>
+        <Item Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0" Name="[Count]">((Array*)(mPtr + sizeof(void*)))->mData.mCount</Item>
+        <ArrayItems>
+            <Size>mPtr == 0 ? 0 : (size_t)(*mPtr >> 4) != 0 ? (size_t)(*mPtr &amp; 15) : ((Array*)(mPtr + sizeof(void*)))->mData.mCount</Size>
+            <ValuePointer Condition="mPtr == 0">(Item*)0</ValuePointer>
+            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0">(Item*)(mPtr + ItemTraits::alignment)</ValuePointer>
+            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">((Array*)(mPtr + sizeof(void*)))->mData.mExternalData.items</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::BucketLimP1&lt;*&gt;">
+    <DisplayString Condition="(size_t)(mState &amp; 15) == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="(size_t)(mState &amp; 15) != 0">{{ Count={(size_t)(mState &amp; 15)} FirstItem={**(Item**)&amp;mItemPtrBuffer} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">(size_t)(mState &amp; 15)</Item>
+        <ArrayItems>
+            <Size>(size_t)(mState &amp; 15)</Size>
+            <ValuePointer>*(Item**)&amp;mItemPtrBuffer</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::BucketOneI1&lt;*&gt;">
+    <DisplayString Condition="mState != stateFull">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="mState == stateFull">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">mState == stateFull ? 1 : 0</Item>
+        <ArrayItems>
+            <Size>mState == stateFull ? 1 : 0</Size>
+            <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+</AutoVisualizer>
