@@ -108,7 +108,7 @@ namespace internal
 		{
 			if (mPtr == nullptr)
 				return false;
-			return _GetMemPoolIndex() == maxCount;
+			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -160,9 +160,10 @@ namespace internal
 			size_t count = _GetCount();
 			assert(count > 0);
 			ItemTraits::Destroy(_GetItems() + count - 1, 1);
-			if (count == 1 && !WasFull())
+			size_t memPoolIndex = _GetMemPoolIndex();
+			if (count == 1 && memPoolIndex != _GetMemPoolIndex(maxCount))
 			{
-				params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
+				params.GetMemPool(memPoolIndex).Deallocate(mPtr);
 				mPtr = nullptr;
 			}
 			else
@@ -277,7 +278,7 @@ namespace internal
 			? minItemAlignment : ItemTraits::alignment;
 
 		static const bool skipOddMemPools =
-			(maxCount % 2 == 0 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+			(memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
 		static const uintptr_t modMemPoolIndex =
 			(uintptr_t)minItemAlignment / (skipOddMemPools ? 2 : 1);
 
@@ -294,7 +295,7 @@ namespace internal
 		public:
 			Params(MemManager& memManager)
 			{
-				for (size_t i = 1; i <= maxCount; ++i)
+				for (size_t i = 1; i <= maxCount + (skipOddMemPools ? 1 : 0); ++i)
 				{
 					if (skipOddMemPools && i % 2 == 1)
 						continue;
@@ -351,7 +352,7 @@ namespace internal
 				return false;
 			if (mPtrState == stateNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == maxCount;
+			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -372,7 +373,8 @@ namespace internal
 			if (_IsNull())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = (mPtrState == stateNull) ? _GetMemPoolIndex(newCount) : maxCount;
+				size_t newMemPoolIndex =
+					_GetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				itemCreator(memory.GetPointer());
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
@@ -414,7 +416,8 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
-				mPtrState = (memPoolIndex < maxCount) ? stateNull : stateNullWasFull;
+				mPtrState = (memPoolIndex < _GetMemPoolIndex(maxCount))
+					? stateNull : stateNullWasFull;
 			}
 			else
 			{

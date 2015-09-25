@@ -93,13 +93,13 @@ namespace internal
 
 	public:
 		BucketLim4() MOMO_NOEXCEPT
-			: mState(stateNull)
+			: mPtrState(stateNull)
 		{
 		}
 
 		~BucketLim4() MOMO_NOEXCEPT
 		{
-			assert(mState == stateNull);
+			assert(mPtrState == stateNull);
 		}
 
 		ConstBounds GetBounds(const Params& params) const MOMO_NOEXCEPT
@@ -119,11 +119,11 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			if (mState == stateNull)
+			if (mPtrState == stateNull)
 				return false;
-			if (mState == stateNullWasFull)
+			if (mPtrState == stateNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == maxCount;
+			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -134,7 +134,7 @@ namespace internal
 				ItemTraits::Destroy(items, _GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(_GetPointer());
 			}
-			mState = stateNull;
+			mPtrState = stateNull;
 		}
 
 		template<typename ItemCreator>
@@ -143,7 +143,8 @@ namespace internal
 			if (_IsNull())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = (mState == stateNull) ? _GetMemPoolIndex(newCount) : maxCount;
+				size_t newMemPoolIndex =
+					_GetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
 				Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
@@ -173,7 +174,7 @@ namespace internal
 				else
 				{
 					itemCreator(_GetItems<Item>(params) + count);
-					++mState;
+					++mPtrState;
 				}
 			}
 		}
@@ -188,23 +189,24 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(_GetPointer());
-				mState = (memPoolIndex < maxCount) ? stateNull : stateNullWasFull;
+				mPtrState = (memPoolIndex < _GetMemPoolIndex(maxCount))
+					? stateNull : stateNullWasFull;
 			}
 			else
 			{
-				--mState;
+				--mPtrState;
 			}
 		}
 
 	private:
 		bool _IsNull() const MOMO_NOEXCEPT
 		{
-			return mState == stateNull || mState == stateNullWasFull;
+			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
 
 		void _Set(uint32_t ptr, size_t memPoolIndex, size_t count)
 		{
-			mState = (uint32_t)(((memPoolIndex - 1) << (32 - logMaxCount))
+			mPtrState = (uint32_t)(((memPoolIndex - 1) << (32 - logMaxCount))
 				+ (size_t)ptr * memPoolIndex + count - 1);
 		}
 
@@ -217,21 +219,21 @@ namespace internal
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return (size_t)(mState >> (32 - logMaxCount)) + 1;
+			return (size_t)(mPtrState >> (32 - logMaxCount)) + 1;
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
 			if (_IsNull())
 				return 0;
-			return internal::UIntMath<size_t>::DivBySmall((size_t)(mState & stateNull),
+			return internal::UIntMath<size_t>::DivBySmall((size_t)(mPtrState & stateNull),
 				_GetMemPoolIndex()).remainder + 1;
 		}
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return internal::UIntMath<uint32_t>::DivBySmall(mState & stateNull,
+			return internal::UIntMath<uint32_t>::DivBySmall(mPtrState & stateNull,
 				(uint32_t)_GetMemPoolIndex()).quotient;
 		}
 
@@ -250,7 +252,7 @@ namespace internal
 		MOMO_DISABLE_COPY_OPERATOR(BucketLim4);
 
 	private:
-		uint32_t mState;
+		uint32_t mPtrState;
 	};
 }
 

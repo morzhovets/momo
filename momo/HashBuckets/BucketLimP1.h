@@ -110,7 +110,7 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return _GetMemPoolIndex() == maxCount;
+			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
