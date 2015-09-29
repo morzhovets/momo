@@ -459,6 +459,14 @@ public:
 		_Fill(begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
+#ifdef MOMO_USE_INIT_LISTS
+	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
+		: mData(items.size(), std::move(memManager))
+	{
+		_Fill(items.begin(), items.end(), std::true_type());
+	}
+#endif
+
 	Array(Array&& array) MOMO_NOEXCEPT
 		: mData(std::move(array.mData))
 	{
@@ -467,8 +475,7 @@ public:
 	Array(const Array& array, bool shrink = true)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		for (const Item& item : array)
-			AddBackNogrow(item);
+		_Fill(array.GetBegin(), array.GetEnd(), std::true_type());
 	}
 
 	static Array CreateCap(size_t capacity, MemManager&& memManager = MemManager())
@@ -740,6 +747,14 @@ public:
 		}
 		ArrayShifter::Add(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
+
+#ifdef MOMO_USE_INIT_LISTS
+	// basic exception safety
+	void Add(size_t index, std::initializer_list<Item> items)
+	{
+		Add(index, items.begin(), items.end());
+	}
+#endif
 
 	void RemoveBack(size_t count = 1)
 	{

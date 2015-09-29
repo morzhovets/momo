@@ -181,34 +181,34 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	unordered_multimap(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount)
 		: mHashMultiMap(HashTraits(bucketCount))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc)
 		: mHashMultiMap(HashTraits(bucketCount, hashFunc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc)
 		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
 		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 #endif
 
@@ -263,8 +263,8 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
 	{
-		clear();
-		insert(values.begin(), values.end());
+		clear();	//?
+		insert(values);
 		return *this;
 	}
 #endif

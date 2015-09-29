@@ -85,12 +85,12 @@ public:
 
 #ifdef MOMO_USE_INIT_LISTS
 	vector(std::initializer_list<value_type> values)
-		: mArray(values.begin(), values.end(), MemManager())
+		: mArray(values, MemManager())
 	{
 	}
 
 	vector(std::initializer_list<value_type> values, const allocator_type& alloc)
-		: mArray(values.begin(), values.end(), MemManager(alloc))
+		: mArray(values, MemManager(alloc))
 	{
 	}
 #endif
@@ -363,7 +363,9 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	iterator insert(const_iterator where, std::initializer_list<value_type> values)
 	{
-		return insert(where, values.begin(), values.end());
+		size_t index = where - begin();
+		mArray.Add(index, values);
+		return begin() + index;
 	}
 #endif
 

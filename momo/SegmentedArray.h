@@ -211,13 +211,17 @@ public:
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
-		for (Iterator iter = begin; iter != end; ++iter)
-		{
-			auto itemCreator = [iter] (void* pitem)
-				{ ItemTraits::Create(*iter, pitem); };
-			AddBackEmpl(itemCreator);
-		}
+		_Fill(begin, end);
 	}
+
+#ifdef MOMO_USE_INIT_LISTS
+	SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
+		: mSegments(std::move(memManager)),
+		mCount(0)
+	{
+		_Fill(items.begin(), items.end());
+	}
+#endif
 
 	SegmentedArray(SegmentedArray&& array) MOMO_NOEXCEPT
 		: mSegments(std::move(array.mSegments)),
@@ -485,12 +489,17 @@ public:
 	void Add(size_t index, Iterator begin, Iterator end)
 	{
 		if (internal::IsForwardIterator<Iterator>::value)
-		{
-			size_t count = std::distance(begin, end);
-			Reserve(mCount + count);
-		}
+			Reserve(mCount + std::distance(begin, end));
 		ArrayShifter::Add(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
+
+#ifdef MOMO_USE_INIT_LISTS
+	// basic exception safety
+	void Add(size_t index, std::initializer_list<Item> items)
+	{
+		Add(index, items.begin(), items.end());
+	}
+#endif
 
 	void RemoveBack(size_t count = 1)
 	{
@@ -505,6 +514,26 @@ public:
 	}
 
 private:
+	template<typename Iterator>
+	void _Fill(Iterator begin, Iterator end)
+	{
+		try
+		{
+			for (Iterator iter = begin; iter != end; ++iter)
+			{
+				auto itemCreator = [iter] (void* pitem)
+					{ ItemTraits::Create(*iter, pitem); };
+				AddBackEmpl(itemCreator);
+			}
+		}
+		catch (...)
+		{
+			_DecCount(0);
+			_DecCapacity(0);
+			throw;
+		}
+	}
+
 	Item* _GetSegMemory(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);

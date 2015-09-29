@@ -753,6 +753,13 @@ public:
 			Add(iter->first, iter->second);
 	}
 
+#ifdef MOMO_USE_INIT_LISTS
+	void Add(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
+	{
+		AddFS(keyValuePairs.begin(), keyValuePairs.end());
+	}
+#endif
+
 	KeyIterator InsertKey(Key&& key)
 	{
 		return KeyIterator(mHashMap.Insert(std::move(key), ValueArray()).iterator);

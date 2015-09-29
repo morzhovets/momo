@@ -129,34 +129,34 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	unordered_set(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount)
 		: mHashSet(HashTraits(bucketCount))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc)
 		: mHashSet(HashTraits(bucketCount, hashFunc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc)
 		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
 		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
-		insert(values.begin(), values.end());
+		insert(values);
 	}
 #endif
 
@@ -211,8 +211,8 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	unordered_set& operator=(std::initializer_list<value_type> values)
 	{
-		clear();
-		insert(values.begin(), values.end());
+		clear();	//?
+		insert(values);
 		return *this;
 	}
 #endif
@@ -387,7 +387,7 @@ public:
 #ifdef MOMO_USE_INIT_LISTS
 	void insert(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		mHashSet.Insert(values);
 	}
 #endif
 

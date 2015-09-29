@@ -781,6 +781,13 @@ public:
 		return count;
 	}
 
+#ifdef MOMO_USE_INIT_LISTS
+	size_t Insert(std::initializer_list<Item> items)
+	{
+		return Insert(items.begin(), items.end());
+	}
+#endif
+
 	template<typename ItemCreator>
 	ConstIterator AddEmpl(ConstIterator iter, const ItemCreator& itemCreator)
 	{
