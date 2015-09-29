@@ -55,6 +55,36 @@ namespace internal
 
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
+#ifdef MOMO_USE_VARIADIC_TEMPLATES
+		template<typename... Args>
+		class VariadicCreator
+		{
+		public:
+			explicit VariadicCreator(Args&&... args)
+				: mArgs(std::forward<Args>(args)...)
+			{
+			}
+
+			void operator()(void* pobject) const
+			{
+				_Create(pobject, typename MakeSequence<sizeof...(Args)>::Sequence());
+			}
+
+		private:
+			template<size_t... sequence>
+			void _Create(void* pobject, Sequence<sequence...>) const
+			{
+				new(pobject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
+			}
+
+		private:
+			std::tuple<Args...> mArgs;
+		};
+
+		typedef VariadicCreator<> Creator;
+		typedef VariadicCreator<Object&&> MoveCreator;
+		typedef VariadicCreator<const Object&> CopyCreator;
+#else
 		class Creator
 		{
 		public:
@@ -97,6 +127,7 @@ namespace internal
 		private:
 			const Object& mObject;
 		};
+#endif
 
 		static void Create(void* pobject)
 		{
