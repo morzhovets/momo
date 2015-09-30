@@ -149,6 +149,39 @@ namespace internal
 		Iterator iterator;
 		bool inserted;
 	};
+
+	template<typename TKey, typename TMapped, typename THashMapReference>
+	class UnorderedMapReference : public std::pair<const TKey&, TMapped&>
+	{
+	public:
+		typedef TKey Key;
+		typedef TMapped Mapped;
+		typedef THashMapReference HashMapReference;
+
+		typedef UnorderedMapReference<TKey, const TMapped,
+			typename HashMapReference::ConstReference> ConstReference;
+
+	private:
+		typedef std::pair<const Key&, Mapped&> RefPair;
+
+	public:
+		UnorderedMapReference(const Key& key, Mapped& mapped) MOMO_NOEXCEPT
+			: RefPair(key, mapped)
+		{
+		}
+
+		explicit UnorderedMapReference(HashMapReference ref) MOMO_NOEXCEPT
+			: RefPair(ref.key, ref.value)
+		{
+		}
+
+		operator ConstReference() MOMO_NOEXCEPT
+		{
+			return ConstReference(this->first, this->second);
+		}
+
+		//? ==, !=
+	};
 }
 
 } // namespace momo

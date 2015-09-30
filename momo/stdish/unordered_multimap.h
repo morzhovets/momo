@@ -15,40 +15,6 @@
 namespace momo
 {
 
-namespace internal
-{
-	template<typename TKey, typename TMapped, typename THashMultiMapReference>
-	class UnorderedMultiMapReference : public std::pair<const TKey&, TMapped&>
-	{
-	public:
-		typedef TKey Key;
-		typedef TMapped Mapped;
-		typedef THashMultiMapReference HashMultiMapReference;
-
-		typedef UnorderedMultiMapReference<TKey, const TMapped,
-			typename HashMultiMapReference::ConstReference> ConstReference;
-
-	private:
-		typedef std::pair<const Key&, Mapped&> RefPair;
-
-	public:
-		UnorderedMultiMapReference(const Key& key, Mapped& mapped) MOMO_NOEXCEPT
-			: RefPair(key, mapped)
-		{
-		}
-
-		explicit UnorderedMultiMapReference(HashMultiMapReference ref) MOMO_NOEXCEPT
-			: RefPair(ref.key, ref.value)
-		{
-		}
-
-		operator ConstReference() MOMO_NOEXCEPT
-		{
-			return ConstReference(this->first, this->second);
-		}
-	};
-}
-
 namespace stdish
 {
 
@@ -77,7 +43,7 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef internal::UnorderedMultiMapReference<key_type, mapped_type,
+	typedef internal::UnorderedMapReference<key_type, mapped_type,
 		typename HashMultiMap::Iterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
