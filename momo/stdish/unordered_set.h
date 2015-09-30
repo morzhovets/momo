@@ -396,7 +396,8 @@ public:
 	std::pair<iterator, bool> emplace(Args&&... args)
 	{
 		ValueBuffer valueBuffer;
-		new(&valueBuffer) value_type(std::forward<Args>(args)...);
+		typename internal::ObjectManager<value_type>::template VariadicCreator<Args...>
+			(std::forward<Args>(args)...)(&valueBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{
