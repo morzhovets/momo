@@ -596,7 +596,7 @@ public:
 			{
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackEmpl(bucketParams,
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
 					typename ItemTraits::CopyCreator(item));
 			}
 		}
@@ -755,7 +755,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	InsertResult InsertEmpl(const Key& key, const ItemCreator& itemCreator)
+	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
 	{
 		return _Insert(key, itemCreator, true);
 	}
@@ -789,7 +789,7 @@ public:
 #endif
 
 	template<typename ItemCreator>
-	ConstIterator AddEmpl(ConstIterator iter, const ItemCreator& itemCreator)
+	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
 	{
 		return _Add(iter, itemCreator, true);
 	}
@@ -1004,7 +1004,7 @@ private:
 	size_t _AddNogrow(size_t hashCode, const ItemCreator& itemCreator)
 	{
 		size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-		(*mBuckets)[bucketIndex].AddBackEmpl(mCrew.GetBucketParams(), itemCreator);
+		(*mBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
 		return bucketIndex;
 	}
 
@@ -1030,7 +1030,7 @@ private:
 		try
 		{
 			bucketIndex = _GetBucketIndexForAdd(*newBuckets, hashCode);
-			(*newBuckets)[bucketIndex].AddBackEmpl(mCrew.GetBucketParams(), itemCreator);
+			(*newBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
 		}
 		catch (...)
 		{
@@ -1097,7 +1097,7 @@ private:
 				Item& item = *(bucketBounds.GetEnd() - 1);
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackEmpl(bucketParams,
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
 					typename ItemTraits::MoveCreator(std::move(item)));
 				bucket.RemoveBack(bucketParams);
 			}

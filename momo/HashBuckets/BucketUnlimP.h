@@ -74,9 +74,9 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			mArrayBucket.AddBackEmpl(params, itemCreator);
+			mArrayBucket.AddBackCrt(params, itemCreator);
 		}
 
 		void RemoveBack(Params& params) MOMO_NOEXCEPT

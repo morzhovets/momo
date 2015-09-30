@@ -375,7 +375,7 @@ public:
 	{
 		auto itemCreator = [this, &args...] (void* pitem)
 			{ new(pitem) value_type(std::forward<Args>(args)...); };
-		mArray.AddBackEmpl(itemCreator);
+		mArray.AddBackCrt(itemCreator);
 	}
 
 	template<typename... Args>
@@ -384,7 +384,7 @@ public:
 		auto itemCreator = [this, &args...] (void* pitem)
 			{ new(pitem) value_type(std::forward<Args>(args)...); };
 		size_t index = where - begin();
-		mArray.InsertEmpl(index, itemCreator);
+		mArray.InsertCrt(index, itemCreator);
 		return begin() + index;
 	}
 #endif

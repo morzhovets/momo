@@ -67,7 +67,7 @@ namespace internal
 						new(pmemPool) MemPool(i * sizeof(Item), MemManagerPtr(memManager),
 							maxTotalBlockCount);
 					};
-					mMemPools.AddBackNogrowEmpl(memPoolCreator);
+					mMemPools.AddBackNogrowCrt(memPoolCreator);
 				}
 			}
 
@@ -138,7 +138,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (_IsNull())
 			{

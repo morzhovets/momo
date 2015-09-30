@@ -686,7 +686,7 @@ private:
 	template<typename MappedCreator>
 	std::pair<iterator, bool> _insert(key_type&& key, const MappedCreator& mappedCreator)
 	{
-		typename HashMap::InsertResult res = mHashMap.InsertEmpl(std::move(key),
+		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::move(key),
 			mappedCreator);
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
@@ -695,7 +695,7 @@ private:
 	std::pair<iterator, bool> _insert(const key_type& key,
 		const MappedCreator& mappedCreator)
 	{
-		typename HashMap::InsertResult res = mHashMap.InsertEmpl(key, mappedCreator);
+		typename HashMap::InsertResult res = mHashMap.InsertCrt(key, mappedCreator);
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
 

@@ -256,7 +256,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	static SegmentedArray CreateEmpl(size_t count, const ItemCreator& itemCreator,
+	static SegmentedArray CreateCrt(size_t count, const ItemCreator& itemCreator,
 		MemManager&& memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
@@ -329,7 +329,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void SetCountEmpl(size_t count, const ItemCreator& itemCreator)
+	void SetCountCrt(size_t count, const ItemCreator& itemCreator)
 	{
 		_SetCount(count, itemCreator);
 	}
@@ -404,7 +404,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackNogrowEmpl(const ItemCreator& itemCreator)
+	void AddBackNogrowCrt(const ItemCreator& itemCreator)
 	{
 		MOMO_CHECK(mCount < GetCapacity());
 		_AddBackNogrow(itemCreator);
@@ -412,16 +412,16 @@ public:
 
 	void AddBackNogrow(Item&& item)
 	{
-		AddBackNogrowEmpl(typename ItemTraits::MoveCreator(std::move(item)));
+		AddBackNogrowCrt(typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	void AddBackNogrow(const Item& item)
 	{
-		AddBackNogrowEmpl(typename ItemTraits::CopyCreator(item));
+		AddBackNogrowCrt(typename ItemTraits::CopyCreator(item));
 	}
 
 	template<typename ItemCreator>
-	void AddBackEmpl(const ItemCreator& itemCreator)
+	void AddBackCrt(const ItemCreator& itemCreator)
 	{
 		size_t initCapacity = GetCapacity();
 		if (mCount < initCapacity)
@@ -446,17 +446,17 @@ public:
 
 	void AddBack(Item&& item)
 	{
-		AddBackEmpl(typename ItemTraits::MoveCreator(std::move(item)));
+		AddBackCrt(typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	void AddBack(const Item& item)
 	{
-		AddBackEmpl(typename ItemTraits::CopyCreator(item));
+		AddBackCrt(typename ItemTraits::CopyCreator(item));
 	}
 
 	// basic exception safety
 	template<typename ItemCreator>
-	void InsertEmpl(size_t index, const ItemCreator& itemCreator)
+	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
 		ItemHandler itemHandler(itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
@@ -466,13 +466,13 @@ public:
 	// basic exception safety
 	void Insert(size_t index, Item&& item)
 	{
-		InsertEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
+		InsertCrt(index, typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	// basic exception safety
 	void Insert(size_t index, const Item& item)
 	{
-		InsertEmpl(index, typename ItemTraits::CopyCreator(item));
+		InsertCrt(index, typename ItemTraits::CopyCreator(item));
 	}
 
 	// basic exception safety
@@ -523,7 +523,7 @@ private:
 			{
 				auto itemCreator = [iter] (void* pitem)
 					{ ItemTraits::Create(*iter, pitem); };
-				AddBackEmpl(itemCreator);
+				AddBackCrt(itemCreator);
 			}
 		}
 		catch (...)

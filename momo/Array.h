@@ -484,7 +484,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	static Array CreateEmpl(size_t count, const ItemCreator& itemCreator,
+	static Array CreateCrt(size_t count, const ItemCreator& itemCreator,
 		MemManager&& memManager = MemManager())
 	{
 		return Array(_CreateData(count, itemCreator, std::move(memManager)));
@@ -562,7 +562,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void SetCountEmpl(size_t count, const ItemCreator& itemCreator)
+	void SetCountCrt(size_t count, const ItemCreator& itemCreator)
 	{
 		_SetCount(count, itemCreator);
 	}
@@ -639,7 +639,7 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackNogrowEmpl(const ItemCreator& itemCreator)
+	void AddBackNogrowCrt(const ItemCreator& itemCreator)
 	{
 		MOMO_CHECK(GetCount() < GetCapacity());
 		_AddBackNogrow(itemCreator);
@@ -647,16 +647,16 @@ public:
 
 	void AddBackNogrow(Item&& item)
 	{
-		AddBackNogrowEmpl(typename ItemTraits::MoveCreator(std::move(item)));
+		AddBackNogrowCrt(typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	void AddBackNogrow(const Item& item)
 	{
-		AddBackNogrowEmpl(typename ItemTraits::CopyCreator(item));
+		AddBackNogrowCrt(typename ItemTraits::CopyCreator(item));
 	}
 
 	template<typename ItemCreator>
-	void AddBackEmpl(const ItemCreator& itemCreator)
+	void AddBackCrt(const ItemCreator& itemCreator)
 	{
 		if (GetCount() < GetCapacity())
 			_AddBackNogrow(itemCreator);
@@ -682,7 +682,7 @@ public:
 
 	// basic exception safety
 	template<typename ItemCreator>
-	void InsertEmpl(size_t index, const ItemCreator& itemCreator)
+	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
 		ItemHandler itemHandler(itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
@@ -697,7 +697,7 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			InsertEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
+			InsertCrt(index, typename ItemTraits::MoveCreator(std::move(item)));
 		}
 		else
 		{
@@ -795,7 +795,7 @@ private:
 		{
 			auto itemCreator = [iter] (void* pitem)
 				{ ItemTraits::Create(*iter, pitem); };
-			AddBackNogrowEmpl(itemCreator);
+			AddBackNogrowCrt(itemCreator);
 		}
 	}
 
@@ -806,7 +806,7 @@ private:
 		{
 			auto itemCreator = [iter] (void* pitem)
 				{ ItemTraits::Create(*iter, pitem); };
-			AddBackEmpl(itemCreator);
+			AddBackCrt(itemCreator);
 		}
 	}
 

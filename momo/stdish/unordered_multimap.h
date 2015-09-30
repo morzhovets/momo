@@ -618,13 +618,13 @@ private:
 	template<typename MappedCreator>
 	iterator _insert(key_type&& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddEmpl(std::move(key), mappedCreator));
+		return iterator(mHashMultiMap.AddCrt(std::move(key), mappedCreator));
 	}
 
 	template<typename MappedCreator>
 	iterator _insert(const key_type& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddEmpl(key, mappedCreator));
+		return iterator(mHashMultiMap.AddCrt(key, mappedCreator));
 	}
 
 #ifdef MOMO_USE_VARIADIC_TEMPLATES

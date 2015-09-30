@@ -302,7 +302,7 @@ namespace internal
 				auto itemCreator = [&iter] (void* pitem)
 					{ ItemTraits::Create(*iter, pitem); };
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
-					array.AddBackNogrowEmpl(itemCreator);
+					array.AddBackNogrowCrt(itemCreator);
 				iter = begin;
 				for (size_t i = index; i < initCount; ++i, ++iter)
 				{
@@ -322,7 +322,7 @@ namespace internal
 			{
 				auto itemCreator = [iter] (void* pitem)
 					{ ItemTraits::Create(*iter, pitem); };
-				array.InsertEmpl(index + count, itemCreator);
+				array.InsertCrt(index + count, itemCreator);
 			}
 		}
 

@@ -121,7 +121,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (mPtr == nullptr)
 			{
@@ -368,7 +368,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (_IsNull())
 			{

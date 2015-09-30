@@ -85,7 +85,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& /*params*/, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator)
 		{
 			assert(!IsFull());
 			itemCreator(&mItemBuffer);

@@ -210,7 +210,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackEmpl(Params& params, const ItemCreator& itemCreator)
+		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (mPtr == nullptr)
 			{
@@ -248,7 +248,7 @@ namespace internal
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							ItemTraits::RelocateAddBack(items, array.GetItems(),
 								count, itemCreator);
-							array.SetCountEmpl(newCount, [] (void* /*pitem*/) { });
+							array.SetCountCrt(newCount, [] (void* /*pitem*/) { });
 							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							_Set(memory.Extract(), (unsigned char)0);
@@ -262,7 +262,7 @@ namespace internal
 				}
 				else
 				{
-					_GetArray().AddBackEmpl(itemCreator);
+					_GetArray().AddBackCrt(itemCreator);
 				}
 			}
 		}

@@ -686,7 +686,7 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddEmpl(Key&& key, const ValueCreator& valueCreator)
+	Iterator AddCrt(Key&& key, const ValueCreator& valueCreator)
 	{
 		return _Add(std::move(key), valueCreator);
 	}
@@ -702,7 +702,7 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddEmpl(const Key& key, const ValueCreator& valueCreator)
+	Iterator AddCrt(const Key& key, const ValueCreator& valueCreator)
 	{
 		return _Add(key, valueCreator);
 	}
@@ -718,7 +718,7 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddEmpl(KeyIterator keyIter, const ValueCreator& valueCreator)
+	Iterator AddCrt(KeyIterator keyIter, const ValueCreator& valueCreator)
 	{
 		ValueArray& valueArray = keyIter.GetBaseIterator()->value;
 		_AddValue(valueArray, valueCreator);
@@ -727,12 +727,12 @@ public:
 
 	Iterator Add(KeyIterator keyIter, Value&& value)
 	{
-		return AddEmpl(keyIter, typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return AddCrt(keyIter, typename KeyValueTraits::MoveValueCreator(std::move(value)));
 	}
 
 	Iterator Add(KeyIterator keyIter, const Value& value)
 	{
-		return AddEmpl(keyIter, typename KeyValueTraits::CopyValueCreator(value));
+		return AddCrt(keyIter, typename KeyValueTraits::CopyValueCreator(value));
 	}
 
 	template<typename Iterator>
@@ -864,7 +864,7 @@ private:
 	{
 		KeyIterator keyIter = Find((const Key&)key);
 		if (!!keyIter)
-			return AddEmpl(keyIter, valueCreator);
+			return AddCrt(keyIter, valueCreator);
 		auto keyValuesCreator = [this, &key, &valueCreator] (void* pkey, void* pvalues)
 		{
 			auto keyValueCreator = [&key, &valueCreator, pkey] (void* pvalue)
@@ -876,14 +876,14 @@ private:
 			this->_AddValue(valueArray, keyValueCreator);
 			new(pvalues) ValueArray(std::move(valueArray));
 		};
-		keyIter = KeyIterator(mHashMap.AddEmpl(keyIter.GetBaseIterator(), keyValuesCreator));
+		keyIter = KeyIterator(mHashMap.AddCrt(keyIter.GetBaseIterator(), keyValuesCreator));
 		return _MakeIterator<Iterator>(keyIter, keyIter->values.GetBegin(), false);
 	}
 
 	template<typename ValueCreator>
 	void _AddValue(ValueArray& valueArray, const ValueCreator& valueCreator)
 	{
-		valueArray.AddBackEmpl(mValueCrew.GetValueArrayParams(), valueCreator);
+		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), valueCreator);
 		++mValueCount;
 		++mValueCrew.GetValueVersion();
 	}

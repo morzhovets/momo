@@ -42,12 +42,12 @@ public:
 		std::string s1 = "s1";
 		ar.AddBack(s1);
 		ar.AddBack("s2");
-		ar.AddBackEmpl([] (void* ptr) { new(ptr) std::string("s3"); });
+		ar.AddBackCrt([] (void* ptr) { new(ptr) std::string("s3"); });
 		ar.Reserve(10);
 		assert(ar.GetCapacity() >= 10);
 		ar.AddBackNogrow(s1);
 		ar.AddBackNogrow("s2");
-		ar.AddBackNogrowEmpl([] (void* ptr) { new(ptr) std::string("s3"); });
+		ar.AddBackNogrowCrt([] (void* ptr) { new(ptr) std::string("s3"); });
 		ar.Insert(0, s1);
 		ar.Insert(1, "s2");
 		ar.Insert(3, ar[0]);

@@ -687,7 +687,7 @@ public:
 	}
 
 	template<typename ValueCreator>
-	InsertResult InsertEmpl(Key&& key, const ValueCreator& valueCreator)
+	InsertResult InsertCrt(Key&& key, const ValueCreator& valueCreator)
 	{
 		return _Insert(std::move(key), valueCreator);
 	}
@@ -704,7 +704,7 @@ public:
 	}
 
 	template<typename ValueCreator>
-	InsertResult InsertEmpl(const Key& key, const ValueCreator& valueCreator)
+	InsertResult InsertCrt(const Key& key, const ValueCreator& valueCreator)
 	{
 		return _Insert(key, valueCreator);
 	}
@@ -747,11 +747,11 @@ public:
 #endif
 
 	template<typename KeyValueCreator>
-	Iterator AddEmpl(ConstIterator iter, const KeyValueCreator& keyValueCreator)
+	Iterator AddCrt(ConstIterator iter, const KeyValueCreator& keyValueCreator)
 	{
 		auto pairCreator = [&keyValueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(keyValueCreator); };
-		Iterator resIter = Iterator(mHashSet.AddEmpl(iter.GetBaseIterator(), pairCreator));
+		Iterator resIter = Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 		MOMO_EXTRA_CHECK(resIter == Find(resIter->key));
 		return resIter;
 	}
@@ -868,7 +868,7 @@ private:
 	{
 		auto pairCreator = [&key, &valueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
-		return Iterator(mHashSet.AddEmpl(iter.GetBaseIterator(), pairCreator));
+		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}
 
 private:
