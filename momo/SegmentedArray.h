@@ -456,48 +456,48 @@ public:
 
 	// basic exception safety
 	template<typename ItemCreator>
-	void AddEmpl(size_t index, const ItemCreator& itemCreator)
+	void InsertEmpl(size_t index, const ItemCreator& itemCreator)
 	{
 		ItemHandler itemHandler(itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
-		Add(index, begin, begin + 1);
+		Insert(index, begin, begin + 1);
 	}
 
 	// basic exception safety
-	void Add(size_t index, Item&& item)
+	void Insert(size_t index, Item&& item)
 	{
-		AddEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
+		InsertEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
 	}
 
 	// basic exception safety
-	void Add(size_t index, const Item& item)
+	void Insert(size_t index, const Item& item)
 	{
-		AddEmpl(index, typename ItemTraits::CopyCreator(item));
+		InsertEmpl(index, typename ItemTraits::CopyCreator(item));
 	}
 
 	// basic exception safety
-	void Add(size_t index, size_t count, const Item& item)
+	void Insert(size_t index, size_t count, const Item& item)
 	{
 		typename ItemTraits::CopyCreator itemCreator(item);
 		ItemHandler itemHandler(itemCreator);
 		Reserve(mCount + count);
-		ArrayShifter::Add(*this, index, count, *&itemHandler);
+		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
 
 	// basic exception safety
 	template<typename Iterator>
-	void Add(size_t index, Iterator begin, Iterator end)
+	void Insert(size_t index, Iterator begin, Iterator end)
 	{
 		if (internal::IsForwardIterator<Iterator>::value)
 			Reserve(mCount + std::distance(begin, end));
-		ArrayShifter::Add(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
+		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
 #ifdef MOMO_USE_INIT_LISTS
 	// basic exception safety
-	void Add(size_t index, std::initializer_list<Item> items)
+	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		Add(index, items.begin(), items.end());
+		Insert(index, items.begin(), items.end());
 	}
 #endif
 

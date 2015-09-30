@@ -251,7 +251,7 @@ namespace internal
 		typedef typename Array::ItemTraits ItemTraits;
 		typedef typename Array::Settings Settings;
 
-		static void Add(Array& array, size_t index, size_t count, const Item& item)
+		static void Insert(Array& array, size_t index, size_t count, const Item& item)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
@@ -279,7 +279,7 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		static void Add(Array& array, size_t index, Iterator begin, Iterator end,
+		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
 			std::true_type /*isForwardIterator*/)
 		{
 			size_t initCount = array.GetCount();
@@ -314,7 +314,7 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		static void Add(Array& array, size_t index, Iterator begin, Iterator end,
+		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
 			std::false_type /*isForwardIterator*/)
 		{
 			size_t count = 0;
@@ -322,7 +322,7 @@ namespace internal
 			{
 				auto itemCreator = [iter] (void* pitem)
 					{ ItemTraits::Create(*iter, pitem); };
-				array.AddEmpl(index + count, itemCreator);
+				array.InsertEmpl(index + count, itemCreator);
 			}
 		}
 

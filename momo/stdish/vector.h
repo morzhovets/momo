@@ -334,21 +334,21 @@ public:
 	iterator insert(const_iterator where, value_type&& value)
 	{
 		size_t index = where - begin();
-		mArray.Add(index, std::move(value));
+		mArray.Insert(index, std::move(value));
 		return begin() + index;
 	}
 
 	iterator insert(const_iterator where, const value_type& value)
 	{
 		size_t index = where - begin();
-		mArray.Add(index, value);
+		mArray.Insert(index, value);
 		return begin() + index;
 	}
 
 	iterator insert(const_iterator where, size_type count, const value_type& value)
 	{
 		size_t index = where - begin();
-		mArray.Add(index, count, value);
+		mArray.Insert(index, count, value);
 		return begin() + index;
 	}
 
@@ -356,7 +356,7 @@ public:
 	iterator insert(const_iterator where, Iterator first, Iterator last)
 	{
 		size_t index = where - begin();
-		mArray.Add(index, first, last);
+		mArray.Insert(index, first, last);
 		return begin() + index;
 	}
 
@@ -364,7 +364,7 @@ public:
 	iterator insert(const_iterator where, std::initializer_list<value_type> values)
 	{
 		size_t index = where - begin();
-		mArray.Add(index, values);
+		mArray.Insert(index, values);
 		return begin() + index;
 	}
 #endif
@@ -384,7 +384,7 @@ public:
 		auto itemCreator = [this, &args...] (void* pitem)
 			{ new(pitem) value_type(std::forward<Args>(args)...); };
 		size_t index = where - begin();
-		mArray.AddEmpl(index, itemCreator);
+		mArray.InsertEmpl(index, itemCreator);
 		return begin() + index;
 	}
 #endif

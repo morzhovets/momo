@@ -682,39 +682,39 @@ public:
 
 	// basic exception safety
 	template<typename ItemCreator>
-	void AddEmpl(size_t index, const ItemCreator& itemCreator)
+	void InsertEmpl(size_t index, const ItemCreator& itemCreator)
 	{
 		ItemHandler itemHandler(itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
-		Add(index, begin, begin + 1);
+		Insert(index, begin, begin + 1);
 	}
 
 	// basic exception safety
-	void Add(size_t index, Item&& item)
+	void Insert(size_t index, Item&& item)
 	{
 		size_t initCount = GetCount();
 		size_t grow = (initCount + 1 > GetCapacity());
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			AddEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
+			InsertEmpl(index, typename ItemTraits::MoveCreator(std::move(item)));
 		}
 		else
 		{
 			std::move_iterator<Item*> begin(std::addressof(item));
-			ArrayShifter::Add(*this, index, begin, begin + 1,
+			ArrayShifter::Insert(*this, index, begin, begin + 1,
 				internal::IsForwardIterator<Iterator>());
 		}
 	}
 
 	// basic exception safety
-	void Add(size_t index, const Item& item)
+	void Insert(size_t index, const Item& item)
 	{
-		return Add(index, (size_t)1, item);	//?
+		return Insert(index, (size_t)1, item);	//?
 	}
 
 	// basic exception safety
-	void Add(size_t index, size_t count, const Item& item)
+	void Insert(size_t index, size_t count, const Item& item)
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + count;
@@ -726,17 +726,17 @@ public:
 			ItemHandler itemHandler(itemCreator);
 			if (grow)
 				_Grow(newCount, ArrayGrowCause::add);
-			ArrayShifter::Add(*this, index, count, *&itemHandler);
+			ArrayShifter::Insert(*this, index, count, *&itemHandler);
 		}
 		else
 		{
-			ArrayShifter::Add(*this, index, count, item);
+			ArrayShifter::Insert(*this, index, count, item);
 		}
 	}
 
 	// basic exception safety
 	template<typename Iterator>
-	void Add(size_t index, Iterator begin, Iterator end)
+	void Insert(size_t index, Iterator begin, Iterator end)
 	{
 		if (internal::IsForwardIterator<Iterator>::value)
 		{
@@ -745,14 +745,14 @@ public:
 			if (newCount > GetCapacity())
 				_Grow(newCount, ArrayGrowCause::add);
 		}
-		ArrayShifter::Add(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
+		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
 #ifdef MOMO_USE_INIT_LISTS
 	// basic exception safety
-	void Add(size_t index, std::initializer_list<Item> items)
+	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		Add(index, items.begin(), items.end());
+		Insert(index, items.begin(), items.end());
 	}
 #endif
 
