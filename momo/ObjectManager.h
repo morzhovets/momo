@@ -65,6 +65,11 @@ namespace internal
 			{
 			}
 
+			explicit VariadicCreator(std::tuple<Args...>&& args)
+				: mArgs(std::move(args))
+			{
+			}
+
 			void operator()(void* pobject) const
 			{
 				_Create(pobject, typename MakeSequence<sizeof...(Args)>::Sequence());
@@ -132,6 +137,24 @@ namespace internal
 			const Object& mObject;
 		};
 #endif
+
+		template<typename Arg>
+		class TemplCreator
+		{
+		public:
+			explicit TemplCreator(Arg&& arg)
+				: mArg(std::forward<Arg>(arg))
+			{
+			}
+
+			void operator()(void* pobject) const
+			{
+				new(pobject) Object(std::forward<Arg>(mArg));
+			}
+
+		private:
+			Arg&& mArg;
+		};
 
 		static void Create(void* pobject)
 		{

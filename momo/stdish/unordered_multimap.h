@@ -57,24 +57,6 @@ public:
 	//const_local_iterator;
 
 private:
-	template<typename Arg>
-	class MappedCreator
-	{
-	public:
-		MappedCreator(Arg&& arg)
-			: mArg(std::forward<Arg>(arg))
-		{
-		}
-
-		void operator()(void* ptr) const
-		{
-			new(ptr) mapped_type(std::forward<Arg>(mArg));
-		}
-
-	private:
-		Arg&& mArg;
-	};
-
 	typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 
 public:
@@ -377,7 +359,8 @@ public:
 		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		return _insert(value.first, MappedCreator<const Second&>(value.second));
+		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<const Second&> MappedCreator;
+		return _insert(value.first, MappedCreator(value.second));
 	}
 
 	template<typename First, typename Second>
@@ -393,8 +376,9 @@ public:
 		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
+		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<Second> MappedCreator;
 		return _insert(std::forward<First>(value.first),
-			MappedCreator<Second>(std::forward<Second>(value.second)));
+			MappedCreator(std::forward<Second>(value.second)));
 	}
 
 	template<typename First, typename Second>
@@ -445,8 +429,8 @@ public:
 	template<typename Arg1, typename Arg2>
 	iterator emplace(Arg1&& arg1, Arg2&& arg2)
 	{
-		return _insert(std::forward<Arg1>(arg1),
-			MappedCreator<Arg2>(std::forward<Arg2>(arg2)));
+		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<Arg2> MappedCreator;
+		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
 	}
 
 	template<typename Arg1, typename Arg2>
@@ -457,31 +441,16 @@ public:
 
 	template<typename... Args1, typename... Args2>
 	iterator emplace(std::piecewise_construct_t,
-		const std::tuple<Args1...>& args1, const std::tuple<Args2...>& args2)
+		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
 	{
-		KeyBuffer keyBuffer;
-		_create(&keyBuffer, args1);
-		iterator resIter;
-		try
-		{
-			auto creator = [this, &args2] (void* pmapped)
-				{ _create((mapped_type*)pmapped, args2); };
-			resIter = _insert(std::move(*&keyBuffer), creator);
-		}
-		catch (...)
-		{
-			HashMultiMap::KeyValueTraits::DestroyKey(*&keyBuffer);
-			throw;
-		}
-		HashMultiMap::KeyValueTraits::DestroyKey(*&keyBuffer);
-		return resIter;
+		return _emplace(std::move(args1), std::move(args2));
 	}
 
 	template<typename... Args1, typename... Args2>
 	iterator emplace_hint(const_iterator, std::piecewise_construct_t,
-		const std::tuple<Args1...>& args1, const std::tuple<Args2...>& args2)
+		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
 	{
-		return emplace(std::piecewise_construct, args1, args2);
+		return _emplace(std::move(args1), std::move(args2));
 	}
 #endif
 
@@ -565,8 +534,9 @@ private:
 	template<typename Key, typename MappedCreator>
 	iterator _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
+		typedef typename internal::ObjectManager<key_type>::template TemplCreator<Key> KeyCreator;
 		KeyBuffer keyBuffer;
-		new(&keyBuffer) key_type(std::forward<Key>(key));
+		KeyCreator(std::forward<Key>(key))(&keyBuffer);
 		iterator resIter;
 		try
 		{
@@ -594,18 +564,25 @@ private:
 	}
 
 #ifdef MOMO_USE_VARIADIC_TEMPLATES
-	template<typename Object, typename... Args>
-	void _create(Object* pobject, const std::tuple<Args...>& args)
+	template<typename... Args1, typename... Args2>
+	iterator _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
 	{
-		_create(pobject, args,
-			typename internal::MakeSequence<sizeof...(Args)>::Sequence());
-	}
-
-	template<typename Object, typename... Args, size_t... sequence>
-	void _create(Object* pobject, const std::tuple<Args...>& args, internal::Sequence<sequence...>)
-	{
-		(void)args;	// vs warning
-		new(pobject) Object(std::get<sequence>(args)...);
+		typedef typename internal::ObjectManager<key_type>::template VariadicCreator<Args1...> KeyCreator;
+		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Args2...> MappedCreator;
+		KeyBuffer keyBuffer;
+		KeyCreator(std::move(args1))(&keyBuffer);
+		iterator resIter;
+		try
+		{
+			resIter = _insert(std::move(*&keyBuffer), MappedCreator(std::move(args2)));
+		}
+		catch (...)
+		{
+			HashMultiMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+			throw;
+		}
+		HashMultiMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+		return resIter;
 	}
 #endif
 

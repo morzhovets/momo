@@ -373,16 +373,16 @@ public:
 	template<typename... Args>
 	void emplace_back(Args&&... args)
 	{
-		typedef typename internal::ObjectManager<value_type>::template VariadicCreator<Args...> ItemCreator;
-		mArray.AddBackCrt(ItemCreator(std::forward<Args>(args)...));
+		typedef typename internal::ObjectManager<value_type>::template VariadicCreator<Args...> ValueCreator;
+		mArray.AddBackCrt(ValueCreator(std::forward<Args>(args)...));
 	}
 
 	template<typename... Args>
 	iterator emplace(const_iterator where, Args&&... args)
 	{
-		typedef typename internal::ObjectManager<value_type>::template VariadicCreator<Args...> ItemCreator;
+		typedef typename internal::ObjectManager<value_type>::template VariadicCreator<Args...> ValueCreator;
 		size_t index = where - begin();
-		mArray.InsertCrt(index, ItemCreator(std::forward<Args>(args)...));
+		mArray.InsertCrt(index, ValueCreator(std::forward<Args>(args)...));
 		return begin() + index;
 	}
 #endif
