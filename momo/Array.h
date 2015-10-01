@@ -35,10 +35,10 @@ struct ArrayItemTraits
 	typedef typename ItemManager::MoveCreator MoveCreator;
 	typedef typename ItemManager::CopyCreator CopyCreator;
 
-	template<typename Argument>
-	static void Create(Argument&& arg, void* pitem)
+	template<typename Arg>
+	static void Create(Arg&& arg, void* pitem)
 	{
-		ItemManager::Create(std::forward<Argument>(arg), pitem);
+		ItemManager::Create(std::forward<Arg>(arg), pitem);
 	}
 
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
@@ -46,10 +46,10 @@ struct ArrayItemTraits
 		ItemManager::Destroy(items, count);
 	}
 
-	template<typename Argument>
-	static void Assign(Argument&& arg, Item& item)
+	template<typename Arg>
+	static void Assign(Arg&& arg, Item& item)
 	{
-		item = std::forward<Argument>(arg);
+		item = std::forward<Arg>(arg);
 	}
 
 	static void Relocate(Item* srcItems, Item* dstItems, size_t count)

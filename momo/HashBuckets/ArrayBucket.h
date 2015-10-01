@@ -40,11 +40,11 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
-			template<typename Argument>
-			static void Create(Argument&& arg, void* pitem)
+			template<typename Arg>
+			static void Create(Arg&& arg, void* pitem)
 			{
 				MOMO_CHECK_TYPE(Item, arg);
-				ItemTraits::Create(std::forward<Argument>(arg), pitem);
+				ItemTraits::Create(std::forward<Arg>(arg), pitem);
 			}
 
 			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT

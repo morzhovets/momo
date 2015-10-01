@@ -161,10 +161,10 @@ namespace internal
 			new(pobject) Object();
 		}
 
-		template<typename Argument>
-		static void Create(Argument&& arg, void* pobject)
+		template<typename Arg>
+		static void Create(Arg&& arg, void* pobject)
 		{
-			new(pobject) Object(std::forward<Argument>(arg));
+			new(pobject) Object(std::forward<Arg>(arg));
 		}
 
 		template<typename Object2Creator>
