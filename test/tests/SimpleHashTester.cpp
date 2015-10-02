@@ -66,69 +66,82 @@ public:
 
 	static void TestVarAll()
 	{
-		TestVarHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestVarHashSet<momo::HashBucketOneI1, 1, 1>("momo::HashBucketOneI1");
+		TestVarHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
 
-		TestVarHash<momo::HashBucketLimP1<1, 1, 32>>("momo::HashBucketLimP1<1, 1, 32>");
-		TestVarHash<momo::HashBucketLimP1<2, 1, 1>>("momo::HashBucketLimP1<2, 1, 1>");
-		TestVarHash<momo::HashBucketLimP1<3, 1, 2>>("momo::HashBucketLimP1<3, 1, 2>");
-		TestVarHash<momo::HashBucketLimP1<4, 1, 4>>("momo::HashBucketLimP1<4, 1, 4>");
-		TestVarHash<momo::HashBucketLimP1<5, 1, 64>>("momo::HashBucketLimP1<5, 1, 64>");
-		TestVarHash<momo::HashBucketLimP1<7, 1, 3>>("momo::HashBucketLimP1<7, 1, 3>");
-		TestVarHash<momo::HashBucketLimP1<10, 1, 127>>("momo::HashBucketLimP1<10, 1, 127>");
-		TestVarHash<momo::HashBucketLimP1<15, 1, 1>>("momo::HashBucketLimP1<15, 1, 1>");
+		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 32>,  1, 1>("momo::HashBucketLimP1< 1, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 32>,  2, 1>("momo::HashBucketLimP1< 1, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 2, 1, 32>, 16, 8>("momo::HashBucketLimP1< 2, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 3, 1, 32>,  4, 4>("momo::HashBucketLimP1< 3, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 7, 1, 32>,  6, 2>("momo::HashBucketLimP1< 7, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1<15, 1, 32>, 11, 1>("momo::HashBucketLimP1<15, 1, 32>");
 
-		TestVarHash<momo::HashBucketLimP<1, 32>>("momo::HashBucketLimP<1, 32>");
-		TestVarHash<momo::HashBucketLimP<2, 1>>("momo::HashBucketLimP<2, 1>");
-		TestVarHash<momo::HashBucketLimP<3, 2>>("momo::HashBucketLimP<3, 2>");
-		TestVarHash<momo::HashBucketLimP<4, 4>>("momo::HashBucketLimP<4, 4>");
-		TestVarHash<momo::HashBucketLimP<5, 64>>("momo::HashBucketLimP<5, 64>");
-		TestVarHash<momo::HashBucketLimP<7, 3>>("momo::HashBucketLimP<7, 3>");
-		TestVarHash<momo::HashBucketLimP<10, 127>>("momo::HashBucketLimP<10, 127>");
-		TestVarHash<momo::HashBucketLimP<15, 1>>("momo::HashBucketLimP<15, 1>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 32, false>, 11, 1>("momo::HashBucketLimP< 1, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 32, false>,  1, 1>("momo::HashBucketLimP< 1, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  3, 1>("momo::HashBucketLimP< 2, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  2, 2>("momo::HashBucketLimP< 2, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  8, 4>("momo::HashBucketLimP< 2, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 3, 32, false>,  6, 1>("momo::HashBucketLimP< 3, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 3, 32, false>,  8, 2>("momo::HashBucketLimP< 3, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 4, 32, false>,  4, 4>("momo::HashBucketLimP< 4, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 5, 32, false>, 10, 2>("momo::HashBucketLimP< 5, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 6, 32, false>,  4, 4>("momo::HashBucketLimP< 6, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 7, 32, false>, 16, 4>("momo::HashBucketLimP< 7, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 8, 32, false>,  8, 8>("momo::HashBucketLimP< 8, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP<10, 32, false>, 32, 8>("momo::HashBucketLimP<10, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP<12, 32, false>, 11, 1>("momo::HashBucketLimP<12, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP<15, 32, false>, 16, 8>("momo::HashBucketLimP<15, 32, false>");
 
-		TestVarHash<momo::HashBucketUnlimP<1, 32>>("momo::HashBucketUnlimP<1, 32>");
-		TestVarHash<momo::HashBucketUnlimP<2, 1>>("momo::HashBucketUnlimP<2, 1>");
-		TestVarHash<momo::HashBucketUnlimP<3, 2>>("momo::HashBucketUnlimP<3, 2>");
-		TestVarHash<momo::HashBucketUnlimP<4, 4>>("momo::HashBucketUnlimP<4, 4>");
-		TestVarHash<momo::HashBucketUnlimP<5, 64>>("momo::HashBucketUnlimP<5, 64>");
-		TestVarHash<momo::HashBucketUnlimP<7, 3>>("momo::HashBucketUnlimP<7, 3>");
-		TestVarHash<momo::HashBucketUnlimP<10, 127>>("momo::HashBucketUnlimP<10, 127>");
-		TestVarHash<momo::HashBucketUnlimP<15, 1>>("momo::HashBucketUnlimP<15, 1>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 32, true>, 11, 1>("momo::HashBucketLimP< 1, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 32, true>,  1, 1>("momo::HashBucketLimP< 1, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  3, 1>("momo::HashBucketLimP< 2, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  2, 2>("momo::HashBucketLimP< 2, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  8, 4>("momo::HashBucketLimP< 2, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 3, 32, true>,  6, 1>("momo::HashBucketLimP< 3, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 3, 32, true>,  8, 2>("momo::HashBucketLimP< 3, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 4, 32, true>,  4, 4>("momo::HashBucketLimP< 4, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 5, 32, true>, 10, 2>("momo::HashBucketLimP< 5, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 6, 32, true>,  4, 4>("momo::HashBucketLimP< 6, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 7, 32, true>, 16, 4>("momo::HashBucketLimP< 7, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 8, 32, true>,  8, 8>("momo::HashBucketLimP< 8, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP<10, 32, true>, 32, 8>("momo::HashBucketLimP<10, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP<12, 32, true>, 11, 1>("momo::HashBucketLimP<12, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP<15, 32, true>, 16, 8>("momo::HashBucketLimP<15, 32, true>");
 
-		TestVarHash<momo::HashBucketLim4<1, 32>>("momo::HashBucketLim4<1, 32>");
-		TestVarHash<momo::HashBucketLim4<2, 1>>("momo::HashBucketLim4<2, 1>");
-		TestVarHash<momo::HashBucketLim4<3, 127>>("momo::HashBucketLim4<3, 127>");
-		TestVarHash<momo::HashBucketLim4<7, 2>>("momo::HashBucketLim4<7, 2>");
+		TestVarHashSet<momo::HashBucketUnlimP< 1, 32>,  1, 1>("momo::HashBucketUnlimP< 1, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP< 1, 32>,  2, 1>("momo::HashBucketUnlimP< 1, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP< 2, 32>, 16, 8>("momo::HashBucketUnlimP< 2, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP< 3, 32>,  4, 4>("momo::HashBucketUnlimP< 3, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP< 7, 32>,  6, 2>("momo::HashBucketUnlimP< 7, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP<15, 32>, 11, 1>("momo::HashBucketUnlimP<15, 32>");
+
+		TestVarHashSet<momo::HashBucketLim4<1, 32>,  1, 1>("momo::HashBucketLim4<1, 32>");
+		TestVarHashSet<momo::HashBucketLim4<2, 32>, 16, 8>("momo::HashBucketLim4<2, 32>");
+		TestVarHashSet<momo::HashBucketLim4<4, 32>, 12, 4>("momo::HashBucketLim4<4, 32>");
 	}
 
-	template<typename HashBucket>
-	static void TestVarHash(const char* bucketName)
+	template<typename HashBucket, size_t size, size_t alignment>
+	static void TestVarHashSet(const char* bucketName)
 	{
-		TestVarHashSet<HashBucket, VarItem<1, 1>>(bucketName, "VarItem<1, 1>");
-		TestVarHashSet<HashBucket, VarItem<2, 1>>(bucketName, "VarItem<2, 1>");
-	}
-
-	template<typename HashBucket, typename VarItem>
-	static void TestVarHashSet(const char* bucketName, const char* varItemName)
-	{
-		std::cout << bucketName << ": " << varItemName << ": " << std::flush;
+		std::cout << bucketName << ": VarItem<" << size << ", " << alignment << ">: " << std::flush;
 
 		static const size_t count = 256;
 		static unsigned char array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = (unsigned char)i;
 
-		typedef momo::HashSet<VarItem, typename VarItem::template HashTraits<HashBucket>> HashSet;
+		typedef VarItem<size, alignment> Item;
+		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket >> HashSet;
 		HashSet set;
 
 		std::shuffle(array, array + count, std::mt19937());
 		for (unsigned char c : array)
-			assert(set.Insert(VarItem(c)).inserted);
+			assert(set.Insert(Item(c)).inserted);
 		assert(set.GetCount() == count);
 
 		std::shuffle(array, array + count, std::mt19937());
 		for (unsigned char c : array)
-			assert(set.Remove(VarItem(c)));
+			assert(set.Remove(Item(c)));
 		assert(set.IsEmpty());
 
 		std::cout << "ok" << std::endl;
