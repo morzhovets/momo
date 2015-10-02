@@ -21,20 +21,25 @@ class SimpleArrayTester
 public:
 	static void TestAll()
 	{
-		std::cout << "momo::Array<std::string>: " << std::flush;
-		typedef momo::Array<std::string, momo::MemManagerC, momo::ArrayItemTraits<std::string>,
-			momo::ArraySettings<std::is_nothrow_move_constructible<std::string>::value ? 2 : 0>> Array;
-		TestArray<Array>();
+		std::cout << "momo::Array (1): " << std::flush;
+		typedef momo::Array<std::string> Array1;
+		TestStrArray<Array1>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::SegmentedArray<std::string>: " << std::flush;
+		std::cout << "momo::Array (2): " << std::flush;
+		typedef momo::Array<std::string, momo::MemManagerC, momo::ArrayItemTraits<std::string>,
+			momo::ArraySettings<std::is_nothrow_move_constructible<std::string>::value ? 2 : 0>> Array2;
+		TestStrArray<Array2>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::SegmentedArray: " << std::flush;
 		typedef momo::SegmentedArray<std::string> SegmentedArray;
-		TestArray<SegmentedArray>();
+		TestStrArray<SegmentedArray>();
 		std::cout << "ok" << std::endl;
 	}
 
 	template<typename Array>
-	static void TestArray()
+	static void TestStrArray()
 	{
 		Array ar;
 		ar = Array(2, "s");
