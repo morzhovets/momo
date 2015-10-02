@@ -17,6 +17,7 @@
 
 #include <string>
 #include <iostream>
+#include <type_traits>
 #include <random>
 
 class SimpleHashTester
@@ -53,13 +54,13 @@ private:
 		}
 
 	private:
-		std::aligned_storage<size, alignment> mStorage;
+		typename std::aligned_storage<size, alignment>::type mStorage;
 	};
 
 public:
 	static void TestAll()
 	{
-		//TestVarAll();
+		TestVarAll();
 		TestStrAll();
 	}
 
