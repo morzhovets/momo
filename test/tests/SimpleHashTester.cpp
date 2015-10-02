@@ -69,55 +69,58 @@ public:
 		TestVarHashSet<momo::HashBucketOneI1, 1, 1>("momo::HashBucketOneI1");
 		TestVarHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
 
-		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 32>,  1, 1>("momo::HashBucketLimP1< 1, 1, 32>");
-		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 32>,  2, 1>("momo::HashBucketLimP1< 1, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 16>,  1, 1>("momo::HashBucketLimP1< 1, 1, 16>");
+		TestVarHashSet<momo::HashBucketLimP1< 1, 1, 99>,  2, 1>("momo::HashBucketLimP1< 1, 1, 99>");
 		TestVarHashSet<momo::HashBucketLimP1< 2, 1, 32>, 16, 8>("momo::HashBucketLimP1< 2, 1, 32>");
-		TestVarHashSet<momo::HashBucketLimP1< 3, 1, 32>,  4, 4>("momo::HashBucketLimP1< 3, 1, 32>");
-		TestVarHashSet<momo::HashBucketLimP1< 7, 1, 32>,  6, 2>("momo::HashBucketLimP1< 7, 1, 32>");
-		TestVarHashSet<momo::HashBucketLimP1<15, 1, 32>, 11, 1>("momo::HashBucketLimP1<15, 1, 32>");
+		TestVarHashSet<momo::HashBucketLimP1< 3, 1,  1>,  4, 4>("momo::HashBucketLimP1< 3, 1,  1>");
+		TestVarHashSet<momo::HashBucketLimP1< 4, 1,  2>,  4, 4>("momo::HashBucketLimP1< 4, 1,  2>");
+		TestVarHashSet<momo::HashBucketLimP1< 7, 1, 11>,  6, 2>("momo::HashBucketLimP1< 7, 1, 11>");
+		TestVarHashSet<momo::HashBucketLimP1<15, 1,  1>, 11, 1>("momo::HashBucketLimP1<15, 1,  1>");
 
-		TestVarHashSet<momo::HashBucketLimP< 1, 32, false>, 11, 1>("momo::HashBucketLimP< 1, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 1, 32, false>,  1, 1>("momo::HashBucketLimP< 1, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  3, 1>("momo::HashBucketLimP< 2, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  2, 2>("momo::HashBucketLimP< 2, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, false>,  8, 4>("momo::HashBucketLimP< 2, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 3, 32, false>,  6, 1>("momo::HashBucketLimP< 3, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 3, 32, false>,  8, 2>("momo::HashBucketLimP< 3, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 4, 32, false>,  4, 4>("momo::HashBucketLimP< 4, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 5, 32, false>, 10, 2>("momo::HashBucketLimP< 5, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 6, 32, false>,  4, 4>("momo::HashBucketLimP< 6, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 7, 32, false>, 16, 4>("momo::HashBucketLimP< 7, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP< 8, 32, false>,  8, 8>("momo::HashBucketLimP< 8, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 16, false>, 11, 1>("momo::HashBucketLimP< 1, 16, false>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 64, false>,  1, 1>("momo::HashBucketLimP< 1, 64, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 99, false>,  3, 1>("momo::HashBucketLimP< 2, 99, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 88, false>,  2, 2>("momo::HashBucketLimP< 2, 88, false>");
+		TestVarHashSet<momo::HashBucketLimP< 2,  1, false>,  8, 4>("momo::HashBucketLimP< 2,  1, false>");
+		TestVarHashSet<momo::HashBucketLimP< 3,  2, false>,  6, 1>("momo::HashBucketLimP< 3,  2, false>");
+		TestVarHashSet<momo::HashBucketLimP< 3,  3, false>,  8, 2>("momo::HashBucketLimP< 3,  3, false>");
+		TestVarHashSet<momo::HashBucketLimP< 4,  4, false>,  4, 4>("momo::HashBucketLimP< 4,  4, false>");
+		TestVarHashSet<momo::HashBucketLimP< 5,  5, false>, 10, 2>("momo::HashBucketLimP< 5,  5, false>");
+		TestVarHashSet<momo::HashBucketLimP< 6,  8, false>,  4, 4>("momo::HashBucketLimP< 6,  8, false>");
+		TestVarHashSet<momo::HashBucketLimP< 7, 11, false>, 16, 4>("momo::HashBucketLimP< 7, 11, false>");
+		TestVarHashSet<momo::HashBucketLimP< 8, 33, false>,  8, 8>("momo::HashBucketLimP< 8, 33, false>");
 		TestVarHashSet<momo::HashBucketLimP<10, 32, false>, 32, 8>("momo::HashBucketLimP<10, 32, false>");
-		TestVarHashSet<momo::HashBucketLimP<12, 32, false>, 11, 1>("momo::HashBucketLimP<12, 32, false>");
+		TestVarHashSet<momo::HashBucketLimP<12, 55, false>, 11, 1>("momo::HashBucketLimP<12, 55, false>");
+		TestVarHashSet<momo::HashBucketLimP<14,  1, false>, 16, 8>("momo::HashBucketLimP<14,  1, false>");
 		TestVarHashSet<momo::HashBucketLimP<15, 32, false>, 16, 8>("momo::HashBucketLimP<15, 32, false>");
 
-		TestVarHashSet<momo::HashBucketLimP< 1, 32, true>, 11, 1>("momo::HashBucketLimP< 1, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 1, 32, true>,  1, 1>("momo::HashBucketLimP< 1, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  3, 1>("momo::HashBucketLimP< 2, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  2, 2>("momo::HashBucketLimP< 2, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 2, 32, true>,  8, 4>("momo::HashBucketLimP< 2, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 3, 32, true>,  6, 1>("momo::HashBucketLimP< 3, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 3, 32, true>,  8, 2>("momo::HashBucketLimP< 3, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 4, 32, true>,  4, 4>("momo::HashBucketLimP< 4, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 5, 32, true>, 10, 2>("momo::HashBucketLimP< 5, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 6, 32, true>,  4, 4>("momo::HashBucketLimP< 6, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 7, 32, true>, 16, 4>("momo::HashBucketLimP< 7, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP< 8, 32, true>,  8, 8>("momo::HashBucketLimP< 8, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 16, true>, 11, 1>("momo::HashBucketLimP< 1, 16, true>");
+		TestVarHashSet<momo::HashBucketLimP< 1, 64, true>,  1, 1>("momo::HashBucketLimP< 1, 64, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 99, true>,  3, 1>("momo::HashBucketLimP< 2, 99, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2, 88, true>,  2, 2>("momo::HashBucketLimP< 2, 88, true>");
+		TestVarHashSet<momo::HashBucketLimP< 2,  1, true>,  8, 4>("momo::HashBucketLimP< 2,  1, true>");
+		TestVarHashSet<momo::HashBucketLimP< 3,  2, true>,  6, 1>("momo::HashBucketLimP< 3,  2, true>");
+		TestVarHashSet<momo::HashBucketLimP< 3,  3, true>,  8, 2>("momo::HashBucketLimP< 3,  3, true>");
+		TestVarHashSet<momo::HashBucketLimP< 4,  4, true>,  4, 4>("momo::HashBucketLimP< 4,  4, true>");
+		TestVarHashSet<momo::HashBucketLimP< 5,  5, true>, 10, 2>("momo::HashBucketLimP< 5,  5, true>");
+		TestVarHashSet<momo::HashBucketLimP< 6,  8, true>,  4, 4>("momo::HashBucketLimP< 6,  8, true>");
+		TestVarHashSet<momo::HashBucketLimP< 7, 11, true>, 16, 4>("momo::HashBucketLimP< 7, 11, true>");
+		TestVarHashSet<momo::HashBucketLimP< 8, 33, true>,  8, 8>("momo::HashBucketLimP< 8, 33, true>");
 		TestVarHashSet<momo::HashBucketLimP<10, 32, true>, 32, 8>("momo::HashBucketLimP<10, 32, true>");
-		TestVarHashSet<momo::HashBucketLimP<12, 32, true>, 11, 1>("momo::HashBucketLimP<12, 32, true>");
+		TestVarHashSet<momo::HashBucketLimP<12, 55, true>, 11, 1>("momo::HashBucketLimP<12, 55, true>");
+		TestVarHashSet<momo::HashBucketLimP<14,  1, true>, 16, 8>("momo::HashBucketLimP<14,  1, true>");
 		TestVarHashSet<momo::HashBucketLimP<15, 32, true>, 16, 8>("momo::HashBucketLimP<15, 32, true>");
 
 		TestVarHashSet<momo::HashBucketUnlimP< 1, 32>,  1, 1>("momo::HashBucketUnlimP< 1, 32>");
-		TestVarHashSet<momo::HashBucketUnlimP< 1, 32>,  2, 1>("momo::HashBucketUnlimP< 1, 32>");
-		TestVarHashSet<momo::HashBucketUnlimP< 2, 32>, 16, 8>("momo::HashBucketUnlimP< 2, 32>");
-		TestVarHashSet<momo::HashBucketUnlimP< 3, 32>,  4, 4>("momo::HashBucketUnlimP< 3, 32>");
-		TestVarHashSet<momo::HashBucketUnlimP< 7, 32>,  6, 2>("momo::HashBucketUnlimP< 7, 32>");
-		TestVarHashSet<momo::HashBucketUnlimP<15, 32>, 11, 1>("momo::HashBucketUnlimP<15, 32>");
+		TestVarHashSet<momo::HashBucketUnlimP< 1,  1>,  2, 1>("momo::HashBucketUnlimP< 1,  1>");
+		TestVarHashSet<momo::HashBucketUnlimP< 2, 99>, 16, 8>("momo::HashBucketUnlimP< 2, 99>");
+		TestVarHashSet<momo::HashBucketUnlimP< 3, 16>,  4, 4>("momo::HashBucketUnlimP< 3, 16>");
+		TestVarHashSet<momo::HashBucketUnlimP< 7, 11>,  6, 2>("momo::HashBucketUnlimP< 7, 11>");
+		TestVarHashSet<momo::HashBucketUnlimP<15,  1>, 11, 1>("momo::HashBucketUnlimP<15,  1>");
 
 		TestVarHashSet<momo::HashBucketLim4<1, 32>,  1, 1>("momo::HashBucketLim4<1, 32>");
-		TestVarHashSet<momo::HashBucketLim4<2, 32>, 16, 8>("momo::HashBucketLim4<2, 32>");
-		TestVarHashSet<momo::HashBucketLim4<4, 32>, 12, 4>("momo::HashBucketLim4<4, 32>");
+		TestVarHashSet<momo::HashBucketLim4<2, 99>, 16, 8>("momo::HashBucketLim4<2, 99>");
+		TestVarHashSet<momo::HashBucketLim4<4,  1>, 12, 4>("momo::HashBucketLim4<4,  1>");
 	}
 
 	template<typename HashBucket, size_t size, size_t alignment>
