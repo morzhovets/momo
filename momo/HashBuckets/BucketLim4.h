@@ -28,7 +28,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t logMaxCount = tLogMaxCount;
-		MOMO_STATIC_ASSERT(0 < logMaxCount && logMaxCount < 8);	//?
+		MOMO_STATIC_ASSERT(0 < logMaxCount && logMaxCount <= 4);	//?
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
