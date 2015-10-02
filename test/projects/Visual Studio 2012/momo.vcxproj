@@ -143,17 +143,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLim4.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
     <ClInclude Include="..\..\..\momo\Settings.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_map.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_multimap.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_set.h" />
     <ClInclude Include="..\..\..\momo\stdish\vector.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\ArrayBucket.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP1.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketOneI1.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUnlimP.h" />
+    <ClInclude Include="..\..\..\momo\details\ArrayBucket.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketLimP.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketLimP1.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketOneI1.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\HashUtility.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />
     <ClInclude Include="..\..\..\momo\MemPool.h" />
@@ -167,7 +167,7 @@
     <ClInclude Include="..\..\tests\LibcxxUnorderedSetTests.h" />
     <ClInclude Include="..\..\tests\LibcxxVectorTests.h" />
     <ClInclude Include="..\..\..\momo\Array.h" />
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUtility.h" />
+    <ClInclude Include="..\..\..\momo\details\BucketUtility.h" />
     <ClInclude Include="..\..\..\momo\HashMap.h" />
     <ClInclude Include="..\..\..\momo\HashMultiMap.h" />
     <ClInclude Include="..\..\..\momo\HashTraits.h" />

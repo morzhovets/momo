@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  momo/HashBuckets/BucketUnlimP.h
+  momo/details/BucketUnlimP.h
 
   namespace momo:
     struct HashBucketUnlimP

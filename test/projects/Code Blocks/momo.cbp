@@ -65,13 +65,13 @@
 		</Build>
 		<Unit filename="../../../momo/Array.h" />
 		<Unit filename="../../../momo/ArrayUtility.h" />
-		<Unit filename="../../../momo/HashBuckets/ArrayBucket.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketLim4.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketLimP.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketLimP1.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketOneI1.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketUnlimP.h" />
-		<Unit filename="../../../momo/HashBuckets/BucketUtility.h" />
+		<Unit filename="../../../momo/details/ArrayBucket.h" />
+		<Unit filename="../../../momo/details/BucketLim4.h" />
+		<Unit filename="../../../momo/details/BucketLimP.h" />
+		<Unit filename="../../../momo/details/BucketLimP1.h" />
+		<Unit filename="../../../momo/details/BucketOneI1.h" />
+		<Unit filename="../../../momo/details/BucketUnlimP.h" />
+		<Unit filename="../../../momo/details/BucketUtility.h" />
 		<Unit filename="../../../momo/HashMap.h" />
 		<Unit filename="../../../momo/HashMultiMap.h" />
 		<Unit filename="../../../momo/HashSet.h" />

@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  momo/HashBuckets/BucketLim4.h
+  momo/details/BucketLim4.h
 
   namespace momo:
     struct HashBucketLim4

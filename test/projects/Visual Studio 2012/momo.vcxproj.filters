@@ -16,7 +16,7 @@
     <Filter Include="Header Files\momo">
       <UniqueIdentifier>{846afa55-333e-48ad-831d-cdb610613c66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\momo\HashBuckets">
+    <Filter Include="Header Files\momo\details">
       <UniqueIdentifier>{31d4bc8a-cdfe-45b3-be96-875c1ec5b335}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\tests">
@@ -110,8 +110,8 @@
     <ClInclude Include="..\..\..\momo\HashSet.h">
       <Filter>Header Files\momo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUtility.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketUtility.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\Array.h">
       <Filter>Header Files\momo</Filter>
@@ -146,23 +146,23 @@
     <ClInclude Include="..\..\..\momo\MemPool.h">
       <Filter>Header Files\momo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\ArrayBucket.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\ArrayBucket.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP1.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketLimP1.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketOneI1.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketOneI1.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketUnlimP.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketUnlimP.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLimP.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketLimP.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\HashBuckets\BucketLim4.h">
-      <Filter>Header Files\momo\HashBuckets</Filter>
+    <ClInclude Include="..\..\..\momo\details\BucketLim4.h">
+      <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\Settings.h">
       <Filter>Header Files\momo</Filter>

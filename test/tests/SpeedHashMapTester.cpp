@@ -9,7 +9,7 @@
 #ifdef TEST_SPEED_HASH_MAP
 
 #include "../../momo/HashMap.h"
-#include "../../momo/HashBuckets/BucketLim4.h"
+#include "../../momo/details/BucketLim4.h"
 
 #include <string>
 #include <iostream>

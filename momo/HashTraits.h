@@ -11,11 +11,11 @@
 
 #pragma once
 
-#include "HashBuckets/BucketLimP1.h"
-#include "HashBuckets/BucketLimP.h"
-#include "HashBuckets/BucketUnlimP.h"
-#include "HashBuckets/BucketOneI1.h"
-//#include "HashBuckets/BucketLim4.h"
+#include "details/BucketLimP1.h"
+#include "details/BucketLimP.h"
+#include "details/BucketUnlimP.h"
+#include "details/BucketOneI1.h"
+//#include "details/BucketLim4.h"
 
 namespace momo
 {

@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  momo/HashBuckets/BucketOneI1.h
+  momo/details/BucketOneI1.h
 
   namespace momo:
     struct HashBucketOneI1

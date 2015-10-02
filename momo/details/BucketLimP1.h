@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  momo/HashBuckets/BucketLimP1.h
+  momo/details/BucketLimP1.h
 
   namespace momo:
     struct HashBucketLimP1

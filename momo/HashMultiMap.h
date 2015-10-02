@@ -12,7 +12,7 @@
 #pragma once
 
 #include "HashMap.h"
-#include "HashBuckets/ArrayBucket.h"
+#include "details/ArrayBucket.h"
 
 namespace momo
 {
