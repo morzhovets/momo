@@ -278,7 +278,7 @@ namespace internal
 			? minItemAlignment : ItemTraits::alignment;
 
 		static const bool skipOddMemPools =
-			(memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+			(maxCount > 1 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
 		static const uintptr_t modMemPoolIndex =
 			(uintptr_t)minItemAlignment / (skipOddMemPools ? 2 : 1);
 
