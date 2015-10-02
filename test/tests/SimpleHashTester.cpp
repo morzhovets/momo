@@ -17,43 +17,152 @@
 
 #include <string>
 #include <iostream>
+#include <random>
 
 class SimpleHashTester
 {
+private:
+	template<size_t size, size_t alignment>
+	class VarItem
+	{
+	public:
+		template<typename HashBucket>
+		class HashTraits : public momo::HashTraits<VarItem, HashBucket>
+		{
+		public:
+			size_t GetHashCode(const VarItem& key) const
+			{
+				return std::hash<unsigned char>()(key.GetValue());
+			}
+
+			bool IsEqual(const VarItem& key1, const VarItem& key2) const
+			{
+				return key1.GetValue() == key2.GetValue();
+			}
+		};
+
+	public:
+		explicit VarItem(unsigned char value) MOMO_NOEXCEPT
+		{
+			*(unsigned char*)&mStorage = value;
+		}
+
+		unsigned char GetValue() const MOMO_NOEXCEPT
+		{
+			return *(unsigned char*)&mStorage;
+		}
+
+	private:
+		std::aligned_storage<size, alignment> mStorage;
+	};
+
 public:
 	static void TestAll()
 	{
-		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4");
-		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP");
-		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1");
-		TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP");
+		//TestVarAll();
+		TestStrAll();
+	}
+
+	static void TestVarAll()
+	{
+		TestVarHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+
+		TestVarHash<momo::HashBucketLimP1<1, 1, 32>>("momo::HashBucketLimP1<1, 1, 32>");
+		TestVarHash<momo::HashBucketLimP1<2, 1, 1>>("momo::HashBucketLimP1<2, 1, 1>");
+		TestVarHash<momo::HashBucketLimP1<3, 1, 2>>("momo::HashBucketLimP1<3, 1, 2>");
+		TestVarHash<momo::HashBucketLimP1<4, 1, 4>>("momo::HashBucketLimP1<4, 1, 4>");
+		TestVarHash<momo::HashBucketLimP1<5, 1, 64>>("momo::HashBucketLimP1<5, 1, 64>");
+		TestVarHash<momo::HashBucketLimP1<7, 1, 3>>("momo::HashBucketLimP1<7, 1, 3>");
+		TestVarHash<momo::HashBucketLimP1<10, 1, 127>>("momo::HashBucketLimP1<10, 1, 127>");
+		TestVarHash<momo::HashBucketLimP1<15, 1, 1>>("momo::HashBucketLimP1<15, 1, 1>");
+
+		TestVarHash<momo::HashBucketLimP<1, 32>>("momo::HashBucketLimP<1, 32>");
+		TestVarHash<momo::HashBucketLimP<2, 1>>("momo::HashBucketLimP<2, 1>");
+		TestVarHash<momo::HashBucketLimP<3, 2>>("momo::HashBucketLimP<3, 2>");
+		TestVarHash<momo::HashBucketLimP<4, 4>>("momo::HashBucketLimP<4, 4>");
+		TestVarHash<momo::HashBucketLimP<5, 64>>("momo::HashBucketLimP<5, 64>");
+		TestVarHash<momo::HashBucketLimP<7, 3>>("momo::HashBucketLimP<7, 3>");
+		TestVarHash<momo::HashBucketLimP<10, 127>>("momo::HashBucketLimP<10, 127>");
+		TestVarHash<momo::HashBucketLimP<15, 1>>("momo::HashBucketLimP<15, 1>");
+
+		TestVarHash<momo::HashBucketUnlimP<1, 32>>("momo::HashBucketUnlimP<1, 32>");
+		TestVarHash<momo::HashBucketUnlimP<2, 1>>("momo::HashBucketUnlimP<2, 1>");
+		TestVarHash<momo::HashBucketUnlimP<3, 2>>("momo::HashBucketUnlimP<3, 2>");
+		TestVarHash<momo::HashBucketUnlimP<4, 4>>("momo::HashBucketUnlimP<4, 4>");
+		TestVarHash<momo::HashBucketUnlimP<5, 64>>("momo::HashBucketUnlimP<5, 64>");
+		TestVarHash<momo::HashBucketUnlimP<7, 3>>("momo::HashBucketUnlimP<7, 3>");
+		TestVarHash<momo::HashBucketUnlimP<10, 127>>("momo::HashBucketUnlimP<10, 127>");
+		TestVarHash<momo::HashBucketUnlimP<15, 1>>("momo::HashBucketUnlimP<15, 1>");
+
+		TestVarHash<momo::HashBucketLim4<1, 32>>("momo::HashBucketLim4<1, 32>");
+		TestVarHash<momo::HashBucketLim4<2, 1>>("momo::HashBucketLim4<2, 1>");
+		TestVarHash<momo::HashBucketLim4<3, 127>>("momo::HashBucketLim4<3, 127>");
+		TestVarHash<momo::HashBucketLim4<7, 2>>("momo::HashBucketLim4<7, 2>");
 	}
 
 	template<typename HashBucket>
-	static void TestHashBucket(const char* bucketName)
+	static void TestVarHash(const char* bucketName)
 	{
-		typedef momo::HashTraits<std::string, HashBucket> HashTraits;
+		TestVarHashSet<HashBucket, VarItem<1, 1>>(bucketName, "VarItem<1, 1>");
+		TestVarHashSet<HashBucket, VarItem<2, 1>>(bucketName, "VarItem<2, 1>");
+	}
 
-		std::cout << bucketName << ": HashSet<std::string>: " << std::flush;
-		typedef momo::HashSet<std::string, HashTraits> HashSet;
-		TestHashSet<HashSet>();
-		std::cout << "ok" << std::endl;
+	template<typename HashBucket, typename VarItem>
+	static void TestVarHashSet(const char* bucketName, const char* varItemName)
+	{
+		std::cout << bucketName << ": " << varItemName << ": " << std::flush;
 
-		std::cout << bucketName << ": HashMap<std::string, std::string>: " << std::flush;
-		typedef momo::HashMap<std::string, std::string, HashTraits> HashMap;
-		TestHashMap<HashMap>();
-		std::cout << "ok" << std::endl;
+		static const size_t count = 256;
+		static unsigned char array[count];
+		for (size_t i = 0; i < count; ++i)
+			array[i] = (unsigned char)i;
 
-		std::cout << bucketName << ": HashMultiMap<std::string, std::string>: " << std::flush;
-		typedef momo::HashMultiMap<std::string, std::string, HashTraits> HashMultiMap;
-		TestHashMultiMap<HashMultiMap>();
+		typedef momo::HashSet<VarItem, typename VarItem::template HashTraits<HashBucket>> HashSet;
+		HashSet set;
+
+		std::shuffle(array, array + count, std::mt19937());
+		for (unsigned char c : array)
+			assert(set.Insert(VarItem(c)).inserted);
+		assert(set.GetCount() == count);
+
+		std::shuffle(array, array + count, std::mt19937());
+		for (unsigned char c : array)
+			assert(set.Remove(VarItem(c)));
+		assert(set.IsEmpty());
+
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename HashSet>
-	static void TestHashSet()
+	static void TestStrAll()
 	{
+		TestStrHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestStrHash<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
+		TestStrHash<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
+		TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+		TestStrHash<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
+	}
+
+	template<typename HashBucket>
+	static void TestStrHash(const char* bucketName)
+	{
+		std::cout << bucketName << ": HashSet: " << std::flush;
+		TestStrHashSet<HashBucket>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << bucketName << ": HashMap: " << std::flush;
+		TestStrHashMap<HashBucket>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << bucketName << ": HashMultiMap: " << std::flush;
+		TestStrHashMultiMap<HashBucket>();
+		std::cout << "ok" << std::endl;
+	}
+
+	template<typename HashBucket>
+	static void TestStrHashSet()
+	{
+		typedef momo::HashSet<std::string,
+			momo::HashTraits<std::string, HashBucket>> HashSet;
 		HashSet set;
 		std::string s1 = "s1";
 		set.Insert(s1);
@@ -87,9 +196,11 @@ public:
 		assert(set.IsEmpty());
 	}
 
-	template<typename HashMap>
-	static void TestHashMap()
+	template<typename HashBucket>
+	static void TestStrHashMap()
 	{
+		typedef momo::HashMap<std::string, std::string,
+			momo::HashTraits<std::string, HashBucket>> HashMap;
 		HashMap map;
 		std::string s1 = "s1";
 		std::string s2 = "s2";
@@ -132,9 +243,11 @@ public:
 		assert(map.IsEmpty());
 	}
 
-	template<typename HashMultiMap>
-	static void TestHashMultiMap()
+	template<typename HashBucket>
+	static void TestStrHashMultiMap()
 	{
+		typedef momo::HashMultiMap<std::string, std::string,
+			momo::HashTraits<std::string, HashBucket>> HashMultiMap;
 		HashMultiMap mmap(typename HashMultiMap::HashTraits(1));
 		std::string k1 = "k1";
 		std::string v1 = "v1";
