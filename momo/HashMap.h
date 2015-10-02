@@ -802,18 +802,9 @@ public:
 
 	// (!KeyManager::isNothrowAnywayMoveAssignable
 	// && !ValueManager::isNothrowAnywayMoveAssignable) -> basic exception safety
-	void Remove(ConstIterator iter)
+	Iterator Remove(ConstIterator iter)
 	{
-		mHashSet.Remove(iter.GetBaseIterator());
-	}
-
-	// (!KeyManager::isNothrowAnywayMoveAssignable
-	// && !ValueManager::isNothrowAnywayMoveAssignable) -> basic exception safety
-	void Remove(ConstIterator iter, Iterator& resIter)
-	{
-		HashSetConstIterator hashSetIter;
-		mHashSet.Remove(iter.GetBaseIterator(), hashSetIter);
-		resIter = Iterator(hashSetIter);
+		return Iterator(mHashSet.Remove(iter.GetBaseIterator()));
 	}
 
 	// (!KeyManager::isNothrowAnywayMoveAssignable

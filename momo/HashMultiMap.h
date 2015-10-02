@@ -809,7 +809,7 @@ public:
 		HashMapIterator hashMapIter;
 		try
 		{
-			mHashMap.Remove(keyIter.GetBaseIterator(), hashMapIter);
+			hashMapIter = mHashMap.Remove(keyIter.GetBaseIterator());
 		}
 		catch (...)
 		{

@@ -804,32 +804,18 @@ public:
 		return _Add(iter, typename ItemTraits::CopyCreator(item), true);
 	}
 
-	void Remove(ConstIterator iter)
+	ConstIterator Remove(ConstIterator iter)
 	{
 		auto removeFunc = [] (Item& item, Item& backItem)
 			{ ItemTraits::Assign(std::move(backItem), item); };
-		_Remove(iter, removeFunc, false);
+		return _Remove(iter, removeFunc);
 	}
 
-	void Remove(ConstIterator iter, Item& resItem)
+	ConstIterator Remove(ConstIterator iter, Item& resItem)
 	{
 		auto removeFunc = [&resItem] (Item& item, Item& backItem)
 			{ ItemTraits::Assign(std::move(backItem), item, resItem); };
-		_Remove(iter, removeFunc, false);
-	}
-
-	void Remove(ConstIterator iter, ConstIterator& resIter)
-	{
-		auto removeFunc = [] (Item& item, Item& backItem)
-			{ ItemTraits::Assign(std::move(backItem), item); };
-		resIter = _Remove(iter, removeFunc, true);
-	}
-
-	void Remove(ConstIterator iter, ConstIterator& resIter, Item& resItem)
-	{
-		auto removeFunc = [&resItem] (Item& item, Item& backItem)
-			{ ItemTraits::Assign(std::move(backItem), item, resItem); };
-		resIter = _Remove(iter, removeFunc, true);
+		return _Remove(iter, removeFunc);
 	}
 
 	bool Remove(const Key& key)
@@ -1044,7 +1030,7 @@ private:
 	}
 
 	template<typename RemoveFunc>
-	ConstIterator _Remove(ConstIterator iter, RemoveFunc removeFunc, bool moveIter)
+	ConstIterator _Remove(ConstIterator iter, RemoveFunc removeFunc)
 	{
 		iter.Check(mCrew.GetVersion(), false);
 		Buckets* buckets = _GetMutBuckets(iter);
@@ -1059,7 +1045,7 @@ private:
 		--mCount;
 		++mCrew.GetVersion();
 		return _MakeIterator(*buckets, bucketIndex,
-			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, moveIter);
+			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, true);
 	}
 
 	void _MoveItems() MOMO_NOEXCEPT

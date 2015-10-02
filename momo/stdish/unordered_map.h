@@ -470,9 +470,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		typename HashMap::Iterator resIter;
-		mHashMap.Remove(where.GetBaseIterator(), resIter);
-		return iterator(resIter);
+		return iterator(mHashMap.Remove(where.GetBaseIterator()));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)

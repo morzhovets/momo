@@ -421,9 +421,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		iterator resIter;
-		mHashSet.Remove(where, resIter);
-		return resIter;
+		return iterator(mHashSet.Remove(where));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
