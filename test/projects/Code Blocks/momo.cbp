@@ -65,13 +65,6 @@
 		</Build>
 		<Unit filename="../../../momo/Array.h" />
 		<Unit filename="../../../momo/ArrayUtility.h" />
-		<Unit filename="../../../momo/details/ArrayBucket.h" />
-		<Unit filename="../../../momo/details/BucketLim4.h" />
-		<Unit filename="../../../momo/details/BucketLimP.h" />
-		<Unit filename="../../../momo/details/BucketLimP1.h" />
-		<Unit filename="../../../momo/details/BucketOneI1.h" />
-		<Unit filename="../../../momo/details/BucketUnlimP.h" />
-		<Unit filename="../../../momo/details/BucketUtility.h" />
 		<Unit filename="../../../momo/HashMap.h" />
 		<Unit filename="../../../momo/HashMultiMap.h" />
 		<Unit filename="../../../momo/HashSet.h" />
@@ -83,6 +76,14 @@
 		<Unit filename="../../../momo/SegmentedArray.h" />
 		<Unit filename="../../../momo/Settings.h" />
 		<Unit filename="../../../momo/Utility.h" />
+		<Unit filename="../../../momo/details/ArrayBucket.h" />
+		<Unit filename="../../../momo/details/BucketLim4.h" />
+		<Unit filename="../../../momo/details/BucketLimP.h" />
+		<Unit filename="../../../momo/details/BucketLimP1.h" />
+		<Unit filename="../../../momo/details/BucketOneI1.h" />
+		<Unit filename="../../../momo/details/BucketUnlimP.h" />
+		<Unit filename="../../../momo/details/BucketUtility.h" />
+		<Unit filename="../../../momo/stdish/pool_allocator.h" />
 		<Unit filename="../../../momo/stdish/unordered_map.h" />
 		<Unit filename="../../../momo/stdish/unordered_multimap.h" />
 		<Unit filename="../../../momo/stdish/unordered_set.h" />

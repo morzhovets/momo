@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
     <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
     <ClInclude Include="..\..\..\momo\Settings.h" />
+    <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_map.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_multimap.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_set.h" />

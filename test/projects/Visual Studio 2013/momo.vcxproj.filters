@@ -197,5 +197,8 @@
     <ClInclude Include="..\..\tests\LibcxxHashSetTester.h">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
