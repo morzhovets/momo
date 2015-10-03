@@ -10,7 +10,7 @@
 
 #undef NDEBUG
 
-#include "../../momo/Settings.h"
+#include "../../momo/Utility.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLimP<2, 2, false>
 #define LIBCXX_TEST_BUCKET_NAME "limp"
