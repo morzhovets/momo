@@ -214,14 +214,12 @@ public:
 		_Fill(begin, end);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
 		_Fill(items.begin(), items.end());
 	}
-#endif
 
 	SegmentedArray(SegmentedArray&& array) MOMO_NOEXCEPT
 		: mSegments(std::move(array.mSegments)),
@@ -493,13 +491,11 @@ public:
 		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	// basic exception safety
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
 		Insert(index, items.begin(), items.end());
 	}
-#endif
 
 	void RemoveBack(size_t count = 1)
 	{

@@ -13,8 +13,6 @@
 namespace
 {
 
-#ifdef MOMO_USE_TYPE_ALIASES
-
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
@@ -36,14 +34,5 @@ using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqu
 
 #undef _LIBCPP_DEBUG
 #undef _LIBCPP_DEBUG_LEVEL
-
-#else
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_map_" LIBCXX_TEST_BUCKET
-using momo::stdish::unordered_map;
-#include "LibcxxUnorderedMapTests.h"
-#undef LIBCXX_TEST_PREFIX
-
-#endif
 
 } // namespace

@@ -23,10 +23,7 @@
 #include <algorithm>
 #include <functional>
 #include <stdexcept>
-
-#ifdef MOMO_USE_INIT_LISTS
 #include <initializer_list>
-#endif
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 #include <Windows.h>
@@ -54,13 +51,8 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
-#ifdef MOMO_USE_DELETE_FUNCS
 #define MOMO_DISABLE_COPY_CONSTRUCTOR(Class) Class(const Class&) = delete;
 #define MOMO_DISABLE_COPY_OPERATOR(Class) Class& operator=(const Class&) = delete;
-#else
-#define MOMO_DISABLE_COPY_CONSTRUCTOR(Class) Class(const Class&);
-#define MOMO_DISABLE_COPY_OPERATOR(Class) Class& operator=(const Class&);
-#endif
 
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
@@ -130,7 +122,6 @@ namespace internal
 	{
 	};
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<size_t... sequence>
 	struct Sequence
 	{
@@ -146,7 +137,6 @@ namespace internal
 	{
 		typedef internal::Sequence<sequence...> Sequence;
 	};
-#endif
 
 	template<typename TUInt>
 	struct UIntMath

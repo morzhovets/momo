@@ -201,16 +201,17 @@ private:
 #endif
 
 template<typename TAllocator,
-	bool tUsePtrWrapper =
-		!std::is_nothrow_move_constructible<typename MOMO_REBIND_TO_CHAR_ALLOC(TAllocator)>::value>
+	bool tUsePtrWrapper = !std::is_nothrow_move_constructible<
+		typename std::allocator_traits<TAllocator>::template rebind_alloc<char>>::value>
 class MemManagerStd;
 
 template<typename TAllocator>
-class MemManagerStd<TAllocator, false> : private MOMO_REBIND_TO_CHAR_ALLOC(TAllocator)
+class MemManagerStd<TAllocator, false>
+	: private std::allocator_traits<TAllocator>::template rebind_alloc<char>
 {
 public:
 	typedef TAllocator Allocator;
-	typedef typename MOMO_REBIND_TO_CHAR_ALLOC(Allocator) CharAllocator;
+	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
 
 	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<CharAllocator>::value);
 
@@ -277,7 +278,7 @@ class MemManagerStd<TAllocator, true>
 {
 public:
 	typedef TAllocator Allocator;
-	typedef typename MOMO_REBIND_TO_CHAR_ALLOC(Allocator) CharAllocator;
+	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
 
 	static const bool canReallocate = false;
 	static const bool canReallocateInplace = false;

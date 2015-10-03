@@ -459,13 +459,11 @@ public:
 		_Fill(begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
 		: mData(items.size(), std::move(memManager))
 	{
 		_Fill(items.begin(), items.end(), std::true_type());
 	}
-#endif
 
 	Array(Array&& array) MOMO_NOEXCEPT
 		: mData(std::move(array.mData))
@@ -748,13 +746,11 @@ public:
 		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	// basic exception safety
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
 		Insert(index, items.begin(), items.end());
 	}
-#endif
 
 	void RemoveBack(size_t count = 1)
 	{

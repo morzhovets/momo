@@ -55,7 +55,6 @@ namespace internal
 
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 		template<typename... Args>
 		class VariadicCreator
 		{
@@ -93,50 +92,6 @@ namespace internal
 		typedef VariadicCreator<> Creator;
 		typedef VariadicCreator<Object&&> MoveCreator;
 		typedef VariadicCreator<const Object&> CopyCreator;
-#else
-		class Creator
-		{
-		public:
-			void operator()(void* pobject) const
-			{
-				Create(pobject);
-			}
-		};
-
-		class MoveCreator
-		{
-		public:
-			explicit MoveCreator(Object&& object) MOMO_NOEXCEPT
-				: mObject(std::move(object))
-			{
-			}
-
-			void operator()(void* pobject) const MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
-			{
-				Create(std::move(mObject), pobject);
-			}
-
-		private:
-			Object&& mObject;
-		};
-
-		class CopyCreator
-		{
-		public:
-			explicit CopyCreator(const Object& object) MOMO_NOEXCEPT
-				: mObject(object)
-			{
-			}
-
-			void operator()(void* pobject) const
-			{
-				Create(mObject, pobject);
-			}
-
-		private:
-			const Object& mObject;
-		};
-#endif
 
 		template<typename Arg>
 		class TemplCreator

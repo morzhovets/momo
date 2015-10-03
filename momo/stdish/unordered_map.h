@@ -127,7 +127,6 @@ public:
 		insert(first, last);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_map(std::initializer_list<value_type> values)
 	{
 		insert(values);
@@ -159,7 +158,6 @@ public:
 	{
 		insert(values);
 	}
-#endif
 
 	unordered_map(unordered_map&& right) MOMO_NOEXCEPT
 		: mHashMap(std::move(right.mHashMap))
@@ -209,14 +207,12 @@ public:
 		return *this;
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
 		clear();	//?
 		insert(values);
 		return *this;
 	}
-#endif
 
 	void swap(unordered_map& right) MOMO_NOEXCEPT
 	{
@@ -410,14 +406,11 @@ public:
 			insert(*iter);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	void insert(std::initializer_list<value_type> values)
 	{
 		insert(values.begin(), values.end());
 	}
-#endif
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	std::pair<iterator, bool> emplace()
 	{
 		return emplace(std::piecewise_construct, std::tuple<>(), std::tuple<>());
@@ -466,7 +459,6 @@ public:
 	{
 		return _emplace(std::move(args1), std::move(args2)).first;
 	}
-#endif
 
 	iterator erase(const_iterator where)
 	{
@@ -631,7 +623,6 @@ private:
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<typename... Args1, typename... Args2>
 	std::pair<iterator, bool> _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
 	{
@@ -652,13 +643,11 @@ private:
 		HashMap::KeyValueTraits::DestroyKey(*&keyBuffer);
 		return res;
 	}
-#endif
 
 private:
 	HashMap mHashMap;
 };
 
-#ifdef MOMO_USE_TYPE_ALIASES
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -666,7 +655,6 @@ template<typename TKey, typename TMapped,
 using unordered_map_open = unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
 	HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOneI1>,
 		MemManagerStd<TAllocator>>>;
-#endif
 
 } // namespace stdish
 

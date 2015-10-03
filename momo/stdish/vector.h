@@ -83,7 +83,6 @@ public:
 	{
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	vector(std::initializer_list<value_type> values)
 		: mArray(values, MemManager())
 	{
@@ -93,7 +92,6 @@ public:
 		: mArray(values, MemManager(alloc))
 	{
 	}
-#endif
 
 	vector(vector&& right) MOMO_NOEXCEPT
 		: mArray(std::move(right.mArray))
@@ -138,13 +136,11 @@ public:
 		return *this;
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	vector& operator=(std::initializer_list<value_type> values)
 	{
 		assign(values);
 		return *this;
 	}
-#endif
 
 	void swap(vector& right) MOMO_NOEXCEPT
 	{
@@ -360,16 +356,13 @@ public:
 		return begin() + index;
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	iterator insert(const_iterator where, std::initializer_list<value_type> values)
 	{
 		size_t index = where - begin();
 		mArray.Insert(index, values);
 		return begin() + index;
 	}
-#endif
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<typename... Args>
 	void emplace_back(Args&&... args)
 	{
@@ -385,7 +378,6 @@ public:
 		mArray.InsertCrt(index, ValueCreator(std::forward<Args>(args)...));
 		return begin() + index;
 	}
-#endif
 
 	void pop_back()
 	{
@@ -415,12 +407,10 @@ public:
 		*this = vector(first, last, get_allocator());
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	void assign(std::initializer_list<value_type> values)
 	{
 		assign(values.begin(), values.end());
 	}
-#endif
 
 	bool operator==(const vector& right) const
 	{
@@ -478,13 +468,11 @@ private:
 	Array mArray;
 };
 
-#ifdef MOMO_USE_TYPE_ALIASES
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector_intcap = vector<TValue, TAllocator,
 	Array<TValue, MemManagerStd<TAllocator>, ArrayItemTraits<TValue>,
 		ArraySettings<tInternalCapacity>>>;
-#endif
 
 } // namespace stdish
 

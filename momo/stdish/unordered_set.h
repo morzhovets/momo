@@ -126,7 +126,6 @@ public:
 		insert(first, last);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_set(std::initializer_list<value_type> values)
 	{
 		insert(values);
@@ -158,7 +157,6 @@ public:
 	{
 		insert(values);
 	}
-#endif
 
 	unordered_set(unordered_set&& right) MOMO_NOEXCEPT
 		: mHashSet(std::move(right.mHashSet))
@@ -208,14 +206,12 @@ public:
 		return *this;
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_set& operator=(std::initializer_list<value_type> values)
 	{
 		clear();	//?
 		insert(values);
 		return *this;
 	}
-#endif
 
 	void swap(unordered_set& right) MOMO_NOEXCEPT
 	{
@@ -376,22 +372,16 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 		for (Iterator iter = first; iter != last; ++iter)
 			emplace(*iter);
-#else
-		mHashSet.Insert(first, last);
-#endif
+		//mHashSet.Insert(first, last);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	void insert(std::initializer_list<value_type> values)
 	{
 		mHashSet.Insert(values);
 	}
-#endif
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<typename... Args>
 	std::pair<iterator, bool> emplace(Args&&... args)
 	{
@@ -417,7 +407,6 @@ public:
 	{
 		return emplace(std::forward<Args>(args)...).first;
 	}
-#endif
 
 	iterator erase(const_iterator where)
 	{
@@ -522,7 +511,6 @@ private:
 	HashSet mHashSet;
 };
 
-#ifdef MOMO_USE_TYPE_ALIASES
 template<typename TKey,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -530,7 +518,6 @@ template<typename TKey,
 using unordered_set_open = unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
 	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOneI1>,
 		MemManagerStd<TAllocator>>>;
-#endif
 
 } // namespace stdish
 

@@ -126,7 +126,6 @@ public:
 		insert(first, last);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_multimap(std::initializer_list<value_type> values)
 	{
 		insert(values);
@@ -158,7 +157,6 @@ public:
 	{
 		insert(values);
 	}
-#endif
 
 	unordered_multimap(unordered_multimap&& right) MOMO_NOEXCEPT
 		: mHashMultiMap(std::move(right.mHashMultiMap))
@@ -208,14 +206,12 @@ public:
 		return *this;
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
 	{
 		clear();	//?
 		insert(values);
 		return *this;
 	}
-#endif
 
 	void swap(unordered_multimap& right) MOMO_NOEXCEPT
 	{
@@ -396,14 +392,11 @@ public:
 			insert(*iter);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	void insert(std::initializer_list<value_type> values)
 	{
 		insert(values.begin(), values.end());
 	}
-#endif
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	iterator emplace()
 	{
 		return emplace(std::piecewise_construct, std::tuple<>(), std::tuple<>());
@@ -452,7 +445,6 @@ public:
 	{
 		return _emplace(std::move(args1), std::move(args2));
 	}
-#endif
 
 	//iterator erase(const_iterator where)
 	iterator erase(iterator where)
@@ -563,7 +555,6 @@ private:
 		return iterator(mHashMultiMap.AddCrt(key, mappedCreator));
 	}
 
-#ifdef MOMO_USE_VARIADIC_TEMPLATES
 	template<typename... Args1, typename... Args2>
 	iterator _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
 	{
@@ -584,13 +575,11 @@ private:
 		HashMultiMap::KeyValueTraits::DestroyKey(*&keyBuffer);
 		return resIter;
 	}
-#endif
 
 private:
 	HashMultiMap mHashMultiMap;
 };
 
-#ifdef MOMO_USE_TYPE_ALIASES
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -598,7 +587,6 @@ template<typename TKey, typename TMapped,
 using unordered_multimap_open = unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
 	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOneI1>,
 		MemManagerStd<TAllocator>>>;
-#endif
 
 } // namespace stdish
 

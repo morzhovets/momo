@@ -739,12 +739,10 @@ public:
 		return _Insert(begin, end, insertFunc);
 	}
 
-#ifdef MOMO_USE_INIT_LISTS
 	size_t Insert(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
 	{
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
 	}
-#endif
 
 	template<typename KeyValueCreator>
 	Iterator AddCrt(ConstIterator iter, const KeyValueCreator& keyValueCreator)

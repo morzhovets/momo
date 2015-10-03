@@ -29,34 +29,14 @@
 #endif
 
 #define MOMO_USE_NOEXCEPT
-#define MOMO_USE_DELETE_FUNCS
-#define MOMO_USE_VARIADIC_TEMPLATES
-#define MOMO_USE_TYPE_ALIASES
-#define MOMO_USE_INIT_LISTS
 #define MOMO_USE_TRIVIALLY_COPIABLE
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_USE_NOEXCEPT
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#undef MOMO_USE_SAFE_MAP_BRACKETS
-#undef MOMO_USE_DELETE_FUNCS
-#undef MOMO_USE_VARIADIC_TEMPLATES
-#undef MOMO_USE_TYPE_ALIASES
-#undef MOMO_USE_INIT_LISTS
-#endif
-
 #if defined(__GNUC__) && __GNUC__ < 5
 #undef MOMO_USE_TRIVIALLY_COPIABLE
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#define MOMO_REBIND_TO_CHAR_ALLOC(Allocator) \
-	std::allocator_traits<Allocator>::template rebind_alloc<char>::other
-#else
-#define MOMO_REBIND_TO_CHAR_ALLOC(Allocator) \
-	std::allocator_traits<Allocator>::template rebind_alloc<char>
 #endif
 
 #ifdef _MSC_VER

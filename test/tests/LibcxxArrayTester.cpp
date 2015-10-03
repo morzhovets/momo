@@ -17,8 +17,6 @@
 #include "../../momo/stdish/vector.h"
 #include "../../momo/SegmentedArray.h"
 
-#ifdef MOMO_USE_TYPE_ALIASES
-
 template<typename TValue>
 struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue>
 {
@@ -107,17 +105,5 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 
 #undef _LIBCPP_DEBUG
 #undef _LIBCPP_DEBUG_LEVEL
-
-#else
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_vector"
-namespace libcxx_test_vector
-{
-using momo::stdish::vector;
-#include "LibcxxVectorTests.h"
-}
-#undef LIBCXX_TEST_PREFIX
-
-#endif
 
 #endif // TEST_LIBCXX_ARRAY
