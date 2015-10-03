@@ -368,7 +368,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<const Second&> MappedCreator;
+		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<const Second&> MappedCreator;
 		return _insert(value.first, MappedCreator(value.second));
 	}
 
@@ -386,7 +386,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<Second> MappedCreator;
+		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Second&&> MappedCreator;
 		return _insert(std::forward<First>(value.first),
 			MappedCreator(std::forward<Second>(value.second)));
 	}
@@ -436,7 +436,7 @@ public:
 	template<typename Arg1, typename Arg2>
 	std::pair<iterator, bool> emplace(Arg1&& arg1, Arg2&& arg2)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template TemplCreator<Arg2> MappedCreator;
+		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Arg2&&> MappedCreator;
 		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
 	}
 
@@ -592,7 +592,7 @@ private:
 	template<typename Key, typename MappedCreator>
 	std::pair<iterator, bool> _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
-		typedef typename internal::ObjectManager<key_type>::template TemplCreator<Key> KeyCreator;
+		typedef typename internal::ObjectManager<key_type>::template VariadicCreator<Key&&> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::forward<Key>(key))(&keyBuffer);
 		std::pair<iterator, bool> res;

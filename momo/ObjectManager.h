@@ -93,24 +93,6 @@ namespace internal
 		typedef VariadicCreator<Object&&> MoveCreator;
 		typedef VariadicCreator<const Object&> CopyCreator;
 
-		template<typename Arg>
-		class TemplCreator
-		{
-		public:
-			explicit TemplCreator(Arg&& arg)
-				: mArg(std::forward<Arg>(arg))
-			{
-			}
-
-			void operator()(void* pobject) const
-			{
-				new(pobject) Object(std::forward<Arg>(mArg));
-			}
-
-		private:
-			Arg&& mArg;
-		};
-
 		static void Create(void* pobject)
 		{
 			new(pobject) Object();
