@@ -26,7 +26,9 @@ namespace internal
 		typedef TBucket Bucket;
 
 		static const size_t maxBucketCount =
-			(SIZE_MAX - 2 * sizeof(void*)) / sizeof(Bucket);
+			(SIZE_MAX - sizeof(size_t) - sizeof(void*)) / sizeof(Bucket);
+
+		MOMO_STATIC_ASSERT((sizeof(size_t) + sizeof(void*)) % std::alignment_of<Bucket>::value == 0);
 
 	public:
 		template<typename MemManager>
