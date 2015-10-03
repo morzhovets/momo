@@ -17,3 +17,7 @@
 #define TEST_LIBCXX_HASH_MAP
 #define TEST_LIBCXX_HASH_MULTI_MAP
 #endif
+
+#if defined(_WIN32) && defined(__GNUC__)
+#undef TEST_LIBCXX_HASH_MULTI_MAP	// slow compilation
+#endif
