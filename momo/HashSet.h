@@ -416,7 +416,7 @@ private:
 	};
 
 	typedef typename HashTraits::HashBucket HashBucket;
-	typedef typename HashBucket::template Bucketer<BucketItemTraits, MemManager>::Bucket Bucket;
+	typedef typename HashBucket::template Bucket<BucketItemTraits, MemManager> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 

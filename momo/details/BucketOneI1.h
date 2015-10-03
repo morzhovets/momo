@@ -112,10 +112,7 @@ namespace internal
 struct HashBucketOneI1 : public internal::HashBucketBase<1>
 {
 	template<typename ItemTraits, typename MemManager>
-	struct Bucketer
-	{
-		typedef internal::BucketOneI1<ItemTraits, MemManager> Bucket;
-	};
+	using Bucket = internal::BucketOneI1<ItemTraits, MemManager>;
 };
 
 } // namespace momo

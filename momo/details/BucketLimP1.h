@@ -232,11 +232,8 @@ struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, typename MemManager>
-	struct Bucketer
-	{
-		typedef internal::BucketLimP1<ItemTraits, MemManager,
-			maxCount, alignment, memPoolBlockCount> Bucket;
-	};
+	using Bucket = internal::BucketLimP1<ItemTraits, MemManager,
+		maxCount, alignment, memPoolBlockCount>;
 };
 
 } // namespace momo

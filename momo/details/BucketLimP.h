@@ -481,6 +481,7 @@ struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const bool useUIntPtr = tUseUIntPtr;
 
+private:
 	template<typename ItemTraits, typename MemManager>
 	struct Bucketer
 	{
@@ -498,6 +499,10 @@ struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 		typedef internal::BucketLimP<ItemTraits, MemManager,
 			maxCount, memPoolBlockCount, useUIntPtr> Bucket;
 	};
+
+public:
+	template<typename ItemTraits, typename MemManager>
+	using Bucket = typename Bucketer<ItemTraits, MemManager>::Bucket;
 };
 
 } // namespace momo

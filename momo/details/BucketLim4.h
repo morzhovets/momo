@@ -264,11 +264,8 @@ struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, typename MemManager>
-	struct Bucketer
-	{
-		typedef internal::BucketLim4<ItemTraits, MemManager,
-			logMaxCount, memPoolBlockCount> Bucket;
-	};
+	using Bucket = internal::BucketLim4<ItemTraits, MemManager,
+		logMaxCount, memPoolBlockCount>;
 };
 
 } // namespace momo

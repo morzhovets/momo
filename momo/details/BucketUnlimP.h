@@ -111,11 +111,8 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 	}
 
 	template<typename ItemTraits, typename MemManager>
-	struct Bucketer
-	{
-		typedef internal::BucketUnlimP<ItemTraits, MemManager,
-			maxFastCount, memPoolBlockCount, ArraySettings> Bucket;
-	};
+	using Bucket = internal::BucketUnlimP<ItemTraits, MemManager,
+		maxFastCount, memPoolBlockCount, ArraySettings>;
 };
 
 } // namespace momo
