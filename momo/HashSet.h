@@ -31,6 +31,14 @@ namespace internal
 		MOMO_STATIC_ASSERT((sizeof(size_t) + sizeof(void*)) % std::alignment_of<Bucket>::value == 0);
 
 	public:
+		HashSetBuckets() = delete;
+
+		HashSetBuckets(const HashSetBuckets&) = delete;
+
+		~HashSetBuckets() = delete;
+
+		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
+
 		template<typename MemManager>
 		static HashSetBuckets& Create(MemManager& memManager, size_t bucketCount)
 		{
@@ -128,10 +136,6 @@ namespace internal
 		{
 			return sizeof(HashSetBuckets) + bucketCount * sizeof(Bucket);
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(HashSetBuckets);
-		MOMO_DISABLE_COPY_OPERATOR(HashSetBuckets);
 
 	private:
 		size_t mCount;
@@ -467,6 +471,8 @@ private:
 			Swap(crew);
 		}
 
+		Crew(const Crew&) = delete;
+
 		~Crew() MOMO_NOEXCEPT
 		{
 			if (!_IsNull())
@@ -484,6 +490,8 @@ private:
 			Crew(std::move(crew)).Swap(*this);
 			return *this;
 		}
+
+		Crew& operator=(const Crew&) = delete;
 
 		void Swap(Crew& crew) MOMO_NOEXCEPT
 		{
@@ -537,10 +545,6 @@ private:
 		{
 			return mData == nullptr;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(Crew);
-		MOMO_DISABLE_COPY_OPERATOR(Crew);
 
 	private:
 		Data* mData;

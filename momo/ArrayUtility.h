@@ -224,19 +224,19 @@ namespace internal
 			itemCreator(&mItemBuffer);
 		}
 
+		ArrayItemHandler(const ArrayItemHandler&) = delete;
+
 		~ArrayItemHandler() MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(&mItemBuffer, 1);
 		}
 
+		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
+
 		Item* operator&() MOMO_NOEXCEPT
 		{
 			return &mItemBuffer;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(ArrayItemHandler);
-		MOMO_DISABLE_COPY_OPERATOR(ArrayItemHandler);
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;

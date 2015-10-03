@@ -170,6 +170,8 @@ private:
 			_CreateMove(std::move(data));
 		}
 
+		Data(const Data&) = delete;
+
 		~Data() MOMO_NOEXCEPT
 		{
 			_Destroy();
@@ -185,6 +187,8 @@ private:
 			}
 			return *this;
 		}
+
+		Data& operator=(const Data&) = delete;
 
 		const Item* GetItems() const MOMO_NOEXCEPT
 		{
@@ -402,10 +406,6 @@ private:
 			_Deallocate();
 			_Create(std::false_type());
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(Data);
-		MOMO_DISABLE_COPY_OPERATOR(Data);
 
 	private:
 		size_t mCount;

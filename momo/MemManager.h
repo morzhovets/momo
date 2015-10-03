@@ -29,14 +29,12 @@ namespace momo
 //	MemManager(MemManager&& memManager) MOMO_NOEXCEPT;
 //	MemManager(const MemManager& memManager);
 //	~MemManager() MOMO_NOEXCEPT;
+//	MemManager& operator=(const MemManager&) = delete;
 //
 //	void* Allocate(size_t size);
 //	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT;
 //	void* Reallocate(void* ptr, size_t size, size_t newSize);
 //	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT;
-//
-//private:
-//	MOMO_DISABLE_COPY_OPERATOR(MemManager);
 //};
 
 class MemManagerCpp
@@ -62,6 +60,8 @@ public:
 	{
 	}
 
+	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
+
 	void* Allocate(size_t size)
 	{
 		assert(size > 0);
@@ -74,9 +74,6 @@ public:
 		assert(ptr != nullptr && size > 0);
 		operator delete(ptr);
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerCpp);
 };
 
 class MemManagerC
@@ -101,6 +98,8 @@ public:
 	~MemManagerC() MOMO_NOEXCEPT
 	{
 	}
+
+	MemManagerC& operator=(const MemManagerC&) = delete;
 
 	void* Allocate(size_t size)
 	{
@@ -128,9 +127,6 @@ public:
 			throw std::bad_alloc();
 		return newPtr;
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerC);
 };
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
@@ -156,6 +152,8 @@ public:
 	~MemManagerWin() MOMO_NOEXCEPT
 	{
 	}
+
+	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
 	void* Allocate(size_t size)
 	{
@@ -194,9 +192,6 @@ public:
 		assert(newPtr == ptr || newPtr == nullptr);
 		return newPtr == ptr;
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerWin);
 };
 #endif
 
@@ -243,6 +238,8 @@ public:
 	{
 	}
 
+	MemManagerStd& operator=(const MemManagerStd&) = delete;
+
 	void* Allocate(size_t size)
 	{
 		return std::allocator_traits<CharAllocator>::allocate(_GetCharAllocator(), size);
@@ -268,9 +265,6 @@ private:
 	{
 		return *this;
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerStd);
 };
 
 template<typename TAllocator>
@@ -309,6 +303,8 @@ public:
 	{
 	}
 
+	MemManagerStd& operator=(const MemManagerStd&) = delete;
+
 	void* Allocate(size_t size)
 	{
 		return std::allocator_traits<CharAllocator>::allocate(*mCharAllocator, size);
@@ -323,9 +319,6 @@ public:
 	{
 		return Allocator(*mCharAllocator);
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerStd);
 
 private:
 	std::unique_ptr<CharAllocator> mCharAllocator;
@@ -356,13 +349,12 @@ public:
 	{
 	}
 
+	MemManagerStd& operator=(const MemManagerStd&) = delete;
+
 	Allocator GetAllocator() const MOMO_NOEXCEPT
 	{
 		return Allocator();
 	}
-
-private:
-	MOMO_DISABLE_COPY_OPERATOR(MemManagerStd);
 };
 
 namespace internal
@@ -374,15 +366,30 @@ namespace internal
 		static const bool canReallocateInplace = false;
 
 	public:
+		MemManagerDummy() MOMO_NOEXCEPT
+		{
+		}
+
+		MemManagerDummy(MemManagerDummy&& /*memManager*/) MOMO_NOEXCEPT
+		{
+		}
+
+		MemManagerDummy(const MemManagerDummy& /*memManager*/) MOMO_NOEXCEPT
+		{
+		}
+
+		~MemManagerDummy() MOMO_NOEXCEPT
+		{
+		}
+
+		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
+
 		//void* Allocate(size_t size);
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
 		{
 			assert(false);
 		}
-
-	private:
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerDummy);
 	};
 
 	template<typename TMemManager,
@@ -408,6 +415,8 @@ namespace internal
 		{
 		}
 
+		MemManagerWrapper(const MemManagerWrapper&) = delete;
+
 		~MemManagerWrapper() MOMO_NOEXCEPT
 		{
 		}
@@ -422,6 +431,8 @@ namespace internal
 			return *this;
 		}
 
+		MemManagerWrapper& operator=(const MemManagerWrapper&) = delete;
+
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
 			return mMemManager;
@@ -431,10 +442,6 @@ namespace internal
 		{
 			return mMemManager;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(MemManagerWrapper);
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerWrapper);
 
 	private:
 		MemManager mMemManager;
@@ -459,6 +466,8 @@ namespace internal
 		{
 		}
 
+		MemManagerWrapper(const MemManagerWrapper&) = delete;
+
 		~MemManagerWrapper() MOMO_NOEXCEPT
 		{
 		}
@@ -467,6 +476,8 @@ namespace internal
 		{
 			return *this;
 		}
+
+		MemManagerWrapper& operator=(const MemManagerWrapper&) = delete;
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
@@ -477,10 +488,6 @@ namespace internal
 		{
 			return *this;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(MemManagerWrapper);
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerWrapper);
 	};
 
 	template<typename TMemManager,
@@ -516,6 +523,8 @@ namespace internal
 		{
 		}
 
+		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
+
 		void* Allocate(size_t size)
 		{
 			return _GetMemManager().Allocate(size);
@@ -546,9 +555,6 @@ namespace internal
 		{
 			return *this;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerPtr);
 	};
 
 	template<typename TMemManager>
@@ -580,6 +586,8 @@ namespace internal
 		{
 		}
 
+		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
+
 		void* Allocate(size_t size)
 		{
 			return mMemManager.Allocate(size);
@@ -599,9 +607,6 @@ namespace internal
 		{
 			return mMemManager.ReallocateInplace(ptr, size, newSize);
 		}
-
-	private:
-		MOMO_DISABLE_COPY_OPERATOR(MemManagerPtr);
 
 	private:
 		MemManager& mMemManager;

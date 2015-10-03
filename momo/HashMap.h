@@ -273,6 +273,8 @@ private:
 			KeyValueTraits::DestroyValue(GetValue());
 		}
 
+		KeyValuePair& operator=(const KeyValuePair&) = delete;
+
 		const Key& GetKey() const MOMO_NOEXCEPT
 		{
 			return *&mKeyBuffer;
@@ -416,9 +418,6 @@ private:
 		}
 
 	private:
-		MOMO_DISABLE_COPY_OPERATOR(KeyValuePair);
-
-	private:
 		internal::ObjectBuffer<Key, KeyValueTraits::keyAlignment> mKeyBuffer;
 		mutable internal::ObjectBuffer<Value, KeyValueTraits::valueAlignment> mValueBuffer;
 	};
@@ -502,6 +501,8 @@ private:
 		{
 		}
 
+		ValueReference(const ValueReference&) = delete;
+
 		ValueReference& operator=(ValueReference&& valueRef)
 		{
 			return _Assign(std::move(valueRef.Get()));
@@ -542,9 +543,6 @@ private:
 				mIter = mHashMap.Add(mIter, std::forward<RKey>(mKey), std::forward<RValue>(value));
 			return *this;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(ValueReference);
 
 	private:
 		HashMap& mHashMap;

@@ -62,15 +62,19 @@ namespace internal
 				}
 			}
 
+			Params(const Params&) = delete;
+
+			~Params() MOMO_NOEXCEPT
+			{
+			}
+
+			Params& operator=(const Params&) = delete;
+
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				assert(memPoolIndex > 0);
 				return mMemPools[memPoolIndex - 1];
 			}
-
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
 
 		private:
 			MemPools mMemPools;
@@ -82,10 +86,14 @@ namespace internal
 		{
 		}
 
+		BucketLimP(const BucketLimP&) = delete;
+
 		~BucketLimP() MOMO_NOEXCEPT
 		{
 			assert(mPtr == nullptr);
 		}
+
+		BucketLimP& operator=(const BucketLimP&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
@@ -218,10 +226,6 @@ namespace internal
 		}
 
 	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketLimP);
-		MOMO_DISABLE_COPY_OPERATOR(BucketLimP);
-
-	private:
 		unsigned char* mPtr;
 	};
 
@@ -306,15 +310,19 @@ namespace internal
 				}
 			}
 
+			Params(const Params&) = delete;
+
+			~Params() MOMO_NOEXCEPT
+			{
+			}
+
+			Params& operator=(const Params&) = delete;
+
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				assert(memPoolIndex > 0);
 				return mMemPools[(memPoolIndex - 1) / (skipOddMemPools ? 2 : 1)];
 			}
-
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
 
 		private:
 			MemPools mMemPools;
@@ -326,10 +334,14 @@ namespace internal
 		{
 		}
 
+		BucketLimP(const BucketLimP&) = delete;
+
 		~BucketLimP() MOMO_NOEXCEPT
 		{
 			assert(mPtrState == stateNull);
 		}
+
+		BucketLimP& operator=(const BucketLimP&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
@@ -462,10 +474,6 @@ namespace internal
 			Item* items = (Item*)((ptrCount - count1) * modMemPoolIndex);
 			return Bounds(items, (size_t)count1 + 1);
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketLimP);
-		MOMO_DISABLE_COPY_OPERATOR(BucketLimP);
 
 	private:
 		uintptr_t mPtrState;

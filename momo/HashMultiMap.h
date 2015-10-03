@@ -384,6 +384,8 @@ private:
 			Swap(crew);
 		}
 
+		ValueCrew(const ValueCrew&) = delete;
+
 		~ValueCrew() MOMO_NOEXCEPT
 		{
 			assert(IsNull());
@@ -394,6 +396,8 @@ private:
 			ValueCrew(std::move(crew)).Swap(*this);
 			return *this;
 		}
+
+		ValueCrew& operator=(const ValueCrew&) = delete;
 
 		void Swap(ValueCrew& crew) MOMO_NOEXCEPT
 		{
@@ -436,10 +440,6 @@ private:
 			assert(!IsNull());
 			return mData->valueArrayParams;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(ValueCrew);
-		MOMO_DISABLE_COPY_OPERATOR(ValueCrew);
 
 	private:
 		Data* mData;

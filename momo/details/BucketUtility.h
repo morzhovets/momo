@@ -91,11 +91,15 @@ namespace internal
 			assert(mPtr != nullPtr);
 		}
 
+		BucketMemory(const BucketMemory&) = delete;
+
 		~BucketMemory() MOMO_NOEXCEPT
 		{
 			if (mPtr != nullPtr)
 				mMemPool.Deallocate(mPtr);
 		}
+
+		BucketMemory& operator=(const BucketMemory&) = delete;
 
 		Pointer GetPointer() const MOMO_NOEXCEPT
 		{
@@ -108,10 +112,6 @@ namespace internal
 			mPtr = nullPtr;
 			return ptr;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketMemory);
-		MOMO_DISABLE_COPY_OPERATOR(BucketMemory);
 
 	private:
 		MemPool& mMemPool;

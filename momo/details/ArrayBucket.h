@@ -97,6 +97,14 @@ namespace internal
 				}
 			}
 
+			Params(const Params&) = delete;
+
+			~Params() MOMO_NOEXCEPT
+			{
+			}
+
+			Params& operator=(const Params&) = delete;
+
 			FastMemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				assert(memPoolIndex > 0);
@@ -107,10 +115,6 @@ namespace internal
 			{
 				return mArrayMemPool;
 			}
-
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
 
 		private:
 			FastMemPools mFastMemPools;
@@ -128,6 +132,8 @@ namespace internal
 		{
 			Swap(bucket);
 		}
+
+		ArrayBucket(const ArrayBucket& bucket) = delete;
 
 		ArrayBucket(Params& params, const ArrayBucket& bucket)
 		{
@@ -175,6 +181,8 @@ namespace internal
 			ArrayBucket(std::move(bucket)).Swap(*this);
 			return *this;
 		}
+
+		ArrayBucket& operator=(const ArrayBucket& bucket) = delete;
 
 		void Swap(ArrayBucket& bucket) MOMO_NOEXCEPT
 		{
@@ -353,10 +361,6 @@ namespace internal
 				return Bounds(array.GetItems(), array.GetCount());
 			}
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(ArrayBucket);
-		MOMO_DISABLE_COPY_OPERATOR(ArrayBucket);
 
 	private:
 		unsigned char* mPtr;

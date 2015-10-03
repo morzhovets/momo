@@ -71,6 +71,14 @@ namespace internal
 				}
 			}
 
+			Params(const Params&) = delete;
+
+			~Params() MOMO_NOEXCEPT
+			{
+			}
+
+			Params& operator=(const Params&) = delete;
+
 			const MemPool& GetMemPool(size_t memPoolIndex) const MOMO_NOEXCEPT
 			{
 				assert(memPoolIndex > 0);
@@ -84,10 +92,6 @@ namespace internal
 			}
 
 		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
-
-		private:
 			MemPools mMemPools;
 		};
 
@@ -97,10 +101,14 @@ namespace internal
 		{
 		}
 
+		BucketLim4(const BucketLim4&) = delete;
+
 		~BucketLim4() MOMO_NOEXCEPT
 		{
 			assert(mPtrState == stateNull);
 		}
+
+		BucketLim4& operator=(const BucketLim4&) = delete;
 
 		ConstBounds GetBounds(const Params& params) const MOMO_NOEXCEPT
 		{
@@ -246,10 +254,6 @@ namespace internal
 			auto* realPtr = memPool.GetRealPointer(_GetPointer());
 			return (Item*)realPtr;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketLim4);
-		MOMO_DISABLE_COPY_OPERATOR(BucketLim4);
 
 	private:
 		uint32_t mPtrState;

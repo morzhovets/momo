@@ -51,9 +51,6 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
-#define MOMO_DISABLE_COPY_CONSTRUCTOR(Class) Class(const Class&) = delete;
-#define MOMO_DISABLE_COPY_OPERATOR(Class) Class& operator=(const Class&) = delete;
-
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
 	{ \

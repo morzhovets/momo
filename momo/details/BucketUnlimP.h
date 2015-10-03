@@ -44,9 +44,13 @@ namespace internal
 		{
 		}
 
+		BucketUnlimP(const BucketUnlimP&) = delete;
+
 		~BucketUnlimP() MOMO_NOEXCEPT
 		{
 		}
+
+		BucketUnlimP& operator=(const BucketUnlimP&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
@@ -83,10 +87,6 @@ namespace internal
 		{
 			mArrayBucket.RemoveBack(params);
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketUnlimP);
-		MOMO_DISABLE_COPY_OPERATOR(BucketUnlimP);
 
 	private:
 		ArrayBucket mArrayBucket;

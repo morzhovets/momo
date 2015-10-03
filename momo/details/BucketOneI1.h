@@ -41,9 +41,13 @@ namespace internal
 			{
 			}
 
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(Params);
-			MOMO_DISABLE_COPY_OPERATOR(Params);
+			Params(const Params&) = delete;
+
+			~Params() MOMO_NOEXCEPT
+			{
+			}
+
+			Params& operator=(const Params&) = delete;
 		};
 
 	public:
@@ -52,10 +56,14 @@ namespace internal
 		{
 		}
 
+		BucketOneI1(const BucketOneI1&) = delete;
+
 		~BucketOneI1() MOMO_NOEXCEPT
 		{
 			assert(mState == stateEmpty);
 		}
+
+		BucketOneI1& operator=(const BucketOneI1&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
@@ -98,10 +106,6 @@ namespace internal
 			ItemTraits::Destroy(&mItemBuffer, 1);
 			mState = stateRemoved;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(BucketOneI1);
-		MOMO_DISABLE_COPY_OPERATOR(BucketOneI1);
 
 	private:
 		internal::ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;

@@ -150,11 +150,23 @@ public:
 		memPool.mAllocCount = 0;
 	}
 
+	MemPool(const MemPool&) = delete;
+
+	~MemPool() MOMO_NOEXCEPT
+	{
+		MOMO_EXTRA_CHECK(mAllocCount == 0);
+		if (Settings::cachedFreeBlockCount > 0)
+			_FlushDeallocate();
+		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
+	}
+
 	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
 	{
 		MemPool(std::move(memPool)).Swap(*this);
 		return *this;
 	}
+
+	MemPool& operator=(const MemPool&) = delete;
 
 	void Swap(MemPool& memPool) MOMO_NOEXCEPT
 	{
@@ -166,14 +178,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(MemPool)
-
-	~MemPool() MOMO_NOEXCEPT
-	{
-		MOMO_EXTRA_CHECK(mAllocCount == 0);
-		if (Settings::cachedFreeBlockCount > 0)
-			_FlushDeallocate();
-		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
-	}
 
 	size_t GetBlockSize() const MOMO_NOEXCEPT
 	{
@@ -467,10 +471,6 @@ private:
 	}
 
 private:
-	MOMO_DISABLE_COPY_CONSTRUCTOR(MemPool);
-	MOMO_DISABLE_COPY_OPERATOR(MemPool);
-
-private:
 	uintptr_t mBufferHead;
 	size_t mAllocCount;
 	CachedFreeBlocks mCachedFreeBlocks;
@@ -505,11 +505,15 @@ namespace internal
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 		}
 
+		MemPoolUInt32(const MemPoolUInt32&) = delete;
+
 		~MemPoolUInt32() MOMO_NOEXCEPT
 		{
 			assert(mAllocCount == 0);
 			_Clear();
 		}
+
+		MemPoolUInt32& operator=(const MemPoolUInt32&) = delete;
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
@@ -605,10 +609,6 @@ namespace internal
 		{
 			return blockCount * mBlockSize;
 		}
-
-	private:
-		MOMO_DISABLE_COPY_CONSTRUCTOR(MemPoolUInt32);
-		MOMO_DISABLE_COPY_OPERATOR(MemPoolUInt32);
 
 	private:
 		Buffers mBuffers;

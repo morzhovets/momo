@@ -69,6 +69,14 @@ namespace internal
 			{
 			}
 
+			VariadicCreator(const VariadicCreator&) = delete;
+
+			~VariadicCreator() MOMO_NOEXCEPT
+			{
+			}
+
+			VariadicCreator& operator=(const VariadicCreator&) = delete;
+
 			void operator()(void* pobject) const
 			{
 				_Create(pobject, typename MakeSequence<sizeof...(Args)>::Sequence());
@@ -80,10 +88,6 @@ namespace internal
 			{
 				new(pobject) Object(std::forward<Args>(std::get<sequence>(std::move(mArgs)))...);
 			}
-
-		private:
-			MOMO_DISABLE_COPY_CONSTRUCTOR(VariadicCreator);
-			MOMO_DISABLE_COPY_OPERATOR(VariadicCreator);
 
 		private:
 			mutable std::tuple<Args...> mArgs;
