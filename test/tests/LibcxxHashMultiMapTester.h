@@ -16,7 +16,7 @@ namespace
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_multimap_" LIBCXX_TEST_BUCKET
+#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_multimap_" LIBCXX_TEST_BUCKET_NAME
 struct LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
@@ -26,7 +26,7 @@ template<typename TKey, typename TMapped,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+	momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc, LIBCXX_TEST_BUCKET>,
 		momo::MemManagerStd<TAllocator>, momo::HashMultiMapKeyValueTraits<TKey, TMapped>,
 		LibcxxHashMultiMapSettings>>;
 #include "LibcxxUnorderedMultiMapTests.h"

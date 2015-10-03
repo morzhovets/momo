@@ -12,10 +12,8 @@
 
 #include "../../momo/Settings.h"
 
-#undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketOneI1
-
-#define LIBCXX_TEST_BUCKET "onei1"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOneI1
+#define LIBCXX_TEST_BUCKET_NAME "onei1"
 
 #include "LibcxxHashMultiMapTester.h"
 

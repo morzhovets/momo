@@ -16,7 +16,7 @@ namespace
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_set_" LIBCXX_TEST_BUCKET
+#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_set_" LIBCXX_TEST_BUCKET_NAME
 struct LibcxxHashSetSettings : public momo::HashSetSettings
 {
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
@@ -26,7 +26,7 @@ template<typename TKey,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using unordered_set = momo::stdish::unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-	momo::HashSet<TKey, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+	momo::HashSet<TKey, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc, LIBCXX_TEST_BUCKET>,
 		momo::MemManagerStd<TAllocator>, momo::HashSetItemTraits<TKey>, LibcxxHashSetSettings>>;
 #include "LibcxxUnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX

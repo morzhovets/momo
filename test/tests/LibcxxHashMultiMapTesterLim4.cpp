@@ -12,10 +12,8 @@
 
 #include "../../momo/Settings.h"
 
-#undef MOMO_DEFAULT_HASH_BUCKET
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLim4<1, 1>
-
-#define LIBCXX_TEST_BUCKET "lim4"
+#define LIBCXX_TEST_BUCKET momo::HashBucketLim4<1, 1>
+#define LIBCXX_TEST_BUCKET_NAME "lim4"
 
 #include "../../momo/details/BucketLim4.h"
 
