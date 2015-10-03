@@ -145,7 +145,7 @@ namespace internal
 
 		static void Destroy(Object* objects, size_t count) MOMO_NOEXCEPT
 		{
-			//if (!std::is_trivially_destructible<Object>::value)	// gcc 4.7
+			if (!std::is_trivially_destructible<Object>::value)
 			{
 				for (size_t i = 0; i < count; ++i)
 					Destroy(objects[i]);
