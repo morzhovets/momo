@@ -22,10 +22,18 @@ namespace momo
 struct MemPoolConst
 {
 	static const size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
+	static const size_t defaultCachedFreeBlockCount = MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT;
+
+	template<size_t blockSize, size_t maxAlignment = MOMO_MAX_ALIGNMENT>
+	struct BlockAlignmenter
+	{
+		static const size_t blockAlignment = (blockSize >= maxAlignment)
+			? maxAlignment : BlockAlignmenter<blockSize, maxAlignment / 2>::blockAlignment;
+	};
 };
 
 template<size_t tBlockSize,
-	size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,	//?
+	size_t tBlockAlignment = MemPoolConst::BlockAlignmenter<tBlockSize>::blockAlignment,
 	size_t tBlockCount = MemPoolConst::defaultBlockCount>
 class MemPoolParams
 {
@@ -68,7 +76,7 @@ protected:
 	size_t blockSize;
 };
 
-template<size_t tCachedFreeBlockCount = 16>	//?
+template<size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
 struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
