@@ -77,7 +77,7 @@
 
 #define MOMO_EXTRA_CHECK(expr) assert(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr));
 
-MOMO_STATIC_ASSERT(MOMO_MAX_ALIGNMENT > 0 && (MOMO_MAX_ALIGNMENT & (MOMO_MAX_ALIGNMENT - 1)) == 0)
+MOMO_STATIC_ASSERT(MOMO_MAX_ALIGNMENT > 0 && (MOMO_MAX_ALIGNMENT & (MOMO_MAX_ALIGNMENT - 1)) == 0);
 
 namespace momo
 {
@@ -109,15 +109,11 @@ struct IsTriviallyRelocatable
 namespace internal
 {
 	template<typename Iterator>
-	struct IsForwardIterator : public std::is_base_of<std::forward_iterator_tag,
-		typename std::iterator_traits<Iterator>::iterator_category>
-	{
-	};
+	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
+		typename std::iterator_traits<Iterator>::iterator_category>;
 
 	template<bool value>
-	struct BoolConstant : public std::integral_constant<bool, value>
-	{
-	};
+	using BoolConstant = std::integral_constant<bool, value>;
 
 	template<size_t... sequence>
 	struct Sequence
