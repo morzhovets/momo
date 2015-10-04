@@ -18,14 +18,15 @@ namespace stdish
 {
 
 template<typename TValue,
-	typename TMemManager = MemManagerDefault>
+	typename TBaseAllocator = std::allocator<char>>
 class pool_allocator
 {
 public:
 	typedef TValue value_type;
+	typedef TBaseAllocator base_allocator;
 
 private:
-	typedef TMemManager MemManager;
+	typedef MemManagerStd<base_allocator> MemManager;
 	typedef MemPool<MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)>,
 		MemManager> MemPool;
 	typedef typename MemPool::Params MemPoolParams;
@@ -46,15 +47,12 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value, MemManager> other;
+		typedef pool_allocator<Value, base_allocator> other;
 	};
 
-	template<typename, typename>
-	friend class pool_allocator;
-
 public:
-	pool_allocator(MemManager&& memManager = MemManager())
-		: mMemPool(MemPoolParams(), std::move(memManager))
+	pool_allocator(const base_allocator& alloc = base_allocator())
+		: mMemPool(MemPoolParams(), MemManager(alloc))
 	{
 	}
 
@@ -64,13 +62,13 @@ public:
 	}
 
 	pool_allocator(const pool_allocator& alloc)
-		: pool_allocator(MemManager(alloc.mMemPool.GetMemManager()))
+		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
 
 	template<class Value>
 	pool_allocator(const pool_allocator<Value>& alloc)
-		: pool_allocator(MemManager(alloc.mMemPool.GetMemManager()))
+		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
 
@@ -97,9 +95,14 @@ public:
 		return *this;
 	}
 
+	base_allocator get_base_allocator() const
+	{
+		return mMemPool.GetMemManager().GetAllocator();
+	}
+
 	pool_allocator select_on_container_copy_construction() const
 	{
-		return pool_allocator(MemManager(mMemPool.GetMemManager()));
+		return pool_allocator(get_base_allocator());
 	}
 
 	pointer address(reference ref) const MOMO_NOEXCEPT
@@ -160,11 +163,12 @@ private:
 	MemPool mMemPool;
 };
 
-template<>
-class pool_allocator<void>
+template<typename TBaseAllocator>
+class pool_allocator<void, TBaseAllocator>
 {
 public:
 	typedef void value_type;
+	typedef TBaseAllocator base_allocator;
 
 	typedef void* pointer;
 	typedef const void* const_pointer;
@@ -172,7 +176,7 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value> other;
+		typedef pool_allocator<Value, base_allocator> other;
 	};
 };
 
