@@ -31,10 +31,6 @@ struct ArrayItemTraits
 	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
 	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
 
-	typedef typename ItemManager::Creator Creator;
-	typedef typename ItemManager::MoveCreator MoveCreator;
-	typedef typename ItemManager::CopyCreator CopyCreator;
-
 	template<typename... Args>
 	using VariadicCreator = typename ItemManager::template VariadicCreator<Args...>;
 
@@ -420,6 +416,12 @@ private:
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<Array> ArrayShifter;
 
+	template<typename... Args>
+	using VariadicCreator = typename ItemTraits::template VariadicCreator<Args...>;
+
+	template<typename Iterator>
+	using IterCreator = VariadicCreator<typename std::iterator_traits<Iterator>::reference>;
+
 public:
 	typedef internal::ArrayIterator<Array, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -435,12 +437,12 @@ public:
 	}
 
 	explicit Array(size_t count, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, typename ItemTraits::Creator(), std::move(memManager)))
+		: mData(_CreateData(count, VariadicCreator<>(), std::move(memManager)))
 	{
 	}
 
 	Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, typename ItemTraits::CopyCreator(item), std::move(memManager)))
+		: mData(_CreateData(count, VariadicCreator<const Item&>(item), std::move(memManager)))
 	{
 	}
 
@@ -560,12 +562,12 @@ public:
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, typename ItemTraits::Creator());
+		_SetCount(count, VariadicCreator<>());
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, typename ItemTraits::CopyCreator(item));
+		_SetCount(count, VariadicCreator<const Item&>(item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -639,18 +641,17 @@ public:
 	template<typename... Args>
 	void AddBackNogrowVar(Args&&... args)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		AddBackNogrowCrt(VariadicCreator<Args...>(std::forward<Args>(args)...));
 	}
 
 	void AddBackNogrow(Item&& item)
 	{
-		AddBackNogrowCrt(typename ItemTraits::MoveCreator(std::move(item)));
+		AddBackNogrowVar(std::move(item));
 	}
 
 	void AddBackNogrow(const Item& item)
 	{
-		AddBackNogrowCrt(typename ItemTraits::CopyCreator(item));
+		AddBackNogrowVar(item);
 	}
 
 	template<typename ItemCreator>
@@ -665,14 +666,13 @@ public:
 	template<typename... Args>
 	void AddBackVar(Args&&... args)
 	{
-		AddBackCrt(typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		AddBackCrt(VariadicCreator<Args...>(std::forward<Args>(args)...));
 	}
 
 	void AddBack(Item&& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(typename ItemTraits::MoveCreator(std::move(item)));
+			_AddBackNogrow(VariadicCreator<Item&&>(std::move(item)));
 		else
 			_AddBackGrow(std::move(item));
 	}
@@ -680,7 +680,7 @@ public:
 	void AddBack(const Item& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(typename ItemTraits::CopyCreator(item));
+			_AddBackNogrow(VariadicCreator<const Item&>(item));
 		else
 			_AddBackGrow(item);
 	}
@@ -698,8 +698,7 @@ public:
 	template<typename... Args>
 	void InsertVar(size_t index, Args&&... args)
 	{
-		InsertCrt(index, typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		InsertCrt(index, VariadicCreator<Args...>(std::forward<Args>(args)...));
 	}
 
 	// basic exception safety
@@ -710,7 +709,7 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			InsertCrt(index, typename ItemTraits::MoveCreator(std::move(item)));
+			InsertCrt(index, VariadicCreator<Item&&>(std::move(item)));
 		}
 		else
 		{
@@ -735,7 +734,7 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			typename ItemTraits::CopyCreator itemCreator(item);
+			VariadicCreator<const Item&> itemCreator(item);
 			ItemHandler itemHandler(itemCreator);
 			if (grow)
 				_Grow(newCount, ArrayGrowCause::add);
@@ -802,19 +801,15 @@ private:
 	template<typename Iterator>
 	void _Fill(Iterator begin, Iterator end, std::true_type /*isForwardIterator*/)
 	{
-		typedef typename ItemTraits::template VariadicCreator<
-			typename std::iterator_traits<Iterator>::reference> Creator;
 		for (Iterator iter = begin; iter != end; ++iter)
-			AddBackNogrowCrt(Creator(*iter));
+			AddBackNogrowCrt(IterCreator<Iterator>(*iter));
 	}
 
 	template<typename Iterator>
 	void _Fill(Iterator begin, Iterator end, std::false_type /*isForwardIterator*/)
 	{
-		typedef typename ItemTraits::template VariadicCreator<
-			typename std::iterator_traits<Iterator>::reference> Creator;
 		for (Iterator iter = begin; iter != end; ++iter)
-			AddBackCrt(Creator(*iter));
+			AddBackCrt(IterCreator<Iterator>(*iter));
 	}
 
 	static size_t _GrowCapacity(size_t capacity, size_t minNewCapacity,
@@ -929,14 +924,14 @@ private:
 		size_t itemIndex = _IndexOf((const Item&)item);
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		typename ItemTraits::MoveCreator(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))
+		VariadicCreator<Item&&>(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))
 			(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		_AddBackGrow(typename ItemTraits::MoveCreator(std::move(item)));
+		_AddBackGrow(VariadicCreator<Item&&>(std::move(item)));
 	}
 
 	void _AddBackGrow(const Item& item)
@@ -950,7 +945,7 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		(typename ItemTraits::CopyCreator(item))(&itemBuffer);
+		(VariadicCreator<const Item&>(item))(&itemBuffer);
 		try
 		{
 			_Grow(newCount, ArrayGrowCause::add);
@@ -966,7 +961,7 @@ private:
 
 	void _AddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
 	{
-		_AddBackGrow(typename ItemTraits::CopyCreator(item));
+		_AddBackGrow(VariadicCreator<const Item&>(item));
 	}
 
 	void _RemoveBack(size_t count) MOMO_NOEXCEPT

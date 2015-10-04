@@ -40,6 +40,11 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
+			template<typename... Args>
+			struct VariadicCreator
+			{
+			};
+
 			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 			{
 				ItemTraits::Destroy(items, count);

@@ -299,10 +299,10 @@ namespace internal
 			else
 			{
 				typedef typename ItemTraits::template VariadicCreator<
-					typename std::iterator_traits<Iterator>::reference> Creator;
+					typename std::iterator_traits<Iterator>::reference> IterCreator;
 				Iterator iter = std::next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
-					array.AddBackNogrowCrt(Creator(*iter));
+					array.AddBackNogrowCrt(IterCreator(*iter));
 				iter = begin;
 				for (size_t i = index; i < initCount; ++i, ++iter)
 				{
@@ -318,10 +318,10 @@ namespace internal
 			std::false_type /*isForwardIterator*/)
 		{
 			typedef typename ItemTraits::template VariadicCreator<
-				typename std::iterator_traits<Iterator>::reference> Creator;
+				typename std::iterator_traits<Iterator>::reference> IterCreator;
 			size_t count = 0;
 			for (Iterator iter = begin; iter != end; ++iter, ++count)
-				array.InsertCrt(index + count, Creator(*iter));
+				array.InsertCrt(index + count, IterCreator(*iter));
 		}
 
 		static void Remove(Array& array, size_t index, size_t count)
