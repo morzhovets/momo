@@ -325,10 +325,7 @@ private:
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		static void Create(const Item& item, void* pitem)
-		{
-			(typename KeyValueTraits::CopyValueCreator(item))(pitem);
-		}
+		typedef typename KeyValueTraits::CopyValueCreator CopyCreator;
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{

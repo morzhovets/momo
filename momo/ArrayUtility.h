@@ -298,11 +298,11 @@ namespace internal
 			}
 			else
 			{
+				typedef typename ItemTraits::template VariadicCreator<
+					typename std::iterator_traits<Iterator>::reference> Creator;
 				Iterator iter = std::next(begin, initCount - index);
-				auto itemCreator = [&iter] (void* pitem)
-					{ ItemTraits::Create(*iter, pitem); };
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
-					array.AddBackNogrowCrt(itemCreator);
+					array.AddBackNogrowCrt(Creator(*iter));
 				iter = begin;
 				for (size_t i = index; i < initCount; ++i, ++iter)
 				{
@@ -317,13 +317,11 @@ namespace internal
 		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
 			std::false_type /*isForwardIterator*/)
 		{
+			typedef typename ItemTraits::template VariadicCreator<
+				typename std::iterator_traits<Iterator>::reference> Creator;
 			size_t count = 0;
 			for (Iterator iter = begin; iter != end; ++iter, ++count)
-			{
-				auto itemCreator = [iter] (void* pitem)
-					{ ItemTraits::Create(*iter, pitem); };
-				array.InsertCrt(index + count, itemCreator);
-			}
+				array.InsertCrt(index + count, Creator(*iter));
 		}
 
 		static void Remove(Array& array, size_t index, size_t count)

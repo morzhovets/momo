@@ -30,11 +30,8 @@ struct SegmentedArrayItemTraits
 	typedef typename ItemManager::MoveCreator MoveCreator;
 	typedef typename ItemManager::CopyCreator CopyCreator;
 
-	template<typename Arg>
-	static void Create(Arg&& arg, void* pitem)
-	{
-		ItemManager::Create(std::forward<Arg>(arg), pitem);
-	}
+	template<typename... Args>
+	using VariadicCreator = typename ItemManager::template VariadicCreator<Args...>;
 
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 	{
@@ -408,6 +405,13 @@ public:
 		_AddBackNogrow(itemCreator);
 	}
 
+	template<typename... Args>
+	void AddBackNogrowVar(Args&&... args)
+	{
+		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
+	}
+
 	void AddBackNogrow(Item&& item)
 	{
 		AddBackNogrowCrt(typename ItemTraits::MoveCreator(std::move(item)));
@@ -442,6 +446,13 @@ public:
 		}
 	}
 
+	template<typename... Args>
+	void AddBackVar(Args&&... args)
+	{
+		AddBackCrt(typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
+	}
+
 	void AddBack(Item&& item)
 	{
 		AddBackCrt(typename ItemTraits::MoveCreator(std::move(item)));
@@ -459,6 +470,14 @@ public:
 		ItemHandler itemHandler(itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
 		Insert(index, begin, begin + 1);
+	}
+
+	// basic exception safety
+	template<typename... Args>
+	void InsertVar(size_t index, Args&&... args)
+	{
+		InsertCrt(index, typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
 	}
 
 	// basic exception safety
@@ -515,12 +534,10 @@ private:
 	{
 		try
 		{
+			typedef typename ItemTraits::template VariadicCreator<
+				typename std::iterator_traits<Iterator>::reference> Creator;
 			for (Iterator iter = begin; iter != end; ++iter)
-			{
-				auto itemCreator = [iter] (void* pitem)
-					{ ItemTraits::Create(*iter, pitem); };
-				AddBackCrt(itemCreator);
-			}
+				AddBackCrt(Creator(*iter));
 		}
 		catch (...)
 		{

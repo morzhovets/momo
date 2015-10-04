@@ -40,13 +40,6 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
-			template<typename Arg>
-			static void Create(Arg&& arg, void* pitem)
-			{
-				MOMO_CHECK_TYPE(Item, arg);
-				ItemTraits::Create(std::forward<Arg>(arg), pitem);
-			}
-
 			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 			{
 				ItemTraits::Destroy(items, count);
@@ -152,7 +145,7 @@ namespace internal
 				try
 				{
 					for (; index < count; ++index)
-						ItemTraits::Create(bounds[index], items + index);
+						(typename ItemTraits::CopyCreator(bounds[index]))(items + index);
 				}
 				catch (...)
 				{
@@ -164,9 +157,11 @@ namespace internal
 			else
 			{
 				ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
+				Array array = Array::CreateCap(count, MemManagerPtr(arrayMemPool.GetMemManager()));
+				for (const Item& item : bounds)
+					array.AddBackNogrowCrt(typename ItemTraits::CopyCreator(item));
 				ArrayMemory memory(arrayMemPool);
-				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(),
-					bounds.GetEnd(), MemManagerPtr(arrayMemPool.GetMemManager()));
+				new(&_GetArray(memory.GetPointer())) Array(std::move(array));
 				_Set(memory.Extract(), (unsigned char)0);
 			}
 		}
