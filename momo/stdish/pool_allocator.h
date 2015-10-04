@@ -25,13 +25,6 @@ public:
 	typedef TValue value_type;
 	typedef TBaseAllocator base_allocator;
 
-private:
-	typedef MemManagerStd<base_allocator> MemManager;
-	typedef MemPool<MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)>,
-		MemManager> MemPool;
-	typedef typename MemPool::Params MemPoolParams;
-
-public:
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
 	typedef value_type& reference;
@@ -50,8 +43,13 @@ public:
 		typedef pool_allocator<Value, base_allocator> other;
 	};
 
+private:
+	typedef MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)> MemPoolParams;
+	typedef MemManagerStd<base_allocator> MemManager;
+	typedef MemPool<MemPoolParams, MemManager> MemPool;
+
 public:
-	pool_allocator(const base_allocator& alloc = base_allocator())
+	explicit pool_allocator(const base_allocator& alloc = base_allocator())
 		: mMemPool(MemPoolParams(), MemManager(alloc))
 	{
 	}
