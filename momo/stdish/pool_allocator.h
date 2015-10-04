@@ -17,12 +17,20 @@ namespace momo
 namespace stdish
 {
 
-template<typename TValue>
+template<typename TValue,
+	typename TMemManager = MemManagerDefault>
 class pool_allocator
 {
 public:
 	typedef TValue value_type;
 
+private:
+	typedef TMemManager MemManager;
+	typedef MemPool<MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)>,
+		MemManager> MemPool;
+	typedef typename MemPool::Params MemPoolParams;
+
+public:
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
 	typedef value_type& reference;
@@ -38,17 +46,15 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value> other;
+		typedef pool_allocator<Value, MemManager> other;
 	};
 
-private:
-	typedef MemPool<MemPoolParams<sizeof(value_type), std::alignment_of<value_type>::value>> MemPool;
-	typedef typename MemPool::Params MemPoolParams;
-	typedef typename MemPool::MemManager MemManager;
+	template<typename, typename>
+	friend class pool_allocator;
 
 public:
-	pool_allocator()
-		: mMemPool(MemPoolParams(), MemManager())
+	pool_allocator(MemManager&& memManager = MemManager())
+		: mMemPool(MemPoolParams(), std::move(memManager))
 	{
 	}
 
@@ -57,14 +63,14 @@ public:
 	{
 	}
 
-	pool_allocator(const pool_allocator& /*alloc*/)
-		: pool_allocator()
+	pool_allocator(const pool_allocator& alloc)
+		: pool_allocator(MemManager(alloc.mMemPool.GetMemManager()))
 	{
 	}
 
 	template<class Value>
-	pool_allocator(const pool_allocator<Value>& /*alloc*/)
-		: pool_allocator()
+	pool_allocator(const pool_allocator<Value>& alloc)
+		: pool_allocator(MemManager(alloc.mMemPool.GetMemManager()))
 	{
 	}
 
@@ -80,18 +86,20 @@ public:
 
 	pool_allocator& operator=(const pool_allocator& /*alloc*/) MOMO_NOEXCEPT
 	{
+		//?
 		return *this;
 	}
 
 	template<class Value>
 	pool_allocator& operator=(const pool_allocator<Value>& /*alloc*/) MOMO_NOEXCEPT
 	{
+		//?
 		return *this;
 	}
 
 	pool_allocator select_on_container_copy_construction() const
 	{
-		return pool_allocator();
+		return pool_allocator(MemManager(mMemPool.GetMemManager()));
 	}
 
 	pointer address(reference ref) const MOMO_NOEXCEPT
