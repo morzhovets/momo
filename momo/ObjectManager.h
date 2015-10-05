@@ -79,7 +79,7 @@ namespace internal
 			template<size_t... sequence>
 			void _Create(void* pobject, Sequence<sequence...>) const
 			{
-				new(pobject) Object(std::forward<Args>(std::get<sequence>(std::move(mArgs)))...);
+				new(pobject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 		private:
@@ -87,11 +87,11 @@ namespace internal
 			MOMO_DISABLE_COPY_OPERATOR(VariadicCreator);
 
 		private:
-			mutable std::tuple<Args...> mArgs;
+			std::tuple<Args&&...> mArgs;
 		};
 
 		typedef VariadicCreator<> Creator;
-		typedef VariadicCreator<Object&&> MoveCreator;
+		typedef VariadicCreator<Object> MoveCreator;
 		typedef VariadicCreator<const Object&> CopyCreator;
 #else
 		class Creator
