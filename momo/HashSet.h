@@ -305,8 +305,8 @@ struct HashSetItemTraits
 
 	static const size_t alignment = ItemManager::alignment;
 
-	typedef typename ItemManager::MoveCreator MoveCreator;
-	typedef typename ItemManager::CopyCreator CopyCreator;
+	template<typename... ItemArgs>
+	using VariadicCreator = typename ItemManager::template VariadicCreator<ItemArgs...>;
 
 	static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 	{
@@ -603,7 +603,7 @@ public:
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
-					typename ItemTraits::CopyCreator(item));
+					typename ItemTraits::template VariadicCreator<const Item&>(item));
 			}
 		}
 		catch (...)
@@ -766,15 +766,23 @@ public:
 		return _Insert(key, itemCreator, true);
 	}
 
+	template<typename... ItemArgs>
+	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
+	{
+		return InsertCrt(key, typename ItemTraits::template VariadicCreator<ItemArgs...>(
+			std::forward<ItemArgs>(itemArgs)...));
+	}
+
 	InsertResult Insert(Item&& item)
 	{
 		return _Insert(ItemTraits::GetKey((const Item&)item),
-			typename ItemTraits::MoveCreator(std::move(item)), false);
+			typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return _Insert(ItemTraits::GetKey(item), typename ItemTraits::CopyCreator(item), false);
+		return _Insert(ItemTraits::GetKey(item),
+			typename ItemTraits::template VariadicCreator<const Item&>(item), false);
 	}
 
 	template<typename Iterator>
@@ -798,14 +806,21 @@ public:
 		return _Add(iter, itemCreator, true);
 	}
 
+	template<typename... ItemArgs>
+	ConstIterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
+	{
+		return AddCrt(iter, typename ItemTraits::template VariadicCreator<ItemArgs...>(
+			std::forward<ItemArgs>(itemArgs)...));
+	}
+
 	ConstIterator Add(ConstIterator iter, Item&& item)
 	{
-		return _Add(iter, typename ItemTraits::MoveCreator(std::move(item)), true);
+		return AddVar(iter, std::move(item));
 	}
 
 	ConstIterator Add(ConstIterator iter, const Item& item)
 	{
-		return _Add(iter, typename ItemTraits::CopyCreator(item), true);
+		return AddVar(iter, item);
 	}
 
 	ConstIterator Remove(ConstIterator iter)
@@ -1088,7 +1103,7 @@ private:
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
-					typename ItemTraits::MoveCreator(std::move(item)));
+					typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
 				bucket.RemoveBack(bucketParams);
 			}
 		}

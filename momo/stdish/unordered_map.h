@@ -368,7 +368,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<const Second&> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<const Second&> MappedCreator;
 		return _insert(value.first, MappedCreator(value.second));
 	}
 
@@ -386,7 +386,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Second&&> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Second&&> MappedCreator;
 		return _insert(std::forward<First>(value.first),
 			MappedCreator(std::forward<Second>(value.second)));
 	}
@@ -436,7 +436,7 @@ public:
 	template<typename Arg1, typename Arg2>
 	std::pair<iterator, bool> emplace(Arg1&& arg1, Arg2&& arg2)
 	{
-		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Arg2&&> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Arg2&&> MappedCreator;
 		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
 	}
 
@@ -592,7 +592,8 @@ private:
 	template<typename Key, typename MappedCreator>
 	std::pair<iterator, bool> _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
-		typedef typename internal::ObjectManager<key_type>::template VariadicCreator<Key&&> KeyCreator;
+		typedef internal::ObjectManager<key_type> KeyManager;
+		typedef typename KeyManager::template VariadicCreator<Key&&> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::forward<Key>(key))(&keyBuffer);
 		std::pair<iterator, bool> res;
@@ -602,10 +603,10 @@ private:
 		}
 		catch (...)
 		{
-			HashMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+			KeyManager::Destroy(*&keyBuffer);
 			throw;
 		}
-		HashMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+		KeyManager::Destroy(*&keyBuffer);
 		return res;
 	}
 
@@ -626,8 +627,9 @@ private:
 	template<typename... Args1, typename... Args2>
 	std::pair<iterator, bool> _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
 	{
-		typedef typename internal::ObjectManager<key_type>::template VariadicCreator<Args1...> KeyCreator;
-		typedef typename internal::ObjectManager<mapped_type>::template VariadicCreator<Args2...> MappedCreator;
+		typedef internal::ObjectManager<key_type> KeyManager;
+		typedef typename KeyManager::template VariadicCreator<Args1...> KeyCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Args2...> MappedCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::move(args1))(&keyBuffer);
 		std::pair<iterator, bool> res;
@@ -637,10 +639,10 @@ private:
 		}
 		catch (...)
 		{
-			HashMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+			KeyManager::Destroy(*&keyBuffer);
 			throw;
 		}
-		HashMap::KeyValueTraits::DestroyKey(*&keyBuffer);
+		KeyManager::Destroy(*&keyBuffer);
 		return res;
 	}
 

@@ -241,8 +241,8 @@ struct HashMultiMapKeyValueTraits
 
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 
-	typedef typename ValueManager::MoveCreator MoveValueCreator;
-	typedef typename ValueManager::CopyCreator CopyValueCreator;
+	template<typename... ValueArgs>
+	using ValueVariadicCreator = typename ValueManager::template VariadicCreator<ValueArgs...>;
 
 	static void CreateKey(const Key& key, void* pkey)
 	{
@@ -325,7 +325,7 @@ private:
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		typedef typename KeyValueTraits::CopyValueCreator CopyCreator;
+		typedef typename KeyValueTraits::template ValueVariadicCreator<const Item&> CopyCreator;
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
@@ -455,7 +455,8 @@ private:
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
-		typedef typename ValueManager::MoveCreator MoveValueCreator;
+		template<typename... ValueArgs>	//?
+		using ValueVariadicCreator = typename ValueManager::template VariadicCreator<ValueArgs...>;
 
 		static void CreateKey(const Key& key, void* pkey)
 		{
@@ -688,14 +689,22 @@ public:
 		return _Add(std::move(key), valueCreator);
 	}
 
+	template<typename... ValueArgs>
+	Iterator AddVar(Key&& key, ValueArgs&&... valueArgs)
+	{
+		return _Add(std::move(key),
+			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
 	Iterator Add(Key&& key, Value&& value)
 	{
-		return _Add(std::move(key), typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return AddVar(std::move(key), std::move(value));
 	}
 
 	Iterator Add(Key&& key, const Value& value)
 	{
-		return _Add(std::move(key), typename KeyValueTraits::CopyValueCreator(value));
+		return AddVar(std::move(key), value);
 	}
 
 	template<typename ValueCreator>
@@ -704,14 +713,21 @@ public:
 		return _Add(key, valueCreator);
 	}
 
+	template<typename... ValueArgs>
+	Iterator AddVar(const Key& key, ValueArgs&&... valueArgs)
+	{
+		return _Add(key, typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
 	Iterator Add(const Key& key, Value&& value)
 	{
-		return _Add(key, typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return AddVar(key, std::move(value));
 	}
 
 	Iterator Add(const Key& key, const Value& value)
 	{
-		return _Add(key, typename KeyValueTraits::CopyValueCreator(value));
+		return AddVar(key, value);
 	}
 
 	template<typename ValueCreator>
@@ -722,14 +738,22 @@ public:
 		return _MakeIterator<Iterator>(keyIter, valueArray.GetBounds().GetEnd() - 1, false);
 	}
 
+	template<typename... ValueArgs>
+	Iterator AddVar(KeyIterator keyIter, ValueArgs&&... valueArgs)
+	{
+		return AddCrt(keyIter,
+			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
 	Iterator Add(KeyIterator keyIter, Value&& value)
 	{
-		return AddCrt(keyIter, typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return AddVar(keyIter, std::move(value));
 	}
 
 	Iterator Add(KeyIterator keyIter, const Value& value)
 	{
-		return AddCrt(keyIter, typename KeyValueTraits::CopyValueCreator(value));
+		return AddVar(keyIter, value);
 	}
 
 	template<typename Iterator>

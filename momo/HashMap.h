@@ -115,12 +115,8 @@ struct HashMapKeyValueTraits
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 	static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
-	typedef typename ValueManager::Creator ValueCreator;
-#endif
-
-	typedef typename ValueManager::MoveCreator MoveValueCreator;
-	typedef typename ValueManager::CopyCreator CopyValueCreator;
+	template<typename... ValueArgs>
+	using ValueVariadicCreator = typename ValueManager::template VariadicCreator<ValueArgs...>;
 
 	static void CreateKey(const Key& key, void* pkey)
 	{
@@ -244,27 +240,27 @@ private:
 		template<typename ValueCreator>
 		KeyValuePair(Key&& key, const ValueCreator& valueCreator)
 		{
-			KeyValueTraits::CreatePair(std::move(key), valueCreator, &mKeyBuffer, &mValueBuffer);
+			_Create(std::move(key), valueCreator);
 		}
 
 		template<typename ValueCreator>
 		KeyValuePair(const Key& key, const ValueCreator& valueCreator)
 		{
-			KeyValueTraits::CreatePair(key, valueCreator, &mKeyBuffer, &mValueBuffer);
+			_Create(key, valueCreator);
 		}
 
 		KeyValuePair(KeyValuePair&& pair)
 		{
-			KeyValueTraits::CreatePair(std::move(pair.GetKey()),
-				typename KeyValueTraits::MoveValueCreator(std::move(pair.GetValue())),
-				&mKeyBuffer, &mValueBuffer);
+			_Create(std::move(pair.GetKey()),
+				typename KeyValueTraits::template ValueVariadicCreator<Value&&>(
+				std::move(pair.GetValue())));
 		}
 
 		KeyValuePair(const KeyValuePair& pair)
 		{
-			KeyValueTraits::CreatePair(pair.GetKey(),
-				typename KeyValueTraits::CopyValueCreator((const Value&)pair.GetValue()),
-				&mKeyBuffer, &mValueBuffer);
+			_Create(pair.GetKey(),
+				typename KeyValueTraits::template ValueVariadicCreator<const Value&>(
+				(const Value&)pair.GetValue()));
 		}
 
 		~KeyValuePair() MOMO_NOEXCEPT
@@ -306,6 +302,13 @@ private:
 		}
 
 	private:
+		template<typename RKey, typename ValueCreator>
+		void _Create(RKey&& key, const ValueCreator& valueCreator)
+		{
+			KeyValueTraits::CreatePair(std::forward<RKey>(key), valueCreator,
+				&mKeyBuffer, &mValueBuffer);
+		}
+
 		template<typename PairCreator>
 		static void _RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
 			size_t srcCount, const PairCreator& pairCreator,
@@ -333,8 +336,8 @@ private:
 			{
 				for (; index < srcCount; ++index)
 				{
-					typename KeyValueTraits::CopyValueCreator(srcPairs[index].GetValue())
-						(&dstPairs[index].mValueBuffer);
+					typename KeyValueTraits::template ValueVariadicCreator<const Value&>
+						(srcPairs[index].GetValue())(&dstPairs[index].mValueBuffer);
 				}
 				pairCreator(dstPairs + srcCount);
 			}
@@ -400,8 +403,8 @@ private:
 				}
 				for (; valueIndex < srcCount; ++valueIndex)
 				{
-					typename KeyValueTraits::CopyValueCreator(srcPairs[valueIndex].GetValue())
-						(&dstPairs[valueIndex].mValueBuffer);
+					typename KeyValueTraits::template ValueVariadicCreator<const Value&>
+						(srcPairs[valueIndex].GetValue())(&dstPairs[valueIndex].mValueBuffer);
 				}
 				pairCreator(dstPairs + srcCount);
 			}
@@ -431,8 +434,8 @@ private:
 
 		static const size_t alignment = ItemManager::alignment;
 
-		typedef typename ItemManager::MoveCreator MoveCreator;
-		typedef typename ItemManager::CopyCreator CopyCreator;
+		template<typename... ItemArgs>	//?
+		using VariadicCreator = typename ItemManager::template VariadicCreator<ItemArgs...>;
 
 		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 		{
@@ -690,15 +693,22 @@ public:
 		return _Insert(std::move(key), valueCreator);
 	}
 
-	InsertResult Insert(Key&& key, Value&& value)
+	template<typename... ValueArgs>
+	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return _Insert(std::move(key),
-			typename KeyValueTraits::MoveValueCreator(std::move(value)));
+			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
+	InsertResult Insert(Key&& key, Value&& value)
+	{
+		return InsertVar(std::move(key), std::move(value));
 	}
 
 	InsertResult Insert(Key&& key, const Value& value)
 	{
-		return _Insert(std::move(key), typename KeyValueTraits::CopyValueCreator(value));
+		return InsertVar(std::move(key), value);
 	}
 
 	template<typename ValueCreator>
@@ -707,14 +717,21 @@ public:
 		return _Insert(key, valueCreator);
 	}
 
+	template<typename... ValueArgs>
+	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
+	{
+		return _Insert(key, typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
 	InsertResult Insert(const Key& key, Value&& value)
 	{
-		return _Insert(key, typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return InsertVar(key, std::move(value));
 	}
 
 	InsertResult Insert(const Key& key, const Value& value)
 	{
-		return _Insert(key, typename KeyValueTraits::CopyValueCreator(value));
+		return InsertVar(key, value);
 	}
 
 	template<typename Iterator>
@@ -743,7 +760,7 @@ public:
 	}
 
 	template<typename KeyValueCreator>
-	Iterator AddCrt(ConstIterator iter, const KeyValueCreator& keyValueCreator)
+	Iterator AddCrt(ConstIterator iter, const KeyValueCreator& keyValueCreator)	//?
 	{
 		auto pairCreator = [&keyValueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(keyValueCreator); };
@@ -752,25 +769,52 @@ public:
 		return resIter;
 	}
 
-	Iterator Add(ConstIterator iter, Key&& key, Value&& value)
+	template<typename ValueCreator>
+	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
+	{
+		return _Add(iter, std::move(key), valueCreator);
+	}
+
+	template<typename... ValueArgs>
+	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
 	{
 		return _Add(iter, std::move(key),
-			typename KeyValueTraits::MoveValueCreator(std::move(value)));
+			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
+	}
+
+	Iterator Add(ConstIterator iter, Key&& key, Value&& value)
+	{
+		return AddVar(iter, std::move(key), std::move(value));
 	}
 
 	Iterator Add(ConstIterator iter, Key&& key, const Value& value)
 	{
-		return _Add(iter, std::move(key), typename KeyValueTraits::CopyValueCreator(value));
+		return AddVar(iter, std::move(key), value);
+	}
+
+	template<typename ValueCreator>
+	Iterator AddCrt(ConstIterator iter, const Key& key, const ValueCreator& valueCreator)
+	{
+		return _Add(iter, key, valueCreator);
+	}
+
+	template<typename... ValueArgs>
+	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
+	{
+		return _Add(iter, key,
+			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
+			std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(ConstIterator iter, const Key& key, Value&& value)
 	{
-		return _Add(iter, key, typename KeyValueTraits::MoveValueCreator(std::move(value)));
+		return AddVar(iter, key, std::move(value));
 	}
 
 	Iterator Add(ConstIterator iter, const Key& key, const Value& value)
 	{
-		return _Add(iter, key, typename KeyValueTraits::CopyValueCreator(value));
+		return AddVar(iter, key, value);
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -787,12 +831,13 @@ public:
 	ValueReferenceRKey operator[](Key&& key)
 	{
 		return _Insert(std::move(key),
-			typename KeyValueTraits::ValueCreator()).iterator->value;
+			typename KeyValueTraits::template ValueVariadicCreator<>()).iterator->value;
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		return _Insert(key, typename KeyValueTraits::ValueCreator()).iterator->value;
+		return _Insert(key,
+			typename KeyValueTraits::template ValueVariadicCreator<>()).iterator->value;
 	}
 #endif
 

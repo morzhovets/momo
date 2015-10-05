@@ -31,8 +31,8 @@ struct ArrayItemTraits
 	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
 	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
 
-	template<typename... Args>
-	using VariadicCreator = typename ItemManager::template VariadicCreator<Args...>;
+	template<typename... ItemArgs>
+	using VariadicCreator = typename ItemManager::template VariadicCreator<ItemArgs...>;
 
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 	{
@@ -634,11 +634,11 @@ public:
 		_AddBackNogrow(itemCreator);
 	}
 
-	template<typename... Args>
-	void AddBackNogrowVar(Args&&... args)
+	template<typename... ItemArgs>
+	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<ItemArgs...>(
+			std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	void AddBackNogrow(Item&& item)
@@ -660,11 +660,11 @@ public:
 			_AddBackGrow(itemCreator);
 	}
 
-	template<typename... Args>
-	void AddBackVar(Args&&... args)
+	template<typename... ItemArgs>
+	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		AddBackCrt(typename ItemTraits::template VariadicCreator<ItemArgs...>(
+			std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	void AddBack(Item&& item)
@@ -693,11 +693,11 @@ public:
 	}
 
 	// basic exception safety
-	template<typename... Args>
-	void InsertVar(size_t index, Args&&... args)
+	template<typename... ItemArgs>
+	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template VariadicCreator<Args...>(
-			std::forward<Args>(args)...));
+		InsertCrt(index, typename ItemTraits::template VariadicCreator<ItemArgs...>(
+			std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	// basic exception safety
