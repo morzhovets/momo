@@ -670,7 +670,7 @@ public:
 	void AddBack(Item&& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
+			_AddBackNogrow(typename ItemTraits::template VariadicCreator<Item>(std::move(item)));
 		else
 			_AddBackGrow(std::move(item));
 	}
@@ -709,7 +709,7 @@ public:
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
 			InsertCrt(index,
-				typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
+				typename ItemTraits::template VariadicCreator<Item>(std::move(item)));
 		}
 		else
 		{
@@ -928,14 +928,14 @@ private:
 		size_t itemIndex = _IndexOf((const Item&)item);
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		typename ItemTraits::template VariadicCreator<Item&&>
+		typename ItemTraits::template VariadicCreator<Item>
 			(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		_AddBackGrow(typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
+		_AddBackGrow(typename ItemTraits::template VariadicCreator<Item>(std::move(item)));
 	}
 
 	void _AddBackGrow(const Item& item)

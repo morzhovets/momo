@@ -777,7 +777,7 @@ public:
 	InsertResult Insert(Item&& item)
 	{
 		return _Insert(ItemTraits::GetKey((const Item&)item),
-			Creator<Item&&>(std::move(item)), false);
+			Creator<Item>(std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
@@ -1101,7 +1101,7 @@ private:
 				Item& item = *(bucketBounds.GetEnd() - 1);
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item&&>(std::move(item)));
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item>(std::move(item)));
 				bucket.RemoveBack(bucketParams);
 			}
 		}

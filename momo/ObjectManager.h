@@ -86,11 +86,11 @@ namespace internal
 			template<size_t... sequence>
 			void _Create(void* pobject, Sequence<sequence...>) const
 			{
-				new(pobject) Object(std::forward<Args>(std::get<sequence>(std::move(mArgs)))...);
+				new(pobject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 		private:
-			mutable std::tuple<Args...> mArgs;
+			std::tuple<Args&&...> mArgs;
 		};
 
 		template<typename Arg>	//?
@@ -271,7 +271,7 @@ namespace internal
 			if (count > 0)
 			{
 				_RelocateAddBack(srcObjects, dstObjects, count - 1,
-					VariadicCreator<Object&&>(std::move(srcObjects[count - 1])), std::false_type());
+					VariadicCreator<Object>(std::move(srcObjects[count - 1])), std::false_type());
 			}
 		}
 

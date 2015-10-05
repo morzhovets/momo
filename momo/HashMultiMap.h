@@ -461,13 +461,17 @@ private:
 		template<typename ValueArg>
 		struct ValueVariadicCreator : public ValueManager::template VariadicCreator<ValueArg>
 		{
-			//MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value&&>::value));
+			MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value>::value));
 
 		private:
 			typedef typename ValueManager::template VariadicCreator<ValueArg> BaseCreator;
 
 		public:
-			using BaseCreator::BaseCreator;
+			//using BaseCreator::BaseCreator;	// vs2013
+			explicit ValueVariadicCreator(ValueArg&& valueArg)
+				: BaseCreator(std::forward<ValueArg>(valueArg))
+			{
+			}
 		};
 
 		static void CreateKey(const Key& key, void* pkey)

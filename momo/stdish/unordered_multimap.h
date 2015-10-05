@@ -372,7 +372,7 @@ public:
 		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename HashMultiMap::KeyValueTraits::template ValueVariadicCreator<Second&&> MappedCreator;
+		typedef typename HashMultiMap::KeyValueTraits::template ValueVariadicCreator<Second> MappedCreator;
 		return _insert(std::forward<First>(value.first),
 			MappedCreator(std::forward<Second>(value.second)));
 	}
@@ -422,7 +422,7 @@ public:
 	template<typename Arg1, typename Arg2>
 	iterator emplace(Arg1&& arg1, Arg2&& arg2)
 	{
-		typedef typename HashMultiMap::KeyValueTraits::template ValueVariadicCreator<Arg2&&> MappedCreator;
+		typedef typename HashMultiMap::KeyValueTraits::template ValueVariadicCreator<Arg2> MappedCreator;
 		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
 	}
 
@@ -527,7 +527,7 @@ private:
 	iterator _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template VariadicCreator<Key&&> KeyCreator;
+		typedef typename KeyManager::template VariadicCreator<Key> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::forward<Key>(key))(&keyBuffer);
 		iterator resIter;

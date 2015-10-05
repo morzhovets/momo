@@ -254,7 +254,7 @@ private:
 
 		KeyValuePair(KeyValuePair&& pair)
 		{
-			_Create(std::move(pair.GetKey()), ValueCreator<Value&&>(std::move(pair.GetValue())));
+			_Create(std::move(pair.GetKey()), ValueCreator<Value>(std::move(pair.GetValue())));
 		}
 
 		KeyValuePair(const KeyValuePair& pair)
@@ -436,14 +436,18 @@ private:
 		template<typename ItemArg>
 		struct VariadicCreator : public ItemManager::template VariadicCreator<ItemArg>
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item&&>::value
+			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
 				|| std::is_same<ItemArg, const Item&>::value));
 
 		private:
 			typedef typename ItemManager::template VariadicCreator<ItemArg> BaseCreator;
 
 		public:
-			using BaseCreator::BaseCreator;
+			//using BaseCreator::BaseCreator;	// vs2013
+			explicit VariadicCreator(ItemArg&& itemArg)
+				: BaseCreator(std::forward<ItemArg>(itemArg))
+			{
+			}
 		};
 
 		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
