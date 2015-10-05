@@ -416,12 +416,6 @@ private:
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<Array> ArrayShifter;
 
-	template<typename... Args>
-	using VariadicCreator = typename ItemTraits::template VariadicCreator<Args...>;
-
-	template<typename Iterator>
-	using IterCreator = VariadicCreator<typename std::iterator_traits<Iterator>::reference>;
-
 public:
 	typedef internal::ArrayIterator<Array, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -437,12 +431,14 @@ public:
 	}
 
 	explicit Array(size_t count, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, VariadicCreator<>(), std::move(memManager)))
+		: mData(_CreateData(count, typename ItemTraits::template VariadicCreator<>(),
+			std::move(memManager)))
 	{
 	}
 
 	Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, VariadicCreator<const Item&>(item), std::move(memManager)))
+		: mData(_CreateData(count, typename ItemTraits::template VariadicCreator<const Item&>(item),
+			std::move(memManager)))
 	{
 	}
 
@@ -562,12 +558,12 @@ public:
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, VariadicCreator<>());
+		_SetCount(count, typename ItemTraits::template VariadicCreator<>());
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, VariadicCreator<const Item&>(item));
+		_SetCount(count, typename ItemTraits::template VariadicCreator<const Item&>(item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -641,7 +637,8 @@ public:
 	template<typename... Args>
 	void AddBackNogrowVar(Args&&... args)
 	{
-		AddBackNogrowCrt(VariadicCreator<Args...>(std::forward<Args>(args)...));
+		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
 	}
 
 	void AddBackNogrow(Item&& item)
@@ -666,13 +663,14 @@ public:
 	template<typename... Args>
 	void AddBackVar(Args&&... args)
 	{
-		AddBackCrt(VariadicCreator<Args...>(std::forward<Args>(args)...));
+		AddBackCrt(typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
 	}
 
 	void AddBack(Item&& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(VariadicCreator<Item&&>(std::move(item)));
+			_AddBackNogrow(typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
 		else
 			_AddBackGrow(std::move(item));
 	}
@@ -680,7 +678,7 @@ public:
 	void AddBack(const Item& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(VariadicCreator<const Item&>(item));
+			_AddBackNogrow(typename ItemTraits::template VariadicCreator<const Item&>(item));
 		else
 			_AddBackGrow(item);
 	}
@@ -698,7 +696,8 @@ public:
 	template<typename... Args>
 	void InsertVar(size_t index, Args&&... args)
 	{
-		InsertCrt(index, VariadicCreator<Args...>(std::forward<Args>(args)...));
+		InsertCrt(index, typename ItemTraits::template VariadicCreator<Args...>(
+			std::forward<Args>(args)...));
 	}
 
 	// basic exception safety
@@ -709,7 +708,8 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			InsertCrt(index, VariadicCreator<Item&&>(std::move(item)));
+			InsertCrt(index,
+				typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
 		}
 		else
 		{
@@ -734,7 +734,7 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			VariadicCreator<const Item&> itemCreator(item);
+			typename ItemTraits::template VariadicCreator<const Item&> itemCreator(item);
 			ItemHandler itemHandler(itemCreator);
 			if (grow)
 				_Grow(newCount, ArrayGrowCause::add);
@@ -801,15 +801,19 @@ private:
 	template<typename Iterator>
 	void _Fill(Iterator begin, Iterator end, std::true_type /*isForwardIterator*/)
 	{
+		typedef typename ItemTraits::template VariadicCreator<
+			typename std::iterator_traits<Iterator>::reference> IterCreator;
 		for (Iterator iter = begin; iter != end; ++iter)
-			AddBackNogrowCrt(IterCreator<Iterator>(*iter));
+			AddBackNogrowCrt(IterCreator(*iter));
 	}
 
 	template<typename Iterator>
 	void _Fill(Iterator begin, Iterator end, std::false_type /*isForwardIterator*/)
 	{
+		typedef typename ItemTraits::template VariadicCreator<
+			typename std::iterator_traits<Iterator>::reference> IterCreator;
 		for (Iterator iter = begin; iter != end; ++iter)
-			AddBackCrt(IterCreator<Iterator>(*iter));
+			AddBackCrt(IterCreator(*iter));
 	}
 
 	static size_t _GrowCapacity(size_t capacity, size_t minNewCapacity,
@@ -924,14 +928,14 @@ private:
 		size_t itemIndex = _IndexOf((const Item&)item);
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		VariadicCreator<Item&&>(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))
-			(items + initCount);
+		typename ItemTraits::template VariadicCreator<Item&&>
+			(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		_AddBackGrow(VariadicCreator<Item&&>(std::move(item)));
+		_AddBackGrow(typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
 	}
 
 	void _AddBackGrow(const Item& item)
@@ -945,7 +949,7 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		(VariadicCreator<const Item&>(item))(&itemBuffer);
+		(typename ItemTraits::template VariadicCreator<const Item&>(item))(&itemBuffer);
 		try
 		{
 			_Grow(newCount, ArrayGrowCause::add);
@@ -961,7 +965,7 @@ private:
 
 	void _AddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
 	{
-		_AddBackGrow(VariadicCreator<const Item&>(item));
+		_AddBackGrow(typename ItemTraits::template VariadicCreator<const Item&>(item));
 	}
 
 	void _RemoveBack(size_t count) MOMO_NOEXCEPT
