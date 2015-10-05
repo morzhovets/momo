@@ -400,6 +400,9 @@ public:
 	typedef typename ItemTraits::Item Item;
 
 private:
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template VariadicCreator<ItemArgs...>;
+
 	struct BucketItemTraits
 	{
 		typedef typename HashSet::Item Item;
@@ -602,8 +605,7 @@ public:
 			{
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
-					typename ItemTraits::template VariadicCreator<const Item&>(item));
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<const Item&>(item));
 			}
 		}
 		catch (...)
@@ -769,20 +771,18 @@ public:
 	template<typename... ItemArgs>
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
-		return InsertCrt(key, typename ItemTraits::template VariadicCreator<ItemArgs...>(
-			std::forward<ItemArgs>(itemArgs)...));
+		return InsertCrt(key, Creator<ItemArgs...>(std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	InsertResult Insert(Item&& item)
 	{
 		return _Insert(ItemTraits::GetKey((const Item&)item),
-			typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)), false);
+			Creator<Item&&>(std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return _Insert(ItemTraits::GetKey(item),
-			typename ItemTraits::template VariadicCreator<const Item&>(item), false);
+		return _Insert(ItemTraits::GetKey(item), Creator<const Item&>(item), false);
 	}
 
 	template<typename Iterator>
@@ -809,8 +809,7 @@ public:
 	template<typename... ItemArgs>
 	ConstIterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(iter, typename ItemTraits::template VariadicCreator<ItemArgs...>(
-			std::forward<ItemArgs>(itemArgs)...));
+		return AddCrt(iter, Creator<ItemArgs...>(std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	ConstIterator Add(ConstIterator iter, Item&& item)
@@ -1102,8 +1101,7 @@ private:
 				Item& item = *(bucketBounds.GetEnd() - 1);
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
-					typename ItemTraits::template VariadicCreator<Item&&>(std::move(item)));
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item&&>(std::move(item)));
 				bucket.RemoveBack(bucketParams);
 			}
 		}

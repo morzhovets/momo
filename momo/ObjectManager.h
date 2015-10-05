@@ -93,16 +93,7 @@ namespace internal
 			mutable std::tuple<Args...> mArgs;
 		};
 
-		typedef VariadicCreator<> Creator;
-		typedef VariadicCreator<Object&&> MoveCreator;
-		typedef VariadicCreator<const Object&> CopyCreator;
-
-		static void Create(void* pobject)
-		{
-			new(pobject) Object();
-		}
-
-		template<typename Arg>
+		template<typename Arg>	//?
 		static void Create(Arg&& arg, void* pobject)
 		{
 			new(pobject) Object(std::forward<Arg>(arg));
@@ -280,7 +271,7 @@ namespace internal
 			if (count > 0)
 			{
 				_RelocateAddBack(srcObjects, dstObjects, count - 1,
-					MoveCreator(std::move(srcObjects[count - 1])), std::false_type());
+					VariadicCreator<Object&&>(std::move(srcObjects[count - 1])), std::false_type());
 			}
 		}
 

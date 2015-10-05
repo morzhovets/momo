@@ -319,13 +319,16 @@ public:
 	typedef TSettings Settings;
 
 private:
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>;
+
 	struct ArrayBucketItemTraits
 	{
 		typedef typename HashMultiMap::Value Item;
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		typedef typename KeyValueTraits::template ValueVariadicCreator<const Item&> CopyCreator;
+		typedef ValueCreator<const Item&> CopyCreator;
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
@@ -455,8 +458,17 @@ private:
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
-		template<typename... ValueArgs>	//?
-		using ValueVariadicCreator = typename ValueManager::template VariadicCreator<ValueArgs...>;
+		template<typename ValueArg>
+		struct ValueVariadicCreator : public ValueManager::template VariadicCreator<ValueArg>
+		{
+			//MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value&&>::value));
+
+		private:
+			typedef typename ValueManager::template VariadicCreator<ValueArg> BaseCreator;
+
+		public:
+			using BaseCreator::BaseCreator;
+		};
 
 		static void CreateKey(const Key& key, void* pkey)
 		{
@@ -693,8 +705,7 @@ public:
 	Iterator AddVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return _Add(std::move(key),
-			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
-			std::forward<ValueArgs>(valueArgs)...));
+			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(Key&& key, Value&& value)
@@ -716,8 +727,7 @@ public:
 	template<typename... ValueArgs>
 	Iterator AddVar(const Key& key, ValueArgs&&... valueArgs)
 	{
-		return _Add(key, typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
-			std::forward<ValueArgs>(valueArgs)...));
+		return _Add(key, ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(const Key& key, Value&& value)
@@ -741,9 +751,7 @@ public:
 	template<typename... ValueArgs>
 	Iterator AddVar(KeyIterator keyIter, ValueArgs&&... valueArgs)
 	{
-		return AddCrt(keyIter,
-			typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>(
-			std::forward<ValueArgs>(valueArgs)...));
+		return AddCrt(keyIter, ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(KeyIterator keyIter, Value&& value)
