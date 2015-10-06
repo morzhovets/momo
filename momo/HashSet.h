@@ -573,6 +573,13 @@ public:
 		mBuckets = &Buckets::Create(GetMemManager(), bucketCount);
 	}
 
+	HashSet(std::initializer_list<Item> items,
+		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+		: HashSet(hashTraits, std::move(memManager))
+	{
+		Insert(items);
+	}
+
 	HashSet(HashSet&& hashSet) MOMO_NOEXCEPT
 		: mCrew(std::move(hashSet.mCrew)),
 		mCount(hashSet.mCount),

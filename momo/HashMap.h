@@ -584,6 +584,13 @@ public:
 	{
 	}
 
+	HashMap(std::initializer_list<std::pair<Key, Value>> keyValuePairs,
+		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+		: HashMap(hashTraits, std::move(memManager))
+	{
+		Insert(keyValuePairs);
+	}
+
 	HashMap(HashMap&& hashMap) MOMO_NOEXCEPT
 		: mHashSet(std::move(hashMap.mHashSet))
 	{

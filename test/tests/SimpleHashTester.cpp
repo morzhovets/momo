@@ -51,10 +51,8 @@ public:
 	{
 		typedef momo::HashSet<std::string,
 			momo::HashTraits<std::string, HashBucket>> HashSet;
-		HashSet set;
 		std::string s1 = "s1";
-		set.Insert(s1);
-		set.Insert("s2");
+		HashSet set = { s1, "s2" };
 		set.Insert("s3");
 		set = set;
 		set = std::move(set);
@@ -89,14 +87,12 @@ public:
 	{
 		typedef momo::HashMap<std::string, std::string,
 			momo::HashTraits<std::string, HashBucket>> HashMap;
-		HashMap map;
 		std::string s1 = "s1";
 		std::string s2 = "s2";
 		std::string s3 = "s3";
 		std::string s4 = "s4";
 		std::string s5 = "s5";
-		map.Insert("s1", "s1");
-		map.Insert("s2", s2);
+		HashMap map = { {"s1", "s1"}, {"s2", s2} };
 		map.Insert(s3, "s3");
 		map.Insert(s4, s4);
 		map[s5] = "s5";
@@ -136,15 +132,13 @@ public:
 	{
 		typedef momo::HashMultiMap<std::string, std::string,
 			momo::HashTraits<std::string, HashBucket>> HashMultiMap;
-		HashMultiMap mmap(typename HashMultiMap::HashTraits(1));
 		std::string k1 = "k1";
 		std::string v1 = "v1";
 		std::string k2 = "k2";
 		std::string v2 = "v2";
 		std::string k3 = "k3";
 		std::string v3 = "v3";
-		mmap.Add("k1", "v1");
-		mmap.Add(k1, "v2");
+		HashMultiMap mmap({ {"k1", "v1"}, {k1, "v2"} }, typename HashMultiMap::HashTraits(1));
 		mmap.Add("k2", v1);
 		mmap.Add(k2, v2);
 		mmap.Add(mmap.InsertKey(k3), "v3");

@@ -127,35 +127,31 @@ public:
 	}
 
 	unordered_set(std::initializer_list<value_type> values)
+		: mHashSet(values)
 	{
-		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount)
-		: mHashSet(HashTraits(bucketCount))
+		: mHashSet(values, HashTraits(bucketCount))
 	{
-		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc))
+		: mHashSet(values, HashTraits(bucketCount, hashFunc))
 	{
-		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc))
+		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc))
 	{
-		insert(values);
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
-		insert(values);
 	}
 
 	unordered_set(unordered_set&& right) MOMO_NOEXCEPT

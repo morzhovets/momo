@@ -562,6 +562,13 @@ public:
 	{
 	}
 
+	HashMultiMap(std::initializer_list<std::pair<Key, Value>> keyValuePairs,
+		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+		: HashMultiMap(hashTraits, std::move(memManager))
+	{
+		Add(keyValuePairs);
+	}
+
 	HashMultiMap(HashMultiMap&& hashMultiMap) MOMO_NOEXCEPT
 		: mHashMap(std::move(hashMultiMap.mHashMap)),
 		mValueCount(hashMultiMap.mValueCount),
