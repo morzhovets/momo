@@ -27,7 +27,7 @@ struct SegmentedArrayItemTraits
 	static const size_t alignment = ItemManager::alignment;
 
 	template<typename... ItemArgs>
-	using VariadicCreator = typename ItemManager::template VariadicCreator<ItemArgs...>;
+	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 	{
@@ -189,14 +189,14 @@ public:
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
-		_IncCount(count, typename ItemTraits::template VariadicCreator<>());
+		_IncCount(count, typename ItemTraits::template Creator<>());
 	}
 
 	SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
-		_IncCount(count, typename ItemTraits::template VariadicCreator<const Item&>(item));
+		_IncCount(count, typename ItemTraits::template Creator<const Item&>(item));
 	}
 
 	template<typename Iterator>
@@ -327,12 +327,12 @@ public:
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, typename ItemTraits::template VariadicCreator<>());
+		_SetCount(count, typename ItemTraits::template Creator<>());
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, typename ItemTraits::template VariadicCreator<const Item&>(item));
+		_SetCount(count, typename ItemTraits::template Creator<const Item&>(item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -404,7 +404,7 @@ public:
 	template<typename... ItemArgs>
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template VariadicCreator<ItemArgs...>(
+		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -445,7 +445,7 @@ public:
 	template<typename... ItemArgs>
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template VariadicCreator<ItemArgs...>(
+		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -472,7 +472,7 @@ public:
 	template<typename... ItemArgs>
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template VariadicCreator<ItemArgs...>(
+		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -491,7 +491,7 @@ public:
 	// basic exception safety
 	void Insert(size_t index, size_t count, const Item& item)
 	{
-		typename ItemTraits::template VariadicCreator<const Item&> itemCreator(item);
+		typename ItemTraits::template Creator<const Item&> itemCreator(item);
 		ItemHandler itemHandler(itemCreator);
 		Reserve(mCount + count);
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
@@ -530,7 +530,7 @@ private:
 	{
 		try
 		{
-			typedef typename ItemTraits::template VariadicCreator<
+			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<Iterator>::reference> IterCreator;
 			for (Iterator iter = begin; iter != end; ++iter)
 				AddBackCrt(IterCreator(*iter));

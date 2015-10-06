@@ -385,7 +385,7 @@ public:
 	template<typename... Args>
 	std::pair<iterator, bool> emplace(Args&&... args)
 	{
-		typedef typename HashSet::ItemTraits::template VariadicCreator<Args...> ValueCreator;
+		typedef typename HashSet::ItemTraits::template Creator<Args...> ValueCreator;
 		ValueBuffer valueBuffer;
 		ValueCreator(std::forward<Args>(args)...)(&valueBuffer);
 		std::pair<iterator, bool> res;

@@ -56,26 +56,26 @@ namespace internal
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
 		template<typename... Args>
-		class VariadicCreator
+		class Creator
 		{
 		public:
-			explicit VariadicCreator(Args&&... args)
+			explicit Creator(Args&&... args)
 				: mArgs(std::forward<Args>(args)...)
 			{
 			}
 
-			explicit VariadicCreator(std::tuple<Args...>&& args)
+			explicit Creator(std::tuple<Args...>&& args)
 				: mArgs(std::move(args))
 			{
 			}
 
-			VariadicCreator(const VariadicCreator&) = delete;
+			Creator(const Creator&) = delete;
 
-			~VariadicCreator() MOMO_NOEXCEPT
+			~Creator() MOMO_NOEXCEPT
 			{
 			}
 
-			VariadicCreator& operator=(const VariadicCreator&) = delete;
+			Creator& operator=(const Creator&) = delete;
 
 			void operator()(void* pobject) const
 			{
@@ -271,7 +271,7 @@ namespace internal
 			if (count > 0)
 			{
 				_RelocateAddBack(srcObjects, dstObjects, count - 1,
-					VariadicCreator<Object>(std::move(srcObjects[count - 1])), std::false_type());
+					Creator<Object>(std::move(srcObjects[count - 1])), std::false_type());
 			}
 		}
 

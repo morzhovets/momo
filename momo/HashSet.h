@@ -306,7 +306,7 @@ struct HashSetItemTraits
 	static const size_t alignment = ItemManager::alignment;
 
 	template<typename... ItemArgs>
-	using VariadicCreator = typename ItemManager::template VariadicCreator<ItemArgs...>;
+	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 	static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 	{
@@ -401,7 +401,7 @@ public:
 
 private:
 	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template VariadicCreator<ItemArgs...>;
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	struct BucketItemTraits
 	{

@@ -132,7 +132,7 @@ public:
 	template<typename Value, typename... Args>
 	void construct(Value* ptr, Args&&... args)
 	{
-		typedef typename internal::ObjectManager<Value>::template VariadicCreator<Args...> ValueCreator;
+		typedef typename internal::ObjectManager<Value>::template Creator<Args...> ValueCreator;
 		ValueCreator(std::forward<Args>(args)...)(ptr);
 	}
 

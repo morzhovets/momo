@@ -298,7 +298,7 @@ namespace internal
 			}
 			else
 			{
-				typedef typename ItemTraits::template VariadicCreator<
+				typedef typename ItemTraits::template Creator<
 					typename std::iterator_traits<Iterator>::reference> IterCreator;
 				Iterator iter = std::next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
@@ -317,7 +317,7 @@ namespace internal
 		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
 			std::false_type /*isForwardIterator*/)
 		{
-			typedef typename ItemTraits::template VariadicCreator<
+			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<Iterator>::reference> IterCreator;
 			size_t count = 0;
 			for (Iterator iter = begin; iter != end; ++iter, ++count)

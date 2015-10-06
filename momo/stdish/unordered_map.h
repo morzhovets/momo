@@ -368,7 +368,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<const Second&> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueCreator<const Second&> MappedCreator;
 		return _insert(value.first, MappedCreator(value.second));
 	}
 
@@ -386,7 +386,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Second> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueCreator<Second> MappedCreator;
 		return _insert(std::forward<First>(value.first),
 			MappedCreator(std::forward<Second>(value.second)));
 	}
@@ -436,7 +436,7 @@ public:
 	template<typename Arg1, typename Arg2>
 	std::pair<iterator, bool> emplace(Arg1&& arg1, Arg2&& arg2)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Arg2> MappedCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueCreator<Arg2> MappedCreator;
 		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
 	}
 
@@ -593,7 +593,7 @@ private:
 	std::pair<iterator, bool> _insert(Key&& key, const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template VariadicCreator<Key> KeyCreator;
+		typedef typename KeyManager::template Creator<Key> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::forward<Key>(key))(&keyBuffer);
 		std::pair<iterator, bool> res;
@@ -628,8 +628,8 @@ private:
 	std::pair<iterator, bool> _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
 	{
 		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template VariadicCreator<Args1...> KeyCreator;
-		typedef typename HashMap::KeyValueTraits::template ValueVariadicCreator<Args2...> MappedCreator;
+		typedef typename KeyManager::template Creator<Args1...> KeyCreator;
+		typedef typename HashMap::KeyValueTraits::template ValueCreator<Args2...> MappedCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::move(args1))(&keyBuffer);
 		std::pair<iterator, bool> res;

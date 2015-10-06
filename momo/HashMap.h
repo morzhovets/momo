@@ -116,7 +116,7 @@ struct HashMapKeyValueTraits
 	static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 	template<typename... ValueArgs>
-	using ValueVariadicCreator = typename ValueManager::template VariadicCreator<ValueArgs...>;
+	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 	static void CreateKey(const Key& key, void* pkey)
 	{
@@ -229,7 +229,7 @@ public:
 
 private:
 	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueVariadicCreator<ValueArgs...>;
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 	class KeyValuePair
 	{
@@ -434,17 +434,17 @@ private:
 		static const size_t alignment = ItemManager::alignment;
 
 		template<typename ItemArg>
-		struct VariadicCreator : public ItemManager::template VariadicCreator<ItemArg>
+		struct Creator : public ItemManager::template Creator<ItemArg>
 		{
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
 				|| std::is_same<ItemArg, const Item&>::value));
 
 		private:
-			typedef typename ItemManager::template VariadicCreator<ItemArg> BaseCreator;
+			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
 
 		public:
 			//using BaseCreator::BaseCreator;	// vs2013
-			explicit VariadicCreator(ItemArg&& itemArg)
+			explicit Creator(ItemArg&& itemArg)
 				: BaseCreator(std::forward<ItemArg>(itemArg))
 			{
 			}
