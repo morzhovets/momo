@@ -40,6 +40,26 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
+			template<typename ItemArg>
+			class Creator
+			{
+				MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
+
+			public:
+				explicit Creator(const Item& item) MOMO_NOEXCEPT
+					: mItem(item)
+				{
+				}
+
+				void operator()(void* pitem) const
+				{
+					ItemTraits::Create(mItem, pitem);
+				}
+
+			private:
+				const Item& mItem;
+			};
+
 			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 			{
 				ItemTraits::Destroy(items, count);
@@ -145,7 +165,7 @@ namespace internal
 				try
 				{
 					for (; index < count; ++index)
-						(typename ItemTraits::CopyCreator(bounds[index]))(items + index);
+						ItemTraits::Create(bounds[index], items + index);
 				}
 				catch (...)
 				{
@@ -157,11 +177,9 @@ namespace internal
 			else
 			{
 				ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
-				Array array = Array::CreateCap(count, MemManagerPtr(arrayMemPool.GetMemManager()));
-				for (const Item& item : bounds)
-					array.AddBackNogrowCrt(typename ItemTraits::CopyCreator(item));
 				ArrayMemory memory(arrayMemPool);
-				new(&_GetArray(memory.GetPointer())) Array(std::move(array));
+				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(), bounds.GetEnd(),
+					MemManagerPtr(arrayMemPool.GetMemManager()));
 				_Set(memory.Extract(), (unsigned char)0);
 			}
 		}

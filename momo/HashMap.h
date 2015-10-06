@@ -434,7 +434,7 @@ private:
 		static const size_t alignment = ItemManager::alignment;
 
 		template<typename ItemArg>
-		struct Creator : public ItemManager::template Creator<ItemArg>
+		class Creator : public ItemManager::template Creator<ItemArg>
 		{
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
 				|| std::is_same<ItemArg, const Item&>::value));
@@ -749,9 +749,8 @@ public:
 	size_t InsertKV(Iterator begin, Iterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->key);
-		MOMO_CHECK_TYPE(Value, begin->value);
 		auto insertFunc = [this] (Iterator iter)
-			{ return Insert(iter->key, iter->value); };
+			{ return InsertVar(iter->key, iter->value); };
 		return _Insert(begin, end, insertFunc);
 	}
 
@@ -759,9 +758,8 @@ public:
 	size_t InsertFS(Iterator begin, Iterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->first);
-		MOMO_CHECK_TYPE(Value, begin->second);
 		auto insertFunc = [this] (Iterator iter)
-			{ return Insert(iter->first, iter->second); };
+			{ return InsertVar(iter->first, iter->second); };
 		return _Insert(begin, end, insertFunc);
 	}
 

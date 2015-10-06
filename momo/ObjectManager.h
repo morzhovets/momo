@@ -93,10 +93,9 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
-		template<typename Arg>	//?
-		static void Create(Arg&& arg, void* pobject)
+		static void Create(const Object& object, void* pobject)
 		{
-			new(pobject) Object(std::forward<Arg>(arg));
+			_Create(object, pobject);
 		}
 
 		template<typename Object2Creator>
@@ -161,20 +160,30 @@ namespace internal
 		}
 
 	private:
+		static void _Create(Object&& object, void* pobject)
+		{
+			new(pobject) Object(std::move(object));
+		}
+
+		static void _Create(const Object& object, void* pobject)
+		{
+			new(pobject) Object(object);
+		}
+
 		template<typename Object2Creator>
 		static void _CreatePair(Object&& object1, const Object2Creator& object2Creator,
 			void* pobject1, void* pobject2)
 		{
 			MOMO_STATIC_ASSERT(isNothrowMoveConstructible);
 			object2Creator(pobject2);
-			Create(std::move(object1), pobject1);
+			_Create(std::move(object1), pobject1);
 		}
 
 		template<typename Object2Creator>
 		static void _CreatePair(const Object& object1, const Object2Creator& object2Creator,
 			void* pobject1, void* pobject2)
 		{
-			Create(object1, pobject1);
+			_Create(object1, pobject1);
 			try
 			{
 				object2Creator(pobject2);
@@ -216,7 +225,7 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				Create(std::move(srcObject), std::addressof(dstObject));
+				_Create(std::move(srcObject), std::addressof(dstObject));
 			}
 		}
 
@@ -243,7 +252,7 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				Create(srcObject, std::addressof(dstObject));
+				_Create(srcObject, std::addressof(dstObject));
 			}
 		}
 

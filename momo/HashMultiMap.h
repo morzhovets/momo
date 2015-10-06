@@ -328,7 +328,10 @@ private:
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		typedef ValueCreator<const Item&> CopyCreator;
+		static void Create(const Item& item, void* pitem)
+		{
+			(ValueCreator<const Item&>(item))(pitem);
+		}
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
@@ -459,7 +462,7 @@ private:
 		static const size_t valueAlignment = ValueManager::alignment;
 
 		template<typename ValueArg>
-		struct ValueCreator : public ValueManager::template Creator<ValueArg>
+		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{
 			MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value>::value));
 
@@ -772,18 +775,16 @@ public:
 	void AddKV(Iterator begin, Iterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->key);
-		MOMO_CHECK_TYPE(Value, begin->value);
 		for (Iterator iter = begin; iter != end; ++iter)
-			Add(iter->key, iter->value);
+			AddVar(iter->key, iter->value);
 	}
 
 	template<typename Iterator>
 	void AddFS(Iterator begin, Iterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->first);
-		MOMO_CHECK_TYPE(Value, begin->second);
 		for (Iterator iter = begin; iter != end; ++iter)
-			Add(iter->first, iter->second);
+			AddVar(iter->first, iter->second);
 	}
 
 	void Add(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
