@@ -93,24 +93,15 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
+		static void Create(Object&& object, void* pobject)
+			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
+		{
+			new(pobject) Object(std::move(object));
+		}
+
 		static void Create(const Object& object, void* pobject)
 		{
-			_Create(object, pobject);
-		}
-
-		template<typename Object2Creator>
-		static void CreatePair(Object&& object1, const Object2Creator& object2Creator,
-			void* pobject1, void* pobject2)
-		{
-			return _CreatePair(std::move_if_noexcept(object1), object2Creator,
-				pobject1, pobject2);
-		}
-
-		template<typename Object2Creator>
-		static void CreatePair(const Object& object1, const Object2Creator& object2Creator,
-			void* pobject1, void* pobject2)
-		{
-			return _CreatePair(object1, object2Creator, pobject1, pobject2);
+			new(pobject) Object(object);
 		}
 
 		static void Destroy(Object& object) MOMO_NOEXCEPT
@@ -131,9 +122,8 @@ namespace internal
 		static void AssignNothrowAnyway(Object&& srcObject, Object& dstObject) MOMO_NOEXCEPT
 		{
 			_AssignNothrowAnyway(std::move(srcObject), dstObject,
-				std::is_nothrow_move_assignable<Object>(),
-				internal::BoolConstant<isTriviallyRelocatable>(),
-				internal::BoolConstant<isNothrowMoveConstructible>());
+				std::is_nothrow_move_assignable<Object>(), BoolConstant<isTriviallyRelocatable>(),
+				BoolConstant<isNothrowMoveConstructible>());
 		}
 
 		static void AssignNothrowAnyway(const Object& srcObject, Object& dstObject) MOMO_NOEXCEPT
@@ -146,9 +136,8 @@ namespace internal
 		static void Relocate(Object* srcObjects, Object* dstObjects, size_t count)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			_Relocate(srcObjects, dstObjects, count,
-				internal::BoolConstant<isTriviallyRelocatable>(),
-				internal::BoolConstant<isNothrowMoveConstructible>());
+			_Relocate(srcObjects, dstObjects, count, BoolConstant<isTriviallyRelocatable>(),
+				BoolConstant<isNothrowMoveConstructible>());
 		}
 
 		template<typename ObjectCreator>
@@ -156,59 +145,22 @@ namespace internal
 			const ObjectCreator& objectCreator)
 		{
 			_RelocateAddBack(srcObjects, dstObjects, srcCount, objectCreator,
-				internal::BoolConstant<isNothrowRelocatable>());
+				BoolConstant<isNothrowRelocatable>());
 		}
 
 	private:
-		static void _Create(Object&& object, void* pobject)
-		{
-			new(pobject) Object(std::move(object));
-		}
-
-		static void _Create(const Object& object, void* pobject)
-		{
-			new(pobject) Object(object);
-		}
-
-		template<typename Object2Creator>
-		static void _CreatePair(Object&& object1, const Object2Creator& object2Creator,
-			void* pobject1, void* pobject2)
-		{
-			MOMO_STATIC_ASSERT(isNothrowMoveConstructible);
-			object2Creator(pobject2);
-			_Create(std::move(object1), pobject1);
-		}
-
-		template<typename Object2Creator>
-		static void _CreatePair(const Object& object1, const Object2Creator& object2Creator,
-			void* pobject1, void* pobject2)
-		{
-			_Create(object1, pobject1);
-			try
-			{
-				object2Creator(pobject2);
-			}
-			catch (...)
-			{
-				Destroy(*(Object*)pobject1);
-				throw;
-			}
-		}
-
 		template<bool isTriviallyRelocatable, bool isNothrowMoveConstructible>
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
-			std::true_type /*isNothrowMoveAssignable*/,
-			internal::BoolConstant<isTriviallyRelocatable>,
-			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
+			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isTriviallyRelocatable>,
+			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			dstObject = std::move(srcObject);
 		}
 
 		template<bool isNothrowMoveConstructible>
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
-			std::false_type /*isNothrowMoveAssignable*/,
-			std::true_type /*isTriviallyRelocatable*/,
-			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
+			std::false_type /*isNothrowMoveAssignable*/, std::true_type /*isTriviallyRelocatable*/,
+			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			static const size_t size = sizeof(Object);
 			char buf[size];
@@ -218,20 +170,18 @@ namespace internal
 		}
 
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
-			std::false_type /*isNothrowMoveAssignable*/,
-			std::false_type /*isTriviallyRelocatable*/,
+			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isTriviallyRelocatable*/,
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				_Create(std::move(srcObject), std::addressof(dstObject));
+				Create(std::move(srcObject), std::addressof(dstObject));
 			}
 		}
 
 		static void _AssignNothrowAnyway(Object&& srcObject, Object& dstObject,
-			std::false_type /*isNothrowMoveAssignable*/,
-			std::false_type /*isTriviallyRelocatable*/,
+			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isTriviallyRelocatable*/,
 			std::false_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			AssignNothrowAnyway((const Object&)srcObject, dstObject);
@@ -252,14 +202,14 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				_Create(srcObject, std::addressof(dstObject));
+				Create(srcObject, std::addressof(dstObject));
 			}
 		}
 
 		template<bool isNothrowMoveConstructible>
 		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
 			std::true_type /*isTriviallyRelocatable*/,
-			internal::BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
+			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
 			memcpy(dstObjects, srcObjects, count * sizeof(Object));
 		}

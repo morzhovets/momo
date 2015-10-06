@@ -239,28 +239,20 @@ struct HashMultiMapKeyValueTraits
 	static const size_t keyAlignment = KeyManager::alignment;
 	static const size_t valueAlignment = ValueManager::alignment;
 
+	static const bool isKeyNothrowMoveConstructible = KeyManager::isNothrowMoveConstructible;
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
+	static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+	{
+		KeyManager::Create(std::move(key), pkey);
+	}
+
 	static void CreateKey(const Key& key, void* pkey)
 	{
 		KeyManager::Create(key, pkey);
-	}
-
-	template<typename ValueCreator>
-	static void CreatePair(Key&& key, const ValueCreator& valueCreator,
-		void* pkey, void* pvalue)
-	{
-		KeyManager::CreatePair(std::move(key), valueCreator, pkey, pvalue);
-	}
-
-	template<typename ValueCreator>
-	static void CreatePair(const Key& key, const ValueCreator& valueCreator,
-		void* pkey, void* pvalue)
-	{
-		KeyManager::CreatePair(key, valueCreator, pkey, pvalue);
 	}
 
 	static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -455,6 +447,7 @@ private:
 
 		typedef internal::ObjectManager<Value> ValueManager;	//?
 
+		static const bool isKeyNothrowMoveConstructible = KeyValueTraits::isKeyNothrowMoveConstructible;
 		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
 		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
@@ -477,24 +470,14 @@ private:
 			}
 		};
 
+		static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+		{
+			KeyValueTraits::CreateKey(std::move(key), pkey);
+		}
+
 		static void CreateKey(const Key& key, void* pkey)
 		{
-			MOMO_STATIC_ASSERT(!isKeyNothrowRelocatable);
 			KeyValueTraits::CreateKey(key, pkey);
-		}
-
-		template<typename ValueCreator>
-		static void CreatePair(Key&& key, const ValueCreator& valueCreator,
-			void* pkey, void* pvalue)
-		{
-			KeyValueTraits::CreatePair(std::move(key), valueCreator, pkey, pvalue);
-		}
-
-		template<typename ValueCreator>
-		static void CreatePair(const Key& key, const ValueCreator& valueCreator,
-			void* pkey, void* pvalue)
-		{
-			KeyValueTraits::CreatePair(key, valueCreator, pkey, pvalue);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -904,18 +887,14 @@ private:
 		KeyIterator keyIter = Find((const Key&)key);
 		if (!!keyIter)
 			return AddCrt(keyIter, valueCreator);
-		auto keyValuesCreator = [this, &key, &valueCreator] (void* pkey, void* pvalues)
+		auto valuesCreator = [this, &valueCreator] (void* pvalues)
 		{
-			auto keyValueCreator = [&key, &valueCreator, pkey] (void* pvalue)
-			{
-				KeyValueTraits::CreatePair(std::forward<RKey>(key),
-					valueCreator, pkey, pvalue);
-			};
 			ValueArray valueArray;
-			this->_AddValue(valueArray, keyValueCreator);
+			this->_AddValue(valueArray, valueCreator);
 			new(pvalues) ValueArray(std::move(valueArray));
 		};
-		keyIter = KeyIterator(mHashMap.AddCrt(keyIter.GetBaseIterator(), keyValuesCreator));
+		keyIter = KeyIterator(mHashMap.AddCrt(keyIter.GetBaseIterator(),
+			std::forward<RKey>(key), valuesCreator));
 		return _MakeIterator<Iterator>(keyIter, keyIter->values.GetBegin(), false);
 	}
 

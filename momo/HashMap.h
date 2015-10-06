@@ -112,29 +112,21 @@ struct HashMapKeyValueTraits
 	static const size_t keyAlignment = KeyManager::alignment;
 	static const size_t valueAlignment = ValueManager::alignment;
 
+	static const bool isKeyNothrowMoveConstructible = KeyManager::isNothrowMoveConstructible;
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 	static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
+	static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+	{
+		KeyManager::Create(std::move(key), pkey);
+	}
+
 	static void CreateKey(const Key& key, void* pkey)
 	{
-		MOMO_STATIC_ASSERT(!isKeyNothrowRelocatable);
 		KeyManager::Create(key, pkey);
-	}
-
-	template<typename ValueCreator>
-	static void CreatePair(Key&& key, const ValueCreator& valueCreator, void* pkey, void* pvalue)
-	{
-		KeyManager::CreatePair(std::move(key), valueCreator, pkey, pvalue);
-	}
-
-	template<typename ValueCreator>
-	static void CreatePair(const Key& key, const ValueCreator& valueCreator,
-		void* pkey, void* pvalue)
-	{
-		KeyManager::CreatePair(key, valueCreator, pkey, pvalue);
 	}
 
 	static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -209,7 +201,6 @@ private:
 struct HashMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
 template<typename TKey, typename TValue,
@@ -233,17 +224,15 @@ private:
 
 	class KeyValuePair
 	{
-	public:
-		template<typename KeyValueCreator>
-		explicit KeyValuePair(const KeyValueCreator& keyValueCreator)
-		{
-			keyValueCreator(&mKeyBuffer, &mValueBuffer);
-		}
+	private:
+		typedef internal::BoolConstant<KeyValueTraits::isKeyNothrowMoveConstructible>
+			IsKeyNothrowMoveConstructible;
 
+	public:
 		template<typename ValueCreator>
 		KeyValuePair(Key&& key, const ValueCreator& valueCreator)
 		{
-			_Create(std::move(key), valueCreator);
+			_Create(std::move(key), valueCreator, IsKeyNothrowMoveConstructible());
 		}
 
 		template<typename ValueCreator>
@@ -254,7 +243,8 @@ private:
 
 		KeyValuePair(KeyValuePair&& pair)
 		{
-			_Create(std::move(pair.GetKey()), ValueCreator<Value>(std::move(pair.GetValue())));
+			_Create(std::move(pair.GetKey()), ValueCreator<Value>(std::move(pair.GetValue())),
+				IsKeyNothrowMoveConstructible());
 		}
 
 		KeyValuePair(const KeyValuePair& pair)
@@ -301,11 +291,34 @@ private:
 		}
 
 	private:
-		template<typename RKey, typename ValueCreator>
-		void _Create(RKey&& key, const ValueCreator& valueCreator)
+		template<typename ValueCreator>
+		void _Create(Key&& key, const ValueCreator& valueCreator,
+			std::true_type /*isKeyNothrowMoveConstructible*/)
 		{
-			KeyValueTraits::CreatePair(std::forward<RKey>(key), valueCreator,
-				&mKeyBuffer, &mValueBuffer);
+			valueCreator(&mValueBuffer);
+			KeyValueTraits::CreateKey(std::move(key), &mKeyBuffer);
+		}
+
+		template<typename ValueCreator>
+		void _Create(Key&& key, const ValueCreator& valueCreator,
+			std::false_type /*isKeyNothrowMoveConstructible*/)
+		{
+			_Create((const Key&)key, valueCreator);
+		}
+
+		template<typename ValueCreator>
+		void _Create(const Key& key, const ValueCreator& valueCreator)
+		{
+			KeyValueTraits::CreateKey(key, &mKeyBuffer);
+			try
+			{
+				valueCreator(&mValueBuffer);
+			}
+			catch (...)
+			{
+				KeyValueTraits::DestroyKey(*&mKeyBuffer);
+				throw;
+			}
 		}
 
 		template<typename PairCreator>
@@ -773,16 +786,6 @@ public:
 	size_t Insert(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
 	{
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
-	}
-
-	template<typename KeyValueCreator>
-	Iterator AddCrt(ConstIterator iter, const KeyValueCreator& keyValueCreator)	//?
-	{
-		auto pairCreator = [&keyValueCreator] (void* ppair)
-			{ new(ppair) KeyValuePair(keyValueCreator); };
-		Iterator resIter = Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
-		MOMO_EXTRA_CHECK(resIter == Find(resIter->key));
-		return resIter;
 	}
 
 	template<typename ValueCreator>
