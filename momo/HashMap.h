@@ -119,9 +119,9 @@ struct HashMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+	static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
 	{
-		KeyManager::Create(std::move(key), pkey);
+		KeyManager::CreateNothrow(std::move(key), pkey);
 	}
 
 	static void CreateKey(const Key& key, void* pkey)
@@ -296,7 +296,7 @@ private:
 			std::true_type /*isKeyNothrowMoveConstructible*/)
 		{
 			valueCreator(&mValueBuffer);
-			KeyValueTraits::CreateKey(std::move(key), &mKeyBuffer);
+			KeyValueTraits::CreateKeyNothrow(std::move(key), &mKeyBuffer);
 		}
 
 		template<typename ValueCreator>

@@ -245,9 +245,9 @@ struct HashMultiMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+	static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
 	{
-		KeyManager::Create(std::move(key), pkey);
+		KeyManager::CreateNothrow(std::move(key), pkey);
 	}
 
 	static void CreateKey(const Key& key, void* pkey)
@@ -470,9 +470,9 @@ private:
 			}
 		};
 
-		static void CreateKey(Key&& key, void* pkey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+		static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::CreateKey(std::move(key), pkey);
+			KeyValueTraits::CreateKeyNothrow(std::move(key), pkey);
 		}
 
 		static void CreateKey(const Key& key, void* pkey)

@@ -93,9 +93,9 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
-		static void Create(Object&& object, void* pobject)
-			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
+		static void CreateNothrow(Object&& object, void* pobject) MOMO_NOEXCEPT
 		{
+			MOMO_STATIC_ASSERT(isNothrowMoveConstructible);
 			new(pobject) Object(std::move(object));
 		}
 
