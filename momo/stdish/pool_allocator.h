@@ -49,7 +49,11 @@ private:
 	typedef MemPool<MemPoolParams, MemManager> MemPool;
 
 public:
-	explicit pool_allocator(const base_allocator& alloc = base_allocator())
+	pool_allocator()
+	{
+	}
+
+	explicit pool_allocator(const base_allocator& alloc)
 		: mMemPool(MemPoolParams(), MemManager(alloc))
 	{
 	}

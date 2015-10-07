@@ -129,12 +129,6 @@ private:
 		typedef internal::BoolConstant<hasInternalCapacity> HasInternalCapacity;
 
 	public:
-		Data()
-			: MemManagerWrapper(MemManager())
-		{
-			_Create(HasInternalCapacity());
-		}
-
 		explicit Data(MemManager&& memManager) MOMO_NOEXCEPT
 			: MemManagerWrapper(std::move(memManager))
 		{
@@ -422,6 +416,7 @@ public:
 
 public:
 	Array()
+		: Array(MemManager())
 	{
 	}
 
@@ -451,9 +446,8 @@ public:
 	}
 
 	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
-		: mData(items.size(), std::move(memManager))
+		: Array(items.begin(), items.end(), std::move(memManager))
 	{
-		_Fill(items.begin(), items.end(), std::true_type());
 	}
 
 	Array(Array&& array) MOMO_NOEXCEPT

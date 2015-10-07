@@ -175,7 +175,7 @@ private:
 
 public:
 	SegmentedArray()
-		: mCount(0)
+		: SegmentedArray(MemManager())
 	{
 	}
 
@@ -186,32 +186,39 @@ public:
 	}
 
 	explicit SegmentedArray(size_t count, MemManager&& memManager = MemManager())
-		: mSegments(std::move(memManager)),
-		mCount(0)
+		: SegmentedArray(std::move(memManager))
 	{
 		_IncCount(count, typename ItemTraits::template Creator<>());
 	}
 
 	SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
-		: mSegments(std::move(memManager)),
-		mCount(0)
+		: SegmentedArray(std::move(memManager))
 	{
 		_IncCount(count, typename ItemTraits::template Creator<const Item&>(item));
 	}
 
 	template<typename Iterator>
 	SegmentedArray(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
-		: mSegments(std::move(memManager)),
-		mCount(0)
+		: SegmentedArray(std::move(memManager))
 	{
-		_Fill(begin, end);
+		try
+		{
+			typedef typename ItemTraits::template Creator<
+				typename std::iterator_traits<Iterator>::reference> IterCreator;
+			for (Iterator iter = begin; iter != end; ++iter)
+				AddBackCrt(IterCreator(*iter));
+		}
+		catch (...)
+		{
+			_DecCount(0);
+			_DecCapacity(0);
+			throw;
+		}
 	}
 
 	SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
-		: mSegments(std::move(memManager)),
-		mCount(0)
+		: SegmentedArray(items.begin(), items.end(), std::move(memManager))
 	{
-		_Fill(items.begin(), items.end());
 	}
 
 	SegmentedArray(SegmentedArray&& array) MOMO_NOEXCEPT
@@ -222,8 +229,7 @@ public:
 	}
 
 	SegmentedArray(const SegmentedArray& array, bool shrink = true)
-		: mSegments(MemManager(array.GetMemManager())),
-		mCount(0)
+		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
 		_IncCapacity(shrink ? array.GetCount() : array.GetCapacity());
 		try
@@ -525,24 +531,6 @@ public:
 	}
 
 private:
-	template<typename Iterator>
-	void _Fill(Iterator begin, Iterator end)
-	{
-		try
-		{
-			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<Iterator>::reference> IterCreator;
-			for (Iterator iter = begin; iter != end; ++iter)
-				AddBackCrt(IterCreator(*iter));
-		}
-		catch (...)
-		{
-			_DecCount(0);
-			_DecCapacity(0);
-			throw;
-		}
-	}
-
 	Item* _GetSegMemory(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
