@@ -7,6 +7,7 @@
 #pragma once
 
 //#define MOMO_USE_SAFE_MAP_BRACKETS
+//#define MOMO_USE_UNORDERED_HINT_ITERATORS
 #define MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS 1
 
 #define MOMO_MAX_ALIGNMENT (std::alignment_of<std::max_align_t>::value)

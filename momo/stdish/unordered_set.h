@@ -346,31 +346,40 @@ public:
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(value));
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
+		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}
 
-	iterator insert(const_iterator, value_type&& value)
+	iterator insert(const_iterator hint, value_type&& value)
 	{
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+		return mHashSet.Add(hint, std::move(value));
+#else
+		(void)hint;
 		return insert(std::move(value)).first;
+#endif
 	}
 
 	std::pair<iterator, bool> insert(const value_type& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(value);
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
+		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}
 
-	iterator insert(const_iterator, const value_type& value)
+	iterator insert(const_iterator hint, const value_type& value)
 	{
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+		return mHashSet.Add(hint, value);
+#else
+		(void)hint;
 		return insert(value).first;
+#endif
 	}
 
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
-			emplace(*iter);
-		//mHashSet.Insert(first, last);
+		_insert(first, last,
+			std::is_same<value_type, typename std::decay<decltype(*first)>::type>());
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -399,14 +408,19 @@ public:
 	}
 
 	template<typename... Args>
-	iterator emplace_hint(const_iterator, Args&&... args)
+	iterator emplace_hint(const_iterator hint, Args&&... args)
 	{
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+		return mHashSet.AddVar(hint, std::forward<Args>(args)...);
+#else
+		(void)hint;
 		return emplace(std::forward<Args>(args)...).first;
+#endif
 	}
 
 	iterator erase(const_iterator where)
 	{
-		return iterator(mHashSet.Remove(where));
+		return mHashSet.Remove(where);
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
@@ -501,6 +515,20 @@ public:
 	bool operator!=(const unordered_set& right) const
 	{
 		return !(*this == right);
+	}
+
+private:
+	template<typename Iterator>
+	void _insert(Iterator first, Iterator last, std::true_type /*isValueType*/)
+	{
+		mHashSet.Insert(first, last);
+	}
+
+	template<typename Iterator>
+	void _insert(Iterator first, Iterator last, std::false_type /*isValueType*/)
+	{
+		for (Iterator iter = first; iter != last; ++iter)
+			emplace(*iter);
 	}
 
 private:
