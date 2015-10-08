@@ -176,7 +176,7 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				Create(std::move(srcObject), std::addressof(dstObject));
+				CreateNothrow(std::move(srcObject), std::addressof(dstObject));
 			}
 		}
 
