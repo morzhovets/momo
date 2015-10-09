@@ -1128,13 +1128,13 @@ private:
 
 namespace std
 {
-	template<typename I, typename BA, typename S>
-	struct iterator_traits<momo::internal::HashSetConstIterator<I, BA, S>>
+	template<typename I, typename B, typename S>
+	struct iterator_traits<momo::internal::HashSetConstIterator<I, B, S>>
 	{
 		typedef forward_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashSetConstIterator<I, BA, S>::Pointer pointer;
-		typedef typename momo::internal::HashSetConstIterator<I, BA, S>::Reference reference;
+		typedef typename momo::internal::HashSetConstIterator<I, B, S>::Pointer pointer;
+		typedef typename momo::internal::HashSetConstIterator<I, B, S>::Reference reference;
 		typedef I value_type;
 	};
 } // namespace std
