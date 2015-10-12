@@ -58,7 +58,7 @@ namespace internal
 			static const size_t minMemPoolIndex = (skipFirstMemPool ? 2 : 1);
 
 		public:
-			Params(MemManager& memManager)
+			explicit Params(MemManager& memManager)
 			{
 				for (size_t i = minMemPoolIndex; i <= maxCount; ++i)
 				{

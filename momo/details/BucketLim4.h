@@ -55,7 +55,7 @@ namespace internal
 				ArraySettings<maxCount>> MemPools;
 
 		public:
-			Params(MemManager& memManager)
+			explicit Params(MemManager& memManager)
 			{
 				for (size_t i = 1; i <= maxCount; ++i)
 				{

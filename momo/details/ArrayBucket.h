@@ -98,7 +98,7 @@ namespace internal
 				momo::ArraySettings<maxFastCount>> FastMemPools;
 
 		public:
-			Params(MemManager& memManager)
+			explicit Params(MemManager& memManager)
 				: mArrayMemPool(typename ArrayMemPool::Params(sizeof(Array) + arrayAlignment),
 					MemManagerPtr(memManager))
 			{

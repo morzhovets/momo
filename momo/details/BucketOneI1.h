@@ -37,7 +37,7 @@ namespace internal
 		class Params
 		{
 		public:
-			Params(MemManager& /*memManager*/) MOMO_NOEXCEPT
+			explicit Params(MemManager& /*memManager*/) MOMO_NOEXCEPT
 			{
 			}
 
