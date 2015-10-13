@@ -77,25 +77,17 @@
 
 #define MOMO_EXTRA_CHECK(expr) assert(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr));
 
-#define MOMO_SWITCH16(var, Func, ...) \
+#define MOMO_SWITCH8(var, Func, ...) \
 	switch (var) \
 	{ \
-		case  1: return Func< 1>(__VA_ARGS__); \
-		case  2: return Func< 2>(__VA_ARGS__); \
-		case  3: return Func< 3>(__VA_ARGS__); \
-		case  4: return Func< 4>(__VA_ARGS__); \
-		case  5: return Func< 5>(__VA_ARGS__); \
-		case  6: return Func< 6>(__VA_ARGS__); \
-		case  7: return Func< 7>(__VA_ARGS__); \
-		case  8: return Func< 8>(__VA_ARGS__); \
-		case  9: return Func< 9>(__VA_ARGS__); \
-		case 10: return Func<10>(__VA_ARGS__); \
-		case 11: return Func<11>(__VA_ARGS__); \
-		case 12: return Func<12>(__VA_ARGS__); \
-		case 13: return Func<13>(__VA_ARGS__); \
-		case 14: return Func<14>(__VA_ARGS__); \
-		case 15: return Func<15>(__VA_ARGS__); \
-		case 16: return Func<16>(__VA_ARGS__); \
+		case 1: return Func<1>(__VA_ARGS__); \
+		case 2: return Func<2>(__VA_ARGS__); \
+		case 3: return Func<3>(__VA_ARGS__); \
+		case 4: return Func<4>(__VA_ARGS__); \
+		case 5: return Func<5>(__VA_ARGS__); \
+		case 6: return Func<6>(__VA_ARGS__); \
+		case 7: return Func<7>(__VA_ARGS__); \
+		case 8: return Func<8>(__VA_ARGS__); \
 	}
 
 MOMO_STATIC_ASSERT(MOMO_MAX_ALIGNMENT > 0 && (MOMO_MAX_ALIGNMENT & (MOMO_MAX_ALIGNMENT - 1)) == 0);
@@ -191,7 +183,7 @@ namespace internal
 
 		static DivResult DivBySmall(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
-			MOMO_SWITCH16(mod, DivByConst, value);
+			MOMO_SWITCH8(mod, DivByConst, value);
 			DivResult result;
 			result.quotient = value / mod;
 			result.remainder = value % mod;
