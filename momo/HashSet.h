@@ -24,11 +24,11 @@ namespace internal
 	{
 	public:
 		typedef TBucket Bucket;
+		typedef typename Bucket::Params BucketParams;
+		typedef typename Bucket::ConstBounds ConstBucketBounds;
 
 		static const size_t maxBucketCount =
-			(SIZE_MAX - sizeof(size_t) - sizeof(void*)) / sizeof(Bucket);
-
-		MOMO_STATIC_ASSERT((sizeof(size_t) + sizeof(void*)) % std::alignment_of<Bucket>::value == 0);
+			(SIZE_MAX - sizeof(size_t) - 2 * sizeof(void*)) / sizeof(Bucket);
 
 	public:
 		HashSetBuckets() = delete;
@@ -40,7 +40,8 @@ namespace internal
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
 
 		template<typename MemManager>
-		static HashSetBuckets& Create(MemManager& memManager, size_t bucketCount)
+		static HashSetBuckets& Create(MemManager& memManager, size_t bucketCount,
+			const BucketParams& bucketParams)
 		{
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
@@ -48,6 +49,7 @@ namespace internal
 			HashSetBuckets& resBuckets = *(HashSetBuckets*)memManager.Allocate(bufferSize);
 			resBuckets.mCount = 0;
 			resBuckets.mNextBuckets = nullptr;
+			resBuckets.mBucketParams = &bucketParams;
 			Bucket* buckets = resBuckets._GetBuckets();
 			try
 			{
@@ -118,18 +120,28 @@ namespace internal
 
 		const Bucket& operator[](size_t index) const MOMO_NOEXCEPT
 		{
-			return _GetBuckets()[index];
+			return _GetBucket(index);
 		}
 
 		Bucket& operator[](size_t index) MOMO_NOEXCEPT
 		{
-			return _GetBuckets()[index];
+			return _GetBucket(index);
+		}
+
+		ConstBucketBounds GetBucketBounds(size_t index) const MOMO_NOEXCEPT
+		{
+			return _GetBucket(index).GetBounds(*mBucketParams);
 		}
 
 	private:
 		Bucket* _GetBuckets() const MOMO_NOEXCEPT
 		{
-			return (Bucket*)(this + 1);	//?
+			return (Bucket*)(this + 1);
+		}
+
+		Bucket& _GetBucket(size_t index) const MOMO_NOEXCEPT
+		{
+			return _GetBuckets()[index];
 		}
 
 		static size_t _GetBufferSize(size_t bucketCount) MOMO_NOEXCEPT
@@ -140,18 +152,22 @@ namespace internal
 	private:
 		size_t mCount;
 		HashSetBuckets* mNextBuckets;
+		union
+		{
+			const BucketParams* mBucketParams;
+			typename std::aligned_storage<std::alignment_of<Bucket>::value,
+				std::alignment_of<Bucket>::value>::type mBucketPadding;
+		};
 	};
 
-	template<typename TItem, typename TBuckets, typename TSettings>
+	template<typename TBuckets, typename TSettings>
 	class HashSetConstIterator
 	{
 	public:
-		typedef TItem Item;
 		typedef TBuckets Buckets;
 		typedef TSettings Settings;
-
 		typedef typename Buckets::Bucket Bucket;
-		typedef typename Bucket::Params BucketParams;
+		typedef typename Bucket::Item Item;
 
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
@@ -163,18 +179,16 @@ namespace internal
 			: mBuckets(nullptr),
 			mHashCode(0),
 			mItemPtr(nullptr),
-			mBucketParams(nullptr),
 			mHashSetVersion(nullptr),
 			mVersion(0)
 		{
 		}
 
 		HashSetConstIterator(const Buckets& buckets, size_t bucketIndex, const Item* pitem,
-			const BucketParams& bucketParams, const size_t& version, bool move) MOMO_NOEXCEPT
+			const size_t& version, bool move) MOMO_NOEXCEPT
 			: mBuckets(&buckets),
 			mBucketIndex(bucketIndex),
 			mItemPtr(pitem),
-			mBucketParams(&bucketParams),
 			mHashSetVersion(&version),
 			mVersion(version)
 		{
@@ -187,7 +201,6 @@ namespace internal
 			: mBuckets(&buckets),
 			mHashCode(hashCode),
 			mItemPtr(nullptr),
-			mBucketParams(nullptr),
 			mHashSetVersion(&version),
 			mVersion(version)
 		{
@@ -246,13 +259,13 @@ namespace internal
 	private:
 		void _Move() MOMO_NOEXCEPT
 		{
-			if (mItemPtr != _GetBounds(mBucketIndex).GetEnd())
+			if (mItemPtr != mBuckets->GetBucketBounds(mBucketIndex).GetEnd())
 				return;
 			size_t bucketCount = mBuckets->GetCount();
 			++mBucketIndex;
 			for (; mBucketIndex < bucketCount; ++mBucketIndex)
 			{
-				typename Bucket::ConstBounds bounds = _GetBounds(mBucketIndex);
+				typename Bucket::ConstBounds bounds = mBuckets->GetBucketBounds(mBucketIndex);
 				mItemPtr = bounds.GetBegin();
 				if (mItemPtr != bounds.GetEnd())
 					return;
@@ -262,16 +275,11 @@ namespace internal
 			{
 				mBuckets = nextBuckets;
 				mBucketIndex = 0;
-				mItemPtr = _GetBounds(0).GetBegin();
+				mItemPtr = mBuckets->GetBucketBounds(0).GetBegin();
 				return _Move();	//?
 			}
 			mBuckets = nullptr;
 			mItemPtr = nullptr;
-		}
-
-		typename Bucket::ConstBounds _GetBounds(size_t bucketIndex) const MOMO_NOEXCEPT
-		{
-			return (*mBuckets)[bucketIndex].GetBounds(*mBucketParams);
 		}
 
 		void _Check() const
@@ -288,7 +296,6 @@ namespace internal
 			size_t mHashCode;
 		};
 		const Item* mItemPtr;
-		const BucketParams* mBucketParams;
 		const size_t* mHashSetVersion;
 		size_t mVersion;
 	};
@@ -556,7 +563,7 @@ private:
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
 public:
-	typedef internal::HashSetConstIterator<Item, Buckets, Settings> ConstIterator;
+	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
 
 	typedef internal::HashInsertResult<ConstIterator> InsertResult;
 
@@ -570,7 +577,7 @@ public:
 	{
 		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
 		mCapacity = hashTraits.CalcCapacity(bucketCount);
-		mBuckets = &Buckets::Create(GetMemManager(), bucketCount);
+		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, mCrew.GetBucketParams());
 	}
 
 	HashSet(std::initializer_list<Item> items,
@@ -605,7 +612,7 @@ public:
 				break;
 			bucketCount <<= 1;
 		}
-		mBuckets = &Buckets::Create(GetMemManager(), bucketCount);
+		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, bucketParams);
 		try
 		{
 			for (const Item& item : hashSet)
@@ -723,7 +730,8 @@ public:
 				break;
 			newBucketCount <<= 1;
 		}
-		Buckets& newBuckets = Buckets::Create(GetMemManager(), newBucketCount);
+		Buckets& newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
+			mCrew.GetBucketParams());
 		newBuckets.SetNextBuckets(mBuckets);
 		mBuckets = &newBuckets;
 		mCapacity = newCapacity;
@@ -928,8 +936,7 @@ private:
 	ConstIterator _MakeIterator(const Buckets& buckets, size_t bucketIndex,
 		const Item* pitem, bool move) const MOMO_NOEXCEPT
 	{
-		return ConstIterator(buckets, bucketIndex, pitem, mCrew.GetBucketParams(),
-			mCrew.GetVersion(), move);
+		return ConstIterator(buckets, bucketIndex, pitem, mCrew.GetVersion(), move);
 	}
 
 	Buckets* _GetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
@@ -1031,7 +1038,8 @@ private:
 		Buckets* newBuckets;
 		try
 		{
-			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount);
+			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount,
+				mCrew.GetBucketParams());
 		}
 		catch (...)	// std::bad_alloc&
 		{
@@ -1128,13 +1136,13 @@ private:
 
 namespace std
 {
-	template<typename I, typename B, typename S>
-	struct iterator_traits<momo::internal::HashSetConstIterator<I, B, S>>
+	template<typename B, typename S>
+	struct iterator_traits<momo::internal::HashSetConstIterator<B, S>>
 	{
 		typedef forward_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashSetConstIterator<I, B, S>::Pointer pointer;
-		typedef typename momo::internal::HashSetConstIterator<I, B, S>::Reference reference;
-		typedef I value_type;
+		typedef typename momo::internal::HashSetConstIterator<B, S>::Pointer pointer;
+		typedef typename momo::internal::HashSetConstIterator<B, S>::Reference reference;
+		typedef typename momo::internal::HashSetConstIterator<B, S>::Item value_type;
 	};
 } // namespace std
