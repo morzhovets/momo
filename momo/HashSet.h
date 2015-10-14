@@ -382,8 +382,9 @@ struct HashSetSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
+
+	static const bool overloadIfCannotGrow = true;
 };
 
 template<typename TKey,
@@ -1038,7 +1039,10 @@ private:
 		}
 		catch (...)	// std::bad_alloc&
 		{
-			return _AddNogrow(hashCode, itemCreator);
+			if (Settings::overloadIfCannotGrow)
+				return _AddNogrow(hashCode, itemCreator);
+			else
+				throw;
 		}
 		size_t bucketIndex;
 		try

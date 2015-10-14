@@ -201,8 +201,9 @@ private:
 struct HashMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
-
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
+
+	static const bool overloadIfCannotGrow = true;
 };
 
 template<typename TKey, typename TValue,
@@ -492,8 +493,9 @@ private:
 	{
 		static const CheckMode checkMode = Settings::checkMode;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-
 		static const bool checkVersion = Settings::checkVersion;
+
+		static const bool overloadIfCannotGrow = Settings::overloadIfCannotGrow;
 	};
 
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
