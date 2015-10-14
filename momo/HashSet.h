@@ -176,7 +176,7 @@ namespace internal
 		typedef HashSetConstIterator ConstIterator;
 
 	private:
-		typedef HashIteratorVersion<Settings::checkVersion> HashIteratorVersion;
+		typedef internal::HashIteratorVersion<Settings::checkVersion> HashIteratorVersion;
 
 	public:
 		HashSetConstIterator() MOMO_NOEXCEPT

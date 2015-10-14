@@ -131,7 +131,7 @@ namespace internal
 		typedef HashPointer<Reference> Pointer;
 
 	private:
-		typedef HashIteratorVersion<Settings::checkVersion> HashIteratorVersion;
+		typedef internal::HashIteratorVersion<Settings::checkValueVersion> HashIteratorVersion;
 
 	public:
 		HashMultiMapIterator() MOMO_NOEXCEPT
