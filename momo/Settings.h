@@ -17,6 +17,7 @@
 
 #define MOMO_DEFAULT_CHECK_MODE assertion
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
+#define MOMO_CHECK_ITERATOR_VERSION
 
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<7, 1>
 

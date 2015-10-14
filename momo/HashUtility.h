@@ -74,6 +74,66 @@ namespace internal
 		Reference mReference;
 	};
 
+	template<bool tCheckVersion>
+	class HashIteratorVersion
+	{
+	public:
+		static const bool checkVersion = tCheckVersion;
+
+	public:
+		HashIteratorVersion() MOMO_NOEXCEPT
+			: mContainerVersion(nullptr),
+			mVersion(0)
+		{
+		}
+
+		explicit HashIteratorVersion(const size_t& version) MOMO_NOEXCEPT
+			: mContainerVersion(&version),
+			mVersion(version)
+		{
+		}
+
+		bool Check() const MOMO_NOEXCEPT
+		{
+			return *mContainerVersion == mVersion;
+		}
+
+		bool Check(const size_t& version) const MOMO_NOEXCEPT
+		{
+			return mContainerVersion == &version && mVersion == version;
+		}
+
+	private:
+		const size_t* mContainerVersion;
+		size_t mVersion;
+	};
+
+	template<>
+	class HashIteratorVersion<false>
+	{
+	public:
+		static const bool checkVersion = false;
+
+	public:
+		HashIteratorVersion() MOMO_NOEXCEPT
+		{
+		}
+
+		explicit HashIteratorVersion(const size_t& /*version*/) MOMO_NOEXCEPT
+		{
+		}
+
+		bool Check() const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
+		bool Check(const size_t& /*version*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+	};
+
 	template<typename TBaseIterator, typename TReference,
 		typename TConstBaseIterator = typename TBaseIterator::ConstIterator,
 		typename TConstReference = typename TReference::ConstReference>

@@ -161,36 +161,37 @@ namespace internal
 	};
 
 	template<typename TBuckets, typename TSettings>
-	class HashSetConstIterator
+	class HashSetConstIterator : private HashIteratorVersion<TSettings::checkVersion>
 	{
 	public:
 		typedef TBuckets Buckets;
 		typedef TSettings Settings;
 		typedef typename Buckets::Bucket Bucket;
 		typedef typename Bucket::Item Item;
+		typedef typename Bucket::ConstBounds ConstBucketBounds;
 
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
 		typedef HashSetConstIterator ConstIterator;
 
+	private:
+		typedef HashIteratorVersion<Settings::checkVersion> HashIteratorVersion;
+
 	public:
 		HashSetConstIterator() MOMO_NOEXCEPT
 			: mBuckets(nullptr),
 			mHashCode(0),
-			mItemPtr(nullptr),
-			mHashSetVersion(nullptr),
-			mVersion(0)
+			mItemPtr(nullptr)
 		{
 		}
 
 		HashSetConstIterator(const Buckets& buckets, size_t bucketIndex, const Item* pitem,
 			const size_t& version, bool move) MOMO_NOEXCEPT
-			: mBuckets(&buckets),
+			: HashIteratorVersion(version),
+			mBuckets(&buckets),
 			mBucketIndex(bucketIndex),
-			mItemPtr(pitem),
-			mHashSetVersion(&version),
-			mVersion(version)
+			mItemPtr(pitem)
 		{
 			if (move)
 				_Move();
@@ -198,11 +199,10 @@ namespace internal
 
 		HashSetConstIterator(const Buckets& buckets, size_t hashCode,
 			const size_t& version) MOMO_NOEXCEPT
-			: mBuckets(&buckets),
+			: HashIteratorVersion(version),
+			mBuckets(&buckets),
 			mHashCode(hashCode),
-			mItemPtr(nullptr),
-			mHashSetVersion(&version),
-			mVersion(version)
+			mItemPtr(nullptr)
 		{
 		}
 
@@ -210,7 +210,8 @@ namespace internal
 
 		HashSetConstIterator& operator++()
 		{
-			_Check();
+			MOMO_CHECK(mItemPtr != nullptr);
+			MOMO_CHECK(HashIteratorVersion::Check());
 			++mItemPtr;
 			_Move();
 			return *this;
@@ -218,7 +219,8 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			_Check();
+			MOMO_CHECK(mItemPtr != nullptr);
+			MOMO_CHECK(HashIteratorVersion::Check());
 			return mItemPtr;
 		}
 
@@ -250,10 +252,9 @@ namespace internal
 		{
 			(void)version;
 			(void)empty;
-			MOMO_CHECK(mHashSetVersion == &version);
-			MOMO_CHECK(mVersion == version);
 			MOMO_CHECK(mBuckets != nullptr);
 			MOMO_CHECK(empty ^ (mItemPtr != nullptr));
+			MOMO_CHECK(HashIteratorVersion::Check(version));
 		}
 
 	private:
@@ -265,7 +266,7 @@ namespace internal
 			++mBucketIndex;
 			for (; mBucketIndex < bucketCount; ++mBucketIndex)
 			{
-				typename Bucket::ConstBounds bounds = mBuckets->GetBucketBounds(mBucketIndex);
+				ConstBucketBounds bounds = mBuckets->GetBucketBounds(mBucketIndex);
 				mItemPtr = bounds.GetBegin();
 				if (mItemPtr != bounds.GetEnd())
 					return;
@@ -282,12 +283,6 @@ namespace internal
 			mItemPtr = nullptr;
 		}
 
-		void _Check() const
-		{
-			MOMO_CHECK(mItemPtr != nullptr);
-			MOMO_CHECK(*mHashSetVersion == mVersion);
-		}
-
 	private:
 		const Buckets* mBuckets;
 		union
@@ -296,8 +291,6 @@ namespace internal
 			size_t mHashCode;
 		};
 		const Item* mItemPtr;
-		const size_t* mHashSetVersion;
-		size_t mVersion;
 	};
 }
 
@@ -389,6 +382,8 @@ struct HashSetSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
 };
 
 template<typename TKey,

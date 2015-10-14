@@ -51,6 +51,14 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
+#if !defined(MOMO_CHECK_ITERATOR_VERSION)
+#define MOMO_CHECK_ITERATOR_VERSION_VALUE false
+#elif defined(NDEBUG)
+#define MOMO_CHECK_ITERATOR_VERSION_VALUE (checkMode != CheckMode::assertion)
+#else
+#define MOMO_CHECK_ITERATOR_VERSION_VALUE true
+#endif
+
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
 	{ \
