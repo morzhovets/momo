@@ -187,13 +187,13 @@ namespace internal
 		}
 
 		HashSetConstIterator(const Buckets& buckets, size_t bucketIndex, const Item* pitem,
-			const size_t& version, bool move) MOMO_NOEXCEPT
+			const size_t& version, bool movable) MOMO_NOEXCEPT
 			: HashIteratorVersion(version),
 			mBuckets(&buckets),
-			mBucketIndex(bucketIndex),
+			mBucketIndex(bucketIndex * 2 + (movable ? 0 : 1)),
 			mItemPtr(pitem)
 		{
-			if (move)
+			if (movable)
 				_Move();
 		}
 
@@ -231,10 +231,16 @@ namespace internal
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
 
+		bool IsMovable() const MOMO_NOEXCEPT
+		{
+			assert(mItemPtr != nullptr);
+			return mBucketIndex % 2 == 0;
+		}
+
 		size_t GetBucketIndex() const MOMO_NOEXCEPT
 		{
 			assert(mItemPtr != nullptr);
-			return mBucketIndex;
+			return _GetBucketIndex();
 		}
 
 		size_t GetHashCode() const MOMO_NOEXCEPT
@@ -260,13 +266,15 @@ namespace internal
 	private:
 		void _Move() MOMO_NOEXCEPT
 		{
-			if (mItemPtr != mBuckets->GetBucketBounds(mBucketIndex).GetEnd())
+			if (mItemPtr != _GetBucketBounds().GetEnd())
 				return;
 			size_t bucketCount = mBuckets->GetCount();
-			++mBucketIndex;
-			for (; mBucketIndex < bucketCount; ++mBucketIndex)
+			while (true)
 			{
-				ConstBucketBounds bounds = mBuckets->GetBucketBounds(mBucketIndex);
+				mBucketIndex += 2;
+				if (_GetBucketIndex() >= bucketCount)
+					break;
+				ConstBucketBounds bounds = _GetBucketBounds();
 				mItemPtr = bounds.GetBegin();
 				if (mItemPtr != bounds.GetEnd())
 					return;
@@ -276,11 +284,21 @@ namespace internal
 			{
 				mBuckets = nextBuckets;
 				mBucketIndex = 0;
-				mItemPtr = mBuckets->GetBucketBounds(0).GetBegin();
+				mItemPtr = _GetBucketBounds().GetBegin();
 				return _Move();	//?
 			}
 			mBuckets = nullptr;
 			mItemPtr = nullptr;
+		}
+
+		ConstBucketBounds _GetBucketBounds() const MOMO_NOEXCEPT
+		{
+			return mBuckets->GetBucketBounds(_GetBucketIndex());
+		}
+
+		size_t _GetBucketIndex() const MOMO_NOEXCEPT
+		{
+			return mBucketIndex / 2;
 		}
 
 	private:
@@ -930,9 +948,9 @@ private:
 	}
 
 	ConstIterator _MakeIterator(const Buckets& buckets, size_t bucketIndex,
-		const Item* pitem, bool move) const MOMO_NOEXCEPT
+		const Item* pitem, bool movable) const MOMO_NOEXCEPT
 	{
-		return ConstIterator(buckets, bucketIndex, pitem, mCrew.GetVersion(), move);
+		return ConstIterator(buckets, bucketIndex, pitem, mCrew.GetVersion(), movable);
 	}
 
 	Buckets* _GetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
@@ -1076,6 +1094,8 @@ private:
 		bucket.RemoveBack(mCrew.GetBucketParams());
 		--mCount;
 		++mCrew.GetVersion();
+		if (!iter.IsMovable())
+			return ConstIterator();
 		return _MakeIterator(*buckets, bucketIndex,
 			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, true);
 	}
