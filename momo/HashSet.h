@@ -212,8 +212,15 @@ namespace internal
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
 			MOMO_CHECK(HashIteratorVersion::Check());
-			++mItemPtr;
-			_Move();
+			if (IsMovable())
+			{
+				++mItemPtr;
+				_Move();
+			}
+			else
+			{
+				*this = HashSetConstIterator();
+			}
 			return *this;
 		}
 
@@ -287,8 +294,7 @@ namespace internal
 				mItemPtr = _GetBucketBounds().GetBegin();
 				return _Move();	//?
 			}
-			mBuckets = nullptr;
-			mItemPtr = nullptr;
+			*this = HashSetConstIterator();
 		}
 
 		ConstBucketBounds _GetBucketBounds() const MOMO_NOEXCEPT
