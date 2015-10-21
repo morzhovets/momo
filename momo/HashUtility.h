@@ -75,10 +75,13 @@ namespace internal
 	};
 
 	template<bool tCheckVersion>
-	class HashIteratorVersion
+	class HashIteratorVersion;
+
+	template<>
+	class HashIteratorVersion<true>
 	{
 	public:
-		static const bool checkVersion = tCheckVersion;
+		static const bool checkVersion = true;
 
 	public:
 		HashIteratorVersion() MOMO_NOEXCEPT

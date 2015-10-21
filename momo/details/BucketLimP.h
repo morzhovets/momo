@@ -20,7 +20,11 @@ namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
 		size_t tMaxCount, size_t tMemPoolBlockCount, bool tUseUIntPtr>
-	class BucketLimP
+	class BucketLimP;
+
+	template<typename TItemTraits, typename TMemManager,
+		size_t tMaxCount, size_t tMemPoolBlockCount>
+	class BucketLimP<TItemTraits, TMemManager, tMaxCount, tMemPoolBlockCount, false>
 	{
 	public:
 		typedef TItemTraits ItemTraits;
@@ -31,7 +35,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
-		static const bool useUIntPtr = tUseUIntPtr;
+		static const bool useUIntPtr = false;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
