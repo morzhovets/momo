@@ -19,7 +19,7 @@
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
 #define MOMO_CHECK_ITERATOR_VERSION
 
-#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP1<7, 1>
+#define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>
 
 #if defined(_MSC_VER) //defined(_WIN32)
 #define MOMO_USE_MEM_MANAGER_WIN

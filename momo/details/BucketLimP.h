@@ -484,7 +484,7 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = 4,
+template<size_t tMaxCount = sizeof(void*),
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
 	bool tUseUIntPtr = true>
 struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
