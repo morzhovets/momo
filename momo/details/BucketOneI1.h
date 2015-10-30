@@ -93,11 +93,12 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator)
 		{
 			assert(!IsFull());
 			itemCreator(&mItemBuffer);
 			mState = stateFull;
+			return &mItemBuffer;
 		}
 
 		void RemoveBack(Params& /*params*/) MOMO_NOEXCEPT

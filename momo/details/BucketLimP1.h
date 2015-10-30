@@ -133,7 +133,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			Item* items = _GetItems();
 			if (items == nullptr)
@@ -141,8 +141,10 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				itemCreator(memory.GetPointer());
+				Item* newItems = memory.GetPointer();
+				itemCreator(newItems);
 				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+				return newItems;
 			}
 			else
 			{
@@ -155,15 +157,17 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					ItemTraits::RelocateAddBack(items,
-						memory.GetPointer(), count, itemCreator);
+					Item* newItems = memory.GetPointer();
+					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+					return newItems + count;
 				}
 				else
 				{
 					itemCreator(items + count);
 					++mState;
+					return items + count;
 				}
 			}
 		}

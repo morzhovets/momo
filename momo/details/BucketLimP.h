@@ -133,15 +133,17 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (mPtr == nullptr)
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				itemCreator(_GetItems(memory.GetPointer()));
+				Item* newItems = _GetItems(memory.GetPointer());
+				itemCreator(newItems);
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
+				return newItems;
 			}
 			else
 			{
@@ -154,15 +156,18 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					ItemTraits::RelocateAddBack(_GetItems(), _GetItems(memory.GetPointer()),
-						count, itemCreator);
+					Item* newItems = _GetItems(memory.GetPointer());
+					ItemTraits::RelocateAddBack(_GetItems(), newItems, count, itemCreator);
 					params.GetMemPool(memPoolIndex).Deallocate(mPtr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
+					return newItems + count;
 				}
 				else
 				{
-					itemCreator(_GetItems() + count);
+					Item* items = _GetItems();
+					itemCreator(items + count);
 					++*mPtr;
+					return items + count;
 				}
 			}
 		}
@@ -384,7 +389,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			if (_IsNull())
 			{
@@ -392,8 +397,10 @@ namespace internal
 				size_t newMemPoolIndex =
 					_GetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				itemCreator(memory.GetPointer());
+				Item* newItems = memory.GetPointer();
+				itemCreator(newItems);
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
+				return newItems;
 			}
 			else
 			{
@@ -408,15 +415,17 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					ItemTraits::RelocateAddBack(items, memory.GetPointer(),
-						count, itemCreator);
+					Item* newItems = memory.GetPointer();
+					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
+					return newItems + count;
 				}
 				else
 				{
 					itemCreator(items + count);
 					mPtrState += modMemPoolIndex;
+					return items + count;
 				}
 			}
 		}

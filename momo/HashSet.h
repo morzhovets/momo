@@ -935,7 +935,7 @@ public:
 	{
 		ConstIterator iter = Find(key);
 		if (!!iter)
-			return iter.GetBucketIndex();
+			return iter.GetBucketIndex();	//?
 		return _GetBucketIndexForAdd(*mBuckets, iter.GetHashCode());
 	}
 
@@ -1020,34 +1020,36 @@ private:
 		iter.Check(mCrew.GetVersion(), true);
 		MOMO_CHECK(iter.GetBuckets() == mBuckets);
 		size_t hashCode = iter.GetHashCode();
-		size_t bucketIndex;	//?
+		Item* pitem;
+		size_t bucketIndex;
 		if (mCount < mCapacity)
-			bucketIndex = _AddNogrow(hashCode, itemCreator);
+			pitem = _AddNogrow(hashCode, itemCreator, bucketIndex);
 		else
-			bucketIndex = _AddGrow(hashCode, itemCreator);
-		Bucket& bucket = (*mBuckets)[bucketIndex];
-		size_t itemIndex = bucket.GetBounds(mCrew.GetBucketParams()).GetCount() - 1;
+			pitem = _AddGrow(hashCode, itemCreator, bucketIndex);
 		if (mBuckets->GetNextBuckets() != nullptr)
+		{
+			Bucket& bucket = (*mBuckets)[bucketIndex];
+			size_t itemIndex = pitem - bucket.GetBounds(mCrew.GetBucketParams()).GetBegin();
 			_MoveItems();
+			pitem = bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex;
+		}
 		++mCount;
 		++mCrew.GetVersion();
-		ConstIterator resIter = _MakeIterator(*mBuckets, bucketIndex,
-			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, false);
+		ConstIterator resIter = _MakeIterator(*mBuckets, bucketIndex, pitem, false);
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || resIter == Find(ItemTraits::GetKey(*resIter)));
 		return resIter;
 	}
 
 	template<typename ItemCreator>
-	size_t _AddNogrow(size_t hashCode, const ItemCreator& itemCreator)
+	Item* _AddNogrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
-		size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-		(*mBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
-		return bucketIndex;
+		bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
+		return (*mBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
 	}
 
 	template<typename ItemCreator>
-	size_t _AddGrow(size_t hashCode, const ItemCreator& itemCreator)
+	Item* _AddGrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t bucketCount = mBuckets->GetCount();
@@ -1064,15 +1066,15 @@ private:
 		catch (...)	// std::bad_alloc&
 		{
 			if (Settings::overloadIfCannotGrow)
-				return _AddNogrow(hashCode, itemCreator);
+				return _AddNogrow(hashCode, itemCreator, bucketIndex);
 			else
 				throw;
 		}
-		size_t bucketIndex;
+		Item* pitem;
 		try
 		{
 			bucketIndex = _GetBucketIndexForAdd(*newBuckets, hashCode);
-			(*newBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
+			pitem = (*newBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
 		}
 		catch (...)
 		{
@@ -1082,7 +1084,7 @@ private:
 		newBuckets->SetNextBuckets(mBuckets);
 		mBuckets = newBuckets;
 		mCapacity = newCapacity;
-		return bucketIndex;
+		return pitem;
 	}
 
 	template<typename RemoveFunc>
