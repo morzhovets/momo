@@ -190,7 +190,7 @@ namespace internal
 			const size_t& version, bool movable) MOMO_NOEXCEPT
 			: HashIteratorVersion(version),
 			mBuckets(&buckets),
-			mBucketIndex(bucketIndex * 2 + (movable ? 0 : 1)),
+			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
 			mItemPtr(pitem)
 		{
 			if (movable)
@@ -241,18 +241,19 @@ namespace internal
 		bool IsMovable() const MOMO_NOEXCEPT
 		{
 			assert(mItemPtr != nullptr);
-			return mBucketIndex % 2 == 0;
+			return mBucketIndex < mBuckets->GetCount();
 		}
 
 		size_t GetBucketIndex() const MOMO_NOEXCEPT
 		{
 			assert(mItemPtr != nullptr);
-			return _GetBucketIndex();
+			size_t bucketCount = mBuckets->GetCount();
+			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
 		size_t GetHashCode() const MOMO_NOEXCEPT
 		{
-			assert(mItemPtr == nullptr);
+			assert(mItemPtr == nullptr && mBuckets != nullptr);
 			return mHashCode;
 		}
 
@@ -278,8 +279,8 @@ namespace internal
 			size_t bucketCount = mBuckets->GetCount();
 			while (true)
 			{
-				mBucketIndex += 2;
-				if (_GetBucketIndex() >= bucketCount)
+				++mBucketIndex;
+				if (mBucketIndex >= bucketCount)
 					break;
 				ConstBucketBounds bounds = _GetBucketBounds();
 				mItemPtr = bounds.GetBegin();
@@ -299,12 +300,7 @@ namespace internal
 
 		ConstBucketBounds _GetBucketBounds() const MOMO_NOEXCEPT
 		{
-			return mBuckets->GetBucketBounds(_GetBucketIndex());
-		}
-
-		size_t _GetBucketIndex() const MOMO_NOEXCEPT
-		{
-			return mBucketIndex / 2;
+			return mBuckets->GetBucketBounds(mBucketIndex);
 		}
 
 	private:
@@ -934,9 +930,15 @@ public:
 	size_t GetBucketIndex(const Key& key) const
 	{
 		ConstIterator iter = Find(key);
-		if (!!iter)
-			return iter.GetBucketIndex();	//?
-		return _GetBucketIndexForAdd(*mBuckets, iter.GetHashCode());
+		if (!iter)
+			return _GetBucketIndexForAdd(*mBuckets, iter.GetHashCode());
+		size_t bucketIndex = iter.GetBucketIndex();
+		for (const Buckets* buckets = mBuckets; buckets != iter.GetBuckets();
+			buckets = buckets->GetNextBuckets())
+		{
+			bucketIndex += buckets->GetCount();
+		}
+		return bucketIndex;
 	}
 
 private:
