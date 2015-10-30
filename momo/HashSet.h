@@ -1137,15 +1137,13 @@ private:
 		BucketParams& bucketParams = mCrew.GetBucketParams();
 		for (Bucket& bucket : *buckets)
 		{
-			while (true)
+			typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
+			for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 			{
-				typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
-				if (bucketBounds.GetCount() == 0)
-					break;
-				Item& item = *(bucketBounds.GetEnd() - 1);
-				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
+				--pitem;
+				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item>(std::move(item)));
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item>(std::move(*pitem)));
 				bucket.RemoveBack(bucketParams);
 			}
 		}
