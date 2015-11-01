@@ -105,7 +105,7 @@ namespace internal
 
 		~BucketLim4() MOMO_NOEXCEPT
 		{
-			assert(mPtrState == stateNull);
+			assert(_IsEmpty());
 		}
 
 		BucketLim4& operator=(const BucketLim4&) = delete;
@@ -136,7 +136,7 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (!_IsNull())
+			if (!_IsEmpty())
 			{
 				Item* items = _GetItems<Item>(params);
 				ItemTraits::Destroy(items, _GetCount());
@@ -148,7 +148,7 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			if (_IsNull())
+			if (_IsEmpty())
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex =
@@ -211,7 +211,7 @@ namespace internal
 		}
 
 	private:
-		bool _IsNull() const MOMO_NOEXCEPT
+		bool _IsEmpty() const MOMO_NOEXCEPT
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
@@ -230,13 +230,13 @@ namespace internal
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			assert(!_IsEmpty());
 			return (size_t)(mPtrState >> (32 - logMaxCount)) + 1;
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
-			if (_IsNull())
+			if (_IsEmpty())
 				return 0;
 			return internal::UIntMath<size_t>::DivBySmall((size_t)(mPtrState & stateNull),
 				_GetMemPoolIndex()).remainder + 1;
@@ -244,7 +244,7 @@ namespace internal
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			assert(!_IsEmpty());
 			return internal::UIntMath<uint32_t>::DivBySmall(mPtrState & stateNull,
 				(uint32_t)_GetMemPoolIndex()).quotient;
 		}
@@ -252,7 +252,7 @@ namespace internal
 		template<typename Item, typename Params>
 		Item* _GetItems(Params& params) const MOMO_NOEXCEPT
 		{
-			if (_IsNull())
+			if (_IsEmpty())
 				return nullptr;
 			auto& memPool = params.GetMemPool(_GetMemPoolIndex());
 			auto* realPtr = memPool.GetRealPointer(_GetPointer());

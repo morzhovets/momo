@@ -1147,8 +1147,8 @@ private:
 				bucket.RemoveBack(bucketParams);
 			}
 		}
-		for (Bucket& bucket : *buckets)
-			bucket.Clear(bucketParams);
+		//for (Bucket& bucket : *buckets)
+		//	bucket.Clear(bucketParams);
 		buckets->Destroy(GetMemManager());
 	}
 

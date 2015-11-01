@@ -19,7 +19,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tAlignment, size_t tMemPoolBlockCount>
+		size_t tMaxCount, size_t tMemPoolBlockCount, size_t tAlignment>
 	class BucketLimP1
 	{
 	public:
@@ -30,8 +30,8 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const size_t alignment = tAlignment;
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+		static const size_t alignment = tAlignment;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -89,7 +89,7 @@ namespace internal
 	public:
 		BucketLimP1() MOMO_NOEXCEPT
 		{
-			_Set(nullptr, (unsigned char)0);
+			_Set(nullptr, _GetMemPoolIndex(1), 0);
 		}
 
 		BucketLimP1(const BucketLimP1&) = delete;
@@ -129,7 +129,7 @@ namespace internal
 				ItemTraits::Destroy(items, _GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
-			_Set(nullptr, (unsigned char)0);
+			_Set(nullptr, _GetMemPoolIndex(1), 0);
 		}
 
 		template<typename ItemCreator>
@@ -139,11 +139,11 @@ namespace internal
 			if (items == nullptr)
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
+				size_t newMemPoolIndex = _GetMemPoolIndex();
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				Item* newItems = memory.GetPointer();
 				itemCreator(newItems);
-				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+				_Set(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
 			}
 			else
@@ -160,7 +160,7 @@ namespace internal
 					Item* newItems = memory.GetPointer();
 					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
-					_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
 				}
 				else
@@ -178,10 +178,13 @@ namespace internal
 			assert(count > 0);
 			Item* items = _GetItems();
 			ItemTraits::Destroy(items + count - 1, 1);
-			if (count == 1 && !WasFull())
+			if (count == 1)
 			{
-				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
-				_Set(nullptr, (unsigned char)0);
+				size_t memPoolIndex = _GetMemPoolIndex();
+				params.GetMemPool(memPoolIndex).Deallocate(items);
+				if (memPoolIndex != _GetMemPoolIndex(maxCount))
+					memPoolIndex = _GetMemPoolIndex(1);
+				_Set(nullptr, memPoolIndex, 0);
 			}
 			else
 			{
@@ -190,15 +193,10 @@ namespace internal
 		}
 
 	private:
-		void _Set(Item* items, unsigned char state) MOMO_NOEXCEPT
+		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			*&mItemPtrBuffer = items;
-			mState = state;
-		}
-
-		static unsigned char _MakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
-		{
-			return (unsigned char)((memPoolIndex << 4) | count);
+			mState = (unsigned char)((memPoolIndex << 4) | count);
 		}
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -230,18 +228,18 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = 7,
-	size_t tAlignment = MOMO_ALIGNMENT_OF(void*),
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
+template<size_t tMaxCount = 4,
+	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
+	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t alignment = tAlignment;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
+	static const size_t alignment = tAlignment;
 
 	template<typename ItemTraits, typename MemManager>
 	using Bucket = internal::BucketLimP1<ItemTraits, MemManager,
-		maxCount, alignment, memPoolBlockCount>;
+		maxCount, memPoolBlockCount, alignment>;
 };
 
 } // namespace momo

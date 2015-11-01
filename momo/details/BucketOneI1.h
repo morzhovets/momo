@@ -60,7 +60,7 @@ namespace internal
 
 		~BucketOneI1() MOMO_NOEXCEPT
 		{
-			assert(mState == stateEmpty);
+			assert(!IsFull());
 		}
 
 		BucketOneI1& operator=(const BucketOneI1&) = delete;

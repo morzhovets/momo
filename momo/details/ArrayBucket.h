@@ -362,7 +362,7 @@ namespace internal
 		{
 			if (mPtr == nullptr)
 			{
-				return Bounds(nullptr, nullptr);
+				return Bounds();
 			}
 			else if (_GetMemPoolIndex() > 0)
 			{

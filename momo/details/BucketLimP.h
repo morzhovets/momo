@@ -94,7 +94,7 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			assert(mPtr == nullptr);
+			assert(_IsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
@@ -111,7 +111,7 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			if (mPtr == nullptr)
+			if (_IsEmpty())
 				return false;
 			return _GetCount() == maxCount;
 		}
@@ -120,25 +120,28 @@ namespace internal
 		{
 			if (mPtr == nullptr)
 				return false;
+			if (mUIntPtr == UIntPtrConst::invalid)
+				return true;
 			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (mPtr == nullptr)
-				return;
-			ItemTraits::Destroy(_GetItems(), _GetCount());
-			params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
+			if (!_IsEmpty())
+			{
+				ItemTraits::Destroy(_GetItems(), _GetCount());
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
+			}
 			mPtr = nullptr;
 		}
 
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			if (mPtr == nullptr)
+			if (_IsEmpty())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
+				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == nullptr) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				Item* newItems = _GetItems(memory.GetPointer());
 				itemCreator(newItems);
@@ -177,11 +180,14 @@ namespace internal
 			size_t count = _GetCount();
 			assert(count > 0);
 			ItemTraits::Destroy(_GetItems() + count - 1, 1);
-			size_t memPoolIndex = _GetMemPoolIndex();
-			if (count == 1 && memPoolIndex != _GetMemPoolIndex(maxCount))
+			if (count == 1)
 			{
+				size_t memPoolIndex = _GetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(mPtr);
-				mPtr = nullptr;
+				if (memPoolIndex < _GetMemPoolIndex(maxCount))
+					mPtr = nullptr;
+				else
+					mUIntPtr = UIntPtrConst::invalid;
 			}
 			else
 			{
@@ -190,6 +196,11 @@ namespace internal
 		}
 
 	private:
+		bool _IsEmpty() const MOMO_NOEXCEPT
+		{
+			return mPtr == nullptr || mUIntPtr == UIntPtrConst::invalid;
+		}
+
 		void _Set(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			assert(ptr != nullptr);
@@ -205,19 +216,19 @@ namespace internal
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(mPtr != nullptr);
+			assert(!_IsEmpty());
 			return (size_t)(*mPtr >> 4);
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
-			assert(_GetMemPoolIndex() > 0);
+			assert(!_IsEmpty());
 			return (size_t)(*mPtr & 15);
 		}
 
 		Item* _GetItems() const MOMO_NOEXCEPT
 		{
-			assert(_GetMemPoolIndex() > 0);
+			assert(!_IsEmpty());
 			return _GetItems(mPtr);
 		}
 
@@ -228,14 +239,18 @@ namespace internal
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT
 		{
-			if (mPtr == nullptr)
-				return Bounds(nullptr, nullptr);
+			if (_IsEmpty())
+				return Bounds();
 			else
 				return Bounds(_GetItems(), _GetCount());
 		}
 
 	private:
-		unsigned char* mPtr;
+		union	//?
+		{
+			unsigned char* mPtr;
+			uintptr_t mUIntPtr;
+		};
 	};
 
 	template<typename TItemTraits, typename TMemManager,
@@ -347,7 +362,7 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			assert(mPtrState == stateNull);
+			assert(_IsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
@@ -378,7 +393,7 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (!_IsNull())
+			if (!_IsEmpty())
 			{
 				Bounds bounds = _GetBounds();
 				Item* items = bounds.GetBegin();
@@ -391,7 +406,7 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			if (_IsNull())
+			if (_IsEmpty())
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex =
@@ -451,7 +466,7 @@ namespace internal
 		}
 
 	private:
-		bool _IsNull() const MOMO_NOEXCEPT
+		bool _IsEmpty() const MOMO_NOEXCEPT
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
@@ -470,13 +485,13 @@ namespace internal
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			assert(!_IsEmpty());
 			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT
 		{
-			if (_IsNull())
+			if (_IsEmpty())
 				return Bounds();
 			uintptr_t memPoolIndex = (uintptr_t)_GetMemPoolIndex();
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
@@ -515,7 +530,7 @@ private:
 			|| (maxCount <= 4 && size % 4 == 0 && (size > 4 || alignment == 4))
 			|| (maxCount <= 8 && size % 8 == 0 && (size > 8 || alignment == 8))
 			|| (maxCount <= 16 && size % 16 == 0 && (size > 16 || alignment == 16)));
-		
+
 	public:
 		typedef internal::BucketLimP<ItemTraits, MemManager,
 			maxCount, memPoolBlockCount, useUIntPtr> Bucket;

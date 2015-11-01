@@ -60,13 +60,13 @@ public:
 		TestHashSet<momo::HashBucketOneI1, 1, 1>("momo::HashBucketOneI1");
 		TestHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
 
-		TestHashSet<momo::HashBucketLimP1< 1, 1, 16>,  1, 1>("momo::HashBucketLimP1< 1, 1, 16>");
-		TestHashSet<momo::HashBucketLimP1< 1, 1, 99>,  2, 1>("momo::HashBucketLimP1< 1, 1, 99>");
-		TestHashSet<momo::HashBucketLimP1< 2, 1, 32>, 16, 8>("momo::HashBucketLimP1< 2, 1, 32>");
-		TestHashSet<momo::HashBucketLimP1< 3, 1,  1>,  4, 4>("momo::HashBucketLimP1< 3, 1,  1>");
-		TestHashSet<momo::HashBucketLimP1< 4, 1,  2>,  4, 4>("momo::HashBucketLimP1< 4, 1,  2>");
-		TestHashSet<momo::HashBucketLimP1< 7, 1, 11>,  6, 2>("momo::HashBucketLimP1< 7, 1, 11>");
-		TestHashSet<momo::HashBucketLimP1<15, 1,  1>, 11, 1>("momo::HashBucketLimP1<15, 1,  1>");
+		TestHashSet<momo::HashBucketLimP1< 1, 16, 1>,  1, 1>("momo::HashBucketLimP1< 1, 16, 1>");
+		TestHashSet<momo::HashBucketLimP1< 1, 99, 2>,  2, 1>("momo::HashBucketLimP1< 1, 99, 2>");
+		TestHashSet<momo::HashBucketLimP1< 2, 32, 4>, 16, 8>("momo::HashBucketLimP1< 2, 32, 4>");
+		TestHashSet<momo::HashBucketLimP1< 3,  1, 8>,  4, 4>("momo::HashBucketLimP1< 3,  1, 8>");
+		TestHashSet<momo::HashBucketLimP1< 4,  2, 1>,  4, 4>("momo::HashBucketLimP1< 4,  2, 1>");
+		TestHashSet<momo::HashBucketLimP1< 7, 11, 2>,  6, 2>("momo::HashBucketLimP1< 7, 11, 2>");
+		TestHashSet<momo::HashBucketLimP1<15,  1, 4>, 11, 1>("momo::HashBucketLimP1<15,  1, 4>");
 
 		TestHashSet<momo::HashBucketLimP< 1, 16, false>, 11, 1>("momo::HashBucketLimP< 1, 16, false>");
 		TestHashSet<momo::HashBucketLimP< 1, 64, false>,  1, 1>("momo::HashBucketLimP< 1, 64, false>");
