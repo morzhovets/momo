@@ -75,15 +75,18 @@
 		return ref.GetEnd(); \
 	}
 
-#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr);
+#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
 
 #define MOMO_CHECK_TYPE(Type, var) \
-	MOMO_STATIC_ASSERT((std::is_same<Type, typename std::decay<decltype(var)>::type>::value));
+	MOMO_STATIC_ASSERT((std::is_same<Type, typename std::decay<decltype(var)>::type>::value))
 
-#define MOMO_CHECK(expr) assert(Settings::checkMode != CheckMode::assertion || (expr)); \
-	if (Settings::checkMode != CheckMode::exception || (expr)) ; else throw std::invalid_argument(#expr);
+#define MOMO_CHECK(expr) \
+	do { \
+		assert(Settings::checkMode != CheckMode::assertion || (expr)); \
+		if (Settings::checkMode == CheckMode::exception && !(expr)) throw std::invalid_argument(#expr); \
+	} while (false)
 
-#define MOMO_EXTRA_CHECK(expr) assert(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr));
+#define MOMO_EXTRA_CHECK(expr) assert(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
 #define MOMO_SWITCH8(var, Func, ...) \
 	switch (var) \
@@ -129,6 +132,13 @@ struct IsTriviallyRelocatable
 
 namespace internal
 {
+	struct UIntPtrConst
+	{
+		static const uintptr_t null = (uintptr_t)(void*)nullptr;	// c++/cli
+		static const uintptr_t invalid = MOMO_INVALID_UINTPTR;
+		MOMO_STATIC_ASSERT(null != invalid);
+	};
+
 	template<typename Iterator>
 	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
 		typename std::iterator_traits<Iterator>::iterator_category>;

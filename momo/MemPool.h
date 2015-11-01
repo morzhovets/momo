@@ -124,7 +124,7 @@ private:
 		uintptr_t begin;
 	};
 
-	static const uintptr_t nullPtr = (uintptr_t)(void*)nullptr;	// c++/cli
+	static const uintptr_t nullPtr = internal::UIntPtrConst::null;
 
 	static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
 	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
@@ -378,7 +378,7 @@ private:
 
 	uintptr_t _GetBlock(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
 	{
-		if (index < 0)
+		if (index < 0)	//?
 			return buffer - (size_t)(-index) * Params::blockSize;
 		else
 			return buffer + (size_t)index * Params::blockSize + Params::blockAlignment;
@@ -388,7 +388,7 @@ private:
 	{
 		assert(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
-		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
+		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)	//?
 		{
 			buffer = block - index * Params::blockSize - Params::blockAlignment;
 			return (signed char)index;

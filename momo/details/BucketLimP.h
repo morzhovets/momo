@@ -295,8 +295,8 @@ namespace internal
 		static const uintptr_t modMemPoolIndex =
 			(uintptr_t)minItemAlignment / (skipOddMemPools ? 2 : 1);
 
-		static const uintptr_t stateNull = 0;	//?
-		static const uintptr_t stateNullWasFull = 1;	//?
+		static const uintptr_t stateNull = UIntPtrConst::null;
+		static const uintptr_t stateNullWasFull = UIntPtrConst::invalid;
 
 	public:
 		class Params

@@ -30,6 +30,8 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
+#define MOMO_INVALID_UINTPTR ((uintptr_t)1)
+
 #define MOMO_USE_NOEXCEPT
 #define MOMO_USE_TRIVIALLY_COPIABLE
 
