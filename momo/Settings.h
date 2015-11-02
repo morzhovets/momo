@@ -30,7 +30,13 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
-#define MOMO_INVALID_UINTPTR ((uintptr_t)1)
+#if !defined(__clang__)
+#define MOMO_NULL_UINTPTR ((uintptr_t)(void*)nullptr)
+#else
+#define MOMO_NULL_UINTPTR ((uintptr_t)0)
+#endif
+
+#define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
 #define MOMO_USE_NOEXCEPT
 #define MOMO_USE_TRIVIALLY_COPIABLE

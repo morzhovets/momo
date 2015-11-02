@@ -134,7 +134,7 @@ namespace internal
 {
 	struct UIntPtrConst
 	{
-		static const uintptr_t null = (uintptr_t)(void*)nullptr;	// c++/cli
+		static const uintptr_t null = MOMO_NULL_UINTPTR;
 		static const uintptr_t invalid = MOMO_INVALID_UINTPTR;
 		MOMO_STATIC_ASSERT(null != invalid);
 	};
