@@ -48,6 +48,9 @@ namespace internal
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
+		static const uintptr_t ptrNull = UIntPtrConst::null;
+		static const uintptr_t ptrNullWasFull = UIntPtrConst::invalid;
+
 	public:
 		class Params
 		{
@@ -86,7 +89,7 @@ namespace internal
 
 	public:
 		BucketLimP() MOMO_NOEXCEPT
-			: mPtr(nullptr)
+			: mPtr(ptrNull)
 		{
 		}
 
@@ -118,9 +121,9 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			if (mPtr == nullptr)
+			if (mPtr == ptrNull)
 				return false;
-			if (mUIntPtr == UIntPtrConst::invalid)
+			if (mPtr == ptrNullWasFull)
 				return true;
 			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
 		}
@@ -130,9 +133,9 @@ namespace internal
 			if (!_IsEmpty())
 			{
 				ItemTraits::Destroy(_GetItems(), _GetCount());
-				params.GetMemPool(_GetMemPoolIndex()).Deallocate(mPtr);
+				params.GetMemPool(_GetMemPoolIndex()).Deallocate(_GetPtr());
 			}
-			mPtr = nullptr;
+			mPtr = ptrNull;
 		}
 
 		template<typename ItemCreator>
@@ -141,7 +144,7 @@ namespace internal
 			if (_IsEmpty())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == nullptr) ? newCount : maxCount);
+				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == ptrNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				Item* newItems = _GetItems(memory.GetPointer());
 				itemCreator(newItems);
@@ -161,7 +164,7 @@ namespace internal
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = _GetItems(memory.GetPointer());
 					ItemTraits::RelocateAddBack(_GetItems(), newItems, count, itemCreator);
-					params.GetMemPool(memPoolIndex).Deallocate(mPtr);
+					params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
 				}
@@ -169,7 +172,7 @@ namespace internal
 				{
 					Item* items = _GetItems();
 					itemCreator(items + count);
-					++*mPtr;
+					++*_GetPtr();
 					return items + count;
 				}
 			}
@@ -183,29 +186,32 @@ namespace internal
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(mPtr);
-				if (memPoolIndex < _GetMemPoolIndex(maxCount))
-					mPtr = nullptr;
-				else
-					mUIntPtr = UIntPtrConst::invalid;
+				params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
+				mPtr = (memPoolIndex < _GetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
 			}
 			else
 			{
-				--*mPtr;
+				--*_GetPtr();
 			}
 		}
 
 	private:
 		bool _IsEmpty() const MOMO_NOEXCEPT
 		{
-			return mPtr == nullptr || mUIntPtr == UIntPtrConst::invalid;
+			return mPtr == ptrNull || mPtr == ptrNullWasFull;
+		}
+
+		unsigned char* _GetPtr() const MOMO_NOEXCEPT
+		{
+			assert(!_IsEmpty());
+			return (unsigned char*)mPtr;
 		}
 
 		void _Set(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			assert(ptr != nullptr);
-			mPtr = ptr;
-			*mPtr = (unsigned char)((memPoolIndex << 4) | count);
+			mPtr = (uintptr_t)ptr;
+			*ptr = (unsigned char)((memPoolIndex << 4) | count);
 		}
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -216,20 +222,17 @@ namespace internal
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
-			return (size_t)(*mPtr >> 4);
+			return (size_t)(*_GetPtr() >> 4);
 		}
 
 		size_t _GetCount() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
-			return (size_t)(*mPtr & 15);
+			return (size_t)(*_GetPtr() & 15);
 		}
 
 		Item* _GetItems() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
-			return _GetItems(mPtr);
+			return _GetItems(_GetPtr());
 		}
 
 		static Item* _GetItems(unsigned char* ptr) MOMO_NOEXCEPT
@@ -246,11 +249,7 @@ namespace internal
 		}
 
 	private:
-		union	//?
-		{
-			unsigned char* mPtr;
-			uintptr_t mUIntPtr;
-		};
+		uintptr_t mPtr;
 	};
 
 	template<typename TItemTraits, typename TMemManager,
@@ -274,7 +273,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		class MemPoolParams
+		class MemPoolParams	//?
 		{
 		public:
 			static const size_t blockCount = memPoolBlockCount;
