@@ -378,17 +378,15 @@ private:
 
 	uintptr_t _GetBlock(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
 	{
-		if (index < 0)	//?
-			return buffer - (size_t)(-index) * Params::blockSize;
-		else
-			return buffer + (size_t)index * Params::blockSize + Params::blockAlignment;
+		return buffer + (intptr_t)index * (intptr_t)Params::blockSize
+			+ ((intptr_t)Params::blockAlignment & -(intptr_t)(index >= 0));
 	}
 
 	signed char _GetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
 	{
 		assert(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
-		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)	//?
+		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
 		{
 			buffer = block - index * Params::blockSize - Params::blockAlignment;
 			return (signed char)index;
@@ -404,8 +402,7 @@ private:
 	{
 		uintptr_t begin = (uintptr_t)GetMemManager().Allocate(_GetBufferSize());
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
-		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
-			block += Params::blockAlignment;
+		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
 		if ((block + Params::blockAlignment) % Params::blockSize == 0)
 			block += Params::blockAlignment;
 		if (((block / Params::blockSize) % Params::blockCount) == 0)
