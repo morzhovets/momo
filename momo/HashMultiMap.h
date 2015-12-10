@@ -278,6 +278,11 @@ struct HashMultiMapKeyValueTraits
 		dstValue = std::move(srcValue);
 	}
 
+	static void RelocateValues(Value* srcValues, Value* dstValues, size_t srcCount)
+	{
+		ValueManager::Relocate(srcValues, dstValues, srcCount);
+	}
+
 	template<typename ValueCreator>
 	static void RelocateAddBackValue(Value* srcValues, Value* dstValues, size_t srcCount,
 		const ValueCreator& valueCreator)
@@ -326,6 +331,11 @@ private:
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			KeyValueTraits::DestroyValues(items, count);
+		}
+
+		static void Relocate(Item* srcItems, Item* dstItems, size_t srcCount)
+		{
+			KeyValueTraits::RelocateValues(srcItems, dstItems, srcCount);
 		}
 
 		template<typename ItemCreator>
@@ -809,6 +819,7 @@ public:
 		size_t valueIndex = std::addressof(value) - valueBounds.GetBegin();
 		KeyValueTraits::AssignValue(std::move(*(valueBounds.GetEnd() - 1)), value);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());
+		valueArray.Shrink(mValueCrew.GetValueArrayParams());
 		--mValueCount;
 		++mValueCrew.GetValueVersion();
 		return _MakeIterator<Iterator>(keyIter,

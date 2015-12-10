@@ -30,7 +30,31 @@ namespace internal
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	private:
-		typedef momo::internal::ArrayBucket<ItemTraits, MemManager,
+		struct ArrayBucketItemTraits
+		{
+			typedef typename ItemTraits::Item Item;
+
+			static const size_t alignment = ItemTraits::alignment;
+
+			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+			{
+				ItemTraits::Destroy(items, count);
+			}
+
+			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*srcCount*/)
+			{
+				assert(false);
+			}
+
+			template<typename ItemCreator>
+			static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
+				const ItemCreator& itemCreator)
+			{
+				ItemTraits::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+			}
+		};
+
+		typedef momo::internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
 			maxFastCount, memPoolBlockCount, ArraySettings> ArrayBucket;
 
 	public:

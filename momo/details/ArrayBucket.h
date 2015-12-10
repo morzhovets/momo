@@ -40,6 +40,8 @@ namespace internal
 		{
 			typedef typename ItemTraits::Item Item;
 
+			static const bool isTriviallyRelocatable = false;	//?
+
 			template<typename ItemArg>
 			class Creator
 			{
@@ -65,9 +67,9 @@ namespace internal
 				ItemTraits::Destroy(items, count);
 			}
 
-			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
+			static void Relocate(Item* srcItems, Item* dstItems, size_t count)
 			{
-				assert(false);	//?
+				ItemTraits::Relocate(srcItems, dstItems, count);
 			}
 
 			template<typename ItemCreator>
@@ -302,6 +304,23 @@ namespace internal
 			else
 			{
 				_GetArray().RemoveBack();
+			}
+		}
+
+		void Shrink(Params& /*params*/) MOMO_NOEXCEPT
+		{
+			if (mPtr != nullptr && _GetMemPoolIndex() == 0)
+			{
+				try
+				{
+					Array& array = _GetArray();
+					if (array.GetCount() < array.GetCapacity() / 2)
+						array.Shrink();
+				}
+				catch (...)
+				{
+					// no throw!
+				}
 			}
 		}
 
