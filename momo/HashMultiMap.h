@@ -278,9 +278,9 @@ struct HashMultiMapKeyValueTraits
 		dstValue = std::move(srcValue);
 	}
 
-	static void RelocateValues(Value* srcValues, Value* dstValues, size_t srcCount)
+	static void RelocateValues(Value* srcValues, Value* dstValues, size_t count)
 	{
-		ValueManager::Relocate(srcValues, dstValues, srcCount);
+		ValueManager::Relocate(srcValues, dstValues, count);
 	}
 
 	template<typename ValueCreator>
@@ -333,9 +333,9 @@ private:
 			KeyValueTraits::DestroyValues(items, count);
 		}
 
-		static void Relocate(Item* srcItems, Item* dstItems, size_t srcCount)
+		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
 		{
-			KeyValueTraits::RelocateValues(srcItems, dstItems, srcCount);
+			KeyValueTraits::RelocateValues(srcItems, dstItems, count);
 		}
 
 		template<typename ItemCreator>

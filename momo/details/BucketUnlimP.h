@@ -41,7 +41,7 @@ namespace internal
 				ItemTraits::Destroy(items, count);
 			}
 
-			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*srcCount*/)
+			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
 			{
 				assert(false);
 			}
