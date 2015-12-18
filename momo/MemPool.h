@@ -30,6 +30,12 @@ struct MemPoolConst
 		static const size_t blockAlignment = (blockSize >= maxAlignment)
 			? maxAlignment : BlockAlignmenter<blockSize, maxAlignment / 2>::blockAlignment;
 	};
+
+	template<size_t blockSize>
+	struct BlockAlignmenter<blockSize, 1>
+	{
+		static const size_t blockAlignment = 1;
+	};
 };
 
 template<size_t tBlockSize,
