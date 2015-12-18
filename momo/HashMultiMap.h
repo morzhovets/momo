@@ -559,9 +559,19 @@ public:
 		mValueCrew(GetMemManager())
 	{
 		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
-		mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
-		for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
-			mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
+		try
+		{
+			mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
+			for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
+				mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
+		}
+		catch (...)
+		{
+			for (typename HashMap::Iterator::Reference ref : mHashMap)
+				ref.value.Clear(valueArrayParams);
+			mValueCrew.Destroy(GetMemManager());
+			throw;
+		}
 	}
 
 	~HashMultiMap() MOMO_NOEXCEPT
