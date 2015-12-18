@@ -600,7 +600,15 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
 		: HashSet(hashTraits, std::move(memManager))
 	{
-		Insert(items);
+		try
+		{
+			Insert(items);
+		}
+		catch (...)
+		{
+			_DestroyBuckets(mBuckets);
+			throw;
+		}
 	}
 
 	HashSet(HashSet&& hashSet) MOMO_NOEXCEPT
@@ -673,7 +681,7 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		if (mBuckets == nullptr)	//?
+		if (mBuckets == nullptr)
 			return ConstIterator();
 		return _MakeIterator(*mBuckets, 0,
 			(*mBuckets)[0].GetBounds(mCrew.GetBucketParams()).GetBegin(), true);
@@ -714,7 +722,7 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		if (mBuckets == nullptr)	//?
+		if (mBuckets == nullptr)
 			return;
 		_DestroyBuckets(mBuckets->ExtractNextBuckets());
 		BucketParams& bucketParams = mCrew.GetBucketParams();
@@ -944,7 +952,7 @@ public:
 private:
 	void _DestroyBuckets(Buckets* buckets) MOMO_NOEXCEPT
 	{
-		while (buckets != nullptr)	//?
+		while (buckets != nullptr)
 		{
 			BucketParams& bucketParams = mCrew.GetBucketParams();
 			for (Bucket& bucket : *buckets)
@@ -1147,8 +1155,6 @@ private:
 				bucket.RemoveBack(bucketParams);
 			}
 		}
-		//for (Bucket& bucket : *buckets)
-		//	bucket.Clear(bucketParams);
 		buckets->Destroy(GetMemManager());
 	}
 
