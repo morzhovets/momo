@@ -557,7 +557,16 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
-		Add(keyValuePairs);
+		try
+		{
+			Add(keyValuePairs);
+		}
+		catch (...)
+		{
+			_ClearValueArrays();
+			mValueCrew.Destroy(GetMemManager());
+			throw;
+		}
 	}
 
 	HashMultiMap(HashMultiMap&& hashMultiMap) MOMO_NOEXCEPT
@@ -573,19 +582,26 @@ public:
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())
 	{
-		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
-		mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
-		for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
-			mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
+		try
+		{
+			ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
+			mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
+			for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
+				mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
+		}
+		catch (...)
+		{
+			_ClearValueArrays();
+			mValueCrew.Destroy(GetMemManager());
+			throw;
+		}
 	}
 
 	~HashMultiMap() MOMO_NOEXCEPT
 	{
-		if (mValueCrew.IsNull())	//?
+		if (mValueCrew.IsNull())
 			return;
-		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
-		for (typename HashMap::Iterator::Reference ref : mHashMap)
-			ref.value.Clear(valueArrayParams);
+		_ClearValueArrays();
 		mValueCrew.Destroy(GetMemManager());
 	}
 
@@ -655,11 +671,9 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		if (mValueCrew.IsNull())	//?
+		if (mValueCrew.IsNull())
 			return;
-		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
-		for (typename HashMap::Iterator::Reference ref : mHashMap)
-			ref.value.Clear(valueArrayParams);
+		_ClearValueArrays();
 		mHashMap.Clear();
 		mValueCount = 0;
 		++mValueCrew.GetValueVersion();
@@ -876,6 +890,13 @@ public:
 	}
 
 private:
+	void _ClearValueArrays() MOMO_NOEXCEPT
+	{
+		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
+		for (typename HashMap::Iterator::Reference ref : mHashMap)
+			ref.value.Clear(valueArrayParams);
+	}
+
 	template<typename Iterator, typename KeyIterator>
 	Iterator _MakeIterator(KeyIterator keyIter) const MOMO_NOEXCEPT
 	{
