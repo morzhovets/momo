@@ -33,7 +33,7 @@
 #define MOMO_USE_VARIADIC_TEMPLATES
 #define MOMO_USE_TYPE_ALIASES
 #define MOMO_USE_INIT_LISTS
-#define MOMO_USE_TRIVIALLY_COPIABLE
+#define MOMO_USE_TRIVIALLY_COPYABLE
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_USE_NOEXCEPT
@@ -48,7 +48,7 @@
 #endif
 
 #if defined(__GNUC__) && __GNUC__ < 5
-#undef MOMO_USE_TRIVIALLY_COPIABLE
+#undef MOMO_USE_TRIVIALLY_COPYABLE
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1800

@@ -101,7 +101,7 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-#ifdef MOMO_USE_TRIVIALLY_COPIABLE
+#ifdef MOMO_USE_TRIVIALLY_COPYABLE
 	MOMO_STATIC_ASSERT(std::is_trivially_copyable<Params>::value);
 #else
 	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
