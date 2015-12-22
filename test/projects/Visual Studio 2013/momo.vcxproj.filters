@@ -203,5 +203,14 @@
     <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h">
       <Filter>Header Files\momo\stdish</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\details\TreeNode.h">
+      <Filter>Header Files\momo\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\TreeSet.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\TreeTraits.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

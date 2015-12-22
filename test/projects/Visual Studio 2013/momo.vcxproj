@@ -170,6 +170,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
     <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
+    <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\Settings.h" />
     <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_map.h" />
@@ -185,6 +186,8 @@
     <ClInclude Include="..\..\..\momo\MemManager.h" />
     <ClInclude Include="..\..\..\momo\MemPool.h" />
     <ClInclude Include="..\..\..\momo\SegmentedArray.h" />
+    <ClInclude Include="..\..\..\momo\TreeSet.h" />
+    <ClInclude Include="..\..\..\momo\TreeTraits.h" />
     <ClInclude Include="..\..\tests\LibcxxHashMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashMultiMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashSetTester.h" />

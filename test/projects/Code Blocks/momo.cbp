@@ -75,6 +75,8 @@
 		<Unit filename="../../../momo/ObjectManager.h" />
 		<Unit filename="../../../momo/SegmentedArray.h" />
 		<Unit filename="../../../momo/Settings.h" />
+		<Unit filename="../../../momo/TreeSet.h" />
+		<Unit filename="../../../momo/TreeTraits.h" />
 		<Unit filename="../../../momo/Utility.h" />
 		<Unit filename="../../../momo/details/ArrayBucket.h" />
 		<Unit filename="../../../momo/details/BucketLim4.h" />
@@ -83,6 +85,7 @@
 		<Unit filename="../../../momo/details/BucketOneI1.h" />
 		<Unit filename="../../../momo/details/BucketUnlimP.h" />
 		<Unit filename="../../../momo/details/BucketUtility.h" />
+		<Unit filename="../../../momo/details/TreeNode.h" />
 		<Unit filename="../../../momo/stdish/pool_allocator.h" />
 		<Unit filename="../../../momo/stdish/unordered_map.h" />
 		<Unit filename="../../../momo/stdish/unordered_multimap.h" />
