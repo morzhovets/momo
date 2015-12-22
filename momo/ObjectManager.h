@@ -110,12 +110,15 @@ namespace internal
 			object.~Object();
 		}
 
-		static void Destroy(Object* objects, size_t count) MOMO_NOEXCEPT
+		template<typename Iterator>
+		static void Destroy(Iterator begin, size_t count) MOMO_NOEXCEPT
 		{
+			MOMO_CHECK_TYPE(Object, *begin);
 			if (!std::is_trivially_destructible<Object>::value)
 			{
-				for (size_t i = 0; i < count; ++i)
-					Destroy(objects[i]);
+				Iterator iter = begin;
+				for (size_t i = 0; i < count; ++i, ++iter)
+					Destroy(*iter);
 			}
 		}
 
@@ -133,18 +136,21 @@ namespace internal
 				std::is_nothrow_copy_constructible<Object>());
 		}
 
-		static void Relocate(Object* srcObjects, Object* dstObjects, size_t count)
+		template<typename Iterator>
+		static void Relocate(Iterator srcBegin, Iterator dstBegin, size_t count)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			_Relocate(srcObjects, dstObjects, count, BoolConstant<isTriviallyRelocatable>(),
+			MOMO_CHECK_TYPE(Object, *srcBegin);
+			_Relocate(srcBegin, dstBegin, count, BoolConstant<isTriviallyRelocatable>(),
 				BoolConstant<isNothrowMoveConstructible>());
 		}
 
-		template<typename ObjectCreator>
-		static void RelocateAddBack(Object* srcObjects, Object* dstObjects, size_t srcCount,
-			const ObjectCreator& objectCreator)
+		template<typename Iterator, typename ObjectCreator>
+		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const ObjectCreator& objectCreator, void* pobject)
 		{
-			_RelocateAddBack(srcObjects, dstObjects, srcCount, objectCreator,
+			MOMO_CHECK_TYPE(Object, *srcBegin);
+			_RelocateCreate(srcBegin, dstBegin, count, objectCreator, pobject,
 				BoolConstant<isNothrowRelocatable>());
 		}
 
@@ -206,58 +212,66 @@ namespace internal
 			}
 		}
 
-		template<bool isNothrowMoveConstructible>
-		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
+		template<typename Iterator, bool isNothrowMoveConstructible>
+		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			std::true_type /*isTriviallyRelocatable*/,
 			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
 		{
-			memcpy(dstObjects, srcObjects, count * sizeof(Object));
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
+				memcpy(std::addressof(*dstIter), std::addressof(*srcIter), sizeof(Object));
 		}
 
-		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
+		template<typename Iterator>
+		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			std::false_type /*isTriviallyRelocatable*/,
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			if (count > 0)	// vs
-				std::uninitialized_copy_n(std::make_move_iterator(srcObjects), count, dstObjects);
-			Destroy(srcObjects, count);
+				std::uninitialized_copy_n(std::make_move_iterator(srcBegin), count, dstBegin);
+			Destroy(srcBegin, count);
 		}
 
-		static void _Relocate(Object* srcObjects, Object* dstObjects, size_t count,
+		template<typename Iterator>
+		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			std::false_type /*isTriviallyRelocatable*/,
 			std::false_type /*isNothrowMoveConstructible*/)
 		{
 			if (count > 0)
 			{
-				_RelocateAddBack(srcObjects, dstObjects, count - 1,
-					Creator<Object>(std::move(srcObjects[count - 1])), std::false_type());
+				_RelocateCreate(std::next(srcBegin), std::next(dstBegin), count - 1,
+					Creator<Object>(std::move(*srcBegin)), std::addressof(*dstBegin),
+					std::false_type());
 			}
 		}
 
-		template<typename ObjectCreator>
-		static void _RelocateAddBack(Object* srcObjects, Object* dstObjects, size_t srcCount,
-			const ObjectCreator& objectCreator, std::true_type /*isNothrowRelocatable*/)
+		template<typename Iterator, typename ObjectCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const ObjectCreator& objectCreator, void* pobject,
+			std::true_type /*isNothrowRelocatable*/)
 		{
-			objectCreator(dstObjects + srcCount);
-			Relocate(srcObjects, dstObjects, srcCount);
+			objectCreator(pobject);
+			Relocate(srcBegin, dstBegin, count);
 		}
 
-		template<typename ObjectCreator>
-		static void _RelocateAddBack(Object* srcObjects, Object* dstObjects, size_t srcCount,
-			const ObjectCreator& objectCreator, std::false_type /*isNothrowRelocatable*/)
+		template<typename Iterator, typename ObjectCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const ObjectCreator& objectCreator, void* pobject,
+			std::false_type /*isNothrowRelocatable*/)
 		{
-			if (srcCount > 0)	// vs
-				std::uninitialized_copy_n(srcObjects, srcCount, dstObjects);
+			if (count > 0)	// vs
+				std::uninitialized_copy_n(srcBegin, count, dstBegin);
 			try
 			{
-				objectCreator(dstObjects + srcCount);
+				objectCreator(pobject);
 			}
 			catch (...)
 			{
-				Destroy(dstObjects, srcCount);
+				Destroy(dstBegin, count);
 				throw;
 			}
-			Destroy(srcObjects, srcCount);
+			Destroy(srcBegin, count);
 		}
 	};
 }

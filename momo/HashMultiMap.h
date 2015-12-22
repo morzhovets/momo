@@ -287,7 +287,8 @@ struct HashMultiMapKeyValueTraits
 	static void RelocateAddBackValue(Value* srcValues, Value* dstValues, size_t srcCount,
 		const ValueCreator& valueCreator)
 	{
-		ValueManager::RelocateAddBack(srcValues, dstValues, srcCount, valueCreator);
+		ValueManager::RelocateCreate(srcValues, dstValues, srcCount,
+			valueCreator, dstValues + srcCount);
 	}
 };
 

@@ -365,7 +365,8 @@ struct HashSetItemTraits
 	static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
 		const ItemCreator& itemCreator)
 	{
-		ItemManager::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+		ItemManager::RelocateCreate(srcItems, dstItems, srcCount,
+			itemCreator, dstItems + srcCount);
 	}
 
 private:
