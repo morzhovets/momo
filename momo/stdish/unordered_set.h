@@ -28,8 +28,8 @@ class unordered_set
 {
 private:
 	typedef THashSet HashSet;
-	typedef typename THashSet::HashTraits HashTraits;
-	typedef typename THashSet::MemManager MemManager;
+	typedef typename HashSet::HashTraits HashTraits;
+	typedef typename HashSet::MemManager MemManager;
 
 public:
 	typedef TKey key_type;
@@ -324,7 +324,7 @@ public:
 
 	size_type count(const key_type& key) const
 	{
-		return (find(key) != end()) ? 1 : 0;
+		return mHashSet.HasKey(key) ? 1 : 0;
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
