@@ -195,24 +195,6 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<typename TIterator>
-	class HashInsertResult
-	{
-	public:
-		typedef TIterator Iterator;
-
-	public:
-		HashInsertResult(Iterator iter, bool inserted) MOMO_NOEXCEPT
-			: iterator(iter),
-			inserted(inserted)
-		{
-		}
-
-	public:
-		Iterator iterator;
-		bool inserted;
-	};
-
 	template<typename TKey, typename TMapped, typename THashMapReference>
 	class UnorderedMapReference : public std::pair<const TKey&, TMapped&>
 	{

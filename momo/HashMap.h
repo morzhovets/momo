@@ -514,7 +514,7 @@ public:
 	typedef internal::HashDerivedIterator<HashSetConstIterator, Reference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::HashInsertResult<Iterator> InsertResult;
+	typedef internal::InsertResult<Iterator> InsertResult;
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 private:

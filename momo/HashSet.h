@@ -581,7 +581,7 @@ private:
 public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
 
-	typedef internal::HashInsertResult<ConstIterator> InsertResult;
+	typedef internal::InsertResult<ConstIterator> InsertResult;
 
 	typedef typename Bucket::ConstBounds ConstBucketBounds;
 

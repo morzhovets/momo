@@ -252,6 +252,24 @@ namespace internal
 		value -= value >> 1;
 		return tab64[(value * (uint64_t)0x07EDD5E59A4E28C2) >> 58];
 	}
+
+	template<typename TIterator>
+	class InsertResult
+	{
+	public:
+		typedef TIterator Iterator;
+
+	public:
+		InsertResult(Iterator iter, bool inserted) MOMO_NOEXCEPT
+			: iterator(iter),
+			inserted(inserted)
+		{
+		}
+
+	public:
+		Iterator iterator;
+		bool inserted;
+	};
 }
 
 } // namespace momo
