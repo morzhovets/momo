@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     set(InputIterator first, InputIterator last, const value_compare& comp);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "../../../test_compare.h"
+//#include "test_iterators.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef int V;
     V ar[] =

@@ -13,12 +13,12 @@
 
 // explicit set(const value_compare& comp);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "../../../test_compare.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef test_compare<std::less<int> > C;
     std::set<int, C> m(C(3));

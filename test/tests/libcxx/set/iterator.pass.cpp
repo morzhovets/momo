@@ -26,12 +26,12 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef int V;

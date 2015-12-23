@@ -13,12 +13,12 @@
 
 // void swap(set& m);
 
-#include <set>
-#include <cassert>
-#include "test_allocator.h"
-#include "../../../test_compare.h"
+//#include <set>
+//#include <cassert>
+//#include "test_allocator.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef int V;
     typedef std::set<int> M;

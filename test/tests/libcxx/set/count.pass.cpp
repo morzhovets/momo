@@ -13,13 +13,13 @@
 
 // size_type count(const key_type& k) const;
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
 
-int main()
+void main()
 {
     {
         typedef int V;

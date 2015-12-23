@@ -13,15 +13,15 @@
 
 // set& operator=(set&& s);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "MoveOnly.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {

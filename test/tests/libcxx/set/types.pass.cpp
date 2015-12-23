@@ -29,12 +29,12 @@
 //     ...
 // };
 
-#include <set>
-#include <type_traits>
+//#include <set>
+//#include <type_traits>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::set<int> C;

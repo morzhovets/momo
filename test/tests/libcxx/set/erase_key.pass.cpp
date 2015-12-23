@@ -13,12 +13,12 @@
 
 // size_type erase(const key_type& k);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::set<int> M;

@@ -13,12 +13,12 @@
 
 // set(const allocator_type& a);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_allocator.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
     typedef std::less<int> C;
     typedef test_allocator<int> A;

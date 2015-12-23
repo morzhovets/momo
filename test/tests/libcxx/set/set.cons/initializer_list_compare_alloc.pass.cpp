@@ -14,12 +14,12 @@
 // set(initializer_list<value_type> il, const key_compare& comp, const allocator_type& a);
 // set(initializer_list<value_type> il, const allocator_type& a);
 
-#include <set>
-#include <cassert>
-#include "../../../test_compare.h"
-#include "test_allocator.h"
+//#include <set>
+//#include <cassert>
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {

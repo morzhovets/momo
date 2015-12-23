@@ -19,14 +19,14 @@
 //     set(InputIterator first, InputIterator last,
 //         const allocator_type& a);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
+//#include "test_iterators.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
     typedef int V;
     V ar[] =

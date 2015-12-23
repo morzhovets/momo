@@ -17,11 +17,11 @@
 
 // This tests a conforming extension
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "test_allocator.h"
+//#include "MoveOnly.h"
+//#include "test_allocator.h"
 
 template <class T>
 struct some_comp
@@ -30,7 +30,7 @@ struct some_comp
     some_comp& operator=(const some_comp&);
 };
 
-int main()
+void main()
 {
 #if __has_feature(cxx_noexcept)
     {

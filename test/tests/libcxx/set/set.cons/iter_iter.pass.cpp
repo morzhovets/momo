@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     set(InputIterator first, InputIterator last);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "min_allocator.h"
+//#include "test_iterators.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef int V;

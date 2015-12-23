@@ -13,12 +13,12 @@
 
 // pair<iterator, bool> insert(const value_type& v);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::set<int> M;

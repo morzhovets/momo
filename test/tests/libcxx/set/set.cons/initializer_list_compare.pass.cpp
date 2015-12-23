@@ -13,11 +13,11 @@
 
 // set(initializer_list<value_type> il, const key_compare& comp = key_compare());
 
-#include <set>
-#include <cassert>
-#include "../../../test_compare.h"
+//#include <set>
+//#include <cassert>
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     typedef test_compare<std::less<int> > Cmp;
