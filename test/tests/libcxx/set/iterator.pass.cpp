@@ -111,7 +111,8 @@ void main()
         for (int j = 1; j <= m.size(); ++j, ++i)
             assert(*i == j);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         V ar[] =

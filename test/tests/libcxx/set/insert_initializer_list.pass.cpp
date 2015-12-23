@@ -38,7 +38,8 @@ void main()
     assert(*++i == V(8));
     assert(*++i == V(10));
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef set<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;

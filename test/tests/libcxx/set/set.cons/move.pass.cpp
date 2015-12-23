@@ -70,7 +70,8 @@ void main()
         assert(mo.size() == 0);
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         V ar[] =

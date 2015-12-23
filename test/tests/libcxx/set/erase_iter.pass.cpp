@@ -106,7 +106,8 @@ void main()
         assert(i == m.begin());
         assert(i == m.end());
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef set<int, std::less<int>, min_allocator<int>> M;
         typedef int V;

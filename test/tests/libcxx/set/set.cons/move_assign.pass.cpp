@@ -141,7 +141,8 @@ void main()
         assert(m3.key_comp() == C(5));
         assert(m1.empty());
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;

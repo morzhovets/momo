@@ -44,7 +44,8 @@ void main()
     assert(*std::next(m.begin()) == 2);
     assert(*std::next(m.begin(), 2) == 3);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef int V;
     V ar[] =

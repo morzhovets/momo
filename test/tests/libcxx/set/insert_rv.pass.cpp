@@ -50,7 +50,8 @@ void main()
         assert(m.size() == 3);
         assert(*r.first == 3);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef set<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
         typedef std::pair<M::iterator, bool> R;
