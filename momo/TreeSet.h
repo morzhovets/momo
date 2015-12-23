@@ -443,7 +443,10 @@ private:
 		~Relocator() MOMO_NOEXCEPT
 		{
 			for (Node* node : mNewNodes)
+			{
+				node->SetCount(0);
 				node->Destroy(mNodeParams);
+			}
 		}
 
 		Relocator& operator=(const Relocator&) = delete;
@@ -657,6 +660,7 @@ public:
 	{
 		if (mRootNode != nullptr)
 			_Clear(mRootNode);
+		mRootNode = nullptr;
 		mCount = 0;
 	}
 
@@ -798,9 +802,22 @@ public:
 		return AddVar(iter, item);
 	}
 
-	//ConstIterator Remove(ConstIterator iter)
+	ConstIterator Remove(ConstIterator iter)
+	{
+		assert(false);	///
+		return iter;
+	}
+
 	//ConstIterator Remove(ConstIterator iter, Item& resItem)
-	//bool Remove(const Key& key)
+	
+	bool Remove(const Key& key)
+	{
+		ConstIterator iter = LowerBound(key);
+		if (!_IsEqual(iter, key))
+			return false;
+		Remove(iter);
+		return true;
+	}
 
 	//void Reset(ConstIterator iter, Item&& newItem)
 	//void Reset(ConstIterator iter, const Item& newItem)
@@ -815,11 +832,9 @@ private:
 
 	void _Clear(Node* node) MOMO_NOEXCEPT
 	{
-		size_t count = node->GetCount();
-		for (size_t i = 0; i < count; ++i)
-			ItemTraits::Destroy(*node->GetItemPtr(i));
 		if (!node->IsLeaf())
 		{
+			size_t count = node->GetCount();
 			for (size_t i = 0; i <= count; ++i)
 				_Clear(node->GetChild(i));
 		}
@@ -874,11 +889,11 @@ private:
 		node->AcceptBackItem(itemIndex);
 		node->SetChild(itemIndex, newNode1);
 		node->SetChild(itemIndex + 1, newNode2);
-		_SetParents(node);
+		_UpdateParents(node);	//?
 		return resIter;
 	}
 
-	void _SetParents(Node* node) MOMO_NOEXCEPT
+	void _UpdateParents(Node* node) MOMO_NOEXCEPT
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i <= count; ++i)
@@ -886,7 +901,7 @@ private:
 			Node* childNode = node->GetChild(i);
 			childNode->SetParent(node);
 			if (!childNode->IsLeaf())
-				_SetParents(childNode);
+				_UpdateParents(childNode);
 		}
 	}
 

@@ -79,6 +79,9 @@ namespace internal
 
 		void Destroy(Params& params) MOMO_NOEXCEPT
 		{
+			size_t count = GetCount();
+			for (size_t i = 0; i < count; ++i)
+				ItemTraits::Destroy(*GetItemPtr(i));
 			params.GetMemPool().Deallocate(this);
 		}
 
@@ -111,22 +114,23 @@ namespace internal
 		TreeNode* GetChild(size_t index) MOMO_NOEXCEPT
 		{
 			assert(!mIsLeaf);
-			assert(index <= mCount);
+			assert(index <= GetCount());
 			return mChildren[index];
 		}
 
 		void SetChild(size_t index, TreeNode* child) MOMO_NOEXCEPT
 		{
 			assert(!mIsLeaf);
-			assert(index <= mCount);
+			assert(index <= GetCount());
 			mChildren[index] = child;
 		}
 
 		size_t GetChildIndex(const TreeNode* child) const MOMO_NOEXCEPT
 		{
 			assert(!mIsLeaf);
-			size_t index = std::find(mChildren, mChildren + mCount + 1, child) - mChildren;
-			assert(index <= mCount);
+			size_t count = GetCount();
+			size_t index = std::find(mChildren, mChildren + count + 1, child) - mChildren;
+			assert(index <= count);
 			return index;
 		}
 
@@ -137,11 +141,12 @@ namespace internal
 
 		void AcceptBackItem(size_t index) MOMO_NOEXCEPT
 		{
-			assert(mCount < capacity);
-			assert(index <= mCount);
-			for (size_t i = mCount; i > index; --i)
+			size_t count = GetCount();
+			assert(count < capacity);
+			assert(index <= count);
+			for (size_t i = count; i > index; --i)
 				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
-			memmove(mChildren + index + 2, mChildren + index + 1, (mCount - index) * sizeof(void*));
+			memmove(mChildren + index + 2, mChildren + index + 1, (count - index) * sizeof(void*));
 			++mCount;
 		}
 
