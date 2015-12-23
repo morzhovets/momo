@@ -87,6 +87,7 @@
 		<Unit filename="../../../momo/details/BucketUtility.h" />
 		<Unit filename="../../../momo/details/TreeNode.h" />
 		<Unit filename="../../../momo/stdish/pool_allocator.h" />
+		<Unit filename="../../../momo/stdish/set.h" />
 		<Unit filename="../../../momo/stdish/unordered_map.h" />
 		<Unit filename="../../../momo/stdish/unordered_multimap.h" />
 		<Unit filename="../../../momo/stdish/unordered_set.h" />

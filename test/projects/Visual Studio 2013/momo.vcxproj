@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\Settings.h" />
     <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h" />
+    <ClInclude Include="..\..\..\momo\stdish\set.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_map.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_multimap.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_set.h" />
