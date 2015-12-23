@@ -18,13 +18,13 @@ namespace momo
 
 namespace internal
 {
-	template<typename TTreeNode, typename TSettings>
+	template<typename TNode, typename TSettings>
 	class TreeSetConstIterator
 	{
 	public:
-		typedef TTreeNode TreeNode;
+		typedef TNode Node;
 		typedef TSettings Settings;
-		typedef typename TreeNode::Item Item;
+		typedef typename Node::Item Item;
 
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
@@ -38,10 +38,21 @@ namespace internal
 		{
 		}
 
-		TreeSetConstIterator(TreeNode& node, size_t itemIndex) MOMO_NOEXCEPT
+		TreeSetConstIterator(Node& node, size_t itemIndex, bool move) MOMO_NOEXCEPT
 			: mNode(&node),
 			mItemIndex(itemIndex)
 		{
+			if (move)
+				_Move();
+		}
+
+		explicit TreeSetConstIterator(Node& node) MOMO_NOEXCEPT
+		{
+			mNode = &node;
+			while (!mNode->IsLeaf())
+				mNode = mNode->GetChild(0);
+			mItemIndex = 0;
+			_Move();
 		}
 
 		//operator ConstIterator() const MOMO_NOEXCEPT
@@ -49,39 +60,15 @@ namespace internal
 		TreeSetConstIterator& operator++()
 		{
 			MOMO_CHECK(mNode != nullptr);
-			if (!mNode->IsLeaf())
+			if (mNode->IsLeaf())
 			{
-				MOMO_CHECK(mItemIndex < mNode->GetCount());
-				mNode = mNode->GetChild(mItemIndex + 1);
-				while (!mNode->IsLeaf())
-					mNode = mNode->GetChild(0);
-				mItemIndex = 0;
-			}
-			else if (mItemIndex + 1 == mNode->GetCount())
-			{
-				TreeNode* node = mNode;
-				while (true)
-				{
-					TreeNode* parentNode = node->GetParent();
-					if (parentNode == nullptr)
-					{
-						mNode = node;
-						mItemIndex = node->GetCount();
-						break;
-					}
-					size_t index = parentNode->GetChildIndex(node);
-					if (index < parentNode->GetCount())
-					{
-						mNode = parentNode;
-						mItemIndex = index;
-						break;
-					}
-					node = parentNode;
-				}
+				++mItemIndex;
+				_Move();
 			}
 			else
 			{
-				++mItemIndex;
+				MOMO_CHECK(mItemIndex < mNode->GetCount());
+				*this = TreeSetConstIterator(*mNode->GetChild(mItemIndex + 1));
 			}
 			return *this;
 		}
@@ -96,34 +83,35 @@ namespace internal
 		TreeSetConstIterator& operator--()
 		{
 			MOMO_CHECK(mNode != nullptr);
-			if (!mNode->IsLeaf())
+			Node* node = mNode;
+			size_t itemIndex = mItemIndex;
+			if (!node->IsLeaf())
 			{
-				mNode = mNode->GetChild(mItemIndex);
-				while (!mNode->IsLeaf())
-					mNode = mNode->GetChild(mNode->GetCount());
-				mItemIndex = mNode->GetCount() - 1;
+				node = node->GetChild(itemIndex);
+				while (!node->IsLeaf())
+					node = node->GetChild(node->GetCount());
+				itemIndex = node->GetCount();
 			}
-			else if (mItemIndex == 0)
+			if (itemIndex == 0)
 			{
-				TreeNode* node = mNode;
 				while (true)
 				{
-					TreeNode* parentNode = node->GetParent();
-					MOMO_CHECK(parentNode != nullptr);
-					size_t index = parentNode->GetChildIndex(node);
-					if (index > 0)
+					Node* childNode = node;
+					node = node->GetParent();
+					MOMO_CHECK(node != nullptr);
+					if (childNode != node->GetChild(0))
 					{
-						mNode = parentNode;
-						mItemIndex = index - 1;
+						itemIndex = node->GetChildIndex(childNode) - 1;
 						break;
 					}
-					node = parentNode;
 				}
 			}
 			else
 			{
-				--mItemIndex;
+				--itemIndex;
 			}
+			mNode = node;
+			mItemIndex = itemIndex;
 			return *this;
 		}
 
@@ -156,7 +144,7 @@ namespace internal
 			return !(*this == iter);
 		}
 
-		TreeNode* GetNode() const MOMO_NOEXCEPT
+		Node* GetNode() const MOMO_NOEXCEPT
 		{
 			return mNode;
 		}
@@ -167,7 +155,31 @@ namespace internal
 		}
 
 	private:
-		TreeNode* mNode;
+		void _Move() MOMO_NOEXCEPT
+		{
+			assert(mNode->IsLeaf());
+			if (mItemIndex < mNode->GetCount())
+				return;
+			while (true)
+			{
+				Node* parentNode = mNode->GetParent();
+				if (parentNode == nullptr)
+				{
+					mItemIndex = mNode->GetCount();
+					break;
+				}
+				Node* childNode = mNode;
+				mNode = parentNode;
+				if (childNode != mNode->GetChild(mNode->GetCount()))
+				{
+					mItemIndex = mNode->GetChildIndex(childNode);
+					break;
+				}
+			}
+		}
+
+	private:
+		Node* mNode;
 		size_t mItemIndex;
 	};
 }
@@ -195,6 +207,11 @@ struct TreeSetItemTraits
 	static void Destroy(Item& item) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(item);
+	}
+
+	static void Assign(Item&& srcItem, Item& dstItem)
+	{
+		dstItem = std::move(srcItem);
 	}
 
 	template<typename Iterator, typename ItemCreator>
@@ -482,7 +499,7 @@ private:
 				AddSegment(oldNode, 0, newNode1, 0, itemIndex);
 				AddSegment(oldNode, itemIndex, newNode1, itemIndex + 1, middleIndex - itemIndex);
 				AddSegment(oldNode, middleIndex + 1, newNode2, 0, itemCount - middleIndex - 1);
-				return ConstIterator(*newNode1, itemIndex);
+				return ConstIterator(*newNode1, itemIndex, false);
 			}
 			else
 			{
@@ -491,7 +508,7 @@ private:
 				AddSegment(oldNode, 0, newNode1, 0, middleIndex);
 				AddSegment(oldNode, middleIndex + 1, newNode2, 0, itemIndex - middleIndex - 1);
 				AddSegment(oldNode, itemIndex, newNode2, itemIndex - middleIndex, itemCount - itemIndex);
-				return ConstIterator(*newNode2, itemIndex - middleIndex - 1);
+				return ConstIterator(*newNode2, itemIndex - middleIndex - 1, false);
 			}
 		}
 
@@ -615,17 +632,14 @@ public:
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		Node* node = mRootNode;
-		while (!node->IsLeaf())
-			node = node->GetChild(0);
-		return ConstIterator(*node, 0);
+		return ConstIterator(*mRootNode);
 	}
 	
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		return ConstIterator(*mRootNode, mRootNode->GetCount());
+		return ConstIterator(*mRootNode, mRootNode->GetCount(), false);
 	}
 
 	MOMO_FRIEND_SWAP(TreeSet)
@@ -659,7 +673,7 @@ public:
 	void Clear() MOMO_NOEXCEPT
 	{
 		if (mRootNode != nullptr)
-			_Clear(mRootNode);
+			_Destroy(mRootNode);
 		mRootNode = nullptr;
 		mCount = 0;
 	}
@@ -685,7 +699,7 @@ public:
 					rightIndex = middleIndex;
 			}
 			if (leftIndex < itemCount)
-				iter = ConstIterator(*node, leftIndex);
+				iter = ConstIterator(*node, leftIndex, false);
 			if (node->IsLeaf())
 				break;
 			node = node->GetChild(leftIndex);
@@ -776,7 +790,7 @@ public:
 		{
 			itemCreator(node->GetItemPtr(itemCount));
 			node->AcceptBackItem(itemIndex);
-			resIter = ConstIterator(*node, itemIndex);
+			resIter = ConstIterator(*node, itemIndex, false);
 		}
 		else
 		{
@@ -804,8 +818,14 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		assert(false);	///
-		return iter;
+		if (mCount == 1)
+		{
+			Clear();
+			return GetEnd();
+		}
+		ConstIterator resIter = _Remove(iter.GetNode(), iter.GetItemIndex());
+		--mCount;
+		return resIter;
 	}
 
 	//ConstIterator Remove(ConstIterator iter, Item& resItem)
@@ -830,13 +850,13 @@ private:
 		return iter != GetEnd() && !GetTreeTraits().Less(key, ItemTraits::GetKey(*iter));
 	}
 
-	void _Clear(Node* node) MOMO_NOEXCEPT
+	void _Destroy(Node* node) MOMO_NOEXCEPT
 	{
 		if (!node->IsLeaf())
 		{
 			size_t count = node->GetCount();
 			for (size_t i = 0; i <= count; ++i)
-				_Clear(node->GetChild(i));
+				_Destroy(node->GetChild(i));
 		}
 		node->Destroy(mCrew.GetNodeParams());
 	}
@@ -902,6 +922,46 @@ private:
 			childNode->SetParent(node);
 			if (!childNode->IsLeaf())
 				_UpdateParents(childNode);
+		}
+	}
+
+	ConstIterator _Remove(Node* node, size_t itemIndex)
+	{
+		if (node->IsLeaf())
+		{
+			node->Remove(itemIndex);
+			return ConstIterator(*node, itemIndex, true);
+		}
+		Node* childNode = node->GetChild(itemIndex);
+		while (!childNode->IsLeaf())
+			childNode = childNode->GetChild(childNode->GetCount());
+		while (childNode != node && childNode->GetCount() == 0)
+			childNode = childNode->GetParent();
+		if (childNode == node)
+		{
+			Node* remNode = node->GetChild(itemIndex + 1);
+			_Destroy(node->GetChild(itemIndex));
+			node->Remove(itemIndex);
+			node->SetChild(itemIndex, remNode);
+			return ConstIterator(*node->GetChild(itemIndex));
+		}
+		else
+		{
+			size_t childItemIndex = childNode->GetCount() - 1;
+			ItemTraits::Assign(std::move(*childNode->GetItemPtr(childItemIndex)),
+				*node->GetItemPtr(itemIndex));
+			if (childNode->IsLeaf())
+			{
+				childNode->Remove(childItemIndex);
+			}
+			else
+			{
+				Node* remNode = childNode->GetChild(childItemIndex);
+				_Destroy(childNode->GetChild(childItemIndex + 1));
+				childNode->Remove(childItemIndex);
+				childNode->SetChild(childItemIndex, remNode);
+			}
+			return ConstIterator(*node->GetChild(itemIndex + 1));
 		}
 	}
 

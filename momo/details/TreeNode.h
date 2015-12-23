@@ -72,8 +72,6 @@ namespace internal
 			node.mParent = nullptr;
 			node.mIsLeaf = isLeaf;
 			node.mCount = (unsigned char)0;
-			for (size_t i = 0; i <= capacity; ++i)
-				node.mChildren[i] = nullptr;
 			return node;
 		}
 
@@ -146,8 +144,21 @@ namespace internal
 			assert(index <= count);
 			for (size_t i = count; i > index; --i)
 				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
-			memmove(mChildren + index + 2, mChildren + index + 1, (count - index) * sizeof(void*));
+			if (!mIsLeaf)
+				memmove(mChildren + index + 2, mChildren + index + 1, (count - index) * sizeof(void*));
 			++mCount;
+		}
+
+		void Remove(size_t index) MOMO_NOEXCEPT
+		{
+			size_t count = GetCount();
+			assert(index < count);
+			for (size_t i = index + 1; i < count; ++i)
+				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
+			ItemTraits::Destroy(*GetItemPtr(count - 1));
+			if (!mIsLeaf)
+				memmove(mChildren + index, mChildren + index + 1, (count - index) * sizeof(void*));
+			--mCount;
 		}
 
 	private:
