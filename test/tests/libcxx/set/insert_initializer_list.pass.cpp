@@ -27,7 +27,7 @@ void main()
     C m = {10, 8};
     m.insert({1, 2, 3, 4, 5, 6});
     assert(m.size() == 8);
-    assert(std::distance(m.begin(), m.end()) == m.size());
+    assert((size_t)std::distance(m.begin(), m.end()) == m.size());
     C::const_iterator i = m.cbegin();
     assert(*i == V(1));
     assert(*++i == V(2));

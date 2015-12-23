@@ -63,13 +63,13 @@ void main()
             8
         };
         set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(std::distance(m.begin(), m.end()) == m.size());
-        assert(std::distance(m.rbegin(), m.rend()) == m.size());
+        assert((size_t)std::distance(m.begin(), m.end()) == m.size());
+        assert((size_t)std::distance(m.rbegin(), m.rend()) == m.size());
         set<int>::iterator i;
         i = m.begin();
         set<int>::const_iterator k = i;
         assert(i == k);
-        for (int j = 1; j <= m.size(); ++j, ++i)
+        for (int j = 1; j <= (int)m.size(); ++j, ++i)
             assert(*i == j);
     }
     {
@@ -102,13 +102,13 @@ void main()
             8
         };
         const set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(std::distance(m.begin(), m.end()) == m.size());
-        assert(std::distance(m.cbegin(), m.cend()) == m.size());
-        assert(std::distance(m.rbegin(), m.rend()) == m.size());
-        assert(std::distance(m.crbegin(), m.crend()) == m.size());
+        assert((size_t)std::distance(m.begin(), m.end()) == m.size());
+        assert((size_t)std::distance(m.cbegin(), m.cend()) == m.size());
+        assert((size_t)std::distance(m.rbegin(), m.rend()) == m.size());
+        assert((size_t)std::distance(m.crbegin(), m.crend()) == m.size());
         set<int>::const_iterator i;
         i = m.begin();
-        for (int j = 1; j <= m.size(); ++j, ++i)
+        for (int j = 1; j <= (int)m.size(); ++j, ++i)
             assert(*i == j);
     }
 //#if __cplusplus >= 201103L
