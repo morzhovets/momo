@@ -228,8 +228,12 @@ namespace internal
 			std::false_type /*isTriviallyRelocatable*/,
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
-			if (count > 0)	// vs
-				std::uninitialized_copy_n(std::make_move_iterator(srcBegin), count, dstBegin);
+			//if (count > 0)	// vs
+			//	std::uninitialized_copy_n(std::make_move_iterator(srcBegin), count, dstBegin);
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
+				CreateNothrow(std::move(*srcIter), std::addressof(*dstIter));
 			Destroy(srcBegin, count);
 		}
 
@@ -260,15 +264,20 @@ namespace internal
 			const ObjectCreator& objectCreator, void* pobject,
 			std::false_type /*isNothrowRelocatable*/)
 		{
-			if (count > 0)	// vs
-				std::uninitialized_copy_n(srcBegin, count, dstBegin);
+			//if (count > 0)	// vs
+			//	std::uninitialized_copy_n(srcBegin, count, dstBegin);
+			size_t index = 0;
 			try
 			{
+				Iterator srcIter = srcBegin;
+				Iterator dstIter = dstBegin;
+				for (; index < count; ++index, ++srcIter, ++dstIter)
+					Create(*srcIter, std::addressof(*dstIter));
 				objectCreator(pobject);
 			}
 			catch (...)
 			{
-				Destroy(dstBegin, count);
+				Destroy(dstBegin, index);
 				throw;
 			}
 			Destroy(srcBegin, count);
