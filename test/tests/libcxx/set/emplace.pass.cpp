@@ -24,6 +24,7 @@
 void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef set<DefaultOnly> M;
         typedef std::pair<M::iterator, bool> R;
@@ -44,6 +45,7 @@ void main()
         assert(DefaultOnly::count == 1);
     }
     assert(DefaultOnly::count == 0);
+#endif
     {
         typedef set<Emplaceable> M;
         typedef std::pair<M::iterator, bool> R;
