@@ -42,8 +42,8 @@ void main()
                  input_iterator<const V*>(ar + sizeof(ar)/sizeof(ar[0])));
         assert(m.size() == 3);
         assert(*m.begin() == 1);
-        assert(*next(m.begin()) == 2);
-        assert(*next(m.begin(), 2) == 3);
+        assert(*std::next(m.begin()) == 2);
+        assert(*std::next(m.begin(), 2) == 3);
     }
 #if __cplusplus >= 201103L
     {
@@ -66,8 +66,8 @@ void main()
                  input_iterator<const V*>(ar + sizeof(ar)/sizeof(ar[0])));
         assert(m.size() == 3);
         assert(*m.begin() == 1);
-        assert(*next(m.begin()) == 2);
-        assert(*next(m.begin(), 2) == 3);
+        assert(*std::next(m.begin()) == 2);
+        assert(*std::next(m.begin(), 2) == 3);
     }
 #endif
 }

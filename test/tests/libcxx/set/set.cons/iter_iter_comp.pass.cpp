@@ -40,8 +40,8 @@ void main()
                      input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])), C(5));
     assert(m.value_comp() == C(5));
     assert(m.size() == 3);
-    assert(distance(m.begin(), m.end()) == 3);
+    assert(std::distance(m.begin(), m.end()) == 3);
     assert(*m.begin() == 1);
-    assert(*next(m.begin()) == 2);
-    assert(*next(m.begin(), 2) == 3);
+    assert(*std::next(m.begin()) == 2);
+    assert(*std::next(m.begin(), 2) == 3);
 }

@@ -39,10 +39,10 @@ void main()
     set<V> m(input_iterator<const int*>(ar),
                   input_iterator<const int*>(ar+sizeof(ar)/sizeof(ar[0])));
     assert(m.size() == 3);
-    assert(distance(m.begin(), m.end()) == 3);
+    assert(std::distance(m.begin(), m.end()) == 3);
     assert(*m.begin() == 1);
-    assert(*next(m.begin()) == 2);
-    assert(*next(m.begin(), 2) == 3);
+    assert(*std::next(m.begin()) == 2);
+    assert(*std::next(m.begin(), 2) == 3);
     }
 #if __cplusplus >= 201103L
     {
@@ -62,10 +62,10 @@ void main()
     set<V, std::less<int>, min_allocator<int>> m(input_iterator<const int*>(ar),
                   input_iterator<const int*>(ar+sizeof(ar)/sizeof(ar[0])));
     assert(m.size() == 3);
-    assert(distance(m.begin(), m.end()) == 3);
+    assert(std::distance(m.begin(), m.end()) == 3);
     assert(*m.begin() == 1);
-    assert(*next(m.begin()) == 2);
-    assert(*next(m.begin(), 2) == 3);
+    assert(*std::next(m.begin()) == 2);
+    assert(*std::next(m.begin(), 2) == 3);
     }
 #endif
 }
