@@ -93,7 +93,8 @@ struct some_alloc3
 
 void main()
 {
-#if __has_feature(cxx_noexcept)
+#ifndef _LIBCPP_HAS_NO_NOEXCEPT
+//#if __has_feature(cxx_noexcept)
     {
         typedef set<MoveOnly> C;
         C c1, c2;

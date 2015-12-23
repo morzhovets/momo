@@ -17,7 +17,8 @@
 //#include "MoveOnly.h"
 //#include "test_allocator.h"
 
-#if __has_feature(cxx_noexcept)
+#ifndef _LIBCPP_HAS_NO_NOEXCEPT
+//#if __has_feature(cxx_noexcept)
 
 template <class T>
 struct some_comp
@@ -30,7 +31,8 @@ struct some_comp
 
 void main()
 {
-#if __has_feature(cxx_noexcept)
+#ifndef _LIBCPP_HAS_NO_NOEXCEPT
+//#if __has_feature(cxx_noexcept)
     {
         typedef set<MoveOnly> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");

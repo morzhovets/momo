@@ -30,7 +30,8 @@ struct some_comp
 
 void main()
 {
-#if __has_feature(cxx_noexcept)
+#ifndef _LIBCPP_HAS_NO_NOEXCEPT
+//#if __has_feature(cxx_noexcept)
     {
         typedef set<MoveOnly> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
