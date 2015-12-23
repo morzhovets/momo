@@ -23,7 +23,7 @@ void main()
 {
     typedef test_compare<std::less<int> > C;
     typedef test_allocator<int> A;
-    std::set<int, C, A> m(C(4), A(5));
+    set<int, C, A> m(C(4), A(5));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(4));

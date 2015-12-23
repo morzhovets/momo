@@ -21,7 +21,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     typedef test_compare<std::less<int> > Cmp;
-    typedef std::set<int, Cmp> C;
+    typedef set<int, Cmp> C;
     typedef C::value_type V;
     C m({1, 2, 3, 4, 5, 6}, Cmp(10));
     assert(m.size() == 6);

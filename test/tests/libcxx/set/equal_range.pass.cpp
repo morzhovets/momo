@@ -24,7 +24,7 @@ void main()
 {
     {
     typedef int V;
-    typedef std::set<int> M;
+    typedef set<int> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -161,7 +161,7 @@ void main()
 #if __cplusplus >= 201103L
     {
     typedef int V;
-    typedef std::set<int, std::less<int>, min_allocator<int>> M;
+    typedef set<int, std::less<int>, min_allocator<int>> M;
     typedef std::pair<M::iterator, M::iterator> R;
     V ar[] =
     {
@@ -231,7 +231,7 @@ void main()
 #if _LIBCPP_STD_VER > 11
     {
     typedef int V;
-    typedef std::set<V, std::less<>> M;
+    typedef set<V, std::less<>> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -301,7 +301,7 @@ void main()
     }
     {
     typedef PrivateConstructor V;
-    typedef std::set<V, std::less<>> M;
+    typedef set<V, std::less<>> M;
     typedef std::pair<M::iterator, M::iterator> R;
 
     M m;

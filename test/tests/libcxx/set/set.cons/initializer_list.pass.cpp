@@ -22,7 +22,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
-    typedef std::set<int> C;
+    typedef set<int> C;
     typedef C::value_type V;
     C m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);
@@ -37,7 +37,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::set<int, std::less<int>, min_allocator<int>> C;
+    typedef set<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;
     C m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);

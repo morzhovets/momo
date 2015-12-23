@@ -22,7 +22,7 @@ void main()
 {
     {
     typedef int V;
-    typedef std::set<int> M;
+    typedef set<int> M;
     {
         M m1;
         M m2;
@@ -99,7 +99,7 @@ void main()
 #if __cplusplus >= 201103L
     {
     typedef int V;
-    typedef std::set<int, std::less<int>, min_allocator<int>> M;
+    typedef set<int, std::less<int>, min_allocator<int>> M;
     {
         M m1;
         M m2;

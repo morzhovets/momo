@@ -21,7 +21,7 @@
 void main()
 {
     {
-        typedef std::set<int> M;
+        typedef set<int> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));
@@ -46,7 +46,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::set<int, std::less<int>, min_allocator<int>> M;
+        typedef set<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));

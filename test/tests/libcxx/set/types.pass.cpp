@@ -37,7 +37,7 @@
 void main()
 {
     {
-    typedef std::set<int> C;
+    typedef set<int> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
@@ -52,7 +52,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::set<int, std::less<int>, min_allocator<int>> C;
+    typedef set<int, std::less<int>, min_allocator<int>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");

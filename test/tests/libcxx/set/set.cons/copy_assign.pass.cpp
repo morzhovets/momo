@@ -37,8 +37,8 @@ void main()
         };
         typedef test_compare<std::less<int> > C;
         typedef test_allocator<V> A;
-        std::set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(2));
-        std::set<int, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0])/2, C(3), A(7));
+        set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(2));
+        set<int, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0])/2, C(3), A(7));
         m = mo;
         assert(m.get_allocator() == A(7));
         assert(m.key_comp() == C(5));
@@ -64,8 +64,8 @@ void main()
             2,
             3
         };
-        std::set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        std::set<int> *p = &m;
+        set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        set<int> *p = &m;
         m = *p;
 
         assert(m.size() == 3);
@@ -87,8 +87,8 @@ void main()
         };
         typedef test_compare<std::less<int> > C;
         typedef other_allocator<V> A;
-        std::set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(2));
-        std::set<int, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0])/2, C(3), A(7));
+        set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(2));
+        set<int, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0])/2, C(3), A(7));
         m = mo;
         assert(m.get_allocator() == A(2));
         assert(m.key_comp() == C(5));

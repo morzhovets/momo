@@ -29,7 +29,7 @@ bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return 
 void main()
 {
     {
-        typedef std::set<int> M;
+        typedef set<int> M;
         typedef int V;
         typedef M::iterator I;
         V ar[] =
@@ -108,7 +108,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::set<int, std::less<int>, min_allocator<int>> M;
+        typedef set<int, std::less<int>, min_allocator<int>> M;
         typedef int V;
         typedef M::iterator I;
         V ar[] =
@@ -190,7 +190,7 @@ void main()
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
-        typedef std::set<T> C;
+        typedef set<T> C;
         typedef C::iterator I;
 
         C c;

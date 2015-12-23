@@ -95,50 +95,50 @@ void main()
 {
 #if __has_feature(cxx_noexcept)
     {
-        typedef std::set<MoveOnly> C;
+        typedef set<MoveOnly> C;
         C c1, c2;
         static_assert(noexcept(swap(c1, c2)), "");
     }
     {
-        typedef std::set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         C c1, c2;
         static_assert(noexcept(swap(c1, c2)), "");
     }
     {
-        typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         C c1, c2;
         static_assert(noexcept(swap(c1, c2)), "");
     }
     {
-        typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
+        typedef set<MoveOnly, some_comp<MoveOnly>> C;
         C c1, c2;
         static_assert(!noexcept(swap(c1, c2)), "");
     }
 
 #if TEST_STD_VER >= 14
     { // POCS allocator, throwable swap for comp
-    typedef std::set<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef set<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
     C c1, c2;
     static_assert(!noexcept(swap(c1, c2)), "");
     }
     { // always equal allocator, throwable swap for comp
-    typedef std::set<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef set<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
     C c1, c2;
     static_assert(!noexcept(swap(c1, c2)), "");
     }
     { // POCS allocator, nothrow swap for comp
-    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
     C c1, c2;
     static_assert( noexcept(swap(c1, c2)), "");
     }
     { // always equal allocator, nothrow swap for comp
-    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
     C c1, c2;
     static_assert( noexcept(swap(c1, c2)), "");
     }
 
     { // NOT always equal allocator, nothrow swap for comp
-    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
+    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
     C c1, c2;
     static_assert( noexcept(swap(c1, c2)), "");
     }

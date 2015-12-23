@@ -62,12 +62,12 @@ void main()
             8,
             8
         };
-        std::set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(std::distance(m.begin(), m.end()) == m.size());
         assert(std::distance(m.rbegin(), m.rend()) == m.size());
-        std::set<int>::iterator i;
+        set<int>::iterator i;
         i = m.begin();
-        std::set<int>::const_iterator k = i;
+        set<int>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= m.size(); ++j, ++i)
             assert(*i == j);
@@ -101,12 +101,12 @@ void main()
             8,
             8
         };
-        const std::set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(std::distance(m.begin(), m.end()) == m.size());
         assert(std::distance(m.cbegin(), m.cend()) == m.size());
         assert(std::distance(m.rbegin(), m.rend()) == m.size());
         assert(std::distance(m.crbegin(), m.crend()) == m.size());
-        std::set<int>::const_iterator i;
+        set<int>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= m.size(); ++j, ++i)
             assert(*i == j);
@@ -141,12 +141,12 @@ void main()
             8,
             8
         };
-        std::set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(std::distance(m.begin(), m.end()) == m.size());
         assert(std::distance(m.rbegin(), m.rend()) == m.size());
-        std::set<int, std::less<int>, min_allocator<int>>::iterator i;
+        set<int, std::less<int>, min_allocator<int>>::iterator i;
         i = m.begin();
-        std::set<int, std::less<int>, min_allocator<int>>::const_iterator k = i;
+        set<int, std::less<int>, min_allocator<int>>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= m.size(); ++j, ++i)
             assert(*i == j);
@@ -180,12 +180,12 @@ void main()
             8,
             8
         };
-        const std::set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(std::distance(m.begin(), m.end()) == m.size());
         assert(std::distance(m.cbegin(), m.cend()) == m.size());
         assert(std::distance(m.rbegin(), m.rend()) == m.size());
         assert(std::distance(m.crbegin(), m.crend()) == m.size());
-        std::set<int, std::less<int>, min_allocator<int>>::const_iterator i;
+        set<int, std::less<int>, min_allocator<int>>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= m.size(); ++j, ++i)
             assert(*i == j);
@@ -193,7 +193,7 @@ void main()
 #endif
 #if _LIBCPP_STD_VER > 11
     { // N3644 testing
-        typedef std::set<int> C;
+        typedef set<int> C;
         C::iterator ii1{}, ii2{};
         C::iterator ii4 = ii1;
         C::const_iterator cii{};

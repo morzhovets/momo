@@ -21,7 +21,7 @@
 void main()
 {
     typedef test_compare<std::less<int> > C;
-    std::set<int, C> m(C(3));
+    set<int, C> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));

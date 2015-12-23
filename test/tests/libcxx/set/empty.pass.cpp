@@ -21,7 +21,7 @@
 void main()
 {
     {
-    typedef std::set<int> M;
+    typedef set<int> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1));
@@ -31,7 +31,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::set<int, std::less<int>, min_allocator<int>> M;
+    typedef set<int, std::less<int>, min_allocator<int>> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1));

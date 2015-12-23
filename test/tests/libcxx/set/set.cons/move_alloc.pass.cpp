@@ -28,7 +28,7 @@ void main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<V> A;
-        typedef std::set<MoveOnly, C, A> M;
+        typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -66,7 +66,7 @@ void main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<V> A;
-        typedef std::set<MoveOnly, C, A> M;
+        typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -104,7 +104,7 @@ void main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef other_allocator<V> A;
-        typedef std::set<MoveOnly, C, A> M;
+        typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -142,7 +142,7 @@ void main()
         typedef Counter<int> V;
         typedef std::less<V> C;
         typedef test_allocator<V> A;
-        typedef std::set<V, C, A> M;
+        typedef set<V, C, A> M;
         typedef V* I;
         Counter_base::gConstructed = 0;
         {

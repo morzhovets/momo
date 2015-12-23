@@ -34,19 +34,19 @@ void main()
 {
 #if __has_feature(cxx_noexcept)
     {
-        typedef std::set<MoveOnly> C;
+        typedef set<MoveOnly> C;
         static_assert(std::is_nothrow_move_assignable<C>::value, "");
     }
     {
-        typedef std::set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_assignable<C>::value, "");
     }
     {
-        typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_move_assignable<C>::value, "");
     }
     {
-        typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
+        typedef set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_assignable<C>::value, "");
     }
 #endif

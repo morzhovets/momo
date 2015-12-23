@@ -25,7 +25,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-        typedef std::set<DefaultOnly> M;
+        typedef set<DefaultOnly> M;
         typedef M::iterator R;
         M m;
         assert(DefaultOnly::count == 0);
@@ -43,7 +43,7 @@ void main()
     }
     assert(DefaultOnly::count == 0);
     {
-        typedef std::set<Emplaceable> M;
+        typedef set<Emplaceable> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.cend());
@@ -60,7 +60,7 @@ void main()
         assert(*r == Emplaceable(2, 3.5));
     }
     {
-        typedef std::set<int> M;
+        typedef set<int> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.cend(), M::value_type(2));
@@ -70,7 +70,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::set<int, std::less<int>, min_allocator<int>> M;
+        typedef set<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.cend(), M::value_type(2));

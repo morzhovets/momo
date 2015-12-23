@@ -36,8 +36,8 @@ void main()
     };
     typedef test_compare<std::less<int> > C;
     typedef test_allocator<V> A;
-    std::set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
-    std::set<int, C, A> m(mo, A(3));
+    set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
+    set<int, C, A> m(mo, A(3));
     assert(m.get_allocator() == A(3));
     assert(m.key_comp() == C(5));
     assert(m.size() == 3);
