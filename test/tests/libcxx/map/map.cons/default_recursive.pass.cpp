@@ -13,7 +13,7 @@
 
 // map();
 
-#include <map>
+//#include <map>
 
 struct X
 {
@@ -24,6 +24,6 @@ struct X
     std::map<int, X>::const_reverse_iterator cri;
 };
 
-int main()
+void main()
 {
 }

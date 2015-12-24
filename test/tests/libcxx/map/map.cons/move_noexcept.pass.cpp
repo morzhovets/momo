@@ -15,11 +15,11 @@
 
 // This tests a conforming extension
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "test_allocator.h"
+//#include "MoveOnly.h"
+//#include "test_allocator.h"
 
 template <class T>
 struct some_comp
@@ -28,7 +28,7 @@ struct some_comp
     some_comp(const some_comp&);
 };
 
-int main()
+void main()
 {
 #if __has_feature(cxx_noexcept)
     typedef std::pair<const MoveOnly, MoveOnly> V;

@@ -13,16 +13,16 @@
 
 // map(map&& m, const allocator_type& a);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "Counter.h"
+//#include "MoveOnly.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
+//#include "Counter.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
@@ -169,7 +169,7 @@ int main()
 
             M m1(I(a1), I(a1+num), C(), A());
             assert(Counter_base::gConstructed == num+3);
-        
+
             M m2(m1);
             assert(m2 == m1);
             assert(Counter_base::gConstructed == num+6);
@@ -187,7 +187,7 @@ int main()
             }
             assert(Counter_base::gConstructed == num+3);
         }
-        assert(Counter_base::gConstructed == 0);            
+        assert(Counter_base::gConstructed == 0);
     }
 #if __cplusplus >= 201103L
     {

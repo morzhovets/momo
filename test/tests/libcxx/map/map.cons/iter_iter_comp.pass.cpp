@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     map(InputIterator first, InputIterator last, const key_compare& comp);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;

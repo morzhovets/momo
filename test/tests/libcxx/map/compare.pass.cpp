@@ -16,16 +16,16 @@
 // http://llvm.org/bugs/show_bug.cgi?id=16538
 // http://llvm.org/bugs/show_bug.cgi?id=16549
 
-#include <map>
-#include <utility>
-#include <cassert>
+//#include <map>
+//#include <utility>
+//#include <cassert>
 
 struct Key {
   template <typename T> Key(const T&) {}
   bool operator< (const Key&) const { return false; }
 };
 
-int main()
+void main()
 {
     typedef std::map<Key, int> MapT;
     typedef MapT::iterator Iter;

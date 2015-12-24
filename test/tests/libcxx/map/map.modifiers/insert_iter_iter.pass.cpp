@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "min_allocator.h"
+//#include "test_iterators.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::map<int, double> M;

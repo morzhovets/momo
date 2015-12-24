@@ -15,15 +15,15 @@
 
 // http://llvm.org/bugs/show_bug.cgi?id=16542
 
-#include <map>
+//#include <map>
 
 #ifndef _LIBCPP_HAS_NO_VARIADICS
 
-#include <tuple>
+//#include <tuple>
 
 #endif
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_VARIADICS
     using namespace std;

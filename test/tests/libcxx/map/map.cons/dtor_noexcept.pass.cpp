@@ -11,11 +11,11 @@
 
 // ~map() // implied noexcept;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "test_allocator.h"
+//#include "MoveOnly.h"
+//#include "test_allocator.h"
 
 #if __has_feature(cxx_noexcept)
 
@@ -28,7 +28,7 @@ struct some_comp
 
 #endif
 
-int main()
+void main()
 {
 #if __has_feature(cxx_noexcept)
     typedef std::pair<const MoveOnly, MoveOnly> V;

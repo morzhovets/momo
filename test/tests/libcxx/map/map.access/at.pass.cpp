@@ -15,12 +15,12 @@
 //       mapped_type& at(const key_type& k);
 // const mapped_type& at(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::pair<const int, double> V;

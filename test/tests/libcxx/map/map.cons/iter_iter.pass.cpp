@@ -14,12 +14,12 @@
 // template <class InputIterator>
 //     map(InputIterator first, InputIterator last);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;

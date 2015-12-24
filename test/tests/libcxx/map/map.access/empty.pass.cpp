@@ -13,12 +13,12 @@
 
 // bool empty() const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::map<int, double> M;

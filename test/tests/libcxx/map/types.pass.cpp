@@ -29,12 +29,12 @@
 //     ...
 // };
 
-#include <map>
-#include <type_traits>
+//#include <map>
+//#include <type_traits>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::map<int, double> C;

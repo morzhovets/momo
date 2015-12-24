@@ -13,14 +13,14 @@
 
 // mapped_type& operator[](key_type&& k);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "MoveOnly.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "MoveOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #if TEST_STD_VER >= 11
     {

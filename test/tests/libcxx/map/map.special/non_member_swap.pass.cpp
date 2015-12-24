@@ -15,13 +15,13 @@
 //   void
 //   swap(map<Key, T, Compare, Allocator>& x, map<Key, T, Compare, Allocator>& y);
 
-#include <map>
-#include <cassert>
-#include "test_allocator.h"
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include <map>
+//#include <cassert>
+//#include "test_allocator.h"
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     typedef std::pair<const int, double> V;
     {

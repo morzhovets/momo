@@ -22,12 +22,12 @@
 // template <class M>
 //  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);        // C++17
 
-#include <__config>
-#include <map>
-#include <cassert>
-#include <tuple>
+//#include <__config>
+//#include <map>
+//#include <cassert>
+//#include <tuple>
 
-#include <iostream>
+//#include <iostream>
 
 class Moveable
 {
@@ -58,7 +58,7 @@ public:
 };
 
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
 #ifndef _LIBCPP_HAS_NO_VARIADICS

@@ -13,13 +13,13 @@
 
 // explicit map(const key_compare& comp);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef test_compare<std::less<int> > C;

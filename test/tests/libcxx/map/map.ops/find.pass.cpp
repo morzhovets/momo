@@ -14,14 +14,14 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "is_transparent.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "is_transparent.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;

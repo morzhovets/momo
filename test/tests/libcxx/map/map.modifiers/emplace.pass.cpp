@@ -14,15 +14,15 @@
 // template <class... Args>
 //   pair<iterator, bool> emplace(Args&&... args);
 
-#include <map>
-#include <cassert>
-#include <tuple>
+//#include <map>
+//#include <cassert>
+//#include <tuple>
 
-#include "../../../Emplaceable.h"
-#include "DefaultOnly.h"
-#include "min_allocator.h"
+//#include "../../../Emplaceable.h"
+//#include "DefaultOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {

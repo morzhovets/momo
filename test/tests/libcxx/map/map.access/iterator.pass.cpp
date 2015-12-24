@@ -26,12 +26,12 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::pair<const int, double> V;

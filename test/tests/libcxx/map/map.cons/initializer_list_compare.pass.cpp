@@ -13,12 +13,12 @@
 
 // map(initializer_list<value_type> il, const key_compare& comp);
 
-#include <map>
-#include <cassert>
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include <map>
+//#include <cassert>
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {

@@ -14,13 +14,13 @@
 //       iterator upper_bound(const key_type& k);
 // const_iterator upper_bound(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;
@@ -280,7 +280,7 @@ int main()
     r = m.upper_bound(20);
     assert(r == next(m.begin(), 8));
     }
-    
+
     {
     typedef PrivateConstructor PC;
     typedef std::map<PC, double, std::less<>> M;

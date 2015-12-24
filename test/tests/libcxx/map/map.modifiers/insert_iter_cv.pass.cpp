@@ -13,12 +13,12 @@
 
 // iterator insert(const_iterator position, const value_type& v);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::map<int, double> M;

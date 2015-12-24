@@ -14,13 +14,13 @@
 // template <class P>
 //   pair<iterator, bool> insert(P&& p);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "min_allocator.h"
+//#include "MoveOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {

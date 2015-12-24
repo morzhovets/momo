@@ -13,10 +13,10 @@
 
 // iterator erase(const_iterator position);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
 struct TemplateConstructor
 {
@@ -26,7 +26,7 @@ struct TemplateConstructor
 
 bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return false; }
 
-int main()
+void main()
 {
     {
         typedef std::map<int, double> M;

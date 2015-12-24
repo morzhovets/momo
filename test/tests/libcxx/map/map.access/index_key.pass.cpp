@@ -13,13 +13,13 @@
 
 // mapped_type& operator[](const key_type& k);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;

@@ -14,14 +14,14 @@
 // template <class... Args>
 //   iterator emplace_hint(const_iterator position, Args&&... args);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "../../../Emplaceable.h"
-#include "DefaultOnly.h"
-#include "min_allocator.h"
+//#include "../../../Emplaceable.h"
+//#include "DefaultOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
@@ -64,7 +64,7 @@ int main()
         assert(m.size() == 1);
         assert(m.begin()->first == 2);
         assert(m.begin()->second == Emplaceable());
-        r = m.emplace_hint(m.end(), std::piecewise_construct, 
+        r = m.emplace_hint(m.end(), std::piecewise_construct,
                                     std::forward_as_tuple(1),
                                     std::forward_as_tuple(2, 3.5));
         assert(r == m.begin());
@@ -130,7 +130,7 @@ int main()
         assert(m.size() == 1);
         assert(m.begin()->first == 2);
         assert(m.begin()->second == Emplaceable());
-        r = m.emplace_hint(m.end(), std::piecewise_construct, 
+        r = m.emplace_hint(m.end(), std::piecewise_construct,
                                     std::forward_as_tuple(1),
                                     std::forward_as_tuple(2, 3.5));
         assert(r == m.begin());

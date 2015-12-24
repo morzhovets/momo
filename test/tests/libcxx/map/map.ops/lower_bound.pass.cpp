@@ -14,14 +14,14 @@
 //       iterator lower_bound(const key_type& k);
 // const_iterator lower_bound(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "is_transparent.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "is_transparent.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;
@@ -317,7 +317,7 @@ int main()
     r = m.lower_bound(C2Int(20));
     assert(r == next(m.begin(), 8));
     }
-    
+
     {
     typedef PrivateConstructor PC;
     typedef std::map<PC, double, std::less<>> M;
