@@ -28,15 +28,21 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParams<sizeof(void*) * (capacity + 3) + sizeof(Item) * capacity>,
-			MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParamsVarSize<>, MemManagerPtr> MemPool;
 
 	public:
 		class Params
 		{
+		private:
+			typedef typename MemPool::Params MemPoolParams;
+
+			static const size_t leafNodeSize = sizeof(TreeNode);
+			static const size_t internalNodeSize = leafNodeSize + sizeof(void*) * (capacity + 1);
+
 		public:
 			explicit Params(MemManager& memManager)
-				: mMemPool(MemManagerPtr(memManager))
+				: mInternalMemPool(MemPoolParams(internalNodeSize), MemManagerPtr(memManager)),
+				mLeafMemPool(MemPoolParams(leafNodeSize), MemManagerPtr(memManager))
 			{
 			}
 
@@ -48,13 +54,14 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
-			MemPool& GetMemPool() MOMO_NOEXCEPT
+			MemPool& GetMemPool(bool isLeaf) MOMO_NOEXCEPT
 			{
-				return mMemPool;
+				return isLeaf ? mLeafMemPool : mInternalMemPool;
 			}
 
 		private:
-			MemPool mMemPool;
+			MemPool mInternalMemPool;
+			MemPool mLeafMemPool;
 		};
 
 	public:
@@ -68,7 +75,7 @@ namespace internal
 
 		static TreeNode& Create(Params& params, bool isLeaf)
 		{
-			TreeNode& node = *(TreeNode*)params.GetMemPool().Allocate();
+			TreeNode& node = *(TreeNode*)params.GetMemPool(isLeaf).Allocate();
 			node.mParent = nullptr;
 			node.mIsLeaf = isLeaf;
 			node.mCount = (unsigned char)0;
@@ -80,7 +87,7 @@ namespace internal
 			size_t count = GetCount();
 			for (size_t i = 0; i < count; ++i)
 				ItemTraits::Destroy(*GetItemPtr(i));
-			params.GetMemPool().Deallocate(this);
+			params.GetMemPool(mIsLeaf).Deallocate(this);
 		}
 
 		bool IsLeaf() const MOMO_NOEXCEPT
@@ -111,23 +118,21 @@ namespace internal
 
 		TreeNode* GetChild(size_t index) MOMO_NOEXCEPT
 		{
-			assert(!mIsLeaf);
 			assert(index <= GetCount());
-			return mChildren[index];
+			return _GetChildren()[index];
 		}
 
 		void SetChild(size_t index, TreeNode* child) MOMO_NOEXCEPT
 		{
-			assert(!mIsLeaf);
 			assert(index <= GetCount());
-			mChildren[index] = child;
+			_GetChildren()[index] = child;
 		}
 
 		size_t GetChildIndex(const TreeNode* child) const MOMO_NOEXCEPT
 		{
-			assert(!mIsLeaf);
 			size_t count = GetCount();
-			size_t index = std::find(mChildren, mChildren + count + 1, child) - mChildren;
+			TreeNode** children = _GetChildren();
+			size_t index = std::find(children, children + count + 1, child) - children;
 			assert(index <= count);
 			return index;
 		}
@@ -145,7 +150,10 @@ namespace internal
 			for (size_t i = count; i > index; --i)
 				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
 			if (!mIsLeaf)
-				memmove(mChildren + index + 2, mChildren + index + 1, (count - index) * sizeof(void*));
+			{
+				TreeNode** children = _GetChildren();
+				memmove(children + index + 2, children + index + 1, (count - index) * sizeof(void*));
+			}
 			++mCount;
 		}
 
@@ -157,15 +165,24 @@ namespace internal
 				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
 			ItemTraits::Destroy(*GetItemPtr(count - 1));
 			if (!mIsLeaf)
-				memmove(mChildren + index, mChildren + index + 1, (count - index) * sizeof(void*));
+			{
+				TreeNode** children = _GetChildren();
+				memmove(children + index, children + index + 1, (count - index) * sizeof(void*));
+			}
 			--mCount;
 		}
 
 	private:
+		TreeNode** _GetChildren() const MOMO_NOEXCEPT
+		{
+			assert(!mIsLeaf);
+			return (TreeNode**)(this + 1);
+		}
+
+	private:
+		TreeNode* mParent;
 		bool mIsLeaf;
 		unsigned char mCount;
-		TreeNode* mParent;
-		TreeNode* mChildren[capacity + 1];
 		ItemBuffer mItems[capacity];
 	};
 }
