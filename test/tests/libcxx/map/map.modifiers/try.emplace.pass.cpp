@@ -62,7 +62,7 @@ void main()
 #ifndef _LIBCPP_HAS_NO_VARIADICS
 
     { // pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
-        typedef std::map<int, Moveable> M;
+        typedef map<int, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -105,7 +105,7 @@ void main()
     }
 
     {  // pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
-        typedef std::map<Moveable, Moveable> M;
+        typedef map<Moveable, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -133,7 +133,7 @@ void main()
     }
 
     {  // iterator try_emplace(const_iterator hint, const key_type& k, Args&&... args);
-        typedef std::map<int, Moveable> M;
+        typedef map<int, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
@@ -159,7 +159,7 @@ void main()
     }
 
     {  // iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
-        typedef std::map<Moveable, Moveable> M;
+        typedef map<Moveable, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )

@@ -25,7 +25,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-        typedef std::map<int, DefaultOnly> M;
+        typedef map<int, DefaultOnly> M;
         typedef M::iterator R;
         M m;
         assert(DefaultOnly::count == 0);
@@ -54,7 +54,7 @@ void main()
     }
     assert(DefaultOnly::count == 0);
     {
-        typedef std::map<int, Emplaceable> M;
+        typedef map<int, Emplaceable> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.end(), std::piecewise_construct,
@@ -80,7 +80,7 @@ void main()
         assert(m.begin()->second == Emplaceable(2, 3.5));
     }
     {
-        typedef std::map<int, double> M;
+        typedef map<int, double> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.end(), M::value_type(2, 3.5));
@@ -91,7 +91,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::map<int, DefaultOnly, std::less<int>, min_allocator<std::pair<const int, DefaultOnly>>> M;
+        typedef map<int, DefaultOnly, std::less<int>, min_allocator<std::pair<const int, DefaultOnly>>> M;
         typedef M::iterator R;
         M m;
         assert(DefaultOnly::count == 0);
@@ -120,7 +120,7 @@ void main()
     }
     assert(DefaultOnly::count == 0);
     {
-        typedef std::map<int, Emplaceable, std::less<int>, min_allocator<std::pair<const int, Emplaceable>>> M;
+        typedef map<int, Emplaceable, std::less<int>, min_allocator<std::pair<const int, Emplaceable>>> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.end(), std::piecewise_construct,
@@ -146,7 +146,7 @@ void main()
         assert(m.begin()->second == Emplaceable(2, 3.5));
     }
     {
-        typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace_hint(m.end(), M::value_type(2, 3.5));

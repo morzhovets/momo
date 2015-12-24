@@ -27,7 +27,7 @@ struct Key {
 
 void main()
 {
-    typedef std::map<Key, int> MapT;
+    typedef map<Key, int> MapT;
     typedef MapT::iterator Iter;
     typedef std::pair<Iter, bool> IterBool;
     {

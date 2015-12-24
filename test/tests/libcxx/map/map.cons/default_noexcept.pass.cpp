@@ -35,19 +35,19 @@ void main()
 #if __has_feature(cxx_noexcept)
     typedef std::pair<const MoveOnly, MoveOnly> V;
     {
-        typedef std::map<MoveOnly, MoveOnly> C;
+        typedef map<MoveOnly, MoveOnly> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef std::map<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
+        typedef map<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef std::map<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
+        typedef map<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef std::map<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
+        typedef map<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
 #endif

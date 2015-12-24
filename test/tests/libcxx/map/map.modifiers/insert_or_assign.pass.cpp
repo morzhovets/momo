@@ -64,7 +64,7 @@ void main()
 #ifndef _LIBCPP_HAS_NO_VARIADICS
 
     { // pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
-        typedef std::map<int, Moveable> M;
+        typedef map<int, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -108,7 +108,7 @@ void main()
         assert(r.first->second.get() == -1);  // value
     }
     { // pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
-        typedef std::map<Moveable, Moveable> M;
+        typedef map<Moveable, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -137,7 +137,7 @@ void main()
         assert(r.first->second.get() == 5); // value
     }
     { // iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
-        typedef std::map<int, Moveable> M;
+        typedef map<int, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
@@ -160,7 +160,7 @@ void main()
         assert(r->second.get() == 5);  // value
     }
     { // iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
-        typedef std::map<Moveable, Moveable> M;
+        typedef map<Moveable, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )

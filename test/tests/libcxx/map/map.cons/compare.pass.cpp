@@ -23,7 +23,7 @@ void main()
 {
     {
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C> m(C(3));
+    map<int, double, C> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));
@@ -31,7 +31,7 @@ void main()
 #if __cplusplus >= 201103L
     {
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C, min_allocator<std::pair<const int, double>>> m(C(3));
+    map<int, double, C, min_allocator<std::pair<const int, double>>> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));

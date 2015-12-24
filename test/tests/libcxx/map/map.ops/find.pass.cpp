@@ -25,7 +25,7 @@ void main()
 {
     {
     typedef std::pair<const int, double> V;
-    typedef std::map<int, double> M;
+    typedef map<int, double> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -96,7 +96,7 @@ void main()
 #if __cplusplus >= 201103L
     {
     typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
+    typedef map<int, double, std::less<int>, min_allocator<V>> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -168,7 +168,7 @@ void main()
 #if _LIBCPP_STD_VER > 11
     {
     typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<>> M;
+    typedef map<int, double, std::less<>> M;
     typedef M::iterator R;
 
     V ar[] =
@@ -224,7 +224,7 @@ void main()
 
     {
     typedef PrivateConstructor PC;
-    typedef std::map<PC, double, std::less<>> M;
+    typedef map<PC, double, std::less<>> M;
     typedef M::iterator R;
 
     M m;

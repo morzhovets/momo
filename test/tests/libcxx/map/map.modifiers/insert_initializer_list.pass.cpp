@@ -23,7 +23,7 @@ void main()
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
     typedef std::pair<const int, double> V;
-    std::map<int, double> m =
+    map<int, double> m =
                             {
                                 {1, 1},
                                 {1, 1.5},
@@ -46,7 +46,7 @@ void main()
 #if __cplusplus >= 201103L
     {
     typedef std::pair<const int, double> V;
-    std::map<int, double, std::less<int>, min_allocator<V>> m =
+    map<int, double, std::less<int>, min_allocator<V>> m =
                             {
                                 {1, 1},
                                 {1, 1.5},

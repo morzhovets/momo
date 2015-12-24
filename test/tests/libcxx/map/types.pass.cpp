@@ -37,7 +37,7 @@
 void main()
 {
     {
-    typedef std::map<int, double> C;
+    typedef map<int, double> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");
@@ -52,7 +52,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
+    typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");

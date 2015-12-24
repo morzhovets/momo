@@ -24,7 +24,7 @@ void main()
     {
     typedef std::pair<const int, double> V;
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C> m({
+    map<int, double, C> m({
                                 {1, 1},
                                 {1, 1.5},
                                 {1, 2},
@@ -46,7 +46,7 @@ void main()
     {
     typedef std::pair<const int, double> V;
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C, min_allocator<std::pair<const int, double>>> m({
+    map<int, double, C, min_allocator<std::pair<const int, double>>> m({
                                 {1, 1},
                                 {1, 1.5},
                                 {1, 2},

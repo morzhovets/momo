@@ -24,7 +24,7 @@ void main()
 {
 #if TEST_STD_VER >= 11
     {
-    std::map<MoveOnly, double> m;
+    map<MoveOnly, double> m;
     assert(m.size() == 0);
     assert(m[1] == 0.0);
     assert(m.size() == 1);
@@ -39,7 +39,7 @@ void main()
     }
     {
     typedef std::pair<const MoveOnly, double> V;
-    std::map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;
+    map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;
     assert(m.size() == 0);
     assert(m[1] == 0.0);
     assert(m.size() == 1);

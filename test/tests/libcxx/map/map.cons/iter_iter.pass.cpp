@@ -35,7 +35,7 @@ void main()
         V(3, 1.5),
         V(3, 2),
     };
-    std::map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 3);
     assert(distance(m.begin(), m.end()) == 3);
     assert(*m.begin() == V(1, 1));
@@ -57,7 +57,7 @@ void main()
         V(3, 1.5),
         V(3, 2),
     };
-    std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 3);
     assert(distance(m.begin(), m.end()) == 3);
     assert(*m.begin() == V(1, 1));

@@ -22,7 +22,7 @@ void main()
 {
     typedef std::pair<const int, double> V;
     {
-    typedef std::map<int, double> M;
+    typedef map<int, double> M;
     {
         M m1;
         M m2;
@@ -98,7 +98,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
+    typedef map<int, double, std::less<int>, min_allocator<V>> M;
     {
         M m1;
         M m2;

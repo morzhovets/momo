@@ -24,7 +24,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-        typedef std::map<int, MoveOnly> M;
+        typedef map<int, MoveOnly> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r = m.insert(M::value_type(2, 2));
@@ -57,7 +57,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::map<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
+        typedef map<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r = m.insert(M::value_type(2, 2));

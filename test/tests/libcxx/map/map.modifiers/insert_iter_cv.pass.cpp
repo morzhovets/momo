@@ -21,7 +21,7 @@
 void main()
 {
     {
-        typedef std::map<int, double> M;
+        typedef map<int, double> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.end(), M::value_type(2, 2.5));
@@ -50,7 +50,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-        typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.end(), M::value_type(2, 2.5));

@@ -37,7 +37,7 @@ void main()
         V(3, 2),
     };
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
+    map<int, double, C> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
     assert(m.key_comp() == C(5));
     assert(m.size() == 3);
     assert(distance(m.begin(), m.end()) == 3);
@@ -61,7 +61,7 @@ void main()
         V(3, 2),
     };
     typedef test_compare<std::less<int> > C;
-    std::map<int, double, C, min_allocator<std::pair<const int, double>>> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
+    map<int, double, C, min_allocator<std::pair<const int, double>>> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
     assert(m.key_comp() == C(5));
     assert(m.size() == 3);
     assert(distance(m.begin(), m.end()) == 3);

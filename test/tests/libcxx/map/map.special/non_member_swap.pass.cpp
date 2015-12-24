@@ -25,7 +25,7 @@ void main()
 {
     typedef std::pair<const int, double> V;
     {
-    typedef std::map<int, double> M;
+    typedef map<int, double> M;
     {
         M m1;
         M m2;
@@ -101,7 +101,7 @@ void main()
     {
         typedef test_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
+        typedef map<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),
@@ -135,7 +135,7 @@ void main()
     {
         typedef other_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
+        typedef map<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),
@@ -169,7 +169,7 @@ void main()
     }
 #if __cplusplus >= 201103L
     {
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
+    typedef map<int, double, std::less<int>, min_allocator<V>> M;
     {
         M m1;
         M m2;
@@ -245,7 +245,7 @@ void main()
     {
         typedef min_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
+        typedef map<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),

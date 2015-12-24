@@ -33,7 +33,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    std::map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 7);
     assert(m[1] == 1.5);
     assert(m.size() == 7);
@@ -59,7 +59,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    std::map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 7);
     assert(m[1] == 1.5);
     assert(m.size() == 7);
@@ -87,7 +87,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    std::map<int, double, std::less<>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    map<int, double, std::less<>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
 
     assert(m.size() == 7);
     assert(m[1] == 1.5);
