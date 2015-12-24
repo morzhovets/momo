@@ -188,13 +188,13 @@ namespace internal
 
 namespace std
 {
-	template<typename BI, typename R>
-	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R>>
+	template<typename BI, typename R, typename CBI, typename CR>
+	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R, CBI, CR>>
 	{
 		typedef forward_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashDerivedIterator<BI, R>::Pointer pointer;
-		typedef typename momo::internal::HashDerivedIterator<BI, R>::Reference reference;
+		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Pointer pointer;
+		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Reference reference;
 		typedef reference value_type;	//?
 	};
 } // namespace std
