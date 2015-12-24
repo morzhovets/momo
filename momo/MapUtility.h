@@ -239,19 +239,25 @@ namespace internal
 			return *&mValueBuffer;
 		}
 
-		template<typename PairCreator>
-		static void RelocateCreate(MapKeyValuePair* srcPairs, MapKeyValuePair* dstPairs,
-			size_t count, const PairCreator& pairCreator, void* ppair)
-		{
-			_RelocateCreate(srcPairs, dstPairs, count, pairCreator, ppair,
-				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
-				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
-		}
-
 		static void Assign(MapKeyValuePair&& srcPair, MapKeyValuePair& dstPair)
 		{
 			KeyValueTraits::AssignPair(std::move(srcPair.GetKey()), std::move(srcPair.GetValue()),
 				dstPair.GetKey(), dstPair.GetValue());
+		}
+
+		static void SwapNothrow(MapKeyValuePair& pair1, MapKeyValuePair& pair2) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::SwapKeysNothrow(pair1.GetKey(), pair2.GetKey());
+			KeyValueTraits::SwapValuesNothrow(pair1.GetValue(), pair2.GetValue());
+		}
+
+		template<typename Iterator, typename PairCreator>
+		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const PairCreator& pairCreator, void* ppair)
+		{
+			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, ppair,
+				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
+				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
 
 	private:
@@ -285,86 +291,81 @@ namespace internal
 			}
 		}
 
-		template<typename PairCreator>
-		static void _RelocateCreate(MapKeyValuePair* srcPairs, MapKeyValuePair* dstPairs,
-			size_t count, const PairCreator& pairCreator, void* ppair,
+		template<typename Iterator, typename PairCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const PairCreator& pairCreator, void* ppair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
 			pairCreator(ppair);
-			for (size_t i = 0; i < count; ++i)	//?
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
 			{
-				MapKeyValuePair& srcPair = srcPairs[i];
-				MapKeyValuePair& dstPair = dstPairs[i];
-				KeyValueTraits::RelocateKeyNothrow(srcPair.GetKey(), &dstPair.mKeyBuffer);
-				KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(), &dstPair.mValueBuffer);
+				KeyValueTraits::RelocateKeyNothrow(srcIter->GetKey(), &dstIter->mKeyBuffer);
+				KeyValueTraits::RelocateValueNothrow(srcIter->GetValue(), &dstIter->mValueBuffer);
 			}
 		}
 
-		template<typename PairCreator>
-		static void _RelocateCreate(MapKeyValuePair* srcPairs, MapKeyValuePair* dstPairs,
-			size_t count, const PairCreator& pairCreator, void* ppair,
+		template<typename Iterator, typename PairCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const PairCreator& pairCreator, void* ppair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
 			{
-				for (; index < count; ++index)
-				{
-					ValueCreator<const Value&>(srcPairs[index].GetValue())
-						(&dstPairs[index].mValueBuffer);
-				}
+				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
+					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
 				pairCreator(ppair);
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < index; ++i)
-					KeyValueTraits::DestroyValue(dstPairs[i].GetValue());
+				for (Iterator itd = dstBegin; index > 0; --index, ++itd)
+					KeyValueTraits::DestroyValue(itd->GetValue());
 				throw;
 			}
-			for (size_t i = 0; i < count; ++i)
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
 			{
-				MapKeyValuePair& srcPair = srcPairs[i];
-				KeyValueTraits::RelocateKeyNothrow(srcPair.GetKey(), &dstPairs[i].mKeyBuffer);
-				KeyValueTraits::DestroyValue(srcPair.GetValue());
+				KeyValueTraits::RelocateKeyNothrow(srcIter->GetKey(), &dstIter->mKeyBuffer);
+				KeyValueTraits::DestroyValue(srcIter->GetValue());
 			}
 		}
 
-		template<typename PairCreator>
-		static void _RelocateCreate(MapKeyValuePair* srcPairs, MapKeyValuePair* dstPairs,
-			size_t count, const PairCreator& pairCreator, void* ppair,
+		template<typename Iterator, typename PairCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const PairCreator& pairCreator, void* ppair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
 			{
-				for (; index < count; ++index)
-				{
-					KeyValueTraits::CreateKey((const Key&)srcPairs[index].GetKey(),
-						&dstPairs[index].mKeyBuffer);
-				}
+				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
+					KeyValueTraits::CreateKey((const Key&)its->GetKey(), &itd->mKeyBuffer);
 				pairCreator(ppair);
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < index; ++i)
-					KeyValueTraits::DestroyKey(dstPairs[i].GetKey());
+				for (Iterator itd = dstBegin; index > 0; --index, ++itd)
+					KeyValueTraits::DestroyKey(itd->GetKey());
 				throw;
 			}
-			for (size_t i = 0; i < count; ++i)
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
 			{
-				MapKeyValuePair& srcPair = srcPairs[i];
-				KeyValueTraits::DestroyKey(srcPair.GetKey());
-				KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(),
-					&dstPairs[i].mValueBuffer);
+				KeyValueTraits::DestroyKey(srcIter->GetKey());
+				KeyValueTraits::RelocateValueNothrow(srcIter->GetValue(), &dstIter->mValueBuffer);
 			}
 		}
 
-		template<typename PairCreator>
-		static void _RelocateCreate(MapKeyValuePair* srcPairs, MapKeyValuePair* dstPairs,
-			size_t count, const PairCreator& pairCreator, void* ppair,
+		template<typename Iterator, typename PairCreator>
+		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const PairCreator& pairCreator, void* ppair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
@@ -372,28 +373,23 @@ namespace internal
 			size_t valueIndex = 0;
 			try
 			{
-				for (; keyIndex < count; ++keyIndex)
-				{
-					KeyValueTraits::CreateKey((const Key&)srcPairs[keyIndex].GetKey(),
-						&dstPairs[keyIndex].mKeyBuffer);
-				}
-				for (; valueIndex < count; ++valueIndex)
-				{
-					ValueCreator<const Value&>(srcPairs[valueIndex].GetValue())
-						(&dstPairs[valueIndex].mValueBuffer);
-				}
+				for (Iterator its = srcBegin, itd = dstBegin; keyIndex < count; ++keyIndex, ++its, ++itd)
+					KeyValueTraits::CreateKey((const Key&)its->GetKey(), &itd->mKeyBuffer);
+				for (Iterator its = srcBegin, itd = dstBegin; valueIndex < count; ++valueIndex, ++its, ++itd)
+					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
 				pairCreator(ppair);
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < keyIndex; ++i)
-					KeyValueTraits::DestroyKey(dstPairs[i].GetKey());
-				for (size_t i = 0; i < valueIndex; ++i)
-					KeyValueTraits::DestroyValue(dstPairs[i].GetValue());
+				for (Iterator itd = dstBegin; keyIndex > 0; --keyIndex, ++itd)
+					KeyValueTraits::DestroyKey(itd->GetKey());
+				for (Iterator itd = dstBegin; valueIndex > 0; --valueIndex, ++itd)
+					KeyValueTraits::DestroyValue(itd->GetValue());
 				throw;
 			}
-			for (size_t i = 0; i < count; ++i)
-				srcPairs[i].~MapKeyValuePair();
+			Iterator srcIter = srcBegin;
+			for (size_t i = 0; i < count; ++i, ++srcIter)
+				srcIter->~MapKeyValuePair();
 		}
 
 	private:
