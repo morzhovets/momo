@@ -270,6 +270,69 @@ namespace internal
 		Iterator iterator;
 		bool inserted;
 	};
+
+	template<bool tCheckVersion>
+	class IteratorVersion;
+
+	template<>
+	class IteratorVersion<true>
+	{
+	public:
+		static const bool checkVersion = true;
+
+	public:
+		IteratorVersion() MOMO_NOEXCEPT
+			: mContainerVersion(nullptr),
+			mVersion(0)
+		{
+		}
+
+		explicit IteratorVersion(const size_t& version) MOMO_NOEXCEPT
+			: mContainerVersion(&version),
+			mVersion(version)
+		{
+		}
+
+		bool Check() const MOMO_NOEXCEPT
+		{
+			return *mContainerVersion == mVersion;
+		}
+
+		bool Check(const size_t& version) const MOMO_NOEXCEPT
+		{
+			return mContainerVersion == &version && mVersion == version;
+		}
+
+	private:
+		const size_t* mContainerVersion;
+		size_t mVersion;
+	};
+
+	template<>
+	class IteratorVersion<false>
+	{
+	public:
+		static const bool checkVersion = false;
+
+	public:
+		IteratorVersion() MOMO_NOEXCEPT
+		{
+		}
+
+		explicit IteratorVersion(const size_t& /*version*/) MOMO_NOEXCEPT
+		{
+		}
+
+		bool Check() const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
+		bool Check(const size_t& /*version*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+	};
 }
 
 } // namespace momo
