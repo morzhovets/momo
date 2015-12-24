@@ -73,10 +73,10 @@ namespace internal
 			}
 
 			template<typename ItemCreator>
-			static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
-				const ItemCreator& itemCreator)
+			static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+				const ItemCreator& itemCreator, void* pitem)
 			{
-				ItemTraits::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+				ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
 			}
 		};
 
@@ -258,8 +258,9 @@ namespace internal
 						{
 							size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
 							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-							ItemTraits::RelocateAddBack(items,
-								_GetFastItems(memory.GetPointer()), count, itemCreator);
+							Item* newItems = _GetFastItems(memory.GetPointer());
+							ItemTraits::RelocateCreate(items, newItems, count,
+								itemCreator, newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 						}
@@ -269,8 +270,9 @@ namespace internal
 							ArrayMemory memory(arrayMemPool);
 							Array array = Array::CreateCap(maxFastCount * 2,
 								MemManagerPtr(arrayMemPool.GetMemManager()));
-							ItemTraits::RelocateAddBack(items, array.GetItems(),
-								count, itemCreator);
+							Item* newItems = array.GetItems();
+							ItemTraits::RelocateCreate(items, newItems, count,
+								itemCreator, newItems + count);
 							array.SetCountCrt(newCount, [] (void* /*pitem*/) { });
 							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);

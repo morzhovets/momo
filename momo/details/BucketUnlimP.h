@@ -47,10 +47,10 @@ namespace internal
 			}
 
 			template<typename ItemCreator>
-			static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
-				const ItemCreator& itemCreator)
+			static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+				const ItemCreator& itemCreator, void* pitem)
 			{
-				ItemTraits::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+				ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
 			}
 		};
 

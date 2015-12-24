@@ -279,10 +279,10 @@ private:
 		}
 
 		template<typename PairCreator>
-		static void RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
-			size_t srcCount, const PairCreator& pairCreator)
+		static void RelocateCreate(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
+			size_t count, const PairCreator& pairCreator, void* ppair)
 		{
-			_RelocateAddBack(srcPairs, dstPairs, srcCount, pairCreator,
+			_RelocateCreate(srcPairs, dstPairs, count, pairCreator, ppair,
 				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
 				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
@@ -325,13 +325,13 @@ private:
 		}
 
 		template<typename PairCreator>
-		static void _RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
-			size_t srcCount, const PairCreator& pairCreator,
+		static void _RelocateCreate(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
+			size_t count, const PairCreator& pairCreator, void* ppair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			pairCreator(dstPairs + srcCount);
-			for (size_t i = 0; i < srcCount; ++i)	//?
+			pairCreator(ppair);
+			for (size_t i = 0; i < count; ++i)	//?
 			{
 				KeyValuePair& srcPair = srcPairs[i];
 				KeyValuePair& dstPair = dstPairs[i];
@@ -341,20 +341,20 @@ private:
 		}
 
 		template<typename PairCreator>
-		static void _RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
-			size_t srcCount, const PairCreator& pairCreator,
+		static void _RelocateCreate(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
+			size_t count, const PairCreator& pairCreator, void* ppair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
 			{
-				for (; index < srcCount; ++index)
+				for (; index < count; ++index)
 				{
 					ValueCreator<const Value&>(srcPairs[index].GetValue())
 						(&dstPairs[index].mValueBuffer);
 				}
-				pairCreator(dstPairs + srcCount);
+				pairCreator(ppair);
 			}
 			catch (...)
 			{
@@ -362,7 +362,7 @@ private:
 					KeyValueTraits::DestroyValue(dstPairs[i].GetValue());
 				throw;
 			}
-			for (size_t i = 0; i < srcCount; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				KeyValuePair& srcPair = srcPairs[i];
 				KeyValueTraits::RelocateKeyNothrow(srcPair.GetKey(), &dstPairs[i].mKeyBuffer);
@@ -371,20 +371,20 @@ private:
 		}
 
 		template<typename PairCreator>
-		static void _RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
-			size_t srcCount, const PairCreator& pairCreator,
+		static void _RelocateCreate(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
+			size_t count, const PairCreator& pairCreator, void* ppair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
 			{
-				for (; index < srcCount; ++index)
+				for (; index < count; ++index)
 				{
 					KeyValueTraits::CreateKey((const Key&)srcPairs[index].GetKey(),
 						&dstPairs[index].mKeyBuffer);
 				}
-				pairCreator(dstPairs + srcCount);
+				pairCreator(ppair);
 			}
 			catch (...)
 			{
@@ -392,7 +392,7 @@ private:
 					KeyValueTraits::DestroyKey(dstPairs[i].GetKey());
 				throw;
 			}
-			for (size_t i = 0; i < srcCount; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				KeyValuePair& srcPair = srcPairs[i];
 				KeyValueTraits::DestroyKey(srcPair.GetKey());
@@ -402,8 +402,8 @@ private:
 		}
 
 		template<typename PairCreator>
-		static void _RelocateAddBack(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
-			size_t srcCount, const PairCreator& pairCreator,
+		static void _RelocateCreate(KeyValuePair* srcPairs, KeyValuePair* dstPairs,
+			size_t count, const PairCreator& pairCreator, void* ppair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
@@ -411,17 +411,17 @@ private:
 			size_t valueIndex = 0;
 			try
 			{
-				for (; keyIndex < srcCount; ++keyIndex)
+				for (; keyIndex < count; ++keyIndex)
 				{
 					KeyValueTraits::CreateKey((const Key&)srcPairs[keyIndex].GetKey(),
 						&dstPairs[keyIndex].mKeyBuffer);
 				}
-				for (; valueIndex < srcCount; ++valueIndex)
+				for (; valueIndex < count; ++valueIndex)
 				{
 					ValueCreator<const Value&>(srcPairs[valueIndex].GetValue())
 						(&dstPairs[valueIndex].mValueBuffer);
 				}
-				pairCreator(dstPairs + srcCount);
+				pairCreator(ppair);
 			}
 			catch (...)
 			{
@@ -431,7 +431,7 @@ private:
 					KeyValueTraits::DestroyValue(dstPairs[i].GetValue());
 				throw;
 			}
-			for (size_t i = 0; i < srcCount; ++i)
+			for (size_t i = 0; i < count; ++i)
 				srcPairs[i].~KeyValuePair();
 		}
 
@@ -482,10 +482,10 @@ private:
 		}
 
 		template<typename ItemCreator>
-		static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
-			const ItemCreator& itemCreator)
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
 		{
-			KeyValuePair::RelocateAddBack(srcItems, dstItems, srcCount, itemCreator);
+			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
 		}
 	};
 

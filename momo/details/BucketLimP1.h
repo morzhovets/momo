@@ -158,7 +158,8 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = memory.GetPointer();
-					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
+					ItemTraits::RelocateCreate(items, newItems, count,
+						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;

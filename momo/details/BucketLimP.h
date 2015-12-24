@@ -163,7 +163,8 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = _GetItems(memory.GetPointer());
-					ItemTraits::RelocateAddBack(_GetItems(), newItems, count, itemCreator);
+					ItemTraits::RelocateCreate(_GetItems(), newItems, count,
+						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
@@ -430,7 +431,8 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = memory.GetPointer();
-					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
+					ItemTraits::RelocateCreate(items, newItems, count,
+						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;

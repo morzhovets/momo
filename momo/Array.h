@@ -52,11 +52,10 @@ struct ArrayItemTraits
 	}
 
 	template<typename ItemCreator>
-	static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
-		const ItemCreator& itemCreator)
+	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+		const ItemCreator& itemCreator, void* pitem)
 	{
-		ItemManager::RelocateCreate(srcItems, dstItems, srcCount,
-			itemCreator, dstItems + srcCount);
+		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
 	}
 };
 
@@ -905,7 +904,10 @@ private:
 		size_t newCapacity = _GrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
 		Item* items = GetItems();
 		auto relocateFunc = [items, initCount, &itemCreator] (Item* newItems)
-			{ ItemTraits::RelocateAddBack(items, newItems, initCount, itemCreator); };
+		{
+			ItemTraits::RelocateCreate(items, newItems, initCount,
+				itemCreator, newItems + initCount);
+		};
 		mData.Reset(newCapacity, newCount, relocateFunc);
 	}
 

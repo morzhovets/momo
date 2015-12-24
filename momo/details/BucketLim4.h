@@ -175,8 +175,8 @@ namespace internal
 					Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
 					MemPool& memPool = params.GetMemPool(memPoolIndex);
 					uint32_t ptr = _GetPointer();
-					Item* items = (Item*)memPool.GetRealPointer(ptr);
-					ItemTraits::RelocateAddBack(items, newItems, count, itemCreator);
+					ItemTraits::RelocateCreate((Item*)memPool.GetRealPointer(ptr), newItems, count,
+						itemCreator, newItems + count);
 					memPool.Deallocate(ptr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;

@@ -284,11 +284,10 @@ struct HashMultiMapKeyValueTraits
 	}
 
 	template<typename ValueCreator>
-	static void RelocateAddBackValue(Value* srcValues, Value* dstValues, size_t srcCount,
-		const ValueCreator& valueCreator)
+	static void RelocateCreateValues(Value* srcValues, Value* dstValues, size_t count,
+		const ValueCreator& valueCreator, void* pvalue)
 	{
-		ValueManager::RelocateCreate(srcValues, dstValues, srcCount,
-			valueCreator, dstValues + srcCount);
+		ValueManager::RelocateCreate(srcValues, dstValues, count, valueCreator, pvalue);
 	}
 };
 
@@ -340,10 +339,10 @@ private:
 		}
 
 		template<typename ItemCreator>
-		static void RelocateAddBack(Item* srcItems, Item* dstItems, size_t srcCount,
-			const ItemCreator& itemCreator)
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
 		{
-			KeyValueTraits::RelocateAddBackValue(srcItems, dstItems, srcCount, itemCreator);
+			KeyValueTraits::RelocateCreateValues(srcItems, dstItems, count, itemCreator, pitem);
 		}
 	};
 
