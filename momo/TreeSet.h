@@ -12,6 +12,7 @@
 #pragma once
 
 #include "TreeTraits.h"
+#include "IteratorUtility.h"
 
 namespace momo
 {

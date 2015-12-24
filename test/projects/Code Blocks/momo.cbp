@@ -69,7 +69,7 @@
 		<Unit filename="../../../momo/HashMultiMap.h" />
 		<Unit filename="../../../momo/HashSet.h" />
 		<Unit filename="../../../momo/HashTraits.h" />
-		<Unit filename="../../../momo/HashUtility.h" />
+		<Unit filename="../../../momo/IteratorUtility.h" />
 		<Unit filename="../../../momo/MapUtility.h" />
 		<Unit filename="../../../momo/MemManager.h" />
 		<Unit filename="../../../momo/MemPool.h" />

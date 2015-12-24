@@ -128,7 +128,7 @@ namespace internal
 			Value& value;
 		};
 
-		typedef HashPointer<Reference> Pointer;
+		typedef IteratorPointer<Reference> Pointer;
 
 	private:
 		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
