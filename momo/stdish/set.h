@@ -383,14 +383,11 @@ public:
 			clear();
 			return end();
 		}
-		else
-		{
-			size_t count = std::distance(first, last);
-			const_iterator iter = first;
-			for (size_t i = 0; i < count; ++i)
-				iter = erase(iter);
-			return iter;
-		}
+		size_t count = std::distance(first, last);
+		iterator iter = first;
+		for (size_t i = 0; i < count; ++i)
+			iter = erase(iter);
+		return iter;
 	}
 
 	size_type erase(const key_type& key)
