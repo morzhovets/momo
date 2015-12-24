@@ -162,6 +162,7 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxTester.cpp" />
+    <ClCompile Include="..\..\tests\LibcxxTreeSetTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTester.cpp" />
     <ClCompile Include="..\..\tests\SpeedHashMapTester.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\..\tests\LibcxxHashMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashMultiMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashSetTester.h" />
+    <ClInclude Include="..\..\tests\LibcxxSetTests.h" />
     <ClInclude Include="..\..\tests\LibcxxTester.h" />
     <ClInclude Include="..\..\tests\LibcxxUnorderedMapTests.h" />
     <ClInclude Include="..\..\tests\LibcxxUnorderedMultiMapTests.h" />

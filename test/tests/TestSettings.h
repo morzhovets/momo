@@ -17,6 +17,7 @@
 #define TEST_LIBCXX_HASH_SET
 #define TEST_LIBCXX_HASH_MAP
 #define TEST_LIBCXX_HASH_MULTI_MAP
+#define TEST_LIBCXX_TREE_SET
 #endif
 
 #if defined(_WIN32) && defined(__GNUC__)
