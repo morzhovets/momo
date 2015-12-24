@@ -224,5 +224,11 @@
     <ClInclude Include="..\..\..\momo\IteratorUtility.h">
       <Filter>Header Files\momo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\TreeMap.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\map.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
