@@ -46,6 +46,39 @@ namespace internal
 		Value& value;
 	};
 
+	template<typename TKey, typename TValue, typename THashMapReference>
+	class MapReferenceStd : public std::pair<const TKey&, TValue&>
+	{
+	public:
+		typedef TKey Key;
+		typedef TValue Value;
+		typedef THashMapReference HashMapReference;
+
+		typedef MapReferenceStd<Key, const Value,
+			typename HashMapReference::ConstReference> ConstReference;
+
+	private:
+		typedef std::pair<const Key&, Value&> RefPair;
+
+	public:
+		MapReferenceStd(const Key& key, Value& value) MOMO_NOEXCEPT
+			: RefPair(key, value)
+		{
+		}
+
+		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
+			: RefPair(ref.key, ref.value)
+		{
+		}
+
+		operator ConstReference() MOMO_NOEXCEPT
+		{
+			return ConstReference(this->first, this->second);
+		}
+
+		//? ==, !=
+	};
+
 	template<typename TKey, typename TValue>
 	struct MapKeyValueTraits
 	{

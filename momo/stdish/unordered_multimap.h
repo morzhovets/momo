@@ -43,7 +43,7 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef internal::UnorderedMapReference<key_type, mapped_type,
+	typedef internal::MapReferenceStd<key_type, mapped_type,
 		typename HashMultiMap::Iterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
