@@ -74,13 +74,6 @@ namespace internal
 			return *this;
 		}
 
-		TreeSetConstIterator operator++(int)
-		{
-			TreeSetConstIterator tempIter = *this;
-			++*this;
-			return tempIter;
-		}
-
 		TreeSetConstIterator& operator--()
 		{
 			MOMO_CHECK(mNode != nullptr);
@@ -116,13 +109,6 @@ namespace internal
 			return *this;
 		}
 
-		TreeSetConstIterator operator--(int)
-		{
-			TreeSetConstIterator tempIter = *this;
-			--*this;
-			return tempIter;
-		}
-
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mNode != nullptr);
@@ -130,20 +116,12 @@ namespace internal
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
-		Reference operator*() const
-		{
-			return *operator->();
-		}
-
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
 			return mNode == iter.mNode && mItemIndex == iter.mItemIndex;
 		}
 
-		bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return !(*this == iter);
-		}
+		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)
 
 		Node* GetNode() const MOMO_NOEXCEPT
 		{
@@ -449,9 +427,14 @@ private:
 				return *this;
 			}
 
+			Item* operator->() const
+			{
+				return mSegmentIter->node->GetItemPtr(mItemIndex);
+			}
+
 			Item& operator*() const
 			{
-				return *mSegmentIter->node->GetItemPtr(mItemIndex);
+				return *operator->();
 			}
 
 		private:

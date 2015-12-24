@@ -28,6 +28,28 @@
 		return *this == ConstIterator(); \
 	}
 
+#define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
+	Iterator operator++(int) \
+	{ \
+		Iterator tempIter = *this; \
+		++*this; \
+		return tempIter; \
+	} \
+	Iterator operator--(int) \
+	{ \
+		Iterator tempIter = *this; \
+		--*this; \
+		return tempIter; \
+	} \
+	Reference operator*() const \
+	{ \
+		return *operator->(); \
+	} \
+	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	{ \
+		return !(*this == iter); \
+	}
+
 namespace momo
 {
 
@@ -162,8 +184,8 @@ namespace internal
 	{
 	public:
 		typedef TBaseIterator BaseIterator;
-		typedef TConstBaseIterator ConstBaseIterator;
 		typedef TReference Reference;
+		typedef TConstBaseIterator ConstBaseIterator;
 		typedef TConstReference ConstReference;
 
 		typedef IteratorPointer<Reference, ConstReference> Pointer;
@@ -212,6 +234,67 @@ namespace internal
 	private:
 		BaseIterator mBaseIterator;
 	};
+
+	template<typename TBaseIterator, typename TReference>
+	class TreeDerivedIterator
+	{
+	public:
+		typedef TBaseIterator BaseIterator;
+		typedef TReference Reference;
+		typedef typename BaseIterator::ConstIterator ConstBaseIterator;
+		typedef typename Reference::ConstReference ConstReference;
+
+		typedef IteratorPointer<Reference, ConstReference> Pointer;
+
+		typedef TreeDerivedIterator<ConstBaseIterator, ConstReference> ConstIterator;
+
+	public:
+		TreeDerivedIterator() MOMO_NOEXCEPT
+		{
+		}
+
+		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
+			: mBaseIterator(iter)
+		{
+		}
+
+		operator ConstIterator() const MOMO_NOEXCEPT
+		{
+			return ConstIterator(mBaseIterator);
+		}
+
+		BaseIterator GetBaseIterator() const MOMO_NOEXCEPT
+		{
+			return mBaseIterator;
+		}
+
+		TreeDerivedIterator& operator++()
+		{
+			++mBaseIterator;
+			return *this;
+		}
+
+		TreeDerivedIterator& operator--()
+		{
+			--mBaseIterator;
+			return *this;
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(Reference(*mBaseIterator));
+		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return mBaseIterator == iter.GetBaseIterator();
+		}
+
+		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
+
+	private:
+		BaseIterator mBaseIterator;
+	};
 }
 
 } // namespace momo
@@ -225,6 +308,16 @@ namespace std
 		typedef ptrdiff_t difference_type;
 		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Pointer pointer;
 		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Reference reference;
+		typedef reference value_type;	//?
+	};
+
+	template<typename BI, typename R>
+	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
+	{
+		typedef bidirectional_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef typename momo::internal::TreeDerivedIterator<BI, R>::Pointer pointer;
+		typedef typename momo::internal::TreeDerivedIterator<BI, R>::Reference reference;
 		typedef reference value_type;	//?
 	};
 } // namespace std
