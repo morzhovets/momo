@@ -136,6 +136,14 @@ namespace internal
 				std::is_nothrow_copy_constructible<Object>());
 		}
 
+		static void SwapNothrow(Object& object1, Object& object2) MOMO_NOEXCEPT	//?
+		{
+			ObjectBuffer<Object, alignment> objectBuffer;
+			CreateNothrow(std::move(object1), &objectBuffer);
+			AssignNothrowAnyway(std::move(object2), object1);
+			AssignNothrowAnyway(std::move(*&objectBuffer), object2);
+		}
+
 		template<typename Iterator>
 		static void Relocate(Iterator srcBegin, Iterator dstBegin, size_t count)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)

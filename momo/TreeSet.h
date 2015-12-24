@@ -214,19 +214,16 @@ struct TreeSetItemTraits
 		dstItem = std::move(srcItem);
 	}
 
+	static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
+	{
+		ItemManager::SwapNothrow(item1, item2);
+	}
+
 	template<typename Iterator, typename ItemCreator>
 	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 		const ItemCreator& itemCreator, void* pobject)
 	{
 		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
-	}
-
-	static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
-	{
-		internal::ObjectBuffer<Item, alignment> itemBuffer;
-		ItemManager::CreateNothrow(std::move(item1), &itemBuffer);
-		ItemManager::AssignNothrowAnyway(std::move(item2), item1);
-		ItemManager::AssignNothrowAnyway(std::move(*&itemBuffer), item2);
 	}
 };
 
@@ -255,10 +252,27 @@ private:
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
+	struct NodeItemTraits
+	{
+		typedef typename TreeSet::Item Item;
+
+		static const size_t alignment = ItemTraits::alignment;
+
+		static void Destroy(Item& item) MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(item);
+		}
+
+		static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
+		{
+			ItemTraits::SwapNothrow(item1, item2);
+		}
+	};
+
 	static const size_t nodeCapacity = TreeTraits::nodeCapacity;
 	MOMO_STATIC_ASSERT(nodeCapacity > 2);
 
-	typedef internal::TreeNode<ItemTraits, MemManager, nodeCapacity> Node;
+	typedef internal::TreeNode<NodeItemTraits, MemManager, nodeCapacity> Node;
 	typedef typename Node::Params NodeParams;
 
 	class Crew
