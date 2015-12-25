@@ -92,7 +92,7 @@ LIBCXX_TEST_BEGIN(upper_bound)
 #include "libcxx/set/upper_bound.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(alloc)
+LIBCXX_TEST_BEGIN(cons_alloc)
 #include "libcxx/set/set.cons/alloc.pass.cpp"
 LIBCXX_TEST_END
 

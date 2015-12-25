@@ -123,7 +123,7 @@ void main()
         swap(m1, m2);
         assert(m1 == m2_save);
         assert(m2 == m1_save);
-		assert(m1.key_comp() == C(2));
+        assert(m1.key_comp() == C(2));
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(m1.get_allocator() == A(1));
 #else
