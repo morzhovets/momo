@@ -417,6 +417,7 @@ namespace internal
 		typedef typename Map::Value Value;
 		typedef typename Map::KeyValueTraits KeyValueTraits;
 		typedef typename Map::Iterator Iterator;
+		typedef typename Map::Settings Settings;
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 	private:
@@ -467,6 +468,7 @@ namespace internal
 
 			Value& Get()
 			{
+				MOMO_CHECK(mKeyPtr == nullptr);
 				return mIter->value;
 			}
 
@@ -478,6 +480,7 @@ namespace internal
 					KeyValueTraits::AssignValue(std::forward<RValue>(value), mIter->value);
 				else
 					mIter = mMap.Add(mIter, std::forward<RKey>(*mKeyPtr), std::forward<RValue>(value));
+				mKeyPtr = nullptr;
 				return *this;
 			}
 

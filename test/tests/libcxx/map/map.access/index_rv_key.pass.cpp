@@ -26,13 +26,17 @@ void main()
     {
     map<MoveOnly, double> m;
     assert(m.size() == 0);
+#ifndef MOMO_USE_SAFE_MAP_BRACKETS
     assert(m[1] == 0.0);
     assert(m.size() == 1);
+#endif
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 1);
+#ifndef MOMO_USE_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 2);
+#endif
     m[6] = 6.5;
     assert(m[6] == 6.5);
     assert(m.size() == 2);
