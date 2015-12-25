@@ -102,6 +102,9 @@
     <ClCompile Include="..\..\tests\LibcxxTreeSetTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxTreeMapTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\momo\stdish\map.h">
       <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxMapTests.h">
+      <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
