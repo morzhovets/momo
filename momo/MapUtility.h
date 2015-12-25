@@ -76,7 +76,19 @@ namespace internal
 			return ConstReference(this->first, this->second);
 		}
 
-		//? ==, !=
+		template<typename First, typename Second>
+		bool operator==(const std::pair<First, Second>& pair) const
+		{
+			return this->first == pair.first && this->second == pair.second;
+		}
+
+		template<typename First, typename Second>
+		bool operator!=(const std::pair<First, Second>& pair) const
+		{
+			return !(*this == pair);
+		}
+
+		//? <, >, <=, >=
 	};
 
 	template<typename TKey, typename TValue>
