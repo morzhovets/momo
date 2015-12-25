@@ -134,7 +134,8 @@ void main()
         assert(i == m.begin());
         assert(i == m.end());
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef std::pair<int, double> P;
@@ -242,7 +243,7 @@ void main()
         assert(i == m.end());
     }
 #endif
-#if __cplusplus >= 201402L
+//#if __cplusplus >= 201402L
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
@@ -255,5 +256,5 @@ void main()
         if (it != c.end())
             c.erase(it);
     }
-#endif
+//#endif
 }

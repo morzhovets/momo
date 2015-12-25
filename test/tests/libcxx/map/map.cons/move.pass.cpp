@@ -69,7 +69,8 @@ void main()
         assert(mo.size() == 0);
         assert(distance(mo.begin(), mo.end()) == 0);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef test_compare<std::less<int> > C;
         typedef min_allocator<V> A;

@@ -31,7 +31,8 @@ void main()
     assert(m.key_comp() == C(4));
     assert(m.get_allocator() == A(5));
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef test_compare<std::less<int> > C;
     typedef min_allocator<std::pair<const int, double> > A;

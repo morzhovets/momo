@@ -42,7 +42,8 @@ void main()
     assert(*next(m.begin(), 2) == V(3, 1));
     assert(m.key_comp() == C(3));
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef std::pair<const int, double> V;
     typedef test_compare<std::less<int> > C;

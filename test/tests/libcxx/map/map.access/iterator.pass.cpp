@@ -119,7 +119,8 @@ void main()
             assert(i->second == 1);
         }
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<const int, double> V;
         V ar[] =

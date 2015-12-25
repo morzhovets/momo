@@ -47,7 +47,8 @@ void main()
         assert(next(m.begin(), 2)->first == 3);
         assert(next(m.begin(), 2)->second == 1);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef std::pair<int, double> P;

@@ -86,7 +86,8 @@ void main()
         assert(m.at(8) == 8.5);
         assert(m.size() == 7);
     }
-#if __cplusplus >= 201103L
+//#if __cplusplus >= 201103L
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<const int, double> V;
         V ar[] =
