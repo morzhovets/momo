@@ -114,19 +114,21 @@ public:
 	}
 
 	map(std::initializer_list<value_type> values)
-		: mTreeMap(values)
 	{
+		insert(values);
 	}
 
 	map(std::initializer_list<value_type> values, const key_compare& lessFunc)
-		: mTreeMap(values, TreeTraits(lessFunc))
+		: mTreeMap(TreeTraits(lessFunc))
 	{
+		insert(values);
 	}
 
 	map(std::initializer_list<value_type> values, const key_compare& lessFunc,
 		const allocator_type& alloc)
-		: mTreeMap(values, TreeTraits(lessFunc), MemManager(alloc))
+		: mTreeMap(TreeTraits(lessFunc), MemManager(alloc))
 	{
+		insert(values);
 	}
 
 	map(map&& right) MOMO_NOEXCEPT
@@ -221,7 +223,7 @@ public:
 
 	const_reverse_iterator rbegin() const MOMO_NOEXCEPT
 	{
-		return reverse_iterator(end());
+		return const_reverse_iterator(end());
 	}
 
 	reverse_iterator rend() MOMO_NOEXCEPT
@@ -231,7 +233,7 @@ public:
 
 	const_reverse_iterator rend() const MOMO_NOEXCEPT
 	{
-		return reverse_iterator(begin());
+		return const_reverse_iterator(begin());
 	}
 
 	const_iterator cbegin() const MOMO_NOEXCEPT
@@ -327,7 +329,7 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, *iter))
+		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, iter->first))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
 	}
@@ -335,7 +337,7 @@ public:
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, *iter))
+		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, iter->first))
 			return std::pair<iterator, iterator>(iter, iter);
 		return std::pair<iterator, iterator>(iter, std::next(iter));
 	}
@@ -470,7 +472,7 @@ public:
 			return end();
 		}
 		if (first == last)
-			return (first != end()) ? find(first->key) : end();
+			return (first != end()) ? find(first->first) : end();
 		size_t count = std::distance(first, last);
 		iterator iter = erase(first);
 		for (size_t i = 1; i < count; ++i)
@@ -543,8 +545,8 @@ private:
 	bool _check_hint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
-		return (hint == begin() || treeTraits.Less(*std::prev(hint), key))
-			&& (hint == end() || !treeTraits.Less(*hint, key));
+		return (hint == begin() || treeTraits.Less(std::prev(hint)->first, key))
+			&& (hint == end() || !treeTraits.Less(hint->first, key));
 	}
 
 	template<typename Hint, typename Key, typename MappedCreator>
