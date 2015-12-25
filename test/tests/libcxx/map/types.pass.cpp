@@ -43,10 +43,12 @@ void main()
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
     static_assert((std::is_same<C::allocator_type, std::allocator<std::pair<const int, double> > >::value), "");
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     static_assert((std::is_same<C::reference, std::pair<const int, double>&>::value), "");
     static_assert((std::is_same<C::const_reference, const std::pair<const int, double>&>::value), "");
     static_assert((std::is_same<C::pointer, std::pair<const int, double>*>::value), "");
     static_assert((std::is_same<C::const_pointer, const std::pair<const int, double>*>::value), "");
+#endif
     static_assert((std::is_same<C::size_type, std::size_t>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }

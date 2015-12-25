@@ -22,7 +22,7 @@
 
 void main()
 {
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
     {
     map<MoveOnly, double> m;
     assert(m.size() == 0);
@@ -37,6 +37,7 @@ void main()
     assert(m[6] == 6.5);
     assert(m.size() == 2);
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef std::pair<const MoveOnly, double> V;
     map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;

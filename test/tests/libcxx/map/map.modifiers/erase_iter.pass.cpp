@@ -18,6 +18,7 @@
 
 //#include "min_allocator.h"
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 struct TemplateConstructor
 {
     template<typename T>
@@ -25,6 +26,7 @@ struct TemplateConstructor
 };
 
 bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return false; }
+#endif
 
 void main()
 {
@@ -244,6 +246,7 @@ void main()
     }
 #endif
 //#if __cplusplus >= 201402L
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
@@ -256,5 +259,5 @@ void main()
         if (it != c.end())
             c.erase(it);
     }
-//#endif
+#endif
 }
