@@ -3,6 +3,7 @@
   momo/TreeTraits.h
 
   namespace momo:
+    struct TreeNodeDefault
     class TreeTraits
     class TreeTraitsStd
 
@@ -10,18 +11,21 @@
 
 #pragma once
 
-#include "details/TreeNode.h"
+#include "details/TreeNodeSwp.h"
+#include "details/TreeNodePrm.h"
 
 namespace momo
 {
 
-template<typename TKey>
+typedef TreeNodePrm<16> TreeNodeDefault;
+
+template<typename TKey,
+	typename TTreeNode = TreeNodeDefault>
 class TreeTraits
 {
 public:
 	typedef TKey Key;
-
-	static const size_t nodeCapacity = 8;
+	typedef TTreeNode TreeNode;
 
 public:
 	TreeTraits() MOMO_NOEXCEPT
@@ -35,14 +39,14 @@ public:
 };
 
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>>
+	typename TLessFunc = std::less<TKey>,
+	typename TTreeNode = TreeNodeDefault>
 class TreeTraitsStd
 {
 public:
 	typedef TKey Key;
 	typedef TLessFunc LessFunc;
-
-	static const size_t nodeCapacity = 8;
+	typedef TTreeNode TreeNode;
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc()) MOMO_NOEXCEPT

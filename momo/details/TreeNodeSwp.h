@@ -1,6 +1,9 @@
 /**********************************************************\
 
-  momo/details/TreeNode.h
+  momo/details/TreeNodeSwp.h
+
+  namespace momo:
+    struct TreeNodeSwp
 
 \**********************************************************/
 
@@ -13,8 +16,9 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager, size_t tCapacity>
-	class TreeNode
+	template<typename TItemTraits, typename TMemManager,
+		size_t tCapacity>
+	class NodeSwp
 	{
 	public:
 		typedef TItemTraits ItemTraits;
@@ -22,6 +26,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t capacity = tCapacity;
+		MOMO_STATIC_ASSERT(0 < capacity && capacity < 256);
 
 	private:
 		typedef ObjectBuffer<Item, ItemTraits::alignment> ItemBuffer;
@@ -36,7 +41,7 @@ namespace internal
 		private:
 			typedef typename MemPool::Params MemPoolParams;
 
-			static const size_t leafNodeSize = sizeof(TreeNode);
+			static const size_t leafNodeSize = sizeof(NodeSwp);
 			static const size_t internalNodeSize = leafNodeSize + sizeof(void*) * (capacity + 1);
 
 		public:
@@ -65,17 +70,17 @@ namespace internal
 		};
 
 	public:
-		TreeNode() = delete;
+		NodeSwp() = delete;
 
-		TreeNode(const TreeNode&) = delete;
+		NodeSwp(const NodeSwp&) = delete;
 
-		~TreeNode() = delete;
+		~NodeSwp() = delete;
 
-		TreeNode& operator=(const TreeNode&) = delete;
+		NodeSwp& operator=(const NodeSwp&) = delete;
 
-		static TreeNode& Create(Params& params, bool isLeaf)
+		static NodeSwp& Create(Params& params, bool isLeaf)
 		{
-			TreeNode& node = *(TreeNode*)params.GetMemPool(isLeaf).Allocate();
+			NodeSwp& node = *(NodeSwp*)params.GetMemPool(isLeaf).Allocate();
 			node.mParent = nullptr;
 			node.mIsLeaf = isLeaf;
 			node.mCount = (unsigned char)0;
@@ -106,32 +111,32 @@ namespace internal
 			mCount = (unsigned char)count;
 		}
 
-		TreeNode* GetParent() MOMO_NOEXCEPT
+		NodeSwp* GetParent() MOMO_NOEXCEPT
 		{
 			return mParent;
 		}
 
-		void SetParent(TreeNode* parent) MOMO_NOEXCEPT
+		void SetParent(NodeSwp* parent) MOMO_NOEXCEPT
 		{
 			mParent = parent;
 		}
 
-		TreeNode* GetChild(size_t index) MOMO_NOEXCEPT
+		NodeSwp* GetChild(size_t index) MOMO_NOEXCEPT
 		{
 			assert(index <= GetCount());
 			return _GetChildren()[index];
 		}
 
-		void SetChild(size_t index, TreeNode* child) MOMO_NOEXCEPT
+		void SetChild(size_t index, NodeSwp* child) MOMO_NOEXCEPT
 		{
 			assert(index <= GetCount());
 			_GetChildren()[index] = child;
 		}
 
-		size_t GetChildIndex(const TreeNode* child) const MOMO_NOEXCEPT
+		size_t GetChildIndex(const NodeSwp* child) const MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
-			TreeNode** children = _GetChildren();
+			NodeSwp** children = _GetChildren();
 			size_t index = std::find(children, children + count + 1, child) - children;
 			assert(index <= count);
 			return index;
@@ -151,7 +156,7 @@ namespace internal
 				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
 			if (!mIsLeaf)
 			{
-				TreeNode** children = _GetChildren();
+				NodeSwp** children = _GetChildren();
 				memmove(children + index + 2, children + index + 1, (count - index) * sizeof(void*));
 			}
 			++mCount;
@@ -166,25 +171,34 @@ namespace internal
 			ItemTraits::Destroy(*GetItemPtr(count - 1));
 			if (!mIsLeaf)
 			{
-				TreeNode** children = _GetChildren();
+				NodeSwp** children = _GetChildren();
 				memmove(children + index, children + index + 1, (count - index) * sizeof(void*));
 			}
 			--mCount;
 		}
 
 	private:
-		TreeNode** _GetChildren() const MOMO_NOEXCEPT
+		NodeSwp** _GetChildren() const MOMO_NOEXCEPT
 		{
 			assert(!mIsLeaf);
-			return (TreeNode**)(this + 1);
+			return (NodeSwp**)(this + 1);
 		}
 
 	private:
-		TreeNode* mParent;
+		NodeSwp* mParent;
 		bool mIsLeaf;
 		unsigned char mCount;
 		ItemBuffer mItems[capacity];
 	};
 }
+
+template<size_t tCapacity>
+struct TreeNodeSwp
+{
+	static const size_t capacity = tCapacity;
+
+	template<typename ItemTraits, typename MemManager>
+	using Node = internal::NodeSwp<ItemTraits, MemManager, capacity>;
+};
 
 } // namespace momo

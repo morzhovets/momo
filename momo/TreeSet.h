@@ -248,11 +248,13 @@ private:
 		}
 	};
 
-	static const size_t nodeCapacity = TreeTraits::nodeCapacity;
-	MOMO_STATIC_ASSERT(nodeCapacity > 2);
+	typedef typename TreeTraits::TreeNode TreeNode;
+	typedef typename TreeNode::template Node<NodeItemTraits, MemManager> Node;
 
-	typedef internal::TreeNode<NodeItemTraits, MemManager, nodeCapacity> Node;
 	typedef typename Node::Params NodeParams;
+
+	static const size_t nodeCapacity = TreeNode::capacity;
+	MOMO_STATIC_ASSERT(nodeCapacity > 2);
 
 	class Crew
 	{
@@ -822,6 +824,7 @@ public:
 			return GetEnd();
 		}
 		ConstIterator resIter = _Remove(iter.GetNode(), iter.GetItemIndex());
+		//?
 		--mCount;
 		return resIter;
 	}
@@ -865,7 +868,7 @@ private:
 		Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
 		Node* newNode1 = relocator.CreateNewNode(true);
 		Node* newNode2 = relocator.CreateNewNode(true);
-		static const size_t middleIndex = nodeCapacity / 2;
+		static const size_t middleIndex = nodeCapacity / 2;	//?
 		ConstIterator resIter = relocator.SplitLeafNode(node, middleIndex, itemIndex,
 			newNode1, newNode2);
 		while (true)
