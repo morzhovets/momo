@@ -129,7 +129,7 @@
 		<Unit filename="../../tests/LibcxxVectorTests.h" />
 		<Unit filename="../../tests/SimpleArrayTester.cpp" />
 		<Unit filename="../../tests/SimpleHashTester.cpp" />
-		<Unit filename="../../tests/SpeedHashMapTester.cpp" />
+		<Unit filename="../../tests/SpeedMapTester.cpp" />
 		<Unit filename="../../tests/TemplHashTester.cpp" />
 		<Unit filename="../../tests/TestSettings.h" />
 		<Extensions>

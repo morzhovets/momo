@@ -166,7 +166,7 @@
     <ClCompile Include="..\..\tests\LibcxxTreeSetTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTester.cpp" />
-    <ClCompile Include="..\..\tests\SpeedHashMapTester.cpp" />
+    <ClCompile Include="..\..\tests\SpeedMapTester.cpp" />
     <ClCompile Include="..\..\tests\TemplHashTester.cpp" />
   </ItemGroup>
   <ItemGroup>

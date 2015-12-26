@@ -7,7 +7,7 @@
 #pragma once
 
 #ifdef NDEBUG
-#define TEST_SPEED_HASH_MAP
+#define TEST_SPEED_MAP
 #else
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_HASH
