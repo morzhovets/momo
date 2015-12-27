@@ -32,7 +32,7 @@ public:
 	{
 	}
 
-	bool Less(const Key& key1, const Key& key2) const
+	bool IsLess(const Key& key1, const Key& key2) const
 	{
 		return std::less<Key>()(key1, key2);
 	}
@@ -54,7 +54,7 @@ public:
 	{
 	}
 
-	bool Less(const Key& key1, const Key& key2) const
+	bool IsLess(const Key& key1, const Key& key2) const
 	{
 		return mLessFunc(key1, key2);
 	}

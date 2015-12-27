@@ -329,7 +329,7 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, iter->first))
+		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
 	}
@@ -337,7 +337,7 @@ public:
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().Less(key, iter->first))
+		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<iterator, iterator>(iter, iter);
 		return std::pair<iterator, iterator>(iter, std::next(iter));
 	}
@@ -545,8 +545,8 @@ private:
 	bool _check_hint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
-		return (hint == begin() || treeTraits.Less(std::prev(hint)->first, key))
-			&& (hint == end() || !treeTraits.Less(hint->first, key));
+		return (hint == begin() || treeTraits.IsLess(std::prev(hint)->first, key))
+			&& (hint == end() || !treeTraits.IsLess(hint->first, key));
 	}
 
 	template<typename Hint, typename Key, typename MappedCreator>

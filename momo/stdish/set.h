@@ -311,7 +311,7 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (iter == end() || mTreeSet.GetTreeTraits().Less(key, *iter))
+		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
 	}
@@ -319,7 +319,7 @@ public:
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = lower_bound(key);
-		if (iter == end() || mTreeSet.GetTreeTraits().Less(key, *iter))
+		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
 			return std::pair<iterator, iterator>(iter, iter);
 		return std::pair<iterator, iterator>(iter, std::next(iter));
 	}
@@ -429,8 +429,8 @@ private:
 	bool _check_hint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
-		return (hint == begin() || treeTraits.Less(*std::prev(hint), key))
-			&& (hint == end() || !treeTraits.Less(*hint, key));
+		return (hint == begin() || treeTraits.IsLess(*std::prev(hint), key))
+			&& (hint == end() || !treeTraits.IsLess(*hint, key));
 	}
 
 	std::pair<iterator, bool> _insert(const_iterator hint, value_type&& value)

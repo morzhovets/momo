@@ -432,7 +432,7 @@ public:
 private:
 	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
 	{
-		return iter != GetEnd() && !GetTreeTraits().Less(key, iter->key);
+		return iter != GetEnd() && !GetTreeTraits().IsLess(key, iter->key);
 	}
 
 	template<typename RKey, typename ValueCreator>

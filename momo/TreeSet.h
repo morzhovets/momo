@@ -691,7 +691,7 @@ public:
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
 				const Item& item = *node->GetItemPtr(middleIndex);
-				if (GetTreeTraits().Less(ItemTraits::GetKey(item), key))
+				if (GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
 					leftIndex = middleIndex + 1;
 				else
 					rightIndex = middleIndex;
@@ -846,7 +846,7 @@ public:
 private:
 	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
 	{
-		return iter != GetEnd() && !GetTreeTraits().Less(key, ItemTraits::GetKey(*iter));
+		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
 	void _Destroy(Node* node) MOMO_NOEXCEPT
