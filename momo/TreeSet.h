@@ -409,38 +409,35 @@ private:
 		class Iterator
 		{
 		public:
-			typedef typename Segments::Iterator SegmentIterator;
-
-		public:
-			explicit Iterator(SegmentIterator segmentIter) MOMO_NOEXCEPT
-				: mSegmentIter(segmentIter),
-				mItemIndex(segmentIter->beginIndex)
+			explicit Iterator(Segment* segmentPtr) MOMO_NOEXCEPT
+				: mSegmentPtr(segmentPtr),
+				mItemIndex(segmentPtr->beginIndex)
 			{
 			}
 
-			Iterator& operator++()
+			Iterator& operator++() MOMO_NOEXCEPT
 			{
 				++mItemIndex;
-				if (mItemIndex == mSegmentIter->endIndex)
+				if (mItemIndex == mSegmentPtr->endIndex)
 				{
-					++mSegmentIter;
-					mItemIndex = mSegmentIter->beginIndex;
+					++mSegmentPtr;
+					mItemIndex = mSegmentPtr->beginIndex;
 				}
 				return *this;
 			}
 
-			Item* operator->() const
+			Item* operator->() const MOMO_NOEXCEPT
 			{
-				return mSegmentIter->node->GetItemPtr(mItemIndex);
+				return mSegmentPtr->node->GetItemPtr(mItemIndex);
 			}
 
-			Item& operator*() const
+			Item& operator*() const MOMO_NOEXCEPT
 			{
 				return *operator->();
 			}
 
 		private:
-			SegmentIterator mSegmentIter;
+			Segment* mSegmentPtr;
 			size_t mItemIndex;
 		};
 
@@ -487,9 +484,10 @@ private:
 			}
 		}
 
-		ConstIterator SplitLeafNode(Node* oldNode, size_t middleIndex, size_t itemIndex,
-			Node* newNode1, Node* newNode2)
+		ConstIterator SplitLeafNode(Node* oldNode, Node* newNode1, Node* newNode2,
+			size_t itemIndex, size_t& middleIndex)
 		{
+			middleIndex = nodeCapacity / 2;	//?
 			mOldNodes.AddBack(oldNode);
 			size_t itemCount = oldNode->GetCount();
 			if (itemIndex <= middleIndex)
@@ -512,10 +510,10 @@ private:
 			}
 		}
 
-		ConstIterator SplitInternalNode(Node* oldNode, size_t middleIndex, size_t itemIndex,
-			Node* newNode1, Node* newNode2)
+		ConstIterator SplitInternalNode(Node* oldNode, Node* newNode1, Node* newNode2,
+			size_t itemIndex, size_t& middleIndex)
 		{
-			ConstIterator iter = SplitLeafNode(oldNode, middleIndex, itemIndex, newNode1, newNode2);
+			ConstIterator iter = SplitLeafNode(oldNode, newNode1, newNode2, itemIndex, middleIndex);
 			size_t itemCount = oldNode->GetCount();
 			Node* newNode = newNode1;
 			size_t newIndex = 0;
@@ -538,8 +536,8 @@ private:
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
-			ItemTraits::RelocateCreate(Iterator(mSrcSegments.GetBegin()),
-				Iterator(mDstSegments.GetBegin()), mItemCount, itemCreator, pitem);
+			ItemTraits::RelocateCreate(Iterator(mSrcSegments.GetItems()),
+				Iterator(mDstSegments.GetItems()), mItemCount, itemCreator, pitem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();
 			mItemCount = 0;
@@ -689,7 +687,7 @@ public:
 			size_t itemCount = node->GetCount();
 			size_t leftIndex = 0;
 			size_t rightIndex = itemCount;
-			while (leftIndex < rightIndex)
+			while (leftIndex < rightIndex)	//?
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
 				const Item& item = *node->GetItemPtr(middleIndex);
@@ -818,7 +816,7 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		if (mCount == 1)
+		if (mCount == 1)	//?
 		{
 			Clear();
 			return GetEnd();
@@ -868,9 +866,9 @@ private:
 		Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
 		Node* newNode1 = relocator.CreateNewNode(true);
 		Node* newNode2 = relocator.CreateNewNode(true);
-		static const size_t middleIndex = nodeCapacity / 2;	//?
-		ConstIterator resIter = relocator.SplitLeafNode(node, middleIndex, itemIndex,
-			newNode1, newNode2);
+		size_t middleIndex;
+		ConstIterator resIter = relocator.SplitLeafNode(node, newNode1, newNode2,
+			itemIndex, middleIndex);
 		while (true)
 		{
 			Node* parentNode = node->GetParent();
@@ -892,8 +890,8 @@ private:
 			itemIndex = parentNode->GetChildIndex(node);
 			Node* parentNewNode1 = relocator.CreateNewNode(false);
 			Node* parentNewNode2 = relocator.CreateNewNode(false);
-			ConstIterator parentIter = relocator.SplitInternalNode(parentNode, middleIndex,
-				itemIndex, parentNewNode1, parentNewNode2);
+			ConstIterator parentIter = relocator.SplitInternalNode(parentNode,
+				parentNewNode1, parentNewNode2, itemIndex, middleIndex);
 			Node* parentNewNode = parentIter.GetNode();
 			size_t parentItemIndex = parentIter.GetItemIndex();
 			relocator.AddSegment(node, middleIndex, parentNewNode, parentItemIndex, 1);
