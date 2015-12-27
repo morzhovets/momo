@@ -24,7 +24,7 @@ template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
-	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc>,
+	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, momo::TreeNodeSwp<3>>,
 		momo::MemManagerStd<TAllocator>, momo::TreeSetItemTraits<TKey>, momo::TreeSetSettings>>;
 #include "LibcxxSetTests.h"
 #undef LIBCXX_TEST_PREFIX

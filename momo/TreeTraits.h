@@ -17,7 +17,7 @@
 namespace momo
 {
 
-typedef TreeNodePrm<16> TreeNodeDefault;
+typedef TreeNodeSwp<32> TreeNodeDefault;
 
 template<typename TKey,
 	typename TTreeNode = TreeNodeDefault>
@@ -49,7 +49,7 @@ public:
 	typedef TTreeNode TreeNode;
 
 public:
-	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc()) MOMO_NOEXCEPT
+	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
 		: mLessFunc(lessFunc)
 	{
 	}
