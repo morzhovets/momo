@@ -27,14 +27,15 @@ struct IsFastComparable : public internal::BoolConstant<std::is_arithmetic<Key>:
 typedef TreeNodeSwp<32> TreeNodeDefault;
 
 template<typename TKey,
-	typename TTreeNode = TreeNodeDefault>
+	typename TTreeNode = TreeNodeDefault,
+	bool tUseLinearSearch = IsFastComparable<TKey>::value>
 class TreeTraits
 {
 public:
 	typedef TKey Key;
 	typedef TTreeNode TreeNode;
 
-	static const bool useLinearSearch = IsFastComparable<Key>::value;
+	static const bool useLinearSearch = tUseLinearSearch;
 
 public:
 	TreeTraits() MOMO_NOEXCEPT
