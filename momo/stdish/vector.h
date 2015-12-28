@@ -183,7 +183,7 @@ public:
 
 	const_reverse_iterator rbegin() const MOMO_NOEXCEPT
 	{
-		return reverse_iterator(end());
+		return const_reverse_iterator(end());
 	}
 
 	reverse_iterator rend() MOMO_NOEXCEPT
@@ -193,7 +193,7 @@ public:
 
 	const_reverse_iterator rend() const MOMO_NOEXCEPT
 	{
-		return reverse_iterator(begin());
+		return const_reverse_iterator(begin());
 	}
 
 	const_iterator cbegin() const MOMO_NOEXCEPT
