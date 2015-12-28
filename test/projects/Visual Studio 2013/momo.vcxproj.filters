@@ -63,21 +63,6 @@
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLim4.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP1.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterOneI1.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterUnlimP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -103,6 +88,9 @@
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\SpeedMapTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
   </ItemGroup>

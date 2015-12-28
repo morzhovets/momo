@@ -106,11 +106,7 @@
 		<Unit filename="../../tests/LibcxxHashMapTesterOneI1.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTesterUnlimP.cpp" />
 		<Unit filename="../../tests/LibcxxHashMultiMapTester.h" />
-		<Unit filename="../../tests/LibcxxHashMultiMapTesterLim4.cpp" />
 		<Unit filename="../../tests/LibcxxHashMultiMapTesterLimP.cpp" />
-		<Unit filename="../../tests/LibcxxHashMultiMapTesterLimP1.cpp" />
-		<Unit filename="../../tests/LibcxxHashMultiMapTesterOneI1.cpp" />
-		<Unit filename="../../tests/LibcxxHashMultiMapTesterUnlimP.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTester.h" />
 		<Unit filename="../../tests/LibcxxHashSetTesterLim4.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTesterLimP.cpp" />

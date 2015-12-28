@@ -12,7 +12,7 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLimP1<2, 2, 2>
+#define LIBCXX_TEST_BUCKET momo::HashBucketLimP1<1, 1, 1>
 #define LIBCXX_TEST_BUCKET_NAME "limp1"
 
 #include "LibcxxHashSetTester.h"

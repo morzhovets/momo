@@ -151,11 +151,7 @@
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneI1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP1.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterOneI1.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterUnlimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP1.cpp" />
