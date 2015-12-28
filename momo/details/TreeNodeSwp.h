@@ -153,7 +153,7 @@ namespace internal
 			assert(count < capacity);
 			assert(index <= count);
 			for (size_t i = count; i > index; --i)
-				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
+				ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
 			if (!mIsLeaf)
 			{
 				NodeSwp** children = _GetChildren();
@@ -167,7 +167,7 @@ namespace internal
 			size_t count = GetCount();
 			assert(index < count);
 			for (size_t i = index + 1; i < count; ++i)
-				ItemTraits::SwapNothrow(*GetItemPtr(i), *GetItemPtr(i - 1));
+				ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
 			ItemTraits::Destroy(*GetItemPtr(count - 1));
 			if (!mIsLeaf)
 			{

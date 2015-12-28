@@ -193,9 +193,9 @@ struct TreeSetItemTraits
 		dstItem = std::move(srcItem);
 	}
 
-	static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
+	static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 	{
-		ItemManager::SwapNothrow(item1, item2);
+		ItemManager::SwapNothrowAnyway(item1, item2);
 	}
 
 	template<typename Iterator, typename ItemCreator>
@@ -242,9 +242,9 @@ private:
 			ItemTraits::Destroy(item);
 		}
 
-		static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
+		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 		{
-			ItemTraits::SwapNothrow(item1, item2);
+			ItemTraits::SwapNothrowAnyway(item1, item2);
 		}
 	};
 

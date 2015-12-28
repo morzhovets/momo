@@ -26,14 +26,14 @@ struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
-	static void SwapKeysNothrow(Key& key1, Key& key2) MOMO_NOEXCEPT
+	static void SwapKeysNothrowAnyway(Key& key1, Key& key2) MOMO_NOEXCEPT
 	{
-		KeyManager::SwapNothrow(key1, key2);
+		KeyManager::SwapNothrowAnyway(key1, key2);
 	}
 
-	static void SwapValuesNothrow(Value& value1, Value& value2) MOMO_NOEXCEPT
+	static void SwapValuesNothrowAnyway(Value& value1, Value& value2) MOMO_NOEXCEPT
 	{
-		ValueManager::SwapNothrow(value1, value2);
+		ValueManager::SwapNothrowAnyway(value1, value2);
 	}
 };
 
@@ -105,9 +105,9 @@ private:
 			KeyValuePair::Assign(std::move(srcItem), dstItem);
 		}
 
-		static void SwapNothrow(Item& item1, Item& item2) MOMO_NOEXCEPT
+		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 		{
-			KeyValuePair::SwapNothrow(item1, item2);
+			KeyValuePair::SwapNothrowAnyway(item1, item2);
 		}
 
 		template<typename Iterator, typename ItemCreator>

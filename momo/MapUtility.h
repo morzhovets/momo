@@ -257,10 +257,10 @@ namespace internal
 				dstPair.GetKey(), dstPair.GetValue());
 		}
 
-		static void SwapNothrow(MapKeyValuePair& pair1, MapKeyValuePair& pair2) MOMO_NOEXCEPT
+		static void SwapNothrowAnyway(MapKeyValuePair& pair1, MapKeyValuePair& pair2) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::SwapKeysNothrow(pair1.GetKey(), pair2.GetKey());
-			KeyValueTraits::SwapValuesNothrow(pair1.GetValue(), pair2.GetValue());
+			KeyValueTraits::SwapKeysNothrowAnyway(pair1.GetKey(), pair2.GetKey());
+			KeyValueTraits::SwapValuesNothrowAnyway(pair1.GetValue(), pair2.GetValue());
 		}
 
 		template<typename Iterator, typename PairCreator>
