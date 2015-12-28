@@ -3,6 +3,7 @@
   momo/TreeTraits.h
 
   namespace momo:
+    struct IsFastComparable
     struct TreeNodeDefault
     class TreeTraits
     class TreeTraitsStd
@@ -17,6 +18,12 @@
 namespace momo
 {
 
+template<typename Key>
+struct IsFastComparable : public internal::BoolConstant<std::is_arithmetic<Key>::value
+	|| std::is_pointer<Key>::value>
+{
+};
+
 typedef TreeNodeSwp<32> TreeNodeDefault;
 
 template<typename TKey,
@@ -26,6 +33,8 @@ class TreeTraits
 public:
 	typedef TKey Key;
 	typedef TTreeNode TreeNode;
+
+	static const bool useLinearSearch = IsFastComparable<Key>::value;
 
 public:
 	TreeTraits() MOMO_NOEXCEPT
@@ -47,6 +56,9 @@ public:
 	typedef TKey Key;
 	typedef TLessFunc LessFunc;
 	typedef TTreeNode TreeNode;
+
+	static const bool useLinearSearch =
+		std::is_same<LessFunc, std::less<TKey>>::value && IsFastComparable<Key>::value;
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())

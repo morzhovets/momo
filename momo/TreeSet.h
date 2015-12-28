@@ -684,23 +684,12 @@ public:
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t itemCount = node->GetCount();
-			size_t leftIndex = 0;
-			size_t rightIndex = itemCount;
-			while (leftIndex < rightIndex)	//?
-			{
-				size_t middleIndex = (leftIndex + rightIndex) / 2;
-				const Item& item = *node->GetItemPtr(middleIndex);
-				if (GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
-					leftIndex = middleIndex + 1;
-				else
-					rightIndex = middleIndex;
-			}
-			if (leftIndex < itemCount)
-				iter = ConstIterator(*node, leftIndex, false);
+			size_t index = _LowerBound(node, key);
+			if (index < node->GetCount())
+				iter = ConstIterator(*node, index, false);
 			if (node->IsLeaf())
 				break;
-			node = node->GetChild(leftIndex);
+			node = node->GetChild(index);
 		}
 		return iter;
 	}
@@ -847,6 +836,34 @@ private:
 	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
+	}
+
+	size_t _LowerBound(Node* node, const Key& key) const
+	{
+		size_t leftIndex = 0;
+		size_t rightIndex = node->GetCount();
+		if (TreeTraits::useLinearSearch)
+		{
+			for (; leftIndex < rightIndex; ++leftIndex)
+			{
+				const Item& item = *node->GetItemPtr(leftIndex);
+				if (!GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
+					break;
+			}
+		}
+		else
+		{
+			while (leftIndex < rightIndex)
+			{
+				size_t middleIndex = (leftIndex + rightIndex) / 2;
+				const Item& item = *node->GetItemPtr(middleIndex);
+				if (GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
+					leftIndex = middleIndex + 1;
+				else
+					rightIndex = middleIndex;
+			}
+		}
+		return leftIndex;
 	}
 
 	void _Destroy(Node* node) MOMO_NOEXCEPT
