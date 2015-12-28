@@ -5,7 +5,6 @@
   namespace momo:
     enum class CheckMode
     enum class ExtraCheckMode
-    struct IsTriviallyRelocatable
 
 \**********************************************************/
 
@@ -29,34 +28,12 @@
 #include <Windows.h>
 #endif
 
-#if MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 1
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	std::is_nothrow_move_constructible<Object>::value \
-	|| !std::is_copy_constructible<Object>::value
-#elif MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 2
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) true
-#else
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	std::is_nothrow_move_constructible<Object>::value
-#endif
-
-#define MOMO_ALIGNMENT_OF(Object) ((MOMO_MAX_ALIGNMENT < std::alignment_of<Object>::value) \
-	? MOMO_MAX_ALIGNMENT : std::alignment_of<Object>::value)
-
 #ifdef MOMO_USE_NOEXCEPT
 #define MOMO_NOEXCEPT noexcept
 #define MOMO_NOEXCEPT_IF(expr) noexcept(expr)
 #else
 #define MOMO_NOEXCEPT throw()
 #define MOMO_NOEXCEPT_IF(expr)
-#endif
-
-#if !defined(MOMO_CHECK_ITERATOR_VERSION)
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE false
-#elif defined(NDEBUG)
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE (checkMode != CheckMode::assertion)
-#else
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE true
 #endif
 
 #define MOMO_FRIEND_SWAP(Object) \
@@ -118,16 +95,6 @@ enum class ExtraCheckMode
 	nothing = 0,
 	assertion = 1,
 	bydefault = MOMO_DEFAULT_EXTRA_CHECK_MODE,
-};
-
-template<typename Object>
-struct IsTriviallyRelocatable
-#ifdef MOMO_USE_TRIVIALLY_COPYABLE
-	: public std::is_trivially_copyable<Object>
-#else
-	: public std::is_trivial<Object>
-#endif
-{
 };
 
 namespace internal

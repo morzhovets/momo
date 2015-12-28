@@ -2,14 +2,30 @@
 
   momo/ObjectManager.h
 
+  namespace momo:
+    struct IsTriviallyRelocatable
+
 \**********************************************************/
 
 #pragma once
 
 #include "Utility.h"
 
+#define MOMO_ALIGNMENT_OF(Object) ((MOMO_MAX_ALIGNMENT < std::alignment_of<Object>::value) \
+	? MOMO_MAX_ALIGNMENT : std::alignment_of<Object>::value)
+
 namespace momo
 {
+
+template<typename Object>
+struct IsTriviallyRelocatable
+#ifdef MOMO_USE_TRIVIALLY_COPYABLE
+	: public std::is_trivially_copyable<Object>
+#else
+	: public std::is_trivial<Object>
+#endif
+{
+};
 
 namespace internal
 {
@@ -42,7 +58,16 @@ namespace internal
 	{
 		typedef TObject Object;
 
-		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
+		static const bool isNothrowMoveConstructible =
+#if MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 1
+			std::is_nothrow_move_constructible<Object>::value
+				|| !std::is_copy_constructible<Object>::value;
+#elif MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 2
+			true;
+#else
+			std::is_nothrow_move_constructible<Object>::value;
+#endif
+
 		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 		static const bool isNothrowRelocatable = isNothrowMoveConstructible
 			|| isTriviallyRelocatable;
