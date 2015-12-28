@@ -172,6 +172,8 @@ struct TreeSetItemTraits
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
+	static const bool isNothrowAnywaySwappable = ItemManager::isNothrowAnywaySwappable;
+
 	static const size_t alignment = ItemManager::alignment;
 
 	template<typename... ItemArgs>
@@ -234,6 +236,8 @@ private:
 	struct NodeItemTraits
 	{
 		typedef typename TreeSet::Item Item;
+
+		static const bool isNothrowAnywaySwappable = ItemTraits::isNothrowAnywaySwappable;
 
 		static const size_t alignment = ItemTraits::alignment;
 

@@ -26,6 +26,9 @@ struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
+	static const bool isKeyNothrowAnywaySwappable = KeyManager::isNothrowAnywaySwappable;
+	static const bool isValueNothrowAnywaySwappable = ValueManager::isNothrowAnywaySwappable;
+
 	static void SwapKeysNothrowAnyway(Key& key1, Key& key2) MOMO_NOEXCEPT
 	{
 		KeyManager::SwapNothrowAnyway(key1, key2);
@@ -70,6 +73,9 @@ private:
 		typedef KeyValuePair Item;
 
 		typedef internal::ObjectManager<Item> ItemManager;
+
+		static const bool isNothrowAnywaySwappable = KeyValueTraits::isKeyNothrowAnywaySwappable
+			|| KeyValueTraits::isValueNothrowAnywaySwappable;	//?
 
 		static const size_t alignment = ItemManager::alignment;
 

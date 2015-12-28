@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include "details/TreeNodeSwp.h"
-#include "details/TreeNodePrm.h"
+#include "details/TreeNode.h"
 
 namespace momo
 {
@@ -24,7 +23,7 @@ struct IsFastComparable : public internal::BoolConstant<std::is_arithmetic<Key>:
 {
 };
 
-typedef TreeNodeSwp<32> TreeNodeDefault;
+typedef TreeNode<32, true> TreeNodeDefault;
 
 template<typename TKey,
 	typename TTreeNode = TreeNodeDefault,
@@ -59,7 +58,7 @@ public:
 	typedef TTreeNode TreeNode;
 
 	static const bool useLinearSearch =
-		std::is_same<LessFunc, std::less<TKey>>::value && IsFastComparable<Key>::value;
+		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())

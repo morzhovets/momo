@@ -168,8 +168,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
     <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
-    <ClInclude Include="..\..\..\momo\details\TreeNodePrm.h" />
-    <ClInclude Include="..\..\..\momo\details\TreeNodeSwp.h" />
+    <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
     <ClInclude Include="..\..\..\momo\Settings.h" />
