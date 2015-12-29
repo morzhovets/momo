@@ -18,12 +18,11 @@ namespace momo
 {
 
 template<typename Key>
-struct IsFastComparable : public internal::BoolConstant<std::is_arithmetic<Key>::value
-	|| std::is_pointer<Key>::value>
+struct IsFastComparable : public internal::BoolConstant<MOMO_IS_FAST_COMPARABLE(Key)>
 {
 };
 
-typedef TreeNode<32, true> TreeNodeDefault;
+typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
 
 template<typename TKey,
 	typename TTreeNode = TreeNodeDefault,

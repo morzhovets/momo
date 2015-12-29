@@ -21,6 +21,10 @@
 
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>
 
+#define MOMO_DEFAULT_TREE_NODE TreeNode<32, true>
+
+#define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
+
 #if defined(_MSC_VER) //defined(_WIN32)
 #define MOMO_USE_MEM_MANAGER_WIN
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerWin
