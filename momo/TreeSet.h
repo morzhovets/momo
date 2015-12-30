@@ -258,7 +258,7 @@ private:
 	typedef typename Node::Params NodeParams;
 
 	static const size_t nodeCapacity = TreeNode::capacity;
-	MOMO_STATIC_ASSERT(nodeCapacity > 2);
+	MOMO_STATIC_ASSERT(nodeCapacity > 0);
 
 	class Crew
 	{
@@ -491,9 +491,11 @@ private:
 		ConstIterator SplitLeafNode(Node* oldNode, Node* newNode1, Node* newNode2,
 			size_t itemIndex, size_t& middleIndex)
 		{
-			middleIndex = nodeCapacity / 2;	//?
 			mOldNodes.AddBack(oldNode);
 			size_t itemCount = oldNode->GetCount();
+			middleIndex = itemCount / 2;
+			if (itemCount % 2 == 0 && middleIndex > itemIndex)
+				--middleIndex;
 			if (itemIndex <= middleIndex)
 			{
 				newNode1->SetCount(middleIndex + 1);
@@ -908,23 +910,25 @@ private:
 				node = parentNode;
 				break;
 			}
-			itemIndex = parentNode->GetChildIndex(node);
+			size_t parentItemIndex = parentNode->GetChildIndex(node);
 			Node* parentNewNode1 = relocator.CreateNewNode(false);
 			Node* parentNewNode2 = relocator.CreateNewNode(false);
+			size_t parentMiddleIndex;
 			ConstIterator parentIter = relocator.SplitInternalNode(parentNode,
-				parentNewNode1, parentNewNode2, itemIndex, middleIndex);
+				parentNewNode1, parentNewNode2, parentItemIndex, parentMiddleIndex);
 			Node* parentNewNode = parentIter.GetNode();
-			size_t parentItemIndex = parentIter.GetItemIndex();
-			relocator.AddSegment(node, middleIndex, parentNewNode, parentItemIndex, 1);
-			parentNewNode->SetChild(parentItemIndex, newNode1);
-			parentNewNode->SetChild(parentItemIndex + 1, newNode2);
+			size_t parentNewItemIndex = parentIter.GetItemIndex();
+			relocator.AddSegment(node, middleIndex, parentNewNode, parentNewItemIndex, 1);
+			parentNewNode->SetChild(parentNewItemIndex, newNode1);
+			parentNewNode->SetChild(parentNewItemIndex + 1, newNode2);
 			node = parentNode;
 			newNode1 = parentNewNode1;
 			newNode2 = parentNewNode2;
+			middleIndex = parentMiddleIndex;
 		}
 		relocator.RelocateCreate(itemCreator,
 			resIter.GetNode()->GetItemPtr(resIter.GetItemIndex()));
-		if (node->GetCount() == 0)
+		if (node->GetParent() == nullptr)
 			mRootNode = node;
 		node->AcceptBackItem(itemIndex);
 		node->SetChild(itemIndex, newNode1);
