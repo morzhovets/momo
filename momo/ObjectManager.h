@@ -34,13 +34,19 @@ namespace internal
 		using std::swap;
 
 		template<typename Object>
-		using IsNothrowSwappable =
+		struct IsNothrowSwappable	// vs2015
+		{
+			static const bool value =
 #ifdef MOMO_USE_NOEXCEPT
-			BoolConstant<noexcept(swap(std::declval<Object&>(), std::declval<Object&>()))>;
+				noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
 #else
-			std::false_type;	//?
+				false;	//?	vs2013
 #endif
+		};
 	}
+
+	template<typename Object>
+	using IsNothrowSwappable = BoolConstant<swp::IsNothrowSwappable<Object>::value>;
 
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
@@ -86,7 +92,7 @@ namespace internal
 		static const bool isNothrowRelocatable = isTriviallyRelocatable
 			|| isNothrowMoveConstructible;
 
-		static const bool isNothrowAnywaySwappable = swp::IsNothrowSwappable<Object>::value
+		static const bool isNothrowAnywaySwappable = IsNothrowSwappable<Object>::value
 			|| isTriviallyRelocatable || isNothrowMoveConstructible
 			|| std::is_nothrow_copy_constructible<Object>::value;
 
@@ -95,7 +101,7 @@ namespace internal
 			|| std::is_nothrow_copy_constructible<Object>::value;
 
 		static const bool isNothrowAnywayMoveAssignable =
-			std::is_nothrow_move_assignable<Object>::value || swp::IsNothrowSwappable<Object>::value
+			std::is_nothrow_move_assignable<Object>::value || IsNothrowSwappable<Object>::value
 			|| isTriviallyRelocatable || isNothrowMoveConstructible || isNothrowAnywayCopyAssignable;
 
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
@@ -171,7 +177,7 @@ namespace internal
 		static void SwapNothrowAnyway(Object& object1, Object& object2) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(isNothrowAnywaySwappable);
-			_SwapNothrowAnyway(object1, object2, swp::IsNothrowSwappable<Object>(),
+			_SwapNothrowAnyway(object1, object2, IsNothrowSwappable<Object>(),
 				BoolConstant<isTriviallyRelocatable>(), BoolConstant<isNothrowMoveConstructible>());
 		}
 
@@ -179,7 +185,7 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(isNothrowAnywayMoveAssignable);
 			_AssignNothrowAnyway(std::move(srcObject), dstObject,
-				std::is_nothrow_move_assignable<Object>(), swp::IsNothrowSwappable<Object>(),
+				std::is_nothrow_move_assignable<Object>(), IsNothrowSwappable<Object>(),
 				BoolConstant<isTriviallyRelocatable>(), BoolConstant<isNothrowMoveConstructible>());
 		}
 
@@ -210,7 +216,7 @@ namespace internal
 	private:
 		static void _SwapNothrowAdl(Object& object1, Object& object2) MOMO_NOEXCEPT
 		{
-			MOMO_STATIC_ASSERT(swp::IsNothrowSwappable<Object>::value);
+			MOMO_STATIC_ASSERT(IsNothrowSwappable<Object>::value);
 			using std::swap;
 			swap(object1, object2);
 		}
