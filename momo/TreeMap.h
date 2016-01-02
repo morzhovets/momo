@@ -1,5 +1,8 @@
 /**********************************************************\
 
+  This file is distributed under the MIT License.
+  See accompanying file LICENSE for details.
+
   momo/TreeMap.h
 
   namespace momo:
