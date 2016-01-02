@@ -1,5 +1,8 @@
 /**********************************************************\
 
+  This file is distributed under the MIT License.
+  See accompanying file LICENSE for details.
+
   momo/HashSet.h
 
   namespace momo:
