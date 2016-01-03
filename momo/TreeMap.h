@@ -46,7 +46,7 @@ struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 struct TreeMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
-	//static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
 };
 
 template<typename TKey, typename TValue,
@@ -130,7 +130,7 @@ private:
 	struct TreeSetSettings : public momo::TreeSetSettings
 	{
 		static const CheckMode checkMode = Settings::checkMode;
-		//static const bool checkVersion = Settings::checkVersion;
+		static const bool checkVersion = Settings::checkVersion;
 	};
 
 	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;

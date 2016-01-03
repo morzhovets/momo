@@ -23,7 +23,7 @@ namespace momo
 namespace internal
 {
 	template<typename TNode, typename TSettings>
-	class TreeSetConstIterator
+	class TreeSetConstIterator : private IteratorVersion<TSettings::checkVersion>
 	{
 	public:
 		typedef TNode Node;
@@ -35,6 +35,9 @@ namespace internal
 
 		typedef TreeSetConstIterator ConstIterator;
 
+	private:
+		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
+
 	public:
 		TreeSetConstIterator() MOMO_NOEXCEPT
 			: mNode(nullptr),
@@ -42,21 +45,14 @@ namespace internal
 		{
 		}
 
-		TreeSetConstIterator(Node& node, size_t itemIndex, bool move) MOMO_NOEXCEPT
-			: mNode(&node),
+		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t& version,
+			bool move) MOMO_NOEXCEPT
+			: IteratorVersion(version),
+			mNode(&node),
 			mItemIndex(itemIndex)
 		{
 			if (move)
 				_Move();
-		}
-
-		explicit TreeSetConstIterator(Node& node) MOMO_NOEXCEPT
-		{
-			mNode = &node;
-			while (!mNode->IsLeaf())
-				mNode = mNode->GetChild(0);
-			mItemIndex = 0;
-			_Move();
 		}
 
 		//operator ConstIterator() const MOMO_NOEXCEPT
@@ -67,13 +63,16 @@ namespace internal
 			if (mNode->IsLeaf())
 			{
 				++mItemIndex;
-				_Move();
 			}
 			else
 			{
 				MOMO_CHECK(mItemIndex < mNode->GetCount());
-				*this = TreeSetConstIterator(*mNode->GetChild(mItemIndex + 1));
+				mNode = mNode->GetChild(mItemIndex + 1);
+				while (!mNode->IsLeaf())
+					mNode = mNode->GetChild(0);
+				mItemIndex = 0;
 			}
+			_Move();
 			return *this;
 		}
 
@@ -214,7 +213,7 @@ struct TreeSetItemTraits
 struct TreeSetSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
-	//static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
 };
 
 template<typename TKey,
@@ -449,6 +448,16 @@ private:
 		};
 
 	public:
+		struct SplitResult
+		{
+			Node* newNode;
+			size_t newItemIndex;
+			size_t middleIndex;
+			Node* newNode1;
+			Node* newNode2;
+		};
+
+	public:
 		Relocator(MemManager& memManager, NodeParams& nodeParams) MOMO_NOEXCEPT
 			: mNodeParams(nodeParams),
 			mOldNodes(MemManagerPtr(memManager)),
@@ -460,7 +469,7 @@ private:
 		}
 
 		Relocator(const Relocator&) = delete;
-		
+
 		~Relocator() MOMO_NOEXCEPT
 		{
 			for (Node* node : mNewNodes)
@@ -488,42 +497,39 @@ private:
 			}
 		}
 
-		Node* GrowLeafNode(Node* oldNode, size_t itemIndex)
+		Node* GrowLeafNode(Node* node, size_t itemIndex)
 		{
-			mOldNodes.AddBack(oldNode);
-			size_t itemCount = oldNode->GetCount();
+			mOldNodes.AddBack(node);
+			size_t itemCount = node->GetCount();
 			Node* newNode = CreateNode(true, itemCount + 1);
-			AddSegment(oldNode, 0, newNode, 0, itemIndex);
-			AddSegment(oldNode, itemIndex, newNode, itemIndex + 1, itemCount - itemIndex);
+			AddSegment(node, 0, newNode, 0, itemIndex);
+			AddSegment(node, itemIndex, newNode, itemIndex + 1, itemCount - itemIndex);
 			return newNode;
 		}
 
-		ConstIterator SplitLeafNode(Node* oldNode, size_t itemIndex, size_t& middleIndex,
-			Node*& newNode1, Node*& newNode2)
+		SplitResult SplitLeafNode(Node* node, size_t itemIndex)
 		{
-			return _SplitNode(oldNode, itemIndex, middleIndex, newNode1, newNode2, true);
+			return _SplitNode(node, itemIndex, true);
 		}
 
-		ConstIterator SplitInternalNode(Node* oldNode, size_t itemIndex, size_t& middleIndex,
-			Node*& newNode1, Node*& newNode2)
+		SplitResult SplitInternalNode(Node* node, size_t itemIndex)
 		{
-			ConstIterator iter = _SplitNode(oldNode, itemIndex, middleIndex,
-				newNode1, newNode2, false);
-			size_t itemCount = oldNode->GetCount();
-			Node* newNode = newNode1;
+			SplitResult splitRes = _SplitNode(node, itemIndex, false);
+			size_t itemCount = node->GetCount();
+			Node* newNode = splitRes.newNode1;
 			size_t newIndex = 0;
 			for (size_t i = 0; i <= itemCount; ++i)
 			{
 				if (i != itemIndex)
-					newNode->SetChild(newIndex, oldNode->GetChild(i));
+					newNode->SetChild(newIndex, node->GetChild(i));
 				newIndex += (i == itemIndex) ? 2 : 1;
-				if (i == middleIndex)
+				if (i == splitRes.middleIndex)
 				{
-					newNode = newNode2;
+					newNode = splitRes.newNode2;
 					newIndex = 0;
 				}
 			}
-			return iter;
+			return splitRes;
 		}
 
 		template<typename ItemCreator>
@@ -540,31 +546,30 @@ private:
 		}
 
 	private:
-		ConstIterator _SplitNode(Node* oldNode, size_t itemIndex, size_t& middleIndex,
-			Node*& newNode1, Node*& newNode2, bool isLeaf)
+		SplitResult _SplitNode(Node* node, size_t itemIndex, bool isLeaf)
 		{
-			mOldNodes.AddBack(oldNode);
-			size_t itemCount = oldNode->GetCount();
-			middleIndex = itemCount / 2;
+			mOldNodes.AddBack(node);
+			size_t itemCount = node->GetCount();
+			size_t middleIndex = itemCount / 2;
 			if (itemCount % 2 == 0 && middleIndex > itemIndex)
 				--middleIndex;
 			if (itemIndex <= middleIndex)
 			{
-				newNode1 = CreateNode(isLeaf, middleIndex + 1);
-				newNode2 = CreateNode(isLeaf, itemCount - middleIndex - 1);
-				AddSegment(oldNode, 0, newNode1, 0, itemIndex);
-				AddSegment(oldNode, itemIndex, newNode1, itemIndex + 1, middleIndex - itemIndex);
-				AddSegment(oldNode, middleIndex + 1, newNode2, 0, itemCount - middleIndex - 1);
-				return ConstIterator(*newNode1, itemIndex, false);
+				Node* newNode1 = CreateNode(isLeaf, middleIndex + 1);
+				Node* newNode2 = CreateNode(isLeaf, itemCount - middleIndex - 1);
+				AddSegment(node, 0, newNode1, 0, itemIndex);
+				AddSegment(node, itemIndex, newNode1, itemIndex + 1, middleIndex - itemIndex);
+				AddSegment(node, middleIndex + 1, newNode2, 0, itemCount - middleIndex - 1);
+				return { newNode1, itemIndex, middleIndex, newNode1, newNode2 };
 			}
 			else
 			{
-				newNode1 = CreateNode(isLeaf, middleIndex);
-				newNode2 = CreateNode(isLeaf, itemCount - middleIndex);
-				AddSegment(oldNode, 0, newNode1, 0, middleIndex);
-				AddSegment(oldNode, middleIndex + 1, newNode2, 0, itemIndex - middleIndex - 1);
-				AddSegment(oldNode, itemIndex, newNode2, itemIndex - middleIndex, itemCount - itemIndex);
-				return ConstIterator(*newNode2, itemIndex - middleIndex - 1, false);
+				Node* newNode1 = CreateNode(isLeaf, middleIndex);
+				Node* newNode2 = CreateNode(isLeaf, itemCount - middleIndex);
+				AddSegment(node, 0, newNode1, 0, middleIndex);
+				AddSegment(node, middleIndex + 1, newNode2, 0, itemIndex - middleIndex - 1);
+				AddSegment(node, itemIndex, newNode2, itemIndex - middleIndex, itemCount - itemIndex);
+				return { newNode2, itemIndex - middleIndex - 1, middleIndex, newNode1, newNode2 };
 			}
 		}
 
@@ -654,14 +659,14 @@ public:
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		return ConstIterator(*mRootNode);
+		return _MakeIterator(mRootNode);
 	}
-	
+
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		return ConstIterator(*mRootNode, mRootNode->GetCount(), false);
+		return _MakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
 
 	MOMO_FRIEND_SWAP(TreeSet)
@@ -710,7 +715,7 @@ public:
 		{
 			size_t index = _LowerBound(node, key);
 			if (index < node->GetCount())
-				iter = ConstIterator(*node, index, false);
+				iter = _MakeIterator(node, index, false);
 			if (node->IsLeaf())
 				break;
 			node = node->GetChild(index);
@@ -795,33 +800,22 @@ public:
 				node = node->GetChild(node->GetCount());
 			itemIndex = node->GetCount();
 		}
-		ConstIterator resIter;
 		size_t itemCount = node->GetCount();
 		if (itemCount < node->GetCapacity())
 		{
 			itemCreator(node->GetItemPtr(itemCount));
 			node->AcceptBackItem(itemIndex);
-			resIter = ConstIterator(*node, itemIndex, false);
-		}
-		else if (itemCount < nodeMaxCapacity)
-		{
-			Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
-			Node* newNode = relocator.GrowLeafNode(node, itemIndex);
-			relocator.RelocateCreate(itemCreator, newNode->GetItemPtr(itemIndex));
-			Node* parentNode = node->GetParent();
-			if (parentNode == nullptr)
-				mRootNode = newNode;
-			else
-				parentNode->SetChild(parentNode->GetChildIndex(node), newNode);
-			newNode->SetParent(parentNode);
-			resIter = ConstIterator(*newNode, itemIndex, false);
 		}
 		else
 		{
-			resIter = _AddSplit(node, itemIndex, itemCreator);
+			Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
+			if (itemCount < nodeMaxCapacity)
+				_AddGrow(relocator, node, itemIndex, itemCreator);
+			else
+				_AddSplit(relocator, node, itemIndex, itemCreator);
 		}
 		++mCount;
-		return resIter;
+		return _MakeIterator(node, itemIndex, false);
 	}
 
 	template<typename... ItemArgs>
@@ -854,7 +848,7 @@ public:
 	}
 
 	//ConstIterator Remove(ConstIterator iter, Item& resItem)
-	
+
 	bool Remove(const Key& key)
 	{
 		ConstIterator iter = LowerBound(key);
@@ -870,6 +864,18 @@ public:
 	//void Reset(ConstIterator iter, const Item& newItem, Item& resItem)
 
 private:
+	ConstIterator _MakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
+	{
+		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
+	}
+
+	ConstIterator _MakeIterator(Node* node) const MOMO_NOEXCEPT
+	{
+		while (!node->IsLeaf())
+			node = node->GetChild(0);
+		return _MakeIterator(node, 0, true);
+	}
+
 	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
@@ -917,57 +923,63 @@ private:
 	}
 
 	template<typename ItemCreator>
-	ConstIterator _AddSplit(Node* node, size_t itemIndex, const ItemCreator& itemCreator)
+	void _AddGrow(Relocator& relocator, Node*& node, size_t itemIndex,
+		const ItemCreator& itemCreator)
 	{
-		Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
-		size_t middleIndex;
-		Node* newNode1;
-		Node* newNode2;
-		ConstIterator resIter = relocator.SplitLeafNode(node, itemIndex, middleIndex,
-			newNode1, newNode2);
+		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
+		relocator.RelocateCreate(itemCreator, newNode->GetItemPtr(itemIndex));
+		Node* parentNode = node->GetParent();
+		if (parentNode == nullptr)
+			mRootNode = newNode;
+		else
+			parentNode->SetChild(parentNode->GetChildIndex(node), newNode);
+		newNode->SetParent(parentNode);
+		node = newNode;
+	}
+
+	template<typename ItemCreator>
+	void _AddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
+		const ItemCreator& itemCreator)
+	{
+		Node* node = leafNode;
+		size_t itemIndex = leafItemIndex;
+		typename Relocator::SplitResult splitRes = relocator.SplitLeafNode(node, itemIndex);
+		leafNode = splitRes.newNode;
+		leafItemIndex = splitRes.newItemIndex;
 		while (true)
 		{
-			Node* parentNode = node->GetParent();
-			if (parentNode == nullptr)
+			size_t childMiddleIndex = splitRes.middleIndex;
+			Node* childNode = node;
+			node = node->GetParent();
+			if (node == nullptr)
 			{
-				parentNode = relocator.CreateNode(false, 0);
+				node = relocator.CreateNode(false, 0);
 				itemIndex = 0;
-				relocator.AddSegment(node, middleIndex, parentNode, 0, 1);
-				node = parentNode;
+				relocator.AddSegment(childNode, childMiddleIndex, node, 0, 1);
 				break;
 			}
-			else if (parentNode->GetCount() < nodeMaxCapacity)
+			size_t itemCount = node->GetCount();
+			itemIndex = node->GetChildIndex(childNode);
+			if (itemCount < nodeMaxCapacity)
 			{
-				itemIndex = parentNode->GetChildIndex(node);
-				relocator.AddSegment(node, middleIndex, parentNode, parentNode->GetCount(), 1);
-				node = parentNode;
+				relocator.AddSegment(childNode, childMiddleIndex, node, itemCount, 1);
 				break;
 			}
-			size_t parentItemIndex = parentNode->GetChildIndex(node);
-			size_t parentMiddleIndex;
-			Node* parentNewNode1;
-			Node* parentNewNode2;
-			ConstIterator parentIter = relocator.SplitInternalNode(parentNode, parentItemIndex,
-				parentMiddleIndex, parentNewNode1, parentNewNode2);
-			Node* parentNewNode = parentIter.GetNode();
-			size_t parentNewItemIndex = parentIter.GetItemIndex();
-			relocator.AddSegment(node, middleIndex, parentNewNode, parentNewItemIndex, 1);
-			parentNewNode->SetChild(parentNewItemIndex, newNode1);
-			parentNewNode->SetChild(parentNewItemIndex + 1, newNode2);
-			node = parentNode;
-			newNode1 = parentNewNode1;
-			newNode2 = parentNewNode2;
-			middleIndex = parentMiddleIndex;
+			Node* childNewNode1 = splitRes.newNode1;
+			Node* childNewNode2 = splitRes.newNode2;
+			splitRes = relocator.SplitInternalNode(node, itemIndex);
+			relocator.AddSegment(childNode, childMiddleIndex,
+				splitRes.newNode, splitRes.newItemIndex, 1);
+			splitRes.newNode->SetChild(splitRes.newItemIndex, childNewNode1);
+			splitRes.newNode->SetChild(splitRes.newItemIndex + 1, childNewNode2);
 		}
-		relocator.RelocateCreate(itemCreator,
-			resIter.GetNode()->GetItemPtr(resIter.GetItemIndex()));
+		relocator.RelocateCreate(itemCreator, leafNode->GetItemPtr(leafItemIndex));
 		if (node->GetParent() == nullptr)
 			mRootNode = node;
 		node->AcceptBackItem(itemIndex);
-		node->SetChild(itemIndex, newNode1);
-		node->SetChild(itemIndex + 1, newNode2);
+		node->SetChild(itemIndex, splitRes.newNode1);
+		node->SetChild(itemIndex + 1, splitRes.newNode2);
 		_UpdateParents(node);	//?
-		return resIter;
 	}
 
 	void _UpdateParents(Node* node) MOMO_NOEXCEPT
@@ -987,7 +999,7 @@ private:
 		if (node->IsLeaf())
 		{
 			node->Remove(itemIndex);
-			return ConstIterator(*node, itemIndex, true);
+			return _MakeIterator(node, itemIndex, true);
 		}
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1000,7 +1012,7 @@ private:
 			_Destroy(node->GetChild(itemIndex));
 			node->Remove(itemIndex);
 			node->SetChild(itemIndex, remNode);
-			return ConstIterator(*node->GetChild(itemIndex));
+			return _MakeIterator(node->GetChild(itemIndex));
 		}
 		else
 		{
@@ -1018,7 +1030,7 @@ private:
 				childNode->Remove(childItemIndex);
 				childNode->SetChild(childItemIndex, remNode);
 			}
-			return ConstIterator(*node->GetChild(itemIndex + 1));
+			return _MakeIterator(node->GetChild(itemIndex + 1));
 		}
 	}
 
