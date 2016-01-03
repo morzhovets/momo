@@ -20,7 +20,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tCapacity, bool tUseSwap>
+		size_t tMaxCapacity, size_t tCapacityStep, bool tUseSwap>
 	class Node
 	{
 	public:
@@ -28,8 +28,11 @@ namespace internal
 		typedef TMemManager MemManager;
 		typedef typename ItemTraits::Item Item;
 
-		static const size_t capacity = tCapacity;
-		MOMO_STATIC_ASSERT(0 < capacity && capacity < 256);
+		static const size_t maxCapacity = tMaxCapacity;
+		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
+
+		static const size_t capacityStep = tCapacityStep;
+		MOMO_STATIC_ASSERT(capacityStep > 0);
 
 		static const bool useSwap = tUseSwap;
 		MOMO_STATIC_ASSERT(!useSwap || ItemTraits::isNothrowAnywaySwappable);
@@ -57,22 +60,35 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParamsVarSize<>, MemManagerPtr> MemPool;
+		typedef MemPoolParamsVarSize<> MemPoolParams;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
+
+		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
+
+		static const size_t internalOffset = MemPoolParams::blockAlignment
+			* ((sizeof(void*) * (maxCapacity + 1) - 1) / MemPoolParams::blockAlignment + 1);
 
 	public:
 		class Params
 		{
 		private:
-			typedef typename MemPool::Params MemPoolParams;
+			typedef Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
+				ArraySettings<leafMemPoolCount>> LeafMemPools;
 
-			static const size_t leafNodeSize = sizeof(Node);
-			static const size_t internalNodeSize = leafNodeSize + sizeof(void*) * (capacity + 1);
+			static const size_t internalNodeSize = sizeof(Node)
+				+ sizeof(Item) * (maxCapacity - 1) + internalOffset;
 
 		public:
 			explicit Params(MemManager& memManager)
-				: mInternalMemPool(MemPoolParams(internalNodeSize), MemManagerPtr(memManager)),
-				mLeafMemPool(MemPoolParams(leafNodeSize), MemManagerPtr(memManager))
+				: mInternalMemPool(MemPoolParams(internalNodeSize), MemManagerPtr(memManager))
 			{
+				for (size_t i = 0; i < leafMemPoolCount; ++i)
+				{
+					size_t capacity = maxCapacity - i * capacityStep;
+					size_t leafNodeSize = sizeof(Node) + sizeof(Item) * (capacity - 1);
+					mLeafMemPools.AddBackNogrow(MemPool(MemPoolParams(leafNodeSize),
+						MemManagerPtr(memManager)));
+				}
 			}
 
 			Params(const Params&) = delete;
@@ -83,14 +99,19 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
-			MemPool& GetMemPool(bool isLeaf) MOMO_NOEXCEPT
+			MemPool& GetInternalMemPool() MOMO_NOEXCEPT
 			{
-				return isLeaf ? mLeafMemPool : mInternalMemPool;
+				return mInternalMemPool;
+			}
+
+			MemPool& GetLeafMemPool(size_t leafMemPoolIndex) MOMO_NOEXCEPT
+			{
+				return mLeafMemPools[leafMemPoolIndex];
 			}
 
 		private:
 			MemPool mInternalMemPool;
-			MemPool mLeafMemPool;
+			LeafMemPools mLeafMemPools;
 		};
 
 	public:
@@ -102,38 +123,54 @@ namespace internal
 
 		Node& operator=(const Node&) = delete;
 
-		static Node& Create(Params& params, bool isLeaf)
+		static Node& Create(Params& params, bool isLeaf, size_t count)
 		{
-			Node& node = *(Node*)params.GetMemPool(isLeaf).Allocate();
-			node.mParent = nullptr;
-			node.mIsLeaf = isLeaf;
-			node.mCounter.count = (unsigned char)0;
-			node._InitIndices(UseSwap());
-			return node;
+			assert(count <= maxCapacity);
+			Node* node;
+			if (isLeaf)
+			{
+				size_t leafMemPoolIndex = (maxCapacity - count) / capacityStep;
+				if (leafMemPoolIndex >= leafMemPoolCount)
+					leafMemPoolIndex = leafMemPoolCount - 1;
+				node = (Node*)params.GetLeafMemPool(leafMemPoolIndex).Allocate();
+				node->mMemPoolIndex = (unsigned char)leafMemPoolIndex;
+			}
+			else
+			{
+				char* ptr = (char*)params.GetInternalMemPool().Allocate();
+				node = (Node*)(ptr + internalOffset);
+				node->mMemPoolIndex = (unsigned char)leafMemPoolCount;
+			}
+			node->mParent = nullptr;
+			node->mCounter.count = (unsigned char)count;
+			node->_InitIndices(UseSwap());
+			return *node;
 		}
 
 		void Destroy(Params& params) MOMO_NOEXCEPT
 		{
-			size_t count = GetCount();
-			for (size_t i = 0; i < count; ++i)
-				ItemTraits::Destroy(*GetItemPtr(i));
-			params.GetMemPool(mIsLeaf).Deallocate(this);
+			if (IsLeaf())
+				params.GetLeafMemPool((size_t)mMemPoolIndex).Deallocate(this);
+			else
+				params.GetInternalMemPool().Deallocate((char*)this - internalOffset);
 		}
 
 		bool IsLeaf() const MOMO_NOEXCEPT
 		{
-			return mIsLeaf;
+			return (size_t)mMemPoolIndex < leafMemPoolCount;
+		}
+
+		size_t GetCapacity() const MOMO_NOEXCEPT
+		{
+			size_t capacity = maxCapacity;
+			if (IsLeaf())
+				return capacity -= capacityStep * (size_t)mMemPoolIndex;
+			return capacity;
 		}
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return (size_t)mCounter.count;
-		}
-
-		void SetCount(size_t count) MOMO_NOEXCEPT
-		{
-			assert(count <= capacity);
-			mCounter.count = (unsigned char)count;
 		}
 
 		Node* GetParent() MOMO_NOEXCEPT
@@ -161,7 +198,7 @@ namespace internal
 		size_t GetChildIndex(const Node* child) const MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
-			Node** children = _GetChildren();
+			Node* const* children = &mParent - maxCapacity - 1;	//?
 			size_t index = std::find(children, children + count + 1, child) - children;
 			assert(index <= count);
 			return index;
@@ -175,10 +212,10 @@ namespace internal
 		void AcceptBackItem(size_t index) MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
-			assert(count < capacity);
+			assert(count < GetCapacity());
 			assert(index <= count);
 			_AcceptBackItem(index, count, UseSwap());
-			if (!mIsLeaf)
+			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
 				memmove(children + index + 2, children + index + 1, (count - index) * sizeof(void*));
@@ -191,7 +228,7 @@ namespace internal
 			size_t count = GetCount();
 			assert(index < count);
 			_Remove(index, count, UseSwap());
-			if (!mIsLeaf)
+			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
 				memmove(children + index, children + index + 1, (count - index) * sizeof(void*));
@@ -200,24 +237,30 @@ namespace internal
 		}
 
 	private:
+		Node** _GetChildren() MOMO_NOEXCEPT
+		{
+			assert(!IsLeaf());
+			return &mParent - maxCapacity - 1;
+		}
+
 		void _InitIndices(std::true_type /*useSwap*/) MOMO_NOEXCEPT
 		{
 		}
 
 		void _InitIndices(std::false_type /*useSwap*/) MOMO_NOEXCEPT
 		{
-			for (size_t i = 0; i < capacity; ++i)
+			for (size_t i = 0; i < maxCapacity; ++i)
 				mCounter.indices[i] = (unsigned char)i;
 		}
 
 		Item* _GetItemPtr(size_t index, std::true_type /*useSwap*/) MOMO_NOEXCEPT
 		{
-			return &mItems[index];
+			return &mFirstItem + index;
 		}
 
 		Item* _GetItemPtr(size_t index, std::false_type /*useSwap*/) MOMO_NOEXCEPT
 		{
-			return &mItems[mCounter.indices[index]];
+			return &mFirstItem + mCounter.indices[index];
 		}
 
 		void _AcceptBackItem(size_t index, size_t count, std::true_type /*useSwap*/) MOMO_NOEXCEPT
@@ -248,29 +291,24 @@ namespace internal
 			mCounter.indices[count - 1] = realIndex;
 		}
 
-		Node** _GetChildren() const MOMO_NOEXCEPT
-		{
-			assert(!mIsLeaf);
-			return (Node**)(this + 1);
-		}
-
 	private:
 		Node* mParent;
-		bool mIsLeaf;
-		Counter<capacity, !useSwap> mCounter;
-		ItemBuffer mItems[capacity];
+		unsigned char mMemPoolIndex;
+		Counter<maxCapacity, !useSwap> mCounter;
+		ItemBuffer mFirstItem;
 	};
 }
 
-template<size_t tCapacity, bool tUseSwap>
+template<size_t tMaxCapacity, size_t tCapacityStep, bool tUseSwap>
 struct TreeNode
 {
-	static const size_t capacity = tCapacity;
+	static const size_t maxCapacity = tMaxCapacity;
+	static const size_t capacityStep = tCapacityStep;
 	static const size_t useSwap = tUseSwap;
 
 	template<typename ItemTraits, typename MemManager>
-	using Node = internal::Node<ItemTraits, MemManager,
-		capacity, useSwap && ItemTraits::isNothrowAnywaySwappable>;
+	using Node = internal::Node<ItemTraits, MemManager, maxCapacity, capacityStep,
+		useSwap && ItemTraits::isNothrowAnywaySwappable>;
 };
 
 } // namespace momo

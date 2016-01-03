@@ -24,7 +24,7 @@
 
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>
 
-#define MOMO_DEFAULT_TREE_NODE TreeNode<32, true>
+#define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4, true>
 
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
 
