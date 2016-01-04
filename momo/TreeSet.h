@@ -60,6 +60,7 @@ namespace internal
 		TreeSetConstIterator& operator++()
 		{
 			MOMO_CHECK(mNode != nullptr);
+			MOMO_CHECK(IteratorVersion::Check());
 			if (mNode->IsLeaf())
 			{
 				++mItemIndex;
@@ -79,6 +80,7 @@ namespace internal
 		TreeSetConstIterator& operator--()
 		{
 			MOMO_CHECK(mNode != nullptr);
+			MOMO_CHECK(IteratorVersion::Check());
 			Node* node = mNode;
 			size_t itemIndex = mItemIndex;
 			if (!node->IsLeaf())
@@ -115,6 +117,7 @@ namespace internal
 		{
 			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(mItemIndex < mNode->GetCount());
+			MOMO_CHECK(IteratorVersion::Check());
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
@@ -133,6 +136,13 @@ namespace internal
 		size_t GetItemIndex() const MOMO_NOEXCEPT
 		{
 			return mItemIndex;
+		}
+
+		void Check(const size_t& version) const
+		{
+			(void)version;
+			MOMO_CHECK(mNode != nullptr);
+			MOMO_CHECK(IteratorVersion::Check(version));
 		}
 
 	private:
@@ -587,7 +597,7 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
-		mRootNode(nullptr)
+		mRootNode(&Node::Create(mCrew.GetNodeParams(), true, 0))
 	{
 	}
 
@@ -601,7 +611,7 @@ public:
 		}
 		catch (...)
 		{
-			Clear();
+			_Destroy(mRootNode);
 			throw;
 		}
 	}
@@ -625,14 +635,15 @@ public:
 		}
 		catch (...)
 		{
-			Clear();
+			_Destroy(mRootNode);
 			throw;
 		}
 	}
 
 	~TreeSet() MOMO_NOEXCEPT
 	{
-		Clear();
+		if (mRootNode != nullptr)
+			_Destroy(mRootNode);
 	}
 
 	TreeSet& operator=(TreeSet&& treeSet) MOMO_NOEXCEPT
@@ -659,7 +670,10 @@ public:
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		return _MakeIterator(mRootNode);
+		Node* node = mRootNode;
+		while (!node->IsLeaf())
+			node = node->GetChild(0);
+		return _MakeIterator(node, 0, true);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
@@ -703,6 +717,7 @@ public:
 			_Destroy(mRootNode);
 		mRootNode = nullptr;
 		mCount = 0;
+		++mCrew.GetVersion();
 	}
 
 	ConstIterator LowerBound(const Key& key) const
@@ -786,11 +801,13 @@ public:
 	template<typename ItemCreator>
 	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
 	{
-		if (mRootNode == nullptr)
+		if (mRootNode == nullptr)	//?
 		{
+			MOMO_CHECK(iter == ConstIterator());
 			mRootNode = &Node::Create(mCrew.GetNodeParams(), true, 0);
 			iter = GetEnd();
 		}
+		iter.Check(mCrew.GetVersion());
 		Node* node = iter.GetNode();
 		size_t itemIndex = iter.GetItemIndex();
 		if (!node->IsLeaf())
@@ -815,6 +832,7 @@ public:
 				_AddSplit(relocator, node, itemIndex, itemCreator);
 		}
 		++mCount;
+		++mCrew.GetVersion();
 		return _MakeIterator(node, itemIndex, false);
 	}
 
@@ -836,15 +854,30 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		if (mCount == 1)	//?
+		//if (mCount == 1)
+		//{
+		//	Clear();
+		//	return GetEnd();
+		//}
+		iter.Check(mCrew.GetVersion());
+		MOMO_CHECK(iter != GetEnd());
+		Node* node = iter.GetNode();
+		size_t itemIndex = iter.GetItemIndex();
+		if (node->IsLeaf())
 		{
-			Clear();
-			return GetEnd();
+			node->Remove(itemIndex);
 		}
-		ConstIterator resIter = _Remove(iter.GetNode(), iter.GetItemIndex());
+		else
+		{
+			node = _Remove(node, itemIndex);
+			while (!node->IsLeaf())
+				node = node->GetChild(0);
+			itemIndex = 0;
+		}
 		//?
 		--mCount;
-		return resIter;
+		++mCrew.GetVersion();
+		return _MakeIterator(node, itemIndex, true);
 	}
 
 	//ConstIterator Remove(ConstIterator iter, Item& resItem)
@@ -867,13 +900,6 @@ private:
 	ConstIterator _MakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
 	{
 		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
-	}
-
-	ConstIterator _MakeIterator(Node* node) const MOMO_NOEXCEPT
-	{
-		while (!node->IsLeaf())
-			node = node->GetChild(0);
-		return _MakeIterator(node, 0, true);
 	}
 
 	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
@@ -994,13 +1020,8 @@ private:
 		}
 	}
 
-	ConstIterator _Remove(Node* node, size_t itemIndex)
+	Node* _Remove(Node* node, size_t itemIndex)
 	{
-		if (node->IsLeaf())
-		{
-			node->Remove(itemIndex);
-			return _MakeIterator(node, itemIndex, true);
-		}
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
 			childNode = childNode->GetChild(childNode->GetCount());
@@ -1012,7 +1033,7 @@ private:
 			_Destroy(node->GetChild(itemIndex));
 			node->Remove(itemIndex);
 			node->SetChild(itemIndex, remNode);
-			return _MakeIterator(node->GetChild(itemIndex));
+			return node->GetChild(itemIndex);
 		}
 		else
 		{
@@ -1030,7 +1051,7 @@ private:
 				childNode->Remove(childItemIndex);
 				childNode->SetChild(childItemIndex, remNode);
 			}
-			return _MakeIterator(node->GetChild(itemIndex + 1));
+			return node->GetChild(itemIndex + 1);
 		}
 	}
 
