@@ -731,11 +731,6 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		//if (mCount == 1)
-		//{
-		//	Clear();
-		//	return GetEnd();
-		//}
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
 		Node* node = iter.GetNode();
@@ -743,15 +738,13 @@ public:
 		if (node->IsLeaf())
 		{
 			node->Remove(itemIndex);
+			_Rebalance(node, node);
 		}
 		else
 		{
-			node = _Remove(node, itemIndex);
-			while (!node->IsLeaf())
-				node = node->GetChild(0);
+			node = _RemoveInternal(node, itemIndex);
 			itemIndex = 0;
 		}
-		//?
 		--mCount;
 		++mCrew.GetVersion();
 		return _MakeIterator(node, itemIndex, true);
@@ -897,20 +890,21 @@ private:
 		}
 	}
 
-	Node* _Remove(Node* node, size_t itemIndex)
+	Node* _RemoveInternal(Node* node, size_t itemIndex)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
 			childNode = childNode->GetChild(childNode->GetCount());
 		while (childNode != node && childNode->GetCount() == 0)
 			childNode = childNode->GetParent();
+		Node* resNode;
 		if (childNode == node)
 		{
 			Node* remNode = node->GetChild(itemIndex + 1);
 			_Destroy(node->GetChild(itemIndex));
 			node->Remove(itemIndex);
 			node->SetChild(itemIndex, remNode);
-			return node->GetChild(itemIndex);
+			resNode = node->GetChild(itemIndex);
 		}
 		else
 		{
@@ -928,8 +922,82 @@ private:
 				childNode->Remove(childItemIndex);
 				childNode->SetChild(childItemIndex, remNode);
 			}
-			return node->GetChild(itemIndex + 1);
+			resNode = node->GetChild(itemIndex + 1);
 		}
+		while (!resNode->IsLeaf())
+			resNode = resNode->GetChild(0);
+		_Rebalance(childNode, resNode);
+		return resNode;
+	}
+
+	void _Rebalance(Node* node, Node* savedNode) MOMO_NOEXCEPT
+	{
+		try
+		{
+			while (true)
+			{
+				Node* parentNode = node->GetParent();
+				assert(parentNode != savedNode);
+				if (parentNode == nullptr)
+				{
+					assert(mRootNode == node);
+					if (node->GetCount() == 0 && !node->IsLeaf())
+					{
+						assert(node != savedNode);
+						mRootNode = node->GetChild(0);
+						mRootNode->SetParent(nullptr);
+						node->Destroy(mCrew.GetDetailParams());
+					}
+					break;
+				}
+				size_t index = parentNode->GetChildIndex(node);
+				bool brk = !_Rebalance(parentNode, index, savedNode)
+					&& !_Rebalance(parentNode, index + 1, savedNode);
+				if (brk)
+					break;
+				node = parentNode;
+			}
+		}
+		catch (...)
+		{
+			// no throw!
+		}
+	}
+
+	bool _Rebalance(Node* parentNode, size_t index, Node* savedNode)
+	{
+		if (index == 0 || index > parentNode->GetCount())
+			return false;
+		--index;
+		Node* node1 = parentNode->GetChild(index);
+		Node* node2 = parentNode->GetChild(index + 1);
+		if (node2 == savedNode)
+			return false;
+		size_t itemCount1 = node1->GetCount();
+		size_t itemCount2 = node2->GetCount();
+		if (itemCount1 + itemCount2 >= node1->GetCapacity())
+			return false;
+		Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
+		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
+		relocator.RelocateCreate(Creator<Item>(std::move(*parentNode->GetItemPtr(index))),
+			node1->GetItemPtr(itemCount1));
+		parentNode->Remove(index);
+		parentNode->SetChild(index, node1);
+		Node* lastChildNode = node1->IsLeaf() ? nullptr : node1->GetChild(itemCount1);
+		for (size_t i = 0; i <= itemCount2; ++i)
+			node1->AcceptBackItem(itemCount1 + i);
+		if (!node1->IsLeaf())
+		{
+			node1->SetChild(itemCount1, lastChildNode);
+			for (size_t i = 0; i <= itemCount2; ++i)
+			{
+				Node* childNode = node2->GetChild(i);
+				node1->SetChild(itemCount1 + i + 1, childNode);
+				childNode->SetParent(node1);
+			}
+		}
+		node2->Destroy(mCrew.GetDetailParams());
+		return true;
 	}
 
 private:
