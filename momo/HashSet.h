@@ -15,6 +15,7 @@
 #pragma once
 
 #include "HashTraits.h"
+#include "SetUtility.h"
 #include "IteratorUtility.h"
 
 namespace momo
@@ -453,131 +454,7 @@ private:
 
 	typedef typename Bucket::Params BucketParams;
 
-	class Crew
-	{
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
-
-	private:
-		struct Data
-		{
-			size_t version;
-			HashTraits hashTraits;
-			BucketParams bucketParams;
-			MemManager memManager;
-		};
-
-	public:
-		Crew(const HashTraits& hashTraits, MemManager&& memManager)
-		{
-			mData = (Data*)memManager.Allocate(sizeof(Data));
-			mData->version = 0;
-			new(&mData->memManager) MemManager(std::move(memManager));
-			try
-			{
-				new(&mData->hashTraits) HashTraits(hashTraits);
-				try
-				{
-					new(&mData->bucketParams) BucketParams(mData->memManager);
-				}
-				catch (...)
-				{
-					mData->hashTraits.~HashTraits();
-					throw;
-				}
-			}
-			catch (...)
-			{
-				MemManager dataMemManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
-				dataMemManager.Deallocate(mData, sizeof(Data));
-				throw;
-			}
-		}
-
-		Crew(Crew&& crew) MOMO_NOEXCEPT
-			: mData(nullptr)
-		{
-			Swap(crew);
-		}
-
-		Crew(const Crew&) = delete;
-
-		~Crew() MOMO_NOEXCEPT
-		{
-			if (!_IsNull())
-			{
-				mData->bucketParams.~BucketParams();
-				mData->hashTraits.~HashTraits();
-				MemManager memManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
-				memManager.Deallocate(mData, sizeof(Data));
-			}
-		}
-
-		Crew& operator=(Crew&& crew) MOMO_NOEXCEPT
-		{
-			Crew(std::move(crew)).Swap(*this);
-			return *this;
-		}
-
-		Crew& operator=(const Crew&) = delete;
-
-		void Swap(Crew& crew) MOMO_NOEXCEPT
-		{
-			std::swap(mData, crew.mData);
-		}
-
-		const size_t& GetVersion() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->version;
-		}
-
-		size_t& GetVersion() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->version;
-		}
-
-		const BucketParams& GetBucketParams() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->bucketParams;
-		}
-
-		BucketParams& GetBucketParams() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->bucketParams;
-		}
-
-		const HashTraits& GetHashTraits() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->hashTraits;
-		}
-
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->memManager;
-		}
-
-		MemManager& GetMemManager() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->memManager;
-		}
-
-	private:
-		bool _IsNull() const MOMO_NOEXCEPT
-		{
-			return mData == nullptr;
-		}
-
-	private:
-		Data* mData;
-	};
+	typedef internal::SetCrew<HashTraits, MemManager, BucketParams> Crew;
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
@@ -596,7 +473,7 @@ public:
 	{
 		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
 		mCapacity = hashTraits.CalcCapacity(bucketCount);
-		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, mCrew.GetBucketParams());
+		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, mCrew.GetDetailParams());
 	}
 
 	HashSet(std::initializer_list<Item> items,
@@ -630,7 +507,7 @@ public:
 		mCount(hashSet.mCount)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
-		BucketParams& bucketParams = mCrew.GetBucketParams();
+		BucketParams& bucketParams = mCrew.GetDetailParams();
 		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
 		while (true)
 		{
@@ -687,7 +564,7 @@ public:
 		if (mBuckets == nullptr)
 			return ConstIterator();
 		return _MakeIterator(*mBuckets, 0,
-			(*mBuckets)[0].GetBounds(mCrew.GetBucketParams()).GetBegin(), true);
+			(*mBuckets)[0].GetBounds(mCrew.GetDetailParams()).GetBegin(), true);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
@@ -700,7 +577,7 @@ public:
 
 	const HashTraits& GetHashTraits() const MOMO_NOEXCEPT
 	{
-		return mCrew.GetHashTraits();
+		return mCrew.GetContainerTraits();
 	}
 
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -728,7 +605,7 @@ public:
 		if (mBuckets == nullptr)
 			return;
 		_DestroyBuckets(mBuckets->ExtractNextBuckets());
-		BucketParams& bucketParams = mCrew.GetBucketParams();
+		BucketParams& bucketParams = mCrew.GetDetailParams();
 		for (Bucket& bucket : *mBuckets)
 			bucket.Clear(bucketParams);
 		mCount = 0;
@@ -758,7 +635,7 @@ public:
 			newBucketCount <<= 1;
 		}
 		Buckets& newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
-			mCrew.GetBucketParams());
+			mCrew.GetDetailParams());
 		newBuckets.SetNextBuckets(mBuckets);
 		mBuckets = &newBuckets;
 		mCapacity = newCapacity;
@@ -774,7 +651,7 @@ public:
 	ConstIterator Find(const Key& key) const
 	{
 		const HashTraits& hashTraits = GetHashTraits();
-		const BucketParams& bucketParams = mCrew.GetBucketParams();
+		const BucketParams& bucketParams = mCrew.GetDetailParams();
 		size_t hashCode = hashTraits.GetHashCode(key);
 		const Buckets* buckets = mBuckets;
 		while (true)
@@ -931,7 +808,7 @@ public:
 		{
 			size_t curBucketCount = buckets->GetCount();
 			if (curBucketIndex < curBucketCount)
-				return (*buckets)[curBucketIndex].GetBounds(mCrew.GetBucketParams());
+				return (*buckets)[curBucketIndex].GetBounds(mCrew.GetDetailParams());
 			curBucketIndex -= curBucketCount;
 		}
 		assert(false);
@@ -957,7 +834,7 @@ private:
 	{
 		while (buckets != nullptr)
 		{
-			BucketParams& bucketParams = mCrew.GetBucketParams();
+			BucketParams& bucketParams = mCrew.GetDetailParams();
 			for (Bucket& bucket : *buckets)
 				bucket.Clear(bucketParams);
 			Buckets* nextBuckets = buckets->ExtractNextBuckets();
@@ -1013,7 +890,7 @@ private:
 		MOMO_EXTRA_CHECK(GetHashTraits().IsEqual(ItemTraits::GetKey(*iter),
 			ItemTraits::GetKey(newItem)));
 		Bucket& bucket = (*buckets)[iter.GetBucketIndex()];
-		Item* bucketBegin = bucket.GetBounds(mCrew.GetBucketParams()).GetBegin();
+		Item* bucketBegin = bucket.GetBounds(mCrew.GetDetailParams()).GetBegin();
 		return bucketBegin[std::addressof(*iter) - bucketBegin];
 	}
 
@@ -1042,9 +919,9 @@ private:
 		if (mBuckets->GetNextBuckets() != nullptr)
 		{
 			Bucket& bucket = (*mBuckets)[bucketIndex];
-			size_t itemIndex = pitem - bucket.GetBounds(mCrew.GetBucketParams()).GetBegin();
+			size_t itemIndex = pitem - bucket.GetBounds(mCrew.GetDetailParams()).GetBegin();
 			_MoveItems();
-			pitem = bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex;
+			pitem = bucket.GetBounds(mCrew.GetDetailParams()).GetBegin() + itemIndex;
 		}
 		++mCount;
 		++mCrew.GetVersion();
@@ -1058,7 +935,7 @@ private:
 	Item* _AddNogrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
 		bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-		return (*mBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
+		return (*mBuckets)[bucketIndex].AddBackCrt(mCrew.GetDetailParams(), itemCreator);
 	}
 
 	template<typename ItemCreator>
@@ -1074,7 +951,7 @@ private:
 		try
 		{
 			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount,
-				mCrew.GetBucketParams());
+				mCrew.GetDetailParams());
 		}
 		catch (...)	// std::bad_alloc&
 		{
@@ -1087,7 +964,7 @@ private:
 		try
 		{
 			bucketIndex = _GetBucketIndexForAdd(*newBuckets, hashCode);
-			pitem = (*newBuckets)[bucketIndex].AddBackCrt(mCrew.GetBucketParams(), itemCreator);
+			pitem = (*newBuckets)[bucketIndex].AddBackCrt(mCrew.GetDetailParams(), itemCreator);
 		}
 		catch (...)
 		{
@@ -1108,17 +985,17 @@ private:
 		MOMO_CHECK(buckets != nullptr);
 		size_t bucketIndex = iter.GetBucketIndex();
 		Bucket& bucket = (*buckets)[bucketIndex];
-		typename Bucket::Bounds bucketBounds = bucket.GetBounds(mCrew.GetBucketParams());
+		typename Bucket::Bounds bucketBounds = bucket.GetBounds(mCrew.GetDetailParams());
 		Item* bucketBegin = bucketBounds.GetBegin();
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
 		removeFunc(bucketBegin[itemIndex], *(bucketBounds.GetEnd() - 1));
-		bucket.RemoveBack(mCrew.GetBucketParams());
+		bucket.RemoveBack(mCrew.GetDetailParams());
 		--mCount;
 		++mCrew.GetVersion();
 		if (!iter.IsMovable())
 			return ConstIterator();
 		return _MakeIterator(*buckets, bucketIndex,
-			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, true);
+			bucket.GetBounds(mCrew.GetDetailParams()).GetBegin() + itemIndex, true);
 	}
 
 	void _MoveItems() MOMO_NOEXCEPT
@@ -1145,7 +1022,7 @@ private:
 			buckets->ExtractNextBuckets();
 		}
 		const HashTraits& hashTraits = GetHashTraits();
-		BucketParams& bucketParams = mCrew.GetBucketParams();
+		BucketParams& bucketParams = mCrew.GetDetailParams();
 		for (Bucket& bucket : *buckets)
 		{
 			typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);

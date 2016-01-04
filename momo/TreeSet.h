@@ -15,6 +15,7 @@
 #pragma once
 
 #include "TreeTraits.h"
+#include "SetUtility.h"
 #include "IteratorUtility.h"
 
 namespace momo
@@ -272,131 +273,7 @@ private:
 	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
-	class Crew
-	{
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
-
-	private:
-		struct Data
-		{
-			size_t version;
-			TreeTraits treeTraits;
-			NodeParams nodeParams;
-			MemManager memManager;
-		};
-
-	public:
-		Crew(const TreeTraits& treeTraits, MemManager&& memManager)
-		{
-			mData = (Data*)memManager.Allocate(sizeof(Data));
-			mData->version = 0;
-			new(&mData->memManager) MemManager(std::move(memManager));
-			try
-			{
-				new(&mData->treeTraits) TreeTraits(treeTraits);
-				try
-				{
-					new(&mData->nodeParams) NodeParams(mData->memManager);
-				}
-				catch (...)
-				{
-					mData->treeTraits.~TreeTraits();
-					throw;
-				}
-			}
-			catch (...)
-			{
-				MemManager dataMemManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
-				dataMemManager.Deallocate(mData, sizeof(Data));
-				throw;
-			}
-		}
-
-		Crew(Crew&& crew) MOMO_NOEXCEPT
-			: mData(nullptr)
-		{
-			Swap(crew);
-		}
-
-		Crew(const Crew&) = delete;
-
-		~Crew() MOMO_NOEXCEPT
-		{
-			if (!_IsNull())
-			{
-				mData->nodeParams.~NodeParams();
-				mData->treeTraits.~TreeTraits();
-				MemManager memManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
-				memManager.Deallocate(mData, sizeof(Data));
-			}
-		}
-
-		Crew& operator=(Crew&& crew) MOMO_NOEXCEPT
-		{
-			Crew(std::move(crew)).Swap(*this);
-			return *this;
-		}
-
-		Crew& operator=(const Crew&) = delete;
-
-		void Swap(Crew& crew) MOMO_NOEXCEPT
-		{
-			std::swap(mData, crew.mData);
-		}
-
-		const size_t& GetVersion() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->version;
-		}
-
-		size_t& GetVersion() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->version;
-		}
-
-		const NodeParams& GetNodeParams() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->nodeParams;
-		}
-
-		NodeParams& GetNodeParams() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->nodeParams;
-		}
-
-		const TreeTraits& GetTreeTraits() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->treeTraits;
-		}
-
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->memManager;
-		}
-
-		MemManager& GetMemManager() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return mData->memManager;
-		}
-
-	private:
-		bool _IsNull() const MOMO_NOEXCEPT
-		{
-			return mData == nullptr;
-		}
-
-	private:
-		Data* mData;
-	};
+	typedef internal::SetCrew<TreeTraits, MemManager, NodeParams> Crew;
 
 public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
@@ -597,7 +474,7 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
-		mRootNode(&Node::Create(mCrew.GetNodeParams(), true, 0))
+		mRootNode(&Node::Create(mCrew.GetDetailParams(), true, 0))
 	{
 	}
 
@@ -688,7 +565,7 @@ public:
 
 	const TreeTraits& GetTreeTraits() const MOMO_NOEXCEPT
 	{
-		return mCrew.GetTreeTraits();
+		return mCrew.GetContainerTraits();
 	}
 
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -804,7 +681,7 @@ public:
 		if (mRootNode == nullptr)	//?
 		{
 			MOMO_CHECK(iter == ConstIterator());
-			mRootNode = &Node::Create(mCrew.GetNodeParams(), true, 0);
+			mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
 			iter = GetEnd();
 		}
 		iter.Check(mCrew.GetVersion());
@@ -825,7 +702,7 @@ public:
 		}
 		else
 		{
-			Relocator relocator(GetMemManager(), mCrew.GetNodeParams());
+			Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
 			if (itemCount < nodeMaxCapacity)
 				_AddGrow(relocator, node, itemIndex, itemCreator);
 			else
@@ -945,7 +822,7 @@ private:
 			for (size_t i = 0; i <= count; ++i)
 				_Destroy(node->GetChild(i));
 		}
-		node->Destroy(mCrew.GetNodeParams());
+		node->Destroy(mCrew.GetDetailParams());
 	}
 
 	template<typename ItemCreator>

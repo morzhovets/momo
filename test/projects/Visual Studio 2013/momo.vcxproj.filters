@@ -224,5 +224,8 @@
     <ClInclude Include="..\..\..\momo\details\TreeNode.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\SetUtility.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

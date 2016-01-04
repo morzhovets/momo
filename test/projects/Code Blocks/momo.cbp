@@ -75,6 +75,7 @@
 		<Unit filename="../../../momo/MemPool.h" />
 		<Unit filename="../../../momo/ObjectManager.h" />
 		<Unit filename="../../../momo/SegmentedArray.h" />
+		<Unit filename="../../../momo/SetUtility.h" />
 		<Unit filename="../../../momo/Settings.h" />
 		<Unit filename="../../../momo/TreeMap.h" />
 		<Unit filename="../../../momo/TreeSet.h" />
