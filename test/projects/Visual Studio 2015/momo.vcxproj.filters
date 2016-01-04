@@ -158,9 +158,6 @@
     <ClInclude Include="..\..\..\momo\details\BucketLim4.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\Settings.h">
-      <Filter>Header Files\momo</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\tests\LibcxxVectorTests.h">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
@@ -225,6 +222,9 @@
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\SetUtility.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\UserSettings.h">
       <Filter>Header Files\momo</Filter>
     </ClInclude>
   </ItemGroup>

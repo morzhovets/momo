@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Settings.h"
+#include "UserSettings.h"
 
 #include <cstdint>
 #include <cstddef>

@@ -76,10 +76,10 @@
 		<Unit filename="../../../momo/ObjectManager.h" />
 		<Unit filename="../../../momo/SegmentedArray.h" />
 		<Unit filename="../../../momo/SetUtility.h" />
-		<Unit filename="../../../momo/Settings.h" />
 		<Unit filename="../../../momo/TreeMap.h" />
 		<Unit filename="../../../momo/TreeSet.h" />
 		<Unit filename="../../../momo/TreeTraits.h" />
+		<Unit filename="../../../momo/UserSettings.h" />
 		<Unit filename="../../../momo/Utility.h" />
 		<Unit filename="../../../momo/details/ArrayBucket.h" />
 		<Unit filename="../../../momo/details/BucketLim4.h" />
