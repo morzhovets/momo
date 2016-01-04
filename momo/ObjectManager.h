@@ -343,6 +343,7 @@ namespace internal
 			{
 				_RelocateAddBack(srcObjects, dstObjects, count - 1,
 					MoveCreator(std::move(srcObjects[count - 1])), std::false_type());
+				Destroy(srcObjects[count - 1]);
 			}
 		}
 
