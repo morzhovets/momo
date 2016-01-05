@@ -80,15 +80,7 @@ namespace internal
 	{
 		typedef TObject Object;
 
-		static const bool isNothrowMoveConstructible =
-#if MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 1
-			std::is_nothrow_move_constructible<Object>::value
-				|| !std::is_copy_constructible<Object>::value;
-#elif MOMO_USE_UNSAFE_MOVE_CONSTRUCTORS == 2
-			true;
-#else
-			std::is_nothrow_move_constructible<Object>::value;
-#endif
+		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
 
 		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
