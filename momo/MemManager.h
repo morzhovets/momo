@@ -12,6 +12,33 @@
     class MemManagerStd
     class MemManagerDefault
 
+  MemManagerCpp uses 'new' and 'delete'.
+  MemManagerC uses 'malloc', 'free' and 'realloc'.
+  MemManagerWin uses 'HeapAlloc', 'HeapFree' and 'HeapReAlloc'.
+  MemManagerStd uses 'allocator<char>::allocate' and 'deallocate'.
+  MemManagerDefault is defined in UserSettings.h.
+  MemManagerStd<std::allocator<...>> equals to MemManagerDefault.
+
+  // template for user MemManager:
+  class UserMemManager
+  {
+  public:
+    static const bool canReallocate = true;
+    static const bool canReallocateInplace = true;
+
+  public:
+    UserMemManager();
+    UserMemManager(UserMemManager&& memManager) noexcept;
+    UserMemManager(const UserMemManager& memManager);
+    ~UserMemManager() noexcept;
+    UserMemManager& operator=(const UserMemManager&) = delete;
+
+    void* Allocate(size_t size);
+    void Deallocate(void* ptr, size_t size) noexcept;
+    void* Reallocate(void* ptr, size_t size, size_t newSize);
+    bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept;
+  };
+
 \**********************************************************/
 
 #pragma once
@@ -20,25 +47,6 @@
 
 namespace momo
 {
-
-//class MemManager
-//{
-//public:
-//	static const bool canReallocate = true;
-//	static const bool canReallocateInplace = true;
-//
-//public:
-//	MemManager();
-//	MemManager(MemManager&& memManager) MOMO_NOEXCEPT;
-//	MemManager(const MemManager& memManager);
-//	~MemManager() MOMO_NOEXCEPT;
-//	MemManager& operator=(const MemManager&) = delete;
-//
-//	void* Allocate(size_t size);
-//	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT;
-//	void* Reallocate(void* ptr, size_t size, size_t newSize);
-//	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT;
-//};
 
 class MemManagerCpp
 {
