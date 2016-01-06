@@ -224,6 +224,7 @@ struct TreeSetItemTraits
 struct TreeSetSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
 };
 
@@ -386,6 +387,7 @@ private:
 
 		Node* GrowLeafNode(Node* node, size_t itemIndex)
 		{
+			assert(node->IsLeaf());
 			mOldNodes.AddBack(node);
 			size_t itemCount = node->GetCount();
 			Node* newNode = CreateNode(true, itemCount + 1);
@@ -394,26 +396,24 @@ private:
 			return newNode;
 		}
 
-		SplitResult SplitLeafNode(Node* node, size_t itemIndex)
+		SplitResult SplitNode(Node* node, size_t itemIndex)
 		{
-			return _SplitNode(node, itemIndex, true);
-		}
-
-		SplitResult SplitInternalNode(Node* node, size_t itemIndex)
-		{
-			SplitResult splitRes = _SplitNode(node, itemIndex, false);
-			size_t itemCount = node->GetCount();
-			Node* newNode = splitRes.newNode1;
-			size_t newIndex = 0;
-			for (size_t i = 0; i <= itemCount; ++i)
+			SplitResult splitRes = _SplitNode(node, itemIndex);
+			if (!node->IsLeaf())
 			{
-				if (i != itemIndex)
-					newNode->SetChild(newIndex, node->GetChild(i));
-				newIndex += (i == itemIndex) ? 2 : 1;
-				if (i == splitRes.middleIndex)
+				size_t itemCount = node->GetCount();
+				Node* newNode = splitRes.newNode1;
+				size_t newIndex = 0;
+				for (size_t i = 0; i <= itemCount; ++i)
 				{
-					newNode = splitRes.newNode2;
-					newIndex = 0;
+					if (i != itemIndex)
+						newNode->SetChild(newIndex, node->GetChild(i));
+					newIndex += (i == itemIndex) ? 2 : 1;
+					if (i == splitRes.middleIndex)
+					{
+						newNode = splitRes.newNode2;
+						newIndex = 0;
+					}
 				}
 			}
 			return splitRes;
@@ -433,8 +433,9 @@ private:
 		}
 
 	private:
-		SplitResult _SplitNode(Node* node, size_t itemIndex, bool isLeaf)
+		SplitResult _SplitNode(Node* node, size_t itemIndex)
 		{
+			bool isLeaf = node->IsLeaf();
 			mOldNodes.AddBack(node);
 			size_t itemCount = node->GetCount();
 			size_t middleIndex = itemCount / 2;
@@ -590,8 +591,9 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		if (mRootNode != nullptr)
-			_Destroy(mRootNode);
+		if (mRootNode == nullptr)
+			return;
+		_Destroy(mRootNode);
 		mRootNode = nullptr;
 		mCount = 0;
 		++mCrew.GetVersion();
@@ -637,11 +639,7 @@ public:
 	template<typename ItemCreator>
 	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
 	{
-		ConstIterator iter = LowerBound(key);
-		if (_IsEqual(iter, key))
-			return InsertResult(iter, false);
-		iter = AddCrt(iter, itemCreator);
-		return InsertResult(iter, true);
+		return _Insert(key, itemCreator, true);
 	}
 
 	template<typename... ItemArgs>
@@ -652,12 +650,13 @@ public:
 
 	InsertResult Insert(Item&& item)
 	{
-		return InsertVar(ItemTraits::GetKey((const Item&)item), std::move(item));
+		return _Insert(ItemTraits::GetKey((const Item&)item),
+			Creator<Item>(std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return InsertVar(ItemTraits::GetKey(item), item);
+		return _Insert(ItemTraits::GetKey(item), Creator<const Item&>(item), false);
 	}
 
 	template<typename Iterator>
@@ -678,39 +677,7 @@ public:
 	template<typename ItemCreator>
 	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
 	{
-		if (mRootNode == nullptr)	//?
-		{
-			MOMO_CHECK(iter == ConstIterator());
-			mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
-			iter = GetEnd();
-		}
-		iter.Check(mCrew.GetVersion());
-		Node* node = iter.GetNode();
-		size_t itemIndex = iter.GetItemIndex();
-		if (!node->IsLeaf())
-		{
-			node = node->GetChild(itemIndex);
-			while (!node->IsLeaf())
-				node = node->GetChild(node->GetCount());
-			itemIndex = node->GetCount();
-		}
-		size_t itemCount = node->GetCount();
-		if (itemCount < node->GetCapacity())
-		{
-			itemCreator(node->GetItemPtr(itemCount));
-			node->AcceptBackItem(itemIndex);
-		}
-		else
-		{
-			Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
-			if (itemCount < nodeMaxCapacity)
-				_AddGrow(relocator, node, itemIndex, itemCreator);
-			else
-				_AddSplit(relocator, node, itemIndex, itemCreator);
-		}
-		++mCount;
-		++mCrew.GetVersion();
-		return _MakeIterator(node, itemIndex, false);
+		return _Add(iter, itemCreator, true);
 	}
 
 	template<typename... ItemArgs>
@@ -777,6 +744,15 @@ private:
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
+	bool _ExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
+	{
+		const TreeTraits& treeTraits = GetTreeTraits();
+		const Key& key = ItemTraits::GetKey(*iter);
+		return (iter == GetBegin() || treeTraits.IsLess(ItemTraits::GetKey(*std::prev(iter)), key))
+			&& (iter == std::prev(GetEnd())
+			|| treeTraits.IsLess(key, ItemTraits::GetKey(*std::next(iter))));
+	}
+
 	size_t _LowerBound(Node* node, const Key& key) const
 	{
 		size_t leftIndex = 0;
@@ -819,6 +795,56 @@ private:
 	}
 
 	template<typename ItemCreator>
+	InsertResult _Insert(const Key& key, const ItemCreator& itemCreator, bool extraCheck)
+	{
+		ConstIterator iter = LowerBound(key);
+		if (_IsEqual(iter, key))
+			return InsertResult(iter, false);
+		iter = _Add(iter, itemCreator, extraCheck);
+		return InsertResult(iter, true);
+	}
+
+	template<typename ItemCreator>
+	ConstIterator _Add(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
+	{
+		if (mRootNode == nullptr)	//?
+		{
+			MOMO_CHECK(iter == ConstIterator());
+			mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
+			iter = GetEnd();
+		}
+		iter.Check(mCrew.GetVersion());
+		Node* node = iter.GetNode();
+		size_t itemIndex = iter.GetItemIndex();
+		if (!node->IsLeaf())
+		{
+			node = node->GetChild(itemIndex);
+			while (!node->IsLeaf())
+				node = node->GetChild(node->GetCount());
+			itemIndex = node->GetCount();
+		}
+		size_t itemCount = node->GetCount();
+		if (itemCount < node->GetCapacity())
+		{
+			itemCreator(node->GetItemPtr(itemCount));
+			node->AcceptBackItem(itemIndex);
+		}
+		else
+		{
+			Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
+			if (itemCount < nodeMaxCapacity)
+				_AddGrow(relocator, node, itemIndex, itemCreator);
+			else
+				_AddSplit(relocator, node, itemIndex, itemCreator);
+		}
+		++mCount;
+		++mCrew.GetVersion();
+		ConstIterator resIter = _MakeIterator(node, itemIndex, false);
+		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
+		return resIter;
+	}
+
+	template<typename ItemCreator>
 	void _AddGrow(Relocator& relocator, Node*& node, size_t itemIndex,
 		const ItemCreator& itemCreator)
 	{
@@ -839,7 +865,7 @@ private:
 	{
 		Node* node = leafNode;
 		size_t itemIndex = leafItemIndex;
-		typename Relocator::SplitResult splitRes = relocator.SplitLeafNode(node, itemIndex);
+		typename Relocator::SplitResult splitRes = relocator.SplitNode(node, itemIndex);
 		leafNode = splitRes.newNode;
 		leafItemIndex = splitRes.newItemIndex;
 		while (true)
@@ -856,14 +882,14 @@ private:
 			}
 			size_t itemCount = node->GetCount();
 			itemIndex = node->GetChildIndex(childNode);
-			if (itemCount < nodeMaxCapacity)
+			if (itemCount < node->GetCapacity())
 			{
 				relocator.AddSegment(childNode, childMiddleIndex, node, itemCount, 1);
 				break;
 			}
 			Node* childNewNode1 = splitRes.newNode1;
 			Node* childNewNode2 = splitRes.newNode2;
-			splitRes = relocator.SplitInternalNode(node, itemIndex);
+			splitRes = relocator.SplitNode(node, itemIndex);
 			relocator.AddSegment(childNode, childMiddleIndex,
 				splitRes.newNode, splitRes.newItemIndex, 1);
 			splitRes.newNode->SetChild(splitRes.newItemIndex, childNewNode1);
