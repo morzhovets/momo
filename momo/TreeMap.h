@@ -46,6 +46,7 @@ struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 struct TreeMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
 };
 
@@ -356,13 +357,13 @@ public:
 	template<typename ValueCreator>
 	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
 	{
-		return _Add(iter, std::move(key), valueCreator);
+		return _Add(iter, std::move(key), valueCreator, true);
 	}
 
 	template<typename... ValueArgs>
 	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
 	{
-		return _Add(iter, std::move(key),
+		return AddCrt(iter, std::move(key),
 			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -379,13 +380,14 @@ public:
 	template<typename ValueCreator>
 	Iterator AddCrt(ConstIterator iter, const Key& key, const ValueCreator& valueCreator)
 	{
-		return _Add(iter, key, valueCreator);
+		return _Add(iter, key, valueCreator, true);
 	}
 
 	template<typename... ValueArgs>
 	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
 	{
-		return _Add(iter, key, ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
+		return AddCrt(iter, key,
+			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(ConstIterator iter, const Key& key, Value&& value)
@@ -439,9 +441,16 @@ public:
 	}
 
 private:
-	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
+	bool _IsEqual(ConstIterator iter, const Key& key) const
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, iter->key);
+	}
+
+	bool _ExtraCheck(ConstIterator iter, const Key& key) const
+	{
+		const TreeTraits& treeTraits = GetTreeTraits();
+		return (iter == GetBegin() || treeTraits.IsLess(std::prev(iter)->key, key))
+			&& (iter == GetEnd() || treeTraits.IsLess(key, iter->key));
 	}
 
 	template<typename RKey, typename ValueCreator>
@@ -450,7 +459,7 @@ private:
 		Iterator iter = LowerBound((const Key&)key);
 		if (_IsEqual(iter, (const Key&)key))
 			return InsertResult(iter, false);
-		iter = _Add(iter, std::forward<RKey>(key), valueCreator);
+		iter = _Add(iter, std::forward<RKey>(key), valueCreator, false);
 		return InsertResult(iter, true);
 	}
 
@@ -464,8 +473,11 @@ private:
 	}
 
 	template<typename RKey, typename ValueCreator>
-	Iterator _Add(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator)
+	Iterator _Add(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator,
+		bool extraCheck)
 	{
+		(void)extraCheck;
+		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, (const Key&)key));
 		auto pairCreator = [&key, &valueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
 		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));

@@ -739,18 +739,27 @@ private:
 		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
-	bool _IsEqual(ConstIterator iter, const Key& key) const MOMO_NOEXCEPT
+	bool _IsEqual(ConstIterator iter, const Key& key) const
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
 	bool _ExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
 	{
-		const TreeTraits& treeTraits = GetTreeTraits();
-		const Key& key = ItemTraits::GetKey(*iter);
-		return (iter == GetBegin() || treeTraits.IsLess(ItemTraits::GetKey(*std::prev(iter)), key))
-			&& (iter == std::prev(GetEnd())
-			|| treeTraits.IsLess(key, ItemTraits::GetKey(*std::next(iter))));
+		try
+		{
+			const TreeTraits& treeTraits = GetTreeTraits();
+			const Key& key = ItemTraits::GetKey(*iter);
+			bool res = (iter == GetBegin()
+				|| treeTraits.IsLess(ItemTraits::GetKey(*std::prev(iter)), key));
+			res = res && (iter == std::prev(GetEnd())
+				|| treeTraits.IsLess(key, ItemTraits::GetKey(*std::next(iter))));
+			return res;
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
 
 	size_t _LowerBound(Node* node, const Key& key) const
@@ -840,6 +849,7 @@ private:
 		++mCount;
 		++mCrew.GetVersion();
 		ConstIterator resIter = _MakeIterator(node, itemIndex, false);
+		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
 		return resIter;
 	}
