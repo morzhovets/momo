@@ -912,6 +912,18 @@ private:
 			mCrew.GetVersion(), move);
 	}
 
+	bool _ExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
+	{
+		try
+		{
+			return iter == Find(ItemTraits::GetKey(*iter));
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
 	Buckets* _GetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
 	{
 		const Buckets* iterBuckets = iter.GetBuckets();
@@ -987,7 +999,7 @@ private:
 		ConstIterator resIter = _MakeIterator(*mBuckets, bucketIndex,
 			bucket.GetBounds(mCrew.GetBucketParams()).GetBegin() + itemIndex, false);
 		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || resIter == Find(ItemTraits::GetKey(*resIter)));
+		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
 		return resIter;
 	}
 
