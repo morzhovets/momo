@@ -12,12 +12,12 @@
     class MemManagerStd
     class MemManagerDefault
 
-  MemManagerCpp uses 'new' and 'delete'.
-  MemManagerC uses 'malloc', 'free' and 'realloc'.
-  MemManagerWin uses 'HeapAlloc', 'HeapFree' and 'HeapReAlloc'.
-  MemManagerStd uses 'allocator<char>::allocate' and 'deallocate'.
+  MemManagerCpp uses `new` and `delete`.
+  MemManagerC uses `malloc`, `free` and `realloc`.
+  MemManagerWin uses `HeapAlloc`, `HeapFree` and `HeapReAlloc`.
+  MemManagerStd uses `allocator<char>::allocate` and `deallocate`.
   MemManagerDefault is defined in UserSettings.h.
-  MemManagerStd<std::allocator<...>> equals to MemManagerDefault.
+  MemManagerStd<std::allocator<...>> is same as MemManagerDefault.
 
   // template for user MemManager:
   class UserMemManager
