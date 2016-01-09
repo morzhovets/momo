@@ -748,6 +748,7 @@ public:
 		return AddCrt(keyIter, typename KeyValueTraits::CopyValueCreator(value));
 	}
 
+	// basic exception safety
 	template<typename Iterator>
 	void AddKV(Iterator begin, Iterator end)
 	{
@@ -757,6 +758,7 @@ public:
 			Add(iter->key, iter->value);
 	}
 
+	// basic exception safety
 	template<typename Iterator>
 	void AddFS(Iterator begin, Iterator end)
 	{
@@ -767,6 +769,7 @@ public:
 	}
 
 #ifdef MOMO_USE_INIT_LISTS
+	// basic exception safety
 	void Add(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
 	{
 		AddFS(keyValuePairs.begin(), keyValuePairs.end());

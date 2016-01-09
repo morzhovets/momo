@@ -776,6 +776,7 @@ public:
 		return _Insert(ItemTraits::GetKey(item), typename ItemTraits::CopyCreator(item), false);
 	}
 
+	// basic exception safety
 	template<typename Iterator>
 	size_t Insert(Iterator begin, Iterator end)
 	{
@@ -787,6 +788,7 @@ public:
 	}
 
 #ifdef MOMO_USE_INIT_LISTS
+	// basic exception safety
 	size_t Insert(std::initializer_list<Item> items)
 	{
 		return Insert(items.begin(), items.end());

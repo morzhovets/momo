@@ -722,6 +722,7 @@ public:
 		return _Insert(key, typename KeyValueTraits::CopyValueCreator(value));
 	}
 
+	// basic exception safety
 	template<typename Iterator>
 	size_t InsertKV(Iterator begin, Iterator end)
 	{
@@ -732,6 +733,7 @@ public:
 		return _Insert(begin, end, insertFunc);
 	}
 
+	// basic exception safety
 	template<typename Iterator>
 	size_t InsertFS(Iterator begin, Iterator end)
 	{
@@ -743,6 +745,7 @@ public:
 	}
 
 #ifdef MOMO_USE_INIT_LISTS
+	// basic exception safety
 	size_t Insert(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
 	{
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
