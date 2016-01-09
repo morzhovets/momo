@@ -178,92 +178,21 @@ namespace internal
 
 template<typename TKey,
 	typename TItem = TKey>
-struct TreeSetItemTraits
+struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 {
 	typedef TKey Key;
 	typedef TItem Item;
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
-	static const bool isNothrowAnywaySwappable = ItemManager::isNothrowAnywaySwappable;
-
-	static const size_t alignment = ItemManager::alignment;
-
-	template<typename... ItemArgs>
-	using Creator = typename ItemManager::template Creator<ItemArgs...>;
-
-	static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
-	{
-		MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
-		return item;
-	}
-
 	static void Destroy(Item& item) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(item);
 	}
 
-	static void Assign(Item&& srcItem, Item& dstItem)
-	{
-		dstItem = std::move(srcItem);
-	}
-
-	static void Assign(const Item& srcItem, Item& dstItem)
-	{
-		dstItem = srcItem;
-	}
-
-	static void Assign(Item&& srcItem, Item& midItem, Item& dstItem)
-	{
-		_Assign(std::move(srcItem), midItem, dstItem,
-			internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
-	}
-
-	static void Assign(const Item& srcItem, Item& midItem, Item& dstItem)
-	{
-		_Assign(srcItem, midItem, dstItem,
-			internal::BoolConstant<ItemManager::isNothrowAnywayCopyAssignable>());
-	}
-
 	static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 	{
 		ItemManager::SwapNothrowAnyway(item1, item2);
-	}
-
-	template<typename Iterator, typename ItemCreator>
-	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-		const ItemCreator& itemCreator, void* pobject)
-	{
-		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
-	}
-
-private:
-	static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
-		std::true_type /*isNothrowAnywayMoveAssignable*/)
-	{
-		dstItem = std::move(midItem);
-		ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
-	}
-
-	static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
-		std::false_type /*isNothrowAnywayMoveAssignable*/)
-	{
-		dstItem = midItem;
-		midItem = std::move(srcItem);
-	}
-
-	static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
-		std::true_type /*isNothrowAnywayCopyAssignable*/)
-	{
-		dstItem = std::move(midItem);
-		ItemManager::AssignNothrowAnyway(srcItem, midItem);
-	}
-
-	static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
-		std::false_type /*isNothrowAnywayCopyAssignable*/)
-	{
-		dstItem = midItem;
-		midItem = srcItem;
 	}
 };
 
