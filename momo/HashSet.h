@@ -743,16 +743,16 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto removeFunc = [] (Item& item, Item& backItem)
-			{ ItemTraits::Assign(std::move(backItem), item); };
-		return _Remove(iter, removeFunc);
+		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::Assign(std::move(srcItem), dstItem); };
+		return _Remove(iter, assignFunc);
 	}
 
 	ConstIterator Remove(ConstIterator iter, Item& resItem)
 	{
-		auto removeFunc = [&resItem] (Item& item, Item& backItem)
-			{ ItemTraits::Assign(std::move(backItem), item, resItem); };
-		return _Remove(iter, removeFunc);
+		auto assignFunc = [&resItem] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::Assign(std::move(srcItem), dstItem, resItem); };
+		return _Remove(iter, assignFunc);
 	}
 
 	bool Remove(const Key& key)
@@ -989,8 +989,8 @@ private:
 		return pitem;
 	}
 
-	template<typename RemoveFunc>
-	ConstIterator _Remove(ConstIterator iter, RemoveFunc removeFunc)
+	template<typename AssignFunc>
+	ConstIterator _Remove(ConstIterator iter, AssignFunc assignFunc)
 	{
 		iter.Check(mCrew.GetVersion(), false);
 		Buckets* buckets = _GetMutBuckets(iter);
@@ -1000,7 +1000,7 @@ private:
 		typename Bucket::Bounds bucketBounds = bucket.GetBounds(mCrew.GetDetailParams());
 		Item* bucketBegin = bucketBounds.GetBegin();
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
-		removeFunc(bucketBegin[itemIndex], *(bucketBounds.GetEnd() - 1));
+		assignFunc(std::move(*(bucketBounds.GetEnd() - 1)), bucketBegin[itemIndex]);
 		bucket.RemoveBack(mCrew.GetDetailParams());
 		--mCount;
 		++mCrew.GetVersion();
