@@ -208,6 +208,23 @@ struct TreeSetItemTraits
 		dstItem = std::move(srcItem);
 	}
 
+	static void Assign(const Item& srcItem, Item& dstItem)
+	{
+		dstItem = srcItem;
+	}
+
+	static void Assign(Item&& srcItem, Item& midItem, Item& dstItem)
+	{
+		_Assign(std::move(srcItem), midItem, dstItem,
+			internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
+	}
+
+	static void Assign(const Item& srcItem, Item& midItem, Item& dstItem)
+	{
+		_Assign(srcItem, midItem, dstItem,
+			internal::BoolConstant<ItemManager::isNothrowAnywayCopyAssignable>());
+	}
+
 	static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 	{
 		ItemManager::SwapNothrowAnyway(item1, item2);
@@ -218,6 +235,35 @@ struct TreeSetItemTraits
 		const ItemCreator& itemCreator, void* pobject)
 	{
 		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
+	}
+
+private:
+	static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
+		std::true_type /*isNothrowAnywayMoveAssignable*/)
+	{
+		dstItem = std::move(midItem);
+		ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
+	}
+
+	static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
+		std::false_type /*isNothrowAnywayMoveAssignable*/)
+	{
+		dstItem = midItem;
+		midItem = std::move(srcItem);
+	}
+
+	static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
+		std::true_type /*isNothrowAnywayCopyAssignable*/)
+	{
+		dstItem = std::move(midItem);
+		ItemManager::AssignNothrowAnyway(srcItem, midItem);
+	}
+
+	static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
+		std::false_type /*isNothrowAnywayCopyAssignable*/)
+	{
+		dstItem = midItem;
+		midItem = srcItem;
 	}
 };
 
@@ -698,26 +744,20 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		iter.Check(mCrew.GetVersion());
-		MOMO_CHECK(iter != GetEnd());
-		Node* node = iter.GetNode();
-		size_t itemIndex = iter.GetItemIndex();
-		if (node->IsLeaf())
-		{
-			node->Remove(itemIndex);
-			_Rebalance(node, node);
-		}
-		else
-		{
-			node = _RemoveInternal(node, itemIndex);
-			itemIndex = 0;
-		}
-		--mCount;
-		++mCrew.GetVersion();
-		return _MakeIterator(node, itemIndex, true);
+		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
+		auto assignFunc2 = [] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::Assign(std::move(srcItem), dstItem); };
+		return _Remove(iter, assignFunc1, assignFunc2);
 	}
 
-	//ConstIterator Remove(ConstIterator iter, Item& resItem)
+	ConstIterator Remove(ConstIterator iter, Item& resItem)
+	{
+		auto assignFunc1 = [&resItem] (Item&& srcItem)
+			{ ItemTraits::Assign(std::move(srcItem), resItem); };
+		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::Assign(std::move(srcItem), dstItem, resItem); };
+		return _Remove(iter, assignFunc1, assignFunc2);
+	}
 
 	bool Remove(const Key& key)
 	{
@@ -728,10 +768,29 @@ public:
 		return true;
 	}
 
-	//void Reset(ConstIterator iter, Item&& newItem)
-	//void Reset(ConstIterator iter, const Item& newItem)
-	//void Reset(ConstIterator iter, Item&& newItem, Item& resItem)
-	//void Reset(ConstIterator iter, const Item& newItem, Item& resItem)
+	void Reset(ConstIterator iter, Item&& newItem)
+	{
+		Item& item = _GetItemForReset(iter, (const Item&)newItem);
+		ItemTraits::Assign(std::move(newItem), item);
+	}
+
+	void Reset(ConstIterator iter, const Item& newItem)
+	{
+		Item& item = _GetItemForReset(iter, newItem);
+		ItemTraits::Assign(newItem, item);
+	}
+
+	void Reset(ConstIterator iter, Item&& newItem, Item& resItem)
+	{
+		Item& item = _GetItemForReset(iter, (const Item&)newItem);
+		ItemTraits::Assign(std::move(newItem), item, resItem);
+	}
+
+	void Reset(ConstIterator iter, const Item& newItem, Item& resItem)
+	{
+		Item& item = _GetItemForReset(iter, newItem);
+		ItemTraits::Assign(newItem, item, resItem);
+	}
 
 private:
 	ConstIterator _MakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
@@ -801,6 +860,17 @@ private:
 				_Destroy(node->GetChild(i));
 		}
 		node->Destroy(mCrew.GetDetailParams());
+	}
+
+	Item& _GetItemForReset(ConstIterator iter, const Item& newItem)
+	{
+		iter.Check(mCrew.GetVersion());
+		MOMO_CHECK(iter != GetEnd());
+		const TreeTraits& treeTraits = GetTreeTraits();
+		const Key& key = ItemTraits::GetKey(*iter);
+		const Key& newKey = ItemTraits::GetKey(newItem);
+		MOMO_EXTRA_CHECK(!treeTraits.IsLess(key, newKey) && !treeTraits.IsLess(newKey, key));
+		return *iter.GetNode()->GetItemPtr(iter.GetItemIndex());
 	}
 
 	template<typename ItemCreator>
@@ -926,7 +996,32 @@ private:
 		}
 	}
 
-	Node* _RemoveInternal(Node* node, size_t itemIndex)
+	template<typename AssignFunc1, typename AssignFunc2>
+	ConstIterator _Remove(ConstIterator iter, AssignFunc1 assignFunc1, AssignFunc2 assignFunc2)
+	{
+		iter.Check(mCrew.GetVersion());
+		MOMO_CHECK(iter != GetEnd());
+		Node* node = iter.GetNode();
+		size_t itemIndex = iter.GetItemIndex();
+		if (node->IsLeaf())
+		{
+			assignFunc1(std::move(*node->GetItemPtr(itemIndex)));
+			node->Remove(itemIndex);
+			_Rebalance(node, node);
+		}
+		else
+		{
+			node = _RemoveInternal(node, itemIndex, assignFunc1, assignFunc2);
+			itemIndex = 0;
+		}
+		--mCount;
+		++mCrew.GetVersion();
+		return _MakeIterator(node, itemIndex, true);
+	}
+
+	template<typename AssignFunc1, typename AssignFunc2>
+	Node* _RemoveInternal(Node* node, size_t itemIndex,
+		AssignFunc1 assignFunc1, AssignFunc2 assignFunc2)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -936,6 +1031,7 @@ private:
 		Node* resNode;
 		if (childNode == node)
 		{
+			assignFunc1(std::move(*node->GetItemPtr(itemIndex)));
 			Node* remNode = node->GetChild(itemIndex + 1);
 			_Destroy(node->GetChild(itemIndex));
 			node->Remove(itemIndex);
@@ -945,7 +1041,7 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			ItemTraits::Assign(std::move(*childNode->GetItemPtr(childItemIndex)),
+			assignFunc2(std::move(*childNode->GetItemPtr(childItemIndex)),
 				*node->GetItemPtr(itemIndex));
 			if (childNode->IsLeaf())
 			{
