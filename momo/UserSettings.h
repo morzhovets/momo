@@ -34,7 +34,7 @@
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
 #define MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT 16
 
-// The method of arguments check in functions (assertion or exception).
+// The method of arguments check in functions (assertion or exception)
 #define MOMO_DEFAULT_CHECK_MODE assertion
 
 // The method of arguments extra check in functions (assertion or nothing)
@@ -49,10 +49,10 @@
 // Settings of node in b-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4, true>
 
-// If key has fast `operator<`, linear search is used in the tree nodes instead of binary one.
+// If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
 
-// Function `realloc` operates slowly under Windows and therefore is not used by default.
+// Function `realloc` operates slowly under Windows and therefore is not used by default
 #if defined(_MSC_VER) //defined(_WIN32)
 #define MOMO_USE_MEM_MANAGER_WIN
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerWin
