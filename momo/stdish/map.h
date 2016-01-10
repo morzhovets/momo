@@ -8,6 +8,32 @@
   namespace momo::stdish:
     class map
 
+  This class is similar to `std::map`, but much more efficient in
+  memory usage and operation speed.
+  The implementation is based on a B-tree.
+
+  Deviations from the `std::map`:
+  1. Container items must be movable (preferably without exceptions)
+    or copyable, similar to items of `std::vector`.
+  2. After each addition or removal of the item all iterators and
+    references to items become invalid and should not be used.
+  3. Type `reference` is not the same as `value_type&`, so
+    `for (auto& p : map)` is illegal, but `for (auto p : map)` or
+    `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+  4.1. Container move constructor, move assignment operator and swap
+    function do not throw exceptions regardless of the allocator.
+  4.2. Functions of the allocator `construct`, `destruct` and `address`
+    are not used.
+  4.3. It is expected that the allocator types `pointer`, `const_pointer`,
+    `reference`, `const_reference`, `size_type` and `difference_type`
+    have the standard definition (as in `std::allocator`).
+  4.4. It is expected that the allocator types `propagate_on_container_swap`
+    and `propagate_on_container_move_assignment` are the same as
+    `std::true_type`.
+
+  It is allowed to pass to functions `insert` and `emplace` references
+  to items within the container.
+
 \**********************************************************/
 
 #pragma once

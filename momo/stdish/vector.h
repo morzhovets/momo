@@ -9,6 +9,28 @@
     class vector
     class vector_intcap
 
+  This classes are similar to `std::vector`.
+  `stdish::vector_intcap` is vector with internal capacity.
+  This vector doesn't need dynamic memory while its size is not greater
+  than user-defined constant.
+
+  Deviations from the `std::vector`:
+  1. Container move constructor, move assignment operator and swap
+    function do not throw exceptions regardless of the allocator.
+  2. Functions of the allocator `construct`, `destruct` and `address`
+    are not used.
+  3. It is expected that the allocator types `pointer`, `const_pointer`,
+    `reference`, `const_reference`, `size_type` and `difference_type`
+    have the standard definition (as in `std::allocator`).
+  4. It is expected that the allocator types `propagate_on_container_swap`
+    and `propagate_on_container_move_assignment` are the same as
+    `std::true_type`.
+
+  It is allowed to pass to functions `insert` and `emplace` references
+  to items within the container.
+  But in case of the function `insert`, receiving pair of iterators, it's
+  not allowed to pass iterators pointing to the items within the container. 
+
 \**********************************************************/
 
 #pragma once

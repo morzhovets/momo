@@ -9,6 +9,40 @@
     class unordered_multimap
     class unordered_multimap_open
 
+  This classes are similar to `std::unordered_multimap`.
+  `unordered_multimap` is much more efficient than standard one in
+  memory usage. Its implementation is based on hash tables with
+  buckets in the form of small arrays.
+  `unordered_multimap_open` is based on open addressing hash table.
+
+  Deviations from the `std::unordered_multimap`:
+  1. Each of duplicate keys stored only once.
+  2. `max_load_factor`, `rehash`, `reserve`, `load_factor` and all
+    the functions, associated with the bucket, are not implemented.
+  3. Functions `erase` take non-constant iterators.
+  4. Container items must be movable (preferably without exceptions)
+    or copyable, similar to items of `std::vector`.
+  5. After each addition or removal of the item all iterators and
+    references to items become invalid and should not be used.
+  6. Type `reference` is not the same as `value_type&`, so
+    `for (auto& p : map)` is illegal, but `for (auto p : map)` or
+    `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+  7.1. Container move constructor, move assignment operator and swap
+    function do not throw exceptions regardless of the allocator.
+  7.2. Functions of the allocator `construct`, `destruct` and `address`
+    are not used.
+  7.3. It is expected that the allocator types `pointer`, `const_pointer`,
+    `reference`, `const_reference`, `size_type` and `difference_type`
+    have the standard definition (as in `std::allocator`).
+  7.4. It is expected that the allocator types `propagate_on_container_swap`
+    and `propagate_on_container_move_assignment` are the same as
+    `std::true_type`.
+
+  It is allowed to pass to functions `insert` and `emplace` references
+  to items within the container.
+  But in case of the function `insert`, receiving pair of iterators, it's
+  not allowed to pass iterators pointing to the items within the container. 
+
 \**********************************************************/
 
 #pragma once
