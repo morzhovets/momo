@@ -291,6 +291,10 @@ LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "libcxx/unord.map/unorder.map.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
+//#include "libcxx/unord.map/unorder.map.modifiers/insert_or_assign.pass.cpp"
+//LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_range)
 #include "libcxx/unord.map/unorder.map.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
@@ -298,3 +302,7 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "libcxx/unord.map/unorder.map.modifiers/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(modifiers_try_emplace)
+//#include "libcxx/unord.map/unorder.map.modifiers/try.emplace.pass.cpp"
+//LIBCXX_TEST_END
