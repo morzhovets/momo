@@ -55,9 +55,9 @@ public:
 	};
 
 private:
-	typedef MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)> MemPoolParams;
+	typedef momo::MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)> MemPoolParams;
 	typedef MemManagerStd<base_allocator> MemManager;
-	typedef MemPool<MemPoolParams, MemManager> MemPool;
+	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
 public:
 	pool_allocator()
