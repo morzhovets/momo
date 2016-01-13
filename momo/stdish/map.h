@@ -575,7 +575,7 @@ private:
 	{
 		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
 		return (hint == begin() || treeTraits.IsLess(std::prev(hint)->first, key))
-			&& (hint == end() || !treeTraits.IsLess(hint->first, key));
+			&& (hint == end() || treeTraits.IsLess(key, hint->first));
 	}
 
 	template<typename Hint, typename Key, typename MappedCreator>
