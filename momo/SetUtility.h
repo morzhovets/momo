@@ -107,12 +107,9 @@ namespace internal
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
 	private:
-		struct Data
+		struct Data : public ContainerTraits, public MemManager, public DetailParams
 		{
 			size_t version;
-			ContainerTraits containerTraits;
-			MemManager memManager;
-			DetailParams detailParams;
 		};
 
 	public:
@@ -120,24 +117,24 @@ namespace internal
 		{
 			mData = (Data*)memManager.Allocate(sizeof(Data));
 			mData->version = 0;
-			new(&mData->memManager) MemManager(std::move(memManager));
+			new(&GetMemManager()) MemManager(std::move(memManager));
 			try
 			{
-				new(&mData->containerTraits) ContainerTraits(containerTraits);
+				new(&GetContainerTraits()) ContainerTraits(containerTraits);
 				try
 				{
-					new(&mData->detailParams) DetailParams(mData->memManager);
+					new(&GetDetailParams()) DetailParams(GetMemManager());
 				}
 				catch (...)
 				{
-					mData->containerTraits.~ContainerTraits();
+					GetContainerTraits().~ContainerTraits();
 					throw;
 				}
 			}
 			catch (...)
 			{
-				MemManager dataMemManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
+				MemManager dataMemManager = std::move(GetMemManager());
+				GetMemManager().~MemManager();
 				dataMemManager.Deallocate(mData, sizeof(Data));
 				throw;
 			}
@@ -155,10 +152,10 @@ namespace internal
 		{
 			if (!_IsNull())
 			{
-				mData->detailParams.~DetailParams();
-				mData->containerTraits.~ContainerTraits();
-				MemManager memManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
+				GetDetailParams().~DetailParams();
+				GetContainerTraits().~ContainerTraits();
+				MemManager memManager = std::move(GetMemManager());
+				GetMemManager().~MemManager();
 				memManager.Deallocate(mData, sizeof(Data));
 			}
 		}
@@ -191,31 +188,37 @@ namespace internal
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return mData->containerTraits;
+			return *mData;
+		}
+
+		ContainerTraits& GetContainerTraits() MOMO_NOEXCEPT
+		{
+			assert(!_IsNull());
+			return *mData;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return mData->memManager;
+			return *mData;
 		}
 
 		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return mData->memManager;
+			return *mData;
 		}
 
 		const DetailParams& GetDetailParams() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return mData->detailParams;
+			return *mData;
 		}
 
 		DetailParams& GetDetailParams() MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return mData->detailParams;
+			return *mData;
 		}
 
 	private:
