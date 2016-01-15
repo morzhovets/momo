@@ -171,17 +171,17 @@ LIBCXX_TEST_BEGIN(modifiers_insert_iter_rv)
 #include "libcxx/map/map.modifiers/insert_iter_rv.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
-//#include "libcxx/map/map.modifiers/insert_or_assign.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
+#include "libcxx/map/map.modifiers/insert_or_assign.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rv)
 #include "libcxx/map/map.modifiers/insert_rv.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(modifiers_try_emplace)
-//#include "libcxx/map/map.modifiers/try.emplace.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(modifiers_try_emplace)
+#include "libcxx/map/map.modifiers/try.emplace.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/map/map.ops/count.pass.cpp"

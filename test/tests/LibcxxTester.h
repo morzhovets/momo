@@ -32,6 +32,7 @@
 #include "libcxx/support/DefaultOnly.h"
 #include "libcxx/support/Emplaceable.h"
 #include "libcxx/support/Counter.h"
+#include "libcxx/support/Moveable.h"
 
 //#include "libcxx/support/min_allocator.h"
 #include "libcxx/support/stack_allocator.h"
