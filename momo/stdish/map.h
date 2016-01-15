@@ -536,56 +536,56 @@ public:
 		return iter->second;
 	}
 
-	template<typename... Args>
-	std::pair<iterator, bool> try_emplace(key_type&& key, Args&&... args)
+	template<typename... MappedArgs>
+	std::pair<iterator, bool> try_emplace(key_type&& key, MappedArgs&&... mappedArgs)
 	{
 		return _insert(nullptr, std::forward_as_tuple(std::move(key)),
-			std::forward_as_tuple(std::forward<Args>(args)...));
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
-	template<typename... Args>
-	iterator try_emplace(const_iterator hint, key_type&& key, Args&&... args)
+	template<typename... MappedArgs>
+	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
 	{
 		return _insert(hint, std::forward_as_tuple(std::move(key)),
-			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
-	template<typename... Args>
-	std::pair<iterator, bool> try_emplace(const key_type& key, Args&&... args)
+	template<typename... MappedArgs>
+	std::pair<iterator, bool> try_emplace(const key_type& key, MappedArgs&&... mappedArgs)
 	{
 		return _insert(nullptr, std::forward_as_tuple(key),
-			std::forward_as_tuple(std::forward<Args>(args)...));
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
-	template<typename... Args>
-	iterator try_emplace(const_iterator hint, const key_type& key, Args&&... args)
+	template<typename... MappedArgs>
+	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
 	{
 		return _insert(hint, std::forward_as_tuple(key),
-			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
-	template<typename Arg>
-	std::pair<iterator, bool> insert_or_assign(key_type&& key, Arg&& arg)
+	template<typename MappedArg>
+	std::pair<iterator, bool> insert_or_assign(key_type&& key, MappedArg&& mappedArg)
 	{
-		return _insert_or_assign(nullptr, std::move(key), std::forward<Arg>(arg));
+		return _insert_or_assign(nullptr, std::move(key), std::forward<MappedArg>(mappedArg));
 	}
 
-	template<typename Arg>
-	iterator insert_or_assign(const_iterator hint, key_type&& key, Arg&& arg)
+	template<typename MappedArg>
+	iterator insert_or_assign(const_iterator hint, key_type&& key, MappedArg&& mappedArg)
 	{
-		return _insert_or_assign(hint, std::move(key), std::forward<Arg>(arg)).first;
+		return _insert_or_assign(hint, std::move(key), std::forward<MappedArg>(mappedArg)).first;
 	}
 
-	template<typename Arg>
-	std::pair<iterator, bool> insert_or_assign(const key_type& key, Arg&& arg)
+	template<typename MappedArg>
+	std::pair<iterator, bool> insert_or_assign(const key_type& key, MappedArg&& mappedArg)
 	{
-		return _insert_or_assign(nullptr, key, std::forward<Arg>(arg));
+		return _insert_or_assign(nullptr, key, std::forward<MappedArg>(mappedArg));
 	}
 
-	template<typename Arg>
-	iterator insert_or_assign(const_iterator hint, const key_type& key, Arg&& arg)
+	template<typename MappedArg>
+	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
 	{
-		return _insert_or_assign(hint, key, std::forward<Arg>(arg)).first;
+		return _insert_or_assign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
 	bool operator==(const map& right) const
