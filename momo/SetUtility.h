@@ -107,9 +107,11 @@ namespace internal
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
 	private:
-		struct Data : public ContainerTraits, public MemManager, public DetailParams
+		struct Data : public MemManager
 		{
 			size_t version;
+			ContainerTraits containerTraits;
+			DetailParams detailParams;
 		};
 
 	public:
@@ -120,14 +122,14 @@ namespace internal
 			new(&GetMemManager()) MemManager(std::move(memManager));
 			try
 			{
-				new(&GetContainerTraits()) ContainerTraits(containerTraits);
+				new(&mData->containerTraits) ContainerTraits(containerTraits);
 				try
 				{
-					new(&GetDetailParams()) DetailParams(GetMemManager());
+					new(&mData->detailParams) DetailParams(GetMemManager());
 				}
 				catch (...)
 				{
-					GetContainerTraits().~ContainerTraits();
+					mData->containerTraits.~ContainerTraits();
 					throw;
 				}
 			}
@@ -152,8 +154,8 @@ namespace internal
 		{
 			if (!_IsNull())
 			{
-				GetDetailParams().~DetailParams();
-				GetContainerTraits().~ContainerTraits();
+				mData->detailParams.~DetailParams();
+				mData->containerTraits.~ContainerTraits();
 				MemManager memManager = std::move(GetMemManager());
 				GetMemManager().~MemManager();
 				memManager.Deallocate(mData, sizeof(Data));
@@ -188,13 +190,7 @@ namespace internal
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return *mData;
-		}
-
-		ContainerTraits& GetContainerTraits() MOMO_NOEXCEPT
-		{
-			assert(!_IsNull());
-			return *mData;
+			return mData->containerTraits;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -212,13 +208,13 @@ namespace internal
 		const DetailParams& GetDetailParams() const MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return *mData;
+			return mData->detailParams;
 		}
 
 		DetailParams& GetDetailParams() MOMO_NOEXCEPT
 		{
 			assert(!_IsNull());
-			return *mData;
+			return mData->detailParams;
 		}
 
 	private:
