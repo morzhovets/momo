@@ -131,6 +131,7 @@ private:
 	struct TreeSetSettings : public momo::TreeSetSettings
 	{
 		static const CheckMode checkMode = Settings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = Settings::checkVersion;
 	};
 
