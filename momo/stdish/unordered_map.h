@@ -36,6 +36,7 @@
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
+  Classes have functions `try_emplace` and `insert_or_assign` from C++ 17.
 
 \**********************************************************/
 
@@ -543,6 +544,58 @@ public:
 		return iter->second;
 	}
 
+	template<typename... Args>
+	std::pair<iterator, bool> try_emplace(key_type&& key, Args&&... args)
+	{
+		return _insert(nullptr, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<Args>(args)...));
+	}
+
+	template<typename... Args>
+	iterator try_emplace(const_iterator hint, key_type&& key, Args&&... args)
+	{
+		return _insert(hint, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+	}
+
+	template<typename... Args>
+	std::pair<iterator, bool> try_emplace(const key_type& key, Args&&... args)
+	{
+		return _insert(nullptr, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<Args>(args)...));
+	}
+
+	template<typename... Args>
+	iterator try_emplace(const_iterator hint, const key_type& key, Args&&... args)
+	{
+		return _insert(hint, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+	}
+
+	template<typename Arg>
+	std::pair<iterator, bool> insert_or_assign(key_type&& key, Arg&& arg)
+	{
+		return _insert_or_assign(nullptr, std::move(key), std::forward<Arg>(arg));
+	}
+
+	template<typename Arg>
+	iterator insert_or_assign(const_iterator hint, key_type&& key, Arg&& arg)
+	{
+		return _insert_or_assign(hint, std::move(key), std::forward<Arg>(arg)).first;
+	}
+
+	template<typename Arg>
+	std::pair<iterator, bool> insert_or_assign(const key_type& key, Arg&& arg)
+	{
+		return _insert_or_assign(nullptr, key, std::forward<Arg>(arg));
+	}
+
+	template<typename Arg>
+	iterator insert_or_assign(const_iterator hint, const key_type& key, Arg&& arg)
+	{
+		return _insert_or_assign(hint, key, std::forward<Arg>(arg)).first;
+	}
+
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
 		return SIZE_MAX;
@@ -694,6 +747,17 @@ private:
 		(void)hint;
 		return _insert(nullptr, key, mappedCreator);
 #endif
+	}
+
+	template<typename Hint, typename RKey, typename MappedArg>
+	std::pair<iterator, bool> _insert_or_assign(Hint hint, RKey&& key, MappedArg&& mappedArg)
+	{
+		std::pair<iterator, bool> res = _insert(hint,
+			std::forward_as_tuple(std::forward<RKey>(key)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
+		if (!res.second)
+			res.first->second = std::forward<MappedArg>(mappedArg);
+		return res;
 	}
 
 private:

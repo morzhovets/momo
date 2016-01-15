@@ -33,6 +33,7 @@
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
+  Class has functions `try_emplace` and `insert_or_assign` from C++ 17.
 
 \**********************************************************/
 
@@ -535,6 +536,58 @@ public:
 		return iter->second;
 	}
 
+	template<typename... Args>
+	std::pair<iterator, bool> try_emplace(key_type&& key, Args&&... args)
+	{
+		return _insert(nullptr, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<Args>(args)...));
+	}
+
+	template<typename... Args>
+	iterator try_emplace(const_iterator hint, key_type&& key, Args&&... args)
+	{
+		return _insert(hint, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+	}
+
+	template<typename... Args>
+	std::pair<iterator, bool> try_emplace(const key_type& key, Args&&... args)
+	{
+		return _insert(nullptr, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<Args>(args)...));
+	}
+
+	template<typename... Args>
+	iterator try_emplace(const_iterator hint, const key_type& key, Args&&... args)
+	{
+		return _insert(hint, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<Args>(args)...)).first;
+	}
+
+	template<typename Arg>
+	std::pair<iterator, bool> insert_or_assign(key_type&& key, Arg&& arg)
+	{
+		return _insert_or_assign(nullptr, std::move(key), std::forward<Arg>(arg));
+	}
+
+	template<typename Arg>
+	iterator insert_or_assign(const_iterator hint, key_type&& key, Arg&& arg)
+	{
+		return _insert_or_assign(hint, std::move(key), std::forward<Arg>(arg)).first;
+	}
+
+	template<typename Arg>
+	std::pair<iterator, bool> insert_or_assign(const key_type& key, Arg&& arg)
+	{
+		return _insert_or_assign(nullptr, key, std::forward<Arg>(arg));
+	}
+
+	template<typename Arg>
+	iterator insert_or_assign(const_iterator hint, const key_type& key, Arg&& arg)
+	{
+		return _insert_or_assign(hint, key, std::forward<Arg>(arg)).first;
+	}
+
 	bool operator==(const map& right) const
 	{
 		return size() == right.size() && std::equal(begin(), end(), right.begin());
@@ -641,6 +694,17 @@ private:
 		typename TreeMap::Iterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
 			std::get<0>(key), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
+	}
+	
+	template<typename Hint, typename RKey, typename MappedArg>
+	std::pair<iterator, bool> _insert_or_assign(Hint hint, RKey&& key, MappedArg&& mappedArg)
+	{
+		std::pair<iterator, bool> res = _insert(hint,
+			std::forward_as_tuple(std::forward<RKey>(key)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
+		if (!res.second)
+			res.first->second = std::forward<MappedArg>(mappedArg);
+		return res;
 	}
 
 private:
