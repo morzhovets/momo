@@ -380,18 +380,16 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value,
-	//	std::pair<iterator, bool>>::type
+	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value,
-	//	iterator>::type
-	//insert(const_iterator, Value&& value)
+	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
+	//insert(const_iterator hint, Value&& value)
 
-	//std::pair<iterator, bool> insert(const value_type& value)
+	//iterator insert(const value_type& value)
 
-	//iterator insert(const_iterator, const value_type& value)
+	//iterator insert(const_iterator hint, const value_type& value)
 
 	template<typename First, typename Second>
 	typename std::enable_if<std::is_convertible<const First&, key_type>::value
@@ -399,8 +397,8 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<const Second&> MappedCreator;
-		return _insert(nullptr, value.first, MappedCreator(value.second));
+		return _insert(nullptr, std::forward_as_tuple(value.first),
+			std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
@@ -408,8 +406,8 @@ public:
 		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
 	insert(const_iterator hint, const std::pair<First, Second>& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<const Second&> MappedCreator;
-		return _insert(hint, value.first, MappedCreator(value.second)).first;
+		return _insert(hint, std::forward_as_tuple(value.first),
+			std::forward_as_tuple(value.second)).first;
 	}
 
 	template<typename First, typename Second>
@@ -418,9 +416,8 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<Second> MappedCreator;
-		return _insert(nullptr, std::forward<First>(value.first),
-			MappedCreator(std::forward<Second>(value.second)));
+		return _insert(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
+			std::forward_as_tuple(std::forward<Second>(value.second)));
 	}
 
 	template<typename First, typename Second>
@@ -428,9 +425,8 @@ public:
 		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
 	insert(const_iterator hint, std::pair<First, Second>&& value)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<Second> MappedCreator;
-		return _insert(hint, std::forward<First>(value.first),
-			MappedCreator(std::forward<Second>(value.second))).first;
+		return _insert(hint, std::forward_as_tuple(std::forward<First>(value.first)),
+			std::forward_as_tuple(std::forward<Second>(value.second))).first;
 	}
 
 	template<typename Iterator>
@@ -447,53 +443,52 @@ public:
 
 	std::pair<iterator, bool> emplace()
 	{
-		return _emplace(nullptr, std::tuple<>(), std::tuple<>());
+		return _insert(nullptr, std::tuple<>(), std::tuple<>());
 	}
 
 	iterator emplace_hint(const_iterator hint)
 	{
-		return _emplace(hint, std::tuple<>(), std::tuple<>()).first;
+		return _insert(hint, std::tuple<>(), std::tuple<>()).first;
 	}
 
-	template<typename Arg>
-	std::pair<iterator, bool> emplace(Arg&& arg)
+	template<typename ValueArg>
+	std::pair<iterator, bool> emplace(ValueArg&& valueArg)
 	{
-		return insert(std::forward<Arg>(arg));
+		return insert(std::forward<ValueArg>(valueArg));
 	}
 
-	template<typename Arg>
-	iterator emplace_hint(const_iterator hint, Arg&& arg)
+	template<typename ValueArg>
+	iterator emplace_hint(const_iterator hint, ValueArg&& valueArg)
 	{
-		return insert(hint, std::forward<Arg>(arg));
+		return insert(hint, std::forward<ValueArg>(valueArg));
 	}
 
-	template<typename Arg1, typename Arg2>
-	std::pair<iterator, bool> emplace(Arg1&& arg1, Arg2&& arg2)
+	template<typename KeyArg, typename MappedArg>
+	std::pair<iterator, bool> emplace(KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<Arg2> MappedCreator;
-		return _insert(nullptr, std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
+		return _insert(nullptr, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 	}
 
-	template<typename Arg1, typename Arg2>
-	iterator emplace_hint(const_iterator hint, Arg1&& arg1, Arg2&& arg2)
+	template<typename KeyArg, typename MappedArg>
+	iterator emplace_hint(const_iterator hint, KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<Arg2> MappedCreator;
-		return _insert(hint, std::forward<Arg1>(arg1),
-			MappedCreator(std::forward<Arg2>(arg2))).first;
+		return _insert(hint, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg))).first;
 	}
 
-	template<typename... Args1, typename... Args2>
+	template<typename... KeyArgs, typename... MappedArgs>
 	std::pair<iterator, bool> emplace(std::piecewise_construct_t,
-		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
+		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _emplace(nullptr, std::move(args1), std::move(args2));
+		return _insert(nullptr, std::move(keyArgs), std::move(mappedArgs));
 	}
 
-	template<typename... Args1, typename... Args2>
+	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace_hint(const_iterator hint, std::piecewise_construct_t,
-		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
+		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _emplace(hint, std::move(args1), std::move(args2)).first;
+		return _insert(hint, std::move(keyArgs), std::move(mappedArgs)).first;
 	}
 
 	iterator erase(const_iterator where)
@@ -625,17 +620,27 @@ public:
 	}
 
 private:
-	template<typename Hint, typename Key, typename MappedCreator>
-	std::pair<iterator, bool> _insert(Hint hint, Key&& key, const MappedCreator& mappedCreator)
+	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
+	std::pair<iterator, bool> _insert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
+		std::tuple<MappedArgs...>&& mappedArgs)
+	{
+		typedef typename HashMap::KeyValueTraits
+			::template ValueCreator<MappedArgs...> MappedCreator;
+		return _insert(hint, std::move(keyArgs), MappedCreator(std::move(mappedArgs)));
+	}
+
+	template<typename Hint, typename... KeyArgs, typename MappedCreator>
+	std::pair<iterator, bool> _insert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
+		const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template Creator<Key> KeyCreator;
+		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(std::forward<Key>(key))(&keyBuffer);
+		KeyCreator(std::move(keyArgs))(&keyBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{
-			res = _insert(hint, std::move(*&keyBuffer), mappedCreator);
+			res = _insert(hint, std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
 		}
 		catch (...)
 		{
@@ -647,20 +652,21 @@ private:
 	}
 
 	template<typename MappedCreator>
-	std::pair<iterator, bool> _insert(std::nullptr_t, key_type&& key,
+	std::pair<iterator, bool> _insert(std::nullptr_t, std::tuple<key_type&&>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::move(key), mappedCreator);
+		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::move(std::get<0>(key)),
+			mappedCreator);
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
 
 	template<typename MappedCreator>
-	std::pair<iterator, bool> _insert(const_iterator hint, key_type&& key,
+	std::pair<iterator, bool> _insert(const_iterator hint, std::tuple<key_type&&>&& key,
 		const MappedCreator& mappedCreator)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		typename HashMap::Iterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
-			std::move(key), mappedCreator);
+			std::move(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 #else
 		(void)hint;
@@ -669,48 +675,25 @@ private:
 	}
 
 	template<typename MappedCreator>
-	std::pair<iterator, bool> _insert(std::nullptr_t, const key_type& key,
+	std::pair<iterator, bool> _insert(std::nullptr_t, std::tuple<const key_type&> key,
 		const MappedCreator& mappedCreator)
 	{
-		typename HashMap::InsertResult res = mHashMap.InsertCrt(key, mappedCreator);
+		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::get<0>(key), mappedCreator);
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
 
 	template<typename MappedCreator>
-	std::pair<iterator, bool> _insert(const_iterator hint, const key_type& key,
+	std::pair<iterator, bool> _insert(const_iterator hint, std::tuple<const key_type&> key,
 		const MappedCreator& mappedCreator)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		typename HashMap::Iterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
-			key, mappedCreator);
+			std::get<0>(key), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 #else
 		(void)hint;
 		return _insert(nullptr, key, mappedCreator);
 #endif
-	}
-
-	template<typename Hint, typename... Args1, typename... Args2>
-	std::pair<iterator, bool> _emplace(Hint hint, std::tuple<Args1...>&& args1,
-		std::tuple<Args2...>&& args2)
-	{
-		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template Creator<Args1...> KeyCreator;
-		typedef typename HashMap::KeyValueTraits::template ValueCreator<Args2...> MappedCreator;
-		KeyBuffer keyBuffer;
-		KeyCreator(std::move(args1))(&keyBuffer);
-		std::pair<iterator, bool> res;
-		try
-		{
-			res = _insert(hint, std::move(*&keyBuffer), MappedCreator(std::move(args2)));
-		}
-		catch (...)
-		{
-			KeyManager::Destroy(*&keyBuffer);
-			throw;
-		}
-		KeyManager::Destroy(*&keyBuffer);
-		return res;
 	}
 
 private:

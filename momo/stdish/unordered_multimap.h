@@ -374,26 +374,23 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value,
-	//	iterator>::type
+	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value,
-	//	iterator>::type
-	//insert(const_iterator, Value&& value)
+	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
+	//insert(const_iterator hint, Value&& value)
 
 	//iterator insert(const value_type& value)
 
-	//iterator insert(const_iterator, const value_type& value)
+	//iterator insert(const_iterator hint, const value_type& value)
 
 	template<typename First, typename Second>
 	typename std::enable_if<std::is_convertible<const First&, key_type>::value
 		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		typedef typename HashMultiMap::KeyValueTraits::template ValueCreator<const Second&> MappedCreator;
-		return _insert(value.first, MappedCreator(value.second));
+		return _insert(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
@@ -409,9 +406,8 @@ public:
 		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		typedef typename HashMultiMap::KeyValueTraits::template ValueCreator<Second> MappedCreator;
-		return _insert(std::forward<First>(value.first),
-			MappedCreator(std::forward<Second>(value.second)));
+		return _insert(std::forward_as_tuple(std::forward<First>(value.first)),
+			std::forward_as_tuple(std::forward<Second>(value.second)));
 	}
 
 	template<typename First, typename Second>
@@ -419,7 +415,7 @@ public:
 		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
 	insert(const_iterator, std::pair<First, Second>&& value)
 	{
-		return insert(std::forward<std::pair<First, Second>>(value));
+		return insert(std::move(value));
 	}
 
 	template<typename Iterator>
@@ -436,7 +432,7 @@ public:
 
 	iterator emplace()
 	{
-		return emplace(std::piecewise_construct, std::tuple<>(), std::tuple<>());
+		return _insert(std::tuple<>(), std::tuple<>());
 	}
 
 	iterator emplace_hint(const_iterator)
@@ -444,43 +440,43 @@ public:
 		return emplace();
 	}
 
-	template<typename Arg>
-	iterator emplace(Arg&& arg)
+	template<typename ValueArg>
+	iterator emplace(ValueArg&& valueArg)
 	{
-		return insert(std::forward<Arg>(arg));
+		return insert(std::forward<ValueArg>(valueArg));
 	}
 
-	template<typename Arg>
-	iterator emplace_hint(const_iterator, Arg&& arg)
+	template<typename ValueArg>
+	iterator emplace_hint(const_iterator, ValueArg&& valueArg)
 	{
-		return emplace(std::forward<Arg>(arg));
+		return emplace(std::forward<ValueArg>(valueArg));
 	}
 
-	template<typename Arg1, typename Arg2>
-	iterator emplace(Arg1&& arg1, Arg2&& arg2)
+	template<typename KeyArg, typename MappedArg>
+	iterator emplace(KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		typedef typename HashMultiMap::KeyValueTraits::template ValueCreator<Arg2> MappedCreator;
-		return _insert(std::forward<Arg1>(arg1), MappedCreator(std::forward<Arg2>(arg2)));
+		return _insert(std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 	}
 
-	template<typename Arg1, typename Arg2>
-	iterator emplace_hint(const_iterator, Arg1&& arg1, Arg2&& arg2)
+	template<typename KeyArg, typename MappedArg>
+	iterator emplace_hint(const_iterator, KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		return emplace(std::forward<Arg1>(arg1), std::forward<Arg2>(arg2));
+		return emplace(std::forward<KeyArg>(keyArg), std::forward<MappedArg>(mappedArg));
 	}
 
-	template<typename... Args1, typename... Args2>
+	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace(std::piecewise_construct_t,
-		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
+		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _emplace(std::move(args1), std::move(args2));
+		return _insert(std::move(keyArgs), std::move(mappedArgs));
 	}
 
-	template<typename... Args1, typename... Args2>
+	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace_hint(const_iterator, std::piecewise_construct_t,
-		std::tuple<Args1...> args1, std::tuple<Args2...> args2)
+		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _emplace(std::move(args1), std::move(args2));
+		return _insert(std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	//iterator erase(const_iterator where)
@@ -560,17 +556,25 @@ public:
 	}
 
 private:
-	template<typename Key, typename MappedCreator>
-	iterator _insert(Key&& key, const MappedCreator& mappedCreator)
+	template<typename... KeyArgs, typename... MappedArgs>
+	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, std::tuple<MappedArgs...>&& mappedArgs)
+	{
+		typedef typename HashMultiMap::KeyValueTraits
+			::template ValueCreator<MappedArgs...> MappedCreator;
+		return _insert(std::move(keyArgs), MappedCreator(std::move(mappedArgs)));
+	}
+
+	template<typename... KeyArgs, typename MappedCreator>
+	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template Creator<Key> KeyCreator;
+		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(std::forward<Key>(key))(&keyBuffer);
+		KeyCreator(std::move(keyArgs))(&keyBuffer);
 		iterator resIter;
 		try
 		{
-			resIter = _insert(std::move(*&keyBuffer), mappedCreator);
+			resIter = _insert(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
 		}
 		catch (...)
 		{
@@ -582,37 +586,15 @@ private:
 	}
 
 	template<typename MappedCreator>
-	iterator _insert(key_type&& key, const MappedCreator& mappedCreator)
+	iterator _insert(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddCrt(std::move(key), mappedCreator));
+		return iterator(mHashMultiMap.AddCrt(std::move(std::get<0>(key)), mappedCreator));
 	}
 
 	template<typename MappedCreator>
-	iterator _insert(const key_type& key, const MappedCreator& mappedCreator)
+	iterator _insert(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddCrt(key, mappedCreator));
-	}
-
-	template<typename... Args1, typename... Args2>
-	iterator _emplace(std::tuple<Args1...>&& args1, std::tuple<Args2...>&& args2)
-	{
-		typedef internal::ObjectManager<key_type> KeyManager;
-		typedef typename KeyManager::template Creator<Args1...> KeyCreator;
-		typedef typename HashMultiMap::KeyValueTraits::template ValueCreator<Args2...> MappedCreator;
-		KeyBuffer keyBuffer;
-		KeyCreator(std::move(args1))(&keyBuffer);
-		iterator resIter;
-		try
-		{
-			resIter = _insert(std::move(*&keyBuffer), MappedCreator(std::move(args2)));
-		}
-		catch (...)
-		{
-			KeyManager::Destroy(*&keyBuffer);
-			throw;
-		}
-		KeyManager::Destroy(*&keyBuffer);
-		return resIter;
+		return iterator(mHashMultiMap.AddCrt(std::get<0>(key), mappedCreator));
 	}
 
 private:
