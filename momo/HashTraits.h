@@ -8,6 +8,7 @@
   namespace momo:
     struct HashBucketDefault
     class HashTraits
+    class HashTraitsVar
     class HashTraitsStd
 
 \**********************************************************/
@@ -32,11 +33,55 @@ class HashTraits
 public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
+
+public:
+	HashTraits() MOMO_NOEXCEPT
+	{
+	}
+
+	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
+	{
+		return HashBucket::CalcCapacity(bucketCount);
+	}
+
+	size_t GetBucketCountShift(size_t bucketCount) const MOMO_NOEXCEPT
+	{
+		return HashBucket::GetBucketCountShift(bucketCount);
+	}
+
+	size_t GetLogStartBucketCount() const MOMO_NOEXCEPT
+	{
+		return HashBucket::logStartBucketCount;
+	}
+
+	size_t GetHashCode(const Key& key) const
+	{
+		return std::hash<Key>()(key);
+	}
+
+	bool IsEqual(const Key& key1, const Key& key2) const
+	{
+		return key1 == key2;
+	}
+
+	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
+	{
+		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
+	}
+};
+
+template<typename TKey,
+	typename THashBucket = HashBucketDefault>
+class HashTraitsVar
+{
+public:
+	typedef TKey Key;
+	typedef THashBucket HashBucket;
 	typedef std::function<size_t(size_t)> CalcCapacityFunc;
 	typedef std::function<size_t(size_t)> GetBucketCountShiftFunc;
 
 public:
-	explicit HashTraits(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
+	explicit HashTraitsVar(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
 		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
 		size_t logStartBucketCount = HashBucket::logStartBucketCount)
 		: mCalcCapacityFunc(calcCapacityFunc),
@@ -45,7 +90,7 @@ public:
 	{
 	}
 
-	explicit HashTraits(float maxLoadFactor,
+	explicit HashTraitsVar(float maxLoadFactor,
 		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
 		size_t logStartBucketCount = HashBucket::logStartBucketCount)
 		: mGetBucketCountShiftFunc(getBucketCountShiftFunc),
@@ -123,10 +168,10 @@ public:
 		size_t logStartBucketCount, float maxLoadFactor)
 		: mHashFunc(hashFunc),
 		mEqualFunc(equalFunc),
+		mMaxLoadFactor(maxLoadFactor),
 		mLogStartBucketCount(logStartBucketCount)
 	{
-		HashBucket::CheckMaxLoadFactor(maxLoadFactor);
-		mMaxLoadFactor = maxLoadFactor;
+		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
 	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
@@ -177,8 +222,8 @@ public:
 private:
 	HashFunc mHashFunc;
 	EqualFunc mEqualFunc;
-	size_t mLogStartBucketCount;
 	float mMaxLoadFactor;
+	size_t mLogStartBucketCount;
 };
 
 } // namespace momo

@@ -134,7 +134,7 @@ public:
 	static void TestStrHashMultiMap()
 	{
 		typedef momo::HashMultiMap<std::string, std::string,
-			momo::HashTraits<std::string, HashBucket>> HashMultiMap;
+			momo::HashTraitsVar<std::string, HashBucket>> HashMultiMap;
 		std::string k1 = "k1";
 		std::string v1 = "v1";
 		std::string k2 = "k2";
