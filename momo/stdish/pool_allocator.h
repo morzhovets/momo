@@ -11,7 +11,7 @@
   Allocator with a pool of memory for containers like `std::list`,
   `std::forward_list`, `std::map`, `std::unordered_map`.
   It makes no sense to use this allocator for classes `momo::stdish`.
-  
+
   Each copy of the container keeps its own memory pool.
   Memory is released not only after destruction of the object,
   but also in case of removal sufficient number of items.

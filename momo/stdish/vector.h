@@ -15,14 +15,15 @@
   than user-defined constant.
 
   Deviations from the `std::vector`:
-  1. Container move constructor, move assignment operator and swap
+  1. `vector<bool>` is just a vector of bool.
+  2.1. Container move constructor, move assignment operator and swap
     function do not throw exceptions regardless of the allocator.
-  2. Functions of the allocator `construct`, `destruct` and `address`
+  2.2. Functions of the allocator `construct`, `destruct` and `address`
     are not used.
-  3. It is expected that the allocator types `pointer`, `const_pointer`,
+  2.3. It is expected that the allocator types `pointer`, `const_pointer`,
     `reference`, `const_reference`, `size_type` and `difference_type`
     have the standard definition (as in `std::allocator`).
-  4. It is expected that the allocator types `propagate_on_container_swap`
+  2.4. It is expected that the allocator types `propagate_on_container_swap`
     and `propagate_on_container_move_assignment` are the same as
     `std::true_type`.
 
