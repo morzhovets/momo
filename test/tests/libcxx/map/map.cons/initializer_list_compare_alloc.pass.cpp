@@ -71,10 +71,14 @@ void main()
     assert(m.get_allocator() == A());
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     {
     typedef std::pair<const int, double> V;
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     typedef min_allocator<V> A;
+#else
+    typedef test_allocator<V> A;
+#endif
     typedef test_compare<std::less<int> > C;
     typedef map<int, double, C, A> M;
     A a;
@@ -96,6 +100,6 @@ void main()
     assert(*next(m.begin(), 2) == V(3, 1));
     assert(m.get_allocator() == a);
     }
-#endif
+//#endif
 #endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

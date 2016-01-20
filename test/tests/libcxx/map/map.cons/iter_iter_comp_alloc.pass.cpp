@@ -77,7 +77,7 @@ void main()
     assert(*next(m.begin(), 2) == V(3, 1));
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     {
     typedef std::pair<const int, double> V;
     V ar[] =
@@ -93,7 +93,11 @@ void main()
         V(3, 2),
     };
     typedef std::pair<const int, double> V;
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     typedef min_allocator<V> A;
+#else
+    typedef test_allocator<V> A;
+#endif
     typedef test_compare<std::less<int> > C;
     A a;
     map<int, double, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a );
@@ -105,5 +109,5 @@ void main()
     assert(*next(m.begin(), 2) == V(3, 1));
     assert(m.get_allocator() == a);
     }
-#endif
+//#endif
 }
