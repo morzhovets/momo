@@ -113,52 +113,35 @@ public:
 	{
 	}
 
-	explicit map(const key_compare& lessFunc)
-		: mTreeMap(TreeTraits(lessFunc))
-	{
-	}
-
-	map(const key_compare& lessFunc, const allocator_type& alloc)
+	explicit map(const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
 		: mTreeMap(TreeTraits(lessFunc), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	map(Iterator first, Iterator last)
+	map(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+		: map(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	map(Iterator first, Iterator last, const key_compare& lessFunc)
-		: mTreeMap(TreeTraits(lessFunc))
+	map(Iterator first, Iterator last, const key_compare& lessFunc,
+		const allocator_type& alloc = allocator_type())
+		: map(lessFunc, alloc)
 	{
 		insert(first, last);
 	}
 
-	template<typename Iterator>
-	map(Iterator first, Iterator last, const key_compare& lessFunc, const allocator_type& alloc)
-		: mTreeMap(TreeTraits(lessFunc), MemManager(alloc))
+	map(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
+		: map(values.begin(), values.end(), alloc)
 	{
-		insert(first, last);
-	}
-
-	map(std::initializer_list<value_type> values)
-	{
-		insert(values);
-	}
-
-	map(std::initializer_list<value_type> values, const key_compare& lessFunc)
-		: mTreeMap(TreeTraits(lessFunc))
-	{
-		insert(values);
 	}
 
 	map(std::initializer_list<value_type> values, const key_compare& lessFunc,
-		const allocator_type& alloc)
-		: mTreeMap(TreeTraits(lessFunc), MemManager(alloc))
+		const allocator_type& alloc = allocator_type())
+		: map(values.begin(), values.end(), lessFunc, alloc)
 	{
-		insert(values);
 	}
 
 	map(map&& right) MOMO_NOEXCEPT

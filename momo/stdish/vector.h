@@ -87,6 +87,11 @@ public:
 	{
 	}
 
+	vector(size_type count, const allocator_type& alloc)
+		: mArray(count, MemManager(alloc))
+	{
+	}
+
 	vector(size_type count, const value_type& value)
 		: mArray(count, value)
 	{
@@ -99,7 +104,7 @@ public:
 
 	template<typename Iterator>
 	vector(Iterator first, Iterator last)
-		: mArray(first, last, MemManager())
+		: mArray(first, last)
 	{
 	}
 
@@ -110,7 +115,7 @@ public:
 	}
 
 	vector(std::initializer_list<value_type> values)
-		: mArray(values, MemManager())
+		: mArray(values)
 	{
 	}
 

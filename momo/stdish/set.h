@@ -93,48 +93,33 @@ public:
 	{
 	}
 
-	explicit set(const key_compare& lessFunc)
-		: mTreeSet(TreeTraits(lessFunc))
-	{
-	}
-
-	set(const key_compare& lessFunc, const allocator_type& alloc)
+	explicit set(const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
 		: mTreeSet(TreeTraits(lessFunc), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	set(Iterator first, Iterator last)
+	set(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+		: set(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	set(Iterator first, Iterator last, const key_compare& lessFunc)
-		: mTreeSet(TreeTraits(lessFunc))
+	set(Iterator first, Iterator last, const key_compare& lessFunc,
+		const allocator_type& alloc = allocator_type())
+		: set(lessFunc, alloc)
 	{
 		insert(first, last);
 	}
 
-	template<typename Iterator>
-	set(Iterator first, Iterator last, const key_compare& lessFunc, const allocator_type& alloc)
-		: mTreeSet(TreeTraits(lessFunc), MemManager(alloc))
-	{
-		insert(first, last);
-	}
-
-	set(std::initializer_list<value_type> values)
-		: mTreeSet(values)
-	{
-	}
-
-	set(std::initializer_list<value_type> values, const key_compare& lessFunc)
-		: mTreeSet(values, TreeTraits(lessFunc))
+	set(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
+		: mTreeSet(values, TreeTraits(), MemManager(alloc))
 	{
 	}
 
 	set(std::initializer_list<value_type> values, const key_compare& lessFunc,
-		const allocator_type& alloc)
+		const allocator_type& alloc = allocator_type())
 		: mTreeSet(values, TreeTraits(lessFunc), MemManager(alloc))
 	{
 	}

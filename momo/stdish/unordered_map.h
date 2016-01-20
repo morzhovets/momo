@@ -102,93 +102,77 @@ public:
 	{
 	}
 
-	explicit unordered_map(size_type bucketCount)
-		: mHashMap(HashTraits(bucketCount))
+	explicit unordered_map(size_type bucketCount, const allocator_type& alloc = allocator_type())
+		: mHashMap(HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_map(size_type bucketCount, const hasher& hashFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc))
-	{
-	}
-
-	unordered_map(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc))
+	unordered_map(size_type bucketCount, const hasher& hashFunc,
+		const allocator_type& alloc = allocator_type())
+		: mHashMap(HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
 	unordered_map(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
-		const allocator_type& alloc)
+		const allocator_type& alloc = allocator_type())
 		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last)
+	unordered_map(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+		: unordered_map(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last, size_type bucketCount)
-		: mHashMap(HashTraits(bucketCount))
-	{
-		insert(first, last);
-	}
-
-	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc))
+	unordered_map(Iterator first, Iterator last, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_map(bucketCount, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
 	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc))
+		const allocator_type& alloc = allocator_type())
+		: unordered_map(bucketCount, hashFunc, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
 	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
+		: unordered_map(bucketCount, hashFunc, equalFunc, alloc)
 	{
 		insert(first, last);
 	}
 
-	unordered_map(std::initializer_list<value_type> values)
+	unordered_map(std::initializer_list<value_type> values,
+		const allocator_type& alloc = allocator_type())
+		: unordered_map(values.begin(), values.end(), alloc)
 	{
-		insert(values);
-	}
-
-	unordered_map(std::initializer_list<value_type> values, size_type bucketCount)
-		: mHashMap(HashTraits(bucketCount))
-	{
-		insert(values);
 	}
 
 	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc))
+		const allocator_type& alloc = allocator_type())
+		: unordered_map(values.begin(), values.end(), bucketCount, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc))
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		const hasher& hashFunc, const key_equal& equalFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, equalFunc, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_map(unordered_map&& right) MOMO_NOEXCEPT

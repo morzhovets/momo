@@ -106,93 +106,80 @@ public:
 	{
 	}
 
-	explicit unordered_multimap(size_type bucketCount)
-		: mHashMultiMap(HashTraits(bucketCount))
+	explicit unordered_multimap(size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: mHashMultiMap(HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_multimap(size_type bucketCount, const hasher& hashFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc))
-	{
-	}
-
-	unordered_multimap(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc))
+	unordered_multimap(size_type bucketCount, const hasher& hashFunc,
+		const allocator_type& alloc = allocator_type())
+		: mHashMultiMap(HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
 	unordered_multimap(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
-		const allocator_type& alloc)
+		const allocator_type& alloc = allocator_type())
 		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	unordered_multimap(Iterator first, Iterator last)
+	unordered_multimap(Iterator first, Iterator last,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_multimap(Iterator first, Iterator last, size_type bucketCount)
-		: mHashMultiMap(HashTraits(bucketCount))
+	unordered_multimap(Iterator first, Iterator last, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_multimap(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc))
+	unordered_multimap(Iterator first, Iterator last, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, hashFunc, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_multimap(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc))
+	unordered_multimap(Iterator first, Iterator last, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, hashFunc, equalFunc, alloc)
 	{
 		insert(first, last);
 	}
 
-	template<typename Iterator>
-	unordered_multimap(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+	unordered_multimap(std::initializer_list<value_type> values,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(values.begin(), values.end(), alloc)
 	{
-		insert(first, last);
-	}
-
-	unordered_multimap(std::initializer_list<value_type> values)
-	{
-		insert(values);
-	}
-
-	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount)
-		: mHashMultiMap(HashTraits(bucketCount))
-	{
-		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc))
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(values.begin(), values.end(), bucketCount, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc))
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_multimap(values.begin(), values.end(), bucketCount, hashFunc, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_multimap(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashMultiMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		const hasher& hashFunc, const key_equal& equalFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(values.begin(), values.end(), bucketCount, hashFunc, equalFunc, alloc)
 	{
-		insert(values);
 	}
 
 	unordered_multimap(unordered_multimap&& right) MOMO_NOEXCEPT

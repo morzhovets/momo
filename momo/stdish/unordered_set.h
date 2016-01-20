@@ -97,87 +97,75 @@ public:
 	{
 	}
 
-	explicit unordered_set(size_type bucketCount)
-		: mHashSet(HashTraits(bucketCount))
+	explicit unordered_set(size_type bucketCount, const allocator_type& alloc = allocator_type())
+		: mHashSet(HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_set(size_type bucketCount, const hasher& hashFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc))
-	{
-	}
-
-	unordered_set(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc))
+	unordered_set(size_type bucketCount, const hasher& hashFunc,
+		const allocator_type& alloc = allocator_type())
+		: mHashSet(HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
 	unordered_set(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
-		const allocator_type& alloc)
+		const allocator_type& alloc = allocator_type())
 		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	unordered_set(Iterator first, Iterator last)
+	unordered_set(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+		: unordered_set(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_set(Iterator first, Iterator last, size_type bucketCount)
-		: mHashSet(HashTraits(bucketCount))
-	{
-		insert(first, last);
-	}
-
-	template<typename Iterator>
-	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc))
+	unordered_set(Iterator first, Iterator last, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc)
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc))
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc)
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
 	{
 		insert(first, last);
 	}
 
-	unordered_set(std::initializer_list<value_type> values)
-		: mHashSet(values)
-	{
-	}
-
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount)
-		: mHashSet(values, HashTraits(bucketCount))
+	unordered_set(std::initializer_list<value_type> values,
+		const allocator_type& alloc = allocator_type())
+		: mHashSet(values, HashTraits(), MemManager(alloc))
 	{
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc)
-		: mHashSet(values, HashTraits(bucketCount, hashFunc))
+		const allocator_type& alloc = allocator_type())
+		: mHashSet(values, HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc)
-		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc))
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: mHashSet(values, HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc, const allocator_type& alloc)
+		const hasher& hashFunc, const key_equal& equalFunc,
+		const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
 	}
