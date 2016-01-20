@@ -62,11 +62,11 @@
 
 #define MOMO_CHECK(expr) \
 	do { \
-		assert(Settings::checkMode != CheckMode::assertion || (expr)); \
+		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \
 		if (Settings::checkMode == CheckMode::exception && !(expr)) throw std::invalid_argument(#expr); \
 	} while (false)
 
-#define MOMO_EXTRA_CHECK(expr) assert(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
+#define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
 #define MOMO_SWITCH8(var, Func, ...) \
 	switch (var) \
@@ -145,7 +145,7 @@ namespace internal
 
 		static UInt Ceil(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
-			assert(value != 0 && mod != 0);
+			MOMO_ASSERT(value != 0 && mod != 0);
 			return (((value - 1) / mod) + 1) * mod;
 		}
 

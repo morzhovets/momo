@@ -394,7 +394,7 @@ private:
 
 		~ValueCrew() MOMO_NOEXCEPT
 		{
-			assert(IsNull());
+			MOMO_ASSERT(IsNull());
 		}
 
 		ValueCrew& operator=(ValueCrew&& crew) MOMO_NOEXCEPT
@@ -412,7 +412,7 @@ private:
 
 		void Destroy(MemManager& memManager) MOMO_NOEXCEPT
 		{
-			assert(!IsNull());
+			MOMO_ASSERT(!IsNull());
 			mData->~Data();
 			memManager.Deallocate(mData, sizeof(Data));
 			mData = nullptr;
@@ -425,25 +425,25 @@ private:
 
 		const size_t& GetValueVersion() const MOMO_NOEXCEPT
 		{
-			assert(!IsNull());
+			MOMO_ASSERT(!IsNull());
 			return mData->valueVersion;
 		}
 
 		size_t& GetValueVersion() MOMO_NOEXCEPT
 		{
-			assert(!IsNull());
+			MOMO_ASSERT(!IsNull());
 			return mData->valueVersion;
 		}
 
 		const ValueArrayParams& GetValueArrayParams() const MOMO_NOEXCEPT
 		{
-			assert(!IsNull());
+			MOMO_ASSERT(!IsNull());
 			return mData->valueArrayParams;
 		}
 
 		ValueArrayParams& GetValueArrayParams() MOMO_NOEXCEPT
 		{
-			assert(!IsNull());
+			MOMO_ASSERT(!IsNull());
 			return mData->valueArrayParams;
 		}
 

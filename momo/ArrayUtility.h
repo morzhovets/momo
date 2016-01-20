@@ -258,7 +258,7 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			assert(array.GetCapacity() >= initCount + count);
+			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)
@@ -288,7 +288,7 @@ namespace internal
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
 			size_t count = std::distance(begin, end);
-			assert(array.GetCapacity() >= initCount + count);
+			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)

@@ -125,7 +125,7 @@ namespace internal
 
 			FastMemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex > 0);
+				MOMO_ASSERT(memPoolIndex > 0);
 				return mFastMemPools[memPoolIndex - 1];
 			}
 
@@ -191,7 +191,7 @@ namespace internal
 
 		~ArrayBucket() MOMO_NOEXCEPT
 		{
-			assert(mPtr == nullptr);
+			MOMO_ASSERT(mPtr == nullptr);
 		}
 
 		ArrayBucket& operator=(ArrayBucket&& bucket) MOMO_NOEXCEPT
@@ -252,7 +252,7 @@ namespace internal
 				if (memPoolIndex > 0)
 				{
 					size_t count = _GetFastCount();
-					assert(count <= memPoolIndex);
+					MOMO_ASSERT(count <= memPoolIndex);
 					if (count == memPoolIndex)
 					{
 						size_t newCount = count + 1;
@@ -298,7 +298,7 @@ namespace internal
 		void RemoveBack(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = GetBounds().GetCount();
-			assert(count > 0);
+			MOMO_ASSERT(count > 0);
 			if (count == 1)
 				return Clear(params);
 			if (_GetMemPoolIndex() > 0)
@@ -332,7 +332,7 @@ namespace internal
 	private:
 		void _Set(unsigned char* ptr, unsigned char state) MOMO_NOEXCEPT
 		{
-			assert(ptr != nullptr);
+			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
 			*mPtr = state;
 		}
@@ -344,25 +344,25 @@ namespace internal
 
 		static size_t _GetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
-			assert(0 < count && count <= maxFastCount);
+			MOMO_ASSERT(0 < count && count <= maxFastCount);
 			return count;
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(mPtr != nullptr);
+			MOMO_ASSERT(mPtr != nullptr);
 			return (size_t)(*mPtr >> 4);
 		}
 
 		size_t _GetFastCount() const MOMO_NOEXCEPT
 		{
-			assert(_GetMemPoolIndex() > 0);
+			MOMO_ASSERT(_GetMemPoolIndex() > 0);
 			return (size_t)(*mPtr & 15);
 		}
 
 		Item* _GetFastItems() const MOMO_NOEXCEPT
 		{
-			assert(_GetMemPoolIndex() > 0);
+			MOMO_ASSERT(_GetMemPoolIndex() > 0);
 			return _GetFastItems(mPtr);
 		}
 
@@ -373,7 +373,7 @@ namespace internal
 
 		Array& _GetArray() const MOMO_NOEXCEPT
 		{
-			assert(_GetMemPoolIndex() == 0);
+			MOMO_ASSERT(_GetMemPoolIndex() == 0);
 			return _GetArray(mPtr);
 		}
 

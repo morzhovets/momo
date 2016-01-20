@@ -82,7 +82,7 @@ namespace internal
 
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex > 0);
+				MOMO_ASSERT(memPoolIndex > 0);
 				return mMemPools[memPoolIndex - 1];
 			}
 
@@ -100,7 +100,7 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			assert(_IsEmpty());
+			MOMO_ASSERT(_IsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
@@ -158,8 +158,8 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				size_t count = _GetCount();
-				assert(count <= memPoolIndex);
-				assert(count < maxCount);
+				MOMO_ASSERT(count <= memPoolIndex);
+				MOMO_ASSERT(count < maxCount);
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
@@ -185,7 +185,7 @@ namespace internal
 		void RemoveBack(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = _GetCount();
-			assert(count > 0);
+			MOMO_ASSERT(count > 0);
 			ItemTraits::Destroy(_GetItems() + count - 1, 1);
 			if (count == 1)
 			{
@@ -207,20 +207,20 @@ namespace internal
 
 		unsigned char* _GetPtr() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
+			MOMO_ASSERT(!_IsEmpty());
 			return (unsigned char*)mPtr;
 		}
 
 		void _Set(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			assert(ptr != nullptr);
+			MOMO_ASSERT(ptr != nullptr);
 			mPtr = (uintptr_t)ptr;
 			*ptr = (unsigned char)((memPoolIndex << 4) | count);
 		}
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
-			assert(0 < count && count <= maxCount);
+			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count;
 		}
 
@@ -347,7 +347,7 @@ namespace internal
 
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex > 0);
+				MOMO_ASSERT(memPoolIndex > 0);
 				return mMemPools[(memPoolIndex - 1) / (skipOddMemPools ? 2 : 1)];
 			}
 
@@ -365,7 +365,7 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			assert(_IsEmpty());
+			MOMO_ASSERT(_IsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
@@ -426,8 +426,8 @@ namespace internal
 				Bounds bounds = _GetBounds();
 				size_t count = bounds.GetCount();
 				Item* items = bounds.GetBegin();
-				assert(count <= memPoolIndex);
-				assert(count < maxCount);
+				MOMO_ASSERT(count <= memPoolIndex);
+				MOMO_ASSERT(count < maxCount);
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
@@ -453,7 +453,7 @@ namespace internal
 		{
 			Bounds bounds = _GetBounds();
 			size_t count = bounds.GetCount();
-			assert(count > 0);
+			MOMO_ASSERT(count > 0);
 			Item* items = bounds.GetBegin();
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
@@ -483,13 +483,13 @@ namespace internal
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
-			assert(0 < count && count <= maxCount);
+			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count + (skipOddMemPools ? count % 2 : 0);
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
+			MOMO_ASSERT(!_IsEmpty());
 			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
@@ -502,7 +502,7 @@ namespace internal
 			typedef internal::UIntMath<uintptr_t> PMath;
 			uintptr_t mod = PMath::Ceil(memPoolIndex, (uintptr_t)itemAlignment / modMemPoolIndex);
 			uintptr_t count1 = PMath::DivBySmall(ptrCount, mod).remainder;
-			assert(count1 < memPoolIndex);
+			MOMO_ASSERT(count1 < memPoolIndex);
 			Item* items = (Item*)((ptrCount - count1) * modMemPoolIndex);
 			return Bounds(items, (size_t)count1 + 1);
 		}

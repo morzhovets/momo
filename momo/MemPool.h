@@ -241,8 +241,8 @@ public:
 
 	void Deallocate(void* pblock) MOMO_NOEXCEPT
 	{
-		assert(pblock != nullptr);
-		assert(mAllocCount > 0);
+		MOMO_ASSERT(pblock != nullptr);
+		MOMO_ASSERT(mAllocCount > 0);
 		if (Settings::cachedFreeBlockCount > 0)
 		{
 			if (mCachedFreeBlocks.GetCount() == Settings::cachedFreeBlockCount)
@@ -393,7 +393,7 @@ private:
 
 	signed char _GetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
 	{
-		assert(block % Params::blockAlignment == 0);
+		MOMO_ASSERT(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
 		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
 		{
@@ -511,7 +511,7 @@ namespace internal
 			mBlockSize(internal::UIntMath<size_t>::Ceil(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
-			assert(maxTotalBlockCount < (size_t)UINT32_MAX);
+			MOMO_ASSERT(maxTotalBlockCount < (size_t)UINT32_MAX);
 			if (mBlockSize > SIZE_MAX / blockCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 		}
@@ -520,7 +520,7 @@ namespace internal
 
 		~MemPoolUInt32() MOMO_NOEXCEPT
 		{
-			assert(mAllocCount == 0);
+			MOMO_ASSERT(mAllocCount == 0);
 			_Clear();
 		}
 
@@ -558,8 +558,8 @@ namespace internal
 
 		void Deallocate(uint32_t ptr) MOMO_NOEXCEPT
 		{
-			assert(ptr != nullPtr);
-			assert(mAllocCount > 0);
+			MOMO_ASSERT(ptr != nullPtr);
+			MOMO_ASSERT(mAllocCount > 0);
 			_GetNextBlock(GetRealPointer(ptr)) = mBlockHead;
 			mBlockHead = ptr;
 			--mAllocCount;
@@ -570,7 +570,7 @@ namespace internal
 	private:
 		void* _GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
 		{
-			assert(ptr != nullPtr);
+			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = (char*)mBuffers[ptr / blockCount];
 			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
 			return realPtr;

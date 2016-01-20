@@ -74,7 +74,7 @@ namespace internal
 		template<typename MemManager>
 		void Destroy(MemManager& memManager) MOMO_NOEXCEPT
 		{
-			assert(mNextBuckets == nullptr);
+			MOMO_ASSERT(mNextBuckets == nullptr);
 			size_t bucketCount = GetCount();
 			Bucket* buckets = _GetBuckets();
 			for (size_t i = 0; i < bucketCount; ++i)
@@ -113,7 +113,7 @@ namespace internal
 
 		void SetNextBuckets(HashSetBuckets* nextBuckets) MOMO_NOEXCEPT
 		{
-			assert(mNextBuckets == nullptr);
+			MOMO_ASSERT(mNextBuckets == nullptr);
 			mNextBuckets = nextBuckets;
 		}
 
@@ -244,20 +244,20 @@ namespace internal
 
 		bool IsMovable() const MOMO_NOEXCEPT
 		{
-			assert(mItemPtr != nullptr);
+			MOMO_ASSERT(mItemPtr != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
 		size_t GetBucketIndex() const MOMO_NOEXCEPT
 		{
-			assert(mItemPtr != nullptr);
+			MOMO_ASSERT(mItemPtr != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
 		size_t GetHashCode() const MOMO_NOEXCEPT
 		{
-			assert(mItemPtr == nullptr && mBuckets != nullptr);
+			MOMO_ASSERT(mItemPtr == nullptr && mBuckets != nullptr);
 			return mHashCode;
 		}
 
@@ -742,7 +742,7 @@ public:
 				return (*buckets)[curBucketIndex].GetBounds(mCrew.GetDetailParams());
 			curBucketIndex -= curBucketCount;
 		}
-		assert(false);
+		MOMO_ASSERT(false);
 		return ConstBucketBounds();
 	}
 
@@ -808,7 +808,7 @@ private:
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t bucketIndex = hashTraits.GetBucketIndex(hashCode, bucketCount, probe);
-		assert(bucketIndex < bucketCount);
+		MOMO_ASSERT(bucketIndex < bucketCount);
 		return bucketIndex;
 	}
 
@@ -944,7 +944,7 @@ private:
 	void _MoveItems() MOMO_NOEXCEPT
 	{
 		Buckets* nextBuckets = mBuckets->GetNextBuckets();
-		assert(nextBuckets != nullptr);
+		MOMO_ASSERT(nextBuckets != nullptr);
 		try
 		{
 			_MoveItems(nextBuckets);

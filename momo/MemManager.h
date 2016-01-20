@@ -75,14 +75,14 @@ public:
 
 	void* Allocate(size_t size)
 	{
-		assert(size > 0);
+		MOMO_ASSERT(size > 0);
 		return operator new(size);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
 		(void)size;
-		assert(ptr != nullptr && size > 0);
+		MOMO_ASSERT(ptr != nullptr && size > 0);
 		operator delete(ptr);
 	}
 };
@@ -114,7 +114,7 @@ public:
 
 	void* Allocate(size_t size)
 	{
-		assert(size > 0);
+		MOMO_ASSERT(size > 0);
 		void* ptr = malloc(size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
@@ -124,13 +124,13 @@ public:
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
 		(void)size;
-		assert(ptr != nullptr && size > 0);
+		MOMO_ASSERT(ptr != nullptr && size > 0);
 		free(ptr);
 	}
 
 	void* Reallocate(void* ptr, size_t size, size_t newSize)
 	{
-		assert(ptr != nullptr && size > 0 && newSize > 0);
+		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 		if (size == newSize)
 			return ptr;
 		void* newPtr = realloc(ptr, newSize);
@@ -168,7 +168,7 @@ public:
 
 	void* Allocate(size_t size)
 	{
-		assert(size > 0);
+		MOMO_ASSERT(size > 0);
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
@@ -178,13 +178,13 @@ public:
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
 		(void)size;
-		assert(ptr != nullptr && size > 0);
+		MOMO_ASSERT(ptr != nullptr && size > 0);
 		HeapFree(GetProcessHeap(), 0, ptr);
 	}
 
 	//void* Reallocate(void* ptr, size_t size, size_t newSize)
 	//{
-	//	assert(ptr != nullptr && size > 0 && newSize > 0);
+	//	MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 	//	if (size == newSize)
 	//		return ptr;
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
@@ -195,12 +195,12 @@ public:
 
 	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
 	{
-		assert(ptr != nullptr && size > 0 && newSize > 0);
+		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 		if (size == newSize)
 			return true;
 		void* newPtr = HeapReAlloc(GetProcessHeap(), HEAP_REALLOC_IN_PLACE_ONLY,
 			ptr, newSize);
-		assert(newPtr == ptr || newPtr == nullptr);
+		MOMO_ASSERT(newPtr == ptr || newPtr == nullptr);
 		return newPtr == ptr;
 	}
 };
@@ -399,7 +399,7 @@ namespace internal
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
 		{
-			assert(false);
+			MOMO_ASSERT(false);
 		}
 	};
 

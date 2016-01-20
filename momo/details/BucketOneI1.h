@@ -63,7 +63,7 @@ namespace internal
 
 		~BucketOneI1() MOMO_NOEXCEPT
 		{
-			assert(!IsFull());
+			MOMO_ASSERT(!IsFull());
 		}
 
 		BucketOneI1& operator=(const BucketOneI1&) = delete;
@@ -98,7 +98,7 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator)
 		{
-			assert(!IsFull());
+			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
 			mState = stateFull;
 			return &mItemBuffer;
@@ -106,7 +106,7 @@ namespace internal
 
 		void RemoveBack(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			assert(IsFull());
+			MOMO_ASSERT(IsFull());
 			ItemTraits::Destroy(&mItemBuffer, 1);
 			mState = stateRemoved;
 		}

@@ -69,7 +69,7 @@ namespace internal
 
 		Item& operator[](size_t index) const MOMO_NOEXCEPT
 		{
-			assert(index < GetCount());
+			MOMO_ASSERT(index < GetCount());
 			return mBegin[index];
 		}
 
@@ -91,7 +91,7 @@ namespace internal
 			: mMemPool(memPool),
 			mPtr((Pointer)memPool.Allocate())
 		{
-			assert(mPtr != nullPtr);
+			MOMO_ASSERT(mPtr != nullPtr);
 		}
 
 		BucketMemory(const BucketMemory&) = delete;
@@ -131,7 +131,7 @@ namespace internal
 
 		static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 		{
-			assert(bucketCount > 0);
+			MOMO_ASSERT(bucketCount > 0);
 			if (maxCount == 1)
 				return (bucketCount / 4) * 3;
 			else if (maxCount == 2)
@@ -142,7 +142,7 @@ namespace internal
 
 		static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
 		{
-			assert(bucketCount > 0);
+			MOMO_ASSERT(bucketCount > 0);
 			if (maxCount == 1)
 				return 1;
 			else if (maxCount == 2)

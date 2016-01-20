@@ -72,6 +72,8 @@
 // One more pointer which doesn't point to anything but is not equal to nullptr
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
+#define MOMO_ASSERT(expr) assert(expr)
+
 #define MOMO_USE_NOEXCEPT
 #define MOMO_USE_TRIVIALLY_COPYABLE
 

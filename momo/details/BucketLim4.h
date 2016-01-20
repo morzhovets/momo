@@ -84,13 +84,13 @@ namespace internal
 
 			const MemPool& GetMemPool(size_t memPoolIndex) const MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex > 0);
+				MOMO_ASSERT(memPoolIndex > 0);
 				return mMemPools[memPoolIndex - 1];
 			}
 
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex > 0);
+				MOMO_ASSERT(memPoolIndex > 0);
 				return mMemPools[memPoolIndex - 1];
 			}
 
@@ -108,7 +108,7 @@ namespace internal
 
 		~BucketLim4() MOMO_NOEXCEPT
 		{
-			assert(_IsEmpty());
+			MOMO_ASSERT(_IsEmpty());
 		}
 
 		BucketLim4& operator=(const BucketLim4&) = delete;
@@ -167,8 +167,8 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				size_t count = _GetCount();
-				assert(count <= memPoolIndex);
-				assert(count < maxCount);
+				MOMO_ASSERT(count <= memPoolIndex);
+				MOMO_ASSERT(count < maxCount);
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
@@ -197,7 +197,7 @@ namespace internal
 		void RemoveBack(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = _GetCount();
-			assert(count > 0);
+			MOMO_ASSERT(count > 0);
 			Item* items = _GetItems<Item>(params);
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
@@ -227,13 +227,13 @@ namespace internal
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
-			assert(0 < count && count <= maxCount);
+			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count;
 		}
 
 		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
+			MOMO_ASSERT(!_IsEmpty());
 			return (size_t)(mPtrState >> (32 - logMaxCount)) + 1;
 		}
 
@@ -247,7 +247,7 @@ namespace internal
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
-			assert(!_IsEmpty());
+			MOMO_ASSERT(!_IsEmpty());
 			return internal::UIntMath<uint32_t>::DivBySmall(mPtrState & stateNull,
 				(uint32_t)_GetMemPoolIndex()).quotient;
 		}

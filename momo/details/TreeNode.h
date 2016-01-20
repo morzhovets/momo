@@ -125,7 +125,7 @@ namespace internal
 
 		static Node& Create(Params& params, bool isLeaf, size_t count)
 		{
-			assert(count <= maxCapacity);
+			MOMO_ASSERT(count <= maxCapacity);
 			Node* node;
 			if (isLeaf)
 			{
@@ -185,13 +185,13 @@ namespace internal
 
 		Node* GetChild(size_t index) MOMO_NOEXCEPT
 		{
-			assert(index <= GetCount());
+			MOMO_ASSERT(index <= GetCount());
 			return _GetChildren()[index];
 		}
 
 		void SetChild(size_t index, Node* child) MOMO_NOEXCEPT
 		{
-			assert(index <= GetCount());
+			MOMO_ASSERT(index <= GetCount());
 			_GetChildren()[index] = child;
 		}
 
@@ -200,7 +200,7 @@ namespace internal
 			size_t count = GetCount();
 			Node* const* children = &mParent - maxCapacity - 1;	//?
 			size_t index = std::find(children, children + count + 1, child) - children;
-			assert(index <= count);
+			MOMO_ASSERT(index <= count);
 			return index;
 		}
 
@@ -212,8 +212,8 @@ namespace internal
 		void AcceptBackItem(size_t index) MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
-			assert(count < GetCapacity());
-			assert(index <= count);
+			MOMO_ASSERT(count < GetCapacity());
+			MOMO_ASSERT(index <= count);
 			_AcceptBackItem(index, count, UseSwap());
 			if (!IsLeaf())
 			{
@@ -226,7 +226,7 @@ namespace internal
 		void Remove(size_t index) MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
-			assert(index < count);
+			MOMO_ASSERT(index < count);
 			_Remove(index, count, UseSwap());
 			if (!IsLeaf())
 			{
@@ -239,7 +239,7 @@ namespace internal
 	private:
 		Node** _GetChildren() MOMO_NOEXCEPT
 		{
-			assert(!IsLeaf());
+			MOMO_ASSERT(!IsLeaf());
 			return &mParent - maxCapacity - 1;
 		}
 

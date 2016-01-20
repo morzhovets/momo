@@ -81,7 +81,7 @@ namespace internal
 
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
-				assert(memPoolIndex >= minMemPoolIndex);
+				MOMO_ASSERT(memPoolIndex >= minMemPoolIndex);
 				return mMemPools[memPoolIndex - minMemPoolIndex];
 			}
 
@@ -99,7 +99,7 @@ namespace internal
 
 		~BucketLimP1() MOMO_NOEXCEPT
 		{
-			assert(_GetItems() == nullptr);
+			MOMO_ASSERT(_GetItems() == nullptr);
 		}
 
 		BucketLimP1& operator=(const BucketLimP1&) = delete;
@@ -153,8 +153,8 @@ namespace internal
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
 				size_t count = _GetCount();
-				assert(count <= memPoolIndex);
-				assert(count < maxCount);
+				MOMO_ASSERT(count <= memPoolIndex);
+				MOMO_ASSERT(count < maxCount);
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
@@ -179,7 +179,7 @@ namespace internal
 		void RemoveBack(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = _GetCount();
-			assert(count > 0);
+			MOMO_ASSERT(count > 0);
 			Item* items = _GetItems();
 			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
@@ -205,7 +205,7 @@ namespace internal
 
 		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
-			assert(0 < count && count <= maxCount);
+			MOMO_ASSERT(0 < count && count <= maxCount);
 			if (Params::skipFirstMemPool && count == 1)
 				return 2;
 			return count;

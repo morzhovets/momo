@@ -577,7 +577,7 @@ private:
 	template<typename ItemCreator>
 	void _IncCount(size_t count, const ItemCreator& itemCreator)
 	{
-		assert(count >= mCount);
+		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();
 		size_t initCount = mCount;
 		Reserve(count);
@@ -608,7 +608,7 @@ private:
 
 	void _DecCount(size_t count) MOMO_NOEXCEPT
 	{
-		assert(count <= mCount);
+		MOMO_ASSERT(count <= mCount);
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
 		while (mCount > count)
@@ -628,7 +628,7 @@ private:
 	void _IncCapacity(size_t capacity)
 	{
 		size_t initCapacity = GetCapacity();
-		assert(capacity >= initCapacity);
+		MOMO_ASSERT(capacity >= initCapacity);
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(capacity, segIndex, itemIndex);
 		if (itemIndex > 0)
@@ -651,7 +651,7 @@ private:
 
 	void _DecCapacity(size_t capacity) MOMO_NOEXCEPT
 	{
-		assert(capacity <= GetCapacity());
+		MOMO_ASSERT(capacity <= GetCapacity());
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(capacity, segIndex, itemIndex);
 		if (itemIndex > 0)

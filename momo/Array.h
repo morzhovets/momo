@@ -80,7 +80,7 @@ struct ArraySettings
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
 		ArrayGrowCause growCause, bool realloc)
 	{
-		assert(capacity < minNewCapacity);
+		MOMO_ASSERT(capacity < minNewCapacity);
 		if (growCause == ArrayGrowCause::reserve && !growOnReserve)
 			return minNewCapacity;
 		size_t newCapacity;
@@ -222,7 +222,7 @@ private:
 
 		void SetCount(size_t count) MOMO_NOEXCEPT
 		{
-			assert(count <= GetCapacity());
+			MOMO_ASSERT(count <= GetCapacity());
 			mCount &= maskInternal;
 			mCount |= count;
 		}
@@ -236,7 +236,7 @@ private:
 		template<typename RelocateFunc>
 		void Reset(size_t capacity, size_t count, RelocateFunc relocateFunc)
 		{
-			assert(count <= capacity);
+			MOMO_ASSERT(count <= capacity);
 			_CheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
@@ -392,7 +392,7 @@ private:
 			std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
 			(void)count;
-			assert(count == 0);
+			MOMO_ASSERT(count == 0);
 			_Deallocate();
 			_Create(std::false_type());
 		}
@@ -816,7 +816,7 @@ private:
 		ArrayGrowCause growCause, bool realloc)
 	{
 		size_t newCapacity = Settings::GrowCapacity(capacity, minNewCapacity, growCause, realloc);
-		assert(newCapacity >= minNewCapacity);
+		MOMO_ASSERT(newCapacity >= minNewCapacity);
 		return newCapacity;
 	}
 

@@ -149,7 +149,7 @@ namespace internal
 	private:
 		void _Move() MOMO_NOEXCEPT
 		{
-			assert(mNode->IsLeaf());
+			MOMO_ASSERT(mNode->IsLeaf());
 			if (mItemIndex < mNode->GetCount())
 				return;
 			while (true)
@@ -362,7 +362,7 @@ private:
 
 		Node* GrowLeafNode(Node* node, size_t itemIndex)
 		{
-			assert(node->IsLeaf());
+			MOMO_ASSERT(node->IsLeaf());
 			mOldNodes.AddBack(node);
 			size_t itemCount = node->GetCount();
 			Node* newNode = CreateNode(true, itemCount + 1);
@@ -998,13 +998,13 @@ private:
 			while (true)
 			{
 				Node* parentNode = node->GetParent();
-				assert(parentNode != savedNode);
+				MOMO_ASSERT(parentNode != savedNode);
 				if (parentNode == nullptr)
 				{
-					assert(mRootNode == node);
+					MOMO_ASSERT(mRootNode == node);
 					if (node->GetCount() == 0 && !node->IsLeaf())
 					{
-						assert(node != savedNode);
+						MOMO_ASSERT(node != savedNode);
 						mRootNode = node->GetChild(0);
 						mRootNode->SetParent(nullptr);
 						node->Destroy(mCrew.GetDetailParams());

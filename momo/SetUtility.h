@@ -177,43 +177,43 @@ namespace internal
 
 		const size_t& GetVersion() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return mData->version;
 		}
 
 		size_t& GetVersion() MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return mData->version;
 		}
 
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return mData->containerTraits;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return *mData;
 		}
 
 		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return *mData;
 		}
 
 		const DetailParams& GetDetailParams() const MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return mData->detailParams;
 		}
 
 		DetailParams& GetDetailParams() MOMO_NOEXCEPT
 		{
-			assert(!_IsNull());
+			MOMO_ASSERT(!_IsNull());
 			return mData->detailParams;
 		}
 

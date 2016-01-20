@@ -493,7 +493,7 @@ public:
 			return erase(first);
 		typename HashMultiMap::KeyIterator keyIter = first.GetBaseIterator().GetKeyIterator();
 		size_t count = keyIter->values.GetCount();
-		assert(count > 0);
+		MOMO_ASSERT(count > 0);
 		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == last.GetBaseIterator())
 			return iterator(mHashMultiMap.RemoveKey(keyIter));
 		throw std::invalid_argument("invalid unordered_multimap erase arguments");
