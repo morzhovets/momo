@@ -92,7 +92,7 @@ void main()
         assert(c.max_load_factor() == 1);
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     {
         typedef int T;
         typedef test_hash<std::hash<T>> HF;
@@ -124,7 +124,9 @@ void main()
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
     }
     {
         typedef int T;
@@ -159,9 +161,10 @@ void main()
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
-    }
 #endif
+    }
 //#endif
 #endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

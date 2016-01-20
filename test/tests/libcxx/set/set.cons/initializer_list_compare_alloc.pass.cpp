@@ -40,7 +40,7 @@ void main()
     assert(m.key_comp() == Cmp(10));
     assert(m.get_allocator() == A(4));
     }
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef test_allocator<int> A;
@@ -58,6 +58,6 @@ void main()
     assert(*++i == V(6));
     assert(m.get_allocator() == A(4));
     }
-#endif
+//#endif
 #endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

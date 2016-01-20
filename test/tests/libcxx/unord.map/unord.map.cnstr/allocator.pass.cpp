@@ -70,7 +70,8 @@ void main()
         assert(c.load_factor() == 0);
         assert(c.max_load_factor() == 1);
     }
-#if _LIBCPP_STD_VER > 11
+#endif
+//#if _LIBCPP_STD_VER > 11
     {
         typedef NotConstructible T;
         typedef test_allocator<std::pair<const T, T>> A;
@@ -80,7 +81,11 @@ void main()
 
         A a(10);
         C c(2, a);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 2);
+#else
+        assert(c.bucket_count() >= 2);
+#endif
         assert(c.hash_function() == HF());
         assert(c.key_eq() == Comp());
         assert(c.get_allocator() == a);
@@ -88,7 +93,9 @@ void main()
         assert(c.empty());
         assert(std::distance(c.begin(), c.end()) == 0);
         assert(c.load_factor() == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
     }
     {
         typedef NotConstructible T;
@@ -100,7 +107,11 @@ void main()
         A a(10);
         HF hf(12);
         C c(2, hf, a);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 2);
+#else
+        assert(c.bucket_count() >= 2);
+#endif
         assert(c.hash_function() == hf);
         assert(!(c.hash_function() == HF()));
         assert(c.key_eq() == Comp());
@@ -109,8 +120,9 @@ void main()
         assert(c.empty());
         assert(std::distance(c.begin(), c.end()) == 0);
         assert(c.load_factor() == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
     }
-#endif
-#endif
+//#endif
 }

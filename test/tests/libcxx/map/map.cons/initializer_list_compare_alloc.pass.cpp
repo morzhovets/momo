@@ -70,6 +70,7 @@ void main()
     assert(m.key_comp() == C(3));
     assert(m.get_allocator() == A());
     }
+#endif
 #if _LIBCPP_STD_VER > 11
     {
     typedef std::pair<const int, double> V;
@@ -95,7 +96,6 @@ void main()
     assert(*next(m.begin(), 2) == V(3, 1));
     assert(m.get_allocator() == a);
     }
-#endif
 #endif
 #endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

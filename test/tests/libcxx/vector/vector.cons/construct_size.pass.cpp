@@ -24,7 +24,7 @@ void
 test2(typename C::size_type n, typename C::allocator_type const& a = typename C::allocator_type ())
 {
     (void)n; (void)a;
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     C c(n, a);
     //assert(c.__invariants());
     assert(c.size() == n);
@@ -34,7 +34,7 @@ test2(typename C::size_type n, typename C::allocator_type const& a = typename C:
     for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e; ++i)
         assert(*i == typename C::value_type());
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#endif
+//#endif
 }
 
 template <class C>

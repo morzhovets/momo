@@ -106,5 +106,4 @@ void main()
     assert(m.get_allocator() == a);
     }
 #endif
-//#endif
 }

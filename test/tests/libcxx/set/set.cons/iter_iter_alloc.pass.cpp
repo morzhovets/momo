@@ -28,6 +28,7 @@
 
 void main()
 {
+	{
     typedef int V;
     V ar[] =
     {
@@ -53,7 +54,8 @@ void main()
     assert(*m.begin() == 1);
     assert(*std::next(m.begin()) == 2);
     assert(*std::next(m.begin(), 2) == 3);
-#if _LIBCPP_STD_VER > 11
+	}
+//#if _LIBCPP_STD_VER > 11
     {
     typedef int V;
     V ar[] =
@@ -80,5 +82,5 @@ void main()
     assert(*std::next(m.begin(), 2) == 3);
     assert(m.get_allocator() == a);
     }
-#endif
+//#endif
 }

@@ -101,7 +101,7 @@ void main()
         assert(c.max_load_factor() == 1);
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     {
         typedef std::pair<int, std::string> P;
         typedef test_allocator<std::pair<const int, std::string>> A;
@@ -132,7 +132,9 @@ void main()
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
     }
     {
         typedef std::pair<int, std::string> P;
@@ -167,8 +169,9 @@ void main()
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
-    }
 #endif
+    }
 //#endif
 }
