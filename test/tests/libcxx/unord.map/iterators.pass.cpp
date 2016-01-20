@@ -109,7 +109,7 @@ void main()
         C::const_iterator i;
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     { // N3644 testing
         typedef unordered_map<int,double> C;
         C::iterator ii1{}, ii2{};
@@ -125,5 +125,5 @@ void main()
         assert (!(ii1 != cii ));
         assert (!(cii != ii1 ));
     }
-#endif
+//#endif
 }

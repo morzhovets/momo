@@ -136,7 +136,7 @@ void main()
         assert(j->first == 3);
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
     { // N3644 testing
         typedef vector<int> C;
         C::iterator ii1{}, ii2{};
@@ -162,5 +162,5 @@ void main()
         assert (cii - ii1 == 0);
         assert (ii1 - cii == 0);
     }
-#endif
+//#endif
 }
