@@ -41,7 +41,11 @@
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
 
 // Checking iterators for invalidation
-#define MOMO_CHECK_ITERATOR_VERSION
+#ifdef NDEBUG
+#define MOMO_CHECK_ITERATOR_VERSION (checkMode != CheckMode::assertion)
+#else
+#define MOMO_CHECK_ITERATOR_VERSION true
+#endif
 
 // Default bucket type in hash tables
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>

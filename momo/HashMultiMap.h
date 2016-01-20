@@ -297,8 +297,8 @@ struct HashMultiMapKeyValueTraits
 struct HashMultiMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
-	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION_VALUE;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 template<typename TKey, typename TValue,

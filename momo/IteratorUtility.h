@@ -53,14 +53,6 @@
 		return !(*this == iter); \
 	}
 
-#if !defined(MOMO_CHECK_ITERATOR_VERSION)
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE false
-#elif defined(NDEBUG)
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE (checkMode != CheckMode::assertion)
-#else
-#define MOMO_CHECK_ITERATOR_VERSION_VALUE true
-#endif
-
 namespace momo
 {
 
