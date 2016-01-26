@@ -450,7 +450,7 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
-		mRootNode(&Node::Create(mCrew.GetDetailParams(), true, 0))
+		mRootNode(nullptr)
 	{
 	}
 
@@ -464,7 +464,8 @@ public:
 		}
 		catch (...)
 		{
-			_Destroy(mRootNode);
+			if (mRootNode != nullptr)
+				_Destroy(mRootNode);
 			throw;
 		}
 	}
@@ -488,7 +489,8 @@ public:
 		}
 		catch (...)
 		{
-			_Destroy(mRootNode);
+			if (mRootNode != nullptr)
+				_Destroy(mRootNode);
 			throw;
 		}
 	}
@@ -815,12 +817,8 @@ private:
 	template<typename ItemCreator>
 	ConstIterator _Add(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
 	{
-		if (mRootNode == nullptr)	//?
-		{
-			MOMO_CHECK(iter == ConstIterator());
-			mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
-			iter = GetEnd();
-		}
+		if (mRootNode == nullptr)
+			return _AddFirst(iter, itemCreator);
 		iter.Check(mCrew.GetVersion());
 		Node* node = iter.GetNode();
 		size_t itemIndex = iter.GetItemIndex();
@@ -851,6 +849,24 @@ private:
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
 		return resIter;
+	}
+
+	template<typename ItemCreator>
+	ConstIterator _AddFirst(ConstIterator iter, const ItemCreator& itemCreator)
+	{
+		(void)iter;
+		MOMO_CHECK(iter == ConstIterator());
+		mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
+		try
+		{
+			return _Add(GetEnd(), itemCreator, false);
+		}
+		catch (...)
+		{
+			mRootNode->Destroy(mCrew.GetDetailParams());
+			mRootNode = nullptr;
+			throw;
+		}
 	}
 
 	template<typename ItemCreator>
