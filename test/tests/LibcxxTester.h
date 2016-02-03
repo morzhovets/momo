@@ -13,15 +13,13 @@
 #include <cfloat>
 #include <string>
 
-#ifndef MOMO_USE_NOEXCEPT
-#define _LIBCPP_HAS_NO_NOEXCEPT
-#endif
+#define _LIBCPP_STD_VER 14
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #define _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
-#endif
-
+#undef _LIBCPP_STD_VER
 #define _LIBCPP_STD_VER 11
+#endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 //#define LIBCPP_TEST_MIN_ALLOCATOR
