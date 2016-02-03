@@ -2,7 +2,7 @@
 
 This project contains an implementation of the C++ containers, similar to the standard `unordered_set/map`, but much more efficient in memory usage. As for the operation speed, these containers are also better than the standard ones in most cases.
 
-Classes are designed in close conformity with the standard C++ 11 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++11 **including exception safety guarantees**.
 
 #### Deviations from the standard
 
@@ -33,6 +33,6 @@ Classes `unordered_set/map` are located in subfolder `stdish`, namespace `momo::
 
 - MS Visual Studio (2012+)
 
-- GCC (4.7+), MinGW
+- GCC (4.7+)
 
 - Clang (3.3+, possibly 3.1+)
