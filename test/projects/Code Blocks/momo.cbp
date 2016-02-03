@@ -12,9 +12,9 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-std=c++14" />
 					<Add option="-Wno-unused-local-typedefs" />
 				</Compiler>
 			</Target>
@@ -25,8 +25,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-std=c++11" />
 					<Add option="-Wall" />
+					<Add option="-std=c++14" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
@@ -41,8 +41,8 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-Wall" />
-					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add option="-std=c++14" />
 					<Add option="-Wno-unused-local-typedefs" />
 				</Compiler>
 			</Target>
@@ -54,7 +54,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++11" />
+					<Add option="-std=c++14" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
