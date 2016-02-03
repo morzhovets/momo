@@ -262,12 +262,40 @@ public:
 		return Iterator(mTreeSet.LowerBound(key));
 	}
 
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	LowerBound(const KeyArg& key) const
+	{
+		return ConstIterator(mTreeSet.LowerBound(key));
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, Iterator>::type
+	LowerBound(const KeyArg& key)
+	{
+		return Iterator(mTreeSet.LowerBound(key));
+	}
+
 	ConstIterator UpperBound(const Key& key) const
 	{
 		return ConstIterator(mTreeSet.UpperBound(key));
 	}
 
 	Iterator UpperBound(const Key& key)
+	{
+		return Iterator(mTreeSet.UpperBound(key));
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	UpperBound(const KeyArg& key) const
+	{
+		return ConstIterator(mTreeSet.UpperBound(key));
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, Iterator>::type
+	UpperBound(const KeyArg& key)
 	{
 		return Iterator(mTreeSet.UpperBound(key));
 	}
@@ -282,7 +310,28 @@ public:
 		return Iterator(mTreeSet.Find(key));
 	}
 
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
+	{
+		return ConstIterator(mTreeSet.Find(key));
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, Iterator>::type
+	Find(const KeyArg& key)
+	{
+		return Iterator(mTreeSet.Find(key));
+	}
+
 	bool HasKey(const Key& key) const
+	{
+		return mTreeSet.HasKey(key);
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, bool>::type
+	HasKey(const KeyArg& key) const
 	{
 		return mTreeSet.HasKey(key);
 	}

@@ -38,13 +38,19 @@ public:
 
 	static const bool useLinearSearch = tUseLinearSearch;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = std::false_type;
+
 public:
 	TreeTraits() MOMO_NOEXCEPT
 	{
 	}
 
-	bool IsLess(const Key& key1, const Key& key2) const
+	template<typename KeyArg1, typename KeyArg2>
+	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value));
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value));
 		return std::less<Key>()(key1, key2);
 	}
 };
@@ -62,13 +68,17 @@ public:
 	static const bool useLinearSearch =
 		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = std::true_type;
+
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
 		: mLessFunc(lessFunc)
 	{
 	}
 
-	bool IsLess(const Key& key1, const Key& key2) const
+	template<typename KeyArg1, typename KeyArg2>
+	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
 		return mLessFunc(key1, key2);
 	}

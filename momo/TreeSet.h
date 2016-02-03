@@ -578,39 +578,50 @@ public:
 
 	ConstIterator LowerBound(const Key& key) const
 	{
-		if (mRootNode == nullptr)
-			return ConstIterator();
-		ConstIterator iter = GetEnd();
-		Node* node = mRootNode;
-		while (true)
-		{
-			size_t index = _LowerBound(node, key);
-			if (index < node->GetCount())
-				iter = _MakeIterator(node, index, false);
-			if (node->IsLeaf())
-				break;
-			node = node->GetChild(index);
-		}
-		return iter;
+		return _LowerBound(key);
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	LowerBound(const KeyArg& key) const
+	{
+		return _LowerBound(key);
 	}
 
 	ConstIterator UpperBound(const Key& key) const
 	{
-		ConstIterator iter = LowerBound(key);
-		if (_IsEqual(iter, key))
-			++iter;
-		return iter;
+		return _UpperBound(key);
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	UpperBound(const KeyArg& key) const
+	{
+		return _UpperBound(key);
 	}
 
 	ConstIterator Find(const Key& key) const
 	{
-		ConstIterator iter = LowerBound(key);
-		return _IsEqual(iter, key) ? iter : GetEnd();
+		return _Find(key);
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
+	{
+		return _Find(key);
 	}
 
 	bool HasKey(const Key& key) const
 	{
-		return _IsEqual(LowerBound(key), key);
+		return _IsEqual(_LowerBound(key), key);
+	}
+
+	template<typename KeyArg>
+	typename std::enable_if<TreeTraits::template IsValidKeyArg<KeyArg>::value, bool>::type
+	HasKey(const KeyArg& key) const
+	{
+		return _IsEqual(_LowerBound(key), key);
 	}
 
 	template<typename ItemCreator>
@@ -729,7 +740,8 @@ private:
 		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
-	bool _IsEqual(ConstIterator iter, const Key& key) const
+	template<typename KeyArg>
+	bool _IsEqual(ConstIterator iter, const KeyArg& key) const
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
@@ -748,11 +760,48 @@ private:
 		}
 		catch (...)
 		{
+			//?
 			return false;
 		}
 	}
 
-	size_t _LowerBound(Node* node, const Key& key) const
+	template<typename KeyArg>
+	ConstIterator _LowerBound(const KeyArg& key) const
+	{
+		if (mRootNode == nullptr)
+			return ConstIterator();
+		ConstIterator iter = GetEnd();
+		Node* node = mRootNode;
+		while (true)
+		{
+			size_t index = _LowerBound(node, key);
+			if (index < node->GetCount())
+				iter = _MakeIterator(node, index, false);
+			if (node->IsLeaf())
+				break;
+			node = node->GetChild(index);
+		}
+		return iter;
+	}
+
+	template<typename KeyArg>
+	ConstIterator _UpperBound(const KeyArg& key) const
+	{
+		ConstIterator iter = _LowerBound(key);
+		if (_IsEqual(iter, key))
+			++iter;
+		return iter;
+	}
+
+	template<typename KeyArg>
+	ConstIterator _Find(const KeyArg& key) const
+	{
+		ConstIterator iter = _LowerBound(key);
+		return _IsEqual(iter, key) ? iter : GetEnd();
+	}
+
+	template<typename KeyArg>
+	size_t _LowerBound(Node* node, const KeyArg& key) const
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = node->GetCount();
