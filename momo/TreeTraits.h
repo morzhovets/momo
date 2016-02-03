@@ -29,29 +29,37 @@ typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
 
 template<typename TKey,
 	typename TTreeNode = TreeNodeDefault,
-	bool tUseLinearSearch = IsFastComparable<TKey>::value>
+	bool tUseLinearSearch = IsFastComparable<TKey>::value,
+	typename TKeyArg = void>
 class TreeTraits
 {
 public:
 	typedef TKey Key;
 	typedef TTreeNode TreeNode;
+	typedef TKeyArg KeyArg;
 
 	static const bool useLinearSearch = tUseLinearSearch;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::false_type;
+	using IsValidKeyArg = internal::BoolConstant<!std::is_same<KeyArg, void>::value
+		&& std::is_same<KeyArg, typename TreeTraits::KeyArg>::value>;
 
 public:
 	TreeTraits() MOMO_NOEXCEPT
 	{
 	}
 
+	bool IsLess(const Key& key1, const Key& key2) const
+	{
+		return std::less<Key>()(key1, key2);
+	}
+
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value));
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value));
-		return std::less<Key>()(key1, key2);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
+		return key1 < key2;
 	}
 };
 
