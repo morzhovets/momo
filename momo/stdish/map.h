@@ -33,7 +33,7 @@
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
-  Class has functions `try_emplace` and `insert_or_assign` from C++ 17.
+  Class has functions `try_emplace` and `insert_or_assign` from C++17.
 
 \**********************************************************/
 
@@ -383,18 +383,12 @@ public:
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		const_iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-			return std::pair<const_iterator, const_iterator>(iter, iter);
-		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
+		return equal_range<key_type, key_compare, void>(key);
 	}
 
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
-		iterator iter = lower_bound(key);
-		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-			return std::pair<iterator, iterator>(iter, iter);
-		return std::pair<iterator, iterator>(iter, std::next(iter));
+		return equal_range<key_type, key_compare, void>(key);
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>

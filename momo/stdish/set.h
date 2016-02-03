@@ -289,10 +289,10 @@ public:
 		return mTreeSet.Find(key);
 	}
 
-	iterator find(const key_type& key)
-	{
-		return mTreeSet.Find(key);
-	}
+	//iterator find(const key_type& key)
+	//{
+	//	return mTreeSet.Find(key);
+	//}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator find(const KeyArg& key) const
@@ -300,11 +300,11 @@ public:
 		return mTreeSet.Find(key);
 	}
 
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	iterator find(const KeyArg& key)
-	{
-		return mTreeSet.Find(key);
-	}
+	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	//iterator find(const KeyArg& key)
+	//{
+	//	return mTreeSet.Find(key);
+	//}
 
 	size_type count(const key_type& key) const
 	{
@@ -322,10 +322,10 @@ public:
 		return mTreeSet.LowerBound(key);
 	}
 
-	iterator lower_bound(const key_type& key)
-	{
-		return mTreeSet.LowerBound(key);
-	}
+	//iterator lower_bound(const key_type& key)
+	//{
+	//	return mTreeSet.LowerBound(key);
+	//}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator lower_bound(const KeyArg& key) const
@@ -333,21 +333,21 @@ public:
 		return mTreeSet.LowerBound(key);
 	}
 
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	iterator lower_bound(const KeyArg& key)
-	{
-		return mTreeSet.LowerBound(key);
-	}
+	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	//iterator lower_bound(const KeyArg& key)
+	//{
+	//	return mTreeSet.LowerBound(key);
+	//}
 
 	const_iterator upper_bound(const key_type& key) const
 	{
 		return mTreeSet.UpperBound(key);
 	}
 
-	iterator upper_bound(const key_type& key)
-	{
-		return mTreeSet.UpperBound(key);
-	}
+	//iterator upper_bound(const key_type& key)
+	//{
+	//	return mTreeSet.UpperBound(key);
+	//}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator upper_bound(const KeyArg& key) const
@@ -355,24 +355,21 @@ public:
 		return mTreeSet.UpperBound(key);
 	}
 
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	iterator upper_bound(const KeyArg& key)
-	{
-		return mTreeSet.UpperBound(key);
-	}
+	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	//iterator upper_bound(const KeyArg& key)
+	//{
+	//	return mTreeSet.UpperBound(key);
+	//}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		const_iterator iter = lower_bound(key);
-		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
-			return std::pair<const_iterator, const_iterator>(iter, iter);
-		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
+		return equal_range<key_type, key_compare, void>(key);
 	}
 
-	std::pair<iterator, iterator> equal_range(const key_type& key)
-	{
-		return const_cast<const set*>(this)->equal_range(key);
-	}
+	//std::pair<iterator, iterator> equal_range(const key_type& key)
+	//{
+	//	return equal_range<key_type, key_compare, void>(key);
+	//}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
@@ -383,11 +380,11 @@ public:
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
 	}
 
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	std::pair<iterator, iterator> equal_range(const KeyArg& key)
-	{
-		return const_cast<const set*>(this)->equal_range(key);
-	}
+	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	//std::pair<iterator, iterator> equal_range(const KeyArg& key)
+	//{
+	//	return const_cast<const set*>(this)->equal_range(key);
+	//}
 
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
