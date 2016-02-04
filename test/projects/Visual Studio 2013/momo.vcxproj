@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\tests\SimpleHashTester.cpp" />
     <ClCompile Include="..\..\tests\SpeedMapTester.cpp" />
     <ClCompile Include="..\..\tests\TemplHashTester.cpp" />
+    <ClCompile Include="..\..\tests\TemplTreeTester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />

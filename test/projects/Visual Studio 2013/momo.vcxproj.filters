@@ -93,6 +93,9 @@
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\TemplTreeTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
