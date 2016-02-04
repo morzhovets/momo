@@ -34,6 +34,9 @@ public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = std::false_type;
+
 public:
 	HashTraits() MOMO_NOEXCEPT
 	{
@@ -79,6 +82,9 @@ public:
 	typedef THashBucket HashBucket;
 	typedef std::function<size_t(size_t)> CalcCapacityFunc;
 	typedef std::function<size_t(size_t)> GetBucketCountShiftFunc;
+
+	template<typename KeyArg>
+	using IsValidKeyArg = std::false_type;
 
 public:
 	explicit HashTraitsVar(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
@@ -148,6 +154,9 @@ public:
 	typedef THashFunc HashFunc;
 	typedef TEqualFunc EqualFunc;
 	typedef THashBucket HashBucket;
+
+	template<typename KeyArg>
+	using IsValidKeyArg = std::false_type;
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,

@@ -712,7 +712,28 @@ public:
 		return KeyIterator(mHashMap.Find(key));
 	}
 
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, ConstKeyIterator>::type Find(const KeyArg& key) const
+	{
+		return ConstKeyIterator(mHashMap.Find(key));
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, KeyIterator>::type Find(const KeyArg& key)
+	{
+		return KeyIterator(mHashMap.Find(key));
+	}
+
 	bool HasKey(const Key& key) const
+	{
+		return mHashMap.HasKey(key);
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
 	{
 		return mHashMap.HasKey(key);
 	}

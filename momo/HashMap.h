@@ -313,7 +313,28 @@ public:
 		return Iterator(mHashSet.Find(key));
 	}
 
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	{
+		return ConstIterator(mHashSet.Find(key));
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, Iterator>::type Find(const KeyArg& key)
+	{
+		return Iterator(mHashSet.Find(key));
+	}
+
 	bool HasKey(const Key& key) const
+	{
+		return mHashSet.HasKey(key);
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
 	{
 		return mHashSet.HasKey(key);
 	}

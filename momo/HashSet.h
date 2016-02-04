@@ -581,35 +581,26 @@ public:
 
 	ConstIterator Find(const Key& key) const
 	{
-		const HashTraits& hashTraits = GetHashTraits();
-		const BucketParams& bucketParams = mCrew.GetDetailParams();
-		size_t hashCode = hashTraits.GetHashCode(key);
-		const Buckets* buckets = mBuckets;
-		while (true)
-		{
-			size_t bucketCount = buckets->GetCount();
-			for (size_t probe = 0; probe < bucketCount; ++probe)
-			{
-				size_t bucketIndex = _GetBucketIndex(hashCode, bucketCount, probe);
-				const Bucket& bucket = (*buckets)[bucketIndex];
-				for (const Item& item : bucket.GetBounds(bucketParams))
-				{
-					if (hashTraits.IsEqual(key, ItemTraits::GetKey(item)))
-						return _MakeIterator(*buckets, bucketIndex, std::addressof(item), false);
-				}
-				if (!bucket.WasFull())
-					break;
-			}
-			buckets = buckets->GetNextBuckets();
-			if (buckets == nullptr)
-				break;
-		}
-		return ConstIterator(*mBuckets, hashCode, mCrew.GetVersion());
+		return _Find(key);
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	{
+		return _Find(key);
 	}
 
 	bool HasKey(const Key& key) const
 	{
-		return !!Find(key);
+		return !!_Find(key);
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
+	{
+		return !!_Find(key);
 	}
 
 	template<typename ItemCreator>
@@ -792,16 +783,33 @@ private:
 		}
 	}
 
-	Buckets* _GetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
+	template<typename KeyArg>
+	ConstIterator _Find(const KeyArg& key) const
 	{
-		const Buckets* iterBuckets = iter.GetBuckets();
-		for (Buckets* buckets = mBuckets; buckets != nullptr;
-			buckets = buckets->GetNextBuckets())
+		const HashTraits& hashTraits = GetHashTraits();
+		const BucketParams& bucketParams = mCrew.GetDetailParams();
+		size_t hashCode = hashTraits.GetHashCode(key);
+		const Buckets* buckets = mBuckets;
+		while (true)
 		{
-			if (buckets == iterBuckets)
-				return buckets;
+			size_t bucketCount = buckets->GetCount();
+			for (size_t probe = 0; probe < bucketCount; ++probe)
+			{
+				size_t bucketIndex = _GetBucketIndex(hashCode, bucketCount, probe);
+				const Bucket& bucket = (*buckets)[bucketIndex];
+				for (const Item& item : bucket.GetBounds(bucketParams))
+				{
+					if (hashTraits.IsEqual(key, ItemTraits::GetKey(item)))
+						return _MakeIterator(*buckets, bucketIndex, std::addressof(item), false);
+				}
+				if (!bucket.WasFull())
+					break;
+			}
+			buckets = buckets->GetNextBuckets();
+			if (buckets == nullptr)
+				break;
 		}
-		return nullptr;
+		return ConstIterator(*mBuckets, hashCode, mCrew.GetVersion());
 	}
 
 	size_t _GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const
@@ -822,6 +830,18 @@ private:
 				return bucketIndex;
 		}
 		throw std::runtime_error("momo::HashSet is full");
+	}
+
+	Buckets* _GetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
+	{
+		const Buckets* iterBuckets = iter.GetBuckets();
+		for (Buckets* buckets = mBuckets; buckets != nullptr;
+			buckets = buckets->GetNextBuckets())
+		{
+			if (buckets == iterBuckets)
+				return buckets;
+		}
+		return nullptr;
 	}
 
 	Item& _GetItemForReset(ConstIterator iter, const Item& newItem)
