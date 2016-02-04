@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  tests/SimpleTreeTester.cpp
+  tests/TemplTreeTester.cpp
 
 \**********************************************************/
 
