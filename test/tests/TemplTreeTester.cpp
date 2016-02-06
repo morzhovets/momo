@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <random>
+#include <set>
 
 class TemplTreeTester
 {
@@ -78,20 +79,33 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = (unsigned char)i;
 
-		momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char,
-			momo::TreeNode<maxCapacity, capacityStep, useSwap>>> set;
+		{
+			std::set<unsigned char> sset;
+			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char,
+				momo::TreeNode<maxCapacity, capacityStep, useSwap>>> mset;
 
-		std::shuffle(array, array + count, std::mt19937());
-		for (unsigned char c : array)
-			assert(set.Insert(c).inserted);
-		assert(set.GetCount() == count);
+			std::shuffle(array, array + count, std::mt19937());
+			for (unsigned char c : array)
+			{
+				sset.insert(c);
+				assert(mset.Insert(c).inserted);
+				assert(mset.GetCount() == sset.size());
+				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
+			}
 
-		std::shuffle(array, array + count, std::mt19937());
-		for (unsigned char c : array)
-			assert(set.Remove(c));
-		assert(set.IsEmpty());
+			std::shuffle(array, array + count, std::mt19937());
+			for (unsigned char c : array)
+			{
+				sset.erase(c);
+				assert(mset.Remove(c));
+				assert(mset.GetCount() == sset.size());
+				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
+			}
 
-		set.Insert(128);
+			assert(mset.IsEmpty());
+			mset.Insert(128);
+			assert(mset.GetCount() == 1);
+		}
 
 		std::cout << "ok" << std::endl;
 	}
