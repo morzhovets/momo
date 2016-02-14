@@ -11,7 +11,6 @@
 
 #include "BucketUtility.h"
 #include "../MemPool.h"
-#include "../Array.h"
 
 namespace momo
 {
@@ -19,19 +18,18 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxFastCount, size_t tMemPoolBlockCount, typename TArraySettings>
+		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
 	class ArrayBucket
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxFastCount = tMaxFastCount;
 		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);
-
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -87,30 +85,27 @@ namespace internal
 
 		static const size_t arrayAlignment = std::alignment_of<Array>::value;
 
-		typedef momo::MemPool<MemPoolParamsVarSize<ItemTraits::alignment, memPoolBlockCount>,
-			MemManagerPtr> FastMemPool;
-		typedef momo::MemPool<MemPoolParamsVarSize<arrayAlignment, memPoolBlockCount>,
-			MemManagerPtr> ArrayMemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
-		typedef BucketMemory<FastMemPool, unsigned char*> FastMemory;
-		typedef BucketMemory<ArrayMemPool, unsigned char*> ArrayMemory;
+		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
 	public:
 		class Params
 		{
 		private:
-			typedef momo::Array<FastMemPool, MemManagerDummy, momo::ArrayItemTraits<FastMemPool>,
-				momo::ArraySettings<maxFastCount>> FastMemPools;
+			typedef momo::Array<MemPool, MemManagerDummy, momo::ArrayItemTraits<MemPool>,
+				momo::ArraySettings<maxFastCount>> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)
-				: mArrayMemPool(typename ArrayMemPool::Params(sizeof(Array) + arrayAlignment),
+				: mArrayMemPool(MemPoolParams(sizeof(Array) + arrayAlignment, arrayAlignment),
 					MemManagerPtr(memManager))
 			{
 				for (size_t i = 1; i <= maxFastCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item) + ItemTraits::alignment;
-					mFastMemPools.AddBackNogrow(FastMemPool(typename FastMemPool::Params(blockSize),
+					mFastMemPools.AddBackNogrow(
+						MemPool(MemPoolParams(blockSize, ItemTraits::alignment),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -123,20 +118,20 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
-			FastMemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
+			MemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
 				return mFastMemPools[memPoolIndex - 1];
 			}
 
-			ArrayMemPool& GetArrayMemPool() MOMO_NOEXCEPT
+			MemPool& GetArrayMemPool() MOMO_NOEXCEPT
 			{
 				return mArrayMemPool;
 			}
 
 		private:
-			FastMemPools mFastMemPools;
-			ArrayMemPool mArrayMemPool;
+			MemPools mFastMemPools;
+			MemPool mArrayMemPool;
 		};
 
 	public:
@@ -164,7 +159,7 @@ namespace internal
 			else if (count <= maxFastCount)
 			{
 				size_t memPoolIndex = _GetFastMemPoolIndex(count);
-				FastMemory memory(params.GetFastMemPool(memPoolIndex));
+				Memory memory(params.GetFastMemPool(memPoolIndex));
 				Item* items = _GetFastItems(memory.GetPointer());
 				size_t index = 0;
 				try
@@ -181,8 +176,8 @@ namespace internal
 			}
 			else
 			{
-				ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
-				ArrayMemory memory(arrayMemPool);
+				MemPool& arrayMemPool = params.GetArrayMemPool();
+				Memory memory(arrayMemPool);
 				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(), bounds.GetEnd(),
 					MemManagerPtr(arrayMemPool.GetMemManager()));
 				_Set(memory.Extract(), (unsigned char)0);
@@ -242,7 +237,7 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
-				FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
+				Memory memory(params.GetFastMemPool(newMemPoolIndex));
 				itemCreator(_GetFastItems(memory.GetPointer()));
 				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 			}
@@ -260,7 +255,7 @@ namespace internal
 						if (newCount <= maxFastCount)
 						{
 							size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
-							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
+							Memory memory(params.GetFastMemPool(newMemPoolIndex));
 							Item* newItems = _GetFastItems(memory.GetPointer());
 							ItemTraits::RelocateCreate(items, newItems, count,
 								itemCreator, newItems + count);
@@ -269,8 +264,8 @@ namespace internal
 						}
 						else
 						{
-							ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
-							ArrayMemory memory(arrayMemPool);
+							MemPool& arrayMemPool = params.GetArrayMemPool();
+							Memory memory(arrayMemPool);
 							Array array = Array::CreateCap(maxFastCount * 2,
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							Item* newItems = array.GetItems();

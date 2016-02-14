@@ -14,7 +14,6 @@
 
 #include "BucketUtility.h"
 #include "../MemPool.h"
-#include "../Array.h"
 
 namespace momo
 {
@@ -22,18 +21,18 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount, size_t tAlignment>
+		size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
 	class BucketLimP1
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 		static const size_t alignment = tAlignment;
 
 		typedef BucketBounds<Item> Bounds;
@@ -42,8 +41,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParamsVarSize<ItemTraits::alignment, memPoolBlockCount>,
-			MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 
@@ -52,13 +50,13 @@ namespace internal
 		{
 		public:
 			static const bool skipFirstMemPool =
-				(maxCount > 1 && memPoolBlockCount > 1 && ItemTraits::alignment == sizeof(Item));
+				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
 
 		private:
 			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<maxCount>> MemPools;
 
-			static const size_t minMemPoolIndex = (skipFirstMemPool ? 2 : 1);
+			static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -66,7 +64,7 @@ namespace internal
 				for (size_t i = minMemPoolIndex; i <= maxCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item);
-					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
+					mMemPools.AddBackNogrow(MemPool(MemPoolParams(blockSize, ItemTraits::alignment),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -233,17 +231,18 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
+	typename TMemPoolParams = MemPoolParamsVar<>,
 	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const size_t alignment = tAlignment;
+
+	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits, typename MemManager>
 	using Bucket = internal::BucketLimP1<ItemTraits, MemManager,
-		maxCount, memPoolBlockCount, alignment>;
+		maxCount, MemPoolParams, alignment>;
 };
 
 } // namespace momo

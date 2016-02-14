@@ -20,17 +20,17 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxFastCount, size_t tMemPoolBlockCount, typename TArraySettings>
+		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
 	class BucketUnlimP
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxFastCount = tMaxFastCount;
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	private:
 		struct ArrayBucketItemTraits
@@ -58,7 +58,7 @@ namespace internal
 		};
 
 		typedef momo::internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
-			maxFastCount, memPoolBlockCount, ArraySettings> ArrayBucket;
+			maxFastCount, MemPoolParams, ArraySettings> ArrayBucket;
 
 	public:
 		typedef typename ArrayBucket::Params Params;
@@ -122,13 +122,13 @@ namespace internal
 }
 
 template<size_t tMaxFastCount = 7,
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
+	typename TMemPoolParams = MemPoolParamsVar<>,
 	typename TArraySettings = ArraySettings<>>
 struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 {
 	static const size_t maxFastCount = tMaxFastCount;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
+	typedef TMemPoolParams MemPoolParams;
 	typedef TArraySettings ArraySettings;
 
 	static size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) MOMO_NOEXCEPT
@@ -140,7 +140,7 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 
 	template<typename ItemTraits, typename MemManager>
 	using Bucket = internal::BucketUnlimP<ItemTraits, MemManager,
-		maxFastCount, memPoolBlockCount, ArraySettings>;
+		maxFastCount, MemPoolParams, ArraySettings>;
 };
 
 } // namespace momo

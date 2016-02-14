@@ -14,7 +14,6 @@
 
 #include "BucketUtility.h"
 #include "../MemPool.h"
-#include "../Array.h"
 
 namespace momo
 {
@@ -22,22 +21,22 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount, bool tUseUIntPtr>
+		size_t tMaxCount, typename TMemPoolParams, bool tUseUIntPtr>
 	class BucketLimP;
 
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount>
-	class BucketLimP<TItemTraits, TMemManager, tMaxCount, tMemPoolBlockCount, false>
+		size_t tMaxCount, typename TMemPoolParams>
+	class BucketLimP<TItemTraits, TMemManager, tMaxCount, TMemPoolParams, false>
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 		static const bool useUIntPtr = false;
 
 		typedef BucketBounds<Item> Bounds;
@@ -46,8 +45,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParamsVarSize<ItemTraits::alignment, memPoolBlockCount>,
-			MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
@@ -67,7 +65,7 @@ namespace internal
 				for (size_t i = 1; i <= maxCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item) + ItemTraits::alignment;
-					mMemPools.AddBackNogrow(MemPool(typename MemPool::Params(blockSize),
+					mMemPools.AddBackNogrow(MemPool(MemPoolParams(blockSize, ItemTraits::alignment),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -257,18 +255,18 @@ namespace internal
 	};
 
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, size_t tMemPoolBlockCount>
-	class BucketLimP<TItemTraits, TMemManager, tMaxCount, tMemPoolBlockCount, true>
+		size_t tMaxCount, typename TMemPoolParams>
+	class BucketLimP<TItemTraits, TMemManager, tMaxCount, TMemPoolParams, true>
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 		static const bool useUIntPtr = true;
 
 		typedef BucketBounds<Item> Bounds;
@@ -276,28 +274,6 @@ namespace internal
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-
-		class MemPoolParams	//?
-		{
-		public:
-			static const size_t blockCount = memPoolBlockCount;
-			MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
-
-		public:
-			MemPoolParams(size_t blockAlignment, size_t blockSize) MOMO_NOEXCEPT
-			{
-				this->blockAlignment = blockAlignment;
-				this->blockSize = (blockCount == 1)
-					? ((blockSize > 0) ? blockSize : 1)
-					: ((blockSize <= blockAlignment)
-						? 2 * blockAlignment
-						: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment));
-			}
-
-		protected:
-			size_t blockAlignment;
-			size_t blockSize;
-		};
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
@@ -308,8 +284,7 @@ namespace internal
 		static const size_t itemAlignment = (ItemTraits::alignment < minItemAlignment)
 			? minItemAlignment : ItemTraits::alignment;
 
-		static const bool skipOddMemPools =
-			(maxCount > 1 && memPoolBlockCount > 1 && sizeof(Item) <= itemAlignment);
+		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
 		static const uintptr_t modMemPoolIndex =
 			(uintptr_t)minItemAlignment / (skipOddMemPools ? 2 : 1);
 
@@ -332,7 +307,7 @@ namespace internal
 						continue;
 					size_t blockAlignment = internal::UIntMath<size_t>::Ceil(
 						i * (size_t)modMemPoolIndex, itemAlignment);
-					mMemPools.AddBackNogrow(MemPool(MemPoolParams(blockAlignment, i * sizeof(Item)),
+					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * sizeof(Item), blockAlignment),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -513,13 +488,14 @@ namespace internal
 }
 
 template<size_t tMaxCount = sizeof(void*),
-	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount,
+	typename TMemPoolParams = MemPoolParamsVar<>,
 	bool tUseUIntPtr = true>
 struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 	static const bool useUIntPtr = tUseUIntPtr;
+
+	typedef TMemPoolParams MemPoolParams;
 
 private:
 	template<typename ItemTraits, typename MemManager>
@@ -537,7 +513,7 @@ private:
 
 	public:
 		typedef internal::BucketLimP<ItemTraits, MemManager,
-			maxCount, memPoolBlockCount, useUIntPtr> Bucket;
+			maxCount, MemPoolParams, useUIntPtr> Bucket;
 	};
 
 public:

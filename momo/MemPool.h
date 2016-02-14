@@ -8,7 +8,7 @@
   namespace momo:
     struct MemPoolConst
     class MemPoolParams
-    class MemPoolParamsVarSize
+    class MemPoolParamsVar
     struct MemPoolSettings
     class MemPool
 
@@ -43,7 +43,8 @@ struct MemPoolConst
 
 template<size_t tBlockSize,
 	size_t tBlockAlignment = MemPoolConst::BlockAlignmenter<tBlockSize>::blockAlignment,
-	size_t tBlockCount = MemPoolConst::defaultBlockCount>
+	size_t tBlockCount = MemPoolConst::defaultBlockCount,
+	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
 class MemPoolParams
 {
 public:
@@ -58,21 +59,38 @@ public:
 		: ((tBlockSize <= blockAlignment)
 			? 2 * blockAlignment
 			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
+
+	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 };
 
-template<size_t tBlockAlignment = MOMO_MAX_ALIGNMENT,
-	size_t tBlockCount = MemPoolConst::defaultBlockCount>
-class MemPoolParamsVarSize
+template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
+	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
+class MemPoolParamsVar
 {
 public:
 	static const size_t blockCount = tBlockCount;
 	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
 
-	static const size_t blockAlignment = tBlockAlignment;
-	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
+	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	explicit MemPoolParamsVarSize(size_t blockSize) MOMO_NOEXCEPT
+	explicit MemPoolParamsVar(size_t blockSize) MOMO_NOEXCEPT
+	{
+		blockAlignment = MOMO_MAX_ALIGNMENT;
+		while (blockAlignment > blockSize && blockAlignment > 1)
+			blockAlignment /= 2;
+		_SetBlockSize(blockSize);
+	}
+
+	MemPoolParamsVar(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
+	{
+		MOMO_ASSERT(blockAlignment > 0);
+		this->blockAlignment = blockAlignment;
+		_SetBlockSize(blockSize);
+	}
+
+private:
+	void _SetBlockSize(size_t blockSize) MOMO_NOEXCEPT
 	{
 		this->blockSize = (blockCount == 1)
 			? ((blockSize > 0) ? blockSize : 1)
@@ -82,21 +100,19 @@ public:
 	}
 
 protected:
+	size_t blockAlignment;
 	size_t blockSize;
 };
 
-template<size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
 struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-
-	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 };
 
-template<typename TParams = MemPoolParamsVarSize<>,
+template<typename TParams = MemPoolParamsVar<>,
 	typename TMemManager = MemManagerDefault,
-	typename TSettings = MemPoolSettings<>>
+	typename TSettings = MemPoolSettings>
 class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
@@ -115,7 +131,7 @@ private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
 	typedef Array<void*, internal::MemManagerDummy, ArrayItemTraits<void*>,
-		ArraySettings<Settings::cachedFreeBlockCount>> CachedFreeBlocks;
+		ArraySettings<Params::cachedFreeBlockCount>> CachedFreeBlocks;
 
 	typedef internal::UIntMath<size_t> SMath;
 	typedef internal::UIntMath<uintptr_t> PMath;
@@ -169,7 +185,7 @@ public:
 	~MemPool() MOMO_NOEXCEPT
 	{
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
-		if (Settings::cachedFreeBlockCount > 0)
+		if (Params::cachedFreeBlockCount > 0)
 			_FlushDeallocate();
 		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
 	}
@@ -221,7 +237,7 @@ public:
 	void* Allocate()
 	{
 		void* pblock;
-		if (Settings::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
+		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
 		{
 			pblock = mCachedFreeBlocks.GetBackItem();
 			mCachedFreeBlocks.RemoveBack();
@@ -243,9 +259,9 @@ public:
 	{
 		MOMO_ASSERT(pblock != nullptr);
 		MOMO_ASSERT(mAllocCount > 0);
-		if (Settings::cachedFreeBlockCount > 0)
+		if (Params::cachedFreeBlockCount > 0)
 		{
-			if (mCachedFreeBlocks.GetCount() == Settings::cachedFreeBlockCount)
+			if (mCachedFreeBlocks.GetCount() == Params::cachedFreeBlockCount)
 				_FlushDeallocate();
 			mCachedFreeBlocks.AddBackNogrow(pblock);
 		}

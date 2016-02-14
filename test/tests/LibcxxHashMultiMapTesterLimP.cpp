@@ -15,7 +15,7 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLimP<2, 2, false>
+#define LIBCXX_TEST_BUCKET momo::HashBucketLimP<2, momo::MemPoolParamsVar<2>, false>
 #define LIBCXX_TEST_BUCKET_NAME "limp"
 
 #include "LibcxxHashMultiMapTester.h"

@@ -355,7 +355,7 @@ private:
 	};
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MemPoolConst::defaultBlockCount, ValueArraySettings> ValueArray;
+		MemPoolParamsVar<>, ValueArraySettings> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 

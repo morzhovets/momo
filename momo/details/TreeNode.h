@@ -60,13 +60,13 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef MemPoolParamsVarSize<> MemPoolParams;
+		typedef MemPoolParamsVar<> MemPoolParams;
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
-		static const size_t internalOffset = MemPoolParams::blockAlignment
-			* ((sizeof(void*) * (maxCapacity + 1) - 1) / MemPoolParams::blockAlignment + 1);
+		static const size_t internalOffset = MOMO_MAX_ALIGNMENT
+			* ((sizeof(void*) * (maxCapacity + 1) - 1) / MOMO_MAX_ALIGNMENT + 1);
 
 	public:
 		class Params
