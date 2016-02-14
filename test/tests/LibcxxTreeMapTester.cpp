@@ -27,7 +27,8 @@ template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
-	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, momo::TreeNode<4, 2, true>>,
+	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc,
+		momo::TreeNode<32, 4, momo::MemPoolParamsVar<>, true>>,
 		momo::MemManagerStd<TAllocator>, momo::TreeMapKeyValueTraits<TKey, TMapped>,
 		momo::TreeMapSettings>>;
 #include "LibcxxMapTests.h"

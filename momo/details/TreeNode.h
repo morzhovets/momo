@@ -20,12 +20,13 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCapacity, size_t tCapacityStep, bool tUseSwap>
+		size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams, bool tUseSwap>
 	class Node
 	{
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef TMemManager MemManager;
+		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t maxCapacity = tMaxCapacity;
@@ -60,7 +61,6 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef MemPoolParamsVar<> MemPoolParams;
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
@@ -75,8 +75,8 @@ namespace internal
 			typedef Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
 				ArraySettings<leafMemPoolCount>> LeafMemPools;
 
-			static const size_t internalNodeSize = sizeof(Node)
-				+ sizeof(Item) * (maxCapacity - 1) + internalOffset;
+			static const size_t internalNodeSize =
+				sizeof(Node) + sizeof(Item) * (maxCapacity - 1) + internalOffset;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -299,16 +299,20 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCapacity, size_t tCapacityStep, bool tUseSwap>
+template<size_t tMaxCapacity, size_t tCapacityStep,
+	typename TMemPoolParams = MemPoolParamsVar<>,	//?
+	bool tUseSwap = true>
 struct TreeNode
 {
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
 	static const size_t useSwap = tUseSwap;
 
+	typedef TMemPoolParams MemPoolParams;
+
 	template<typename ItemTraits, typename MemManager>
 	using Node = internal::Node<ItemTraits, MemManager, maxCapacity, capacityStep,
-		useSwap && ItemTraits::isNothrowAnywaySwappable>;
+		MemPoolParams, useSwap && ItemTraits::isNothrowAnywaySwappable>;
 };
 
 } // namespace momo

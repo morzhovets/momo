@@ -51,7 +51,7 @@
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>
 
 // Settings of node in b-tree
-#define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4, true>
+#define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)

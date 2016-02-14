@@ -24,55 +24,58 @@ class TemplTreeTester
 public:
 	static void TestAll()
 	{
-		TestTreeNode2<1, 1>();
-		TestTreeNode2<2, 1>();
-		TestTreeNode2<3, 1>();
-		TestTreeNode2<4, 1>();
-		TestTreeNode2<5, 1>();
-		TestTreeNode2<10, 1>();
-		TestTreeNode2<101, 1>();
-		TestTreeNode2<255, 1>();
+		TestTreeNode3<  1, 1, 127>();
+		TestTreeNode3<  2, 1,  66>();
+		TestTreeNode3<  3, 1,  32>();
+		TestTreeNode3<  4, 1,  15>();
+		TestTreeNode3<  5, 1,   1>();
+		TestTreeNode3< 10, 1,   3>();
+		TestTreeNode3<101, 1,   2>();
+		TestTreeNode3<255, 1,   1>();
 
-		TestTreeNode2<4, 2>();
-		TestTreeNode2<5, 2>();
-		TestTreeNode2<6, 2>();
-		TestTreeNode2<7, 2>();
-		TestTreeNode2<12, 2>();
-		TestTreeNode2<55, 2>();
-		TestTreeNode2<111, 2>();
-		TestTreeNode2<255, 2>();
+		TestTreeNode3<  4, 2, 127>();
+		TestTreeNode3<  5, 2,  66>();
+		TestTreeNode3<  6, 2,  32>();
+		TestTreeNode3<  7, 2,  15>();
+		TestTreeNode3< 12, 2,   1>();
+		TestTreeNode3< 55, 2,   3>();
+		TestTreeNode3<111, 2,   2>();
+		TestTreeNode3<255, 2,   1>();
 
-		TestTreeNode2<6, 3>();
-		TestTreeNode2<7, 3>();
-		TestTreeNode2<8, 3>();
-		TestTreeNode2<9, 3>();
-		TestTreeNode2<14, 3>();
-		TestTreeNode2<77, 3>();
-		TestTreeNode2<121, 3>();
-		TestTreeNode2<255, 3>();
+		TestTreeNode3<  6, 3, 127>();
+		TestTreeNode3<  7, 3,  66>();
+		TestTreeNode3<  8, 3,  32>();
+		TestTreeNode3<  9, 3,  15>();
+		TestTreeNode3< 14, 3,   1>();
+		TestTreeNode3< 77, 3,   3>();
+		TestTreeNode3<121, 3,   2>();
+		TestTreeNode3<255, 3,   1>();
 
-		TestTreeNode2<37, 7>();
-		TestTreeNode2<42, 15>();
-		TestTreeNode2<65, 23>();
-		TestTreeNode2<77, 30>();
-		TestTreeNode2<88, 31>();
-		TestTreeNode2<104, 33>();
-		TestTreeNode2<204, 100>();
-		TestTreeNode2<255, 127>();
+		TestTreeNode3< 37,   7, 127>();
+		TestTreeNode3< 42,  15,  66>();
+		TestTreeNode3< 65,  23,  32>();
+		TestTreeNode3< 77,  30,  15>();
+		TestTreeNode3< 88,  31,   1>();
+		TestTreeNode3<104,  33,   3>();
+		TestTreeNode3<204, 100,   2>();
+		TestTreeNode3<255, 127,   1>();
 	}
 
-	template<size_t maxCapacity, size_t capacityStep>
-	static void TestTreeNode2()
-	{
-		static const bool useSwap = (maxCapacity + capacityStep) % 2 == 0;
-		TestTreeNode3<maxCapacity, capacityStep, useSwap>();
-	}
-
-	template<size_t maxCapacity, size_t capacityStep, bool useSwap>
+	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount>
 	static void TestTreeNode3()
 	{
+		static const bool useSwap = (maxCapacity + capacityStep) % 2 == 0;
+		TestTreeNode4<maxCapacity, capacityStep, memPoolBlockCount, useSwap>();
+	}
+
+	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount, bool useSwap>
+	static void TestTreeNode4()
+	{
 		std::cout << "momo::TreeNode<" << maxCapacity << ", " << capacityStep << ", "
-			<< (useSwap ? "true" : "false") << ">: " << std::flush;
+			<< memPoolBlockCount << ", " << (useSwap ? "true" : "false") << ">: " << std::flush;
+
+		typedef momo::TreeNode<maxCapacity, capacityStep,
+			momo::MemPoolParamsVar<memPoolBlockCount>, useSwap> TreeNode;
 
 		static const size_t count = 256;
 		static unsigned char array[count];
@@ -81,8 +84,7 @@ public:
 
 		{
 			std::set<unsigned char> sset;
-			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char,
-				momo::TreeNode<maxCapacity, capacityStep, useSwap>>> mset;
+			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> mset;
 
 			std::shuffle(array, array + count, std::mt19937());
 			for (unsigned char c : array)
