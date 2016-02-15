@@ -499,9 +499,10 @@ private:
 	static size_t _MultShift(size_t value1, size_t value2) MOMO_NOEXCEPT
 	{
 		static const size_t halfSize = 4 * sizeof(size_t);
+		static const size_t halfMask = ((size_t)1 << halfSize) - 1;
 		return (value1 >> halfSize) * (value2 >> halfSize)
-			+ (((value1 >> halfSize) * (value2 & ((1 << halfSize) - 1))) >> halfSize)
-			+ (((value2 >> halfSize) * (value1 & ((1 << halfSize) - 1))) >> halfSize);
+			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)
+			+ (((value2 >> halfSize) * (value1 & halfMask)) >> halfSize);
 	}
 };
 
