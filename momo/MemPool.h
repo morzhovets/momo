@@ -75,33 +75,40 @@ public:
 
 public:
 	explicit MemPoolParamsVar(size_t blockSize) MOMO_NOEXCEPT
+		: blockSize(blockSize),
+		blockAlignment(MOMO_MAX_ALIGNMENT)
 	{
-		blockAlignment = MOMO_MAX_ALIGNMENT;
 		while (blockAlignment > blockSize && blockAlignment > 1)
 			blockAlignment /= 2;
-		_SetBlockSize(blockSize);
+		_CorrectBlockSize();
 	}
 
 	MemPoolParamsVar(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
+		: blockSize(blockSize),
+		blockAlignment(blockAlignment)
 	{
 		MOMO_ASSERT(blockAlignment > 0);
-		this->blockAlignment = blockAlignment;
-		_SetBlockSize(blockSize);
+		_CorrectBlockSize();
 	}
 
 private:
-	void _SetBlockSize(size_t blockSize) MOMO_NOEXCEPT
+	void _CorrectBlockSize() MOMO_NOEXCEPT
 	{
-		this->blockSize = (blockCount == 1)
-			? ((blockSize > 0) ? blockSize : 1)
-			: ((blockSize <= blockAlignment)
-				? 2 * blockAlignment
-				: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment));
+		if (blockCount == 1)
+		{
+			if (blockSize == 0)
+				blockSize = 1;
+		}
+		else
+		{
+			blockSize = (blockSize <= blockAlignment) ? 2 * blockAlignment
+				: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment);
+		}
 	}
 
 protected:
-	size_t blockAlignment;
 	size_t blockSize;
+	size_t blockAlignment;
 };
 
 struct MemPoolSettings
