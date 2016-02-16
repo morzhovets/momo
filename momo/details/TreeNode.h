@@ -300,13 +300,13 @@ namespace internal
 }
 
 template<size_t tMaxCapacity, size_t tCapacityStep,
-	typename TMemPoolParams = MemPoolParamsVar<>,	//?
+	typename TMemPoolParams = MemPoolParamsVar<(tMaxCapacity < 64) ? 32 : 1>,
 	bool tUseSwap = true>
 struct TreeNode
 {
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
-	static const size_t useSwap = tUseSwap;
+	static const bool useSwap = tUseSwap;
 
 	typedef TMemPoolParams MemPoolParams;
 
