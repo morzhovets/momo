@@ -8,6 +8,7 @@
   namespace momo:
     struct HashBucketDefault
     class HashTraits
+    class HashTraitsOpen
     class HashTraitsVar
     class HashTraitsStd
 
@@ -72,6 +73,9 @@ public:
 		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 	}
 };
+
+template<typename TKey>
+using HashTraitsOpen = HashTraits<TKey, HashBucketOneI1>;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>
