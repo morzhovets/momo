@@ -258,7 +258,7 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(std::is_nothrow_copy_constructible<Object>::value);
 			ObjectBuffer<Object, alignment> objectBuffer;
-			Create((const Object&)object1, &objectBuffer);
+			Create(const_cast<const Object&>(object1), &objectBuffer);
 			AssignNothrowAnyway(std::move(object2), object1);
 			AssignNothrowAnyway(std::move(*&objectBuffer), object2);
 		}
@@ -305,7 +305,7 @@ namespace internal
 			std::false_type /*isTriviallyRelocatable*/,
 			std::false_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
-			AssignNothrowAnyway((const Object&)srcObject, dstObject);
+			AssignNothrowAnyway(const_cast<const Object&>(srcObject), dstObject);
 		}
 
 		static void _AssignNothrowAnyway(const Object& srcObject, Object& dstObject,

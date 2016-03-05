@@ -497,7 +497,7 @@ private:
 
 	std::pair<iterator, bool> _insert(const_iterator hint, value_type&& value)
 	{
-		if (!_check_hint(hint, (const key_type&)value))
+		if (!_check_hint(hint, const_cast<const key_type&>(value)))
 			return _insert(nullptr, std::move(value));
 		return std::pair<iterator, bool>(mTreeSet.Add(hint, std::move(value)), true);
 	}

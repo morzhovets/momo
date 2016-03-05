@@ -924,7 +924,7 @@ private:
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
-		size_t itemIndex = _IndexOf((const Item&)item);
+		size_t itemIndex = _IndexOf(const_cast<const Item&>(item));
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
 		typename ItemTraits::template Creator<Item>

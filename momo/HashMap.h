@@ -456,7 +456,7 @@ public:
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		Iterator iter = Find((const Key&)key);
+		Iterator iter = Find(const_cast<const Key&>(key));
 		return ValueReferenceRKey(*this, iter, !!iter ? nullptr : std::addressof(key));
 	}
 
@@ -522,7 +522,7 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult _Insert(RKey&& key, const ValueCreator& valueCreator)
 	{
-		Iterator iter = Find((const Key&)key);
+		Iterator iter = Find(const_cast<const Key&>(key));
 		if (!!iter)
 			return InsertResult(iter, false);
 		iter = _Add(iter, std::forward<RKey>(key), valueCreator, false);
@@ -543,7 +543,7 @@ private:
 		bool extraCheck)
 	{
 		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, (const Key&)key));
+		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, const_cast<const Key&>(key)));
 		auto pairCreator = [&key, &valueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
