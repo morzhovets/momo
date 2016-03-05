@@ -241,22 +241,23 @@ public:
 		return _GetMemManagerWrapper().GetMemManager();
 	}
 
-	void* Allocate()
+	template<typename ResType = void>
+	ResType* Allocate()
 	{
-		void* pblock;
+		ResType* pblock;
 		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
 		{
-			pblock = mCachedFreeBlocks.GetBackItem();
+			pblock = static_cast<ResType*>(mCachedFreeBlocks.GetBackItem());
 			mCachedFreeBlocks.RemoveBack();
 		}
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = (void*)_NewBlock();
+				pblock = reinterpret_cast<ResType*>(_NewBlock());
 			else if (maxAlignment % Params::blockAlignment == 0)
-				pblock = GetMemManager().Allocate(_GetBufferSize0());
+				pblock = GetMemManager().template Allocate<ResType>(_GetBufferSize0());
 			else
-				pblock = (void*)_NewBlock1();
+				pblock = reinterpret_cast<ResType*>(_NewBlock1());
 		}
 		++mAllocCount;
 		return pblock;
@@ -318,11 +319,11 @@ private:
 	void _DeleteBlock(void* pblock) MOMO_NOEXCEPT
 	{
 		if (Params::blockCount > 1)
-			_DeleteBlock((uintptr_t)pblock);
+			_DeleteBlock(reinterpret_cast<uintptr_t>(pblock));
 		else if (maxAlignment % Params::blockAlignment == 0)
 			GetMemManager().Deallocate(pblock, _GetBufferSize0());
 		else
-			_DeleteBlock1((uintptr_t)pblock);
+			_DeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
 	}
 
 	size_t _GetBufferSize0() const MOMO_NOEXCEPT
@@ -332,7 +333,7 @@ private:
 
 	uintptr_t _NewBlock1()
 	{
-		uintptr_t begin = (uintptr_t)GetMemManager().Allocate(_GetBufferSize1());
+		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(_GetBufferSize1()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		_GetBufferBegin1(block) = begin;
 		return block;
@@ -341,7 +342,7 @@ private:
 	void _DeleteBlock1(uintptr_t block) MOMO_NOEXCEPT
 	{
 		uintptr_t begin = _GetBufferBegin1(block);
-		GetMemManager().Deallocate((void*)begin, _GetBufferSize1());
+		GetMemManager().Deallocate(reinterpret_cast<void*>(begin), _GetBufferSize1());
 	}
 
 	size_t _GetBufferSize1() const MOMO_NOEXCEPT
@@ -353,7 +354,8 @@ private:
 
 	uintptr_t& _GetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
 	{
-		return *(uintptr_t*)PMath::Ceil(block + Params::blockSize, (uintptr_t)sizeof(void*));
+		return *reinterpret_cast<uintptr_t*>(PMath::Ceil(block + Params::blockSize,
+			(uintptr_t)sizeof(void*)));
 	}
 
 	uintptr_t _NewBlock()
@@ -405,7 +407,7 @@ private:
 
 	signed char& _GetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
 	{
-		return *(signed char*)block;
+		return *reinterpret_cast<signed char*>(block);
 	}
 
 	uintptr_t _GetBlock(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
@@ -432,7 +434,7 @@ private:
 
 	uintptr_t _NewBuffer()
 	{
-		uintptr_t begin = (uintptr_t)GetMemManager().Allocate(_GetBufferSize());
+		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(_GetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
 		if ((block + Params::blockAlignment) % Params::blockSize == 0)
@@ -469,7 +471,7 @@ private:
 		if (mBufferHead == buffer)
 			mBufferHead = pointers.nextBuffer;
 		if (deallocate)
-			GetMemManager().Deallocate((void*)pointers.begin, _GetBufferSize());
+			GetMemManager().Deallocate(reinterpret_cast<void*>(pointers.begin), _GetBufferSize());
 	}
 
 	size_t _GetBufferSize() const MOMO_NOEXCEPT
@@ -486,22 +488,22 @@ private:
 
 	signed char& _GetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
 	{
-		return *(signed char*)buffer;
+		return *reinterpret_cast<signed char*>(buffer);
 	}
 
 	BufferChars& _GetBufferChars(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		if (Params::blockAlignment > 2)
-			return *(BufferChars*)(buffer + 1);
+			return *reinterpret_cast<BufferChars*>(buffer + 1);
 		else
-			return *(BufferChars*)(&_GetBufferPointers(buffer) + 1);
+			return *reinterpret_cast<BufferChars*>(&_GetBufferPointers(buffer) + 1);
 	}
 
 	BufferPointers& _GetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		size_t offset = Params::blockCount - (size_t)(-_GetFirstBlockIndex(buffer));
-		return *(BufferPointers*)PMath::Ceil(buffer + Params::blockAlignment
-			+ Params::blockSize * offset, (uintptr_t)sizeof(void*));
+		return *reinterpret_cast<BufferPointers*>(PMath::Ceil(buffer + Params::blockAlignment
+			+ Params::blockSize * offset, (uintptr_t)sizeof(void*)));
 	}
 
 private:
@@ -524,7 +526,7 @@ namespace internal
 		static const uint32_t nullPtr = UINT32_MAX;
 
 	private:
-		typedef Array<void*, MemManager> Buffers;
+		typedef Array<char*, MemManager> Buffers;
 
 	public:
 		MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)
@@ -559,14 +561,16 @@ namespace internal
 			return mBuffers.GetMemManager();
 		}
 
-		const void* GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
+		template<typename ResType = void>
+		const ResType* GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
 		{
-			return _GetRealPointer(ptr);
+			return _GetRealPointer<const ResType>(ptr);
 		}
 
-		void* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
+		template<typename ResType = void>
+		ResType* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
 		{
-			return _GetRealPointer(ptr);
+			return _GetRealPointer<ResType>(ptr);
 		}
 
 		uint32_t Allocate()
@@ -591,17 +595,18 @@ namespace internal
 		}
 
 	private:
-		void* _GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
+		template<typename ResType>
+		ResType* _GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullPtr);
-			char* buffer = (char*)mBuffers[ptr / blockCount];
+			char* buffer = mBuffers[ptr / blockCount];
 			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
-			return realPtr;
+			return static_cast<ResType*>(realPtr);
 		}
 
 		uint32_t& _GetNextBlock(void* realPtr) MOMO_NOEXCEPT
 		{
-			return *(uint32_t*)realPtr;
+			return *static_cast<uint32_t*>(realPtr);
 		}
 
 		void _NewBuffer()
@@ -610,7 +615,7 @@ namespace internal
 			if (bufferCount >= mMaxBufferCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 			mBuffers.Reserve(bufferCount + 1);
-			char* buffer = (char*)GetMemManager().Allocate(_GetBufferSize());
+			char* buffer = GetMemManager().template Allocate<char>(_GetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				void* realPtr = buffer + mBlockSize * i;
@@ -635,7 +640,7 @@ namespace internal
 		{
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = _GetBufferSize();
-			for (void* buffer : mBuffers)
+			for (char* buffer : mBuffers)
 				memManager.Deallocate(buffer, bufferSize);
 		}
 

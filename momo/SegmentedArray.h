@@ -539,7 +539,7 @@ private:
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > SIZE_MAX / sizeof(Item))
 			throw std::length_error("momo::SegmentedArray length error");
-		return (Item*)GetMemManager().Allocate(itemCount * sizeof(Item));
+		return GetMemManager().template Allocate<Item>(itemCount * sizeof(Item));
 	}
 
 	void _FreeSegMemory(size_t segIndex, Item* segMemory) MOMO_NOEXCEPT

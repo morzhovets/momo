@@ -117,7 +117,7 @@ namespace internal
 	public:
 		SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
-			mData = (Data*)memManager.Allocate(sizeof(Data));
+			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->version = 0;
 			new(&GetMemManager()) MemManager(std::move(memManager));
 			try

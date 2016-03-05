@@ -63,12 +63,12 @@ namespace internal
 	public:
 		const Object* operator&() const MOMO_NOEXCEPT
 		{
-			return (const Object*)&mBuffer;
+			return reinterpret_cast<const Object*>(&mBuffer);
 		}
 
 		Object* operator&() MOMO_NOEXCEPT
 		{
-			return (Object*)&mBuffer;
+			return reinterpret_cast<Object*>(&mBuffer);
 		}
 
 	private:

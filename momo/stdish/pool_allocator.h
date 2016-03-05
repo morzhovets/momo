@@ -131,9 +131,9 @@ public:
 	pointer allocate(size_type count, const void* = nullptr)
 	{
 		if (count == 1)
-			return (pointer)mMemPool.Allocate();
+			return mMemPool.template Allocate<value_type>();
 		else
-			return (pointer)mMemPool.GetMemManager().Allocate(count * sizeof(value_type));
+			return mMemPool.GetMemManager().template Allocate<value_type>(count * sizeof(value_type));
 	}
 
 	void deallocate(pointer ptr, size_type count) MOMO_NOEXCEPT

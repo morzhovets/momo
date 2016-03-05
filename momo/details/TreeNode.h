@@ -132,13 +132,13 @@ namespace internal
 				size_t leafMemPoolIndex = (maxCapacity - count) / capacityStep;
 				if (leafMemPoolIndex >= leafMemPoolCount)
 					leafMemPoolIndex = leafMemPoolCount - 1;
-				node = (Node*)params.GetLeafMemPool(leafMemPoolIndex).Allocate();
+				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
 				node->mMemPoolIndex = (unsigned char)leafMemPoolIndex;
 			}
 			else
 			{
-				char* ptr = (char*)params.GetInternalMemPool().Allocate();
-				node = (Node*)(ptr + internalOffset);
+				char* ptr = params.GetInternalMemPool().template Allocate<char>();
+				node = reinterpret_cast<Node*>(ptr + internalOffset);
 				node->mMemPoolIndex = (unsigned char)leafMemPoolCount;
 			}
 			node->mParent = nullptr;
@@ -152,7 +152,7 @@ namespace internal
 			if (IsLeaf())
 				params.GetLeafMemPool((size_t)mMemPoolIndex).Deallocate(this);
 			else
-				params.GetInternalMemPool().Deallocate((char*)this - internalOffset);
+				params.GetInternalMemPool().Deallocate(reinterpret_cast<char*>(this) - internalOffset);
 		}
 
 		bool IsLeaf() const MOMO_NOEXCEPT

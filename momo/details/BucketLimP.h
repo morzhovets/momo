@@ -206,13 +206,13 @@ namespace internal
 		unsigned char* _GetPtr() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsEmpty());
-			return (unsigned char*)mPtr;
+			return reinterpret_cast<unsigned char*>(mPtr);
 		}
 
 		void _Set(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullptr);
-			mPtr = (uintptr_t)ptr;
+			mPtr = reinterpret_cast<uintptr_t>(ptr);
 			*ptr = (unsigned char)((memPoolIndex << 4) | count);
 		}
 
@@ -239,7 +239,7 @@ namespace internal
 
 		static Item* _GetItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return (Item*)(ptr + ItemTraits::alignment);
+			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT
@@ -452,7 +452,7 @@ namespace internal
 
 		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			mPtrState = (uintptr_t)items + (uintptr_t)(count - 1) * modMemPoolIndex
+			mPtrState = reinterpret_cast<uintptr_t>(items) + (uintptr_t)(count - 1) * modMemPoolIndex
 				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
@@ -478,7 +478,7 @@ namespace internal
 			uintptr_t mod = PMath::Ceil(memPoolIndex, (uintptr_t)itemAlignment / modMemPoolIndex);
 			uintptr_t count1 = PMath::DivBySmall(ptrCount, mod).remainder;
 			MOMO_ASSERT(count1 < memPoolIndex);
-			Item* items = (Item*)((ptrCount - count1) * modMemPoolIndex);
+			Item* items = reinterpret_cast<Item*>((ptrCount - count1) * modMemPoolIndex);
 			return Bounds(items, (size_t)count1 + 1);
 		}
 

@@ -157,7 +157,7 @@ namespace internal
 					_GetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
-				Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
+				Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
 				itemCreator(newItems);
 				_Set(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
@@ -174,11 +174,11 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 					Memory memory(newMemPool);
-					Item* newItems = (Item*)newMemPool.GetRealPointer(memory.GetPointer());
+					Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
 					MemPool& memPool = params.GetMemPool(memPoolIndex);
 					uint32_t ptr = _GetPointer();
-					ItemTraits::RelocateCreate((Item*)memPool.GetRealPointer(ptr), newItems, count,
-						itemCreator, newItems + count);
+					ItemTraits::RelocateCreate(memPool.template GetRealPointer<Item>(ptr),
+						newItems, count, itemCreator, newItems + count);
 					memPool.Deallocate(ptr);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
@@ -257,8 +257,7 @@ namespace internal
 			if (_IsEmpty())
 				return nullptr;
 			auto& memPool = params.GetMemPool(_GetMemPoolIndex());
-			auto* realPtr = memPool.GetRealPointer(_GetPointer());
-			return (Item*)realPtr;
+			return memPool.template GetRealPointer<Item>(_GetPointer());
 		}
 
 	private:

@@ -363,7 +363,7 @@ namespace internal
 
 		static Item* _GetFastItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return (Item*)(ptr + ItemTraits::alignment);
+			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
 		Array& _GetArray() const MOMO_NOEXCEPT
@@ -374,7 +374,7 @@ namespace internal
 
 		static Array& _GetArray(unsigned char* ptr) MOMO_NOEXCEPT
 		{
-			return *(Array*)(ptr + arrayAlignment);
+			return *reinterpret_cast<Array*>(ptr + arrayAlignment);
 		}
 
 		Bounds _GetBounds() const MOMO_NOEXCEPT

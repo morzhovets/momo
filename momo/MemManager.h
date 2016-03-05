@@ -33,9 +33,14 @@
     ~UserMemManager() noexcept;
     UserMemManager& operator=(const UserMemManager&) = delete;
 
-    void* Allocate(size_t size);
+    template<typename ResType = void>
+    ResType* Allocate(size_t size);
+
     void Deallocate(void* ptr, size_t size) noexcept;
-    void* Reallocate(void* ptr, size_t size, size_t newSize);
+
+    template<typename ResType = void>
+    ResType* Reallocate(void* ptr, size_t size, size_t newSize);
+
     bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept;
   };
 
@@ -73,10 +78,12 @@ public:
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
-	void* Allocate(size_t size)
+	template<typename ResType = void>
+	ResType* Allocate(size_t size)
 	{
 		MOMO_ASSERT(size > 0);
-		return operator new(size);
+		void* ptr = operator new(size);
+		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
@@ -112,13 +119,14 @@ public:
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
-	void* Allocate(size_t size)
+	template<typename ResType = void>
+	ResType* Allocate(size_t size)
 	{
 		MOMO_ASSERT(size > 0);
 		void* ptr = malloc(size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
-		return ptr;
+		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
@@ -128,7 +136,8 @@ public:
 		free(ptr);
 	}
 
-	void* Reallocate(void* ptr, size_t size, size_t newSize)
+	template<typename ResType = void>
+	ResType* Reallocate(void* ptr, size_t size, size_t newSize)
 	{
 		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 		if (size == newSize)
@@ -136,7 +145,7 @@ public:
 		void* newPtr = realloc(ptr, newSize);
 		if (newPtr == nullptr)
 			throw std::bad_alloc();
-		return newPtr;
+		return static_cast<ResType*>(newPtr);
 	}
 };
 
@@ -166,13 +175,14 @@ public:
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
-	void* Allocate(size_t size)
+	template<typename ResType = void>
+	ResType* Allocate(size_t size)
 	{
 		MOMO_ASSERT(size > 0);
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
-		return ptr;
+		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
@@ -182,6 +192,7 @@ public:
 		HeapFree(GetProcessHeap(), 0, ptr);
 	}
 
+	//template<typename ResType = void>
 	//void* Reallocate(void* ptr, size_t size, size_t newSize)
 	//{
 	//	MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
@@ -190,7 +201,7 @@ public:
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 	//	if (newPtr == nullptr)
 	//		throw std::bad_alloc();
-	//	return newPtr;
+	//	return static_cast<ResType*>(newPtr);
 	//}
 
 	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
@@ -251,14 +262,17 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	void* Allocate(size_t size)
+	template<typename ResType = void>
+	ResType* Allocate(size_t size)
 	{
-		return std::allocator_traits<CharAllocator>::allocate(_GetCharAllocator(), size);
+		void* ptr = std::allocator_traits<CharAllocator>::allocate(_GetCharAllocator(), size);
+		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
-		std::allocator_traits<CharAllocator>::deallocate(_GetCharAllocator(), (char*)ptr, size);
+		std::allocator_traits<CharAllocator>::deallocate(_GetCharAllocator(),
+			static_cast<char*>(ptr), size);
 	}
 
 	Allocator GetAllocator() const
@@ -316,14 +330,17 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	void* Allocate(size_t size)
+	template<typename ResType = void>
+	ResType* Allocate(size_t size)
 	{
-		return std::allocator_traits<CharAllocator>::allocate(*mCharAllocator, size);
+		void* ptr = std::allocator_traits<CharAllocator>::allocate(*mCharAllocator, size);
+		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
-		std::allocator_traits<CharAllocator>::deallocate(*mCharAllocator, (char*)ptr, size);
+		std::allocator_traits<CharAllocator>::deallocate(*mCharAllocator,
+			static_cast<char*>(ptr), size);
 	}
 
 	Allocator GetAllocator() const
@@ -395,7 +412,8 @@ namespace internal
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
-		//void* Allocate(size_t size);
+		//template<typename ResType = void>
+		//ResType* Allocate(size_t size);
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
 		{
@@ -536,9 +554,10 @@ namespace internal
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		void* Allocate(size_t size)
+		template<typename ResType = void>
+		ResType* Allocate(size_t size)
 		{
-			return _GetMemManager().Allocate(size);
+			return _GetMemManager().template Allocate<ResType>(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
@@ -546,9 +565,10 @@ namespace internal
 			return _GetMemManager().Deallocate(ptr, size);
 		}
 
-		void* Reallocate(void* ptr, size_t size, size_t newSize)
+		template<typename ResType = void>
+		ResType* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return _GetMemManager().Reallocate(ptr, size, newSize);
+			return _GetMemManager().template Reallocate<ResType>(ptr, size, newSize);
 		}
 
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
@@ -599,9 +619,10 @@ namespace internal
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		void* Allocate(size_t size)
+		template<typename ResType = void>
+		ResType* Allocate(size_t size)
 		{
-			return mMemManager.Allocate(size);
+			return mMemManager.template Allocate<ResType>(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
@@ -609,9 +630,10 @@ namespace internal
 			return mMemManager.Deallocate(ptr, size);
 		}
 
-		void* Reallocate(void* ptr, size_t size, size_t newSize)
+		template<typename ResType = void>
+		ResType* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return mMemManager.Reallocate(ptr, size, newSize);
+			return mMemManager.template Reallocate<ResType>(ptr, size, newSize);
 		}
 
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT

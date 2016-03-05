@@ -89,7 +89,7 @@ namespace internal
 	public:
 		explicit BucketMemory(MemPool& memPool)
 			: mMemPool(memPool),
-			mPtr((Pointer)memPool.Allocate())
+			mPtr(static_cast<Pointer>(memPool.Allocate()))
 		{
 			MOMO_ASSERT(mPtr != nullPtr);
 		}

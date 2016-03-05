@@ -50,7 +50,7 @@ namespace internal
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
 			size_t bufferSize = _GetBufferSize(bucketCount);
-			HashSetBuckets& resBuckets = *(HashSetBuckets*)memManager.Allocate(bufferSize);
+			HashSetBuckets& resBuckets = *memManager.template Allocate<HashSetBuckets>(bufferSize);
 			resBuckets.mCount = 0;
 			resBuckets.mNextBuckets = nullptr;
 			resBuckets.mBucketParams = &bucketParams;
@@ -124,28 +124,28 @@ namespace internal
 
 		const Bucket& operator[](size_t index) const MOMO_NOEXCEPT
 		{
-			return _GetBucket(index);
+			return _GetBuckets()[index];
 		}
 
 		Bucket& operator[](size_t index) MOMO_NOEXCEPT
 		{
-			return _GetBucket(index);
+			return _GetBuckets()[index];
 		}
 
 		ConstBucketBounds GetBucketBounds(size_t index) const MOMO_NOEXCEPT
 		{
-			return _GetBucket(index).GetBounds(*mBucketParams);
+			return _GetBuckets()[index].GetBounds(*mBucketParams);
 		}
 
 	private:
-		Bucket* _GetBuckets() const MOMO_NOEXCEPT
+		const Bucket* _GetBuckets() const MOMO_NOEXCEPT
 		{
-			return (Bucket*)(this + 1);
+			return reinterpret_cast<const Bucket*>(this + 1);
 		}
 
-		Bucket& _GetBucket(size_t index) const MOMO_NOEXCEPT
+		Bucket* _GetBuckets() MOMO_NOEXCEPT
 		{
-			return _GetBuckets()[index];
+			return reinterpret_cast<Bucket*>(this + 1);
 		}
 
 		static size_t _GetBufferSize(size_t bucketCount) MOMO_NOEXCEPT

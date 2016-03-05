@@ -371,7 +371,7 @@ private:
 	public:
 		ValueCrew(MemManager& memManager)
 		{
-			mData = (Data*)memManager.Allocate(sizeof(Data));
+			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->valueVersion = 0;
 			try
 			{

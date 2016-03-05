@@ -145,7 +145,7 @@ private:
 			if (capacity > internalCapacity)
 			{
 				mCount = 0;
-				mExternalData.items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
+				mExternalData.items = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
 				mExternalData.capacity = capacity;
 			}
 			else
@@ -240,7 +240,7 @@ private:
 			_CheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				Item* items = (Item*)GetMemManager().Allocate(capacity * sizeof(Item));
+				Item* items = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
 				try
 				{
 					relocateFunc(items);
@@ -352,7 +352,7 @@ private:
 		bool _SetCapacity(size_t capacity, std::true_type /*canReallocate*/,
 			internal::BoolConstant<canReallocateInplace>)
 		{
-			mExternalData.items = (Item*)GetMemManager().Reallocate(mExternalData.items,
+			mExternalData.items = GetMemManager().template Reallocate<Item>(mExternalData.items,
 				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
 			mExternalData.capacity = capacity;
 			return true;
