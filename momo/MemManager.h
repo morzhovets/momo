@@ -141,7 +141,7 @@ public:
 	{
 		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 		if (size == newSize)
-			return ptr;
+			return static_cast<ResType*>(ptr);
 		void* newPtr = realloc(ptr, newSize);
 		if (newPtr == nullptr)
 			throw std::bad_alloc();
@@ -197,7 +197,7 @@ public:
 	//{
 	//	MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 	//	if (size == newSize)
-	//		return ptr;
+	//		return static_cast<ResType*>(ptr);
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 	//	if (newPtr == nullptr)
 	//		throw std::bad_alloc();
