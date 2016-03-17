@@ -707,7 +707,7 @@ private:
 	std::pair<iterator, bool> _insert(const_iterator hint, std::tuple<key_type&&>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		if (!_check_hint(hint, const_cast<const key_type&>(std::get<0>(key))))
+		if (!_check_hint(hint, static_cast<const key_type&>(std::get<0>(key))))
 			return _insert(nullptr, std::move(key), mappedCreator);
 		typename TreeMap::Iterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
 			std::move(std::get<0>(key)), mappedCreator);

@@ -617,7 +617,7 @@ public:
 
 	InsertResult Insert(Item&& item)
 	{
-		return _Insert(ItemTraits::GetKey(const_cast<const Item&>(item)),
+		return _Insert(ItemTraits::GetKey(static_cast<const Item&>(item)),
 			Creator<Item>(std::move(item)), false);
 	}
 
@@ -688,7 +688,7 @@ public:
 
 	void Reset(ConstIterator iter, Item&& newItem)
 	{
-		Item& item = _GetItemForReset(iter, const_cast<const Item&>(newItem));
+		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
 		ItemTraits::Assign(std::move(newItem), item);
 	}
 
@@ -700,7 +700,7 @@ public:
 
 	void Reset(ConstIterator iter, Item&& newItem, Item& resItem)
 	{
-		Item& item = _GetItemForReset(iter, const_cast<const Item&>(newItem));
+		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
 		ItemTraits::Assign(std::move(newItem), item, resItem);
 	}
 

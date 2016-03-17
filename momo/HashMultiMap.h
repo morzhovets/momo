@@ -938,7 +938,7 @@ private:
 	template<typename RKey, typename ValueCreator>
 	Iterator _Add(RKey&& key, const ValueCreator& valueCreator)
 	{
-		KeyIterator keyIter = Find(const_cast<const Key&>(key));
+		KeyIterator keyIter = Find(static_cast<const Key&>(key));
 		if (!!keyIter)
 			return AddCrt(keyIter, valueCreator);
 		auto valuesCreator = [this, &valueCreator] (void* pvalues)

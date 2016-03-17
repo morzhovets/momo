@@ -187,7 +187,7 @@ namespace internal
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
-			dstValue = const_cast<const Value&>(srcValue);
+			dstValue = static_cast<const Value&>(srcValue);
 			dstKey = std::move(srcKey);
 		}
 	};
@@ -288,7 +288,7 @@ namespace internal
 		void _Create(Key&& key, const ValueCreator& valueCreator,
 			std::false_type /*isKeyNothrowMoveConstructible*/)
 		{
-			_Create(const_cast<const Key&>(key), valueCreator);
+			_Create(static_cast<const Key&>(key), valueCreator);
 		}
 
 		template<typename ValueCreator>
@@ -360,7 +360,7 @@ namespace internal
 			try
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
-					KeyValueTraits::CreateKey(const_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
+					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
 				pairCreator(ppair);
 			}
 			catch (...)
@@ -389,7 +389,7 @@ namespace internal
 			try
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; keyIndex < count; ++keyIndex, ++its, ++itd)
-					KeyValueTraits::CreateKey(const_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
+					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
 				for (Iterator its = srcBegin, itd = dstBegin; valueIndex < count; ++valueIndex, ++its, ++itd)
 					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
 				pairCreator(ppair);

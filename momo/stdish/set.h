@@ -383,7 +383,7 @@ public:
 	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	//std::pair<iterator, iterator> equal_range(const KeyArg& key)
 	//{
-	//	return const_cast<const set*>(this)->equal_range(key);
+	//	return static_cast<const set*>(this)->equal_range(key);
 	//}
 
 	std::pair<iterator, bool> insert(value_type&& value)
@@ -497,7 +497,7 @@ private:
 
 	std::pair<iterator, bool> _insert(const_iterator hint, value_type&& value)
 	{
-		if (!_check_hint(hint, const_cast<const key_type&>(value)))
+		if (!_check_hint(hint, static_cast<const key_type&>(value)))
 			return _insert(nullptr, std::move(value));
 		return std::pair<iterator, bool>(mTreeSet.Add(hint, std::move(value)), true);
 	}

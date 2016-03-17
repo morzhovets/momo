@@ -453,9 +453,9 @@ public:
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		Iterator iter = LowerBound(const_cast<const Key&>(key));
+		Iterator iter = LowerBound(static_cast<const Key&>(key));
 		return ValueReferenceRKey(*this, iter,
-			_IsEqual(iter, const_cast<const Key&>(key)) ? nullptr : std::addressof(key));
+			_IsEqual(iter, static_cast<const Key&>(key)) ? nullptr : std::addressof(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
@@ -506,8 +506,8 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult _Insert(RKey&& key, const ValueCreator& valueCreator)
 	{
-		Iterator iter = LowerBound(const_cast<const Key&>(key));
-		if (_IsEqual(iter, const_cast<const Key&>(key)))
+		Iterator iter = LowerBound(static_cast<const Key&>(key));
+		if (_IsEqual(iter, static_cast<const Key&>(key)))
 			return InsertResult(iter, false);
 		iter = _Add(iter, std::forward<RKey>(key), valueCreator, false);
 		return InsertResult(iter, true);
@@ -527,7 +527,7 @@ private:
 		bool extraCheck)
 	{
 		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, const_cast<const Key&>(key)));
+		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
 		auto pairCreator = [&key, &valueCreator] (void* ppair)
 			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
 		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));
