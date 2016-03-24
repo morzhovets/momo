@@ -478,7 +478,7 @@ namespace internal
 				else
 				{
 					mIter = mMap.AddCrt(mIter, std::forward<RKey>(*mKeyPtr),
-						KeyValueTraits::template ValueCreator<Arg>(std::forward<Arg>(arg)));
+						typename KeyValueTraits::template ValueCreator<Arg>(std::forward<Arg>(arg)));
 				}
 				mKeyPtr = nullptr;
 				return *this;
