@@ -153,14 +153,10 @@ namespace internal
 		}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		static void AssignValue(Value&& srcValue, Value& dstValue)
+		template<typename Arg>
+		static void AssignValue(Arg&& arg, Value& value)
 		{
-			dstValue = std::move(srcValue);
-		}
-
-		static void AssignValue(const Value& srcValue, Value& dstValue)
-		{
-			dstValue = srcValue;
+			value = std::forward<Arg>(arg);
 		}
 #endif
 
@@ -454,14 +450,10 @@ namespace internal
 				return _Assign(valueRef.Get());
 			}
 
-			ValueReference& operator=(Value&& value)
+			template<typename Arg>
+			ValueReference& operator=(Arg&& arg)
 			{
-				return _Assign(std::move(value));
-			}
-
-			ValueReference& operator=(const Value& value)
-			{
-				return _Assign(value);
+				return _Assign(std::forward<Arg>(arg));
 			}
 
 			operator Value&()
@@ -476,13 +468,18 @@ namespace internal
 			}
 
 		private:
-			template<typename RValue>
-			ValueReference& _Assign(RValue&& value)
+			template<typename Arg>
+			ValueReference& _Assign(Arg&& arg)
 			{
 				if (mKeyPtr == nullptr)
-					KeyValueTraits::AssignValue(std::forward<RValue>(value), mIter->value);
+				{
+					KeyValueTraits::AssignValue(std::forward<Arg>(arg), mIter->value);
+				}
 				else
-					mIter = mMap.Add(mIter, std::forward<RKey>(*mKeyPtr), std::forward<RValue>(value));
+				{
+					mIter = mMap.AddCrt(mIter, std::forward<RKey>(*mKeyPtr),
+						KeyValueTraits::template ValueCreator<Arg>(std::forward<Arg>(arg)));
+				}
 				mKeyPtr = nullptr;
 				return *this;
 			}
