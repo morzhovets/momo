@@ -45,12 +45,35 @@ private:
 	public:
 		explicit TemplItem(unsigned char value) MOMO_NOEXCEPT
 		{
-			*(unsigned char*)&mStorage = value;
+			*_GetPtr() = value;
 		}
 
 		unsigned char GetValue() const MOMO_NOEXCEPT
 		{
-			return *(unsigned char*)&mStorage;
+			return *_GetPtr();
+		}
+
+		static unsigned char GetState(const TemplItem* item) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(size > 1);
+			return item->_GetPtr()[1];
+		}
+
+		static void SetState(TemplItem* item, unsigned char state) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(size > 1);
+			item->_GetPtr()[1] = state;
+		}
+
+	private:
+		const unsigned char* _GetPtr() const MOMO_NOEXCEPT
+		{
+			return reinterpret_cast<const unsigned char*>(&mStorage);
+		}
+
+		unsigned char* _GetPtr() MOMO_NOEXCEPT
+		{
+			return reinterpret_cast<unsigned char*>(&mStorage);
 		}
 
 	private:
@@ -65,6 +88,9 @@ public:
 	{
 		TestHashSet<momo::HashBucketOneI1, 1, 1>("momo::HashBucketOneI1");
 		TestHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
+
+		TestHashSet<momo::HashBucketOneI<TemplItem<2, 2>>, 2, 2>("momo::HashBucketOneI");
+		TestHashSet<momo::HashBucketOneI<TemplItem<4, 2>>, 4, 2>("momo::HashBucketOneI");
 
 		TestHashSet<momo::HashBucketLimP1< 1, MPP<16>, 1>,  1, 1>("momo::HashBucketLimP1< 1, 16, 1>");
 		TestHashSet<momo::HashBucketLimP1< 1, MPP<99>, 2>,  2, 1>("momo::HashBucketLimP1< 1, 99, 2>");

@@ -85,6 +85,7 @@
 		<Unit filename="../../../momo/details/BucketLim4.h" />
 		<Unit filename="../../../momo/details/BucketLimP.h" />
 		<Unit filename="../../../momo/details/BucketLimP1.h" />
+		<Unit filename="../../../momo/details/BucketOneI.h" />
 		<Unit filename="../../../momo/details/BucketOneI1.h" />
 		<Unit filename="../../../momo/details/BucketUnlimP.h" />
 		<Unit filename="../../../momo/details/BucketUtility.h" />
