@@ -178,12 +178,11 @@ public:
 		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
-	HashTraitsStd(const HashFunc& hashFunc, const EqualFunc& equalFunc,
-		size_t logStartBucketCount, float maxLoadFactor)
-		: mHashFunc(hashFunc),
-		mEqualFunc(equalFunc),
-		mMaxLoadFactor(maxLoadFactor),
-		mLogStartBucketCount(logStartBucketCount)
+	HashTraitsStd(const HashTraitsStd& hashTraits, float maxLoadFactor)
+		: mHashFunc(hashTraits.mHashFunc),
+		mEqualFunc(hashTraits.mEqualFunc),
+		mLogStartBucketCount(hashTraits.mLogStartBucketCount),
+		mMaxLoadFactor(maxLoadFactor)
 	{
 		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
@@ -236,8 +235,8 @@ public:
 private:
 	HashFunc mHashFunc;
 	EqualFunc mEqualFunc;
-	float mMaxLoadFactor;
 	size_t mLogStartBucketCount;
+	float mMaxLoadFactor;
 };
 
 } // namespace momo

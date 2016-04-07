@@ -279,8 +279,7 @@ public:
 	{
 		if (maxLoadFactor == max_load_factor())
 			return;
-		size_t logStartBucketCount = internal::UIntMath<size_t>::Log2(bucket_count());	//?
-		HashTraits hashTraits(hash_function(), key_eq(), logStartBucketCount, maxLoadFactor);
+		HashTraits hashTraits(mHashMap.GetHashTraits(), maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
 		hashMap.Reserve(size());
 		hashMap.InsertFS(begin(), end());
