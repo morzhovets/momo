@@ -277,7 +277,9 @@ public:
 
 	void max_load_factor(float maxLoadFactor)
 	{
-		size_t logStartBucketCount = internal::UIntMath<size_t>::Log2(bucket_count());
+		if (maxLoadFactor == max_load_factor())
+			return;
+		size_t logStartBucketCount = internal::UIntMath<size_t>::Log2(bucket_count());	//?
 		HashTraits hashTraits(hash_function(), key_eq(), logStartBucketCount, maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
 		hashMap.Reserve(size());
@@ -633,7 +635,11 @@ public:
 
 	float load_factor() const MOMO_NOEXCEPT
 	{
-		return (float)size() / (float)bucket_count();
+		size_t count = size();
+		size_t bucketCount = bucket_count();
+		if (count == 0 && bucketCount == 0)
+			return 0;
+		return (float)count / (float)bucketCount;
 	}
 
 	bool operator==(const unordered_map& right) const

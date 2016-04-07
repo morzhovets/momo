@@ -283,9 +283,9 @@ public:
 		return mHashSet.IsEmpty();
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear(bool shrink = true) MOMO_NOEXCEPT
 	{
-		mHashSet.Clear();
+		mHashSet.Clear(shrink);
 	}
 
 	size_t GetCapacity() const MOMO_NOEXCEPT

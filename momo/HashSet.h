@@ -201,10 +201,10 @@ namespace internal
 				_Move();
 		}
 
-		HashSetConstIterator(const Buckets& buckets, size_t hashCode,
+		HashSetConstIterator(const Buckets* buckets, size_t hashCode,
 			const size_t& version) MOMO_NOEXCEPT
 			: IteratorVersion(version),
-			mBuckets(&buckets),
+			mBuckets(buckets),
 			mHashCode(hashCode),
 			mItemPtr(nullptr)
 		{
@@ -244,20 +244,20 @@ namespace internal
 
 		bool IsMovable() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mItemPtr != nullptr);
+			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
 		size_t GetBucketIndex() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mItemPtr != nullptr);
+			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
 		size_t GetHashCode() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mItemPtr == nullptr && mBuckets != nullptr);
+			MOMO_ASSERT(mItemPtr == nullptr);
 			return mHashCode;
 		}
 
@@ -270,7 +270,7 @@ namespace internal
 		{
 			(void)version;
 			(void)empty;
-			MOMO_CHECK(mBuckets != nullptr);
+			MOMO_CHECK(empty || mBuckets != nullptr);
 			MOMO_CHECK(empty ^ (mItemPtr != nullptr));
 			MOMO_CHECK(IteratorVersion::Check(version));
 		}
@@ -400,11 +400,10 @@ public:
 	explicit HashSet(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
 		: mCrew(hashTraits, std::move(memManager)),
-		mCount(0)
+		mCount(0),
+		mCapacity(0),
+		mBuckets(nullptr)
 	{
-		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
-		mCapacity = hashTraits.CalcCapacity(bucketCount);
-		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, mCrew.GetDetailParams());
 	}
 
 	HashSet(std::initializer_list<Item> items,
@@ -434,9 +433,11 @@ public:
 	}
 
 	HashSet(const HashSet& hashSet)
-		: mCrew(hashSet.GetHashTraits(), MemManager(hashSet.GetMemManager())),
-		mCount(hashSet.mCount)
+		: HashSet(hashSet.GetHashTraits(), MemManager(hashSet.GetMemManager()))
 	{
+		mCount = hashSet.mCount;
+		if (mCount == 0)
+			return;
 		const HashTraits& hashTraits = GetHashTraits();
 		BucketParams& bucketParams = mCrew.GetDetailParams();
 		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
@@ -531,14 +532,23 @@ public:
 		return mCount == 0;
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear(bool shrink = true) MOMO_NOEXCEPT
 	{
 		if (mBuckets == nullptr)
 			return;
-		_DestroyBuckets(mBuckets->ExtractNextBuckets());
-		BucketParams& bucketParams = mCrew.GetDetailParams();
-		for (Bucket& bucket : *mBuckets)
-			bucket.Clear(bucketParams);
+		if (shrink)
+		{
+			_DestroyBuckets(mBuckets);
+			mBuckets = nullptr;
+			mCapacity = 0;
+		}
+		else
+		{
+			_DestroyBuckets(mBuckets->ExtractNextBuckets());
+			BucketParams& bucketParams = mCrew.GetDetailParams();
+			for (Bucket& bucket : *mBuckets)
+				bucket.Clear(bucketParams);
+		}
 		mCount = 0;
 		++mCrew.GetVersion();
 	}
@@ -553,10 +563,7 @@ public:
 		if (capacity <= mCapacity)
 			return;
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t bucketCount = mBuckets->GetCount();
-		size_t shift = hashTraits.GetBucketCountShift(bucketCount);
-		//? MOMO_CHECK(shift > 0);
-		size_t newBucketCount = bucketCount << shift;
+		size_t newBucketCount = _GetNewBucketCount();
 		size_t newCapacity;
 		while (true)
 		{
@@ -571,7 +578,8 @@ public:
 		mBuckets = &newBuckets;
 		mCapacity = newCapacity;
 		++mCrew.GetVersion();
-		_MoveItems();
+		if (mBuckets->GetNextBuckets() != nullptr)
+			_MoveItems();
 	}
 
 	void Shrink()
@@ -739,9 +747,10 @@ public:
 
 	size_t GetBucketIndex(const Key& key) const
 	{
+		MOMO_CHECK(mBuckets != nullptr);
 		ConstIterator iter = Find(key);
 		if (!iter)
-			return _GetBucketIndexForAdd(*mBuckets, iter.GetHashCode());
+			return _GetBucketIndexForAdd(*mBuckets, iter.GetHashCode());	//?
 		size_t bucketIndex = iter.GetBucketIndex();
 		for (const Buckets* buckets = mBuckets; buckets != iter.GetBuckets();
 			buckets = buckets->GetNextBuckets())
@@ -765,6 +774,17 @@ private:
 		}
 	}
 
+	size_t _GetNewBucketCount() const
+	{
+		const HashTraits& hashTraits = GetHashTraits();
+		if (mBuckets == nullptr)
+			return (size_t)1 << hashTraits.GetLogStartBucketCount();
+		size_t bucketCount = mBuckets->GetCount();
+		size_t shift = hashTraits.GetBucketCountShift(bucketCount);
+		MOMO_CHECK(shift > 0);
+		return bucketCount << shift;
+	}
+
 	ConstIterator _MakeIterator(const Buckets& buckets, size_t bucketIndex,
 		const Item* pitem, bool movable) const MOMO_NOEXCEPT
 	{
@@ -779,6 +799,7 @@ private:
 		}
 		catch (...)
 		{
+			//?
 			return false;
 		}
 	}
@@ -789,8 +810,8 @@ private:
 		const HashTraits& hashTraits = GetHashTraits();
 		const BucketParams& bucketParams = mCrew.GetDetailParams();
 		size_t hashCode = hashTraits.GetHashCode(key);
-		const Buckets* buckets = mBuckets;
-		while (true)
+		for (const Buckets* buckets = mBuckets; buckets != nullptr;
+			buckets = buckets->GetNextBuckets())
 		{
 			size_t bucketCount = buckets->GetCount();
 			for (size_t probe = 0; probe < bucketCount; ++probe)
@@ -805,11 +826,8 @@ private:
 				if (!bucket.WasFull())
 					break;
 			}
-			buckets = buckets->GetNextBuckets();
-			if (buckets == nullptr)
-				break;
 		}
-		return ConstIterator(*mBuckets, hashCode, mCrew.GetVersion());
+		return ConstIterator(mBuckets, hashCode, mCrew.GetVersion());
 	}
 
 	size_t _GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const
@@ -905,9 +923,7 @@ private:
 	Item* _AddGrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t bucketCount = mBuckets->GetCount();
-		size_t shift = hashTraits.GetBucketCountShift(bucketCount);
-		size_t newBucketCount = bucketCount << shift;
+		size_t newBucketCount = _GetNewBucketCount();
 		size_t newCapacity = hashTraits.CalcCapacity(newBucketCount);
 		MOMO_CHECK(newCapacity > mCount);
 		Buckets* newBuckets;
@@ -918,7 +934,7 @@ private:
 		}
 		catch (...)	// std::bad_alloc&
 		{
-			if (Settings::overloadIfCannotGrow)
+			if (Settings::overloadIfCannotGrow && mBuckets != nullptr)
 				return _AddNogrow(hashCode, itemCreator, bucketIndex);
 			else
 				throw;
