@@ -33,9 +33,7 @@ void main()
                                    test_allocator<NotConstructible>
                                    > C;
         C c(test_allocator<NotConstructible>(10));
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 0);
-#endif
         assert(c.hash_function() == test_hash<std::hash<NotConstructible> >());
         assert(c.key_eq() == test_compare<std::equal_to<NotConstructible> >());
         assert(c.get_allocator() == test_allocator<NotConstructible>(10));
@@ -80,7 +78,7 @@ void main()
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 3);
 #else
-        assert(c.bucket_count() >= 3);
+        assert(c.bucket_count() == 0);
 #endif
         assert(c.hash_function() == HF());
         assert(c.key_eq() == Comp ());
@@ -107,7 +105,7 @@ void main()
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 4);
 #else
-        assert(c.bucket_count() >= 4);
+        assert(c.bucket_count() == 0);
 #endif
         assert(c.hash_function() == hf);
         assert(!(c.hash_function() == HF()));

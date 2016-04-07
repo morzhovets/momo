@@ -33,9 +33,7 @@ void main()
                                    test_allocator<NotConstructible>
                                    > C;
         C c;
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 0);
-#endif
         assert(c.hash_function() == test_hash<std::hash<NotConstructible> >());
         assert(c.key_eq() == test_compare<std::equal_to<NotConstructible> >());
         assert(c.get_allocator() == (test_allocator<NotConstructible>()));
@@ -70,9 +68,7 @@ void main()
 //#if _LIBCPP_STD_VER > 11
     {
         unordered_set<int> c = {};
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 0);
-#endif
         assert(c.size() == 0);
         assert(c.empty());
         assert(std::distance(c.begin(), c.end()) == 0);

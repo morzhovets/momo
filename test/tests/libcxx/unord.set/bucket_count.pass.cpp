@@ -27,9 +27,7 @@ void main()
         typedef C::const_iterator I;
         typedef int P;
         const C c;
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 0);
-#endif
     }
     {
         typedef unordered_set<int> C;

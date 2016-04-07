@@ -40,9 +40,7 @@ void main()
 #endif
         swap(c1, c2);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.bucket_count() == 0);
-#endif
         assert(c1.size() == 0);
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
@@ -59,9 +57,7 @@ void main()
         assert(c1.max_load_factor() == 0.5);
 #endif
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
-#endif
         assert(c2.size() == 0);
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
@@ -129,9 +125,7 @@ void main()
         assert(c1.max_load_factor() == 0.5);
 #endif
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
-#endif
         assert(c2.size() == 0);
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
@@ -170,9 +164,7 @@ void main()
 #endif
         swap(c1, c2);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.bucket_count() == 0);
-#endif
         assert(c1.size() == 0);
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
@@ -305,9 +297,7 @@ void main()
 #endif
         swap(c1, c2);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.bucket_count() == 0);
-#endif
         assert(c1.size() == 0);
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
@@ -320,9 +310,7 @@ void main()
         assert(c1.max_load_factor() == 0.5);
 #endif
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
-#endif
         assert(c2.size() == 0);
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
@@ -382,9 +370,7 @@ void main()
         assert(c1.max_load_factor() == 0.5);
 #endif
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c2.bucket_count() == 0);
-#endif
         assert(c2.size() == 0);
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
@@ -419,9 +405,7 @@ void main()
 #endif
         swap(c1, c2);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c1.bucket_count() == 0);
-#endif
         assert(c1.size() == 0);
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));

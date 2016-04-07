@@ -41,7 +41,7 @@ void main()
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.bucket_count() == 7);
 #else
-        assert(c.bucket_count() >= 7);
+        assert(c.bucket_count() == 0);
 #endif
         assert(c.hash_function() == test_hash<std::hash<NotConstructible> >(8));
         assert(c.key_eq() == test_compare<std::equal_to<NotConstructible> >(9));
