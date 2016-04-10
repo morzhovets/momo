@@ -96,22 +96,29 @@ namespace internal
 		}
 	};
 
-	template<typename TContainerTraits, typename TMemManager, typename TDetailParams>
-	class SetCrew
+	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion,
+		bool tIsEmpty = std::is_empty<TContainerTraits>::value
+			&& std::is_nothrow_copy_constructible<TContainerTraits>::value
+			&& std::is_empty<TMemManager>::value && !tKeepVersion>
+	class SetCrew;
+
+	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
+	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false>
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
-		typedef TDetailParams DetailParams;
 
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
+		static const bool keepVersion = tKeepVersion;
+
 	private:
-		struct Data : public MemManager
+		struct Data
 		{
 			size_t version;
 			ContainerTraits containerTraits;
-			DetailParams detailParams;
+			MemManager memManager;
 		};
 
 	public:
@@ -119,24 +126,15 @@ namespace internal
 		{
 			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->version = 0;
-			new(&GetMemManager()) MemManager(std::move(memManager));
+			new(&mData->memManager) MemManager(std::move(memManager));
 			try
 			{
 				new(&mData->containerTraits) ContainerTraits(containerTraits);
-				try
-				{
-					new(&mData->detailParams) DetailParams(GetMemManager());
-				}
-				catch (...)
-				{
-					mData->containerTraits.~ContainerTraits();
-					throw;
-				}
 			}
 			catch (...)
 			{
-				MemManager dataMemManager = std::move(GetMemManager());
-				GetMemManager().~MemManager();
+				MemManager dataMemManager = std::move(mData->memManager);
+				mData->memManager.~MemManager();
 				dataMemManager.Deallocate(mData, sizeof(Data));
 				throw;
 			}
@@ -154,18 +152,11 @@ namespace internal
 		{
 			if (!_IsNull())
 			{
-				mData->detailParams.~DetailParams();
 				mData->containerTraits.~ContainerTraits();
 				MemManager memManager = std::move(GetMemManager());
 				GetMemManager().~MemManager();
 				memManager.Deallocate(mData, sizeof(Data));
 			}
-		}
-
-		SetCrew& operator=(SetCrew&& crew) MOMO_NOEXCEPT
-		{
-			SetCrew(std::move(crew)).Swap(*this);
-			return *this;
 		}
 
 		SetCrew& operator=(const SetCrew&) = delete;
@@ -175,16 +166,16 @@ namespace internal
 			std::swap(mData, crew.mData);
 		}
 
-		const size_t& GetVersion() const MOMO_NOEXCEPT
+		const size_t* GetVersion() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsNull());
-			return mData->version;
+			return &mData->version;
 		}
 
-		size_t& GetVersion() MOMO_NOEXCEPT
+		void IncVersion() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsNull());
-			return mData->version;
+			++mData->version;
 		}
 
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
@@ -196,25 +187,13 @@ namespace internal
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsNull());
-			return *mData;
+			return mData->memManager;
 		}
 
 		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsNull());
-			return *mData;
-		}
-
-		const DetailParams& GetDetailParams() const MOMO_NOEXCEPT
-		{
-			MOMO_ASSERT(!_IsNull());
-			return mData->detailParams;
-		}
-
-		DetailParams& GetDetailParams() MOMO_NOEXCEPT
-		{
-			MOMO_ASSERT(!_IsNull());
-			return mData->detailParams;
+			return mData->memManager;
 		}
 
 	private:
@@ -225,6 +204,70 @@ namespace internal
 
 	private:
 		Data* mData;
+	};
+
+	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
+	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, true>
+		: private TContainerTraits, private TMemManager
+	{
+	public:
+		typedef TContainerTraits ContainerTraits;
+		typedef TMemManager MemManager;
+
+		MOMO_STATIC_ASSERT(std::is_nothrow_copy_constructible<TContainerTraits>::value);
+		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+
+		static const bool keepVersion = tKeepVersion;
+		MOMO_STATIC_ASSERT(!keepVersion);
+
+	public:
+		SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager) MOMO_NOEXCEPT
+			: ContainerTraits(containerTraits),
+			MemManager(std::move(memManager))
+		{
+		}
+
+		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
+			: ContainerTraits(crew.GetContainerTraits()),
+			MemManager(std::move(crew.GetMemManager()))
+		{
+		}
+
+		SetCrew(const SetCrew&) = delete;
+
+		~SetCrew() MOMO_NOEXCEPT
+		{
+		}
+
+		SetCrew& operator=(const SetCrew&) = delete;
+
+		void Swap(SetCrew& /*crew*/) MOMO_NOEXCEPT
+		{
+		}
+
+		const size_t* GetVersion() const MOMO_NOEXCEPT
+		{
+			return nullptr;
+		}
+
+		void IncVersion() MOMO_NOEXCEPT
+		{
+		}
+
+		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
+		{
+			return *this;
+		}
+
+		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		{
+			return *this;
+		}
+
+		MemManager& GetMemManager() MOMO_NOEXCEPT
+		{
+			return *this;
+		}
 	};
 }
 

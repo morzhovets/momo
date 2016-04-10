@@ -92,9 +92,9 @@ namespace internal
 		{
 		}
 
-		explicit IteratorVersion(const size_t& version) MOMO_NOEXCEPT
-			: mContainerVersion(&version),
-			mVersion(version)
+		explicit IteratorVersion(const size_t* version) MOMO_NOEXCEPT
+			: mContainerVersion(version),
+			mVersion(*version)
 		{
 		}
 
@@ -103,9 +103,10 @@ namespace internal
 			return *mContainerVersion == mVersion;
 		}
 
-		bool Check(const size_t& version) const MOMO_NOEXCEPT
+		bool Check(const size_t* version) const MOMO_NOEXCEPT
 		{
-			return mContainerVersion == &version && mVersion == version;
+			MOMO_ASSERT(version != nullptr);
+			return mContainerVersion == version && mVersion == *version;
 		}
 
 	private:
@@ -124,7 +125,7 @@ namespace internal
 		{
 		}
 
-		explicit IteratorVersion(const size_t& /*version*/) MOMO_NOEXCEPT
+		explicit IteratorVersion(const size_t* /*version*/) MOMO_NOEXCEPT
 		{
 		}
 
@@ -133,7 +134,7 @@ namespace internal
 			return true;
 		}
 
-		bool Check(const size_t& /*version*/) const MOMO_NOEXCEPT
+		bool Check(const size_t* /*version*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}

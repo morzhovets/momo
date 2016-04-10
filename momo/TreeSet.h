@@ -46,7 +46,7 @@ namespace internal
 		{
 		}
 
-		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t& version,
+		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
 			bool move) MOMO_NOEXCEPT
 			: IteratorVersion(version),
 			mNode(&node),
@@ -139,7 +139,7 @@ namespace internal
 			return mItemIndex;
 		}
 
-		void Check(const size_t& version) const
+		void Check(const size_t* version) const
 		{
 			(void)version;
 			MOMO_CHECK(mNode != nullptr);
@@ -249,7 +249,7 @@ private:
 	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
-	typedef internal::SetCrew<TreeTraits, MemManager, NodeParams> Crew;
+	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
 
 public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
@@ -450,7 +450,8 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
-		mRootNode(nullptr)
+		mRootNode(nullptr),
+		mNodeParams(nullptr)
 	{
 	}
 
@@ -464,8 +465,7 @@ public:
 		}
 		catch (...)
 		{
-			if (mRootNode != nullptr)
-				_Destroy(mRootNode);
+			_Destroy();
 			throw;
 		}
 	}
@@ -473,10 +473,12 @@ public:
 	TreeSet(TreeSet&& treeSet) MOMO_NOEXCEPT
 		: mCrew(std::move(treeSet.mCrew)),
 		mCount(treeSet.mCount),
-		mRootNode(treeSet.mRootNode)
+		mRootNode(treeSet.mRootNode),
+		mNodeParams(treeSet.mNodeParams)
 	{
 		treeSet.mCount = 0;
 		treeSet.mRootNode = nullptr;
+		treeSet.mNodeParams = nullptr;
 	}
 
 	TreeSet(const TreeSet& treeSet)
@@ -489,16 +491,14 @@ public:
 		}
 		catch (...)
 		{
-			if (mRootNode != nullptr)
-				_Destroy(mRootNode);
+			_Destroy();
 			throw;
 		}
 	}
 
 	~TreeSet() MOMO_NOEXCEPT
 	{
-		if (mRootNode != nullptr)
-			_Destroy(mRootNode);
+		_Destroy();
 	}
 
 	TreeSet& operator=(TreeSet&& treeSet) MOMO_NOEXCEPT
@@ -519,6 +519,7 @@ public:
 		mCrew.Swap(treeSet.mCrew);
 		std::swap(mCount, treeSet.mCount);
 		std::swap(mRootNode, treeSet.mRootNode);
+		std::swap(mNodeParams, treeSet.mNodeParams);
 	}
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
@@ -568,12 +569,11 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		if (mRootNode == nullptr)
-			return;
-		_Destroy(mRootNode);
+		_Destroy();
 		mRootNode = nullptr;
+		mNodeParams = nullptr;
 		mCount = 0;
-		++mCrew.GetVersion();
+		mCrew.IncVersion();
 	}
 
 	ConstIterator LowerBound(const Key& key) const
@@ -735,6 +735,17 @@ public:
 	}
 
 private:
+	void _Destroy() MOMO_NOEXCEPT
+	{
+		if (mRootNode != nullptr)
+			_Destroy(mRootNode);
+		if (mNodeParams != nullptr)
+		{
+			mNodeParams->~NodeParams();
+			GetMemManager().Deallocate(mNodeParams, sizeof(NodeParams));
+		}
+	}
+
 	ConstIterator _MakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
 	{
 		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
@@ -839,7 +850,7 @@ private:
 			for (size_t i = 0; i <= count; ++i)
 				_Destroy(node->GetChild(i));
 		}
-		node->Destroy(mCrew.GetDetailParams());
+		node->Destroy(*mNodeParams);
 	}
 
 	Item& _GetItemForReset(ConstIterator iter, const Item& newItem)
@@ -886,14 +897,14 @@ private:
 		}
 		else
 		{
-			Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
+			Relocator relocator(GetMemManager(), *mNodeParams);
 			if (itemCount < nodeMaxCapacity)
 				_AddGrow(relocator, node, itemIndex, itemCreator);
 			else
 				_AddSplit(relocator, node, itemIndex, itemCreator);
 		}
 		++mCount;
-		++mCrew.GetVersion();
+		mCrew.IncVersion();
 		ConstIterator resIter = _MakeIterator(node, itemIndex, false);
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
@@ -905,14 +916,28 @@ private:
 	{
 		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
-		mRootNode = &Node::Create(mCrew.GetDetailParams(), true, 0);
+		if (mNodeParams == nullptr)
+		{
+			mNodeParams = GetMemManager().template Allocate<NodeParams>(sizeof(NodeParams));
+			try
+			{
+				new(mNodeParams) NodeParams(GetMemManager());
+			}
+			catch (...)
+			{
+				GetMemManager().Deallocate(mNodeParams, sizeof(NodeParams));
+				mNodeParams = nullptr;
+				throw;
+			}
+		}
+		mRootNode = &Node::Create(*mNodeParams, true, 0);
 		try
 		{
 			return _Add(GetEnd(), itemCreator, false);
 		}
 		catch (...)
 		{
-			mRootNode->Destroy(mCrew.GetDetailParams());
+			mRootNode->Destroy(*mNodeParams);
 			mRootNode = nullptr;
 			throw;
 		}
@@ -1009,7 +1034,7 @@ private:
 			itemIndex = 0;
 		}
 		--mCount;
-		++mCrew.GetVersion();
+		mCrew.IncVersion();
 		return _MakeIterator(node, itemIndex, true);
 	}
 
@@ -1072,7 +1097,7 @@ private:
 						MOMO_ASSERT(node != savedNode);
 						mRootNode = node->GetChild(0);
 						mRootNode->SetParent(nullptr);
-						node->Destroy(mCrew.GetDetailParams());
+						node->Destroy(*mNodeParams);
 					}
 					break;
 				}
@@ -1103,7 +1128,7 @@ private:
 		size_t itemCount2 = node2->GetCount();
 		if (itemCount1 + itemCount2 >= node1->GetCapacity())
 			return false;
-		Relocator relocator(GetMemManager(), mCrew.GetDetailParams());
+		Relocator relocator(GetMemManager(), *mNodeParams);
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
 		relocator.RelocateCreate(Creator<Item>(std::move(*parentNode->GetItemPtr(index))),
 			node1->GetItemPtr(itemCount1));
@@ -1122,7 +1147,7 @@ private:
 				childNode->SetParent(node1);
 			}
 		}
-		node2->Destroy(mCrew.GetDetailParams());
+		node2->Destroy(*mNodeParams);
 		return true;
 	}
 
@@ -1130,6 +1155,7 @@ private:
 	Crew mCrew;
 	size_t mCount;
 	Node* mRootNode;
+	NodeParams* mNodeParams;
 };
 
 } // namespace momo

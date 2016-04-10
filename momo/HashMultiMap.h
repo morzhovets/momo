@@ -144,7 +144,7 @@ namespace internal
 
 		HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
 			bool move) MOMO_NOEXCEPT
-			: IteratorVersion(version),
+			: IteratorVersion(&version),
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
 		{
@@ -202,7 +202,7 @@ namespace internal
 		{
 			(void)version;
 			MOMO_CHECK(mValuePtr != nullptr);
-			MOMO_CHECK(IteratorVersion::Check(version));
+			MOMO_CHECK(IteratorVersion::Check(&version));
 		}
 
 	private:
