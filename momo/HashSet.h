@@ -997,8 +997,8 @@ private:
 	{
 		iter.Check(mCrew.GetVersion(), false);
 		Buckets* buckets = _GetMutBuckets(iter);
-		BucketParams& bucketParams = buckets->GetBucketParams();
 		MOMO_CHECK(buckets != nullptr);
+		BucketParams& bucketParams = buckets->GetBucketParams();
 		size_t bucketIndex = iter.GetBucketIndex();
 		Bucket& bucket = (*buckets)[bucketIndex];
 		typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
