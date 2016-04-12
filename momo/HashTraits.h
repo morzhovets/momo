@@ -171,7 +171,8 @@ public:
 		mEqualFunc(equalFunc)
 	{
 		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
-		mLogStartBucketCount = internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
+		mLogStartBucketCount =
+			(unsigned char)internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
 		startBucketCount = (size_t)1 << mLogStartBucketCount;
 		size_t startCapacity = HashBucket::CalcCapacity(startBucketCount);
 		mMaxLoadFactor = (float)startCapacity / (float)startBucketCount;
@@ -199,7 +200,7 @@ public:
 
 	size_t GetLogStartBucketCount() const MOMO_NOEXCEPT
 	{
-		return mLogStartBucketCount;
+		return (size_t)mLogStartBucketCount;
 	}
 
 	size_t GetHashCode(const Key& key) const
@@ -235,7 +236,7 @@ public:
 private:
 	HashFunc mHashFunc;
 	EqualFunc mEqualFunc;
-	size_t mLogStartBucketCount;
+	unsigned char mLogStartBucketCount;
 	float mMaxLoadFactor;
 };
 
