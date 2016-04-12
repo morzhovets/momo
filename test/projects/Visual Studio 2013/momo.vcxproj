@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\main.cpp" />
-    <ClCompile Include="..\..\tests\GoogleHashTester.cpp" />
     <ClCompile Include="..\..\tests\LibcxxArrayTester.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP.cpp" />

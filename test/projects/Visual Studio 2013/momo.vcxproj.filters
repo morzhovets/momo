@@ -33,9 +33,6 @@
     <ClCompile Include="..\..\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\GoogleHashTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>

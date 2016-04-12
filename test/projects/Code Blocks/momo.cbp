@@ -98,7 +98,6 @@
 		<Unit filename="../../../momo/stdish/unordered_set.h" />
 		<Unit filename="../../../momo/stdish/vector.h" />
 		<Unit filename="../../main.cpp" />
-		<Unit filename="../../tests/GoogleHashTester.cpp" />
 		<Unit filename="../../tests/LibcxxArrayTester.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTester.h" />
 		<Unit filename="../../tests/LibcxxHashMapTesterLim4.cpp" />
