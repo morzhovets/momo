@@ -29,12 +29,15 @@ namespace stdish
 {
 
 template<typename TValue,
-	typename TBaseAllocator = std::allocator<char>>
+	typename TBaseAllocator = std::allocator<char>,
+	typename TMemPoolParams = MemPoolParamsVar<>>
 class pool_allocator
 {
 public:
 	typedef TValue value_type;
+
 	typedef TBaseAllocator base_allocator;
+	typedef TMemPoolParams mem_pool_params;
 
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
@@ -55,7 +58,8 @@ public:
 	};
 
 private:
-	typedef momo::MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type)> MemPoolParams;
+	typedef momo::MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type),
+		mem_pool_params::blockCount, mem_pool_params::cachedFreeBlockCount> MemPoolParams;
 	typedef MemManagerStd<base_allocator> MemManager;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
@@ -162,14 +166,14 @@ public:
 		return SIZE_MAX / sizeof(value_type);
 	}
 
-	bool operator==(const pool_allocator& /*alloc*/) const MOMO_NOEXCEPT
+	bool operator==(const pool_allocator& alloc) const MOMO_NOEXCEPT
 	{
-		return false;
+		return this == &alloc;
 	}
 
-	bool operator!=(const pool_allocator& /*alloc*/) const MOMO_NOEXCEPT
+	bool operator!=(const pool_allocator& alloc) const MOMO_NOEXCEPT
 	{
-		return true;
+		return this != &alloc;
 	}
 
 private:
