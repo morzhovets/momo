@@ -169,11 +169,10 @@ public:
 
 	explicit MemPool(const Params& params, MemManager&& memManager = MemManager())
 		: Params(params),
-		MemManagerWrapper(std::move(memManager)),
+		MemManagerWrapper((_CheckParams(), std::move(memManager))),
 		mBufferHead(nullPtr),
 		mAllocCount(0)
 	{
-		_CheckParams();
 	}
 
 	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
