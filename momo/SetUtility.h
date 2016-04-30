@@ -126,18 +126,16 @@ namespace internal
 		{
 			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->version = 0;
-			new(&mData->memManager) MemManager(std::move(memManager));
 			try
 			{
 				new(&mData->containerTraits) ContainerTraits(containerTraits);
 			}
 			catch (...)
 			{
-				MemManager dataMemManager = std::move(mData->memManager);
-				mData->memManager.~MemManager();
-				dataMemManager.Deallocate(mData, sizeof(Data));
+				memManager.Deallocate(mData, sizeof(Data));
 				throw;
 			}
+			new(&mData->memManager) MemManager(std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
@@ -207,7 +205,8 @@ namespace internal
 	};
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
-	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false> : private TMemManager
+	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false>
+		: private TContainerTraits, private TMemManager
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
@@ -222,14 +221,14 @@ namespace internal
 
 	public:
 		SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
-			: MemManager(std::move(memManager)),
-			mContainerTraits(containerTraits)
+			: ContainerTraits(containerTraits),
+			MemManager(std::move(memManager))
 		{
 		}
 
 		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
-			: MemManager(std::move(crew.GetMemManager())),
-			mContainerTraits(std::move(crew.mContainerTraits))
+			: ContainerTraits(std::move(crew.mContainerTraits)),
+			MemManager(std::move(crew.GetMemManager()))
 		{
 		}
 
@@ -243,7 +242,7 @@ namespace internal
 
 		void Swap(SetCrew& crew) MOMO_NOEXCEPT
 		{
-			std::swap(mContainerTraits, crew.mContainerTraits);
+			std::swap(_GetContainerTraits(), crew._GetContainerTraits());
 		}
 
 		const size_t* GetVersion() const MOMO_NOEXCEPT
@@ -257,7 +256,7 @@ namespace internal
 
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
 		{
-			return mContainerTraits;
+			return *this;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -271,7 +270,10 @@ namespace internal
 		}
 
 	private:
-		ContainerTraits mContainerTraits;
+		ContainerTraits& _GetContainerTraits() MOMO_NOEXCEPT
+		{
+			return *this;
+		}
 	};
 }
 
