@@ -11,6 +11,13 @@
     struct SegmentedArraySettings
     class SegmentedArray
 
+  All `SegmentedArray` functions and constructors have strong exception safety,
+  but not the following cases:
+  1. Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
+    basic exception safety.
+  2. If any constructor throws exception, input argument `memManager`
+    may be changed.
+
 \**********************************************************/
 
 #pragma once
@@ -468,7 +475,6 @@ public:
 		AddBackVar(item);
 	}
 
-	// basic exception safety
 	template<typename ItemCreator>
 	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
@@ -477,7 +483,6 @@ public:
 		Insert(index, begin, begin + 1);
 	}
 
-	// basic exception safety
 	template<typename... ItemArgs>
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
@@ -485,19 +490,16 @@ public:
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
-	// basic exception safety
 	void Insert(size_t index, Item&& item)
 	{
 		InsertVar(index, std::move(item));
 	}
 
-	// basic exception safety
 	void Insert(size_t index, const Item& item)
 	{
 		InsertVar(index, item);
 	}
 
-	// basic exception safety
 	void Insert(size_t index, size_t count, const Item& item)
 	{
 		typename ItemTraits::template Creator<const Item&> itemCreator(item);
@@ -506,7 +508,6 @@ public:
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
 
-	// basic exception safety
 	template<typename Iterator>
 	void Insert(size_t index, Iterator begin, Iterator end)
 	{
@@ -515,7 +516,6 @@ public:
 		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
-	// basic exception safety
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
 		Insert(index, items.begin(), items.end());
@@ -527,7 +527,6 @@ public:
 		_DecCount(mCount - count);
 	}
 
-	// !std::is_nothrow_move_assignable<Item>::value -> basic exception safety
 	void Remove(size_t index, size_t count)
 	{
 		ArrayShifter::Remove(*this, index, count);

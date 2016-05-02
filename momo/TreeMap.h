@@ -10,6 +10,17 @@
     struct TreeMapSettings
     class TreeMap
 
+  All `TreeMap` functions and constructors have strong exception safety,
+  but not the following cases:
+  1. Functions `Insert`, `InsertKV`, `InsertFS` receiving many items have
+    basic exception safety.
+  2. If constructor receiving many items throws exception, input argument
+    `memManager` may be changed.
+  3. In case default `KeyValueTraits`: if function `Remove` throws exception and
+    `ObjectManager<Key>::isNothrowAnywayMoveAssignable` is false and
+    `ObjectManager<Value>::isNothrowAnywayMoveAssignable` is false,
+    removing value may be changed.
+
 \**********************************************************/
 
 #pragma once
@@ -476,15 +487,11 @@ public:
 	}
 #endif
 
-	// (!KeyManager::isNothrowAnywayMoveAssignable
-	// && !ValueManager::isNothrowAnywayMoveAssignable) -> basic exception safety
 	Iterator Remove(ConstIterator iter)
 	{
 		return Iterator(mTreeSet.Remove(iter.GetBaseIterator()));
 	}
 
-	// (!KeyManager::isNothrowAnywayMoveAssignable
-	// && !ValueManager::isNothrowAnywayMoveAssignable) -> basic exception safety
 	bool Remove(const Key& key)
 	{
 		return mTreeSet.Remove(key);

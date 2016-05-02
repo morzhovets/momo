@@ -178,11 +178,11 @@ namespace internal
 			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
 		}
 
-		// basic exception safety
 		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
+			// basic exception safety
 			dstValue = static_cast<const Value&>(srcValue);
 			dstKey = std::move(srcKey);
 		}

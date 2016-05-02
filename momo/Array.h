@@ -11,6 +11,13 @@
     struct ArraySettings
     class Array
 
+  All `Array` functions and constructors have strong exception safety,
+  but not the following cases:
+  1. Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
+    basic exception safety.
+  2. If any constructor throws exception, input argument `memManager`
+    may be changed.
+
 \**********************************************************/
 
 #pragma once
@@ -680,7 +687,6 @@ public:
 			_AddBackGrow(item);
 	}
 
-	// basic exception safety
 	template<typename ItemCreator>
 	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
@@ -689,7 +695,6 @@ public:
 		Insert(index, begin, begin + 1);
 	}
 
-	// basic exception safety
 	template<typename... ItemArgs>
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
@@ -697,7 +702,6 @@ public:
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
-	// basic exception safety
 	void Insert(size_t index, Item&& item)
 	{
 		size_t initCount = GetCount();
@@ -715,13 +719,11 @@ public:
 		}
 	}
 
-	// basic exception safety
 	void Insert(size_t index, const Item& item)
 	{
 		return Insert(index, (size_t)1, item);	//?
 	}
 
-	// basic exception safety
 	void Insert(size_t index, size_t count, const Item& item)
 	{
 		size_t initCount = GetCount();
@@ -742,7 +744,6 @@ public:
 		}
 	}
 
-	// basic exception safety
 	template<typename Iterator>
 	void Insert(size_t index, Iterator begin, Iterator end)
 	{
@@ -756,7 +757,6 @@ public:
 		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
 	}
 
-	// basic exception safety
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
 		Insert(index, items.begin(), items.end());
@@ -768,7 +768,6 @@ public:
 		_RemoveBack(count);
 	}
 
-	// !std::is_nothrow_move_assignable<Item>::value -> basic exception safety
 	void Remove(size_t index, size_t count)
 	{
 		ArrayShifter::Remove(*this, index, count);
