@@ -19,7 +19,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <ctime>
+#include <chrono>
 #include <unordered_map>
 #include <map>
 #include <random>
@@ -38,18 +38,19 @@ private:
 			: mStream(stream)
 		{
 			mStream << title << std::flush;
-			mStartTime = clock();
+			mStartTime = std::chrono::steady_clock::now();
 		}
 
 		~Timer()
 		{
-			clock_t time = clock() - mStartTime;
-			mStream << (int64_t)time * 1000 / CLOCKS_PER_SEC << std::endl;
+			auto diff = std::chrono::steady_clock::now() - mStartTime;
+			auto count = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+			mStream << count << std::endl;
 		}
 
 	private:
 		std::ostream& mStream;
-		clock_t mStartTime;
+		std::chrono::time_point<std::chrono::steady_clock> mStartTime;
 	};
 
 public:
