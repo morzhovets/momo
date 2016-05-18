@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <functional>
 #include <stdexcept>
+#include <utility>
 #include <initializer_list>
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
