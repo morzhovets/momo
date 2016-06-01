@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cfloat>
 #include <string>
+#include <cmath>
 
 #ifndef MOMO_USE_NOEXCEPT
 #define _LIBCPP_HAS_NO_NOEXCEPT
