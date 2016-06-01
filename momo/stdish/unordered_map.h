@@ -21,6 +21,9 @@ namespace momo
 namespace stdish
 {
 
+using std::begin;
+using std::end;
+
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,

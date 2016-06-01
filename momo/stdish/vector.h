@@ -21,6 +21,9 @@ namespace momo
 namespace stdish
 {
 
+using std::begin;
+using std::end;
+
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>,
 	typename TArray = Array<TValue, MemManagerStd<TAllocator>>>
