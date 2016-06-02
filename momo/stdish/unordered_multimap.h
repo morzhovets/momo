@@ -242,11 +242,6 @@ public:
 		mHashMultiMap.Swap(right.mHashMultiMap);
 	}
 
-	friend void swap(unordered_multimap& left, unordered_multimap& right) MOMO_NOEXCEPT
-	{
-		left.swap(right);
-	}
-
 	iterator begin() MOMO_NOEXCEPT
 	{
 		return iterator(mHashMultiMap.GetBegin());
@@ -276,6 +271,8 @@ public:
 	{
 		return end();
 	}
+
+	MOMO_FRIENDS_SWAP_BEGIN_END_STD(unordered_multimap)
 
 	//float max_load_factor() const MOMO_NOEXCEPT
 	//void max_load_factor(float maxLoadFactor)

@@ -178,11 +178,6 @@ public:
 		mArray.Swap(right.mArray);
 	}
 
-	friend void swap(vector& left, vector& right) MOMO_NOEXCEPT
-	{
-		left.swap(right);
-	}
-
 	iterator begin() MOMO_NOEXCEPT
 	{
 		return mArray.GetBegin();
@@ -242,6 +237,8 @@ public:
 	{
 		return rend();
 	}
+
+	MOMO_FRIENDS_SWAP_BEGIN_END_STD(vector)
 
 	pointer data() MOMO_NOEXCEPT
 	{
