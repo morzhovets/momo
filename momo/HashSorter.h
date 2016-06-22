@@ -28,6 +28,8 @@ public:
 private:
 	static const size_t radixSize = 8;
 
+	typedef size_t HashFuncResult;
+
 	template<typename HashFunc>
 	class HashFuncIter
 	{
@@ -38,7 +40,7 @@ private:
 		}
 
 		template<typename Iterator>
-		size_t operator()(Iterator iter) const
+		HashFuncResult operator()(Iterator iter) const
 		{
 			return mHashFunc(*iter);
 		}
@@ -47,59 +49,42 @@ private:
 		const HashFunc& mHashFunc;
 	};
 
-	template<typename Iterator, typename HashArray>
-	class HashFuncIterA
+	template<typename Iterator, typename HashIterator>
+	class HashFuncIterExt
 	{
 	public:
-		HashFuncIterA(Iterator begin, const HashArray& hashArray) MOMO_NOEXCEPT
+		HashFuncIterExt(Iterator begin, HashIterator hashBegin) MOMO_NOEXCEPT
 			: mBegin(begin),
-			mHashArray(hashArray)
+			mHashBegin(hashBegin)
 		{
 		}
 
-		size_t operator()(Iterator iter) const
+		HashFuncResult operator()(Iterator iter) const
 		{
-			return mHashArray[iter - mBegin];
+			return mHashBegin[iter - mBegin];
 		}
 
-		size_t operator()(std::reverse_iterator<Iterator> iter) const
+		HashFuncResult operator()(std::reverse_iterator<Iterator> iter) const
 		{
-			return mHashArray[iter.base() - 1 - mBegin];
+			return mHashBegin[iter.base() - 1 - mBegin];
 		}
 
 	private:
 		Iterator mBegin;
-		const HashArray& mHashArray;
+		HashIterator mHashBegin;
 	};
 
 public:
 	template<typename Iterator,
 		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static HashArray SortRA(Iterator begin, size_t count,
+	static HashArray SortRet(Iterator begin, size_t count,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc(),
 		typename HashArray::MemManager&& memManager = typename HashArray::MemManager())
 	{
 		HashArray hashArray(count, std::move(memManager));
-		SortA(hashArray, begin, count, hashFunc, equalFunc);
+		SortExt(hashArray.GetBegin(), begin, count, hashFunc, equalFunc);
 		return hashArray;
-	}
-
-	template<typename HashArray, typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static void SortA(HashArray& hashArray, Iterator begin, size_t count,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
-	{
-		for (size_t i = 0; i < count; ++i)
-			hashArray[i] = hashFunc(begin[i]);
-		auto swapFunc = [begin, &hashArray] (Iterator iter1, Iterator iter2)
-		{
-			std::iter_swap(iter1, iter2);
-			std::swap(hashArray[iter1 - begin], hashArray[iter2 - begin]);
-		};
-		_Sort(begin, count, HashFuncIterA<Iterator, HashArray>(begin, hashArray), equalFunc,
-			swapFunc, 8 * sizeof(size_t) - radixSize);
 	}
 
 	template<typename Iterator,
@@ -110,7 +95,24 @@ public:
 	{
 		auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
 		_Sort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc,
-			swapFunc, 8 * sizeof(size_t) - radixSize);
+			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
+	}
+
+	template<typename HashIterator, typename Iterator,
+		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+	static void SortExt(HashIterator hashBegin, Iterator begin, size_t count,
+		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	{
+		for (size_t i = 0; i < count; ++i)
+			hashBegin[i] = hashFunc(begin[i]);
+		auto swapFunc = [begin, hashBegin] (Iterator iter1, Iterator iter2)
+		{
+			std::iter_swap(iter1, iter2);
+			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
+		};
+		_Sort(begin, count, HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc,
+			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
 	}
 
 	template<typename Iterator,
@@ -119,32 +121,17 @@ public:
 	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
-		size_t prevIndex = 0;
-		size_t prevHash = hashFunc(*begin);
-		for (size_t i = 1; i < count; ++i)
-		{
-			size_t hash = hashFunc(begin[i]);
-			if (hash < prevHash)
-				return false;
-			if (hash != prevHash)
-			{
-				if (!_IsGrouped(begin + prevIndex, i - prevIndex, equalFunc))
-					return false;
-				prevIndex = i;
-			}
-		}
-		return _IsGrouped(begin + prevIndex, count - prevIndex, equalFunc);
+		return _IsSorted(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<typename HashArray, typename Iterator,
+	template<typename HashIterator, typename Iterator,
 		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, bool> FindA(const HashArray& hashArray, Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item,
+	static bool IsSortedExt(HashIterator hashBegin, Iterator begin, size_t count,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _Find(begin, count, item, hashFunc(item),
-			HashFuncIterA<Iterator, HashArray>(begin, hashArray), equalFunc);
+		return _IsSorted(begin, count,
+			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
@@ -158,15 +145,15 @@ public:
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<typename HashArray, typename Iterator,
+	template<typename HashIterator, typename Iterator,
 		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, Iterator> EqualRangeA(const HashArray& hashArray, Iterator begin,
-		size_t count, const typename std::iterator_traits<Iterator>::value_type& item,
+	static std::pair<Iterator, bool> FindExt(HashIterator hashBegin, Iterator begin, size_t count,
+		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _EqualRange(begin, count, item, hashFunc(item),
-			HashFuncIterA<Iterator, HashArray>(begin, hashArray), equalFunc);
+		return _Find(begin, count, item, hashFunc(item),
+			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
@@ -178,6 +165,17 @@ public:
 	{
 		return _EqualRange(begin, count, item, hashFunc(item),
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
+	}
+
+	template<typename HashIterator, typename Iterator,
+		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+	static std::pair<Iterator, Iterator> EqualRangeExt(HashIterator hashBegin, Iterator begin,
+		size_t count, const typename std::iterator_traits<Iterator>::value_type& item,
+		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	{
+		return _EqualRange(begin, count, item, hashFunc(item),
+			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 private:
@@ -209,7 +207,7 @@ private:
 		const EqualFunc& equalFunc, SwapFunc swapFunc)
 	{
 		MOMO_ASSERT(count > 0);
-		size_t hashes[1 << (radixSize / 2 + 1)];	//?
+		HashFuncResult hashes[1 << (radixSize / 2 + 1)];	//?
 		for (size_t i = 0; i < count; ++i)
 			hashes[i] = hashFuncIter(begin + i);
 		for (size_t i = 0; i < count - 1; ++i)
@@ -239,12 +237,12 @@ private:
 	{
 		static const size_t radixCount = 1 << radixSize;
 		size_t endIndices[radixCount] = {};
-		size_t hash0 = hashFuncIter(begin);
+		HashFuncResult hash0 = hashFuncIter(begin);
 		++endIndices[_GetRadix(hash0, shift)];
 		bool singleHash = true;
 		for (size_t i = 1; i < count; ++i)
 		{
-			size_t hash = hashFuncIter(begin + i);
+			HashFuncResult hash = hashFuncIter(begin + i);
 			++endIndices[_GetRadix(hash, shift)];
 			singleHash &= (hash == hash0);
 		}
@@ -314,6 +312,27 @@ private:
 		}
 	}
 
+	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
+	static bool _IsSorted(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
+		const EqualFunc& equalFunc)
+	{
+		size_t prevIndex = 0;
+		HashFuncResult prevHash = hashFuncIter(begin);
+		for (size_t i = 1; i < count; ++i)
+		{
+			HashFuncResult hash = hashFuncIter(begin + i);
+			if (hash < prevHash)
+				return false;
+			if (hash != prevHash)
+			{
+				if (!_IsGrouped(begin + prevIndex, i - prevIndex, equalFunc))
+					return false;
+				prevIndex = i;
+			}
+		}
+		return _IsGrouped(begin + prevIndex, count - prevIndex, equalFunc);
+	}
+
 	template<typename Iterator, typename EqualFunc>
 	static bool _IsGrouped(Iterator begin, size_t count, const EqualFunc& equalFunc)
 	{
@@ -332,7 +351,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static std::pair<Iterator, bool> _Find(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, size_t itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = _FindHash(begin, count, itemHash, hashFuncIter);
@@ -350,7 +369,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static std::pair<Iterator, Iterator> _EqualRange(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, size_t itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = _FindHash(begin, count, itemHash, hashFuncIter);
@@ -379,7 +398,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static std::pair<Iterator, bool> _FindNext(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, size_t itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;
@@ -404,8 +423,8 @@ private:
 	}
 
 	template<typename Iterator, typename HashFuncIter>
-	static std::pair<Iterator, bool> _FindHash(Iterator begin, size_t count, size_t itemHash,
-		const HashFuncIter& hashFuncIter)
+	static std::pair<Iterator, bool> _FindHash(Iterator begin, size_t count,
+		HashFuncResult itemHash, const HashFuncIter& hashFuncIter)
 	{
 		auto pred = [itemHash, &hashFuncIter] (Iterator iter)
 			{ return _Compare(hashFuncIter(iter), itemHash); };
@@ -415,7 +434,7 @@ private:
 		size_t step = (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 		while (true)
 		{
-			size_t middleHash = hashFuncIter(begin + middleIndex);
+			HashFuncResult middleHash = hashFuncIter(begin + middleIndex);
 			if (middleHash < itemHash)
 			{
 				leftIndex = middleIndex + 1;
@@ -486,23 +505,25 @@ private:
 		return { begin + leftIndex, false };
 	}
 
-	static size_t _GetRadix(size_t value, size_t shift) MOMO_NOEXCEPT
+	static size_t _GetRadix(HashFuncResult value, size_t shift) MOMO_NOEXCEPT
 	{
-		return (value >> shift) & ((1 << radixSize) - 1);
+		return (size_t)(value >> shift) & (((size_t)1 << radixSize) - 1);
 	}
 
-	static int _Compare(size_t value1, size_t value2) MOMO_NOEXCEPT
+	static int _Compare(HashFuncResult value1, HashFuncResult value2) MOMO_NOEXCEPT
 	{
 		return (value1 < value2) ? -1 : (int)(value1 != value2);
 	}
 
-	static size_t _MultShift(size_t value1, size_t value2) MOMO_NOEXCEPT
+	static size_t _MultShift(HashFuncResult value1, size_t value2) MOMO_NOEXCEPT
 	{
-		static const size_t halfSize = 4 * sizeof(size_t);
-		static const size_t halfMask = ((size_t)1 << halfSize) - 1;
-		return (value1 >> halfSize) * (value2 >> halfSize)
+		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
+		static const size_t halfSize = 4 * sizeof(HashFuncResult);
+		static const HashFuncResult halfMask = ((HashFuncResult)1 << halfSize) - 1;
+		HashFuncResult res = (value1 >> halfSize) * (value2 >> halfSize)
 			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)
 			+ (((value2 >> halfSize) * (value1 & halfMask)) >> halfSize);
+		return (size_t)res;
 	}
 };
 
