@@ -227,7 +227,7 @@ namespace internal
 		}
 
 		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
-			: ContainerTraits(std::move(crew.mContainerTraits)),
+			: ContainerTraits(std::move(crew._GetContainerTraits())),
 			MemManager(std::move(crew.GetMemManager()))
 		{
 		}
