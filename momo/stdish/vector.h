@@ -392,9 +392,10 @@ public:
 	}
 
 	template<typename... Args>
-	void emplace_back(Args&&... args)
+	reference emplace_back(Args&&... args)
 	{
 		mArray.AddBackVar(std::forward<Args>(args)...);
+		return back();	// C++17
 	}
 
 	template<typename... Args>
