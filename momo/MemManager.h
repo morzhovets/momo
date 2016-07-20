@@ -520,7 +520,8 @@ namespace internal
 	};
 
 	template<typename TMemManager,
-		bool tIsMemManagerEmpty = std::is_empty<TMemManager>::value>
+		bool tIsMemManagerEmpty = std::is_empty<TMemManager>::value
+			&& std::is_nothrow_default_constructible<TMemManager>::value>
 	class MemManagerPtr;
 
 	template<typename TMemManager>
@@ -529,22 +530,23 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
-
 		static const bool canReallocate = MemManager::canReallocate;
 		static const bool canReallocateInplace = MemManager::canReallocateInplace;
 
 	public:
-		explicit MemManagerPtr(MemManager& /*memManager*/)
+		MemManagerPtr() MOMO_NOEXCEPT
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& memManagerPtr) MOMO_NOEXCEPT
-			: MemManager(std::move(memManagerPtr._GetMemManager()))
+		explicit MemManagerPtr(MemManager& /*memManager*/) MOMO_NOEXCEPT
 		{
 		}
 
-		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/)
+		MemManagerPtr(MemManagerPtr&& /*memManagerPtr*/) MOMO_NOEXCEPT
+		{
+		}
+
+		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/) MOMO_NOEXCEPT
 		{
 		}
 
@@ -577,11 +579,6 @@ namespace internal
 		}
 
 	private:
-		//const MemManager& _GetMemManager() const MOMO_NOEXCEPT
-		//{
-		//	return *this;
-		//}
-
 		MemManager& _GetMemManager() MOMO_NOEXCEPT
 		{
 			return *this;
