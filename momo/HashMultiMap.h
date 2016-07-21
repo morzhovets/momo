@@ -376,7 +376,7 @@ private:
 		};
 
 	public:
-		ValueCrew(MemManager& memManager)
+		explicit ValueCrew(MemManager& memManager)
 		{
 			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->valueVersion = 0;
@@ -609,10 +609,11 @@ public:
 
 	~HashMultiMap() MOMO_NOEXCEPT
 	{
-		if (mValueCrew.IsNull())
-			return;
-		_ClearValueArrays();
-		mValueCrew.Destroy(GetMemManager());
+		if (!mValueCrew.IsNull())
+		{
+			_ClearValueArrays();
+			mValueCrew.Destroy(GetMemManager());
+		}
 	}
 
 	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) MOMO_NOEXCEPT
@@ -681,12 +682,13 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		if (mValueCrew.IsNull())
-			return;
-		_ClearValueArrays();
-		mHashMap.Clear();
-		mValueCount = 0;
-		++mValueCrew.GetValueVersion();
+		if (!mValueCrew.IsNull())
+		{
+			_ClearValueArrays();
+			mHashMap.Clear();
+			mValueCount = 0;
+			++mValueCrew.GetValueVersion();
+		}
 	}
 
 	ConstKeyBounds GetKeyBounds() const MOMO_NOEXCEPT
