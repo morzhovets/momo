@@ -14,7 +14,7 @@
 #pragma once
 
 #include "DataColumn.h"
-#include "DataRow.h"
+#include "DataSelection.h"
 #include "DataIndexes.h"
 
 namespace momo
@@ -216,7 +216,7 @@ public:
 	Row NewRow()
 	{
 		_FreeNewRaws();
-		return Row(_CreateRaw(), &GetColumnList(), &mCrew.GetFreeRaws());
+		return Row(&GetColumnList(), _CreateRaw(), &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename... Args>
@@ -237,7 +237,7 @@ public:
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
 		mRaws.AddBackNogrow(raw);
-		return RowRef(raw, &GetColumnList(), mIndexes.GetOffsetMarks());
+		return RowRef(&GetColumnList(), raw, mIndexes.GetOffsetMarks());
 	}
 
 	template<typename Type, typename... Args>
@@ -291,12 +291,12 @@ public:
 
 	const ConstRowRef operator[](size_t index) const
 	{
-		return ConstRowRef(mRaws[index], &GetColumnList());
+		return ConstRowRef(&GetColumnList(), mRaws[index]);
 	}
 
 	const RowRef operator[](size_t index)
 	{
-		return RowRef(mRaws[index], &GetColumnList(), mIndexes.GetOffsetMarks());
+		return RowRef(&GetColumnList(), mRaws[index], mIndexes.GetOffsetMarks());
 	}
 
 	template<typename... Types>
@@ -432,10 +432,10 @@ private:
 		SelectionRaws raws(std::move(memManager));
 		for (RawIterator iter = rawBegin; iter != rawEnd; ++iter)
 		{
-			if (filter(ConstRowRef(*iter, &GetColumnList())))
+			if (filter(ConstRowRef(&GetColumnList(), *iter)))
 				raws.AddBack(*iter);
 		}
-		return ConstSelection(std::move(raws), &GetColumnList());
+		return ConstSelection(&GetColumnList(), std::move(raws));
 	}
 
 	template<typename RawIterator>
@@ -443,8 +443,8 @@ private:
 		const EmptyFilter& /*filter*/) const
 	{
 		MemManager memManager = GetMemManager();
-		return ConstSelection(SelectionRaws(rawBegin, rawEnd, std::move(memManager)),
-			&GetColumnList());
+		return ConstSelection(&GetColumnList(),
+			SelectionRaws(rawBegin, rawEnd, std::move(memManager)));
 	}
 
 private:

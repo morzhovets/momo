@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Array.h"
+#include "Utility.h"
 
 #include <atomic>	//?
 
@@ -32,16 +32,16 @@ namespace internal
 		using Column = typename ColumnList::template Column<Type>;
 
 	public:
-		DataRow(Raw* raw, const ColumnList* columnList, std::atomic<Raw*>* freeRaws) noexcept
-			: mRaw(raw),
-			mColumnList(columnList),
+		DataRow(const ColumnList* columnList, Raw* raw, std::atomic<Raw*>* freeRaws) noexcept
+			: mColumnList(columnList),
+			mRaw(raw),
 			mFreeRaws(freeRaws)
 		{
 		}
 
 		DataRow(DataRow&& row) noexcept
-			: mRaw(row.mRaw),
-			mColumnList(row.mColumnList),
+			: mColumnList(row.mColumnList),
+			mRaw(row.mRaw),
 			mFreeRaws(row.mFreeRaws)
 		{
 			row.mRaw = nullptr;
@@ -52,16 +52,15 @@ namespace internal
 
 		~DataRow() noexcept
 		{
-			if (mRaw != nullptr)
+			if (mRaw == nullptr)
+				return;
+			mColumnList->DestroyRaw(mRaw);
+			while (true)
 			{
-				mColumnList->DestroyRaw(mRaw);
-				while (true)
-				{
-					Raw* headRaw = *mFreeRaws;
-					*reinterpret_cast<Raw**>(mRaw) = headRaw;
-					if (mFreeRaws->compare_exchange_weak(headRaw, mRaw))
-						break;
-				}
+				Raw* headRaw = *mFreeRaws;
+				*reinterpret_cast<Raw**>(mRaw) = headRaw;
+				if (mFreeRaws->compare_exchange_weak(headRaw, mRaw))
+					break;
 			}
 		}
 
@@ -75,8 +74,8 @@ namespace internal
 
 		void Swap(DataRow& row) noexcept
 		{
-			std::swap(mRaw, row.mRaw);
 			std::swap(mColumnList, row.mColumnList);
+			std::swap(mRaw, row.mRaw);
 			std::swap(mFreeRaws, row.mFreeRaws);
 		}
 
@@ -160,8 +159,8 @@ namespace internal
 		}
 
 	private:
-		Raw* mRaw;
 		const ColumnList* mColumnList;
+		Raw* mRaw;
 		std::atomic<Raw*>* mFreeRaws;
 	};
 
@@ -243,9 +242,9 @@ namespace internal
 		};
 
 	public:
-		DataRowRef(Raw* raw, const ColumnList* columnList, const bool* offsetMarks) noexcept
-			: mRaw(raw),
-			mColumnList(columnList),
+		DataRowRef(const ColumnList* columnList, Raw* raw, const bool* offsetMarks) noexcept
+			: mColumnList(columnList),
+			mRaw(raw),
 			mOffsetMarks(offsetMarks)
 		{
 		}
@@ -285,8 +284,8 @@ namespace internal
 		}
 
 	private:
-		Raw* mRaw;
 		const ColumnList* mColumnList;
+		Raw* mRaw;
 		const bool* mOffsetMarks;
 	};
 
@@ -301,19 +300,19 @@ namespace internal
 		using Column = typename ColumnList::template Column<Type>;
 
 	public:
-		DataConstRowRef(const Raw* raw, const ColumnList* columnList) noexcept
-			: mRaw(raw),
-			mColumnList(columnList)
+		DataConstRowRef(const ColumnList* columnList, const Raw* raw) noexcept
+			: mColumnList(columnList),
+			mRaw(raw)
 		{
 		}
 
 		DataConstRowRef(DataRowRef<ColumnList> rowRef) noexcept
-			: DataConstRowRef(rowRef.GetRaw(), &rowRef.GetColumnList())
+			: DataConstRowRef(&rowRef.GetColumnList(), rowRef.GetRaw())
 		{
 		}
 
 		DataConstRowRef(const DataRow<ColumnList>& row) noexcept
-			: DataConstRowRef(row.GetRaw(), &row.GetColumnList())
+			: DataConstRowRef(&row.GetColumnList(), row.GetRaw())
 		{
 		}
 
@@ -351,45 +350,8 @@ namespace internal
 		}
 
 	private:
+		const ColumnList* mColumnList;
 		const Raw* mRaw;
-		const ColumnList* mColumnList;
-	};
-
-	template<typename TColumn, typename TMemManager>
-	class DataConstSelection
-	{
-	public:
-		typedef TColumn ColumnList;
-		typedef TMemManager MemManager;
-		typedef typename ColumnList::Raw Raw;
-
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
-
-		typedef DataRowRef<ColumnList> RowRef;
-
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>, ArraySettings<2>> Raws;
-
-	public:
-		DataConstSelection(Raws&& raws, const ColumnList* columnList) noexcept
-			: mColumnList(columnList),
-			mRaws(std::move(raws))
-		{
-		}
-
-		size_t GetCount() const noexcept
-		{
-			return mRaws.GetCount();
-		}
-
-		const RowRef operator[](size_t index) const
-		{
-			return RowRef(mRaws[index], mColumnList);
-		}
-
-	private:
-		const ColumnList* mColumnList;
-		Raws mRaws;
 	};
 }
 

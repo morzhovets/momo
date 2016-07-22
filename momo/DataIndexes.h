@@ -210,10 +210,11 @@ namespace internal
 		{
 		}
 
-		DataIndexes& operator=(DataIndexes&& indexes)
-		{
-			DataIndexes(std::move(indexes)).Swap(*this);
-		}
+		//DataIndexes& operator=(DataIndexes&& indexes) noexcept
+		//{
+		//	DataIndexes(std::move(indexes)).Swap(*this);
+		//	return *this;
+		//}
 
 		DataIndexes& operator=(const DataIndexes&) = delete;
 
