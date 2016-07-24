@@ -59,30 +59,6 @@ namespace internal
 			return ConstIterator(mItemPtr);
 		}
 
-		ArrayPtrIterator& operator++()
-		{
-			return *this += 1;
-		}
-
-		ArrayPtrIterator operator++(int)
-		{
-			ArrayPtrIterator tempIter = *this;
-			++*this;
-			return tempIter;
-		}
-
-		ArrayPtrIterator& operator--()
-		{
-			return *this -= 1;
-		}
-
-		ArrayPtrIterator operator--(int)
-		{
-			ArrayPtrIterator tempIter = *this;
-			--*this;
-			return tempIter;
-		}
-
 		ArrayPtrIterator& operator+=(ptrdiff_t diff)
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
@@ -90,34 +66,9 @@ namespace internal
 			return *this;
 		}
 
-		ArrayPtrIterator operator+(ptrdiff_t diff) const
-		{
-			return ArrayPtrIterator(*this) += diff;
-		}
-
-		friend ArrayPtrIterator operator+(ptrdiff_t diff, ArrayPtrIterator iter)
-		{
-			return iter + diff;
-		}
-
-		ArrayPtrIterator& operator-=(ptrdiff_t diff)
-		{
-			return *this += (-diff);
-		}
-
-		ArrayPtrIterator operator-(ptrdiff_t diff) const
-		{
-			return *this + (-diff);
-		}
-
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			return mItemPtr - iter.GetItemPtr();
-		}
-
-		Item* operator->() const
-		{
-			return std::addressof(**this);
 		}
 
 		Item& operator*() const
@@ -126,41 +77,18 @@ namespace internal
 			return *mItemPtr;
 		}
 
-		Item& operator[](ptrdiff_t diff) const
-		{
-			return *(*this + diff);
-		}
-
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
 			return mItemPtr == iter.GetItemPtr();
 		}
 
-		bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return !(*this == iter);
-		}
-
-		bool operator<(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator<(ConstIterator iter) const
 		{
 			return std::less<const Item*>()(mItemPtr, iter.GetItemPtr());
 			//return mItemPtr < iter.GetItemPtr();
 		}
 
-		bool operator>(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return iter < *this;
-		}
-
-		bool operator<=(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return !(iter < *this);
-		}
-
-		bool operator>=(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return iter <= *this;
-		}
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayPtrIterator)
 
 		Item* GetItemPtr() const MOMO_NOEXCEPT
 		{

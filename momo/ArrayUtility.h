@@ -11,6 +11,68 @@
 
 #include "ObjectManager.h"
 
+#define MOMO_MORE_ARRAY_ITERATOR_OPERATORS(Iterator) \
+	Iterator& operator++() \
+	{ \
+		return *this += 1; \
+	} \
+	Iterator operator++(int) \
+	{ \
+		Iterator tempIter = *this; \
+		++*this; \
+		return tempIter; \
+	} \
+	Iterator& operator--() \
+	{ \
+		return *this -= 1; \
+	} \
+	Iterator operator--(int) \
+	{ \
+		Iterator tempIter = *this; \
+		--*this; \
+		return tempIter; \
+	} \
+	Iterator operator+(ptrdiff_t diff) const \
+	{ \
+		return Iterator(*this) += diff; \
+	} \
+	friend Iterator operator+(ptrdiff_t diff, Iterator iter) \
+	{ \
+		return iter + diff; \
+	} \
+	Iterator& operator-=(ptrdiff_t diff) \
+	{ \
+		return *this += (-diff); \
+	} \
+	Iterator operator-(ptrdiff_t diff) const \
+	{ \
+		return *this + (-diff); \
+	} \
+	Item* operator->() const \
+	{ \
+		return std::addressof(**this); \
+	} \
+	Item& operator[](ptrdiff_t diff) const \
+	{ \
+		return *(*this + diff); \
+	} \
+	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	{ \
+		return !(*this == iter); \
+	} \
+	bool operator>(ConstIterator iter) const \
+	{ \
+		return iter < *this; \
+	} \
+	bool operator<=(ConstIterator iter) const \
+	{ \
+		return !(iter < *this); \
+	} \
+	bool operator>=(ConstIterator iter) const \
+	{ \
+		return iter <= *this; \
+	}
+
 namespace momo
 {
 
@@ -47,30 +109,6 @@ namespace internal
 			return ConstIterator(mArray, mIndex);
 		}
 
-		ArrayIterator& operator++()
-		{
-			return *this += 1;
-		}
-
-		ArrayIterator operator++(int)
-		{
-			ArrayIterator tempIter = *this;
-			++*this;
-			return tempIter;
-		}
-
-		ArrayIterator& operator--()
-		{
-			return *this -= 1;
-		}
-
-		ArrayIterator operator--(int)
-		{
-			ArrayIterator tempIter = *this;
-			--*this;
-			return tempIter;
-		}
-
 		ArrayIterator& operator+=(ptrdiff_t diff)
 		{
 			MOMO_CHECK(mArray != nullptr);
@@ -80,35 +118,10 @@ namespace internal
 			return *this;
 		}
 
-		ArrayIterator operator+(ptrdiff_t diff) const
-		{
-			return ArrayIterator(*this) += diff;
-		}
-
-		friend ArrayIterator operator+(ptrdiff_t diff, ArrayIterator iter)
-		{
-			return iter + diff;
-		}
-
-		ArrayIterator& operator-=(ptrdiff_t diff)
-		{
-			return *this += (-diff);
-		}
-
-		ArrayIterator operator-(ptrdiff_t diff) const
-		{
-			return *this + (-diff);
-		}
-
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mArray == iter.GetArray());
 			return mIndex - iter.GetIndex();
-		}
-
-		Item* operator->() const
-		{
-			return std::addressof(**this);
 		}
 
 		Item& operator*() const
@@ -117,19 +130,9 @@ namespace internal
 			return (*mArray)[mIndex];
 		}
 
-		Item& operator[](ptrdiff_t diff) const
-		{
-			return *(*this + diff);
-		}
-
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
 			return mArray == iter.GetArray() && mIndex == iter.GetIndex();
-		}
-
-		bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT
-		{
-			return !(*this == iter);
 		}
 
 		bool operator<(ConstIterator iter) const
@@ -138,20 +141,7 @@ namespace internal
 			return mIndex < iter.GetIndex();
 		}
 
-		bool operator>(ConstIterator iter) const
-		{
-			return iter < *this;
-		}
-
-		bool operator<=(ConstIterator iter) const
-		{
-			return !(iter < *this);
-		}
-
-		bool operator>=(ConstIterator iter) const
-		{
-			return iter <= *this;
-		}
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIterator)
 
 		Array* GetArray() const MOMO_NOEXCEPT
 		{
