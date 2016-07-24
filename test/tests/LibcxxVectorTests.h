@@ -41,6 +41,8 @@ LIBCXX_TEST_BEGIN(db_index)
 #include "libcxx/vector/db_index.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCXX_TEST_ARRAY
+
 LIBCXX_TEST_BEGIN(db_iterators_2)
 #include "libcxx/vector/db_iterators_2.pass.cpp"
 LIBCXX_TEST_END
@@ -68,6 +70,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(db_iterators_8)
 #include "libcxx/vector/db_iterators_8.pass.cpp"
 LIBCXX_TEST_END
+
+#endif
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "libcxx/vector/iterators.pass.cpp"

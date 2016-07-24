@@ -117,6 +117,7 @@ void main()
         //assert(is_contiguous_container_asan_correct(c));
     }
 #endif
+#ifndef LIBCXX_TEST_ARRAY
 #if _LIBCPP_DEBUG >= 1
     {
         vector<A> c1;
@@ -124,6 +125,7 @@ void main()
         LIBCPP_CATCH(c1.emplace(c2.cbegin(), 2, 3.5));
         //assert(false);
     }
+#endif
 #endif
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
