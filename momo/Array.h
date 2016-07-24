@@ -28,6 +28,165 @@
 namespace momo
 {
 
+namespace internal
+{
+	template<typename TItem, typename TSettings>
+	class ArrayPtrIterator
+	{
+	public:
+		typedef TItem Item;
+		typedef TSettings Settings;
+
+		typedef Item& Reference;
+		typedef Item* Pointer;
+
+		typedef ArrayPtrIterator<const Item, Settings> ConstIterator;
+
+	public:
+		explicit ArrayPtrIterator(Item* pitem = nullptr) MOMO_NOEXCEPT
+			: mItemPtr(pitem)
+		{
+		}
+
+		template<typename Array>
+		ArrayPtrIterator(Array* array, size_t index) MOMO_NOEXCEPT
+			: mItemPtr(array->GetItems() + index)
+		{
+		}
+
+		operator ConstIterator() const MOMO_NOEXCEPT
+		{
+			return ConstIterator(mItemPtr);
+		}
+
+		ArrayPtrIterator& operator++()
+		{
+			return *this += 1;
+		}
+
+		ArrayPtrIterator operator++(int)
+		{
+			ArrayPtrIterator tempIter = *this;
+			++*this;
+			return tempIter;
+		}
+
+		ArrayPtrIterator& operator--()
+		{
+			return *this -= 1;
+		}
+
+		ArrayPtrIterator operator--(int)
+		{
+			ArrayPtrIterator tempIter = *this;
+			--*this;
+			return tempIter;
+		}
+
+		ArrayPtrIterator& operator+=(ptrdiff_t diff)
+		{
+			MOMO_CHECK(mItemPtr != nullptr);
+			mItemPtr += diff;
+			return *this;
+		}
+
+		ArrayPtrIterator operator+(ptrdiff_t diff) const
+		{
+			return ArrayPtrIterator(*this) += diff;
+		}
+
+		friend ArrayPtrIterator operator+(ptrdiff_t diff, ArrayPtrIterator iter)
+		{
+			return iter + diff;
+		}
+
+		ArrayPtrIterator& operator-=(ptrdiff_t diff)
+		{
+			return *this += (-diff);
+		}
+
+		ArrayPtrIterator operator-(ptrdiff_t diff) const
+		{
+			return *this + (-diff);
+		}
+
+		ptrdiff_t operator-(ConstIterator iter) const
+		{
+			return mItemPtr - iter.GetItemPtr();
+		}
+
+		Item* operator->() const
+		{
+			return std::addressof(**this);
+		}
+
+		Item& operator*() const
+		{
+			MOMO_CHECK(mItemPtr != nullptr);
+			return *mItemPtr;
+		}
+
+		Item& operator[](ptrdiff_t diff) const
+		{
+			return *(*this + diff);
+		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return mItemPtr == iter.GetItemPtr();
+		}
+
+		bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return !(*this == iter);
+		}
+
+		bool operator<(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return std::less<const Item*>()(mItemPtr, iter.GetItemPtr());
+			//return mItemPtr < iter.GetItemPtr();
+		}
+
+		bool operator>(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return iter < *this;
+		}
+
+		bool operator<=(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return !(iter < *this);
+		}
+
+		bool operator>=(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return iter <= *this;
+		}
+
+		Item* GetItemPtr() const MOMO_NOEXCEPT
+		{
+			return mItemPtr;
+		}
+
+	private:
+		Item* mItemPtr;
+	};
+
+	template<typename Array, bool usePtrIterator = Array::Settings::usePtrIterator>
+	struct ArrayIteratorSelector;
+
+	template<typename Array>
+	struct ArrayIteratorSelector<Array, true>
+	{
+		typedef ArrayPtrIterator<typename Array::Item, typename Array::Settings> Iterator;
+	};
+
+	template<typename Array>
+	struct ArrayIteratorSelector<Array, false>
+	{
+		typedef ArrayIterator<Array, typename Array::Item> Iterator;
+	};
+}
+
 template<typename TItem>
 struct ArrayItemTraits
 {
@@ -76,13 +235,15 @@ enum class ArrayGrowCause
 };
 
 template<size_t tInternalCapacity = 0,
-	bool tGrowOnReserve = true>
+	bool tGrowOnReserve = true,
+	bool tUsePtrIterator = (tInternalCapacity == 0)>
 struct ArraySettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const size_t internalCapacity = tInternalCapacity;
 	static const bool growOnReserve = tGrowOnReserve;
+	static const bool usePtrIterator = tUsePtrIterator;
 
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
 		ArrayGrowCause growCause, bool realloc)
@@ -122,9 +283,6 @@ public:
 	typedef TSettings Settings;
 
 	static const size_t internalCapacity = Settings::internalCapacity;
-	//static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
-	//	: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
-	//MOMO_STATIC_ASSERT(internalCapacity <= maxCapacity);
 
 private:
 	class Data : private internal::MemManagerWrapper<MemManager>
@@ -421,7 +579,7 @@ private:
 	typedef internal::ArrayShifter<Array> ArrayShifter;
 
 public:
-	typedef internal::ArrayIterator<Array, Item> Iterator;
+	typedef typename internal::ArrayIteratorSelector<Array>::Iterator Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 public:
@@ -598,7 +756,7 @@ public:
 	{
 		size_t count = GetCount();
 		size_t initCapacity = GetCapacity();
-		if (initCapacity > count && initCapacity > Settings::internalCapacity)
+		if (initCapacity > count && initCapacity > internalCapacity)
 		{
 			size_t newCapacity = count;
 			if (!mData.SetCapacity(newCapacity))
@@ -986,3 +1144,12 @@ private:
 };
 
 } // namespace momo
+
+namespace std
+{
+	template<typename I, typename S>
+	struct iterator_traits<momo::internal::ArrayPtrIterator<I, S>>
+		: public iterator_traits<I*>
+	{
+	};
+} // namespace std
