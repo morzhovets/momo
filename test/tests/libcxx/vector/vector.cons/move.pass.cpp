@@ -57,7 +57,8 @@ void main()
         assert(l2.get_allocator() == lo.get_allocator());
         //assert(is_contiguous_container_asan_correct(l2));
     }
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         int a1[] = {1, 3, 7, 9, 10};
         vector<int> c1(a1, a1+sizeof(a1)/sizeof(a1[0]));
@@ -69,6 +70,7 @@ void main()
         assert(*j == 3);
         //assert(is_contiguous_container_asan_correct(c2));
     }
+#endif
 #endif
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

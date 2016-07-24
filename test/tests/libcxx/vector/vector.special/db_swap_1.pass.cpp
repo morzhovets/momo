@@ -24,7 +24,8 @@
 void main()
 {
 #if _LIBCPP_DEBUG >= 1
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         int a1[] = {1, 3, 7, 9, 10};
         int a2[] = {0, 2, 4, 5, 6, 8, 11};
@@ -35,9 +36,12 @@ void main()
         swap(c1, c2);
         c1.erase(i2);
         c2.erase(i1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         LIBCPP_CATCH(c1.erase(i1));
         //assert(false);
+#endif
     }
+#endif
 #endif
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
