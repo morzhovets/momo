@@ -27,8 +27,8 @@ struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TV
 		momo::internal::ObjectManager<TValue>::isNothrowMoveConstructible;
 };
 
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
+//#define _LIBCPP_DEBUG 1
+//#define _LIBCPP_DEBUG_LEVEL 1
 
 #define LIBCPP_TEST_STACK_ALLOCATOR
 
@@ -47,6 +47,9 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
+
+#define _LIBCPP_DEBUG 1
+#define _LIBCPP_DEBUG_LEVEL 1
 
 #define LIBCXX_TEST_INTCAP_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_5"

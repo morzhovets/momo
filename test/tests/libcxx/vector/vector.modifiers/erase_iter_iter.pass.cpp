@@ -26,16 +26,16 @@ void main()
         //assert(is_contiguous_container_asan_correct(l1));
         vector<int>::iterator i = l1.erase(l1.cbegin(), l1.cbegin());
         assert(l1.size() == 3);
-        assert(distance(l1.cbegin(), l1.cend()) == 3);
+        assert(std::distance(l1.cbegin(), l1.cend()) == 3);
         assert(i == l1.begin());
         //assert(is_contiguous_container_asan_correct(l1));
     }
     {
         vector<int> l1(a1, a1+3);
         //assert(is_contiguous_container_asan_correct(l1));
-        vector<int>::iterator i = l1.erase(l1.cbegin(), next(l1.cbegin()));
+        vector<int>::iterator i = l1.erase(l1.cbegin(), std::next(l1.cbegin()));
         assert(l1.size() == 2);
-        assert(distance(l1.cbegin(), l1.cend()) == 2);
+        assert(std::distance(l1.cbegin(), l1.cend()) == 2);
         assert(i == l1.begin());
         assert(l1 == vector<int>(a1+1, a1+3));
         //assert(is_contiguous_container_asan_correct(l1));
@@ -43,9 +43,9 @@ void main()
     {
         vector<int> l1(a1, a1+3);
         //assert(is_contiguous_container_asan_correct(l1));
-        vector<int>::iterator i = l1.erase(l1.cbegin(), next(l1.cbegin(), 2));
+        vector<int>::iterator i = l1.erase(l1.cbegin(), std::next(l1.cbegin(), 2));
         assert(l1.size() == 1);
-        assert(distance(l1.cbegin(), l1.cend()) == 1);
+        assert(std::distance(l1.cbegin(), l1.cend()) == 1);
         assert(i == l1.begin());
         assert(l1 == vector<int>(a1+2, a1+3));
         //assert(is_contiguous_container_asan_correct(l1));
@@ -53,9 +53,9 @@ void main()
     {
         vector<int> l1(a1, a1+3);
         //assert(is_contiguous_container_asan_correct(l1));
-        vector<int>::iterator i = l1.erase(l1.cbegin(), next(l1.cbegin(), 3));
+        vector<int>::iterator i = l1.erase(l1.cbegin(), std::next(l1.cbegin(), 3));
         assert(l1.size() == 0);
-        assert(distance(l1.cbegin(), l1.cend()) == 0);
+        assert(std::distance(l1.cbegin(), l1.cend()) == 0);
         assert(i == l1.begin());
         //assert(is_contiguous_container_asan_correct(l1));
     }
