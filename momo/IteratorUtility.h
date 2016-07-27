@@ -29,6 +29,10 @@
 	bool operator!() const MOMO_NOEXCEPT \
 	{ \
 		return *this == ConstIterator(); \
+	} \
+	explicit operator bool() const MOMO_NOEXCEPT \
+	{ \
+		return !!*this; \
 	}
 
 #define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
