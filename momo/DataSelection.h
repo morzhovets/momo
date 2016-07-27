@@ -77,14 +77,59 @@ namespace internal
 			mRaws.Swap(selection.mRaws);
 		}
 
+		MOMO_FRIEND_SWAP(DataConstSelection)
+
+		const ColumnList& GetColumnList() const noexcept
+		{
+			return *mColumnList;
+		}
+
+		const MemManager& GetMemManager() const noexcept
+		{
+			return mRaws.GetMemManager();
+		}
+
+		MemManager& GetMemManager() noexcept
+		{
+			return mRaws.GetMemManager();
+		}
+
 		size_t GetCount() const noexcept
 		{
 			return mRaws.GetCount();
 		}
 
+		bool IsEmpty() const noexcept
+		{
+			return mRaws.IsEmpty();
+		}
+
+		void Clear() noexcept
+		{
+			mRaws.Clear();
+		}
+
 		const ConstRowRef operator[](size_t index) const
 		{
 			return ConstRowRef(mRaws[index], mColumnList);
+		}
+
+		DataConstSelection& Reverse() noexcept
+		{
+			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
+			return *this;
+		}
+
+		template<typename Comparer>
+		DataConstSelection& Sort(const Comparer& comparer)
+		{
+			auto rawComparer = [this, &comparer] (const Raw* raw1, const Raw* raw2)
+			{
+				return comparer(ConstRowRef(mColumnList, raw1),
+					ConstRowRef(mColumnList, raw2));
+			};
+			std::sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+			return *this;
 		}
 
 	private:

@@ -25,6 +25,8 @@ namespace experimental
 
 struct DataTraits
 {
+	typedef MemPoolParamsVar<> RawMemPoolParams;
+
 	template<typename Type>
 	static size_t GetHashCode(const Type& item)
 	{
@@ -65,7 +67,7 @@ private:
 	typedef Array<Raw*, MemManagerPtr> Raws;
 	typedef typename ConstSelection::Raws SelectionRaws;
 
-	typedef momo::MemPool<MemPoolParamsVar<>, MemManagerPtr> MemPool;
+	typedef momo::MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> MemPool;
 
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;
@@ -205,6 +207,50 @@ public:
 		mIndexes.Swap(table.mIndexes);
 	}
 
+	MOMO_FRIEND_SWAP(DataTable)
+
+	const ColumnList& GetColumnList() const noexcept
+	{
+		return mCrew.GetColumnList();
+	}
+
+	const MemManager& GetMemManager() const noexcept
+	{
+		return mCrew.GetMemManager();
+	}
+
+	MemManager& GetMemManager() noexcept
+	{
+		return mCrew.GetMemManager();
+	}
+
+	size_t GetCount() const noexcept
+	{
+		return mRaws.GetCount();
+	}
+
+	bool IsEmpty() const noexcept
+	{
+		return mRaws.IsEmpty();
+	}
+
+	void Clear() noexcept
+	{
+		_FreeRaws();
+		mRaws.Clear();
+		mIndexes.Clear();
+	}
+
+	const ConstRowRef operator[](size_t index) const
+	{
+		return ConstRowRef(&GetColumnList(), mRaws[index]);
+	}
+
+	const RowRef operator[](size_t index)
+	{
+		return RowRef(&GetColumnList(), mRaws[index], mIndexes.GetOffsetMarks());
+	}
+
 	template<typename Type, typename... Args>
 	Row NewRow(const Column<Type>& column, const Type& item, Args&&... args)
 	{
@@ -240,63 +286,16 @@ public:
 		return RowRef(&GetColumnList(), raw, mIndexes.GetOffsetMarks());
 	}
 
-	template<typename Type, typename... Args>
-	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
+	template<typename... Types>
+	bool HasUniqueHashIndex(const Column<Types>&... columns)
 	{
-		return Select(EmptyFilter(), column, item, args...);
+		return mIndexes.HasUniqueHash(columns...);
 	}
 
-	template<typename Filter, typename Type, typename... Args>
-	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	template<typename... Types>
+	bool HasMultiHashIndex(const Column<Types>&... columns)
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		size_t offsets[columnCount];
-		_GetOffsets(offsets, column, item, args...);
-		size_t sortedOffsets[columnCount];
-		Indexes::GetSortedOffsets(offsets, sortedOffsets);
-		const auto* uniqueHash = mIndexes.FindUniqueHash(sortedOffsets);
-		if (uniqueHash != nullptr)
-			return _Select(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
-		const auto* multiHash = mIndexes.FindMultiHash(sortedOffsets);
-		if (multiHash != nullptr)
-			return _Select(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
-		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowRef rowRef)
-			{ return _IsSatisfied(rowRef, offsets, column, item, args...) && filter(rowRef); };
-		return Select(newFilter);
-	}
-
-	ConstSelection Select() const
-	{
-		return Select(EmptyFilter());
-	}
-
-	template<typename Filter>
-	ConstSelection Select(const Filter& filter) const
-	{
-		return _MakeSelection(mRaws.GetBegin(), mRaws.GetEnd(), filter);
-	}
-
-	void Clear() noexcept
-	{
-		_FreeRaws();
-		mRaws.Clear();
-		mIndexes.Clear();
-	}
-
-	size_t GetCount() const noexcept
-	{
-		return mRaws.GetCount();
-	}
-
-	const ConstRowRef operator[](size_t index) const
-	{
-		return ConstRowRef(&GetColumnList(), mRaws[index]);
-	}
-
-	const RowRef operator[](size_t index)
-	{
-		return RowRef(&GetColumnList(), mRaws[index], mIndexes.GetOffsetMarks());
+		return mIndexes.HasMultiHash(columns...);
 	}
 
 	template<typename... Types>
@@ -311,20 +310,68 @@ public:
 		return mIndexes.AddMultiHash(mRaws, columns...);
 	}
 
-	const ColumnList& GetColumnList() const noexcept
+	template<typename... Types>
+	bool RemoveUniqueHashIndex(const Column<Types>&... columns)
 	{
-		return mCrew.GetColumnList();
+		return mIndexes.RemoveUniqueHash(columns...);
 	}
 
-	const MemManager& GetMemManager() const noexcept
+	template<typename... Types>
+	bool RemoveMultiHashIndex(const Column<Types>&... columns)
 	{
-		return mCrew.GetMemManager();
+		return mIndexes.RemoveMultiHash(columns...);
 	}
 
-	MemManager& GetMemManager() noexcept
+	template<typename Type, typename... Args>
+	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
 	{
-		return mCrew.GetMemManager();
+		return Select(EmptyFilter(), column, item, args...);
 	}
+
+	template<typename Filter, typename Type, typename... Args>
+	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		return _Select<ConstSelection>(filter, column, item, args...);
+	}
+
+	ConstSelection Select() const
+	{
+		return Select(EmptyFilter());
+	}
+
+	template<typename Filter>
+	ConstSelection Select(const Filter& filter) const
+	{
+		return _MakeSelection<ConstSelection>(mRaws, filter);
+	}
+
+	template<typename Type, typename... Args>
+	size_t SelectCount(const Column<Type>& column, const Type& item, const Args&... args) const
+	{
+		return SelectCount(EmptyFilter(), column, item, args...);
+	}
+
+	template<typename Filter, typename Type, typename... Args>
+	size_t SelectCount(const Filter& filter, const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		return _Select<size_t>(filter, column, item, args...);
+	}
+
+	size_t SelectCount() const
+	{
+		return SelectCount(EmptyFilter());
+	}
+
+	template<typename Filter>
+	size_t SelectCount(const Filter& filter) const
+	{
+		return _MakeSelection<size_t>(mRaws, filter);
+	}
+
+	//FindUnique
+	//FindMulti
 
 private:
 	size_t _GetRawSize() const noexcept
@@ -370,6 +417,26 @@ private:
 		}
 	}
 
+	template<typename Result, typename Filter, typename Type, typename... Args>
+	Result _Select(const Filter& filter, const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		size_t offsets[columnCount];
+		_GetOffsets(offsets, column, item, args...);
+		size_t sortedOffsets[columnCount];
+		Indexes::GetSortedOffsets(offsets, sortedOffsets);
+		const auto* uniqueHash = mIndexes.FindFitUniqueHash(sortedOffsets);
+		if (uniqueHash != nullptr)
+			return _SelectRec<Result>(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
+		const auto* multiHash = mIndexes.FindFitMultiHash(sortedOffsets);
+		if (multiHash != nullptr)
+			return _SelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
+		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowRef rowRef)
+			{ return _IsSatisfied(rowRef, offsets, column, item, args...) && filter(rowRef); };
+		return _MakeSelection<Result>(mRaws, newFilter);
+	}
+
 	template<typename Type, typename... Args>
 	void _GetOffsets(size_t* offsets, const Column<Type>& column, const Type& /*item*/,
 		const Args&... args) const
@@ -395,8 +462,8 @@ private:
 		return true;
 	}
 
-	template<typename Index, typename Filter, typename... Types, typename Type, typename... Args>
-	ConstSelection _Select(const Index& index, const Filter& filter, const OffsetItemTuple<Types...>& key,
+	template<typename Result, typename Index, typename Filter, typename... Types, typename Type, typename... Args>
+	Result _SelectRec(const Index& index, const Filter& filter, const OffsetItemTuple<Types...>& key,
 		const Column<Type>& column, const Type& item, const Args&... args) const
 	{
 		size_t offset = GetColumnList().GetOffset(column);
@@ -404,7 +471,7 @@ private:
 		{
 			OffsetItemTuple<Types..., Type> newKey = std::tuple_cat(key,
 				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return _Select(index, filter, newKey, args...);
+			return _SelectRec<Result>(index, filter, newKey, args...);
 		}
 		else
 		{
@@ -413,38 +480,58 @@ private:
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& filter(rowRef);
 			};
-			return _Select(index, newFilter, key, args...);
+			return _SelectRec<Result>(index, newFilter, key, args...);
 		}
 	}
 
-	template<typename Index, typename Filter, typename... Types>
-	ConstSelection _Select(const Index& index, const Filter& filter,
+	template<typename Result, typename Index, typename Filter, typename... Types>
+	Result _SelectRec(const Index& index, const Filter& filter,
 		const OffsetItemTuple<Types...>& key) const
 	{
-		auto raws = mIndexes.Find(index, key);
-		return _MakeSelection(raws.GetBegin(), raws.GetEnd(), filter);
+		return _MakeSelection<Result>(mIndexes.FindRaws(index, key), filter);
 	}
 
-	template<typename RawIterator, typename Filter>
-	ConstSelection _MakeSelection(RawIterator rawBegin, RawIterator rawEnd, const Filter& filter) const
+	template<typename Result, typename Raws, typename Filter>
+	Result _MakeSelection(const Raws& raws, const Filter& filter) const
 	{
-		MemManager memManager = GetMemManager();
-		SelectionRaws raws(std::move(memManager));
-		for (RawIterator iter = rawBegin; iter != rawEnd; ++iter)
-		{
-			if (filter(ConstRowRef(&GetColumnList(), *iter)))
-				raws.AddBack(*iter);
-		}
-		return ConstSelection(&GetColumnList(), std::move(raws));
+		return _MakeSelection(raws, filter, static_cast<const Result*>(nullptr));
 	}
 
-	template<typename RawIterator>
-	ConstSelection _MakeSelection(RawIterator rawBegin, RawIterator rawEnd,
-		const EmptyFilter& /*filter*/) const
+	template<typename Raws, typename Filter>
+	ConstSelection _MakeSelection(const Raws& raws, const Filter& filter, const ConstSelection*) const
+	{
+		const ColumnList* columnList = &GetColumnList();
+		MemManager memManager = GetMemManager();
+		SelectionRaws selRaws(std::move(memManager));
+		for (Raw* raw : raws)
+		{
+			if (filter(ConstRowRef(columnList, raw)))
+				selRaws.AddBack(raw);
+		}
+		return ConstSelection(columnList, std::move(selRaws));
+	}
+
+	template<typename Raws>
+	ConstSelection _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/,
+		const ConstSelection*) const
 	{
 		MemManager memManager = GetMemManager();
 		return ConstSelection(&GetColumnList(),
-			SelectionRaws(rawBegin, rawEnd, std::move(memManager)));
+			SelectionRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager)));
+	}
+
+	template<typename Raws, typename Filter>
+	size_t _MakeSelection(const Raws& raws, const Filter& filter, const size_t*) const
+	{
+		const ColumnList* columnList = &GetColumnList();
+		return std::count_if(raws.GetBegin(), raws.GetEnd(),
+			[&filter, columnList] (Raw* raw) { return filter(ConstRowRef(columnList, raw)); });
+	}
+
+	template<typename Raws>
+	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, const size_t*) const noexcept
+	{
+		return raws.GetEnd() - raws.GetBegin();
 	}
 
 private:

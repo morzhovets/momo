@@ -79,6 +79,13 @@ namespace internal
 			std::swap(mFreeRaws, row.mFreeRaws);
 		}
 
+		MOMO_FRIEND_SWAP(DataRow)
+
+		const ColumnList& GetColumnList() const noexcept
+		{
+			return *mColumnList;
+		}
+
 		template<typename Type>
 		const Type& GetByOffset(size_t offset) const
 		{
@@ -124,11 +131,6 @@ namespace internal
 
 		void Fill() noexcept
 		{
-		}
-
-		const ColumnList& GetColumnList() const noexcept
-		{
-			return *mColumnList;
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -249,6 +251,11 @@ namespace internal
 		{
 		}
 
+		const ColumnList& GetColumnList() const noexcept
+		{
+			return *mColumnList;
+		}
+
 		template<typename Type>
 		ItemRef<Type> GetByOffset(size_t offset) const
 		{
@@ -266,11 +273,6 @@ namespace internal
 		ItemRef<Type> operator[](const Column<Type>& column) const
 		{
 			return GetByOffset<Type>(mColumnList->template GetOffset<Type>(column));
-		}
-
-		const ColumnList& GetColumnList() const noexcept
-		{
-			return *mColumnList;
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -311,9 +313,14 @@ namespace internal
 		{
 		}
 
-		DataConstRowRef(const DataRow<ColumnList>& row) noexcept
-			: DataConstRowRef(&row.GetColumnList(), row.GetRaw())
+		//DataConstRowRef(const DataRow<ColumnList>& row) noexcept
+		//	: DataConstRowRef(&row.GetColumnList(), row.GetRaw())
+		//{
+		//}
+
+		const ColumnList& GetColumnList() const noexcept
 		{
+			return *mColumnList;
 		}
 
 		template<typename Type>
@@ -332,11 +339,6 @@ namespace internal
 		const Type& operator[](const Column<Type>& column) const
 		{
 			return mColumnList->GetByColumn(mRaw, column);
-		}
-
-		const ColumnList& GetColumnList() const noexcept
-		{
-			return *mColumnList;
 		}
 
 		const Raw* GetRaw() const noexcept
