@@ -498,16 +498,15 @@ private:
 		{
 		}
 
-		ValueReference(ValueReference&& valueRef)
+		ValueReference(ValueReference&& valueRef) MOMO_NOEXCEPT
 			: mHashMap(valueRef.mHashMap),
 			mKey(std::forward<RKey>(valueRef.mKey)),
 			mIter(valueRef.mIter)
 		{
 		}
 
-		ValueReference& operator=(ValueReference&& valueRef)
+		~ValueReference() MOMO_NOEXCEPT
 		{
-			return _Assign(std::move(valueRef.Get()));
 		}
 
 		ValueReference& operator=(const ValueReference& valueRef)
