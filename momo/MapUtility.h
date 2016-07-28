@@ -424,14 +424,14 @@ namespace internal
 		class ValueReference
 		{
 		public:
-			ValueReference(Map& map, Iterator iter, PKey pkey)
+			ValueReference(Map& map, Iterator iter, PKey pkey) MOMO_NOEXCEPT
 				: mMap(map),
 				mIter(iter),
 				mKeyPtr(pkey)
 			{
 			}
 
-			ValueReference(ValueReference&& valueRef)
+			ValueReference(ValueReference&& valueRef) MOMO_NOEXCEPT
 				: mMap(valueRef.mMap),
 				mIter(valueRef.mIter),
 				mKeyPtr(valueRef.mKeyPtr)
@@ -440,9 +440,8 @@ namespace internal
 
 			ValueReference(const ValueReference&) = delete;
 
-			ValueReference& operator=(ValueReference&& valueRef)
+			~ValueReference() MOMO_NOEXCEPT
 			{
-				return _Assign(std::move(valueRef.Get()));
 			}
 
 			ValueReference& operator=(const ValueReference& valueRef)
