@@ -122,17 +122,6 @@ namespace internal
 			return mColumnList->GetByColumn(mRaw, column);
 		}
 
-		template<typename Type, typename... Args>
-		void Fill(const Column<Type>& column, const Type& item, Args&&... args)
-		{
-			GetByColumn(column) = item;
-			Fill(std::forward<Args>(args)...);
-		}
-
-		void Fill() noexcept
-		{
-		}
-
 		const Raw* GetRaw() const noexcept
 		{
 			return mRaw;
@@ -180,15 +169,17 @@ namespace internal
 		class ItemRef
 		{
 		public:
-			ItemRef(Type& item, bool readOnly) noexcept
-				: mItem(item),
-				mReadOnly(readOnly)
+			ItemRef(const ColumnList* columnList, Raw* raw, size_t offset) noexcept
+				: mColumnList(columnList),
+				mRaw(raw),
+				mOffset(offset)
 			{
 			}
 
 			ItemRef(ItemRef&& itemRef) noexcept
-				: mItem(itemRef.mItem),
-				mReadOnly(itemRef.mReadOnly)
+				: mColumnList(itemRef.mColumnList),
+				mRaw(itemRef.mRaw),
+				mOffset(itemRef.mOffset)
 			{
 			}
 
@@ -198,56 +189,47 @@ namespace internal
 			{
 			}
 
-			ItemRef& operator=(ItemRef&& itemRef)
-			{
-				return _Assign(std::move(itemRef.mItem));
-			}
-
 			ItemRef& operator=(const ItemRef& itemRef)
 			{
-				return _Assign(static_cast<const Type&>(itemRef.mItem));
+				return _Assign(itemRef.Get());
 			}
 
-			ItemRef& operator=(Type&& item)
+			template<typename RType>
+			ItemRef& operator=(RType&& item)
 			{
-				return _Assign(std::move(item));
+				return _Assign(std::forward<RType>(item));
 			}
 
-			ItemRef& operator=(const Type& item)
+			operator const Type&() const
 			{
-				return _Assign(item);
+				return Get();
 			}
 
-			operator const Type&() const noexcept
+			const Type& Get() const
 			{
-				return mItem;
-			}
-
-			const Type& Get() const noexcept
-			{
-				return mItem;
+				return mColumnList->template GetByOffset<Type>(mRaw, mOffset);
 			}
 
 		private:
-			template<typename Arg>
-			ItemRef& _Assign(Arg&& arg)
+			template<typename RType>
+			ItemRef& _Assign(RType&& item)
 			{
-				if (mReadOnly)
+				if (!mColumnList->IsMutable(mOffset))
 					throw std::runtime_error("Item is read only");
-				mItem = std::forward<Arg>(arg);
+				mColumnList->Assign(mRaw, mOffset, std::forward<RType>(item));
 				return *this;
 			}
 
 		private:
-			Type& mItem;
-			bool mReadOnly;
+			const ColumnList* mColumnList;
+			Raw* mRaw;
+			size_t mOffset;
 		};
 
 	public:
-		DataRowRef(const ColumnList* columnList, Raw* raw, const bool* offsetMarks) noexcept
+		DataRowRef(const ColumnList* columnList, Raw* raw) noexcept
 			: mColumnList(columnList),
-			mRaw(raw),
-			mOffsetMarks(offsetMarks)
+			mRaw(raw)
 		{
 		}
 
@@ -259,8 +241,7 @@ namespace internal
 		template<typename Type>
 		ItemRef<Type> GetByOffset(size_t offset) const
 		{
-			return ItemRef<Type>(mColumnList->template GetByOffset<Type>(mRaw, offset),
-				mOffsetMarks[offset]);
+			return ItemRef<Type>(mColumnList, mRaw, offset);
 		}
 
 		template<typename Type>
@@ -288,7 +269,6 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		Raw* mRaw;
-		const bool* mOffsetMarks;
 	};
 
 	template<typename TColumnList>

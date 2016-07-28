@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	constexpr size_t GetTotalSize() const noexcept
+	constexpr static size_t GetTotalSize() noexcept
 	{
 		return sizeof(Struct);
 	}
@@ -51,6 +51,11 @@ public:
 	void DestroyRaw(Raw* raw) const noexcept
 	{
 		raw->~Raw();
+	}
+
+	constexpr static bool IsMutable(size_t /*offset*/) noexcept
+	{
+		return false;
 	}
 
 	template<typename Type>
@@ -86,6 +91,12 @@ public:
 	const Type& GetByColumn(const Raw* raw, const Column<Type>& column) const noexcept
 	{
 		return raw->*column;
+	}
+
+	template<typename Type, typename RType>
+	void Assign(Raw* raw, const Column<Type>& column, RType&& item) const
+	{
+		GetByColumn(raw, column) = std::forward<RType>(item);
 	}
 };
 
@@ -127,6 +138,12 @@ struct DataColumnTraits
 	static void Destroy(/*const Column<Type>& column,*/ Type* pitem) noexcept
 	{
 		pitem->~Type();
+	}
+
+	template<typename RType, typename Type>
+	static void Assign(RType&& srcItem, Type& dstItem)
+	{
+		dstItem = std::forward<RType>(srcItem);
 	}
 };
 
@@ -258,6 +275,11 @@ public:
 		mDestroyFunc(raw);
 	}
 
+	constexpr static bool IsMutable(size_t /*offset*/) noexcept
+	{
+		return false;
+	}
+
 	template<typename Type>
 	size_t GetOffset(const Column<Type>& column) const noexcept
 	{
@@ -299,6 +321,12 @@ public:
 		return *reinterpret_cast<const Type*>(raw + GetOffset(column));
 	}
 
+	template<typename Type, typename RType>
+	void Assign(Raw* raw, const Column<Type>& column, RType&& item) const
+	{
+		ColumnTraits::Assign(std::forward<RType>(item), GetByColumn(raw, column));
+	}
+
 private:
 	template<size_t edgeCount, typename Type, typename... Types>
 	void _MakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment, const Column<Type>& column,
@@ -326,7 +354,7 @@ private:
 		size_t code = ColumnTraits::GetCode(column);
 		size_t vertex1 = code & (vertexCount - 1);
 		size_t vertex2 = (code >> logVertexCount) & (vertexCount - 1);
-		if (vertex1 == vertex2)
+		if (vertex1 == vertex2)	//?
 			++vertex2;
 		return std::make_pair(vertex1, vertex2);
 	}

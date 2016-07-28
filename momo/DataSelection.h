@@ -33,7 +33,14 @@ namespace internal
 
 		typedef DataConstRowRef<ColumnList> ConstRowRef;
 
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>, ArraySettings<2>> Raws;
+	private:
+		struct RawsSettings : public ArraySettings<2>
+		{
+			static const CheckMode checkMode = CheckMode::assertion;
+		};
+
+	public:
+		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>, RawsSettings> Raws;
 
 	public:
 		DataConstSelection(const ColumnList* columnList, Raws&& raws) noexcept

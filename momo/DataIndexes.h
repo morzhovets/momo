@@ -35,6 +35,19 @@ namespace internal
 		using OffsetItemTuple = std::tuple<std::pair<size_t, const Types&>...>;
 
 	private:
+		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+		template<size_t internalCapacity>
+		struct ArraySettings : public momo::ArraySettings<internalCapacity>
+		{
+			static const CheckMode checkMode = CheckMode::assertion;
+		};
+		template<typename Item, size_t internalCapacity = 0>
+		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item>,
+			ArraySettings<internalCapacity>>;
+
+		typedef Array<size_t> Offsets;
+
 		typedef std::function<size_t(const Raw*, size_t*)> HashFunc;
 		typedef std::function<bool(const Raw*, const Raw*)> EqualFunc;
 
@@ -116,13 +129,10 @@ namespace internal
 			EqualFunc mEqualFunc;
 		};
 
-		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
-
-		typedef Array<size_t, MemManagerPtr> Offsets;
-
 		class UniqueHash
 		{
 		private:
+			//? HashSetSettings
 			typedef momo::HashSet<HashRawKey, HashTraits, MemManagerPtr> HashSet;
 
 		public:
@@ -221,15 +231,14 @@ namespace internal
 
 		//typedef typename UniqueHash::RawBounds UniqueHashBounds;
 
-		typedef Array<UniqueHash, MemManagerPtr> UniqueHashes;
+		typedef Array<UniqueHash> UniqueHashes;
 
-		typedef typename UniqueHash::Iterator UniqueHashIterator;
-		typedef Array<UniqueHashIterator, MemManagerPtr,
-			ArrayItemTraits<UniqueHashIterator>, ArraySettings<8>> UniqueHashIterators;
+		typedef Array<typename UniqueHash::Iterator, 8> UniqueHashIterators;
 
 		class MultiHash
 		{
 		private:
+			//? HashMultiMapSettings, HashMapSettings
 			typedef momo::HashMultiMap<HashRawKey, Raw*, HashTraits, MemManagerPtr> HashMultiMap;
 			typedef momo::HashMap<Raw*, size_t, momo::HashTraits<Raw*>, MemManagerPtr> HashMap;
 
@@ -323,14 +332,12 @@ namespace internal
 
 		//typedef typename MultiHash::RawBounds MultiHashBounds;
 
-		typedef Array<MultiHash, MemManagerPtr> MultiHashes;
+		typedef Array<MultiHash> MultiHashes;
 
-		typedef typename MultiHash::Iterator MultiHashIterator;
-		typedef Array<MultiHashIterator, MemManagerPtr,
-			ArrayItemTraits<MultiHashIterator>, ArraySettings<8>> MultiHashIterators;
+		typedef Array<typename MultiHash::Iterator, 8> MultiHashIterators;
 
-		typedef Array<bool, MemManagerPtr> OffsetMarks;
-		typedef Array<size_t, MemManagerPtr> OffsetHashCodes;
+		typedef Array<bool> OffsetMarks;
+		typedef Array<size_t> OffsetHashCodes;
 
 	public:
 		DataIndexes(const ColumnList* columnList, MemManager& memManager)
@@ -502,11 +509,6 @@ namespace internal
 			return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
 		}
 
-		const bool* GetOffsetMarks() const noexcept
-		{
-			return mOffsetMarks.GetItems();
-		}
-
 	private:
 		MemManagerPtr _GetMemManagerPtr() const noexcept
 		{
@@ -543,6 +545,11 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(Types);
 			size_t offsets[columnCount] = { mColumnList->GetOffset(columns)... };
+			for (size_t offset : offsets)
+			{
+				if (mColumnList->IsMutable(offset))
+					throw std::runtime_error("Cannot add index on mutable column");
+			}
 			Offsets sortedOffsets(columnCount, _GetMemManagerPtr());
 			if (_FindHash(hashes, offsets, sortedOffsets.GetItems(), columns...) != nullptr)
 				return false;

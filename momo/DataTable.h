@@ -64,10 +64,16 @@ private:
 
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef Array<Raw*, MemManagerPtr> Raws;
-	typedef typename ConstSelection::Raws SelectionRaws;
+	struct RawsSettings : public ArraySettings<>
+	{
+		static const CheckMode checkMode = CheckMode::assertion;
+	};
+	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*>, RawsSettings> Raws;
 
-	typedef momo::MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> MemPool;
+	//? MemPoolSettings
+	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
+
+	typedef typename ConstSelection::Raws SelectionRaws;
 
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;
@@ -171,7 +177,7 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(columnList, std::move(memManager)),
 		mRaws(MemManagerPtr(GetMemManager())),
-		mRawMemPool(typename MemPool::Params(_GetRawSize()), MemManagerPtr(GetMemManager())),
+		mRawMemPool(typename RawMemPool::Params(_GetRawSize()), MemManagerPtr(GetMemManager())),
 		mIndexes(&GetColumnList(), GetMemManager())
 	{
 	}
@@ -248,14 +254,14 @@ public:
 
 	const RowRef operator[](size_t index)
 	{
-		return RowRef(&GetColumnList(), mRaws[index], mIndexes.GetOffsetMarks());
+		return RowRef(&GetColumnList(), mRaws[index]);
 	}
 
-	template<typename Type, typename... Args>
-	Row NewRow(const Column<Type>& column, const Type& item, Args&&... args)
+	template<typename Type, typename RType, typename... Args>
+	Row NewRow(const Column<Type>& column, RType&& item, Args&&... args)
 	{
 		Row row = NewRow();
-		row.Fill(column, item, std::forward<Args>(args)...);
+		_FillRaw(row.GetRaw(), column, std::forward<RType>(item), std::forward<Args>(args)...);
 		return row;
 	}
 
@@ -265,10 +271,10 @@ public:
 		return Row(&GetColumnList(), _CreateRaw(), &mCrew.GetFreeRaws());
 	}
 
-	template<typename Type, typename... Args>
-	RowRef AddRow(const Column<Type>& column, const Type& item, Args&&... args)
+	template<typename Type, typename RType, typename... Args>
+	RowRef AddRow(const Column<Type>& column, RType&& item, Args&&... args)
 	{
-		return AddRow(NewRow(column, item, std::forward<Args>(args)...));
+		return AddRow(NewRow(column, std::forward<RType>(item), std::forward<Args>(args)...));
 	}
 
 	RowRef AddRow()
@@ -283,7 +289,7 @@ public:
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
 		mRaws.AddBackNogrow(raw);
-		return RowRef(&GetColumnList(), raw, mIndexes.GetOffsetMarks());
+		return RowRef(&GetColumnList(), raw);
 	}
 
 	template<typename... Types>
@@ -417,6 +423,17 @@ private:
 		}
 	}
 
+	template<typename Type, typename RType, typename... Args>
+	void _FillRaw(Raw* raw, const Column<Type>& column, RType&& item, Args&&... args)
+	{
+		GetColumnList().Assign(raw, column, std::forward<RType>(item));
+		_FillRaw(raw, std::forward<Args>(args)...);
+	}
+
+	void _FillRaw(Raw* /*raw*/) noexcept
+	{
+	}
+
 	template<typename Result, typename Filter, typename Type, typename... Args>
 	Result _Select(const Filter& filter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
@@ -531,13 +548,13 @@ private:
 	template<typename Raws>
 	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, const size_t*) const noexcept
 	{
-		return raws.GetEnd() - raws.GetBegin();
+		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
 
 private:
 	Crew mCrew;
 	Raws mRaws;
-	MemPool mRawMemPool;
+	RawMemPool mRawMemPool;
 	Indexes mIndexes;
 };
 
