@@ -23,84 +23,6 @@ namespace experimental
 {
 
 template<typename TStruct>
-class DataColumnList
-{
-public:
-	typedef TStruct Struct;
-
-	template<typename Type>
-	using Column = Type Struct::*;
-
-	typedef Struct Raw;
-
-public:
-	DataColumnList() noexcept
-	{
-	}
-
-	constexpr static size_t GetTotalSize() noexcept
-	{
-		return sizeof(Struct);
-	}
-
-	void CreateRaw(Raw* raw) const
-	{
-		new(raw) Raw();
-	}
-
-	void DestroyRaw(Raw* raw) const noexcept
-	{
-		raw->~Raw();
-	}
-
-	constexpr static bool IsMutable(size_t /*offset*/) noexcept
-	{
-		return false;
-	}
-
-	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const noexcept
-	{
-		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
-		//return offsetof(Struct, *column);
-	}
-
-	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
-	{
-		MOMO_ASSERT(offset < GetTotalSize());
-		MOMO_ASSERT(offset % alignof(Type) == 0);
-		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
-	}
-
-	template<typename Type>
-	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
-	{
-		MOMO_ASSERT(offset < GetTotalSize());
-		MOMO_ASSERT(offset % alignof(Type) == 0);
-		return *reinterpret_cast<const Type*>(reinterpret_cast<const char*>(raw) + offset);
-	}
-
-	template<typename Type>
-	Type& GetByColumn(Raw* raw, const Column<Type>& column) const noexcept
-	{
-		return raw->*column;
-	}
-
-	template<typename Type>
-	const Type& GetByColumn(const Raw* raw, const Column<Type>& column) const noexcept
-	{
-		return raw->*column;
-	}
-
-	template<typename Type, typename RType>
-	void Assign(Raw* raw, const Column<Type>& column, RType&& item) const
-	{
-		GetByColumn(raw, column) = std::forward<RType>(item);
-	}
-};
-
-template<typename TStruct>
 struct DataColumnTraits
 {
 	typedef TStruct Struct;
@@ -117,13 +39,13 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	constexpr static size_t GetSize(/*const Column<Type>& column*/) noexcept
+	static constexpr size_t GetSize(/*const Column<Type>& column*/) noexcept
 	{
 		return sizeof(Type);
 	}
 
 	template<typename Type>
-	constexpr static size_t GetAlignment(/*const Column<Type>& column*/) noexcept
+	static constexpr size_t GetAlignment(/*const Column<Type>& column*/) noexcept
 	{
 		return alignof(Type);
 	}
@@ -149,7 +71,7 @@ struct DataColumnTraits
 
 template<typename TColumnTraits,
 	size_t tLogMaxColumnCount = 7>
-class DataColumnListVar
+class DataColumnList
 {
 public:
 	typedef TColumnTraits ColumnTraits;
@@ -241,7 +163,7 @@ private:
 
 public:
 	template<typename... Types>
-	explicit DataColumnListVar(const Column<Types>&... columns)
+	explicit DataColumnList(const Column<Types>&... columns)
 	{
 		static const size_t columnCount = sizeof...(columns);
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
@@ -260,6 +182,11 @@ public:
 		mDestroyFunc = [] (Raw* raw) { _Destroy<void, Types...>(raw, 0); };
 	}
 
+	static constexpr bool IsMutable(size_t /*offset*/) noexcept
+	{
+		return false;
+	}
+
 	size_t GetTotalSize() const noexcept
 	{
 		return mTotalSize;
@@ -273,11 +200,6 @@ public:
 	void DestroyRaw(Raw* raw) const noexcept
 	{
 		mDestroyFunc(raw);
-	}
-
-	constexpr static bool IsMutable(size_t /*offset*/) noexcept
-	{
-		return false;
 	}
 
 	template<typename Type>
@@ -322,9 +244,9 @@ public:
 	}
 
 	template<typename Type, typename RType>
-	void Assign(Raw* raw, const Column<Type>& column, RType&& item) const
+	void Assign(Raw* raw, size_t offset, RType&& item) const
 	{
-		ColumnTraits::Assign(std::forward<RType>(item), GetByColumn(raw, column));
+		ColumnTraits::Assign(std::forward<RType>(item), GetByOffset<Type>(raw, offset));
 	}
 
 private:
@@ -405,6 +327,110 @@ private:
 	size_t mAddends[vertexCount];
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
+};
+
+template<typename TStruct>
+class DataColumnListStatic
+{
+public:
+	typedef TStruct Struct;
+
+	template<typename Type>
+	using Column = Type Struct::*;
+
+	typedef Struct Raw;
+
+private:
+	static const size_t structSize = sizeof(Struct);
+
+public:
+	DataColumnListStatic() noexcept
+	{
+		std::fill(std::begin(mMutOffsets), std::end(mMutOffsets), (unsigned char)0);
+	}
+
+	template<typename... Types>
+	void SetMutable(const Column<Types>&... columns)
+	{
+		_SetMutable(columns...);
+	}
+
+	bool IsMutable(size_t offset) const noexcept
+	{
+		return (mMutOffsets[offset / 8] & (1 << (offset % 8))) != 0;
+	}
+
+	static constexpr size_t GetTotalSize() noexcept
+	{
+		return structSize;
+	}
+
+	void CreateRaw(Raw* raw) const
+	{
+		new(raw) Raw();
+	}
+
+	void DestroyRaw(Raw* raw) const noexcept
+	{
+		raw->~Raw();
+	}
+
+	template<typename Type>
+	size_t GetOffset(const Column<Type>& column) const noexcept
+	{
+		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
+		//return offsetof(Struct, *column);
+	}
+
+	template<typename Type>
+	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
+	{
+		MOMO_ASSERT(offset < GetTotalSize());
+		MOMO_ASSERT(offset % alignof(Type) == 0);
+		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
+	}
+
+	template<typename Type>
+	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
+	{
+		MOMO_ASSERT(offset < GetTotalSize());
+		MOMO_ASSERT(offset % alignof(Type) == 0);
+		return *reinterpret_cast<const Type*>(reinterpret_cast<const char*>(raw) + offset);
+	}
+
+	template<typename Type>
+	Type& GetByColumn(Raw* raw, const Column<Type>& column) const noexcept
+	{
+		return raw->*column;
+	}
+
+	template<typename Type>
+	const Type& GetByColumn(const Raw* raw, const Column<Type>& column) const noexcept
+	{
+		return raw->*column;
+	}
+
+	template<typename Type, typename RType>
+	void Assign(Raw* raw, size_t offset, RType&& item) const
+	{
+		GetByOffset<Type>(raw, offset) = std::forward<RType>(item);
+	}
+
+private:
+	template<typename Type, typename... Types>
+	void _SetMutable(const Column<Type>& column, const Column<Types>&... columns)
+	{
+		size_t offset = GetOffset(column);
+		mMutOffsets[offset / 8] |= (unsigned char)1 << (offset % 8);
+		_SetMutable(columns...);
+	}
+
+	void _SetMutable() noexcept
+	{
+	}
+
+private:
+	unsigned char mMutOffsets[structSize / 8 + 1];
 };
 
 } // namespace experimental

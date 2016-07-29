@@ -216,7 +216,7 @@ namespace internal
 			{
 				if (!mColumnList->IsMutable(mOffset))
 					throw std::runtime_error("Item is read only");
-				mColumnList->Assign(mRaw, mOffset, std::forward<RType>(item));
+				mColumnList->template Assign<Type>(mRaw, mOffset, std::forward<RType>(item));
 				return *this;
 			}
 

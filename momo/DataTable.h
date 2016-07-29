@@ -292,6 +292,23 @@ public:
 		return RowRef(&GetColumnList(), raw);
 	}
 
+	void RemoveRow(size_t rowNumber, bool keepOrder = true)
+	{
+		MOMO_ASSERT(rowNumber < GetCount());
+		Raw* raw = mRaws[rowNumber];
+		mIndexes.RemoveRaw(raw);
+		_FreeRaw(raw);
+		if (keepOrder)
+		{
+			mRaws.Remove(rowNumber, 1);
+		}
+		else
+		{
+			mRaws[rowNumber] = mRaws.GetBackItem();
+			mRaws.RemoveBack();
+		}
+	}
+
 	template<typename... Types>
 	bool HasUniqueHashIndex(const Column<Types>&... columns)
 	{
@@ -406,10 +423,13 @@ private:
 			return;
 		_FreeNewRaws();
 		for (Raw* raw : mRaws)
-		{
-			GetColumnList().DestroyRaw(raw);
-			mRawMemPool.Deallocate(raw);
-		}
+			_FreeRaw(raw);
+	}
+
+	void _FreeRaw(Raw* raw) noexcept
+	{
+		GetColumnList().DestroyRaw(raw);
+		mRawMemPool.Deallocate(raw);
 	}
 
 	void _FreeNewRaws() noexcept
@@ -426,7 +446,8 @@ private:
 	template<typename Type, typename RType, typename... Args>
 	void _FillRaw(Raw* raw, const Column<Type>& column, RType&& item, Args&&... args)
 	{
-		GetColumnList().Assign(raw, column, std::forward<RType>(item));
+		size_t offset = GetColumnList().GetOffset(column);
+		GetColumnList().template Assign<Type>(raw, offset, std::forward<RType>(item));
 		_FillRaw(raw, std::forward<Args>(args)...);
 	}
 

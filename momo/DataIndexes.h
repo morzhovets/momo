@@ -51,12 +51,6 @@ namespace internal
 		typedef std::function<size_t(const Raw*, size_t*)> HashFunc;
 		typedef std::function<bool(const Raw*, const Raw*)> EqualFunc;
 
-		struct HashRawKey
-		{
-			Raw* raw;
-			size_t hashCode;
-		};
-
 		template<typename... Types>
 		struct HashTupleKey
 		{
@@ -65,6 +59,7 @@ namespace internal
 			const ColumnList* columnList;
 		};
 
+		template<typename HashRawKey>
 		class HashTraits : public momo::HashTraits<HashRawKey>
 		{
 		public:
@@ -132,8 +127,14 @@ namespace internal
 		class UniqueHash
 		{
 		private:
+			struct HashRawKey
+			{
+				Raw* raw;
+				size_t hashCode;
+			};
+
 			//? HashSetSettings
-			typedef momo::HashSet<HashRawKey, HashTraits, MemManagerPtr> HashSet;
+			typedef momo::HashSet<HashRawKey, HashTraits<HashRawKey>, MemManagerPtr> HashSet;
 
 		public:
 			typedef typename HashSet::ConstIterator Iterator;
@@ -169,7 +170,8 @@ namespace internal
 			UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc) noexcept
 				: mSortedOffsets(std::move(sortedOffsets)),
 				mHashFunc(std::move(hashFunc)),
-				mHashSet(HashTraits(std::move(equalFunc)), MemManagerPtr(mSortedOffsets.GetMemManager()))
+				mHashSet(typename HashSet::HashTraits(std::move(equalFunc)),
+					MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
 
@@ -195,6 +197,14 @@ namespace internal
 			const Offsets& GetSortedOffsets() const noexcept
 			{
 				return mSortedOffsets;
+			}
+
+			Iterator Find(Raw* raw, size_t* hashCodes)
+			{
+				size_t hashCode = mHashFunc(raw, hashCodes);
+				Iterator iter = mHashSet.Find({ raw, hashCode });
+				MOMO_ASSERT(!!iter);
+				return iter;
 			}
 
 			template<typename... Types>
@@ -229,18 +239,23 @@ namespace internal
 			HashSet mHashSet;
 		};
 
-		//typedef typename UniqueHash::RawBounds UniqueHashBounds;
-
 		typedef Array<UniqueHash> UniqueHashes;
-
 		typedef Array<typename UniqueHash::Iterator, 8> UniqueHashIterators;
 
 		class MultiHash
 		{
 		private:
+			struct HashRawKey
+			{
+				mutable Raw* raw;
+				size_t hashCode;
+			};
+
 			//? HashMultiMapSettings, HashMapSettings
-			typedef momo::HashMultiMap<HashRawKey, Raw*, HashTraits, MemManagerPtr> HashMultiMap;
+			typedef momo::HashMultiMap<HashRawKey, Raw*, HashTraits<HashRawKey>, MemManagerPtr> HashMultiMap;
 			typedef momo::HashMap<Raw*, size_t, momo::HashTraits<Raw*>, MemManagerPtr> HashMap;
+
+			static const size_t rawFastCount = 8;
 
 		public:
 			typedef typename HashMultiMap::Iterator Iterator;
@@ -251,7 +266,8 @@ namespace internal
 			MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc) noexcept
 				: mSortedOffsets(std::move(sortedOffsets)),
 				mHashFunc(std::move(hashFunc)),
-				mHashMultiMap(HashTraits(std::move(equalFunc)), MemManagerPtr(mSortedOffsets.GetMemManager())),
+				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(equalFunc)),
+					MemManagerPtr(mSortedOffsets.GetMemManager())),
 				mHashMap(typename HashMap::HashTraits(), MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
@@ -287,6 +303,22 @@ namespace internal
 				return mHashMultiMap.GetKeyCount();
 			}
 
+			Iterator Find(Raw* raw, size_t* hashCodes)
+			{
+				size_t hashCode = mHashFunc(raw, hashCodes);
+				auto keyIter = mHashMultiMap.Find({ raw, hashCode });
+				MOMO_ASSERT(!!keyIter);
+				auto raws = keyIter->values;
+				if (raws.GetCount() > rawFastCount)
+				{
+					auto mapIter = mHashMap.Find(raw);
+					if (!!mapIter)
+						return mHashMultiMap.MakeIterator(keyIter, mapIter->value);
+				}
+				size_t rawNum = std::find(raws.GetBegin(), raws.GetEnd(), raw) - raws.GetBegin();
+				return mHashMultiMap.MakeIterator(keyIter, rawNum);
+			}
+
 			template<typename... Types>
 			RawBounds Find(const HashTupleKey<Types...>& hashTupleKey) const
 			{
@@ -304,23 +336,36 @@ namespace internal
 			{
 				size_t hashCode = mHashFunc(raw, hashCodes);
 				Iterator iter = mHashMultiMap.Add({ raw, hashCode }, raw);
-				try
+				auto raws = iter.GetKeyIterator()->values;
+				if (raws.GetCount() > rawFastCount)
 				{
-					mHashMap.Insert(raw,
-						iter.GetValuePtr() - iter.GetKeyIterator()->values.GetBegin());
-				}
-				catch (...)
-				{
-					mHashMultiMap.Remove(iter);
-					throw;
+					try
+					{
+						mHashMap.Insert(raw, iter.GetValuePtr() - raws.GetBegin());
+					}
+					catch (...)
+					{
+						mHashMultiMap.Remove(iter);
+						throw;
+					}
 				}
 				return iter;
 			}
 
 			void Remove(Iterator iter) noexcept
 			{
-				mHashMap.Remove(iter->value);
+				Raw* raw = iter->value;
+				mHashMap.Remove(raw);
+				auto keyIter = iter.GetKeyIterator();
 				mHashMultiMap.Remove(iter);
+				if (keyIter->key.raw == raw)
+				{
+					auto raws = keyIter->values;
+					if (raws.GetCount() > 0)
+						keyIter->key.raw = raws[0];
+					else
+						mHashMultiMap.RemoveKey(keyIter);
+				}
 			}
 
 		private:
@@ -330,13 +375,9 @@ namespace internal
 			HashMap mHashMap;
 		};
 
-		//typedef typename MultiHash::RawBounds MultiHashBounds;
-
 		typedef Array<MultiHash> MultiHashes;
-
 		typedef Array<typename MultiHash::Iterator, 8> MultiHashIterators;
 
-		typedef Array<bool> OffsetMarks;
 		typedef Array<size_t> OffsetHashCodes;
 
 	public:
@@ -344,9 +385,7 @@ namespace internal
 			: mColumnList(columnList),
 			mUniqueHashes(MemManagerPtr(memManager)),
 			mMultiHashes(MemManagerPtr(memManager)),
-			mOffsetMarks(columnList->GetTotalSize(), true, MemManagerPtr(memManager)),
-			mOffsetHashCodes(OffsetHashCodes::CreateCap(
-				columnList->GetTotalSize(), MemManagerPtr(memManager)))
+			mOffsetHashCodes(columnList->GetTotalSize(), (size_t)0, MemManagerPtr(memManager))
 		{
 		}
 
@@ -354,7 +393,6 @@ namespace internal
 			: mColumnList(indexes.mColumnList),
 			mUniqueHashes(std::move(indexes.mUniqueHashes)),
 			mMultiHashes(std::move(indexes.mMultiHashes)),
-			mOffsetMarks(std::move(indexes.mOffsetMarks)),
 			mOffsetHashCodes(std::move(indexes.mOffsetHashCodes))
 		{
 		}
@@ -378,7 +416,6 @@ namespace internal
 			std::swap(mColumnList, indexes.mColumnList);
 			mUniqueHashes.Swap(indexes.mUniqueHashes);
 			mMultiHashes.Swap(indexes.mMultiHashes);
-			mOffsetMarks.Swap(indexes.mOffsetMarks);
 			mOffsetHashCodes.Swap(indexes.mOffsetHashCodes);
 		}
 
@@ -445,9 +482,9 @@ namespace internal
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
-					mUniqueHashes[uniqueHashIndex].Add(raw, hashCodes);
+					uniqueHashIters[uniqueHashIndex] = mUniqueHashes[uniqueHashIndex].Add(raw, hashCodes);
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
-					mMultiHashes[multiHashIndex].Add(raw, hashCodes);
+					multiHashIters[multiHashIndex] = mMultiHashes[multiHashIndex].Add(raw, hashCodes);
 			}
 			catch (...)
 			{
@@ -457,6 +494,23 @@ namespace internal
 					mMultiHashes[i].Remove(multiHashIters[i]);
 				throw;
 			}
+		}
+
+		void RemoveRaw(Raw* raw)
+		{
+			size_t uniqueHashCount = mUniqueHashes.GetCount();
+			UniqueHashIterators uniqueHashIters(uniqueHashCount, _GetMemManagerPtr());
+			size_t multiHashCount = mMultiHashes.GetCount();
+			MultiHashIterators multiHashIters(multiHashCount, _GetMemManagerPtr());
+			size_t* hashCodes = nullptr;
+			for (size_t i = 0; i < uniqueHashCount; ++i)
+				uniqueHashIters[i] = mUniqueHashes[i].Find(raw, hashCodes);
+			for (size_t i = 0; i < multiHashCount; ++i)
+				multiHashIters[i] = mMultiHashes[i].Find(raw, hashCodes);
+			for (size_t i = 0; i < uniqueHashCount; ++i)
+				mUniqueHashes[i].Remove(uniqueHashIters[i]);
+			for (size_t i = 0; i < multiHashCount; ++i)
+				mMultiHashes[i].Remove(multiHashIters[i]);
 		}
 
 		template<size_t columnCount>
@@ -512,7 +566,7 @@ namespace internal
 	private:
 		MemManagerPtr _GetMemManagerPtr() const noexcept
 		{
-			return mOffsetMarks.GetMemManager();
+			return mOffsetHashCodes.GetMemManager();
 		}
 
 		template<typename Hashes, typename... Types>
@@ -656,7 +710,6 @@ namespace internal
 		const ColumnList* mColumnList;
 		UniqueHashes mUniqueHashes;
 		MultiHashes mMultiHashes;
-		OffsetMarks mOffsetMarks;
 		OffsetHashCodes mOffsetHashCodes;
 	};
 }
