@@ -33,24 +33,31 @@ public:
 private:
 	class Timer
 	{
+	private:
+#if defined(_MSC_VER) && _MSC_VER < 1900
+		typedef std::chrono::system_clock Clock;
+#else
+		typedef std::chrono::steady_clock Clock;
+#endif
+
 	public:
 		Timer(const std::string& title, std::ostream& stream)
 			: mStream(stream)
 		{
 			mStream << title << std::flush;
-			mStartTime = std::chrono::steady_clock::now();
+			mStartTime = Clock::now();
 		}
 
 		~Timer()
 		{
-			auto diff = std::chrono::steady_clock::now() - mStartTime;
+			auto diff = Clock::now() - mStartTime;
 			auto count = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
 			mStream << count << std::endl;
 		}
 
 	private:
 		std::ostream& mStream;
-		std::chrono::time_point<std::chrono::steady_clock> mStartTime;
+		std::chrono::time_point<Clock> mStartTime;
 	};
 
 public:
