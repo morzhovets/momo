@@ -30,7 +30,7 @@ namespace stdish
 
 template<typename TValue,
 	typename TBaseAllocator = std::allocator<char>,
-	typename TMemPoolParams = MemPoolParamsVar<>>
+	typename TMemPoolParams = MemPoolParams<>>
 class pool_allocator
 {
 public:
@@ -58,7 +58,7 @@ public:
 	};
 
 private:
-	typedef momo::MemPoolParams<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type),
+	typedef momo::MemPoolParamsStatic<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type),
 		mem_pool_params::blockCount, mem_pool_params::cachedFreeBlockCount> MemPoolParams;
 	typedef MemManagerStd<base_allocator> MemManager;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;

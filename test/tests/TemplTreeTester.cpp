@@ -75,7 +75,7 @@ public:
 			<< memPoolBlockCount << ", " << (useSwap ? "true" : "false") << ">: " << std::flush;
 
 		typedef momo::TreeNode<maxCapacity, capacityStep,
-			momo::MemPoolParamsVar<memPoolBlockCount>, useSwap> TreeNode;
+			momo::MemPoolParams<memPoolBlockCount>, useSwap> TreeNode;
 
 		static const size_t count = 256;
 		static unsigned char array[count];

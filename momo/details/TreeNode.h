@@ -300,7 +300,7 @@ namespace internal
 }
 
 template<size_t tMaxCapacity, size_t tCapacityStep,
-	typename TMemPoolParams = MemPoolParamsVar<(tMaxCapacity < 64) ? 32 : 1>,
+	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,
 	bool tUseSwap = true>
 struct TreeNode
 {

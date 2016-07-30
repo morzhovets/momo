@@ -362,7 +362,7 @@ private:
 	};
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MemPoolParamsVar<>, ValueArraySettings> ValueArray;
+		MemPoolParams<>, ValueArraySettings> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 

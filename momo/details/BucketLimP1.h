@@ -231,7 +231,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	typename TMemPoolParams = MemPoolParamsVar<>,
+	typename TMemPoolParams = MemPoolParams<>,
 	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
 struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 {

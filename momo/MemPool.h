@@ -8,7 +8,7 @@
   namespace momo:
     struct MemPoolConst
     class MemPoolParams
-    class MemPoolParamsVar
+    class MemPoolParamsStatic
     struct MemPoolSettings
     class MemPool
 
@@ -41,9 +41,7 @@ struct MemPoolConst
 	};
 };
 
-template<size_t tBlockSize,
-	size_t tBlockAlignment = MemPoolConst::BlockAlignmenter<tBlockSize>::blockAlignment,
-	size_t tBlockCount = MemPoolConst::defaultBlockCount,
+template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
 class MemPoolParams
 {
@@ -51,30 +49,10 @@ public:
 	static const size_t blockCount = tBlockCount;
 	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
 
-	static const size_t blockAlignment = tBlockAlignment;
-	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
-
-	static const size_t blockSize = (blockCount == 1)
-		? ((tBlockSize > 0) ? tBlockSize : 1)
-		: ((tBlockSize <= blockAlignment)
-			? 2 * blockAlignment
-			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
-
-	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
-};
-
-template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
-	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
-class MemPoolParamsVar
-{
-public:
-	static const size_t blockCount = tBlockCount;
-	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
-
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	explicit MemPoolParamsVar(size_t blockSize) MOMO_NOEXCEPT
+	explicit MemPoolParams(size_t blockSize) MOMO_NOEXCEPT
 		: blockSize(blockSize),
 		blockAlignment(MOMO_MAX_ALIGNMENT)
 	{
@@ -83,7 +61,7 @@ public:
 		_CorrectBlockSize();
 	}
 
-	MemPoolParamsVar(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
+	MemPoolParams(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
 		: blockSize(blockSize),
 		blockAlignment(blockAlignment)
 	{
@@ -111,13 +89,35 @@ protected:
 	size_t blockAlignment;
 };
 
+template<size_t tBlockSize,
+	size_t tBlockAlignment = MemPoolConst::BlockAlignmenter<tBlockSize>::blockAlignment,
+	size_t tBlockCount = MemPoolConst::defaultBlockCount,
+	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
+class MemPoolParamsStatic
+{
+public:
+	static const size_t blockCount = tBlockCount;
+	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+
+	static const size_t blockAlignment = tBlockAlignment;
+	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
+
+	static const size_t blockSize = (blockCount == 1)
+		? ((tBlockSize > 0) ? tBlockSize : 1)
+		: ((tBlockSize <= blockAlignment)
+			? 2 * blockAlignment
+			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
+
+	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
+};
+
 struct MemPoolSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
-template<typename TParams = MemPoolParamsVar<>,
+template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
 class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>

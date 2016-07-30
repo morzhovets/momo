@@ -81,7 +81,7 @@ private:
 	};
 
 	template<size_t blockCount>
-	using MPP = momo::MemPoolParamsVar<blockCount>;
+	using MPP = momo::MemPoolParams<blockCount>;
 
 public:
 	static void TestAll()

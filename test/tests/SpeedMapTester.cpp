@@ -98,8 +98,8 @@ public:
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 
 		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, size_t>>>("std::map + pool_allocator");
-		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParamsVar<>, false>>("TreeNodePrm");
-		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParamsVar<>, true>>("TreeNodeSwp");
+		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("TreeNodePrm");
+		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("TreeNodeSwp");
 	}
 
 private:

@@ -488,7 +488,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = sizeof(void*),
-	typename TMemPoolParams = MemPoolParamsVar<>,
+	typename TMemPoolParams = MemPoolParams<>,
 	bool tUseUIntPtr = true>
 struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 {
