@@ -401,12 +401,12 @@ public:
 		mHashSet.Insert(values);
 	}
 
-	template<typename... Args>
-	std::pair<iterator, bool> emplace(Args&&... args)
+	template<typename... ValueArgs>
+	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
-		typedef typename HashSet::ItemTraits::template Creator<Args...> ValueCreator;
+		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
-		ValueCreator(std::forward<Args>(args)...)(&valueBuffer);
+		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{
@@ -421,14 +421,14 @@ public:
 		return res;
 	}
 
-	template<typename... Args>
-	iterator emplace_hint(const_iterator hint, Args&&... args)
+	template<typename... ValueArgs>
+	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		return mHashSet.AddVar(hint, std::forward<Args>(args)...);
+		return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
 #else
 		(void)hint;
-		return emplace(std::forward<Args>(args)...).first;
+		return emplace(std::forward<ValueArgs>(valueArgs)...).first;
 #endif
 	}
 

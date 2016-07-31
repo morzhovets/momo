@@ -44,10 +44,10 @@ struct SegmentedArrayItemTraits
 		ItemManager::Destroy(items, count);
 	}
 
-	template<typename Arg>
-	static void Assign(Arg&& arg, Item& item)
+	template<typename ItemArg>
+	static void Assign(ItemArg&& itemArg, Item& item)
 	{
-		item = std::forward<Arg>(arg);
+		item = std::forward<ItemArg>(itemArg);
 	}
 };
 

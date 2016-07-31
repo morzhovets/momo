@@ -391,18 +391,18 @@ public:
 		return begin() + index;
 	}
 
-	template<typename... Args>
-	reference emplace_back(Args&&... args)
+	template<typename... ValueArgs>
+	reference emplace_back(ValueArgs&&... valueArgs)
 	{
-		mArray.AddBackVar(std::forward<Args>(args)...);
+		mArray.AddBackVar(std::forward<ValueArgs>(valueArgs)...);
 		return back();	// C++17
 	}
 
-	template<typename... Args>
-	iterator emplace(const_iterator where, Args&&... args)
+	template<typename... ValueArgs>
+	iterator emplace(const_iterator where, ValueArgs&&... valueArgs)
 	{
 		size_t index = where - begin();
-		mArray.InsertVar(index, std::forward<Args>(args)...);
+		mArray.InsertVar(index, std::forward<ValueArgs>(valueArgs)...);
 		return begin() + index;
 	}
 

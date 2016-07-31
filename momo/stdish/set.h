@@ -418,16 +418,16 @@ public:
 		mTreeSet.Insert(values);
 	}
 
-	template<typename... Args>
-	std::pair<iterator, bool> emplace(Args&&... args)
+	template<typename... ValueArgs>
+	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
-		return _emplace(nullptr, std::forward<Args>(args)...);
+		return _emplace(nullptr, std::forward<ValueArgs>(valueArgs)...);
 	}
 
-	template<typename... Args>
-	iterator emplace_hint(const_iterator hint, Args&&... args)
+	template<typename... ValueArgs>
+	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-		return _emplace(hint, std::forward<Args>(args)...).first;
+		return _emplace(hint, std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
 	iterator erase(const_iterator where)
@@ -518,12 +518,12 @@ private:
 			emplace(*iter);
 	}
 
-	template<typename Hint, typename... Args>
-	std::pair<iterator, bool> _emplace(Hint hint, Args&&... args)
+	template<typename Hint, typename... ValueArgs>
+	std::pair<iterator, bool> _emplace(Hint hint, ValueArgs&&... valueArgs)
 	{
-		typedef typename TreeSet::ItemTraits::template Creator<Args...> ValueCreator;
+		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
-		ValueCreator(std::forward<Args>(args)...)(&valueBuffer);
+		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{

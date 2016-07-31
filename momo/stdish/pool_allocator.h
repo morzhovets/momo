@@ -148,11 +148,11 @@ public:
 			mMemPool.GetMemManager().Deallocate(ptr, count * sizeof(value_type));
 	}
 
-	template<typename Value, typename... Args>
-	void construct(Value* ptr, Args&&... args)
+	template<typename Value, typename... ValueArgs>
+	void construct(Value* ptr, ValueArgs&&... valueArgs)
 	{
-		typedef typename internal::ObjectManager<Value>::template Creator<Args...> ValueCreator;
-		ValueCreator(std::forward<Args>(args)...)(ptr);
+		typedef typename internal::ObjectManager<Value>::template Creator<ValueArgs...> ValueCreator;
+		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(ptr);
 	}
 
 	template<class Value>
