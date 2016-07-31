@@ -11,7 +11,7 @@
 
 #include "Utility.h"
 
-#include <atomic>	//?
+#include <atomic>
 
 namespace momo
 {
@@ -89,7 +89,8 @@ namespace internal
 		template<typename Type>
 		const Type& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<Type>(mRaw, offset);
+			return mColumnList->template GetByOffset<Type>(
+				static_cast<const Raw*>(mRaw), offset);
 		}
 
 		template<typename Type>
@@ -101,25 +102,25 @@ namespace internal
 		template<typename Type>
 		const Type& GetByColumn(const Column<Type>& column) const
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Type>
 		Type& GetByColumn(const Column<Type>& column)
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Type>
 		const Type& operator[](const Column<Type>& column) const
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByColumn(column);
 		}
 
 		template<typename Type>
 		Type& operator[](const Column<Type>& column)
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByColumn(column);
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -194,10 +195,10 @@ namespace internal
 				return _Assign(itemRef.Get());
 			}
 
-			template<typename RType>
-			ItemRef& operator=(RType&& item)
+			template<typename TypeArg>
+			ItemRef& operator=(TypeArg&& itemArg)
 			{
-				return _Assign(std::forward<RType>(item));
+				return _Assign(std::forward<TypeArg>(itemArg));
 			}
 
 			operator const Type&() const
@@ -211,12 +212,12 @@ namespace internal
 			}
 
 		private:
-			template<typename RType>
-			ItemRef& _Assign(RType&& item)
+			template<typename TypeArg>
+			ItemRef& _Assign(TypeArg&& itemArg)
 			{
 				if (!mColumnList->IsMutable(mOffset))
 					throw std::runtime_error("Item is read only");
-				mColumnList->template Assign<Type>(mRaw, mOffset, std::forward<RType>(item));
+				mColumnList->template Assign<Type>(mRaw, mOffset, std::forward<TypeArg>(itemArg));
 				return *this;
 			}
 
@@ -247,13 +248,13 @@ namespace internal
 		template<typename Type>
 		ItemRef<Type> GetByColumn(const Column<Type>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->template GetOffset<Type>(column));
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Type>
 		ItemRef<Type> operator[](const Column<Type>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->template GetOffset<Type>(column));
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -312,13 +313,13 @@ namespace internal
 		template<typename Type>
 		const Type& GetByColumn(const Column<Type>& column) const
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Type>
 		const Type& operator[](const Column<Type>& column) const
 		{
-			return mColumnList->GetByColumn(mRaw, column);
+			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		const Raw* GetRaw() const noexcept

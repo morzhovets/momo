@@ -25,7 +25,7 @@ namespace experimental
 
 struct DataTraits
 {
-	typedef MemPoolParamsVar<> RawMemPoolParams;
+	typedef MemPoolParams<> RawMemPoolParams;
 
 	template<typename Type>
 	static size_t GetHashCode(const Type& item)
@@ -257,11 +257,11 @@ public:
 		return RowRef(&GetColumnList(), mRaws[index]);
 	}
 
-	template<typename Type, typename RType, typename... Args>
-	Row NewRow(const Column<Type>& column, RType&& item, Args&&... args)
+	template<typename Type, typename TypeArg, typename... Args>
+	Row NewRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
 		Row row = NewRow();
-		_FillRaw(row.GetRaw(), column, std::forward<RType>(item), std::forward<Args>(args)...);
+		_FillRaw(row.GetRaw(), column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...);
 		return row;
 	}
 
@@ -271,10 +271,10 @@ public:
 		return Row(&GetColumnList(), _CreateRaw(), &mCrew.GetFreeRaws());
 	}
 
-	template<typename Type, typename RType, typename... Args>
-	RowRef AddRow(const Column<Type>& column, RType&& item, Args&&... args)
+	template<typename Type, typename TypeArg, typename... Args>
+	RowRef AddRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
-		return AddRow(NewRow(column, std::forward<RType>(item), std::forward<Args>(args)...));
+		return AddRow(NewRow(column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...));
 	}
 
 	RowRef AddRow()
@@ -443,11 +443,11 @@ private:
 		}
 	}
 
-	template<typename Type, typename RType, typename... Args>
-	void _FillRaw(Raw* raw, const Column<Type>& column, RType&& item, Args&&... args)
+	template<typename Type, typename TypeArg, typename... Args>
+	void _FillRaw(Raw* raw, const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
 		size_t offset = GetColumnList().GetOffset(column);
-		GetColumnList().template Assign<Type>(raw, offset, std::forward<RType>(item));
+		GetColumnList().template Assign<Type>(raw, offset, std::forward<TypeArg>(itemArg));
 		_FillRaw(raw, std::forward<Args>(args)...);
 	}
 

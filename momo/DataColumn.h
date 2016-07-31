@@ -6,15 +6,17 @@
   momo/DataColumn.h
 
   namespace momo::experimental:
-    class DataColumnList
     struct DataColumnTraits
-    class DataColumnListVar
+    class DataColumnList
+    class DataColumnListStatic
 
 \**********************************************************/
 
 #pragma once
 
-#include "Utility.h"
+#include "ObjectManager.h"
+
+#include <bitset>
 
 namespace momo
 {
@@ -47,7 +49,7 @@ struct DataColumnTraits
 	template<typename Type>
 	static constexpr size_t GetAlignment(/*const Column<Type>& column*/) noexcept
 	{
-		return alignof(Type);
+		return MOMO_ALIGNMENT_OF(Type);
 	}
 
 	template<typename Type>
@@ -62,10 +64,10 @@ struct DataColumnTraits
 		pitem->~Type();
 	}
 
-	template<typename RType, typename Type>
-	static void Assign(RType&& srcItem, Type& dstItem)
+	template<typename TypeArg, typename Type>
+	static void Assign(TypeArg&& itemArg, Type& item)
 	{
-		dstItem = std::forward<RType>(srcItem);
+		item = std::forward<TypeArg>(itemArg);
 	}
 };
 
@@ -216,14 +218,6 @@ public:
 	}
 
 	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
-	{
-		MOMO_ASSERT(offset < mTotalSize);
-		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
-		return *reinterpret_cast<Type*>(raw + offset);
-	}
-
-	template<typename Type>
 	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
@@ -232,21 +226,17 @@ public:
 	}
 
 	template<typename Type>
-	Type& GetByColumn(Raw* raw, const Column<Type>& column) const noexcept
+	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
 	{
-		return *reinterpret_cast<Type*>(raw + GetOffset(column));
+		MOMO_ASSERT(offset < mTotalSize);
+		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
+		return *reinterpret_cast<Type*>(raw + offset);
 	}
 
-	template<typename Type>
-	const Type& GetByColumn(const Raw* raw, const Column<Type>& column) const noexcept
+	template<typename Type, typename TypeArg>
+	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
 	{
-		return *reinterpret_cast<const Type*>(raw + GetOffset(column));
-	}
-
-	template<typename Type, typename RType>
-	void Assign(Raw* raw, size_t offset, RType&& item) const
-	{
-		ColumnTraits::Assign(std::forward<RType>(item), GetByOffset<Type>(raw, offset));
+		ColumnTraits::Assign(std::forward<TypeArg>(itemArg), GetByOffset<Type>(raw, offset));
 	}
 
 private:
@@ -343,10 +333,11 @@ public:
 private:
 	static const size_t structSize = sizeof(Struct);
 
+	typedef std::bitset<structSize> MutOffsets;
+
 public:
 	DataColumnListStatic() noexcept
 	{
-		std::fill(std::begin(mMutOffsets), std::end(mMutOffsets), (unsigned char)0);
 	}
 
 	template<typename... Types>
@@ -357,7 +348,7 @@ public:
 
 	bool IsMutable(size_t offset) const noexcept
 	{
-		return (mMutOffsets[offset / 8] & (1 << (offset % 8))) != 0;
+		return mMutOffsets.test(offset);
 	}
 
 	static constexpr size_t GetTotalSize() noexcept
@@ -383,45 +374,32 @@ public:
 	}
 
 	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
-	{
-		MOMO_ASSERT(offset < GetTotalSize());
-		MOMO_ASSERT(offset % alignof(Type) == 0);
-		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
-	}
-
-	template<typename Type>
 	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
 	{
-		MOMO_ASSERT(offset < GetTotalSize());
-		MOMO_ASSERT(offset % alignof(Type) == 0);
+		MOMO_ASSERT(offset < structSize);
+		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
 		return *reinterpret_cast<const Type*>(reinterpret_cast<const char*>(raw) + offset);
 	}
 
 	template<typename Type>
-	Type& GetByColumn(Raw* raw, const Column<Type>& column) const noexcept
+	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
 	{
-		return raw->*column;
+		MOMO_ASSERT(offset < structSize);
+		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
+		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
 	}
 
-	template<typename Type>
-	const Type& GetByColumn(const Raw* raw, const Column<Type>& column) const noexcept
+	template<typename Type, typename TypeArg>
+	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
 	{
-		return raw->*column;
-	}
-
-	template<typename Type, typename RType>
-	void Assign(Raw* raw, size_t offset, RType&& item) const
-	{
-		GetByOffset<Type>(raw, offset) = std::forward<RType>(item);
+		GetByOffset<Type>(raw, offset) = std::forward<TypeArg>(itemArg);
 	}
 
 private:
 	template<typename Type, typename... Types>
 	void _SetMutable(const Column<Type>& column, const Column<Types>&... columns)
 	{
-		size_t offset = GetOffset(column);
-		mMutOffsets[offset / 8] |= (unsigned char)1 << (offset % 8);
+		mMutOffsets.set(GetOffset(column));
 		_SetMutable(columns...);
 	}
 
@@ -430,7 +408,7 @@ private:
 	}
 
 private:
-	unsigned char mMutOffsets[structSize / 8 + 1];
+	MutOffsets mMutOffsets;
 };
 
 } // namespace experimental
