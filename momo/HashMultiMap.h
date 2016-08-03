@@ -104,6 +104,32 @@ namespace internal
 		KeyIterator mBegin;
 	};
 
+	template<typename TKey, typename TValue>
+	class HashMultiMapReference
+	{
+	public:
+		typedef TKey Key;
+		typedef TValue Value;
+
+		typedef HashMultiMapReference<Key, const Value> ConstReference;
+
+	public:
+		HashMultiMapReference(const Key& key, Value& value) MOMO_NOEXCEPT
+			: key(key),
+			value(value)
+		{
+		}
+
+		operator ConstReference() const MOMO_NOEXCEPT
+		{
+			return ConstReference(key, value);
+		}
+
+	public:
+		const Key& key;
+		Value& value;
+	};
+
 	template<typename TKeyIterator, typename TValue, typename TSettings>
 	class HashMultiMapIterator : private IteratorVersion<TSettings::checkValueVersion>
 	{
@@ -116,28 +142,7 @@ namespace internal
 		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator,
 			const Value, Settings> ConstIterator;
 
-		class Reference
-		{
-		public:
-			typedef typename ConstIterator::Reference ConstReference;
-
-		public:
-			Reference(const Key& key, Value& value) MOMO_NOEXCEPT
-				: key(key),
-				value(value)
-			{
-			}
-
-			operator ConstReference() const MOMO_NOEXCEPT
-			{
-				return ConstReference(key, value);
-			}
-
-		public:
-			const Key& key;
-			Value& value;
-		};
-
+		typedef HashMultiMapReference<Key, Value> Reference;
 		typedef IteratorPointer<Reference> Pointer;
 
 	private:

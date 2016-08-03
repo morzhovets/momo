@@ -361,6 +361,27 @@ namespace internal
 		};
 		const Item* mItemPtr;
 	};
+
+	template<typename TItemTraits>
+	struct HashSetBucketItemTraits
+	{
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+		static const size_t alignment = ItemTraits::alignment;
+
+		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(items, count);
+		}
+
+		template<typename ItemCreator>
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
+		{
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+		}
+	};
 }
 
 template<typename TKey,
@@ -403,36 +424,19 @@ public:
 	typedef typename ItemTraits::Item Item;
 
 private:
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
 
-	struct BucketItemTraits
-	{
-		typedef typename HashSet::Item Item;
-
-		static const size_t alignment = ItemTraits::alignment;
-
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-		{
-			ItemTraits::Destroy(items, count);
-		}
-
-		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
-		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
-		}
-	};
+	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
 	typedef typename HashTraits::HashBucket HashBucket;
 	typedef typename HashBucket::template Bucket<BucketItemTraits, MemManager> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 
-	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
-
 	typedef internal::HashSetBuckets<Bucket> Buckets;
+
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;

@@ -33,6 +33,68 @@ namespace momo
 
 namespace internal
 {
+	template<typename TKeyValuePair>
+	struct HashMapNestedSetItemTraits
+	{
+		typedef TKeyValuePair KeyValuePair;
+
+		typedef typename KeyValuePair::Key Key;
+		typedef KeyValuePair Item;
+
+		typedef internal::ObjectManager<Item> ItemManager;
+
+		static const size_t alignment = ItemManager::alignment;
+
+		template<typename ItemArg>
+		class Creator : public ItemManager::template Creator<ItemArg>
+		{
+			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
+				|| std::is_same<ItemArg, const Item&>::value));
+
+		private:
+			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
+
+		public:
+			//using BaseCreator::BaseCreator;	// vs2013
+			explicit Creator(ItemArg&& itemArg)
+				: BaseCreator(std::forward<ItemArg>(itemArg))
+			{
+			}
+		};
+
+		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
+		{
+			return item.GetKey();
+		}
+
+		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		{
+			ItemManager::Destroy(items, count);
+		}
+
+		static void Assign(Item&& srcItem, Item& dstItem)
+		{
+			KeyValuePair::Assign(std::move(srcItem), dstItem);
+		}
+
+		template<typename ItemCreator>
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
+		{
+			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+		}
+	};
+
+	template<typename Settings>
+	struct HashMapNestedSetSettings : public momo::HashSetSettings
+	{
+		static const CheckMode checkMode = Settings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = Settings::checkVersion;
+
+		static const bool overloadIfCannotGrow = Settings::overloadIfCannotGrow;
+	};
+
 	template<typename TBucketIterator, typename THashSetBucketBounds>
 	class HashMapBucketBounds
 	{
@@ -110,82 +172,25 @@ public:
 	typedef TSettings Settings;
 
 private:
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
 	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
 
-	struct HashSetItemTraits
-	{
-		typedef typename HashMap::Key Key;
-		typedef KeyValuePair Item;
-
-		typedef internal::ObjectManager<Item> ItemManager;
-
-		static const size_t alignment = ItemManager::alignment;
-
-		template<typename ItemArg>
-		class Creator : public ItemManager::template Creator<ItemArg>
-		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
-				|| std::is_same<ItemArg, const Item&>::value));
-
-		private:
-			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
-
-		public:
-			//using BaseCreator::BaseCreator;	// vs2013
-			explicit Creator(ItemArg&& itemArg)
-				: BaseCreator(std::forward<ItemArg>(itemArg))
-			{
-			}
-		};
-
-		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
-		{
-			return item.GetKey();
-		}
-
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-		{
-			ItemManager::Destroy(items, count);
-		}
-
-		static void Assign(Item&& srcItem, Item& dstItem)
-		{
-			KeyValuePair::Assign(std::move(srcItem), dstItem);
-		}
-
-		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
-		{
-			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
-		}
-	};
-
-	struct HashSetSettings : public momo::HashSetSettings
-	{
-		static const CheckMode checkMode = Settings::checkMode;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = Settings::checkVersion;
-
-		static const bool overloadIfCannotGrow = Settings::overloadIfCannotGrow;
-	};
-
+	typedef internal::HashMapNestedSetItemTraits<KeyValuePair> HashSetItemTraits;
+	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSetConstIterator::Reference HashSetConstReference;
-	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
-	typedef typename HashSetConstBucketBounds::Iterator HashSetConstBucketIterator;
-
 	typedef internal::MapReference<Key, Value, HashSetConstReference> Reference;
 
-	typedef internal::HashDerivedIterator<HashSetConstBucketIterator, Reference,
-		HashSetConstBucketIterator> BucketIterator;
-
 	typedef internal::MapValueReferencer<HashMap> ValueReferencer;
+
+	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
+	typedef typename HashSetConstBucketBounds::Iterator HashSetConstBucketIterator;
+	typedef internal::HashDerivedIterator<HashSetConstBucketIterator, Reference,
+		HashSetConstBucketIterator> BucketIterator;	//?
+
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 public:
 	typedef internal::HashDerivedIterator<HashSetConstIterator, Reference> Iterator;
