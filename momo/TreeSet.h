@@ -188,6 +188,27 @@ namespace internal
 		Node* mNode;
 		size_t mItemIndex;
 	};
+
+	template<typename TItemTraits>
+	struct HashSetNodeItemTraits
+	{
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+		static const bool isNothrowAnywaySwappable = ItemTraits::isNothrowAnywaySwappable;
+
+		static const size_t alignment = ItemTraits::alignment;
+
+		static void Destroy(Item& item) MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(item);
+		}
+
+		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
+		{
+			ItemTraits::SwapNothrowAnyway(item1, item2);
+		}
+	};
 }
 
 template<typename TKey,
@@ -233,27 +254,9 @@ public:
 	typedef typename ItemTraits::Item Item;
 
 private:
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
 
-	struct NodeItemTraits
-	{
-		typedef typename TreeSet::Item Item;
-
-		static const bool isNothrowAnywaySwappable = ItemTraits::isNothrowAnywaySwappable;
-
-		static const size_t alignment = ItemTraits::alignment;
-
-		static void Destroy(Item& item) MOMO_NOEXCEPT
-		{
-			ItemTraits::Destroy(item);
-		}
-
-		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
-		{
-			ItemTraits::SwapNothrowAnyway(item1, item2);
-		}
-	};
+	typedef internal::HashSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
 	typedef typename TreeTraits::TreeNode TreeNode;
 	typedef typename TreeNode::template Node<NodeItemTraits, MemManager> Node;
@@ -263,7 +266,8 @@ private:
 	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
-	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;

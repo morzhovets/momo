@@ -31,60 +31,15 @@
 namespace momo
 {
 
-template<typename TKey, typename TValue>
-struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
+namespace internal
 {
-	typedef TKey Key;
-	typedef TValue Value;
-
-	typedef internal::ObjectManager<Key> KeyManager;
-	typedef internal::ObjectManager<Value> ValueManager;
-
-	static const bool isKeyNothrowAnywaySwappable = KeyManager::isNothrowAnywaySwappable;
-	static const bool isValueNothrowAnywaySwappable = ValueManager::isNothrowAnywaySwappable;
-
-	static void SwapKeysNothrowAnyway(Key& key1, Key& key2) MOMO_NOEXCEPT
+	template<typename TKeyValuePair>
+	struct TreeMapNestedSetItemTraits
 	{
-		KeyManager::SwapNothrowAnyway(key1, key2);
-	}
+		typedef TKeyValuePair KeyValuePair;
 
-	static void SwapValuesNothrowAnyway(Value& value1, Value& value2) MOMO_NOEXCEPT
-	{
-		ValueManager::SwapNothrowAnyway(value1, value2);
-	}
-};
-
-struct TreeMapSettings
-{
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-};
-
-template<typename TKey, typename TValue,
-	typename TTreeTraits = TreeTraits<TKey>,
-	typename TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue>,
-	typename TSettings = TreeMapSettings>
-class TreeMap
-{
-public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef TTreeTraits TreeTraits;
-	typedef TMemManager MemManager;
-	typedef TKeyValueTraits KeyValueTraits;
-	typedef TSettings Settings;
-
-private:
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
-	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
-
-	struct TreeSetItemTraits
-	{
-		typedef typename TreeMap::Key Key;
+		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
+		typedef typename KeyValuePair::Key Key;
 		typedef KeyValuePair Item;
 
 		typedef internal::ObjectManager<Item> ItemManager;
@@ -139,20 +94,79 @@ private:
 		}
 	};
 
-	struct TreeSetSettings : public momo::TreeSetSettings
+	template<typename TTreeMapSettings>
+	struct TreeMapNestedSetSettings : public TreeSetSettings
 	{
-		static const CheckMode checkMode = Settings::checkMode;
+		typedef TTreeMapSettings TreeMapSettings;
+
+		static const CheckMode checkMode = TreeMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = Settings::checkVersion;
+		static const bool checkVersion = TreeMapSettings::checkVersion;
 	};
+}
+
+template<typename TKey, typename TValue>
+struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
+{
+	typedef TKey Key;
+	typedef TValue Value;
+
+	typedef internal::ObjectManager<Key> KeyManager;
+	typedef internal::ObjectManager<Value> ValueManager;
+
+	static const bool isKeyNothrowAnywaySwappable = KeyManager::isNothrowAnywaySwappable;
+	static const bool isValueNothrowAnywaySwappable = ValueManager::isNothrowAnywaySwappable;
+
+	static void SwapKeysNothrowAnyway(Key& key1, Key& key2) MOMO_NOEXCEPT
+	{
+		KeyManager::SwapNothrowAnyway(key1, key2);
+	}
+
+	static void SwapValuesNothrowAnyway(Value& value1, Value& value2) MOMO_NOEXCEPT
+	{
+		ValueManager::SwapNothrowAnyway(value1, value2);
+	}
+};
+
+struct TreeMapSettings
+{
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+};
+
+template<typename TKey, typename TValue,
+	typename TTreeTraits = TreeTraits<TKey>,
+	typename TMemManager = MemManagerDefault,
+	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue>,
+	typename TSettings = TreeMapSettings>
+class TreeMap
+{
+public:
+	typedef TKey Key;
+	typedef TValue Value;
+	typedef TTreeTraits TreeTraits;
+	typedef TMemManager MemManager;
+	typedef TKeyValueTraits KeyValueTraits;
+	typedef TSettings Settings;
+
+private:
+	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
+
+	typedef internal::TreeMapNestedSetItemTraits<KeyValuePair> TreeSetItemTraits;
+	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
 	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;
 
 	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
+	typedef typename TreeSetConstIterator::Reference TreeSetConstReference;
 
-	typedef internal::MapReference<Key, Value, typename TreeSetConstIterator::Reference> Reference;
+	typedef internal::MapReference<Key, Value, TreeSetConstReference> Reference;
 
 	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
+
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 public:
 	typedef internal::TreeDerivedIterator<TreeSetConstIterator, Reference> Iterator;
