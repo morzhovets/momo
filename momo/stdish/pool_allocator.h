@@ -54,7 +54,7 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value, base_allocator> other;
+		typedef pool_allocator<Value, base_allocator, mem_pool_params> other;
 	};
 
 private:
@@ -180,12 +180,14 @@ private:
 	MemPool mMemPool;
 };
 
-template<typename TBaseAllocator>
-class pool_allocator<void, TBaseAllocator>
+template<typename TBaseAllocator, typename TMemPoolParams>
+class pool_allocator<void, TBaseAllocator, TMemPoolParams>
 {
 public:
 	typedef void value_type;
+
 	typedef TBaseAllocator base_allocator;
+	typedef TMemPoolParams mem_pool_params;
 
 	typedef void* pointer;
 	typedef const void* const_pointer;
@@ -193,7 +195,7 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value, base_allocator> other;
+		typedef pool_allocator<Value, base_allocator, mem_pool_params> other;
 	};
 };
 
