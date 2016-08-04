@@ -237,6 +237,118 @@ namespace internal
 		KeyIterator mKeyIterator;
 		Value* mValuePtr;
 	};
+
+	template<typename TKeyValueTraits>
+	struct HashMultiMapArrayBucketItemTraits
+	{
+		typedef TKeyValueTraits KeyValueTraits;
+		typedef typename KeyValueTraits::Value Item;
+
+		static const size_t alignment = KeyValueTraits::valueAlignment;
+
+		static void Create(const Item& item, void* pitem)
+		{
+			(typename KeyValueTraits::template ValueCreator<const Item&>(item))(pitem);
+		}
+
+		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::DestroyValues(items, count);
+		}
+
+		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
+		{
+			KeyValueTraits::RelocateValues(srcItems, dstItems, count);
+		}
+
+		template<typename ItemCreator>
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
+		{
+			KeyValueTraits::RelocateCreateValues(srcItems, dstItems, count, itemCreator, pitem);
+		}
+	};
+
+	template<typename TKeyValueTraits, typename TValueArray>
+	struct HashMultiMapNestedMapKeyValueTraits
+	{
+		typedef TKeyValueTraits KeyValueTraits;
+		typedef TValueArray ValueArray;
+
+		typedef typename KeyValueTraits::Key Key;
+		typedef ValueArray Value;	//?
+
+		typedef internal::ObjectManager<Value> ValueManager;	//?
+
+		static const bool isKeyNothrowMoveConstructible = KeyValueTraits::isKeyNothrowMoveConstructible;
+		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
+		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+
+		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
+		static const size_t valueAlignment = ValueManager::alignment;
+
+		template<typename ValueArg>
+		class ValueCreator : public ValueManager::template Creator<ValueArg>
+		{
+			MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value>::value));
+
+		private:
+			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
+
+		public:
+			//using BaseCreator::BaseCreator;	// vs2013
+			explicit ValueCreator(ValueArg&& valueArg)
+				: BaseCreator(std::forward<ValueArg>(valueArg))
+			{
+			}
+		};
+
+		static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::CreateKeyNothrow(std::move(key), pkey);
+		}
+
+		static void CreateKey(const Key& key, void* pkey)
+		{
+			KeyValueTraits::CreateKey(key, pkey);
+		}
+
+		static void DestroyKey(Key& key) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::DestroyKey(key);
+		}
+
+		static void DestroyValue(Value& value) MOMO_NOEXCEPT
+		{
+			ValueManager::Destroy(value);
+		}
+
+		static void RelocateKeyNothrow(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::RelocateKeyNothrow(srcKey, dstKey);
+		}
+
+		static void RelocateValueNothrow(Value& srcValue, Value* dstValue) MOMO_NOEXCEPT
+		{
+			ValueManager::Relocate(std::addressof(srcValue), dstValue, 1);
+		}
+
+		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
+		{
+			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
+			dstValue = std::move(srcValue);
+		}
+	};
+
+	template<typename THashMultiMapSettings>
+	struct HashMultiMapNestedMapSettings : public HashMapSettings
+	{
+		typedef THashMultiMapSettings HashMultiMapSettings;
+
+		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = HashMultiMapSettings::checkVersion;
+	};
 }
 
 template<typename TKey, typename TValue>
@@ -329,42 +441,8 @@ public:
 	typedef TSettings Settings;
 
 private:
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
-	struct ArrayBucketItemTraits
-	{
-		typedef typename HashMultiMap::Value Item;
-
-		static const size_t alignment = KeyValueTraits::valueAlignment;
-
-		static void Create(const Item& item, void* pitem)
-		{
-			(ValueCreator<const Item&>(item))(pitem);
-		}
-
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::DestroyValues(items, count);
-		}
-
-		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
-		{
-			KeyValueTraits::RelocateValues(srcItems, dstItems, count);
-		}
-
-		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
-		{
-			KeyValueTraits::RelocateCreateValues(srcItems, dstItems, count, itemCreator, pitem);
-		}
-	};
-
-	struct ValueArraySettings : public ArraySettings<>
-	{
-		static const CheckMode checkMode = CheckMode::assertion;
-	};
+	typedef internal::HashMultiMapArrayBucketItemTraits<KeyValueTraits> ArrayBucketItemTraits;
+	typedef internal::NestedArraySettings<ArraySettings<>> ValueArraySettings;
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
 		MemPoolParams<>, ValueArraySettings> ValueArray;
@@ -463,84 +541,18 @@ private:
 		Data* mData;
 	};
 
-	struct HashMapKeyValueTraits
-	{
-		typedef typename HashMultiMap::Key Key;
-		typedef typename HashMultiMap::ValueArray Value;
-
-		typedef internal::ObjectManager<Value> ValueManager;	//?
-
-		static const bool isKeyNothrowMoveConstructible = KeyValueTraits::isKeyNothrowMoveConstructible;
-		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
-
-		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
-		static const size_t valueAlignment = ValueManager::alignment;
-
-		template<typename ValueArg>
-		class ValueCreator : public ValueManager::template Creator<ValueArg>
-		{
-			MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value>::value));
-
-		private:
-			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
-
-		public:
-			//using BaseCreator::BaseCreator;	// vs2013
-			explicit ValueCreator(ValueArg&& valueArg)
-				: BaseCreator(std::forward<ValueArg>(valueArg))
-			{
-			}
-		};
-
-		static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::CreateKeyNothrow(std::move(key), pkey);
-		}
-
-		static void CreateKey(const Key& key, void* pkey)
-		{
-			KeyValueTraits::CreateKey(key, pkey);
-		}
-
-		static void DestroyKey(Key& key) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::DestroyKey(key);
-		}
-
-		static void DestroyValue(Value& value) MOMO_NOEXCEPT
-		{
-			ValueManager::Destroy(value);
-		}
-
-		static void RelocateKeyNothrow(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::RelocateKeyNothrow(srcKey, dstKey);
-		}
-
-		static void RelocateValueNothrow(Value& srcValue, Value* dstValue) MOMO_NOEXCEPT
-		{
-			ValueManager::Relocate(std::addressof(srcValue), dstValue, 1);
-		}
-
-		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
-		{
-			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
-			dstValue = std::move(srcValue);
-		}
-	};
-
-	struct HashMapSettings : public momo::HashMapSettings
-	{
-		static const CheckMode checkMode = Settings::checkMode;
-		static const bool checkVersion = Settings::checkVersion;
-	};
+	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,
+		ValueArray> HashMapKeyValueTraits;
+	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
 
 	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager,
 		HashMapKeyValueTraits, HashMapSettings> HashMap;
 
 	typedef typename HashMap::Iterator HashMapIterator;
 	typedef typename HashMapIterator::Reference HashMapReference;
+
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 public:
 	typedef typename ValueArray::ConstBounds ConstValueBounds;
@@ -913,14 +925,14 @@ public:
 		return valueCount;
 	}
 
-	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const	//?
+	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const
 	{
 		ConstValueBounds valueBounds = keyIter->values;
 		MOMO_CHECK(valueIndex < valueBounds.GetCount());
 		return _MakeIterator<ConstIterator>(keyIter, valueBounds.GetBegin() + valueIndex, false);
 	}
 
-	Iterator MakeIterator(KeyIterator keyIter, size_t valueIndex)	//?
+	Iterator MakeIterator(KeyIterator keyIter, size_t valueIndex)
 	{
 		ValueBounds valueBounds = keyIter->values;
 		MOMO_CHECK(valueIndex < valueBounds.GetCount());

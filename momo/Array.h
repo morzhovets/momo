@@ -113,6 +113,14 @@ namespace internal
 	{
 		typedef ArrayIterator<Array, typename Array::Item> Iterator;
 	};
+
+	template<typename TArraySettings>
+	struct NestedArraySettings : public TArraySettings
+	{
+		typedef TArraySettings ArraySettings;
+
+		static const CheckMode checkMode = CheckMode::assertion;
+	};
 }
 
 template<typename TItem>

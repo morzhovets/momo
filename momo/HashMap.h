@@ -85,14 +85,16 @@ namespace internal
 		}
 	};
 
-	template<typename Settings>
-	struct HashMapNestedSetSettings : public momo::HashSetSettings
+	template<typename THashMapSettings>
+	struct HashMapNestedSetSettings : public HashSetSettings
 	{
-		static const CheckMode checkMode = Settings::checkMode;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = Settings::checkVersion;
+		typedef THashMapSettings HashMapSettings;
 
-		static const bool overloadIfCannotGrow = Settings::overloadIfCannotGrow;
+		static const CheckMode checkMode = HashMapSettings::checkMode;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = HashMapSettings::checkVersion;
+
+		static const bool overloadIfCannotGrow = HashMapSettings::overloadIfCannotGrow;
 	};
 
 	template<typename TBucketIterator, typename THashSetBucketBounds>
@@ -176,10 +178,12 @@ private:
 
 	typedef internal::HashMapNestedSetItemTraits<KeyValuePair> HashSetItemTraits;
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
+
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSetConstIterator::Reference HashSetConstReference;
+
 	typedef internal::MapReference<Key, Value, HashSetConstReference> Reference;
 
 	typedef internal::MapValueReferencer<HashMap> ValueReferencer;

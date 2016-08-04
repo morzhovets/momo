@@ -173,10 +173,7 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
-	struct SegmentsSettings : public Settings::SegmentsSettings
-	{
-		static const CheckMode checkMode = CheckMode::assertion;
-	};
+	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
 	typedef Array<Item*, MemManager, ArrayItemTraits<Item*>, SegmentsSettings> Segments;
 

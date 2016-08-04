@@ -17,6 +17,52 @@ namespace momo
 
 namespace internal
 {
+	template<typename TItemTraits>
+	struct ArrayBucketNestedArrayItemTraits
+	{
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+		static const bool isTriviallyRelocatable = false;	//?
+
+		template<typename ItemArg>
+		class Creator
+		{
+			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
+
+		public:
+			explicit Creator(const Item& item) MOMO_NOEXCEPT
+				: mItem(item)
+			{
+			}
+
+			void operator()(void* pitem) const
+			{
+				ItemTraits::Create(mItem, pitem);
+			}
+
+		private:
+			const Item& mItem;
+		};
+
+		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(items, count);
+		}
+
+		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
+		{
+			ItemTraits::Relocate(srcItems, dstItems, count);
+		}
+
+		template<typename ItemCreator>
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
+		{
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+		}
+	};
+
 	template<typename TItemTraits, typename TMemManager,
 		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
 	class ArrayBucket
@@ -37,49 +83,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		struct ArrayItemTraits
-		{
-			typedef typename ItemTraits::Item Item;
-
-			static const bool isTriviallyRelocatable = false;	//?
-
-			template<typename ItemArg>
-			class Creator
-			{
-				MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
-
-			public:
-				explicit Creator(const Item& item) MOMO_NOEXCEPT
-					: mItem(item)
-				{
-				}
-
-				void operator()(void* pitem) const
-				{
-					ItemTraits::Create(mItem, pitem);
-				}
-
-			private:
-				const Item& mItem;
-			};
-
-			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-			{
-				ItemTraits::Destroy(items, count);
-			}
-
-			static void Relocate(Item* srcItems, Item* dstItems, size_t count)
-			{
-				ItemTraits::Relocate(srcItems, dstItems, count);
-			}
-
-			template<typename ItemCreator>
-			static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-				const ItemCreator& itemCreator, void* pitem)
-			{
-				ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
-			}
-		};
+		typedef ArrayBucketNestedArrayItemTraits<ItemTraits> ArrayItemTraits;
 
 		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits, ArraySettings> Array;
 
