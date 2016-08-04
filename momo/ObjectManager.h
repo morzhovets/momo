@@ -7,6 +7,7 @@
 
   namespace momo:
     struct IsTriviallyRelocatable
+    struct IsNothrowSwappable
 
 \**********************************************************/
 
@@ -30,27 +31,18 @@ struct IsTriviallyRelocatable
 {
 };
 
+template<typename Object>
+struct IsNothrowSwappable
+#ifdef MOMO_USE_NOTHROW_SWAPPABLE
+	: public std::is_nothrow_swappable<Object>
+#else
+	: public std::false_type
+#endif
+{
+};
+
 namespace internal
 {
-	namespace swp
-	{
-		using std::swap;
-
-		template<typename Object>
-		struct IsNothrowSwappable	// vs2015
-		{
-			static const bool value =
-#ifdef MOMO_USE_NOEXCEPT
-				noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
-#else
-				false;	//?	vs2013
-#endif
-		};
-	}
-
-	template<typename Object>
-	using IsNothrowSwappable = BoolConstant<swp::IsNothrowSwappable<Object>::value>;
-
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
