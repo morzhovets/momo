@@ -150,9 +150,7 @@ namespace internal
 	public:
 		typedef TReference Reference;
 
-		typedef typename Reference::ConstReference ConstReference;
-
-		typedef IteratorPointer<ConstReference> ConstPointer;
+		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
 
 	public:
 		//IteratorPointer() MOMO_NOEXCEPT
@@ -174,7 +172,7 @@ namespace internal
 			return &mReference;
 		}
 
-		const Reference& operator*() const MOMO_NOEXCEPT
+		Reference operator*() const MOMO_NOEXCEPT
 		{
 			return mReference;
 		}
@@ -183,21 +181,17 @@ namespace internal
 		Reference mReference;
 	};
 
-	template<typename TBaseIterator, typename TReference,
-		typename TConstBaseIterator = typename TBaseIterator::ConstIterator,
-		typename TConstReference = typename TReference::ConstReference>
+	template<typename TBaseIterator, typename TReference>
 	class HashDerivedIterator
 	{
 	public:
 		typedef TBaseIterator BaseIterator;
 		typedef TReference Reference;
-		typedef TConstBaseIterator ConstBaseIterator;
-		typedef TConstReference ConstReference;
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef HashDerivedIterator<ConstBaseIterator, ConstReference,
-			ConstBaseIterator, ConstReference> ConstIterator;
+		typedef HashDerivedIterator<typename BaseIterator::ConstIterator,
+			typename Reference::ConstReference> ConstIterator;
 
 	public:
 		HashDerivedIterator() MOMO_NOEXCEPT
@@ -247,12 +241,11 @@ namespace internal
 	public:
 		typedef TBaseIterator BaseIterator;
 		typedef TReference Reference;
-		typedef typename BaseIterator::ConstIterator ConstBaseIterator;
-		typedef typename Reference::ConstReference ConstReference;
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef TreeDerivedIterator<ConstBaseIterator, ConstReference> ConstIterator;
+		typedef TreeDerivedIterator<typename BaseIterator::ConstIterator,
+			typename Reference::ConstReference> ConstIterator;
 
 	public:
 		TreeDerivedIterator() MOMO_NOEXCEPT
@@ -301,19 +294,67 @@ namespace internal
 	private:
 		BaseIterator mBaseIterator;
 	};
+
+	template<typename TBucketIterator, typename TBaseBucketBounds>
+	class HashDerivedBucketBounds
+	{
+	public:
+		typedef TBucketIterator BucketIterator;
+		typedef TBaseBucketBounds BaseBucketBounds;
+
+		typedef BucketIterator Iterator;
+
+		typedef HashDerivedBucketBounds<typename BucketIterator::ConstIterator,
+			typename BaseBucketBounds::ConstBounds> ConstBounds;
+
+	public:
+		HashDerivedBucketBounds() MOMO_NOEXCEPT
+		{
+		}
+
+		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) MOMO_NOEXCEPT
+			: mBaseBucketBounds(bounds)
+		{
+		}
+
+		operator ConstBounds() const MOMO_NOEXCEPT
+		{
+			return ConstBounds(mBaseBucketBounds);
+		}
+
+		BucketIterator GetBegin() const MOMO_NOEXCEPT
+		{
+			return BucketIterator(mBaseBucketBounds.GetBegin());
+		}
+
+		BucketIterator GetEnd() const MOMO_NOEXCEPT
+		{
+			return BucketIterator(mBaseBucketBounds.GetEnd());
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const HashDerivedBucketBounds&, BucketIterator)
+
+		size_t GetCount() const MOMO_NOEXCEPT
+		{
+			return mBaseBucketBounds.GetCount();
+		}
+
+	private:
+		BaseBucketBounds mBaseBucketBounds;
+	};
 }
 
 } // namespace momo
 
 namespace std
 {
-	template<typename BI, typename R, typename CBI, typename CR>
-	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R, CBI, CR>>
+	template<typename BI, typename R>
+	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R>>
 	{
 		typedef forward_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Pointer pointer;
-		typedef typename momo::internal::HashDerivedIterator<BI, R, CBI, CR>::Reference reference;
+		typedef typename momo::internal::HashDerivedIterator<BI, R>::Pointer pointer;
+		typedef typename momo::internal::HashDerivedIterator<BI, R>::Reference reference;
 		typedef reference value_type;	//?
 	};
 

@@ -96,54 +96,6 @@ namespace internal
 
 		static const bool overloadIfCannotGrow = HashMapSettings::overloadIfCannotGrow;
 	};
-
-	template<typename TBucketIterator, typename THashSetBucketBounds>
-	class HashMapBucketBounds
-	{
-	public:
-		typedef TBucketIterator BucketIterator;
-		typedef THashSetBucketBounds HashSetBucketBounds;
-
-		typedef BucketIterator Iterator;
-
-		typedef HashMapBucketBounds<typename BucketIterator::ConstIterator,
-			HashSetBucketBounds> ConstBounds;
-
-	public:
-		HashMapBucketBounds() MOMO_NOEXCEPT
-		{
-		}
-
-		HashMapBucketBounds(HashSetBucketBounds hashSetBucketBounds) MOMO_NOEXCEPT
-			: mHashSetBucketBounds(hashSetBucketBounds)
-		{
-		}
-
-		operator ConstBounds() const MOMO_NOEXCEPT
-		{
-			return ConstBounds(mHashSetBucketBounds);
-		}
-
-		BucketIterator GetBegin() const MOMO_NOEXCEPT
-		{
-			return BucketIterator(mHashSetBucketBounds.GetBegin());
-		}
-
-		BucketIterator GetEnd() const MOMO_NOEXCEPT
-		{
-			return BucketIterator(mHashSetBucketBounds.GetEnd());
-		}
-
-		MOMO_FRIENDS_BEGIN_END(const HashMapBucketBounds&, BucketIterator)
-
-		size_t GetCount() const MOMO_NOEXCEPT
-		{
-			return mHashSetBucketBounds.GetCount();
-		}
-
-	private:
-		HashSetBucketBounds mHashSetBucketBounds;
-	};
 }
 
 template<typename TKey, typename TValue>
@@ -189,9 +141,8 @@ private:
 	typedef internal::MapValueReferencer<HashMap> ValueReferencer;
 
 	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
-	typedef typename HashSetConstBucketBounds::Iterator HashSetConstBucketIterator;
-	typedef internal::HashDerivedIterator<HashSetConstBucketIterator, Reference,
-		HashSetConstBucketIterator> BucketIterator;	//?
+	typedef internal::HashDerivedIterator<typename HashSetConstBucketBounds::Iterator,
+		Reference> BucketIterator;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
@@ -205,7 +156,8 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
-	typedef internal::HashMapBucketBounds<BucketIterator, HashSetConstBucketBounds> BucketBounds;
+	typedef internal::HashDerivedBucketBounds<BucketIterator,
+		HashSetConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 public:

@@ -31,6 +31,7 @@
 #include "HashTraits.h"
 #include "SetUtility.h"
 #include "IteratorUtility.h"
+#include "Array.h"
 
 namespace momo
 {
@@ -435,6 +436,8 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
+	typedef internal::ArrayPtrIterator<const Item, Settings> ConstBucketIterator;
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
@@ -443,7 +446,8 @@ public:
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
 
-	typedef typename Bucket::ConstBounds ConstBucketBounds;
+	typedef internal::HashDerivedBucketBounds<ConstBucketIterator,
+		typename Bucket::ConstBounds> ConstBucketBounds;
 
 public:
 	explicit HashSet(const HashTraits& hashTraits = HashTraits(),
@@ -786,7 +790,7 @@ public:
 		{
 			size_t curBucketCount = buckets->GetCount();
 			if (curBucketIndex < curBucketCount)
-				return buckets->GetBucketBounds(curBucketIndex);
+				return ConstBucketBounds(buckets->GetBucketBounds(curBucketIndex));
 			curBucketIndex -= curBucketCount;
 		}
 		MOMO_ASSERT(false);

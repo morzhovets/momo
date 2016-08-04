@@ -519,7 +519,7 @@ public:
 			return false;
 		if (mHashMultiMap.GetValueCount() != right.mHashMultiMap.GetValueCount())
 			return false;
-		for (typename HashMultiMap::KeyIterator::ConstReference ref : mHashMultiMap.GetKeyBounds())
+		for (typename HashMultiMap::ConstKeyIterator::Reference ref : mHashMultiMap.GetKeyBounds())
 		{
 			typename HashMultiMap::ConstKeyIterator keyIterRight = right.mHashMultiMap.Find(ref.key);
 			if (!keyIterRight)
