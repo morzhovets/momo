@@ -144,17 +144,15 @@ namespace internal
 		}
 	};
 
-	template<typename TReference,
-		typename TConstReference = typename TReference::ConstReference>
+	template<typename TReference>
 	class IteratorPointer
 	{
 	public:
 		typedef TReference Reference;
-		typedef TConstReference ConstReference;
 
-		typedef IteratorPointer<ConstReference, ConstReference> ConstPointer;
+		typedef typename Reference::ConstReference ConstReference;
 
-		typedef const typename std::remove_reference<Reference>::type* RefAddress;
+		typedef IteratorPointer<ConstReference> ConstPointer;
 
 	public:
 		//IteratorPointer() MOMO_NOEXCEPT
@@ -171,12 +169,12 @@ namespace internal
 			return ConstPointer(mReference);
 		}
 
-		RefAddress operator->() const MOMO_NOEXCEPT
+		const Reference* operator->() const MOMO_NOEXCEPT
 		{
-			return std::addressof(mReference);
+			return &mReference;
 		}
 
-		Reference operator*() const MOMO_NOEXCEPT
+		const Reference& operator*() const MOMO_NOEXCEPT
 		{
 			return mReference;
 		}
@@ -196,7 +194,7 @@ namespace internal
 		typedef TConstBaseIterator ConstBaseIterator;
 		typedef TConstReference ConstReference;
 
-		typedef IteratorPointer<Reference, ConstReference> Pointer;
+		typedef IteratorPointer<Reference> Pointer;
 
 		typedef HashDerivedIterator<ConstBaseIterator, ConstReference,
 			ConstBaseIterator, ConstReference> ConstIterator;
@@ -252,7 +250,7 @@ namespace internal
 		typedef typename BaseIterator::ConstIterator ConstBaseIterator;
 		typedef typename Reference::ConstReference ConstReference;
 
-		typedef IteratorPointer<Reference, ConstReference> Pointer;
+		typedef IteratorPointer<Reference> Pointer;
 
 		typedef TreeDerivedIterator<ConstBaseIterator, ConstReference> ConstIterator;
 
