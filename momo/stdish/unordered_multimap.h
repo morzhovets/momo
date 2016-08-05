@@ -358,11 +358,11 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
+	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_convertible<Value, value_type>::value, iterator>::type
+	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
 	//insert(const_iterator hint, Value&& value)
 
 	//iterator insert(const value_type& value)
@@ -370,24 +370,24 @@ public:
 	//iterator insert(const_iterator hint, const value_type& value)
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_convertible<const First&, key_type>::value
-		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
+	typename std::enable_if<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
 	insert(const std::pair<First, Second>& value)
 	{
 		return _insert(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_convertible<const First&, key_type>::value
-		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
+	typename std::enable_if<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
 	insert(const_iterator, const std::pair<First, Second>& value)
 	{
-		return insert(value).first;
+		return insert(value);
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_convertible<First, key_type>::value
-		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
+	typename std::enable_if<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
 		return _insert(std::forward_as_tuple(std::forward<First>(value.first)),
@@ -395,8 +395,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_convertible<First, key_type>::value
-		&& std::is_convertible<Second, mapped_type>::value, iterator>::type
+	typename std::enable_if<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
 	insert(const_iterator, std::pair<First, Second>&& value)
 	{
 		return insert(std::move(value));
