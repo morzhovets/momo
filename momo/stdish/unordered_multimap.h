@@ -374,7 +374,7 @@ public:
 		&& std::is_convertible<const Second&, mapped_type>::value, iterator>::type
 	insert(const_iterator, const std::pair<First, Second>& value)
 	{
-		return insert(value).first;
+		return insert(value);
 	}
 
 	template<typename First, typename Second>
