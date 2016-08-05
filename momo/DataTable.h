@@ -246,12 +246,12 @@ public:
 		mIndexes.Clear();
 	}
 
-	const ConstRowRef operator[](size_t index) const&
+	const ConstRowRef operator[](size_t index) const
 	{
 		return ConstRowRef(&GetColumnList(), mRaws[index]);
 	}
 
-	const RowRef operator[](size_t index) &
+	const RowRef operator[](size_t index)
 	{
 		return RowRef(&GetColumnList(), mRaws[index]);
 	}
@@ -345,49 +345,49 @@ public:
 	}
 
 	template<typename Type, typename... Args>
-	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const&
+	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
 	{
 		return Select(EmptyFilter(), column, item, args...);
 	}
 
 	template<typename Filter, typename Type, typename... Args>
 	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
-		const Args&... args) const&
+		const Args&... args) const
 	{
 		return _Select<Selection>(filter, column, item, args...);
 	}
 
-	ConstSelection Select() const&
+	ConstSelection Select() const
 	{
 		return Select(EmptyFilter());
 	}
 
 	template<typename Filter>
-	ConstSelection Select(const Filter& filter) const&
+	ConstSelection Select(const Filter& filter) const
 	{
 		return _MakeSelection<Selection>(mRaws, filter);
 	}
 
 	template<typename Type, typename... Args>
-	Selection Select(const Column<Type>& column, const Type& item, const Args&... args) &
+	Selection Select(const Column<Type>& column, const Type& item, const Args&... args)
 	{
 		return Select(EmptyFilter(), column, item, args...);
 	}
 
 	template<typename Filter, typename Type, typename... Args>
 	Selection Select(const Filter& filter, const Column<Type>& column, const Type& item,
-		const Args&... args) &
+		const Args&... args)
 	{
 		return _Select<Selection>(filter, column, item, args...);
 	}
 
-	Selection Select() &
+	Selection Select()
 	{
 		return Select(EmptyFilter());
 	}
 
 	template<typename Filter>
-	Selection Select(const Filter& filter) &
+	Selection Select(const Filter& filter)
 	{
 		return _MakeSelection<Selection>(mRaws, filter);
 	}

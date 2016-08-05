@@ -296,7 +296,7 @@ namespace internal
 
 		operator ConstRowRef() const noexcept
 		{
-			return ConstRowRew(mColumnList, mRaw);
+			return ConstRowRef(mColumnList, mRaw);
 		}
 
 		const ColumnList& GetColumnList() const noexcept
