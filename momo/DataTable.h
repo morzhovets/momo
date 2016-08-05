@@ -14,6 +14,7 @@
 #pragma once
 
 #include "DataColumn.h"
+#include "DataRow.h"
 #include "DataSelection.h"
 #include "DataIndexes.h"
 
@@ -56,24 +57,22 @@ public:
 
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowRef<ColumnList> RowRef;
-	typedef internal::DataConstRowRef<ColumnList> ConstRowRef;
-	typedef internal::DataConstSelection<ColumnList, MemManager> ConstSelection;
+	typedef typename RowRef::ConstRowRef ConstRowRef;
+
+	typedef internal::DataSelection<RowRef, MemManager> Selection;
+	typedef typename Selection::ConstSelection ConstSelection;
 
 private:
 	typedef internal::DataIndexes<ColumnList, DataTraits, MemManager> Indexes;
 
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	struct RawsSettings : public ArraySettings<>
-	{
-		static const CheckMode checkMode = CheckMode::assertion;
-	};
-	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*>, RawsSettings> Raws;
+	typedef Array<Raw*, MemManagerPtr> Raws;
 
 	//? MemPoolSettings
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
 
-	typedef typename ConstSelection::Raws SelectionRaws;
+	typedef typename Selection::Raws SelectionRaws;
 
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;
@@ -247,12 +246,12 @@ public:
 		mIndexes.Clear();
 	}
 
-	const ConstRowRef operator[](size_t index) const
+	const ConstRowRef operator[](size_t index) const&
 	{
 		return ConstRowRef(&GetColumnList(), mRaws[index]);
 	}
 
-	const RowRef operator[](size_t index)
+	const RowRef operator[](size_t index) &
 	{
 		return RowRef(&GetColumnList(), mRaws[index]);
 	}
@@ -346,27 +345,51 @@ public:
 	}
 
 	template<typename Type, typename... Args>
-	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
+	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const&
 	{
 		return Select(EmptyFilter(), column, item, args...);
 	}
 
 	template<typename Filter, typename Type, typename... Args>
 	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
-		const Args&... args) const
+		const Args&... args) const&
 	{
-		return _Select<ConstSelection>(filter, column, item, args...);
+		return _Select<Selection>(filter, column, item, args...);
 	}
 
-	ConstSelection Select() const
+	ConstSelection Select() const&
 	{
 		return Select(EmptyFilter());
 	}
 
 	template<typename Filter>
-	ConstSelection Select(const Filter& filter) const
+	ConstSelection Select(const Filter& filter) const&
 	{
-		return _MakeSelection<ConstSelection>(mRaws, filter);
+		return _MakeSelection<Selection>(mRaws, filter);
+	}
+
+	template<typename Type, typename... Args>
+	Selection Select(const Column<Type>& column, const Type& item, const Args&... args) &
+	{
+		return Select(EmptyFilter(), column, item, args...);
+	}
+
+	template<typename Filter, typename Type, typename... Args>
+	Selection Select(const Filter& filter, const Column<Type>& column, const Type& item,
+		const Args&... args) &
+	{
+		return _Select<Selection>(filter, column, item, args...);
+	}
+
+	Selection Select() &
+	{
+		return Select(EmptyFilter());
+	}
+
+	template<typename Filter>
+	Selection Select(const Filter& filter) &
+	{
+		return _MakeSelection<Selection>(mRaws, filter);
 	}
 
 	template<typename Type, typename... Args>
@@ -532,11 +555,11 @@ private:
 	template<typename Result, typename Raws, typename Filter>
 	Result _MakeSelection(const Raws& raws, const Filter& filter) const
 	{
-		return _MakeSelection(raws, filter, static_cast<const Result*>(nullptr));
+		return _MakeSelection(raws, filter, static_cast<Result*>(nullptr));
 	}
 
 	template<typename Raws, typename Filter>
-	ConstSelection _MakeSelection(const Raws& raws, const Filter& filter, const ConstSelection*) const
+	Selection _MakeSelection(const Raws& raws, const Filter& filter, Selection*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		MemManager memManager = GetMemManager();
@@ -546,20 +569,19 @@ private:
 			if (filter(ConstRowRef(columnList, raw)))
 				selRaws.AddBack(raw);
 		}
-		return ConstSelection(columnList, std::move(selRaws));
+		return Selection(columnList, std::move(selRaws));
 	}
 
 	template<typename Raws>
-	ConstSelection _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/,
-		const ConstSelection*) const
+	Selection _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
-		return ConstSelection(&GetColumnList(),
+		return Selection(&GetColumnList(),
 			SelectionRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager)));
 	}
 
 	template<typename Raws, typename Filter>
-	size_t _MakeSelection(const Raws& raws, const Filter& filter, const size_t*) const
+	size_t _MakeSelection(const Raws& raws, const Filter& filter, size_t*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
@@ -567,7 +589,7 @@ private:
 	}
 
 	template<typename Raws>
-	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, const size_t*) const noexcept
+	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const noexcept
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}

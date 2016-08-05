@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "DataRow.h"
 #include "Array.h"
 
 namespace momo
@@ -20,71 +19,77 @@ namespace experimental
 
 namespace internal
 {
-	template<typename TColumnList, typename TMemManager>
-	class DataConstSelection
+	template<typename TRowRef, typename TMemManager>
+	class DataSelection
 	{
 	public:
-		typedef TColumnList ColumnList;
+		typedef TRowRef RowRef;
 		typedef TMemManager MemManager;
+		typedef typename RowRef::ColumnList ColumnList;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
-		typedef DataConstRowRef<ColumnList> ConstRowRef;
+		typedef typename RowRef::ConstRowRef ConstRowRef;
+		typedef DataSelection<ConstRowRef, MemManager> ConstSelection;
 
-	private:
-		struct RawsSettings : public ArraySettings<2>
-		{
-			static const CheckMode checkMode = CheckMode::assertion;
-		};
+		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>,
+			ArraySettings<2>> Raws;
 
 	public:
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>, RawsSettings> Raws;
-
-	public:
-		DataConstSelection(const ColumnList* columnList, Raws&& raws) noexcept
+		DataSelection(const ColumnList* columnList, Raws&& raws) noexcept
 			: mColumnList(columnList),
 			mRaws(std::move(raws))
 		{
 		}
 
-		DataConstSelection(DataConstSelection&& selection) noexcept
+		DataSelection(DataSelection&& selection) noexcept
 			: mColumnList(selection.mColumnList),
 			mRaws(std::move(selection.mRaws))
 		{
 		}
 
-		DataConstSelection(const DataConstSelection& selection)
+		DataSelection(const DataSelection& selection)
 			: mColumnList(selection.mColumnList),
 			mRaws(selection.mRaws)
 		{
 		}
 
-		~DataConstSelection() noexcept
+		~DataSelection() noexcept
 		{
 		}
 
-		DataConstSelection& operator=(DataConstSelection&& selection) noexcept
+		DataSelection& operator=(DataSelection&& selection) noexcept
 		{
-			DataConstSelection(std::move(selection)).Swap(*this);
+			DataSelection(std::move(selection)).Swap(*this);
 			return *this;
 		}
 
-		DataConstSelection& operator=(const DataConstSelection& selection)
+		DataSelection& operator=(const DataSelection& selection)
 		{
 			if (this != &selection)
-				DataConstSelection(selection).Swap(*this);
+				DataSelection(selection).Swap(*this);
 			return *this;
 		}
 
-		void Swap(DataConstSelection& selection) noexcept
+		operator ConstSelection() && noexcept
+		{
+			return ConstSelection(mColumnList, std::move(mRaws));
+		}
+
+		operator ConstSelection() const&
+		{
+			return ConstSelection(mColumnList, Raws(mRaws));
+		}
+
+		void Swap(DataSelection& selection) noexcept
 		{
 			std::swap(mColumnList, selection.mColumnList);
 			mRaws.Swap(selection.mRaws);
 		}
 
-		MOMO_FRIEND_SWAP(DataConstSelection)
+		MOMO_FRIEND_SWAP(DataSelection)
 
 		const ColumnList& GetColumnList() const noexcept
 		{
@@ -121,22 +126,47 @@ namespace internal
 			return ConstRowRef(mRaws[index], mColumnList);
 		}
 
-		DataConstSelection& Reverse() noexcept
+		DataSelection&& Reverse() && noexcept
 		{
-			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
+			_Reverse();
+			return std::move(*this);
+		}
+
+		DataSelection& Reverse() & noexcept
+		{
+			_Reverse();
 			return *this;
 		}
 
-		template<typename Comparer>
-		DataConstSelection& Sort(const Comparer& comparer)
+		template<typename RowComparer>
+		DataSelection&& Sort(const RowComparer& rowComparer) &&
 		{
-			auto rawComparer = [this, &comparer] (const Raw* raw1, const Raw* raw2)
+			_Sort(rowComparer);
+			return std::move(*this);
+		}
+
+		template<typename RowComparer>
+		DataSelection& Sort(const RowComparer& rowComparer) &
+		{
+			_Sort(rowComparer);
+			return *this;
+		}
+
+	private:
+		void _Reverse() noexcept
+		{
+			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
+		}
+
+		template<typename RowComparer>
+		void _Sort(const RowComparer& rowComparer)
+		{
+			auto rawComparer = [this, &rowComparer] (const Raw* raw1, const Raw* raw2)
 			{
-				return comparer(ConstRowRef(mColumnList, raw1),
+				return rowComparer(ConstRowRef(mColumnList, raw1),
 					ConstRowRef(mColumnList, raw2));
 			};
 			std::sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
-			return *this;
 		}
 
 	private:

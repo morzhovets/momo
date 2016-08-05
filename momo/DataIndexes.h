@@ -37,14 +37,9 @@ namespace internal
 	private:
 		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		template<size_t internalCapacity>
-		struct ArraySettings : public momo::ArraySettings<internalCapacity>
-		{
-			static const CheckMode checkMode = CheckMode::assertion;
-		};
 		template<typename Item, size_t internalCapacity = 0>
 		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item>,
-			ArraySettings<internalCapacity>>;
+			momo::internal::NestedArraySettings<ArraySettings<internalCapacity>>>;
 
 		typedef Array<size_t> Offsets;
 
