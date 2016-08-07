@@ -3,5 +3,7 @@
 /x64
 /*.sdf
 /*.opensdf
+/*.db
+/*.opendb
 /*.suo
 /.vs
