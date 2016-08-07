@@ -115,7 +115,7 @@ namespace internal
 	};
 
 	template<typename TArraySettings>
-	struct NestedArraySettings : public TArraySettings
+	struct NestedArraySettings : public TArraySettings	//?
 	{
 		typedef TArraySettings ArraySettings;
 

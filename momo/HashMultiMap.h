@@ -442,10 +442,9 @@ public:
 
 private:
 	typedef internal::HashMultiMapArrayBucketItemTraits<KeyValueTraits> ArrayBucketItemTraits;
-	typedef internal::NestedArraySettings<ArraySettings<>> ValueArraySettings;
 
 	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MemPoolParams<>, ValueArraySettings> ValueArray;
+		MemPoolParams<>, ArraySettings<>> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 

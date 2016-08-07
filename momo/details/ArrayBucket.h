@@ -85,7 +85,8 @@ namespace internal
 
 		typedef ArrayBucketNestedArrayItemTraits<ItemTraits> ArrayItemTraits;
 
-		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits, ArraySettings> Array;
+		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits,
+			NestedArraySettings<ArraySettings>> Array;
 
 		static const size_t arrayAlignment = std::alignment_of<Array>::value;
 

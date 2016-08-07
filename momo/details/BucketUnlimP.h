@@ -19,6 +19,32 @@ namespace momo
 
 namespace internal
 {
+	template<typename TItemTraits>
+	struct BucketUnlimPArrayBucketItemTraits
+	{
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+		static const size_t alignment = ItemTraits::alignment;
+
+		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		{
+			ItemTraits::Destroy(items, count);
+		}
+
+		static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
+		{
+			MOMO_ASSERT(false);
+		}
+
+		template<typename ItemCreator>
+		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+			const ItemCreator& itemCreator, void* pitem)
+		{
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+		}
+	};
+
 	template<typename TItemTraits, typename TMemManager,
 		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
 	class BucketUnlimP
@@ -33,31 +59,9 @@ namespace internal
 		static const size_t maxFastCount = tMaxFastCount;
 
 	private:
-		struct ArrayBucketItemTraits
-		{
-			typedef typename ItemTraits::Item Item;
+		typedef BucketUnlimPArrayBucketItemTraits<ItemTraits> ArrayBucketItemTraits;
 
-			static const size_t alignment = ItemTraits::alignment;
-
-			static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-			{
-				ItemTraits::Destroy(items, count);
-			}
-
-			static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
-			{
-				MOMO_ASSERT(false);
-			}
-
-			template<typename ItemCreator>
-			static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-				const ItemCreator& itemCreator, void* pitem)
-			{
-				ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
-			}
-		};
-
-		typedef momo::internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
+		typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
 			maxFastCount, MemPoolParams, ArraySettings> ArrayBucket;
 
 	public:
