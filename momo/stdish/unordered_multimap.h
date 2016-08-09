@@ -29,7 +29,7 @@
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
   7.1. Container move constructor, move assignment operator and swap
     function do not throw exceptions regardless of the allocator.
-  7.2. Functions of the allocator `construct`, `destruct` and `address`
+  7.2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
   7.3. It is expected that the allocator types `pointer`, `const_pointer`,
     `reference`, `const_reference`, `size_type` and `difference_type`

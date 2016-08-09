@@ -19,7 +19,7 @@
     references to items become invalid and should not be used.
   3.1. Container move constructor, move assignment operator and swap
     function do not throw exceptions regardless of the allocator.
-  3.2. Functions of the allocator `construct`, `destruct` and `address`
+  3.2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
   3.3. It is expected that the allocator types `pointer`, `const_pointer`,
     `reference`, `const_reference`, `size_type` and `difference_type`
