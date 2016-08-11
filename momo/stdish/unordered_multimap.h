@@ -31,10 +31,7 @@
     function do not throw exceptions regardless of the allocator.
   7.2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  7.3. It is expected that the allocator types `pointer`, `const_pointer`,
-    `reference`, `const_reference`, `size_type` and `difference_type`
-    have the standard definition (as in `std::allocator`).
-  7.4. It is expected that the allocator types `propagate_on_container_swap`
+  7.3. It is expected that the allocator types `propagate_on_container_swap`
     and `propagate_on_container_move_assignment` are the same as
     `std::true_type`.
 
@@ -89,6 +86,8 @@ public:
 
 	typedef typename iterator::Pointer pointer;
 	typedef typename const_iterator::Pointer const_pointer;
+	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
+	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
 	//local_iterator;
 	//const_local_iterator;

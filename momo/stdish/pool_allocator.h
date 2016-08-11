@@ -16,6 +16,8 @@
   Memory is released not only after destruction of the object,
   but also in case of removal sufficient number of items.
 
+  Deviation from the `Allocator` concept: `pool_allocator(a) != a`.
+
 \**********************************************************/
 
 #pragma once
@@ -69,7 +71,7 @@ public:
 	}
 
 	explicit pool_allocator(const base_allocator& alloc)
-		: mMemPool(MemPoolParams(), MemManager(alloc))
+		: mMemPool(MemManager(alloc))
 	{
 	}
 
@@ -78,13 +80,13 @@ public:
 	{
 	}
 
-	pool_allocator(const pool_allocator& alloc)
+	pool_allocator(const pool_allocator& alloc) //MOMO_NOEXCEPT	//?
 		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
 
 	template<class Value>
-	pool_allocator(const pool_allocator<Value>& alloc)
+	pool_allocator(const pool_allocator<Value>& alloc) //MOMO_NOEXCEPT	//?
 		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
@@ -99,25 +101,23 @@ public:
 		return *this;
 	}
 
-	pool_allocator& operator=(const pool_allocator& /*alloc*/) MOMO_NOEXCEPT
+	pool_allocator& operator=(const pool_allocator& /*alloc*/) MOMO_NOEXCEPT	//?
 	{
-		//?
 		return *this;
 	}
 
 	template<class Value>
-	pool_allocator& operator=(const pool_allocator<Value>& /*alloc*/) MOMO_NOEXCEPT
+	pool_allocator& operator=(const pool_allocator<Value>& /*alloc*/) MOMO_NOEXCEPT	//?
 	{
-		//?
 		return *this;
 	}
 
-	base_allocator get_base_allocator() const
+	base_allocator get_base_allocator() const //MOMO_NOEXCEPT
 	{
 		return mMemPool.GetMemManager().GetAllocator();
 	}
 
-	pool_allocator select_on_container_copy_construction() const
+	pool_allocator select_on_container_copy_construction() const //MOMO_NOEXCEPT
 	{
 		return pool_allocator(get_base_allocator());
 	}

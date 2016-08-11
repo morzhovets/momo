@@ -20,10 +20,7 @@
     function do not throw exceptions regardless of the allocator.
   2.2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  2.3. It is expected that the allocator types `pointer`, `const_pointer`,
-    `reference`, `const_reference`, `size_type` and `difference_type`
-    have the standard definition (as in `std::allocator`).
-  2.4. It is expected that the allocator types `propagate_on_container_swap`
+  2.3. It is expected that the allocator types `propagate_on_container_swap`
     and `propagate_on_container_move_assignment` are the same as
     `std::true_type`.
 
@@ -54,8 +51,8 @@ private:
 	typedef typename Array::MemManager MemManager;
 
 public:
-	typedef TAllocator allocator_type;
 	typedef TValue value_type;
+	typedef TAllocator allocator_type;
 
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
@@ -63,11 +60,13 @@ public:
 	typedef typename Array::Iterator iterator;
 	typedef typename Array::ConstIterator const_iterator;
 
-	typedef typename iterator::Pointer pointer;
-	typedef typename const_iterator::Pointer const_pointer;
-
 	typedef typename iterator::Reference reference;
 	typedef typename const_iterator::Reference const_reference;
+
+	typedef typename iterator::Pointer pointer;
+	typedef typename const_iterator::Pointer const_pointer;
+	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
+	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -240,12 +239,12 @@ public:
 
 	MOMO_FRIENDS_SWAP_BEGIN_END_STD(vector)
 
-	pointer data() MOMO_NOEXCEPT
+	value_type* data() MOMO_NOEXCEPT
 	{
 		return mArray.GetItems();
 	}
 
-	const_pointer data() const MOMO_NOEXCEPT
+	const value_type* data() const MOMO_NOEXCEPT
 	{
 		return mArray.GetItems();
 	}
@@ -425,13 +424,15 @@ public:
 
 	void assign(size_type count, const value_type& value)
 	{
-		*this = vector(count, value, get_allocator());
+		clear();	//?
+		insert(end(), count, value);
 	}
 
 	template<typename Iterator>
 	void assign(Iterator first, Iterator last)
 	{
-		*this = vector(first, last, get_allocator());
+		clear();	//?
+		insert(end(), first, last);
 	}
 
 	void assign(std::initializer_list<value_type> values)

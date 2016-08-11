@@ -24,10 +24,7 @@
     function do not throw exceptions regardless of the allocator.
   4.2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  4.3. It is expected that the allocator types `pointer`, `const_pointer`,
-    `reference`, `const_reference`, `size_type` and `difference_type`
-    have the standard definition (as in `std::allocator`).
-  4.4. It is expected that the allocator types `propagate_on_container_swap`
+  4.3. It is expected that the allocator types `propagate_on_container_swap`
     and `propagate_on_container_move_assignment` are the same as
     `std::true_type`.
 
@@ -59,6 +56,8 @@ private:
 	typedef typename TreeMap::TreeTraits TreeTraits;
 	typedef typename TreeMap::MemManager MemManager;
 
+	typedef typename TreeMap::Iterator TreeMapIterator;
+
 public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
@@ -88,14 +87,16 @@ public:
 	};
 
 	typedef internal::MapReferenceStd<key_type, mapped_type,
-		typename TreeMap::Iterator::Reference> reference;
+		typename TreeMapIterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
-	typedef internal::TreeDerivedIterator<typename TreeMap::Iterator, reference> iterator;
+	typedef internal::TreeDerivedIterator<TreeMapIterator, reference> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Pointer pointer;
 	typedef typename const_iterator::Pointer const_pointer;
+	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
+	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -531,7 +532,7 @@ public:
 			return end();
 		}
 		if (first == last)
-			return (first != end()) ? find(first->first) : end();	//?
+			return iterator(TreeMapIterator(first.GetBaseIterator().GetBaseIterator()));
 		size_t count = std::distance(first, last);
 		iterator iter = erase(first);
 		for (size_t i = 1; i < count; ++i)
@@ -706,7 +707,7 @@ private:
 	{
 		if (!_check_hint(hint, static_cast<const key_type&>(std::get<0>(key))))
 			return _insert(nullptr, std::move(key), mappedCreator);
-		typename TreeMap::Iterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
+		TreeMapIterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
 			std::move(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
@@ -725,7 +726,7 @@ private:
 	{
 		if (!_check_hint(hint, std::get<0>(key)))
 			return _insert(nullptr, key, mappedCreator);
-		typename TreeMap::Iterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
+		TreeMapIterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
 			std::get<0>(key), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
