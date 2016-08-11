@@ -34,8 +34,7 @@ namespace internal
 		typedef typename RowRef::ConstRowRef ConstRowRef;
 		typedef DataSelection<ConstRowRef, MemManager> ConstSelection;
 
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*>,
-			ArraySettings<2>> Raws;
+		typedef Array<Raw*, MemManager> Raws;
 
 	public:
 		DataSelection(const ColumnList* columnList, Raws&& raws) noexcept

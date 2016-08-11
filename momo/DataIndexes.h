@@ -55,7 +55,38 @@ namespace internal
 		};
 
 		template<typename HashRawKey>
-		class HashTraits : public momo::HashTraits<HashRawKey>
+		struct HashBucketStater
+		{
+			static unsigned char GetState(const HashRawKey* key) noexcept
+			{
+				return (key->raw != nullptr) ? (unsigned char)1 : (unsigned char)key->hashCode;
+			}
+
+			template<typename Item>
+			static unsigned char GetState(const Item* item) noexcept
+			{
+				return GetState(&item->GetKey());
+			}
+
+			static void SetState(HashRawKey* key, unsigned char state) noexcept
+			{
+				MOMO_ASSERT(state != (unsigned char)1 || key->raw != nullptr);
+				if (state != (unsigned char)1)
+				{
+					key->raw = nullptr;
+					key->hashCode = (size_t)state;
+				}
+			}
+
+			template<typename Item>
+			static void SetState(Item* item, unsigned char state) noexcept
+			{
+				return SetState(&item->GetKey(), state);
+			}
+		};
+
+		template<typename HashRawKey>
+		class HashTraits : public momo::HashTraits<HashRawKey, HashBucketOneI<HashBucketStater<HashRawKey>>>
 		{
 		public:
 			template<typename KeyArg>
@@ -248,7 +279,7 @@ namespace internal
 
 			//? HashMultiMapSettings, HashMapSettings
 			typedef momo::HashMultiMap<HashRawKey, Raw*, HashTraits<HashRawKey>, MemManagerPtr> HashMultiMap;
-			typedef momo::HashMap<Raw*, size_t, momo::HashTraits<Raw*>, MemManagerPtr> HashMap;
+			typedef momo::HashMap<Raw*, size_t, momo::HashTraits<Raw*>, MemManagerPtr> HashMap;	//?
 
 			static const size_t rawFastCount = 8;
 
@@ -546,6 +577,7 @@ namespace internal
 		static std::array<size_t, columnCount> GetSortedOffsets(
 			const std::array<size_t, columnCount>& offsets)
 		{
+			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> sortedOffsets = offsets;
 			std::sort(sortedOffsets.begin(), sortedOffsets.end());
 			MOMO_ASSERT(std::unique(sortedOffsets.begin(), sortedOffsets.end()) == sortedOffsets.end());

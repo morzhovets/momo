@@ -160,6 +160,8 @@ private:
 		std::array<Edge*, vertexCount> mEdges;
 	};
 
+	typedef std::array<size_t, vertexCount> Addends;
+
 	typedef std::function<void(Raw*)> CreateFunc;
 	typedef std::function<void(Raw*)> DestroyFunc;
 
@@ -177,7 +179,7 @@ public:
 			if (!graph.HasEdge(v) || mAddends[v] != 0)
 				continue;
 			mAddends[v] = (size_t)1 << (8 * sizeof(size_t) - 1);
-			if (!graph.FillAddends(mAddends, v))
+			if (!graph.FillAddends(mAddends.data(), v))
 				throw std::runtime_error("Cannot create DataColumnListVar");	//?
 		}
 		mCreateFunc = [] (Raw* raw) { _Create<void, Types...>(raw, 0); };
@@ -257,7 +259,7 @@ private:
 	template<size_t edgeCount>
 	void _MakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) noexcept
 	{
-		mTotalSize = internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
+		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
 	template<typename Type>
@@ -314,7 +316,7 @@ private:
 
 private:
 	size_t mTotalSize;
-	std::array<size_t, vertexCount> mAddends;
+	Addends mAddends;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
 };
