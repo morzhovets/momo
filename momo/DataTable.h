@@ -483,10 +483,9 @@ private:
 		const Args&... args) const
 	{
 		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		size_t offsets[columnCount];
-		_GetOffsets(offsets, column, item, args...);
-		size_t sortedOffsets[columnCount];
-		Indexes::GetSortedOffsets(offsets, sortedOffsets);
+		std::array<size_t, columnCount> offsets;
+		_GetOffsets(offsets.data(), column, item, args...);
+		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		const auto* uniqueHash = mIndexes.FindFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
 			return _SelectRec<Result>(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
@@ -494,7 +493,7 @@ private:
 		if (multiHash != nullptr)
 			return _SelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
 		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowRef rowRef)
-			{ return _IsSatisfied(rowRef, offsets, column, item, args...) && filter(rowRef); };
+			{ return _IsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
 		return _MakeSelection<Result>(mRaws, newFilter);
 	}
 
@@ -523,16 +522,15 @@ private:
 		return true;
 	}
 
-	template<typename Result, typename Index, typename Filter, typename... Types, typename Type, typename... Args>
-	Result _SelectRec(const Index& index, const Filter& filter, const OffsetItemTuple<Types...>& key,
+	template<typename Result, typename Index, typename Filter, typename Tuple, typename Type, typename... Args>
+	Result _SelectRec(const Index& index, const Filter& filter, const Tuple& tuple,
 		const Column<Type>& column, const Type& item, const Args&... args) const
 	{
 		size_t offset = GetColumnList().GetOffset(column);
 		if (Indexes::HasOffset(index, offset))
 		{
-			OffsetItemTuple<Types..., Type> newKey = std::tuple_cat(key,
-				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return _SelectRec<Result>(index, filter, newKey, args...);
+			auto newTuple = std::tuple_cat(tuple, std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
+			return _SelectRec<Result>(index, filter, newTuple, args...);
 		}
 		else
 		{
@@ -541,16 +539,23 @@ private:
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& filter(rowRef);
 			};
-			return _SelectRec<Result>(index, newFilter, key, args...);
+			return _SelectRec<Result>(index, newFilter, tuple, args...);
 		}
 	}
 
-	template<typename Result, typename Index, typename Filter, typename... Types>
-	Result _SelectRec(const Index& index, const Filter& filter,
-		const OffsetItemTuple<Types...>& key) const
+	template<typename Result, typename Index, typename Filter, typename Tuple>
+	Result _SelectRec(const Index& index, const Filter& filter, const Tuple& tuple) const
 	{
-		return _MakeSelection<Result>(mIndexes.FindRaws(index, key), filter);
+		return _MakeSelection<Result>(mIndexes.FindRaws(index, tuple), filter);
 	}
+
+#ifdef _MSC_VER	//?
+	template<typename Result, typename Index, typename Filter>
+	Result _SelectRec(const Index&, const Filter&, const OffsetItemTuple<>&) const
+	{
+		throw std::exception();
+	}
+#endif
 
 	template<typename Result, typename Raws, typename Filter>
 	Result _MakeSelection(const Raws& raws, const Filter& filter) const

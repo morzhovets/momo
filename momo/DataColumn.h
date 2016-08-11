@@ -105,7 +105,7 @@ private:
 		Graph() noexcept
 		{
 			mEdgeNumber = 0;
-			std::fill_n(mEdges, vertexCount, nullptr);
+			std::fill(mEdges.begin(), mEdges.end(), nullptr);
 		}
 
 		Graph(const Graph&) = delete;
@@ -156,8 +156,8 @@ private:
 
 	private:
 		size_t mEdgeNumber;
-		Edge mEdgeStorage[edgeCount];
-		Edge* mEdges[vertexCount];
+		std::array<Edge, edgeCount> mEdgeStorage;
+		std::array<Edge*, vertexCount> mEdges;
 	};
 
 	typedef std::function<void(Raw*)> CreateFunc;
@@ -171,7 +171,7 @@ public:
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
 		Graph<2 * columnCount> graph;
 		_MakeGraph(graph, 0, 1, columns...);
-		std::fill_n(mAddends, vertexCount, 0);
+		std::fill(mAddends.begin(), mAddends.end(), 0);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
 			if (!graph.HasEdge(v) || mAddends[v] != 0)
@@ -314,7 +314,7 @@ private:
 
 private:
 	size_t mTotalSize;
-	size_t mAddends[vertexCount];
+	std::array<size_t, vertexCount> mAddends;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
 };
@@ -363,6 +363,7 @@ public:
 
 	void DestroyRaw(Raw* raw) const noexcept
 	{
+		(void)raw;
 		raw->~Raw();
 	}
 
