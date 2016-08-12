@@ -16,13 +16,8 @@
 
   Deviations from the `std::vector`:
   1. `vector<bool>` is just a vector of bool.
-  2.1. Container move constructor, move assignment operator and swap
-    function do not throw exceptions regardless of the allocator.
-  2.2. Functions of the allocator `construct`, `destroy` and `address`
+  2. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  2.3. It is expected that the allocator types `propagate_on_container_swap`
-    and `propagate_on_container_move_assignment` are the same as
-    `std::true_type`.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -72,7 +67,7 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 public:
-	vector()
+	vector() MOMO_NOEXCEPT_IF(noexcept(allocator_type()))
 	{
 	}
 
@@ -110,7 +105,6 @@ public:
 	vector(vector&& right, const allocator_type& alloc)
 		: mArray(_create_array(std::move(right), alloc))
 	{
-		right.clear();
 	}
 
 	vector(const vector& right)
@@ -127,9 +121,15 @@ public:
 	{
 	}
 
-	vector& operator=(vector&& right) MOMO_NOEXCEPT
+	vector& operator=(vector&& right) //MOMO_NOEXCEPT_IF
 	{
-		mArray = std::move(right.mArray);
+		if (this != &right)
+		{
+			bool propagate = std::allocator_traits<allocator_type>
+				::propagate_on_container_move_assignment::value;
+			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			mArray = _create_array(std::move(right), alloc);
+		}
 		return *this;
 	}
 
@@ -140,7 +140,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			vector(right, alloc).swap(*this);
+			mArray = Array(right.begin(), right.end(), MemManager(alloc));
 		}
 		return *this;
 	}
@@ -153,6 +153,8 @@ public:
 
 	void swap(vector& right) MOMO_NOEXCEPT
 	{
+		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
+			|| get_allocator() == right.get_allocator());
 		mArray.Swap(right.mArray);
 	}
 
@@ -454,21 +456,10 @@ private:
 	{
 		if (right.get_allocator() == alloc)
 			return std::move(right.mArray);
-		return _create_array(right, MemManager(alloc),
-			internal::BoolConstant<Array::ItemTraits::isNothrowMoveConstructible>());
-	}
-
-	static Array _create_array(vector& right, MemManager&& memManager,
-		std::true_type /*isNothrowMoveConstructible*/)
-	{
-		return Array(std::make_move_iterator(right.begin()),
-			std::make_move_iterator(right.end()), std::move(memManager));
-	}
-
-	static Array _create_array(vector& right, MemManager&& memManager,
-		std::false_type /*isNothrowMoveConstructible*/)
-	{
-		return Array(right.begin(), right.end(), std::move(memManager));
+		Array array(std::make_move_iterator(right.begin()),
+			std::make_move_iterator(right.end()), MemManager(alloc));
+		right.clear();
+		return array;
 	}
 
 private:

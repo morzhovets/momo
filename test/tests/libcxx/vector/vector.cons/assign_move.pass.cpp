@@ -55,11 +55,10 @@ void main()
         assert(l2 == lo);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(!l.empty());
-        assert(l2.get_allocator() == test_allocator<MoveOnly>(6));
 #else
         assert(l.empty());
-        assert(l2.get_allocator() == test_allocator<MoveOnly>(5));
 #endif
+        assert(l2.get_allocator() == test_allocator<MoveOnly>(6));
         //assert(is_contiguous_container_asan_correct(l2));
     }
     {
