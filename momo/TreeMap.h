@@ -511,6 +511,11 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
+	void Merge(TreeMap& treeMap)
+	{
+		mTreeSet.Merge(treeMap.mTreeSet);
+	}
+
 private:
 	bool _IsEqual(ConstIterator iter, const Key& key) const
 	{

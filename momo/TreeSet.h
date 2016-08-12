@@ -728,6 +728,23 @@ public:
 		return true;
 	}
 
+	void Merge(TreeSet& treeSet)
+	{
+		auto assignFunc2 = [] (Item&& /*srcItem*/, Item& /*dstItem*/) { MOMO_ASSERT(false); };
+		ConstIterator remIter = treeSet.GetEnd();
+		while (remIter != treeSet.GetBegin())
+		{
+			--remIter;
+			const Key& key = ItemTraits::GetKey(*remIter);
+			ConstIterator addIter = LowerBound(key);
+			if (_IsEqual(addIter, key))
+				continue;
+			auto assignFunc1 = [this, addIter] (Item&& srcItem)
+				{ _Add(addIter, Creator<Item>(std::move(srcItem)), false); };
+			remIter = treeSet._Remove(remIter, assignFunc1, assignFunc2);
+		}
+	}
+
 	void Reset(ConstIterator iter, Item&& newItem)
 	{
 		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
