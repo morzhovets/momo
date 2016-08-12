@@ -202,6 +202,8 @@ public:
 
 	void swap(map& right) MOMO_NOEXCEPT
 	{
+		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
+			|| get_allocator() == right.get_allocator());
 		mTreeMap.Swap(right.mTreeMap);
 	}
 

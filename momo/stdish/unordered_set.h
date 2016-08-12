@@ -226,6 +226,8 @@ public:
 
 	void swap(unordered_set& right) MOMO_NOEXCEPT
 	{
+		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
+			|| get_allocator() == right.get_allocator());
 		mHashSet.Swap(right.mHashSet);
 	}
 

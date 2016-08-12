@@ -51,6 +51,10 @@ public:
 
     template <class U> struct rebind {typedef test_allocator<U> other;};
 
+#ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+	typedef std::true_type propagate_on_container_swap;
+#endif
+
     test_allocator() throw() : data_(0) {++count;}
     explicit test_allocator(int i) throw() : data_(i) {++count;}
     test_allocator(const test_allocator& a) throw()

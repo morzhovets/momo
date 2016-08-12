@@ -180,6 +180,8 @@ public:
 
 	void swap(set& right) MOMO_NOEXCEPT
 	{
+		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
+			|| get_allocator() == right.get_allocator());
 		mTreeSet.Swap(right.mTreeSet);
 	}
 
