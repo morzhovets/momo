@@ -86,7 +86,7 @@ public:
 	}
 
 	template<class Value>
-	pool_allocator(const pool_allocator<Value>& alloc) //MOMO_NOEXCEPT	//?
+	pool_allocator(const pool_allocator<Value, base_allocator, mem_pool_params>& alloc) //MOMO_NOEXCEPT	//?
 		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
@@ -101,16 +101,7 @@ public:
 		return *this;
 	}
 
-	pool_allocator& operator=(const pool_allocator& /*alloc*/) MOMO_NOEXCEPT	//?
-	{
-		return *this;
-	}
-
-	template<class Value>
-	pool_allocator& operator=(const pool_allocator<Value>& /*alloc*/) MOMO_NOEXCEPT	//?
-	{
-		return *this;
-	}
+	pool_allocator& operator=(const pool_allocator& alloc) = delete;
 
 	base_allocator get_base_allocator() const //MOMO_NOEXCEPT
 	{
