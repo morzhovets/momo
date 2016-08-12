@@ -76,49 +76,28 @@ public:
 	{
 	}
 
-	explicit vector(const allocator_type& alloc)
+	explicit vector(const allocator_type& alloc) MOMO_NOEXCEPT
 		: mArray(MemManager(alloc))
 	{
 	}
 
-	explicit vector(size_type count)
-		: mArray(count)
-	{
-	}
-
-	vector(size_type count, const allocator_type& alloc)
+	explicit vector(size_type count, const allocator_type& alloc = allocator_type())
 		: mArray(count, MemManager(alloc))
 	{
 	}
 
-	vector(size_type count, const value_type& value)
-		: mArray(count, value)
-	{
-	}
-
-	vector(size_type count, const value_type& value, const allocator_type& alloc)
+	vector(size_type count, const value_type& value, const allocator_type& alloc = allocator_type())
 		: mArray(count, value, MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	vector(Iterator first, Iterator last)
-		: mArray(first, last)
-	{
-	}
-
-	template<typename Iterator>
-	vector(Iterator first, Iterator last, const allocator_type& alloc)
+	vector(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 		: mArray(first, last, MemManager(alloc))
 	{
 	}
 
-	vector(std::initializer_list<value_type> values)
-		: mArray(values)
-	{
-	}
-
-	vector(std::initializer_list<value_type> values, const allocator_type& alloc)
+	vector(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
 		: mArray(values, MemManager(alloc))
 	{
 	}
@@ -249,12 +228,12 @@ public:
 		return mArray.GetItems();
 	}
 
-	allocator_type get_allocator() const //MOMO_NOEXCEPT
+	allocator_type get_allocator() const MOMO_NOEXCEPT
 	{
 		return mArray.GetMemManager().GetAllocator();
 	}
 
-	size_type max_size() const //MOMO_NOEXCEPT
+	size_type max_size() const MOMO_NOEXCEPT
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 		//return std::minmax(Array::maxCapacity, get_allocator().max_size()).second;

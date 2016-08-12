@@ -287,12 +287,12 @@ public:
 		return mHashSet.GetHashTraits().GetEqualFunc();
 	}
 
-	allocator_type get_allocator() const //MOMO_NOEXCEPT
+	allocator_type get_allocator() const MOMO_NOEXCEPT
 	{
 		return mHashSet.GetMemManager().GetAllocator();
 	}
 
-	size_type max_size() const //MOMO_NOEXCEPT
+	size_type max_size() const MOMO_NOEXCEPT
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 	}

@@ -217,20 +217,14 @@ public:
 };
 #endif
 
-template<typename TAllocator,
-	bool tUsePtrWrapper = !std::is_nothrow_move_constructible<
-		typename std::allocator_traits<TAllocator>::template rebind_alloc<char>>::value>
-class MemManagerStd;
-
 template<typename TAllocator>
-class MemManagerStd<TAllocator, false>
-	: private std::allocator_traits<TAllocator>::template rebind_alloc<char>
+class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<char>
 {
 public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
 
-	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<CharAllocator>::value);
+	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<CharAllocator>::value);
 
 	static const bool canReallocate = false;
 	static const bool canReallocateInplace = false;
@@ -240,7 +234,7 @@ public:
 	{
 	}
 
-	explicit MemManagerStd(const Allocator& alloc)
+	explicit MemManagerStd(const Allocator& alloc) MOMO_NOEXCEPT
 		: CharAllocator(alloc)
 	{
 	}
@@ -275,7 +269,7 @@ public:
 			static_cast<char*>(ptr), size);
 	}
 
-	Allocator GetAllocator() const
+	Allocator GetAllocator() const MOMO_NOEXCEPT
 	{
 		return Allocator(_GetCharAllocator());
 	}
@@ -292,70 +286,10 @@ private:
 	}
 };
 
-template<typename TAllocator>
-class MemManagerStd<TAllocator, true>
-{
-public:
-	typedef TAllocator Allocator;
-	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
-
-	static const bool canReallocate = false;
-	static const bool canReallocateInplace = false;
-
-public:
-	MemManagerStd()
-		: mCharAllocator(new CharAllocator)
-	{
-	}
-
-	explicit MemManagerStd(const Allocator& alloc)
-		: mCharAllocator(new CharAllocator(alloc))
-	{
-	}
-
-	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
-		: mCharAllocator(std::move(memManager.mCharAllocator))
-	{
-	}
-
-	MemManagerStd(const MemManagerStd& memManager)
-		: mCharAllocator(new CharAllocator(std::allocator_traits<CharAllocator>
-			::select_on_container_copy_construction(*memManager.mCharAllocator)))
-	{
-	}
-
-	~MemManagerStd() MOMO_NOEXCEPT
-	{
-	}
-
-	MemManagerStd& operator=(const MemManagerStd&) = delete;
-
-	template<typename ResType = void>
-	ResType* Allocate(size_t size)
-	{
-		void* ptr = std::allocator_traits<CharAllocator>::allocate(*mCharAllocator, size);
-		return static_cast<ResType*>(ptr);
-	}
-
-	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
-	{
-		std::allocator_traits<CharAllocator>::deallocate(*mCharAllocator,
-			static_cast<char*>(ptr), size);
-	}
-
-	Allocator GetAllocator() const
-	{
-		return Allocator(*mCharAllocator);
-	}
-
-private:
-	std::unique_ptr<CharAllocator> mCharAllocator;
-};
-
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
 template<typename TItem>
-class MemManagerStd<std::allocator<TItem>, false> : public MemManagerDefault
+class MemManagerStd<std::allocator<TItem>> : public MemManagerDefault
 {
 public:
 	typedef std::allocator<TItem> Allocator;

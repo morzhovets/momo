@@ -38,7 +38,7 @@ class pool_allocator
 public:
 	typedef TValue value_type;
 
-	typedef TBaseAllocator base_allocator;
+	typedef TBaseAllocator base_allocator_type;
 	typedef TMemPoolParams mem_pool_params;
 
 	typedef value_type* pointer;
@@ -56,13 +56,13 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value, base_allocator, mem_pool_params> other;
+		typedef pool_allocator<Value, base_allocator_type, mem_pool_params> other;
 	};
 
 private:
 	typedef momo::MemPoolParamsStatic<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type),
 		mem_pool_params::blockCount, mem_pool_params::cachedFreeBlockCount> MemPoolParams;
-	typedef MemManagerStd<base_allocator> MemManager;
+	typedef MemManagerStd<base_allocator_type> MemManager;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
 public:
@@ -70,7 +70,7 @@ public:
 	{
 	}
 
-	explicit pool_allocator(const base_allocator& alloc)
+	explicit pool_allocator(const base_allocator_type& alloc)
 		: mMemPool(MemManager(alloc))
 	{
 	}
@@ -80,14 +80,15 @@ public:
 	{
 	}
 
-	pool_allocator(const pool_allocator& alloc) //MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.get_base_allocator())
+	pool_allocator(const pool_allocator& alloc) MOMO_NOEXCEPT	//?
+		: pool_allocator(alloc.base_allocator())
 	{
 	}
 
 	template<class Value>
-	pool_allocator(const pool_allocator<Value, base_allocator, mem_pool_params>& alloc) //MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.get_base_allocator())
+	pool_allocator(const pool_allocator<Value,
+		base_allocator_type, mem_pool_params>& alloc) MOMO_NOEXCEPT	//?
+		: pool_allocator(alloc.base_allocator())
 	{
 	}
 
@@ -103,14 +104,14 @@ public:
 
 	pool_allocator& operator=(const pool_allocator& alloc) = delete;
 
-	base_allocator get_base_allocator() const //MOMO_NOEXCEPT
+	base_allocator_type base_allocator() const MOMO_NOEXCEPT
 	{
 		return mMemPool.GetMemManager().GetAllocator();
 	}
 
-	pool_allocator select_on_container_copy_construction() const //MOMO_NOEXCEPT
+	pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
 	{
-		return pool_allocator(get_base_allocator());
+		return pool_allocator(base_allocator());
 	}
 
 	pointer address(reference ref) const MOMO_NOEXCEPT
@@ -177,7 +178,7 @@ class pool_allocator<void, TBaseAllocator, TMemPoolParams>
 public:
 	typedef void value_type;
 
-	typedef TBaseAllocator base_allocator;
+	typedef TBaseAllocator base_allocator_type;
 	typedef TMemPoolParams mem_pool_params;
 
 	typedef void* pointer;
@@ -186,7 +187,7 @@ public:
 	template<typename Value>
 	struct rebind
 	{
-		typedef pool_allocator<Value, base_allocator, mem_pool_params> other;
+		typedef pool_allocator<Value, base_allocator_type, mem_pool_params> other;
 	};
 };
 
