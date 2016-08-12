@@ -65,6 +65,11 @@
 		</Build>
 		<Unit filename="../../../momo/Array.h" />
 		<Unit filename="../../../momo/ArrayUtility.h" />
+		<Unit filename="../../../momo/DataColumn.h" />
+		<Unit filename="../../../momo/DataIndexes.h" />
+		<Unit filename="../../../momo/DataRow.h" />
+		<Unit filename="../../../momo/DataSelection.h" />
+		<Unit filename="../../../momo/DataTable.h" />
 		<Unit filename="../../../momo/HashMap.h" />
 		<Unit filename="../../../momo/HashMultiMap.h" />
 		<Unit filename="../../../momo/HashSet.h" />

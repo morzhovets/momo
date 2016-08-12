@@ -230,5 +230,20 @@
     <ClInclude Include="..\..\..\momo\details\BucketOneI.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\DataColumn.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\DataIndexes.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\DataRow.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\DataSelection.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\DataTable.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

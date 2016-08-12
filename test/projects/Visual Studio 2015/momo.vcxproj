@@ -167,6 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
+    <ClInclude Include="..\..\..\momo\DataColumn.h" />
+    <ClInclude Include="..\..\..\momo\DataIndexes.h" />
+    <ClInclude Include="..\..\..\momo\DataRow.h" />
+    <ClInclude Include="..\..\..\momo\DataSelection.h" />
+    <ClInclude Include="..\..\..\momo\DataTable.h" />
     <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
     <ClInclude Include="..\..\..\momo\details\BucketOneI.h" />
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
