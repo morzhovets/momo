@@ -98,11 +98,7 @@ void main()
         M m3(C(3), A(5));
         m3 = std::move(m1);
         assert(m3 == m2);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(m3.get_allocator() == A(5));
-#else
-        assert(m3.get_allocator() == A(7));
-#endif
         assert(m3.key_comp() == C(5));
         assert(m1.empty());
     }

@@ -20,13 +20,8 @@
   3. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4.1. Container move constructor, move assignment operator and swap
-    function do not throw exceptions regardless of the allocator.
-  4.2. Functions of the allocator `construct`, `destroy` and `address`
+  4. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  4.3. It is expected that the allocator types `propagate_on_container_swap`
-    and `propagate_on_container_move_assignment` are the same as
-    `std::true_type`.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -151,13 +146,8 @@ public:
 	}
 
 	map(map&& right, const allocator_type& alloc)
-		: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
+		: mTreeMap(_create_map(std::move(right), alloc))
 	{
-		if (right.get_allocator() == alloc)
-			*this = std::move(right);
-		else
-			insert(right.begin(), right.end());
-		right.clear();
 	}
 
 	map(const map& right)
@@ -175,9 +165,15 @@ public:
 	{
 	}
 
-	map& operator=(map&& right) MOMO_NOEXCEPT
+	map& operator=(map&& right) //MOMO_NOEXCEPT_IF
 	{
-		mTreeMap = std::move(right.mTreeMap);
+		if (this != &right)
+		{
+			bool propagate = std::allocator_traits<allocator_type>
+				::propagate_on_container_move_assignment::value;
+			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			mTreeMap = _create_map(std::move(right), alloc);
+		}
 		return *this;
 	}
 
@@ -188,7 +184,9 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			map(right, alloc).swap(*this);
+			TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
+			treeMap.InsertFS(right.begin(), right.end());
+			mTreeMap = std::move(treeMap);
 		}
 		return *this;
 	}
@@ -656,6 +654,16 @@ public:
 	}
 
 private:
+	static TreeMap _create_map(map&& right, const allocator_type& alloc)
+	{
+		if (right.get_allocator() == alloc)
+			return std::move(right.mTreeMap);
+		TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
+		treeMap.Merge(right.mTreeMap);
+		right.clear();
+		return treeMap;
+	}
+
 	bool _check_hint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();

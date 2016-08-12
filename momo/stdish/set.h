@@ -17,13 +17,8 @@
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
     references to items become invalid and should not be used.
-  3.1. Container move constructor, move assignment operator and swap
-    function do not throw exceptions regardless of the allocator.
-  3.2. Functions of the allocator `construct`, `destroy` and `address`
+  3. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  3.3. It is expected that the allocator types `propagate_on_container_swap`
-    and `propagate_on_container_move_assignment` are the same as
-    `std::true_type`.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -129,13 +124,8 @@ public:
 	}
 
 	set(set&& right, const allocator_type& alloc)
-		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
+		: mTreeSet(_create_set(std::move(right), alloc))
 	{
-		if (right.get_allocator() == alloc)
-			*this = std::move(right);
-		else
-			insert(right.begin(), right.end());
-		right.clear();
 	}
 
 	set(const set& right)
@@ -153,9 +143,15 @@ public:
 	{
 	}
 
-	set& operator=(set&& right) MOMO_NOEXCEPT
+	set& operator=(set&& right) //MOMO_NOEXCEPT_IF
 	{
-		mTreeSet = std::move(right.mTreeSet);
+		if (this != &right)
+		{
+			bool propagate = std::allocator_traits<allocator_type>
+				::propagate_on_container_move_assignment::value;
+			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			mTreeSet = _create_set(std::move(right), alloc);
+		}
 		return *this;
 	}
 
@@ -166,7 +162,9 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			set(right, alloc).swap(*this);
+			TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
+			treeSet.Insert(right.begin(), right.end());
+			mTreeSet = std::move(treeSet);
 		}
 		return *this;
 	}
@@ -486,6 +484,16 @@ public:
 	}
 
 private:
+	static TreeSet _create_set(set&& right, const allocator_type& alloc)
+	{
+		if (right.get_allocator() == alloc)
+			return std::move(right.mTreeSet);
+		TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
+		treeSet.Merge(right.mTreeSet);
+		right.clear();
+		return treeSet;
+	}
+
 	bool _check_hint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
