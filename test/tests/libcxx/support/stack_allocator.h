@@ -63,14 +63,4 @@ inline
 void
 swap(stack_allocator<T, N>& x, stack_allocator<T, N>& y) {}
 
-#if defined(_MSC_VER) && _MSC_VER < 1800
-namespace std
-{
-	template <class T, std::size_t N>
-	struct is_nothrow_move_constructible<stack_allocator<T, N>> : public std::false_type
-	{
-	};
-}
-#endif
-
 #endif  // STACK_ALLOCATOR_H
