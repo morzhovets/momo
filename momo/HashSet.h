@@ -746,6 +746,27 @@ public:
 		return true;
 	}
 
+	void Merge(HashSet&& hashSet)
+	{
+		for (Buckets* buckets = hashSet.mBuckets; buckets != nullptr;
+			buckets = buckets->GetNextBuckets())
+		{
+			BucketParams& bucketParams = buckets->GetBucketParams();
+			for (Bucket& bucket : *buckets)
+			{
+				typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
+				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
+				{
+					--pitem;
+					Insert(std::move(*pitem));
+					bucket.RemoveBack(bucketParams);
+					--hashSet.mCount;
+					hashSet.mCrew.IncVersion();
+				}
+			}
+		}
+	}
+
 	void Reset(ConstIterator iter, Item&& newItem)
 	{
 		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
