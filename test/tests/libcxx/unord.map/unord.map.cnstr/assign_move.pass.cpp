@@ -70,11 +70,7 @@ void main()
         assert(c.at(4) == "four");
         assert(c.hash_function() == test_hash<std::hash<int> >(8));
         assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.get_allocator() == A(4));
-#else
-        assert(c.get_allocator() == A(10));
-#endif
         assert(!c.empty());
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());

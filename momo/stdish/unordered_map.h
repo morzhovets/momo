@@ -23,13 +23,8 @@
   3. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4.1. Container move constructor, move assignment operator and swap
-    function do not throw exceptions regardless of the allocator.
-  4.2. Functions of the allocator `construct`, `destroy` and `address`
+  4. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  4.3. It is expected that the allocator types `propagate_on_container_swap`
-    and `propagate_on_container_move_assignment` are the same as
-    `std::true_type`.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -180,13 +175,8 @@ public:
 	}
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
+		: mHashMap(_create_map(std::move(right), alloc))
 	{
-		if (right.get_allocator() == alloc)
-			*this = std::move(right);
-		else
-			insert(right.begin(), right.end());
-		right.clear();
 	}
 
 	unordered_map(const unordered_map& right)
@@ -204,9 +194,15 @@ public:
 	{
 	}
 
-	unordered_map& operator=(unordered_map&& right) MOMO_NOEXCEPT
+	unordered_map& operator=(unordered_map&& right) //MOMO_NOEXCEPT_IF
 	{
-		mHashMap = std::move(right.mHashMap);
+		if (this != &right)
+		{
+			bool propagate = std::allocator_traits<allocator_type>
+				::propagate_on_container_move_assignment::value;
+			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			mHashMap = _create_map(std::move(right), alloc);
+		}
 		return *this;
 	}
 
@@ -217,7 +213,9 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			unordered_map(right, alloc).swap(*this);
+			HashMap hashMap(right.mHashMap.GetHashTraits(), MemManager(alloc));
+			hashMap.InsertFS(right.begin(), right.end());
+			mHashMap = std::move(hashMap);
 		}
 		return *this;
 	}
@@ -660,6 +658,15 @@ public:
 	}
 
 private:
+	static HashMap _create_map(unordered_map&& right, const allocator_type& alloc)
+	{
+		if (right.get_allocator() == alloc)
+			return std::move(right.mHashMap);
+		HashMap hashMap(right.mHashMap.GetHashTraits(), MemManager(alloc));
+		hashMap.Merge(std::move(right.mHashMap));
+		return hashMap;
+	}
+
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
 	std::pair<iterator, bool> _insert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		std::tuple<MappedArgs...>&& mappedArgs)

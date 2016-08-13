@@ -20,13 +20,8 @@
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
     references to items become invalid and should not be used.
-  3.1. Container move constructor, move assignment operator and swap
-    function do not throw exceptions regardless of the allocator.
-  3.2. Functions of the allocator `construct`, `destroy` and `address`
+  3. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
-  3.3. It is expected that the allocator types `propagate_on_container_swap`
-    and `propagate_on_container_move_assignment` are the same as
-    `std::true_type`.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -175,13 +170,8 @@ public:
 	}
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
-		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
+		: mHashSet(_create_set(std::move(right), alloc))
 	{
-		if (right.get_allocator() == alloc)
-			*this = std::move(right);
-		else
-			insert(right.begin(), right.end());
-		right.clear();
 	}
 
 	unordered_set(const unordered_set& right)
@@ -199,9 +189,15 @@ public:
 	{
 	}
 
-	unordered_set& operator=(unordered_set&& right) MOMO_NOEXCEPT
+	unordered_set& operator=(unordered_set&& right) //MOMO_NOEXCEPT_IF
 	{
-		mHashSet = std::move(right.mHashSet);
+		if (this != &right)
+		{
+			bool propagate = std::allocator_traits<allocator_type>
+				::propagate_on_container_move_assignment::value;
+			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			mHashSet = _create_set(std::move(right), alloc);
+		}
 		return *this;
 	}
 
@@ -212,7 +208,9 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			unordered_set(right, alloc).swap(*this);
+			HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
+			hashSet.Insert(right.begin(), right.end());
+			mHashSet = std::move(hashSet);
 		}
 		return *this;
 	}
@@ -537,6 +535,15 @@ public:
 	}
 
 private:
+	static HashSet _create_set(unordered_set&& right, const allocator_type& alloc)
+	{
+		if (right.get_allocator() == alloc)
+			return std::move(right.mHashSet);
+		HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
+		hashSet.Merge(std::move(right.mHashSet));
+		return hashSet;
+	}
+
 	template<typename Iterator>
 	void _insert(Iterator first, Iterator last, std::true_type /*isValueType*/)
 	{
