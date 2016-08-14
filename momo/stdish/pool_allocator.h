@@ -81,14 +81,14 @@ public:
 	}
 
 	pool_allocator(const pool_allocator& alloc) MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.base_allocator())
+		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
 
 	template<class Value>
 	pool_allocator(const pool_allocator<Value,
 		base_allocator_type, mem_pool_params>& alloc) MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.base_allocator())
+		: pool_allocator(alloc.get_base_allocator())
 	{
 	}
 
@@ -104,14 +104,14 @@ public:
 
 	pool_allocator& operator=(const pool_allocator& alloc) = delete;
 
-	base_allocator_type base_allocator() const MOMO_NOEXCEPT
+	base_allocator_type get_base_allocator() const MOMO_NOEXCEPT
 	{
 		return mMemPool.GetMemManager().GetAllocator();
 	}
 
 	pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
 	{
-		return pool_allocator(base_allocator());
+		return pool_allocator(get_base_allocator());
 	}
 
 	pointer address(reference ref) const MOMO_NOEXCEPT
