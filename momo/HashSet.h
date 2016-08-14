@@ -486,7 +486,12 @@ public:
 	}
 
 	HashSet(const HashSet& hashSet)
-		: HashSet(hashSet.GetHashTraits(), MemManager(hashSet.GetMemManager()))
+		: HashSet(hashSet, MemManager(hashSet.GetMemManager()))
+	{
+	}
+
+	HashSet(const HashSet& hashSet, MemManager&& memManager)
+		: HashSet(hashSet.GetHashTraits(), std::move(memManager))
 	{
 		mCount = hashSet.mCount;
 		if (mCount == 0)

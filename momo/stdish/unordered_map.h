@@ -175,6 +175,7 @@ public:
 	}
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mHashMap(_create_map(std::move(right), alloc))
 	{
 	}
@@ -185,16 +186,17 @@ public:
 	}
 
 	unordered_map(const unordered_map& right, const allocator_type& alloc)
-		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
+		: mHashMap(right.mHashMap, MemManager(alloc))
 	{
-		insert(right.begin(), right.end());
 	}
 
 	~unordered_map() MOMO_NOEXCEPT
 	{
 	}
 
-	unordered_map& operator=(unordered_map&& right) //MOMO_NOEXCEPT_IF
+	unordered_map& operator=(unordered_map&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

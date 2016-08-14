@@ -230,7 +230,7 @@ public:
 	static const bool canReallocateInplace = false;
 
 public:
-	MemManagerStd()
+	MemManagerStd() MOMO_NOEXCEPT_IF(noexcept(CharAllocator()))
 	{
 	}
 

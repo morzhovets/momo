@@ -67,7 +67,7 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 public:
-	vector() MOMO_NOEXCEPT_IF(noexcept(allocator_type()))
+	vector() MOMO_NOEXCEPT_IF(noexcept(Array()))
 	{
 	}
 
@@ -103,6 +103,7 @@ public:
 	}
 
 	vector(vector&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mArray(_create_array(std::move(right), alloc))
 	{
 	}
@@ -113,7 +114,7 @@ public:
 	}
 
 	vector(const vector& right, const allocator_type& alloc)
-		: mArray(right.begin(), right.end(), MemManager(alloc))
+		: mArray(right.mArray, MemManager(alloc))
 	{
 	}
 
@@ -121,7 +122,9 @@ public:
 	{
 	}
 
-	vector& operator=(vector&& right) //MOMO_NOEXCEPT_IF
+	vector& operator=(vector&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

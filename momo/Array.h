@@ -519,7 +519,7 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 public:
-	Array()
+	Array() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
 		: Array(MemManager())
 	{
 	}
@@ -563,6 +563,11 @@ public:
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
 		_Fill(array.GetBegin(), array.GetEnd(), std::true_type());
+	}
+
+	Array(const Array& array, MemManager&& memManager)
+		: Array(array.GetBegin(), array.GetEnd(), std::move(memManager))
+	{
 	}
 
 	static Array CreateCap(size_t capacity, MemManager&& memManager = MemManager())

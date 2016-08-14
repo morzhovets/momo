@@ -124,6 +124,7 @@ public:
 	}
 
 	set(set&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mTreeSet(_create_set(std::move(right), alloc))
 	{
 	}
@@ -134,16 +135,17 @@ public:
 	}
 
 	set(const set& right, const allocator_type& alloc)
-		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
+		: mTreeSet(right.mTreeSet, MemManager(alloc))
 	{
-		insert(right.begin(), right.end());
 	}
 
 	~set() MOMO_NOEXCEPT
 	{
 	}
 
-	set& operator=(set&& right) //MOMO_NOEXCEPT_IF
+	set& operator=(set&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

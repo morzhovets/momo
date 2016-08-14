@@ -170,6 +170,7 @@ public:
 	}
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mHashSet(_create_set(std::move(right), alloc))
 	{
 	}
@@ -180,16 +181,17 @@ public:
 	}
 
 	unordered_set(const unordered_set& right, const allocator_type& alloc)
-		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
+		: mHashSet(right.mHashSet, MemManager(alloc))
 	{
-		insert(right.begin(), right.end());
 	}
 
 	~unordered_set() MOMO_NOEXCEPT
 	{
 	}
 
-	unordered_set& operator=(unordered_set&& right) //MOMO_NOEXCEPT_IF
+	unordered_set& operator=(unordered_set&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

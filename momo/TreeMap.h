@@ -201,6 +201,11 @@ public:
 	{
 	}
 
+	TreeMap(const TreeMap& treeMap, MemManager&& memManager)
+		: mTreeSet(treeMap.mTreeSet, std::move(memManager))
+	{
+	}
+
 	~TreeMap() MOMO_NOEXCEPT
 	{
 	}

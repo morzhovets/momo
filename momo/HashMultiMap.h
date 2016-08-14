@@ -604,7 +604,12 @@ public:
 	}
 
 	HashMultiMap(const HashMultiMap& hashMultiMap)
-		: mHashMap(hashMultiMap.GetHashTraits(), MemManager(hashMultiMap.GetMemManager())),
+		: HashMultiMap(hashMultiMap, MemManager(hashMultiMap.GetMemManager()))
+	{
+	}
+
+	HashMultiMap(const HashMultiMap& hashMultiMap, MemManager&& memManager)
+		: mHashMap(hashMultiMap.GetHashTraits(), std::move(memManager)),
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())
 	{

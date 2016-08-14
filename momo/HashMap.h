@@ -184,6 +184,11 @@ public:
 	{
 	}
 
+	HashMap(const HashMap& hashMap, MemManager&& memManager)
+		: mHashSet(hashMap.mHashSet, std::move(memManager))
+	{
+	}
+
 	~HashMap() MOMO_NOEXCEPT
 	{
 	}

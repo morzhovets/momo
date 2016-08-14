@@ -182,6 +182,7 @@ public:
 	}
 
 	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mHashMultiMap(_create_multimap(std::move(right), alloc))
 	{
 	}
@@ -192,16 +193,17 @@ public:
 	}
 
 	unordered_multimap(const unordered_multimap& right, const allocator_type& alloc)
-		: mHashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc))
+		: mHashMultiMap(right.mHashMultiMap, MemManager(alloc))
 	{
-		insert(right.begin(), right.end());
 	}
 
 	~unordered_multimap() MOMO_NOEXCEPT
 	{
 	}
 
-	unordered_multimap& operator=(unordered_multimap&& right) //MOMO_NOEXCEPT_IF
+	unordered_multimap& operator=(unordered_multimap&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

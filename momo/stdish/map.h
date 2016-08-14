@@ -146,6 +146,7 @@ public:
 	}
 
 	map(map&& right, const allocator_type& alloc)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
 		: mTreeMap(_create_map(std::move(right), alloc))
 	{
 	}
@@ -156,16 +157,17 @@ public:
 	}
 
 	map(const map& right, const allocator_type& alloc)
-		: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
+		: mTreeMap(right.mTreeMap, MemManager(alloc))
 	{
-		insert(right.begin(), right.end());
 	}
 
 	~map() MOMO_NOEXCEPT
 	{
 	}
 
-	map& operator=(map&& right) //MOMO_NOEXCEPT_IF
+	map& operator=(map&& right)
+		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{

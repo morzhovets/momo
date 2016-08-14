@@ -500,7 +500,12 @@ public:
 	}
 
 	TreeSet(const TreeSet& treeSet)
-		: TreeSet(treeSet.GetTreeTraits(), MemManager(treeSet.GetMemManager()))
+		: TreeSet(treeSet, MemManager(treeSet.GetMemManager()))
+	{
+	}
+
+	TreeSet(const TreeSet& treeSet, MemManager&& memManager)
+		: TreeSet(treeSet.GetTreeTraits(), std::move(memManager))
 	{
 		try
 		{

@@ -181,7 +181,7 @@ private:
 	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;
 
 public:
-	SegmentedArray()
+	SegmentedArray() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
 		: SegmentedArray(MemManager())
 	{
 	}
@@ -250,6 +250,11 @@ public:
 			_DecCapacity(0);
 			throw;
 		}
+	}
+
+	SegmentedArray(const SegmentedArray& array, MemManager&& memManager)
+		: SegmentedArray(array.GetBegin(), array.GetEnd(), std::move(memManager))
+	{
 	}
 
 	static SegmentedArray CreateCap(size_t capacity, MemManager&& memManager = MemManager())
