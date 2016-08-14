@@ -489,7 +489,7 @@ private:
 		if (right.get_allocator() == alloc)
 			return std::move(right.mTreeSet);
 		TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
-		treeSet.Merge(std::move(right.mTreeSet));
+		treeSet.MergeFrom(right.mTreeSet);
 		return treeSet;
 	}
 

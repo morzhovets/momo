@@ -511,9 +511,14 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	void Merge(TreeMap&& treeMap)
+	void MergeFrom(TreeMap& srcTreeMap)
 	{
-		mTreeSet.Merge(std::move(treeMap.mTreeSet));
+		mTreeSet.MergeFrom(srcTreeMap.mTreeSet);
+	}
+
+	void MergeTo(TreeMap& dstTreeMap)
+	{
+		mTreeSet.MergeTo(dstTreeMap.mTreeSet);
 	}
 
 private:

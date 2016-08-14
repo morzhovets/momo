@@ -459,9 +459,14 @@ public:
 		return mHashSet.Remove(key);
 	}
 
-	void Merge(HashMap&& hashMap)
+	void MergeFrom(HashMap& srcHashMap)
 	{
-		mHashSet.Merge(std::move(hashMap.mHashSet));
+		mHashSet.MergeFrom(srcHashMap.mHashSet);
+	}
+
+	void MergeTo(HashMap& dstHashMap)
+	{
+		mHashSet.MergeTo(dstHashMap.mHashSet);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT

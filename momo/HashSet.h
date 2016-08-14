@@ -746,9 +746,17 @@ public:
 		return true;
 	}
 
-	void Merge(HashSet&& hashSet)
+	template<typename HashTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
+	void MergeFrom(HashSet<Key, HashTraits2, MemManager2, ItemTraits2, Settings2>& srcHashSet)
 	{
-		for (Buckets* buckets = hashSet.mBuckets; buckets != nullptr;
+		srcHashSet.MergeTo(*this);
+	}
+
+	template<typename HashTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
+	void MergeTo(HashSet<Key, HashTraits2, MemManager2, ItemTraits2, Settings2>& dstHashSet)
+	{
+		MOMO_STATIC_ASSERT((std::is_same<Item, typename ItemTraits2::Item>::value));
+		for (Buckets* buckets = mBuckets; buckets != nullptr;
 			buckets = buckets->GetNextBuckets())
 		{
 			BucketParams& bucketParams = buckets->GetBucketParams();
@@ -758,10 +766,10 @@ public:
 				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 				{
 					--pitem;
-					Insert(std::move(*pitem));
+					dstHashSet.Insert(std::move(*pitem));
 					bucket.RemoveBack(bucketParams);
-					--hashSet.mCount;
-					hashSet.mCrew.IncVersion();
+					--mCount;
+					mCrew.IncVersion();
 				}
 			}
 		}

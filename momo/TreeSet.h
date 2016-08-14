@@ -190,7 +190,7 @@ namespace internal
 	};
 
 	template<typename TItemTraits>
-	struct HashSetNodeItemTraits
+	struct TreeSetNodeItemTraits
 	{
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
@@ -256,7 +256,7 @@ public:
 private:
 	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
 
-	typedef internal::HashSetNodeItemTraits<ItemTraits> NodeItemTraits;
+	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
 	typedef typename TreeTraits::TreeNode TreeNode;
 	typedef typename TreeNode::template Node<NodeItemTraits, MemManager> Node;
@@ -728,12 +728,20 @@ public:
 		return true;
 	}
 
-	void Merge(TreeSet&& treeSet)
+	template<typename TreeTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
+	void MergeFrom(TreeSet<Key, TreeTraits2, MemManager2, ItemTraits2, Settings2>& srcTreeSet)
 	{
-		auto assignFunc1 = [this] (Item&& srcItem) { Insert(std::move(srcItem)); };
+		srcTreeSet.MergeTo(*this);
+	}
+
+	template<typename TreeTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
+	void MergeTo(TreeSet<Key, TreeTraits2, MemManager2, ItemTraits2, Settings2>& dstTreeSet)
+	{
+		MOMO_STATIC_ASSERT((std::is_same<Item, typename ItemTraits2::Item>::value));
+		auto assignFunc1 = [&dstTreeSet] (Item&& srcItem) { dstTreeSet.Insert(std::move(srcItem)); };
 		auto assignFunc2 = [] (Item&& /*srcItem*/, Item& /*dstItem*/) { MOMO_ASSERT(false); };
-		while (!treeSet.IsEmpty())
-			treeSet._Remove(treeSet.GetBegin(), assignFunc1, assignFunc2);
+		while (!IsEmpty())
+			_Remove(GetBegin(), assignFunc1, assignFunc2);
 	}
 
 	void Reset(ConstIterator iter, Item&& newItem)
