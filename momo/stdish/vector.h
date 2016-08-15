@@ -143,7 +143,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			mArray = Array(right.begin(), right.end(), MemManager(alloc));
+			mArray = Array(right.mArray, MemManager(alloc));
 		}
 		return *this;
 	}

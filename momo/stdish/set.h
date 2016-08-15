@@ -164,9 +164,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
-			treeSet.Insert(right.begin(), right.end());
-			mTreeSet = std::move(treeSet);
+			mTreeSet = TreeSet(right.mTreeSet, MemManager(alloc));
 		}
 		return *this;
 	}

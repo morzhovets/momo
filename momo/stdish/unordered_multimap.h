@@ -222,9 +222,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			HashMultiMap hashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc));
-			hashMultiMap.AddFS(right.begin(), right.end());
-			mHashMultiMap = std::move(hashMultiMap);
+			mHashMultiMap = HashMultiMap(right.mHashMultiMap, MemManager(alloc));
 		}
 		return *this;
 	}

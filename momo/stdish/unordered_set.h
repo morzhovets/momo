@@ -210,9 +210,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
-			hashSet.Insert(right.begin(), right.end());
-			mHashSet = std::move(hashSet);
+			mHashSet = HashSet(right.mHashSet, MemManager(alloc));
 		}
 		return *this;
 	}

@@ -186,9 +186,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
-			treeMap.InsertFS(right.begin(), right.end());
-			mTreeMap = std::move(treeMap);
+			mTreeMap = TreeMap(right.mTreeMap, MemManager(alloc));
 		}
 		return *this;
 	}
