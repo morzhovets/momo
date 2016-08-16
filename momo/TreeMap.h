@@ -516,14 +516,22 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	void MergeFrom(TreeMap& srcTreeMap)
+	template<typename Map>
+	void MergeFrom(Map& srcMap)
 	{
-		mTreeSet.MergeFrom(srcTreeMap.mTreeSet);
+		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
+		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
+		auto insertFunc = [this] (Key&& key, Value&& value)
+			{ Insert(std::move(key), std::move(value)); };
+		srcMap.MergeTo(insertFunc);
 	}
 
-	void MergeTo(TreeMap& dstTreeMap)
+	template<typename InsertFunc>
+	void MergeTo(const InsertFunc& insertFunc)
 	{
-		mTreeSet.MergeTo(dstTreeMap.mTreeSet);
+		auto setInsertFunc = [&insertFunc] (KeyValuePair&& pair)
+			{ insertFunc(std::move(pair.GetKey()), std::move(pair.GetValue())); };
+		mTreeSet.MergeTo(setInsertFunc);
 	}
 
 private:

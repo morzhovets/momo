@@ -751,16 +751,17 @@ public:
 		return true;
 	}
 
-	template<typename HashTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
-	void MergeFrom(HashSet<Key, HashTraits2, MemManager2, ItemTraits2, Settings2>& srcHashSet)
+	template<typename Set>
+	void MergeFrom(Set& srcSet)
 	{
-		srcHashSet.MergeTo(*this);
+		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
+		auto insertFunc = [this] (Item&& item) { Insert(std::move(item)); };
+		srcSet.MergeTo(insertFunc);
 	}
 
-	template<typename HashTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
-	void MergeTo(HashSet<Key, HashTraits2, MemManager2, ItemTraits2, Settings2>& dstHashSet)
+	template<typename InsertFunc>
+	void MergeTo(const InsertFunc& insertFunc)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename ItemTraits2::Item>::value));
 		for (Buckets* buckets = mBuckets; buckets != nullptr;
 			buckets = buckets->GetNextBuckets())
 		{
@@ -771,7 +772,7 @@ public:
 				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 				{
 					--pitem;
-					dstHashSet.Insert(std::move(*pitem));
+					insertFunc(std::move(*pitem));
 					bucket.RemoveBack(bucketParams);
 					--mCount;
 					mCrew.IncVersion();

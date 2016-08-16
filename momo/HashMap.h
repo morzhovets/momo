@@ -464,14 +464,22 @@ public:
 		return mHashSet.Remove(key);
 	}
 
-	void MergeFrom(HashMap& srcHashMap)
+	template<typename Map>
+	void MergeFrom(Map& srcMap)
 	{
-		mHashSet.MergeFrom(srcHashMap.mHashSet);
+		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
+		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
+		auto insertFunc = [this] (Key&& key, Value&& value)
+			{ Insert(std::move(key), std::move(value)); };
+		srcMap.MergeTo(insertFunc);
 	}
 
-	void MergeTo(HashMap& dstHashMap)
+	template<typename InsertFunc>
+	void MergeTo(const InsertFunc& insertFunc)
 	{
-		mHashSet.MergeTo(dstHashMap.mHashSet);
+		auto setInsertFunc = [&insertFunc] (KeyValuePair&& pair)
+			{ insertFunc(std::move(pair.GetKey()), std::move(pair.GetValue())); };
+		mHashSet.MergeTo(setInsertFunc);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT

@@ -733,17 +733,18 @@ public:
 		return true;
 	}
 
-	template<typename TreeTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
-	void MergeFrom(TreeSet<Key, TreeTraits2, MemManager2, ItemTraits2, Settings2>& srcTreeSet)
+	template<typename Set>
+	void MergeFrom(Set& srcSet)
 	{
-		srcTreeSet.MergeTo(*this);
+		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
+		auto insertFunc = [this] (Item&& item) { Insert(std::move(item)); };
+		srcSet.MergeTo(insertFunc);
 	}
 
-	template<typename TreeTraits2, typename MemManager2, typename ItemTraits2, typename Settings2>
-	void MergeTo(TreeSet<Key, TreeTraits2, MemManager2, ItemTraits2, Settings2>& dstTreeSet)
+	template<typename InsertFunc>
+	void MergeTo(const InsertFunc& insertFunc)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename ItemTraits2::Item>::value));
-		auto assignFunc1 = [&dstTreeSet] (Item&& srcItem) { dstTreeSet.Insert(std::move(srcItem)); };
+		auto assignFunc1 = [&insertFunc] (Item&& srcItem) { insertFunc(std::move(srcItem)); };
 		auto assignFunc2 = [] (Item&& /*srcItem*/, Item& /*dstItem*/) { MOMO_ASSERT(false); };
 		while (!IsEmpty())
 			_Remove(GetBegin(), assignFunc1, assignFunc2);
