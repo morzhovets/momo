@@ -86,7 +86,8 @@ public:
 	{
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	vector(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 		: mArray(first, last, MemManager(alloc))
 	{
@@ -359,7 +360,8 @@ public:
 		return begin() + index;
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	iterator insert(const_iterator where, Iterator first, Iterator last)
 	{
 		size_t index = where - begin();
@@ -412,7 +414,8 @@ public:
 		insert(end(), count, value);
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	void assign(Iterator first, Iterator last)
 	{
 		clear();	//?

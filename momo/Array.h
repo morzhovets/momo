@@ -541,12 +541,13 @@ public:
 	{
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	Array(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
 		: mData(internal::IsForwardIterator<Iterator>::value ? std::distance(begin, end) : 0,
 			std::move(memManager))
 	{
-		_Fill(begin, end, internal::IsForwardIterator<Iterator>());
+		_Fill(begin, end);
 	}
 
 	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
@@ -562,7 +563,7 @@ public:
 	Array(const Array& array, bool shrink = true)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		_Fill(array.GetBegin(), array.GetEnd(), std::true_type());
+		_Fill(array.GetBegin(), array.GetEnd());
 	}
 
 	Array(const Array& array, MemManager&& memManager)
@@ -813,8 +814,7 @@ public:
 		else
 		{
 			std::move_iterator<Item*> begin(std::addressof(item));
-			ArrayShifter::Insert(*this, index, begin, begin + 1,
-				internal::IsForwardIterator<Iterator>());
+			ArrayShifter::Insert(*this, index, begin, begin + 1);
 		}
 	}
 
@@ -843,7 +843,8 @@ public:
 		}
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	void Insert(size_t index, Iterator begin, Iterator end)
 	{
 		if (internal::IsForwardIterator<Iterator>::value)
@@ -853,7 +854,7 @@ public:
 			if (newCount > GetCapacity())
 				_Grow(newCount, ArrayGrowCause::add);
 		}
-		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
+		ArrayShifter::Insert(*this, index, begin, end);
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
@@ -893,7 +894,8 @@ private:
 	}
 
 	template<typename Iterator>
-	void _Fill(Iterator begin, Iterator end, std::true_type /*isForwardIterator*/)
+	void _Fill(Iterator begin, Iterator end,
+		typename std::enable_if<internal::IsForwardIterator<Iterator>::value, int>::type = 0)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<Iterator>::reference> IterCreator;
@@ -902,7 +904,8 @@ private:
 	}
 
 	template<typename Iterator>
-	void _Fill(Iterator begin, Iterator end, std::false_type /*isForwardIterator*/)
+	void _Fill(Iterator begin, Iterator end,
+		typename std::enable_if<!internal::IsForwardIterator<Iterator>::value, int>::type = 0)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<Iterator>::reference> IterCreator;

@@ -204,7 +204,8 @@ public:
 		_IncCount(count, typename ItemTraits::template Creator<const Item&>(item));
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	SegmentedArray(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
@@ -510,12 +511,13 @@ public:
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
 
-	template<typename Iterator>
+	template<typename Iterator,
+		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	void Insert(size_t index, Iterator begin, Iterator end)
 	{
 		if (internal::IsForwardIterator<Iterator>::value)
 			Reserve(mCount + std::distance(begin, end));
-		ArrayShifter::Insert(*this, index, begin, end, internal::IsForwardIterator<Iterator>());
+		ArrayShifter::Insert(*this, index, begin, end);
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
