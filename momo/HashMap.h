@@ -14,9 +14,10 @@
   but not the following cases:
   1. Functions `Insert`, `InsertKV`, `InsertFS` receiving many items have
     basic exception safety.
-  2. If constructor receiving many items throws exception, input argument
+  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+  3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
-  3. In case default `KeyValueTraits`: if function `Remove` throws exception and
+  4. In case default `KeyValueTraits`: if function `Remove` throws exception and
     `ObjectManager<Key>::isNothrowAnywayMoveAssignable` is false and
     `ObjectManager<Value>::isNothrowAnywayMoveAssignable` is false,
     removing value may be changed.

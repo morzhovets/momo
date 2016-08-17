@@ -13,13 +13,14 @@
   All `HashSet` functions and constructors have strong exception safety,
   but not the following cases:
   1. Functions `Insert` receiving many items have basic exception safety.
-  2. If constructor receiving many items throws exception, input argument
+  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+  3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
-  3.1. In case default `ItemTraits`: if function
+  4.1. In case default `ItemTraits`: if function
     `Reset(ConstIterator, Item&&, Item& resItem)` throws exception and
     `ObjectManager<Item>::isNothrowAnywayMoveAssignable` is false,
     argument `resItem` may be changed.
-  3.2. In case default `ItemTraits`: if function
+  4.2. In case default `ItemTraits`: if function
     `Reset(ConstIterator, const Item&, Item& resItem)` throws exception and
     `ObjectManager<Item>::isNothrowAnywayCopyAssignable` is false,
     argument `resItem` may be changed.
