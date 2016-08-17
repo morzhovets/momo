@@ -295,15 +295,18 @@ public:
 	typedef std::allocator<TItem> Allocator;
 
 public:
-	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator()) MOMO_NOEXCEPT
+	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())
+		MOMO_NOEXCEPT_IF(noexcept(MemManagerDefault()))
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
+		: MemManagerDefault(std::move(memManager))
 	{
 	}
 
-	MemManagerStd(const MemManagerStd& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerStd(const MemManagerStd& memManager)
+		: MemManagerDefault(memManager)
 	{
 	}
 
