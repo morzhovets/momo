@@ -25,7 +25,7 @@ void main()
 {
     {
         vector<int> v(100);
-        vector<int>::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int>::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == 105);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -41,7 +41,7 @@ void main()
         vector<int> v(100);
         while(v.size() < v.capacity()) v.push_back(0); // force reallocation
         size_t sz = v.size();
-        vector<int>::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int>::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == sz + 5);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -57,7 +57,7 @@ void main()
         vector<int> v(100);
         v.reserve(128); // force no reallocation
         size_t sz = v.size();
-        vector<int>::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int>::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == sz + 5);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -72,7 +72,7 @@ void main()
 #ifdef LIBCPP_TEST_STACK_ALLOCATOR
     {
         vector<int, stack_allocator<int, 300> > v(100);
-        vector<int, stack_allocator<int, 300> >::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int, stack_allocator<int, 300> >::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == 105);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -89,7 +89,7 @@ void main()
     {
         vector<int> c1(100);
         vector<int> c2;
-        LIBCPP_CATCH(c1.insert(c2.cbegin() + 10, (size_t)5, 1));
+        LIBCPP_CATCH(c1.insert(c2.cbegin() + 10, 5, 1));
         //assert(false);
     }
 #endif
@@ -97,7 +97,7 @@ void main()
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> v(100);
-        vector<int, min_allocator<int>>::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int, min_allocator<int>>::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == 105);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -111,7 +111,7 @@ void main()
     }
     {
         vector<int, min_allocator<int>> v(100);
-        vector<int, min_allocator<int>>::iterator i = v.insert(v.cbegin() + 10, (size_t)5, 1);
+        vector<int, min_allocator<int>>::iterator i = v.insert(v.cbegin() + 10, 5, 1);
         assert(v.size() == 105);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -127,7 +127,7 @@ void main()
     {
         vector<int, min_allocator<int>> c1(100);
         vector<int, min_allocator<int>> c2;
-        vector<int, min_allocator<int>>::iterator i = c1.insert(c2.cbegin() + 10, (size_t)5, 1);
+        vector<int, min_allocator<int>>::iterator i = c1.insert(c2.cbegin() + 10, 5, 1);
         assert(false);
     }
 #endif
