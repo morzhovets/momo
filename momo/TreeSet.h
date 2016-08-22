@@ -221,6 +221,8 @@ struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
+	static const bool isNothrowAnywaySwappable = ItemManager::isNothrowAnywaySwappable;
+
 	static void Destroy(Item& item) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(item);

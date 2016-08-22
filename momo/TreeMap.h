@@ -46,7 +46,7 @@ namespace internal
 		typedef internal::ObjectManager<Item> ItemManager;
 
 		static const bool isNothrowAnywaySwappable = KeyValueTraits::isKeyNothrowAnywaySwappable
-			|| KeyValueTraits::isValueNothrowAnywaySwappable;	//?
+			&& KeyValueTraits::isValueNothrowAnywaySwappable;
 
 		static const size_t alignment = ItemManager::alignment;
 
