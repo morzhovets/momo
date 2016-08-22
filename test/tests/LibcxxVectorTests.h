@@ -273,9 +273,11 @@ LIBCXX_TEST_BEGIN(modifiers_insert_iter_rvalue)
 #include "libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_size_value)
 #include "libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_value)
 #include "libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp"
