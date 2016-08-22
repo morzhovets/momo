@@ -163,9 +163,9 @@ LIBCXX_TEST_BEGIN(cons_move)
 #include "libcxx/set/set.cons/move.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_alloc)
-//#include "libcxx/set/set.cons/move_alloc.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_alloc)
+#include "libcxx/set/set.cons/move_alloc.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_move_assign)
 #include "libcxx/set/set.cons/move_assign.pass.cpp"

@@ -111,9 +111,9 @@ LIBCXX_TEST_BEGIN(cons_move)
 #include "libcxx/map/map.cons/move.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_alloc)
-//#include "libcxx/map/map.cons/move_alloc.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_alloc)
+#include "libcxx/map/map.cons/move_alloc.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_move_assign)
 #include "libcxx/map/map.cons/move_assign.pass.cpp"
