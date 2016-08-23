@@ -17,7 +17,11 @@
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
     references to items become invalid and should not be used.
-  3. Functions of the allocator `construct`, `destroy` and `address`
+  3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
+    complexity.
+  4. Functions `erase` can throw exceptions thrown by `key_type`
+    move assignment operator.
+  5. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
 
   It is allowed to pass to functions `insert` and `emplace` references

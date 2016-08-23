@@ -23,7 +23,11 @@
   3. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4. Functions of the allocator `construct`, `destroy` and `address`
+  4. Functions `begin`, `cbegin` and iterator increment take
+    O(bucket_count) time in worst case.
+  5. Functions `erase` can throw exceptions thrown by `key_type` and
+    `mapped_type` move assignment operators.
+  6. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
 
   It is allowed to pass to functions `insert` and `emplace` references

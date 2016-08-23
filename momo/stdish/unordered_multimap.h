@@ -19,15 +19,19 @@
   1. Each of duplicate keys stored only once.
   2. `max_load_factor`, `rehash`, `reserve`, `load_factor` and all
     the functions, associated with the bucket, are not implemented.
-  3. Functions `erase` take non-constant iterators.
-  4. Container items must be movable (preferably without exceptions)
+  3. Container items must be movable (preferably without exceptions)
     or copyable, similar to items of `std::vector`.
-  5. After each addition or removal of the item all iterators and
+  4. After each addition or removal of the item all iterators and
     references to items become invalid and should not be used.
-  6. Type `reference` is not the same as `value_type&`, so
+  5. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  7. Functions of the allocator `construct`, `destroy` and `address`
+  6. Functions `begin`, `cbegin` and iterator increment take
+    O(bucket_count) time in worst case.
+  7. Functions `erase` take non-constant iterators and can throw
+    exceptions thrown by `key_type` and `mapped_type` move assignment
+	operators.
+  8. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
 
   It is allowed to pass to functions `insert` and `emplace` references
