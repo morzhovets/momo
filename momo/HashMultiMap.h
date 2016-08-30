@@ -338,6 +338,16 @@ namespace internal
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
 			dstValue = std::move(srcValue);
 		}
+
+		static void AssignKey(Key&& srcKey, Key& dstKey)
+		{
+			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
+		}
+
+		static void AssignKey(const Key& srcKey, Key& dstKey)
+		{
+			KeyValueTraits::AssignKey(srcKey, dstKey);
+		}
 	};
 
 	template<typename THashMultiMapSettings>
@@ -398,6 +408,11 @@ struct HashMultiMapKeyValueTraits
 	static void AssignKey(Key&& srcKey, Key& dstKey)
 	{
 		dstKey = std::move(srcKey);
+	}
+
+	static void AssignKey(const Key& srcKey, Key& dstKey)
+	{
+		dstKey = srcKey;
 	}
 
 	static void AssignValue(Value&& srcValue, Value& dstValue)
@@ -927,6 +942,16 @@ public:
 		size_t valueCount = keyIter->values.GetCount();
 		RemoveKey(keyIter);
 		return valueCount;
+	}
+
+	void ResetKey(ConstKeyIterator keyIter, Key&& newKey)
+	{
+		mHashMap.ResetKey(keyIter.GetBaseIterator(), std::move(newKey));
+	}
+
+	void ResetKey(ConstKeyIterator keyIter, const Key& newKey)
+	{
+		mHashMap.ResetKey(keyIter.GetBaseIterator(), newKey);
 	}
 
 	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const

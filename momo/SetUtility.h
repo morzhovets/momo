@@ -58,13 +58,6 @@ namespace internal
 			dstItem = srcKey;
 		}
 
-		template<typename Iterator, typename ItemCreator>
-		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ItemCreator& itemCreator, void* pobject)
-		{
-			ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
-		}
-
 	private:
 		static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
 			std::true_type /*isNothrowAnywayMoveAssignable*/)

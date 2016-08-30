@@ -35,7 +35,7 @@ namespace momo
 namespace internal
 {
 	template<typename TKeyValuePair>
-	struct TreeMapNestedSetItemTraits
+	struct TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
 		typedef TKeyValuePair KeyValuePair;
 
@@ -48,38 +48,9 @@ namespace internal
 		static const bool isNothrowAnywaySwappable = KeyValueTraits::isKeyNothrowAnywaySwappable
 			&& KeyValueTraits::isValueNothrowAnywaySwappable;
 
-		static const size_t alignment = ItemManager::alignment;
-
-		template<typename ItemArg>
-		class Creator : public ItemManager::template Creator<ItemArg>
-		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
-				|| std::is_same<ItemArg, const Item&>::value));
-
-		private:
-			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
-
-		public:
-			//using BaseCreator::BaseCreator;	// vs2013
-			explicit Creator(ItemArg&& itemArg)
-				: BaseCreator(std::forward<ItemArg>(itemArg))
-			{
-			}
-		};
-
-		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
-		{
-			return item.GetKey();
-		}
-
 		static void Destroy(Item& item) MOMO_NOEXCEPT
 		{
 			ItemManager::Destroy(item);
-		}
-
-		static void Assign(Item&& srcItem, Item& dstItem)
-		{
-			KeyValuePair::Assign(std::move(srcItem), dstItem);
 		}
 
 		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
@@ -515,6 +486,16 @@ public:
 	bool Remove(const Key& key)
 	{
 		return mTreeSet.Remove(key);
+	}
+
+	void ResetKey(ConstIterator iter, Key&& newKey)
+	{
+		mTreeSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));
+	}
+
+	void ResetKey(ConstIterator iter, const Key& newKey)
+	{
+		mTreeSet.ResetKey(iter.GetBaseIterator(), newKey);
 	}
 
 	template<typename Map>

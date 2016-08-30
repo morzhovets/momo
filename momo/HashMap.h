@@ -35,7 +35,7 @@ namespace momo
 namespace internal
 {
 	template<typename TKeyValuePair>
-	struct HashMapNestedSetItemTraits
+	struct HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
 		typedef TKeyValuePair KeyValuePair;
 
@@ -44,38 +44,9 @@ namespace internal
 
 		typedef internal::ObjectManager<Item> ItemManager;
 
-		static const size_t alignment = ItemManager::alignment;
-
-		template<typename ItemArg>
-		class Creator : public ItemManager::template Creator<ItemArg>
-		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
-				|| std::is_same<ItemArg, const Item&>::value));
-
-		private:
-			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
-
-		public:
-			//using BaseCreator::BaseCreator;	// vs2013
-			explicit Creator(ItemArg&& itemArg)
-				: BaseCreator(std::forward<ItemArg>(itemArg))
-			{
-			}
-		};
-
-		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
-		{
-			return item.GetKey();
-		}
-
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			ItemManager::Destroy(items, count);
-		}
-
-		static void Assign(Item&& srcItem, Item& dstItem)
-		{
-			KeyValuePair::Assign(std::move(srcItem), dstItem);
 		}
 
 		template<typename ItemCreator>
@@ -463,6 +434,16 @@ public:
 	bool Remove(const Key& key)
 	{
 		return mHashSet.Remove(key);
+	}
+
+	void ResetKey(ConstIterator iter, Key&& newKey)
+	{
+		mHashSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));
+	}
+
+	void ResetKey(ConstIterator iter, const Key& newKey)
+	{
+		mHashSet.ResetKey(iter.GetBaseIterator(), newKey);
 	}
 
 	template<typename Map>

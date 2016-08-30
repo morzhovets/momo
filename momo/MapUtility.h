@@ -152,6 +152,16 @@ namespace internal
 				internal::BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
 		}
 
+		static void AssignKey(Key&& srcKey, Key& dstKey)
+		{
+			dstKey = std::move(srcKey);
+		}
+
+		static void AssignKey(const Key& srcKey, Key& dstKey)
+		{
+			dstKey = srcKey;
+		}
+
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 		template<typename ValueArg>
 		static void AssignValue(ValueArg&& valueArg, Value& value)
@@ -254,6 +264,16 @@ namespace internal
 		{
 			KeyValueTraits::AssignPair(std::move(srcPair.GetKey()), std::move(srcPair.GetValue()),
 				dstPair.GetKey(), dstPair.GetValue());
+		}
+
+		static void AssignKey(Key&& srcKey, MapKeyValuePair& dstPair)
+		{
+			KeyValueTraits::AssignKey(std::move(srcKey), dstPair.GetKey());
+		}
+
+		static void AssignKey(const Key& srcKey, MapKeyValuePair& dstPair)
+		{
+			KeyValueTraits::AssignKey(srcKey, dstPair.GetKey());
 		}
 
 		static void SwapNothrowAnyway(MapKeyValuePair& pair1, MapKeyValuePair& pair2) MOMO_NOEXCEPT
@@ -406,6 +426,56 @@ namespace internal
 	private:
 		internal::ObjectBuffer<Key, KeyValueTraits::keyAlignment> mKeyBuffer;
 		mutable internal::ObjectBuffer<Value, KeyValueTraits::valueAlignment> mValueBuffer;
+	};
+
+	template<typename TKeyValuePair>
+	struct MapNestedSetItemTraits
+	{
+		typedef TKeyValuePair KeyValuePair;
+
+		typedef typename KeyValuePair::Key Key;
+		typedef KeyValuePair Item;
+
+		typedef internal::ObjectManager<Item> ItemManager;
+
+		static const size_t alignment = ItemManager::alignment;
+
+		template<typename ItemArg>
+		class Creator : public ItemManager::template Creator<ItemArg>
+		{
+			MOMO_STATIC_ASSERT((std::is_same<ItemArg, Item>::value
+				|| std::is_same<ItemArg, const Item&>::value));
+
+		private:
+			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;
+
+		public:
+			//using BaseCreator::BaseCreator;	// vs2013
+			explicit Creator(ItemArg&& itemArg)
+				: BaseCreator(std::forward<ItemArg>(itemArg))
+			{
+			}
+		};
+
+		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
+		{
+			return item.GetKey();
+		}
+
+		static void Assign(Item&& srcItem, Item& dstItem)
+		{
+			KeyValuePair::Assign(std::move(srcItem), dstItem);
+		}
+
+		static void AssignKey(Key&& srcKey, Item& dstItem)
+		{
+			KeyValuePair::AssignKey(std::move(srcKey), dstItem);
+		}
+
+		static void AssignKey(const Key& srcKey, Item& dstItem)
+		{
+			KeyValuePair::AssignKey(srcKey, dstItem);
+		}
 	};
 
 	template<typename TMap>

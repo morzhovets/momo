@@ -97,6 +97,8 @@ public:
 		map[s5] = "s5";
 		assert((std::string)map["s5"] == s5);
 		map["s6"] = "s6";
+		map.ResetKey(map.Find("s1"), s1);
+		map.ResetKey(map.Find(s2), "s2");
 		map = map;
 		map = std::move(map);
 		assert(map.GetCount() == 6);
@@ -142,6 +144,8 @@ public:
 		mmap.Add(k2, v2);
 		mmap.Add(mmap.InsertKey(k3), "v3");
 		mmap.Add(mmap.InsertKey("k3"), v3);
+		mmap.ResetKey(mmap.Find("k1"), k1);
+		mmap.ResetKey(mmap.Find(k2), "k2");
 		mmap = mmap;
 		mmap = std::move(mmap);
 		assert(mmap.GetKeyCount() == 3);

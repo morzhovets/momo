@@ -391,6 +391,13 @@ struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 	{
 		ItemManager::Destroy(items, count);
 	}
+
+	template<typename ItemCreator>
+	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
+		const ItemCreator& itemCreator, void* pobject)
+	{
+		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, pobject);
+	}
 };
 
 struct HashSetSettings
@@ -744,6 +751,18 @@ public:
 		return true;
 	}
 
+	void ResetKey(ConstIterator iter, Key&& newKey)
+	{
+		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
+		ItemTraits::AssignKey(std::move(newKey), item);
+	}
+
+	void ResetKey(ConstIterator iter, const Key& newKey)
+	{
+		Item& item = _GetItemForReset(iter, newKey);
+		ItemTraits::AssignKey(newKey, item);
+	}
+
 	template<typename Set>
 	void MergeFrom(Set& srcSet)
 	{
@@ -772,18 +791,6 @@ public:
 				}
 			}
 		}
-	}
-
-	void ResetKey(ConstIterator iter, Key&& newKey)
-	{
-		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(std::move(newKey), item);
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		Item& item = _GetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(newKey, item);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT

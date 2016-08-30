@@ -224,6 +224,13 @@ struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 	{
 		ItemManager::SwapNothrowAnyway(item1, item2);
 	}
+
+	template<typename Iterator, typename ItemCreator>
+	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
+		const ItemCreator& itemCreator, void* pobject)
+	{
+		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
+	}
 };
 
 struct TreeSetSettings
@@ -728,6 +735,18 @@ public:
 		return true;
 	}
 
+	void ResetKey(ConstIterator iter, Key&& newKey)
+	{
+		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
+		ItemTraits::AssignKey(std::move(newKey), item);
+	}
+
+	void ResetKey(ConstIterator iter, const Key& newKey)
+	{
+		Item& item = _GetItemForReset(iter, newKey);
+		ItemTraits::AssignKey(newKey, item);
+	}
+
 	template<typename Set>
 	void MergeFrom(Set& srcSet)
 	{
@@ -743,18 +762,6 @@ public:
 		auto assignFunc2 = [] (Item&& /*srcItem*/, Item& /*dstItem*/) { MOMO_ASSERT(false); };
 		while (!IsEmpty())
 			_Remove(GetBegin(), assignFunc1, assignFunc2);
-	}
-
-	void ResetKey(ConstIterator iter, Key&& newKey)
-	{
-		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(std::move(newKey), item);
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		Item& item = _GetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(newKey, item);
 	}
 
 private:
