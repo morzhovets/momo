@@ -16,14 +16,6 @@
   2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
-  4.1. In case default `ItemTraits`: if function
-    `Reset(ConstIterator, Item&&, Item& resItem)` throws exception and
-    `ObjectManager<Item>::isNothrowAnywayMoveAssignable` is false,
-    argument `resItem` may be changed.
-  4.2. In case default `ItemTraits`: if function
-    `Reset(ConstIterator, const Item&, Item& resItem)` throws exception and
-    `ObjectManager<Item>::isNothrowAnywayCopyAssignable` is false,
-    argument `resItem` may be changed.
 
 \**********************************************************/
 
@@ -753,28 +745,16 @@ public:
 			_Remove(GetBegin(), assignFunc1, assignFunc2);
 	}
 
-	void Reset(ConstIterator iter, Item&& newItem)
+	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
-		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
-		ItemTraits::Assign(std::move(newItem), item);
+		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
+		ItemTraits::AssignKey(std::move(newKey), item);
 	}
 
-	void Reset(ConstIterator iter, const Item& newItem)
+	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
-		Item& item = _GetItemForReset(iter, newItem);
-		ItemTraits::Assign(newItem, item);
-	}
-
-	void Reset(ConstIterator iter, Item&& newItem, Item& resItem)
-	{
-		Item& item = _GetItemForReset(iter, static_cast<const Item&>(newItem));
-		ItemTraits::Assign(std::move(newItem), item, resItem);
-	}
-
-	void Reset(ConstIterator iter, const Item& newItem, Item& resItem)
-	{
-		Item& item = _GetItemForReset(iter, newItem);
-		ItemTraits::Assign(newItem, item, resItem);
+		Item& item = _GetItemForReset(iter, newKey);
+		ItemTraits::AssignKey(newKey, item);
 	}
 
 private:
@@ -896,13 +876,12 @@ private:
 		node->Destroy(*mNodeParams);
 	}
 
-	Item& _GetItemForReset(ConstIterator iter, const Item& newItem)
+	Item& _GetItemForReset(ConstIterator iter, const Key& newKey)
 	{
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
 		const TreeTraits& treeTraits = GetTreeTraits();
 		const Key& key = ItemTraits::GetKey(*iter);
-		const Key& newKey = ItemTraits::GetKey(newItem);
 		MOMO_EXTRA_CHECK(!treeTraits.IsLess(key, newKey) && !treeTraits.IsLess(newKey, key));
 		return *iter.GetNode()->GetItemPtr(iter.GetItemIndex());
 	}

@@ -69,12 +69,8 @@ public:
 		iter = set.Find("s1");
 		assert(iter == set.GetEnd());
 		set.Insert(&s1, &s1 + 1);
-		set.Reset(set.Find("s1"), s1);
-		set.Reset(set.Find(s1), "s1", rs);
-		assert(rs == "s1");
-		set.Reset(set.Find("s2"), "s2");
-		set.Reset(set.Find("s2"), "s2", rs);
-		assert(rs == "s2");
+		set.ResetKey(set.Find("s1"), s1);
+		set.ResetKey(set.Find("s2"), "s2");
 		set.Remove("s2");
 		set.Reserve(100);
 		assert(set.GetCapacity() >= 100);

@@ -40,21 +40,22 @@ namespace internal
 			dstItem = std::move(srcItem);
 		}
 
-		static void Assign(const Item& srcItem, Item& dstItem)
-		{
-			dstItem = srcItem;
-		}
-
 		static void Assign(Item&& srcItem, Item& midItem, Item& dstItem)
 		{
 			_Assign(std::move(srcItem), midItem, dstItem,
 				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 		}
 
-		static void Assign(const Item& srcItem, Item& midItem, Item& dstItem)
+		static void AssignKey(Key&& srcKey, Item& dstItem)
 		{
-			_Assign(srcItem, midItem, dstItem,
-				internal::BoolConstant<ItemManager::isNothrowAnywayCopyAssignable>());
+			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
+			dstItem = std::move(srcKey);
+		}
+
+		static void AssignKey(const Key& srcKey, Item& dstItem)
+		{
+			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
+			dstItem = srcKey;
 		}
 
 		template<typename Iterator, typename ItemCreator>
@@ -77,20 +78,6 @@ namespace internal
 		{
 			dstItem = midItem;
 			midItem = std::move(srcItem);
-		}
-
-		static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
-			std::true_type /*isNothrowAnywayCopyAssignable*/)
-		{
-			dstItem = std::move(midItem);
-			ItemManager::AssignNothrowAnyway(srcItem, midItem);
-		}
-
-		static void _Assign(const Item& srcItem, Item& midItem, Item& dstItem,
-			std::false_type /*isNothrowAnywayCopyAssignable*/)
-		{
-			dstItem = midItem;
-			midItem = srcItem;
 		}
 	};
 
