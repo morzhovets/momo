@@ -35,15 +35,19 @@ namespace internal
 			return item;
 		}
 
+		static void Destroy(Item& item) MOMO_NOEXCEPT
+		{
+			ItemManager::Destroy(item);
+		}
+
 		static void Assign(Item&& srcItem, Item& dstItem)
 		{
 			dstItem = std::move(srcItem);
 		}
 
-		static void Assign(Item&& srcItem, Item& midItem, Item& dstItem)
+		static void AssignNothrowAnyway(Item&& srcItem, Item& dstItem) MOMO_NOEXCEPT
 		{
-			_Assign(std::move(srcItem), midItem, dstItem,
-				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
+			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
@@ -56,21 +60,6 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			dstItem = srcKey;
-		}
-
-	private:
-		static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
-			std::true_type /*isNothrowAnywayMoveAssignable*/)
-		{
-			dstItem = std::move(midItem);
-			ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
-		}
-
-		static void _Assign(Item&& srcItem, Item& midItem, Item& dstItem,
-			std::false_type /*isNothrowAnywayMoveAssignable*/)
-		{
-			dstItem = midItem;
-			midItem = std::move(srcItem);
 		}
 	};
 
@@ -252,6 +241,59 @@ namespace internal
 		{
 			return *this;
 		}
+	};
+
+	template<typename TItemTraits>
+	class SetExtractedItem
+	{
+	public:
+		typedef TItemTraits ItemTraits;
+		typedef typename ItemTraits::Item Item;
+
+	public:
+		SetExtractedItem() MOMO_NOEXCEPT
+			: mHasItem(false)
+		{
+		}
+
+		SetExtractedItem(const SetExtractedItem&) = delete;
+
+		~SetExtractedItem() MOMO_NOEXCEPT
+		{
+			Clear();
+		}
+
+		SetExtractedItem& operator=(const SetExtractedItem&) = delete;
+
+		bool IsEmpty() const MOMO_NOEXCEPT
+		{
+			return !mHasItem;
+		}
+
+		void Clear() MOMO_NOEXCEPT
+		{
+			if (mHasItem)
+				ItemTraits::Destroy(GetItem());
+			mHasItem = false;
+		}
+
+		Item& GetItem() MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(mHasItem);
+			return *&mItemBuffer;
+		}
+
+		template<typename ItemCreator>
+		void SetItem(const ItemCreator& itemCreator)
+		{
+			MOMO_ASSERT(!mHasItem);
+			itemCreator(&mItemBuffer);
+			mHasItem = true;
+		}
+
+	private:
+		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
+		bool mHasItem;
 	};
 }
 

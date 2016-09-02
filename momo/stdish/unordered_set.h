@@ -417,10 +417,10 @@ public:
 		}
 		catch (...)
 		{
-			HashSet::ItemTraits::Destroy(&valueBuffer, 1);
+			HashSet::ItemTraits::Destroy(*&valueBuffer);
 			throw;
 		}
-		HashSet::ItemTraits::Destroy(&valueBuffer, 1);
+		HashSet::ItemTraits::Destroy(*&valueBuffer);
 		return res;
 	}
 

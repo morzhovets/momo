@@ -366,7 +366,8 @@ namespace internal
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(items, count);
+			for (size_t i = 0; i < count; ++i)
+				ItemTraits::Destroy(items[i]);
 		}
 
 		template<typename ItemCreator>
@@ -386,11 +387,6 @@ struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 	typedef TItem Item;
 
 	typedef internal::ObjectManager<Item> ItemManager;
-
-	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
-	{
-		ItemManager::Destroy(items, count);
-	}
 
 	template<typename ItemCreator>
 	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
@@ -445,6 +441,8 @@ public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
+
+	typedef internal::SetExtractedItem<ItemTraits> ExtractedItem;
 
 	typedef internal::HashDerivedBucketBounds<ConstBucketIterator,
 		typename Bucket::ConstBounds> ConstBucketBounds;
@@ -728,6 +726,13 @@ public:
 		return AddVar(iter, item);
 	}
 
+	ConstIterator RemoveNothrow(ConstIterator iter)
+	{
+		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem); };
+		return _Remove(iter, assignFunc);
+	}
+
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
@@ -735,10 +740,14 @@ public:
 		return _Remove(iter, assignFunc);
 	}
 
-	ConstIterator Remove(ConstIterator iter, Item& resItem)
+	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
+		MOMO_CHECK(resItem.IsEmpty());
 		auto assignFunc = [&resItem] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::Assign(std::move(srcItem), dstItem, resItem); };
+		{
+			resItem.SetItem(Creator<Item>(std::move(dstItem)));
+			ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem);
+		};
 		return _Remove(iter, assignFunc);
 	}
 

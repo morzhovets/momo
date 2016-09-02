@@ -215,11 +215,6 @@ struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 
 	static const bool isNothrowAnywaySwappable = ItemManager::isNothrowAnywaySwappable;
 
-	static void Destroy(Item& item) MOMO_NOEXCEPT
-	{
-		ItemManager::Destroy(item);
-	}
-
 	static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 	{
 		ItemManager::SwapNothrowAnyway(item1, item2);
@@ -275,6 +270,8 @@ public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
+
+	typedef internal::SetExtractedItem<ItemTraits> ExtractedItem;
 
 private:
 	class Relocator
@@ -709,6 +706,14 @@ public:
 		return AddVar(iter, item);
 	}
 
+	ConstIterator RemoveNothrow(ConstIterator iter)
+	{
+		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
+		auto assignFunc2 = [] (Item&& srcItem, Item& dstItem)
+			{ ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem); };
+		return _Remove(iter, assignFunc1, assignFunc2);
+	}
+
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
@@ -717,12 +722,16 @@ public:
 		return _Remove(iter, assignFunc1, assignFunc2);
 	}
 
-	ConstIterator Remove(ConstIterator iter, Item& resItem)
+	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
+		MOMO_CHECK(resItem.IsEmpty());
 		auto assignFunc1 = [&resItem] (Item&& srcItem)
-			{ ItemTraits::Assign(std::move(srcItem), resItem); };
+			{ resItem.SetItem(Creator<Item>(std::move(srcItem))); };
 		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::Assign(std::move(srcItem), dstItem, resItem); };
+		{
+			resItem.SetItem(Creator<Item>(std::move(dstItem)));
+			ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem);
+		};
 		return _Remove(iter, assignFunc1, assignFunc2);
 	}
 
@@ -887,9 +896,9 @@ private:
 	{
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
-		const TreeTraits& treeTraits = GetTreeTraits();
-		const Key& key = ItemTraits::GetKey(*iter);
-		MOMO_EXTRA_CHECK(!treeTraits.IsLess(key, newKey) && !treeTraits.IsLess(newKey, key));
+		(void)newKey;
+		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(ItemTraits::GetKey(*iter), newKey));
+		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(newKey, ItemTraits::GetKey(*iter)));
 		return *iter.GetNode()->GetItemPtr(iter.GetItemIndex());
 	}
 

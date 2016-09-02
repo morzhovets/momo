@@ -63,9 +63,9 @@ public:
 		assert(set.HasKey("s2"));
 		typename HashSet::ConstIterator iter = set.Find("s1");
 		assert(*iter == "s1");
-		std::string rs;
+		typename HashSet::ExtractedItem rs;
 		set.Remove(iter, rs);
-		assert(rs == "s1");
+		assert(rs.GetItem() == "s1");
 		iter = set.Find("s1");
 		assert(iter == set.GetEnd());
 		set.Insert(&s1, &s1 + 1);

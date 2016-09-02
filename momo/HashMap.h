@@ -44,9 +44,9 @@ namespace internal
 
 		typedef internal::ObjectManager<Item> ItemManager;
 
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(Item& item) MOMO_NOEXCEPT
 		{
-			ItemManager::Destroy(items, count);
+			ItemManager::Destroy(item);
 		}
 
 		template<typename ItemCreator>
