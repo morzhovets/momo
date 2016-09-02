@@ -14,6 +14,7 @@
 #else
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_HASH
+#define TEST_SIMPLE_TREE
 #define TEST_TEMPL_HASH
 #define TEST_TEMPL_TREE
 #define TEST_LIBCXX_ARRAY
