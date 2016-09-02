@@ -24,11 +24,11 @@ class SimpleTreeTester
 public:
 	static void TestAll()
 	{
-		std::cout << "TreeSet: " << std::flush;
+		std::cout << "momo::TreeSet: " << std::flush;
 		TestStrTreeSet();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "TreeMap: " << std::flush;
+		std::cout << "momo::TreeMap: " << std::flush;
 		TestStrTreeMap();
 		std::cout << "ok" << std::endl;
 	}
