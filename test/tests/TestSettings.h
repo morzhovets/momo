@@ -13,6 +13,7 @@
 #define TEST_SPEED_MAP
 #else
 #define TEST_SIMPLE_ARRAY
+#define TEST_SIMPLE_DATA
 #define TEST_SIMPLE_HASH
 #define TEST_SIMPLE_TREE
 #define TEST_TEMPL_HASH
