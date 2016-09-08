@@ -273,7 +273,7 @@ namespace internal
 		private:
 			struct HashRawKey
 			{
-				mutable Raw* raw;
+				Raw* raw;
 				size_t hashCode;
 			};
 
@@ -388,7 +388,7 @@ namespace internal
 				{
 					auto raws = keyIter->values;
 					if (raws.GetCount() > 0)
-						keyIter->key.raw = raws[0];
+						mHashMultiMap.ResetKey(keyIter, { raws[0], keyIter->key.hashCode });
 					else
 						mHashMultiMap.RemoveKey(keyIter);
 				}
@@ -601,7 +601,7 @@ namespace internal
 		const typename Hashes::Item* _FindHash(const Hashes& hashes, const Column<Types>&... columns) const
 		{
 			static const size_t columnCount = sizeof...(Types);
-			std::array<size_t, columnCount> offsets = { mColumnList->GetOffset(columns)... };
+			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};	// C++11
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			return _FindHash(hashes, sortedOffsets);
 		}
@@ -625,7 +625,7 @@ namespace internal
 		bool _AddHash(Hashes& hashes, const Raws& raws, const Column<Types>&... columns)
 		{
 			static const size_t columnCount = sizeof...(Types);
-			std::array<size_t, columnCount> offsets = { mColumnList->GetOffset(columns)... };
+			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};	// C++11
 			for (size_t offset : offsets)
 			{
 				if (mColumnList->IsMutable(offset))
