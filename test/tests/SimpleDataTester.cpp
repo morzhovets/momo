@@ -48,20 +48,23 @@ public:
 		typedef momo::experimental::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;
 
+		static const size_t count = 1024;
+		static const size_t count2 = 10;
+
 		DataTable table(columns);
+		const DataTable& ctable = table;
 
 		assert(table.AddUniqueHashIndex(&Struct::intCol, &Struct::strCol));
 		assert(table.AddMultiHashIndex(&Struct::intCol));
 		assert(table.AddMultiHashIndex(&Struct::strCol));
 
-		for (size_t i = 0; i < 1024; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			DataRow row = table.NewRow(&Struct::intCol, (int)i / 2);
 			row[&Struct::strCol] = (i % 2 == 0) ? "0" : "1";
 			row[&Struct::dblCol] = (double)i / 2;
 			table.AddRow(std::move(row));
 		}
-		assert(table.GetCount() == 1024);
 
 		assert(table.HasUniqueHashIndex(&Struct::intCol, &Struct::strCol));
 		assert(table.HasMultiHashIndex(&Struct::intCol));
@@ -69,6 +72,33 @@ public:
 		assert(table.RemoveMultiHashIndex(&Struct::intCol));
 		assert(table.AddUniqueHashIndex(&Struct::intCol, &Struct::strCol));
 		assert(table.AddMultiHashIndex(&Struct::intCol));
+
+		for (size_t i = 0; i < count2; ++i)
+			table.AddRow(&Struct::intCol, (int)(count + i));
+		assert(table.GetCount() == count + count2);
+
+		for (size_t i = 0; i < count2; ++i)
+			table.RemoveRow(count, i % 2 == 0);
+		assert(table.GetCount() == count);
+
+		assert(table.SelectCount() == count);
+		assert(table.Select().GetCount() == count);
+		assert(ctable.Select().GetCount() == count);
+
+		assert(table.SelectCount(&Struct::strCol, std::string("0"), &Struct::intCol, 1) == 1);
+		assert(table.Select(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+		assert(ctable.Select(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+
+		assert(table.SelectCount(&Struct::strCol, std::string("0")) == count / 2);
+		assert(table.Select(&Struct::strCol, std::string("1")).GetCount() == count / 2);
+		assert(ctable.Select(&Struct::strCol, std::string("1")).GetCount() == count / 2);
+
+		assert(table.SelectCount(&Struct::dblCol, 0.0) == 1);
+		assert(table.Select(&Struct::dblCol, 1.0).GetCount() == 1);
+		assert(ctable.Select(&Struct::dblCol, 1.0).GetCount() == 1);
+
+		table.Clear();
+		assert(table.IsEmpty());
 	}
 };
 
