@@ -42,12 +42,14 @@ namespace internal
 
 		static void Assign(Item&& srcItem, Item& dstItem)
 		{
-			dstItem = std::move(srcItem);
+			_Assign(std::move(srcItem), dstItem,
+				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 		}
 
-		static void AssignNothrowAnyway(Item&& srcItem, Item& dstItem) MOMO_NOEXCEPT
+		static void Relocate(Item&& srcItem, Item& midItem, Item* dstItem)
 		{
-			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
+			_Relocate(std::move(srcItem), midItem, dstItem,
+				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
@@ -60,6 +62,41 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			dstItem = srcKey;
+		}
+
+	private:
+		static void _Assign(Item&& srcItem, Item& dstItem,
+			std::true_type /*isNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
+		{
+			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
+		}
+
+		static void _Assign(Item&& srcItem, Item& dstItem,
+			std::false_type /*isNothrowAnywayMoveAssignable*/)
+		{
+			dstItem = std::move(srcItem);
+		}
+
+		static void _Relocate(Item&& srcItem, Item& midItem, Item* dstItem,
+			std::true_type /*isNothrowAnywayMoveAssignable*/)
+		{
+			Creator<Item>(std::move(midItem))(dstItem);
+			ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
+		}
+
+		static void _Relocate(Item&& srcItem, Item& midItem, Item* dstItem,
+			std::false_type /*isNothrowAnywayMoveAssignable*/)
+		{
+			(Creator<const Item&>(midItem))(dstItem);
+			try
+			{
+				midItem = std::move(srcItem);
+			}
+			catch (...)
+			{
+				Destroy(*dstItem);
+				throw;
+			}
 		}
 	};
 

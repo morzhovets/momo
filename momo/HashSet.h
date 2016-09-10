@@ -726,13 +726,6 @@ public:
 		return AddVar(iter, item);
 	}
 
-	ConstIterator RemoveNothrow(ConstIterator iter)
-	{
-		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem); };
-		return _Remove(iter, assignFunc);
-	}
-
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
@@ -745,8 +738,9 @@ public:
 		MOMO_CHECK(resItem.IsEmpty());
 		auto assignFunc = [&resItem] (Item&& srcItem, Item& dstItem)
 		{
-			resItem.SetItem(Creator<Item>(std::move(dstItem)));
-			ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem);
+			auto itemCreator = [&srcItem, &dstItem] (Item* item)
+				{ ItemTraits::Relocate(std::move(srcItem), dstItem, item); };
+			resItem.SetItem(itemCreator);
 		};
 		return _Remove(iter, assignFunc);
 	}

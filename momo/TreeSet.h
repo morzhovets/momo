@@ -706,14 +706,6 @@ public:
 		return AddVar(iter, item);
 	}
 
-	ConstIterator RemoveNothrow(ConstIterator iter)
-	{
-		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
-		auto assignFunc2 = [] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem); };
-		return _Remove(iter, assignFunc1, assignFunc2);
-	}
-
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
@@ -729,8 +721,9 @@ public:
 			{ resItem.SetItem(Creator<Item>(std::move(srcItem))); };
 		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
 		{
-			resItem.SetItem(Creator<Item>(std::move(dstItem)));
-			ItemTraits::AssignNothrowAnyway(std::move(srcItem), dstItem);
+			auto itemCreator = [&srcItem, &dstItem] (Item* item)
+				{ ItemTraits::Relocate(std::move(srcItem), dstItem, item); };
+			resItem.SetItem(itemCreator);
 		};
 		return _Remove(iter, assignFunc1, assignFunc2);
 	}

@@ -171,10 +171,17 @@ namespace internal
 #endif
 
 	private:
-		template<bool isValueNothrowAnywayMoveAssignable>
 		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
-			internal::BoolConstant<isValueNothrowAnywayMoveAssignable>)
+			std::true_type /*isValueNothrowAnywayMoveAssignable*/)
+		{
+			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
+			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
+		}
+
+		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
+			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
 			dstValue = std::move(srcValue);
 			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);

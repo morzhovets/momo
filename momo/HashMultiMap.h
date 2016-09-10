@@ -336,7 +336,7 @@ namespace internal
 		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
 		{
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
-			dstValue = std::move(srcValue);
+			dstValue = std::move(srcValue);	//?
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
