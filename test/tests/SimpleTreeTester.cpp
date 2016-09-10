@@ -43,9 +43,9 @@ public:
 		set = std::move(set);
 		assert(set.GetCount() == 3);
 		assert(set.HasKey("s2"));
-		typename TreeSet::ConstIterator iter = set.Find("s1");
+		TreeSet::ConstIterator iter = set.Find("s1");
 		assert(*iter == "s1");
-		typename TreeSet::ExtractedItem rs;
+		TreeSet::ExtractedItem rs;
 		set.Remove(iter, rs);
 		assert(rs.GetItem() == "s1");
 		iter = set.Find("s1");
@@ -80,10 +80,10 @@ public:
 		map = std::move(map);
 		assert(map.GetCount() == 6);
 		assert(map.HasKey(s2));
-		typename TreeMap::ConstIterator iter1 = map.Find(s1);
+		TreeMap::ConstIterator iter1 = map.Find(s1);
 		assert(iter1->key == s1 && iter1->value == s1);
 		map.Remove(s1);
-		typename TreeMap::Iterator iter2 = map.Find("s5");
+		TreeMap::Iterator iter2 = map.Find("s5");
 		assert(iter2->key == s5 && iter2->value == s5);
 		map.Remove(iter2);
 		map.Remove(s3);
