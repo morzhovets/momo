@@ -129,6 +129,7 @@
 		<Unit filename="../../tests/LibcxxUnorderedSetTests.h" />
 		<Unit filename="../../tests/LibcxxVectorTests.h" />
 		<Unit filename="../../tests/SimpleArrayTester.cpp" />
+		<Unit filename="../../tests/SimpleDataTester.cpp" />
 		<Unit filename="../../tests/SimpleHashTester.cpp" />
 		<Unit filename="../../tests/SimpleTreeTester.cpp" />
 		<Unit filename="../../tests/SpeedMapTester.cpp" />
