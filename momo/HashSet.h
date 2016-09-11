@@ -372,9 +372,9 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 }
@@ -390,9 +390,9 @@ struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 
 	template<typename ItemCreator>
 	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-		const ItemCreator& itemCreator, void* pobject)
+		const ItemCreator& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, pobject);
+		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 	}
 };
 
@@ -738,8 +738,8 @@ public:
 		MOMO_CHECK(resItem.IsEmpty());
 		auto assignFunc = [&resItem] (Item&& srcItem, Item& dstItem)
 		{
-			auto itemCreator = [&srcItem, &dstItem] (Item* item)
-				{ ItemTraits::Relocate(std::move(srcItem), dstItem, item); };
+			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
+				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
 			resItem.SetItem(itemCreator);
 		};
 		return _Remove(iter, assignFunc);

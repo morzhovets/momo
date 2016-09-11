@@ -113,14 +113,14 @@ namespace internal
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-		static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
+		static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
 		{
-			KeyManager::CreateNothrow(std::move(key), pkey);
+			KeyManager::CreateNothrow(std::move(srcKey), dstKey);
 		}
 
-		static void CreateKey(const Key& key, void* pkey)
+		static void CreateKey(const Key& srcKey, Key* dstKey)
 		{
-			KeyManager::Create(key, pkey);
+			KeyManager::Create(srcKey, dstKey);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -291,9 +291,9 @@ namespace internal
 
 		template<typename Iterator, typename PairCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const PairCreator& pairCreator, void* ppair)
+			const PairCreator& pairCreator, MapKeyValuePair* newPair)
 		{
-			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, ppair,
+			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, newPair,
 				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
 				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
@@ -331,11 +331,11 @@ namespace internal
 
 		template<typename Iterator, typename PairCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const PairCreator& pairCreator, void* ppair,
+			const PairCreator& pairCreator, MapKeyValuePair* newPair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			pairCreator(ppair);
+			pairCreator(newPair);
 			Iterator srcIter = srcBegin;
 			Iterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
@@ -347,7 +347,7 @@ namespace internal
 
 		template<typename Iterator, typename PairCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const PairCreator& pairCreator, void* ppair,
+			const PairCreator& pairCreator, MapKeyValuePair* newPair,
 			std::true_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
@@ -356,7 +356,7 @@ namespace internal
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
 					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
-				pairCreator(ppair);
+				pairCreator(newPair);
 			}
 			catch (...)
 			{
@@ -375,7 +375,7 @@ namespace internal
 
 		template<typename Iterator, typename PairCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const PairCreator& pairCreator, void* ppair,
+			const PairCreator& pairCreator, MapKeyValuePair* newPair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
@@ -384,7 +384,7 @@ namespace internal
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
 					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
-				pairCreator(ppair);
+				pairCreator(newPair);
 			}
 			catch (...)
 			{
@@ -403,7 +403,7 @@ namespace internal
 
 		template<typename Iterator, typename PairCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const PairCreator& pairCreator, void* ppair,
+			const PairCreator& pairCreator, MapKeyValuePair* newPair,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
@@ -415,7 +415,7 @@ namespace internal
 					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
 				for (Iterator its = srcBegin, itd = dstBegin; valueIndex < count; ++valueIndex, ++its, ++itd)
 					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
-				pairCreator(ppair);
+				pairCreator(newPair);
 			}
 			catch (...)
 			{

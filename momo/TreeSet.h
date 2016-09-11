@@ -222,9 +222,9 @@ struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 
 	template<typename Iterator, typename ItemCreator>
 	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-		const ItemCreator& itemCreator, void* pobject)
+		const ItemCreator& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
+		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
 	}
 };
 
@@ -721,8 +721,8 @@ public:
 			{ resItem.SetItem(Creator<Item>(std::move(srcItem))); };
 		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
 		{
-			auto itemCreator = [&srcItem, &dstItem] (Item* item)
-				{ ItemTraits::Relocate(std::move(srcItem), dstItem, item); };
+			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
+				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
 			resItem.SetItem(itemCreator);
 		};
 		return _Remove(iter, assignFunc1, assignFunc2);

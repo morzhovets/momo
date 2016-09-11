@@ -60,9 +60,9 @@ namespace internal
 
 		template<typename Iterator, typename ItemCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ItemCreator& itemCreator, void* pobject)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValuePair::RelocateCreate(srcBegin, dstBegin, count, itemCreator, pobject);
+			KeyValuePair::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
 		}
 	};
 
@@ -554,8 +554,8 @@ private:
 	{
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
-		auto pairCreator = [&key, &valueCreator] (void* ppair)
-			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
+		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
+			{ new(newPair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
 		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}
 

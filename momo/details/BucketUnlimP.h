@@ -39,9 +39,9 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 

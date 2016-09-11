@@ -46,9 +46,9 @@ namespace internal
 				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 		}
 
-		static void Relocate(Item&& srcItem, Item& midItem, Item* dstItem)
+		static void AssignCreate(Item&& srcItem, Item& midItem, Item* dstItem)
 		{
-			_Relocate(std::move(srcItem), midItem, dstItem,
+			_AssignCreate(std::move(srcItem), midItem, dstItem,
 				internal::BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 		}
 
@@ -77,14 +77,14 @@ namespace internal
 			dstItem = std::move(srcItem);
 		}
 
-		static void _Relocate(Item&& srcItem, Item& midItem, Item* dstItem,
+		static void _AssignCreate(Item&& srcItem, Item& midItem, Item* dstItem,
 			std::true_type /*isNothrowAnywayMoveAssignable*/)
 		{
 			Creator<Item>(std::move(midItem))(dstItem);
 			ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
 		}
 
-		static void _Relocate(Item&& srcItem, Item& midItem, Item* dstItem,
+		static void _AssignCreate(Item&& srcItem, Item& midItem, Item* dstItem,
 			std::false_type /*isNothrowAnywayMoveAssignable*/)
 		{
 			(Creator<const Item&>(midItem))(dstItem);

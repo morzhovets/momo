@@ -246,9 +246,9 @@ namespace internal
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		static void Create(const Item& item, void* pitem)
+		static void Create(const Item& srcItem, Item* dstItem)
 		{
-			(typename KeyValueTraits::template ValueCreator<const Item&>(item))(pitem);
+			(typename KeyValueTraits::template ValueCreator<const Item&>(srcItem))(dstItem);
 		}
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
@@ -263,9 +263,9 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValueTraits::RelocateCreateValues(srcItems, dstItems, count, itemCreator, pitem);
+			KeyValueTraits::RelocateCreateValues(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 
@@ -303,14 +303,14 @@ namespace internal
 			}
 		};
 
-		static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
+		static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::CreateKeyNothrow(std::move(key), pkey);
+			KeyValueTraits::CreateKeyNothrow(std::move(srcKey), dstKey);
 		}
 
-		static void CreateKey(const Key& key, void* pkey)
+		static void CreateKey(const Key& srcKey, Key* dstKey)
 		{
-			KeyValueTraits::CreateKey(key, pkey);
+			KeyValueTraits::CreateKey(srcKey, dstKey);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -379,14 +379,14 @@ struct HashMultiMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void CreateKeyNothrow(Key&& key, void* pkey) MOMO_NOEXCEPT
+	static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
 	{
-		KeyManager::CreateNothrow(std::move(key), pkey);
+		KeyManager::CreateNothrow(std::move(srcKey), dstKey);
 	}
 
-	static void CreateKey(const Key& key, void* pkey)
+	static void CreateKey(const Key& srcKey, Key* dstKey)
 	{
-		KeyManager::Create(key, pkey);
+		KeyManager::Create(srcKey, dstKey);
 	}
 
 	static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -427,9 +427,9 @@ struct HashMultiMapKeyValueTraits
 
 	template<typename ValueCreator>
 	static void RelocateCreateValues(Value* srcValues, Value* dstValues, size_t count,
-		const ValueCreator& valueCreator, void* pvalue)
+		const ValueCreator& valueCreator, Value* newValue)
 	{
-		ValueManager::RelocateCreate(srcValues, dstValues, count, valueCreator, pvalue);
+		ValueManager::RelocateCreate(srcValues, dstValues, count, valueCreator, newValue);
 	}
 };
 
@@ -996,11 +996,11 @@ private:
 		KeyIterator keyIter = Find(static_cast<const Key&>(key));
 		if (!!keyIter)
 			return AddCrt(keyIter, valueCreator);
-		auto valuesCreator = [this, &valueCreator] (void* pvalues)
+		auto valuesCreator = [this, &valueCreator] (ValueArray* newValueArray)
 		{
 			ValueArray valueArray;
 			this->_AddValue(valueArray, valueCreator);
-			new(pvalues) ValueArray(std::move(valueArray));
+			new(newValueArray) ValueArray(std::move(valueArray));
 		};
 		keyIter = KeyIterator(mHashMap.AddCrt(keyIter.GetBaseIterator(),
 			std::forward<RKey>(key), valuesCreator));

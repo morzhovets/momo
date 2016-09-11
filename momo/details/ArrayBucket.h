@@ -36,9 +36,9 @@ namespace internal
 			{
 			}
 
-			void operator()(void* pitem) const
+			void operator()(Item* newItem) const
 			{
-				ItemTraits::Create(mItem, pitem);
+				ItemTraits::Create(mItem, newItem);
 			}
 
 		private:
@@ -57,9 +57,9 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 
@@ -276,7 +276,7 @@ namespace internal
 							Item* newItems = array.GetItems();
 							ItemTraits::RelocateCreate(items, newItems, count,
 								itemCreator, newItems + count);
-							array.SetCountCrt(newCount, [] (void* /*pitem*/) { });
+							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
 							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							_Set(memory.Extract(), (unsigned char)0);

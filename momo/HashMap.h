@@ -51,9 +51,9 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, void* pitem)
+			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, pitem);
+			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 
@@ -517,8 +517,8 @@ private:
 	{
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
-		auto pairCreator = [&key, &valueCreator] (void* ppair)
-			{ new(ppair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
+		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
+			{ new(newPair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}
 

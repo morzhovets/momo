@@ -111,32 +111,32 @@ namespace internal
 
 			Creator& operator=(const Creator&) = delete;
 
-			void operator()(void* pobject) const
+			void operator()(Object* newObject) const
 			{
-				_Create(pobject, typename MakeSequence<sizeof...(Args)>::Sequence());
+				_Create(newObject, typename MakeSequence<sizeof...(Args)>::Sequence());
 			}
 
 		private:
 			template<size_t... sequence>
-			void _Create(void* pobject, Sequence<sequence...>) const
+			void _Create(Object* newObject, Sequence<sequence...>) const
 			{
-				new(pobject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
+				new(newObject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 		private:
 			std::tuple<Args&&...> mArgs;
 		};
 
-		static void CreateNothrow(Object&& object, void* pobject) MOMO_NOEXCEPT
+		static void CreateNothrow(Object&& srcObject, Object* dstObject) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(isNothrowMoveConstructible);
-			new(pobject) Object(std::move(object));
+			new(dstObject) Object(std::move(srcObject));
 		}
 
-		static void Create(const Object& object, void* pobject)
+		static void Create(const Object& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(std::is_nothrow_copy_constructible<Object>::value)
 		{
-			new(pobject) Object(object);
+			new(dstObject) Object(srcObject);
 		}
 
 		static void Destroy(Object& object) MOMO_NOEXCEPT
@@ -183,10 +183,10 @@ namespace internal
 
 		template<typename Iterator, typename ObjectCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ObjectCreator& objectCreator, void* pobject)
+			const ObjectCreator& objectCreator, Object* newObject)
 		{
 			MOMO_CHECK_TYPE(Object, *srcBegin);
-			_RelocateCreate(srcBegin, dstBegin, count, objectCreator, pobject,
+			_RelocateCreate(srcBegin, dstBegin, count, objectCreator, newObject,
 				BoolConstant<isNothrowRelocatable>());
 		}
 
@@ -319,16 +319,16 @@ namespace internal
 
 		template<typename Iterator, typename ObjectCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ObjectCreator& objectCreator, void* pobject,
+			const ObjectCreator& objectCreator, Object* newObject,
 			std::true_type /*isNothrowRelocatable*/)
 		{
-			objectCreator(pobject);
+			objectCreator(newObject);
 			Relocate(srcBegin, dstBegin, count);
 		}
 
 		template<typename Iterator, typename ObjectCreator>
 		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ObjectCreator& objectCreator, void* pobject,
+			const ObjectCreator& objectCreator, Object* newObject,
 			std::false_type /*isNothrowRelocatable*/)
 		{
 			size_t index = 0;
@@ -338,7 +338,7 @@ namespace internal
 				Iterator dstIter = dstBegin;
 				for (; index < count; ++index, ++srcIter, ++dstIter)
 					Create(*srcIter, std::addressof(*dstIter));
-				objectCreator(pobject);
+				objectCreator(newObject);
 			}
 			catch (...)
 			{
