@@ -271,7 +271,7 @@ public:
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
 
-	typedef internal::SetExtractedItem<ItemTraits> ExtractedItem;
+	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
 	class Relocator

@@ -280,11 +280,12 @@ namespace internal
 		}
 	};
 
-	template<typename TItemTraits>
+	template<typename TItemTraits, typename TSettings>
 	class SetExtractedItem
 	{
 	public:
 		typedef TItemTraits ItemTraits;
+		typedef TSettings Settings;
 		typedef typename ItemTraits::Item Item;
 
 	public:
@@ -314,16 +315,16 @@ namespace internal
 			mHasItem = false;
 		}
 
-		Item& GetItem() MOMO_NOEXCEPT
+		Item& GetItem()
 		{
-			MOMO_ASSERT(mHasItem);
+			MOMO_CHECK(mHasItem);
 			return *&mItemBuffer;
 		}
 
 		template<typename ItemCreator>
 		void SetItem(const ItemCreator& itemCreator)
 		{
-			MOMO_ASSERT(!mHasItem);
+			MOMO_CHECK(!mHasItem);
 			itemCreator(&mItemBuffer);
 			mHasItem = true;
 		}
