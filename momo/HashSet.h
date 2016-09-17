@@ -740,7 +740,7 @@ public:
 		{
 			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
 				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
-			resItem.SetItem(itemCreator);
+			resItem.SetItemCrt(itemCreator);
 		};
 		return _Remove(iter, assignFunc);
 	}

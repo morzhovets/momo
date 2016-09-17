@@ -718,12 +718,12 @@ public:
 	{
 		MOMO_CHECK(resItem.IsEmpty());
 		auto assignFunc1 = [&resItem] (Item&& srcItem)
-			{ resItem.SetItem(Creator<Item>(std::move(srcItem))); };
+			{ resItem.SetItemCrt(Creator<Item>(std::move(srcItem))); };
 		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
 		{
 			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
 				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
-			resItem.SetItem(itemCreator);
+			resItem.SetItemCrt(itemCreator);
 		};
 		return _Remove(iter, assignFunc1, assignFunc2);
 	}

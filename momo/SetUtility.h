@@ -327,7 +327,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void SetItem(const ItemCreator& itemCreator)
+		void SetItemCrt(const ItemCreator& itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
 			itemCreator(&mItemBuffer);
