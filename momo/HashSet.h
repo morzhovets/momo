@@ -787,8 +787,9 @@ public:
 				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 				{
 					--pitem;
-					insertFunc(std::move(*pitem));
-					bucket.RemoveBack(bucketParams);
+					insertFunc(std::move(*pitem));	//?
+					ItemTraits::Destroy(*pitem);
+					bucket.DecCount(bucketParams);
 					--mCount;
 					mCrew.IncVersion();
 				}
@@ -1050,9 +1051,11 @@ private:
 		Bucket& bucket = (*buckets)[bucketIndex];
 		typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
 		Item* bucketBegin = bucketBounds.GetBegin();
+		Item& bucketBack = *(bucketBounds.GetEnd() - 1);
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
-		assignFunc(std::move(*(bucketBounds.GetEnd() - 1)), bucketBegin[itemIndex]);
-		bucket.RemoveBack(bucketParams);
+		assignFunc(std::move(bucketBack), bucketBegin[itemIndex]);
+		ItemTraits::Destroy(bucketBack);
+		bucket.DecCount(bucketParams);
 		--mCount;
 		mCrew.IncVersion();
 		if (!iter.IsMovable())
@@ -1094,8 +1097,10 @@ private:
 				--pitem;
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<Item>(std::move(*pitem)));
-				bucket.RemoveBack(bucketParams);
+				auto relocateCreator = [pitem] (Item* newItem)
+					{ ItemTraits::Relocate(*pitem, newItem); };
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator);
+				bucket.DecCount(bucketParams);
 			}
 		}
 		buckets->Destroy(GetMemManager(), false);

@@ -40,6 +40,11 @@ namespace internal
 			ItemManager::Destroy(item);
 		}
 
+		static void Relocate(Item& srcItem, Item* dstItem)
+		{
+			ItemManager::Relocate(srcItem, dstItem);
+		}
+
 		static void Assign(Item&& srcItem, Item& dstItem)
 		{
 			_Assign(std::move(srcItem), dstItem,

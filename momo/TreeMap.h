@@ -48,11 +48,6 @@ namespace internal
 		static const bool isNothrowAnywaySwappable = KeyValueTraits::isKeyNothrowAnywaySwappable
 			&& KeyValueTraits::isValueNothrowAnywaySwappable;
 
-		static void Destroy(Item& item) MOMO_NOEXCEPT
-		{
-			ItemManager::Destroy(item);
-		}
-
 		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
 		{
 			KeyValuePair::SwapNothrowAnyway(item1, item2);

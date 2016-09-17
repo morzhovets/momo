@@ -105,10 +105,9 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		void RemoveBack(Params& /*params*/) MOMO_NOEXCEPT
+		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
-			ItemTraits::Destroy(&mItemBuffer, 1);
 			_SetState(stateRemoved);
 		}
 

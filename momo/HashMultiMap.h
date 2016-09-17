@@ -330,13 +330,13 @@ namespace internal
 
 		static void RelocateValueNothrow(Value& srcValue, Value* dstValue) MOMO_NOEXCEPT
 		{
-			ValueManager::Relocate(std::addressof(srcValue), dstValue, 1);
+			ValueManager::Relocate(srcValue, dstValue);
 		}
 
 		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
 		{
-			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);
-			dstValue = std::move(srcValue);	//?
+			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);	//?
+			dstValue = std::move(srcValue);
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -402,7 +402,7 @@ struct HashMultiMapKeyValueTraits
 	static void RelocateKeyNothrow(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT
 	{
 		MOMO_STATIC_ASSERT(isKeyNothrowRelocatable);
-		KeyManager::Relocate(std::addressof(srcKey), dstKey, 1);
+		KeyManager::Relocate(srcKey, dstKey);
 	}
 
 	static void AssignKey(Key&& srcKey, Key& dstKey)

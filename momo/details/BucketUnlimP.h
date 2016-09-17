@@ -29,7 +29,8 @@ namespace internal
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(items, count);
+			if (count != 1)
+				ItemTraits::Destroy(items, count);
 		}
 
 		static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
@@ -105,6 +106,9 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
+			Bounds bounds = GetBounds(params);
+			if (bounds.GetCount() == 1)
+				ItemTraits::Destroy(bounds.GetBegin(), 1);
 			mArrayBucket.Clear(params);
 		}
 
@@ -112,10 +116,10 @@ namespace internal
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
 			mArrayBucket.AddBackCrt(params, itemCreator);
-			return mArrayBucket.GetBounds().GetEnd() - 1;
+			return GetBounds(params).GetEnd() - 1;
 		}
 
-		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
 			mArrayBucket.RemoveBack(params);
 		}

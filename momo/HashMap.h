@@ -44,11 +44,6 @@ namespace internal
 
 		typedef internal::ObjectManager<Item> ItemManager;
 
-		static void Destroy(Item& item) MOMO_NOEXCEPT
-		{
-			ItemManager::Destroy(item);
-		}
-
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)

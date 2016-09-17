@@ -172,6 +172,12 @@ namespace internal
 				BoolConstant<isTriviallyRelocatable>(), BoolConstant<isNothrowMoveConstructible>());
 		}
 
+		static void Relocate(Object& srcObject, Object* dstObject)
+			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+		{
+			Relocate(std::addressof(srcObject), dstObject, 1);
+		}
+
 		template<typename Iterator>
 		static void Relocate(Iterator srcBegin, Iterator dstBegin, size_t count)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)

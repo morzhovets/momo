@@ -180,11 +180,10 @@ namespace internal
 			}
 		}
 
-		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = _GetCount();
 			MOMO_ASSERT(count > 0);
-			ItemTraits::Destroy(_GetItems() + count - 1, 1);
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
@@ -424,17 +423,15 @@ namespace internal
 			}
 		}
 
-		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
 			Bounds bounds = _GetBounds();
 			size_t count = bounds.GetCount();
 			MOMO_ASSERT(count > 0);
-			Item* items = bounds.GetBegin();
-			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(items);
+				params.GetMemPool(memPoolIndex).Deallocate(bounds.GetBegin());
 				mPtrState = (memPoolIndex < _GetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
 			}

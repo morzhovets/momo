@@ -193,12 +193,10 @@ namespace internal
 			}
 		}
 
-		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = _GetCount();
 			MOMO_ASSERT(count > 0);
-			Item* items = _GetItems<Item>(params);
-			ItemTraits::Destroy(items + count - 1, 1);
 			if (count == 1)
 			{
 				size_t memPoolIndex = _GetMemPoolIndex();
