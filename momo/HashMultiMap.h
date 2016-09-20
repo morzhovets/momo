@@ -256,11 +256,6 @@ namespace internal
 			KeyValueTraits::DestroyValues(items, count);
 		}
 
-		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
-		{
-			KeyValueTraits::RelocateValues(srcItems, dstItems, count);
-		}
-
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
@@ -418,11 +413,6 @@ struct HashMultiMapKeyValueTraits
 	static void AssignValue(Value&& srcValue, Value& dstValue)
 	{
 		dstValue = std::move(srcValue);
-	}
-
-	static void RelocateValues(Value* srcValues, Value* dstValues, size_t count)
-	{
-		ValueManager::Relocate(srcValues, dstValues, count);
 	}
 
 	template<typename ValueCreator>

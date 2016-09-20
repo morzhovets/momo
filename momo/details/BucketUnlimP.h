@@ -33,11 +33,6 @@ namespace internal
 				ItemTraits::Destroy(items, count);
 		}
 
-		static void Relocate(Item* /*srcItems*/, Item* /*dstItems*/, size_t /*count*/)
-		{
-			MOMO_ASSERT(false);
-		}
-
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)

@@ -52,7 +52,7 @@ namespace internal
 
 		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
 		{
-			ItemTraits::Relocate(srcItems, dstItems, count);
+			ItemTraits::RelocateCreate(srcItems, dstItems, count, [] (Item*) {}, nullptr);
 		}
 
 		template<typename ItemCreator>
