@@ -223,11 +223,12 @@ namespace internal
 			++mCounter.count;
 		}
 
-		void Remove(size_t index) MOMO_NOEXCEPT
+		template<typename RemoveFunc>
+		void Remove(size_t index, const RemoveFunc& removeFunc)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			_Remove(index, count, UseSwap());
+			_Remove(index, count, removeFunc, UseSwap());
 			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
@@ -276,16 +277,29 @@ namespace internal
 			mCounter.indices[index] = realIndex;
 		}
 
-		void _Remove(size_t index, size_t count, std::true_type /*useSwap*/) MOMO_NOEXCEPT
+		template<typename RemoveFunc>
+		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
+			std::true_type /*useSwap*/)
 		{
 			for (size_t i = index + 1; i < count; ++i)
 				ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
-			ItemTraits::Destroy(*GetItemPtr(count - 1));
+			try
+			{
+				removeFunc(*GetItemPtr(count - 1));
+			}
+			catch (...)
+			{
+				for (size_t i = count - 1; i > index; --i)
+					ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
+				throw;
+			}
 		}
 
-		void _Remove(size_t index, size_t count, std::false_type /*useSwap*/) MOMO_NOEXCEPT
+		template<typename RemoveFunc>
+		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
+			std::false_type /*useSwap*/)
 		{
-			ItemTraits::Destroy(*GetItemPtr(index));
+			removeFunc(*GetItemPtr(index));
 			unsigned char realIndex = mCounter.indices[index];
 			memmove(mCounter.indices + index, mCounter.indices + index + 1, count - index - 1);
 			mCounter.indices[count - 1] = realIndex;

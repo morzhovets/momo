@@ -233,13 +233,9 @@ namespace internal
 			_Create(key, valueCreator);
 		}
 
-		MapKeyValuePair(MapKeyValuePair&& pair)
-		{
-			_Create(std::move(pair.GetKey()), ValueCreator<Value>(std::move(pair.GetValue())),
-				IsKeyNothrowMoveConstructible());
-		}
+		MapKeyValuePair(MapKeyValuePair&& pair) = delete;
 
-		MapKeyValuePair(const MapKeyValuePair& pair)
+		MapKeyValuePair(const MapKeyValuePair& pair)	//?
 		{
 			_Create(pair.GetKey(), ValueCreator<const Value&>(pair.GetValue()));
 		}
@@ -269,9 +265,8 @@ namespace internal
 
 		static void Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair)
 		{
-			_Relocate(srcPair, dstPair,
-				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
-				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
+			_Relocate(srcPair, dstPair, BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
+				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
 
 		static void Assign(MapKeyValuePair&& srcPair, MapKeyValuePair& dstPair)
@@ -301,8 +296,8 @@ namespace internal
 			const PairCreator& pairCreator, MapKeyValuePair* newPair)
 		{
 			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, newPair,
-				internal::BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
-				internal::BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
+				BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
+				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
 
 	private:
@@ -503,8 +498,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator : public ItemManager::template Creator<ItemArg>
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value
-				|| std::is_same<ItemArg, Item>::value));	//?
+			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		private:
 			typedef typename ItemManager::template Creator<ItemArg> BaseCreator;

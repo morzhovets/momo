@@ -1055,8 +1055,12 @@ private:
 		size_t itemIndex = iter.GetItemIndex();
 		if (node->IsLeaf())
 		{
-			assignFunc1(std::move(*node->GetItemPtr(itemIndex)));
-			node->Remove(itemIndex);
+			auto removeFunc = [assignFunc1] (Item& item)
+			{
+				assignFunc1(std::move(item));
+				ItemTraits::Destroy(item);
+			};
+			node->Remove(itemIndex, removeFunc);
 			_Rebalance(node, node);
 		}
 		else
@@ -1070,8 +1074,8 @@ private:
 	}
 
 	template<typename AssignFunc1, typename AssignFunc2>
-	Node* _RemoveInternal(Node* node, size_t itemIndex,
-		AssignFunc1 assignFunc1, AssignFunc2 assignFunc2)
+	Node* _RemoveInternal(Node* node, size_t itemIndex, AssignFunc1 assignFunc1,
+		AssignFunc2 assignFunc2)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1081,28 +1085,37 @@ private:
 		Node* resNode;
 		if (childNode == node)
 		{
-			assignFunc1(std::move(*node->GetItemPtr(itemIndex)));
-			Node* remNode = node->GetChild(itemIndex + 1);
-			_Destroy(node->GetChild(itemIndex));
-			node->Remove(itemIndex);
-			node->SetChild(itemIndex, remNode);
-			resNode = node->GetChild(itemIndex);
+			Node* leftNode = node->GetChild(itemIndex);
+			Node* rightNode = node->GetChild(itemIndex + 1);
+			auto removeFunc = [assignFunc1] (Item& item)
+			{
+				assignFunc1(std::move(item));
+				ItemTraits::Destroy(item);
+			};
+			node->Remove(itemIndex, removeFunc);
+			_Destroy(leftNode);
+			node->SetChild(itemIndex, rightNode);
+			resNode = rightNode;
 		}
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			assignFunc2(std::move(*childNode->GetItemPtr(childItemIndex)),
-				*node->GetItemPtr(itemIndex));
+			auto removeFunc = [node, itemIndex, assignFunc2] (Item& item)
+			{
+				assignFunc2(std::move(item), *node->GetItemPtr(itemIndex));
+				ItemTraits::Destroy(item);
+			};
 			if (childNode->IsLeaf())
 			{
-				childNode->Remove(childItemIndex);
+				childNode->Remove(childItemIndex, removeFunc);
 			}
 			else
 			{
-				Node* remNode = childNode->GetChild(childItemIndex);
-				_Destroy(childNode->GetChild(childItemIndex + 1));
-				childNode->Remove(childItemIndex);
-				childNode->SetChild(childItemIndex, remNode);
+				Node* leftNode = childNode->GetChild(childItemIndex);
+				Node* rightNode = childNode->GetChild(childItemIndex + 1);
+				childNode->Remove(childItemIndex, removeFunc);
+				_Destroy(rightNode);
+				childNode->SetChild(childItemIndex, leftNode);
 			}
 			resNode = node->GetChild(itemIndex + 1);
 		}
@@ -1157,13 +1170,16 @@ private:
 			return false;
 		size_t itemCount1 = node1->GetCount();
 		size_t itemCount2 = node2->GetCount();
-		if (itemCount1 + itemCount2 >= node1->GetCapacity())
+		if (itemCount1 + itemCount2 + 1 > node1->GetCapacity())
 			return false;
 		Relocator relocator(GetMemManager(), *mNodeParams);
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
-		relocator.RelocateCreate(Creator<Item>(std::move(*parentNode->GetItemPtr(index))),
-			node1->GetItemPtr(itemCount1));
-		parentNode->Remove(index);
+		auto removeFunc = [&relocator, node1, itemCount1] (Item& item)
+		{
+			auto itemCreator = [&item] (Item* newItem) { ItemTraits::Relocate(item, newItem); };
+			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
+		};
+		parentNode->Remove(index, removeFunc);
 		parentNode->SetChild(index, node1);
 		Node* lastChildNode = node1->IsLeaf() ? nullptr : node1->GetChild(itemCount1);
 		for (size_t i = 0; i <= itemCount2; ++i)
