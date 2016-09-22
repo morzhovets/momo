@@ -47,7 +47,8 @@ namespace internal
 
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
-			_Assign(srcItem, dstItem, BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
+			_Assign(std::move(srcItem), dstItem,
+				BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
 			Destroy(srcItem);
 		}
 
@@ -70,13 +71,13 @@ namespace internal
 		}
 
 	private:
-		static void _Assign(Item& srcItem, Item& dstItem,
+		static void _Assign(Item&& srcItem, Item& dstItem,
 			std::true_type /*isNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
 		{
 			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
 		}
 
-		static void _Assign(Item& srcItem, Item& dstItem,
+		static void _Assign(Item&& srcItem, Item& dstItem,
 			std::false_type /*isNothrowAnywayMoveAssignable*/)
 		{
 			dstItem = std::move(srcItem);

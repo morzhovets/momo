@@ -328,10 +328,12 @@ namespace internal
 			ValueManager::Relocate(srcValue, dstValue);
 		}
 
-		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
+		static void ReplacePair(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);	//?
 			dstValue = std::move(srcValue);
+			DestroyKey(srcKey);
+			DestroyValue(srcValue);
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)

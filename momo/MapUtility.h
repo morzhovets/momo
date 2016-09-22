@@ -145,11 +145,13 @@ namespace internal
 			ValueManager::Relocate(srcValue, dstValue);
 		}
 
-		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
+		static void ReplacePair(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
 			_AssignPair(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayMoveAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
+			DestroyKey(srcKey);
+			DestroyValue(srcValue);
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -269,10 +271,10 @@ namespace internal
 				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
 		}
 
-		static void Assign(MapKeyValuePair&& srcPair, MapKeyValuePair& dstPair)
+		static void Replace(MapKeyValuePair& srcPair, MapKeyValuePair& dstPair)
 		{
-			KeyValueTraits::AssignPair(std::move(srcPair.GetKey()), std::move(srcPair.GetValue()),
-				dstPair.GetKey(), dstPair.GetValue());
+			KeyValueTraits::ReplacePair(srcPair.GetKey(), srcPair.GetValue(), dstPair.GetKey(),
+				dstPair.GetValue());
 		}
 
 		static void AssignKey(Key&& srcKey, MapKeyValuePair& dstPair)
@@ -528,8 +530,7 @@ namespace internal
 
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
-			KeyValuePair::Assign(std::move(srcItem), dstItem);
-			Destroy(srcItem);
+			KeyValuePair::Replace(srcItem, dstItem);
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
