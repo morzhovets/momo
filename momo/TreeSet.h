@@ -708,24 +708,29 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto assignFunc1 = [] (Item&& /*srcItem*/) { };
-		auto assignFunc2 = [] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::Assign(std::move(srcItem), dstItem); };
-		return _Remove(iter, assignFunc1, assignFunc2);
+		auto replaceFunc1 = [] (Item& srcItem)
+			{ ItemTraits::Destroy(srcItem); };
+		auto replaceFunc2 = [] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::Replace(srcItem, dstItem); };
+		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
 		MOMO_CHECK(resItem.IsEmpty());
-		auto assignFunc1 = [&resItem] (Item&& srcItem)
-			{ resItem.SetItemCrt(Creator<Item>(std::move(srcItem))); };
-		auto assignFunc2 = [&resItem] (Item&& srcItem, Item& dstItem)
+		auto replaceFunc1 = [&resItem] (Item& srcItem)
 		{
-			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
+			auto itemCreator = [&srcItem] (Item* newItem)
+				{ ItemTraits::Relocate(srcItem, newItem); };
 			resItem.SetItemCrt(itemCreator);
 		};
-		return _Remove(iter, assignFunc1, assignFunc2);
+		auto replaceFunc2 = [&resItem] (Item& srcItem, Item& dstItem)
+		{
+			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
+				{ ItemTraits::Replace(srcItem, dstItem, newItem); };
+			resItem.SetItemCrt(itemCreator);
+		};
+		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}
 
 	bool Remove(const Key& key)
@@ -760,10 +765,15 @@ public:
 	template<typename InsertFunc>
 	void MergeTo(const InsertFunc& insertFunc)
 	{
-		auto assignFunc1 = [&insertFunc] (Item&& srcItem) { insertFunc(std::move(srcItem)); };
-		auto assignFunc2 = [] (Item&& /*srcItem*/, Item& /*dstItem*/) { MOMO_ASSERT(false); };
+		auto replaceFunc1 = [&insertFunc] (Item& srcItem)
+		{
+			insertFunc(std::move(srcItem));
+			ItemTraits::Destroy(srcItem);
+		};
+		auto replaceFunc2 = [] (Item& /*srcItem*/, Item& /*dstItem*/)
+			{ MOMO_ASSERT(false); };
 		while (!IsEmpty())
-			_Remove(GetBegin(), assignFunc1, assignFunc2);
+			_Remove(GetBegin(), replaceFunc1, replaceFunc2);
 	}
 
 private:
@@ -1046,8 +1056,8 @@ private:
 		}
 	}
 
-	template<typename AssignFunc1, typename AssignFunc2>
-	ConstIterator _Remove(ConstIterator iter, AssignFunc1 assignFunc1, AssignFunc2 assignFunc2)
+	template<typename ReplaceFunc1, typename ReplaceFunc2>
+	ConstIterator _Remove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
 	{
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
@@ -1055,17 +1065,12 @@ private:
 		size_t itemIndex = iter.GetItemIndex();
 		if (node->IsLeaf())
 		{
-			auto removeFunc = [assignFunc1] (Item& item)
-			{
-				assignFunc1(std::move(item));
-				ItemTraits::Destroy(item);
-			};
-			node->Remove(itemIndex, removeFunc);
+			node->Remove(itemIndex, replaceFunc1);
 			_Rebalance(node, node);
 		}
 		else
 		{
-			node = _RemoveInternal(node, itemIndex, assignFunc1, assignFunc2);
+			node = _RemoveInternal(node, itemIndex, replaceFunc1, replaceFunc2);
 			itemIndex = 0;
 		}
 		--mCount;
@@ -1073,9 +1078,9 @@ private:
 		return _MakeIterator(node, itemIndex, true);
 	}
 
-	template<typename AssignFunc1, typename AssignFunc2>
-	Node* _RemoveInternal(Node* node, size_t itemIndex, AssignFunc1 assignFunc1,
-		AssignFunc2 assignFunc2)
+	template<typename ReplaceFunc1, typename ReplaceFunc2>
+	Node* _RemoveInternal(Node* node, size_t itemIndex, ReplaceFunc1 replaceFunc1,
+		ReplaceFunc2 replaceFunc2)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1087,12 +1092,7 @@ private:
 		{
 			Node* leftNode = node->GetChild(itemIndex);
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			auto removeFunc = [assignFunc1] (Item& item)
-			{
-				assignFunc1(std::move(item));
-				ItemTraits::Destroy(item);
-			};
-			node->Remove(itemIndex, removeFunc);
+			node->Remove(itemIndex, replaceFunc1);
 			_Destroy(leftNode);
 			node->SetChild(itemIndex, rightNode);
 			resNode = rightNode;
@@ -1100,11 +1100,8 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto removeFunc = [node, itemIndex, assignFunc2] (Item& item)
-			{
-				assignFunc2(std::move(item), *node->GetItemPtr(itemIndex));
-				ItemTraits::Destroy(item);
-			};
+			auto removeFunc = [node, itemIndex, replaceFunc2] (Item& item)
+				{ replaceFunc2(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
 			{
 				childNode->Remove(childItemIndex, removeFunc);
@@ -1176,7 +1173,8 @@ private:
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
 		auto removeFunc = [&relocator, node1, itemCount1] (Item& item)
 		{
-			auto itemCreator = [&item] (Item* newItem) { ItemTraits::Relocate(item, newItem); };
+			auto itemCreator = [&item] (Item* newItem)
+				{ ItemTraits::Relocate(item, newItem); };
 			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
 		};
 		parentNode->Remove(index, removeFunc);

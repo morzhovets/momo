@@ -148,8 +148,8 @@ namespace internal
 		static void AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue)
 		{
 			_AssignPair(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
-				internal::BoolConstant<KeyManager::isNothrowAnywayMoveAssignable>(),
-				internal::BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
+				BoolConstant<KeyManager::isNothrowAnywayMoveAssignable>(),
+				BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -173,7 +173,7 @@ namespace internal
 	private:
 		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
-			std::true_type /*isValueNothrowAnywayMoveAssignable*/)
+			std::true_type /*isValueNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
 		{
 			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
 			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
@@ -526,9 +526,10 @@ namespace internal
 			KeyValuePair::Relocate(srcItem, dstItem);
 		}
 
-		static void Assign(Item&& srcItem, Item& dstItem)
+		static void Replace(Item& srcItem, Item& dstItem)
 		{
 			KeyValuePair::Assign(std::move(srcItem), dstItem);
+			Destroy(srcItem);
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)

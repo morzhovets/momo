@@ -728,21 +728,21 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto assignFunc = [] (Item&& srcItem, Item& dstItem)
-			{ ItemTraits::Assign(std::move(srcItem), dstItem); };
-		return _Remove(iter, assignFunc);
+		auto replaceFunc = [] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::Replace(srcItem, dstItem); };
+		return _Remove(iter, replaceFunc);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
 		MOMO_CHECK(resItem.IsEmpty());
-		auto assignFunc = [&resItem] (Item&& srcItem, Item& dstItem)
+		auto replaceFunc = [&resItem] (Item& srcItem, Item& dstItem)
 		{
 			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::AssignCreate(std::move(srcItem), dstItem, newItem); };
+				{ ItemTraits::Replace(srcItem, dstItem, newItem); };
 			resItem.SetItemCrt(itemCreator);
 		};
-		return _Remove(iter, assignFunc);
+		return _Remove(iter, replaceFunc);
 	}
 
 	bool Remove(const Key& key)
@@ -1040,8 +1040,8 @@ private:
 		return pitem;
 	}
 
-	template<typename AssignFunc>
-	ConstIterator _Remove(ConstIterator iter, AssignFunc assignFunc)
+	template<typename ReplaceFunc>
+	ConstIterator _Remove(ConstIterator iter, ReplaceFunc replaceFunc)
 	{
 		iter.Check(mCrew.GetVersion(), false);
 		Buckets* buckets = _GetMutBuckets(iter);
@@ -1053,8 +1053,7 @@ private:
 		Item* bucketBegin = bucketBounds.GetBegin();
 		Item& bucketBack = *(bucketBounds.GetEnd() - 1);
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
-		assignFunc(std::move(bucketBack), bucketBegin[itemIndex]);
-		ItemTraits::Destroy(bucketBack);
+		replaceFunc(bucketBack, bucketBegin[itemIndex]);
 		bucket.DecCount(bucketParams);
 		--mCount;
 		mCrew.IncVersion();
