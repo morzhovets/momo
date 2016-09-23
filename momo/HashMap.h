@@ -14,7 +14,7 @@
   but not the following cases:
   1. Functions `Insert`, `InsertKV`, `InsertFS` receiving many items have
     basic exception safety.
-  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+  2. Functions `Merge` and `ExtractAll` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
   4. In case default `KeyValueTraits`: if function `Remove` throws exception and
@@ -441,22 +441,27 @@ public:
 		mHashSet.ResetKey(iter.GetBaseIterator(), newKey);
 	}
 
-	template<typename Map>
-	void MergeFrom(Map& srcMap)
+	template<typename RMap>
+	void Merge(RMap&& srcMap)
 	{
+		typedef typename std::decay<RMap>::type Map;
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
 		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
-		auto insertFunc = [this] (Key&& key, Value&& value)
-			{ Insert(std::move(key), std::move(value)); };
-		srcMap.MergeTo(insertFunc);
+		auto relocateFunc = [this] (Key& key, Value& value)
+		{
+			Insert(std::move(key), std::move(value));	//?
+			Map::KeyValueTraits::DestroyKey(key);
+			Map::KeyValueTraits::DestroyValue(value);
+		};
+		srcMap.ExtractAll(relocateFunc);
 	}
 
-	template<typename InsertFunc>
-	void MergeTo(const InsertFunc& insertFunc)
+	template<typename RelocateFunc>
+	void ExtractAll(const RelocateFunc& relocateFunc)
 	{
-		auto setInsertFunc = [&insertFunc] (KeyValuePair&& pair)
-			{ insertFunc(std::move(pair.GetKey()), std::move(pair.GetValue())); };
-		mHashSet.MergeTo(setInsertFunc);
+		auto setRelocateFunc = [&relocateFunc] (KeyValuePair& pair)
+			{ relocateFunc(pair.GetKey(), pair.GetValue()); };
+		mHashSet.ExtractAll(setRelocateFunc);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT

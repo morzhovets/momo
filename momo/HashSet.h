@@ -13,7 +13,7 @@
   All `HashSet` functions and constructors have strong exception safety,
   but not the following cases:
   1. Functions `Insert` receiving many items have basic exception safety.
-  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+  2. Functions `Merge` and `ExtractAll` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
 
@@ -766,16 +766,22 @@ public:
 		ItemTraits::AssignKey(newKey, item);
 	}
 
-	template<typename Set>
-	void MergeFrom(Set& srcSet)
+	template<typename RSet>
+	void Merge(RSet&& srcSet)
 	{
+		typedef typename std::decay<RSet>::type Set;
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
-		auto insertFunc = [this] (Item&& item) { Insert(std::move(item)); };
-		srcSet.MergeTo(insertFunc);
+		auto relocateFunc = [this] (Item& item)
+		{
+			auto itemCreator = [&item] (Item* newItem)
+				{ ItemTraits::Relocate(item, newItem); };
+			InsertCrt(ItemTraits::GetKey(item), itemCreator);
+		};
+		srcSet.ExtractAll(relocateFunc);
 	}
 
-	template<typename InsertFunc>
-	void MergeTo(const InsertFunc& insertFunc)
+	template<typename RelocateFunc>
+	void ExtractAll(const RelocateFunc& relocateFunc)
 	{
 		for (Buckets* buckets = mBuckets; buckets != nullptr;
 			buckets = buckets->GetNextBuckets())
@@ -787,8 +793,7 @@ public:
 				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 				{
 					--pitem;
-					insertFunc(std::move(*pitem));	//?
-					ItemTraits::Destroy(*pitem);
+					relocateFunc(*pitem);
 					bucket.DecCount(bucketParams);
 					--mCount;
 					mCrew.IncVersion();

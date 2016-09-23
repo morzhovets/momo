@@ -663,7 +663,7 @@ private:
 		if (right.get_allocator() == alloc)
 			return std::move(right.mTreeMap);
 		TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
-		treeMap.MergeFrom(right.mTreeMap);
+		treeMap.Merge(right.mTreeMap);
 		return treeMap;
 	}
 
