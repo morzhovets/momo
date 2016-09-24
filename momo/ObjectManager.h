@@ -82,7 +82,7 @@ namespace internal
 		static const bool isNothrowAnywaySwappable = IsNothrowSwappable<Object>::value
 			|| isTriviallyRelocatable || isNothrowMoveConstructible;
 
-		static const bool isNothrowAnywayMoveAssignable =
+		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || IsNothrowSwappable<Object>::value
 			|| isTriviallyRelocatable || isNothrowMoveConstructible
 			|| std::is_nothrow_copy_assignable<Object>::value;
@@ -166,7 +166,7 @@ namespace internal
 
 		static void AssignNothrowAnyway(Object&& srcObject, Object& dstObject) MOMO_NOEXCEPT
 		{
-			MOMO_STATIC_ASSERT(isNothrowAnywayMoveAssignable);
+			MOMO_STATIC_ASSERT(isNothrowAnywayAssignable);
 			_AssignNothrowAnyway(std::move(srcObject), dstObject,
 				std::is_nothrow_move_assignable<Object>(), IsNothrowSwappable<Object>(),
 				BoolConstant<isTriviallyRelocatable>(), BoolConstant<isNothrowMoveConstructible>());
@@ -238,6 +238,7 @@ namespace internal
 			CreateNothrow(std::move(object1), &objectBuffer);
 			AssignNothrowAnyway(std::move(object2), object1);
 			AssignNothrowAnyway(std::move(*&objectBuffer), object2);
+			Destroy(*&objectBuffer);
 		}
 
 		template<bool isNothrowSwappable, bool isTriviallyRelocatable, bool isNothrowMoveConstructible>

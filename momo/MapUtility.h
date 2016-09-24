@@ -148,8 +148,8 @@ namespace internal
 		static void ReplacePair(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
 			_AssignPair(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
-				BoolConstant<KeyManager::isNothrowAnywayMoveAssignable>(),
-				BoolConstant<ValueManager::isNothrowAnywayMoveAssignable>());
+				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
+				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 			DestroyKey(srcKey);
 			DestroyValue(srcValue);
 		}

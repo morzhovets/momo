@@ -48,14 +48,14 @@ namespace internal
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
 			_Assign(std::move(srcItem), dstItem,
-				BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
+				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
 			Destroy(srcItem);
 		}
 
 		static void Replace(Item& srcItem, Item& midItem, Item* dstItem)
 		{
 			_Replace(srcItem, midItem, dstItem, BoolConstant<ItemManager::isNothrowRelocatable>(),
-				BoolConstant<ItemManager::isNothrowAnywayMoveAssignable>());
+				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
@@ -72,21 +72,21 @@ namespace internal
 
 	private:
 		static void _Assign(Item&& srcItem, Item& dstItem,
-			std::true_type /*isNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowAnywayAssignable*/) MOMO_NOEXCEPT
 		{
 			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
 		}
 
 		static void _Assign(Item&& srcItem, Item& dstItem,
-			std::false_type /*isNothrowAnywayMoveAssignable*/)
+			std::false_type /*isNothrowAnywayAssignable*/)
 		{
 			dstItem = std::move(srcItem);
 		}
 
-		template<bool isNothrowAnywayMoveAssignable>
+		template<bool isNothrowAnywayAssignable>
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
 			std::true_type /*isNothrowRelocatable*/,
-			BoolConstant<isNothrowAnywayMoveAssignable>) MOMO_NOEXCEPT
+			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
 			Relocate(midItem, dstItem);
 			Relocate(srcItem, std::addressof(midItem));
@@ -94,7 +94,7 @@ namespace internal
 
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
 			std::false_type /*isNothrowRelocatable*/,
-			std::true_type /*isNothrowAnywayMoveAssignable*/)
+			std::true_type /*isNothrowAnywayAssignable*/)
 		{
 			Creator<Item>(std::move(midItem))(dstItem);
 			ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
@@ -103,7 +103,7 @@ namespace internal
 
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
 			std::false_type /*isNothrowRelocatable*/,
-			std::false_type /*isNothrowAnywayMoveAssignable*/)
+			std::false_type /*isNothrowAnywayAssignable*/)
 		{
 			(Creator<const Item&>(midItem))(dstItem);
 			try
