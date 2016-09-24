@@ -175,7 +175,7 @@ namespace internal
 		static void Relocate(Object& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			Relocate(std::addressof(srcObject), dstObject, 1);
+			_Relocate(srcObject, dstObject, BoolConstant<isTriviallyRelocatable>());
 		}
 
 		template<typename Iterator>
@@ -183,8 +183,7 @@ namespace internal
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
 			MOMO_CHECK_TYPE(Object, *srcBegin);
-			_Relocate(srcBegin, dstBegin, count, BoolConstant<isTriviallyRelocatable>(),
-				BoolConstant<isNothrowMoveConstructible>());
+			_Relocate(srcBegin, dstBegin, count, BoolConstant<isNothrowRelocatable>());
 		}
 
 		template<typename Iterator, typename ObjectCreator>
@@ -287,33 +286,32 @@ namespace internal
 			dstObject = static_cast<const Object&>(srcObject);
 		}
 
-		template<typename Iterator, bool isNothrowMoveConstructible>
-		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			std::true_type /*isTriviallyRelocatable*/,
-			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
+		static void _Relocate(Object& srcObject, Object* dstObject,
+			std::true_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT
 		{
-			Iterator srcIter = srcBegin;
-			Iterator dstIter = dstBegin;
-			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
-				memcpy(std::addressof(*dstIter), std::addressof(*srcIter), sizeof(Object));
+			memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+		}
+
+		static void _Relocate(Object& srcObject, Object* dstObject,
+			std::false_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
+		{
+			new(dstObject) Object(std::move(srcObject));	//?
+			Destroy(srcObject);
 		}
 
 		template<typename Iterator>
 		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			std::false_type /*isTriviallyRelocatable*/,
-			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
 		{
 			Iterator srcIter = srcBegin;
 			Iterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
-				CreateNothrow(std::move(*srcIter), std::addressof(*dstIter));
-			Destroy(srcBegin, count);
+				Relocate(*srcIter, std::addressof(*dstIter));
 		}
 
 		template<typename Iterator>
 		static void _Relocate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			std::false_type /*isTriviallyRelocatable*/,
-			std::false_type /*isNothrowMoveConstructible*/)
+			std::false_type /*isNothrowRelocatable*/)
 		{
 			if (count > 0)
 			{
