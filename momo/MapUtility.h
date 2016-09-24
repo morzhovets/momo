@@ -113,14 +113,15 @@ namespace internal
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-		static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
+		static void MoveKey(Key&& srcKey, Key* dstKey)
+			MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
 		{
-			KeyManager::CreateNothrow(std::move(srcKey), dstKey);
+			KeyManager::Move(std::move(srcKey), dstKey);
 		}
 
-		static void CreateKey(const Key& srcKey, Key* dstKey)
+		static void CopyKey(const Key& srcKey, Key* dstKey)
 		{
-			KeyManager::Create(srcKey, dstKey);
+			KeyManager::Copy(srcKey, dstKey);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -308,7 +309,7 @@ namespace internal
 			std::true_type /*isKeyNothrowMoveConstructible*/)
 		{
 			valueCreator(&mValueBuffer);
-			KeyValueTraits::CreateKeyNothrow(std::move(key), &mKeyBuffer);
+			KeyValueTraits::MoveKey(std::move(key), &mKeyBuffer);
 		}
 
 		template<typename ValueCreator>
@@ -321,7 +322,7 @@ namespace internal
 		template<typename ValueCreator>
 		void _Create(const Key& key, const ValueCreator& valueCreator)
 		{
-			KeyValueTraits::CreateKey(key, &mKeyBuffer);
+			KeyValueTraits::CopyKey(key, &mKeyBuffer);
 			try
 			{
 				valueCreator(&mValueBuffer);
@@ -354,8 +355,8 @@ namespace internal
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyValueTraits::CreateKey(static_cast<const Key&>(srcPair.GetKey()),
-				&dstPair->mKeyBuffer);	//?
+			KeyValueTraits::MoveKey(static_cast<const Key&>(srcPair.GetKey()),
+				&dstPair->mKeyBuffer);
 			KeyValueTraits::DestroyKey(srcPair.GetKey());
 			KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(), &dstPair->mValueBuffer);
 		}
@@ -364,7 +365,7 @@ namespace internal
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
-			KeyValueTraits::CreateKey(static_cast<const Key&>(srcPair.GetKey()),
+			KeyValueTraits::CopyKey(static_cast<const Key&>(srcPair.GetKey()),
 				&dstPair->mKeyBuffer);
 			try
 			{
@@ -433,7 +434,7 @@ namespace internal
 			try
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; index < count; ++index, ++its, ++itd)
-					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
+					KeyValueTraits::CopyKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
 				pairCreator(newPair);
 			}
 			catch (...)
@@ -462,7 +463,7 @@ namespace internal
 			try
 			{
 				for (Iterator its = srcBegin, itd = dstBegin; keyIndex < count; ++keyIndex, ++its, ++itd)
-					KeyValueTraits::CreateKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
+					KeyValueTraits::CopyKey(static_cast<const Key&>(its->GetKey()), &itd->mKeyBuffer);
 				for (Iterator its = srcBegin, itd = dstBegin; valueIndex < count; ++valueIndex, ++its, ++itd)
 					ValueCreator<const Value&>(its->GetValue())(&itd->mValueBuffer);
 				pairCreator(newPair);

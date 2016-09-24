@@ -127,14 +127,13 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
-		static void CreateNothrow(Object&& srcObject, Object* dstObject) MOMO_NOEXCEPT
+		static void Move(Object&& srcObject, Object* dstObject)
+			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
 		{
-			MOMO_STATIC_ASSERT(isNothrowMoveConstructible);
 			new(dstObject) Object(std::move(srcObject));
 		}
 
-		static void Create(const Object& srcObject, Object* dstObject)
-			MOMO_NOEXCEPT_IF(std::is_nothrow_copy_constructible<Object>::value)
+		static void Copy(const Object& srcObject, Object* dstObject)
 		{
 			new(dstObject) Object(srcObject);
 		}
@@ -234,7 +233,7 @@ namespace internal
 			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
 		{
 			ObjectBuffer<Object, alignment> objectBuffer;
-			CreateNothrow(std::move(object1), &objectBuffer);
+			Move(std::move(object1), &objectBuffer);
 			AssignNothrowAnyway(std::move(object2), object1);
 			AssignNothrowAnyway(std::move(*&objectBuffer), object2);
 			Destroy(*&objectBuffer);
@@ -273,7 +272,7 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				Destroy(dstObject);
-				CreateNothrow(std::move(srcObject), std::addressof(dstObject));
+				Move(std::move(srcObject), std::addressof(dstObject));
 			}
 		}
 
@@ -295,7 +294,7 @@ namespace internal
 		static void _Relocate(Object& srcObject, Object* dstObject,
 			std::false_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
 		{
-			new(dstObject) Object(std::move(srcObject));	//?
+			Move(std::move(srcObject), dstObject);
 			Destroy(srcObject);
 		}
 
@@ -342,7 +341,7 @@ namespace internal
 				Iterator srcIter = srcBegin;
 				Iterator dstIter = dstBegin;
 				for (; index < count; ++index, ++srcIter, ++dstIter)
-					Create(*srcIter, std::addressof(*dstIter));
+					Copy(*srcIter, std::addressof(*dstIter));
 				objectCreator(newObject);
 			}
 			catch (...)

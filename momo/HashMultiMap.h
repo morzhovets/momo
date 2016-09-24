@@ -246,7 +246,7 @@ namespace internal
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
-		static void Create(const Item& srcItem, Item* dstItem)
+		static void Copy(const Item& srcItem, Item* dstItem)
 		{
 			(typename KeyValueTraits::template ValueCreator<const Item&>(srcItem))(dstItem);
 		}
@@ -298,14 +298,14 @@ namespace internal
 			}
 		};
 
-		static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
+		static void MoveKey(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::CreateKeyNothrow(std::move(srcKey), dstKey);
+			KeyValueTraits::MoveKey(std::move(srcKey), dstKey);
 		}
 
-		static void CreateKey(const Key& srcKey, Key* dstKey)
+		static void CopyKey(const Key& srcKey, Key* dstKey)
 		{
-			KeyValueTraits::CreateKey(srcKey, dstKey);
+			KeyValueTraits::CopyKey(srcKey, dstKey);
 		}
 
 		static void DestroyKey(Key& key) MOMO_NOEXCEPT
@@ -376,14 +376,14 @@ struct HashMultiMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void CreateKeyNothrow(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
+	static void MoveKey(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
 	{
-		KeyManager::CreateNothrow(std::move(srcKey), dstKey);
+		KeyManager::Move(std::move(srcKey), dstKey);
 	}
 
-	static void CreateKey(const Key& srcKey, Key* dstKey)
+	static void CopyKey(const Key& srcKey, Key* dstKey)
 	{
-		KeyManager::Create(srcKey, dstKey);
+		KeyManager::Copy(srcKey, dstKey);
 	}
 
 	static void DestroyKey(Key& key) MOMO_NOEXCEPT

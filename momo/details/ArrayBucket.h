@@ -38,7 +38,7 @@ namespace internal
 
 			void operator()(Item* newItem) const
 			{
-				ItemTraits::Create(mItem, newItem);
+				ItemTraits::Copy(mItem, newItem);
 			}
 
 		private:
@@ -170,7 +170,7 @@ namespace internal
 				try
 				{
 					for (; index < count; ++index)
-						ItemTraits::Create(bounds[index], items + index);
+						ItemTraits::Copy(bounds[index], items + index);
 				}
 				catch (...)
 				{
