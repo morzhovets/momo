@@ -79,13 +79,13 @@ namespace internal
 		static const bool isNothrowRelocatable = isTriviallyRelocatable
 			|| isNothrowMoveConstructible;
 
-		static const bool isNothrowAnywaySwappable = IsNothrowSwappable<Object>::value
-			|| isTriviallyRelocatable || isNothrowMoveConstructible;
-
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || IsNothrowSwappable<Object>::value
 			|| isTriviallyRelocatable || isNothrowMoveConstructible
 			|| std::is_nothrow_copy_assignable<Object>::value;
+
+		static const bool isNothrowShiftable = isNothrowRelocatable
+			|| IsNothrowSwappable<Object>::value;
 
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
@@ -156,13 +156,6 @@ namespace internal
 			}
 		}
 
-		static void SwapNothrowAnyway(Object& object1, Object& object2) MOMO_NOEXCEPT
-		{
-			MOMO_STATIC_ASSERT(isNothrowAnywaySwappable);
-			_SwapNothrowAnyway(object1, object2, IsNothrowSwappable<Object>(),
-				BoolConstant<isTriviallyRelocatable>(), BoolConstant<isNothrowMoveConstructible>());
-		}
-
 		static void AssignNothrowAnyway(Object&& srcObject, Object& dstObject) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(isNothrowAnywayAssignable);
@@ -194,6 +187,14 @@ namespace internal
 				BoolConstant<isNothrowRelocatable>());
 		}
 
+		template<typename Iterator>
+		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(isNothrowShiftable);
+			MOMO_CHECK_TYPE(Object, *begin);
+			_ShiftNothrow(begin, shift, BoolConstant<isNothrowRelocatable>());
+		}
+
 	private:
 		static void _SwapNothrowAdl(Object& object1, Object& object2) MOMO_NOEXCEPT
 		{
@@ -206,37 +207,10 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(isTriviallyRelocatable);
 			static const size_t size = sizeof(Object);
-			char buf[size];
-			memcpy(buf, std::addressof(object1), size);
-			memcpy(std::addressof(object1), std::addressof(object2), size);
-			memcpy(std::addressof(object2), buf, size);
-		}
-
-		template<bool isTriviallyRelocatable, bool isNothrowMoveConstructible>
-		static void _SwapNothrowAnyway(Object& object1, Object& object2,
-			std::true_type /*isNothrowSwappable*/, BoolConstant<isTriviallyRelocatable>,
-			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
-		{
-			_SwapNothrowAdl(object1, object2);
-		}
-
-		template<bool isNothrowMoveConstructible>
-		static void _SwapNothrowAnyway(Object& object1, Object& object2,
-			std::false_type /*isNothrowSwappable*/, std::true_type /*isTriviallyRelocatable*/,
-			BoolConstant<isNothrowMoveConstructible>) MOMO_NOEXCEPT
-		{
-			_SwapNothrowMemory(object1, object2);
-		}
-
-		static void _SwapNothrowAnyway(Object& object1, Object& object2,
-			std::false_type /*isNothrowSwappable*/, std::false_type /*isTriviallyRelocatable*/,
-			std::true_type /*isNothrowMoveConstructible*/) MOMO_NOEXCEPT
-		{
 			ObjectBuffer<Object, alignment> objectBuffer;
-			Move(std::move(object1), &objectBuffer);
-			AssignNothrowAnyway(std::move(object2), object1);
-			AssignNothrowAnyway(std::move(*&objectBuffer), object2);
-			Destroy(*&objectBuffer);
+			memcpy(&objectBuffer, std::addressof(object1), size);
+			memcpy(std::addressof(object1), std::addressof(object2), size);
+			memcpy(std::addressof(object2), &objectBuffer, size);
 		}
 
 		template<bool isNothrowSwappable, bool isTriviallyRelocatable, bool isNothrowMoveConstructible>
@@ -350,6 +324,27 @@ namespace internal
 				throw;
 			}
 			Destroy(srcBegin, count);
+		}
+
+		template<typename Iterator>
+		static void _ShiftNothrow(Iterator begin, size_t shift,
+			std::true_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
+		{
+			ObjectBuffer<Object, alignment> objectBuffer;
+			Relocate(*begin, &objectBuffer);
+			Iterator iter = begin;
+			for (size_t i = 0; i < shift; ++i, ++iter)
+				Relocate(*std::next(iter), std::addressof(*iter));
+			Relocate(*&objectBuffer, std::addressof(*iter));
+		}
+
+		template<typename Iterator>
+		static void _ShiftNothrow(Iterator begin, size_t shift,
+			std::false_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
+		{
+			Iterator iter = begin;
+			for (size_t i = 0; i < shift; ++i, ++iter)
+				_SwapNothrowAdl(*iter, *std::next(iter));
 		}
 	};
 }

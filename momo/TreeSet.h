@@ -188,7 +188,7 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
-		static const bool isNothrowAnywaySwappable = ItemTraits::isNothrowAnywaySwappable;
+		static const bool isNothrowShiftable = ItemTraits::isNothrowShiftable;
 
 		static const size_t alignment = ItemTraits::alignment;
 
@@ -197,9 +197,10 @@ namespace internal
 			ItemTraits::Destroy(item);
 		}
 
-		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
+		template<typename Iterator>
+		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
-			ItemTraits::SwapNothrowAnyway(item1, item2);
+			ItemTraits::ShiftNothrow(begin, shift);
 		}
 	};
 }
@@ -213,18 +214,19 @@ struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 
 	typedef internal::ObjectManager<Item> ItemManager;
 
-	static const bool isNothrowAnywaySwappable = ItemManager::isNothrowAnywaySwappable;
-
-	static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
-	{
-		ItemManager::SwapNothrowAnyway(item1, item2);
-	}
+	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 	template<typename Iterator, typename ItemCreator>
 	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 		const ItemCreator& itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
+	}
+
+	template<typename Iterator>
+	static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+	{
+		ItemManager::ShiftNothrow(begin, shift);
 	}
 };
 

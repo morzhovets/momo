@@ -20,7 +20,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams, bool tUseSwap>
+		size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams, bool tIsContinuous>
 	class Node
 	{
 	public:
@@ -35,11 +35,11 @@ namespace internal
 		static const size_t capacityStep = tCapacityStep;
 		MOMO_STATIC_ASSERT(capacityStep > 0);
 
-		static const bool useSwap = tUseSwap;
-		MOMO_STATIC_ASSERT(!useSwap || ItemTraits::isNothrowAnywaySwappable);
+		static const bool isContinuous = tIsContinuous;
+		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
 
 	private:
-		typedef BoolConstant<useSwap> UseSwap;
+		typedef BoolConstant<isContinuous> IsContinuous;
 
 		template<size_t capacity, bool hasIndices>
 		struct Counter;
@@ -143,7 +143,7 @@ namespace internal
 			}
 			node->mParent = nullptr;
 			node->mCounter.count = (unsigned char)count;
-			node->_InitIndices(UseSwap());
+			node->_InitIndices(IsContinuous());
 			return *node;
 		}
 
@@ -206,7 +206,7 @@ namespace internal
 
 		Item* GetItemPtr(size_t index) MOMO_NOEXCEPT
 		{
-			return _GetItemPtr(index, UseSwap());
+			return _GetItemPtr(index, IsContinuous());
 		}
 
 		void AcceptBackItem(size_t index) MOMO_NOEXCEPT
@@ -214,7 +214,7 @@ namespace internal
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			_AcceptBackItem(index, count, UseSwap());
+			_AcceptBackItem(index, count, IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
@@ -228,7 +228,7 @@ namespace internal
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			_Remove(index, count, removeFunc, UseSwap());
+			_Remove(index, count, removeFunc, IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
@@ -244,33 +244,35 @@ namespace internal
 			return &mParent - maxCapacity - 1;
 		}
 
-		void _InitIndices(std::true_type /*useSwap*/) MOMO_NOEXCEPT
+		void _InitIndices(std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 		}
 
-		void _InitIndices(std::false_type /*useSwap*/) MOMO_NOEXCEPT
+		void _InitIndices(std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
 				mCounter.indices[i] = (unsigned char)i;
 		}
 
-		Item* _GetItemPtr(size_t index, std::true_type /*useSwap*/) MOMO_NOEXCEPT
+		Item* _GetItemPtr(size_t index, std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			return &mFirstItem + index;
 		}
 
-		Item* _GetItemPtr(size_t index, std::false_type /*useSwap*/) MOMO_NOEXCEPT
+		Item* _GetItemPtr(size_t index, std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			return &mFirstItem + mCounter.indices[index];
 		}
 
-		void _AcceptBackItem(size_t index, size_t count, std::true_type /*useSwap*/) MOMO_NOEXCEPT
+		void _AcceptBackItem(size_t index, size_t count,
+			std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
-			for (size_t i = count; i > index; --i)
-				ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
+			ItemTraits::ShiftNothrow(std::reverse_iterator<Item*>(GetItemPtr(count + 1)),
+				count - index);
 		}
 
-		void _AcceptBackItem(size_t index, size_t count, std::false_type /*useSwap*/) MOMO_NOEXCEPT
+		void _AcceptBackItem(size_t index, size_t count,
+			std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			unsigned char realIndex = mCounter.indices[count];
 			memmove(mCounter.indices + index + 1, mCounter.indices + index, count - index);
@@ -279,25 +281,24 @@ namespace internal
 
 		template<typename RemoveFunc>
 		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
-			std::true_type /*useSwap*/)
+			std::true_type /*isContinuous*/)
 		{
-			for (size_t i = index + 1; i < count; ++i)
-				ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
+			ItemTraits::ShiftNothrow(GetItemPtr(index), count - index - 1);
 			try
 			{
 				removeFunc(*GetItemPtr(count - 1));
 			}
 			catch (...)
 			{
-				for (size_t i = count - 1; i > index; --i)
-					ItemTraits::SwapNothrowAnyway(*GetItemPtr(i), *GetItemPtr(i - 1));
+				ItemTraits::ShiftNothrow(std::reverse_iterator<Item*>(GetItemPtr(count)),
+					count - index - 1);
 				throw;
 			}
 		}
 
 		template<typename RemoveFunc>
 		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
-			std::false_type /*useSwap*/)
+			std::false_type /*isContinuous*/)
 		{
 			removeFunc(*GetItemPtr(index));
 			unsigned char realIndex = mCounter.indices[index];
@@ -308,25 +309,25 @@ namespace internal
 	private:
 		Node* mParent;
 		unsigned char mMemPoolIndex;
-		Counter<maxCapacity, !useSwap> mCounter;
+		Counter<maxCapacity, !isContinuous> mCounter;
 		ItemBuffer mFirstItem;
 	};
 }
 
 template<size_t tMaxCapacity, size_t tCapacityStep,
 	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,
-	bool tUseSwap = true>
+	bool tIsContinuous = true>
 struct TreeNode
 {
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
-	static const bool useSwap = tUseSwap;
+	static const bool isContinuous = tIsContinuous;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits, typename MemManager>
 	using Node = internal::Node<ItemTraits, MemManager, maxCapacity, capacityStep,
-		MemPoolParams, useSwap && ItemTraits::isNothrowAnywaySwappable>;
+		MemPoolParams, isContinuous && ItemTraits::isNothrowShiftable>;
 };
 
 } // namespace momo

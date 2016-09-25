@@ -45,19 +45,20 @@ namespace internal
 
 		typedef internal::ObjectManager<Item> ItemManager;
 
-		static const bool isNothrowAnywaySwappable = KeyValueTraits::isKeyNothrowAnywaySwappable
-			&& KeyValueTraits::isValueNothrowAnywaySwappable;
-
-		static void SwapNothrowAnyway(Item& item1, Item& item2) MOMO_NOEXCEPT
-		{
-			KeyValuePair::SwapNothrowAnyway(item1, item2);
-		}
+		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
+			&& KeyValueTraits::isValueNothrowShiftable;
 
 		template<typename Iterator, typename ItemCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
 		{
 			KeyValuePair::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
+		}
+
+		template<typename Iterator>
+		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+		{
+			KeyValuePair::ShiftNothrow(begin, shift);
 		}
 	};
 
@@ -81,17 +82,19 @@ struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
-	static const bool isKeyNothrowAnywaySwappable = KeyManager::isNothrowAnywaySwappable;
-	static const bool isValueNothrowAnywaySwappable = ValueManager::isNothrowAnywaySwappable;
+	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
+	static const bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
 
-	static void SwapKeysNothrowAnyway(Key& key1, Key& key2) MOMO_NOEXCEPT
+	template<typename KeyIterator>
+	static void ShiftKeyNothrow(KeyIterator keyBegin, size_t shift) MOMO_NOEXCEPT
 	{
-		KeyManager::SwapNothrowAnyway(key1, key2);
+		KeyManager::ShiftNothrow(keyBegin, shift);
 	}
 
-	static void SwapValuesNothrowAnyway(Value& value1, Value& value2) MOMO_NOEXCEPT
+	template<typename ValueIterator>
+	static void ShiftValueNothrow(ValueIterator valueBegin, size_t shift) MOMO_NOEXCEPT
 	{
-		ValueManager::SwapNothrowAnyway(value1, value2);
+		ValueManager::ShiftNothrow(valueBegin, shift);
 	}
 };
 

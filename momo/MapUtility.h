@@ -94,6 +94,62 @@ namespace internal
 		//? <, >, <=, >=
 	};
 
+	template<typename TSetIterator, typename TKey>
+	class MapKeyIterator
+	{
+	public:
+		typedef TSetIterator SetIterator;
+		typedef TKey Key;
+
+	public:
+		explicit MapKeyIterator(SetIterator setIterator) MOMO_NOEXCEPT
+			: mSetIterator(setIterator)
+		{
+		}
+
+		MapKeyIterator& operator++() MOMO_NOEXCEPT
+		{
+			++mSetIterator;
+			return *this;
+		}
+
+		Key& operator*() const MOMO_NOEXCEPT
+		{
+			return mSetIterator->GetKey();
+		}
+
+	private:
+		SetIterator mSetIterator;
+	};
+
+	template<typename TSetIterator, typename TValue>
+	class MapValueIterator
+	{
+	public:
+		typedef TSetIterator SetIterator;
+		typedef TValue Value;
+
+	public:
+		explicit MapValueIterator(SetIterator setIterator) MOMO_NOEXCEPT
+			: mSetIterator(setIterator)
+		{
+		}
+
+		MapValueIterator& operator++() MOMO_NOEXCEPT
+		{
+			++mSetIterator;
+			return *this;
+		}
+
+		Value& operator*() const MOMO_NOEXCEPT
+		{
+			return mSetIterator->GetValue();
+		}
+
+	private:
+		SetIterator mSetIterator;
+	};
+
 	template<typename TKey, typename TValue>
 	struct MapKeyValueTraits
 	{
@@ -288,12 +344,6 @@ namespace internal
 			KeyValueTraits::AssignKey(srcKey, dstPair.GetKey());
 		}
 
-		static void SwapNothrowAnyway(MapKeyValuePair& pair1, MapKeyValuePair& pair2) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::SwapKeysNothrowAnyway(pair1.GetKey(), pair2.GetKey());
-			KeyValueTraits::SwapValuesNothrowAnyway(pair1.GetValue(), pair2.GetValue());
-		}
-
 		template<typename Iterator, typename PairCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const PairCreator& pairCreator, MapKeyValuePair* newPair)
@@ -301,6 +351,13 @@ namespace internal
 			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, newPair,
 				BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
 				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
+		}
+
+		template<typename Iterator>
+		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::ShiftKeyNothrow(MapKeyIterator<Iterator, Key>(begin), shift);
+			KeyValueTraits::ShiftValueNothrow(MapValueIterator<Iterator, Value>(begin), shift);
 		}
 
 	private:
@@ -355,8 +412,7 @@ namespace internal
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyValueTraits::MoveKey(static_cast<const Key&>(srcPair.GetKey()),
-				&dstPair->mKeyBuffer);
+			KeyValueTraits::MoveKey(std::move(srcPair.GetKey()), &dstPair->mKeyBuffer);
 			KeyValueTraits::DestroyKey(srcPair.GetKey());
 			KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(), &dstPair->mValueBuffer);
 		}
@@ -373,7 +429,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				KeyValueTraits::DestroyKey(&dstPair->mKeyBuffer);
+				KeyValueTraits::DestroyKey(*&dstPair->mKeyBuffer);
 				throw;
 			}
 			KeyValueTraits::DestroyKey(srcPair.GetKey());
@@ -638,3 +694,18 @@ namespace internal
 }
 
 } // namespace momo
+
+namespace std
+{
+	template<typename SI, typename K>
+	struct iterator_traits<momo::internal::MapKeyIterator<SI, K>> : public iterator_traits<K*>
+	{
+		typedef forward_iterator_tag iterator_category;
+	};
+
+	template<typename SI, typename V>
+	struct iterator_traits<momo::internal::MapValueIterator<SI, V>> : public iterator_traits<V*>
+	{
+		typedef forward_iterator_tag iterator_category;
+	};
+} // namespace std
