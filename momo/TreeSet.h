@@ -182,6 +182,46 @@ namespace internal
 		size_t mItemIndex;
 	};
 
+	template<typename TSegment, typename TItem>
+	class TreeSetRelocatorIterator
+	{
+	public:
+		typedef TSegment Segment;
+		typedef TItem Item;
+
+	public:
+		explicit TreeSetRelocatorIterator(Segment* segmentPtr) MOMO_NOEXCEPT
+			: mSegmentPtr(segmentPtr),
+			mItemIndex(segmentPtr->beginIndex)
+		{
+		}
+
+		TreeSetRelocatorIterator& operator++() MOMO_NOEXCEPT
+		{
+			++mItemIndex;
+			if (mItemIndex == mSegmentPtr->endIndex)
+			{
+				++mSegmentPtr;
+				mItemIndex = mSegmentPtr->beginIndex;
+			}
+			return *this;
+		}
+
+		Item* operator->() const MOMO_NOEXCEPT
+		{
+			return mSegmentPtr->node->GetItemPtr(mItemIndex);
+		}
+
+		Item& operator*() const MOMO_NOEXCEPT
+		{
+			return *operator->();
+		}
+
+	private:
+		Segment* mSegmentPtr;
+		size_t mItemIndex;
+	};
+
 	template<typename TItemTraits>
 	struct TreeSetNodeItemTraits
 	{
@@ -294,40 +334,7 @@ private:
 		typedef Array4<Node*> Nodes;
 		typedef Array4<Segment> Segments;
 
-		class Iterator
-		{
-		public:
-			explicit Iterator(Segment* segmentPtr) MOMO_NOEXCEPT
-				: mSegmentPtr(segmentPtr),
-				mItemIndex(segmentPtr->beginIndex)
-			{
-			}
-
-			Iterator& operator++() MOMO_NOEXCEPT
-			{
-				++mItemIndex;
-				if (mItemIndex == mSegmentPtr->endIndex)
-				{
-					++mSegmentPtr;
-					mItemIndex = mSegmentPtr->beginIndex;
-				}
-				return *this;
-			}
-
-			Item* operator->() const MOMO_NOEXCEPT
-			{
-				return mSegmentPtr->node->GetItemPtr(mItemIndex);
-			}
-
-			Item& operator*() const MOMO_NOEXCEPT
-			{
-				return *operator->();
-			}
-
-		private:
-			Segment* mSegmentPtr;
-			size_t mItemIndex;
-		};
+		typedef internal::TreeSetRelocatorIterator<Segment, Item> Iterator;
 
 	public:
 		struct SplitResult
@@ -1219,5 +1226,12 @@ namespace std
 		typedef typename momo::internal::TreeSetConstIterator<N, S>::Pointer pointer;
 		typedef typename momo::internal::TreeSetConstIterator<N, S>::Reference reference;
 		typedef typename momo::internal::TreeSetConstIterator<N, S>::Item value_type;
+	};
+
+	template<typename S, typename I>
+	struct iterator_traits<momo::internal::TreeSetRelocatorIterator<S, I>>
+		: public iterator_traits<I*>
+	{
+		typedef forward_iterator_tag iterator_category;
 	};
 } // namespace std
