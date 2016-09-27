@@ -89,7 +89,8 @@ namespace internal
 			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
 			Relocate(midItem, dstItem);
-			Relocate(srcItem, std::addressof(midItem));
+			if (std::addressof(srcItem) != std::addressof(midItem))
+				Relocate(srcItem, std::addressof(midItem));
 		}
 
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,

@@ -167,6 +167,7 @@ namespace internal
 		static void Relocate(Object& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
+			MOMO_ASSERT(std::addressof(srcObject) != dstObject);
 			_Relocate(srcObject, dstObject, BoolConstant<isTriviallyRelocatable>());
 		}
 
