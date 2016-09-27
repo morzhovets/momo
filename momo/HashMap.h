@@ -39,14 +39,19 @@ namespace internal
 	{
 		typedef TKeyValuePair KeyValuePair;
 
+		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValuePair::Key Key;
+		typedef typename KeyValuePair::Value Value;
 		typedef KeyValuePair Item;
 
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValuePair::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+			KeyValueTraits::RelocateCreate(
+				MapKeyIterator<Item*, Key>(srcItems), MapValueIterator<Item*, Value>(srcItems),
+				MapKeyIterator<Item*, Key>(dstItems), MapValueIterator<Item*, Value>(dstItems),
+				count, itemCreator, newItem);
 		}
 	};
 
@@ -448,8 +453,7 @@ public:
 		auto relocateFunc = [this] (Key& key, Value& value)
 		{
 			Insert(std::move(key), std::move(value));	//?
-			Map::KeyValueTraits::DestroyKey(key);
-			Map::KeyValueTraits::DestroyValue(value);
+			Map::KeyValueTraits::Destroy(key, value);
 		};
 		srcMap.ExtractAll(relocateFunc);
 	}
@@ -516,7 +520,10 @@ private:
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
 		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
-			{ new(newPair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
+		{
+			KeyValueTraits::Create(std::forward<RKey>(key), valueCreator,
+				std::addressof(newPair->GetKey()), std::addressof(newPair->GetValue()));
+		};
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}
 

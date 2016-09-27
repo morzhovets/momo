@@ -248,7 +248,7 @@ namespace internal
 
 		static void Copy(const Item& srcItem, Item* dstItem)
 		{
-			(typename KeyValueTraits::template ValueCreator<const Item&>(srcItem))(dstItem);
+			(typename KeyValueTraits::template ValueCreator<const Item&>(srcItem))(dstItem);	//?
 		}
 
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
@@ -273,11 +273,7 @@ namespace internal
 		typedef typename KeyValueTraits::Key Key;
 		typedef ValueArray Value;	//?
 
-		typedef internal::ObjectManager<Value> ValueManager;	//?
-
-		static const bool isKeyNothrowMoveConstructible = KeyValueTraits::isKeyNothrowMoveConstructible;
-		static const bool isKeyNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+		typedef internal::ObjectManager<Value> ValueManager;
 
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
@@ -298,49 +294,49 @@ namespace internal
 			}
 		};
 
-		static void MoveKey(Key&& srcKey, Key* dstKey)
+		template<typename ValueCreator>
+		static void Create(Key&& key, const ValueCreator& valueCreator,
+			Key* newKey, Value* newValue)
 		{
-			KeyValueTraits::MoveKey(std::move(srcKey), dstKey);
+			KeyValueTraits::MoveKey(std::move(key), newKey);
+			valueCreator(newValue);
 		}
 
-		static void CopyKey(const Key& srcKey, Key* dstKey)
+		template<typename ValueCreator>
+		static void Create(const Key& key, const ValueCreator& valueCreator,
+			Key* newKey, Value* newValue)
 		{
-			KeyValueTraits::CopyKey(srcKey, dstKey);
+			KeyValueTraits::CopyKey(key, newKey);
+			valueCreator(newValue);
 		}
 
-		static void DestroyKey(Key& key) MOMO_NOEXCEPT
+		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
 		{
 			KeyValueTraits::DestroyKey(key);
-		}
-
-		static void DestroyValue(Value& value) MOMO_NOEXCEPT
-		{
 			ValueManager::Destroy(value);
-		}
-
-		static void RelocateKeyNothrow(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::RelocateKeyNothrow(srcKey, dstKey);
-		}
-
-		static void RelocateValueNothrow(Value& srcValue, Value* dstValue) MOMO_NOEXCEPT
-		{
-			ValueManager::Relocate(srcValue, dstValue);
 		}
 
 		static void Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
 		{
-			KeyValueTraits::MoveKey(std::move(srcKey), dstKey);
-			KeyValueTraits::DestroyKey(srcKey);
+			KeyValueTraits::RelocateKey(srcKey, dstKey);
 			ValueManager::Relocate(srcValue, dstValue);
 		}
 
 		static void Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);	//?
+			KeyValueTraits::DestroyKey(srcKey);
 			dstValue = std::move(srcValue);
-			DestroyKey(srcKey);
-			DestroyValue(srcValue);
+			ValueManager::Destroy(srcValue);
+		}
+
+		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
+		static void RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
+			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
+			const PairCreator& pairCreator, Pair* newPair)
+		{
+			_RelocateCreate(srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin, count,
+				pairCreator, newPair, BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>());
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -351,6 +347,45 @@ namespace internal
 		static void AssignKey(const Key& srcKey, Key& dstKey)
 		{
 			KeyValueTraits::AssignKey(srcKey, dstKey);
+		}
+
+	private:
+		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
+		static void _RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
+			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
+			const PairCreator& pairCreator, Pair* newPair, std::true_type /*isKeyNothrowRelocatable*/)
+		{
+			pairCreator(newPair);
+			KeyIterator srcKeyIter = srcKeyBegin;
+			KeyIterator dstKeyIter = dstKeyBegin;
+			for (size_t i = 0; i < count; ++i, ++srcKeyIter, ++dstKeyIter)
+				KeyValueTraits::RelocateKey(*srcKeyIter, std::addressof(*dstKeyIter));
+			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
+		}
+
+		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
+		static void _RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
+			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
+			const PairCreator& pairCreator, Pair* newPair, std::false_type /*isKeyNothrowRelocatable*/)
+		{
+			size_t index = 0;
+			try
+			{
+				KeyIterator srcKeyIter = srcKeyBegin;
+				KeyIterator dstKeyIter = dstKeyBegin;
+				for (; index < count; ++index, ++srcKeyIter, ++dstKeyIter)
+					KeyValueTraits::CopyKey(*srcKeyIter, std::addressof(*dstKeyIter));
+				pairCreator(newPair);
+			}
+			catch (...)
+			{
+				for (KeyIterator itd = dstKeyBegin; index > 0; --index, ++itd)
+					KeyValueTraits::DestroyKey(*itd);
+				throw;
+			}
+			for (KeyIterator its = srcKeyBegin; index > 0; --index, ++its)
+				KeyValueTraits::DestroyKey(*its);
+			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
 		}
 	};
 
@@ -377,13 +412,12 @@ struct HashMultiMapKeyValueTraits
 	static const size_t keyAlignment = KeyManager::alignment;
 	static const size_t valueAlignment = ValueManager::alignment;
 
-	static const bool isKeyNothrowMoveConstructible = KeyManager::isNothrowMoveConstructible;
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void MoveKey(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT_IF(isKeyNothrowMoveConstructible)
+	static void MoveKey(Key&& srcKey, Key* dstKey)
 	{
 		KeyManager::Move(std::move(srcKey), dstKey);
 	}
@@ -403,10 +437,16 @@ struct HashMultiMapKeyValueTraits
 		ValueManager::Destroy(values, count);
 	}
 
-	static void RelocateKeyNothrow(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT
+	static void RelocateKey(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT_IF(isKeyNothrowRelocatable)
 	{
-		MOMO_STATIC_ASSERT(isKeyNothrowRelocatable);
 		KeyManager::Relocate(srcKey, dstKey);
+	}
+
+	template<typename ValueCreator>
+	static void RelocateCreateValues(Value* srcValues, Value* dstValues, size_t count,
+		const ValueCreator& valueCreator, Value* newValue)
+	{
+		ValueManager::RelocateCreate(srcValues, dstValues, count, valueCreator, newValue);
 	}
 
 	static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -422,13 +462,6 @@ struct HashMultiMapKeyValueTraits
 	static void AssignValue(Value&& srcValue, Value& dstValue)
 	{
 		dstValue = std::move(srcValue);
-	}
-
-	template<typename ValueCreator>
-	static void RelocateCreateValues(Value* srcValues, Value* dstValues, size_t count,
-		const ValueCreator& valueCreator, Value* newValue)
-	{
-		ValueManager::RelocateCreate(srcValues, dstValues, count, valueCreator, newValue);
 	}
 };
 

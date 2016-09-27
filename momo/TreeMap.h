@@ -51,7 +51,10 @@ namespace internal
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValuePair::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
+			KeyValueTraits::RelocateCreate(
+				MapKeyIterator<Iterator, Key>(srcBegin), MapValueIterator<Iterator, Value>(srcBegin),
+				MapKeyIterator<Iterator, Key>(dstBegin), MapValueIterator<Iterator, Value>(dstBegin),
+				count, itemCreator, newItem);
 		}
 
 		template<typename Iterator>
@@ -505,8 +508,7 @@ public:
 		auto relocateFunc = [this] (Key& key, Value& value)
 		{
 			Insert(std::move(key), std::move(value));	//?
-			Map::KeyValueTraits::DestroyKey(key);
-			Map::KeyValueTraits::DestroyValue(value);
+			Map::KeyValueTraits::Destroy(key, value);
 		};
 		srcMap.ExtractAll(relocateFunc);
 	}
@@ -558,7 +560,10 @@ private:
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
 		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
-			{ new(newPair) KeyValuePair(std::forward<RKey>(key), valueCreator); };
+		{
+			KeyValueTraits::Create(std::forward<RKey>(key), valueCreator,
+				std::addressof(newPair->GetKey()), std::addressof(newPair->GetValue()));
+		};
 		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}
 
