@@ -298,7 +298,7 @@ namespace internal
 			}
 		};
 
-		static void MoveKey(Key&& srcKey, Key* dstKey) MOMO_NOEXCEPT
+		static void MoveKey(Key&& srcKey, Key* dstKey)
 		{
 			KeyValueTraits::MoveKey(std::move(srcKey), dstKey);
 		}
@@ -328,7 +328,14 @@ namespace internal
 			ValueManager::Relocate(srcValue, dstValue);
 		}
 
-		static void ReplacePair(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
+		static void Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
+		{
+			KeyValueTraits::MoveKey(std::move(srcKey), dstKey);
+			KeyValueTraits::DestroyKey(srcKey);
+			ValueManager::Relocate(srcValue, dstValue);
+		}
+
+		static void Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);	//?
 			dstValue = std::move(srcValue);

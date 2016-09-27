@@ -42,8 +42,6 @@ namespace internal
 		typedef typename KeyValuePair::Key Key;
 		typedef KeyValuePair Item;
 
-		typedef internal::ObjectManager<Item> ItemManager;
-
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)

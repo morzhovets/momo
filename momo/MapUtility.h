@@ -202,9 +202,16 @@ namespace internal
 			ValueManager::Relocate(srcValue, dstValue);
 		}
 
-		static void ReplacePair(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
+		static void Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
 		{
-			_AssignPair(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
+			_Relocate(srcKey, srcValue, dstKey, dstValue,
+				BoolConstant<KeyManager::isNothrowRelocatable>(),
+				BoolConstant<ValueManager::isNothrowRelocatable>());
+		}
+
+		static void Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
+		{
+			_Assign(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 			DestroyKey(srcKey);
@@ -230,7 +237,41 @@ namespace internal
 #endif
 
 	private:
-		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		template<bool isValueNothrowRelocatable>
+		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
+			std::true_type /*isKeyNothrowRelocatable*/,
+			BoolConstant<isValueNothrowRelocatable>)
+		{
+			ValueManager::Relocate(srcValue, dstValue);
+			KeyManager::Relocate(srcKey, dstKey);
+		}
+
+		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
+			std::false_type /*isKeyNothrowRelocatable*/,
+			std::true_type /*isValueNothrowRelocatable*/)
+		{
+			KeyManager::Relocate(srcKey, dstKey);
+			ValueManager::Relocate(srcValue, dstValue);
+		}
+
+		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
+			std::false_type /*isKeyNothrowRelocatable*/,
+			std::false_type /*isValueNothrowRelocatable*/)
+		{
+			KeyManager::Copy(srcKey, dstKey);
+			try
+			{
+				ValueManager::Relocate(srcValue, dstValue);
+			}
+			catch (...)
+			{
+				KeyManager::Destroy(*dstKey);
+				throw;
+			}
+			KeyManager::Destroy(srcKey);
+		}
+
+		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::true_type /*isValueNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
 		{
@@ -238,7 +279,7 @@ namespace internal
 			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
 		}
 
-		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
@@ -246,7 +287,7 @@ namespace internal
 			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
 		}
 
-		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::true_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
@@ -254,7 +295,7 @@ namespace internal
 			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
 		}
 
-		static void _AssignPair(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
@@ -322,28 +363,6 @@ namespace internal
 			return *&mValueBuffer;
 		}
 
-		static void Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair)
-		{
-			_Relocate(srcPair, dstPair, BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
-				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
-		}
-
-		static void Replace(MapKeyValuePair& srcPair, MapKeyValuePair& dstPair)
-		{
-			KeyValueTraits::ReplacePair(srcPair.GetKey(), srcPair.GetValue(), dstPair.GetKey(),
-				dstPair.GetValue());
-		}
-
-		static void AssignKey(Key&& srcKey, MapKeyValuePair& dstPair)
-		{
-			KeyValueTraits::AssignKey(std::move(srcKey), dstPair.GetKey());
-		}
-
-		static void AssignKey(const Key& srcKey, MapKeyValuePair& dstPair)
-		{
-			KeyValueTraits::AssignKey(srcKey, dstPair.GetKey());
-		}
-
 		template<typename Iterator, typename PairCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const PairCreator& pairCreator, MapKeyValuePair* newPair)
@@ -351,13 +370,6 @@ namespace internal
 			_RelocateCreate(srcBegin, dstBegin, count, pairCreator, newPair,
 				BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>(),
 				BoolConstant<KeyValueTraits::isValueNothrowRelocatable>());
-		}
-
-		template<typename Iterator>
-		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::ShiftKeyNothrow(MapKeyIterator<Iterator, Key>(begin), shift);
-			KeyValueTraits::ShiftValueNothrow(MapValueIterator<Iterator, Value>(begin), shift);
 		}
 
 	private:
@@ -389,51 +401,6 @@ namespace internal
 				KeyValueTraits::DestroyKey(*&mKeyBuffer);
 				throw;
 			}
-		}
-
-		static void _Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair,
-			std::true_type /*isKeyNothrowRelocatable*/,
-			std::true_type /*isValueNothrowRelocatable*/) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::RelocateKeyNothrow(srcPair.GetKey(), &dstPair->mKeyBuffer);
-			KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(), &dstPair->mValueBuffer);
-		}
-
-		static void _Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair,
-			std::true_type /*isKeyNothrowRelocatable*/,
-			std::false_type /*isValueNothrowRelocatable*/)
-		{
-			ValueCreator<Value>(std::move(srcPair.GetValue()))(&dstPair->mValueBuffer);
-			KeyValueTraits::DestroyValue(srcPair.GetValue());
-			KeyValueTraits::RelocateKeyNothrow(srcPair.GetKey(), &dstPair->mKeyBuffer);
-		}
-
-		static void _Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair,
-			std::false_type /*isKeyNothrowRelocatable*/,
-			std::true_type /*isValueNothrowRelocatable*/)
-		{
-			KeyValueTraits::MoveKey(std::move(srcPair.GetKey()), &dstPair->mKeyBuffer);
-			KeyValueTraits::DestroyKey(srcPair.GetKey());
-			KeyValueTraits::RelocateValueNothrow(srcPair.GetValue(), &dstPair->mValueBuffer);
-		}
-
-		static void _Relocate(MapKeyValuePair& srcPair, MapKeyValuePair* dstPair,
-			std::false_type /*isKeyNothrowRelocatable*/,
-			std::false_type /*isValueNothrowRelocatable*/)
-		{
-			KeyValueTraits::CopyKey(static_cast<const Key&>(srcPair.GetKey()),
-				&dstPair->mKeyBuffer);
-			try
-			{
-				ValueCreator<Value>(std::move(srcPair.GetValue()))(&dstPair->mValueBuffer);
-			}
-			catch (...)
-			{
-				KeyValueTraits::DestroyKey(*&dstPair->mKeyBuffer);
-				throw;
-			}
-			KeyValueTraits::DestroyKey(srcPair.GetKey());
-			KeyValueTraits::DestroyValue(srcPair.GetValue());
 		}
 
 		template<typename Iterator, typename PairCreator>
@@ -547,6 +514,7 @@ namespace internal
 	{
 		typedef TKeyValuePair KeyValuePair;
 
+		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValuePair::Key Key;
 		typedef KeyValuePair Item;
 
@@ -582,22 +550,24 @@ namespace internal
 
 		static void Relocate(Item& srcItem, Item* dstItem)
 		{
-			KeyValuePair::Relocate(srcItem, dstItem);
+			KeyValueTraits::Relocate(srcItem.GetKey(), srcItem.GetValue(),
+				std::addressof(dstItem->GetKey()), std::addressof(dstItem->GetValue()));
 		}
 
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
-			KeyValuePair::Replace(srcItem, dstItem);
+			KeyValueTraits::Replace(srcItem.GetKey(), srcItem.GetValue(), dstItem.GetKey(),
+				dstItem.GetValue());
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
 		{
-			KeyValuePair::AssignKey(std::move(srcKey), dstItem);
+			KeyValueTraits::AssignKey(std::move(srcKey), dstItem.GetKey());
 		}
 
 		static void AssignKey(const Key& srcKey, Item& dstItem)
 		{
-			KeyValuePair::AssignKey(srcKey, dstItem);
+			KeyValueTraits::AssignKey(srcKey, dstItem.GetKey());
 		}
 	};
 

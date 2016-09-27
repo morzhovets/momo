@@ -41,9 +41,8 @@ namespace internal
 
 		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValuePair::Key Key;
+		typedef typename KeyValuePair::Value Value;
 		typedef KeyValuePair Item;
-
-		typedef internal::ObjectManager<Item> ItemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
@@ -58,7 +57,8 @@ namespace internal
 		template<typename Iterator>
 		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
-			KeyValuePair::ShiftNothrow(begin, shift);
+			KeyValueTraits::ShiftKeyNothrow(MapKeyIterator<Iterator, Key>(begin), shift);
+			KeyValueTraits::ShiftValueNothrow(MapValueIterator<Iterator, Value>(begin), shift);
 		}
 	};
 
