@@ -169,24 +169,16 @@ namespace internal
 		static void Create(Key&& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			_Create(std::move(key), valueCreator, newKey, newValue,
-				BoolConstant<KeyManager::isNothrowMoveConstructible>());
+			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			KeyManager::MoveExec(std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
 		static void Create(const Key& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			KeyManager::Copy(key, newKey);
-			try
-			{
-				valueCreator(newValue);
-			}
-			catch (...)
-			{
-				KeyManager::Destroy(*newKey);
-				throw;
-			}
+			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			KeyManager::CopyExec(key, newKey, func);
 		}
 
 		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
@@ -238,21 +230,6 @@ namespace internal
 #endif
 
 	private:
-		template<typename ValueCreator>
-		static void _Create(Key&& key, const ValueCreator& valueCreator,
-			Key* newKey, Value* newValue, std::true_type /*isKeyNothrowMoveConstructible*/)
-		{
-			valueCreator(newValue);
-			KeyManager::Move(std::move(key), newKey);
-		}
-
-		template<typename ValueCreator>
-		static void _Create(Key&& key, const ValueCreator& valueCreator,
-			Key* newKey, Value* newValue, std::false_type /*isKeyNothrowMoveConstructible*/)
-		{
-			Create(static_cast<const Key&>(key), valueCreator, newKey, newValue);
-		}
-
 		template<bool isValueNothrowRelocatable>
 		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
 			std::true_type /*isKeyNothrowRelocatable*/, BoolConstant<isValueNothrowRelocatable>)

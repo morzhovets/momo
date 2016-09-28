@@ -298,16 +298,16 @@ namespace internal
 		static void Create(Key&& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			KeyValueTraits::MoveKey(std::move(key), newKey);
-			valueCreator(newValue);
+			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			KeyValueTraits::MoveExecKey(std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
 		static void Create(const Key& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			KeyValueTraits::CopyKey(key, newKey);
-			valueCreator(newValue);
+			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			KeyValueTraits::CopyExecKey(key, newKey, func);
 		}
 
 		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
@@ -377,14 +377,16 @@ struct HashMultiMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
-	static void MoveKey(Key&& srcKey, Key* dstKey)
+	template<typename Func>
+	static void MoveExecKey(Key&& srcKey, Key* dstKey, const Func& func)
 	{
-		KeyManager::Move(std::move(srcKey), dstKey);
+		KeyManager::MoveExec(std::move(srcKey), dstKey, func);
 	}
 
-	static void CopyKey(const Key& srcKey, Key* dstKey)
+	template<typename Func>
+	static void CopyExecKey(const Key& srcKey, Key* dstKey, const Func& func)
 	{
-		KeyManager::Copy(srcKey, dstKey);
+		KeyManager::CopyExec(srcKey, dstKey, func);
 	}
 
 	static void DestroyKey(Key& key) MOMO_NOEXCEPT

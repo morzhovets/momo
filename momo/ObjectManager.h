@@ -138,6 +138,45 @@ namespace internal
 			new(dstObject) Object(srcObject);
 		}
 
+		template<typename Func>
+		static void MoveExec(Object&& srcObject, Object* dstObject, const Func& func)
+		{
+			if (isNothrowMoveConstructible)
+			{
+				func();
+				Move(std::move(srcObject), dstObject);
+			}
+			else
+			{
+				Move(std::move(srcObject), dstObject);
+				try
+				{
+					func();
+				}
+				catch (...)
+				{
+					// srcObject has been changed!
+					Destroy(*dstObject);
+					throw;
+				}
+			}
+		}
+
+		template<typename Func>
+		static void CopyExec(const Object& srcObject, Object* dstObject, const Func& func)
+		{
+			Copy(srcObject, dstObject);
+			try
+			{
+				func();
+			}
+			catch (...)
+			{
+				Destroy(*dstObject);
+				throw;
+			}
+		}
+
 		static void Destroy(Object& object) MOMO_NOEXCEPT
 		{
 			(void)object;	// vs warning
