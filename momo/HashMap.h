@@ -462,7 +462,7 @@ public:
 	void ExtractAll(const RelocateFunc& relocateFunc)
 	{
 		auto setRelocateFunc = [&relocateFunc] (KeyValuePair& pair)
-			{ relocateFunc(pair.GetKey(), pair.GetValue()); };
+			{ relocateFunc(*pair.GetKeyPtr(), *pair.GetValuePtr()); };
 		mHashSet.ExtractAll(setRelocateFunc);
 	}
 
@@ -522,7 +522,7 @@ private:
 		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
 		{
 			KeyValueTraits::Create(std::forward<RKey>(key), valueCreator,
-				std::addressof(newPair->GetKey()), std::addressof(newPair->GetValue()));
+				newPair->GetKeyPtr(), newPair->GetValuePtr());
 		};
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));
 	}

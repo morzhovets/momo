@@ -34,8 +34,8 @@ namespace internal
 		}
 
 		explicit MapReference(SetReference setRef) MOMO_NOEXCEPT
-			: key(setRef.GetKey()),
-			value(setRef.GetValue())
+			: key(*setRef.GetKeyPtr()),
+			value(*setRef.GetValuePtr())
 		{
 		}
 
@@ -115,7 +115,7 @@ namespace internal
 
 		Key& operator*() const MOMO_NOEXCEPT
 		{
-			return mSetIterator->GetKey();
+			return *mSetIterator->GetKeyPtr();
 		}
 
 	private:
@@ -143,7 +143,7 @@ namespace internal
 
 		Value& operator*() const MOMO_NOEXCEPT
 		{
-			return mSetIterator->GetValue();
+			return *mSetIterator->GetValuePtr();
 		}
 
 	private:
@@ -436,19 +436,19 @@ namespace internal
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
-		const Key& GetKey() const MOMO_NOEXCEPT
+		const Key* GetKeyPtr() const MOMO_NOEXCEPT
 		{
-			return *&mKeyBuffer;
+			return &mKeyBuffer;
 		}
 
-		Key& GetKey() MOMO_NOEXCEPT
+		Key* GetKeyPtr() MOMO_NOEXCEPT
 		{
-			return *&mKeyBuffer;
+			return &mKeyBuffer;
 		}
 
-		Value& GetValue() const MOMO_NOEXCEPT
+		Value* GetValuePtr() const MOMO_NOEXCEPT
 		{
-			return *&mValueBuffer;
+			return &mValueBuffer;
 		}
 
 	private:
@@ -483,9 +483,9 @@ namespace internal
 
 			void operator()(Item* newItem) const
 			{
-				KeyValueTraits::Create(mItem.GetKey(),
-					typename KeyValueTraits::template ValueCreator<const Value&>(mItem.GetValue()),
-					std::addressof(newItem->GetKey()), std::addressof(newItem->GetValue()));
+				KeyValueTraits::Create(*mItem.GetKeyPtr(),
+					typename KeyValueTraits::template ValueCreator<const Value&>(*mItem.GetValuePtr()),
+					newItem->GetKeyPtr(), newItem->GetValuePtr());
 			}
 
 		private:
@@ -494,34 +494,34 @@ namespace internal
 
 		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 		{
-			return item.GetKey();
+			return *item.GetKeyPtr();
 		}
 
 		static void Destroy(Item& item) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::Destroy(item.GetKey(), item.GetValue());
+			KeyValueTraits::Destroy(*item.GetKeyPtr(), *item.GetValuePtr());
 		}
 
 		static void Relocate(Item& srcItem, Item* dstItem)
 		{
-			KeyValueTraits::Relocate(srcItem.GetKey(), srcItem.GetValue(),
-				std::addressof(dstItem->GetKey()), std::addressof(dstItem->GetValue()));
+			KeyValueTraits::Relocate(*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
-			KeyValueTraits::Replace(srcItem.GetKey(), srcItem.GetValue(), dstItem.GetKey(),
-				dstItem.GetValue());
+			KeyValueTraits::Replace(*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
 		}
 
 		static void AssignKey(Key&& srcKey, Item& dstItem)
 		{
-			KeyValueTraits::AssignKey(std::move(srcKey), dstItem.GetKey());
+			KeyValueTraits::AssignKey(std::move(srcKey), *dstItem.GetKeyPtr());
 		}
 
 		static void AssignKey(const Key& srcKey, Item& dstItem)
 		{
-			KeyValueTraits::AssignKey(srcKey, dstItem.GetKey());
+			KeyValueTraits::AssignKey(srcKey, *dstItem.GetKeyPtr());
 		}
 	};
 

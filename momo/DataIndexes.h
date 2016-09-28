@@ -65,7 +65,7 @@ namespace internal
 			template<typename Item>
 			static unsigned char GetState(const Item* item) noexcept
 			{
-				return GetState(&item->GetKey());
+				return GetState(item->GetKeyPtr());
 			}
 
 			static void SetState(HashRawKey* key, unsigned char state) noexcept
@@ -81,7 +81,7 @@ namespace internal
 			template<typename Item>
 			static void SetState(Item* item, unsigned char state) noexcept
 			{
-				return SetState(&item->GetKey(), state);
+				return SetState(item->GetKeyPtr(), state);
 			}
 		};
 
