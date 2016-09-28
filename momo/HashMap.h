@@ -48,10 +48,11 @@ namespace internal
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValueTraits::RelocateCreate(
+			auto func = [&itemCreator, newItem] () { itemCreator(newItem); };
+			KeyValueTraits::RelocateExec(
 				MapKeyIterator<Item*, Key>(srcItems), MapValueIterator<Item*, Value>(srcItems),
 				MapKeyIterator<Item*, Key>(dstItems), MapValueIterator<Item*, Value>(dstItems),
-				count, itemCreator, newItem);
+				count, func);
 		}
 	};
 

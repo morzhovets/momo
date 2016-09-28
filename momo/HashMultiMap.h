@@ -330,13 +330,12 @@ namespace internal
 			ValueManager::Destroy(srcValue);
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
-		static void RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
-			const PairCreator& pairCreator, Pair* newPair)
+		template<typename KeyIterator, typename ValueIterator, typename Func>
+		static void RelocateExec(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
+			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, const Func& func)
 		{
-			_RelocateCreate(srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin, count,
-				pairCreator, newPair, BoolConstant<KeyValueTraits::isKeyNothrowRelocatable>());
+			KeyValueTraits::RelocateExecKeys(srcKeyBegin, dstKeyBegin, count, func);
+			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
 		}
 
 		static void AssignKey(Key&& srcKey, Key& dstKey)
@@ -347,45 +346,6 @@ namespace internal
 		static void AssignKey(const Key& srcKey, Key& dstKey)
 		{
 			KeyValueTraits::AssignKey(srcKey, dstKey);
-		}
-
-	private:
-		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
-		static void _RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
-			const PairCreator& pairCreator, Pair* newPair, std::true_type /*isKeyNothrowRelocatable*/)
-		{
-			pairCreator(newPair);
-			KeyIterator srcKeyIter = srcKeyBegin;
-			KeyIterator dstKeyIter = dstKeyBegin;
-			for (size_t i = 0; i < count; ++i, ++srcKeyIter, ++dstKeyIter)
-				KeyValueTraits::RelocateKey(*srcKeyIter, std::addressof(*dstKeyIter));
-			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
-		}
-
-		template<typename KeyIterator, typename ValueIterator, typename PairCreator, typename Pair>
-		static void _RelocateCreate(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count,
-			const PairCreator& pairCreator, Pair* newPair, std::false_type /*isKeyNothrowRelocatable*/)
-		{
-			size_t index = 0;
-			try
-			{
-				KeyIterator srcKeyIter = srcKeyBegin;
-				KeyIterator dstKeyIter = dstKeyBegin;
-				for (; index < count; ++index, ++srcKeyIter, ++dstKeyIter)
-					KeyValueTraits::CopyKey(*srcKeyIter, std::addressof(*dstKeyIter));
-				pairCreator(newPair);
-			}
-			catch (...)
-			{
-				for (KeyIterator itd = dstKeyBegin; index > 0; --index, ++itd)
-					KeyValueTraits::DestroyKey(*itd);
-				throw;
-			}
-			for (KeyIterator its = srcKeyBegin; index > 0; --index, ++its)
-				KeyValueTraits::DestroyKey(*its);
-			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
 		}
 	};
 
@@ -440,6 +400,13 @@ struct HashMultiMapKeyValueTraits
 	static void RelocateKey(Key& srcKey, Key* dstKey) MOMO_NOEXCEPT_IF(isKeyNothrowRelocatable)
 	{
 		KeyManager::Relocate(srcKey, dstKey);
+	}
+
+	template<typename KeyIterator, typename Func>
+	static void RelocateExecKeys(KeyIterator srcKeyBegin, KeyIterator dstKeyBegin, size_t count,
+		const Func& func)
+	{
+		KeyManager::RelocateExec(srcKeyBegin, dstKeyBegin, count, func);
 	}
 
 	template<typename ValueCreator>

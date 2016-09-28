@@ -183,9 +183,15 @@ namespace internal
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const ObjectCreator& objectCreator, Object* newObject)
 		{
+			auto func = [&objectCreator, newObject] () { objectCreator(newObject); };
+			RelocateExec(srcBegin, dstBegin, count, func);
+		}
+
+		template<typename Iterator, typename Func>
+		static void RelocateExec(Iterator srcBegin, Iterator dstBegin, size_t count, const Func& func)
+		{
 			MOMO_CHECK_TYPE(Object, *srcBegin);
-			_RelocateCreate(srcBegin, dstBegin, count, objectCreator, newObject,
-				BoolConstant<isNothrowRelocatable>());
+			_RelocateExec(srcBegin, dstBegin, count, func, BoolConstant<isNothrowRelocatable>());
 		}
 
 		template<typename Iterator>
@@ -289,26 +295,23 @@ namespace internal
 		{
 			if (count > 0)
 			{
-				_RelocateCreate(std::next(srcBegin), std::next(dstBegin), count - 1,
-					Creator<Object>(std::move(*srcBegin)), std::addressof(*dstBegin),
-					std::false_type());
+				RelocateCreate(std::next(srcBegin), std::next(dstBegin), count - 1,
+					Creator<Object>(std::move(*srcBegin)), std::addressof(*dstBegin));
 				Destroy(*srcBegin);
 			}
 		}
 
-		template<typename Iterator, typename ObjectCreator>
-		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ObjectCreator& objectCreator, Object* newObject,
-			std::true_type /*isNothrowRelocatable*/)
+		template<typename Iterator, typename Func>
+		static void _RelocateExec(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const Func& func, std::true_type /*isNothrowRelocatable*/)
 		{
-			objectCreator(newObject);
+			func();
 			Relocate(srcBegin, dstBegin, count);
 		}
 
-		template<typename Iterator, typename ObjectCreator>
-		static void _RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ObjectCreator& objectCreator, Object* newObject,
-			std::false_type /*isNothrowRelocatable*/)
+		template<typename Iterator, typename Func>
+		static void _RelocateExec(Iterator srcBegin, Iterator dstBegin, size_t count,
+			const Func& func, std::false_type /*isNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
@@ -317,7 +320,7 @@ namespace internal
 				Iterator dstIter = dstBegin;
 				for (; index < count; ++index, ++srcIter, ++dstIter)
 					Copy(*srcIter, std::addressof(*dstIter));
-				objectCreator(newObject);
+				func();
 			}
 			catch (...)
 			{
