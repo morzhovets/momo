@@ -17,7 +17,9 @@
   2. Functions `Merge` and `ExtractAll` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
-  4. In case default `KeyValueTraits`: if function `Remove` throws exception
+  4. If insert/add function receiving argument `Key&& key` throws exception,
+    this argument may be changed.
+  5. In case default `KeyValueTraits`: if function `Remove` throws exception
     and `ObjectManager<Key>::isNothrowAnywayAssignable` is false
     and `ObjectManager<Value>::isNothrowAnywayAssignable` is false,
     removing value may be changed.

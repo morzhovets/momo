@@ -16,6 +16,8 @@
     basic exception safety.
   2. If any constructor throws exception, input argument `memManager`
     may be changed.
+  3. If function `Add`, `AddVar` or `AddCrt` receiving argument `Key&& key`
+    throws exception, this argument may be changed.
 
 \**********************************************************/
 
