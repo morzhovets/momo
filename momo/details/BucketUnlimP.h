@@ -20,13 +20,15 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits>
-	struct BucketUnlimPArrayBucketItemTraits
+	class BucketUnlimPArrayBucketItemTraits
 	{
+	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t alignment = ItemTraits::alignment;
 
+	public:
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			if (count != 1)

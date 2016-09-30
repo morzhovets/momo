@@ -55,8 +55,9 @@ namespace internal
 		};
 
 		template<typename HashRawKey>
-		struct HashBucketStater
+		class HashBucketStater
 		{
+		public:
 			static unsigned char GetState(const HashRawKey* key) noexcept
 			{
 				return (key->raw != nullptr) ? (unsigned char)1 : (unsigned char)key->hashCode;

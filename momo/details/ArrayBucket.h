@@ -18,8 +18,9 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits>
-	struct ArrayBucketNestedArrayItemTraits
+	class ArrayBucketNestedArrayItemTraits
 	{
+	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
@@ -45,6 +46,7 @@ namespace internal
 			const Item& mItem;
 		};
 
+	public:
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(items, count);

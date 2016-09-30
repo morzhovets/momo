@@ -6,7 +6,7 @@
   momo/HashMultiMap.h
 
   namespace momo:
-    struct HashMultiMapKeyValueTraits
+    class HashMultiMapKeyValueTraits
     struct HashMultiMapSettings
     class HashMultiMap
 
@@ -242,13 +242,15 @@ namespace internal
 	};
 
 	template<typename TKeyValueTraits>
-	struct HashMultiMapArrayBucketItemTraits
+	class HashMultiMapArrayBucketItemTraits
 	{
+	public:
 		typedef TKeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Value Item;
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
+	public:
 		static void Copy(const Item& srcItem, Item* dstItem)
 		{
 			(typename KeyValueTraits::template ValueCreator<const Item&>(srcItem))(dstItem);	//?
@@ -268,16 +270,19 @@ namespace internal
 	};
 
 	template<typename TKeyValueTraits, typename TValueArray>
-	struct HashMultiMapNestedMapKeyValueTraits
+	class HashMultiMapNestedMapKeyValueTraits
 	{
+	public:
 		typedef TKeyValueTraits KeyValueTraits;
 		typedef TValueArray ValueArray;
 
 		typedef typename KeyValueTraits::Key Key;
 		typedef ValueArray Value;	//?
 
+	private:
 		typedef internal::ObjectManager<Value> ValueManager;
 
+	public:
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
@@ -297,6 +302,7 @@ namespace internal
 			}
 		};
 
+	public:
 		template<typename ValueCreator>
 		static void Create(Key&& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
@@ -364,14 +370,17 @@ namespace internal
 }
 
 template<typename TKey, typename TValue>
-struct HashMultiMapKeyValueTraits
+class HashMultiMapKeyValueTraits
 {
+public:
 	typedef TKey Key;
 	typedef TValue Value;
 
+private:
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
+public:
 	static const size_t keyAlignment = KeyManager::alignment;
 	static const size_t valueAlignment = ValueManager::alignment;
 
@@ -380,6 +389,7 @@ struct HashMultiMapKeyValueTraits
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
+public:
 	template<typename Func>
 	static void MoveExecKey(Key&& srcKey, Key* dstKey, const Func& func)
 	{

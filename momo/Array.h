@@ -6,7 +6,7 @@
   momo/Array.h
 
   namespace momo:
-    struct ArrayItemTraits
+    class ArrayItemTraits
     enum class ArrayGrowCause
     struct ArraySettings
     class Array
@@ -124,12 +124,15 @@ namespace internal
 }
 
 template<typename TItem>
-struct ArrayItemTraits
+class ArrayItemTraits
 {
+public:
 	typedef TItem Item;
 
+private:
 	typedef internal::ObjectManager<Item> ItemManager;
 
+public:
 	static const size_t alignment = ItemManager::alignment;
 
 	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
@@ -139,6 +142,7 @@ struct ArrayItemTraits
 	template<typename... ItemArgs>
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
+public:
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(items, count);

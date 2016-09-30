@@ -236,14 +236,16 @@ namespace internal
 	};
 
 	template<typename TArray>
-	struct ArrayShifter
+	class ArrayShifter
 	{
+	public:
 		typedef TArray Array;
 		typedef typename Array::Item Item;
 		typedef typename Array::MemManager MemManager;
 		typedef typename Array::ItemTraits ItemTraits;
 		typedef typename Array::Settings Settings;
 
+	public:
 		static void Insert(Array& array, size_t index, size_t count, const Item& item)
 		{
 			size_t initCount = array.GetCount();

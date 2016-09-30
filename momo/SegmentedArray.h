@@ -6,7 +6,7 @@
   momo/SegmentedArray.h
 
   namespace momo:
-    struct SegmentedArrayItemTraits
+    class SegmentedArrayItemTraits
     enum class SegmentedArrayItemCountFunc
     struct SegmentedArraySettings
     class SegmentedArray
@@ -28,17 +28,21 @@ namespace momo
 {
 
 template<typename TItem>
-struct SegmentedArrayItemTraits
+class SegmentedArrayItemTraits
 {
+public:
 	typedef TItem Item;
 
+private:
 	typedef internal::ObjectManager<Item> ItemManager;
 
+public:
 	static const size_t alignment = ItemManager::alignment;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
+public:
 	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(items, count);

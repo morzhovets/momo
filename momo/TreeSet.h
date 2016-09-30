@@ -6,7 +6,7 @@
   momo/TreeSet.h
 
   namespace momo:
-    struct TreeSetItemTraits
+    class TreeSetItemTraits
     struct TreeSetSettings
     class TreeSet
 
@@ -223,8 +223,9 @@ namespace internal
 	};
 
 	template<typename TItemTraits>
-	struct TreeSetNodeItemTraits
+	class TreeSetNodeItemTraits
 	{
+	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
@@ -232,6 +233,7 @@ namespace internal
 
 		static const size_t alignment = ItemTraits::alignment;
 
+	public:
 		static void Destroy(Item& item) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(item);
@@ -247,15 +249,19 @@ namespace internal
 
 template<typename TKey,
 	typename TItem = TKey>
-struct TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
+class TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 {
+public:
 	typedef TKey Key;
 	typedef TItem Item;
 
+private:
 	typedef internal::ObjectManager<Item> ItemManager;
 
+public:
 	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
+public:
 	template<typename Iterator, typename ItemCreator>
 	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 		const ItemCreator& itemCreator, Item* newItem)

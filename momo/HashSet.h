@@ -6,7 +6,7 @@
   momo/HashSet.h
 
   namespace momo:
-    struct HashSetItemTraits
+    class HashSetItemTraits
     struct HashSetSettings
     class HashSet
 
@@ -357,13 +357,15 @@ namespace internal
 	};
 
 	template<typename TItemTraits>
-	struct HashSetBucketItemTraits
+	class HashSetBucketItemTraits
 	{
+	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
 		static const size_t alignment = ItemTraits::alignment;
 
+	public:
 		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < count; ++i)
@@ -383,11 +385,14 @@ template<typename TKey,
 	typename TItem = TKey>
 struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem>
 {
+public:
 	typedef TKey Key;
 	typedef TItem Item;
 
+private:
 	typedef internal::ObjectManager<Item> ItemManager;
 
+public:
 	template<typename ItemCreator>
 	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 		const ItemCreator& itemCreator, Item* newItem)

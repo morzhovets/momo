@@ -6,7 +6,7 @@
   momo/HashMap.h
 
   namespace momo:
-    struct HashMapKeyValueTraits
+    class HashMapKeyValueTraits
     struct HashMapSettings
     class HashMap
 
@@ -37,8 +37,9 @@ namespace momo
 namespace internal
 {
 	template<typename TKeyValuePair>
-	struct HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
+	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
+	public:
 		typedef TKeyValuePair KeyValuePair;
 
 		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
@@ -46,6 +47,7 @@ namespace internal
 		typedef typename KeyValuePair::Value Value;
 		typedef KeyValuePair Item;
 
+	public:
 		template<typename ItemCreator>
 		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)

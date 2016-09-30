@@ -68,8 +68,9 @@ namespace internal
 	};
 
 	template<typename TObject>
-	struct ObjectManager
+	class ObjectManager
 	{
+	public:
 		typedef TObject Object;
 
 		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
@@ -127,6 +128,7 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
+	public:
 		static void Move(Object&& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
 		{

@@ -151,20 +151,24 @@ namespace internal
 	};
 
 	template<typename TKey, typename TValue>
-	struct MapKeyValueTraits
+	class MapKeyValueTraits
 	{
+	public:
 		typedef TKey Key;
 		typedef TValue Value;
 
+	private:
 		typedef internal::ObjectManager<Key> KeyManager;
 		typedef internal::ObjectManager<Value> ValueManager;
 
+	public:
 		static const size_t keyAlignment = KeyManager::alignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
+	public:
 		template<typename ValueCreator>
 		static void Create(Key&& key, const ValueCreator& valueCreator,
 			Key* newKey, Value* newValue)
@@ -387,8 +391,9 @@ namespace internal
 	};
 
 	template<typename TKeyValuePair>
-	struct MapNestedSetItemTraits
+	class MapNestedSetItemTraits
 	{
+	public:
 		typedef TKeyValuePair KeyValuePair;
 
 		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
@@ -396,8 +401,10 @@ namespace internal
 		typedef typename KeyValuePair::Value Value;
 		typedef KeyValuePair Item;
 
+	private:
 		typedef internal::ObjectManager<Item> ItemManager;
 
+	public:
 		static const size_t alignment = ItemManager::alignment;
 
 		template<typename ItemArg>
@@ -422,6 +429,7 @@ namespace internal
 			const Item& mItem;
 		};
 
+	public:
 		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 		{
 			return *item.GetKeyPtr();
@@ -456,8 +464,9 @@ namespace internal
 	};
 
 	template<typename TMap>
-	struct MapValueReferencer
+	class MapValueReferencer
 	{
+	public:
 		typedef TMap Map;
 		typedef typename Map::Key Key;
 		typedef typename Map::Value Value;

@@ -17,18 +17,22 @@ namespace momo
 namespace internal
 {
 	template<typename TKey, typename TItem>
-	struct SetItemTraits
+	class SetItemTraits
 	{
+	public:
 		typedef TKey Key;
 		typedef TItem Item;
 
+	private:
 		typedef internal::ObjectManager<Item> ItemManager;
 
+	public:
 		static const size_t alignment = ItemManager::alignment;
 
 		template<typename... ItemArgs>
 		using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
+	public:
 		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));

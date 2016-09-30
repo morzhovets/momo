@@ -6,7 +6,7 @@
   momo/TreeMap.h
 
   namespace momo:
-    struct TreeMapKeyValueTraits
+    class TreeMapKeyValueTraits
     struct TreeMapSettings
     class TreeMap
 
@@ -37,8 +37,9 @@ namespace momo
 namespace internal
 {
 	template<typename TKeyValuePair>
-	struct TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
+	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
+	public:
 		typedef TKeyValuePair KeyValuePair;
 
 		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
@@ -49,6 +50,7 @@ namespace internal
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
 
+	public:
 		template<typename Iterator, typename ItemCreator>
 		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
 			const ItemCreator& itemCreator, Item* newItem)
@@ -80,17 +82,21 @@ namespace internal
 }
 
 template<typename TKey, typename TValue>
-struct TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
+class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
 {
+public:
 	typedef TKey Key;
 	typedef TValue Value;
 
+private:
 	typedef internal::ObjectManager<Key> KeyManager;
 	typedef internal::ObjectManager<Value> ValueManager;
 
+public:
 	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
 	static const bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
 
+public:
 	template<typename KeyIterator>
 	static void ShiftKeyNothrow(KeyIterator keyBegin, size_t shift) MOMO_NOEXCEPT
 	{
