@@ -19,8 +19,8 @@
     references to items become invalid and should not be used.
   3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
     complexity.
-  4. Functions `erase` can throw exceptions thrown by `key_type`
-    move assignment operator.
+  4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
+    functions `erase` can throw exceptions.
   5. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
 

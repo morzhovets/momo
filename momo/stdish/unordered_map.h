@@ -25,8 +25,9 @@
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
   4. Functions `begin`, `cbegin` and iterator increment take
     O(bucket_count) time in worst case.
-  5. Functions `erase` can throw exceptions thrown by `key_type` and
-    `mapped_type` move assignment operators.
+  5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
+    or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
+    functions `erase` can throw exceptions.
   6. Functions of the allocator `construct`, `destroy` and `address`
     are not used.
 
