@@ -310,23 +310,18 @@ namespace internal
 			}
 			else
 			{
-				_GetArray().RemoveBack();
-			}
-		}
-
-		void Shrink(Params& /*params*/) MOMO_NOEXCEPT
-		{
-			if (mPtr != nullptr && _GetMemPoolIndex() == 0)
-			{
-				try
+				Array& array = _GetArray();
+				array.RemoveBack();
+				if (4 < count && count < array.GetCapacity() / 2)
 				{
-					Array& array = _GetArray();
-					if (array.GetCount() < array.GetCapacity() / 2)
+					try
+					{
 						array.Shrink();
-				}
-				catch (...)
-				{
-					// no throw!
+					}
+					catch (...)
+					{
+						// no throw!
+					}
 				}
 			}
 		}

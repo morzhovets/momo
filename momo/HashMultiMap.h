@@ -440,9 +440,9 @@ public:
 		dstKey = srcKey;
 	}
 
-	static void AssignValue(Value&& srcValue, Value& dstValue)
+	static void AssignAnywayValue(Value& srcValue, Value& dstValue)
 	{
-		dstValue = std::move(srcValue);
+		ValueManager::AssignAnyway(srcValue, dstValue);
 	}
 };
 
@@ -913,9 +913,8 @@ public:
 		Value& value = iter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
 		size_t valueIndex = std::addressof(value) - valueBounds.GetBegin();
-		KeyValueTraits::AssignValue(std::move(*(valueBounds.GetEnd() - 1)), value);
+		KeyValueTraits::AssignAnywayValue(*(valueBounds.GetEnd() - 1), value);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());
-		valueArray.Shrink(mValueCrew.GetValueArrayParams());
 		--mValueCount;
 		++mValueCrew.GetValueVersion();
 		return _MakeIterator<Iterator>(keyIter,
