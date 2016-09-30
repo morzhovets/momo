@@ -335,8 +335,7 @@ namespace internal
 		{
 			KeyValueTraits::AssignKey(std::move(srcKey), dstKey);	//?
 			KeyValueTraits::DestroyKey(srcKey);
-			dstValue = std::move(srcValue);
-			ValueManager::Destroy(srcValue);
+			ValueManager::Replace(srcValue, dstValue);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>

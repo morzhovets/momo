@@ -200,10 +200,9 @@ namespace internal
 
 		static void Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
 		{
-			_Assign(std::move(srcKey), std::move(srcValue), dstKey, dstValue,
+			_Replace(srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
-			Destroy(srcKey, srcValue);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
@@ -319,37 +318,32 @@ namespace internal
 				ValueManager::Destroy(*its);
 		}
 
-		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		template<bool isValueNothrowAnywayMoveAssignable>
+		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
 			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
-			std::true_type /*isValueNothrowAnywayMoveAssignable*/) MOMO_NOEXCEPT
+			BoolConstant<isValueNothrowAnywayMoveAssignable>)
 		{
-			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
-			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
+			ValueManager::Replace(srcValue, dstValue);
+			KeyManager::Replace(srcKey, dstKey);
 		}
 
-		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
-			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
-			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
-		{
-			dstValue = std::move(srcValue);
-			KeyManager::AssignNothrowAnyway(std::move(srcKey), dstKey);
-		}
-
-		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::true_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
-			dstKey = std::move(srcKey);
-			ValueManager::AssignNothrowAnyway(std::move(srcValue), dstValue);
+			KeyManager::Replace(srcKey, dstKey);
+			ValueManager::Replace(srcValue, dstValue);
 		}
 
-		static void _Assign(Key&& srcKey, Value&& srcValue, Key& dstKey, Value& dstValue,
+		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
 			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
 			// basic exception safety
 			dstValue = static_cast<const Value&>(srcValue);
 			dstKey = std::move(srcKey);
+			KeyManager::Destroy(srcKey);
+			ValueManager::Destroy(srcValue);
 		}
 	};
 

@@ -51,9 +51,7 @@ namespace internal
 
 		static void Replace(Item& srcItem, Item& dstItem)
 		{
-			_Assign(std::move(srcItem), dstItem,
-				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
-			ItemManager::Destroy(srcItem);
+			ItemManager::Replace(srcItem, dstItem);
 		}
 
 		static void Replace(Item& srcItem, Item& midItem, Item* dstItem)
@@ -75,18 +73,6 @@ namespace internal
 		}
 
 	private:
-		static void _Assign(Item&& srcItem, Item& dstItem,
-			std::true_type /*isNothrowAnywayAssignable*/) MOMO_NOEXCEPT
-		{
-			ItemManager::AssignNothrowAnyway(std::move(srcItem), dstItem);
-		}
-
-		static void _Assign(Item&& srcItem, Item& dstItem,
-			std::false_type /*isNothrowAnywayAssignable*/)
-		{
-			dstItem = std::move(srcItem);
-		}
-
 		template<bool isNothrowAnywayAssignable>
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
 			std::true_type /*isNothrowRelocatable*/,
@@ -102,8 +88,7 @@ namespace internal
 			std::true_type /*isNothrowAnywayAssignable*/)
 		{
 			ItemManager::Move(std::move(midItem), dstItem);
-			ItemManager::AssignNothrowAnyway(std::move(srcItem), midItem);
-			ItemManager::Destroy(srcItem);
+			ItemManager::Replace(srcItem, midItem);
 		}
 
 		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
@@ -113,14 +98,13 @@ namespace internal
 			ItemManager::Copy(midItem, dstItem);
 			try
 			{
-				midItem = std::move(srcItem);
+				ItemManager::Replace(srcItem, midItem);
 			}
 			catch (...)
 			{
 				ItemManager::Destroy(*dstItem);
 				throw;
 			}
-			ItemManager::Destroy(srcItem);
 		}
 	};
 
