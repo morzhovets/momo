@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  momo/details/BucketLimP1.h
+  momo/details/HashBucketLimP1.h
 
   namespace momo:
     struct HashBucketLimP1

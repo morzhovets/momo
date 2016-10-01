@@ -14,7 +14,7 @@
 #undef NDEBUG
 
 #include "../../momo/HashSet.h"
-#include "../../momo/details/BucketLim4.h"
+#include "../../momo/details/HashBucketLim4.h"
 
 #include <iostream>
 #include <type_traits>

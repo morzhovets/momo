@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  momo/details/BucketOneI1.h
+  momo/details/HashBucketOneI1.h
 
   namespace momo:
     struct HashBucketOneI1

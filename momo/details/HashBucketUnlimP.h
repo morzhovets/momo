@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  momo/details/BucketUnlimP.h
+  momo/details/HashBucketUnlimP.h
 
   namespace momo:
     struct HashBucketUnlimP

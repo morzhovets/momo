@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include "details/BucketLimP.h"
-#include "details/BucketLimP1.h"
-#include "details/BucketUnlimP.h"
-#include "details/BucketOneI1.h"
-#include "details/BucketOneI.h"
-//#include "details/BucketLim4.h"
+#include "details/HashBucketLimP.h"
+#include "details/HashBucketLimP1.h"
+#include "details/HashBucketUnlimP.h"
+#include "details/HashBucketOneI1.h"
+#include "details/HashBucketOneI.h"
+//#include "details/HashBucketLim4.h"
 
 namespace momo
 {

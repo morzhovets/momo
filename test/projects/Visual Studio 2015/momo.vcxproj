@@ -174,8 +174,8 @@
     <ClInclude Include="..\..\..\momo\DataRow.h" />
     <ClInclude Include="..\..\..\momo\DataSelection.h" />
     <ClInclude Include="..\..\..\momo\DataTable.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketLim4.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketOneI.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketLim4.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h" />
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
@@ -188,10 +188,10 @@
     <ClInclude Include="..\..\..\momo\stdish\unordered_set.h" />
     <ClInclude Include="..\..\..\momo\stdish\vector.h" />
     <ClInclude Include="..\..\..\momo\details\ArrayBucket.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketLimP.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketLimP1.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketOneI1.h" />
-    <ClInclude Include="..\..\..\momo\details\BucketUnlimP.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketLimP.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketLimP1.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOneI1.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />
     <ClInclude Include="..\..\..\momo\MemPool.h" />
     <ClInclude Include="..\..\..\momo\SegmentedArray.h" />
