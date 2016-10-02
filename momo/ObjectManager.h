@@ -23,11 +23,7 @@ namespace momo
 
 template<typename Object>
 struct IsTriviallyRelocatable
-#ifdef MOMO_USE_TRIVIALLY_COPYABLE
-	: public std::is_trivially_copyable<Object>
-#else
-	: public std::is_trivial<Object>
-#endif
+	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
 {
 };
 

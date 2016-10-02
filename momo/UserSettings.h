@@ -27,6 +27,14 @@
 #define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
 	(std::is_nothrow_move_constructible<Object>::value || !std::is_copy_constructible<Object>::value)
 
+// Using `memcmpy` instead of move constructor and destructor
+#define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
+
+#if defined(__GNUC__) && __GNUC__ < 5
+#undef MOMO_IS_TRIVIALLY_RELOCATABLE
+#define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
+#endif
+
 // If your platform does not require data alignment, define it as `1`
 #define MOMO_MAX_ALIGNMENT (std::alignment_of<std::max_align_t>::value)
 
@@ -67,9 +75,10 @@
 #endif
 
 // nullptr, converted to the type uintptr_t
-#if !defined(__clang__)
 #define MOMO_NULL_UINTPTR ((uintptr_t)(void*)nullptr)
-#else
+
+#if defined(__clang__)
+#undef MOMO_NULL_UINTPTR
 #define MOMO_NULL_UINTPTR ((uintptr_t)0)
 #endif
 
@@ -79,16 +88,12 @@
 #define MOMO_ASSERT(expr) assert(expr)
 
 #define MOMO_USE_NOEXCEPT
-#define MOMO_USE_TRIVIALLY_COPYABLE
-//#define MOMO_USE_NOTHROW_SWAPPABLE	// C++17
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_USE_NOEXCEPT
 #endif
 
-#if defined(__GNUC__) && __GNUC__ < 5
-#undef MOMO_USE_TRIVIALLY_COPYABLE
-#endif
+//#define MOMO_USE_NOTHROW_SWAPPABLE	// C++17
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4127)	// conditional expression is constant
