@@ -25,15 +25,19 @@
 // On the contrary, for strong safety it can be defined as
 // `std::is_nothrow_move_constructible<Object>::value`.
 #define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	(std::is_nothrow_move_constructible<Object>::value || !std::is_copy_constructible<Object>::value)
+	(std::is_nothrow_move_constructible<Object>::value \
+	|| (!std::is_copy_constructible<Object>::value && !momo::IsTriviallyRelocatable<Object>::value))
 
-// Using `memcmpy` instead of move constructor and destructor
+// Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
 
 #if defined(__GNUC__) && __GNUC__ < 5
 #undef MOMO_IS_TRIVIALLY_RELOCATABLE
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
+
+// C++17: (std::is_nothrow_swappable<Object>::value)
+#define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
 
 // If your platform does not require data alignment, define it as `1`
 #define MOMO_MAX_ALIGNMENT (std::alignment_of<std::max_align_t>::value)
@@ -92,8 +96,6 @@
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_USE_NOEXCEPT
 #endif
-
-//#define MOMO_USE_NOTHROW_SWAPPABLE	// C++17
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4127)	// conditional expression is constant

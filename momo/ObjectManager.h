@@ -29,11 +29,7 @@ struct IsTriviallyRelocatable
 
 template<typename Object>
 struct IsNothrowSwappable
-#ifdef MOMO_USE_NOTHROW_SWAPPABLE
-	: public std::is_nothrow_swappable<Object>
-#else
-	: public std::false_type
-#endif
+	: public internal::BoolConstant<MOMO_IS_NOTHROW_SWAPPABLE(Object)>
 {
 };
 
