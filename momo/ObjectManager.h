@@ -7,7 +7,6 @@
 
   namespace momo:
     struct IsTriviallyRelocatable
-    struct IsNothrowSwappable
 
 \**********************************************************/
 
@@ -24,12 +23,6 @@ namespace momo
 template<typename Object>
 struct IsTriviallyRelocatable
 	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
-{
-};
-
-template<typename Object>
-struct IsNothrowSwappable
-	: public internal::BoolConstant<MOMO_IS_NOTHROW_SWAPPABLE(Object)>
 {
 };
 
@@ -65,20 +58,21 @@ namespace internal
 	public:
 		typedef TObject Object;
 
+		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
+
 		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
 
-		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
+		static const bool isNothrowSwappable = MOMO_IS_NOTHROW_SWAPPABLE(Object);
 
 		static const bool isNothrowRelocatable = isTriviallyRelocatable
 			|| isNothrowMoveConstructible;
 
 		static const bool isNothrowAnywayAssignable =
-			std::is_nothrow_move_assignable<Object>::value || IsNothrowSwappable<Object>::value
+			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
 			|| isTriviallyRelocatable || isNothrowMoveConstructible
 			|| std::is_nothrow_copy_assignable<Object>::value;
 
-		static const bool isNothrowShiftable = isNothrowRelocatable
-			|| IsNothrowSwappable<Object>::value;
+		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
 		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
 
@@ -193,7 +187,7 @@ namespace internal
 			MOMO_NOEXCEPT_IF(isNothrowAnywayAssignable)
 		{
 			_AssignAnyway(srcObject, dstObject, std::is_nothrow_move_assignable<Object>(),
-				IsNothrowSwappable<Object>(), BoolConstant<isTriviallyRelocatable>(),
+				BoolConstant<isNothrowSwappable>(), BoolConstant<isTriviallyRelocatable>(),
 				BoolConstant<isNothrowMoveConstructible>(), std::is_nothrow_copy_assignable<Object>());
 		}
 
@@ -398,6 +392,7 @@ namespace internal
 		static void _ShiftNothrow(Iterator begin, size_t shift,
 			std::false_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
 		{
+			MOMO_STATIC_ASSERT(isNothrowSwappable);
 			Iterator iter = begin;
 			for (size_t i = 0; i < shift; ++i, ++iter)
 				_SwapNothrowAdl(*iter, *std::next(iter));
