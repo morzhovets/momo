@@ -53,8 +53,7 @@ namespace internal
 				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
 
 		private:
-			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
-				ArraySettings<maxCount>> MemPools;
+			typedef ArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
 			static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 

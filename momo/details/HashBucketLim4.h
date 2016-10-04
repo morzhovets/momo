@@ -53,8 +53,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef momo::Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
-				ArraySettings<maxCount>> MemPools;
+			typedef ArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)

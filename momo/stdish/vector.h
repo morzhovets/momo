@@ -475,8 +475,7 @@ private:
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector_intcap = vector<TValue, TAllocator,
-	Array<TValue, MemManagerStd<TAllocator>, ArrayItemTraits<TValue>,
-		ArraySettings<tInternalCapacity>>>;
+	ArrayIntCap<tInternalCapacity, TValue, MemManagerStd<TAllocator>>>;
 
 } // namespace stdish
 

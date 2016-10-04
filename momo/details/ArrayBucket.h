@@ -100,8 +100,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef momo::Array<MemPool, MemManagerDummy, momo::ArrayItemTraits<MemPool>,
-				momo::ArraySettings<maxFastCount>> MemPools;
+			typedef ArrayIntCap<maxFastCount, MemPool, MemManagerDummy> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)

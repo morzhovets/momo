@@ -10,6 +10,7 @@
     enum class ArrayGrowCause
     struct ArraySettings
     class Array
+    class ArrayIntCap
 
   All `Array` functions and constructors have strong exception safety,
   but not the following cases:
@@ -1090,6 +1091,12 @@ private:
 private:
 	Data mData;
 };
+
+template<size_t tInternalCapacity, typename TItem,
+	typename TMemManager = MemManagerDefault,
+	typename TItemTraits = ArrayItemTraits<TItem>,
+	typename TSettings = ArraySettings<tInternalCapacity>>
+using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, TSettings>;
 
 } // namespace momo
 

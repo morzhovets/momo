@@ -334,11 +334,8 @@ private:
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		template<typename Item>
-		using Array4 = Array<Item, MemManagerPtr, ArrayItemTraits<Item>, ArraySettings<4>>;
-
-		typedef Array4<Node*> Nodes;
-		typedef Array4<Segment> Segments;
+		typedef ArrayIntCap<4, Node*, MemManagerPtr> Nodes;
+		typedef ArrayIntCap<4, Segment, MemManagerPtr> Segments;
 
 		typedef internal::TreeSetRelocatorIterator<Segment, Item> Iterator;
 

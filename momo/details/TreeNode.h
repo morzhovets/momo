@@ -72,8 +72,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef Array<MemPool, MemManagerDummy, ArrayItemTraits<MemPool>,
-				ArraySettings<leafMemPoolCount>> LeafMemPools;
+			typedef ArrayIntCap<leafMemPoolCount, MemPool, MemManagerDummy> LeafMemPools;
 
 			static const size_t internalNodeSize =
 				sizeof(Node) + sizeof(Item) * (maxCapacity - 1) + internalOffset;
