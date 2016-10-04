@@ -82,9 +82,6 @@ public:
 	typedef typename HashSet::ConstBucketBounds::Iterator const_local_iterator;
 	typedef const_local_iterator local_iterator;
 
-private:
-	typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
-
 public:
 	unordered_set()
 	{
@@ -407,6 +404,7 @@ public:
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
+		typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
 		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);

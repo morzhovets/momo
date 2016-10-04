@@ -91,9 +91,6 @@ public:
 	//local_iterator;
 	//const_local_iterator;
 
-private:
-	typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
-
 public:
 	unordered_multimap()
 	{
@@ -565,6 +562,7 @@ private:
 	template<typename... KeyArgs, typename MappedCreator>
 	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
+		typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef internal::ObjectManager<key_type> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;

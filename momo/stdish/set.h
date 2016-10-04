@@ -78,9 +78,6 @@ public:
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-private:
-	typedef internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
-
 public:
 	set()
 	{
@@ -533,6 +530,7 @@ private:
 	template<typename Hint, typename... ValueArgs>
 	std::pair<iterator, bool> _emplace(Hint hint, ValueArgs&&... valueArgs)
 	{
+		typedef internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
 		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
