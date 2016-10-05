@@ -73,8 +73,8 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue>
-using HashMapKeyValueTraits = internal::MapKeyValueTraits<TKey, TValue>;
+template<typename TKey, typename TValue, typename TMemManager>
+using HashMapKeyValueTraits = internal::MapKeyValueTraits<TKey, TValue, TMemManager>;
 
 struct HashMapSettings
 {
@@ -88,7 +88,7 @@ struct HashMapSettings
 template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue>,
+	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
 class HashMap
 {

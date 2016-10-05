@@ -150,12 +150,13 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
-	template<typename TKey, typename TValue>
+	template<typename TKey, typename TValue, typename TMemManager>
 	class MapKeyValueTraits
 	{
 	public:
 		typedef TKey Key;
 		typedef TValue Value;
+		typedef TMemManager MemManager;
 
 	private:
 		typedef internal::ObjectManager<Key> KeyManager;

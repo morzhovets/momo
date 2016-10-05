@@ -368,12 +368,13 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue>
+template<typename TKey, typename TValue, typename TMemManager>
 class HashMultiMapKeyValueTraits
 {
 public:
 	typedef TKey Key;
 	typedef TValue Value;
+	typedef TMemManager MemManager;
 
 private:
 	typedef internal::ObjectManager<Key> KeyManager;
@@ -456,7 +457,7 @@ struct HashMultiMapSettings
 template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue>,
+	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
 class HashMultiMap
 {

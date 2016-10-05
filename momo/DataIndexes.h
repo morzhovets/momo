@@ -38,7 +38,7 @@ namespace internal
 		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 		template<typename Item, size_t internalCapacity = 0>
-		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item>,
+		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item, MemManagerPtr>,
 			momo::internal::NestedArraySettings<ArraySettings<internalCapacity>>>;
 
 		typedef Array<size_t> Offsets;

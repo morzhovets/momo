@@ -30,7 +30,8 @@ public:
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array (2): " << std::flush;
-		typedef momo::Array<std::string, momo::MemManagerC, momo::ArrayItemTraits<std::string>,
+		typedef momo::Array<std::string, momo::MemManagerC,
+			momo::ArrayItemTraits<std::string, momo::MemManagerC>,
 			momo::ArraySettings<std::is_nothrow_move_constructible<std::string>::value ? 2 : 0>> Array2;
 		TestStrArray<Array2>();
 		std::cout << "ok" << std::endl;

@@ -30,7 +30,8 @@ template<typename TKey, typename TMapped,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
 	momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc, LIBCXX_TEST_BUCKET>,
-		momo::MemManagerStd<TAllocator>, momo::HashMultiMapKeyValueTraits<TKey, TMapped>,
+		momo::MemManagerStd<TAllocator>,
+		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashMultiMapSettings>>;
 #include "LibcxxUnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX

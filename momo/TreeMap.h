@@ -81,12 +81,13 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue>
-class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue>
+template<typename TKey, typename TValue, typename TMemManager>
+class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
 public:
 	typedef TKey Key;
 	typedef TValue Value;
+	typedef TMemManager MemManager;
 
 private:
 	typedef internal::ObjectManager<Key> KeyManager;
@@ -120,7 +121,7 @@ struct TreeMapSettings
 template<typename TKey, typename TValue,
 	typename TTreeTraits = TreeTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue>,
+	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
 class TreeMap
 {

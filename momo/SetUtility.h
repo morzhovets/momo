@@ -16,12 +16,13 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename TItem>
+	template<typename TKey, typename TItem, typename TMemManager>
 	class SetItemTraits
 	{
 	public:
 		typedef TKey Key;
 		typedef TItem Item;
+		typedef TMemManager MemManager;
 
 	private:
 		typedef internal::ObjectManager<Item> ItemManager;

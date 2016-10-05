@@ -20,8 +20,8 @@
 #include "../../momo/stdish/vector.h"
 #include "../../momo/SegmentedArray.h"
 
-template<typename TValue>
-struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue>
+template<typename TValue, typename TMemManager>
+struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>
 {
 	static const bool isNothrowMoveConstructible =
 		momo::internal::ObjectManager<TValue>::isNothrowMoveConstructible;
@@ -43,8 +43,8 @@ struct LibcxxArraySettings : public momo::ArraySettings<0, false>
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::Array<TValue, momo::MemManagerStd<TAllocator>, momo::ArrayItemTraits<TValue>,
-		LibcxxArraySettings>>;
+	momo::Array<TValue, momo::MemManagerStd<TAllocator>,
+		momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
@@ -61,8 +61,8 @@ struct LibcxxArraySettings : public momo::ArraySettings<5, false>
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::Array<TValue, momo::MemManagerStd<TAllocator>, momo::ArrayItemTraits<TValue>,
-		LibcxxArraySettings>>;
+	momo::Array<TValue, momo::MemManagerStd<TAllocator>,
+		momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
 #undef LIBCXX_TEST_PREFIX
@@ -83,7 +83,8 @@ struct LibcxxSegmentedArraySettings
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>, LibcxxSegmentedArrayItemTraits<TValue>,
+	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
+		LibcxxSegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
@@ -100,7 +101,8 @@ struct LibcxxSegmentedArraySettings
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>, LibcxxSegmentedArrayItemTraits<TValue>,
+	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
+		LibcxxSegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }

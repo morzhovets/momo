@@ -247,13 +247,13 @@ namespace internal
 	};
 }
 
-template<typename TKey,
-	typename TItem = TKey>
-class TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem>
+template<typename TKey, typename TItem, typename TMemManager>
+class TreeSetItemTraits : public internal::SetItemTraits<TKey, TItem, TMemManager>
 {
 public:
 	typedef TKey Key;
 	typedef TItem Item;
+	typedef TMemManager MemManager;
 
 private:
 	typedef internal::ObjectManager<Item> ItemManager;
@@ -286,7 +286,7 @@ struct TreeSetSettings
 template<typename TKey,
 	typename TTreeTraits = TreeTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = TreeSetItemTraits<TKey>,
+	typename TItemTraits = TreeSetItemTraits<TKey, TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
 class TreeSet
 {

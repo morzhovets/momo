@@ -124,11 +124,12 @@ namespace internal
 	};
 }
 
-template<typename TItem>
+template<typename TItem, typename TMemManager>
 class ArrayItemTraits
 {
 public:
 	typedef TItem Item;
+	typedef TMemManager MemManager;
 
 private:
 	typedef internal::ObjectManager<Item> ItemManager;
@@ -213,7 +214,7 @@ struct ArraySettings
 
 template<typename TItem,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = ArrayItemTraits<TItem>,
+	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
 class Array
 {
@@ -1094,7 +1095,7 @@ private:
 
 template<size_t tInternalCapacity, typename TItem,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = ArrayItemTraits<TItem>,
+	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<tInternalCapacity>>
 using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, TSettings>;
 

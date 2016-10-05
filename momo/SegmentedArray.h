@@ -27,11 +27,12 @@
 namespace momo
 {
 
-template<typename TItem>
+template<typename TItem, typename TMemManager>
 class SegmentedArrayItemTraits
 {
 public:
 	typedef TItem Item;
+	typedef TMemManager MemManager;
 
 private:
 	typedef internal::ObjectManager<Item> ItemManager;
@@ -163,7 +164,7 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogFirstItemCo
 
 template<typename TItem,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = SegmentedArrayItemTraits<TItem>,
+	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
 class SegmentedArray
 {
@@ -179,7 +180,8 @@ public:
 private:
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
-	typedef Array<Item*, MemManager, ArrayItemTraits<Item*>, SegmentsSettings> Segments;
+	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
+		SegmentsSettings> Segments;
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;
