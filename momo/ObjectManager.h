@@ -233,27 +233,11 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(isNothrowShiftable);
 			MOMO_CHECK_TYPE(Object, *begin);
-			_ShiftNothrow(begin, shift, BoolConstant<isNothrowRelocatable>());
+			_ShiftNothrow(begin, shift, BoolConstant<isNothrowRelocatable>(),
+				BoolConstant<isNothrowSwappable>());
 		}
 
 	private:
-		static void _SwapNothrowAdl(Object& object1, Object& object2) MOMO_NOEXCEPT
-		{
-			MOMO_STATIC_ASSERT(IsNothrowSwappable<Object>::value);
-			using std::swap;
-			swap(object1, object2);
-		}
-
-		static void _SwapNothrowMemory(Object& object1, Object& object2) MOMO_NOEXCEPT
-		{
-			MOMO_STATIC_ASSERT(isTriviallyRelocatable);
-			static const size_t size = sizeof(Object);
-			ObjectBuffer<Object, alignment> objectBuffer;
-			memcpy(&objectBuffer, std::addressof(object1), size);
-			memcpy(std::addressof(object1), std::addressof(object2), size);
-			memcpy(std::addressof(object2), &objectBuffer, size);
-		}
-
 		template<bool isNothrowSwappable, bool isTriviallyRelocatable,
 			bool isNothrowMoveConstructible, bool isNothrowCopyAssignable>
 		static void _AssignAnyway(Object& srcObject, Object& dstObject,
@@ -271,7 +255,8 @@ namespace internal
 			BoolConstant<isTriviallyRelocatable>, BoolConstant<isNothrowMoveConstructible>,
 			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
 		{
-			_SwapNothrowAdl(srcObject, dstObject);
+			using std::swap;
+			swap(srcObject, dstObject);
 		}
 
 		template<bool isNothrowMoveConstructible, bool isNothrowCopyAssignable>
@@ -280,7 +265,11 @@ namespace internal
 			std::true_type /*isTriviallyRelocatable*/, BoolConstant<isNothrowMoveConstructible>,
 			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
 		{
-			_SwapNothrowMemory(srcObject, dstObject);
+			static const size_t size = sizeof(Object);
+			ObjectBuffer<Object, alignment> objectBuffer;
+			memcpy(&objectBuffer, std::addressof(dstObject), size);
+			memcpy(std::addressof(dstObject), std::addressof(srcObject), size);
+			memcpy(std::addressof(srcObject), &objectBuffer, size);
 		}
 
 		template<bool isNothrowCopyAssignable>
@@ -376,9 +365,9 @@ namespace internal
 			Destroy(srcBegin, count);
 		}
 
-		template<typename Iterator>
+		template<typename Iterator, bool isNothrowSwappable>
 		static void _ShiftNothrow(Iterator begin, size_t shift,
-			std::true_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
+			std::true_type /*isNothrowRelocatable*/, BoolConstant<isNothrowSwappable>) MOMO_NOEXCEPT
 		{
 			ObjectBuffer<Object, alignment> objectBuffer;
 			Relocate(*begin, &objectBuffer);
@@ -390,12 +379,13 @@ namespace internal
 
 		template<typename Iterator>
 		static void _ShiftNothrow(Iterator begin, size_t shift,
-			std::false_type /*isNothrowRelocatable*/) MOMO_NOEXCEPT
+			std::false_type /*isNothrowRelocatable*/,
+			std::true_type /*isNothrowSwappable*/) MOMO_NOEXCEPT
 		{
-			MOMO_STATIC_ASSERT(isNothrowSwappable);
+			using std::swap;
 			Iterator iter = begin;
 			for (size_t i = 0; i < shift; ++i, ++iter)
-				_SwapNothrowAdl(*iter, *std::next(iter));
+				swap(*iter, *std::next(iter));
 		}
 	};
 }
