@@ -554,7 +554,7 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		if (mBuckets == nullptr)
+		if (mCount == 0)
 			return ConstIterator();
 		return _MakeIterator(*mBuckets, 0, mBuckets->GetBucketBounds(0).GetBegin(), true);
 	}
