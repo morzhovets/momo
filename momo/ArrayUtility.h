@@ -273,9 +273,9 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator>
-		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
-			typename std::enable_if<internal::IsForwardIterator<Iterator>::value, int>::type = 0)
+		template<typename ArgIterator>
+		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end,
+			typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
@@ -287,15 +287,15 @@ namespace internal
 					array.AddBackNogrow(std::move(array[i]));
 				for (size_t i = initCount - count; i > index; --i)
 					ItemTraits::Assign(std::move(array[i - 1]), array[i + count - 1]);
-				Iterator iter = begin;
+				ArgIterator iter = begin;
 				for (size_t i = index; i < index + count; ++i, ++iter)
 					ItemTraits::Assign(*iter, array[i]);
 			}
 			else
 			{
 				typedef typename ItemTraits::template Creator<
-					typename std::iterator_traits<Iterator>::reference> IterCreator;
-				Iterator iter = std::next(begin, initCount - index);
+					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+				ArgIterator iter = std::next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
 					array.AddBackNogrowCrt(IterCreator(*iter));
 				iter = begin;
@@ -308,14 +308,14 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator>
-		static void Insert(Array& array, size_t index, Iterator begin, Iterator end,
-			typename std::enable_if<!internal::IsForwardIterator<Iterator>::value, int>::type = 0)
+		template<typename ArgIterator>
+		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end,
+			typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
 		{
 			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<Iterator>::reference> IterCreator;
+				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
 			size_t count = 0;
-			for (Iterator iter = begin; iter != end; ++iter, ++count)
+			for (ArgIterator iter = begin; iter != end; ++iter, ++count)
 				array.InsertCrt(index + count, IterCreator(*iter));
 		}
 

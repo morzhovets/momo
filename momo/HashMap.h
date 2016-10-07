@@ -336,20 +336,20 @@ public:
 		return InsertVar(key, value);
 	}
 
-	template<typename Iterator>
-	size_t InsertKV(Iterator begin, Iterator end)
+	template<typename ArgIterator>
+	size_t InsertKV(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->key);
-		auto insertFunc = [this] (Iterator iter)
+		auto insertFunc = [this] (ArgIterator iter)
 			{ return InsertVar(iter->key, iter->value); };
 		return _Insert(begin, end, insertFunc);
 	}
 
-	template<typename Iterator>
-	size_t InsertFS(Iterator begin, Iterator end)
+	template<typename ArgIterator>
+	size_t InsertFS(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->first);
-		auto insertFunc = [this] (Iterator iter)
+		auto insertFunc = [this] (ArgIterator iter)
 			{ return InsertVar(iter->first, iter->second); };
 		return _Insert(begin, end, insertFunc);
 	}
@@ -509,11 +509,11 @@ private:
 		return InsertResult(iter, true);
 	}
 
-	template<typename Iterator, typename InsertFunc>
-	size_t _Insert(Iterator begin, Iterator end, InsertFunc insertFunc)
+	template<typename ArgIterator, typename InsertFunc>
+	size_t _Insert(ArgIterator begin, ArgIterator end, InsertFunc insertFunc)
 	{
 		size_t count = 0;
-		for (Iterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			count += insertFunc(iter).inserted ? 1 : 0;
 		return count;
 	}

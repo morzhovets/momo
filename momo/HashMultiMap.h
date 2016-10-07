@@ -866,19 +866,19 @@ public:
 		return AddVar(keyIter, value);
 	}
 
-	template<typename Iterator>
-	void AddKV(Iterator begin, Iterator end)
+	template<typename ArgIterator>
+	void AddKV(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->key);
-		for (Iterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			AddVar(iter->key, iter->value);
 	}
 
-	template<typename Iterator>
-	void AddFS(Iterator begin, Iterator end)
+	template<typename ArgIterator>
+	void AddFS(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Key, begin->first);
-		for (Iterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			AddVar(iter->first, iter->second);
 	}
 

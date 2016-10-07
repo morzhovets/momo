@@ -547,10 +547,10 @@ public:
 	{
 	}
 
-	template<typename Iterator,
-		typename = typename std::iterator_traits<Iterator>::iterator_category>
-	Array(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
-		: mData(internal::IsForwardIterator<Iterator>::value ? std::distance(begin, end) : 0,
+	template<typename ArgIterator,
+		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	Array(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
+		: mData(internal::IsForwardIterator<ArgIterator>::value ? std::distance(begin, end) : 0,
 			std::move(memManager))
 	{
 		_Fill(begin, end);
@@ -849,11 +849,11 @@ public:
 		}
 	}
 
-	template<typename Iterator,
-		typename = typename std::iterator_traits<Iterator>::iterator_category>
-	void Insert(size_t index, Iterator begin, Iterator end)
+	template<typename ArgIterator,
+		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if (internal::IsForwardIterator<Iterator>::value)
+		if (internal::IsForwardIterator<ArgIterator>::value)
 		{
 			size_t count = std::distance(begin, end);
 			size_t newCount = GetCount() + count;
@@ -899,23 +899,23 @@ private:
 		return data;
 	}
 
-	template<typename Iterator>
-	void _Fill(Iterator begin, Iterator end,
-		typename std::enable_if<internal::IsForwardIterator<Iterator>::value, int>::type = 0)
+	template<typename ArgIterator>
+	void _Fill(ArgIterator begin, ArgIterator end,
+		typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
 	{
 		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<Iterator>::reference> IterCreator;
-		for (Iterator iter = begin; iter != end; ++iter)
+			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			AddBackNogrowCrt(IterCreator(*iter));
 	}
 
-	template<typename Iterator>
-	void _Fill(Iterator begin, Iterator end,
-		typename std::enable_if<!internal::IsForwardIterator<Iterator>::value, int>::type = 0)
+	template<typename ArgIterator>
+	void _Fill(ArgIterator begin, ArgIterator end,
+		typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
 	{
 		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<Iterator>::reference> IterCreator;
-		for (Iterator iter = begin; iter != end; ++iter)
+			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			AddBackCrt(IterCreator(*iter));
 	}
 

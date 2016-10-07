@@ -210,16 +210,16 @@ public:
 		_IncCount(count, typename ItemTraits::template Creator<const Item&>(item));
 	}
 
-	template<typename Iterator,
-		typename = typename std::iterator_traits<Iterator>::iterator_category>
-	SegmentedArray(Iterator begin, Iterator end, MemManager&& memManager = MemManager())
+	template<typename ArgIterator,
+		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	SegmentedArray(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		try
 		{
 			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<Iterator>::reference> IterCreator;
-			for (Iterator iter = begin; iter != end; ++iter)
+				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+			for (ArgIterator iter = begin; iter != end; ++iter)
 				AddBackCrt(IterCreator(*iter));
 		}
 		catch (...)
@@ -517,11 +517,11 @@ public:
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
 
-	template<typename Iterator,
-		typename = typename std::iterator_traits<Iterator>::iterator_category>
-	void Insert(size_t index, Iterator begin, Iterator end)
+	template<typename ArgIterator,
+		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if (internal::IsForwardIterator<Iterator>::value)
+		if (internal::IsForwardIterator<ArgIterator>::value)
 			Reserve(mCount + std::distance(begin, end));
 		ArrayShifter::Insert(*this, index, begin, end);
 	}

@@ -681,12 +681,12 @@ public:
 		return _Insert(ItemTraits::GetKey(item), Creator<const Item&>(item), false);
 	}
 
-	template<typename Iterator>
-	size_t Insert(Iterator begin, Iterator end)
+	template<typename ArgIterator>
+	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Item, *begin);
 		size_t count = 0;
-		Iterator iter = begin;
+		ArgIterator iter = begin;
 		if (IsEmpty() && iter != end)
 		{
 			const TreeTraits& treeTraits = GetTreeTraits();
