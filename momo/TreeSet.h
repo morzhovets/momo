@@ -686,22 +686,7 @@ public:
 	{
 		MOMO_CHECK_TYPE(Item, *begin);
 		size_t count = 0;
-		ArgIterator iter = begin;
-		if (IsEmpty() && iter != end)
-		{
-			const TreeTraits& treeTraits = GetTreeTraits();
-			while (true)
-			{
-				const Key& key = ItemTraits::GetKey(*Add(GetEnd(), *iter));
-				++count;
-				++iter;
-				if (iter == end)
-					break;
-				if (!treeTraits.IsLess(key, ItemTraits::GetKey(static_cast<const Item&>(*iter))))
-					break;
-			}
-		}
-		for (; iter != end; ++iter)
+		for (ArgIterator iter = begin; iter != end; ++iter)
 			count += Insert(*iter).inserted ? 1 : 0;
 		return count;
 	}
