@@ -14,11 +14,6 @@
   This vector doesn't need dynamic memory while its size is not greater
   than user-defined constant.
 
-  Deviations from the `std::vector`:
-  1. `vector<bool>` is just a vector of bool.
-  2. Functions of the allocator `construct`, `destroy` and `address`
-    are not used.
-
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
   But in case of the function `insert`, receiving pair of iterators, it's

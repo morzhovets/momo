@@ -24,8 +24,6 @@
     O(bucket_count) time in worst case.
   4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
     functions `erase` can throw exceptions.
-  5. Functions of the allocator `construct`, `destroy` and `address`
-    are not used.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.

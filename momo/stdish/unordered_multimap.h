@@ -31,8 +31,6 @@
   7. Functions `erase` take non-constant iterators and can throw
     exceptions thrown by `key_type` and `mapped_type` move assignment
 	operators.
-  8. Functions of the allocator `construct`, `destroy` and `address`
-    are not used.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
