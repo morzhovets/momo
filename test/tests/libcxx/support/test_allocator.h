@@ -88,7 +88,7 @@ public:
     void construct(pointer p, T&& val)
         {::new(p) T(std::move(val));}
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-    void destroy(pointer p) {p->~T();}
+    void destroy(pointer p) {(void)p;p->~T();}
 
     friend bool operator==(const test_allocator& x, const test_allocator& y)
         {return x.data_ == y.data_;}
