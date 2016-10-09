@@ -7,6 +7,7 @@
 
   namespace momo:
     struct IsTriviallyRelocatable
+    struct IsNothrowMoveConstructible
 
 \**********************************************************/
 
@@ -23,6 +24,24 @@ namespace momo
 template<typename Object>
 struct IsTriviallyRelocatable
 	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
+{
+};
+
+template<typename Object, typename MemManager, bool onRelocate>
+struct IsNothrowMoveConstructible
+	: public internal::BoolConstant<MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object)>
+{
+};
+
+template<typename Object, typename Allocator>
+struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>, false>
+	: public std::false_type
+{
+};
+
+template<typename Object, typename AllocObject>
+struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>, false>
+	: public internal::BoolConstant<MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object)>
 {
 };
 
@@ -61,12 +80,13 @@ namespace internal
 
 		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
-		static const bool isNothrowMoveConstructible = MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object);
+		static const bool isNothrowMoveConstructible =
+			IsNothrowMoveConstructible<Object, MemManager, false>::value;
 
 		static const bool isNothrowSwappable = MOMO_IS_NOTHROW_SWAPPABLE(Object);
 
 		static const bool isNothrowRelocatable = isTriviallyRelocatable
-			|| isNothrowMoveConstructible;
+			|| IsNothrowMoveConstructible<Object, MemManager, true>::value;
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
@@ -102,14 +122,25 @@ namespace internal
 
 			void operator()(Object* newObject) const
 			{
-				_Create(newObject, typename MakeSequence<sizeof...(Args)>::Sequence());
+				_Create(mMemManager, newObject,
+					typename MakeSequence<sizeof...(Args)>::Sequence());
 			}
 
 		private:
-			template<size_t... sequence>
-			void _Create(Object* newObject, Sequence<sequence...>) const
+			template<typename MemManager, size_t... sequence>
+			void _Create(MemManager& /*memManager*/, Object* newObject,
+				Sequence<sequence...>) const
 			{
 				new(newObject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
+			}
+
+			template<typename Allocator, size_t... sequence>
+			void _Create(MemManagerStd<Allocator>& memManager, Object* newObject,
+				Sequence<sequence...>) const
+			{
+				Allocator alloc = memManager.GetAllocator();
+				std::allocator_traits<Allocator>::construct(alloc, newObject,
+					std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 		private:
@@ -148,7 +179,7 @@ namespace internal
 				catch (...)
 				{
 					// srcObject has been changed!
-					Destroy(memManager, *dstObject);
+					_Destroy(memManager, *dstObject);
 					throw;
 				}
 			}
@@ -165,15 +196,14 @@ namespace internal
 			}
 			catch (...)
 			{
-				Destroy(memManager, *dstObject);
+				_Destroy(memManager, *dstObject);
 				throw;
 			}
 		}
 
-		static void Destroy(MemManager& /*memManager*/, Object& object) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Object& object) MOMO_NOEXCEPT
 		{
-			(void)object;	// vs warning
-			object.~Object();
+			_Destroy(memManager, object);
 		}
 
 		template<typename Iterator>
@@ -182,7 +212,7 @@ namespace internal
 			MOMO_CHECK_TYPE(Object, *begin);
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, ++iter)
-				Destroy(memManager, *iter);
+				_Destroy(memManager, *iter);
 		}
 
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)
@@ -197,7 +227,7 @@ namespace internal
 			MOMO_NOEXCEPT_IF(isNothrowAnywayAssignable)
 		{
 			AssignAnyway(memManager, srcObject, dstObject);
-			Destroy(memManager, srcObject);
+			_Destroy(memManager, srcObject);
 		}
 
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
@@ -242,6 +272,20 @@ namespace internal
 		}
 
 	private:
+		template<typename MemManager>
+		static void _Destroy(MemManager& /*memManager*/, Object& object) MOMO_NOEXCEPT
+		{
+			(void)object;	// vs warning
+			object.~Object();
+		}
+
+		template<typename Allocator>
+		static void _Destroy(MemManagerStd<Allocator>& memManager, Object& object) MOMO_NOEXCEPT
+		{
+			Allocator alloc = memManager.GetAllocator();
+			std::allocator_traits<Allocator>::destroy(alloc, std::addressof(object));
+		}
+
 		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,
@@ -296,10 +340,11 @@ namespace internal
 		}
 
 		static void _Relocate(MemManager& memManager, Object& srcObject, Object* dstObject,
-			std::false_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
+			std::false_type /*isTriviallyRelocatable*/)
+			MOMO_NOEXCEPT_IF((IsNothrowMoveConstructible<Object, MemManager, true>::value))
 		{
-			Move(memManager, std::move(srcObject), dstObject);
-			Destroy(memManager, srcObject);
+			Creator<Object>(memManager, std::move(srcObject))(dstObject);
+			_Destroy(memManager, srcObject);
 		}
 
 		template<typename Iterator>
@@ -320,7 +365,7 @@ namespace internal
 			{
 				RelocateCreate(memManager, std::next(srcBegin), std::next(dstBegin), count - 1,
 					Creator<Object>(memManager, std::move(*srcBegin)), std::addressof(*dstBegin));
-				Destroy(memManager, *srcBegin);
+				_Destroy(memManager, *srcBegin);
 			}
 		}
 
