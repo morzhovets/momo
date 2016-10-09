@@ -385,16 +385,16 @@ namespace internal
 		mutable ObjectBuffer<Value, KeyValueTraits::valueAlignment> mValueBuffer;
 	};
 
-	template<typename TKeyValuePair>
+	template<typename TKeyValueTraits>
 	class MapNestedSetItemTraits
 	{
 	public:
-		typedef TKeyValuePair KeyValuePair;
+		typedef TKeyValueTraits KeyValueTraits;
+		typedef typename KeyValueTraits::MemManager MemManager;
+		typedef typename KeyValueTraits::Key Key;
+		typedef typename KeyValueTraits::Value Value;
 
-		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
-		typedef typename KeyValuePair::Key Key;
-		typedef typename KeyValuePair::Value Value;
-		typedef KeyValuePair Item;
+		typedef MapKeyValuePair<KeyValueTraits> Item;
 
 	private:
 		typedef internal::ObjectManager<Item> ItemManager;

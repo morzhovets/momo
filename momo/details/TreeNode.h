@@ -19,15 +19,15 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams, bool tIsContinuous>
+	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
+		typename TMemPoolParams, bool tIsContinuous>
 	class Node
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCapacity = tMaxCapacity;
 		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
@@ -324,9 +324,9 @@ struct TreeNode
 
 	typedef TMemPoolParams MemPoolParams;
 
-	template<typename ItemTraits, typename MemManager>
-	using Node = internal::Node<ItemTraits, MemManager, maxCapacity, capacityStep,
-		MemPoolParams, isContinuous && ItemTraits::isNothrowShiftable>;
+	template<typename ItemTraits>
+	using Node = internal::Node<ItemTraits, maxCapacity, capacityStep, MemPoolParams,
+		isContinuous && ItemTraits::isNothrowShiftable>;
 };
 
 } // namespace momo

@@ -209,10 +209,12 @@ namespace internal
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
 		template<typename ItemCreator>
-		explicit ArrayItemHandler(const ItemCreator& itemCreator)
+		explicit ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
+			: mMemManager(memManager)
 		{
 			itemCreator(&mItemBuffer);
 		}
@@ -221,7 +223,7 @@ namespace internal
 
 		~ArrayItemHandler() MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(&mItemBuffer, 1);
+			ItemTraits::Destroy(mMemManager,&mItemBuffer, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
@@ -233,6 +235,7 @@ namespace internal
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
+		MemManager& mMemManager;
 	};
 
 	template<typename TArray>
@@ -251,14 +254,15 @@ namespace internal
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
+			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)
 					array.AddBackNogrow(std::move(array[i]));
 				for (size_t i = initCount - count; i > index; --i)
-					ItemTraits::Assign(std::move(array[i - 1]), array[i + count - 1]);
+					ItemTraits::Assign(memManager, std::move(array[i - 1]), array[i + count - 1]);
 				for (size_t i = index; i < index + count; ++i)
-					ItemTraits::Assign(item, array[i]);
+					ItemTraits::Assign(memManager, item, array[i]);
 			}
 			else
 			{
@@ -268,7 +272,7 @@ namespace internal
 				{
 					Item& arrayItem = array[i];
 					array.AddBackNogrow(std::move(arrayItem));
-					ItemTraits::Assign(item, arrayItem);
+					ItemTraits::Assign(memManager, item, arrayItem);
 				}
 			}
 		}
@@ -281,15 +285,16 @@ namespace internal
 			MOMO_CHECK(index <= initCount);
 			size_t count = std::distance(begin, end);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
+			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)
 					array.AddBackNogrow(std::move(array[i]));
 				for (size_t i = initCount - count; i > index; --i)
-					ItemTraits::Assign(std::move(array[i - 1]), array[i + count - 1]);
+					ItemTraits::Assign(memManager, std::move(array[i - 1]), array[i + count - 1]);
 				ArgIterator iter = begin;
 				for (size_t i = index; i < index + count; ++i, ++iter)
-					ItemTraits::Assign(*iter, array[i]);
+					ItemTraits::Assign(memManager, *iter, array[i]);
 			}
 			else
 			{
@@ -303,7 +308,7 @@ namespace internal
 				{
 					Item& arrayItem = array[i];
 					array.AddBackNogrow(std::move(arrayItem));
-					ItemTraits::Assign(*iter, arrayItem);
+					ItemTraits::Assign(memManager, *iter, arrayItem);
 				}
 			}
 		}
@@ -323,8 +328,9 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index + count <= initCount);
+			MemManager& memManager = array.GetMemManager();
 			for (size_t i = index + count; i < initCount; ++i)
-				ItemTraits::Assign(std::move(array[i]), array[i - count]);
+				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
 			array.RemoveBack(count);
 		}
 	};

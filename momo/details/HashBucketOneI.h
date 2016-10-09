@@ -20,14 +20,14 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager, typename TStater>
+	template<typename TItemTraits, typename TStater>
 	class BucketOneI
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TStater Stater;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -132,8 +132,8 @@ struct HashBucketOneI : public internal::HashBucketBase<1>
 {
 	typedef TStater Stater;
 
-	template<typename ItemTraits, typename MemManager>
-	using Bucket = internal::BucketOneI<ItemTraits, MemManager, Stater>;
+	template<typename ItemTraits>
+	using Bucket = internal::BucketOneI<ItemTraits, Stater>;
 };
 
 } // namespace momo

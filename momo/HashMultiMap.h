@@ -247,6 +247,7 @@ namespace internal
 	public:
 		typedef TKeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Value Item;
+		typedef typename KeyValueTraits::MemManager MemManager;
 
 		static const size_t alignment = KeyValueTraits::valueAlignment;
 
@@ -277,6 +278,7 @@ namespace internal
 		typedef TValueArray ValueArray;
 
 		typedef typename KeyValueTraits::Key Key;
+		typedef typename KeyValueTraits::MemManager MemManager;
 		typedef ValueArray Value;	//?
 
 	private:
@@ -472,8 +474,7 @@ public:
 private:
 	typedef internal::HashMultiMapArrayBucketItemTraits<KeyValueTraits> ArrayBucketItemTraits;
 
-	typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager, 7,
-		MemPoolParams<>, ArraySettings<>> ValueArray;
+	typedef internal::ArrayBucket<ArrayBucketItemTraits, 7, MemPoolParams<>, ArraySettings<>> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 

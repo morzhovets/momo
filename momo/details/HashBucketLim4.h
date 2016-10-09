@@ -20,14 +20,13 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager,
-		size_t tLogMaxCount, size_t tMemPoolBlockCount>
+	template<typename TItemTraits, size_t tLogMaxCount, size_t tMemPoolBlockCount>
 	class BucketLim4
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t logMaxCount = tLogMaxCount;
 		MOMO_STATIC_ASSERT(0 < logMaxCount && logMaxCount <= 4);	//?
@@ -269,9 +268,8 @@ struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
 	static const size_t logMaxCount = tLogMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
-	template<typename ItemTraits, typename MemManager>
-	using Bucket = internal::BucketLim4<ItemTraits, MemManager,
-		logMaxCount, memPoolBlockCount>;
+	template<typename ItemTraits>
+	using Bucket = internal::BucketLim4<ItemTraits, logMaxCount, memPoolBlockCount>;
 };
 
 } // namespace momo

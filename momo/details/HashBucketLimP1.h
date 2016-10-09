@@ -20,15 +20,14 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
 	class BucketLimP1
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
@@ -237,9 +236,8 @@ struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 
 	typedef TMemPoolParams MemPoolParams;
 
-	template<typename ItemTraits, typename MemManager>
-	using Bucket = internal::BucketLimP1<ItemTraits, MemManager,
-		maxCount, MemPoolParams, alignment>;
+	template<typename ItemTraits>
+	using Bucket = internal::BucketLimP1<ItemTraits, maxCount, MemPoolParams, alignment>;
 };
 
 } // namespace momo

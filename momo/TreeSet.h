@@ -228,6 +228,7 @@ namespace internal
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const bool isNothrowShiftable = ItemTraits::isNothrowShiftable;
 
@@ -304,7 +305,7 @@ private:
 	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
 	typedef typename TreeTraits::TreeNode TreeNode;
-	typedef typename TreeNode::template Node<NodeItemTraits, MemManager> Node;
+	typedef typename TreeNode::template Node<NodeItemTraits> Node;
 
 	typedef typename Node::Params NodeParams;
 

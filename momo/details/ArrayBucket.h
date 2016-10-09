@@ -24,6 +24,8 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
 
+		typedef MemManagerPtr<typename ItemTraits::MemManager> MemManager;
+
 		static const bool isTriviallyRelocatable = false;	//?
 
 		template<typename ItemArg>
@@ -47,34 +49,34 @@ namespace internal
 		};
 
 	public:
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(items, count);
 		}
 
-		static void Relocate(Item* srcItems, Item* dstItems, size_t count)
+		static void Relocate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems, size_t count)
 		{
 			ItemTraits::RelocateCreate(srcItems, dstItems, count, [] (Item*) {}, nullptr);
 		}
 
 		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, Item* newItem)
+		static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
 			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
+	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
+		typename TArraySettings>
 	class ArrayBucket
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxFastCount = tMaxFastCount;
 		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);

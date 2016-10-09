@@ -25,6 +25,7 @@ namespace internal
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t alignment = ItemTraits::alignment;
 
@@ -43,24 +44,24 @@ namespace internal
 		}
 	};
 
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxFastCount, typename TMemPoolParams, typename TArraySettings>
+	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
+		typename TArraySettings>
 	class BucketUnlimP
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxFastCount = tMaxFastCount;
 
 	private:
 		typedef BucketUnlimPArrayBucketItemTraits<ItemTraits> ArrayBucketItemTraits;
 
-		typedef internal::ArrayBucket<ArrayBucketItemTraits, MemManager,
-			maxFastCount, MemPoolParams, ArraySettings> ArrayBucket;
+		typedef internal::ArrayBucket<ArrayBucketItemTraits, maxFastCount, MemPoolParams,
+			ArraySettings> ArrayBucket;
 
 	public:
 		typedef typename ArrayBucket::Params Params;
@@ -143,9 +144,8 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 		return hashCode & (bucketCount - 1);
 	}
 
-	template<typename ItemTraits, typename MemManager>
-	using Bucket = internal::BucketUnlimP<ItemTraits, MemManager,
-		maxFastCount, MemPoolParams, ArraySettings>;
+	template<typename ItemTraits>
+	using Bucket = internal::BucketUnlimP<ItemTraits, maxFastCount, MemPoolParams, ArraySettings>;
 };
 
 } // namespace momo

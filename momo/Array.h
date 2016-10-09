@@ -145,26 +145,26 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(items, count);
 	}
 
 	template<typename ItemArg>
-	static void Assign(ItemArg&& itemArg, Item& item)
+	static void Assign(MemManager& /*memManager*/, ItemArg&& itemArg, Item& item)
 	{
 		item = std::forward<ItemArg>(itemArg);
 	}
 
-	static void Relocate(Item* srcItems, Item* dstItems, size_t count)
+	static void Relocate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems, size_t count)
 		MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 	{
 		ItemManager::Relocate(srcItems, dstItems, count);
 	}
 
 	template<typename ItemCreator>
-	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-		const ItemCreator& itemCreator, Item* newItem)
+	static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+		size_t count, const ItemCreator& itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 	}
@@ -408,7 +408,7 @@ private:
 
 		void _Destroy() MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(GetItems(), GetCount());
+			ItemTraits::Destroy(GetMemManager(), GetItems(), GetCount());
 			_Deallocate();
 		}
 
@@ -425,7 +425,7 @@ private:
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data._IsInternal())
-				ItemTraits::Relocate(&data.mInternalData, &mInternalData, data.GetCount());
+				ItemTraits::Relocate(GetMemManager(), &data.mInternalData, &mInternalData, data.GetCount());
 			else
 				_MoveData(std::move(data), std::false_type());
 		}
@@ -490,7 +490,7 @@ private:
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
 			relocateFunc(&internalData);
 			_Deallocate();
-			ItemTraits::Relocate(&internalData, &mInternalData, count);
+			ItemTraits::Relocate(GetMemManager(), &internalData, &mInternalData, count);
 			mCount = maskInternal | count;
 		}
 
@@ -710,8 +710,8 @@ public:
 			if (!mData.SetCapacity(newCapacity))
 			{
 				Item* items = GetItems();
-				auto relocateFunc = [items, count] (Item* newItems)
-					{ ItemTraits::Relocate(items, newItems, count); };
+				auto relocateFunc = [this, items, count] (Item* newItems)
+					{ ItemTraits::Relocate(GetMemManager(), items, newItems, count); };
 				mData.Reset(newCapacity, count, relocateFunc);
 			}
 		}
@@ -796,7 +796,7 @@ public:
 	template<typename ItemCreator>
 	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
-		ItemHandler itemHandler(itemCreator);
+		ItemHandler itemHandler(GetMemManager(), itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
 		Insert(index, begin, begin + 1);
 	}
@@ -838,7 +838,7 @@ public:
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
 			typename ItemTraits::template Creator<const Item&> itemCreator(item);
-			ItemHandler itemHandler(itemCreator);
+			ItemHandler itemHandler(GetMemManager(), itemCreator);
 			if (grow)
 				_Grow(newCount, ArrayGrowCause::add);
 			ArrayShifter::Insert(*this, index, count, *&itemHandler);
@@ -934,8 +934,8 @@ private:
 		{
 			Item* items = GetItems();
 			size_t count = GetCount();
-			auto relocateFunc = [items, count] (Item* newItems)
-				{ ItemTraits::Relocate(items, newItems, count); };
+			auto relocateFunc = [this, items, count] (Item* newItems)
+				{ ItemTraits::Relocate(GetMemManager(), items, newItems, count); };
 			mData.Reset(_GrowCapacity(initCapacity, minNewCapacity, growCause, false),
 				count, relocateFunc);
 		}
@@ -962,7 +962,7 @@ private:
 			}
 			catch (...)
 			{
-				ItemTraits::Destroy(items + initCount, index - initCount);
+				ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount);
 				throw;
 			}
 			mData.SetCount(newCount);
@@ -972,18 +972,18 @@ private:
 			size_t newCapacity = _GrowCapacity(initCapacity, newCount,
 				ArrayGrowCause::reserve, false);
 			Item* items = GetItems();
-			auto relocateFunc = [items, initCount, newCount, &itemCreator] (Item* newItems)
+			auto relocateFunc = [this, items, initCount, newCount, &itemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
 				try
 				{
 					for (; index < newCount; ++index)
 						itemCreator(newItems + index);
-					ItemTraits::Relocate(items, newItems, initCount);
+					ItemTraits::Relocate(GetMemManager(), items, newItems, initCount);
 				}
 				catch (...)
 				{
-					ItemTraits::Destroy(newItems + initCount, index - initCount);
+					ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount);
 					throw;
 				}
 			};
@@ -1013,9 +1013,9 @@ private:
 		size_t newCount = initCount + 1;
 		size_t newCapacity = _GrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
 		Item* items = GetItems();
-		auto relocateFunc = [items, initCount, &itemCreator] (Item* newItems)
+		auto relocateFunc = [this, items, initCount, &itemCreator] (Item* newItems)
 		{
-			ItemTraits::RelocateCreate(items, newItems, initCount,
+			ItemTraits::RelocateCreate(GetMemManager(), items, newItems, initCount,
 				itemCreator, newItems + initCount);
 		};
 		mData.Reset(newCapacity, newCount, relocateFunc);
@@ -1062,10 +1062,10 @@ private:
 		}
 		catch (...)
 		{
-			ItemTraits::Destroy(&itemBuffer, 1);
+			ItemTraits::Destroy(GetMemManager(), &itemBuffer, 1);
 			throw;
 		}
-		ItemTraits::Relocate(&itemBuffer, GetItems() + initCount, 1);
+		ItemTraits::Relocate(GetMemManager(), &itemBuffer, GetItems() + initCount, 1);
 		mData.SetCount(newCount);
 	}
 
@@ -1077,7 +1077,7 @@ private:
 	void _RemoveBack(size_t count) MOMO_NOEXCEPT
 	{
 		size_t initCount = GetCount();
-		ItemTraits::Destroy(GetItems() + initCount - count, count);
+		ItemTraits::Destroy(GetMemManager(), GetItems() + initCount - count, count);
 		mData.SetCount(initCount - count);
 	}
 

@@ -362,6 +362,7 @@ namespace internal
 	public:
 		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t alignment = ItemTraits::alignment;
 
@@ -431,7 +432,7 @@ private:
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
 	typedef typename HashTraits::HashBucket HashBucket;
-	typedef typename HashBucket::template Bucket<BucketItemTraits, MemManager> Bucket;
+	typedef typename HashBucket::template Bucket<BucketItemTraits> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 

@@ -44,13 +44,13 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
 	{
 		ItemManager::Destroy(items, count);
 	}
 
 	template<typename ItemArg>
-	static void Assign(ItemArg&& itemArg, Item& item)
+	static void Assign(MemManager& /*memManager*/, ItemArg&& itemArg, Item& item)
 	{
 		item = std::forward<ItemArg>(itemArg);
 	}
@@ -487,7 +487,7 @@ public:
 	template<typename ItemCreator>
 	void InsertCrt(size_t index, const ItemCreator& itemCreator)
 	{
-		ItemHandler itemHandler(itemCreator);
+		ItemHandler itemHandler(GetMemManager(), itemCreator);
 		std::move_iterator<Item*> begin(&itemHandler);
 		Insert(index, begin, begin + 1);
 	}
@@ -512,7 +512,7 @@ public:
 	void Insert(size_t index, size_t count, const Item& item)
 	{
 		typename ItemTraits::template Creator<const Item&> itemCreator(item);
-		ItemHandler itemHandler(itemCreator);
+		ItemHandler itemHandler(GetMemManager(), itemCreator);
 		Reserve(mCount + count);
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
@@ -628,7 +628,7 @@ private:
 				itemIndex = Settings::GetItemCount(segIndex);
 			}
 			size_t delCount = std::minmax(itemIndex, mCount - count).first;
-			ItemTraits::Destroy(mSegments[segIndex] + itemIndex - delCount, delCount);
+			ItemTraits::Destroy(GetMemManager(), mSegments[segIndex] + itemIndex - delCount, delCount);
 			itemIndex -= delCount;
 			mCount -= delCount;
 		}

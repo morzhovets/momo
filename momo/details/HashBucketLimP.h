@@ -20,19 +20,17 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, typename TMemPoolParams, bool tUseUIntPtr>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, bool tUseUIntPtr>
 	class BucketLimP;
 
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, TMemManager, tMaxCount, TMemPoolParams, false>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false>
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
@@ -252,15 +250,14 @@ namespace internal
 		uintptr_t mPtr;
 	};
 
-	template<typename TItemTraits, typename TMemManager,
-		size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, TMemManager, tMaxCount, TMemPoolParams, true>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true>
 	{
 	public:
 		typedef TItemTraits ItemTraits;
-		typedef TMemManager MemManager;
 		typedef TMemPoolParams MemPoolParams;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
@@ -493,7 +490,7 @@ struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 	typedef TMemPoolParams MemPoolParams;
 
 private:
-	template<typename ItemTraits, typename MemManager>
+	template<typename ItemTraits>
 	struct Bucketer
 	{
 	private:
@@ -507,13 +504,12 @@ private:
 			|| (maxCount <= 16 && size % 16 == 0 && (size > 16 || alignment == 16)));
 
 	public:
-		typedef internal::BucketLimP<ItemTraits, MemManager,
-			maxCount, MemPoolParams, useUIntPtr> Bucket;
+		typedef internal::BucketLimP<ItemTraits, maxCount, MemPoolParams, useUIntPtr> Bucket;
 	};
 
 public:
-	template<typename ItemTraits, typename MemManager>
-	using Bucket = typename Bucketer<ItemTraits, MemManager>::Bucket;
+	template<typename ItemTraits>
+	using Bucket = typename Bucketer<ItemTraits>::Bucket;
 };
 
 } // namespace momo
