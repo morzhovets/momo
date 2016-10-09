@@ -537,9 +537,9 @@ namespace internal
 				}
 				else
 				{
-					mIter = mMap.AddCrt(mIter, std::forward<RKey>(*mKeyPtr),
-						typename KeyValueTraits::template ValueCreator<ValueArg>(
-						std::forward<ValueArg>(valueArg)));
+					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
+						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
+					mIter = mMap.AddCrt(mIter, std::forward<RKey>(*mKeyPtr), valueCreator);
 				}
 				mKeyPtr = nullptr;
 				return *this;
