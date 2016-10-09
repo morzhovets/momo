@@ -407,7 +407,7 @@ public:
 		typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
-		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
+		ValueCreator(mHashSet.GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{

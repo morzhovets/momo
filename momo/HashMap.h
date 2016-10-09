@@ -302,7 +302,7 @@ public:
 	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return _Insert(std::move(key),
-			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
+			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	InsertResult Insert(Key&& key, Value&& value)
@@ -324,7 +324,8 @@ public:
 	template<typename... ValueArgs>
 	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
 	{
-		return _Insert(key, ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
+		return _Insert(key,
+			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	InsertResult Insert(const Key& key, Value&& value)
@@ -370,7 +371,7 @@ public:
 	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(iter, std::move(key),
-			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
+			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(ConstIterator iter, Key&& key, Value&& value)
@@ -393,7 +394,7 @@ public:
 	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(iter, key,
-			ValueCreator<ValueArgs...>(std::forward<ValueArgs>(valueArgs)...));
+			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
 	Iterator Add(ConstIterator iter, const Key& key, Value&& value)
@@ -421,12 +422,12 @@ public:
 #else
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		return _Insert(std::move(key), ValueCreator<>()).iterator->value;
+		return _Insert(std::move(key), ValueCreator<>(GetMemManager())).iterator->value;
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		return _Insert(key, ValueCreator<>()).iterator->value;
+		return _Insert(key, ValueCreator<>(GetMemManager())).iterator->value;
 	}
 #endif
 
@@ -527,7 +528,7 @@ private:
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
 		auto pairCreator = [this, &key, &valueCreator] (KeyValuePair* newPair)
 		{
-			KeyValueTraits::Create(/*GetMemManager(), */std::forward<RKey>(key), valueCreator,
+			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newPair->GetKeyPtr(), newPair->GetValuePtr());
 		};
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));

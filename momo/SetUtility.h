@@ -40,24 +40,25 @@ namespace internal
 			return item;
 		}
 
-		static void Destroy(MemManager& /*memManager*/, Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
-			ItemManager::Destroy(item);
+			ItemManager::Destroy(memManager, item);
 		}
 
-		static void Relocate(MemManager& /*memManager*/, Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 		{
-			ItemManager::Relocate(srcItem, dstItem);
+			ItemManager::Relocate(memManager, srcItem, dstItem);
 		}
 
-		static void Replace(MemManager& /*memManager*/, Item& srcItem, Item& dstItem)
+		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
-			ItemManager::Replace(srcItem, dstItem);
+			ItemManager::Replace(memManager, srcItem, dstItem);
 		}
 
-		static void Replace(MemManager& /*memManager*/, Item& srcItem, Item& midItem, Item* dstItem)
+		static void Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
 		{
-			_Replace(srcItem, midItem, dstItem, BoolConstant<ItemManager::isNothrowRelocatable>(),
+			_Replace(memManager, srcItem, midItem, dstItem,
+				BoolConstant<ItemManager::isNothrowRelocatable>(),
 				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
 		}
 
@@ -75,35 +76,35 @@ namespace internal
 
 	private:
 		template<bool isNothrowAnywayAssignable>
-		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
+		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
 			std::true_type /*isNothrowRelocatable*/,
 			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
-			ItemManager::Relocate(midItem, dstItem);
+			ItemManager::Relocate(memManager, midItem, dstItem);
 			if (std::addressof(srcItem) != std::addressof(midItem))	//?
-				ItemManager::Relocate(srcItem, std::addressof(midItem));
+				ItemManager::Relocate(memManager, srcItem, std::addressof(midItem));
 		}
 
-		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
+		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
 			std::false_type /*isNothrowRelocatable*/,
 			std::true_type /*isNothrowAnywayAssignable*/)
 		{
-			ItemManager::Move(std::move(midItem), dstItem);
-			ItemManager::Replace(srcItem, midItem);
+			ItemManager::Move(memManager, std::move(midItem), dstItem);
+			ItemManager::Replace(memManager, srcItem, midItem);
 		}
 
-		static void _Replace(Item& srcItem, Item& midItem, Item* dstItem,
+		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
 			std::false_type /*isNothrowRelocatable*/,
 			std::false_type /*isNothrowAnywayAssignable*/)
 		{
-			ItemManager::Copy(midItem, dstItem);
+			ItemManager::Copy(memManager, midItem, dstItem);
 			try
 			{
-				ItemManager::Replace(srcItem, midItem);
+				ItemManager::Replace(memManager, srcItem, midItem);
 			}
 			catch (...)
 			{
-				ItemManager::Destroy(*dstItem);
+				ItemManager::Destroy(memManager, *dstItem);
 				throw;
 			}
 		}

@@ -44,9 +44,9 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 	{
-		ItemManager::Destroy(items, count);
+		ItemManager::Destroy(memManager, items, count);
 	}
 
 	template<typename ItemArg>
@@ -201,13 +201,13 @@ public:
 	explicit SegmentedArray(size_t count, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		_IncCount(count, typename ItemTraits::template Creator<>());
+		_IncCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		_IncCount(count, typename ItemTraits::template Creator<const Item&>(item));
+		_IncCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	template<typename ArgIterator,
@@ -219,8 +219,9 @@ public:
 		{
 			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+			MemManager& memManager = GetMemManager();
 			for (ArgIterator iter = begin; iter != end; ++iter)
-				AddBackCrt(IterCreator(*iter));
+				AddBackCrt(IterCreator(memManager, *iter));
 		}
 		catch (...)
 		{
@@ -352,12 +353,12 @@ public:
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<>());
+		_SetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<const Item&>(item));
+		_SetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -429,7 +430,7 @@ public:
 	template<typename... ItemArgs>
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(
+		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -470,7 +471,7 @@ public:
 	template<typename... ItemArgs>
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(
+		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -495,7 +496,7 @@ public:
 	template<typename... ItemArgs>
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
+		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -511,7 +512,7 @@ public:
 
 	void Insert(size_t index, size_t count, const Item& item)
 	{
-		typename ItemTraits::template Creator<const Item&> itemCreator(item);
+		typename ItemTraits::template Creator<const Item&> itemCreator(GetMemManager(), item);
 		ItemHandler itemHandler(GetMemManager(), itemCreator);
 		Reserve(mCount + count);
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);

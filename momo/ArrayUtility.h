@@ -302,7 +302,7 @@ namespace internal
 					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
 				ArgIterator iter = std::next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, ++iter)
-					array.AddBackNogrowCrt(IterCreator(*iter));
+					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;
 				for (size_t i = index; i < initCount; ++i, ++iter)
 				{
@@ -319,9 +319,10 @@ namespace internal
 		{
 			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+			MemManager& memManager = array.GetMemManager();
 			size_t count = 0;
 			for (ArgIterator iter = begin; iter != end; ++iter, ++count)
-				array.InsertCrt(index + count, IterCreator(*iter));
+				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
 		static void Remove(Array& array, size_t index, size_t count)

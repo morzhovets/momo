@@ -678,7 +678,8 @@ private:
 	{
 		typedef typename TreeMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return _insert(hint, std::move(keyArgs), MappedCreator(std::move(mappedArgs)));
+		return _insert(hint, std::move(keyArgs),
+			MappedCreator(mTreeMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename Hint, typename... KeyArgs, typename MappedCreator>
@@ -689,7 +690,7 @@ private:
 		typedef internal::ObjectManager<key_type, typename TreeMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(std::move(keyArgs))(&keyBuffer);
+		KeyCreator(mTreeMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{
@@ -697,10 +698,10 @@ private:
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(*&keyBuffer);
+			KeyManager::Destroy(mTreeMap.GetMemManager(), *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(*&keyBuffer);
+		KeyManager::Destroy(mTreeMap.GetMemManager(), *&keyBuffer);
 		return res;
 	}
 

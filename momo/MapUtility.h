@@ -171,50 +171,50 @@ namespace internal
 
 	public:
 		template<typename ValueCreator>
-		static void Create(/*MemManager& memManager,*/ Key&& key,
+		static void Create(MemManager& memManager, Key&& key,
 			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
-			KeyManager::MoveExec(std::move(key), newKey, func);
+			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
-		static void Create(/*MemManager& memManager,*/ const Key& key,
+		static void Create(MemManager& memManager, const Key& key,
 			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
-			KeyManager::CopyExec(key, newKey, func);
+			KeyManager::CopyExec(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager& /*memManager*/, Key& key, Value& value) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Key& key, Value& value) MOMO_NOEXCEPT
 		{
-			KeyManager::Destroy(key);
-			ValueManager::Destroy(value);
+			KeyManager::Destroy(memManager, key);
+			ValueManager::Destroy(memManager, value);
 		}
 
-		static void Relocate(MemManager& /*memManager*/, Key& srcKey, Value& srcValue,
+		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
-			_Relocate(srcKey, srcValue, dstKey, dstValue,
+			_Relocate(memManager, srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
 
-		static void Replace(MemManager& /*memManager*/, Key& srcKey, Value& srcValue,
+		static void Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue)
 		{
-			_Replace(srcKey, srcValue, dstKey, dstValue,
+			_Replace(memManager, srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void RelocateExec(MemManager& /*memManager*/, KeyIterator srcKeyBegin,
+		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func)
 		{
-			_RelocateExec(srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin, count, func,
-				BoolConstant<KeyManager::isNothrowRelocatable>(),
+			_RelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
+				count, func, BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
 
@@ -238,61 +238,65 @@ namespace internal
 
 	private:
 		template<bool isValueNothrowRelocatable>
-		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
-			std::true_type /*isKeyNothrowRelocatable*/, BoolConstant<isValueNothrowRelocatable>)
+		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key* dstKey, Value* dstValue, std::true_type /*isKeyNothrowRelocatable*/,
+			BoolConstant<isValueNothrowRelocatable>)
 		{
-			ValueManager::Relocate(srcValue, dstValue);
-			KeyManager::Relocate(srcKey, dstKey);
+			ValueManager::Relocate(memManager, srcValue, dstValue);
+			KeyManager::Relocate(memManager, srcKey, dstKey);
 		}
 
-		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
-			std::false_type /*isKeyNothrowRelocatable*/,
+		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::Relocate(srcKey, dstKey);
-			ValueManager::Relocate(srcValue, dstValue);
+			KeyManager::Relocate(memManager, srcKey, dstKey);
+			ValueManager::Relocate(memManager, srcValue, dstValue);
 		}
 
-		static void _Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue,
-			std::false_type /*isKeyNothrowRelocatable*/,
+		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::Copy(srcKey, dstKey);
+			KeyManager::Copy(memManager, srcKey, dstKey);
 			try
 			{
-				ValueManager::Relocate(srcValue, dstValue);
+				ValueManager::Relocate(memManager, srcValue, dstValue);
 			}
 			catch (...)
 			{
-				KeyManager::Destroy(*dstKey);
+				KeyManager::Destroy(memManager, *dstKey);
 				throw;
 			}
-			KeyManager::Destroy(srcKey);
+			KeyManager::Destroy(memManager, srcKey);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func,
 			bool isValueNothrowRelocatable>
-		static void _RelocateExec(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, const Func& func,
-			std::true_type /*isKeyNothrowRelocatable*/, BoolConstant<isValueNothrowRelocatable>)
+		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
+			size_t count, const Func& func, std::true_type /*isKeyNothrowRelocatable*/,
+			BoolConstant<isValueNothrowRelocatable>)
 		{
-			ValueManager::RelocateExec(srcValueBegin, dstValueBegin, count, func);
-			KeyManager::Relocate(srcKeyBegin, dstKeyBegin, count);
+			ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin, count, func);
+			KeyManager::Relocate(memManager, srcKeyBegin, dstKeyBegin, count);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void _RelocateExec(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, const Func& func,
-			std::false_type /*isKeyNothrowRelocatable*/, std::true_type /*isValueNothrowRelocatable*/)
+		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
+			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
+			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::RelocateExec(srcKeyBegin, dstKeyBegin, count, func);
-			ValueManager::Relocate(srcValueBegin, dstValueBegin, count);
+			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, func);
+			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void _RelocateExec(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, const Func& func,
-			std::false_type /*isKeyNothrowRelocatable*/, std::false_type /*isValueNothrowRelocatable*/)
+		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
+			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
+			std::false_type /*isValueNothrowRelocatable*/)
 		{
 			size_t keyIndex = 0;
 			size_t valueIndex = 0;
@@ -301,53 +305,53 @@ namespace internal
 				KeyIterator srcKeyIter = srcKeyBegin;
 				KeyIterator dstKeyIter = dstKeyBegin;
 				for (; keyIndex < count; ++keyIndex, ++srcKeyIter, ++dstKeyIter)
-					KeyManager::Copy(*srcKeyIter, std::addressof(*dstKeyIter));
+					KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
 				ValueIterator srcValueIter = srcValueBegin;
 				ValueIterator dstValueIter = dstValueBegin;
 				for (; valueIndex < count; ++valueIndex, ++srcValueIter, ++dstValueIter)
-					ValueManager::Copy(*srcValueIter, std::addressof(*dstValueIter));
+					ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
 				func();
 			}
 			catch (...)
 			{
 				for (KeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, ++itd)
-					KeyManager::Destroy(*itd);
+					KeyManager::Destroy(memManager, *itd);
 				for (ValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, ++itd)
-					ValueManager::Destroy(*itd);
+					ValueManager::Destroy(memManager, *itd);
 				throw;
 			}
 			for (KeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, ++its)
-				KeyManager::Destroy(*its);
+				KeyManager::Destroy(memManager, *its);
 			for (ValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, ++its)
-				ValueManager::Destroy(*its);
+				ValueManager::Destroy(memManager, *its);
 		}
 
 		template<bool isValueNothrowAnywayMoveAssignable>
-		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
-			std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
+		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key& dstKey, Value& dstValue, std::true_type /*isKeyNothrowAnywayMoveAssignable*/,
 			BoolConstant<isValueNothrowAnywayMoveAssignable>)
 		{
-			ValueManager::Replace(srcValue, dstValue);
-			KeyManager::Replace(srcKey, dstKey);
+			ValueManager::Replace(memManager, srcValue, dstValue);
+			KeyManager::Replace(memManager, srcKey, dstKey);
 		}
 
-		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
-			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
+		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key& dstKey, Value& dstValue, std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::true_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
-			KeyManager::Replace(srcKey, dstKey);
-			ValueManager::Replace(srcValue, dstValue);
+			KeyManager::Replace(memManager, srcKey, dstKey);
+			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
-		static void _Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue,
-			std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
+		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+			Key& dstKey, Value& dstValue, std::false_type /*isKeyNothrowAnywayMoveAssignable*/,
 			std::false_type /*isValueNothrowAnywayMoveAssignable*/)
 		{
 			// basic exception safety
 			dstValue = static_cast<const Value&>(srcValue);
 			dstKey = std::move(srcKey);
-			KeyManager::Destroy(srcKey);
-			ValueManager::Destroy(srcValue);
+			KeyManager::Destroy(memManager, srcKey);
+			ValueManager::Destroy(memManager, srcValue);
 		}
 	};
 
@@ -410,19 +414,22 @@ namespace internal
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		public:
-			explicit Creator(const Item& item) MOMO_NOEXCEPT
-				: mItem(item)
+			Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
+				: mMemManager(memManager),
+				mItem(item)
 			{
 			}
 
 			void operator()(Item* newItem) const
 			{
-				KeyValueTraits::Create(*mItem.GetKeyPtr(),
-					typename KeyValueTraits::template ValueCreator<const Value&>(*mItem.GetValuePtr()),
+				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
+					mMemManager, *mItem.GetValuePtr());
+				KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), valueCreator,
 					newItem->GetKeyPtr(), newItem->GetValuePtr());
 			}
 
 		private:
+			MemManager& mMemManager;
 			const Item& mItem;
 		};
 

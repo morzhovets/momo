@@ -556,7 +556,8 @@ private:
 	{
 		typedef typename HashMultiMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return _insert(std::move(keyArgs), MappedCreator(std::move(mappedArgs)));
+		return _insert(std::move(keyArgs),
+			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename... KeyArgs, typename MappedCreator>
@@ -566,7 +567,7 @@ private:
 		typedef internal::ObjectManager<key_type, typename HashMultiMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(std::move(keyArgs))(&keyBuffer);
+		KeyCreator(mHashMultiMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);
 		iterator resIter;
 		try
 		{
@@ -574,10 +575,10 @@ private:
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(*&keyBuffer);
+			KeyManager::Destroy(mHashMultiMap.GetMemManager(), *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(*&keyBuffer);
+		KeyManager::Destroy(mHashMultiMap.GetMemManager(), *&keyBuffer);
 		return resIter;
 	}
 

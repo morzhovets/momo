@@ -675,7 +675,8 @@ private:
 	{
 		typedef typename HashMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return _insert(hint, std::move(keyArgs), MappedCreator(std::move(mappedArgs)));
+		return _insert(hint, std::move(keyArgs),
+			MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename Hint, typename... KeyArgs, typename MappedCreator>
@@ -686,7 +687,7 @@ private:
 		typedef internal::ObjectManager<key_type, typename HashMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(std::move(keyArgs))(&keyBuffer);
+		KeyCreator(mHashMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{
@@ -694,10 +695,10 @@ private:
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(*&keyBuffer);
+			KeyManager::Destroy(mHashMap.GetMemManager(), *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(*&keyBuffer);
+		KeyManager::Destroy(mHashMap.GetMemManager(), *&keyBuffer);
 		return res;
 	}
 

@@ -533,7 +533,7 @@ private:
 		typedef internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
-		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
+		ValueCreator(mTreeSet.GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
 		std::pair<iterator, bool> res;
 		try
 		{

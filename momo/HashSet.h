@@ -395,10 +395,10 @@ private:
 
 public:
 	template<typename ItemCreator>
-	static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 		size_t count, const ItemCreator& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
 	}
 };
 
@@ -517,7 +517,8 @@ public:
 			{
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, Creator<const Item&>(item));
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
+					Creator<const Item&>(GetMemManager(), item));
 			}
 		}
 		catch (...)
@@ -681,18 +682,20 @@ public:
 	template<typename... ItemArgs>
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
-		return InsertCrt(key, Creator<ItemArgs...>(std::forward<ItemArgs>(itemArgs)...));
+		return InsertCrt(key,
+			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	InsertResult Insert(Item&& item)
 	{
 		return _Insert(ItemTraits::GetKey(static_cast<const Item&>(item)),
-			Creator<Item>(std::move(item)), false);
+			Creator<Item>(GetMemManager(), std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return _Insert(ItemTraits::GetKey(item), Creator<const Item&>(item), false);
+		return _Insert(ItemTraits::GetKey(item),
+			Creator<const Item&>(GetMemManager(), item), false);
 	}
 
 	template<typename ArgIterator>
@@ -719,7 +722,8 @@ public:
 	template<typename... ItemArgs>
 	ConstIterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(iter, Creator<ItemArgs...>(std::forward<ItemArgs>(itemArgs)...));
+		return AddCrt(iter,
+			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	ConstIterator Add(ConstIterator iter, Item&& item)

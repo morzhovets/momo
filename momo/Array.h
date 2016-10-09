@@ -145,9 +145,9 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 	{
-		ItemManager::Destroy(items, count);
+		ItemManager::Destroy(memManager, items, count);
 	}
 
 	template<typename ItemArg>
@@ -156,17 +156,17 @@ public:
 		item = std::forward<ItemArg>(itemArg);
 	}
 
-	static void Relocate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems, size_t count)
+	static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 	{
-		ItemManager::Relocate(srcItems, dstItems, count);
+		ItemManager::Relocate(memManager, srcItems, dstItems, count);
 	}
 
 	template<typename ItemCreator>
-	static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 		size_t count, const ItemCreator& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
 	}
 };
 
@@ -536,15 +536,15 @@ public:
 	}
 
 	explicit Array(size_t count, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, typename ItemTraits::template Creator<>(),
-			std::move(memManager)))
+		: mData(count, std::move(memManager))
 	{
+		_Fill(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
-		: mData(_CreateData(count, typename ItemTraits::template Creator<const Item&>(item),
-			std::move(memManager)))
+		: mData(count, std::move(memManager))
 	{
+		_Fill(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	template<typename ArgIterator,
@@ -586,7 +586,9 @@ public:
 	static Array CreateCrt(size_t count, const ItemCreator& itemCreator,
 		MemManager&& memManager = MemManager())
 	{
-		return Array(_CreateData(count, itemCreator, std::move(memManager)));
+		Array array = CreateCap(count, std::move(memManager));
+		array._Fill(count, itemCreator);
+		return array;
 	}
 
 	~Array() MOMO_NOEXCEPT
@@ -668,12 +670,12 @@ public:
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<>());
+		_SetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<const Item&>(item));
+		_SetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -747,7 +749,7 @@ public:
 	template<typename... ItemArgs>
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(
+		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -773,24 +775,34 @@ public:
 	template<typename... ItemArgs>
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(
+		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	void AddBack(Item&& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(typename ItemTraits::template Creator<Item>(std::move(item)));
+		{
+			_AddBackNogrow(typename ItemTraits::template Creator<Item>(
+				GetMemManager(), std::move(item)));
+		}
 		else
+		{
 			_AddBackGrow(std::move(item));
+		}
 	}
 
 	void AddBack(const Item& item)
 	{
 		if (GetCount() < GetCapacity())
-			_AddBackNogrow(typename ItemTraits::template Creator<const Item&>(item));
+		{
+			_AddBackNogrow(typename ItemTraits::template Creator<const Item&>(
+				GetMemManager(), item));
+		}
 		else
+		{
 			_AddBackGrow(item);
+		}
 	}
 
 	template<typename ItemCreator>
@@ -804,7 +816,7 @@ public:
 	template<typename... ItemArgs>
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
+		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -815,7 +827,8 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			InsertCrt(index, typename ItemTraits::template Creator<Item>(std::move(item)));
+			InsertCrt(index, typename ItemTraits::template Creator<Item>(
+				GetMemManager(), std::move(item)));
 		}
 		else
 		{
@@ -837,7 +850,7 @@ public:
 		size_t itemIndex = _IndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			typename ItemTraits::template Creator<const Item&> itemCreator(item);
+			typename ItemTraits::template Creator<const Item&> itemCreator(GetMemManager(), item);
 			ItemHandler itemHandler(GetMemManager(), itemCreator);
 			if (grow)
 				_Grow(newCount, ArrayGrowCause::add);
@@ -886,17 +899,10 @@ private:
 	}
 
 	template<typename ItemCreator>
-	static Data _CreateData(size_t count, const ItemCreator& itemCreator,
-		MemManager&& memManager)
+	void _Fill(size_t count, const ItemCreator& itemCreator)
 	{
-		Data data(count, std::move(memManager));
-		Item* items = data.GetItems();
 		for (size_t i = 0; i < count; ++i)
-		{
-			itemCreator(items + i);
-			data.SetCount(i + 1);
-		}
-		return data;
+			AddBackNogrowCrt(itemCreator);
 	}
 
 	template<typename ArgIterator>
@@ -905,8 +911,9 @@ private:
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		MemManager& memManager = GetMemManager();
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackNogrowCrt(IterCreator(*iter));
+			AddBackNogrowCrt(IterCreator(memManager, *iter));
 	}
 
 	template<typename ArgIterator>
@@ -915,8 +922,9 @@ private:
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		MemManager& memManager = GetMemManager();
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackCrt(IterCreator(*iter));
+			AddBackCrt(IterCreator(memManager, *iter));
 	}
 
 	static size_t _GrowCapacity(size_t capacity, size_t minNewCapacity,
@@ -1034,14 +1042,14 @@ private:
 		size_t itemIndex = _IndexOf(static_cast<const Item&>(item));
 		_Grow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		typename ItemTraits::template Creator<Item>
-			(std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
+		typename ItemTraits::template Creator<Item>(GetMemManager(),
+			std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void _AddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		_AddBackGrow(typename ItemTraits::template Creator<Item>(std::move(item)));
+		_AddBackGrow(typename ItemTraits::template Creator<Item>(GetMemManager(), std::move(item)));
 	}
 
 	void _AddBackGrow(const Item& item)
@@ -1055,7 +1063,7 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		(typename ItemTraits::template Creator<const Item&>(item))(&itemBuffer);
+		typename ItemTraits::template Creator<const Item&>(GetMemManager(), item)(&itemBuffer);
 		try
 		{
 			_Grow(newCount, ArrayGrowCause::add);
@@ -1071,7 +1079,7 @@ private:
 
 	void _AddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
 	{
-		_AddBackGrow(typename ItemTraits::template Creator<const Item&>(item));
+		_AddBackGrow(typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	void _RemoveBack(size_t count) MOMO_NOEXCEPT

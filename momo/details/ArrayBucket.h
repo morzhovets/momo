@@ -34,17 +34,19 @@ namespace internal
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		public:
-			explicit Creator(const Item& item) MOMO_NOEXCEPT
-				: mItem(item)
+			explicit Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
+				: mMemManager(memManager),
+				mItem(item)
 			{
 			}
 
 			void operator()(Item* newItem) const
 			{
-				ItemTraits::Copy(mItem, newItem);
+				ItemTraits::Copy(mMemManager.GetBaseMemManager(), mItem, newItem);
 			}
 
 		private:
+			MemManager& mMemManager;
 			const Item& mItem;
 		};
 
@@ -165,6 +167,7 @@ namespace internal
 
 		ArrayBucket(Params& params, const ArrayBucket& bucket)
 		{
+			MemManager& memManager = params.GetMemManager();
 			ConstBounds bounds = bucket.GetBounds();
 			size_t count = bounds.GetCount();
 			if (count == 0)
@@ -180,11 +183,11 @@ namespace internal
 				try
 				{
 					for (; index < count; ++index)
-						ItemTraits::Copy(bounds[index], items + index);
+						ItemTraits::Copy(memManager, bounds[index], items + index);
 				}
 				catch (...)
 				{
-					ItemTraits::Destroy(params.GetMemManager(), items, index);
+					ItemTraits::Destroy(memManager, items, index);
 					throw;
 				}
 				_Set(memory.Extract(), _MakeState(memPoolIndex, count));
@@ -192,8 +195,8 @@ namespace internal
 			else
 			{
 				Memory memory(params.GetArrayMemPool());
-				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(), bounds.GetEnd(),
-					MemManagerPtr(params.GetMemManager()));
+				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(),
+					bounds.GetEnd(), MemManagerPtr(memManager));
 				_Set(memory.Extract(), (unsigned char)0);
 			}
 		}
