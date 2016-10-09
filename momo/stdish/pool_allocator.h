@@ -145,13 +145,13 @@ public:
 	{
 		typedef typename internal::ObjectManager<Value, MemManager>
 			::template Creator<ValueArgs...> ValueCreator;
-		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(ptr);
+		ValueCreator(mMemPool.GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(ptr);
 	}
 
 	template<class Value>
 	void destroy(Value* ptr) MOMO_NOEXCEPT
 	{
-		internal::ObjectManager<Value, MemManager>::Destroy(*ptr);
+		internal::ObjectManager<Value, MemManager>::Destroy(mMemPool.GetMemManager(), *ptr);
 	}
 
 	size_type max_size() const MOMO_NOEXCEPT
