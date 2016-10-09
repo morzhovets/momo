@@ -493,32 +493,31 @@ namespace internal
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
+		MemManager& GetBaseMemManager() MOMO_NOEXCEPT	//?
+		{
+			return *this;
+		}
+
 		template<typename ResType = void>
 		ResType* Allocate(size_t size)
 		{
-			return _GetMemManager().template Allocate<ResType>(size);
+			return GetBaseMemManager().template Allocate<ResType>(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 		{
-			return _GetMemManager().Deallocate(ptr, size);
+			return GetBaseMemManager().Deallocate(ptr, size);
 		}
 
 		template<typename ResType = void>
 		ResType* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return _GetMemManager().template Reallocate<ResType>(ptr, size, newSize);
+			return GetBaseMemManager().template Reallocate<ResType>(ptr, size, newSize);
 		}
 
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
 		{
-			return _GetMemManager().ReallocateInplace(ptr, size, newSize);
-		}
-
-	private:
-		MemManager& _GetMemManager() MOMO_NOEXCEPT
-		{
-			return *this;
+			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
 	};
 
@@ -552,6 +551,11 @@ namespace internal
 		}
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
+
+		MemManager& GetBaseMemManager() MOMO_NOEXCEPT	//?
+		{
+			return mMemManager;
+		}
 
 		template<typename ResType = void>
 		ResType* Allocate(size_t size)

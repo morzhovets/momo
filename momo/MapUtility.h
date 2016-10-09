@@ -171,35 +171,37 @@ namespace internal
 
 	public:
 		template<typename ValueCreator>
-		static void Create(Key&& key, const ValueCreator& valueCreator,
-			Key* newKey, Value* newValue)
+		static void Create(/*MemManager& memManager,*/ Key&& key,
+			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
 			KeyManager::MoveExec(std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
-		static void Create(const Key& key, const ValueCreator& valueCreator,
-			Key* newKey, Value* newValue)
+		static void Create(/*MemManager& memManager,*/ const Key& key,
+			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
 			KeyManager::CopyExec(key, newKey, func);
 		}
 
-		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
+		static void Destroy(MemManager& /*memManager*/, Key& key, Value& value) MOMO_NOEXCEPT
 		{
 			KeyManager::Destroy(key);
 			ValueManager::Destroy(value);
 		}
 
-		static void Relocate(Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
+		static void Relocate(MemManager& /*memManager*/, Key& srcKey, Value& srcValue,
+			Key* dstKey, Value* dstValue)
 		{
 			_Relocate(srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
 
-		static void Replace(Key& srcKey, Value& srcValue, Key& dstKey, Value& dstValue)
+		static void Replace(MemManager& /*memManager*/, Key& srcKey, Value& srcValue,
+			Key& dstKey, Value& dstValue)
 		{
 			_Replace(srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
@@ -207,27 +209,28 @@ namespace internal
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void RelocateExec(KeyIterator srcKeyBegin, ValueIterator srcValueBegin,
-			KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, const Func& func)
+		static void RelocateExec(MemManager& /*memManager*/, KeyIterator srcKeyBegin,
+			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
+			size_t count, const Func& func)
 		{
 			_RelocateExec(srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin, count, func,
 				BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
 
-		static void AssignKey(Key&& srcKey, Key& dstKey)
+		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Key& dstKey)
 		{
 			dstKey = std::move(srcKey);
 		}
 
-		static void AssignKey(const Key& srcKey, Key& dstKey)
+		static void AssignKey(MemManager& /*memManager*/, const Key& srcKey, Key& dstKey)
 		{
 			dstKey = srcKey;
 		}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 		template<typename ValueArg>
-		static void AssignValue(ValueArg&& valueArg, Value& value)
+		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
 		{
 			value = std::forward<ValueArg>(valueArg);
 		}
@@ -429,31 +432,31 @@ namespace internal
 			return *item.GetKeyPtr();
 		}
 
-		static void Destroy(Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::Destroy(*item.GetKeyPtr(), *item.GetValuePtr());
+			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
 		}
 
-		static void Relocate(Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 		{
-			KeyValueTraits::Relocate(*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+			KeyValueTraits::Relocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
-		static void Replace(Item& srcItem, Item& dstItem)
+		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
-			KeyValueTraits::Replace(*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+			KeyValueTraits::Replace(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
 		}
 
-		static void AssignKey(Key&& srcKey, Item& dstItem)
+		static void AssignKey(MemManager& memManager, Key&& srcKey, Item& dstItem)
 		{
-			KeyValueTraits::AssignKey(std::move(srcKey), *dstItem.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, std::move(srcKey), *dstItem.GetKeyPtr());
 		}
 
-		static void AssignKey(const Key& srcKey, Item& dstItem)
+		static void AssignKey(MemManager& memManager, const Key& srcKey, Item& dstItem)
 		{
-			KeyValueTraits::AssignKey(srcKey, *dstItem.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, srcKey, *dstItem.GetKeyPtr());
 		}
 	};
 
@@ -522,7 +525,8 @@ namespace internal
 			{
 				if (mKeyPtr == nullptr)
 				{
-					KeyValueTraits::AssignValue(std::forward<ValueArg>(valueArg), mIter->value);
+					KeyValueTraits::AssignValue(mMap.GetMemManager(),
+						std::forward<ValueArg>(valueArg), mIter->value);
 				}
 				else
 				{

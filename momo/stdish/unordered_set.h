@@ -415,10 +415,10 @@ public:
 		}
 		catch (...)
 		{
-			HashSet::ItemTraits::Destroy(*&valueBuffer);
+			HashSet::ItemTraits::Destroy(mHashSet.GetMemManager(), *&valueBuffer);
 			throw;
 		}
-		HashSet::ItemTraits::Destroy(*&valueBuffer);
+		HashSet::ItemTraits::Destroy(mHashSet.GetMemManager(), *&valueBuffer);
 		return res;
 	}
 

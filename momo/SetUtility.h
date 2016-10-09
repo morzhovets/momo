@@ -40,34 +40,34 @@ namespace internal
 			return item;
 		}
 
-		static void Destroy(Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager& /*memManager*/, Item& item) MOMO_NOEXCEPT
 		{
 			ItemManager::Destroy(item);
 		}
 
-		static void Relocate(Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager& /*memManager*/, Item& srcItem, Item* dstItem)
 		{
 			ItemManager::Relocate(srcItem, dstItem);
 		}
 
-		static void Replace(Item& srcItem, Item& dstItem)
+		static void Replace(MemManager& /*memManager*/, Item& srcItem, Item& dstItem)
 		{
 			ItemManager::Replace(srcItem, dstItem);
 		}
 
-		static void Replace(Item& srcItem, Item& midItem, Item* dstItem)
+		static void Replace(MemManager& /*memManager*/, Item& srcItem, Item& midItem, Item* dstItem)
 		{
 			_Replace(srcItem, midItem, dstItem, BoolConstant<ItemManager::isNothrowRelocatable>(),
 				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
 		}
 
-		static void AssignKey(Key&& srcKey, Item& dstItem)
+		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Item& dstItem)
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			dstItem = std::move(srcKey);
 		}
 
-		static void AssignKey(const Key& srcKey, Item& dstItem)
+		static void AssignKey(MemManager& /*memManager*/, const Key& srcKey, Item& dstItem)
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			dstItem = srcKey;
@@ -80,7 +80,7 @@ namespace internal
 			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
 			ItemManager::Relocate(midItem, dstItem);
-			if (std::addressof(srcItem) != std::addressof(midItem))
+			if (std::addressof(srcItem) != std::addressof(midItem))	//?
 				ItemManager::Relocate(srcItem, std::addressof(midItem));
 		}
 
@@ -296,10 +296,11 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TSettings Settings;
 		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
 		SetExtractedItem() MOMO_NOEXCEPT
-			: mHasItem(false)
+			: mMemManager(nullptr)
 		{
 		}
 
@@ -314,33 +315,33 @@ namespace internal
 
 		bool IsEmpty() const MOMO_NOEXCEPT
 		{
-			return !mHasItem;
+			return mMemManager == nullptr;
 		}
 
 		void Clear() MOMO_NOEXCEPT
 		{
-			if (mHasItem)
-				ItemTraits::Destroy(GetItem());
-			mHasItem = false;
+			if (mMemManager != nullptr)
+				ItemTraits::Destroy(*mMemManager, GetItem());
+			mMemManager = nullptr;
 		}
 
 		Item& GetItem()
 		{
-			MOMO_CHECK(mHasItem);
+			MOMO_CHECK(mMemManager != nullptr);
 			return *&mItemBuffer;
 		}
 
 		template<typename ItemCreator>
-		void SetItemCrt(const ItemCreator& itemCreator)
+		void SetItemCrt(MemManager& memManager, const ItemCreator& itemCreator)
 		{
-			MOMO_CHECK(!mHasItem);
+			MOMO_CHECK(mMemManager == nullptr);
 			itemCreator(&mItemBuffer);
-			mHasItem = true;
+			mMemManager = &memManager;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		bool mHasItem;
+		MemManager* mMemManager;
 	};
 }
 

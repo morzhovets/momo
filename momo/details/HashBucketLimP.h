@@ -75,6 +75,11 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mMemPools[0].GetMemManager().GetBaseMemManager();
+			}
+
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
@@ -130,7 +135,7 @@ namespace internal
 		{
 			if (!_IsEmpty())
 			{
-				ItemTraits::Destroy(_GetItems(), _GetCount());
+				ItemTraits::Destroy(params.GetMemManager(), _GetItems(), _GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(_GetPtr());
 			}
 			mPtr = ptrNull;
@@ -161,8 +166,8 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = _GetItems(memory.GetPointer());
-					ItemTraits::RelocateCreate(_GetItems(), newItems, count,
-						itemCreator, newItems + count);
+					ItemTraits::RelocateCreate(params.GetMemManager(), _GetItems(), newItems,
+						count, itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
 					_Set(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
@@ -314,6 +319,11 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mMemPools[0].GetMemManager().GetBaseMemManager();
+			}
+
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
@@ -369,7 +379,7 @@ namespace internal
 			{
 				Bounds bounds = _GetBounds();
 				Item* items = bounds.GetBegin();
-				ItemTraits::Destroy(items, bounds.GetCount());
+				ItemTraits::Destroy(params.GetMemManager(), items, bounds.GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
 			mPtrState = stateNull;
@@ -403,7 +413,7 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = memory.GetPointer();
-					ItemTraits::RelocateCreate(items, newItems, count,
+					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);

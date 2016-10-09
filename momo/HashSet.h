@@ -367,17 +367,17 @@ namespace internal
 		static const size_t alignment = ItemTraits::alignment;
 
 	public:
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < count; ++i)
-				ItemTraits::Destroy(items[i]);
+				ItemTraits::Destroy(memManager, items[i]);
 		}
 
 		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, Item* newItem)
+		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
+			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+			ItemTraits::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 }
@@ -395,8 +395,8 @@ private:
 
 public:
 	template<typename ItemCreator>
-	static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-		const ItemCreator& itemCreator, Item* newItem)
+	static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+		size_t count, const ItemCreator& itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
 	}
@@ -734,19 +734,20 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto replaceFunc = [] (Item& srcItem, Item& dstItem)
-			{ ItemTraits::Replace(srcItem, dstItem); };
+		auto replaceFunc = [this] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
 		return _Remove(iter, replaceFunc);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
 		MOMO_CHECK(resItem.IsEmpty());
-		auto replaceFunc = [&resItem] (Item& srcItem, Item& dstItem)
+		auto replaceFunc = [this, &resItem] (Item& srcItem, Item& dstItem)
 		{
-			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::Replace(srcItem, dstItem, newItem); };
-			resItem.SetItemCrt(itemCreator);
+			MemManager& memManager = GetMemManager();
+			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
+				{ ItemTraits::Replace(memManager, srcItem, dstItem, newItem); };
+			resItem.SetItemCrt(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc);
 	}
@@ -763,13 +764,13 @@ public:
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
 		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(std::move(newKey), item);
+		ItemTraits::AssignKey(GetMemManager(), std::move(newKey), item);
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
 		Item& item = _GetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(newKey, item);
+		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
 	template<typename RSet>
@@ -779,8 +780,9 @@ public:
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
 		auto relocateFunc = [this] (Item& item)
 		{
-			auto itemCreator = [&item] (Item* newItem)
-				{ ItemTraits::Relocate(item, newItem); };
+			MemManager& memManager = GetMemManager();
+			auto itemCreator = [&memManager, &item] (Item* newItem)
+				{ ItemTraits::Relocate(memManager, item, newItem); };
 			InsertCrt(ItemTraits::GetKey(item), itemCreator);
 		};
 		srcSet.ExtractAll(relocateFunc);
@@ -1107,8 +1109,8 @@ private:
 				--pitem;
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
 				size_t bucketIndex = _GetBucketIndexForAdd(*mBuckets, hashCode);
-				auto relocateCreator = [pitem] (Item* newItem)
-					{ ItemTraits::Relocate(*pitem, newItem); };
+				auto relocateCreator = [this, pitem] (Item* newItem)
+					{ ItemTraits::Relocate(GetMemManager(), *pitem, newItem); };
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator);
 				bucket.DecCount(bucketParams);
 			}

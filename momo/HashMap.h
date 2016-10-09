@@ -48,11 +48,11 @@ namespace internal
 
 	public:
 		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, Item* newItem)
+		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
+			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
 			auto func = [&itemCreator, newItem] () { itemCreator(newItem); };
-			KeyValueTraits::RelocateExec(
+			KeyValueTraits::RelocateExec(memManager,
 				MapKeyIterator<Item*, Key>(srcItems), MapValueIterator<Item*, Value>(srcItems),
 				MapKeyIterator<Item*, Key>(dstItems), MapValueIterator<Item*, Value>(dstItems),
 				count, func);
@@ -73,7 +73,9 @@ namespace internal
 }
 
 template<typename TKey, typename TValue, typename TMemManager>
-using HashMapKeyValueTraits = internal::MapKeyValueTraits<TKey, TValue, TMemManager>;
+class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
+{
+};
 
 struct HashMapSettings
 {
@@ -454,10 +456,10 @@ public:
 		typedef typename std::decay<RMap>::type Map;
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
 		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
-		auto relocateFunc = [this] (Key& key, Value& value)
+		auto relocateFunc = [this, &srcMap] (Key& key, Value& value)
 		{
 			Insert(std::move(key), std::move(value));	//?
-			Map::KeyValueTraits::Destroy(key, value);
+			Map::KeyValueTraits::Destroy(srcMap.GetMemManager(), key, value);
 		};
 		srcMap.ExtractAll(relocateFunc);
 	}
@@ -523,9 +525,9 @@ private:
 	{
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
-		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
+		auto pairCreator = [this, &key, &valueCreator] (KeyValuePair* newPair)
 		{
-			KeyValueTraits::Create(std::forward<RKey>(key), valueCreator,
+			KeyValueTraits::Create(/*GetMemManager(), */std::forward<RKey>(key), valueCreator,
 				newPair->GetKeyPtr(), newPair->GetValuePtr());
 		};
 		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), pairCreator));

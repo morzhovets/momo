@@ -235,15 +235,15 @@ namespace internal
 		static const size_t alignment = ItemTraits::alignment;
 
 	public:
-		static void Destroy(Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(item);
+			ItemTraits::Destroy(memManager, item);
 		}
 
 		template<typename Iterator>
-		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
-			ItemTraits::ShiftNothrow(begin, shift);
+			ItemTraits::ShiftNothrow(memManager, begin, shift);
 		}
 	};
 }
@@ -264,14 +264,14 @@ public:
 
 public:
 	template<typename Iterator, typename ItemCreator>
-	static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-		const ItemCreator& itemCreator, Item* newItem)
+	static void RelocateCreate(MemManager& /*memManager*/, Iterator srcBegin, Iterator dstBegin,
+		size_t count, const ItemCreator& itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(srcBegin, dstBegin, count, itemCreator, newItem);
 	}
 
 	template<typename Iterator>
-	static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+	static void ShiftNothrow(MemManager& /*memManager*/, Iterator begin, size_t shift) MOMO_NOEXCEPT
 	{
 		ItemManager::ShiftNothrow(begin, shift);
 	}
@@ -351,12 +351,12 @@ private:
 		};
 
 	public:
-		Relocator(MemManager& memManager, NodeParams& nodeParams) MOMO_NOEXCEPT
+		explicit Relocator(NodeParams& nodeParams) MOMO_NOEXCEPT
 			: mNodeParams(nodeParams),
-			mOldNodes(MemManagerPtr(memManager)),
-			mNewNodes(MemManagerPtr(memManager)),
-			mSrcSegments(MemManagerPtr(memManager)),
-			mDstSegments(MemManagerPtr(memManager)),
+			mOldNodes(MemManagerPtr(nodeParams.GetMemManager())),
+			mNewNodes(MemManagerPtr(nodeParams.GetMemManager())),
+			mSrcSegments(MemManagerPtr(nodeParams.GetMemManager())),
+			mDstSegments(MemManagerPtr(nodeParams.GetMemManager())),
 			mItemCount(0)
 		{
 		}
@@ -429,8 +429,9 @@ private:
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
-			ItemTraits::RelocateCreate(Iterator(mSrcSegments.GetItems()),
-				Iterator(mDstSegments.GetItems()), mItemCount, itemCreator, pitem);
+			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(),
+				Iterator(mSrcSegments.GetItems()), Iterator(mDstSegments.GetItems()),
+				mItemCount, itemCreator, pitem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();
 			mItemCount = 0;
@@ -721,27 +722,28 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto replaceFunc1 = [] (Item& srcItem)
-			{ ItemTraits::Destroy(srcItem); };
-		auto replaceFunc2 = [] (Item& srcItem, Item& dstItem)
-			{ ItemTraits::Replace(srcItem, dstItem); };
+		auto replaceFunc1 = [this] (Item& srcItem)
+			{ ItemTraits::Destroy(GetMemManager(), srcItem); };
+		auto replaceFunc2 = [this] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
 		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
 	{
 		MOMO_CHECK(resItem.IsEmpty());
-		auto replaceFunc1 = [&resItem] (Item& srcItem)
+		MemManager& memManager = GetMemManager();
+		auto replaceFunc1 = [&memManager, &resItem] (Item& srcItem)
 		{
-			auto itemCreator = [&srcItem] (Item* newItem)
-				{ ItemTraits::Relocate(srcItem, newItem); };
-			resItem.SetItemCrt(itemCreator);
+			auto itemCreator = [&memManager, &srcItem] (Item* newItem)
+				{ ItemTraits::Relocate(memManager, srcItem, newItem); };
+			resItem.SetItemCrt(memManager, itemCreator);
 		};
-		auto replaceFunc2 = [&resItem] (Item& srcItem, Item& dstItem)
+		auto replaceFunc2 = [&memManager, &resItem] (Item& srcItem, Item& dstItem)
 		{
-			auto itemCreator = [&srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::Replace(srcItem, dstItem, newItem); };
-			resItem.SetItemCrt(itemCreator);
+			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
+				{ ItemTraits::Replace(memManager, srcItem, dstItem, newItem); };
+			resItem.SetItemCrt(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}
@@ -758,13 +760,13 @@ public:
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
 		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(std::move(newKey), item);
+		ItemTraits::AssignKey(GetMemManager(), std::move(newKey), item);
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
 		Item& item = _GetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(newKey, item);
+		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
 	template<typename RSet>
@@ -774,8 +776,9 @@ public:
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
 		auto relocateFunc = [this] (Item& item)
 		{
-			auto itemCreator = [&item] (Item* newItem)
-				{ ItemTraits::Relocate(item, newItem); };
+			MemManager& memManager = GetMemManager();
+			auto itemCreator = [&memManager, &item] (Item* newItem)
+				{ ItemTraits::Relocate(memManager, item, newItem); };
 			InsertCrt(ItemTraits::GetKey(item), itemCreator);
 		};
 		srcSet.ExtractAll(relocateFunc);
@@ -901,7 +904,7 @@ private:
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i < count; ++i)
-			ItemTraits::Destroy(*node->GetItemPtr(i));
+			ItemTraits::Destroy(GetMemManager(), *node->GetItemPtr(i));
 		if (!node->IsLeaf())
 		{
 			for (size_t i = 0; i <= count; ++i)
@@ -949,11 +952,11 @@ private:
 		if (itemCount < node->GetCapacity())
 		{
 			itemCreator(node->GetItemPtr(itemCount));
-			node->AcceptBackItem(itemIndex);
+			node->AcceptBackItem(*mNodeParams, itemIndex);
 		}
 		else
 		{
-			Relocator relocator(GetMemManager(), *mNodeParams);
+			Relocator relocator(*mNodeParams);
 			if (itemCount < nodeMaxCapacity)
 				_AddGrow(relocator, node, itemIndex, itemCreator);
 			else
@@ -1053,7 +1056,7 @@ private:
 		relocator.RelocateCreate(itemCreator, leafNode->GetItemPtr(leafItemIndex));
 		if (node->GetParent() == nullptr)
 			mRootNode = node;
-		node->AcceptBackItem(itemIndex);
+		node->AcceptBackItem(*mNodeParams, itemIndex);
 		node->SetChild(itemIndex, splitRes.newNode1);
 		node->SetChild(itemIndex + 1, splitRes.newNode2);
 		_UpdateParents(node);	//?
@@ -1080,7 +1083,7 @@ private:
 		size_t itemIndex = iter.GetItemIndex();
 		if (node->IsLeaf())
 		{
-			node->Remove(itemIndex, replaceFunc1);
+			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
 			_Rebalance(node, node);
 		}
 		else
@@ -1107,7 +1110,7 @@ private:
 		{
 			Node* leftNode = node->GetChild(itemIndex);
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			node->Remove(itemIndex, replaceFunc1);
+			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
 			_Destroy(leftNode);
 			node->SetChild(itemIndex, rightNode);
 			resNode = rightNode;
@@ -1119,13 +1122,13 @@ private:
 				{ replaceFunc2(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
 			{
-				childNode->Remove(childItemIndex, removeFunc);
+				childNode->Remove(*mNodeParams, childItemIndex, removeFunc);
 			}
 			else
 			{
 				Node* leftNode = childNode->GetChild(childItemIndex);
 				Node* rightNode = childNode->GetChild(childItemIndex + 1);
-				childNode->Remove(childItemIndex, removeFunc);
+				childNode->Remove(*mNodeParams, childItemIndex, removeFunc);
 				_Destroy(rightNode);
 				childNode->SetChild(childItemIndex, leftNode);
 			}
@@ -1184,19 +1187,20 @@ private:
 		size_t itemCount2 = node2->GetCount();
 		if (itemCount1 + itemCount2 + 1 > node1->GetCapacity())
 			return false;
-		Relocator relocator(GetMemManager(), *mNodeParams);
+		Relocator relocator(*mNodeParams);
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
-		auto removeFunc = [&relocator, node1, itemCount1] (Item& item)
+		auto removeFunc = [this, &relocator, node1, itemCount1] (Item& item)
 		{
-			auto itemCreator = [&item] (Item* newItem)
-				{ ItemTraits::Relocate(item, newItem); };
+			MemManager& memManager = GetMemManager();
+			auto itemCreator = [&memManager, &item] (Item* newItem)
+				{ ItemTraits::Relocate(memManager, item, newItem); };
 			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
 		};
-		parentNode->Remove(index, removeFunc);
+		parentNode->Remove(*mNodeParams, index, removeFunc);
 		parentNode->SetChild(index, node1);
 		Node* lastChildNode = node1->IsLeaf() ? nullptr : node1->GetChild(itemCount1);
 		for (size_t i = 0; i <= itemCount2; ++i)
-			node1->AcceptBackItem(itemCount1 + i);
+			node1->AcceptBackItem(*mNodeParams, itemCount1 + i);
 		if (!node1->IsLeaf())
 		{
 			node1->SetChild(itemCount1, lastChildNode);

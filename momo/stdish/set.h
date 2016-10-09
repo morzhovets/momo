@@ -541,10 +541,10 @@ private:
 		}
 		catch (...)
 		{
-			TreeSet::ItemTraits::Destroy(*&valueBuffer);
+			TreeSet::ItemTraits::Destroy(mTreeSet.GetMemManager(), *&valueBuffer);
 			throw;
 		}
-		TreeSet::ItemTraits::Destroy(*&valueBuffer);
+		TreeSet::ItemTraits::Destroy(mTreeSet.GetMemManager(), *&valueBuffer);
 		return res;
 	}
 

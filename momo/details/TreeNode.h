@@ -98,6 +98,11 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mInternalMemPool.GetMemManager().GetBaseMemManager();
+			}
+
 			MemPool& GetInternalMemPool() MOMO_NOEXCEPT
 			{
 				return mInternalMemPool;
@@ -208,12 +213,12 @@ namespace internal
 			return _GetItemPtr(index, IsContinuous());
 		}
 
-		void AcceptBackItem(size_t index) MOMO_NOEXCEPT
+		void AcceptBackItem(Params& params, size_t index) MOMO_NOEXCEPT
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			_AcceptBackItem(index, count, IsContinuous());
+			_AcceptBackItem(params, index, count, IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
@@ -223,11 +228,11 @@ namespace internal
 		}
 
 		template<typename RemoveFunc>
-		void Remove(size_t index, const RemoveFunc& removeFunc)
+		void Remove(Params& params, size_t index, const RemoveFunc& removeFunc)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			_Remove(index, count, removeFunc, IsContinuous());
+			_Remove(params, index, count, removeFunc, IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = _GetChildren();
@@ -263,14 +268,14 @@ namespace internal
 			return &mFirstItem + mCounter.indices[index];
 		}
 
-		void _AcceptBackItem(size_t index, size_t count,
+		void _AcceptBackItem(Params& params, size_t index, size_t count,
 			std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
-			ItemTraits::ShiftNothrow(std::reverse_iterator<Item*>(GetItemPtr(count + 1)),
-				count - index);
+			ItemTraits::ShiftNothrow(params.GetMemManager(),
+				std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
 		}
 
-		void _AcceptBackItem(size_t index, size_t count,
+		void _AcceptBackItem(Params& /*params*/, size_t index, size_t count,
 			std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			unsigned char realIndex = mCounter.indices[count];
@@ -279,24 +284,24 @@ namespace internal
 		}
 
 		template<typename RemoveFunc>
-		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
+		void _Remove(Params& params, size_t index, size_t count, const RemoveFunc& removeFunc,
 			std::true_type /*isContinuous*/)
 		{
-			ItemTraits::ShiftNothrow(GetItemPtr(index), count - index - 1);
+			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 			try
 			{
 				removeFunc(*GetItemPtr(count - 1));
 			}
 			catch (...)
 			{
-				ItemTraits::ShiftNothrow(std::reverse_iterator<Item*>(GetItemPtr(count)),
-					count - index - 1);
+				ItemTraits::ShiftNothrow(params.GetMemManager(),
+					std::reverse_iterator<Item*>(GetItemPtr(count)), count - index - 1);
 				throw;
 			}
 		}
 
 		template<typename RemoveFunc>
-		void _Remove(size_t index, size_t count, const RemoveFunc& removeFunc,
+		void _Remove(Params& /*params*/, size_t index, size_t count, const RemoveFunc& removeFunc,
 			std::false_type /*isContinuous*/)
 		{
 			removeFunc(*GetItemPtr(index));

@@ -41,7 +41,8 @@ namespace internal
 		class Params
 		{
 		public:
-			explicit Params(MemManager& /*memManager*/) MOMO_NOEXCEPT
+			explicit Params(MemManager& memManager) MOMO_NOEXCEPT
+				: mMemManager(memManager)
 			{
 			}
 
@@ -52,6 +53,14 @@ namespace internal
 			}
 
 			Params& operator=(const Params&) = delete;
+
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mMemManager;
+			}
+
+		private:
+			MemManager& mMemManager;
 		};
 
 	public:
@@ -89,10 +98,10 @@ namespace internal
 			return _GetState() != stateEmpty;
 		}
 
-		void Clear(Params& /*params*/) MOMO_NOEXCEPT
+		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
-				ItemTraits::Destroy(&mItemBuffer, 1);
+				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
 			_SetState(stateEmpty);
 		}
 

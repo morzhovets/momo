@@ -49,21 +49,23 @@ namespace internal
 		};
 
 	public:
-		static void Destroy(MemManager& /*memManager*/, Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(items, count);
+			ItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
 		}
 
-		static void Relocate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems, size_t count)
+		static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, [] (Item*) {}, nullptr);
+			ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems, dstItems, count,
+				[] (Item*) {}, nullptr);
 		}
 
 		template<typename ItemCreator>
-		static void RelocateCreate(MemManager& /*memManager*/, Item* srcItems, Item* dstItems,
+		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+			ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems, dstItems, count,
+				itemCreator, newItem);
 		}
 	};
 
@@ -126,6 +128,11 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mArrayMemPool.GetMemManager().GetBaseMemManager();
+			}
+
 			MemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
@@ -177,17 +184,16 @@ namespace internal
 				}
 				catch (...)
 				{
-					ItemTraits::Destroy(items, index);
+					ItemTraits::Destroy(params.GetMemManager(), items, index);
 					throw;
 				}
 				_Set(memory.Extract(), _MakeState(memPoolIndex, count));
 			}
 			else
 			{
-				MemPool& arrayMemPool = params.GetArrayMemPool();
-				Memory memory(arrayMemPool);
+				Memory memory(params.GetArrayMemPool());
 				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(), bounds.GetEnd(),
-					MemManagerPtr(arrayMemPool.GetMemManager()));
+					MemManagerPtr(params.GetMemManager()));
 				_Set(memory.Extract(), (unsigned char)0);
 			}
 		}
@@ -227,7 +233,7 @@ namespace internal
 			size_t memPoolIndex = _GetMemPoolIndex();
 			if (memPoolIndex > 0)
 			{
-				ItemTraits::Destroy(_GetFastItems(), _GetFastCount());
+				ItemTraits::Destroy(params.GetMemManager(), _GetFastItems(), _GetFastCount());
 				params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 			}
 			else
@@ -265,8 +271,8 @@ namespace internal
 							size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
 							Memory memory(params.GetFastMemPool(newMemPoolIndex));
 							Item* newItems = _GetFastItems(memory.GetPointer());
-							ItemTraits::RelocateCreate(items, newItems, count,
-								itemCreator, newItems + count);
+							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
+								count, itemCreator, newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
 						}
@@ -277,8 +283,8 @@ namespace internal
 							Array array = Array::CreateCap(maxFastCount * 2,
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							Item* newItems = array.GetItems();
-							ItemTraits::RelocateCreate(items, newItems, count,
-								itemCreator, newItems + count);
+							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
+								count, itemCreator, newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
 							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
@@ -306,7 +312,7 @@ namespace internal
 				return Clear(params);
 			if (_GetMemPoolIndex() > 0)
 			{
-				ItemTraits::Destroy(_GetFastItems() + count - 1, 1);
+				ItemTraits::Destroy(params.GetMemManager(), _GetFastItems() + count - 1, 1);
 				--*mPtr;
 			}
 			else

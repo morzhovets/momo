@@ -75,6 +75,11 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			MemManager& GetMemManager() MOMO_NOEXCEPT
+			{
+				return mMemPools[0].GetMemManager().GetBaseMemManager();
+			}
+
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex >= minMemPoolIndex);
@@ -125,7 +130,7 @@ namespace internal
 			Item* items = _GetItems();
 			if (items != nullptr)
 			{
-				ItemTraits::Destroy(items, _GetCount());
+				ItemTraits::Destroy(params.GetMemManager(), items, _GetCount());
 				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
 			}
 			_Set(nullptr, _GetMemPoolIndex(1), 0);
@@ -157,7 +162,7 @@ namespace internal
 					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = memory.GetPointer();
-					ItemTraits::RelocateCreate(items, newItems, count,
+					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
 					_Set(memory.Extract(), newMemPoolIndex, newCount);

@@ -30,17 +30,17 @@ namespace internal
 		static const size_t alignment = ItemTraits::alignment;
 
 	public:
-		static void Destroy(Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			if (count != 1)
-				ItemTraits::Destroy(items, count);
+				ItemTraits::Destroy(memManager, items, count);
 		}
 
 		template<typename ItemCreator>
-		static void RelocateCreate(Item* srcItems, Item* dstItems, size_t count,
-			const ItemCreator& itemCreator, Item* newItem)
+		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
+			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(srcItems, dstItems, count, itemCreator, newItem);
+			ItemTraits::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
 		}
 	};
 
@@ -106,7 +106,7 @@ namespace internal
 		{
 			Bounds bounds = GetBounds(params);
 			if (bounds.GetCount() == 1)
-				ItemTraits::Destroy(bounds.GetBegin(), 1);
+				ItemTraits::Destroy(params.GetMemManager(), bounds.GetBegin(), 1);
 			mArrayBucket.Clear(params);
 		}
 

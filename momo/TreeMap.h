@@ -51,21 +51,23 @@ namespace internal
 
 	public:
 		template<typename Iterator, typename ItemCreator>
-		static void RelocateCreate(Iterator srcBegin, Iterator dstBegin, size_t count,
-			const ItemCreator& itemCreator, Item* newItem)
+		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
 			auto func = [&itemCreator, newItem] () { itemCreator(newItem); };
-			KeyValueTraits::RelocateExec(
+			KeyValueTraits::RelocateExec(memManager,
 				MapKeyIterator<Iterator, Key>(srcBegin), MapValueIterator<Iterator, Value>(srcBegin),
 				MapKeyIterator<Iterator, Key>(dstBegin), MapValueIterator<Iterator, Value>(dstBegin),
 				count, func);
 		}
 
 		template<typename Iterator>
-		static void ShiftNothrow(Iterator begin, size_t shift) MOMO_NOEXCEPT
+		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::ShiftKeyNothrow(MapKeyIterator<Iterator, Key>(begin), shift);
-			KeyValueTraits::ShiftValueNothrow(MapValueIterator<Iterator, Value>(begin), shift);
+			KeyValueTraits::ShiftKeyNothrow(memManager,
+				MapKeyIterator<Iterator, Key>(begin), shift);
+			KeyValueTraits::ShiftValueNothrow(memManager,
+				MapValueIterator<Iterator, Value>(begin), shift);
 		}
 	};
 
@@ -98,13 +100,15 @@ public:
 
 public:
 	template<typename KeyIterator>
-	static void ShiftKeyNothrow(KeyIterator keyBegin, size_t shift) MOMO_NOEXCEPT
+	static void ShiftKeyNothrow(MemManager& /*memManager*/, KeyIterator keyBegin,
+		size_t shift) MOMO_NOEXCEPT
 	{
 		KeyManager::ShiftNothrow(keyBegin, shift);
 	}
 
 	template<typename ValueIterator>
-	static void ShiftValueNothrow(ValueIterator valueBegin, size_t shift) MOMO_NOEXCEPT
+	static void ShiftValueNothrow(MemManager& /*memManager*/, ValueIterator valueBegin,
+		size_t shift) MOMO_NOEXCEPT
 	{
 		ValueManager::ShiftNothrow(valueBegin, shift);
 	}
@@ -514,10 +518,10 @@ public:
 		typedef typename std::decay<RMap>::type Map;
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
 		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
-		auto relocateFunc = [this] (Key& key, Value& value)
+		auto relocateFunc = [this, &srcMap] (Key& key, Value& value)
 		{
 			Insert(std::move(key), std::move(value));	//?
-			Map::KeyValueTraits::Destroy(key, value);
+			Map::KeyValueTraits::Destroy(srcMap.GetMemManager(), key, value);
 		};
 		srcMap.ExtractAll(relocateFunc);
 	}
@@ -568,9 +572,9 @@ private:
 	{
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
-		auto pairCreator = [&key, &valueCreator] (KeyValuePair* newPair)
+		auto pairCreator = [this, &key, &valueCreator] (KeyValuePair* newPair)
 		{
-			KeyValueTraits::Create(std::forward<RKey>(key), valueCreator,
+			KeyValueTraits::Create(/*GetMemManager(), */std::forward<RKey>(key), valueCreator,
 				newPair->GetKeyPtr(), newPair->GetValuePtr());
 		};
 		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));
