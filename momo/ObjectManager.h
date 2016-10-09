@@ -70,8 +70,7 @@ namespace internal
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
-			|| isTriviallyRelocatable || isNothrowMoveConstructible
-			|| std::is_nothrow_copy_assignable<Object>::value;
+			|| isNothrowRelocatable || std::is_nothrow_copy_assignable<Object>::value;
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
@@ -190,8 +189,8 @@ namespace internal
 			MOMO_NOEXCEPT_IF(isNothrowAnywayAssignable)
 		{
 			_AssignAnyway(memManager, srcObject, dstObject, std::is_nothrow_move_assignable<Object>(),
-				BoolConstant<isNothrowSwappable>(), BoolConstant<isTriviallyRelocatable>(),
-				BoolConstant<isNothrowMoveConstructible>(), std::is_nothrow_copy_assignable<Object>());
+				BoolConstant<isNothrowSwappable>(), BoolConstant<isNothrowRelocatable>(),
+				std::is_nothrow_copy_assignable<Object>());
 		}
 
 		static void Replace(MemManager& memManager, Object& srcObject, Object& dstObject)
@@ -243,56 +242,41 @@ namespace internal
 		}
 
 	private:
-		template<bool isNothrowSwappable, bool isTriviallyRelocatable,
-			bool isNothrowMoveConstructible, bool isNothrowCopyAssignable>
+		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,
-			BoolConstant<isTriviallyRelocatable>, BoolConstant<isNothrowMoveConstructible>,
-			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
+			BoolConstant<isNothrowRelocatable>, BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
 		{
 			dstObject = std::move(srcObject);
 		}
 
-		template<bool isTriviallyRelocatable, bool isNothrowMoveConstructible,
-			bool isNothrowCopyAssignable>
+		template<bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::true_type /*isNothrowSwappable*/,
-			BoolConstant<isTriviallyRelocatable>, BoolConstant<isNothrowMoveConstructible>,
-			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
+			BoolConstant<isNothrowRelocatable>, BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
 		{
 			using std::swap;
 			swap(srcObject, dstObject);
 		}
 
-		template<bool isNothrowMoveConstructible, bool isNothrowCopyAssignable>
-		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
-			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::true_type /*isTriviallyRelocatable*/, BoolConstant<isNothrowMoveConstructible>,
-			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
-		{
-			static const size_t size = sizeof(Object);
-			ObjectBuffer<Object, alignment> objectBuffer;
-			memcpy(&objectBuffer, std::addressof(dstObject), size);
-			memcpy(std::addressof(dstObject), std::addressof(srcObject), size);
-			memcpy(std::addressof(srcObject), &objectBuffer, size);
-		}
-
 		template<bool isNothrowCopyAssignable>
 		static void _AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::false_type /*isTriviallyRelocatable*/, std::true_type /*isNothrowMoveConstructible*/,
+			std::true_type /*isNothrowRelocatable*/,
 			BoolConstant<isNothrowCopyAssignable>) MOMO_NOEXCEPT
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
-				Destroy(memManager, dstObject);
-				Move(memManager, std::move(srcObject), std::addressof(dstObject));
+				ObjectBuffer<Object, alignment> objectBuffer;
+				Relocate(dstObject, &objectBuffer);
+				Relocate(srcObject, std::addressof(dstObject));
+				Relocate(*&objectBuffer, std::addressof(srcObject));
 			}
 		}
 
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::false_type /*isTriviallyRelocatable*/, std::false_type /*isNothrowMoveConstructible*/,
+			std::false_type /*isNothrowRelocatable*/,
 			std::true_type /*isNothrowCopyAssignable*/) MOMO_NOEXCEPT
 		{
 			dstObject = static_cast<const Object&>(srcObject);
@@ -300,8 +284,7 @@ namespace internal
 
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::false_type /*isTriviallyRelocatable*/, std::false_type /*isNothrowMoveConstructible*/,
-			std::false_type /*isNothrowCopyAssignable*/)
+			std::false_type /*isNothrowRelocatable*/, std::false_type /*isNothrowCopyAssignable*/)
 		{
 			dstObject = std::move(srcObject);
 		}
