@@ -118,12 +118,12 @@ namespace internal
 		static void Move(Object&& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
 		{
-			new(dstObject) Object(std::move(srcObject));
+			Creator<Object>(std::move(srcObject))(dstObject);
 		}
 
 		static void Copy(const Object& srcObject, Object* dstObject)
 		{
-			new(dstObject) Object(srcObject);
+			(Creator<const Object&>(srcObject))(dstObject);
 		}
 
 		template<typename Func>
@@ -175,12 +175,9 @@ namespace internal
 		static void Destroy(Iterator begin, size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_CHECK_TYPE(Object, *begin);
-			if (!std::is_trivially_destructible<Object>::value)
-			{
-				Iterator iter = begin;
-				for (size_t i = 0; i < count; ++i, ++iter)
-					Destroy(*iter);
-			}
+			Iterator iter = begin;
+			for (size_t i = 0; i < count; ++i, ++iter)
+				Destroy(*iter);
 		}
 
 		static void AssignAnyway(Object& srcObject, Object& dstObject)
