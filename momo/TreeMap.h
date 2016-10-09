@@ -36,15 +36,15 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKeyValueTraits>
-	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
+	template<typename TKeyValuePair>
+	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
 	public:
-		typedef typename TKeyValueTraits KeyValueTraits;
+		typedef TKeyValuePair Item;
+		typedef typename Item::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::Value Value;
-
-		typedef MapKeyValuePair<KeyValueTraits> Item;
+		typedef typename KeyValueTraits::MemManager MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
@@ -135,7 +135,7 @@ public:
 private:
 	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
 
-	typedef internal::TreeMapNestedSetItemTraits<KeyValueTraits> TreeSetItemTraits;
+	typedef internal::TreeMapNestedSetItemTraits<KeyValuePair> TreeSetItemTraits;
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
 	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;

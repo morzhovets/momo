@@ -36,15 +36,15 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKeyValueTraits>
-	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
+	template<typename TKeyValuePair>
+	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
 	public:
-		typedef typename TKeyValueTraits KeyValueTraits;
+		typedef TKeyValuePair Item;
+		typedef typename Item::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::Value Value;
-
-		typedef MapKeyValuePair<KeyValueTraits> Item;
+		typedef typename KeyValueTraits::MemManager MemManager;
 
 	public:
 		template<typename ItemCreator>
@@ -102,7 +102,7 @@ public:
 private:
 	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
 
-	typedef internal::HashMapNestedSetItemTraits<KeyValueTraits> HashSetItemTraits;
+	typedef internal::HashMapNestedSetItemTraits<KeyValuePair> HashSetItemTraits;
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
