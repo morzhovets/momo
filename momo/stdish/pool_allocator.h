@@ -143,14 +143,15 @@ public:
 	template<typename Value, typename... ValueArgs>
 	void construct(Value* ptr, ValueArgs&&... valueArgs)
 	{
-		typedef typename internal::ObjectManager<Value>::template Creator<ValueArgs...> ValueCreator;
+		typedef typename internal::ObjectManager<Value, MemManager>
+			::template Creator<ValueArgs...> ValueCreator;
 		ValueCreator(std::forward<ValueArgs>(valueArgs)...)(ptr);
 	}
 
 	template<class Value>
 	void destroy(Value* ptr) MOMO_NOEXCEPT
 	{
-		internal::ObjectManager<Value>::Destroy(*ptr);
+		internal::ObjectManager<Value, MemManager>::Destroy(*ptr);
 	}
 
 	size_type max_size() const MOMO_NOEXCEPT

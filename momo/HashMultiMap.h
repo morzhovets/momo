@@ -283,7 +283,7 @@ namespace internal
 		typedef ValueArray Value;	//?
 
 	private:
-		typedef internal::ObjectManager<Value> ValueManager;
+		typedef ObjectManager<Value, MemManager> ValueManager;
 
 	public:
 		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
@@ -383,8 +383,8 @@ public:
 	typedef TMemManager MemManager;
 
 private:
-	typedef internal::ObjectManager<Key> KeyManager;
-	typedef internal::ObjectManager<Value> ValueManager;
+	typedef internal::ObjectManager<Key, MemManager> KeyManager;
+	typedef internal::ObjectManager<Value, MemManager> ValueManager;
 
 public:
 	static const size_t keyAlignment = KeyManager::alignment;

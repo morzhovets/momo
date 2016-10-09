@@ -20,8 +20,8 @@
   4. In case default `KeyValueTraits`: if insert/add function receiving
     argument `Key&& key` throws exception, this argument may be changed.
   5. In case default `KeyValueTraits`: if function `Remove` throws exception
-    and `ObjectManager<Key>::isNothrowAnywayAssignable` is false
-    and `ObjectManager<Value>::isNothrowAnywayAssignable` is false,
+    and `ObjectManager<Key, MemManager>::isNothrowAnywayAssignable` is false
+    and `ObjectManager<Value, MemManager>::isNothrowAnywayAssignable` is false,
     removing value may be changed.
 
 \**********************************************************/

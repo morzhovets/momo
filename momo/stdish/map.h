@@ -686,7 +686,7 @@ private:
 		const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef internal::ObjectManager<key_type> KeyManager;
+		typedef internal::ObjectManager<key_type, typename TreeMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(std::move(keyArgs))(&keyBuffer);

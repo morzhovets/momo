@@ -257,7 +257,7 @@ public:
 	typedef TMemManager MemManager;
 
 private:
-	typedef internal::ObjectManager<Item> ItemManager;
+	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
 	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;

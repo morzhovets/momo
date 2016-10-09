@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "Utility.h"
+#include "MemManager.h"
 
 #define MOMO_ALIGNMENT_OF(Object) ((MOMO_MAX_ALIGNMENT < std::alignment_of<Object>::value) \
 	? MOMO_MAX_ALIGNMENT : std::alignment_of<Object>::value)
@@ -52,11 +52,12 @@ namespace internal
 		typename std::aligned_storage<sizeof(Object), alignment>::type mBuffer;
 	};
 
-	template<typename TObject>
+	template<typename TObject, typename TMemManager>
 	class ObjectManager
 	{
 	public:
 		typedef TObject Object;
+		typedef TMemManager MemManager;
 
 		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 

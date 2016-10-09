@@ -25,7 +25,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		typedef internal::ObjectManager<Item> ItemManager;
+		typedef ObjectManager<Item, MemManager> ItemManager;
 
 	public:
 		static const size_t alignment = ItemManager::alignment;

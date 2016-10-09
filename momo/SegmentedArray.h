@@ -35,7 +35,7 @@ public:
 	typedef TMemManager MemManager;
 
 private:
-	typedef internal::ObjectManager<Item> ItemManager;
+	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
 	static const size_t alignment = ItemManager::alignment;

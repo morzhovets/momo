@@ -159,8 +159,8 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		typedef internal::ObjectManager<Key> KeyManager;
-		typedef internal::ObjectManager<Value> ValueManager;
+		typedef ObjectManager<Key, MemManager> KeyManager;
+		typedef ObjectManager<Value, MemManager> ValueManager;
 
 	public:
 		static const size_t keyAlignment = KeyManager::alignment;
@@ -399,7 +399,7 @@ namespace internal
 		typedef typename KeyValueTraits::MemManager MemManager;
 
 	private:
-		typedef internal::ObjectManager<Item> ItemManager;
+		typedef ObjectManager<Item, MemManager> ItemManager;
 
 	public:
 		static const size_t alignment = ItemManager::alignment;

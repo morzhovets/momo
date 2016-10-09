@@ -24,7 +24,7 @@ template<typename TValue, typename TMemManager>
 struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>
 {
 	static const bool isNothrowMoveConstructible =
-		momo::internal::ObjectManager<TValue>::isNothrowMoveConstructible;
+		momo::internal::ObjectManager<TValue, TMemManager>::isNothrowMoveConstructible;
 };
 
 #define _LIBCPP_DEBUG 1
