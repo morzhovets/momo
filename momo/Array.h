@@ -62,7 +62,7 @@ namespace internal
 
 		ArrayPtrIterator& operator+=(ptrdiff_t diff)
 		{
-			MOMO_CHECK(mItemPtr != nullptr);
+			MOMO_CHECK(mItemPtr != nullptr || diff == 0);
 			mItemPtr += diff;
 			return *this;
 		}
