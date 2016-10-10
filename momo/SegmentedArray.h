@@ -219,9 +219,8 @@ public:
 		{
 			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-			MemManager& memManager = GetMemManager();
 			for (ArgIterator iter = begin; iter != end; ++iter)
-				AddBackCrt(IterCreator(memManager, *iter));
+				AddBackCrt(IterCreator(GetMemManager(), *iter));
 		}
 		catch (...)
 		{

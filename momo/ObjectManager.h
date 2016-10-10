@@ -312,9 +312,9 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
-				Relocate(dstObject, &objectBuffer);
-				Relocate(srcObject, std::addressof(dstObject));
-				Relocate(*&objectBuffer, std::addressof(srcObject));
+				Relocate(memManager, dstObject, &objectBuffer);
+				Relocate(memManager, srcObject, std::addressof(dstObject));
+				Relocate(memManager, *&objectBuffer, std::addressof(srcObject));
 			}
 		}
 
