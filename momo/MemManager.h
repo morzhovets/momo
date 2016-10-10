@@ -456,26 +456,26 @@ namespace internal
 		}
 	};
 
-	template<typename TMemManager,
-		bool tIsMemManagerEmpty = std::is_empty<TMemManager>::value
-			&& std::is_nothrow_default_constructible<TMemManager>::value>
+	template<typename TBaseMemManager,
+		bool tIsEmpty = std::is_empty<TBaseMemManager>::value
+			&& std::is_nothrow_default_constructible<TBaseMemManager>::value>
 	class MemManagerPtr;
 
-	template<typename TMemManager>
-	class MemManagerPtr<TMemManager, true> : private TMemManager
+	template<typename TBaseMemManager>
+	class MemManagerPtr<TBaseMemManager, true> : private TBaseMemManager
 	{
 	public:
-		typedef TMemManager MemManager;
+		typedef TBaseMemManager BaseMemManager;
 
-		static const bool canReallocate = MemManager::canReallocate;
-		static const bool canReallocateInplace = MemManager::canReallocateInplace;
+		static const bool canReallocate = BaseMemManager::canReallocate;
+		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
 
 	public:
 		MemManagerPtr() MOMO_NOEXCEPT
 		{
 		}
 
-		explicit MemManagerPtr(MemManager& /*memManager*/) MOMO_NOEXCEPT
+		explicit MemManagerPtr(BaseMemManager& /*memManager*/) MOMO_NOEXCEPT
 		{
 		}
 
@@ -493,7 +493,7 @@ namespace internal
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		MemManager& GetBaseMemManager() MOMO_NOEXCEPT	//?
+		BaseMemManager& GetBaseMemManager() MOMO_NOEXCEPT
 		{
 			return *this;
 		}
@@ -506,7 +506,7 @@ namespace internal
 
 		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 		{
-			return GetBaseMemManager().Deallocate(ptr, size);
+			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
 		template<typename ResType = void>
@@ -521,28 +521,28 @@ namespace internal
 		}
 	};
 
-	template<typename TMemManager>
-	class MemManagerPtr<TMemManager, false>
+	template<typename TBaseMemManager>
+	class MemManagerPtr<TBaseMemManager, false>
 	{
 	public:
-		typedef TMemManager MemManager;
+		typedef TBaseMemManager BaseMemManager;
 
-		static const bool canReallocate = MemManager::canReallocate;
-		static const bool canReallocateInplace = MemManager::canReallocateInplace;
+		static const bool canReallocate = BaseMemManager::canReallocate;
+		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
 
 	public:
-		explicit MemManagerPtr(MemManager& memManager) MOMO_NOEXCEPT
-			: mMemManager(memManager)
+		explicit MemManagerPtr(BaseMemManager& memManager) MOMO_NOEXCEPT
+			: mBaseMemManager(memManager)
 		{
 		}
 
 		MemManagerPtr(MemManagerPtr&& memManagerPtr) MOMO_NOEXCEPT
-			: mMemManager(memManagerPtr.mMemManager)
+			: mBaseMemManager(memManagerPtr.mBaseMemManager)
 		{
 		}
 
 		MemManagerPtr(const MemManagerPtr& memManagerPtr) MOMO_NOEXCEPT
-			: mMemManager(memManagerPtr.mMemManager)
+			: mBaseMemManager(memManagerPtr.mBaseMemManager)
 		{
 		}
 
@@ -552,35 +552,35 @@ namespace internal
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		MemManager& GetBaseMemManager() MOMO_NOEXCEPT	//?
+		BaseMemManager& GetBaseMemManager() MOMO_NOEXCEPT
 		{
-			return mMemManager;
+			return mBaseMemManager;
 		}
 
 		template<typename ResType = void>
 		ResType* Allocate(size_t size)
 		{
-			return mMemManager.template Allocate<ResType>(size);
+			return mBaseMemManager.template Allocate<ResType>(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 		{
-			return mMemManager.Deallocate(ptr, size);
+			mBaseMemManager.Deallocate(ptr, size);
 		}
 
 		template<typename ResType = void>
 		ResType* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return mMemManager.template Reallocate<ResType>(ptr, size, newSize);
+			return mBaseMemManager.template Reallocate<ResType>(ptr, size, newSize);
 		}
 
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
 		{
-			return mMemManager.ReallocateInplace(ptr, size, newSize);
+			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
 		}
 
 	private:
-		MemManager& mMemManager;
+		BaseMemManager& mBaseMemManager;
 	};
 }
 
