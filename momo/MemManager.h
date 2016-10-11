@@ -240,13 +240,13 @@ public:
 	}
 
 	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
-		: CharAllocator(std::move(memManager._GetCharAllocator()))
+		: CharAllocator(std::move(memManager.GetCharAllocator()))
 	{
 	}
 
 	MemManagerStd(const MemManagerStd& memManager)
 		: CharAllocator(std::allocator_traits<CharAllocator>
-			::select_on_container_copy_construction(memManager._GetCharAllocator()))
+			::select_on_container_copy_construction(memManager.GetCharAllocator()))
 	{
 	}
 
@@ -259,28 +259,22 @@ public:
 	template<typename ResType = void>
 	ResType* Allocate(size_t size)
 	{
-		void* ptr = std::allocator_traits<CharAllocator>::allocate(_GetCharAllocator(), size);
+		void* ptr = std::allocator_traits<CharAllocator>::allocate(GetCharAllocator(), size);
 		return static_cast<ResType*>(ptr);
 	}
 
 	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
 	{
-		std::allocator_traits<CharAllocator>::deallocate(_GetCharAllocator(),
+		std::allocator_traits<CharAllocator>::deallocate(GetCharAllocator(),
 			static_cast<char*>(ptr), size);
 	}
 
-	Allocator GetAllocator() const MOMO_NOEXCEPT
-	{
-		return Allocator(_GetCharAllocator());
-	}
-
-private:
-	const CharAllocator& _GetCharAllocator() const MOMO_NOEXCEPT
+	const CharAllocator& GetCharAllocator() const MOMO_NOEXCEPT
 	{
 		return *this;
 	}
 
-	CharAllocator& _GetCharAllocator() MOMO_NOEXCEPT
+	CharAllocator& GetCharAllocator() MOMO_NOEXCEPT
 	{
 		return *this;
 	}
@@ -289,10 +283,12 @@ private:
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
 template<typename TItem>
-class MemManagerStd<std::allocator<TItem>> : public MemManagerDefault
+class MemManagerStd<std::allocator<TItem>>
+	: private std::allocator<char>, public MemManagerDefault
 {
 public:
 	typedef std::allocator<TItem> Allocator;
+	typedef std::allocator<char> CharAllocator;
 
 public:
 	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())
@@ -316,9 +312,14 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	Allocator GetAllocator() const MOMO_NOEXCEPT
+	const CharAllocator& GetCharAllocator() const MOMO_NOEXCEPT
 	{
-		return Allocator();
+		return *this;
+	}
+
+	CharAllocator& GetCharAllocator() MOMO_NOEXCEPT
+	{
+		return *this;
 	}
 };
 

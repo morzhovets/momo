@@ -256,7 +256,7 @@ public:
 
 	allocator_type get_allocator() const MOMO_NOEXCEPT
 	{
-		return mTreeSet.GetMemManager().GetAllocator();
+		return allocator_type(mTreeSet.GetMemManager().GetCharAllocator());
 	}
 
 	size_type max_size() const MOMO_NOEXCEPT

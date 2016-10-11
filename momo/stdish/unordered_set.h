@@ -288,7 +288,7 @@ public:
 
 	allocator_type get_allocator() const MOMO_NOEXCEPT
 	{
-		return mHashSet.GetMemManager().GetAllocator();
+		return allocator_type(mHashSet.GetMemManager().GetCharAllocator());
 	}
 
 	size_type max_size() const MOMO_NOEXCEPT

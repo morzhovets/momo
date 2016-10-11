@@ -138,8 +138,8 @@ namespace internal
 			void _Create(MemManagerStd<Allocator>& memManager, Object* newObject,
 				Sequence<sequence...>) const
 			{
-				Allocator alloc = memManager.GetAllocator();
-				std::allocator_traits<Allocator>::construct(alloc, newObject,
+				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
+					memManager.GetCharAllocator(), newObject,
 					std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
@@ -282,8 +282,8 @@ namespace internal
 		template<typename Allocator>
 		static void _Destroy(MemManagerStd<Allocator>& memManager, Object& object) MOMO_NOEXCEPT
 		{
-			Allocator alloc = memManager.GetAllocator();
-			std::allocator_traits<Allocator>::destroy(alloc, std::addressof(object));
+			std::allocator_traits<Allocator>::template rebind_traits<char>::destroy(
+				memManager.GetCharAllocator(), std::addressof(object));
 		}
 
 		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>

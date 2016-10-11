@@ -106,7 +106,7 @@ public:
 
 	base_allocator_type get_base_allocator() const MOMO_NOEXCEPT
 	{
-		return mMemPool.GetMemManager().GetAllocator();
+		return base_allocator_type(mMemPool.GetMemManager().GetCharAllocator());
 	}
 
 	pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
