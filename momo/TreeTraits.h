@@ -51,7 +51,7 @@ public:
 
 	bool IsLess(const Key& key1, const Key& key2) const
 	{
-		return std::less<Key>()(key1, key2);
+		return std::less<Key>()(key1, key2);	//?
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
@@ -64,7 +64,7 @@ public:
 };
 
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessFunc = MOMO_DEFAULT_ORDER(TKey),
 	typename TTreeNode = TreeNodeDefault>
 class TreeTraitsStd
 {

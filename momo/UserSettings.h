@@ -36,7 +36,7 @@
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
 
-// C++17: (std::is_nothrow_swappable<Object>::value)
+// C++17: (std::is_nothrow_swappable_v<Object>)
 #define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
 
 // If your platform does not require data alignment, define it as `1`
@@ -62,8 +62,11 @@
 // Default bucket type in hash tables
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP<>
 
-// Settings of node in b-tree
+// Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
+
+// C++17: std::default_order_t<Key>
+#define MOMO_DEFAULT_ORDER(Key) std::less<Key>
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
