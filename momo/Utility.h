@@ -33,14 +33,6 @@
 #include <Windows.h>
 #endif
 
-#ifdef MOMO_USE_NOEXCEPT
-#define MOMO_NOEXCEPT noexcept
-#define MOMO_NOEXCEPT_IF(expr) noexcept(expr)
-#else
-#define MOMO_NOEXCEPT throw()
-#define MOMO_NOEXCEPT_IF(expr)
-#endif
-
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
 	{ \

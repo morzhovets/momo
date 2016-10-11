@@ -36,7 +36,7 @@
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
 
-// C++17: (std::is_nothrow_swappable_v<Object>)
+// C++17: `std::is_nothrow_swappable_v<Object>`
 #define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
 
 // If your platform does not require data alignment, define it as `1`
@@ -46,10 +46,10 @@
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
 #define MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT 16
 
-// The method of arguments check in functions (assertion or exception)
+// The method of arguments check in functions (`assertion` or `exception`)
 #define MOMO_DEFAULT_CHECK_MODE assertion
 
-// The method of arguments extra check in functions (assertion or nothing)
+// The method of arguments extra check in functions (`assertion` or `nothing`)
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE assertion
 
 // Checking iterators for invalidation
@@ -65,7 +65,7 @@
 // Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
 
-// C++17: std::default_order_t<Key>
+// C++17: `std::default_order_t<Key>`
 #define MOMO_DEFAULT_ORDER(Key) std::less<Key>
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
@@ -81,7 +81,7 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
-// nullptr, converted to the type uintptr_t
+// `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR ((uintptr_t)(void*)nullptr)
 
 #if defined(__clang__)
@@ -89,15 +89,19 @@
 #define MOMO_NULL_UINTPTR ((uintptr_t)0)
 #endif
 
-// One more pointer which doesn't point to anything but is not equal to nullptr
+// One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
 #define MOMO_ASSERT(expr) assert(expr)
 
-#define MOMO_USE_NOEXCEPT
+#define MOMO_NOEXCEPT noexcept
+#define MOMO_NOEXCEPT_IF(expr) noexcept(expr)
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
-#undef MOMO_USE_NOEXCEPT
+#undef MOMO_NOEXCEPT
+#undef MOMO_NOEXCEPT_IF
+#define MOMO_NOEXCEPT throw()
+#define MOMO_NOEXCEPT_IF(expr)
 #endif
 
 #ifdef _MSC_VER
