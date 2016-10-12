@@ -782,12 +782,13 @@ public:
 	{
 		typedef typename std::decay<RSet>::type Set;
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
-		auto relocateFunc = [this] (Item& item)
+		typename Set::MemManager& memManager = srcSet.GetMemManager();
+		auto relocateFunc = [this, &memManager] (Item& item)
 		{
-			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &item] (Item* newItem)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
-			InsertCrt(ItemTraits::GetKey(item), itemCreator);
+				{ Set::ItemTraits::Relocate(memManager, item, newItem); };
+			if (!InsertCrt(ItemTraits::GetKey(item), itemCreator).inserted)
+				Set::ItemTraits::Destroy(memManager, item);
 		};
 		srcSet.ExtractAll(relocateFunc);
 	}
