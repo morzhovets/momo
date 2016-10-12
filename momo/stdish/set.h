@@ -38,7 +38,7 @@ namespace stdish
 {
 
 template<typename TKey,
-	typename TLessFunc = MOMO_DEFAULT_ORDER(TKey),
+	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>,
 	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessFunc>, MemManagerStd<TAllocator>>>
 class set
