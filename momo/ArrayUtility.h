@@ -279,7 +279,7 @@ namespace internal
 
 		template<typename ArgIterator>
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end,
-			typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
+			typename std::enable_if<IsForwardIterator<ArgIterator>::value, int>::type = 0)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
@@ -315,7 +315,7 @@ namespace internal
 
 		template<typename ArgIterator>
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end,
-			typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
+			typename std::enable_if<!IsForwardIterator<ArgIterator>::value, int>::type = 0)
 		{
 			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;

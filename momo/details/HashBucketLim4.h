@@ -242,14 +242,14 @@ namespace internal
 		{
 			if (_IsEmpty())
 				return 0;
-			return internal::UIntMath<size_t>::DivBySmall((size_t)(mPtrState & stateNull),
+			return UIntMath<size_t>::DivBySmall((size_t)(mPtrState & stateNull),
 				_GetMemPoolIndex()).remainder + 1;
 		}
 
 		int32_t _GetPointer() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!_IsEmpty());
-			return internal::UIntMath<uint32_t>::DivBySmall(mPtrState & stateNull,
+			return UIntMath<uint32_t>::DivBySmall(mPtrState & stateNull,
 				(uint32_t)_GetMemPoolIndex()).quotient;
 		}
 

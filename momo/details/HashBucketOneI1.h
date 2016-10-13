@@ -120,7 +120,7 @@ namespace internal
 		}
 
 	private:
-		internal::ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
+		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 		unsigned char mState;
 	};
 }

@@ -304,8 +304,8 @@ namespace internal
 				{
 					if (skipOddMemPools && i % 2 == 1)
 						continue;
-					size_t blockAlignment = internal::UIntMath<size_t>::Ceil(
-						i * (size_t)modMemPoolIndex, itemAlignment);
+					size_t blockAlignment = UIntMath<size_t>::Ceil(i * (size_t)modMemPoolIndex,
+						itemAlignment);
 					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * sizeof(Item), blockAlignment),
 						MemManagerPtr(memManager)));
 				}
@@ -476,9 +476,9 @@ namespace internal
 				return Bounds();
 			uintptr_t memPoolIndex = (uintptr_t)_GetMemPoolIndex();
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
-			typedef internal::UIntMath<uintptr_t> PMath;
-			uintptr_t mod = PMath::Ceil(memPoolIndex, (uintptr_t)itemAlignment / modMemPoolIndex);
-			uintptr_t count1 = PMath::DivBySmall(ptrCount, mod).remainder;
+			uintptr_t mod = UIntMath<uintptr_t>::Ceil(memPoolIndex,
+				(uintptr_t)itemAlignment / modMemPoolIndex);
+			uintptr_t count1 = UIntMath<uintptr_t>::DivBySmall(ptrCount, mod).remainder;
 			MOMO_ASSERT(count1 < memPoolIndex);
 			Item* items = reinterpret_cast<Item*>((ptrCount - count1) * modMemPoolIndex);
 			return Bounds(items, (size_t)count1 + 1);
