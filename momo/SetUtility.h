@@ -57,6 +57,8 @@ namespace internal
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
 		{
+			if (std::addressof(srcItem) == std::addressof(midItem))
+				return ItemManager::Relocate(memManager, srcItem, dstItem);
 			_Replace(memManager, srcItem, midItem, dstItem,
 				BoolConstant<ItemManager::isNothrowRelocatable>(),
 				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
@@ -81,8 +83,7 @@ namespace internal
 			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
 			ItemManager::Relocate(memManager, midItem, dstItem);
-			if (std::addressof(srcItem) != std::addressof(midItem))	//?
-				ItemManager::Relocate(memManager, srcItem, std::addressof(midItem));
+			ItemManager::Relocate(memManager, srcItem, std::addressof(midItem));
 		}
 
 		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
