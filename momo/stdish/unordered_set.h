@@ -402,22 +402,23 @@ public:
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
+		typename HashSet::MemManager& memManager = mHashSet.GetMemManager();
 		typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
-		ValueCreator(mHashSet.GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
-		std::pair<iterator, bool> res;
+		ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
 		try
 		{
-			res = insert(std::move(*&valueBuffer));
+			auto valueCreator = [&memManager, &valueBuffer] (value_type* newValue)
+				{ HashSet::ItemTraits::Relocate(memManager, *&valueBuffer, newValue); };
+			typename HashSet::InsertResult res = mHashSet.InsertCrt(*&valueBuffer, valueCreator);
+			return std::pair<iterator, bool>(res.iterator, res.inserted);
 		}
 		catch (...)
 		{
-			HashSet::ItemTraits::Destroy(mHashSet.GetMemManager(), *&valueBuffer);
+			HashSet::ItemTraits::Destroy(memManager, *&valueBuffer);
 			throw;
 		}
-		HashSet::ItemTraits::Destroy(mHashSet.GetMemManager(), *&valueBuffer);
-		return res;
 	}
 
 	template<typename... ValueArgs>
