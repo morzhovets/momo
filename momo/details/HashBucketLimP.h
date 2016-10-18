@@ -20,7 +20,7 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, bool tUseUIntPtr>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, bool tUsePtrState>
 	class BucketLimP;
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
@@ -35,7 +35,7 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const bool useUIntPtr = false;
+		static const bool usePtrState = false;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -267,7 +267,7 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
-		static const bool useUIntPtr = true;
+		static const bool usePtrState = true;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -491,11 +491,11 @@ namespace internal
 
 template<size_t tMaxCount = sizeof(void*),
 	typename TMemPoolParams = MemPoolParams<>,
-	bool tUseUIntPtr = true>
+	bool tUsePtrState = true>
 struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const bool useUIntPtr = tUseUIntPtr;
+	static const bool usePtrState = tUsePtrState;
 
 	typedef TMemPoolParams MemPoolParams;
 
@@ -507,14 +507,14 @@ private:
 		static const size_t size = sizeof(typename ItemTraits::Item);
 		static const size_t alignment = ItemTraits::alignment;
 
-		static const bool useUIntPtr = HashBucketLimP::useUIntPtr && ((maxCount <= 1)
+		static const bool usePtrState = HashBucketLimP::usePtrState && ((maxCount <= 1)
 			|| (maxCount <= 2 && size % 2 == 0 && (size > 2 || alignment == 2))
 			|| (maxCount <= 4 && size % 4 == 0 && (size > 4 || alignment == 4))
 			|| (maxCount <= 8 && size % 8 == 0 && (size > 8 || alignment == 8))
 			|| (maxCount <= 16 && size % 16 == 0 && (size > 16 || alignment == 16)));
 
 	public:
-		typedef internal::BucketLimP<ItemTraits, maxCount, MemPoolParams, useUIntPtr> Bucket;
+		typedef internal::BucketLimP<ItemTraits, maxCount, MemPoolParams, usePtrState> Bucket;
 	};
 
 public:
