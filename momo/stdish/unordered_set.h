@@ -228,6 +228,11 @@ public:
 		mHashSet.Swap(right.mHashSet);
 	}
 
+	friend void swap(unordered_set& left, unordered_set& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+
 	iterator begin() MOMO_NOEXCEPT
 	{
 		return mHashSet.GetBegin();
@@ -257,8 +262,6 @@ public:
 	{
 		return end();
 	}
-
-	MOMO_FRIENDS_SWAP_BEGIN_END_STD(unordered_set)
 
 	float max_load_factor() const MOMO_NOEXCEPT
 	{

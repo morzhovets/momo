@@ -49,28 +49,6 @@
 		return ref.GetEnd(); \
 	}
 
-#define MOMO_FRIENDS_SWAP_BEGIN_END_STD(Object) \
-	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
-	{ \
-		object1.swap(object2); \
-	} \
-	friend const_iterator begin(const Object& object) MOMO_NOEXCEPT \
-	{ \
-		return object.begin(); \
-	} \
-	friend const_iterator end(const Object& object) MOMO_NOEXCEPT \
-	{ \
-		return object.end(); \
-	} \
-	friend iterator begin(Object& object) MOMO_NOEXCEPT \
-	{ \
-		return object.begin(); \
-	} \
-	friend iterator end(Object& object) MOMO_NOEXCEPT \
-	{ \
-		return object.end(); \
-	}
-
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
 
 #define MOMO_CHECK_TYPE(Type, var) \

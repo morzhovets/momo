@@ -205,6 +205,11 @@ public:
 		mTreeMap.Swap(right.mTreeMap);
 	}
 
+	friend void swap(map& left, map& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+
 	iterator begin() MOMO_NOEXCEPT
 	{
 		return iterator(mTreeMap.GetBegin());
@@ -264,8 +269,6 @@ public:
 	{
 		return rend();
 	}
-
-	MOMO_FRIENDS_SWAP_BEGIN_END_STD(map)
 
 	key_compare key_comp() const
 	{

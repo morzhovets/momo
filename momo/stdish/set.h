@@ -181,6 +181,11 @@ public:
 		mTreeSet.Swap(right.mTreeSet);
 	}
 
+	friend void swap(set& left, set& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+
 	iterator begin() MOMO_NOEXCEPT
 	{
 		return mTreeSet.GetBegin();
@@ -240,8 +245,6 @@ public:
 	{
 		return rend();
 	}
-
-	MOMO_FRIENDS_SWAP_BEGIN_END_STD(set)
 
 	key_compare key_comp() const
 	{
