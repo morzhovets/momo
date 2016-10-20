@@ -439,15 +439,13 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == end())
-			return end();
-		if (first == last)
-			return find(*first);
 		if (first == begin() && last == end())
 		{
 			clear();
 			return end();
 		}
+		if (first == last)
+			return first;
 		if (std::next(first) == last)
 			return erase(first);
 		throw std::invalid_argument("invalid unordered_set erase arguments");

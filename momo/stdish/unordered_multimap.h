@@ -475,15 +475,13 @@ public:
 	//iterator erase(const_iterator first, const_iterator last)
 	iterator erase(iterator first, iterator last)
 	{
-		if (first == end())
-			return end();
-		if (first == last)
-			return first;
 		if (first == begin() && last == end())
 		{
 			clear();
 			return end();
 		}
+		if (first == last)
+			return first;
 		if (std::next(first) == last)
 			return erase(first);
 		typename HashMultiMap::KeyIterator keyIter = first.GetBaseIterator().GetKeyIterator();
@@ -562,7 +560,7 @@ private:
 	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef internal::ObjectManager<key_type, typename HashMultiMap::MemManager> KeyManager;
+		typedef internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(mHashMultiMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);

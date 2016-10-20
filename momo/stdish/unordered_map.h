@@ -58,6 +58,8 @@ private:
 	typedef typename HashMap::HashTraits HashTraits;
 	typedef typename HashMap::MemManager MemManager;
 
+	typedef typename HashMap::Iterator HashMapIterator;
+
 public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
@@ -71,10 +73,10 @@ public:
 	typedef std::pair<const key_type, mapped_type> value_type;
 
 	typedef internal::MapReferenceStd<key_type, mapped_type,
-		typename HashMap::Iterator::Reference> reference;
+		typename HashMapIterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
-	typedef internal::HashDerivedIterator<typename HashMap::Iterator, reference> iterator;
+	typedef internal::HashDerivedIterator<HashMapIterator, reference> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Pointer pointer;
@@ -480,15 +482,13 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == end())
-			return end();
-		if (first == last)
-			return find(first->first);
 		if (first == begin() && last == end())
 		{
 			clear();
 			return end();
 		}
+		if (first == last)
+			return iterator(HashMapIterator(first.GetBaseIterator().GetBaseIterator()));
 		if (std::next(first) == last)
 			return erase(first);
 		throw std::invalid_argument("invalid unordered_map erase arguments");
@@ -714,7 +714,7 @@ private:
 		const MappedCreator& mappedCreator)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		typename HashMap::Iterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
+		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
 			std::move(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 #else
@@ -736,7 +736,7 @@ private:
 		const MappedCreator& mappedCreator)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		typename HashMap::Iterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
+		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
 			std::get<0>(key), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 #else
