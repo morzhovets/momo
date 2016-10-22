@@ -55,13 +55,10 @@ namespace internal
 			ItemManager::Replace(memManager, srcItem, dstItem);
 		}
 
-		static void Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
+		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
+			Item* dstItem)
 		{
-			if (std::addressof(srcItem) == std::addressof(midItem))
-				return ItemManager::Relocate(memManager, srcItem, dstItem);
-			_Replace(memManager, srcItem, midItem, dstItem,
-				BoolConstant<ItemManager::isNothrowRelocatable>(),
-				BoolConstant<ItemManager::isNothrowAnywayAssignable>());
+			ItemManager::ReplaceRelocate(memManager, srcItem, midItem, dstItem);
 		}
 
 		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Item& dstItem)
@@ -74,40 +71,6 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			dstItem = srcKey;
-		}
-
-	private:
-		template<bool isNothrowAnywayAssignable>
-		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
-			std::true_type /*isNothrowRelocatable*/,
-			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
-		{
-			ItemManager::Relocate(memManager, midItem, dstItem);
-			ItemManager::Relocate(memManager, srcItem, std::addressof(midItem));
-		}
-
-		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
-			std::false_type /*isNothrowRelocatable*/,
-			std::true_type /*isNothrowAnywayAssignable*/)
-		{
-			ItemManager::Move(memManager, std::move(midItem), dstItem);
-			ItemManager::Replace(memManager, srcItem, midItem);
-		}
-
-		static void _Replace(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem,
-			std::false_type /*isNothrowRelocatable*/,
-			std::false_type /*isNothrowAnywayAssignable*/)
-		{
-			ItemManager::Copy(memManager, midItem, dstItem);
-			try
-			{
-				ItemManager::Replace(memManager, srcItem, midItem);
-			}
-			catch (...)
-			{
-				ItemManager::Destroy(memManager, *dstItem);
-				throw;
-			}
 		}
 	};
 

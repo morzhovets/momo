@@ -542,7 +542,7 @@ private:
 		if (right.get_allocator() == alloc)
 			return std::move(right.mHashSet);
 		HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
-		hashSet.Merge(right.mHashSet);
+		hashSet.MergeFrom(right.mHashSet);
 		return hashSet;
 	}
 

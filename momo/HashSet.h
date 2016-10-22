@@ -750,7 +750,12 @@ public:
 		{
 			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::Replace(memManager, srcItem, dstItem, newItem); };
+			{
+				if (std::addressof(srcItem) == std::addressof(dstItem))
+					ItemTraits::Relocate(memManager, srcItem, newItem);
+				else
+					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
+			};
 			resItem.SetItemCrt(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc);
@@ -777,41 +782,33 @@ public:
 		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
-	template<typename RSet>
-	void Merge(RSet&& srcSet)
+	template<typename Set>
+	void MergeFrom(Set& srcSet)
 	{
-		typedef typename std::decay<RSet>::type Set;
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
-		typename Set::MemManager& memManager = srcSet.GetMemManager();
-		auto relocateFunc = [this, &memManager] (Item& item)
-		{
-			auto itemCreator = [&memManager, &item] (Item* newItem)
-				{ Set::ItemTraits::Relocate(memManager, item, newItem); };
-			if (!InsertCrt(ItemTraits::GetKey(item), itemCreator).inserted)
-				Set::ItemTraits::Destroy(memManager, item);
-		};
-		srcSet.ExtractAll(relocateFunc);
+		srcSet.MergeTo(*this);
 	}
 
-	template<typename RelocateFunc>
-	void ExtractAll(const RelocateFunc& relocateFunc)
+	template<typename Set>
+	void MergeTo(Set& dstSet)
 	{
-		for (Buckets* buckets = mBuckets; buckets != nullptr;
-			buckets = buckets->GetNextBuckets())
+		MOMO_STATIC_ASSERT((std::is_same<ItemTraits, typename Set::ItemTraits>::value));
+		ConstIterator iter = GetBegin();
+		while (!!iter)
 		{
-			BucketParams& bucketParams = buckets->GetBucketParams();
-			for (Bucket& bucket : *buckets)
+			auto itemCreator = [this, &iter] (Item* newItem)
 			{
-				typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
-				for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
+				MemManager& memManager = GetMemManager();
+				auto replaceFunc = [&memManager, newItem] (Item& srcItem, Item& dstItem)
 				{
-					--pitem;
-					relocateFunc(*pitem);
-					bucket.DecCount(bucketParams);
-					--mCount;
-					mCrew.IncVersion();
-				}
-			}
+					if (std::addressof(srcItem) == std::addressof(dstItem))
+						ItemTraits::Relocate(memManager, srcItem, newItem);
+					else
+						ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
+				};
+				iter = _Remove(iter, replaceFunc);
+			};
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
+				++iter;
 		}
 	}
 

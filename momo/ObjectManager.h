@@ -215,6 +215,13 @@ namespace internal
 				_Destroy(memManager, *iter);
 		}
 
+		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
+			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+		{
+			MOMO_ASSERT(std::addressof(srcObject) != dstObject);
+			_Relocate(memManager, srcObject, dstObject, BoolConstant<isTriviallyRelocatable>());
+		}
+
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowAnywayAssignable)
 		{
@@ -230,11 +237,12 @@ namespace internal
 			_Destroy(memManager, srcObject);
 		}
 
-		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
-			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
+			Object* dstObject) MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-			_Relocate(memManager, srcObject, dstObject, BoolConstant<isTriviallyRelocatable>());
+			MOMO_ASSERT(std::addressof(srcObject) != std::addressof(midObject));
+			_ReplaceRelocate(memManager, srcObject, midObject, dstObject,
+				BoolConstant<isNothrowRelocatable>(), BoolConstant<isNothrowAnywayAssignable>());
 		}
 
 		template<typename Iterator>
@@ -286,6 +294,20 @@ namespace internal
 				memManager.GetCharAllocator(), std::addressof(object));
 		}
 
+		static void _Relocate(MemManager& /*memManager*/, Object& srcObject, Object* dstObject,
+			std::true_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT
+		{
+			memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+		}
+
+		static void _Relocate(MemManager& memManager, Object& srcObject, Object* dstObject,
+			std::false_type /*isTriviallyRelocatable*/)
+			MOMO_NOEXCEPT_IF((IsNothrowMoveConstructible<Object, MemManager, true>::value))
+		{
+			Move(memManager, std::move(srcObject), dstObject);
+			_Destroy(memManager, srcObject);
+		}
+
 		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void _AssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,
@@ -333,18 +355,37 @@ namespace internal
 			dstObject = std::move(srcObject);
 		}
 
-		static void _Relocate(MemManager& /*memManager*/, Object& srcObject, Object* dstObject,
-			std::true_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT
+		template<bool isNothrowAnywayAssignable>
+		static void _ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
+			Object* dstObject, std::true_type /*isNothrowRelocatable*/,
+			BoolConstant<isNothrowAnywayAssignable>) MOMO_NOEXCEPT
 		{
-			memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+			Relocate(memManager, midObject, dstObject);
+			Relocate(memManager, srcObject, std::addressof(midObject));
 		}
 
-		static void _Relocate(MemManager& memManager, Object& srcObject, Object* dstObject,
-			std::false_type /*isTriviallyRelocatable*/)
-			MOMO_NOEXCEPT_IF((IsNothrowMoveConstructible<Object, MemManager, true>::value))
+		static void _ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
+			Object* dstObject, std::false_type /*isNothrowRelocatable*/,
+			std::true_type /*isNothrowAnywayAssignable*/)
 		{
-			Creator<Object>(memManager, std::move(srcObject))(dstObject);
-			_Destroy(memManager, srcObject);
+			Move(memManager, std::move(midObject), dstObject);
+			Replace(memManager, srcObject, midObject);
+		}
+
+		static void _ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
+			Object* dstObject, std::false_type /*isNothrowRelocatable*/,
+			std::false_type /*isNothrowAnywayAssignable*/)
+		{
+			Copy(memManager, midObject, dstObject);
+			try
+			{
+				Replace(memManager, srcObject, midObject);
+			}
+			catch (...)
+			{
+				Destroy(memManager, *dstObject);
+				throw;
+			}
 		}
 
 		template<typename Iterator>

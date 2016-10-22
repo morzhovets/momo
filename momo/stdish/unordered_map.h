@@ -666,7 +666,7 @@ private:
 		if (right.get_allocator() == alloc)
 			return std::move(right.mHashMap);
 		HashMap hashMap(right.mHashMap.GetHashTraits(), MemManager(alloc));
-		hashMap.Merge(right.mHashMap);
+		hashMap.MergeFrom(right.mHashMap);
 		return hashMap;
 	}
 

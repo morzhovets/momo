@@ -745,7 +745,7 @@ public:
 		auto replaceFunc2 = [&memManager, &resItem] (Item& srcItem, Item& dstItem)
 		{
 			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::Replace(memManager, srcItem, dstItem, newItem); };
+				{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
 			resItem.SetItemCrt(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc1, replaceFunc2);
@@ -772,30 +772,31 @@ public:
 		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
-	template<typename RSet>
-	void Merge(RSet&& srcSet)
+	template<typename Set>
+	void MergeFrom(Set& srcSet)
 	{
-		typedef typename std::decay<RSet>::type Set;
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
-		typename Set::MemManager& memManager = srcSet.GetMemManager();
-		auto relocateFunc = [this, &memManager] (Item& item)
-		{
-			auto itemCreator = [&memManager, &item] (Item* newItem)
-				{ Set::ItemTraits::Relocate(memManager, item, newItem); };
-			if (!InsertCrt(ItemTraits::GetKey(item), itemCreator).inserted)
-				Set::ItemTraits::Destroy(memManager, item);
-		};
-		srcSet.ExtractAll(relocateFunc);
+		srcSet.MergeTo(*this);
 	}
 
-	template<typename RelocateFunc>
-	void ExtractAll(const RelocateFunc& relocateFunc)
+	template<typename Set>
+	void MergeTo(Set& dstSet)
 	{
-		auto replaceFunc1 = relocateFunc;
-		auto replaceFunc2 = [] (Item& /*srcItem*/, Item& /*dstItem*/)
-			{ MOMO_ASSERT(false); };
-		while (!IsEmpty())
-			_Remove(GetBegin(), replaceFunc1, replaceFunc2);
+		MOMO_STATIC_ASSERT((std::is_same<ItemTraits, typename Set::ItemTraits>::value));
+		ConstIterator iter = GetBegin();
+		while (iter != GetEnd())
+		{
+			auto itemCreator = [this, &iter] (Item* newItem)
+			{
+				MemManager& memManager = GetMemManager();
+				auto replaceFunc1 = [&memManager, newItem] (Item& srcItem)
+					{ ItemTraits::Relocate(memManager, srcItem, newItem); };
+				auto replaceFunc2 = [&memManager, newItem] (Item& srcItem, Item& dstItem)
+					{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
+				iter = _Remove(iter, replaceFunc1, replaceFunc2);
+			};
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
+				++iter;
+		}
 	}
 
 private:

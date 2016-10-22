@@ -451,26 +451,16 @@ public:
 		mHashSet.ResetKey(iter.GetBaseIterator(), newKey);
 	}
 
-	template<typename RMap>
-	void Merge(RMap&& srcMap)
+	template<typename Map>
+	void MergeFrom(Map& srcMap)
 	{
-		typedef typename std::decay<RMap>::type Map;
-		MOMO_STATIC_ASSERT((std::is_same<Key, typename Map::Key>::value));
-		MOMO_STATIC_ASSERT((std::is_same<Value, typename Map::Value>::value));
-		auto relocateFunc = [this, &srcMap] (Key& key, Value& value)
-		{
-			Insert(std::move(key), std::move(value));	//?
-			Map::KeyValueTraits::Destroy(srcMap.GetMemManager(), key, value);
-		};
-		srcMap.ExtractAll(relocateFunc);
+		srcMap.MergeTo(mHashSet);
 	}
 
-	template<typename RelocateFunc>
-	void ExtractAll(const RelocateFunc& relocateFunc)
+	template<typename Map>
+	void MergeTo(Map& dstMap)
 	{
-		auto setRelocateFunc = [&relocateFunc] (KeyValuePair& pair)
-			{ relocateFunc(*pair.GetKeyPtr(), *pair.GetValuePtr()); };
-		mHashSet.ExtractAll(setRelocateFunc);
+		dstMap.MergeFrom(mHashSet);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT
