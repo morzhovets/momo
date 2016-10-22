@@ -711,9 +711,8 @@ public:
 			size_t newCapacity = count;
 			if (!mData.SetCapacity(newCapacity))
 			{
-				Item* items = GetItems();
-				auto relocateFunc = [this, items, count] (Item* newItems)
-					{ ItemTraits::Relocate(GetMemManager(), items, newItems, count); };
+				auto relocateFunc = [this, count] (Item* newItems)
+					{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 				mData.Reset(newCapacity, count, relocateFunc);
 			}
 		}
@@ -940,10 +939,9 @@ private:
 		size_t initCapacity = GetCapacity();
 		if (!mData.SetCapacity(_GrowCapacity(initCapacity, minNewCapacity, growCause, true)))
 		{
-			Item* items = GetItems();
 			size_t count = GetCount();
-			auto relocateFunc = [this, items, count] (Item* newItems)
-				{ ItemTraits::Relocate(GetMemManager(), items, newItems, count); };
+			auto relocateFunc = [this, count] (Item* newItems)
+				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.Reset(_GrowCapacity(initCapacity, minNewCapacity, growCause, false),
 				count, relocateFunc);
 		}
@@ -979,15 +977,14 @@ private:
 		{
 			size_t newCapacity = _GrowCapacity(initCapacity, newCount,
 				ArrayGrowCause::reserve, false);
-			Item* items = GetItems();
-			auto relocateFunc = [this, items, initCount, newCount, &itemCreator] (Item* newItems)
+			auto relocateFunc = [this, initCount, newCount, &itemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
 				try
 				{
 					for (; index < newCount; ++index)
 						itemCreator(newItems + index);
-					ItemTraits::Relocate(GetMemManager(), items, newItems, initCount);
+					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
 				}
 				catch (...)
 				{
@@ -1020,10 +1017,9 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		size_t newCapacity = _GrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
-		Item* items = GetItems();
-		auto relocateFunc = [this, items, initCount, &itemCreator] (Item* newItems)
+		auto relocateFunc = [this, initCount, &itemCreator] (Item* newItems)
 		{
-			ItemTraits::RelocateCreate(GetMemManager(), items, newItems, initCount,
+			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				itemCreator, newItems + initCount);
 		};
 		mData.Reset(newCapacity, newCount, relocateFunc);
