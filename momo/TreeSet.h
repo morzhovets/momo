@@ -740,13 +740,13 @@ public:
 		{
 			auto itemCreator = [&memManager, &srcItem] (Item* newItem)
 				{ ItemTraits::Relocate(memManager, srcItem, newItem); };
-			resItem.SetItemCrt(memManager, itemCreator);
+			resItem.SetData(memManager, itemCreator);
 		};
 		auto replaceFunc2 = [&memManager, &resItem] (Item& srcItem, Item& dstItem)
 		{
 			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
 				{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
-			resItem.SetItemCrt(memManager, itemCreator);
+			resItem.SetData(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}

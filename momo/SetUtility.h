@@ -269,6 +269,17 @@ namespace internal
 		{
 		}
 
+		SetExtractedItem(SetExtractedItem&& extractedItem) //MOMO_NOEXCEPT_IF
+			: mMemManager(nullptr)
+		{
+			if (extractedItem.mMemManager != nullptr)
+			{
+				ItemTraits::Relocate(*&extractedItem.mItemBuffer, &mItemBuffer);
+				mMemManager = extractedItem.mMemManager;
+				extractedItem.mMemManager = nullptr;
+			}
+		}
+
 		SetExtractedItem(const SetExtractedItem&) = delete;
 
 		~SetExtractedItem() MOMO_NOEXCEPT
@@ -286,8 +297,20 @@ namespace internal
 		void Clear() MOMO_NOEXCEPT
 		{
 			if (mMemManager != nullptr)
-				ItemTraits::Destroy(*mMemManager, GetItem());
+				ItemTraits::Destroy(*mMemManager, *&mItemBuffer);
 			mMemManager = nullptr;
+		}
+
+		const MemManager& GetMemManager() const
+		{
+			MOMO_CHECK(mMemManager != nullptr);
+			return *mMemManager;
+		}
+
+		const Item& GetItem() const
+		{
+			MOMO_CHECK(mMemManager != nullptr);
+			return *&mItemBuffer;
 		}
 
 		Item& GetItem()
@@ -297,7 +320,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void SetItemCrt(MemManager& memManager, const ItemCreator& itemCreator)
+		void SetData(MemManager& memManager, const ItemCreator& itemCreator)
 		{
 			MOMO_CHECK(mMemManager == nullptr);
 			itemCreator(&mItemBuffer);

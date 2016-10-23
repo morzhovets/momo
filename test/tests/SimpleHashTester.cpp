@@ -108,7 +108,9 @@ public:
 		map.Remove(s1);
 		typename HashMap::Iterator iter2 = map.Find("s5");
 		assert(iter2->key == s5 && iter2->value == s5);
-		map.Remove(iter2);
+		typename HashMap::ExtractedPair rp;
+		map.Remove(iter2, rp);
+		assert(rp.GetKey() == s5 && rp.GetValue() == s5);
 		map.Remove(s3);
 		map.Remove("s4");
 		map.Reserve(100);

@@ -756,7 +756,7 @@ public:
 				else
 					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
 			};
-			resItem.SetItemCrt(memManager, itemCreator);
+			resItem.SetData(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc);
 	}

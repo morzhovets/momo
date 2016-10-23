@@ -676,6 +676,77 @@ namespace internal
 		typedef Value& ValueReferenceCKey;
 #endif
 	};
+
+	template<typename TSetExtractedItem>
+	class MapExtractedPair
+	{
+	public:
+		typedef TSetExtractedItem SetExtractedItem;
+		typedef typename SetExtractedItem::Item::Key Key;
+		typedef typename SetExtractedItem::Item::Value Value;
+		typedef typename SetExtractedItem::MemManager MemManager;
+
+	public:
+		MapExtractedPair() MOMO_NOEXCEPT
+		{
+		}
+
+		MapExtractedPair(MapExtractedPair&& extractedPair) //MOMO_NOEXCEPT_IF
+			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
+		{
+		}
+
+		MapExtractedPair(const MapExtractedPair&) = delete;
+
+		~MapExtractedPair() MOMO_NOEXCEPT
+		{
+		}
+
+		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
+
+		bool IsEmpty() const MOMO_NOEXCEPT
+		{
+			return mSetExtractedItem.IsEmpty();
+		}
+
+		void Clear() MOMO_NOEXCEPT
+		{
+			mSetExtractedItem.Clear();
+		}
+
+		const MemManager& GetMemManager() const
+		{
+			return mSetExtractedItem.GetMemManager();
+		}
+
+		const Key& GetKey() const
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		Key& GetKey()
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		const Value& GetValue() const
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		Value& GetValue()
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		SetExtractedItem& GetSetExtractedItem() MOMO_NOEXCEPT
+		{
+			return mSetExtractedItem;
+		}
+
+	private:
+		SetExtractedItem mSetExtractedItem;
+	};
 }
 
 } // namespace momo

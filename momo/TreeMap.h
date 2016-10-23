@@ -163,6 +163,8 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
+	typedef internal::MapExtractedPair<typename TreeSet::ExtractedItem> ExtractedPair;
+
 public:
 	explicit TreeMap(const TreeTraits& treeTraits = TreeTraits(),
 		MemManager&& memManager = MemManager())
@@ -496,6 +498,11 @@ public:
 	Iterator Remove(ConstIterator iter)
 	{
 		return Iterator(mTreeSet.Remove(iter.GetBaseIterator()));
+	}
+
+	Iterator Remove(ConstIterator iter, ExtractedPair& resPair)
+	{
+		return Iterator(mTreeSet.Remove(iter.GetBaseIterator(), resPair.GetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)

@@ -132,6 +132,8 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
+	typedef internal::MapExtractedPair<typename HashSet::ExtractedItem> ExtractedPair;
+
 	typedef internal::HashDerivedBucketBounds<BucketIterator,
 		HashSetConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
@@ -434,6 +436,11 @@ public:
 	Iterator Remove(ConstIterator iter)
 	{
 		return Iterator(mHashSet.Remove(iter.GetBaseIterator()));
+	}
+
+	Iterator Remove(ConstIterator iter, ExtractedPair& resPair)
+	{
+		return Iterator(mHashSet.Remove(iter.GetBaseIterator(), resPair.GetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)
