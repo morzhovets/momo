@@ -277,14 +277,11 @@ namespace internal
 		}
 
 		SetExtractedItem(SetExtractedItem&& extractedItem) //MOMO_NOEXCEPT_IF
-			: SetExtractedItem()
+			: mMemManager(extractedItem.mMemManager)
 		{
-			if (extractedItem.mMemManager != nullptr)
-			{
-				ItemTraits::Relocate(*&extractedItem.mItemBuffer, &mItemBuffer);
-				mMemManager = extractedItem.mMemManager;
-				extractedItem.mMemManager = nullptr;
-			}
+			if (mMemManager != nullptr)
+				ItemTraits::Relocate(*mMemManager, *&extractedItem.mItemBuffer, &mItemBuffer);
+			extractedItem.mMemManager = nullptr;
 		}
 
 		SetExtractedItem(const SetExtractedItem&) = delete;
