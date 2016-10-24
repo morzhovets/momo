@@ -691,6 +691,12 @@ namespace internal
 		{
 		}
 
+		template<typename Map>
+		MapExtractedPair(Map& map, typename Map::ConstIterator iter)
+		{
+			map.Remove(iter, *this);
+		}
+
 		MapExtractedPair(MapExtractedPair&& extractedPair) //MOMO_NOEXCEPT_IF
 			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
 		{

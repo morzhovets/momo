@@ -63,8 +63,7 @@ public:
 		assert(set.HasKey("s2"));
 		typename HashSet::ConstIterator iter = set.Find("s1");
 		assert(*iter == "s1");
-		typename HashSet::ExtractedItem rs;
-		set.Remove(iter, rs);
+		auto rs = set.Extract(iter);
 		assert(rs.GetItem() == "s1");
 		iter = set.Find("s1");
 		assert(iter == set.GetEnd());
@@ -108,8 +107,7 @@ public:
 		map.Remove(s1);
 		typename HashMap::Iterator iter2 = map.Find("s5");
 		assert(iter2->key == s5 && iter2->value == s5);
-		typename HashMap::ExtractedPair rp;
-		map.Remove(iter2, rp);
+		auto rp = map.Extract(iter2);
 		assert(rp.GetKey() == s5 && rp.GetValue() == s5);
 		map.Remove(s3);
 		map.Remove("s4");

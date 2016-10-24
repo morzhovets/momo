@@ -510,6 +510,11 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
+	ExtractedPair Extract(ConstIterator iter)
+	{
+		return ExtractedPair(*this, iter);	// need RVO for exception safety
+	}
+
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
 		mTreeSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));

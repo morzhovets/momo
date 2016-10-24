@@ -448,6 +448,11 @@ public:
 		return mHashSet.Remove(key);
 	}
 
+	ExtractedPair Extract(ConstIterator iter)
+	{
+		return ExtractedPair(*this, iter);	// need RVO for exception safety
+	}
+
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
 		mHashSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));

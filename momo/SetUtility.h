@@ -269,8 +269,15 @@ namespace internal
 		{
 		}
 
+		template<typename Set>
+		SetExtractedItem(Set& set, typename Set::ConstIterator iter)
+			: SetExtractedItem()
+		{
+			set.Remove(iter, *this);
+		}
+
 		SetExtractedItem(SetExtractedItem&& extractedItem) //MOMO_NOEXCEPT_IF
-			: mMemManager(nullptr)
+			: SetExtractedItem()
 		{
 			if (extractedItem.mMemManager != nullptr)
 			{

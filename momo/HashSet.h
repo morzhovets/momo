@@ -770,6 +770,11 @@ public:
 		return true;
 	}
 
+	ExtractedItem Extract(ConstIterator iter)
+	{
+		return ExtractedItem(*this, iter);	// need RVO for exception safety
+	}
+
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
 		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
