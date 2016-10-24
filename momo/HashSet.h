@@ -13,7 +13,7 @@
   All `HashSet` functions and constructors have strong exception safety,
   but not the following cases:
   1. Functions `Insert` receiving many items have basic exception safety.
-  2. Functions `Merge` and `ExtractAll` have basic exception safety.
+  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
 
