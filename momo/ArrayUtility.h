@@ -79,7 +79,7 @@ namespace momo
 namespace internal
 {
 	template<typename TArray, typename TItem>
-	class ArrayIterator
+	class ArrayIndexIterator
 	{
 	public:
 		typedef TArray Array;
@@ -89,16 +89,16 @@ namespace internal
 		typedef Item& Reference;
 		typedef Item* Pointer;
 
-		typedef ArrayIterator<const Array, const Item> ConstIterator;
+		typedef ArrayIndexIterator<const Array, const Item> ConstIterator;
 
 	public:
-		ArrayIterator() MOMO_NOEXCEPT
+		ArrayIndexIterator() MOMO_NOEXCEPT
 			: mArray(nullptr),
 			mIndex(0)
 		{
 		}
 
-		ArrayIterator(Array* array, size_t index) MOMO_NOEXCEPT
+		ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
 			: mArray(array),
 			mIndex(index)
 		{
@@ -109,7 +109,7 @@ namespace internal
 			return ConstIterator(mArray, mIndex);
 		}
 
-		ArrayIterator& operator+=(ptrdiff_t diff)
+		ArrayIndexIterator& operator+=(ptrdiff_t diff)
 		{
 			MOMO_CHECK(mArray != nullptr);
 			size_t newIndex = mIndex + diff;
@@ -141,7 +141,7 @@ namespace internal
 			return mIndex < iter.GetIndex();
 		}
 
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIterator)
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
 		Array* GetArray() const MOMO_NOEXCEPT
 		{
@@ -223,7 +223,7 @@ namespace internal
 
 		~ArrayItemHandler() MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(mMemManager,&mItemBuffer, 1);
+			ItemTraits::Destroy(mMemManager, &mItemBuffer, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
@@ -342,7 +342,7 @@ namespace internal
 namespace std
 {
 	template<typename A, typename I>
-	struct iterator_traits<momo::internal::ArrayIterator<A, I>>
+	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
 		: public iterator_traits<I*>
 	{
 	};

@@ -174,7 +174,7 @@ public:
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
 
-	typedef internal::ArrayIterator<SegmentedArray, Item> Iterator;
+	typedef internal::ArrayIndexIterator<SegmentedArray, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:

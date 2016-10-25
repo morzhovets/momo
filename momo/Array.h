@@ -112,7 +112,7 @@ namespace internal
 	template<typename Array>
 	struct ArrayIteratorSelector<Array, false>
 	{
-		typedef ArrayIterator<Array, typename Array::Item> Iterator;
+		typedef ArrayIndexIterator<Array, typename Array::Item> Iterator;
 	};
 
 	template<typename TArraySettings>
