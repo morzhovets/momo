@@ -182,7 +182,7 @@ public:
 
 	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
 		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
-		: mHashMultiMap(_create_multimap(std::move(right), alloc))
+		: mHashMultiMap(prvCreateMultiMap(std::move(right), alloc))
 	{
 	}
 
@@ -209,7 +209,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_move_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			mHashMultiMap = _create_multimap(std::move(right), alloc);
+			mHashMultiMap = prvCreateMultiMap(std::move(right), alloc);
 		}
 		return *this;
 	}
@@ -375,7 +375,7 @@ public:
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		return _insert(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
+		return prvInsert(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
@@ -391,7 +391,7 @@ public:
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		return _insert(std::forward_as_tuple(std::forward<First>(value.first)),
+		return prvInsert(std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second)));
 	}
 
@@ -417,7 +417,7 @@ public:
 
 	iterator emplace()
 	{
-		return _insert(std::tuple<>(), std::tuple<>());
+		return prvInsert(std::tuple<>(), std::tuple<>());
 	}
 
 	iterator emplace_hint(const_iterator)
@@ -440,7 +440,7 @@ public:
 	template<typename KeyArg, typename MappedArg>
 	iterator emplace(KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		return _insert(std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+		return prvInsert(std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 	}
 
@@ -454,14 +454,14 @@ public:
 	iterator emplace(std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _insert(std::move(keyArgs), std::move(mappedArgs));
+		return prvInsert(std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace_hint(const_iterator, std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return _insert(std::move(keyArgs), std::move(mappedArgs));
+		return prvInsert(std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	//iterator erase(const_iterator where)
@@ -539,7 +539,7 @@ public:
 	}
 
 private:
-	static HashMultiMap _create_multimap(unordered_multimap&& right, const allocator_type& alloc)
+	static HashMultiMap prvCreateMultiMap(unordered_multimap&& right, const allocator_type& alloc)
 	{
 		if (right.get_allocator() == alloc)
 			return std::move(right.mHashMultiMap);
@@ -551,16 +551,16 @@ private:
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
-	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, std::tuple<MappedArgs...>&& mappedArgs)
+	iterator prvInsert(std::tuple<KeyArgs...>&& keyArgs, std::tuple<MappedArgs...>&& mappedArgs)
 	{
 		typedef typename HashMultiMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return _insert(std::move(keyArgs),
+		return prvInsert(std::move(keyArgs),
 			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename... KeyArgs, typename MappedCreator>
-	iterator _insert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
+	iterator prvInsert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
 		typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef internal::ObjectManager<key_type, MemManager> KeyManager;
@@ -570,7 +570,7 @@ private:
 		iterator resIter;
 		try
 		{
-			resIter = _insert(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
+			resIter = prvInsert(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
 		}
 		catch (...)
 		{
@@ -582,13 +582,13 @@ private:
 	}
 
 	template<typename MappedCreator>
-	iterator _insert(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
+	iterator prvInsert(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
 	{
 		return iterator(mHashMultiMap.AddCrt(std::move(std::get<0>(key)), mappedCreator));
 	}
 
 	template<typename MappedCreator>
-	iterator _insert(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
+	iterator prvInsert(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
 	{
 		return iterator(mHashMultiMap.AddCrt(std::get<0>(key), mappedCreator));
 	}

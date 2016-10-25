@@ -170,7 +170,7 @@ public:
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
 		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
-		: mHashSet(_create_set(std::move(right), alloc))
+		: mHashSet(prvCreateSet(std::move(right), alloc))
 	{
 	}
 
@@ -197,7 +197,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_move_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			mHashSet = _create_set(std::move(right), alloc);
+			mHashSet = prvCreateSet(std::move(right), alloc);
 		}
 		return *this;
 	}
@@ -393,7 +393,7 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		_insert(first, last,
+		prvInsert(first, last,
 			std::is_same<value_type, typename std::decay<decltype(*first)>::type>());
 	}
 
@@ -537,7 +537,7 @@ public:
 	}
 
 private:
-	static HashSet _create_set(unordered_set&& right, const allocator_type& alloc)
+	static HashSet prvCreateSet(unordered_set&& right, const allocator_type& alloc)
 	{
 		if (right.get_allocator() == alloc)
 			return std::move(right.mHashSet);
@@ -547,13 +547,13 @@ private:
 	}
 
 	template<typename Iterator>
-	void _insert(Iterator first, Iterator last, std::true_type /*isValueType*/)
+	void prvInsert(Iterator first, Iterator last, std::true_type /*isValueType*/)
 	{
 		mHashSet.Insert(first, last);
 	}
 
 	template<typename Iterator>
-	void _insert(Iterator first, Iterator last, std::false_type /*isValueType*/)
+	void prvInsert(Iterator first, Iterator last, std::false_type /*isValueType*/)
 	{
 		for (Iterator iter = first; iter != last; ++iter)
 			emplace(*iter);

@@ -123,7 +123,7 @@ public:
 
 	set(set&& right, const allocator_type& alloc)
 		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
-		: mTreeSet(_create_set(std::move(right), alloc))
+		: mTreeSet(prvCreateSet(std::move(right), alloc))
 	{
 	}
 
@@ -150,7 +150,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_move_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			mTreeSet = _create_set(std::move(right), alloc);
+			mTreeSet = prvCreateSet(std::move(right), alloc);
 		}
 		return *this;
 	}
@@ -391,7 +391,7 @@ public:
 
 	iterator insert(const_iterator hint, value_type&& value)
 	{
-		if (!_check_hint(hint, static_cast<const key_type&>(value)))
+		if (!prvCheckHint(hint, static_cast<const key_type&>(value)))
 			return insert(std::move(value)).first;
 		return mTreeSet.Add(hint, std::move(value));
 	}
@@ -404,7 +404,7 @@ public:
 
 	iterator insert(const_iterator hint, const value_type& value)
 	{
-		if (!_check_hint(hint, value))
+		if (!prvCheckHint(hint, value))
 			return insert(value).first;
 		return mTreeSet.Add(hint, value);
 	}
@@ -412,7 +412,7 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		_insert(first, last,
+		prvInsert(first, last,
 			std::is_same<value_type, typename std::decay<decltype(*first)>::type>());
 	}
 
@@ -424,13 +424,13 @@ public:
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
-		return _emplace(nullptr, std::forward<ValueArgs>(valueArgs)...);
+		return prvEmplace(nullptr, std::forward<ValueArgs>(valueArgs)...);
 	}
 
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-		return _emplace(hint, std::forward<ValueArgs>(valueArgs)...).first;
+		return prvEmplace(hint, std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
 	iterator erase(const_iterator where)
@@ -488,7 +488,7 @@ public:
 	}
 
 private:
-	static TreeSet _create_set(set&& right, const allocator_type& alloc)
+	static TreeSet prvCreateSet(set&& right, const allocator_type& alloc)
 	{
 		if (right.get_allocator() == alloc)
 			return std::move(right.mTreeSet);
@@ -497,7 +497,7 @@ private:
 		return treeSet;
 	}
 
-	bool _check_hint(const_iterator hint, const key_type& key) const
+	bool prvCheckHint(const_iterator hint, const key_type& key) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
 		return (hint == begin() || treeTraits.IsLess(*std::prev(hint), key))
@@ -505,29 +505,29 @@ private:
 	}
 
 	template<typename Iterator>
-	void _insert(Iterator first, Iterator last, std::true_type /*isValueType*/)
+	void prvInsert(Iterator first, Iterator last, std::true_type /*isValueType*/)
 	{
 		mTreeSet.Insert(first, last);
 	}
 
 	template<typename Iterator>
-	void _insert(Iterator first, Iterator last, std::false_type /*isValueType*/)
+	void prvInsert(Iterator first, Iterator last, std::false_type /*isValueType*/)
 	{
 		for (Iterator iter = first; iter != last; ++iter)
 			emplace(*iter);
 	}
 
 	template<typename ValueCreator>
-	std::pair<iterator, bool> _insert(const_iterator hint, const key_type& key,
+	std::pair<iterator, bool> prvInsert(const_iterator hint, const key_type& key,
 		const ValueCreator& valueCreator)
 	{
-		if (!_check_hint(hint, key))
-			return _insert(nullptr, key, valueCreator);
+		if (!prvCheckHint(hint, key))
+			return prvInsert(nullptr, key, valueCreator);
 		return std::pair<iterator, bool>(mTreeSet.AddCrt(hint, valueCreator), true);
 	}
 
 	template<typename ValueCreator>
-	std::pair<iterator, bool> _insert(std::nullptr_t, const key_type& key,
+	std::pair<iterator, bool> prvInsert(std::nullptr_t, const key_type& key,
 		const ValueCreator& valueCreator)
 	{
 		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(key, valueCreator);
@@ -535,7 +535,7 @@ private:
 	}
 
 	template<typename Hint, typename... ValueArgs>
-	std::pair<iterator, bool> _emplace(Hint hint, ValueArgs&&... valueArgs)
+	std::pair<iterator, bool> prvEmplace(Hint hint, ValueArgs&&... valueArgs)
 	{
 		typename TreeSet::MemManager& memManager = mTreeSet.GetMemManager();
 		typedef internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
@@ -546,7 +546,7 @@ private:
 		{
 			auto valueCreator = [&memManager, &valueBuffer] (value_type* newValue)
 				{ TreeSet::ItemTraits::Relocate(memManager, *&valueBuffer, newValue); };
-			return _insert(hint, *&valueBuffer, valueCreator);
+			return prvInsert(hint, *&valueBuffer, valueCreator);
 		}
 		catch (...)
 		{
