@@ -685,6 +685,19 @@ public:
 			Creator<const Item&>(GetMemManager(), item), false);
 	}
 
+	InsertResult Insert(ExtractedItem&& extItem)
+	{
+		MOMO_CHECK(!extItem.IsEmpty());
+		MemManager& memManager = GetMemManager();
+		auto itemCreator = [&memManager, &extItem] (Item* newItem)
+		{
+			auto removeFunc = [&memManager, newItem] (Item& item)
+				{ ItemTraits::Relocate(memManager, item, newItem); };
+			extItem.Reset(removeFunc);
+		};
+		return _Insert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
+	}
+
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
@@ -732,21 +745,21 @@ public:
 		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}
 
-	ConstIterator Remove(ConstIterator iter, ExtractedItem& resItem)
+	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
-		MOMO_CHECK(resItem.IsEmpty());
+		MOMO_CHECK(extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
-		auto replaceFunc1 = [&memManager, &resItem] (Item& srcItem)
+		auto replaceFunc1 = [&memManager, &extItem] (Item& srcItem)
 		{
 			auto itemCreator = [&memManager, &srcItem] (Item* newItem)
 				{ ItemTraits::Relocate(memManager, srcItem, newItem); };
-			resItem.SetData(memManager, itemCreator);
+			extItem.Set(memManager, itemCreator);
 		};
-		auto replaceFunc2 = [&memManager, &resItem] (Item& srcItem, Item& dstItem)
+		auto replaceFunc2 = [&memManager, &extItem] (Item& srcItem, Item& dstItem)
 		{
 			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
 				{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
-			resItem.SetData(memManager, itemCreator);
+			extItem.Set(memManager, itemCreator);
 		};
 		return _Remove(iter, replaceFunc1, replaceFunc2);
 	}

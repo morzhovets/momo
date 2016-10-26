@@ -300,35 +300,43 @@ namespace internal
 
 		void Clear() MOMO_NOEXCEPT
 		{
-			if (mMemManager != nullptr)
+			if (!IsEmpty())
 				ItemTraits::Destroy(*mMemManager, *&mItemBuffer);
 			mMemManager = nullptr;
 		}
 
 		const MemManager& GetMemManager() const
 		{
-			MOMO_CHECK(mMemManager != nullptr);
+			MOMO_CHECK(!IsEmpty());
 			return *mMemManager;
 		}
 
 		const Item& GetItem() const
 		{
-			MOMO_CHECK(mMemManager != nullptr);
+			MOMO_CHECK(!IsEmpty());
 			return *&mItemBuffer;
 		}
 
 		Item& GetItem()
 		{
-			MOMO_CHECK(mMemManager != nullptr);
+			MOMO_CHECK(!IsEmpty());
 			return *&mItemBuffer;
 		}
 
 		template<typename ItemCreator>
-		void SetData(MemManager& memManager, const ItemCreator& itemCreator)
+		void Set(MemManager& memManager, const ItemCreator& itemCreator)
 		{
-			MOMO_CHECK(mMemManager == nullptr);
+			MOMO_CHECK(IsEmpty());
 			itemCreator(&mItemBuffer);
 			mMemManager = &memManager;
+		}
+
+		template<typename RemoveFunc>
+		void Reset(const RemoveFunc& removeFunc)
+		{
+			MOMO_CHECK(!IsEmpty());
+			removeFunc(*&mItemBuffer);
+			mMemManager = nullptr;
 		}
 
 	private:

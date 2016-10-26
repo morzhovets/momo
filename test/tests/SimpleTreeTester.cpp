@@ -47,6 +47,8 @@ public:
 		assert(*iter == "s1");
 		auto rs = set.Extract(iter);
 		assert(rs.GetItem() == "s1");
+		set.Insert(std::move(rs));
+		set.Remove(set.Find("s1"));
 		iter = set.Find("s1");
 		assert(iter == set.GetEnd());
 		set.Insert(&s1, &s1 + 1);

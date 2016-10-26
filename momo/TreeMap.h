@@ -500,9 +500,9 @@ public:
 		return Iterator(mTreeSet.Remove(iter.GetBaseIterator()));
 	}
 
-	Iterator Remove(ConstIterator iter, ExtractedPair& resPair)
+	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return Iterator(mTreeSet.Remove(iter.GetBaseIterator(), resPair.GetSetExtractedItem()));
+		return Iterator(mTreeSet.Remove(iter.GetBaseIterator(), extPair.GetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)

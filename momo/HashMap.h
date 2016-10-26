@@ -438,9 +438,9 @@ public:
 		return Iterator(mHashSet.Remove(iter.GetBaseIterator()));
 	}
 
-	Iterator Remove(ConstIterator iter, ExtractedPair& resPair)
+	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return Iterator(mHashSet.Remove(iter.GetBaseIterator(), resPair.GetSetExtractedItem()));
+		return Iterator(mHashSet.Remove(iter.GetBaseIterator(), extPair.GetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)
