@@ -62,6 +62,8 @@ public:
 	typedef TLessFunc key_compare;
 	typedef TAllocator allocator_type;
 
+	typedef TreeMap nested_container_type;
+
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
@@ -208,6 +210,16 @@ public:
 	friend void swap(map& left, map& right) MOMO_NOEXCEPT
 	{
 		left.swap(right);
+	}
+
+	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	{
+		return mTreeMap;
+	}
+
+	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	{
+		return mTreeMap;
 	}
 
 	iterator begin() MOMO_NOEXCEPT

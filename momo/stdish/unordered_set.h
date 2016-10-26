@@ -59,6 +59,8 @@ public:
 	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
 
+	typedef HashSet nested_container_type;
+
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
@@ -231,6 +233,16 @@ public:
 	friend void swap(unordered_set& left, unordered_set& right) MOMO_NOEXCEPT
 	{
 		left.swap(right);
+	}
+
+	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	{
+		return mHashSet;
+	}
+
+	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	{
+		return mHashSet;
 	}
 
 	iterator begin() MOMO_NOEXCEPT

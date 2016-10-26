@@ -44,6 +44,8 @@ public:
 	typedef TValue value_type;
 	typedef TAllocator allocator_type;
 
+	typedef Array nested_container_type;
+
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
@@ -160,6 +162,16 @@ public:
 	friend void swap(vector& left, vector& right) MOMO_NOEXCEPT
 	{
 		left.swap(right);
+	}
+
+	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	{
+		return mArray;
+	}
+
+	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	{
+		return mArray;
 	}
 
 	iterator begin() MOMO_NOEXCEPT
