@@ -88,18 +88,19 @@ private:
 	class Crew
 	{
 	private:
+		typedef std::atomic<Raw*> FreeRaws;
+
 		struct Data
 		{
 			ColumnList columnList;
 			MemManager memManager;
-			std::atomic<Raw*> freeRaws;
+			FreeRaws freeRaws;
 		};
 
 	public:
 		Crew(const ColumnList& columnList, MemManager&& memManager)
 		{
 			mData = memManager.template Allocate<Data>(sizeof(Data));
-			mData->freeRaws = nullptr;
 			try
 			{
 				new(&mData->columnList) ColumnList(columnList);
@@ -110,6 +111,7 @@ private:
 				throw;
 			}
 			new(&mData->memManager) MemManager(std::move(memManager));
+			new(&mData->freeRaws) FreeRaws(nullptr);
 		}
 
 		Crew(Crew&& crew) noexcept
@@ -125,6 +127,7 @@ private:
 			if (!IsNull())
 			{
 				mData->columnList.~ColumnList();
+				mData->freeRaws.~FreeRaws();
 				MemManager memManager = std::move(GetMemManager());
 				GetMemManager().~MemManager();
 				memManager.Deallocate(mData, sizeof(Data));
@@ -161,7 +164,7 @@ private:
 			return mData->memManager;
 		}
 
-		std::atomic<Raw*>& GetFreeRaws() noexcept
+		FreeRaws& GetFreeRaws() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->freeRaws;

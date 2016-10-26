@@ -31,8 +31,10 @@ namespace internal
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
+		typedef std::atomic<Raw*> FreeRaws;
+
 	public:
-		DataRow(const ColumnList* columnList, Raw* raw, std::atomic<Raw*>* freeRaws) noexcept
+		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) noexcept
 			: mColumnList(columnList),
 			mRaw(raw),
 			mFreeRaws(freeRaws)
@@ -153,7 +155,7 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		Raw* mRaw;
-		std::atomic<Raw*>* mFreeRaws;
+		FreeRaws* mFreeRaws;
 	};
 
 	template<typename TColumnList>
