@@ -102,7 +102,7 @@ public:
 
 	vector(vector&& right, const allocator_type& alloc)
 		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
-		: mArray(prvCreateArray(std::move(right), alloc))
+		: mArray(pvCreateArray(std::move(right), alloc))
 	{
 	}
 
@@ -129,7 +129,7 @@ public:
 			bool propagate = std::allocator_traits<allocator_type>
 				::propagate_on_container_move_assignment::value;
 			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
-			mArray = prvCreateArray(std::move(right), alloc);
+			mArray = pvCreateArray(std::move(right), alloc);
 		}
 		return *this;
 	}
@@ -468,7 +468,7 @@ public:
 	}
 
 private:
-	static Array prvCreateArray(vector&& right, const allocator_type& alloc)
+	static Array pvCreateArray(vector&& right, const allocator_type& alloc)
 	{
 		if (right.get_allocator() == alloc)
 			return std::move(right.mArray);
