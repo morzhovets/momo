@@ -45,33 +45,33 @@ private:
 	public:
 		explicit TemplItem(unsigned char value) MOMO_NOEXCEPT
 		{
-			*_GetPtr() = value;
+			*pvGetPtr() = value;
 		}
 
 		unsigned char GetValue() const MOMO_NOEXCEPT
 		{
-			return *_GetPtr();
+			return *pvGetPtr();
 		}
 
 		static unsigned char GetState(const TemplItem* item) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(size > 1);
-			return item->_GetPtr()[1];
+			return item->pvGetPtr()[1];
 		}
 
 		static void SetState(TemplItem* item, unsigned char state) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(size > 1);
-			item->_GetPtr()[1] = state;
+			item->pvGetPtr()[1] = state;
 		}
 
 	private:
-		const unsigned char* _GetPtr() const MOMO_NOEXCEPT
+		const unsigned char* pvGetPtr() const MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<const unsigned char*>(&mStorage);
 		}
 
-		unsigned char* _GetPtr() MOMO_NOEXCEPT
+		unsigned char* pvGetPtr() MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<unsigned char*>(&mStorage);
 		}

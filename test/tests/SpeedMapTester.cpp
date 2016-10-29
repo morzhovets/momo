@@ -67,7 +67,7 @@ public:
 	void TestStdUnorderedMap(const std::string& mapTitle)
 	{
 		typedef std::unordered_map<Key, size_t, std::hash<Key>, std::equal_to<Key>, Allocator> Map;
-		_TestMap<Map>(mapTitle);
+		pvTestMap<Map>(mapTitle);
 	}
 
 	template<typename HashBucket>
@@ -77,14 +77,14 @@ public:
 			std::allocator<std::pair<const Key, size_t>>,
 			momo::HashMap<Key, size_t,
 				momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>>> Map;
-		_TestMap<Map>(mapTitle);
+		pvTestMap<Map>(mapTitle);
 	}
 
 	template<typename Allocator>
 	void TestStdMap(const std::string& mapTitle)
 	{
 		typedef std::map<Key, size_t, std::less<Key>, Allocator> Map;
-		_TestMap<Map>(mapTitle);
+		pvTestMap<Map>(mapTitle);
 	}
 
 	template<typename TreeNode>
@@ -92,7 +92,7 @@ public:
 	{
 		typedef momo::stdish::map<Key, size_t, std::less<Key>, std::allocator<std::pair<const Key, size_t>>,
 			momo::TreeMap<Key, size_t, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>>> Map;
-		_TestMap<Map>(mapTitle);
+		pvTestMap<Map>(mapTitle);
 	}
 
 	void TestAll()
@@ -111,7 +111,7 @@ public:
 
 private:
 	template<typename Map>
-	void _TestMap(const std::string& mapTitle)
+	void pvTestMap(const std::string& mapTitle)
 	{
 		Map map;
 		{
