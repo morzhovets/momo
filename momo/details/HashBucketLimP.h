@@ -100,26 +100,26 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(_IsEmpty());
+			MOMO_ASSERT(pvIsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			if (_IsEmpty())
+			if (pvIsEmpty())
 				return false;
-			return _GetCount() == maxCount;
+			return pvGetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -128,15 +128,15 @@ namespace internal
 				return false;
 			if (mPtr == ptrNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
+			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (!_IsEmpty())
+			if (!pvIsEmpty())
 			{
-				ItemTraits::Destroy(params.GetMemManager(), _GetItems(), _GetCount());
-				params.GetMemPool(_GetMemPoolIndex()).Deallocate(_GetPtr());
+				ItemTraits::Destroy(params.GetMemManager(), pvGetItems(), pvGetCount());
+				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(pvGetPtr());
 			}
 			mPtr = ptrNull;
 		}
@@ -144,39 +144,39 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			if (_IsEmpty())
+			if (pvIsEmpty())
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetMemPoolIndex((mPtr == ptrNull) ? newCount : maxCount);
+				size_t newMemPoolIndex = pvGetMemPoolIndex((mPtr == ptrNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				Item* newItems = _GetItems(memory.GetPointer());
+				Item* newItems = pvGetItems(memory.GetPointer());
 				itemCreator(newItems);
-				_Set(memory.Extract(), newMemPoolIndex, newCount);
+				pvSet(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
 			}
 			else
 			{
-				size_t memPoolIndex = _GetMemPoolIndex();
-				size_t count = _GetCount();
+				size_t memPoolIndex = pvGetMemPoolIndex();
+				size_t count = pvGetCount();
 				MOMO_ASSERT(count <= memPoolIndex);
 				MOMO_ASSERT(count < maxCount);
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
-					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
+					size_t newMemPoolIndex = pvGetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					Item* newItems = _GetItems(memory.GetPointer());
-					ItemTraits::RelocateCreate(params.GetMemManager(), _GetItems(), newItems,
+					Item* newItems = pvGetItems(memory.GetPointer());
+					ItemTraits::RelocateCreate(params.GetMemManager(), pvGetItems(), newItems,
 						count, itemCreator, newItems + count);
-					params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
-					_Set(memory.Extract(), newMemPoolIndex, newCount);
+					params.GetMemPool(memPoolIndex).Deallocate(pvGetPtr());
+					pvSet(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
 				}
 				else
 				{
-					Item* items = _GetItems();
+					Item* items = pvGetItems();
 					itemCreator(items + count);
-					++*_GetPtr();
+					++*pvGetPtr();
 					return items + count;
 				}
 			}
@@ -184,71 +184,71 @@ namespace internal
 
 		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
-			size_t count = _GetCount();
+			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
 			if (count == 1)
 			{
-				size_t memPoolIndex = _GetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(_GetPtr());
-				mPtr = (memPoolIndex < _GetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
+				size_t memPoolIndex = pvGetMemPoolIndex();
+				params.GetMemPool(memPoolIndex).Deallocate(pvGetPtr());
+				mPtr = (memPoolIndex < pvGetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
 			}
 			else
 			{
-				--*_GetPtr();
+				--*pvGetPtr();
 			}
 		}
 
 	private:
-		bool _IsEmpty() const MOMO_NOEXCEPT
+		bool pvIsEmpty() const MOMO_NOEXCEPT
 		{
 			return mPtr == ptrNull || mPtr == ptrNullWasFull;
 		}
 
-		unsigned char* _GetPtr() const MOMO_NOEXCEPT
+		unsigned char* pvGetPtr() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsEmpty());
+			MOMO_ASSERT(!pvIsEmpty());
 			return reinterpret_cast<unsigned char*>(mPtr);
 		}
 
-		void _Set(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		void pvSet(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = reinterpret_cast<uintptr_t>(ptr);
 			*ptr = (unsigned char)((memPoolIndex << 4) | count);
 		}
 
-		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count;
 		}
 
-		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			return (size_t)(*_GetPtr() >> 4);
+			return (size_t)(*pvGetPtr() >> 4);
 		}
 
-		size_t _GetCount() const MOMO_NOEXCEPT
+		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			return (size_t)(*_GetPtr() & 15);
+			return (size_t)(*pvGetPtr() & 15);
 		}
 
-		Item* _GetItems() const MOMO_NOEXCEPT
+		Item* pvGetItems() const MOMO_NOEXCEPT
 		{
-			return _GetItems(_GetPtr());
+			return pvGetItems(pvGetPtr());
 		}
 
-		static Item* _GetItems(unsigned char* ptr) MOMO_NOEXCEPT
+		static Item* pvGetItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
-		Bounds _GetBounds() const MOMO_NOEXCEPT
+		Bounds pvGetBounds() const MOMO_NOEXCEPT
 		{
-			if (_IsEmpty())
+			if (pvIsEmpty())
 				return Bounds();
 			else
-				return Bounds(_GetItems(), _GetCount());
+				return Bounds(pvGetItems(), pvGetCount());
 		}
 
 	private:
@@ -344,24 +344,24 @@ namespace internal
 
 		~BucketLimP() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(_IsEmpty());
+			MOMO_ASSERT(pvIsEmpty());
 		}
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return _GetBounds().GetCount() == maxCount;
+			return pvGetBounds().GetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -370,17 +370,17 @@ namespace internal
 				return false;
 			if (mPtrState == stateNullWasFull)
 				return true;
-			return _GetMemPoolIndex() == _GetMemPoolIndex(maxCount);
+			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			if (!_IsEmpty())
+			if (!pvIsEmpty())
 			{
-				Bounds bounds = _GetBounds();
+				Bounds bounds = pvGetBounds();
 				Item* items = bounds.GetBegin();
 				ItemTraits::Destroy(params.GetMemManager(), items, bounds.GetCount());
-				params.GetMemPool(_GetMemPoolIndex()).Deallocate(items);
+				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
 			}
 			mPtrState = stateNull;
 		}
@@ -388,21 +388,21 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
 		{
-			if (_IsEmpty())
+			if (pvIsEmpty())
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex =
-					_GetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
+					pvGetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				Item* newItems = memory.GetPointer();
 				itemCreator(newItems);
-				_Set(memory.Extract(), newMemPoolIndex, newCount);
+				pvSet(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
 			}
 			else
 			{
-				size_t memPoolIndex = _GetMemPoolIndex();
-				Bounds bounds = _GetBounds();
+				size_t memPoolIndex = pvGetMemPoolIndex();
+				Bounds bounds = pvGetBounds();
 				size_t count = bounds.GetCount();
 				Item* items = bounds.GetBegin();
 				MOMO_ASSERT(count <= memPoolIndex);
@@ -410,13 +410,13 @@ namespace internal
 				if (count == memPoolIndex)
 				{
 					size_t newCount = count + 1;
-					size_t newMemPoolIndex = _GetMemPoolIndex(newCount);
+					size_t newMemPoolIndex = pvGetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
 					Item* newItems = memory.GetPointer();
 					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 						itemCreator, newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
-					_Set(memory.Extract(), newMemPoolIndex, newCount);
+					pvSet(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
 				}
 				else
@@ -430,14 +430,14 @@ namespace internal
 
 		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
-			Bounds bounds = _GetBounds();
+			Bounds bounds = pvGetBounds();
 			size_t count = bounds.GetCount();
 			MOMO_ASSERT(count > 0);
 			if (count == 1)
 			{
-				size_t memPoolIndex = _GetMemPoolIndex();
+				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(bounds.GetBegin());
-				mPtrState = (memPoolIndex < _GetMemPoolIndex(maxCount))
+				mPtrState = (memPoolIndex < pvGetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
 			}
 			else
@@ -447,34 +447,34 @@ namespace internal
 		}
 
 	private:
-		bool _IsEmpty() const MOMO_NOEXCEPT
+		bool pvIsEmpty() const MOMO_NOEXCEPT
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
 
-		void _Set(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		void pvSet(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			mPtrState = reinterpret_cast<uintptr_t>(items) + (uintptr_t)(count - 1) * modMemPoolIndex
 				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
-		static size_t _GetMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count + (skipOddMemPools ? count % 2 : 0);
 		}
 
-		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsEmpty());
+			MOMO_ASSERT(!pvIsEmpty());
 			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
-		Bounds _GetBounds() const MOMO_NOEXCEPT
+		Bounds pvGetBounds() const MOMO_NOEXCEPT
 		{
-			if (_IsEmpty())
+			if (pvIsEmpty())
 				return Bounds();
-			uintptr_t memPoolIndex = (uintptr_t)_GetMemPoolIndex();
+			uintptr_t memPoolIndex = (uintptr_t)pvGetMemPoolIndex();
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
 			uintptr_t mod = UIntMath<uintptr_t>::Ceil(memPoolIndex,
 				(uintptr_t)itemAlignment / modMemPoolIndex);

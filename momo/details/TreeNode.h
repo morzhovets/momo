@@ -147,7 +147,7 @@ namespace internal
 			}
 			node->mParent = nullptr;
 			node->mCounter.count = (unsigned char)count;
-			node->_InitIndices(IsContinuous());
+			node->pvInitIndices(IsContinuous());
 			return *node;
 		}
 
@@ -190,13 +190,13 @@ namespace internal
 		Node* GetChild(size_t index) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(index <= GetCount());
-			return _GetChildren()[index];
+			return pvGetChildren()[index];
 		}
 
 		void SetChild(size_t index, Node* child) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(index <= GetCount());
-			_GetChildren()[index] = child;
+			pvGetChildren()[index] = child;
 		}
 
 		size_t GetChildIndex(const Node* child) const MOMO_NOEXCEPT
@@ -210,7 +210,7 @@ namespace internal
 
 		Item* GetItemPtr(size_t index) MOMO_NOEXCEPT
 		{
-			return _GetItemPtr(index, IsContinuous());
+			return pvGetItemPtr(index, IsContinuous());
 		}
 
 		void AcceptBackItem(Params& params, size_t index) MOMO_NOEXCEPT
@@ -218,10 +218,10 @@ namespace internal
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			_AcceptBackItem(params, index, count, IsContinuous());
+			pvAcceptBackItem(params, index, count, IsContinuous());
 			if (!IsLeaf())
 			{
-				Node** children = _GetChildren();
+				Node** children = pvGetChildren();
 				memmove(children + index + 2, children + index + 1, (count - index) * sizeof(void*));
 			}
 			++mCounter.count;
@@ -232,50 +232,50 @@ namespace internal
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			_Remove(params, index, count, removeFunc, IsContinuous());
+			pvRemove(params, index, count, removeFunc, IsContinuous());
 			if (!IsLeaf())
 			{
-				Node** children = _GetChildren();
+				Node** children = pvGetChildren();
 				memmove(children + index, children + index + 1, (count - index) * sizeof(void*));
 			}
 			--mCounter.count;
 		}
 
 	private:
-		Node** _GetChildren() MOMO_NOEXCEPT
+		Node** pvGetChildren() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsLeaf());
 			return &mParent - maxCapacity - 1;
 		}
 
-		void _InitIndices(std::true_type /*isContinuous*/) MOMO_NOEXCEPT
+		void pvInitIndices(std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 		}
 
-		void _InitIndices(std::false_type /*isContinuous*/) MOMO_NOEXCEPT
+		void pvInitIndices(std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
 				mCounter.indices[i] = (unsigned char)i;
 		}
 
-		Item* _GetItemPtr(size_t index, std::true_type /*isContinuous*/) MOMO_NOEXCEPT
+		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			return &mFirstItem + index;
 		}
 
-		Item* _GetItemPtr(size_t index, std::false_type /*isContinuous*/) MOMO_NOEXCEPT
+		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			return &mFirstItem + mCounter.indices[index];
 		}
 
-		void _AcceptBackItem(Params& params, size_t index, size_t count,
+		void pvAcceptBackItem(Params& params, size_t index, size_t count,
 			std::true_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(),
 				std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
 		}
 
-		void _AcceptBackItem(Params& /*params*/, size_t index, size_t count,
+		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
 			std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			unsigned char realIndex = mCounter.indices[count];
@@ -284,7 +284,7 @@ namespace internal
 		}
 
 		template<typename RemoveFunc>
-		void _Remove(Params& params, size_t index, size_t count, const RemoveFunc& removeFunc,
+		void pvRemove(Params& params, size_t index, size_t count, const RemoveFunc& removeFunc,
 			std::true_type /*isContinuous*/)
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
@@ -301,7 +301,7 @@ namespace internal
 		}
 
 		template<typename RemoveFunc>
-		void _Remove(Params& /*params*/, size_t index, size_t count, const RemoveFunc& removeFunc,
+		void pvRemove(Params& /*params*/, size_t index, size_t count, const RemoveFunc& removeFunc,
 			std::false_type /*isContinuous*/)
 		{
 			removeFunc(*GetItemPtr(index));

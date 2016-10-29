@@ -58,7 +58,7 @@ public:
 	{
 		while (blockAlignment > blockSize && blockAlignment > 1)
 			blockAlignment /= 2;
-		_CorrectBlockSize();
+		pvCorrectBlockSize();
 	}
 
 	MemPoolParams(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
@@ -66,11 +66,11 @@ public:
 		blockAlignment(blockAlignment)
 	{
 		MOMO_ASSERT(blockAlignment > 0);
-		_CorrectBlockSize();
+		pvCorrectBlockSize();
 	}
 
 private:
-	void _CorrectBlockSize() MOMO_NOEXCEPT
+	void pvCorrectBlockSize() MOMO_NOEXCEPT
 	{
 		if (blockCount == 1)
 		{
@@ -165,15 +165,15 @@ public:
 
 	explicit MemPool(const Params& params, MemManager&& memManager = MemManager())
 		: Params(params),
-		MemManagerWrapper((_CheckParams(), std::move(memManager))),
+		MemManagerWrapper((pvCheckParams(), std::move(memManager))),
 		mBufferHead(nullPtr),
 		mAllocCount(0)
 	{
 	}
 
 	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
-		: Params(std::move(memPool._GetParams())),
-		MemManagerWrapper(std::move(memPool._GetMemManagerWrapper())),
+		: Params(std::move(memPool.pvGetParams())),
+		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
 		mAllocCount(memPool.mAllocCount),
 		mCachedFreeBlocks(std::move(memPool.mCachedFreeBlocks))
@@ -188,7 +188,7 @@ public:
 	{
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
 		if (Params::cachedFreeBlockCount > 0)
-			_FlushDeallocate();
+			pvFlushDeallocate();
 		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
 	}
 
@@ -202,8 +202,8 @@ public:
 
 	void Swap(MemPool& memPool) MOMO_NOEXCEPT
 	{
-		std::swap(_GetMemManagerWrapper(), memPool._GetMemManagerWrapper());
-		std::swap(_GetParams(), memPool._GetParams());
+		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
+		std::swap(pvGetParams(), memPool.pvGetParams());
 		std::swap(mBufferHead, memPool.mBufferHead);
 		std::swap(mAllocCount, memPool.mAllocCount);
 		mCachedFreeBlocks.Swap(memPool.mCachedFreeBlocks);
@@ -228,12 +228,12 @@ public:
 
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
 	{
-		return _GetMemManagerWrapper().GetMemManager();
+		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
 	MemManager& GetMemManager() MOMO_NOEXCEPT
 	{
-		return _GetMemManagerWrapper().GetMemManager();
+		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
 	template<typename ResType = void>
@@ -248,11 +248,11 @@ public:
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = reinterpret_cast<ResType*>(_NewBlock());
+				pblock = reinterpret_cast<ResType*>(pvNewBlock());
 			else if (maxAlignment % Params::blockAlignment == 0)
-				pblock = GetMemManager().template Allocate<ResType>(_GetBufferSize0());
+				pblock = GetMemManager().template Allocate<ResType>(pvGetBufferSize0());
 			else
-				pblock = reinterpret_cast<ResType*>(_NewBlock1());
+				pblock = reinterpret_cast<ResType*>(pvNewBlock1());
 		}
 		++mAllocCount;
 		return pblock;
@@ -265,33 +265,33 @@ public:
 		if (Params::cachedFreeBlockCount > 0)
 		{
 			if (mCachedFreeBlocks.GetCount() == Params::cachedFreeBlockCount)
-				_FlushDeallocate();
+				pvFlushDeallocate();
 			mCachedFreeBlocks.AddBackNogrow(pblock);
 		}
 		else
 		{
-			_DeleteBlock(pblock);
+			pvDeleteBlock(pblock);
 		}
 		--mAllocCount;
 	}
 
 private:
-	Params& _GetParams() MOMO_NOEXCEPT
+	Params& pvGetParams() MOMO_NOEXCEPT
 	{
 		return *this;
 	}
 
-	const MemManagerWrapper& _GetMemManagerWrapper() const MOMO_NOEXCEPT
+	const MemManagerWrapper& pvGetMemManagerWrapper() const MOMO_NOEXCEPT
 	{
 		return *this;
 	}
 
-	MemManagerWrapper& _GetMemManagerWrapper() MOMO_NOEXCEPT
+	MemManagerWrapper& pvGetMemManagerWrapper() MOMO_NOEXCEPT
 	{
 		return *this;
 	}
 
-	void _CheckParams() const
+	void pvCheckParams() const
 	{
 		MOMO_CHECK(0 < Params::blockCount && Params::blockCount < 128);
 		MOMO_CHECK(0 < Params::blockAlignment && Params::blockAlignment <= 1024);
@@ -304,114 +304,114 @@ private:
 			throw std::length_error("momo::MemPool length error");
 	}
 
-	void _FlushDeallocate() MOMO_NOEXCEPT
+	void pvFlushDeallocate() MOMO_NOEXCEPT
 	{
 		for (void* pblock : mCachedFreeBlocks)
-			_DeleteBlock(pblock);
+			pvDeleteBlock(pblock);
 		mCachedFreeBlocks.Clear();
 	}
 
-	void _DeleteBlock(void* pblock) MOMO_NOEXCEPT
+	void pvDeleteBlock(void* pblock) MOMO_NOEXCEPT
 	{
 		if (Params::blockCount > 1)
-			_DeleteBlock(reinterpret_cast<uintptr_t>(pblock));
+			pvDeleteBlock(reinterpret_cast<uintptr_t>(pblock));
 		else if (maxAlignment % Params::blockAlignment == 0)
-			GetMemManager().Deallocate(pblock, _GetBufferSize0());
+			GetMemManager().Deallocate(pblock, pvGetBufferSize0());
 		else
-			_DeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
+			pvDeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
 	}
 
-	size_t _GetBufferSize0() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize0() const MOMO_NOEXCEPT
 	{
 		return std::minmax((size_t)Params::blockSize, (size_t)Params::blockAlignment).second;	// gcc & llvm
 	}
 
-	uintptr_t _NewBlock1()
+	uintptr_t pvNewBlock1()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(_GetBufferSize1()));
+		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(pvGetBufferSize1()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
-		_GetBufferBegin1(block) = begin;
+		pvGetBufferBegin1(block) = begin;
 		return block;
 	}
 
-	void _DeleteBlock1(uintptr_t block) MOMO_NOEXCEPT
+	void pvDeleteBlock1(uintptr_t block) MOMO_NOEXCEPT
 	{
-		uintptr_t begin = _GetBufferBegin1(block);
-		GetMemManager().Deallocate(reinterpret_cast<void*>(begin), _GetBufferSize1());
+		uintptr_t begin = pvGetBufferBegin1(block);
+		GetMemManager().Deallocate(reinterpret_cast<void*>(begin), pvGetBufferSize1());
 	}
 
-	size_t _GetBufferSize1() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize1() const MOMO_NOEXCEPT
 	{
 		size_t bufferUsefulSize = Params::blockSize + Params::blockAlignment
 			- SMath::GCD(maxAlignment, Params::blockAlignment);
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
 	}
 
-	uintptr_t& _GetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
+	uintptr_t& pvGetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
 	{
 		return *reinterpret_cast<uintptr_t*>(PMath::Ceil(block + Params::blockSize,
 			(uintptr_t)sizeof(void*)));
 	}
 
-	uintptr_t _NewBlock()
+	uintptr_t pvNewBlock()
 	{
 		if (mBufferHead == nullPtr)
-			mBufferHead = _NewBuffer();
+			mBufferHead = pvNewBuffer();
 		uintptr_t block;
-		size_t freeBlockCount = _NewBlock(mBufferHead, block);
+		size_t freeBlockCount = pvNewBlock(mBufferHead, block);
 		if (freeBlockCount == 0)
-			_RemoveBuffer(mBufferHead, false);
+			pvRemoveBuffer(mBufferHead, false);
 		return block;
 	}
 
-	void _DeleteBlock(uintptr_t block) MOMO_NOEXCEPT
+	void pvDeleteBlock(uintptr_t block) MOMO_NOEXCEPT
 	{
 		uintptr_t buffer;
-		size_t freeBlockCount = _DeleteBlock(block, buffer);
+		size_t freeBlockCount = pvDeleteBlock(block, buffer);
 		if (freeBlockCount == 1)
 		{
-			BufferPointers& pointers = _GetBufferPointers(buffer);
+			BufferPointers& pointers = pvGetBufferPointers(buffer);
 			pointers.prevBuffer = nullPtr;
 			pointers.nextBuffer = mBufferHead;
 			if (mBufferHead != nullPtr)
-				_GetBufferPointers(mBufferHead).prevBuffer = buffer;
+				pvGetBufferPointers(mBufferHead).prevBuffer = buffer;
 			mBufferHead = buffer;
 		}
 		if (freeBlockCount == Params::blockCount)
-			_RemoveBuffer(buffer, true);
+			pvRemoveBuffer(buffer, true);
 	}
 
-	size_t _NewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
+	size_t pvNewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
 	{
-		BufferChars& chars = _GetBufferChars(buffer);
-		block = _GetBlock(buffer, chars.firstFreeBlockIndex);
-		chars.firstFreeBlockIndex = _GetNextFreeBlockIndex(block);
+		BufferChars& chars = pvGetBufferChars(buffer);
+		block = pvGetNextFreeBlockIndex(buffer, chars.firstFreeBlockIndex);
+		chars.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
 		--chars.freeBlockCount;
 		return (size_t)chars.freeBlockCount;
 	}
 
-	size_t _DeleteBlock(uintptr_t block, uintptr_t& buffer) MOMO_NOEXCEPT
+	size_t pvDeleteBlock(uintptr_t block, uintptr_t& buffer) MOMO_NOEXCEPT
 	{
-		signed char blockIndex = _GetBlockIndex(block, buffer);
-		BufferChars& chars = _GetBufferChars(buffer);
-		_GetNextFreeBlockIndex(block) = chars.firstFreeBlockIndex;
+		signed char blockIndex = pvGetBlockIndex(block, buffer);
+		BufferChars& chars = pvGetBufferChars(buffer);
+		pvGetNextFreeBlockIndex(block) = chars.firstFreeBlockIndex;
 		chars.firstFreeBlockIndex = blockIndex;
 		++chars.freeBlockCount;
 		return (size_t)chars.freeBlockCount;
 	}
 
-	signed char& _GetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
+	signed char& pvGetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
 	{
 		return *reinterpret_cast<signed char*>(block);
 	}
 
-	uintptr_t _GetBlock(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
+	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
 	{
 		return buffer + (intptr_t)index * (intptr_t)Params::blockSize
 			+ ((intptr_t)Params::blockAlignment & -(intptr_t)(index >= 0));
 	}
 
-	signed char _GetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
+	signed char pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
@@ -427,9 +427,9 @@ private:
 		}
 	}
 
-	uintptr_t _NewBuffer()
+	uintptr_t pvNewBuffer()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(_GetBufferSize()));
+		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(pvGetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
 		if ((block + Params::blockAlignment) % Params::blockSize == 0)
@@ -437,39 +437,39 @@ private:
 		if (((block / Params::blockSize) % Params::blockCount) == 0)
 			block += Params::blockAlignment;
 		uintptr_t buffer;
-		signed char blockIndex = _GetBlockIndex(block, buffer);
-		_GetFirstBlockIndex(buffer) = blockIndex;
-		BufferChars& chars = _GetBufferChars(buffer);
+		signed char blockIndex = pvGetBlockIndex(block, buffer);
+		pvGetFirstBlockIndex(buffer) = blockIndex;
+		BufferChars& chars = pvGetBufferChars(buffer);
 		chars.firstFreeBlockIndex = blockIndex;
 		chars.freeBlockCount = (signed char)Params::blockCount;
-		BufferPointers& pointers = _GetBufferPointers(buffer);
+		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		pointers.prevBuffer = nullPtr;
 		pointers.nextBuffer = nullPtr;
 		pointers.begin = begin;
 		for (size_t i = 1; i < Params::blockCount; ++i)
 		{
 			++blockIndex;
-			_GetNextFreeBlockIndex(block) = blockIndex;
-			block = _GetBlock(buffer, blockIndex);
+			pvGetNextFreeBlockIndex(block) = blockIndex;
+			block = pvGetNextFreeBlockIndex(buffer, blockIndex);
 		}
-		_GetNextFreeBlockIndex(block) = (signed char)(-128);
+		pvGetNextFreeBlockIndex(block) = (signed char)(-128);
 		return buffer;
 	}
 
-	void _RemoveBuffer(uintptr_t buffer, bool deallocate) MOMO_NOEXCEPT
+	void pvRemoveBuffer(uintptr_t buffer, bool deallocate) MOMO_NOEXCEPT
 	{
-		BufferPointers& pointers = _GetBufferPointers(buffer);
+		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		if (pointers.prevBuffer != nullPtr)
-			_GetBufferPointers(pointers.prevBuffer).nextBuffer = pointers.nextBuffer;
+			pvGetBufferPointers(pointers.prevBuffer).nextBuffer = pointers.nextBuffer;
 		if (pointers.nextBuffer != nullPtr)
-			_GetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
+			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
 		if (mBufferHead == buffer)
 			mBufferHead = pointers.nextBuffer;
 		if (deallocate)
-			GetMemManager().Deallocate(reinterpret_cast<void*>(pointers.begin), _GetBufferSize());
+			GetMemManager().Deallocate(reinterpret_cast<void*>(pointers.begin), pvGetBufferSize());
 	}
 
-	size_t _GetBufferSize() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize() const MOMO_NOEXCEPT
 	{
 		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
 			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
@@ -481,22 +481,22 @@ private:
 			+ ((Params::blockAlignment <= 2) ? 2 : 0);
 	}
 
-	signed char& _GetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
+	signed char& pvGetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		return *reinterpret_cast<signed char*>(buffer);
 	}
 
-	BufferChars& _GetBufferChars(uintptr_t buffer) MOMO_NOEXCEPT
+	BufferChars& pvGetBufferChars(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		if (Params::blockAlignment > 2)
 			return *reinterpret_cast<BufferChars*>(buffer + 1);
 		else
-			return *reinterpret_cast<BufferChars*>(&_GetBufferPointers(buffer) + 1);
+			return *reinterpret_cast<BufferChars*>(&pvGetBufferPointers(buffer) + 1);
 	}
 
-	BufferPointers& _GetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
+	BufferPointers& pvGetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
 	{
-		size_t offset = Params::blockCount - (size_t)(-_GetFirstBlockIndex(buffer));
+		size_t offset = Params::blockCount - (size_t)(-pvGetFirstBlockIndex(buffer));
 		return *reinterpret_cast<BufferPointers*>(PMath::Ceil(buffer + Params::blockAlignment
 			+ Params::blockSize * offset, (uintptr_t)sizeof(void*)));
 	}
@@ -541,7 +541,7 @@ namespace internal
 		~MemPoolUInt32() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mAllocCount == 0);
-			_Clear();
+			pvClear();
 		}
 
 		MemPoolUInt32& operator=(const MemPoolUInt32&) = delete;
@@ -559,21 +559,21 @@ namespace internal
 		template<typename ResType = void>
 		const ResType* GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
 		{
-			return _GetRealPointer<const ResType>(ptr);
+			return pvGetRealPointer<const ResType>(ptr);
 		}
 
 		template<typename ResType = void>
 		ResType* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
 		{
-			return _GetRealPointer<ResType>(ptr);
+			return pvGetRealPointer<ResType>(ptr);
 		}
 
 		uint32_t Allocate()
 		{
 			if (mBlockHead == nullPtr)
-				_NewBuffer();
+				pvNewBuffer();
 			uint32_t ptr = mBlockHead;
-			mBlockHead = _GetNextBlock(GetRealPointer(mBlockHead));
+			mBlockHead = pvGetNextBlock(GetRealPointer(mBlockHead));
 			++mAllocCount;
 			return ptr;
 		}
@@ -582,16 +582,16 @@ namespace internal
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			MOMO_ASSERT(mAllocCount > 0);
-			_GetNextBlock(GetRealPointer(ptr)) = mBlockHead;
+			pvGetNextBlock(GetRealPointer(ptr)) = mBlockHead;
 			mBlockHead = ptr;
 			--mAllocCount;
 			if (mAllocCount == 0)
-				_Shrink();
+				pvShrink();
 		}
 
 	private:
 		template<typename ResType>
-		ResType* _GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
+		ResType* pvGetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = mBuffers[ptr / blockCount];
@@ -599,47 +599,47 @@ namespace internal
 			return static_cast<ResType*>(realPtr);
 		}
 
-		uint32_t& _GetNextBlock(void* realPtr) MOMO_NOEXCEPT
+		uint32_t& pvGetNextBlock(void* realPtr) MOMO_NOEXCEPT
 		{
 			return *static_cast<uint32_t*>(realPtr);
 		}
 
-		void _NewBuffer()
+		void pvNewBuffer()
 		{
 			size_t bufferCount = mBuffers.GetCount();
 			if (bufferCount >= mMaxBufferCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 			mBuffers.Reserve(bufferCount + 1);
-			char* buffer = GetMemManager().template Allocate<char>(_GetBufferSize());
+			char* buffer = GetMemManager().template Allocate<char>(pvGetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				void* realPtr = buffer + mBlockSize * i;
-				_GetNextBlock(realPtr) = (i + 1 < blockCount)
+				pvGetNextBlock(realPtr) = (i + 1 < blockCount)
 					? (uint32_t)(bufferCount * blockCount + i + 1) : nullPtr;
 			}
 			mBlockHead = (uint32_t)(bufferCount * blockCount);
 			mBuffers.AddBackNogrow(buffer);
 		}
 
-		void _Shrink() MOMO_NOEXCEPT
+		void pvShrink() MOMO_NOEXCEPT
 		{
 			if (mBuffers.GetCount() > 2)
 			{
-				_Clear();
+				pvClear();
 				mBlockHead = nullPtr;
 				mBuffers.Clear(true);
 			}
 		}
 
-		void _Clear() MOMO_NOEXCEPT
+		void pvClear() MOMO_NOEXCEPT
 		{
 			MemManager& memManager = GetMemManager();
-			size_t bufferSize = _GetBufferSize();
+			size_t bufferSize = pvGetBufferSize();
 			for (char* buffer : mBuffers)
 				memManager.Deallocate(buffer, bufferSize);
 		}
 
-		size_t _GetBufferSize() const MOMO_NOEXCEPT
+		size_t pvGetBufferSize() const MOMO_NOEXCEPT
 		{
 			return blockCount * mBlockSize;
 		}

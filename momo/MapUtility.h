@@ -195,7 +195,7 @@ namespace internal
 		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
-			_Relocate(memManager, srcKey, srcValue, dstKey, dstValue,
+			pvRelocate(memManager, srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
@@ -203,7 +203,7 @@ namespace internal
 		static void Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue)
 		{
-			_Replace(memManager, srcKey, srcValue, dstKey, dstValue,
+			pvReplace(memManager, srcKey, srcValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 		}
@@ -213,7 +213,7 @@ namespace internal
 		{
 			MOMO_ASSERT(std::addressof(srcKey) != std::addressof(midKey));
 			MOMO_ASSERT(std::addressof(srcValue) != std::addressof(midValue));
-			_ReplaceRelocate(memManager, srcKey, srcValue, midKey, midValue, dstKey, dstValue,
+			pvReplaceRelocate(memManager, srcKey, srcValue, midKey, midValue, dstKey, dstValue,
 				BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>(),
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
@@ -225,7 +225,7 @@ namespace internal
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func)
 		{
-			_RelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
+			pvRelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
 				count, func, BoolConstant<KeyManager::isNothrowRelocatable>(),
 				BoolConstant<ValueManager::isNothrowRelocatable>());
 		}
@@ -250,7 +250,7 @@ namespace internal
 
 	private:
 		template<bool isValueNothrowRelocatable>
-		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::true_type /*isKeyNothrowRelocatable*/,
 			BoolConstant<isValueNothrowRelocatable>)
 		{
@@ -258,7 +258,7 @@ namespace internal
 			KeyManager::Relocate(memManager, srcKey, dstKey);
 		}
 
-		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
@@ -266,7 +266,7 @@ namespace internal
 			ValueManager::Relocate(memManager, srcValue, dstValue);
 		}
 
-		static void _Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
@@ -284,7 +284,7 @@ namespace internal
 		}
 
 		template<bool isValueNothrowAnywayAssignable>
-		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue, std::true_type /*isKeyNothrowAnywayAssignable*/,
 			BoolConstant<isValueNothrowAnywayAssignable>)
 		{
@@ -292,7 +292,7 @@ namespace internal
 			KeyManager::Replace(memManager, srcKey, dstKey);
 		}
 
-		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue, std::false_type /*isKeyNothrowAnywayAssignable*/,
 			std::true_type /*isValueNothrowAnywayAssignable*/)
 		{
@@ -300,14 +300,14 @@ namespace internal
 			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
-		static void _Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue, std::false_type /*isKeyNothrowAnywayAssignable*/,
 			std::false_type /*isValueNothrowAnywayAssignable*/)
 		{
-			_ReplaceUnsafe(memManager, srcKey, srcValue, dstKey, dstValue);
+			pvReplaceUnsafe(memManager, srcKey, srcValue, dstKey, dstValue);
 		}
 
-		static void _ReplaceUnsafe(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceUnsafe(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue)
 		{
 			// basic exception safety
@@ -319,7 +319,7 @@ namespace internal
 
 		template<bool isValueNothrowRelocatable, bool isKeyNothrowAnywayAssignable,
 			bool isValueNothrowAnywayAssignable>
-		static void _ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue,
 			std::true_type /*isKeyNothrowRelocatable*/, BoolConstant<isValueNothrowRelocatable>,
 			BoolConstant<isKeyNothrowAnywayAssignable>, BoolConstant<isValueNothrowAnywayAssignable>)
@@ -329,7 +329,7 @@ namespace internal
 		}
 
 		template<bool isKeyNothrowAnywayAssignable, bool isValueNothrowAnywayAssignable>
-		static void _ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/,
@@ -340,7 +340,7 @@ namespace internal
 		}
 
 		template<bool isValueNothrowAnywayAssignable>
-		static void _ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/,
@@ -360,7 +360,7 @@ namespace internal
 			KeyManager::Replace(memManager, srcKey, midKey);
 		}
 
-		static void _ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/,
@@ -380,7 +380,7 @@ namespace internal
 			ValueManager::Replace(memManager, srcValue, midValue);
 		}
 
-		static void _ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue,
 			std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/,
@@ -393,7 +393,7 @@ namespace internal
 				ValueManager::Copy(memManager, midValue, dstValue);
 				try
 				{
-					_ReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
+					pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
 				}
 				catch (...)
 				{
@@ -410,7 +410,7 @@ namespace internal
 
 		template<typename KeyIterator, typename ValueIterator, typename Func,
 			bool isValueNothrowRelocatable>
-		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func, std::true_type /*isKeyNothrowRelocatable*/,
 			BoolConstant<isValueNothrowRelocatable>)
@@ -420,7 +420,7 @@ namespace internal
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
@@ -430,7 +430,7 @@ namespace internal
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void _RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
+		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
@@ -623,13 +623,13 @@ namespace internal
 
 			ValueReference& operator=(const ValueReference& valueRef)
 			{
-				return _Assign(valueRef.Get());
+				return pvAssign(valueRef.Get());
 			}
 
 			template<typename ValueArg>
 			ValueReference& operator=(ValueArg&& valueArg)
 			{
-				return _Assign(std::forward<ValueArg>(valueArg));
+				return pvAssign(std::forward<ValueArg>(valueArg));
 			}
 
 			operator Value&()
@@ -645,7 +645,7 @@ namespace internal
 
 		private:
 			template<typename ValueArg>
-			ValueReference& _Assign(ValueArg&& valueArg)
+			ValueReference& pvAssign(ValueArg&& valueArg)
 			{
 				if (mKeyPtr == nullptr)
 				{

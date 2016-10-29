@@ -126,7 +126,7 @@ namespace internal
 
 		~SetCrew() MOMO_NOEXCEPT
 		{
-			if (!_IsNull())
+			if (!pvIsNull())
 			{
 				mData->containerTraits.~ContainerTraits();
 				MemManager memManager = std::move(GetMemManager());
@@ -144,36 +144,36 @@ namespace internal
 
 		const size_t* GetVersion() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsNull());
+			MOMO_ASSERT(!pvIsNull());
 			return &mData->version;
 		}
 
 		void IncVersion() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsNull());
+			MOMO_ASSERT(!pvIsNull());
 			++mData->version;
 		}
 
 		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsNull());
+			MOMO_ASSERT(!pvIsNull());
 			return mData->containerTraits;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsNull());
+			MOMO_ASSERT(!pvIsNull());
 			return mData->memManager;
 		}
 
 		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(!_IsNull());
+			MOMO_ASSERT(!pvIsNull());
 			return mData->memManager;
 		}
 
 	private:
-		bool _IsNull() const MOMO_NOEXCEPT
+		bool pvIsNull() const MOMO_NOEXCEPT
 		{
 			return mData == nullptr;
 		}
@@ -205,7 +205,7 @@ namespace internal
 		}
 
 		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
-			: ContainerTraits(std::move(crew._GetContainerTraits())),
+			: ContainerTraits(std::move(crew.pvGetContainerTraits())),
 			MemManager(std::move(crew.GetMemManager()))
 		{
 		}
@@ -220,7 +220,7 @@ namespace internal
 
 		void Swap(SetCrew& crew) MOMO_NOEXCEPT
 		{
-			std::swap(_GetContainerTraits(), crew._GetContainerTraits());
+			std::swap(pvGetContainerTraits(), crew.pvGetContainerTraits());
 		}
 
 		const size_t* GetVersion() const MOMO_NOEXCEPT
@@ -248,7 +248,7 @@ namespace internal
 		}
 
 	private:
-		ContainerTraits& _GetContainerTraits() MOMO_NOEXCEPT
+		ContainerTraits& pvGetContainerTraits() MOMO_NOEXCEPT
 		{
 			return *this;
 		}

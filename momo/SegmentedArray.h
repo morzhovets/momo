@@ -99,7 +99,7 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCo
 	{
 		size_t index1 = (index >> logFirstItemCount) + 1;
 		size_t index2 = index & (((size_t)1 << logFirstItemCount) - 1);
-		size_t logItemCount = _IndexToLogItemCount(index1);
+		size_t logItemCount = pvIndexToLogItemCount(index1);
 		size_t itemIndex1 = index1 & (((size_t)1 << logItemCount) - 1);
 		size_t itemIndex2 = index2;
 		segIndex = (index1 >> logItemCount) + ((size_t)1 << logItemCount) - 2;
@@ -110,7 +110,7 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCo
 	{
 		size_t itemIndex1 = itemIndex >> logFirstItemCount;
 		size_t itemIndex2 = itemIndex & (((size_t)1 << logFirstItemCount) - 1);
-		size_t logItemCount = _SegIndexToLogItemCount(segIndex);
+		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
 		size_t index1 = ((segIndex + 2 - ((size_t)1 << logItemCount)) << logItemCount) + itemIndex1;
 		size_t index2 = itemIndex2;
 		size_t index = ((index1 - 1) << logFirstItemCount) + index2;
@@ -119,17 +119,17 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCo
 
 	static size_t GetItemCount(size_t segIndex) MOMO_NOEXCEPT
 	{
-		size_t logItemCount = _SegIndexToLogItemCount(segIndex);
+		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
 		return (size_t)1 << (logItemCount + logFirstItemCount);
 	}
 
 private:
-	static size_t _IndexToLogItemCount(size_t index1) MOMO_NOEXCEPT
+	static size_t pvIndexToLogItemCount(size_t index1) MOMO_NOEXCEPT
 	{
 		return (internal::UIntMath<size_t>::Log2(index1) + 1) / 2;
 	}
 
-	static size_t _SegIndexToLogItemCount(size_t segIndex) MOMO_NOEXCEPT
+	static size_t pvSegIndexToLogItemCount(size_t segIndex) MOMO_NOEXCEPT
 	{
 		return internal::UIntMath<size_t>::Log2((segIndex * 2 + 4) / 3);
 	}
@@ -201,13 +201,13 @@ public:
 	explicit SegmentedArray(size_t count, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		_IncCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		pvIncCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		_IncCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		pvIncCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	template<typename ArgIterator,
@@ -224,8 +224,8 @@ public:
 		}
 		catch (...)
 		{
-			_DecCount(0);
-			_DecCapacity(0);
+			pvDecCount(0);
+			pvDecCapacity(0);
 			throw;
 		}
 	}
@@ -245,7 +245,7 @@ public:
 	SegmentedArray(const SegmentedArray& array, bool shrink = true)
 		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
-		_IncCapacity(shrink ? array.GetCount() : array.GetCapacity());
+		pvIncCapacity(shrink ? array.GetCount() : array.GetCapacity());
 		try
 		{
 			for (const Item& item : array)
@@ -253,8 +253,8 @@ public:
 		}
 		catch (...)
 		{
-			_DecCount(0);
-			_DecCapacity(0);
+			pvDecCount(0);
+			pvDecCapacity(0);
 			throw;
 		}
 	}
@@ -267,7 +267,7 @@ public:
 	static SegmentedArray CreateCap(size_t capacity, MemManager&& memManager = MemManager())
 	{
 		SegmentedArray array(std::move(memManager));
-		array._IncCapacity(capacity);
+		array.pvIncCapacity(capacity);
 		return array;
 	}
 
@@ -276,14 +276,14 @@ public:
 		MemManager&& memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
-		array._IncCount(count, itemCreator);
+		array.pvIncCount(count, itemCreator);
 		return array;
 	}
 
 	~SegmentedArray() MOMO_NOEXCEPT
 	{
-		_DecCount(0);
-		_DecCapacity(0);
+		pvDecCount(0);
+		pvDecCapacity(0);
 	}
 
 	SegmentedArray& operator=(SegmentedArray&& array) MOMO_NOEXCEPT
@@ -347,17 +347,17 @@ public:
 	template<typename ItemCreator>
 	void SetCountCrt(size_t count, const ItemCreator& itemCreator)
 	{
-		_SetCount(count, itemCreator);
+		pvSetCount(count, itemCreator);
 	}
 
 	void SetCount(size_t count)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		pvSetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		_SetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		pvSetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -367,10 +367,10 @@ public:
 
 	void Clear(bool shrink = false) MOMO_NOEXCEPT
 	{
-		_DecCount(0);
+		pvDecCount(0);
 		if (shrink)
 		{
-			_DecCapacity(0);
+			pvDecCapacity(0);
 			mSegments.Clear(true);
 		}
 	}
@@ -383,12 +383,12 @@ public:
 	void Reserve(size_t capacity)
 	{
 		if (capacity > GetCapacity())
-			_IncCapacity(capacity);
+			pvIncCapacity(capacity);
 	}
 
 	void Shrink() MOMO_NOEXCEPT
 	{
-		_DecCapacity(mCount);
+		pvDecCapacity(mCount);
 		try
 		{
 			mSegments.Shrink();
@@ -401,29 +401,29 @@ public:
 
 	const Item& operator[](size_t index) const
 	{
-		return _GetItem(index);
+		return pvGetItem(index);
 	}
 
 	Item& operator[](size_t index)
 	{
-		return _GetItem(index);
+		return pvGetItem(index);
 	}
 
 	const Item& GetBackItem() const
 	{
-		return _GetItem(mCount - 1);
+		return pvGetItem(mCount - 1);
 	}
 
 	Item& GetBackItem()
 	{
-		return _GetItem(mCount - 1);
+		return pvGetItem(mCount - 1);
 	}
 
 	template<typename ItemCreator>
 	void AddBackNogrowCrt(const ItemCreator& itemCreator)
 	{
 		MOMO_CHECK(mCount < GetCapacity());
-		_AddBackNogrow(itemCreator);
+		pvAddBackNogrow(itemCreator);
 	}
 
 	template<typename... ItemArgs>
@@ -449,11 +449,11 @@ public:
 		size_t initCapacity = GetCapacity();
 		if (mCount < initCapacity)
 		{
-			_AddBackNogrow(itemCreator);
+			pvAddBackNogrow(itemCreator);
 		}
 		else
 		{
-			_IncCapacity(initCapacity + 1);
+			pvIncCapacity(initCapacity + 1);
 			try
 			{
 				itemCreator(mSegments.GetBackItem());
@@ -461,7 +461,7 @@ public:
 			}
 			catch (...)
 			{
-				_DecCapacity(initCapacity);
+				pvDecCapacity(initCapacity);
 				throw;
 			}
 		}
@@ -534,7 +534,7 @@ public:
 	void RemoveBack(size_t count = 1)
 	{
 		MOMO_CHECK(count <= mCount);
-		_DecCount(mCount - count);
+		pvDecCount(mCount - count);
 	}
 
 	void Remove(size_t index, size_t count)
@@ -543,7 +543,7 @@ public:
 	}
 
 private:
-	Item* _GetSegMemory(size_t segIndex)
+	Item* pvGetSegMemory(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > SIZE_MAX / sizeof(Item))
@@ -551,13 +551,13 @@ private:
 		return GetMemManager().template Allocate<Item>(itemCount * sizeof(Item));
 	}
 
-	void _FreeSegMemory(size_t segIndex, Item* segMemory) MOMO_NOEXCEPT
+	void pvFreeSegMemory(size_t segIndex, Item* segMemory) MOMO_NOEXCEPT
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		GetMemManager().Deallocate(segMemory, itemCount * sizeof(Item));
 	}
 
-	Item& _GetItem(size_t index) const
+	Item& pvGetItem(size_t index) const
 	{
 		MOMO_CHECK(index < mCount);
 		size_t segIndex, itemIndex;
@@ -566,7 +566,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void _AddBackNogrow(const ItemCreator& itemCreator)
+	void pvAddBackNogrow(const ItemCreator& itemCreator)
 	{
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
@@ -575,16 +575,16 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void _SetCount(size_t count, const ItemCreator& itemCreator)
+	void pvSetCount(size_t count, const ItemCreator& itemCreator)
 	{
 		if (count < mCount)
-			_DecCount(count);
+			pvDecCount(count);
 		else if (count > mCount)
-			_IncCount(count, itemCreator);
+			pvIncCount(count, itemCreator);
 	}
 
 	template<typename ItemCreator>
-	void _IncCount(size_t count, const ItemCreator& itemCreator)
+	void pvIncCount(size_t count, const ItemCreator& itemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();
@@ -609,13 +609,13 @@ private:
 		}
 		catch (...)
 		{
-			_DecCount(initCount);
-			_DecCapacity(initCapacity);
+			pvDecCount(initCount);
+			pvDecCapacity(initCapacity);
 			throw;
 		}
 	}
 
-	void _DecCount(size_t count) MOMO_NOEXCEPT
+	void pvDecCount(size_t count) MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(count <= mCount);
 		size_t segIndex, itemIndex;
@@ -634,7 +634,7 @@ private:
 		}
 	}
 
-	void _IncCapacity(size_t capacity)
+	void pvIncCapacity(size_t capacity)
 	{
 		size_t initCapacity = GetCapacity();
 		MOMO_ASSERT(capacity >= initCapacity);
@@ -647,18 +647,18 @@ private:
 			for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
 			{
 				mSegments.Reserve(segCount + 1);
-				Item* segMemory = _GetSegMemory(segCount);
+				Item* segMemory = pvGetSegMemory(segCount);
 				mSegments.AddBackNogrow(segMemory);
 			}
 		}
 		catch (...)
 		{
-			_DecCapacity(initCapacity);
+			pvDecCapacity(initCapacity);
 			throw;
 		}
 	}
 
-	void _DecCapacity(size_t capacity) MOMO_NOEXCEPT
+	void pvDecCapacity(size_t capacity) MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(capacity <= GetCapacity());
 		size_t segIndex, itemIndex;
@@ -667,7 +667,7 @@ private:
 			++segIndex;
 		size_t segCount = mSegments.GetCount();
 		for (size_t i = segIndex; i < segCount; ++i)
-			_FreeSegMemory(i, mSegments[i]);
+			pvFreeSegMemory(i, mSegments[i]);
 		mSegments.RemoveBack(segCount - segIndex);
 	}
 

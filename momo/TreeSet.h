@@ -60,7 +60,7 @@ namespace internal
 			mItemIndex(itemIndex)
 		{
 			if (move)
-				_Move();
+				pvMove();
 		}
 
 		//operator ConstIterator() const MOMO_NOEXCEPT
@@ -81,7 +81,7 @@ namespace internal
 					mNode = mNode->GetChild(0);
 				mItemIndex = 0;
 			}
-			_Move();
+			pvMove();
 			return *this;
 		}
 
@@ -154,7 +154,7 @@ namespace internal
 		}
 
 	private:
-		void _Move() MOMO_NOEXCEPT
+		void pvMove() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mNode->IsLeaf());
 			if (mItemIndex < mNode->GetCount())
@@ -403,7 +403,7 @@ private:
 
 		SplitResult SplitNode(Node* node, size_t itemIndex)
 		{
-			SplitResult splitRes = _SplitNode(node, itemIndex);
+			SplitResult splitRes = pvSplitNode(node, itemIndex);
 			if (!node->IsLeaf())
 			{
 				size_t itemCount = node->GetCount();
@@ -439,7 +439,7 @@ private:
 		}
 
 	private:
-		SplitResult _SplitNode(Node* node, size_t itemIndex)
+		SplitResult pvSplitNode(Node* node, size_t itemIndex)
 		{
 			bool isLeaf = node->IsLeaf();
 			mOldNodes.AddBack(node);
@@ -496,7 +496,7 @@ public:
 		}
 		catch (...)
 		{
-			_Destroy();
+			pvDestroy();
 			throw;
 		}
 	}
@@ -527,14 +527,14 @@ public:
 		}
 		catch (...)
 		{
-			_Destroy();
+			pvDestroy();
 			throw;
 		}
 	}
 
 	~TreeSet() MOMO_NOEXCEPT
 	{
-		_Destroy();
+		pvDestroy();
 	}
 
 	TreeSet& operator=(TreeSet&& treeSet) MOMO_NOEXCEPT
@@ -565,14 +565,14 @@ public:
 		Node* node = mRootNode;
 		while (!node->IsLeaf())
 			node = node->GetChild(0);
-		return _MakeIterator(node, 0, true);
+		return pvMakeIterator(node, 0, true);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
-		return _MakeIterator(mRootNode, mRootNode->GetCount(), false);
+		return pvMakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
 
 	MOMO_FRIEND_SWAP(TreeSet)
@@ -605,7 +605,7 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		_Destroy();
+		pvDestroy();
 		mRootNode = nullptr;
 		mNodeParams = nullptr;
 		mCount = 0;
@@ -614,56 +614,56 @@ public:
 
 	ConstIterator LowerBound(const Key& key) const
 	{
-		return _LowerBound(key);
+		return pvLowerBound(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, ConstIterator>::type LowerBound(const KeyArg& key) const
 	{
-		return _LowerBound(key);
+		return pvLowerBound(key);
 	}
 
 	ConstIterator UpperBound(const Key& key) const
 	{
-		return _UpperBound(key);
+		return pvUpperBound(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, ConstIterator>::type UpperBound(const KeyArg& key) const
 	{
-		return _UpperBound(key);
+		return pvUpperBound(key);
 	}
 
 	ConstIterator Find(const Key& key) const
 	{
-		return _Find(key);
+		return pvFind(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
 	{
-		return _Find(key);
+		return pvFind(key);
 	}
 
 	bool HasKey(const Key& key) const
 	{
-		return _IsEqual(_LowerBound(key), key);
+		return pvIsEqual(pvLowerBound(key), key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
 	{
-		return _IsEqual(_LowerBound(key), key);
+		return pvIsEqual(pvLowerBound(key), key);
 	}
 
 	template<typename ItemCreator>
 	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
 	{
-		return _Insert(key, itemCreator, true);
+		return pvInsert(key, itemCreator, true);
 	}
 
 	template<typename... ItemArgs>
@@ -675,13 +675,13 @@ public:
 
 	InsertResult Insert(Item&& item)
 	{
-		return _Insert(ItemTraits::GetKey(static_cast<const Item&>(item)),
+		return pvInsert(ItemTraits::GetKey(static_cast<const Item&>(item)),
 			Creator<Item>(GetMemManager(), std::move(item)), false);
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return _Insert(ItemTraits::GetKey(item),
+		return pvInsert(ItemTraits::GetKey(item),
 			Creator<const Item&>(GetMemManager(), item), false);
 	}
 
@@ -695,7 +695,7 @@ public:
 				{ ItemTraits::Relocate(memManager, item, newItem); };
 			extItem.Reset(removeFunc);
 		};
-		return _Insert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
+		return pvInsert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
 	}
 
 	template<typename ArgIterator>
@@ -716,7 +716,7 @@ public:
 	template<typename ItemCreator>
 	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
 	{
-		return _Add(iter, itemCreator, true);
+		return pvAdd(iter, itemCreator, true);
 	}
 
 	template<typename... ItemArgs>
@@ -742,7 +742,7 @@ public:
 			{ ItemTraits::Destroy(GetMemManager(), srcItem); };
 		auto replaceFunc2 = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return _Remove(iter, replaceFunc1, replaceFunc2);
+		return pvRemove(iter, replaceFunc1, replaceFunc2);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -761,13 +761,13 @@ public:
 				{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
 			extItem.Set(memManager, itemCreator);
 		};
-		return _Remove(iter, replaceFunc1, replaceFunc2);
+		return pvRemove(iter, replaceFunc1, replaceFunc2);
 	}
 
 	bool Remove(const Key& key)
 	{
 		ConstIterator iter = LowerBound(key);
-		if (!_IsEqual(iter, key))
+		if (!pvIsEqual(iter, key))
 			return false;
 		Remove(iter);
 		return true;
@@ -780,13 +780,13 @@ public:
 
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
-		Item& item = _GetItemForReset(iter, static_cast<const Key&>(newKey));
+		Item& item = pvGetItemForReset(iter, static_cast<const Key&>(newKey));
 		ItemTraits::AssignKey(GetMemManager(), std::move(newKey), item);
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
-		Item& item = _GetItemForReset(iter, newKey);
+		Item& item = pvGetItemForReset(iter, newKey);
 		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
@@ -810,7 +810,7 @@ public:
 					{ ItemTraits::Relocate(memManager, srcItem, newItem); };
 				auto replaceFunc2 = [&memManager, newItem] (Item& srcItem, Item& dstItem)
 					{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
-				iter = _Remove(iter, replaceFunc1, replaceFunc2);
+				iter = pvRemove(iter, replaceFunc1, replaceFunc2);
 			};
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
@@ -818,10 +818,10 @@ public:
 	}
 
 private:
-	void _Destroy() MOMO_NOEXCEPT
+	void pvDestroy() MOMO_NOEXCEPT
 	{
 		if (mRootNode != nullptr)
-			_Destroy(mRootNode);
+			pvDestroy(mRootNode);
 		if (mNodeParams != nullptr)
 		{
 			mNodeParams->~NodeParams();
@@ -829,18 +829,18 @@ private:
 		}
 	}
 
-	ConstIterator _MakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
+	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
 	{
 		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
 	template<typename KeyArg>
-	bool _IsEqual(ConstIterator iter, const KeyArg& key) const
+	bool pvIsEqual(ConstIterator iter, const KeyArg& key) const
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
-	bool _ExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
+	bool pvExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
 	{
 		try
 		{
@@ -860,7 +860,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator _LowerBound(const KeyArg& key) const
+	ConstIterator pvLowerBound(const KeyArg& key) const
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -868,9 +868,9 @@ private:
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t index = _LowerBound(node, key);
+			size_t index = pvLowerBound(node, key);
 			if (index < node->GetCount())
-				iter = _MakeIterator(node, index, false);
+				iter = pvMakeIterator(node, index, false);
 			if (node->IsLeaf())
 				break;
 			node = node->GetChild(index);
@@ -879,23 +879,23 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator _UpperBound(const KeyArg& key) const
+	ConstIterator pvUpperBound(const KeyArg& key) const
 	{
-		ConstIterator iter = _LowerBound(key);
-		if (_IsEqual(iter, key))
+		ConstIterator iter = pvLowerBound(key);
+		if (pvIsEqual(iter, key))
 			++iter;
 		return iter;
 	}
 
 	template<typename KeyArg>
-	ConstIterator _Find(const KeyArg& key) const
+	ConstIterator pvFind(const KeyArg& key) const
 	{
-		ConstIterator iter = _LowerBound(key);
-		return _IsEqual(iter, key) ? iter : GetEnd();
+		ConstIterator iter = pvLowerBound(key);
+		return pvIsEqual(iter, key) ? iter : GetEnd();
 	}
 
 	template<typename KeyArg>
-	size_t _LowerBound(Node* node, const KeyArg& key) const
+	size_t pvLowerBound(Node* node, const KeyArg& key) const
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = node->GetCount();
@@ -923,7 +923,7 @@ private:
 		return leftIndex;
 	}
 
-	void _Destroy(Node* node) MOMO_NOEXCEPT
+	void pvDestroy(Node* node) MOMO_NOEXCEPT
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i < count; ++i)
@@ -931,12 +931,12 @@ private:
 		if (!node->IsLeaf())
 		{
 			for (size_t i = 0; i <= count; ++i)
-				_Destroy(node->GetChild(i));
+				pvDestroy(node->GetChild(i));
 		}
 		node->Destroy(*mNodeParams);
 	}
 
-	Item& _GetItemForReset(ConstIterator iter, const Key& newKey)
+	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
 	{
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
@@ -947,20 +947,20 @@ private:
 	}
 
 	template<typename ItemCreator>
-	InsertResult _Insert(const Key& key, const ItemCreator& itemCreator, bool extraCheck)
+	InsertResult pvInsert(const Key& key, const ItemCreator& itemCreator, bool extraCheck)
 	{
 		ConstIterator iter = LowerBound(key);
-		if (_IsEqual(iter, key))
+		if (pvIsEqual(iter, key))
 			return InsertResult(iter, false);
-		iter = _Add(iter, itemCreator, extraCheck);
+		iter = pvAdd(iter, itemCreator, extraCheck);
 		return InsertResult(iter, true);
 	}
 
 	template<typename ItemCreator>
-	ConstIterator _Add(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
+	ConstIterator pvAdd(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
 	{
 		if (mRootNode == nullptr)
-			return _AddFirst(iter, itemCreator);
+			return pvAddFirst(iter, itemCreator);
 		iter.Check(mCrew.GetVersion());
 		Node* node = iter.GetNode();
 		size_t itemIndex = iter.GetItemIndex();
@@ -981,20 +981,20 @@ private:
 		{
 			Relocator relocator(*mNodeParams);
 			if (itemCount < nodeMaxCapacity)
-				_AddGrow(relocator, node, itemIndex, itemCreator);
+				pvAddGrow(relocator, node, itemIndex, itemCreator);
 			else
-				_AddSplit(relocator, node, itemIndex, itemCreator);
+				pvAddSplit(relocator, node, itemIndex, itemCreator);
 		}
 		++mCount;
 		mCrew.IncVersion();
-		ConstIterator resIter = _MakeIterator(node, itemIndex, false);
+		ConstIterator resIter = pvMakeIterator(node, itemIndex, false);
 		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(resIter));
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resIter));
 		return resIter;
 	}
 
 	template<typename ItemCreator>
-	ConstIterator _AddFirst(ConstIterator iter, const ItemCreator& itemCreator)
+	ConstIterator pvAddFirst(ConstIterator iter, const ItemCreator& itemCreator)
 	{
 		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
@@ -1015,7 +1015,7 @@ private:
 		mRootNode = &Node::Create(*mNodeParams, true, 0);
 		try
 		{
-			return _Add(GetEnd(), itemCreator, false);
+			return pvAdd(GetEnd(), itemCreator, false);
 		}
 		catch (...)
 		{
@@ -1026,7 +1026,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void _AddGrow(Relocator& relocator, Node*& node, size_t itemIndex,
+	void pvAddGrow(Relocator& relocator, Node*& node, size_t itemIndex,
 		const ItemCreator& itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
@@ -1041,7 +1041,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void _AddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
+	void pvAddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		const ItemCreator& itemCreator)
 	{
 		Node* node = leafNode;
@@ -1082,10 +1082,10 @@ private:
 		node->AcceptBackItem(*mNodeParams, itemIndex);
 		node->SetChild(itemIndex, splitRes.newNode1);
 		node->SetChild(itemIndex + 1, splitRes.newNode2);
-		_UpdateParents(node);	//?
+		pvUpdateParents(node);	//?
 	}
 
-	void _UpdateParents(Node* node) MOMO_NOEXCEPT
+	void pvUpdateParents(Node* node) MOMO_NOEXCEPT
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i <= count; ++i)
@@ -1093,12 +1093,12 @@ private:
 			Node* childNode = node->GetChild(i);
 			childNode->SetParent(node);
 			if (!childNode->IsLeaf())
-				_UpdateParents(childNode);
+				pvUpdateParents(childNode);
 		}
 	}
 
 	template<typename ReplaceFunc1, typename ReplaceFunc2>
-	ConstIterator _Remove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
+	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
 	{
 		iter.Check(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
@@ -1107,20 +1107,20 @@ private:
 		if (node->IsLeaf())
 		{
 			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
-			_Rebalance(node, node);
+			pvRebalance(node, node);
 		}
 		else
 		{
-			node = _RemoveInternal(node, itemIndex, replaceFunc1, replaceFunc2);
+			node = pvRemoveInternal(node, itemIndex, replaceFunc1, replaceFunc2);
 			itemIndex = 0;
 		}
 		--mCount;
 		mCrew.IncVersion();
-		return _MakeIterator(node, itemIndex, true);
+		return pvMakeIterator(node, itemIndex, true);
 	}
 
 	template<typename ReplaceFunc1, typename ReplaceFunc2>
-	Node* _RemoveInternal(Node* node, size_t itemIndex, ReplaceFunc1 replaceFunc1,
+	Node* pvRemoveInternal(Node* node, size_t itemIndex, ReplaceFunc1 replaceFunc1,
 		ReplaceFunc2 replaceFunc2)
 	{
 		Node* childNode = node->GetChild(itemIndex);
@@ -1134,7 +1134,7 @@ private:
 			Node* leftNode = node->GetChild(itemIndex);
 			Node* rightNode = node->GetChild(itemIndex + 1);
 			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
-			_Destroy(leftNode);
+			pvDestroy(leftNode);
 			node->SetChild(itemIndex, rightNode);
 			resNode = rightNode;
 		}
@@ -1152,18 +1152,18 @@ private:
 				Node* leftNode = childNode->GetChild(childItemIndex);
 				Node* rightNode = childNode->GetChild(childItemIndex + 1);
 				childNode->Remove(*mNodeParams, childItemIndex, removeFunc);
-				_Destroy(rightNode);
+				pvDestroy(rightNode);
 				childNode->SetChild(childItemIndex, leftNode);
 			}
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
-		_Rebalance(childNode, resNode);
+		pvRebalance(childNode, resNode);
 		return resNode;
 	}
 
-	void _Rebalance(Node* node, Node* savedNode) MOMO_NOEXCEPT
+	void pvRebalance(Node* node, Node* savedNode) MOMO_NOEXCEPT
 	{
 		try
 		{
@@ -1184,8 +1184,8 @@ private:
 					break;
 				}
 				size_t index = parentNode->GetChildIndex(node);
-				bool brk = !_Rebalance(parentNode, index, savedNode)
-					&& !_Rebalance(parentNode, index + 1, savedNode);
+				bool brk = !pvRebalance(parentNode, index, savedNode)
+					&& !pvRebalance(parentNode, index + 1, savedNode);
 				if (brk)
 					break;
 				node = parentNode;
@@ -1197,7 +1197,7 @@ private:
 		}
 	}
 
-	bool _Rebalance(Node* parentNode, size_t index, Node* savedNode)
+	bool pvRebalance(Node* parentNode, size_t index, Node* savedNode)
 	{
 		if (index == 0 || index > parentNode->GetCount())
 			return false;

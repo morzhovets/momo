@@ -357,13 +357,13 @@ public:
 	template<typename ValueCreator>
 	InsertResult InsertCrt(Key&& key, const ValueCreator& valueCreator)
 	{
-		return _Insert(std::move(key), valueCreator);
+		return pvInsert(std::move(key), valueCreator);
 	}
 
 	template<typename... ValueArgs>
 	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
-		return _Insert(std::move(key),
+		return pvInsert(std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -380,13 +380,13 @@ public:
 	template<typename ValueCreator>
 	InsertResult InsertCrt(const Key& key, const ValueCreator& valueCreator)
 	{
-		return _Insert(key, valueCreator);
+		return pvInsert(key, valueCreator);
 	}
 
 	template<typename... ValueArgs>
 	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
 	{
-		return _Insert(key,
+		return pvInsert(key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -406,7 +406,7 @@ public:
 		MOMO_CHECK_TYPE(Key, begin->key);
 		auto insertFunc = [this] (ArgIterator iter)
 			{ return InsertVar(iter->key, iter->value); };
-		return _Insert(begin, end, insertFunc);
+		return pvInsert(begin, end, insertFunc);
 	}
 
 	template<typename ArgIterator>
@@ -415,7 +415,7 @@ public:
 		MOMO_CHECK_TYPE(Key, begin->first);
 		auto insertFunc = [this] (ArgIterator iter)
 			{ return InsertVar(iter->first, iter->second); };
-		return _Insert(begin, end, insertFunc);
+		return pvInsert(begin, end, insertFunc);
 	}
 
 	size_t Insert(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
@@ -426,7 +426,7 @@ public:
 	template<typename ValueCreator>
 	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
 	{
-		return _Add(iter, std::move(key), valueCreator, true);
+		return pvAdd(iter, std::move(key), valueCreator, true);
 	}
 
 	template<typename... ValueArgs>
@@ -449,7 +449,7 @@ public:
 	template<typename ValueCreator>
 	Iterator AddCrt(ConstIterator iter, const Key& key, const ValueCreator& valueCreator)
 	{
-		return _Add(iter, key, valueCreator, true);
+		return pvAdd(iter, key, valueCreator, true);
 	}
 
 	template<typename... ValueArgs>
@@ -474,24 +474,24 @@ public:
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
 		return ValueReferenceRKey(*this, iter,
-			_IsEqual(iter, static_cast<const Key&>(key)) ? nullptr : std::addressof(key));
+			pvIsEqual(iter, static_cast<const Key&>(key)) ? nullptr : std::addressof(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
 		Iterator iter = LowerBound(key);
 		return ValueReferenceCKey(*this, iter,
-			_IsEqual(iter, key) ? nullptr : std::addressof(key));
+			pvIsEqual(iter, key) ? nullptr : std::addressof(key));
 	}
 #else
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		return _Insert(std::move(key), ValueCreator<>(GetMemManager())).iterator->value;
+		return pvInsert(std::move(key), ValueCreator<>(GetMemManager())).iterator->value;
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		return _Insert(key, ValueCreator<>(GetMemManager())).iterator->value;
+		return pvInsert(key, ValueCreator<>(GetMemManager())).iterator->value;
 	}
 #endif
 
@@ -538,12 +538,12 @@ public:
 	}
 
 private:
-	bool _IsEqual(ConstIterator iter, const Key& key) const
+	bool pvIsEqual(ConstIterator iter, const Key& key) const
 	{
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, iter->key);
 	}
 
-	bool _ExtraCheck(ConstIterator iter, const Key& key) const
+	bool pvExtraCheck(ConstIterator iter, const Key& key) const
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
 		return (iter == GetBegin() || treeTraits.IsLess(std::prev(iter)->key, key))
@@ -551,17 +551,17 @@ private:
 	}
 
 	template<typename RKey, typename ValueCreator>
-	InsertResult _Insert(RKey&& key, const ValueCreator& valueCreator)
+	InsertResult pvInsert(RKey&& key, const ValueCreator& valueCreator)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
-		if (_IsEqual(iter, static_cast<const Key&>(key)))
+		if (pvIsEqual(iter, static_cast<const Key&>(key)))
 			return InsertResult(iter, false);
-		iter = _Add(iter, std::forward<RKey>(key), valueCreator, false);
+		iter = pvAdd(iter, std::forward<RKey>(key), valueCreator, false);
 		return InsertResult(iter, true);
 	}
 
 	template<typename ArgIterator, typename InsertFunc>
-	size_t _Insert(ArgIterator begin, ArgIterator end, InsertFunc insertFunc)
+	size_t pvInsert(ArgIterator begin, ArgIterator end, InsertFunc insertFunc)
 	{
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
@@ -570,11 +570,11 @@ private:
 	}
 
 	template<typename RKey, typename ValueCreator>
-	Iterator _Add(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator,
+	Iterator pvAdd(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator,
 		bool extraCheck)
 	{
 		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || _ExtraCheck(iter, static_cast<const Key&>(key)));
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter, static_cast<const Key&>(key)));
 		auto pairCreator = [this, &key, &valueCreator] (KeyValuePair* newPair)
 		{
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,

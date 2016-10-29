@@ -176,9 +176,9 @@ namespace internal
 			}
 			else if (count <= maxFastCount)
 			{
-				size_t memPoolIndex = _GetFastMemPoolIndex(count);
+				size_t memPoolIndex = pvGetFastMemPoolIndex(count);
 				Memory memory(params.GetFastMemPool(memPoolIndex));
-				Item* items = _GetFastItems(memory.GetPointer());
+				Item* items = pvGetFastItems(memory.GetPointer());
 				size_t index = 0;
 				try
 				{
@@ -190,14 +190,14 @@ namespace internal
 					ItemTraits::Destroy(memManager, items, index);
 					throw;
 				}
-				_Set(memory.Extract(), _MakeState(memPoolIndex, count));
+				pvSet(memory.Extract(), pvMakeState(memPoolIndex, count));
 			}
 			else
 			{
 				Memory memory(params.GetArrayMemPool());
-				new(&_GetArray(memory.GetPointer())) Array(bounds.GetBegin(),
+				new(&pvGetArray(memory.GetPointer())) Array(bounds.GetBegin(),
 					bounds.GetEnd(), MemManagerPtr(memManager));
-				_Set(memory.Extract(), (unsigned char)0);
+				pvSet(memory.Extract(), (unsigned char)0);
 			}
 		}
 
@@ -221,27 +221,27 @@ namespace internal
 
 		ConstBounds GetBounds() const MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		Bounds GetBounds() MOMO_NOEXCEPT
 		{
-			return _GetBounds();
+			return pvGetBounds();
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (mPtr == nullptr)
 				return;
-			size_t memPoolIndex = _GetMemPoolIndex();
+			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (memPoolIndex > 0)
 			{
-				ItemTraits::Destroy(params.GetMemManager(), _GetFastItems(), _GetFastCount());
+				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems(), pvGetFastCount());
 				params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 			}
 			else
 			{
-				_GetArray().~Array();
+				pvGetArray().~Array();
 				params.GetArrayMemPool().Deallocate(mPtr);
 			}
 			mPtr = nullptr;
@@ -253,31 +253,31 @@ namespace internal
 			if (mPtr == nullptr)
 			{
 				size_t newCount = 1;
-				size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
+				size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 				Memory memory(params.GetFastMemPool(newMemPoolIndex));
-				itemCreator(_GetFastItems(memory.GetPointer()));
-				_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+				itemCreator(pvGetFastItems(memory.GetPointer()));
+				pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 			}
 			else
 			{
-				size_t memPoolIndex = _GetMemPoolIndex();
+				size_t memPoolIndex = pvGetMemPoolIndex();
 				if (memPoolIndex > 0)
 				{
-					size_t count = _GetFastCount();
+					size_t count = pvGetFastCount();
 					MOMO_ASSERT(count <= memPoolIndex);
 					if (count == memPoolIndex)
 					{
 						size_t newCount = count + 1;
-						Item* items = _GetFastItems();
+						Item* items = pvGetFastItems();
 						if (newCount <= maxFastCount)
 						{
-							size_t newMemPoolIndex = _GetFastMemPoolIndex(newCount);
+							size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 							Memory memory(params.GetFastMemPool(newMemPoolIndex));
-							Item* newItems = _GetFastItems(memory.GetPointer());
+							Item* newItems = pvGetFastItems(memory.GetPointer());
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, itemCreator, newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
-							_Set(memory.Extract(), _MakeState(newMemPoolIndex, newCount));
+							pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 						}
 						else
 						{
@@ -289,20 +289,20 @@ namespace internal
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, itemCreator, newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
-							new(&_GetArray(memory.GetPointer())) Array(std::move(array));
+							new(&pvGetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
-							_Set(memory.Extract(), (unsigned char)0);
+							pvSet(memory.Extract(), (unsigned char)0);
 						}
 					}
 					else
 					{
-						itemCreator(_GetFastItems() + count);
+						itemCreator(pvGetFastItems() + count);
 						++*mPtr;
 					}
 				}
 				else
 				{
-					_GetArray().AddBackCrt(itemCreator);
+					pvGetArray().AddBackCrt(itemCreator);
 				}
 			}
 		}
@@ -313,14 +313,14 @@ namespace internal
 			MOMO_ASSERT(count > 0);
 			if (count == 1)
 				return Clear(params);
-			if (_GetMemPoolIndex() > 0)
+			if (pvGetMemPoolIndex() > 0)
 			{
-				ItemTraits::Destroy(params.GetMemManager(), _GetFastItems() + count - 1, 1);
+				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems() + count - 1, 1);
 				--*mPtr;
 			}
 			else
 			{
-				Array& array = _GetArray();
+				Array& array = pvGetArray();
 				array.RemoveBack();
 				if (4 < count && count < array.GetCapacity() / 2)
 				{
@@ -337,71 +337,71 @@ namespace internal
 		}
 
 	private:
-		void _Set(unsigned char* ptr, unsigned char state) MOMO_NOEXCEPT
+		void pvSet(unsigned char* ptr, unsigned char state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
 			*mPtr = state;
 		}
 
-		static unsigned char _MakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		static unsigned char pvMakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			return (unsigned char)((memPoolIndex << 4) | count);
 		}
 
-		static size_t _GetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		static size_t pvGetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(0 < count && count <= maxFastCount);
 			return count;
 		}
 
-		size_t _GetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mPtr != nullptr);
 			return (size_t)(*mPtr >> 4);
 		}
 
-		size_t _GetFastCount() const MOMO_NOEXCEPT
+		size_t pvGetFastCount() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(_GetMemPoolIndex() > 0);
+			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
 			return (size_t)(*mPtr & 15);
 		}
 
-		Item* _GetFastItems() const MOMO_NOEXCEPT
+		Item* pvGetFastItems() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(_GetMemPoolIndex() > 0);
-			return _GetFastItems(mPtr);
+			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
+			return pvGetFastItems(mPtr);
 		}
 
-		static Item* _GetFastItems(unsigned char* ptr) MOMO_NOEXCEPT
+		static Item* pvGetFastItems(unsigned char* ptr) MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
-		Array& _GetArray() const MOMO_NOEXCEPT
+		Array& pvGetArray() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(_GetMemPoolIndex() == 0);
-			return _GetArray(mPtr);
+			MOMO_ASSERT(pvGetMemPoolIndex() == 0);
+			return pvGetArray(mPtr);
 		}
 
-		static Array& _GetArray(unsigned char* ptr) MOMO_NOEXCEPT
+		static Array& pvGetArray(unsigned char* ptr) MOMO_NOEXCEPT
 		{
 			return *reinterpret_cast<Array*>(ptr + arrayAlignment);
 		}
 
-		Bounds _GetBounds() const MOMO_NOEXCEPT
+		Bounds pvGetBounds() const MOMO_NOEXCEPT
 		{
 			if (mPtr == nullptr)
 			{
 				return Bounds();
 			}
-			else if (_GetMemPoolIndex() > 0)
+			else if (pvGetMemPoolIndex() > 0)
 			{
-				return Bounds(_GetFastItems(), _GetFastCount());
+				return Bounds(pvGetFastItems(), pvGetFastCount());
 			}
 			else
 			{
-				Array& array = _GetArray();
+				Array& array = pvGetArray();
 				return Bounds(array.GetItems(), array.GetCount());
 			}
 		}

@@ -66,7 +66,7 @@ namespace internal
 	public:
 		BucketOneI() MOMO_NOEXCEPT
 		{
-			_SetState(stateEmpty);
+			pvSetState(stateEmpty);
 		}
 
 		BucketOneI(const BucketOneI&) = delete;
@@ -90,19 +90,19 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return _GetState() == stateFull;
+			return pvGetState() == stateFull;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return _GetState() != stateEmpty;
+			return pvGetState() != stateEmpty;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			_SetState(stateEmpty);
+			pvSetState(stateEmpty);
 		}
 
 		template<typename ItemCreator>
@@ -110,23 +110,23 @@ namespace internal
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			_SetState(stateFull);
+			pvSetState(stateFull);
 			return &mItemBuffer;
 		}
 
 		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
-			_SetState(stateRemoved);
+			pvSetState(stateRemoved);
 		}
 
 	private:
-		unsigned char _GetState() const MOMO_NOEXCEPT
+		unsigned char pvGetState() const MOMO_NOEXCEPT
 		{
 			return Stater::GetState(&mItemBuffer);
 		}
 
-		void _SetState(unsigned char state) MOMO_NOEXCEPT
+		void pvSetState(unsigned char state) MOMO_NOEXCEPT
 		{
 			Stater::SetState(&mItemBuffer, state);
 		}
