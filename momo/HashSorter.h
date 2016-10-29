@@ -94,7 +94,7 @@ public:
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
-		_Sort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc,
+		pvSort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc,
 			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
 	}
 
@@ -111,7 +111,7 @@ public:
 			std::iter_swap(iter1, iter2);
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
-		_Sort(begin, count, HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc,
+		pvSort(begin, count, HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc,
 			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
 	}
 
@@ -121,7 +121,7 @@ public:
 	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _IsSorted(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc);
+		return pvIsSorted(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
 	template<typename HashIterator, typename Iterator,
@@ -130,7 +130,7 @@ public:
 	static bool IsSortedExt(HashIterator hashBegin, Iterator begin, size_t count,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _IsSorted(begin, count,
+		return pvIsSorted(begin, count,
 			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
@@ -141,7 +141,7 @@ public:
 		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _Find(begin, count, item, hashFunc(item),
+		return pvFind(begin, count, item, hashFunc(item),
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
@@ -152,7 +152,7 @@ public:
 		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _Find(begin, count, item, hashFunc(item),
+		return pvFind(begin, count, item, hashFunc(item),
 			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
@@ -163,7 +163,7 @@ public:
 		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _EqualRange(begin, count, item, hashFunc(item),
+		return pvEqualRange(begin, count, item, hashFunc(item),
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
@@ -174,13 +174,13 @@ public:
 		size_t count, const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return _EqualRange(begin, count, item, hashFunc(item),
+		return pvEqualRange(begin, count, item, hashFunc(item),
 			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 private:
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
-	static void _Sort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
+	static void pvSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
 		const EqualFunc& equalFunc, SwapFunc swapFunc, size_t shift)
 	{
 		switch (count)
@@ -195,15 +195,15 @@ private:
 		default:
 			{
 				if (count <= (size_t)1 << (radixSize / 2 + 1))
-					_SelectionSort(begin, count, hashFuncIter, equalFunc, swapFunc);
+					pvSelectionSort(begin, count, hashFuncIter, equalFunc, swapFunc);
 				else
-					_RadixSort(begin, count, hashFuncIter, equalFunc, swapFunc, shift);
+					pvRadixSort(begin, count, hashFuncIter, equalFunc, swapFunc, shift);
 			}
 		}
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
-	static void _SelectionSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
+	static void pvSelectionSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
 		const EqualFunc& equalFunc, SwapFunc swapFunc)
 	{
 		MOMO_ASSERT(count > 0);
@@ -224,47 +224,47 @@ private:
 		{
 			if (hashes[i] != hashes[prevIndex])
 			{
-				_GroupIf(begin + prevIndex, i - prevIndex, equalFunc, swapFunc);
+				pvGroupIf(begin + prevIndex, i - prevIndex, equalFunc, swapFunc);
 				prevIndex = i;
 			}
 		}
-		_GroupIf(begin + prevIndex, count - prevIndex, equalFunc, swapFunc);
+		pvGroupIf(begin + prevIndex, count - prevIndex, equalFunc, swapFunc);
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
-	static void _RadixSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
+	static void pvRadixSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
 		const EqualFunc& equalFunc, SwapFunc swapFunc, size_t shift)
 	{
 		static const size_t radixCount = 1 << radixSize;
 		size_t endIndices[radixCount] = {};
 		HashFuncResult hash0 = hashFuncIter(begin);
-		++endIndices[_GetRadix(hash0, shift)];
+		++endIndices[pvGetRadix(hash0, shift)];
 		bool singleHash = true;
 		for (size_t i = 1; i < count; ++i)
 		{
 			HashFuncResult hash = hashFuncIter(begin + i);
-			++endIndices[_GetRadix(hash, shift)];
+			++endIndices[pvGetRadix(hash, shift)];
 			singleHash &= (hash == hash0);
 		}
 		if (singleHash)
-			return _Group(begin, count, equalFunc, swapFunc);
+			return pvGroup(begin, count, equalFunc, swapFunc);
 		for (size_t r = 1; r < radixCount; ++r)
 			endIndices[r] += endIndices[r - 1];
-		_RadixSort(begin, hashFuncIter, swapFunc, shift, endIndices);
+		pvRadixSort(begin, hashFuncIter, swapFunc, shift, endIndices);
 		size_t nextShift = (shift > radixSize) ? shift - radixSize : 0;
 		size_t beginIndex = 0;
 		for (size_t e : endIndices)
 		{
 			if (shift > 0)
-				_Sort(begin + beginIndex, e - beginIndex, hashFuncIter, equalFunc, swapFunc, nextShift);
+				pvSort(begin + beginIndex, e - beginIndex, hashFuncIter, equalFunc, swapFunc, nextShift);
 			else
-				_GroupIf(begin + beginIndex, e - beginIndex, equalFunc, swapFunc);
+				pvGroupIf(begin + beginIndex, e - beginIndex, equalFunc, swapFunc);
 			beginIndex = e;
 		}
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename SwapFunc>
-	static void _RadixSort(Iterator begin, const HashFuncIter& hashFuncIter, SwapFunc swapFunc,
+	static void pvRadixSort(Iterator begin, const HashFuncIter& hashFuncIter, SwapFunc swapFunc,
 		size_t shift, const size_t* endIndices)
 	{
 		static const size_t radixCount = 1 << radixSize;
@@ -278,7 +278,7 @@ private:
 			size_t endIndex = endIndices[r];
 			while (beginIndex < endIndex)
 			{
-				size_t radix = _GetRadix(hashFuncIter(begin + beginIndex), shift);
+				size_t radix = pvGetRadix(hashFuncIter(begin + beginIndex), shift);
 				if (radix != r)
 					swapFunc(begin + beginIndex, begin + beginIndices[radix]);
 				++beginIndices[radix];
@@ -287,15 +287,15 @@ private:
 	}
 
 	template<typename Iterator, typename EqualFunc, typename SwapFunc>
-	static void _GroupIf(Iterator begin, size_t count, const EqualFunc& equalFunc,
+	static void pvGroupIf(Iterator begin, size_t count, const EqualFunc& equalFunc,
 		SwapFunc swapFunc)
 	{
 		if (count > 2)
-			_Group(begin, count, equalFunc, swapFunc);
+			pvGroup(begin, count, equalFunc, swapFunc);
 	}
 
 	template<typename Iterator, typename EqualFunc, typename SwapFunc>
-	static void _Group(Iterator begin, size_t count, const EqualFunc& equalFunc, SwapFunc swapFunc)
+	static void pvGroup(Iterator begin, size_t count, const EqualFunc& equalFunc, SwapFunc swapFunc)
 	{
 		for (size_t i = 1; i < count; ++i)
 		{
@@ -313,7 +313,7 @@ private:
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static bool _IsSorted(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
+	static bool pvIsSorted(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
 		const EqualFunc& equalFunc)
 	{
 		size_t prevIndex = 0;
@@ -325,16 +325,16 @@ private:
 				return false;
 			if (hash != prevHash)
 			{
-				if (!_IsGrouped(begin + prevIndex, i - prevIndex, equalFunc))
+				if (!pvIsGrouped(begin + prevIndex, i - prevIndex, equalFunc))
 					return false;
 				prevIndex = i;
 			}
 		}
-		return _IsGrouped(begin + prevIndex, count - prevIndex, equalFunc);
+		return pvIsGrouped(begin + prevIndex, count - prevIndex, equalFunc);
 	}
 
 	template<typename Iterator, typename EqualFunc>
-	static bool _IsGrouped(Iterator begin, size_t count, const EqualFunc& equalFunc)
+	static bool pvIsGrouped(Iterator begin, size_t count, const EqualFunc& equalFunc)
 	{
 		for (size_t i = 1; i < count; ++i)
 		{
@@ -350,61 +350,61 @@ private:
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, bool> _Find(Iterator begin, size_t count,
+	static std::pair<Iterator, bool> pvFind(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
-		auto res = _FindHash(begin, count, itemHash, hashFuncIter);
+		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
 		if (!res.second)
 			return res;
 		if (equalFunc(*res.first, item))
 			return res;
-		auto revRes = _FindNext(std::reverse_iterator<Iterator>(res.first + 1),
+		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
 			res.first + 1 - begin, item, itemHash, hashFuncIter, equalFunc);
 		if (revRes.second)
 			return { revRes.first.base() - 1, true };
-		return _FindNext(res.first, begin + count - res.first,
+		return pvFindNext(res.first, begin + count - res.first,
 			item, itemHash, hashFuncIter, equalFunc);
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, Iterator> _EqualRange(Iterator begin, size_t count,
+	static std::pair<Iterator, Iterator> pvEqualRange(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
-		auto res = _FindHash(begin, count, itemHash, hashFuncIter);
+		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
 		if (!res.second)
 			return { res.first, res.first };
 		if (equalFunc(*res.first, item))
 		{
-			Iterator resBegin = _FindOther(std::reverse_iterator<Iterator>(res.first + 1),
+			Iterator resBegin = pvFindOther(std::reverse_iterator<Iterator>(res.first + 1),
 				res.first + 1 - begin, equalFunc).base();
-			return { resBegin, _FindOther(res.first, begin + count - res.first, equalFunc) };
+			return { resBegin, pvFindOther(res.first, begin + count - res.first, equalFunc) };
 		}
-		auto revRes = _FindNext(std::reverse_iterator<Iterator>(res.first + 1),
+		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
 			res.first + 1 - begin, item, itemHash, hashFuncIter, equalFunc);
 		if (revRes.second)
 		{
-			Iterator resBegin = _FindOther(revRes.first,
+			Iterator resBegin = pvFindOther(revRes.first,
 				revRes.first.base() - begin, equalFunc).base();
 			return { resBegin, revRes.first.base() };
 		}
-		res = _FindNext(res.first, begin + count - res.first, item, itemHash,
+		res = pvFindNext(res.first, begin + count - res.first, item, itemHash,
 			hashFuncIter, equalFunc);
 		if (!res.second)
 			return { res.first, res.first };
-		return { res.first, _FindOther(res.first, begin + count - res.first, equalFunc) };
+		return { res.first, pvFindOther(res.first, begin + count - res.first, equalFunc) };
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, bool> _FindNext(Iterator begin, size_t count,
+	static std::pair<Iterator, bool> pvFindNext(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;
 		while (true)
 		{
-			iter = _FindOther(iter, begin + count - iter, equalFunc);
+			iter = pvFindOther(iter, begin + count - iter, equalFunc);
 			if (iter == begin + count || hashFuncIter(iter) != itemHash)
 				break;
 			if (equalFunc(*iter, item))
@@ -414,23 +414,23 @@ private:
 	}
 
 	template<typename Iterator, typename EqualFunc>
-	static Iterator _FindOther(Iterator begin, size_t count, const EqualFunc& equalFunc)
+	static Iterator pvFindOther(Iterator begin, size_t count, const EqualFunc& equalFunc)
 	{
 		MOMO_ASSERT(count > 0);
 		auto pred = [begin, &equalFunc] (Iterator iter)
 			{ return equalFunc(*begin, *iter) ? -1 : 1; };
-		return _ExponentialSearch(begin + 1, count - 1, pred).first;
+		return pvExponentialSearch(begin + 1, count - 1, pred).first;
 	}
 
 	template<typename Iterator, typename HashFuncIter>
-	static std::pair<Iterator, bool> _FindHash(Iterator begin, size_t count,
+	static std::pair<Iterator, bool> pvFindHash(Iterator begin, size_t count,
 		HashFuncResult itemHash, const HashFuncIter& hashFuncIter)
 	{
 		auto pred = [itemHash, &hashFuncIter] (Iterator iter)
-			{ return _Compare(hashFuncIter(iter), itemHash); };
+			{ return pvCompare(hashFuncIter(iter), itemHash); };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
-		size_t middleIndex = _MultShift(itemHash, count);
+		size_t middleIndex = pvMultShift(itemHash, count);
 		size_t step = (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 		while (true)
 		{
@@ -439,8 +439,8 @@ private:
 			{
 				leftIndex = middleIndex + 1;
 				if (step == 0)
-					return _ExponentialSearch(begin + leftIndex, rightIndex - leftIndex, pred);
-				middleIndex += _MultShift(itemHash - middleHash, count);
+					return pvExponentialSearch(begin + leftIndex, rightIndex - leftIndex, pred);
+				middleIndex += pvMultShift(itemHash - middleHash, count);
 				if (middleIndex >= rightIndex)
 					break;
 			}
@@ -451,12 +451,12 @@ private:
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
 					auto revPred = [itemHash, &hashFuncIter] (ReverseIterator iter)
-						{ return -_Compare(hashFuncIter(iter), itemHash); };
-					auto res = _ExponentialSearch(ReverseIterator(begin + rightIndex),
+						{ return -pvCompare(hashFuncIter(iter), itemHash); };
+					auto res = pvExponentialSearch(ReverseIterator(begin + rightIndex),
 						rightIndex - leftIndex, revPred);
 					return { res.first.base() - (res.second ? 1 : 0), res.second };
 				}
-				size_t diff = _MultShift(middleHash - itemHash, count);
+				size_t diff = pvMultShift(middleHash - itemHash, count);
 				if (leftIndex + diff > middleIndex)
 					break;
 				middleIndex -= diff;
@@ -467,27 +467,27 @@ private:
 			}
 			--step;
 		}
-		return _BinarySearch(begin + leftIndex, rightIndex - leftIndex, pred);
+		return pvBinarySearch(begin + leftIndex, rightIndex - leftIndex, pred);
 	}
 
 	template<typename Iterator, typename Predicate>
-	static std::pair<Iterator, bool> _ExponentialSearch(Iterator begin, size_t count, Predicate pred)
+	static std::pair<Iterator, bool> pvExponentialSearch(Iterator begin, size_t count, Predicate pred)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
 		{
 			int cmp = pred(begin + i);
 			if (cmp == 1)
-				return _BinarySearch(begin + leftIndex, i - leftIndex, pred);
+				return pvBinarySearch(begin + leftIndex, i - leftIndex, pred);
 			else if (cmp == 0)
 				return { begin + i, true };
 			leftIndex = i + 1;
 		}
-		return _BinarySearch(begin + leftIndex, count - leftIndex, pred);
+		return pvBinarySearch(begin + leftIndex, count - leftIndex, pred);
 	}
 
 	template<typename Iterator, typename Predicate>
-	static std::pair<Iterator, bool> _BinarySearch(Iterator begin, size_t count, Predicate pred)
+	static std::pair<Iterator, bool> pvBinarySearch(Iterator begin, size_t count, Predicate pred)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
@@ -505,17 +505,17 @@ private:
 		return { begin + leftIndex, false };
 	}
 
-	static size_t _GetRadix(HashFuncResult value, size_t shift) MOMO_NOEXCEPT
+	static size_t pvGetRadix(HashFuncResult value, size_t shift) MOMO_NOEXCEPT
 	{
 		return (size_t)(value >> shift) & (((size_t)1 << radixSize) - 1);
 	}
 
-	static int _Compare(HashFuncResult value1, HashFuncResult value2) MOMO_NOEXCEPT
+	static int pvCompare(HashFuncResult value1, HashFuncResult value2) MOMO_NOEXCEPT
 	{
 		return (value1 < value2) ? -1 : (int)(value1 != value2);
 	}
 
-	static size_t _MultShift(HashFuncResult value1, size_t value2) MOMO_NOEXCEPT
+	static size_t pvMultShift(HashFuncResult value1, size_t value2) MOMO_NOEXCEPT
 	{
 		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
 		static const size_t halfSize = 4 * sizeof(HashFuncResult);
