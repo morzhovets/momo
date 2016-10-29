@@ -37,13 +37,13 @@ namespace internal
 		typedef Array<Raw*, MemManager> Raws;
 
 	public:
-		DataSelection(const ColumnList* columnList, Raws&& raws) noexcept
+		DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaws(std::move(raws))
 		{
 		}
 
-		DataSelection(DataSelection&& selection) noexcept
+		DataSelection(DataSelection&& selection) MOMO_NOEXCEPT
 			: mColumnList(selection.mColumnList),
 			mRaws(std::move(selection.mRaws))
 		{
@@ -55,11 +55,11 @@ namespace internal
 		{
 		}
 
-		~DataSelection() noexcept
+		~DataSelection() MOMO_NOEXCEPT
 		{
 		}
 
-		DataSelection& operator=(DataSelection&& selection) noexcept
+		DataSelection& operator=(DataSelection&& selection) MOMO_NOEXCEPT
 		{
 			DataSelection(std::move(selection)).Swap(*this);
 			return *this;
@@ -72,7 +72,7 @@ namespace internal
 			return *this;
 		}
 
-		operator ConstSelection() && noexcept
+		operator ConstSelection() && MOMO_NOEXCEPT
 		{
 			return ConstSelection(mColumnList, std::move(mRaws));
 		}
@@ -82,7 +82,7 @@ namespace internal
 			return ConstSelection(mColumnList, Raws(mRaws));
 		}
 
-		void Swap(DataSelection& selection) noexcept
+		void Swap(DataSelection& selection) MOMO_NOEXCEPT
 		{
 			std::swap(mColumnList, selection.mColumnList);
 			mRaws.Swap(selection.mRaws);
@@ -90,32 +90,32 @@ namespace internal
 
 		MOMO_FRIEND_SWAP(DataSelection)
 
-		const ColumnList& GetColumnList() const noexcept
+		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
 			return *mColumnList;
 		}
 
-		const MemManager& GetMemManager() const noexcept
+		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
 			return mRaws.GetMemManager();
 		}
 
-		MemManager& GetMemManager() noexcept
+		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
 			return mRaws.GetMemManager();
 		}
 
-		size_t GetCount() const noexcept
+		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return mRaws.GetCount();
 		}
 
-		bool IsEmpty() const noexcept
+		bool IsEmpty() const MOMO_NOEXCEPT
 		{
 			return mRaws.IsEmpty();
 		}
 
-		void Clear() noexcept
+		void Clear() MOMO_NOEXCEPT
 		{
 			mRaws.Clear();
 		}
@@ -125,13 +125,13 @@ namespace internal
 			return ConstRowRef(mRaws[index], mColumnList);
 		}
 
-		DataSelection&& Reverse() && noexcept
+		DataSelection&& Reverse() && MOMO_NOEXCEPT
 		{
 			_Reverse();
 			return std::move(*this);
 		}
 
-		DataSelection& Reverse() & noexcept
+		DataSelection& Reverse() & MOMO_NOEXCEPT
 		{
 			_Reverse();
 			return *this;
@@ -152,7 +152,7 @@ namespace internal
 		}
 
 	private:
-		void _Reverse() noexcept
+		void _Reverse() MOMO_NOEXCEPT
 		{
 			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
 		}

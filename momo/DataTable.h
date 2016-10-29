@@ -79,7 +79,7 @@ private:
 
 	struct EmptyFilter
 	{
-		bool operator()(ConstRowRef /*rowRef*/) const noexcept
+		bool operator()(ConstRowRef /*rowRef*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}
@@ -114,7 +114,7 @@ private:
 			new(&mData->freeRaws) FreeRaws(nullptr);
 		}
 
-		Crew(Crew&& crew) noexcept
+		Crew(Crew&& crew) MOMO_NOEXCEPT
 			: mData(nullptr)
 		{
 			Swap(crew);
@@ -122,7 +122,7 @@ private:
 
 		Crew(const Crew&) = delete;
 
-		~Crew() noexcept
+		~Crew() MOMO_NOEXCEPT
 		{
 			if (!IsNull())
 			{
@@ -136,35 +136,35 @@ private:
 
 		Crew& operator=(const Crew&) = delete;
 
-		void Swap(Crew& crew) noexcept
+		void Swap(Crew& crew) MOMO_NOEXCEPT
 		{
 			std::swap(mData, crew.mData);
 		}
 
-		bool IsNull() const noexcept
+		bool IsNull() const MOMO_NOEXCEPT
 		{
 			return mData == nullptr;
 		}
 
-		const ColumnList& GetColumnList() const noexcept
+		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->columnList;
 		}
 
-		const MemManager& GetMemManager() const noexcept
+		const MemManager& GetMemManager() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->memManager;
 		}
 
-		MemManager& GetMemManager() noexcept
+		MemManager& GetMemManager() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->memManager;
 		}
 
-		FreeRaws& GetFreeRaws() noexcept
+		FreeRaws& GetFreeRaws() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->freeRaws;
@@ -184,7 +184,7 @@ public:
 	{
 	}
 
-	DataTable(DataTable&& table) noexcept
+	DataTable(DataTable&& table) MOMO_NOEXCEPT
 		: mCrew(std::move(table.mCrew)),
 		mRaws(std::move(table.mRaws)),
 		mRawMemPool(std::move(table.mRawMemPool)),
@@ -194,12 +194,12 @@ public:
 
 	DataTable(const DataTable&) = delete;
 
-	~DataTable() noexcept
+	~DataTable() MOMO_NOEXCEPT
 	{
 		_FreeRaws();
 	}
 
-	DataTable& operator=(DataTable&& table) noexcept
+	DataTable& operator=(DataTable&& table) MOMO_NOEXCEPT
 	{
 		DataTable(std::move(table)).Swap(*this);
 		return *this;
@@ -207,7 +207,7 @@ public:
 
 	DataTable& operator=(const DataTable&) = delete;
 
-	void Swap(DataTable& table) noexcept
+	void Swap(DataTable& table) MOMO_NOEXCEPT
 	{
 		mCrew.Swap(table.mCrew);
 		mRaws.Swap(table.mRaws);
@@ -217,32 +217,32 @@ public:
 
 	MOMO_FRIEND_SWAP(DataTable)
 
-	const ColumnList& GetColumnList() const noexcept
+	const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 	{
 		return mCrew.GetColumnList();
 	}
 
-	const MemManager& GetMemManager() const noexcept
+	const MemManager& GetMemManager() const MOMO_NOEXCEPT
 	{
 		return mCrew.GetMemManager();
 	}
 
-	MemManager& GetMemManager() noexcept
+	MemManager& GetMemManager() MOMO_NOEXCEPT
 	{
 		return mCrew.GetMemManager();
 	}
 
-	size_t GetCount() const noexcept
+	size_t GetCount() const MOMO_NOEXCEPT
 	{
 		return mRaws.GetCount();
 	}
 
-	bool IsEmpty() const noexcept
+	bool IsEmpty() const MOMO_NOEXCEPT
 	{
 		return mRaws.IsEmpty();
 	}
 
-	void Clear() noexcept
+	void Clear() MOMO_NOEXCEPT
 	{
 		_FreeRaws();
 		mRaws.Clear();
@@ -423,7 +423,7 @@ public:
 	//FindMulti
 
 private:
-	size_t _GetRawSize() const noexcept
+	size_t _GetRawSize() const MOMO_NOEXCEPT
 	{
 		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
 	}
@@ -443,7 +443,7 @@ private:
 		return raw;
 	}
 
-	void _FreeRaws() noexcept
+	void _FreeRaws() MOMO_NOEXCEPT
 	{
 		if (mCrew.IsNull())
 			return;
@@ -452,13 +452,13 @@ private:
 			_FreeRaw(raw);
 	}
 
-	void _FreeRaw(Raw* raw) noexcept
+	void _FreeRaw(Raw* raw) MOMO_NOEXCEPT
 	{
 		GetColumnList().DestroyRaw(raw);
 		mRawMemPool.Deallocate(raw);
 	}
 
-	void _FreeNewRaws() noexcept
+	void _FreeNewRaws() MOMO_NOEXCEPT
 	{
 		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
@@ -477,7 +477,7 @@ private:
 		_FillRaw(raw, std::forward<Args>(args)...);
 	}
 
-	void _FillRaw(Raw* /*raw*/) noexcept
+	void _FillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
 	{
 	}
 
@@ -508,7 +508,7 @@ private:
 		_GetOffsets(offsets + 1, args...);
 	}
 
-	void _GetOffsets(size_t* /*offsets*/) const noexcept
+	void _GetOffsets(size_t* /*offsets*/) const MOMO_NOEXCEPT
 	{
 	}
 
@@ -520,7 +520,7 @@ private:
 			&& _IsSatisfied(rowRef, offsets + 1, args...);
 	}
 
-	static bool _IsSatisfied(ConstRowRef /*rowRef*/, const size_t* /*offsets*/) noexcept
+	static bool _IsSatisfied(ConstRowRef /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
 	{
 		return true;
 	}
@@ -597,7 +597,7 @@ private:
 	}
 
 	template<typename Raws>
-	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const noexcept
+	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}

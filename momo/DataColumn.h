@@ -33,7 +33,7 @@ struct DataColumnTraits
 	using Column = Type Struct::*;
 
 	template<typename Type>
-	static size_t GetCode(const Column<Type>& column) noexcept
+	static size_t GetCode(const Column<Type>& column) MOMO_NOEXCEPT
 	{
 		//? typeid(Type).hash_code()
 		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
@@ -41,13 +41,13 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	static constexpr size_t GetSize(/*const Column<Type>& column*/) noexcept
+	static constexpr size_t GetSize(/*const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
 		return sizeof(Type);
 	}
 
 	template<typename Type>
-	static constexpr size_t GetAlignment(/*const Column<Type>& column*/) noexcept
+	static constexpr size_t GetAlignment(/*const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
 		return MOMO_ALIGNMENT_OF(Type);
 	}
@@ -59,7 +59,7 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	static void Destroy(/*const Column<Type>& column,*/ Type* pitem) noexcept
+	static void Destroy(/*const Column<Type>& column,*/ Type* pitem) MOMO_NOEXCEPT
 	{
 		pitem->~Type();
 	}
@@ -102,7 +102,7 @@ private:
 		};
 
 	public:
-		Graph() noexcept
+		Graph() MOMO_NOEXCEPT
 		{
 			mEdgeNumber = 0;
 			std::fill(mEdges.begin(), mEdges.end(), nullptr);
@@ -110,13 +110,13 @@ private:
 
 		Graph(const Graph&) = delete;
 
-		~Graph() noexcept
+		~Graph() MOMO_NOEXCEPT
 		{
 		}
 
 		Graph& operator=(const Graph&) = delete;
 
-		void AddEdge(size_t vertex1, size_t vertex2, size_t value) noexcept
+		void AddEdge(size_t vertex1, size_t vertex2, size_t value) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mEdgeNumber < vertexCount * 2);
 			Edge* edge = &mEdgeStorage[mEdgeNumber];
@@ -127,12 +127,12 @@ private:
 			mEdges[vertex1] = edge;
 		}
 
-		bool HasEdge(size_t vertex) const noexcept
+		bool HasEdge(size_t vertex) const MOMO_NOEXCEPT
 		{
 			return mEdges[vertex] != nullptr;
 		}
 
-		bool FillAddends(size_t* addends, size_t vertex) const noexcept
+		bool FillAddends(size_t* addends, size_t vertex) const MOMO_NOEXCEPT
 		{
 			size_t addend = addends[vertex];
 			for (Edge* edge = mEdges[vertex]; edge != nullptr; edge = edge->nextEdge)
@@ -186,12 +186,12 @@ public:
 		mDestroyFunc = [] (Raw* raw) { _Destroy<void, Types...>(raw, 0); };
 	}
 
-	static constexpr bool IsMutable(size_t /*offset*/) noexcept
+	static constexpr bool IsMutable(size_t /*offset*/) MOMO_NOEXCEPT
 	{
 		return false;
 	}
 
-	size_t GetTotalSize() const noexcept
+	size_t GetTotalSize() const MOMO_NOEXCEPT
 	{
 		return mTotalSize;
 	}
@@ -201,13 +201,13 @@ public:
 		mCreateFunc(raw);
 	}
 
-	void DestroyRaw(Raw* raw) const noexcept
+	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
 	{
 		mDestroyFunc(raw);
 	}
 
 	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const noexcept
+	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
 		std::pair<size_t, size_t> vertices = _GetVertices(column);
 		size_t addend1 = mAddends[vertices.first];
@@ -220,7 +220,7 @@ public:
 	}
 
 	template<typename Type>
-	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
+	const Type& GetByOffset(const Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
@@ -228,7 +228,7 @@ public:
 	}
 
 	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
+	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
@@ -244,7 +244,7 @@ public:
 private:
 	template<size_t edgeCount, typename Type, typename... Types>
 	void _MakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment, const Column<Type>& column,
-		const Column<Types>&... columns) noexcept
+		const Column<Types>&... columns) MOMO_NOEXCEPT
 	{
 		_CorrectOffset<Type>(offset);
 		std::pair<size_t, size_t> vertices = _GetVertices(column);
@@ -257,13 +257,13 @@ private:
 	}
 
 	template<size_t edgeCount>
-	void _MakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) noexcept
+	void _MakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
 	{
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
 	template<typename Type>
-	static std::pair<size_t, size_t> _GetVertices(const Column<Type>& column) noexcept
+	static std::pair<size_t, size_t> _GetVertices(const Column<Type>& column) MOMO_NOEXCEPT
 	{
 		size_t code = ColumnTraits::GetCode(column);
 		size_t vertex1 = code & (vertexCount - 1);
@@ -290,12 +290,12 @@ private:
 	}
 
 	template<typename Void>
-	static void _Create(Raw* /*raw*/, size_t /*offset*/) noexcept
+	static void _Create(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void _Destroy(Raw* raw, size_t offset) noexcept
+	static void _Destroy(Raw* raw, size_t offset) MOMO_NOEXCEPT
 	{
 		_CorrectOffset<Type>(offset);
 		ColumnTraits::Destroy(reinterpret_cast<Type*>(raw + offset));
@@ -303,12 +303,12 @@ private:
 	}
 
 	template<typename Void>
-	static void _Destroy(Raw* /*raw*/, size_t /*offset*/) noexcept
+	static void _Destroy(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Type>
-	static void _CorrectOffset(size_t& offset) noexcept
+	static void _CorrectOffset(size_t& offset) MOMO_NOEXCEPT
 	{
 		static const size_t alignment = ColumnTraits::template GetAlignment<Type>();
 		offset = ((offset + alignment - 1) / alignment) * alignment;
@@ -338,7 +338,7 @@ private:
 	typedef std::bitset<structSize> MutOffsets;
 
 public:
-	DataColumnListStatic() noexcept
+	DataColumnListStatic() MOMO_NOEXCEPT
 	{
 	}
 
@@ -348,12 +348,12 @@ public:
 		_SetMutable(columns...);
 	}
 
-	bool IsMutable(size_t offset) const noexcept
+	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
 	{
 		return mMutOffsets.test(offset);
 	}
 
-	static constexpr size_t GetTotalSize() noexcept
+	static constexpr size_t GetTotalSize() MOMO_NOEXCEPT
 	{
 		return structSize;
 	}
@@ -363,21 +363,21 @@ public:
 		new(raw) Raw();
 	}
 
-	void DestroyRaw(Raw* raw) const noexcept
+	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
 	{
 		(void)raw;
 		raw->~Raw();
 	}
 
 	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const noexcept
+	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
 		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
 		//return offsetof(Struct, *column);
 	}
 
 	template<typename Type>
-	const Type& GetByOffset(const Raw* raw, size_t offset) const noexcept
+	const Type& GetByOffset(const Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < structSize);
 		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
@@ -385,7 +385,7 @@ public:
 	}
 
 	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const noexcept
+	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < structSize);
 		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
@@ -406,7 +406,7 @@ private:
 		_SetMutable(columns...);
 	}
 
-	void _SetMutable() noexcept
+	void _SetMutable() MOMO_NOEXCEPT
 	{
 	}
 

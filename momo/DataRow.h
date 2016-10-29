@@ -34,14 +34,14 @@ namespace internal
 		typedef std::atomic<Raw*> FreeRaws;
 
 	public:
-		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) noexcept
+		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw),
 			mFreeRaws(freeRaws)
 		{
 		}
 
-		DataRow(DataRow&& row) noexcept
+		DataRow(DataRow&& row) MOMO_NOEXCEPT
 			: mColumnList(row.mColumnList),
 			mRaw(row.mRaw),
 			mFreeRaws(row.mFreeRaws)
@@ -52,7 +52,7 @@ namespace internal
 
 		DataRow(const DataRow&) = delete;
 
-		~DataRow() noexcept
+		~DataRow() MOMO_NOEXCEPT
 		{
 			if (mRaw == nullptr)
 				return;
@@ -66,7 +66,7 @@ namespace internal
 			}
 		}
 
-		DataRow& operator=(DataRow&& row) noexcept
+		DataRow& operator=(DataRow&& row) MOMO_NOEXCEPT
 		{
 			DataRow(std::move(row)).Swap(*this);
 			return *this;
@@ -74,7 +74,7 @@ namespace internal
 
 		DataRow& operator=(const DataRow&) = delete;
 
-		void Swap(DataRow& row) noexcept
+		void Swap(DataRow& row) MOMO_NOEXCEPT
 		{
 			std::swap(mColumnList, row.mColumnList);
 			std::swap(mRaw, row.mRaw);
@@ -83,7 +83,7 @@ namespace internal
 
 		MOMO_FRIEND_SWAP(DataRow)
 
-		const ColumnList& GetColumnList() const noexcept
+		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
 			return *mColumnList;
 		}
@@ -125,29 +125,29 @@ namespace internal
 			return GetByColumn(column);
 		}
 
-		const Raw* GetRaw() const noexcept
+		const Raw* GetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
 
-		Raw* GetRaw() noexcept
+		Raw* GetRaw() MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
 
-		Raw* ExtractRaw() noexcept
+		Raw* ExtractRaw() MOMO_NOEXCEPT
 		{
 			Raw* raw = mRaw;
 			mRaw = nullptr;
 			return raw;
 		}
 
-		const Raw* operator->() const noexcept
+		const Raw* operator->() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
 
-		Raw* operator->() noexcept
+		Raw* operator->() MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
@@ -171,13 +171,13 @@ namespace internal
 		typedef DataConstRowRef ConstRowRef;
 
 	public:
-		DataConstRowRef(const ColumnList* columnList, const Raw* raw) noexcept
+		DataConstRowRef(const ColumnList* columnList, const Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{
 		}
 
-		const ColumnList& GetColumnList() const noexcept
+		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
 			return *mColumnList;
 		}
@@ -200,12 +200,12 @@ namespace internal
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
-		const Raw* GetRaw() const noexcept
+		const Raw* GetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
 
-		const Raw* operator->() const noexcept
+		const Raw* operator->() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
@@ -231,14 +231,14 @@ namespace internal
 		class ItemRef
 		{
 		public:
-			ItemRef(const ColumnList* columnList, Raw* raw, size_t offset) noexcept
+			ItemRef(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT
 				: mColumnList(columnList),
 				mRaw(raw),
 				mOffset(offset)
 			{
 			}
 
-			ItemRef(ItemRef&& itemRef) noexcept
+			ItemRef(ItemRef&& itemRef) MOMO_NOEXCEPT
 				: mColumnList(itemRef.mColumnList),
 				mRaw(itemRef.mRaw),
 				mOffset(itemRef.mOffset)
@@ -247,7 +247,7 @@ namespace internal
 
 			ItemRef(const ItemRef&) = delete;
 
-			~ItemRef() noexcept
+			~ItemRef() MOMO_NOEXCEPT
 			{
 			}
 
@@ -290,18 +290,18 @@ namespace internal
 		};
 
 	public:
-		DataRowRef(const ColumnList* columnList, Raw* raw) noexcept
+		DataRowRef(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{
 		}
 
-		operator ConstRowRef() const noexcept
+		operator ConstRowRef() const MOMO_NOEXCEPT
 		{
 			return ConstRowRef(mColumnList, mRaw);
 		}
 
-		const ColumnList& GetColumnList() const noexcept
+		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
 			return *mColumnList;
 		}
@@ -324,12 +324,12 @@ namespace internal
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
-		const Raw* GetRaw() const noexcept
+		const Raw* GetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
 
-		const Raw* operator->() const noexcept
+		const Raw* operator->() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}
