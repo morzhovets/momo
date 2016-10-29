@@ -69,21 +69,24 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 	
-	class value_compare : public std::binary_function<value_type, value_type, bool>
+	class value_compare
 	{
-	public:
-		explicit value_compare(const key_compare& keyComp)
-			: mKeyComp(keyComp)
-		{
-		}
+		friend class map;
 
+	public:
 		bool operator()(const value_type& value1, const value_type& value2) const
 		{
-			return mKeyComp(value1.first, value2.first);
+			return comp(value1.first, value2.first);
 		}
 
-	private:
-		key_compare mKeyComp;
+	protected:
+		value_compare(const key_compare& keyComp)
+			: comp(keyComp)
+		{
+		}
+
+	protected:
+		key_compare comp;
 	};
 
 	typedef internal::MapReferenceStd<key_type, mapped_type,
