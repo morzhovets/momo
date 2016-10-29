@@ -253,13 +253,13 @@ namespace internal
 
 			ItemRef& operator=(const ItemRef& itemRef)
 			{
-				return _Assign(itemRef.Get());
+				return pvAssign(itemRef.Get());
 			}
 
 			template<typename TypeArg>
 			ItemRef& operator=(TypeArg&& itemArg)
 			{
-				return _Assign(std::forward<TypeArg>(itemArg));
+				return pvAssign(std::forward<TypeArg>(itemArg));
 			}
 
 			operator const Type&() const
@@ -275,7 +275,7 @@ namespace internal
 
 		private:
 			template<typename TypeArg>
-			ItemRef& _Assign(TypeArg&& itemArg)
+			ItemRef& pvAssign(TypeArg&& itemArg)
 			{
 				if (!mColumnList->IsMutable(mOffset))
 					throw std::runtime_error("Item is read only");

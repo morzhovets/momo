@@ -127,38 +127,38 @@ namespace internal
 
 		DataSelection&& Reverse() && MOMO_NOEXCEPT
 		{
-			_Reverse();
+			pvReverse();
 			return std::move(*this);
 		}
 
 		DataSelection& Reverse() & MOMO_NOEXCEPT
 		{
-			_Reverse();
+			pvReverse();
 			return *this;
 		}
 
 		template<typename RowComparer>
 		DataSelection&& Sort(const RowComparer& rowComparer) &&
 		{
-			_Sort(rowComparer);
+			pvSort(rowComparer);
 			return std::move(*this);
 		}
 
 		template<typename RowComparer>
 		DataSelection& Sort(const RowComparer& rowComparer) &
 		{
-			_Sort(rowComparer);
+			pvSort(rowComparer);
 			return *this;
 		}
 
 	private:
-		void _Reverse() MOMO_NOEXCEPT
+		void pvReverse() MOMO_NOEXCEPT
 		{
 			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
 		}
 
 		template<typename RowComparer>
-		void _Sort(const RowComparer& rowComparer)
+		void pvSort(const RowComparer& rowComparer)
 		{
 			auto rawComparer = [this, &rowComparer] (const Raw* raw1, const Raw* raw2)
 			{

@@ -172,7 +172,7 @@ public:
 		static const size_t columnCount = sizeof...(columns);
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
 		Graph<2 * columnCount> graph;
-		_MakeGraph(graph, 0, 1, columns...);
+		pvMakeGraph(graph, 0, 1, columns...);
 		std::fill(mAddends.begin(), mAddends.end(), 0);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
@@ -182,8 +182,8 @@ public:
 			if (!graph.FillAddends(mAddends.data(), v))
 				throw std::runtime_error("Cannot create DataColumnListVar");	//?
 		}
-		mCreateFunc = [] (Raw* raw) { _Create<void, Types...>(raw, 0); };
-		mDestroyFunc = [] (Raw* raw) { _Destroy<void, Types...>(raw, 0); };
+		mCreateFunc = [] (Raw* raw) { pvCreate<void, Types...>(raw, 0); };
+		mDestroyFunc = [] (Raw* raw) { pvDestroy<void, Types...>(raw, 0); };
 	}
 
 	static constexpr bool IsMutable(size_t /*offset*/) MOMO_NOEXCEPT
@@ -209,7 +209,7 @@ public:
 	template<typename Type>
 	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
-		std::pair<size_t, size_t> vertices = _GetVertices(column);
+		std::pair<size_t, size_t> vertices = pvGetVertices(column);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
@@ -243,27 +243,27 @@ public:
 
 private:
 	template<size_t edgeCount, typename Type, typename... Types>
-	void _MakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment, const Column<Type>& column,
-		const Column<Types>&... columns) MOMO_NOEXCEPT
+	void pvMakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment,
+		const Column<Type>& column, const Column<Types>&... columns) MOMO_NOEXCEPT
 	{
-		_CorrectOffset<Type>(offset);
-		std::pair<size_t, size_t> vertices = _GetVertices(column);
+		pvCorrectOffset<Type>(offset);
+		std::pair<size_t, size_t> vertices = pvGetVertices(column);
 		graph.AddEdge(vertices.first, vertices.second, offset);
 		graph.AddEdge(vertices.second, vertices.first, offset);
 		offset += ColumnTraits::template GetSize<Type>();
 		maxAlignment = std::minmax(maxAlignment,
 			ColumnTraits::template GetAlignment<Type>()).second;
-		_MakeGraph(graph, offset, maxAlignment, columns...);
+		pvMakeGraph(graph, offset, maxAlignment, columns...);
 	}
 
 	template<size_t edgeCount>
-	void _MakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
+	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
 	{
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
 	template<typename Type>
-	static std::pair<size_t, size_t> _GetVertices(const Column<Type>& column) MOMO_NOEXCEPT
+	static std::pair<size_t, size_t> pvGetVertices(const Column<Type>& column) MOMO_NOEXCEPT
 	{
 		size_t code = ColumnTraits::GetCode(column);
 		size_t vertex1 = code & (vertexCount - 1);
@@ -274,13 +274,13 @@ private:
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void _Create(Raw* raw, size_t offset)
+	static void pvCreate(Raw* raw, size_t offset)
 	{
-		_CorrectOffset<Type>(offset);
+		pvCorrectOffset<Type>(offset);
 		ColumnTraits::Create(reinterpret_cast<Type*>(raw + offset));
 		try
 		{
-			_Create<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
+			pvCreate<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
 		}
 		catch (...)
 		{
@@ -290,25 +290,25 @@ private:
 	}
 
 	template<typename Void>
-	static void _Create(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvCreate(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void _Destroy(Raw* raw, size_t offset) MOMO_NOEXCEPT
+	static void pvDestroy(Raw* raw, size_t offset) MOMO_NOEXCEPT
 	{
-		_CorrectOffset<Type>(offset);
+		pvCorrectOffset<Type>(offset);
 		ColumnTraits::Destroy(reinterpret_cast<Type*>(raw + offset));
-		_Destroy<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
+		pvDestroy<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
 	}
 
 	template<typename Void>
-	static void _Destroy(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvDestroy(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Type>
-	static void _CorrectOffset(size_t& offset) MOMO_NOEXCEPT
+	static void pvCorrectOffset(size_t& offset) MOMO_NOEXCEPT
 	{
 		static const size_t alignment = ColumnTraits::template GetAlignment<Type>();
 		offset = ((offset + alignment - 1) / alignment) * alignment;
@@ -345,7 +345,7 @@ public:
 	template<typename... Types>
 	void SetMutable(const Column<Types>&... columns)
 	{
-		_SetMutable(columns...);
+		pvSetMutable(columns...);
 	}
 
 	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
@@ -400,13 +400,13 @@ public:
 
 private:
 	template<typename Type, typename... Types>
-	void _SetMutable(const Column<Type>& column, const Column<Types>&... columns)
+	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
 	{
 		mMutOffsets.set(GetOffset(column));
-		_SetMutable(columns...);
+		pvSetMutable(columns...);
 	}
 
-	void _SetMutable() MOMO_NOEXCEPT
+	void pvSetMutable() MOMO_NOEXCEPT
 	{
 	}
 

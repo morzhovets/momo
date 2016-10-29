@@ -179,7 +179,7 @@ public:
 		MemManager&& memManager = MemManager())
 		: mCrew(columnList, std::move(memManager)),
 		mRaws(MemManagerPtr(GetMemManager())),
-		mRawMemPool(typename RawMemPool::Params(_GetRawSize()), MemManagerPtr(GetMemManager())),
+		mRawMemPool(typename RawMemPool::Params(pvGetRawSize()), MemManagerPtr(GetMemManager())),
 		mIndexes(&GetColumnList(), GetMemManager())
 	{
 	}
@@ -196,7 +196,7 @@ public:
 
 	~DataTable() MOMO_NOEXCEPT
 	{
-		_FreeRaws();
+		pvFreeRaws();
 	}
 
 	DataTable& operator=(DataTable&& table) MOMO_NOEXCEPT
@@ -244,7 +244,7 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
-		_FreeRaws();
+		pvFreeRaws();
 		mRaws.Clear();
 		mIndexes.Clear();
 	}
@@ -263,14 +263,14 @@ public:
 	Row NewRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
 		Row row = NewRow();
-		_FillRaw(row.GetRaw(), column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...);
+		pvFillRaw(row.GetRaw(), column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...);
 		return row;
 	}
 
 	Row NewRow()
 	{
-		_FreeNewRaws();
-		return Row(&GetColumnList(), _CreateRaw(), &mCrew.GetFreeRaws());
+		pvFreeNewRaws();
+		return Row(&GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -299,7 +299,7 @@ public:
 		MOMO_ASSERT(rowNumber < GetCount());
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		_FreeRaw(raw);
+		pvFreeRaw(raw);
 		if (keepOrder)
 		{
 			mRaws.Remove(rowNumber, 1);
@@ -357,7 +357,7 @@ public:
 	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
-		return _Select<Selection>(filter, column, item, args...);
+		return pvSelect<Selection>(filter, column, item, args...);
 	}
 
 	ConstSelection Select() const
@@ -368,7 +368,7 @@ public:
 	template<typename Filter>
 	ConstSelection Select(const Filter& filter) const
 	{
-		return _MakeSelection<Selection>(mRaws, filter);
+		return pvSelectRec<Selection>(mRaws, filter);
 	}
 
 	template<typename Type, typename... Args>
@@ -381,7 +381,7 @@ public:
 	Selection Select(const Filter& filter, const Column<Type>& column, const Type& item,
 		const Args&... args)
 	{
-		return _Select<Selection>(filter, column, item, args...);
+		return pvSelect<Selection>(filter, column, item, args...);
 	}
 
 	Selection Select()
@@ -392,7 +392,7 @@ public:
 	template<typename Filter>
 	Selection Select(const Filter& filter)
 	{
-		return _MakeSelection<Selection>(mRaws, filter);
+		return pvSelectRec<Selection>(mRaws, filter);
 	}
 
 	template<typename Type, typename... Args>
@@ -405,7 +405,7 @@ public:
 	size_t SelectCount(const Filter& filter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
-		return _Select<size_t>(filter, column, item, args...);
+		return pvSelect<size_t>(filter, column, item, args...);
 	}
 
 	size_t SelectCount() const
@@ -416,19 +416,19 @@ public:
 	template<typename Filter>
 	size_t SelectCount(const Filter& filter) const
 	{
-		return _MakeSelection<size_t>(mRaws, filter);
+		return pvSelectRec<size_t>(mRaws, filter);
 	}
 
 	//FindUnique
 	//FindMulti
 
 private:
-	size_t _GetRawSize() const MOMO_NOEXCEPT
+	size_t pvGetRawSize() const MOMO_NOEXCEPT
 	{
 		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
 	}
 
-	Raw* _CreateRaw()
+	Raw* pvCreateRaw()
 	{
 		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
@@ -443,22 +443,22 @@ private:
 		return raw;
 	}
 
-	void _FreeRaws() MOMO_NOEXCEPT
+	void pvFreeRaws() MOMO_NOEXCEPT
 	{
 		if (mCrew.IsNull())
 			return;
-		_FreeNewRaws();
+		pvFreeNewRaws();
 		for (Raw* raw : mRaws)
-			_FreeRaw(raw);
+			pvFreeRaw(raw);
 	}
 
-	void _FreeRaw(Raw* raw) MOMO_NOEXCEPT
+	void pvFreeRaw(Raw* raw) MOMO_NOEXCEPT
 	{
 		GetColumnList().DestroyRaw(raw);
 		mRawMemPool.Deallocate(raw);
 	}
 
-	void _FreeNewRaws() MOMO_NOEXCEPT
+	void pvFreeNewRaws() MOMO_NOEXCEPT
 	{
 		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
@@ -470,70 +470,71 @@ private:
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
-	void _FillRaw(Raw* raw, const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
+	void pvFillRaw(Raw* raw, const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
 		size_t offset = GetColumnList().GetOffset(column);
 		GetColumnList().template Assign<Type>(raw, offset, std::forward<TypeArg>(itemArg));
-		_FillRaw(raw, std::forward<Args>(args)...);
+		pvFillRaw(raw, std::forward<Args>(args)...);
 	}
 
-	void _FillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
+	void pvFillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Result, typename Filter, typename Type, typename... Args>
-	Result _Select(const Filter& filter, const Column<Type>& column, const Type& item,
+	Result pvSelect(const Filter& filter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
 		static const size_t columnCount = 1 + sizeof...(Args) / 2;
 		std::array<size_t, columnCount> offsets;
-		_GetOffsets(offsets.data(), column, item, args...);
+		pvGetOffsets(offsets.data(), column, item, args...);
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		const auto* uniqueHash = mIndexes.FindFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
-			return _SelectRec<Result>(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
+			return pvSelectRec<Result>(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
 		const auto* multiHash = mIndexes.FindFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
-			return _SelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
+			return pvSelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
 		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowRef rowRef)
-			{ return _IsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
-		return _MakeSelection<Result>(mRaws, newFilter);
+			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
+		return pvSelectRec<Result>(mRaws, newFilter);
 	}
 
 	template<typename Type, typename... Args>
-	void _GetOffsets(size_t* offsets, const Column<Type>& column, const Type& /*item*/,
+	void pvGetOffsets(size_t* offsets, const Column<Type>& column, const Type& /*item*/,
 		const Args&... args) const
 	{
 		*offsets = GetColumnList().GetOffset(column);
-		_GetOffsets(offsets + 1, args...);
+		pvGetOffsets(offsets + 1, args...);
 	}
 
-	void _GetOffsets(size_t* /*offsets*/) const MOMO_NOEXCEPT
+	void pvGetOffsets(size_t* /*offsets*/) const MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Type, typename... Args>
-	static bool _IsSatisfied(ConstRowRef rowRef, const size_t* offsets,
+	static bool pvIsSatisfied(ConstRowRef rowRef, const size_t* offsets,
 		const Column<Type>& /*column*/, const Type& item, const Args&... args)
 	{
 		return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(*offsets), item)
-			&& _IsSatisfied(rowRef, offsets + 1, args...);
+			&& pvIsSatisfied(rowRef, offsets + 1, args...);
 	}
 
-	static bool _IsSatisfied(ConstRowRef /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
+	static bool pvIsSatisfied(ConstRowRef /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
 	{
 		return true;
 	}
 
 	template<typename Result, typename Index, typename Filter, typename Tuple, typename Type, typename... Args>
-	Result _SelectRec(const Index& index, const Filter& filter, const Tuple& tuple,
+	Result pvSelectRec(const Index& index, const Filter& filter, const Tuple& tuple,
 		const Column<Type>& column, const Type& item, const Args&... args) const
 	{
 		size_t offset = GetColumnList().GetOffset(column);
 		if (Indexes::HasOffset(index, offset))
 		{
-			auto newTuple = std::tuple_cat(tuple, std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return _SelectRec<Result>(index, filter, newTuple, args...);
+			auto newTuple = std::tuple_cat(tuple,
+				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
+			return pvSelectRec<Result>(index, filter, newTuple, args...);
 		}
 		else
 		{
@@ -542,32 +543,32 @@ private:
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& filter(rowRef);
 			};
-			return _SelectRec<Result>(index, newFilter, tuple, args...);
+			return pvSelectRec<Result>(index, newFilter, tuple, args...);
 		}
 	}
 
 	template<typename Result, typename Index, typename Filter, typename Tuple>
-	Result _SelectRec(const Index& index, const Filter& filter, const Tuple& tuple) const
+	Result pvSelectRec(const Index& index, const Filter& filter, const Tuple& tuple) const
 	{
-		return _MakeSelection<Result>(mIndexes.FindRaws(index, tuple), filter);
+		return pvSelectRec<Result>(mIndexes.FindRaws(index, tuple), filter);
 	}
 
 #ifdef _MSC_VER	//?
 	template<typename Result, typename Index, typename Filter>
-	Result _SelectRec(const Index&, const Filter&, const OffsetItemTuple<>&) const
+	Result pvSelectRec(const Index&, const Filter&, const OffsetItemTuple<>&) const
 	{
 		throw std::exception();
 	}
 #endif
 
 	template<typename Result, typename Raws, typename Filter>
-	Result _MakeSelection(const Raws& raws, const Filter& filter) const
+	Result pvSelectRec(const Raws& raws, const Filter& filter) const
 	{
-		return _MakeSelection(raws, filter, static_cast<Result*>(nullptr));
+		return pvSelectRec(raws, filter, static_cast<Result*>(nullptr));
 	}
 
 	template<typename Raws, typename Filter>
-	Selection _MakeSelection(const Raws& raws, const Filter& filter, Selection*) const
+	Selection pvSelectRec(const Raws& raws, const Filter& filter, Selection*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		MemManager memManager = GetMemManager();
@@ -581,7 +582,7 @@ private:
 	}
 
 	template<typename Raws>
-	Selection _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
+	Selection pvSelectRec(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
 		return Selection(&GetColumnList(),
@@ -589,7 +590,7 @@ private:
 	}
 
 	template<typename Raws, typename Filter>
-	size_t _MakeSelection(const Raws& raws, const Filter& filter, size_t*) const
+	size_t pvSelectRec(const Raws& raws, const Filter& filter, size_t*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
@@ -597,7 +598,7 @@ private:
 	}
 
 	template<typename Raws>
-	size_t _MakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
+	size_t pvSelectRec(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
