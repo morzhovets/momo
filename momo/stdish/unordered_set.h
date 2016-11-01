@@ -417,23 +417,12 @@ public:
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
-		typename HashSet::MemManager& memManager = mHashSet.GetMemManager();
-		typedef momo::internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
+		MemManager& memManager = mHashSet.GetMemManager();
+		typename HashSet::ExtractedItem extItem;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
-		ValueBuffer valueBuffer;
-		ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
-		try
-		{
-			auto valueCreator = [&memManager, &valueBuffer] (value_type* newValue)
-				{ HashSet::ItemTraits::Relocate(memManager, *&valueBuffer, newValue); };
-			typename HashSet::InsertResult res = mHashSet.InsertCrt(*&valueBuffer, valueCreator);
-			return std::pair<iterator, bool>(res.iterator, res.inserted);
-		}
-		catch (...)
-		{
-			HashSet::ItemTraits::Destroy(memManager, *&valueBuffer);
-			throw;
-		}
+		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		typename HashSet::InsertResult res = mHashSet.Insert(std::move(extItem));
+		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}
 
 	template<typename... ValueArgs>

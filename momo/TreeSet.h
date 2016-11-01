@@ -736,6 +736,19 @@ public:
 		return AddVar(iter, item);
 	}
 
+	ConstIterator Add(ConstIterator iter, ExtractedItem&& extItem)
+	{
+		MOMO_CHECK(!extItem.IsEmpty());
+		MemManager& memManager = GetMemManager();
+		auto itemCreator = [&memManager, &extItem] (Item* newItem)
+		{
+			auto removeFunc = [&memManager, newItem] (Item& item)
+				{ ItemTraits::Relocate(memManager, item, newItem); };
+			extItem.Reset(removeFunc);
+		};
+		return AddCrt(iter, itemCreator);
+	}
+
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto replaceFunc1 = [this] (Item& srcItem)

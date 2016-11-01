@@ -47,6 +47,9 @@ public:
 		assert(*iter == "s1");
 		auto rs = set.Extract(iter);
 		assert(rs.GetItem() == "s1");
+		set.Add(set.LowerBound(s1), std::move(rs));
+		set.Remove(set.Find(s1), rs);
+		assert(rs.GetItem() == s1);
 		set.Insert(std::move(rs));
 		set.Remove(set.Find("s1"));
 		iter = set.Find("s1");

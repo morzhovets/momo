@@ -436,13 +436,24 @@ public:
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
-		return pvEmplace(nullptr, std::forward<ValueArgs>(valueArgs)...);
+		MemManager& memManager = mTreeSet.GetMemManager();
+		typename TreeSet::ExtractedItem extItem;
+		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
+		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		typename TreeSet::InsertResult res = mTreeSet.Insert(std::move(extItem));
+		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}
 
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-		return pvEmplace(hint, std::forward<ValueArgs>(valueArgs)...).first;
+		MemManager& memManager = mTreeSet.GetMemManager();
+		typename TreeSet::ExtractedItem extItem;
+		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
+		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		if (!pvCheckHint(hint, extItem.GetItem()))
+			return mTreeSet.Insert(std::move(extItem)).iterator;
+		return mTreeSet.Add(hint, std::move(extItem));
 	}
 
 	iterator erase(const_iterator where)
@@ -527,44 +538,6 @@ private:
 	{
 		for (Iterator iter = first; iter != last; ++iter)
 			emplace(*iter);
-	}
-
-	template<typename ValueCreator>
-	std::pair<iterator, bool> pvInsert(const_iterator hint, const key_type& key,
-		const ValueCreator& valueCreator)
-	{
-		if (!pvCheckHint(hint, key))
-			return pvInsert(nullptr, key, valueCreator);
-		return std::pair<iterator, bool>(mTreeSet.AddCrt(hint, valueCreator), true);
-	}
-
-	template<typename ValueCreator>
-	std::pair<iterator, bool> pvInsert(std::nullptr_t, const key_type& key,
-		const ValueCreator& valueCreator)
-	{
-		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(key, valueCreator);
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
-	}
-
-	template<typename Hint, typename... ValueArgs>
-	std::pair<iterator, bool> pvEmplace(Hint hint, ValueArgs&&... valueArgs)
-	{
-		typename TreeSet::MemManager& memManager = mTreeSet.GetMemManager();
-		typedef momo::internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
-		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
-		ValueBuffer valueBuffer;
-		ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
-		try
-		{
-			auto valueCreator = [&memManager, &valueBuffer] (value_type* newValue)
-				{ TreeSet::ItemTraits::Relocate(memManager, *&valueBuffer, newValue); };
-			return pvInsert(hint, *&valueBuffer, valueCreator);
-		}
-		catch (...)
-		{
-			TreeSet::ItemTraits::Destroy(memManager, *&valueBuffer);
-			throw;
-		}
 	}
 
 private:
