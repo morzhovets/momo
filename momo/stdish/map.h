@@ -88,11 +88,11 @@ public:
 		key_compare comp;
 	};
 
-	typedef internal::MapReferenceStd<key_type, mapped_type,
+	typedef momo::internal::MapReferenceStd<key_type, mapped_type,
 		typename TreeMapIterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
-	typedef internal::TreeDerivedIterator<TreeMapIterator, reference> iterator;
+	typedef momo::internal::TreeDerivedIterator<TreeMapIterator, reference> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Pointer pointer;
@@ -701,8 +701,8 @@ private:
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		const MappedCreator& mappedCreator)
 	{
-		typedef internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef internal::ObjectManager<key_type, typename TreeMap::MemManager> KeyManager;
+		typedef momo::internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
+		typedef momo::internal::ObjectManager<key_type, typename TreeMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(mTreeMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);

@@ -73,11 +73,11 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef internal::MapReferenceStd<key_type, mapped_type,
+	typedef momo::internal::MapReferenceStd<key_type, mapped_type,
 		typename HashMapIterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
-	typedef internal::HashDerivedIterator<HashMapIterator, reference> iterator;
+	typedef momo::internal::HashDerivedIterator<HashMapIterator, reference> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Pointer pointer;
@@ -85,7 +85,7 @@ public:
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
-	typedef internal::HashDerivedIterator<typename HashMap::BucketBounds::Iterator,
+	typedef momo::internal::HashDerivedIterator<typename HashMap::BucketBounds::Iterator,
 		reference> local_iterator;
 	typedef typename local_iterator::ConstIterator const_local_iterator;
 
@@ -336,7 +336,7 @@ public:
 	void rehash(size_type bucketCount)
 	{
 		bucketCount = std::minmax(bucketCount, (size_t)2).second;
-		size_t logBucketCount = internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
+		size_t logBucketCount = momo::internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
 		bucketCount = (size_t)1 << logBucketCount;
 		reserve(mHashMap.GetHashTraits().CalcCapacity(bucketCount));
 	}
@@ -594,7 +594,7 @@ public:
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
 		return SIZE_MAX;
-		//return internal::HashSetBuckets<Bucket>::maxBucketCount;
+		//return momo::internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 
 	size_type bucket_count() const MOMO_NOEXCEPT
@@ -695,8 +695,8 @@ private:
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		const MappedCreator& mappedCreator)
 	{
-		typedef internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef internal::ObjectManager<key_type, typename HashMap::MemManager> KeyManager;
+		typedef momo::internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
+		typedef momo::internal::ObjectManager<key_type, typename HashMap::MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(mHashMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);

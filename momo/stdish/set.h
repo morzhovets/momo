@@ -550,7 +550,7 @@ private:
 	std::pair<iterator, bool> pvEmplace(Hint hint, ValueArgs&&... valueArgs)
 	{
 		typename TreeSet::MemManager& memManager = mTreeSet.GetMemManager();
-		typedef internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
+		typedef momo::internal::ObjectBuffer<value_type, TreeSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
 		ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);

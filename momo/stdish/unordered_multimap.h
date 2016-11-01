@@ -76,11 +76,11 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef internal::MapReferenceStd<key_type, mapped_type,
+	typedef momo::internal::MapReferenceStd<key_type, mapped_type,
 		typename HashMultiMap::Iterator::Reference> reference;
 	typedef typename reference::ConstReference const_reference;
 
-	typedef internal::HashDerivedIterator<typename HashMultiMap::Iterator, reference> iterator;
+	typedef momo::internal::HashDerivedIterator<typename HashMultiMap::Iterator, reference> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Pointer pointer;
@@ -574,8 +574,8 @@ private:
 	template<typename... KeyArgs, typename MappedCreator>
 	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
-		typedef internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef internal::ObjectManager<key_type, MemManager> KeyManager;
+		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
+		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(mHashMultiMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);

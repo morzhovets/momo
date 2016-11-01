@@ -329,7 +329,7 @@ public:
 	void rehash(size_type bucketCount)
 	{
 		bucketCount = std::minmax(bucketCount, (size_t)2).second;
-		size_t logBucketCount = internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
+		size_t logBucketCount = momo::internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
 		bucketCount = (size_t)1 << logBucketCount;
 		reserve(mHashSet.GetHashTraits().CalcCapacity(bucketCount));
 	}
@@ -418,7 +418,7 @@ public:
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
 	{
 		typename HashSet::MemManager& memManager = mHashSet.GetMemManager();
-		typedef internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
+		typedef momo::internal::ObjectBuffer<value_type, HashSet::ItemTraits::alignment> ValueBuffer;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		ValueBuffer valueBuffer;
 		ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...)(&valueBuffer);
@@ -474,7 +474,7 @@ public:
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
 		return SIZE_MAX;
-		//return internal::HashSetBuckets<Bucket>::maxBucketCount;
+		//return momo::internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 
 	size_type bucket_count() const MOMO_NOEXCEPT
