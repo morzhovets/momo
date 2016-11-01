@@ -280,7 +280,7 @@ namespace internal
 			: mMemManager(extractedItem.mMemManager)
 		{
 			if (mMemManager != nullptr)
-				ItemTraits::Relocate(*mMemManager, *&extractedItem.mItemBuffer, &mItemBuffer);
+				ItemTraits::Relocate(*mMemManager, *&extractedItem.mItemBuffer, &mItemBuffer);	//?
 			extractedItem.mMemManager = nullptr;
 		}
 
@@ -301,7 +301,7 @@ namespace internal
 		void Clear() MOMO_NOEXCEPT
 		{
 			if (!IsEmpty())
-				ItemTraits::Destroy(*mMemManager, *&mItemBuffer);
+				ItemTraits::Destroy(*mMemManager, *&mItemBuffer);	//? MemManager&
 			mMemManager = nullptr;
 		}
 
@@ -331,11 +331,11 @@ namespace internal
 			mMemManager = &memManager;
 		}
 
-		template<typename RemoveFunc>
-		void Reset(const RemoveFunc& removeFunc)
+		template<typename ItemRemover>
+		void Reset(const ItemRemover& itemRemover)
 		{
 			MOMO_CHECK(!IsEmpty());
-			removeFunc(*&mItemBuffer);
+			itemRemover(*&mItemBuffer);
 			mMemManager = nullptr;
 		}
 

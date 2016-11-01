@@ -227,12 +227,12 @@ namespace internal
 			++mCounter.count;
 		}
 
-		template<typename RemoveFunc>
-		void Remove(Params& params, size_t index, const RemoveFunc& removeFunc)
+		template<typename ItemRemover>
+		void Remove(Params& params, size_t index, const ItemRemover& itemRemover)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			pvRemove(params, index, count, removeFunc, IsContinuous());
+			pvRemove(params, index, count, itemRemover, IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
@@ -283,14 +283,14 @@ namespace internal
 			mCounter.indices[index] = realIndex;
 		}
 
-		template<typename RemoveFunc>
-		void pvRemove(Params& params, size_t index, size_t count, const RemoveFunc& removeFunc,
+		template<typename ItemRemover>
+		void pvRemove(Params& params, size_t index, size_t count, const ItemRemover& itemRemover,
 			std::true_type /*isContinuous*/)
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 			try
 			{
-				removeFunc(*GetItemPtr(count - 1));
+				itemRemover(*GetItemPtr(count - 1));
 			}
 			catch (...)
 			{
@@ -300,11 +300,11 @@ namespace internal
 			}
 		}
 
-		template<typename RemoveFunc>
-		void pvRemove(Params& /*params*/, size_t index, size_t count, const RemoveFunc& removeFunc,
+		template<typename ItemRemover>
+		void pvRemove(Params& /*params*/, size_t index, size_t count, const ItemRemover& itemRemover,
 			std::false_type /*isContinuous*/)
 		{
-			removeFunc(*GetItemPtr(index));
+			itemRemover(*GetItemPtr(index));
 			unsigned char realIndex = mCounter.indices[index];
 			memmove(mCounter.indices + index, mCounter.indices + index + 1, count - index - 1);
 			mCounter.indices[count - 1] = realIndex;

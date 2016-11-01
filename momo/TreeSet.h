@@ -691,9 +691,9 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
-			auto removeFunc = [&memManager, newItem] (Item& item)
+			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(memManager, item, newItem); };
-			extItem.Reset(removeFunc);
+			extItem.Reset(itemRemover);
 		};
 		return pvInsert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
 	}
@@ -742,9 +742,9 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
-			auto removeFunc = [&memManager, newItem] (Item& item)
+			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(memManager, item, newItem); };
-			extItem.Reset(removeFunc);
+			extItem.Reset(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
 	}
@@ -1154,17 +1154,17 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto removeFunc = [node, itemIndex, replaceFunc2] (Item& item)
+			auto itemRemover = [node, itemIndex, replaceFunc2] (Item& item)
 				{ replaceFunc2(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
 			{
-				childNode->Remove(*mNodeParams, childItemIndex, removeFunc);
+				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
 			}
 			else
 			{
 				Node* leftNode = childNode->GetChild(childItemIndex);
 				Node* rightNode = childNode->GetChild(childItemIndex + 1);
-				childNode->Remove(*mNodeParams, childItemIndex, removeFunc);
+				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
 				pvDestroy(rightNode);
 				childNode->SetChild(childItemIndex, leftNode);
 			}
@@ -1225,14 +1225,14 @@ private:
 			return false;
 		Relocator relocator(*mNodeParams);
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
-		auto removeFunc = [this, &relocator, node1, itemCount1] (Item& item)
+		auto itemRemover = [this, &relocator, node1, itemCount1] (Item& item)
 		{
 			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &item] (Item* newItem)
 				{ ItemTraits::Relocate(memManager, item, newItem); };
 			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
 		};
-		parentNode->Remove(*mNodeParams, index, removeFunc);
+		parentNode->Remove(*mNodeParams, index, itemRemover);
 		parentNode->SetChild(index, node1);
 		Node* lastChildNode = node1->IsLeaf() ? nullptr : node1->GetChild(itemCount1);
 		for (size_t i = 0; i <= itemCount2; ++i)

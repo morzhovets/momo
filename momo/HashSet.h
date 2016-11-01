@@ -704,9 +704,9 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
-			auto removeFunc = [&memManager, newItem] (Item& item)
+			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(memManager, item, newItem); };
-			extItem.Reset(removeFunc);
+			extItem.Reset(itemRemover);
 		};
 		return pvInsert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
 	}
@@ -755,9 +755,9 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
-			auto removeFunc = [&memManager, newItem] (Item& item)
+			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(memManager, item, newItem); };
-			extItem.Reset(removeFunc);
+			extItem.Reset(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
 	}
