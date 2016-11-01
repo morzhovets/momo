@@ -682,8 +682,9 @@ namespace internal
 	{
 	public:
 		typedef TSetExtractedItem SetExtractedItem;
-		typedef typename SetExtractedItem::Item::Key Key;
-		typedef typename SetExtractedItem::Item::Value Value;
+		typedef typename SetExtractedItem::Item KeyValuePair;
+		typedef typename KeyValuePair::Key Key;
+		typedef typename KeyValuePair::Value Value;
 		typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
@@ -743,6 +744,22 @@ namespace internal
 		Value& GetValue()
 		{
 			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		template<typename PairCreator>
+		void Set(MemManager& memManager, const PairCreator& pairCreator)
+		{
+			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
+				{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
+			mSetExtractedItem.Set(memManager, itemCreator);
+		}
+
+		template<typename PairRemover>
+		void Reset(const PairRemover& pairRemover)
+		{
+			auto itemRemover = [&pairRemover] (KeyValuePair& item)
+				{ pairRemover(*item.GetKeyPtr(), *item.GetValuePtr()); };
+			mSetExtractedItem.Reset(itemRemover);
 		}
 
 		SetExtractedItem& GetSetExtractedItem() MOMO_NOEXCEPT

@@ -430,6 +430,15 @@ public:
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
 	}
 
+	template<typename PairCreator>
+	Iterator AddCrt(ConstIterator iter, const PairCreator& pairCreator)
+	{
+		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
+			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
+		//? extra check
+		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), itemCreator));
+	}
+
 	template<typename ValueCreator>
 	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
 	{
@@ -588,12 +597,12 @@ private:
 	{
 		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter, static_cast<const Key&>(key)));
-		auto pairCreator = [this, &key, &valueCreator] (KeyValuePair* newPair)
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
-				newPair->GetKeyPtr(), newPair->GetValuePtr());
+				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), pairCreator));
+		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), itemCreator));
 	}
 
 private:
