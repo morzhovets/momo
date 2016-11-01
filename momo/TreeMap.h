@@ -400,6 +400,13 @@ public:
 		return InsertVar(key, value);
 	}
 
+	InsertResult Insert(ExtractedPair&& extPair)
+	{
+		typename TreeSet::InsertResult res =
+			mTreeSet.Insert(std::move(extPair.GetSetExtractedItem()));
+		return InsertResult(Iterator(res.iterator), res.inserted);
+	}
+
 	template<typename ArgIterator>
 	size_t InsertKV(ArgIterator begin, ArgIterator end)
 	{
@@ -467,6 +474,12 @@ public:
 	Iterator Add(ConstIterator iter, const Key& key, const Value& value)
 	{
 		return AddVar(iter, key, value);
+	}
+
+	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
+	{
+		return Iterator(mTreeSet.Add(iter.GetBaseIterator(),
+			std::move(extPair.GetSetExtractedItem())));
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
