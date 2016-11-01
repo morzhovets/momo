@@ -390,7 +390,7 @@ public:
 	reference emplace_back(ValueArgs&&... valueArgs)
 	{
 		mArray.AddBackVar(std::forward<ValueArgs>(valueArgs)...);
-		return back();	// C++17
+		return back();
 	}
 
 	template<typename... ValueArgs>

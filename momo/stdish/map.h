@@ -28,7 +28,6 @@
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
-  Class has functions `try_emplace` and `insert_or_assign` from C++17.
 
 \**********************************************************/
 
