@@ -40,6 +40,8 @@ namespace internal
 		{
 		}
 
+		set_node_handle(const set_node_handle&) = delete;
+
 		template<typename Set>
 		set_node_handle(Set& set, typename Set::const_iterator iter)
 		{
@@ -49,6 +51,8 @@ namespace internal
 		~set_node_handle() MOMO_NOEXCEPT
 		{
 		}
+
+		//set_node_handle& operator=(set_node_handle&&)
 
 		set_node_handle& operator=(const set_node_handle&) = delete;
 
@@ -71,6 +75,9 @@ namespace internal
 		{
 			return mSetExtractedItem.GetItem();
 		}
+
+		//void swap(set_node_handle&)
+		//friend void swap(set_node_handle&, set_node_handle&)
 
 	private:
 		mutable SetExtractedItem mSetExtractedItem;
@@ -97,6 +104,8 @@ namespace internal
 		{
 		}
 
+		map_node_handle(const map_node_handle&) = delete;
+
 		template<typename Map>
 		map_node_handle(Map& map, typename Map::const_iterator iter)
 		{
@@ -106,6 +115,8 @@ namespace internal
 		~map_node_handle() MOMO_NOEXCEPT
 		{
 		}
+
+		//map_node_handle& operator=(map_node_handle&&)
 
 		map_node_handle& operator=(const map_node_handle&) = delete;
 
@@ -133,6 +144,9 @@ namespace internal
 		{
 			return mMapExtractedPair.GetValue();
 		}
+
+		//void swap(map_node_handle&)
+		//friend void swap(map_node_handle&, map_node_handle&)
 
 	private:
 		mutable MapExtractedPair mMapExtractedPair;
