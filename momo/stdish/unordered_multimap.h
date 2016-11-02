@@ -387,7 +387,7 @@ public:
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		return pvInsert(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
+		return pvEmplace(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
@@ -403,7 +403,7 @@ public:
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		return pvInsert(std::forward_as_tuple(std::forward<First>(value.first)),
+		return pvEmplace(std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second)));
 	}
 
@@ -429,7 +429,7 @@ public:
 
 	iterator emplace()
 	{
-		return pvInsert(std::tuple<>(), std::tuple<>());
+		return pvEmplace(std::tuple<>(), std::tuple<>());
 	}
 
 	iterator emplace_hint(const_iterator)
@@ -452,7 +452,7 @@ public:
 	template<typename KeyArg, typename MappedArg>
 	iterator emplace(KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		return pvInsert(std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+		return pvEmplace(std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 	}
 
@@ -466,14 +466,14 @@ public:
 	iterator emplace(std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return pvInsert(std::move(keyArgs), std::move(mappedArgs));
+		return pvEmplace(std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace_hint(const_iterator, std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return pvInsert(std::move(keyArgs), std::move(mappedArgs));
+		return pvEmplace(std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	//iterator erase(const_iterator where)
@@ -563,16 +563,16 @@ private:
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
-	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, std::tuple<MappedArgs...>&& mappedArgs)
+	iterator pvEmplace(std::tuple<KeyArgs...>&& keyArgs, std::tuple<MappedArgs...>&& mappedArgs)
 	{
 		typedef typename HashMultiMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return pvInsert(std::move(keyArgs),
+		return pvAdd(std::move(keyArgs),
 			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename... KeyArgs, typename MappedCreator>
-	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
+	iterator pvAdd(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
 		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
@@ -582,7 +582,7 @@ private:
 		iterator resIter;
 		try
 		{
-			resIter = pvInsert(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
+			resIter = pvAdd(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
 		}
 		catch (...)
 		{
@@ -594,13 +594,13 @@ private:
 	}
 
 	template<typename MappedCreator>
-	iterator pvInsert(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
+	iterator pvAdd(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
 	{
 		return iterator(mHashMultiMap.AddCrt(std::move(std::get<0>(key)), mappedCreator));
 	}
 
 	template<typename MappedCreator>
-	iterator pvInsert(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
+	iterator pvAdd(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
 	{
 		return iterator(mHashMultiMap.AddCrt(std::get<0>(key), mappedCreator));
 	}
