@@ -442,7 +442,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(const std::pair<First, Second>& value)
 	{
-		return pvInsert(nullptr, std::forward_as_tuple(value.first),
+		return pvEmplace(nullptr, std::forward_as_tuple(value.first),
 			std::forward_as_tuple(value.second));
 	}
 
@@ -451,7 +451,7 @@ public:
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
 	insert(const_iterator hint, const std::pair<First, Second>& value)
 	{
-		return pvInsert(hint, std::forward_as_tuple(value.first),
+		return pvEmplace(hint, std::forward_as_tuple(value.first),
 			std::forward_as_tuple(value.second)).first;
 	}
 
@@ -461,7 +461,7 @@ public:
 		std::pair<iterator, bool>>::type
 	insert(std::pair<First, Second>&& value)
 	{
-		return pvInsert(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
+		return pvEmplace(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second)));
 	}
 
@@ -470,7 +470,7 @@ public:
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
 	insert(const_iterator hint, std::pair<First, Second>&& value)
 	{
-		return pvInsert(hint, std::forward_as_tuple(std::forward<First>(value.first)),
+		return pvEmplace(hint, std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second))).first;
 	}
 
@@ -488,12 +488,12 @@ public:
 
 	std::pair<iterator, bool> emplace()
 	{
-		return pvInsert(nullptr, std::tuple<>(), std::tuple<>());
+		return pvEmplace(nullptr, std::tuple<>(), std::tuple<>());
 	}
 
 	iterator emplace_hint(const_iterator hint)
 	{
-		return pvInsert(hint, std::tuple<>(), std::tuple<>()).first;
+		return pvEmplace(hint, std::tuple<>(), std::tuple<>()).first;
 	}
 
 	template<typename ValueArg>
@@ -511,14 +511,14 @@ public:
 	template<typename KeyArg, typename MappedArg>
 	std::pair<iterator, bool> emplace(KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		return pvInsert(nullptr, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+		return pvEmplace(nullptr, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 	}
 
 	template<typename KeyArg, typename MappedArg>
 	iterator emplace_hint(const_iterator hint, KeyArg&& keyArg, MappedArg&& mappedArg)
 	{
-		return pvInsert(hint, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
+		return pvEmplace(hint, std::forward_as_tuple(std::forward<KeyArg>(keyArg)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg))).first;
 	}
 
@@ -526,14 +526,14 @@ public:
 	std::pair<iterator, bool> emplace(std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return pvInsert(nullptr, std::move(keyArgs), std::move(mappedArgs));
+		return pvEmplace(nullptr, std::move(keyArgs), std::move(mappedArgs));
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
 	iterator emplace_hint(const_iterator hint, std::piecewise_construct_t,
 		std::tuple<KeyArgs...> keyArgs, std::tuple<MappedArgs...> mappedArgs)
 	{
-		return pvInsert(hint, std::move(keyArgs), std::move(mappedArgs)).first;
+		return pvEmplace(hint, std::move(keyArgs), std::move(mappedArgs)).first;
 	}
 
 	iterator erase(const_iterator where)
@@ -591,28 +591,28 @@ public:
 	template<typename... MappedArgs>
 	std::pair<iterator, bool> try_emplace(key_type&& key, MappedArgs&&... mappedArgs)
 	{
-		return pvInsert(nullptr, std::forward_as_tuple(std::move(key)),
+		return pvEmplace(nullptr, std::forward_as_tuple(std::move(key)),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
 	template<typename... MappedArgs>
 	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
 	{
-		return pvInsert(hint, std::forward_as_tuple(std::move(key)),
+		return pvEmplace(hint, std::forward_as_tuple(std::move(key)),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
 	template<typename... MappedArgs>
 	std::pair<iterator, bool> try_emplace(const key_type& key, MappedArgs&&... mappedArgs)
 	{
-		return pvInsert(nullptr, std::forward_as_tuple(key),
+		return pvEmplace(nullptr, std::forward_as_tuple(key),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
 	template<typename... MappedArgs>
 	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
 	{
-		return pvInsert(hint, std::forward_as_tuple(key),
+		return pvEmplace(hint, std::forward_as_tuple(key),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
@@ -680,15 +680,26 @@ private:
 		return treeMap;
 	}
 
-	bool pvCheckHint(const_iterator hint, const key_type& key) const
+	std::pair<iterator, bool> pvFind(std::nullptr_t, const key_type& key) 
+	{
+		iterator hint = lower_bound(key);
+		bool isNewKey = (hint == end() || mTreeMap.GetTreeTraits().IsLess(key, hint->first));
+		return std::pair<iterator, bool>(hint, isNewKey);
+	}
+
+	std::pair<iterator, bool> pvFind(const_iterator hint, const key_type& key)
 	{
 		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
-		return (hint == begin() || treeTraits.IsLess(std::prev(hint)->first, key))
-			&& (hint == end() || treeTraits.IsLess(key, hint->first));
+		if (hint != begin() && !treeTraits.IsLess(std::prev(hint)->first, key))
+			return pvFind(nullptr, key);
+		if (hint != end() && !treeTraits.IsLess(key, hint->first))
+			return pvFind(nullptr, key);
+		return std::pair<iterator, bool>(
+			iterator(TreeMapIterator(hint.GetBaseIterator().GetBaseIterator())), true);
 	}
 
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
-	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
+	std::pair<iterator, bool> pvEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		std::tuple<MappedArgs...>&& mappedArgs)
 	{
 		typedef typename TreeMap::KeyValueTraits
@@ -701,68 +712,79 @@ private:
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		const MappedCreator& mappedCreator)
 	{
+		MemManager& memManager = mTreeMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
-		typedef momo::internal::ObjectManager<key_type, typename TreeMap::MemManager> KeyManager;
+		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(mTreeMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);
-		std::pair<iterator, bool> res;
+		KeyCreator(memManager, std::move(keyArgs))(&keyBuffer);
+		bool keyDestroyed = false;
 		try
 		{
-			res = pvInsert(hint, std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
+			std::pair<iterator, bool> res = pvFind(hint, *&keyBuffer);
+			if (!res.second)
+			{
+				KeyManager::Destroy(memManager, *&keyBuffer);
+				keyDestroyed = true;
+				return res;
+			}
+			TreeMapIterator iter = res.first.GetBaseIterator();
+			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
+				(key_type* newKey, mapped_type* newMapped)
+			{
+				KeyManager::Relocate(memManager, *&keyBuffer, newKey);
+				keyDestroyed = true;
+				try
+				{
+					mappedCreator(newMapped);
+				}
+				catch (...)
+				{
+					KeyManager::Destroy(memManager, *newKey);
+					throw;
+				}
+			};
+			return std::pair<iterator, bool>(iterator(mTreeMap.AddCrt(iter, valueCreator)), true);
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(mTreeMap.GetMemManager(), *&keyBuffer);
+			if (!keyDestroyed)
+				KeyManager::Destroy(memManager, *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(mTreeMap.GetMemManager(), *&keyBuffer);
+	}
+
+	template<typename Hint, typename MappedCreator>
+	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<key_type&&>&& key,
+		const MappedCreator& mappedCreator)
+	{
+		std::pair<iterator, bool> res = pvFind(hint,
+			static_cast<const key_type&>(std::get<0>(key)));
+		if (res.second)
+		{
+			res.first = iterator(mTreeMap.AddCrt(res.first.GetBaseIterator(),
+				std::move(std::get<0>(key)), mappedCreator));
+		}
 		return res;
 	}
 
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(std::nullptr_t, std::tuple<key_type&&>&& key,
+	template<typename Hint, typename MappedCreator>
+	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<const key_type&> key,
 		const MappedCreator& mappedCreator)
 	{
-		typename TreeMap::InsertResult res = mTreeMap.InsertCrt(std::move(std::get<0>(key)),
-			mappedCreator);
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
-	}
-
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<key_type&&>&& key,
-		const MappedCreator& mappedCreator)
-	{
-		if (!pvCheckHint(hint, static_cast<const key_type&>(std::get<0>(key))))
-			return pvInsert(nullptr, std::move(key), mappedCreator);
-		TreeMapIterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
-			std::move(std::get<0>(key)), mappedCreator);
-		return std::pair<iterator, bool>(iterator(resIter), true);
-	}
-
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(std::nullptr_t, std::tuple<const key_type&> key,
-		const MappedCreator& mappedCreator)
-	{
-		typename TreeMap::InsertResult res = mTreeMap.InsertCrt(std::get<0>(key), mappedCreator);
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
-	}
-
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<const key_type&> key,
-		const MappedCreator& mappedCreator)
-	{
-		if (!pvCheckHint(hint, std::get<0>(key)))
-			return pvInsert(nullptr, key, mappedCreator);
-		TreeMapIterator resIter = mTreeMap.AddCrt(hint.GetBaseIterator(),
-			std::get<0>(key), mappedCreator);
-		return std::pair<iterator, bool>(iterator(resIter), true);
+		std::pair<iterator, bool> res = pvFind(hint, std::get<0>(key));
+		if (res.second)
+		{
+			res.first = iterator(mTreeMap.AddCrt(res.first.GetBaseIterator(),
+				std::get<0>(key), mappedCreator));
+		}
+		return res;
 	}
 	
 	template<typename Hint, typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
 	{
-		std::pair<iterator, bool> res = pvInsert(hint,
+		std::pair<iterator, bool> res = pvEmplace(hint,
 			std::forward_as_tuple(std::forward<RKey>(key)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 		if (!res.second)
