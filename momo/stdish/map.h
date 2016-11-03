@@ -769,7 +769,7 @@ private:
 	}
 
 	template<typename Hint, typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<const key_type&> key,
+	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<const key_type&>&& key,
 		const MappedCreator& mappedCreator)
 	{
 		std::pair<iterator, bool> res = pvFind(hint, std::get<0>(key));

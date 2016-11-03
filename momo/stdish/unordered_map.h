@@ -719,7 +719,7 @@ private:
 		bool keyDestroyed = false;
 		try
 		{
-			typename HashMap::Iterator iter = mHashMap.Find(*&keyBuffer);
+			HashMapIterator iter = mHashMap.Find(*&keyBuffer);
 			if (!!iter)
 			{
 				KeyManager::Destroy(memManager, *&keyBuffer);
