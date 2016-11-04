@@ -680,7 +680,7 @@ private:
 		return treeMap;
 	}
 
-	std::pair<iterator, bool> pvFind(std::nullptr_t, const key_type& key) 
+	std::pair<iterator, bool> pvFind(std::nullptr_t /*hint*/, const key_type& key)
 	{
 		iterator hint = lower_bound(key);
 		bool isNewKey = (hint == end() || mTreeMap.GetTreeTraits().IsLess(key, hint->first));
@@ -728,7 +728,6 @@ private:
 				keyDestroyed = true;
 				return res;
 			}
-			TreeMapIterator iter = res.first.GetBaseIterator();
 			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
 				(key_type* newKey, mapped_type* newMapped)
 			{
@@ -744,7 +743,8 @@ private:
 					throw;
 				}
 			};
-			return std::pair<iterator, bool>(iterator(mTreeMap.AddCrt(iter, valueCreator)), true);
+			TreeMapIterator resIter = mTreeMap.AddCrt(res.first.GetBaseIterator(), valueCreator);
+			return std::pair<iterator, bool>(iterator(resIter), true);
 		}
 		catch (...)
 		{
@@ -754,31 +754,19 @@ private:
 		}
 	}
 
-	template<typename Hint, typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<key_type&&>&& key,
+	template<typename Hint, typename RKey, typename MappedCreator,
+		typename Key = typename std::decay<RKey>::type,
+		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
+	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
 		const MappedCreator& mappedCreator)
 	{
 		std::pair<iterator, bool> res = pvFind(hint,
 			static_cast<const key_type&>(std::get<0>(key)));
-		if (res.second)
-		{
-			res.first = iterator(mTreeMap.AddCrt(res.first.GetBaseIterator(),
-				std::move(std::get<0>(key)), mappedCreator));
-		}
-		return res;
-	}
-
-	template<typename Hint, typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<const key_type&>&& key,
-		const MappedCreator& mappedCreator)
-	{
-		std::pair<iterator, bool> res = pvFind(hint, std::get<0>(key));
-		if (res.second)
-		{
-			res.first = iterator(mTreeMap.AddCrt(res.first.GetBaseIterator(),
-				std::get<0>(key), mappedCreator));
-		}
-		return res;
+		if (!res.second)
+			return res;
+		TreeMapIterator resIter = mTreeMap.AddCrt(res.first.GetBaseIterator(),
+			std::forward<RKey>(std::get<0>(key)), mappedCreator);
+		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
 	
 	template<typename Hint, typename RKey, typename MappedArg>

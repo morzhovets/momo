@@ -567,42 +567,39 @@ private:
 	{
 		typedef typename HashMultiMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return pvAdd(std::move(keyArgs),
+		return pvInsert(std::move(keyArgs),
 			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
 	template<typename... KeyArgs, typename MappedCreator>
-	iterator pvAdd(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
+	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, const MappedCreator& mappedCreator)
 	{
+		MemManager& memManager = mHashMultiMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(mHashMultiMap.GetMemManager(), std::move(keyArgs))(&keyBuffer);
+		KeyCreator(memManager, std::move(keyArgs))(&keyBuffer);
 		iterator resIter;
 		try
 		{
-			resIter = pvAdd(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
+			resIter = pvInsert(std::forward_as_tuple(std::move(*&keyBuffer)), mappedCreator);
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(mHashMultiMap.GetMemManager(), *&keyBuffer);
+			KeyManager::Destroy(memManager, *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(mHashMultiMap.GetMemManager(), *&keyBuffer);
+		KeyManager::Destroy(memManager, *&keyBuffer);
 		return resIter;
 	}
 
-	template<typename MappedCreator>
-	iterator pvAdd(std::tuple<key_type&&>&& key, const MappedCreator& mappedCreator)
+	template<typename RKey, typename MappedCreator,
+		typename Key = typename std::decay<RKey>::type,
+		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
+	iterator pvInsert(std::tuple<RKey>&& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddCrt(std::move(std::get<0>(key)), mappedCreator));
-	}
-
-	template<typename MappedCreator>
-	iterator pvAdd(std::tuple<const key_type&>&& key, const MappedCreator& mappedCreator)
-	{
-		return iterator(mHashMultiMap.AddCrt(std::get<0>(key), mappedCreator));
+		return iterator(mHashMultiMap.AddCrt(std::forward<RKey>(std::get<0>(key)), mappedCreator));
 	}
 
 private:

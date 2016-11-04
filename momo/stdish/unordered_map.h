@@ -681,33 +681,18 @@ private:
 		return hashMap;
 	}
 
-	template<typename... KeyArgs, typename... MappedArgs>
-	std::pair<iterator, bool> pvEmplace(std::nullptr_t, std::tuple<KeyArgs...>&& keyArgs,
+	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
+	std::pair<iterator, bool> pvEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		std::tuple<MappedArgs...>&& mappedArgs)
 	{
 		typedef typename HashMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
-		return pvInsert(std::move(keyArgs),
+		return pvInsert(hint, std::move(keyArgs),
 			MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
-	template<typename... KeyArgs, typename... MappedArgs>
-	std::pair<iterator, bool> pvEmplace(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
-		std::tuple<MappedArgs...>&& mappedArgs)
-	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		typedef typename HashMap::KeyValueTraits
-			::template ValueCreator<MappedArgs...> MappedCreator;
-		return std::pair<iterator, bool>(pvAdd(hint, std::move(keyArgs),
-			MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs))), true);
-#else
-		(void)hint;
-		return pvEmplace(nullptr, std::move(keyArgs), std::move(mappedArgs));
-#endif
-	}
-
-	template<typename... KeyArgs, typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(std::tuple<KeyArgs...>&& keyArgs,
+	template<typename Hint, typename... KeyArgs, typename MappedCreator>
+	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
 		const MappedCreator& mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
@@ -741,7 +726,8 @@ private:
 					throw;
 				}
 			};
-			return std::pair<iterator, bool>(iterator(mHashMap.AddCrt(iter, valueCreator)), true);
+			HashMapIterator resIter = mHashMap.AddCrt(iter, valueCreator);
+			return std::pair<iterator, bool>(iterator(resIter), true);
 		}
 		catch (...)
 		{
@@ -751,26 +737,20 @@ private:
 		}
 	}
 
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(std::tuple<key_type&&>&& key,
+	template<typename Hint, typename RKey, typename MappedCreator,
+		typename Key = typename std::decay<RKey>::type,
+		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
+	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::move(std::get<0>(key)),
-			mappedCreator);
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
-	}
-
-	template<typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(std::tuple<const key_type&>&& key,
-		const MappedCreator& mappedCreator)
-	{
-		typename HashMap::InsertResult res = mHashMap.InsertCrt(std::get<0>(key), mappedCreator);
+		typename HashMap::InsertResult res = mHashMap.InsertCrt(
+			std::forward<RKey>(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 	template<typename... KeyArgs, typename MappedCreator>
-	iterator pvAdd(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
+	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
 		const MappedCreator& mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
@@ -790,23 +770,19 @@ private:
 				throw;
 			}
 		};
-		return iterator(mHashMap.AddCrt(hint.GetBaseIterator(), valueCreator));
+		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(), valueCreator);
+		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
 
-	template<typename MappedCreator>
-	iterator pvAdd(const_iterator hint, std::tuple<key_type&&>&& key,
+	template<typename RKey, typename MappedCreator,
+		typename Key = typename std::decay<RKey>::type,
+		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
+	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMap.AddCrt(hint.GetBaseIterator(), std::move(std::get<0>(key)),
-			mappedCreator));
-	}
-
-	template<typename MappedCreator>
-	iterator pvAdd(const_iterator hint, std::tuple<const key_type&>&& key,
-		const MappedCreator& mappedCreator)
-	{
-		return iterator(mHashMap.AddCrt(hint.GetBaseIterator(), std::get<0>(key),
-			mappedCreator));
+		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
+			std::forward<RKey>(std::get<0>(key)), mappedCreator);
+		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
 #endif
 
