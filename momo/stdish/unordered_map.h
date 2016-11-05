@@ -491,7 +491,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		return iterator(mHashMap.Remove(where.GetBaseIterator()));
+		return iterator(mHashMap.Remove(where.frGetBaseIterator()));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
@@ -502,7 +502,7 @@ public:
 			return end();
 		}
 		if (first == last)
-			return iterator(HashMapIterator(first.GetBaseIterator().GetBaseIterator()));
+			return iterator(HashMapIterator(first.frGetBaseIterator().frGetBaseIterator()));
 		if (std::next(first) == last)
 			return erase(first);
 		throw std::invalid_argument("invalid unordered_map erase arguments");
@@ -770,7 +770,7 @@ private:
 				throw;
 			}
 		};
-		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(), valueCreator);
+		HashMapIterator resIter = mHashMap.AddCrt(hint.frGetBaseIterator(), valueCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 	}
 
@@ -780,7 +780,7 @@ private:
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		HashMapIterator resIter = mHashMap.AddCrt(hint.GetBaseIterator(),
+		HashMapIterator resIter = mHashMap.AddCrt(hint.frGetBaseIterator(),
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 	}

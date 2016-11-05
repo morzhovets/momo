@@ -479,7 +479,7 @@ public:
 	//iterator erase(const_iterator where)
 	iterator erase(iterator where)
 	{
-		typename HashMultiMap::Iterator iter = where.GetBaseIterator();
+		typename HashMultiMap::Iterator iter = where.frGetBaseIterator();
 		typename HashMultiMap::KeyIterator keyIter = iter.GetKeyIterator();
 		if (keyIter->values.GetCount() == 1)
 			return iterator(mHashMultiMap.RemoveKey(keyIter));
@@ -499,10 +499,10 @@ public:
 			return first;
 		if (std::next(first) == last)
 			return erase(first);
-		typename HashMultiMap::KeyIterator keyIter = first.GetBaseIterator().GetKeyIterator();
+		typename HashMultiMap::KeyIterator keyIter = first.frGetBaseIterator().GetKeyIterator();
 		size_t count = keyIter->values.GetCount();
 		MOMO_ASSERT(count > 0);
-		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == last.GetBaseIterator())
+		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == last.frGetBaseIterator())
 			return iterator(mHashMultiMap.RemoveKey(keyIter));
 		throw std::invalid_argument("invalid unordered_multimap erase arguments");
 	}

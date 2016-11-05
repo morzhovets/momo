@@ -227,33 +227,13 @@ namespace internal
 		{
 		}
 
-		HashSetConstIterator(const Buckets& buckets, size_t bucketIndex, const Item* pitem,
-			const size_t* version, bool movable) MOMO_NOEXCEPT
-			: IteratorVersion(version),
-			mBuckets(&buckets),
-			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
-			mItemPtr(pitem)
-		{
-			if (movable)
-				pvMove();
-		}
-
-		HashSetConstIterator(const Buckets* buckets, size_t hashCode,
-			const size_t* version) MOMO_NOEXCEPT
-			: IteratorVersion(version),
-			mBuckets(buckets),
-			mHashCode(hashCode),
-			mItemPtr(nullptr)
-		{
-		}
-
 		//operator ConstIterator() const MOMO_NOEXCEPT
 
 		HashSetConstIterator& operator++()
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
 			MOMO_CHECK(IteratorVersion::Check());
-			if (IsMovable())
+			if (frIsMovable())
 			{
 				++mItemPtr;
 				pvMove();
@@ -279,31 +259,52 @@ namespace internal
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
 
-		bool IsMovable() const MOMO_NOEXCEPT
+	public:
+		HashSetConstIterator(const Buckets& buckets, size_t bucketIndex, const Item* pitem,
+			const size_t* version, bool movable) MOMO_NOEXCEPT
+			: IteratorVersion(version),
+			mBuckets(&buckets),
+			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
+			mItemPtr(pitem)
+		{
+			if (movable)
+				pvMove();
+		}
+
+		HashSetConstIterator(const Buckets* buckets, size_t hashCode,
+			const size_t* version) MOMO_NOEXCEPT
+			: IteratorVersion(version),
+			mBuckets(buckets),
+			mHashCode(hashCode),
+			mItemPtr(nullptr)
+		{
+		}
+
+		bool frIsMovable() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
-		size_t GetBucketIndex() const MOMO_NOEXCEPT
+		size_t frGetBucketIndex() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
-		size_t GetHashCode() const MOMO_NOEXCEPT
+		size_t frGetHashCode() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr == nullptr);
 			return mHashCode;
 		}
 
-		const Buckets* GetBuckets() const MOMO_NOEXCEPT
+		const Buckets* frGetBuckets() const MOMO_NOEXCEPT
 		{
 			return mBuckets;
 		}
 
-		void Check(const size_t* version, bool empty) const
+		void frCheck(const size_t* version, bool empty) const
 		{
 			(void)version;
 			(void)empty;
@@ -873,9 +874,9 @@ public:
 		MOMO_CHECK(mBuckets != nullptr);
 		ConstIterator iter = Find(key);
 		if (!iter)
-			return pvGetBucketIndexForAdd(*mBuckets, iter.GetHashCode());	//?
-		size_t bucketIndex = iter.GetBucketIndex();
-		for (const Buckets* buckets = mBuckets; buckets != iter.GetBuckets();
+			return pvGetBucketIndexForAdd(*mBuckets, iter.frGetHashCode());	//?
+		size_t bucketIndex = iter.frGetBucketIndex();
+		for (const Buckets* buckets = mBuckets; buckets != iter.frGetBuckets();
 			buckets = buckets->GetNextBuckets())
 		{
 			bucketIndex += buckets->GetCount();
@@ -978,7 +979,7 @@ private:
 
 	Buckets* pvGetMutBuckets(ConstIterator iter) MOMO_NOEXCEPT
 	{
-		const Buckets* iterBuckets = iter.GetBuckets();
+		const Buckets* iterBuckets = iter.frGetBuckets();
 		for (Buckets* buckets = mBuckets; buckets != nullptr;
 			buckets = buckets->GetNextBuckets())
 		{
@@ -990,12 +991,12 @@ private:
 
 	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
 	{
-		iter.Check(mCrew.GetVersion(), false);
+		iter.frCheck(mCrew.GetVersion(), false);
 		Buckets* buckets = pvGetMutBuckets(iter);
 		MOMO_CHECK(buckets != nullptr);
 		(void)newKey;
 		MOMO_EXTRA_CHECK(GetHashTraits().IsEqual(ItemTraits::GetKey(*iter), newKey));
-		Bucket& bucket = (*buckets)[iter.GetBucketIndex()];
+		Bucket& bucket = (*buckets)[iter.frGetBucketIndex()];
 		Item* bucketBegin = bucket.GetBounds(buckets->GetBucketParams()).GetBegin();
 		return bucketBegin[std::addressof(*iter) - bucketBegin];
 	}
@@ -1013,9 +1014,9 @@ private:
 	template<typename ItemCreator>
 	ConstIterator pvAdd(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
 	{
-		iter.Check(mCrew.GetVersion(), true);
-		MOMO_CHECK(iter.GetBuckets() == mBuckets);
-		size_t hashCode = iter.GetHashCode();
+		iter.frCheck(mCrew.GetVersion(), true);
+		MOMO_CHECK(iter.frGetBuckets() == mBuckets);
+		size_t hashCode = iter.frGetHashCode();
 		Item* pitem;
 		size_t bucketIndex;
 		if (mCount < mCapacity)
@@ -1087,11 +1088,11 @@ private:
 	template<typename ReplaceFunc>
 	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc replaceFunc)
 	{
-		iter.Check(mCrew.GetVersion(), false);
+		iter.frCheck(mCrew.GetVersion(), false);
 		Buckets* buckets = pvGetMutBuckets(iter);
 		MOMO_CHECK(buckets != nullptr);
 		BucketParams& bucketParams = buckets->GetBucketParams();
-		size_t bucketIndex = iter.GetBucketIndex();
+		size_t bucketIndex = iter.frGetBucketIndex();
 		Bucket& bucket = (*buckets)[bucketIndex];
 		typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
 		Item* bucketBegin = bucketBounds.GetBegin();
@@ -1101,7 +1102,7 @@ private:
 		bucket.DecCount(bucketParams);
 		--mCount;
 		mCrew.IncVersion();
-		if (!iter.IsMovable())
+		if (!iter.frIsMovable())
 			return ConstIterator();
 		return pvMakeIterator(*buckets, bucketIndex,
 			bucket.GetBounds(bucketParams).GetBegin() + itemIndex, true);

@@ -343,7 +343,7 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		typename HashSet::InsertResult res =
-			mHashSet.Insert(std::move(extPair.GetSetExtractedItem()));
+			mHashSet.Insert(std::move(extPair.frGetSetExtractedItem()));
 		return InsertResult(Iterator(res.iterator), res.inserted);
 	}
 
@@ -376,7 +376,7 @@ public:
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
 		//? extra check
-		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), itemCreator));
+		return Iterator(mHashSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
 	}
 
 	template<typename ValueCreator>
@@ -427,8 +427,8 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return Iterator(mHashSet.Add(iter.GetBaseIterator(),
-			std::move(extPair.GetSetExtractedItem())));
+		return Iterator(mHashSet.Add(iter.frGetBaseIterator(),
+			std::move(extPair.frGetSetExtractedItem())));
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -457,12 +457,13 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return Iterator(mHashSet.Remove(iter.GetBaseIterator()));
+		return Iterator(mHashSet.Remove(iter.frGetBaseIterator()));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return Iterator(mHashSet.Remove(iter.GetBaseIterator(), extPair.GetSetExtractedItem()));
+		return Iterator(mHashSet.Remove(iter.frGetBaseIterator(),
+			extPair.frGetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)
@@ -477,12 +478,12 @@ public:
 
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
-		mHashSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));
+		mHashSet.ResetKey(iter.frGetBaseIterator(), std::move(newKey));
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
-		mHashSet.ResetKey(iter.GetBaseIterator(), newKey);
+		mHashSet.ResetKey(iter.frGetBaseIterator(), newKey);
 	}
 
 	template<typename Map>
@@ -522,7 +523,7 @@ private:
 	{
 		if (!!iter)
 			return false;
-		return iter.GetBaseIterator().GetHashCode() == GetHashTraits().GetHashCode(key);
+		return iter.frGetBaseIterator().frGetHashCode() == GetHashTraits().GetHashCode(key);
 	}
 
 	template<typename RKey, typename ValueCreator>
@@ -555,7 +556,7 @@ private:
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return Iterator(mHashSet.AddCrt(iter.GetBaseIterator(), itemCreator));
+		return Iterator(mHashSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
 	}
 
 private:

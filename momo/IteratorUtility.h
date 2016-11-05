@@ -198,19 +198,9 @@ namespace internal
 		{
 		}
 
-		explicit HashDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
-			: mBaseIterator(iter)
-		{
-		}
-
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
 			return ConstIterator(mBaseIterator);
-		}
-
-		BaseIterator GetBaseIterator() const MOMO_NOEXCEPT
-		{
-			return mBaseIterator;
 		}
 
 		HashDerivedIterator& operator++()
@@ -226,10 +216,21 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mBaseIterator == iter.GetBaseIterator();
+			return mBaseIterator == iter.frGetBaseIterator();
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
+
+	public:
+		explicit HashDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
+			: mBaseIterator(iter)
+		{
+		}
+
+		BaseIterator frGetBaseIterator() const MOMO_NOEXCEPT
+		{
+			return mBaseIterator;
+		}
 
 	private:
 		BaseIterator mBaseIterator;
@@ -252,19 +253,9 @@ namespace internal
 		{
 		}
 
-		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
-			: mBaseIterator(iter)
-		{
-		}
-
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
 			return ConstIterator(mBaseIterator);
-		}
-
-		BaseIterator GetBaseIterator() const MOMO_NOEXCEPT
-		{
-			return mBaseIterator;
 		}
 
 		TreeDerivedIterator& operator++()
@@ -286,10 +277,21 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mBaseIterator == iter.GetBaseIterator();
+			return mBaseIterator == iter.frGetBaseIterator();
 		}
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
+
+	public:
+		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
+			: mBaseIterator(iter)
+		{
+		}
+
+		BaseIterator frGetBaseIterator() const MOMO_NOEXCEPT
+		{
+			return mBaseIterator;
+		}
 
 	private:
 		BaseIterator mBaseIterator;

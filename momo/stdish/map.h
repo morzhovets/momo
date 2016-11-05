@@ -538,7 +538,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		return iterator(mTreeMap.Remove(where.GetBaseIterator()));
+		return iterator(mTreeMap.Remove(where.frGetBaseIterator()));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
@@ -549,7 +549,7 @@ public:
 			return end();
 		}
 		if (first == last)
-			return iterator(TreeMapIterator(first.GetBaseIterator().GetBaseIterator()));
+			return iterator(TreeMapIterator(first.frGetBaseIterator().frGetBaseIterator()));
 		size_t count = std::distance(first, last);
 		iterator iter = erase(first);
 		for (size_t i = 1; i < count; ++i)
@@ -695,7 +695,7 @@ private:
 		if (hint != end() && !treeTraits.IsLess(key, hint->first))
 			return pvFind(nullptr, key);
 		return std::pair<iterator, bool>(
-			iterator(TreeMapIterator(hint.GetBaseIterator().GetBaseIterator())), true);
+			iterator(TreeMapIterator(hint.frGetBaseIterator().frGetBaseIterator())), true);
 	}
 
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
@@ -743,7 +743,7 @@ private:
 					throw;
 				}
 			};
-			TreeMapIterator resIter = mTreeMap.AddCrt(res.first.GetBaseIterator(), valueCreator);
+			TreeMapIterator resIter = mTreeMap.AddCrt(res.first.frGetBaseIterator(), valueCreator);
 			return std::pair<iterator, bool>(iterator(resIter), true);
 		}
 		catch (...)
@@ -764,7 +764,7 @@ private:
 			static_cast<const key_type&>(std::get<0>(key)));
 		if (!res.second)
 			return res;
-		TreeMapIterator resIter = mTreeMap.AddCrt(res.first.GetBaseIterator(),
+		TreeMapIterator resIter = mTreeMap.AddCrt(res.first.frGetBaseIterator(),
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(iterator(resIter), true);
 	}

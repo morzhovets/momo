@@ -403,7 +403,7 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		typename TreeSet::InsertResult res =
-			mTreeSet.Insert(std::move(extPair.GetSetExtractedItem()));
+			mTreeSet.Insert(std::move(extPair.frGetSetExtractedItem()));
 		return InsertResult(Iterator(res.iterator), res.inserted);
 	}
 
@@ -436,7 +436,7 @@ public:
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
 		//? extra check
-		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), itemCreator));
+		return Iterator(mTreeSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
 	}
 
 	template<typename ValueCreator>
@@ -487,8 +487,8 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return Iterator(mTreeSet.Add(iter.GetBaseIterator(),
-			std::move(extPair.GetSetExtractedItem())));
+		return Iterator(mTreeSet.Add(iter.frGetBaseIterator(),
+			std::move(extPair.frGetSetExtractedItem())));
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -519,12 +519,13 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return Iterator(mTreeSet.Remove(iter.GetBaseIterator()));
+		return Iterator(mTreeSet.Remove(iter.frGetBaseIterator()));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return Iterator(mTreeSet.Remove(iter.GetBaseIterator(), extPair.GetSetExtractedItem()));
+		return Iterator(mTreeSet.Remove(iter.frGetBaseIterator(),
+			extPair.frGetSetExtractedItem()));
 	}
 
 	bool Remove(const Key& key)
@@ -539,12 +540,12 @@ public:
 
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
-		mTreeSet.ResetKey(iter.GetBaseIterator(), std::move(newKey));
+		mTreeSet.ResetKey(iter.frGetBaseIterator(), std::move(newKey));
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
-		mTreeSet.ResetKey(iter.GetBaseIterator(), newKey);
+		mTreeSet.ResetKey(iter.frGetBaseIterator(), newKey);
 	}
 
 	template<typename Map>
@@ -602,7 +603,7 @@ private:
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return Iterator(mTreeSet.AddCrt(iter.GetBaseIterator(), itemCreator));
+		return Iterator(mTreeSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
 	}
 
 private:
