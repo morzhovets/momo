@@ -33,15 +33,16 @@ namespace internal
 		{
 		}
 
+		operator ConstReference() const MOMO_NOEXCEPT
+		{
+			return ConstReference(key, value);
+		}
+
+	public:
 		explicit MapReference(SetReference setRef) MOMO_NOEXCEPT
 			: key(*setRef.GetKeyPtr()),
 			value(*setRef.GetValuePtr())
 		{
-		}
-
-		operator ConstReference() const MOMO_NOEXCEPT
-		{
-			return ConstReference(key, value);
 		}
 
 	public:
@@ -69,11 +70,6 @@ namespace internal
 		{
 		}
 
-		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
-			: RefPair(ref.key, ref.value)
-		{
-		}
-
 		operator ConstReference() MOMO_NOEXCEPT
 		{
 			return ConstReference(this->first, this->second);
@@ -92,6 +88,12 @@ namespace internal
 		}
 
 		//? <, >, <=, >=
+
+	public:
+		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
+			: RefPair(ref.key, ref.value)
+		{
+		}
 	};
 
 	template<typename TSetIterator, typename TKey>

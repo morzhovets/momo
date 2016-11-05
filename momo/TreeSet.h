@@ -53,16 +53,6 @@ namespace internal
 		{
 		}
 
-		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
-			bool move) MOMO_NOEXCEPT
-			: IteratorVersion(version),
-			mNode(&node),
-			mItemIndex(itemIndex)
-		{
-			if (move)
-				pvMove();
-		}
-
 		//operator ConstIterator() const MOMO_NOEXCEPT
 
 		TreeSetConstIterator& operator++()
@@ -136,17 +126,28 @@ namespace internal
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)
 
-		Node* GetNode() const MOMO_NOEXCEPT
+	public:
+		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
+			bool move) MOMO_NOEXCEPT
+			: IteratorVersion(version),
+			mNode(&node),
+			mItemIndex(itemIndex)
+		{
+			if (move)
+				pvMove();
+		}
+
+		Node* frGetNode() const MOMO_NOEXCEPT
 		{
 			return mNode;
 		}
 
-		size_t GetItemIndex() const MOMO_NOEXCEPT
+		size_t frGetItemIndex() const MOMO_NOEXCEPT
 		{
 			return mItemIndex;
 		}
 
-		void Check(const size_t* version) const
+		void frCheck(const size_t* version) const
 		{
 			(void)version;
 			MOMO_CHECK(mNode != nullptr);
@@ -951,12 +952,12 @@ private:
 
 	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
 	{
-		iter.Check(mCrew.GetVersion());
+		iter.frCheck(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
 		(void)newKey;
 		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(ItemTraits::GetKey(*iter), newKey));
 		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(newKey, ItemTraits::GetKey(*iter)));
-		return *iter.GetNode()->GetItemPtr(iter.GetItemIndex());
+		return *iter.frGetNode()->GetItemPtr(iter.frGetItemIndex());
 	}
 
 	template<typename ItemCreator>
@@ -974,9 +975,9 @@ private:
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, itemCreator);
-		iter.Check(mCrew.GetVersion());
-		Node* node = iter.GetNode();
-		size_t itemIndex = iter.GetItemIndex();
+		iter.frCheck(mCrew.GetVersion());
+		Node* node = iter.frGetNode();
+		size_t itemIndex = iter.frGetItemIndex();
 		if (!node->IsLeaf())
 		{
 			node = node->GetChild(itemIndex);
@@ -1113,10 +1114,10 @@ private:
 	template<typename ReplaceFunc1, typename ReplaceFunc2>
 	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
 	{
-		iter.Check(mCrew.GetVersion());
+		iter.frCheck(mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
-		Node* node = iter.GetNode();
-		size_t itemIndex = iter.GetItemIndex();
+		Node* node = iter.frGetNode();
+		size_t itemIndex = iter.frGetItemIndex();
 		if (node->IsLeaf())
 		{
 			node->Remove(*mNodeParams, itemIndex, replaceFunc1);

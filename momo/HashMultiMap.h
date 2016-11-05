@@ -50,15 +50,16 @@ namespace internal
 		{
 		}
 
+		operator ConstReference() const MOMO_NOEXCEPT
+		{
+			return ConstReference(key, values);
+		}
+
+	public:
 		explicit HashMultiMapKeyReference(HashMapReference hashMapRef) MOMO_NOEXCEPT
 			: key(hashMapRef.key),
 			values(hashMapRef.value.GetBounds())
 		{
-		}
-
-		operator ConstReference() const MOMO_NOEXCEPT
-		{
-			return ConstReference(key, values);
 		}
 
 	public:
