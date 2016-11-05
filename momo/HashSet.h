@@ -36,6 +36,7 @@ namespace internal
 	{
 	public:
 		typedef TBucket Bucket;
+		typedef typename Bucket::MemManager MemManager;
 		typedef typename Bucket::Params BucketParams;
 		typedef typename Bucket::ConstBounds ConstBucketBounds;
 
@@ -51,7 +52,6 @@ namespace internal
 
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
 
-		template<typename MemManager>
 		static HashSetBuckets& Create(MemManager& memManager, size_t bucketCount,
 			BucketParams* bucketParams)
 		{
@@ -82,7 +82,6 @@ namespace internal
 			return resBuckets;
 		}
 
-		template<typename MemManager>
 		void Destroy(MemManager& memManager, bool destroyBucketParams) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mNextBuckets == nullptr);
@@ -175,7 +174,6 @@ namespace internal
 			return sizeof(HashSetBuckets) + bucketCount * sizeof(Bucket);
 		}
 
-		template<typename MemManager>
 		static BucketParams& pvCreateBucketParams(MemManager& memManager)
 		{
 			BucketParams* bucketParams = memManager.template Allocate<BucketParams>(
