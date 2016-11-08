@@ -291,7 +291,7 @@ public:
 	{
 		struct ValueCompareFactory : private value_compare
 		{
-			static Create()
+			static value_compare Create()
 			{
 				return value_compare(key_comp());
 			}
