@@ -70,6 +70,8 @@ public:
 	
 	class value_compare
 	{
+		friend class map;
+
 	public:
 		bool operator()(const value_type& value1, const value_type& value2) const
 		{
@@ -289,14 +291,7 @@ public:
 
 	value_compare value_comp() const
 	{
-		struct ValueCompareFactory : private value_compare
-		{
-			static value_compare Create()
-			{
-				return value_compare(key_comp());
-			}
-		};
-		return ValueCompareFactory::Create();
+		return value_compare(key_comp());
 	}
 
 	allocator_type get_allocator() const MOMO_NOEXCEPT
