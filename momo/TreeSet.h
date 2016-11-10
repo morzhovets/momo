@@ -126,7 +126,7 @@ namespace internal
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)
 
-	public:
+	protected:
 		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
 			bool move) MOMO_NOEXCEPT
 			: IteratorVersion(version),
@@ -324,6 +324,14 @@ public:
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
+	struct ConstIteratorProxy : public ConstIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode, Node*)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex, size_t)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
+	};
+
 	class Relocator
 	{
 	private:
@@ -845,7 +853,7 @@ private:
 
 	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
 	{
-		return ConstIterator(*node, itemIndex, mCrew.GetVersion(), move);
+		return ConstIteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
 	template<typename KeyArg>
@@ -952,12 +960,13 @@ private:
 
 	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
 	{
-		iter.frCheck(mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
 		(void)newKey;
 		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(ItemTraits::GetKey(*iter), newKey));
 		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(newKey, ItemTraits::GetKey(*iter)));
-		return *iter.frGetNode()->GetItemPtr(iter.frGetItemIndex());
+		Node* node = ConstIteratorProxy::GetNode(iter);
+		return *node->GetItemPtr(ConstIteratorProxy::GetItemIndex(iter));
 	}
 
 	template<typename ItemCreator>
@@ -975,9 +984,9 @@ private:
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, itemCreator);
-		iter.frCheck(mCrew.GetVersion());
-		Node* node = iter.frGetNode();
-		size_t itemIndex = iter.frGetItemIndex();
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		Node* node = ConstIteratorProxy::GetNode(iter);
+		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (!node->IsLeaf())
 		{
 			node = node->GetChild(itemIndex);
@@ -1114,10 +1123,10 @@ private:
 	template<typename ReplaceFunc1, typename ReplaceFunc2>
 	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
 	{
-		iter.frCheck(mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
-		Node* node = iter.frGetNode();
-		size_t itemIndex = iter.frGetItemIndex();
+		Node* node = ConstIteratorProxy::GetNode(iter);
+		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (node->IsLeaf())
 		{
 			node->Remove(*mNodeParams, itemIndex, replaceFunc1);

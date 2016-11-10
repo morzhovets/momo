@@ -138,6 +138,12 @@ public:
 		HashSetConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
+private:
+	struct HashSetConstIteratorProxy : private HashSetConstIterator
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(HashSetConstIterator, GetHashCode, size_t)
+	};
+
 public:
 	explicit HashMap(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
@@ -523,7 +529,9 @@ private:
 	{
 		if (!!iter)
 			return false;
-		return iter.frGetBaseIterator().frGetHashCode() == GetHashTraits().GetHashCode(key);
+		size_t iterHashCode = HashSetConstIteratorProxy::GetHashCode(iter.frGetBaseIterator());
+		size_t keyHashCode = GetHashTraits().GetHashCode(key);
+		return iterHashCode == keyHashCode;
 	}
 
 	template<typename RKey, typename ValueCreator>
