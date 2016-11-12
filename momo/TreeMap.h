@@ -154,6 +154,8 @@ private:
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
+	typedef typename TreeSet::ExtractedItem SetExtractedItem;
+
 public:
 	typedef internal::TreeDerivedIterator<TreeSetConstIterator, Reference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -163,7 +165,13 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
-	typedef internal::MapExtractedPair<typename TreeSet::ExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<SetExtractedItem> ExtractedPair;
+
+private:
+	struct ExtractedPairProxy : private ExtractedPair
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
+	};
 
 public:
 	explicit TreeMap(const TreeTraits& treeTraits = TreeTraits(),
@@ -403,7 +411,7 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		typename TreeSet::InsertResult res =
-			mTreeSet.Insert(std::move(extPair.frGetSetExtractedItem()));
+			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return InsertResult(Iterator(res.iterator), res.inserted);
 	}
 
@@ -488,7 +496,7 @@ public:
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
 		return Iterator(mTreeSet.Add(iter.frGetBaseIterator(),
-			std::move(extPair.frGetSetExtractedItem())));
+			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -525,7 +533,7 @@ public:
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
 		return Iterator(mTreeSet.Remove(iter.frGetBaseIterator(),
-			extPair.frGetSetExtractedItem()));
+			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
 	bool Remove(const Key& key)

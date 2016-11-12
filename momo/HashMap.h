@@ -116,6 +116,8 @@ private:
 
 	typedef internal::MapValueReferencer<HashMap> ValueReferencer;
 
+	typedef typename HashSet::ExtractedItem SetExtractedItem;
+
 	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
 	typedef internal::HashDerivedIterator<typename HashSetConstBucketBounds::Iterator,
 		Reference> BucketIterator;
@@ -132,7 +134,7 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
-	typedef internal::MapExtractedPair<typename HashSet::ExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<SetExtractedItem> ExtractedPair;
 
 	typedef internal::HashDerivedBucketBounds<BucketIterator,
 		HashSetConstBucketBounds> BucketBounds;
@@ -142,6 +144,11 @@ private:
 	struct HashSetConstIteratorProxy : private HashSetConstIterator
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(HashSetConstIterator, GetHashCode, size_t)
+	};
+
+	struct ExtractedPairProxy : private ExtractedPair
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
 	};
 
 public:
@@ -349,7 +356,7 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		typename HashSet::InsertResult res =
-			mHashSet.Insert(std::move(extPair.frGetSetExtractedItem()));
+			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return InsertResult(Iterator(res.iterator), res.inserted);
 	}
 
@@ -434,7 +441,7 @@ public:
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
 		return Iterator(mHashSet.Add(iter.frGetBaseIterator(),
-			std::move(extPair.frGetSetExtractedItem())));
+			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -469,7 +476,7 @@ public:
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
 		return Iterator(mHashSet.Remove(iter.frGetBaseIterator(),
-			extPair.frGetSetExtractedItem()));
+			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
 	bool Remove(const Key& key)

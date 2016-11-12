@@ -764,7 +764,7 @@ namespace internal
 			mSetExtractedItem.Reset(itemRemover);
 		}
 
-	public:
+	protected:
 		SetExtractedItem& frGetSetExtractedItem() MOMO_NOEXCEPT
 		{
 			return mSetExtractedItem;
