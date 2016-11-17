@@ -38,7 +38,7 @@ namespace internal
 			return ConstReference(key, value);
 		}
 
-	public:
+	public:	// protected
 		explicit MapReference(SetReference setRef) MOMO_NOEXCEPT
 			: key(*setRef.GetKeyPtr()),
 			value(*setRef.GetValuePtr())
@@ -89,7 +89,7 @@ namespace internal
 
 		//? <, >, <=, >=
 
-	public:
+	public:	// protected
 		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
 			: RefPair(ref.key, ref.value)
 		{

@@ -415,7 +415,7 @@ namespace internal
 	};
 
 	template<typename TMemManager>
-	class MemManagerWrapper<TMemManager, true> : protected TMemManager
+	class MemManagerWrapper<TMemManager, true> : protected TMemManager	// vs
 	{
 	public:
 		typedef TMemManager MemManager;

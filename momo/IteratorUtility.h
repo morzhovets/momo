@@ -221,7 +221,7 @@ namespace internal
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
 
-	public:
+	public:	// protected
 		explicit HashDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
 			: mBaseIterator(iter)
 		{
@@ -282,7 +282,7 @@ namespace internal
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
 
-	public:
+	public:	// protected
 		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
 			: mBaseIterator(iter)
 		{
