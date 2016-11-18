@@ -193,6 +193,12 @@ namespace internal
 		typedef HashDerivedIterator<typename BaseIterator::ConstIterator,
 			typename Reference::ConstReference> ConstIterator;
 
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
 	public:
 		HashDerivedIterator() MOMO_NOEXCEPT
 		{
@@ -211,7 +217,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(Reference(*mBaseIterator));
+			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
@@ -248,6 +254,12 @@ namespace internal
 		typedef TreeDerivedIterator<typename BaseIterator::ConstIterator,
 			typename Reference::ConstReference> ConstIterator;
 
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
 	public:
 		TreeDerivedIterator() MOMO_NOEXCEPT
 		{
@@ -272,7 +284,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(Reference(*mBaseIterator));
+			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT

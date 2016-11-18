@@ -55,7 +55,7 @@ namespace internal
 			return ConstReference(key, values);
 		}
 
-	public:	// protected
+	protected:
 		explicit HashMultiMapKeyReference(HashMapReference hashMapRef) MOMO_NOEXCEPT
 			: key(hashMapRef.key),
 			values(hashMapRef.value.GetBounds())
