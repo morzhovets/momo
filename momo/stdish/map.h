@@ -70,8 +70,6 @@ public:
 	
 	class value_compare
 	{
-		friend class map;
-
 	public:
 		bool operator()(const value_type& value1, const value_type& value2) const
 		{
@@ -102,6 +100,13 @@ public:
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
+private:
+	struct ValueCompareProxy : public value_compare
+	{
+		typedef value_compare ValueCompare;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ValueCompare)
+	};
 
 public:
 	map()
@@ -291,7 +296,7 @@ public:
 
 	value_compare value_comp() const
 	{
-		return value_compare(key_comp());
+		return ValueCompareProxy(key_comp());
 	}
 
 	allocator_type get_allocator() const MOMO_NOEXCEPT
