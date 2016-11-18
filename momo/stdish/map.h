@@ -117,12 +117,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, TreeMapIterator)
 	};
 
-	struct ValueCompareProxy : public value_compare
-	{
-		typedef value_compare ValueCompare;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ValueCompare)
-	};
-
 public:
 	map()
 	{
@@ -311,6 +305,13 @@ public:
 
 	value_compare value_comp() const
 	{
+		struct ValueCompareProxy : public value_compare
+		{
+			explicit ValueCompareProxy(const key_compare& keyComp)
+				: value_compare(keyComp)
+			{
+			}
+		};
 		return ValueCompareProxy(key_comp());
 	}
 
