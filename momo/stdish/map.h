@@ -102,6 +102,21 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
+	struct ConstIteratorProxy : public const_iterator
+	{
+		typedef const_iterator ConstIterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+			typename ConstIterator::BaseIterator)
+	};
+
+	struct IteratorProxy : public iterator
+	{
+		typedef iterator Iterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, TreeMapIterator)
+	};
+
 	struct ValueCompareProxy : public value_compare
 	{
 		typedef value_compare ValueCompare;
@@ -231,22 +246,22 @@ public:
 
 	iterator begin() MOMO_NOEXCEPT
 	{
-		return iterator(mTreeMap.GetBegin());
+		return IteratorProxy(mTreeMap.GetBegin());
 	}
 
 	const_iterator begin() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mTreeMap.GetBegin());
+		return ConstIteratorProxy(mTreeMap.GetBegin());
 	}
 
 	iterator end() MOMO_NOEXCEPT
 	{
-		return iterator(mTreeMap.GetEnd());
+		return IteratorProxy(mTreeMap.GetEnd());
 	}
 
 	const_iterator end() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mTreeMap.GetEnd());
+		return ConstIteratorProxy(mTreeMap.GetEnd());
 	}
 
 	reverse_iterator rbegin() MOMO_NOEXCEPT
@@ -326,24 +341,24 @@ public:
 
 	const_iterator find(const key_type& key) const
 	{
-		return const_iterator(mTreeMap.Find(key));
+		return ConstIteratorProxy(mTreeMap.Find(key));
 	}
 
 	iterator find(const key_type& key)
 	{
-		return iterator(mTreeMap.Find(key));
+		return IteratorProxy(mTreeMap.Find(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator find(const KeyArg& key) const
 	{
-		return const_iterator(mTreeMap.Find(key));
+		return ConstIteratorProxy(mTreeMap.Find(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	iterator find(const KeyArg& key)
 	{
-		return iterator(mTreeMap.Find(key));
+		return IteratorProxy(mTreeMap.Find(key));
 	}
 
 	size_type count(const key_type& key) const
@@ -359,46 +374,46 @@ public:
 
 	const_iterator lower_bound(const key_type& key) const
 	{
-		return const_iterator(mTreeMap.LowerBound(key));
+		return ConstIteratorProxy(mTreeMap.LowerBound(key));
 	}
 
 	iterator lower_bound(const key_type& key)
 	{
-		return iterator(mTreeMap.LowerBound(key));
+		return IteratorProxy(mTreeMap.LowerBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator lower_bound(const KeyArg& key) const
 	{
-		return const_iterator(mTreeMap.LowerBound(key));
+		return ConstIteratorProxy(mTreeMap.LowerBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	iterator lower_bound(const KeyArg& key)
 	{
-		return iterator(mTreeMap.LowerBound(key));
+		return IteratorProxy(mTreeMap.LowerBound(key));
 	}
 
 	const_iterator upper_bound(const key_type& key) const
 	{
-		return const_iterator(mTreeMap.UpperBound(key));
+		return ConstIteratorProxy(mTreeMap.UpperBound(key));
 	}
 
 	iterator upper_bound(const key_type& key)
 	{
-		return iterator(mTreeMap.UpperBound(key));
+		return IteratorProxy(mTreeMap.UpperBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator upper_bound(const KeyArg& key) const
 	{
-		return const_iterator(mTreeMap.UpperBound(key));
+		return ConstIteratorProxy(mTreeMap.UpperBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	iterator upper_bound(const KeyArg& key)
 	{
-		return iterator(mTreeMap.UpperBound(key));
+		return IteratorProxy(mTreeMap.UpperBound(key));
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
@@ -543,7 +558,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		return iterator(mTreeMap.Remove(where.frGetBaseIterator()));
+		return IteratorProxy(mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
@@ -554,7 +569,10 @@ public:
 			return end();
 		}
 		if (first == last)
-			return iterator(TreeMapIterator(first.frGetBaseIterator().frGetBaseIterator()));
+		{
+			return IteratorProxy(mTreeMap.MakeMutableIterator(
+				ConstIteratorProxy::GetBaseIterator(first)));
+		}
 		size_t count = std::distance(first, last);
 		iterator iter = erase(first);
 		for (size_t i = 1; i < count; ++i)
@@ -687,9 +705,9 @@ private:
 
 	std::pair<iterator, bool> pvFind(std::nullptr_t /*hint*/, const key_type& key)
 	{
-		iterator hint = lower_bound(key);
-		bool isNewKey = (hint == end() || mTreeMap.GetTreeTraits().IsLess(key, hint->first));
-		return std::pair<iterator, bool>(hint, isNewKey);
+		iterator resHint = lower_bound(key);
+		bool isNewKey = (resHint == end() || mTreeMap.GetTreeTraits().IsLess(key, resHint->first));
+		return std::pair<iterator, bool>(resHint, isNewKey);
 	}
 
 	std::pair<iterator, bool> pvFind(const_iterator hint, const key_type& key)
@@ -699,8 +717,9 @@ private:
 			return pvFind(nullptr, key);
 		if (hint != end() && !treeTraits.IsLess(key, hint->first))
 			return pvFind(nullptr, key);
-		return std::pair<iterator, bool>(
-			iterator(TreeMapIterator(hint.frGetBaseIterator().frGetBaseIterator())), true);
+		iterator resHint = IteratorProxy(mTreeMap.MakeMutableIterator(
+			ConstIteratorProxy::GetBaseIterator(hint)));
+		return std::pair<iterator, bool>(resHint, true);
 	}
 
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
@@ -748,8 +767,9 @@ private:
 					throw;
 				}
 			};
-			TreeMapIterator resIter = mTreeMap.AddCrt(res.first.frGetBaseIterator(), valueCreator);
-			return std::pair<iterator, bool>(iterator(resIter), true);
+			TreeMapIterator resIter = mTreeMap.AddCrt(
+				IteratorProxy::GetBaseIterator(res.first), valueCreator);
+			return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 		}
 		catch (...)
 		{
@@ -769,9 +789,9 @@ private:
 			static_cast<const key_type&>(std::get<0>(key)));
 		if (!res.second)
 			return res;
-		TreeMapIterator resIter = mTreeMap.AddCrt(res.first.frGetBaseIterator(),
+		TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
-		return std::pair<iterator, bool>(iterator(resIter), true);
+		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 	
 	template<typename Hint, typename RKey, typename MappedArg>

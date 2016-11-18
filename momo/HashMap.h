@@ -141,6 +141,17 @@ public:
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 private:
+	struct ConstIteratorProxy : public ConstIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator, HashSetConstIterator)
+	};
+
+	struct IteratorProxy : public Iterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+	};
+
 	struct HashSetConstIteratorProxy : private HashSetConstIterator
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(HashSetConstIterator, GetHashCode, size_t)
@@ -204,12 +215,12 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		return ConstIterator(mHashSet.GetBegin());
+		return ConstIteratorProxy(mHashSet.GetBegin());
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
-		return Iterator(mHashSet.GetBegin());
+		return IteratorProxy(mHashSet.GetBegin());
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
@@ -273,26 +284,26 @@ public:
 
 	ConstIterator Find(const Key& key) const
 	{
-		return ConstIterator(mHashSet.Find(key));
+		return ConstIteratorProxy(mHashSet.Find(key));
 	}
 
 	Iterator Find(const Key& key)
 	{
-		return Iterator(mHashSet.Find(key));
+		return IteratorProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
 	{
-		return ConstIterator(mHashSet.Find(key));
+		return ConstIteratorProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, Iterator>::type Find(const KeyArg& key)
 	{
-		return Iterator(mHashSet.Find(key));
+		return IteratorProxy(mHashSet.Find(key));
 	}
 
 	bool HasKey(const Key& key) const
@@ -357,7 +368,7 @@ public:
 	{
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return InsertResult(Iterator(res.iterator), res.inserted);
+		return InsertResult(IteratorProxy(res.iterator), res.inserted);
 	}
 
 	template<typename ArgIterator>
@@ -389,7 +400,8 @@ public:
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
 		//? extra check
-		return Iterator(mHashSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
+		return IteratorProxy(mHashSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
+			itemCreator));
 	}
 
 	template<typename ValueCreator>
@@ -440,7 +452,7 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return Iterator(mHashSet.Add(iter.frGetBaseIterator(),
+		return IteratorProxy(mHashSet.Add(ConstIteratorProxy::GetBaseIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -470,12 +482,12 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return Iterator(mHashSet.Remove(iter.frGetBaseIterator()));
+		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetBaseIterator(iter)));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return Iterator(mHashSet.Remove(iter.frGetBaseIterator(),
+		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetBaseIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
@@ -491,12 +503,12 @@ public:
 
 	void ResetKey(ConstIterator iter, Key&& newKey)
 	{
-		mHashSet.ResetKey(iter.frGetBaseIterator(), std::move(newKey));
+		mHashSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), std::move(newKey));
 	}
 
 	void ResetKey(ConstIterator iter, const Key& newKey)
 	{
-		mHashSet.ResetKey(iter.frGetBaseIterator(), newKey);
+		mHashSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), newKey);
 	}
 
 	template<typename Map>
@@ -531,14 +543,19 @@ public:
 		return mHashSet.GetBucketIndex(key);
 	}
 
+	Iterator MakeMutableIterator(ConstIterator iter)
+	{
+		//?
+		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
+	}
+
 private:
 	bool pvExtraCheck(ConstIterator iter, const Key& key) const
 	{
 		if (!!iter)
 			return false;
-		size_t iterHashCode = HashSetConstIteratorProxy::GetHashCode(iter.frGetBaseIterator());
-		size_t keyHashCode = GetHashTraits().GetHashCode(key);
-		return iterHashCode == keyHashCode;
+		return GetHashTraits().GetHashCode(key) ==
+			HashSetConstIteratorProxy::GetHashCode(ConstIteratorProxy::GetBaseIterator(iter));
 	}
 
 	template<typename RKey, typename ValueCreator>
@@ -571,7 +588,8 @@ private:
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return Iterator(mHashSet.AddCrt(iter.frGetBaseIterator(), itemCreator));
+		return IteratorProxy(mHashSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
+			itemCreator));
 	}
 
 private:

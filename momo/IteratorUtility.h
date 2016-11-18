@@ -199,6 +199,13 @@ namespace internal
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
 		};
 
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+				typename ConstIterator::BaseIterator)
+		};
+
 	public:
 		HashDerivedIterator() MOMO_NOEXCEPT
 		{
@@ -206,7 +213,7 @@ namespace internal
 
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mBaseIterator);
+			return ConstIteratorProxy(mBaseIterator);
 		}
 
 		HashDerivedIterator& operator++()
@@ -222,12 +229,12 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mBaseIterator == iter.frGetBaseIterator();
+			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
 
-	public:	// protected
+	protected:
 		explicit HashDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
 			: mBaseIterator(iter)
 		{
@@ -260,6 +267,13 @@ namespace internal
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
 		};
 
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+				typename ConstIterator::BaseIterator)
+		};
+
 	public:
 		TreeDerivedIterator() MOMO_NOEXCEPT
 		{
@@ -267,7 +281,7 @@ namespace internal
 
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mBaseIterator);
+			return ConstIteratorProxy(mBaseIterator);
 		}
 
 		TreeDerivedIterator& operator++()
@@ -289,12 +303,12 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mBaseIterator == iter.frGetBaseIterator();
+			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
 		}
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
 
-	public:	// protected
+	protected:
 		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
 			: mBaseIterator(iter)
 		{
@@ -321,6 +335,12 @@ namespace internal
 		typedef HashDerivedBucketBounds<typename BucketIterator::ConstIterator,
 			typename BaseBucketBounds::ConstBounds> ConstBounds;
 
+	private:
+		struct BucketIteratorProxy : public BucketIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(BucketIterator)
+		};
+
 	public:
 		HashDerivedBucketBounds() MOMO_NOEXCEPT
 		{
@@ -338,12 +358,12 @@ namespace internal
 
 		BucketIterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return BucketIterator(mBaseBucketBounds.GetBegin());
+			return BucketIteratorProxy(mBaseBucketBounds.GetBegin());
 		}
 
 		BucketIterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return BucketIterator(mBaseBucketBounds.GetEnd());
+			return BucketIteratorProxy(mBaseBucketBounds.GetEnd());
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const HashDerivedBucketBounds&, BucketIterator)

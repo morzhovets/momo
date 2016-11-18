@@ -626,6 +626,19 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, Check, void)
 	};
 
+	struct ConstKeyIteratorProxy : public ConstKeyIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstKeyIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstKeyIterator, GetBaseIterator,
+			typename ConstKeyIterator::BaseIterator)
+	};
+
+	struct KeyIteratorProxy : public KeyIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(KeyIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(KeyIterator, GetBaseIterator, HashMapIterator)
+	};
+
 public:
 	explicit HashMultiMap(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
@@ -770,12 +783,12 @@ public:
 
 	ConstKeyBounds GetKeyBounds() const MOMO_NOEXCEPT
 	{
-		return ConstKeyBounds(ConstKeyIterator(mHashMap.GetBegin()));
+		return ConstKeyBounds(ConstKeyIteratorProxy(mHashMap.GetBegin()));
 	}
 
 	KeyBounds GetKeyBounds() MOMO_NOEXCEPT
 	{
-		return KeyBounds(KeyIterator(mHashMap.GetBegin()));
+		return KeyBounds(KeyIteratorProxy(mHashMap.GetBegin()));
 	}
 
 	size_t GetKeyCount() const MOMO_NOEXCEPT
@@ -790,26 +803,26 @@ public:
 
 	ConstKeyIterator Find(const Key& key) const
 	{
-		return ConstKeyIterator(mHashMap.Find(key));
+		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	KeyIterator Find(const Key& key)
 	{
-		return KeyIterator(mHashMap.Find(key));
+		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, ConstKeyIterator>::type Find(const KeyArg& key) const
 	{
-		return ConstKeyIterator(mHashMap.Find(key));
+		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, KeyIterator>::type Find(const KeyArg& key)
 	{
-		return KeyIterator(mHashMap.Find(key));
+		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	bool HasKey(const Key& key) const
@@ -873,7 +886,7 @@ public:
 	template<typename ValueCreator>
 	Iterator AddCrt(KeyIterator keyIter, const ValueCreator& valueCreator)
 	{
-		ValueArray& valueArray = keyIter.frGetBaseIterator()->value;
+		ValueArray& valueArray = KeyIteratorProxy::GetBaseIterator(keyIter)->value;
 		pvAddValue(valueArray, valueCreator);
 		return pvMakeIterator<IteratorProxy>(keyIter, valueArray.GetBounds().GetEnd() - 1, false);
 	}
@@ -918,12 +931,12 @@ public:
 
 	KeyIterator InsertKey(Key&& key)
 	{
-		return KeyIterator(mHashMap.Insert(std::move(key), ValueArray()).iterator);
+		return KeyIteratorProxy(mHashMap.Insert(std::move(key), ValueArray()).iterator);
 	}
 
 	KeyIterator InsertKey(const Key& key)
 	{
-		return KeyIterator(mHashMap.Insert(key, ValueArray()).iterator);
+		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).iterator);
 	}
 
 	Iterator Remove(KeyIterator keyIter, size_t valueIndex)
@@ -939,7 +952,7 @@ public:
 	{
 		IteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = iter.GetKeyIterator();
-		ValueArray& valueArray = keyIter.frGetBaseIterator()->value;
+		ValueArray& valueArray = KeyIteratorProxy::GetBaseIterator(keyIter)->value;
 		Value& value = iter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
 		size_t valueIndex = std::addressof(value) - valueBounds.GetBegin();
@@ -953,19 +966,19 @@ public:
 
 	Iterator RemoveValues(KeyIterator keyIter)
 	{
-		ValueArray& valueArray = keyIter.frGetBaseIterator()->value;
+		ValueArray& valueArray = KeyIteratorProxy::GetBaseIterator(keyIter)->value;
 		pvRemoveValues(valueArray);
 		return pvMakeIterator<IteratorProxy>(std::next(keyIter));
 	}
 
 	Iterator RemoveKey(KeyIterator keyIter)
 	{
-		ValueArray& valueArray = keyIter.frGetBaseIterator()->value;
+		ValueArray& valueArray = KeyIteratorProxy::GetBaseIterator(keyIter)->value;
 		ValueArray tempValueArray(std::move(valueArray));
 		HashMapIterator hashMapIter;
 		try
 		{
-			hashMapIter = mHashMap.Remove(keyIter.frGetBaseIterator());
+			hashMapIter = mHashMap.Remove(KeyIteratorProxy::GetBaseIterator(keyIter));
 		}
 		catch (...)
 		{
@@ -973,7 +986,7 @@ public:
 			throw;
 		}
 		pvRemoveValues(tempValueArray);
-		return pvMakeIterator<IteratorProxy>(KeyIterator(hashMapIter));
+		return pvMakeIterator<IteratorProxy>(KeyIteratorProxy(hashMapIter));
 	}
 
 	size_t RemoveKey(const Key& key)
@@ -988,12 +1001,12 @@ public:
 
 	void ResetKey(ConstKeyIterator keyIter, Key&& newKey)
 	{
-		mHashMap.ResetKey(keyIter.frGetBaseIterator(), std::move(newKey));
+		mHashMap.ResetKey(ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(newKey));
 	}
 
 	void ResetKey(ConstKeyIterator keyIter, const Key& newKey)
 	{
-		mHashMap.ResetKey(keyIter.frGetBaseIterator(), newKey);
+		mHashMap.ResetKey(ConstKeyIteratorProxy::GetBaseIterator(keyIter), newKey);
 	}
 
 	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const
@@ -1045,7 +1058,7 @@ private:
 			this->pvAddValue(valueArray, valueCreator);
 			new(newValueArray) ValueArray(std::move(valueArray));
 		};
-		keyIter = KeyIterator(mHashMap.AddCrt(keyIter.frGetBaseIterator(),
+		keyIter = KeyIteratorProxy(mHashMap.AddCrt(KeyIteratorProxy::GetBaseIterator(keyIter),
 			std::forward<RKey>(key), valuesCreator));
 		return pvMakeIterator<IteratorProxy>(keyIter, keyIter->values.GetBegin(), false);
 	}

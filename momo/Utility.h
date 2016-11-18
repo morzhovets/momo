@@ -77,7 +77,7 @@
 
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
 	template<typename... Args> \
-	BaseClass##Proxy(Args&&... args) MOMO_NOEXCEPT \
+	BaseClass##Proxy(Args&&... args) /*MOMO_NOEXCEPT_IF*/ \
 		: BaseClass(std::forward<Args>(args)...) \
 	{ \
 	}

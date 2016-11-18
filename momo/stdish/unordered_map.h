@@ -89,6 +89,34 @@ public:
 		reference> local_iterator;
 	typedef typename local_iterator::ConstIterator const_local_iterator;
 
+private:
+	struct ConstIteratorProxy : public const_iterator
+	{
+		typedef const_iterator ConstIterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+			typename ConstIterator::BaseIterator)
+	};
+
+	struct IteratorProxy : public iterator
+	{
+		typedef iterator Iterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, HashMapIterator)
+	};
+
+	struct ConstLocalIteratorProxy : public const_local_iterator
+	{
+		typedef const_local_iterator ConstLocalIterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstLocalIterator)
+	};
+
+	struct LocalIteratorProxy : public local_iterator
+	{
+		typedef local_iterator LocalIterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(LocalIterator)
+	};
+
 public:
 	unordered_map()
 	{
@@ -254,22 +282,22 @@ public:
 
 	iterator begin() MOMO_NOEXCEPT
 	{
-		return iterator(mHashMap.GetBegin());
+		return IteratorProxy(mHashMap.GetBegin());
 	}
 
 	const_iterator begin() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mHashMap.GetBegin());
+		return ConstIteratorProxy(mHashMap.GetBegin());
 	}
 
 	iterator end() MOMO_NOEXCEPT
 	{
-		return iterator(mHashMap.GetEnd());
+		return IteratorProxy(mHashMap.GetEnd());
 	}
 
 	const_iterator end() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mHashMap.GetEnd());
+		return ConstIteratorProxy(mHashMap.GetEnd());
 	}
 
 	const_iterator cbegin() const MOMO_NOEXCEPT
@@ -348,12 +376,12 @@ public:
 
 	const_iterator find(const key_type& key) const
 	{
-		return const_iterator(mHashMap.Find(key));
+		return ConstIteratorProxy(mHashMap.Find(key));
 	}
 
 	iterator find(const key_type& key)
 	{
-		return iterator(mHashMap.Find(key));
+		return IteratorProxy(mHashMap.Find(key));
 	}
 
 	size_type count(const key_type& key) const
@@ -491,7 +519,7 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		return iterator(mHashMap.Remove(where.frGetBaseIterator()));
+		return IteratorProxy(mHashMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
@@ -502,7 +530,10 @@ public:
 			return end();
 		}
 		if (first == last)
-			return iterator(HashMapIterator(first.frGetBaseIterator().frGetBaseIterator()));
+		{
+			return IteratorProxy(mHashMap.MakeMutableIterator(
+				ConstIteratorProxy::GetBaseIterator(first)));
+		}
 		if (std::next(first) == last)
 			return erase(first);
 		throw std::invalid_argument("invalid unordered_map erase arguments");
@@ -609,22 +640,22 @@ public:
 
 	local_iterator begin(size_type bucketIndex)
 	{
-		return local_iterator(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
+		return LocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
 	}
 
 	const_local_iterator begin(size_type bucketIndex) const
 	{
-		return const_local_iterator(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
+		return ConstLocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
 	}
 
 	local_iterator end(size_type bucketIndex)
 	{
-		return local_iterator(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
+		return LocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
 	}
 
 	const_local_iterator end(size_type bucketIndex) const
 	{
-		return const_local_iterator(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
+		return ConstLocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
 	}
 
 	const_local_iterator cbegin(size_type bucketIndex) const
@@ -709,7 +740,7 @@ private:
 			{
 				KeyManager::Destroy(memManager, *&keyBuffer);
 				keyDestroyed = true;
-				return std::pair<iterator, bool>(iterator(iter), false);
+				return std::pair<iterator, bool>(IteratorProxy(iter), false);
 			}
 			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
 				(key_type* newKey, mapped_type* newMapped)
@@ -727,7 +758,7 @@ private:
 				}
 			};
 			HashMapIterator resIter = mHashMap.AddCrt(iter, valueCreator);
-			return std::pair<iterator, bool>(iterator(resIter), true);
+			return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 		}
 		catch (...)
 		{
@@ -745,7 +776,7 @@ private:
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
-		return std::pair<iterator, bool>(iterator(res.iterator), res.inserted);
+		return std::pair<iterator, bool>(IteratorProxy(res.iterator), res.inserted);
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
@@ -770,8 +801,9 @@ private:
 				throw;
 			}
 		};
-		HashMapIterator resIter = mHashMap.AddCrt(hint.frGetBaseIterator(), valueCreator);
-		return std::pair<iterator, bool>(iterator(resIter), true);
+		HashMapIterator resIter = mHashMap.AddCrt(
+			ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
+		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 
 	template<typename RKey, typename MappedCreator,
@@ -780,9 +812,9 @@ private:
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
 		const MappedCreator& mappedCreator)
 	{
-		HashMapIterator resIter = mHashMap.AddCrt(hint.frGetBaseIterator(),
+		HashMapIterator resIter = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
-		return std::pair<iterator, bool>(iterator(resIter), true);
+		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 #endif
 

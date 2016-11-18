@@ -91,6 +91,21 @@ public:
 	//local_iterator;
 	//const_local_iterator;
 
+private:
+	struct ConstIteratorProxy : public const_iterator
+	{
+		typedef const_iterator ConstIterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+	};
+
+	struct IteratorProxy : public iterator
+	{
+		typedef iterator Iterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator,
+			typename Iterator::BaseIterator)
+	};
+
 public:
 	unordered_multimap()
 	{
@@ -259,22 +274,22 @@ public:
 
 	iterator begin() MOMO_NOEXCEPT
 	{
-		return iterator(mHashMultiMap.GetBegin());
+		return IteratorProxy(mHashMultiMap.GetBegin());
 	}
 
 	const_iterator begin() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mHashMultiMap.GetBegin());
+		return ConstIteratorProxy(mHashMultiMap.GetBegin());
 	}
 
 	iterator end() MOMO_NOEXCEPT
 	{
-		return iterator(mHashMultiMap.GetEnd());
+		return IteratorProxy(mHashMultiMap.GetEnd());
 	}
 
 	const_iterator end() const MOMO_NOEXCEPT
 	{
-		return const_iterator(mHashMultiMap.GetEnd());
+		return ConstIteratorProxy(mHashMultiMap.GetEnd());
 	}
 
 	const_iterator cbegin() const MOMO_NOEXCEPT
@@ -352,8 +367,8 @@ public:
 		size_t count = keyIter->values.GetCount();
 		if (count == 0)	//?
 			return std::pair<const_iterator, const_iterator>(end(), end());
-		const_iterator first(mHashMultiMap.MakeIterator(keyIter, 0));
-		const_iterator last(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
+		const_iterator first = ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, 0));
+		const_iterator last = ConstIteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
 		return std::pair<const_iterator, const_iterator>(first, last);
 	}
 
@@ -365,8 +380,8 @@ public:
 		size_t count = keyIter->values.GetCount();
 		if (count == 0)	//?
 			return std::pair<iterator, iterator>(end(), end());
-		iterator first(mHashMultiMap.MakeIterator(keyIter, 0));
-		iterator last(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
+		iterator first = IteratorProxy(mHashMultiMap.MakeIterator(keyIter, 0));
+		iterator last = IteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
 		return std::pair<iterator, iterator>(first, last);
 	}
 
@@ -479,12 +494,12 @@ public:
 	//iterator erase(const_iterator where)
 	iterator erase(iterator where)
 	{
-		typename HashMultiMap::Iterator iter = where.frGetBaseIterator();
+		typename HashMultiMap::Iterator iter = IteratorProxy::GetBaseIterator(where);
 		typename HashMultiMap::KeyIterator keyIter = iter.GetKeyIterator();
 		if (keyIter->values.GetCount() == 1)
-			return iterator(mHashMultiMap.RemoveKey(keyIter));
+			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
 		else
-			return iterator(mHashMultiMap.Remove(iter));
+			return IteratorProxy(mHashMultiMap.Remove(iter));
 	}
 
 	//iterator erase(const_iterator first, const_iterator last)
@@ -499,11 +514,12 @@ public:
 			return first;
 		if (std::next(first) == last)
 			return erase(first);
-		typename HashMultiMap::KeyIterator keyIter = first.frGetBaseIterator().GetKeyIterator();
+		typename HashMultiMap::KeyIterator keyIter =
+			IteratorProxy::GetBaseIterator(first).GetKeyIterator();
 		size_t count = keyIter->values.GetCount();
 		MOMO_ASSERT(count > 0);
-		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == last.frGetBaseIterator())
-			return iterator(mHashMultiMap.RemoveKey(keyIter));
+		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == IteratorProxy::GetBaseIterator(last))
+			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
 		throw std::invalid_argument("invalid unordered_multimap erase arguments");
 	}
 
@@ -599,7 +615,8 @@ private:
 		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
 	iterator pvInsert(std::tuple<RKey>&& key, const MappedCreator& mappedCreator)
 	{
-		return iterator(mHashMultiMap.AddCrt(std::forward<RKey>(std::get<0>(key)), mappedCreator));
+		return IteratorProxy(mHashMultiMap.AddCrt(
+			std::forward<RKey>(std::get<0>(key)), mappedCreator));
 	}
 
 private:
