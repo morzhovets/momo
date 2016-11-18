@@ -137,17 +137,17 @@ namespace internal
 				pvMove();
 		}
 
-		Node* frGetNode() const MOMO_NOEXCEPT
+		Node* ptGetNode() const MOMO_NOEXCEPT
 		{
 			return mNode;
 		}
 
-		size_t frGetItemIndex() const MOMO_NOEXCEPT
+		size_t ptGetItemIndex() const MOMO_NOEXCEPT
 		{
 			return mItemIndex;
 		}
 
-		void frCheck(const size_t* version) const
+		void ptCheck(const size_t* version) const
 		{
 			(void)version;
 			MOMO_CHECK(mNode != nullptr);

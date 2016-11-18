@@ -765,7 +765,7 @@ namespace internal
 		}
 
 	protected:
-		SetExtractedItem& frGetSetExtractedItem() MOMO_NOEXCEPT
+		SetExtractedItem& ptGetSetExtractedItem() MOMO_NOEXCEPT
 		{
 			return mSetExtractedItem;
 		}

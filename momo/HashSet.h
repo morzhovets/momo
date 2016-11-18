@@ -233,7 +233,7 @@ namespace internal
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
 			MOMO_CHECK(IteratorVersion::Check());
-			if (frIsMovable())
+			if (ptIsMovable())
 			{
 				++mItemPtr;
 				pvMove();
@@ -280,31 +280,31 @@ namespace internal
 		{
 		}
 
-		bool frIsMovable() const MOMO_NOEXCEPT
+		bool ptIsMovable() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
-		size_t frGetBucketIndex() const MOMO_NOEXCEPT
+		size_t ptGetBucketIndex() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr != nullptr && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
-		size_t frGetHashCode() const MOMO_NOEXCEPT
+		size_t ptGetHashCode() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mItemPtr == nullptr);
 			return mHashCode;
 		}
 
-		const Buckets* frGetBuckets() const MOMO_NOEXCEPT
+		const Buckets* ptGetBuckets() const MOMO_NOEXCEPT
 		{
 			return mBuckets;
 		}
 
-		void frCheck(const size_t* version, bool empty) const
+		void ptCheck(const size_t* version, bool empty) const
 		{
 			(void)version;
 			(void)empty;

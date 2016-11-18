@@ -240,7 +240,7 @@ namespace internal
 		{
 		}
 
-		BaseIterator frGetBaseIterator() const MOMO_NOEXCEPT
+		BaseIterator ptGetBaseIterator() const MOMO_NOEXCEPT
 		{
 			return mBaseIterator;
 		}
@@ -314,7 +314,7 @@ namespace internal
 		{
 		}
 
-		BaseIterator frGetBaseIterator() const MOMO_NOEXCEPT
+		BaseIterator ptGetBaseIterator() const MOMO_NOEXCEPT
 		{
 			return mBaseIterator;
 		}

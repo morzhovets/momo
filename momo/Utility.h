@@ -85,9 +85,9 @@
 #define MOMO_DECLARE_PROXY_FUNCTION(BaseClass, Func, Result) \
 	template<typename Object, typename... Args> \
 	static Result Func(Object&& object, Args&&... args) \
-		MOMO_NOEXCEPT_IF(noexcept((object.*&BaseClass##Proxy::fr##Func)(std::forward<Args>(args)...))) \
+		MOMO_NOEXCEPT_IF(noexcept((object.*&BaseClass##Proxy::pt##Func)(std::forward<Args>(args)...))) \
 	{ \
-		return (object.*&BaseClass##Proxy::fr##Func)(std::forward<Args>(args)...); \
+		return (object.*&BaseClass##Proxy::pt##Func)(std::forward<Args>(args)...); \
 	}
 
 MOMO_STATIC_ASSERT(MOMO_MAX_ALIGNMENT > 0 && (MOMO_MAX_ALIGNMENT & (MOMO_MAX_ALIGNMENT - 1)) == 0);

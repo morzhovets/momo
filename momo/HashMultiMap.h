@@ -220,7 +220,7 @@ namespace internal
 		{
 		}
 
-		void frCheck(const size_t& version) const
+		void ptCheck(const size_t& version) const
 		{
 			(void)version;
 			MOMO_CHECK(mValuePtr != nullptr);
