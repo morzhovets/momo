@@ -38,8 +38,11 @@ namespace internal
 	public:
 		typedef TKey Key;
 		typedef TValues Values;
+
+	protected:
 		typedef THashMapReference HashMapReference;
 
+	public:
 		typedef HashMultiMapKeyReference<Key, typename Values::ConstBounds,
 			typename HashMapReference::ConstReference> ConstReference;
 
@@ -71,7 +74,7 @@ namespace internal
 	class HashMultiMapKeyBounds
 	{
 	public:
-		typedef TKeyIterator KeyIterator;
+		typedef TKeyIterator KeyIterator;	//?
 
 		typedef KeyIterator Iterator;
 
@@ -140,7 +143,13 @@ namespace internal
 	public:
 		typedef TKeyIterator KeyIterator;
 		typedef TValue Value;
+
+	protected:
 		typedef TSettings Settings;
+
+		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
+
+	public:
 		typedef typename KeyIterator::Reference::Key Key;
 
 		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator,
@@ -150,8 +159,6 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 	private:
-		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
-
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)

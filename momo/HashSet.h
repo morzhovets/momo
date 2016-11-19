@@ -204,13 +204,14 @@ namespace internal
 	template<typename TBuckets, typename TSettings>
 	class HashSetConstIterator : private IteratorVersion<TSettings::checkVersion>
 	{
-	public:
+	protected:
 		typedef TBuckets Buckets;
 		typedef TSettings Settings;
 		typedef typename Buckets::Bucket Bucket;
 		typedef typename Bucket::Item Item;
 		typedef typename Bucket::ConstBounds ConstBucketBounds;
 
+	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
@@ -1171,6 +1172,6 @@ namespace std
 		typedef ptrdiff_t difference_type;
 		typedef typename momo::internal::HashSetConstIterator<B, S>::Pointer pointer;
 		typedef typename momo::internal::HashSetConstIterator<B, S>::Reference reference;
-		typedef typename momo::internal::HashSetConstIterator<B, S>::Item value_type;
+		typedef typename std::decay<reference>::type value_type;
 	};
 } // namespace std

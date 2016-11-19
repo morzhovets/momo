@@ -184,8 +184,10 @@ namespace internal
 	template<typename TBaseIterator, typename TReference>
 	class HashDerivedIterator
 	{
-	public:
+	protected:
 		typedef TBaseIterator BaseIterator;
+
+	public:
 		typedef TReference Reference;
 
 		typedef IteratorPointer<Reference> Pointer;
@@ -252,8 +254,10 @@ namespace internal
 	template<typename TBaseIterator, typename TReference>
 	class TreeDerivedIterator
 	{
-	public:
+	protected:
 		typedef TBaseIterator BaseIterator;
+
+	public:
 		typedef TReference Reference;
 
 		typedef IteratorPointer<Reference> Pointer;
@@ -327,7 +331,7 @@ namespace internal
 	class HashDerivedBucketBounds
 	{
 	public:
-		typedef TBucketIterator BucketIterator;
+		typedef TBucketIterator BucketIterator;	//?
 		typedef TBaseBucketBounds BaseBucketBounds;
 
 		typedef BucketIterator Iterator;

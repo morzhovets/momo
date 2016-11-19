@@ -33,11 +33,12 @@ namespace internal
 	template<typename TNode, typename TSettings>
 	class TreeSetConstIterator : private IteratorVersion<TSettings::checkVersion>
 	{
-	public:
+	protected:
 		typedef TNode Node;
 		typedef TSettings Settings;
 		typedef typename Node::Item Item;
 
+	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
@@ -1279,7 +1280,7 @@ namespace std
 		typedef ptrdiff_t difference_type;
 		typedef typename momo::internal::TreeSetConstIterator<N, S>::Pointer pointer;
 		typedef typename momo::internal::TreeSetConstIterator<N, S>::Reference reference;
-		typedef typename momo::internal::TreeSetConstIterator<N, S>::Item value_type;
+		typedef typename std::decay<reference>::type value_type;
 	};
 
 	template<typename S, typename I>

@@ -22,8 +22,11 @@ namespace internal
 	public:
 		typedef TKey Key;
 		typedef TValue Value;
+
+	protected:
 		typedef TSetReference SetReference;
 
+	public:
 		typedef MapReference<Key, const Value, SetReference> ConstReference;
 
 	public:
@@ -56,8 +59,11 @@ namespace internal
 	public:
 		typedef TKey Key;
 		typedef TValue Value;
+
+	protected:
 		typedef THashMapReference HashMapReference;
 
+	public:
 		typedef MapReferenceStd<Key, const Value,
 			typename HashMapReference::ConstReference> ConstReference;
 
@@ -682,9 +688,11 @@ namespace internal
 	template<typename TSetExtractedItem>
 	class MapExtractedPair
 	{
-	public:
+	protected:
 		typedef TSetExtractedItem SetExtractedItem;
 		typedef typename SetExtractedItem::Item KeyValuePair;
+
+	public:
 		typedef typename KeyValuePair::Key Key;
 		typedef typename KeyValuePair::Value Value;
 		typedef typename SetExtractedItem::MemManager MemManager;
