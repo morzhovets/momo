@@ -257,9 +257,11 @@ namespace internal
 	template<typename TItemTraits, typename TSettings>
 	class SetExtractedItem
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TSettings Settings;
+
+	public:
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

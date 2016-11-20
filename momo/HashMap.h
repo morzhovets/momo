@@ -39,11 +39,14 @@ namespace internal
 	template<typename TKeyValuePair>
 	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
-	public:
-		typedef TKeyValuePair Item;
-		typedef typename Item::KeyValueTraits KeyValueTraits;
+	protected:
+		typedef TKeyValuePair KeyValuePair;
+		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::Value Value;
+
+	public:
+		typedef KeyValuePair Item;
 		typedef typename KeyValueTraits::MemManager MemManager;
 
 	public:
@@ -60,10 +63,12 @@ namespace internal
 	};
 
 	template<typename THashMapSettings>
-	struct HashMapNestedSetSettings : public HashSetSettings
+	struct HashMapNestedSetSettings //: public HashSetSettings
 	{
+	protected:
 		typedef THashMapSettings HashMapSettings;
 
+	public:
 		static const CheckMode checkMode = HashMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = HashMapSettings::checkVersion;

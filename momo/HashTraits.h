@@ -85,6 +85,7 @@ class HashTraitsVar
 public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
+
 	typedef std::function<size_t(size_t)> CalcCapacityFunc;
 	typedef std::function<size_t(size_t)> GetBucketCountShiftFunc;
 

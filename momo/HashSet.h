@@ -356,28 +356,31 @@ namespace internal
 		const Item* mItemPtr;
 	};
 
-	template<typename TItemTraits>
+	template<typename THashSetItemTraits>
 	class HashSetBucketItemTraits
 	{
-	public:
-		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
+	protected:
+		typedef THashSetItemTraits HashSetItemTraits;
 
-		static const size_t alignment = ItemTraits::alignment;
+	public:
+		typedef typename HashSetItemTraits::Item Item;
+		typedef typename HashSetItemTraits::MemManager MemManager;
+
+		static const size_t alignment = HashSetItemTraits::alignment;
 
 	public:
 		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < count; ++i)
-				ItemTraits::Destroy(memManager, items[i]);
+				HashSetItemTraits::Destroy(memManager, items[i]);
 		}
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
+			HashSetItemTraits::RelocateCreate(memManager, srcItems, dstItems, count,
+				itemCreator, newItem);
 		}
 	};
 }

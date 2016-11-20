@@ -258,8 +258,10 @@ namespace internal
 	template<typename TKeyValueTraits>
 	class HashMultiMapArrayBucketItemTraits
 	{
+	protected:
+		typedef TKeyValueTraits KeyValueTraits;	//?
+
 	public:
-		typedef TKeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Value Item;
 		typedef typename KeyValueTraits::MemManager MemManager;
 
@@ -285,22 +287,23 @@ namespace internal
 		}
 	};
 
-	template<typename TKeyValueTraits, typename TValueArray>
+	template<typename THashMultiMapKeyValueTraits, typename THashMultiMapValueArray>
 	class HashMultiMapNestedMapKeyValueTraits
 	{
-	public:
-		typedef TKeyValueTraits KeyValueTraits;
-		typedef TValueArray ValueArray;
+	protected:
+		typedef THashMultiMapKeyValueTraits HashMultiMapKeyValueTraits;
+		typedef THashMultiMapValueArray HashMultiMapValueArray;
 
-		typedef typename KeyValueTraits::Key Key;
-		typedef typename KeyValueTraits::MemManager MemManager;
-		typedef ValueArray Value;	//?
+	public:
+		typedef typename HashMultiMapKeyValueTraits::Key Key;
+		typedef typename HashMultiMapKeyValueTraits::MemManager MemManager;
+		typedef HashMultiMapValueArray Value;
 
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;
 
 	public:
-		static const size_t keyAlignment = KeyValueTraits::keyAlignment;
+		static const size_t keyAlignment = HashMultiMapKeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
 		template<typename ValueArg>
@@ -325,7 +328,7 @@ namespace internal
 			Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
-			KeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, func);
+			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
@@ -333,27 +336,27 @@ namespace internal
 			Key* newKey, Value* newValue)
 		{
 			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
-			KeyValueTraits::CopyExecKey(memManager, key, newKey, func);
+			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, func);
 		}
 
 		static void Destroy(MemManager& memManager, Key& key, Value& value) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::DestroyKey(memManager, key);
+			HashMultiMapKeyValueTraits::DestroyKey(memManager, key);
 			ValueManager::Destroy(memManager, value);
 		}
 
 		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
-			KeyValueTraits::RelocateKey(memManager, srcKey, dstKey);
+			HashMultiMapKeyValueTraits::RelocateKey(memManager, srcKey, dstKey);
 			ValueManager::Relocate(memManager, srcValue, dstValue);
 		}
 
 		static void Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue)
 		{
-			KeyValueTraits::AssignKey(memManager, std::move(srcKey), dstKey);	//?
-			KeyValueTraits::DestroyKey(memManager, srcKey);
+			HashMultiMapKeyValueTraits::AssignKey(memManager, std::move(srcKey), dstKey);	//?
+			HashMultiMapKeyValueTraits::DestroyKey(memManager, srcKey);
 			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
@@ -362,26 +365,29 @@ namespace internal
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
 			size_t count, const Func& func)
 		{
-			KeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin, count, func);
+			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
+				count, func);
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
 		static void AssignKey(MemManager& memManager, Key&& srcKey, Key& dstKey)
 		{
-			KeyValueTraits::AssignKey(memManager, std::move(srcKey), dstKey);
+			HashMultiMapKeyValueTraits::AssignKey(memManager, std::move(srcKey), dstKey);
 		}
 
 		static void AssignKey(MemManager& memManager, const Key& srcKey, Key& dstKey)
 		{
-			KeyValueTraits::AssignKey(memManager, srcKey, dstKey);
+			HashMultiMapKeyValueTraits::AssignKey(memManager, srcKey, dstKey);
 		}
 	};
 
 	template<typename THashMultiMapSettings>
 	struct HashMultiMapNestedMapSettings : public HashMapSettings
 	{
+	protected:
 		typedef THashMultiMapSettings HashMultiMapSettings;
 
+	public:
 		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = HashMultiMapSettings::checkVersion;

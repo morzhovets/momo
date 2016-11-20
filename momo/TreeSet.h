@@ -224,28 +224,30 @@ namespace internal
 		size_t mItemIndex;
 	};
 
-	template<typename TItemTraits>
+	template<typename TTreeSetItemTraits>
 	class TreeSetNodeItemTraits
 	{
+	protected:
+		typedef TTreeSetItemTraits TreeSetItemTraits;
+
 	public:
-		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
+		typedef typename TreeSetItemTraits::Item Item;
+		typedef typename TreeSetItemTraits::MemManager MemManager;
 
-		static const bool isNothrowShiftable = ItemTraits::isNothrowShiftable;
+		static const bool isNothrowShiftable = TreeSetItemTraits::isNothrowShiftable;
 
-		static const size_t alignment = ItemTraits::alignment;
+		static const size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
 		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(memManager, item);
+			TreeSetItemTraits::Destroy(memManager, item);
 		}
 
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
-			ItemTraits::ShiftNothrow(memManager, begin, shift);
+			TreeSetItemTraits::ShiftNothrow(memManager, begin, shift);
 		}
 	};
 }

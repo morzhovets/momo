@@ -19,28 +19,31 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits>
+	template<typename TBucketUnlimPItemTraits>
 	class BucketUnlimPArrayBucketItemTraits
 	{
-	public:
-		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
+	protected:
+		typedef TBucketUnlimPItemTraits BucketUnlimPItemTraits;
 
-		static const size_t alignment = ItemTraits::alignment;
+	public:
+		typedef typename BucketUnlimPItemTraits::Item Item;
+		typedef typename BucketUnlimPItemTraits::MemManager MemManager;
+
+		static const size_t alignment = BucketUnlimPItemTraits::alignment;
 
 	public:
 		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			if (count != 1)
-				ItemTraits::Destroy(memManager, items, count);
+				BucketUnlimPItemTraits::Destroy(memManager, items, count);
 		}
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
+			BucketUnlimPItemTraits::RelocateCreate(memManager, srcItems, dstItems, count,
+				itemCreator, newItem);
 		}
 	};
 

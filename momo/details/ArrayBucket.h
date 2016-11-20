@@ -17,14 +17,17 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits>
+	template<typename TArrayBucketItemTraits>
 	class ArrayBucketNestedArrayItemTraits
 	{
-	public:
-		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
+	protected:
+		typedef TArrayBucketItemTraits ArrayBucketItemTraits;
+		typedef typename ArrayBucketItemTraits::MemManager ArrayBucketMemManager;
 
-		typedef MemManagerPtr<typename ItemTraits::MemManager> MemManager;
+	public:
+		typedef typename ArrayBucketItemTraits::Item Item;
+
+		typedef MemManagerPtr<ArrayBucketMemManager> MemManager;
 
 		static const bool isTriviallyRelocatable = false;	//?
 
@@ -42,7 +45,7 @@ namespace internal
 
 			void operator()(Item* newItem) const
 			{
-				ItemTraits::Copy(mMemManager.GetBaseMemManager(), mItem, newItem);
+				ArrayBucketItemTraits::Copy(mMemManager.GetBaseMemManager(), mItem, newItem);
 			}
 
 		private:
@@ -53,21 +56,21 @@ namespace internal
 	public:
 		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
+			ArrayBucketItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
 		}
 
 		static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		{
-			ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems, dstItems, count,
-				[] (Item*) {}, nullptr);
+			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
+				dstItems, count, [] (Item*) {}, nullptr);
 		}
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems, dstItems, count,
-				itemCreator, newItem);
+			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
+				dstItems, count, itemCreator, newItem);
 		}
 	};
 

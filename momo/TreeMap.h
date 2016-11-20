@@ -39,11 +39,14 @@ namespace internal
 	template<typename TKeyValuePair>
 	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
-	public:
-		typedef TKeyValuePair Item;
-		typedef typename Item::KeyValueTraits KeyValueTraits;
+	protected:
+		typedef TKeyValuePair KeyValuePair;
+		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::Value Value;
+
+	public:
+		typedef KeyValuePair Item;
 		typedef typename KeyValueTraits::MemManager MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
@@ -72,10 +75,12 @@ namespace internal
 	};
 
 	template<typename TTreeMapSettings>
-	struct TreeMapNestedSetSettings : public TreeSetSettings
+	struct TreeMapNestedSetSettings //: public TreeSetSettings
 	{
+	protected:
 		typedef TTreeMapSettings TreeMapSettings;
 
+	public:
 		static const CheckMode checkMode = TreeMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = TreeMapSettings::checkVersion;
