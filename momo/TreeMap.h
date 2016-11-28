@@ -459,7 +459,7 @@ public:
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
-		return IteratorProxy(mTreeSet.AddCrt<decltype(PairCreator), extraCheck>(
+		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
@@ -623,7 +623,7 @@ private:
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return IteratorProxy(mTreeSet.AddCrt<decltype(itemCreator), extraCheck>(
+		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
