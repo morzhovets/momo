@@ -672,10 +672,10 @@ public:
 		return pvIsEqual(pvLowerBound(key), key);
 	}
 
-	template<typename ItemCreator>
+	template<typename ItemCreator, bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
 	{
-		return pvInsert(key, itemCreator, true);
+		return pvInsert<extraCheck>(key, itemCreator);
 	}
 
 	template<typename... ItemArgs>
@@ -687,14 +687,14 @@ public:
 
 	InsertResult Insert(Item&& item)
 	{
-		return pvInsert(ItemTraits::GetKey(static_cast<const Item&>(item)),
-			Creator<Item>(GetMemManager(), std::move(item)), false);
+		return pvInsert<false>(ItemTraits::GetKey(static_cast<const Item&>(item)),
+			Creator<Item>(GetMemManager(), std::move(item)));
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return pvInsert(ItemTraits::GetKey(item),
-			Creator<const Item&>(GetMemManager(), item), false);
+		return pvInsert<false>(ItemTraits::GetKey(item),
+			Creator<const Item&>(GetMemManager(), item));
 	}
 
 	InsertResult Insert(ExtractedItem&& extItem)
@@ -707,7 +707,7 @@ public:
 				{ ItemTraits::Relocate(memManager, item, newItem); };
 			extItem.Reset(itemRemover);
 		};
-		return pvInsert(ItemTraits::GetKey(extItem.GetItem()), itemCreator, false);
+		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
 	template<typename ArgIterator>
@@ -725,10 +725,10 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<typename ItemCreator>
+	template<typename ItemCreator, bool extraCheck = true>
 	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
 	{
-		return pvAdd(iter, itemCreator, true);
+		return pvAdd<extraCheck>(iter, itemCreator);
 	}
 
 	template<typename... ItemArgs>
@@ -972,18 +972,18 @@ private:
 		return *node->GetItemPtr(ConstIteratorProxy::GetItemIndex(iter));
 	}
 
-	template<typename ItemCreator>
-	InsertResult pvInsert(const Key& key, const ItemCreator& itemCreator, bool extraCheck)
+	template<bool extraCheck, typename ItemCreator>
+	InsertResult pvInsert(const Key& key, const ItemCreator& itemCreator)
 	{
 		ConstIterator iter = LowerBound(key);
 		if (pvIsEqual(iter, key))
 			return InsertResult(iter, false);
-		iter = pvAdd(iter, itemCreator, extraCheck);
+		iter = pvAdd<extraCheck>(iter, itemCreator);
 		return InsertResult(iter, true);
 	}
 
-	template<typename ItemCreator>
-	ConstIterator pvAdd(ConstIterator iter, const ItemCreator& itemCreator, bool extraCheck)
+	template<bool extraCheck, typename ItemCreator>
+	ConstIterator pvAdd(ConstIterator iter, const ItemCreator& itemCreator)
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, itemCreator);
@@ -1014,7 +1014,6 @@ private:
 		++mCount;
 		mCrew.IncVersion();
 		ConstIterator resIter = pvMakeIterator(node, itemIndex, false);
-		(void)extraCheck;
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resIter));
 		return resIter;
 	}
@@ -1041,7 +1040,7 @@ private:
 		mRootNode = &Node::Create(*mNodeParams, true, 0);
 		try
 		{
-			return pvAdd(GetEnd(), itemCreator, false);
+			return pvAdd<false>(GetEnd(), itemCreator);
 		}
 		catch (...)
 		{

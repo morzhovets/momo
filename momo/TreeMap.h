@@ -82,7 +82,7 @@ namespace internal
 
 	public:
 		static const CheckMode checkMode = TreeMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const ExtraCheckMode extraCheckMode = TreeMapSettings::extraCheckMode;
 		static const bool checkVersion = TreeMapSettings::checkVersion;
 	};
 }
@@ -454,20 +454,19 @@ public:
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
 	}
 
-	template<typename PairCreator>
+	template<typename PairCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, const PairCreator& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
-		//? extra check
-		return IteratorProxy(mTreeSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
-			itemCreator));
+		return IteratorProxy(mTreeSet.AddCrt<decltype(PairCreator), extraCheck>(
+			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
-	template<typename ValueCreator>
+	template<typename ValueCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
 	{
-		return pvAdd(iter, std::move(key), valueCreator, true);
+		return pvAdd<extraCheck>(iter, std::move(key), valueCreator);
 	}
 
 	template<typename... ValueArgs>
@@ -487,10 +486,10 @@ public:
 		return AddVar(iter, std::move(key), value);
 	}
 
-	template<typename ValueCreator>
+	template<typename ValueCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, const Key& key, const ValueCreator& valueCreator)
 	{
-		return pvAdd(iter, key, valueCreator, true);
+		return pvAdd<extraCheck>(iter, key, valueCreator);
 	}
 
 	template<typename... ValueArgs>
@@ -597,20 +596,13 @@ private:
 		return iter != GetEnd() && !GetTreeTraits().IsLess(key, iter->key);
 	}
 
-	bool pvExtraCheck(ConstIterator iter, const Key& key) const
-	{
-		const TreeTraits& treeTraits = GetTreeTraits();
-		return (iter == GetBegin() || treeTraits.IsLess(std::prev(iter)->key, key))
-			&& (iter == GetEnd() || treeTraits.IsLess(key, iter->key));
-	}
-
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, const ValueCreator& valueCreator)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
 		if (pvIsEqual(iter, static_cast<const Key&>(key)))
 			return InsertResult(iter, false);
-		iter = pvAdd(iter, std::forward<RKey>(key), valueCreator, false);
+		iter = pvAdd<false>(iter, std::forward<RKey>(key), valueCreator);
 		return InsertResult(iter, true);
 	}
 
@@ -623,19 +615,16 @@ private:
 		return count;
 	}
 
-	template<typename RKey, typename ValueCreator>
-	Iterator pvAdd(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator,
-		bool extraCheck)
+	template<bool extraCheck, typename RKey, typename ValueCreator>
+	Iterator pvAdd(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator)
 	{
-		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter, static_cast<const Key&>(key)));
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return IteratorProxy(mTreeSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
-			itemCreator));
+		return IteratorProxy(mTreeSet.AddCrt<decltype(itemCreator), extraCheck>(
+			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
 private:
