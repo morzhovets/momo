@@ -157,11 +157,6 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
-	struct HashSetConstIteratorProxy : private HashSetConstIterator
-	{
-		MOMO_DECLARE_PROXY_FUNCTION(HashSetConstIterator, GetHashCode, size_t)
-	};
-
 	struct ExtractedPairProxy : private ExtractedPair
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
@@ -399,20 +394,19 @@ public:
 		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
 	}
 
-	template<typename PairCreator>
+	template<typename PairCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, const PairCreator& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
-		//? extra check
-		return IteratorProxy(mHashSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
-			itemCreator));
+		return IteratorProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
-	template<typename ValueCreator>
+	template<typename ValueCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, Key&& key, const ValueCreator& valueCreator)
 	{
-		return pvAdd(iter, std::move(key), valueCreator, true);
+		return pvAdd<extraCheck>(iter, std::move(key), valueCreator);
 	}
 
 	template<typename... ValueArgs>
@@ -432,10 +426,10 @@ public:
 		return AddVar(iter, std::move(key), value);
 	}
 
-	template<typename ValueCreator>
+	template<typename ValueCreator, bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, const Key& key, const ValueCreator& valueCreator)
 	{
-		return pvAdd(iter, key, valueCreator, true);
+		return pvAdd<extraCheck>(iter, key, valueCreator);
 	}
 
 	template<typename... ValueArgs>
@@ -555,21 +549,13 @@ public:
 	}
 
 private:
-	bool pvExtraCheck(ConstIterator iter, const Key& key) const
-	{
-		if (!!iter)
-			return false;
-		return GetHashTraits().GetHashCode(key) ==
-			HashSetConstIteratorProxy::GetHashCode(ConstIteratorProxy::GetBaseIterator(iter));
-	}
-
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, const ValueCreator& valueCreator)
 	{
 		Iterator iter = Find(static_cast<const Key&>(key));
 		if (!!iter)
 			return InsertResult(iter, false);
-		iter = pvAdd(iter, std::forward<RKey>(key), valueCreator, false);
+		iter = pvAdd<false>(iter, std::forward<RKey>(key), valueCreator);
 		return InsertResult(iter, true);
 	}
 
@@ -582,19 +568,16 @@ private:
 		return count;
 	}
 
-	template<typename RKey, typename ValueCreator>
-	Iterator pvAdd(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator,
-		bool extraCheck)
+	template<bool extraCheck, typename RKey, typename ValueCreator>
+	Iterator pvAdd(ConstIterator iter, RKey&& key, const ValueCreator& valueCreator)
 	{
-		(void)extraCheck;
-		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter, static_cast<const Key&>(key)));
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key), valueCreator,
 				newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return IteratorProxy(mHashSet.AddCrt(ConstIteratorProxy::GetBaseIterator(iter),
-			itemCreator));
+		return IteratorProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+			ConstIteratorProxy::GetBaseIterator(iter), itemCreator));
 	}
 
 private:

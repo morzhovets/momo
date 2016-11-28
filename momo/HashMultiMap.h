@@ -389,7 +389,7 @@ namespace internal
 
 	public:
 		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
 		static const bool checkVersion = HashMultiMapSettings::checkVersion;
 	};
 }
@@ -479,6 +479,7 @@ public:
 struct HashMultiMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
@@ -1071,8 +1072,8 @@ private:
 			this->pvAddValue(valueArray, valueCreator);
 			new(newValueArray) ValueArray(std::move(valueArray));
 		};
-		keyIter = KeyIteratorProxy(mHashMap.AddCrt(KeyIteratorProxy::GetBaseIterator(keyIter),
-			std::forward<RKey>(key), valuesCreator));
+		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
+			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key), valuesCreator));
 		return pvMakeIterator<IteratorProxy>(keyIter, keyIter->values.GetBegin(), false);
 	}
 

@@ -672,10 +672,10 @@ public:
 		return pvIsEqual(pvLowerBound(key), key);
 	}
 
-	template<typename ItemCreator, bool extraCheck = true>
+	template<typename ItemCreator>
 	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
 	{
-		return pvInsert<extraCheck>(key, itemCreator);
+		return pvInsert<true>(key, itemCreator);
 	}
 
 	template<typename... ItemArgs>
