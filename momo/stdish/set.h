@@ -480,6 +480,14 @@ public:
 		return mTreeSet.Remove(key) ? 1 : 0;
 	}
 
+#ifdef MOMO_USE_NODE_HANDLE
+	template<typename Set>
+	void merge(Set&& set)
+	{
+		mTreeSet.MergeFrom(set.get_nested_container());
+	}
+#endif
+
 	bool operator==(const set& right) const
 	{
 		return size() == right.size() && std::equal(begin(), end(), right.begin());

@@ -664,6 +664,14 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
+#ifdef MOMO_USE_NODE_HANDLE
+	template<typename Map>
+	void merge(Map&& map)
+	{
+		mTreeMap.MergeFrom(map.get_nested_container());
+	}
+#endif
+
 	bool operator==(const map& right) const
 	{
 		return size() == right.size() && std::equal(begin(), end(), right.begin());

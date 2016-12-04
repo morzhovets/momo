@@ -622,6 +622,14 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
+#ifdef MOMO_USE_NODE_HANDLE
+	template<typename Map>
+	void merge(Map&& map)
+	{
+		mHashMap.MergeFrom(map.get_nested_container());
+	}
+#endif
+
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
 		return SIZE_MAX;

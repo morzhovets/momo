@@ -460,6 +460,14 @@ public:
 		return mHashSet.Remove(key) ? 1 : 0;
 	}
 
+#ifdef MOMO_USE_NODE_HANDLE
+	template<typename Set>
+	void merge(Set&& set)
+	{
+		mHashSet.MergeFrom(set.get_nested_container());
+	}
+#endif
+
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
 		return SIZE_MAX;
