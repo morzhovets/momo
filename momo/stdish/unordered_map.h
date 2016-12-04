@@ -37,6 +37,7 @@
 #pragma once
 
 #include "../HashMap.h"
+#include "node_handle.h"
 
 namespace momo
 {
@@ -84,6 +85,11 @@ public:
 	typedef typename const_iterator::Pointer const_pointer;
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
+
+#ifdef MOMO_USE_NODE_HANDLE
+	typedef internal::map_node_handle<typename HashMap::ExtractedPair> node_type;
+	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
+#endif
 
 	typedef momo::internal::HashDerivedIterator<typename HashMap::BucketBounds::Iterator,
 		reference> local_iterator;

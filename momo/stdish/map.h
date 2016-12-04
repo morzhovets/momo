@@ -34,6 +34,7 @@
 #pragma once
 
 #include "../TreeMap.h"
+#include "node_handle.h"
 
 namespace momo
 {
@@ -100,6 +101,11 @@ public:
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
+#ifdef MOMO_USE_NODE_HANDLE
+	typedef internal::map_node_handle<typename TreeMap::ExtractedPair> node_type;
+	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
+#endif
 
 private:
 	struct ConstIteratorProxy : public const_iterator

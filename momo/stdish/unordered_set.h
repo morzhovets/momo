@@ -33,6 +33,7 @@
 #pragma once
 
 #include "../HashSet.h"
+#include "node_handle.h"
 
 namespace momo
 {
@@ -78,6 +79,11 @@ public:
 	typedef typename const_iterator::Pointer const_pointer;
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
+
+#ifdef MOMO_USE_NODE_HANDLE
+	typedef internal::set_node_handle<typename HashSet::ExtractedItem> node_type;
+	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
+#endif
 
 	typedef typename HashSet::ConstBucketBounds::Iterator const_local_iterator;
 	typedef const_local_iterator local_iterator;

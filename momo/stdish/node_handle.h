@@ -151,6 +151,14 @@ namespace internal
 	private:
 		mutable MapExtractedPair mMapExtractedPair;
 	};
+
+	template<typename Iterator, typename NodeHandle>
+	struct insert_return_type
+	{
+		Iterator position;
+		bool inserted;
+		NodeHandle node;
+	};
 }
 
 } // namespace stdish

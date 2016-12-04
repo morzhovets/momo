@@ -30,6 +30,7 @@
 #pragma once
 
 #include "../TreeSet.h"
+#include "node_handle.h"
 
 namespace momo
 {
@@ -76,6 +77,11 @@ public:
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
+#ifdef MOMO_USE_NODE_HANDLE
+	typedef internal::set_node_handle<typename TreeSet::ExtractedItem> node_type;
+	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
+#endif
 
 public:
 	set()
