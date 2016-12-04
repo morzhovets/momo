@@ -467,6 +467,20 @@ public:
 	}
 
 #ifdef MOMO_USE_NODE_HANDLE
+	//insert_return_type insert(node_type&& node)
+	//iterator insert(const_iterator hint, node_type&& node)
+
+	node_type extract(const_iterator where)
+	{
+		return node_type(*this, where);
+	}
+
+	node_type extract(const key_type& key)
+	{
+		iterator iter = find(key);
+		return (iter != end()) ? extract(iter) : node_type();
+	}
+
 	template<typename Set>
 	void merge(Set&& set)
 	{
