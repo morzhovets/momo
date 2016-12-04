@@ -233,5 +233,8 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\stdish\node_handle.h">
+      <Filter>Header Files\momo\stdish</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

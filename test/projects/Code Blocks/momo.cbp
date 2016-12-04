@@ -87,15 +87,16 @@
 		<Unit filename="../../../momo/UserSettings.h" />
 		<Unit filename="../../../momo/Utility.h" />
 		<Unit filename="../../../momo/details/ArrayBucket.h" />
+		<Unit filename="../../../momo/details/BucketUtility.h" />
 		<Unit filename="../../../momo/details/HashBucketLim4.h" />
 		<Unit filename="../../../momo/details/HashBucketLimP.h" />
 		<Unit filename="../../../momo/details/HashBucketLimP1.h" />
 		<Unit filename="../../../momo/details/HashBucketOneI.h" />
 		<Unit filename="../../../momo/details/HashBucketOneI1.h" />
 		<Unit filename="../../../momo/details/HashBucketUnlimP.h" />
-		<Unit filename="../../../momo/details/BucketUtility.h" />
 		<Unit filename="../../../momo/details/TreeNode.h" />
 		<Unit filename="../../../momo/stdish/map.h" />
+		<Unit filename="../../../momo/stdish/node_handle.h" />
 		<Unit filename="../../../momo/stdish/pool_allocator.h" />
 		<Unit filename="../../../momo/stdish/set.h" />
 		<Unit filename="../../../momo/stdish/unordered_map.h" />

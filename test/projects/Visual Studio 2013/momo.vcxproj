@@ -175,6 +175,7 @@
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
     <ClInclude Include="..\..\..\momo\SetUtility.h" />
     <ClInclude Include="..\..\..\momo\stdish\map.h" />
+    <ClInclude Include="..\..\..\momo\stdish\node_handle.h" />
     <ClInclude Include="..\..\..\momo\stdish\pool_allocator.h" />
     <ClInclude Include="..\..\..\momo\stdish\set.h" />
     <ClInclude Include="..\..\..\momo\stdish\unordered_map.h" />
