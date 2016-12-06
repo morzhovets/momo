@@ -676,12 +676,12 @@ public:
 
 	node_type extract(const_iterator where)
 	{
-		return node_type(*this, where);
+		return node_type(mTreeMap, ConstIteratorProxy::GetBaseIterator(where));
 	}
 
 	node_type extract(const key_type& key)
 	{
-		iterator iter = find(key);
+		const_iterator iter = find(key);
 		return (iter != end()) ? extract(iter) : node_type();
 	}
 

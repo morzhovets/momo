@@ -43,9 +43,9 @@ namespace internal
 		set_node_handle(const set_node_handle&) = delete;
 
 		template<typename Set>
-		set_node_handle(Set& set, typename Set::const_iterator iter)
+		set_node_handle(Set& set, typename Set::ConstIterator iter)
+			: mSetExtractedItem(set, iter)
 		{
-			set.get_nested_container().Remove(iter, mSetExtractedItem);
 		}
 
 		~set_node_handle() MOMO_NOEXCEPT
@@ -107,9 +107,9 @@ namespace internal
 		map_node_handle(const map_node_handle&) = delete;
 
 		template<typename Map>
-		map_node_handle(Map& map, typename Map::const_iterator iter)
+		map_node_handle(Map& map, typename Map::ConstIterator iter)
+			: mMapExtractedPair(map, iter)
 		{
-			map.get_nested_container().Remove(iter.GetBaseIterator(), mMapExtractedPair);
 		}
 
 		~map_node_handle() MOMO_NOEXCEPT
