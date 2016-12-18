@@ -28,9 +28,8 @@
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
   6. Functions `begin`, `cbegin` and iterator increment take
     O(bucket_count) time in worst case.
-  7. Functions `erase` take non-constant iterators and can throw
-    exceptions thrown by `key_type` and `mapped_type` move assignment
-	operators.
+  7. Functions `erase` can throw exceptions thrown by `key_type` and
+    `mapped_type` move assignment operators.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
@@ -98,14 +97,14 @@ private:
 	{
 		typedef const_iterator ConstIterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+			typename ConstIterator::BaseIterator)
 	};
 
 	struct IteratorProxy : public iterator
 	{
 		typedef iterator Iterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator,
-			typename Iterator::BaseIterator)
 	};
 
 public:
@@ -493,19 +492,17 @@ public:
 		return pvEmplace(std::move(keyArgs), std::move(mappedArgs));
 	}
 
-	//iterator erase(const_iterator where)
-	iterator erase(iterator where)
+	iterator erase(const_iterator where)
 	{
-		typename HashMultiMap::Iterator iter = IteratorProxy::GetBaseIterator(where);
-		typename HashMultiMap::KeyIterator keyIter = iter.GetKeyIterator();
+		typename HashMultiMap::ConstIterator iter = ConstIteratorProxy::GetBaseIterator(where);
+		typename HashMultiMap::ConstKeyIterator keyIter = iter.GetKeyIterator();
 		if (keyIter->values.GetCount() == 1)
 			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
 		else
 			return IteratorProxy(mHashMultiMap.Remove(iter));
 	}
 
-	//iterator erase(const_iterator first, const_iterator last)
-	iterator erase(iterator first, iterator last)
+	iterator erase(const_iterator first, const_iterator last)
 	{
 		if (first == begin() && last == end())
 		{
@@ -513,14 +510,17 @@ public:
 			return end();
 		}
 		if (first == last)
-			return first;
+		{
+			return IteratorProxy(mHashMultiMap.MakeMutableIterator(
+				ConstIteratorProxy::GetBaseIterator(first)));
+		}
 		if (std::next(first) == last)
 			return erase(first);
-		typename HashMultiMap::KeyIterator keyIter =
-			IteratorProxy::GetBaseIterator(first).GetKeyIterator();
+		typename HashMultiMap::ConstKeyIterator keyIter =
+			ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
 		size_t count = keyIter->values.GetCount();
 		MOMO_ASSERT(count > 0);
-		if (std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)) == IteratorProxy::GetBaseIterator(last))
+		if (ConstIteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1))) == last)
 			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
 		throw std::invalid_argument("invalid unordered_multimap erase arguments");
 	}
