@@ -23,7 +23,7 @@ namespace internal
 	template<typename TSetExtractedItem>
 	class set_node_handle
 	{
-	private:
+	protected:
 		typedef TSetExtractedItem SetExtractedItem;
 
 	public:
@@ -79,6 +79,12 @@ namespace internal
 		//void swap(set_node_handle&)
 		//friend void swap(set_node_handle&, set_node_handle&)
 
+	protected:
+		SetExtractedItem& ptGetExtractedItem() MOMO_NOEXCEPT
+		{
+			return mSetExtractedItem;
+		}
+
 	private:
 		mutable SetExtractedItem mSetExtractedItem;
 	};
@@ -86,7 +92,7 @@ namespace internal
 	template<typename TMapExtractedPair>
 	class map_node_handle
 	{
-	private:
+	protected:
 		typedef TMapExtractedPair MapExtractedPair;
 
 	public:
@@ -147,6 +153,12 @@ namespace internal
 
 		//void swap(map_node_handle&)
 		//friend void swap(map_node_handle&, map_node_handle&)
+
+	protected:
+		MapExtractedPair& ptGetExtractedPair() MOMO_NOEXCEPT
+		{
+			return mMapExtractedPair;
+		}
 
 	private:
 		mutable MapExtractedPair mMapExtractedPair;
