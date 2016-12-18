@@ -26,11 +26,7 @@ void main()
     typedef std::pair<int, int> P;
     P a1[] = {P(1, 1), P(2, 2), P(3, 3)};
     unordered_multimap<int, int> l1(a1, a1+3);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     LIBCPP_CATCH(l1.erase(next(l1.cbegin()), l1.cbegin()));
-#else
-    LIBCPP_CATCH(l1.erase(next(l1.begin()), l1.begin()));
-#endif
     //assert(false);
     }
 }

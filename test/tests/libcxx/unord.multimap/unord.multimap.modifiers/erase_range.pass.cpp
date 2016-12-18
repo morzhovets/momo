@@ -36,13 +36,8 @@ void main()
             P(2, "four"),
         };
         C c(a, a + sizeof(a)/sizeof(a[0]));
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         C::const_iterator i = c.find(2);
         C::const_iterator j = next(i, 2);
-#else
-        C::iterator i = c.find(2);
-        C::iterator j = next(i, 2);
-#endif
         C::iterator k = c.erase(i, i);
         assert(k == i);
         assert(c.size() == 6);
@@ -99,11 +94,7 @@ void main()
         assert((size_t)std::distance(c.begin(), c.end()) == c.size());
         assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         k = c.erase(c.cbegin(), c.cend());
-#else
-        k = c.erase(c.begin(), c.end());
-#endif
         assert(c.size() == 0);
         assert(k == c.end());
     }

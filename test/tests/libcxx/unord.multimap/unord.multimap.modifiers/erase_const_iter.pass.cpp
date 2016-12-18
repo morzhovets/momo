@@ -36,11 +36,7 @@ void main()
             P(2, "four"),
         };
         C c(a, a + sizeof(a)/sizeof(a[0]));
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         C::const_iterator i = c.find(2);
-#else
-        C::iterator i = c.find(2);
-#endif
         C::iterator j = c.erase(i);
         (void)j;
 
