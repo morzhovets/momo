@@ -18,7 +18,7 @@
   Deviations from the `std::unordered_multimap`:
   1. Each of duplicate keys stored only once.
   2. `max_load_factor`, `rehash`, `reserve`, `load_factor` and all
-    the functions, associated with the bucket, are not implemented.
+    the functions, associated with buckets or nodes, are not implemented.
   3. Container items must be movable (preferably without exceptions)
     or copyable, similar to items of `std::vector`.
   4. After each addition or removal of the item all iterators and
@@ -87,6 +87,8 @@ public:
 	typedef typename const_iterator::Pointer const_pointer;
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
+
+	//node_type;
 
 	//local_iterator;
 	//const_local_iterator;
@@ -527,6 +529,12 @@ public:
 	{
 		return mHashMultiMap.RemoveKey(key);
 	}
+
+	//iterator insert(node_type&& node)
+	//iterator insert(const_iterator, node_type&& node)
+	//node_type extract(const_iterator where)
+	//node_type extract(const key_type& key)
+	//void merge(...)
 
 	//size_type max_bucket_count() const MOMO_NOEXCEPT
 	//size_type bucket_count() const MOMO_NOEXCEPT
