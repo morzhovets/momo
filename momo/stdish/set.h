@@ -83,6 +83,16 @@ public:
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
 #endif
 
+private:
+#ifdef MOMO_USE_NODE_HANDLE
+	struct NodeTypeProxy : public node_type
+	{
+		typedef node_type NodeType;
+		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem,
+			typename NodeType::SetExtractedItem&)
+	};
+#endif
+
 public:
 	set()
 	{
@@ -487,8 +497,23 @@ public:
 	}
 
 #ifdef MOMO_USE_NODE_HANDLE
-	//insert_return_type insert(node_type&& node)
-	//iterator insert(const_iterator hint, node_type&& node)
+	insert_return_type insert(node_type&& node)
+	{
+		if (node.empty())
+			return { end(), false, node_type() };
+		typename TreeSet::InsertResult res = mTreeSet.Insert(
+			std::move(NodeTypeProxy::GetExtractedItem(node)));
+		return { res.iterator, res.inserted, res.inserted ? node_type() : std::move(node) };
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+		if (node.empty())
+			return end();
+		if (!pvCheckHint(hint, node.value()))
+			return insert(std::move(node)).position;
+		return mTreeSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
+	}
 
 	node_type extract(const_iterator where)
 	{

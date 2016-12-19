@@ -123,6 +123,15 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, TreeMapIterator)
 	};
 
+#ifdef MOMO_USE_NODE_HANDLE
+	struct NodeTypeProxy : public node_type
+	{
+		typedef node_type NodeType;
+		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair,
+			typename NodeType::MapExtractedPair&)
+	};
+#endif
+
 public:
 	map()
 	{
@@ -671,8 +680,26 @@ public:
 	}
 
 #ifdef MOMO_USE_NODE_HANDLE
-	//insert_return_type insert(node_type&& node)
-	//iterator insert(const_iterator hint, node_type&& node)
+	insert_return_type insert(node_type&& node)
+	{
+		if (node.empty())
+			return { end(), false, node_type() };
+		typename TreeMap::InsertResult res = mTreeMap.Insert(
+			std::move(NodeTypeProxy::GetExtractedPair(node)));
+		return { IteratorProxy(res.iterator), res.inserted,
+			res.inserted ? node_type() : std::move(node) };
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+		if (node.empty())
+			return end();
+		std::pair<iterator, bool> res = pvFind(hint, node.key());
+		if (!res.second)
+			return res.first;
+		return IteratorProxy(mTreeMap.Add(IteratorProxy::GetBaseIterator(res.first),
+			std::move(NodeTypeProxy::GetExtractedPair(node))));
+	}
 
 	node_type extract(const_iterator where)
 	{

@@ -88,6 +88,16 @@ public:
 	typedef typename HashSet::ConstBucketBounds::Iterator const_local_iterator;
 	typedef const_local_iterator local_iterator;
 
+private:
+#ifdef MOMO_USE_NODE_HANDLE
+	struct NodeTypeProxy : public node_type
+	{
+		typedef node_type NodeType;
+		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem,
+			typename NodeType::SetExtractedItem&)
+	};
+#endif
+
 public:
 	unordered_set()
 	{
@@ -467,8 +477,26 @@ public:
 	}
 
 #ifdef MOMO_USE_NODE_HANDLE
-	//insert_return_type insert(node_type&& node)
-	//iterator insert(const_iterator hint, node_type&& node)
+	insert_return_type insert(node_type&& node)
+	{
+		if (node.empty())
+			return { end(), false, node_type() };
+		typename HashSet::InsertResult res = mHashSet.Insert(
+			std::move(NodeTypeProxy::GetExtractedItem(node)));
+		return { res.iterator, res.inserted, res.inserted ? node_type() : std::move(node) };
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+		if (node.empty())
+			return end();
+		return mHashSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
+#else
+		(void)hint;
+		return insert(std::move(node)).position;
+#endif
+	}
 
 	node_type extract(const_iterator where)
 	{
