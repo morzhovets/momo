@@ -598,16 +598,18 @@ namespace internal
 	template<typename TMap>
 	class MapValueReferencer
 	{
-	public:
+	protected:
 		typedef TMap Map;
-		typedef typename Map::Key Key;
+
+	private:
 		typedef typename Map::Value Value;
+
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+		typedef typename Map::Key Key;
 		typedef typename Map::KeyValueTraits KeyValueTraits;
 		typedef typename Map::Iterator Iterator;
 		typedef typename Map::Settings Settings;
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
-	private:
 		template<typename RKey, typename PKey>
 		class ValueReference
 		{
@@ -683,6 +685,7 @@ namespace internal
 		typedef ValueReference<Key&&, Key*> ValueReferenceRKey;
 		typedef ValueReference<const Key&, const Key*> ValueReferenceCKey;
 #else
+	public:
 		typedef Value& ValueReferenceRKey;
 		typedef Value& ValueReferenceCKey;
 #endif

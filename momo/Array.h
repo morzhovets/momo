@@ -34,17 +34,18 @@ namespace internal
 	template<typename TItem, typename TSettings>
 	class ArrayPtrIterator
 	{
-	public:
+	protected:
 		typedef TItem Item;
 		typedef TSettings Settings;
 
+	public:
 		typedef Item& Reference;
 		typedef Item* Pointer;
 
 		typedef ArrayPtrIterator<const Item, Settings> ConstIterator;
 
 	public:
-		explicit ArrayPtrIterator(Item* pitem = nullptr) MOMO_NOEXCEPT
+		explicit ArrayPtrIterator(Pointer pitem = nullptr) MOMO_NOEXCEPT
 			: mItemPtr(pitem)
 		{
 		}
@@ -72,7 +73,7 @@ namespace internal
 			return mItemPtr - iter.GetItemPtr();
 		}
 
-		Item& operator*() const
+		Reference operator*() const
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
 			return *mItemPtr;
@@ -91,7 +92,7 @@ namespace internal
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayPtrIterator)
 
-		Item* GetItemPtr() const MOMO_NOEXCEPT
+		Pointer GetItemPtr() const MOMO_NOEXCEPT
 		{
 			return mItemPtr;
 		}

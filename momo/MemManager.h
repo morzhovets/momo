@@ -282,12 +282,12 @@ public:
 
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
-template<typename TItem>
-class MemManagerStd<std::allocator<TItem>>
+template<typename Item>
+class MemManagerStd<std::allocator<Item>>
 	: private std::allocator<char>, public MemManagerDefault
 {
 public:
-	typedef std::allocator<TItem> Allocator;
+	typedef std::allocator<Item> Allocator;
 	typedef std::allocator<char> CharAllocator;
 
 public:

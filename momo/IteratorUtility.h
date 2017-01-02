@@ -330,10 +330,11 @@ namespace internal
 	template<typename TBucketIterator, typename TBaseBucketBounds>
 	class HashDerivedBucketBounds
 	{
-	public:
-		typedef TBucketIterator BucketIterator;	//?
+	protected:
+		typedef TBucketIterator BucketIterator;
 		typedef TBaseBucketBounds BaseBucketBounds;
 
+	public:
 		typedef BucketIterator Iterator;
 
 		typedef HashDerivedBucketBounds<typename BucketIterator::ConstIterator,
@@ -360,12 +361,12 @@ namespace internal
 			return ConstBounds(mBaseBucketBounds);
 		}
 
-		BucketIterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
 			return BucketIteratorProxy(mBaseBucketBounds.GetBegin());
 		}
 
-		BucketIterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
 			return BucketIteratorProxy(mBaseBucketBounds.GetEnd());
 		}

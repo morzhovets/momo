@@ -73,9 +73,10 @@ namespace internal
 	template<typename TKeyIterator>
 	class HashMultiMapKeyBounds
 	{
-	public:
-		typedef TKeyIterator KeyIterator;	//?
+	protected:
+		typedef TKeyIterator KeyIterator;
 
+	public:
 		typedef KeyIterator Iterator;
 
 		typedef HashMultiMapKeyBounds<typename KeyIterator::ConstIterator> ConstBounds;
@@ -85,7 +86,7 @@ namespace internal
 		{
 		}
 
-		explicit HashMultiMapKeyBounds(KeyIterator begin) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyBounds(Iterator begin) MOMO_NOEXCEPT
 			: mBegin(begin)
 		{
 		}
@@ -95,12 +96,12 @@ namespace internal
 			return ConstBounds(mBegin);
 		}
 
-		KeyIterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
 			return mBegin;
 		}
 
-		KeyIterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
 			return KeyIterator();
 		}

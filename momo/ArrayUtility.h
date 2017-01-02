@@ -48,11 +48,11 @@
 	{ \
 		return *this + (-diff); \
 	} \
-	Item* operator->() const \
+	Pointer operator->() const \
 	{ \
 		return std::addressof(**this); \
 	} \
-	Item& operator[](ptrdiff_t diff) const \
+	Reference operator[](ptrdiff_t diff) const \
 	{ \
 		return *(*this + diff); \
 	} \
@@ -81,15 +81,19 @@ namespace internal
 	template<typename TArray, typename TItem>
 	class ArrayIndexIterator
 	{
-	public:
-		typedef TArray Array;
+	protected:
 		typedef TItem Item;
-		typedef typename Array::Settings Settings;
+
+	public:
+		typedef TArray Array;	//?
 
 		typedef Item& Reference;
 		typedef Item* Pointer;
 
 		typedef ArrayIndexIterator<const Array, const Item> ConstIterator;
+
+	private:
+		typedef typename Array::Settings Settings;
 
 	public:
 		ArrayIndexIterator() MOMO_NOEXCEPT
@@ -124,7 +128,7 @@ namespace internal
 			return mIndex - iter.GetIndex();
 		}
 
-		Item& operator*() const
+		Reference operator*() const
 		{
 			MOMO_CHECK(mArray != nullptr);
 			return (*mArray)[mIndex];
@@ -161,11 +165,13 @@ namespace internal
 	template<typename TItemTraits, size_t tCount>
 	class ArrayBuffer
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
 
+	public:
 		static const size_t count = tCount;
+
+		typedef typename ItemTraits::Item Item;
 
 	public:
 		const Item* operator&() const MOMO_NOEXCEPT
@@ -185,11 +191,13 @@ namespace internal
 	template<typename TItemTraits>
 	class ArrayBuffer<TItemTraits, 0>
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
-		//typedef typename ItemTraits::Item Item;
 
+	public:
 		static const size_t count = 0;
+
+		//typedef typename ItemTraits::Item Item;
 
 	public:
 		const void* operator&() const MOMO_NOEXCEPT
@@ -206,8 +214,10 @@ namespace internal
 	template<typename TItemTraits>
 	class ArrayItemHandler
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
+
+	public:
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -244,6 +254,8 @@ namespace internal
 	public:
 		typedef TArray Array;
 		typedef typename Array::Item Item;
+
+	private:
 		typedef typename Array::MemManager MemManager;
 		typedef typename Array::ItemTraits ItemTraits;
 		typedef typename Array::Settings Settings;
