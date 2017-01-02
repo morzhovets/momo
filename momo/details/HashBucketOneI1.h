@@ -23,8 +23,10 @@ namespace internal
 	template<typename TItemTraits>
 	class BucketOneI1
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
+
+	public:
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

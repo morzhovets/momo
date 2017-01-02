@@ -51,12 +51,10 @@ namespace internal
 		typename TArraySettings>
 	class BucketUnlimP
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxFastCount = tMaxFastCount;
 
@@ -67,10 +65,13 @@ namespace internal
 			ArraySettings> ArrayBucket;
 
 	public:
-		typedef typename ArrayBucket::Params Params;
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef typename ArrayBucket::ConstBounds ConstBounds;
 		typedef typename ArrayBucket::Bounds Bounds;
+
+		typedef typename ArrayBucket::Params Params;
 
 	public:
 		BucketUnlimP() MOMO_NOEXCEPT

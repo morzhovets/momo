@@ -78,15 +78,17 @@ namespace internal
 		typename TArraySettings>
 	class ArrayBucket
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxFastCount = tMaxFastCount;
 		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;

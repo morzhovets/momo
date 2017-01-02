@@ -23,15 +23,17 @@ namespace internal
 	template<typename TItemTraits, size_t tLogMaxCount, size_t tMemPoolBlockCount>
 	class BucketLim4
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t logMaxCount = tLogMaxCount;
 		MOMO_STATIC_ASSERT(0 < logMaxCount && logMaxCount <= 4);	//?
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;

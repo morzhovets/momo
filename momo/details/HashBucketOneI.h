@@ -23,9 +23,11 @@ namespace internal
 	template<typename TItemTraits, typename TStater>
 	class BucketOneI
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TStater Stater;
+
+	public:
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

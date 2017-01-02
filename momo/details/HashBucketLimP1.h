@@ -23,16 +23,18 @@ namespace internal
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
 	class BucketLimP1
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const size_t alignment = tAlignment;
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;

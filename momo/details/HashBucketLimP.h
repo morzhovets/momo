@@ -26,16 +26,18 @@ namespace internal
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false>
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const bool usePtrState = false;
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
@@ -258,16 +260,18 @@ namespace internal
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true>
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		static const bool usePtrState = true;
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;

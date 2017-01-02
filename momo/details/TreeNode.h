@@ -23,11 +23,9 @@ namespace internal
 		typename TMemPoolParams, bool tIsContinuous>
 	class Node
 	{
-	public:
+	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
-		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
 
 		static const size_t maxCapacity = tMaxCapacity;
 		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
@@ -37,6 +35,10 @@ namespace internal
 
 		static const bool isContinuous = tIsContinuous;
 		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
+
+	public:
+		typedef typename ItemTraits::Item Item;
+		typedef typename ItemTraits::MemManager MemManager;
 
 	private:
 		typedef BoolConstant<isContinuous> IsContinuous;
