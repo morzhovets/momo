@@ -10,6 +10,7 @@
     class unordered_multimap_open
 
   This classes are similar to `std::unordered_multimap`.
+
   `unordered_multimap` is much more efficient than standard one in
   memory usage. Its implementation is based on hash tables with
   buckets in the form of small arrays.

@@ -10,9 +10,10 @@
     class vector_intcap
 
   This classes are similar to `std::vector`.
-  `stdish::vector_intcap` is vector with internal capacity.
-  This vector doesn't need dynamic memory while its size is not greater
-  than user-defined constant.
+
+  `stdish::vector_intcap` is vector with internal capacity. This vector
+  doesn't need dynamic memory while its size is not greater than
+  user-defined constant.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
