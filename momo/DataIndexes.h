@@ -19,13 +19,13 @@ namespace experimental
 
 namespace internal
 {
-	template<typename TColumnList, typename TDataTraits, typename TMemManager>
+	template<typename TColumnList, typename TDataTraits>
 	class DataIndexes
 	{
 	public:
 		typedef TColumnList ColumnList;
 		typedef TDataTraits DataTraits;
-		typedef TMemManager MemManager;
+		typedef typename ColumnList::MemManager MemManager;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>

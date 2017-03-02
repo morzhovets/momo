@@ -37,13 +37,12 @@ public:
 
 		std::cout << "momo::experimental::DataColumnList: " << std::flush;
 		typedef momo::experimental::DataColumnList<momo::experimental::DataColumnTraits<Struct>> Columns;
-		Columns columns(&Struct::strCol, &Struct::intCol, &Struct::dblCol);
-		TestData(columns);
+		TestData(Columns(&Struct::strCol, &Struct::intCol, &Struct::dblCol));
 		std::cout << "ok" << std::endl;
 	}
 
 	template<typename DataColumnList>
-	static void TestData(const DataColumnList& columns)
+	static void TestData(DataColumnList&& columns)
 	{
 		typedef momo::experimental::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;
@@ -51,7 +50,7 @@ public:
 		static const size_t count = 1024;
 		static const size_t count2 = 10;
 
-		DataTable table(columns);
+		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
 		assert(table.AddUniqueHashIndex(&Struct::intCol, &Struct::strCol));

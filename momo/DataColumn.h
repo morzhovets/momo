@@ -24,10 +24,12 @@ namespace momo
 namespace experimental
 {
 
-template<typename TStruct>
+template<typename TStruct,
+	typename TMemManager = MemManagerDefault>
 struct DataColumnTraits
 {
 	typedef TStruct Struct;
+	typedef TMemManager MemManager;
 
 	template<typename Type>
 	using Column = Type Struct::*;
@@ -53,19 +55,19 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	static void Create(/*const Column<Type>& column,*/ Type* pitem)
+	static void Create(MemManager& memManager, Type* pitem /*, const Column<Type>& column*/)
 	{
-		new(pitem) Type();
+		(typename momo::internal::ObjectManager<Type, MemManager>::template Creator<>(memManager))(pitem);
 	}
 
 	template<typename Type>
-	static void Destroy(/*const Column<Type>& column,*/ Type* pitem) MOMO_NOEXCEPT
+	static void Destroy(MemManager& memManager, Type* pitem /*, const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
-		pitem->~Type();
+		momo::internal::ObjectManager<Type, MemManager>::Destroy(memManager, *pitem);
 	}
 
 	template<typename TypeArg, typename Type>
-	static void Assign(TypeArg&& itemArg, Type& item)
+	static void Assign(/*MemManager& memManager,*/ TypeArg&& itemArg, Type& item)
 	{
 		item = std::forward<TypeArg>(itemArg);
 	}
@@ -77,6 +79,7 @@ class DataColumnList
 {
 public:
 	typedef TColumnTraits ColumnTraits;
+	typedef typename ColumnTraits::MemManager MemManager;
 
 	static const size_t logMaxColumnCount = tLogMaxColumnCount;
 	MOMO_STATIC_ASSERT(logMaxColumnCount <= 15);
@@ -162,12 +165,19 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
-	typedef std::function<void(Raw*)> CreateFunc;
-	typedef std::function<void(Raw*)> DestroyFunc;
+	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
+	typedef std::function<void(MemManager&, Raw*)> DestroyFunc;
 
 public:
 	template<typename... Types>
 	explicit DataColumnList(const Column<Types>&... columns)
+		: DataColumnList(MemManager(), columns...)
+	{
+	}
+
+	template<typename... Types>
+	explicit DataColumnList(MemManager&& memManager, const Column<Types>&... columns)
+		: mMemManager(std::move(memManager))
 	{
 		static const size_t columnCount = sizeof...(columns);
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
@@ -182,13 +192,49 @@ public:
 			if (!graph.FillAddends(mAddends.data(), v))
 				throw std::runtime_error("Cannot create DataColumnListVar");	//?
 		}
-		mCreateFunc = [] (Raw* raw) { pvCreate<void, Types...>(raw, 0); };
-		mDestroyFunc = [] (Raw* raw) { pvDestroy<void, Types...>(raw, 0); };
+		mCreateFunc = [] (MemManager& memManager, Raw* raw)
+			{ pvCreate<void, Types...>(memManager, raw, 0); };
+		mDestroyFunc = [] (MemManager& memManager, Raw* raw)
+			{ pvDestroy<void, Types...>(memManager, raw, 0); };
 	}
 
-	static constexpr bool IsMutable(size_t /*offset*/) MOMO_NOEXCEPT
+	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
+		: mMemManager(std::move(columnList.mMemManager)),
+		mTotalSize(columnList.mTotalSize),
+		mAddends(columnList.mAddends),
+		mCreateFunc(std::move(columnList.mCreateFunc)),
+		mDestroyFunc(std::move(columnList.mDestroyFunc))
 	{
-		return false;
+	}
+
+	DataColumnList(const DataColumnList& columnList)
+		: mMemManager(columnList.mMemManager),
+		mTotalSize(columnList.mTotalSize),
+		mAddends(columnList.mAddends),
+		mCreateFunc(columnList.mCreateFunc),
+		mDestroyFunc(columnList.mDestroyFunc)
+	{
+	}
+
+	~DataColumnList() MOMO_NOEXCEPT
+	{
+	}
+
+	DataColumnList& operator=(const DataColumnList&) = delete;
+
+	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	{
+		return mMemManager;
+	}
+
+	MemManager& GetMemManager() MOMO_NOEXCEPT
+	{
+		return mMemManager;
+	}
+
+	bool IsMutable(size_t /*offset*/) const MOMO_NOEXCEPT
+	{
+		return false;	//?
 	}
 
 	size_t GetTotalSize() const MOMO_NOEXCEPT
@@ -196,14 +242,14 @@ public:
 		return mTotalSize;
 	}
 
-	void CreateRaw(Raw* raw) const
+	void CreateRaw(Raw* raw)
 	{
-		mCreateFunc(raw);
+		mCreateFunc(mMemManager, raw);
 	}
 
-	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		mDestroyFunc(raw);
+		mDestroyFunc(mMemManager, raw);
 	}
 
 	template<typename Type>
@@ -238,7 +284,8 @@ public:
 	template<typename Type, typename TypeArg>
 	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
 	{
-		ColumnTraits::Assign(std::forward<TypeArg>(itemArg), GetByOffset<Type>(raw, offset));
+		ColumnTraits::Assign(/*mMemManager,*/ std::forward<TypeArg>(itemArg),
+			GetByOffset<Type>(raw, offset));
 	}
 
 private:
@@ -274,36 +321,36 @@ private:
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void pvCreate(Raw* raw, size_t offset)
+	static void pvCreate(MemManager& memManager, Raw* raw, size_t offset)
 	{
 		pvCorrectOffset<Type>(offset);
-		ColumnTraits::Create(reinterpret_cast<Type*>(raw + offset));
+		ColumnTraits::Create(memManager, reinterpret_cast<Type*>(raw + offset));
 		try
 		{
-			pvCreate<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
+			pvCreate<void, Types...>(memManager, raw, offset + ColumnTraits::template GetSize<Type>());
 		}
 		catch (...)
 		{
-			ColumnTraits::Destroy(reinterpret_cast<Type*>(raw + offset));
+			ColumnTraits::Destroy(memManager, reinterpret_cast<Type*>(raw + offset));
 			throw;
 		}
 	}
 
 	template<typename Void>
-	static void pvCreate(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvCreate(MemManager& /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void pvDestroy(Raw* raw, size_t offset) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager& memManager, Raw* raw, size_t offset) MOMO_NOEXCEPT
 	{
 		pvCorrectOffset<Type>(offset);
-		ColumnTraits::Destroy(reinterpret_cast<Type*>(raw + offset));
-		pvDestroy<void, Types...>(raw, offset + ColumnTraits::template GetSize<Type>());
+		ColumnTraits::Destroy(memManager, reinterpret_cast<Type*>(raw + offset));
+		pvDestroy<void, Types...>(memManager, raw, offset + ColumnTraits::template GetSize<Type>());
 	}
 
 	template<typename Void>
-	static void pvDestroy(Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager& /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
@@ -315,17 +362,20 @@ private:
 	}
 
 private:
+	MemManager mMemManager;
 	size_t mTotalSize;
 	Addends mAddends;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
 };
 
-template<typename TStruct>
+template<typename TStruct,
+	typename TMemManager = MemManagerDefault>
 class DataColumnListStatic
 {
 public:
 	typedef TStruct Struct;
+	typedef TMemManager MemManager;
 
 	template<typename Type>
 	using Column = Type Struct::*;
@@ -333,13 +383,44 @@ public:
 	typedef Struct Raw;
 
 private:
+	typedef momo::internal::ObjectManager<Raw, MemManager> RawManager;
+
 	static const size_t structSize = sizeof(Struct);
 
 	typedef std::bitset<structSize> MutOffsets;
 
 public:
-	DataColumnListStatic() MOMO_NOEXCEPT
+	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
+		: mMemManager(std::move(memManager))
 	{
+	}
+
+	DataColumnListStatic(DataColumnListStatic&& columnList) MOMO_NOEXCEPT
+		: mMemManager(std::move(columnList.mMemManager)),
+		mMutOffsets(columnList.mMutOffsets)
+	{
+	}
+
+	DataColumnListStatic(const DataColumnListStatic& columnList)
+		: mMemManager(columnList.mMemManager),
+		mMutOffsets(columnList.mMutOffsets)
+	{
+	}
+
+	~DataColumnListStatic() MOMO_NOEXCEPT
+	{
+	}
+
+	DataColumnListStatic& operator=(const DataColumnListStatic&) = delete;
+
+	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	{
+		return mMemManager;
+	}
+
+	MemManager& GetMemManager() MOMO_NOEXCEPT
+	{
+		return mMemManager;
 	}
 
 	template<typename... Types>
@@ -353,20 +434,19 @@ public:
 		return mMutOffsets.test(offset);
 	}
 
-	static constexpr size_t GetTotalSize() MOMO_NOEXCEPT
+	size_t GetTotalSize() const MOMO_NOEXCEPT
 	{
 		return structSize;
 	}
 
-	void CreateRaw(Raw* raw) const
+	void CreateRaw(Raw* raw)
 	{
-		new(raw) Raw();
+		(typename RawManager::template Creator<>(mMemManager))(raw);
 	}
 
-	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		(void)raw;
-		raw->~Raw();
+		RawManager::Destroy(mMemManager, *raw);
 	}
 
 	template<typename Type>
@@ -411,6 +491,7 @@ private:
 	}
 
 private:
+	MemManager mMemManager;
 	MutOffsets mMutOffsets;
 };
 

@@ -42,14 +42,13 @@ struct DataTraits
 };
 
 template<typename TColumnList,
-	typename TDataTraits = DataTraits,
-	typename TMemManager = MemManagerDefault>
+	typename TDataTraits = DataTraits>
 class DataTable
 {
 public:
 	typedef TColumnList ColumnList;
 	typedef TDataTraits DataTraits;
-	typedef TMemManager MemManager;
+	typedef typename ColumnList::MemManager MemManager;
 	typedef typename ColumnList::Raw Raw;
 
 	template<typename Type>
@@ -63,7 +62,7 @@ public:
 	typedef typename Selection::ConstSelection ConstSelection;
 
 private:
-	typedef internal::DataIndexes<ColumnList, DataTraits, MemManager> Indexes;
+	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
@@ -93,24 +92,14 @@ private:
 		struct Data
 		{
 			ColumnList columnList;
-			MemManager memManager;
 			FreeRaws freeRaws;
 		};
 
 	public:
-		Crew(const ColumnList& columnList, MemManager&& memManager)
+		explicit Crew(ColumnList&& columnList)
 		{
-			mData = memManager.template Allocate<Data>(sizeof(Data));
-			try
-			{
-				new(&mData->columnList) ColumnList(columnList);
-			}
-			catch (...)
-			{
-				memManager.Deallocate(mData, sizeof(Data));
-				throw;
-			}
-			new(&mData->memManager) MemManager(std::move(memManager));
+			mData = columnList.GetMemManager().template Allocate<Data>(sizeof(Data));
+			new(&mData->columnList) ColumnList(std::move(columnList));
 			new(&mData->freeRaws) FreeRaws(nullptr);
 		}
 
@@ -126,11 +115,10 @@ private:
 		{
 			if (!IsNull())
 			{
+				ColumnList columnList = std::move(mData->columnList);
 				mData->columnList.~ColumnList();
 				mData->freeRaws.~FreeRaws();
-				MemManager memManager = std::move(GetMemManager());
-				GetMemManager().~MemManager();
-				memManager.Deallocate(mData, sizeof(Data));
+				columnList.GetMemManager().Deallocate(mData, sizeof(Data));
 			}
 		}
 
@@ -152,16 +140,10 @@ private:
 			return mData->columnList;
 		}
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		ColumnList& GetColumnList() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
-			return mData->memManager;
-		}
-
-		MemManager& GetMemManager() MOMO_NOEXCEPT
-		{
-			MOMO_ASSERT(!IsNull());
-			return mData->memManager;
+			return mData->columnList;
 		}
 
 		FreeRaws& GetFreeRaws() MOMO_NOEXCEPT
@@ -175,9 +157,8 @@ private:
 	};
 
 public:
-	explicit DataTable(const ColumnList& columnList = ColumnList(),
-		MemManager&& memManager = MemManager())
-		: mCrew(columnList, std::move(memManager)),
+	explicit DataTable(ColumnList&& columnList = ColumnList())
+		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
 		mRawMemPool(typename RawMemPool::Params(pvGetRawSize()), MemManagerPtr(GetMemManager())),
 		mIndexes(&GetColumnList(), GetMemManager())
@@ -224,12 +205,12 @@ public:
 
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
 	{
-		return mCrew.GetMemManager();
+		return mCrew.GetColumnList().GetMemManager();
 	}
 
 	MemManager& GetMemManager() MOMO_NOEXCEPT
 	{
-		return mCrew.GetMemManager();
+		return mCrew.GetColumnList().GetMemManager();
 	}
 
 	size_t GetCount() const MOMO_NOEXCEPT
@@ -270,7 +251,7 @@ public:
 	Row NewRow()
 	{
 		pvFreeNewRaws();
-		return Row(&GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
+		return Row(&mCrew.GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -433,7 +414,7 @@ private:
 		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			GetColumnList().CreateRaw(raw);
+			mCrew.GetColumnList().CreateRaw(raw);
 		}
 		catch (...)
 		{
@@ -454,7 +435,7 @@ private:
 
 	void pvFreeRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		GetColumnList().DestroyRaw(raw);
+		mCrew.GetColumnList().DestroyRaw(raw);
 		mRawMemPool.Deallocate(raw);
 	}
 
