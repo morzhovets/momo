@@ -50,6 +50,8 @@ public:
 		static const size_t count = 1024;
 		static const size_t count2 = 10;
 
+		columns.SetMutable(&Struct::dblCol);
+
 		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
@@ -61,9 +63,12 @@ public:
 		{
 			DataRow row = table.NewRow(&Struct::intCol, (int)i / 2);
 			row[&Struct::strCol] = (i % 2 == 0) ? "0" : "1";
-			row[&Struct::dblCol] = (double)i / 2;
+			row[&Struct::dblCol] = 0;
 			table.AddRow(std::move(row));
 		}
+
+		for (size_t i = 0; i < count; ++i)
+			table[i][&Struct::dblCol] = (double)i / 2;
 
 		assert(table.HasUniqueHashIndex(&Struct::intCol, &Struct::strCol));
 		assert(table.HasMultiHashIndex(&Struct::intCol));

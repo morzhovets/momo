@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "ObjectManager.h"
+#include "Array.h"
 
 #include <bitset>
 
@@ -165,6 +165,9 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
+	static const size_t mutOffsetsIntCapacity = (1 << logMaxColumnCount) * sizeof(void*);
+	typedef ArrayIntCap<mutOffsetsIntCapacity, unsigned char, MemManager> MutOffsets;
+
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
 
@@ -177,12 +180,13 @@ public:
 
 	template<typename... Types>
 	explicit DataColumnList(MemManager&& memManager, const Column<Types>&... columns)
-		: mMemManager(std::move(memManager))
+		: mMutOffsets(std::move(memManager))
 	{
 		static const size_t columnCount = sizeof...(columns);
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
 		Graph<2 * columnCount> graph;
 		pvMakeGraph(graph, 0, 1, columns...);
+		mMutOffsets.SetCount(mTotalSize / 8 + 1, (unsigned char)0);
 		std::fill(mAddends.begin(), mAddends.end(), 0);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
@@ -199,18 +203,18 @@ public:
 	}
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
-		: mMemManager(std::move(columnList.mMemManager)),
-		mTotalSize(columnList.mTotalSize),
+		: mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
+		mMutOffsets(std::move(columnList.mMutOffsets)),
 		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
 		mDestroyFunc(std::move(columnList.mDestroyFunc))
 	{
 	}
 
 	DataColumnList(const DataColumnList& columnList)
-		: mMemManager(columnList.mMemManager),
-		mTotalSize(columnList.mTotalSize),
+		: mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
+		mMutOffsets(columnList.mMutOffsets),
 		mCreateFunc(columnList.mCreateFunc),
 		mDestroyFunc(columnList.mDestroyFunc)
 	{
@@ -224,17 +228,23 @@ public:
 
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
 	{
-		return mMemManager;
+		return mMutOffsets.GetMemManager();
 	}
 
 	MemManager& GetMemManager() MOMO_NOEXCEPT
 	{
-		return mMemManager;
+		return mMutOffsets.GetMemManager();
 	}
 
-	bool IsMutable(size_t /*offset*/) const MOMO_NOEXCEPT
+	template<typename... Types>
+	void SetMutable(const Column<Types>&... columns)
 	{
-		return false;	//?
+		pvSetMutable(columns...);
+	}
+
+	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
+	{
+		return (mMutOffsets[offset / 8] & (unsigned char)(1 << (offset % 8))) != 0;
 	}
 
 	size_t GetTotalSize() const MOMO_NOEXCEPT
@@ -244,7 +254,7 @@ public:
 
 	void CreateRaw(Raw* raw)
 	{
-		mCreateFunc(mMemManager, raw);
+		mCreateFunc(GetMemManager(), raw);
 	}
 
 	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
@@ -254,7 +264,7 @@ public:
 
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		mDestroyFunc(&mMemManager, raw);
+		mDestroyFunc(&GetMemManager(), raw);
 	}
 
 	template<typename Type>
@@ -313,6 +323,18 @@ private:
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
+	template<typename Type, typename... Types>
+	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
+	{
+		size_t offset = GetOffset(column);
+		mMutOffsets[offset / 8] |= (unsigned char)(1 << (offset % 8));
+		pvSetMutable(columns...);
+	}
+
+	void pvSetMutable() MOMO_NOEXCEPT
+	{
+	}
+
 	template<typename Type>
 	static std::pair<size_t, size_t> pvGetVertices(const Column<Type>& column) MOMO_NOEXCEPT
 	{
@@ -366,9 +388,9 @@ private:
 	}
 
 private:
-	MemManager mMemManager;
 	size_t mTotalSize;
 	Addends mAddends;
+	MutOffsets mMutOffsets;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
 };
