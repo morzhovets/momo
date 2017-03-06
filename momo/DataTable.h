@@ -173,7 +173,42 @@ public:
 	{
 	}
 
-	DataTable(const DataTable&) = delete;
+	DataTable(const DataTable& table)
+		: DataTable(ColumnList(table.GetColumnList()))
+	{
+		mRaws.Reserve(table.GetCount());
+		try
+		{
+			for (const Raw* srcRaw : table.mRaws)
+			{
+				Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
+				try
+				{
+					mCrew.GetColumnList().CopyRaw(srcRaw, dstRaw);
+					try
+					{
+						mIndexes.AddRaw(dstRaw);
+					}
+					catch (...)
+					{
+						mCrew.GetColumnList().DestroyRaw(dstRaw);
+						throw;
+					}
+				}
+				catch (...)
+				{
+					mRawMemPool.Deallocate(dstRaw);
+					throw;
+				}
+				mRaws.AddBackNogrow(dstRaw);
+			}
+		}
+		catch (...)
+		{
+			pvFreeRaws();
+			throw;
+		}
+	}
 
 	~DataTable() MOMO_NOEXCEPT
 	{
@@ -186,7 +221,12 @@ public:
 		return *this;
 	}
 
-	DataTable& operator=(const DataTable&) = delete;
+	DataTable& operator=(const DataTable& table)
+	{
+		if (this != &table)
+			DataTable(table).Swap(*this);
+		return *this;
+	}
 
 	void Swap(DataTable& table) MOMO_NOEXCEPT
 	{

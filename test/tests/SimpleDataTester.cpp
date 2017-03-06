@@ -101,6 +101,9 @@ public:
 		assert(table.Select(&Struct::dblCol, 1.0).GetCount() == 1);
 		assert(ctable.Select(&Struct::dblCol, 1.0).GetCount() == 1);
 
+		DataTable tableCopy(table);
+		assert(tableCopy.GetCount() == count);
+
 		table.Clear();
 		assert(table.IsEmpty());
 	}

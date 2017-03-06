@@ -56,7 +56,7 @@ namespace internal
 		{
 			if (mRaw == nullptr)
 				return;
-			mColumnList->DestroyRaw(mRaw);	//?
+			mColumnList->DestroyRaw(mRaw);
 			while (true)
 			{
 				Raw* headRaw = *mFreeRaws;

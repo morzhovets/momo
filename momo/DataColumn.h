@@ -26,14 +26,20 @@ namespace experimental
 
 template<typename TStruct,
 	typename TMemManager = MemManagerDefault>
-struct DataColumnTraits
+class DataColumnTraits
 {
+public:
 	typedef TStruct Struct;
 	typedef TMemManager MemManager;
 
 	template<typename Type>
 	using Column = Type Struct::*;
 
+private:
+	template<typename Type>
+	using ItemManager = momo::internal::ObjectManager<Type, MemManager>;
+
+public:
 	template<typename Type>
 	static size_t GetCode(const Column<Type>& column) MOMO_NOEXCEPT
 	{
@@ -55,15 +61,22 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	static void Create(MemManager& memManager, Type* pitem /*, const Column<Type>& column*/)
+	static void Create(MemManager& memManager, Type* item /*, const Column<Type>& column*/)
 	{
-		(typename momo::internal::ObjectManager<Type, MemManager>::template Creator<>(memManager))(pitem);
+		(typename ItemManager<Type>::template Creator<>(memManager))(item);
 	}
 
 	template<typename Type>
-	static void Destroy(MemManager* memManager, Type* pitem /*, const Column<Type>& column*/) MOMO_NOEXCEPT
+	static void Destroy(MemManager* memManager, Type* item /*, const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
-		momo::internal::ObjectManager<Type, MemManager>::Destroy(memManager, *pitem);
+		ItemManager<Type>::Destroy(memManager, *item);
+	}
+
+	template<typename Type>
+	static void Copy(MemManager& memManager, const Type* srcItem, Type* dstItem
+		/*, const Column<Type>& column*/)
+	{
+		ItemManager<Type>::Copy(memManager, *srcItem, dstItem);
 	}
 
 	template<typename TypeArg, typename Type>
@@ -170,6 +183,7 @@ private:
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
+	typedef std::function<void(MemManager&, const Raw*, Raw*)> CopyFunc;
 
 public:
 	template<typename... Types>
@@ -200,6 +214,8 @@ public:
 			{ pvCreate<void, Types...>(memManager, raw, 0); };
 		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
 			{ pvDestroy<void, Types...>(memManager, raw, 0); };
+		mCopyFunc = [] (MemManager& memManager, const Raw* srcRaw, Raw* dstRaw)
+			{ pvCopy<void, Types...>(memManager, srcRaw, dstRaw, 0); };
 	}
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
@@ -207,7 +223,8 @@ public:
 		mAddends(columnList.mAddends),
 		mMutOffsets(std::move(columnList.mMutOffsets)),
 		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
-		mDestroyFunc(std::move(columnList.mDestroyFunc))
+		mDestroyFunc(std::move(columnList.mDestroyFunc)),
+		mCopyFunc(std::move(columnList.mCopyFunc))
 	{
 	}
 
@@ -216,7 +233,8 @@ public:
 		mAddends(columnList.mAddends),
 		mMutOffsets(columnList.mMutOffsets),
 		mCreateFunc(columnList.mCreateFunc),
-		mDestroyFunc(columnList.mDestroyFunc)
+		mDestroyFunc(columnList.mDestroyFunc),
+		mCopyFunc(columnList.mCopyFunc)
 	{
 	}
 
@@ -265,6 +283,11 @@ public:
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
 		mDestroyFunc(&GetMemManager(), raw);
+	}
+
+	void CopyRaw(const Raw* srcRaw, Raw* dstRaw)
+	{
+		mCopyFunc(GetMemManager(), srcRaw, dstRaw);
 	}
 
 	template<typename Type>
@@ -380,6 +403,30 @@ private:
 	{
 	}
 
+	template<typename Void, typename Type, typename... Types>
+	static void pvCopy(MemManager& memManager, const Raw* srcRaw, Raw* dstRaw, size_t offset)
+	{
+		pvCorrectOffset<Type>(offset);
+		ColumnTraits::Copy(memManager, reinterpret_cast<const Type*>(srcRaw + offset),
+			reinterpret_cast<Type*>(dstRaw + offset));
+		try
+		{
+			pvCopy<void, Types...>(memManager, srcRaw, dstRaw,
+				offset + ColumnTraits::template GetSize<Type>());
+		}
+		catch (...)
+		{
+			ColumnTraits::Destroy(&memManager, reinterpret_cast<Type*>(dstRaw + offset));
+			throw;
+		}
+	}
+
+	template<typename Void>
+	static void pvCopy(MemManager& /*memManager*/, const Raw* /*srcRaw*/, Raw* /*dstRaw*/,
+		size_t /*offset*/) MOMO_NOEXCEPT
+	{
+	}
+
 	template<typename Type>
 	static void pvCorrectOffset(size_t& offset) MOMO_NOEXCEPT
 	{
@@ -393,6 +440,7 @@ private:
 	MutOffsets mMutOffsets;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
+	CopyFunc mCopyFunc;
 };
 
 template<typename TStruct,
@@ -478,6 +526,11 @@ public:
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
 		RawManager::Destroy(&mMemManager, *raw);
+	}
+
+	void CopyRaw(const Raw* srcRaw, Raw* dstRaw)
+	{
+		RawManager::Copy(mMemManager, *srcRaw, dstRaw);
 	}
 
 	template<typename Type>

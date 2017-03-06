@@ -430,12 +430,6 @@ namespace internal
 		{
 		}
 
-		//DataIndexes& operator=(DataIndexes&& indexes) MOMO_NOEXCEPT
-		//{
-		//	DataIndexes(std::move(indexes)).Swap(*this);
-		//	return *this;
-		//}
-
 		DataIndexes& operator=(const DataIndexes&) = delete;
 
 		void Swap(DataIndexes& indexes) MOMO_NOEXCEPT
