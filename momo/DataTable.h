@@ -251,7 +251,7 @@ public:
 	Row NewRow()
 	{
 		pvFreeNewRaws();
-		return Row(&mCrew.GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
+		return Row(&GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>

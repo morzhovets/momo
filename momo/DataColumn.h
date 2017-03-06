@@ -61,13 +61,13 @@ struct DataColumnTraits
 	}
 
 	template<typename Type>
-	static void Destroy(MemManager& memManager, Type* pitem /*, const Column<Type>& column*/) MOMO_NOEXCEPT
+	static void Destroy(MemManager* memManager, Type* pitem /*, const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
 		momo::internal::ObjectManager<Type, MemManager>::Destroy(memManager, *pitem);
 	}
 
 	template<typename TypeArg, typename Type>
-	static void Assign(/*MemManager& memManager,*/ TypeArg&& itemArg, Type& item)
+	static void Assign(TypeArg&& itemArg, Type& item)
 	{
 		item = std::forward<TypeArg>(itemArg);
 	}
@@ -166,7 +166,7 @@ private:
 	typedef std::array<size_t, vertexCount> Addends;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
-	typedef std::function<void(MemManager&, Raw*)> DestroyFunc;
+	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
 
 public:
 	template<typename... Types>
@@ -194,7 +194,7 @@ public:
 		}
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
 			{ pvCreate<void, Types...>(memManager, raw, 0); };
-		mDestroyFunc = [] (MemManager& memManager, Raw* raw)
+		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
 			{ pvDestroy<void, Types...>(memManager, raw, 0); };
 	}
 
@@ -202,7 +202,7 @@ public:
 		: mMemManager(std::move(columnList.mMemManager)),
 		mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
-		mCreateFunc(std::move(columnList.mCreateFunc)),
+		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
 		mDestroyFunc(std::move(columnList.mDestroyFunc))
 	{
 	}
@@ -247,9 +247,14 @@ public:
 		mCreateFunc(mMemManager, raw);
 	}
 
+	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	{
+		mDestroyFunc(nullptr, raw);
+	}
+
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		mDestroyFunc(mMemManager, raw);
+		mDestroyFunc(&mMemManager, raw);
 	}
 
 	template<typename Type>
@@ -284,8 +289,7 @@ public:
 	template<typename Type, typename TypeArg>
 	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
 	{
-		ColumnTraits::Assign(/*mMemManager,*/ std::forward<TypeArg>(itemArg),
-			GetByOffset<Type>(raw, offset));
+		ColumnTraits::Assign(std::forward<TypeArg>(itemArg), GetByOffset<Type>(raw, offset));
 	}
 
 private:
@@ -331,7 +335,7 @@ private:
 		}
 		catch (...)
 		{
-			ColumnTraits::Destroy(memManager, reinterpret_cast<Type*>(raw + offset));
+			ColumnTraits::Destroy(&memManager, reinterpret_cast<Type*>(raw + offset));
 			throw;
 		}
 	}
@@ -342,7 +346,7 @@ private:
 	}
 
 	template<typename Void, typename Type, typename... Types>
-	static void pvDestroy(MemManager& memManager, Raw* raw, size_t offset) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) MOMO_NOEXCEPT
 	{
 		pvCorrectOffset<Type>(offset);
 		ColumnTraits::Destroy(memManager, reinterpret_cast<Type*>(raw + offset));
@@ -350,7 +354,7 @@ private:
 	}
 
 	template<typename Void>
-	static void pvDestroy(MemManager& /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager* /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
 	{
 	}
 
@@ -444,9 +448,14 @@ public:
 		(typename RawManager::template Creator<>(mMemManager))(raw);
 	}
 
+	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	{
+		RawManager::Destroy(nullptr, *raw);
+	}
+
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
 	{
-		RawManager::Destroy(mMemManager, *raw);
+		RawManager::Destroy(&mMemManager, *raw);
 	}
 
 	template<typename Type>

@@ -34,7 +34,7 @@ namespace internal
 		typedef std::atomic<Raw*> FreeRaws;
 
 	public:
-		DataRow(ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
+		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw),
 			mFreeRaws(freeRaws)
@@ -153,7 +153,7 @@ namespace internal
 		}
 
 	private:
-		ColumnList* mColumnList;
+		const ColumnList* mColumnList;
 		Raw* mRaw;
 		FreeRaws* mFreeRaws;
 	};

@@ -206,6 +206,14 @@ namespace internal
 			pvDestroy(memManager, object);
 		}
 
+		static void Destroy(MemManager* memManager, Object& object) MOMO_NOEXCEPT
+		{
+			if (memManager != nullptr)
+				pvDestroy(*memManager, object);
+			else
+				object.~Object();
+		}
+
 		template<typename Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) MOMO_NOEXCEPT
 		{
