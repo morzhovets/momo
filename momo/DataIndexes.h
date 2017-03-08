@@ -255,6 +255,12 @@ namespace internal
 				return insRes.iterator;
 			}
 
+			Iterator Insert(Raw* raw, size_t* hashCodes)
+			{
+				size_t hashCode = mHashFunc(raw, hashCodes);
+				return mHashSet.Insert({ raw, hashCode }).iterator;
+			}
+
 			void Remove(Iterator iter) MOMO_NOEXCEPT
 			{
 				mHashSet.Remove(iter);
@@ -382,12 +388,20 @@ namespace internal
 			void Remove(Iterator iter) MOMO_NOEXCEPT
 			{
 				Raw* raw = iter->value;
-				mHashMap.Remove(raw);
 				auto keyIter = iter.GetKeyIterator();
+				auto raws = keyIter->values;
+				Raw* lastRaw = *(raws.GetEnd() - 1);
+				if (raw != lastRaw)
+				{
+					auto mapIter = mHashMap.Find(lastRaw);
+					if (!!mapIter)
+						mapIter->value = iter.GetValuePtr() - raws.GetBegin();
+				}
 				mHashMultiMap.Remove(iter);
+				mHashMap.Remove(raw);
 				if (keyIter->key.raw == raw)
 				{
-					auto raws = keyIter->values;
+					raws = keyIter->values;
 					if (raws.GetCount() > 0)
 						mHashMultiMap.ResetKey(keyIter, { raws[0], keyIter->key.hashCode });
 					else
@@ -532,6 +546,57 @@ namespace internal
 				mUniqueHashes[i].Remove(uniqueHashIters[i]);
 			for (size_t i = 0; i < multiHashCount; ++i)
 				mMultiHashes[i].Remove(multiHashIters[i]);
+		}
+
+		void UpdateRaw(Raw* oldRaw, Raw* newRaw)
+		{
+			size_t uniqueHashCount = mUniqueHashes.GetCount();
+			UniqueHashIterators oldUniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
+			UniqueHashIterators newUniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
+			size_t uniqueHashIndex = 0;
+			size_t multiHashCount = mMultiHashes.GetCount();
+			MultiHashIterators oldMultiHashIters(multiHashCount, pvGetMemManagerPtr());
+			MultiHashIterators newMultiHashIters(multiHashCount, pvGetMemManagerPtr());
+			size_t multiHashIndex = 0;
+			try
+			{
+				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
+					newUniqueHashIters[uniqueHashIndex] = mUniqueHashes[uniqueHashIndex].Insert(newRaw, nullptr);
+				for (size_t i = 0; i < uniqueHashCount; ++i)
+				{
+					auto newIter = newUniqueHashIters[i];
+					if (newIter->raw != oldRaw)
+					{
+						if (newIter->raw != newRaw)
+							throw std::runtime_error("Unique index violation");
+						oldUniqueHashIters[i] = mUniqueHashes[i].Find(oldRaw, nullptr);
+					}
+				}
+				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
+					newMultiHashIters[multiHashIndex] = mMultiHashes[multiHashIndex].Add(newRaw, nullptr);
+				for (size_t i = 0; i < multiHashCount; ++i)
+					oldMultiHashIters[i] = mMultiHashes[i].Find(oldRaw, nullptr);
+			}
+			catch (...)
+			{
+				for (size_t i = 0; i < uniqueHashIndex; ++i)
+				{
+					auto newIter = newUniqueHashIters[i];
+					if (newIter->raw == newRaw)
+						mUniqueHashes[i].Remove(newIter);
+				}
+				for (size_t i = 0; i < multiHashIndex; ++i)
+					mMultiHashes[i].Remove(newMultiHashIters[i]);
+				throw;
+			}
+			for (size_t i = 0; i < uniqueHashCount; ++i)
+			{
+				auto oldIter = oldUniqueHashIters[i];
+				if (!!oldIter)
+					mUniqueHashes[i].Remove(oldIter);
+			}
+			for (size_t i = 0; i < multiHashCount; ++i)
+				mMultiHashes[i].Remove(oldMultiHashIters[i]);
 		}
 
 		template<size_t columnCount>

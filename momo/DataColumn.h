@@ -6,7 +6,7 @@
   momo/DataColumn.h
 
   namespace momo::experimental:
-    struct DataColumnTraits
+    class DataColumnTraits
     class DataColumnList
     class DataColumnListStatic
 

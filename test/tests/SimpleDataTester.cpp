@@ -61,10 +61,15 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
+			DataRow row = table.NewRow(&Struct::intCol, (int)i);
+			table.AddRow(std::move(row));
+		}
+
+		for (size_t i = 0; i < count; ++i)
+		{
 			DataRow row = table.NewRow(&Struct::intCol, (int)i / 2);
 			row[&Struct::strCol] = (i % 2 == 0) ? "0" : "1";
-			row[&Struct::dblCol] = 0;
-			table.AddRow(std::move(row));
+			table.UpdateRow(i, std::move(row));
 		}
 
 		for (size_t i = 0; i < count; ++i)
@@ -82,7 +87,7 @@ public:
 		assert(table.GetCount() == count + count2);
 
 		for (size_t i = 0; i < count2; ++i)
-			table.RemoveRow(count, i % 2 == 0);
+			table.ExtractRow(count, i % 2 == 0);
 		assert(table.GetCount() == count);
 
 		assert(table.SelectCount() == count);

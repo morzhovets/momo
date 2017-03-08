@@ -6,7 +6,7 @@
   momo/DataTable.h
 
   namespace momo::experimental:
-    struct DataTraits
+    class DataTraits
     class DataTable
 
 \**********************************************************/
@@ -24,8 +24,9 @@ namespace momo
 namespace experimental
 {
 
-struct DataTraits
+class DataTraits
 {
+public:
 	typedef MemPoolParams<> RawMemPoolParams;
 
 	template<typename Type>
@@ -315,12 +316,12 @@ public:
 		return RowRef(&GetColumnList(), raw);
 	}
 
-	void RemoveRow(size_t rowNumber, bool keepOrder = true)
+	Row ExtractRow(size_t rowNumber, bool keepOrder = true)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		pvFreeRaw(raw);
+		Row row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 		if (keepOrder)
 		{
 			mRaws.Remove(rowNumber, 1);
@@ -330,6 +331,17 @@ public:
 			mRaws[rowNumber] = mRaws.GetBackItem();
 			mRaws.RemoveBack();
 		}
+		return row;
+	}
+
+	RowRef UpdateRow(size_t rowNumber, Row&& row)
+	{
+		MOMO_ASSERT(rowNumber < GetCount());
+		Raw*& raw = mRaws[rowNumber];
+		mIndexes.UpdateRaw(raw, row.GetRaw());
+		pvFreeRaw(raw);
+		raw = row.ExtractRaw();
+		return RowRef(&GetColumnList(), raw);
 	}
 
 	template<typename... Types>
