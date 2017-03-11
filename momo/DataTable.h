@@ -65,6 +65,8 @@ public:
 private:
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
+	typedef momo::internal::BoolConstant<ColumnList::keepRowNumber> KeepRowNumber;
+
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 	typedef Array<Raw*, MemManagerPtr> Raws;
@@ -202,7 +204,7 @@ public:
 					mRawMemPool.Deallocate(dstRaw);
 					throw;
 				}
-				columnList.SetNumber(dstRaw, mRaws.GetCount());
+				pvSetNumber(dstRaw, mRaws.GetCount(), KeepRowNumber());
 				mRaws.AddBackNogrow(dstRaw);
 			}
 		}
@@ -310,14 +312,13 @@ public:
 
 	RowRef AddRow(Row&& row)
 	{
-		const ColumnList& columnList = GetColumnList();
-		MOMO_ASSERT(&row.GetColumnList() == &columnList);
+		MOMO_ASSERT(&row.GetColumnList() == &GetColumnList());
 		mRaws.Reserve(mRaws.GetCount() + 1);
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
-		columnList.SetNumber(raw, mRaws.GetCount());
+		pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
 		mRaws.AddBackNogrow(raw);
-		return RowRef(&columnList, raw);
+		return RowRef(&GetColumnList(), raw);
 	}
 
 	Row ExtractRow(ConstRowRef rowRef)
@@ -329,13 +330,12 @@ public:
 	Row ExtractRow(size_t rowNumber)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
-		const ColumnList& columnList = GetColumnList();
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		Row row(&columnList, raw, &mCrew.GetFreeRaws());
+		Row row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 		mRaws.Remove(rowNumber, 1);
 		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
-			columnList.SetNumber(mRaws[i], i);
+			pvSetNumber(mRaws[i], i, KeepRowNumber());
 		return row;
 	}
 
@@ -348,13 +348,12 @@ public:
 	RowRef UpdateRow(size_t rowNumber, Row&& row)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
-		const ColumnList& columnList = GetColumnList();
 		Raw*& raw = mRaws[rowNumber];
 		mIndexes.UpdateRaw(raw, row.GetRaw());
 		pvFreeRaw(raw);
 		raw = row.ExtractRaw();
-		columnList.SetNumber(raw, rowNumber);
-		return RowRef(&columnList, raw);
+		pvSetNumber(raw, rowNumber, KeepRowNumber());
+		return RowRef(&GetColumnList(), raw);
 	}
 
 	template<typename... Types>
@@ -524,6 +523,15 @@ private:
 	}
 
 	void pvFillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
+	{
+	}
+
+	void pvSetNumber(Raw* raw, size_t number, std::true_type /*keepRowNumber*/) MOMO_NOEXCEPT
+	{
+		GetColumnList().SetNumber(raw, number);
+	}
+
+	void pvSetNumber(Raw* /*raw*/, size_t /*number*/, std::false_type /*keepRowNumber*/) MOMO_NOEXCEPT
 	{
 	}
 

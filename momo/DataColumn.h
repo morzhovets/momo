@@ -87,7 +87,8 @@ public:
 };
 
 template<typename TColumnTraits,
-	size_t tLogMaxColumnCount = 7>
+	size_t tLogMaxColumnCount = 7,
+	bool tKeepRowNumber = true>
 class DataColumnList
 {
 public:
@@ -96,6 +97,8 @@ public:
 
 	static const size_t logMaxColumnCount = tLogMaxColumnCount;
 	MOMO_STATIC_ASSERT(logMaxColumnCount <= 15);
+
+	static const bool keepRowNumber = tKeepRowNumber;
 
 	template<typename Type>
 	using Column = typename ColumnTraits::template Column<Type>;
@@ -327,11 +330,13 @@ public:
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(keepRowNumber);
 		return *reinterpret_cast<const size_t*>(raw + mTotalSize - sizeof(size_t));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(keepRowNumber);
 		*reinterpret_cast<size_t*>(raw + mTotalSize - sizeof(size_t)) = number;
 	}
 
@@ -353,9 +358,12 @@ private:
 	template<size_t edgeCount>
 	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
 	{
-		pvCorrectOffset<size_t>(offset);
-		offset += sizeof(size_t);
-		maxAlignment = std::minmax(maxAlignment, alignof(size_t)).second;
+		if (keepRowNumber)
+		{
+			pvCorrectOffset<size_t>(offset);
+			offset += sizeof(size_t);
+			maxAlignment = std::minmax(maxAlignment, alignof(size_t)).second;
+		}
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
@@ -457,12 +465,15 @@ private:
 };
 
 template<typename TStruct,
-	typename TMemManager = MemManagerDefault>
+	typename TMemManager = MemManagerDefault,
+	bool tKeepRowNumber = true>
 class DataColumnListStatic
 {
 public:
 	typedef TStruct Struct;
 	typedef TMemManager MemManager;
+
+	static const bool keepRowNumber = tKeepRowNumber;
 
 	template<typename Type>
 	using Column = Type Struct::*;
@@ -474,9 +485,22 @@ private:
 
 	typedef std::bitset<sizeof(Struct)> MutOffsets;
 
-	struct StructNumber : public Struct
+	template<typename Void, bool keepRowNumber>
+	struct Number;
+
+	template<typename Void>
+	struct Number<Void, true>
 	{
 		size_t rowNumber;
+	};
+
+	template<typename Void>
+	struct Number<Void, false>
+	{
+	};
+
+	struct StructNumber : public Struct, public Number<void, keepRowNumber>
+	{
 	};
 
 public:
@@ -580,11 +604,13 @@ public:
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(keepRowNumber);
 		return static_cast<const StructNumber*>(raw)->rowNumber;
 	}
 
 	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(keepRowNumber);
 		static_cast<StructNumber*>(raw)->rowNumber = number;
 	}
 
