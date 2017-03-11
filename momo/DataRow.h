@@ -159,7 +159,7 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataConstRowRef
+	class DataConstRowReference
 	{
 	public:
 		typedef TColumnList ColumnList;
@@ -168,10 +168,10 @@ namespace internal
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
-		typedef DataConstRowRef ConstRowRef;
+		typedef DataConstRowReference ConstReference;
 
 	public:
-		DataConstRowRef(const ColumnList* columnList, const Raw* raw) MOMO_NOEXCEPT
+		DataConstRowReference(const ColumnList* columnList, const Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{
@@ -221,7 +221,7 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataRowRef
+	class DataRowReference
 	{
 	public:
 		typedef TColumnList ColumnList;
@@ -230,39 +230,39 @@ namespace internal
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
-		typedef DataConstRowRef<ColumnList> ConstRowRef;
+		typedef DataConstRowReference<ColumnList> ConstReference;
 
 		template<typename Type>
-		class ItemRef
+		class ItemReference
 		{
 		public:
-			ItemRef(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT
+			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT
 				: mColumnList(columnList),
 				mRaw(raw),
 				mOffset(offset)
 			{
 			}
 
-			ItemRef(ItemRef&& itemRef) MOMO_NOEXCEPT
+			ItemReference(ItemReference&& itemRef) MOMO_NOEXCEPT
 				: mColumnList(itemRef.mColumnList),
 				mRaw(itemRef.mRaw),
 				mOffset(itemRef.mOffset)
 			{
 			}
 
-			ItemRef(const ItemRef&) = delete;
+			ItemReference(const ItemReference&) = delete;
 
-			~ItemRef() MOMO_NOEXCEPT
+			~ItemReference() MOMO_NOEXCEPT
 			{
 			}
 
-			ItemRef& operator=(const ItemRef& itemRef)
+			ItemReference& operator=(const ItemReference& itemRef)
 			{
 				return pvAssign(itemRef.Get());
 			}
 
 			template<typename TypeArg>
-			ItemRef& operator=(TypeArg&& itemArg)
+			ItemReference& operator=(TypeArg&& itemArg)
 			{
 				return pvAssign(std::forward<TypeArg>(itemArg));
 			}
@@ -280,7 +280,7 @@ namespace internal
 
 		private:
 			template<typename TypeArg>
-			ItemRef& pvAssign(TypeArg&& itemArg)
+			ItemReference& pvAssign(TypeArg&& itemArg)
 			{
 				if (!mColumnList->IsMutable(mOffset))
 					throw std::runtime_error("Item is read only");
@@ -295,15 +295,15 @@ namespace internal
 		};
 
 	public:
-		DataRowRef(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
+		DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{
 		}
 
-		operator ConstRowRef() const MOMO_NOEXCEPT
+		operator ConstReference() const MOMO_NOEXCEPT
 		{
-			return ConstRowRef(mColumnList, mRaw);
+			return ConstReference(mColumnList, mRaw);
 		}
 
 		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
@@ -312,19 +312,19 @@ namespace internal
 		}
 
 		template<typename Type>
-		ItemRef<Type> GetByOffset(size_t offset) const
+		ItemReference<Type> GetByOffset(size_t offset) const
 		{
-			return ItemRef<Type>(mColumnList, mRaw, offset);
+			return ItemReference<Type>(mColumnList, mRaw, offset);
 		}
 
 		template<typename Type>
-		ItemRef<Type> GetByColumn(const Column<Type>& column) const
+		ItemReference<Type> GetByColumn(const Column<Type>& column) const
 		{
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Type>
-		ItemRef<Type> operator[](const Column<Type>& column) const
+		ItemReference<Type> operator[](const Column<Type>& column) const
 		{
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}

@@ -75,6 +75,11 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			table[i][&Struct::dblCol] = (double)i / 2;
 
+		for (auto row : table) { (void)row; }
+		for (auto row : ctable) { (void)row; }
+		for (auto row : table.Select()) { (void)row; }
+		for (auto row : ctable.Select()) { (void)row; }
+
 		assert(table.HasUniqueHashIndex(&Struct::intCol, &Struct::strCol));
 		assert(table.HasMultiHashIndex(&Struct::intCol));
 		assert(table.RemoveUniqueHashIndex(&Struct::intCol, &Struct::strCol));

@@ -56,20 +56,25 @@ public:
 	using Column = typename ColumnList::template Column<Type>;
 
 	typedef internal::DataRow<ColumnList> Row;
-	typedef internal::DataRowRef<ColumnList> RowRef;
-	typedef typename RowRef::ConstRowRef ConstRowRef;
+	typedef internal::DataRowReference<ColumnList> RowReference;
+	typedef typename RowReference::ConstReference ConstRowReference;
 
-	typedef internal::DataSelection<RowRef, MemManager> Selection;
+	typedef internal::DataSelection<RowReference, MemManager> Selection;
 	typedef typename Selection::ConstSelection ConstSelection;
+
+private:
+	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+	typedef Array<Raw*, MemManagerPtr> Raws;
+
+public:
+	typedef internal::DataRowIterator<RowReference, typename Raws::Iterator> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
 	typedef momo::internal::BoolConstant<ColumnList::keepRowNumber> KeepRowNumber;
-
-	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
-
-	typedef Array<Raw*, MemManagerPtr> Raws;
 
 	//? MemPoolSettings
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
@@ -81,7 +86,7 @@ private:
 
 	struct EmptyFilter
 	{
-		bool operator()(ConstRowRef /*rowRef*/) const MOMO_NOEXCEPT
+		bool operator()(ConstRowReference /*rowRef*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}
@@ -241,7 +246,29 @@ public:
 		mIndexes.Swap(table.mIndexes);
 	}
 
+	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	{
+		return ConstIterator(&GetColumnList(), mRaws.GetBegin());
+	}
+
+	Iterator GetBegin() MOMO_NOEXCEPT
+	{
+		return Iterator(&GetColumnList(), mRaws.GetBegin());
+	}
+
+	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	{
+		return ConstIterator(&GetColumnList(), mRaws.GetEnd());
+	}
+
+	Iterator GetEnd() MOMO_NOEXCEPT
+	{
+		return Iterator(&GetColumnList(), mRaws.GetEnd());
+	}
+
 	MOMO_FRIEND_SWAP(DataTable)
+	MOMO_FRIENDS_BEGIN_END(const DataTable&, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(DataTable&, Iterator)
 
 	const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 	{
@@ -275,14 +302,14 @@ public:
 		mIndexes.Clear();
 	}
 
-	const ConstRowRef operator[](size_t index) const
+	const ConstRowReference operator[](size_t index) const
 	{
-		return ConstRowRef(&GetColumnList(), mRaws[index]);
+		return ConstRowReference(&GetColumnList(), mRaws[index]);
 	}
 
-	const RowRef operator[](size_t index)
+	const RowReference operator[](size_t index)
 	{
-		return RowRef(&GetColumnList(), mRaws[index]);
+		return RowReference(&GetColumnList(), mRaws[index]);
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -300,17 +327,17 @@ public:
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
-	RowRef AddRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
+	RowReference AddRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
 	{
 		return AddRow(NewRow(column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...));
 	}
 
-	RowRef AddRow()
+	RowReference AddRow()
 	{
 		return AddRow(NewRow());
 	}
 
-	RowRef AddRow(Row&& row)
+	RowReference AddRow(Row&& row)
 	{
 		MOMO_ASSERT(&row.GetColumnList() == &GetColumnList());
 		mRaws.Reserve(mRaws.GetCount() + 1);
@@ -318,10 +345,10 @@ public:
 		Raw* raw = row.ExtractRaw();
 		pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
 		mRaws.AddBackNogrow(raw);
-		return RowRef(&GetColumnList(), raw);
+		return RowReference(&GetColumnList(), raw);
 	}
 
-	Row ExtractRow(ConstRowRef rowRef)
+	Row ExtractRow(ConstRowReference rowRef)
 	{
 		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
 		return ExtractRow(rowRef.GetNumber());
@@ -339,13 +366,13 @@ public:
 		return row;
 	}
 
-	RowRef UpdateRow(ConstRowRef rowRef, Row&& row)
+	RowReference UpdateRow(ConstRowReference rowRef, Row&& row)
 	{
 		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
 		return UpdateRow(rowRef.GetNumber(), std::move(row));
 	}
 
-	RowRef UpdateRow(size_t rowNumber, Row&& row)
+	RowReference UpdateRow(size_t rowNumber, Row&& row)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
 		Raw*& raw = mRaws[rowNumber];
@@ -353,7 +380,7 @@ public:
 		pvFreeRaw(raw);
 		raw = row.ExtractRaw();
 		pvSetNumber(raw, rowNumber, KeepRowNumber());
-		return RowRef(&GetColumnList(), raw);
+		return RowReference(&GetColumnList(), raw);
 	}
 
 	template<typename... Types>
@@ -549,7 +576,7 @@ private:
 		const auto* multiHash = mIndexes.FindFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
 			return pvSelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
-		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowRef rowRef)
+		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowReference rowRef)
 			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
 		return pvSelectRec<Result>(mRaws, newFilter);
 	}
@@ -567,14 +594,14 @@ private:
 	}
 
 	template<typename Type, typename... Args>
-	static bool pvIsSatisfied(ConstRowRef rowRef, const size_t* offsets,
+	static bool pvIsSatisfied(ConstRowReference rowRef, const size_t* offsets,
 		const Column<Type>& /*column*/, const Type& item, const Args&... args)
 	{
 		return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(*offsets), item)
 			&& pvIsSatisfied(rowRef, offsets + 1, args...);
 	}
 
-	static bool pvIsSatisfied(ConstRowRef /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
+	static bool pvIsSatisfied(ConstRowReference /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
 	{
 		return true;
 	}
@@ -592,7 +619,7 @@ private:
 		}
 		else
 		{
-			auto newFilter = [&filter, offset, &item] (ConstRowRef rowRef)
+			auto newFilter = [&filter, offset, &item] (ConstRowReference rowRef)
 			{
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& filter(rowRef);
@@ -629,7 +656,7 @@ private:
 		SelectionRaws selRaws(std::move(memManager));
 		for (Raw* raw : raws)
 		{
-			if (filter(ConstRowRef(columnList, raw)))
+			if (filter(ConstRowReference(columnList, raw)))
 				selRaws.AddBack(raw);
 		}
 		return Selection(columnList, std::move(selRaws));
@@ -648,7 +675,7 @@ private:
 	{
 		const ColumnList* columnList = &GetColumnList();
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
-			[&filter, columnList] (Raw* raw) { return filter(ConstRowRef(columnList, raw)); });
+			[&filter, columnList] (Raw* raw) { return filter(ConstRowReference(columnList, raw)); });
 	}
 
 	template<typename Raws>
