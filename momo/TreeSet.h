@@ -321,6 +321,7 @@ private:
 
 public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
+	typedef ConstIterator Iterator;
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
 

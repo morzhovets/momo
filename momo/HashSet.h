@@ -448,6 +448,7 @@ private:
 
 public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
+	typedef ConstIterator Iterator;
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
 

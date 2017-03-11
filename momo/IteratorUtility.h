@@ -104,6 +104,7 @@ namespace internal
 
 		bool Check() const MOMO_NOEXCEPT
 		{
+			MOMO_ASSERT(mContainerVersion != nullptr);
 			return *mContainerVersion == mVersion;
 		}
 

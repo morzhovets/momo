@@ -63,7 +63,7 @@ public:
 	typedef key_compare value_compare;
 
 	typedef typename TreeSet::ConstIterator const_iterator;
-	typedef const_iterator iterator;
+	typedef typename TreeSet::Iterator iterator;
 
 	//typedef typename iterator::Reference reference;
 	typedef value_type& reference;

@@ -69,7 +69,7 @@ public:
 	typedef key_type value_type;
 
 	typedef typename HashSet::ConstIterator const_iterator;
-	typedef const_iterator iterator;
+	typedef typename HashSet::Iterator iterator;
 
 	//typedef typename iterator::Reference reference;
 	typedef value_type& reference;
