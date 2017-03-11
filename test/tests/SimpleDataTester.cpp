@@ -69,7 +69,7 @@ public:
 		{
 			DataRow row = table.NewRow(&Struct::intCol, (int)i / 2);
 			row[&Struct::strCol] = (i % 2 == 0) ? "0" : "1";
-			table.UpdateRow(i, std::move(row));
+			table.UpdateRow(table[i], std::move(row));
 		}
 
 		for (size_t i = 0; i < count; ++i)
@@ -87,7 +87,7 @@ public:
 		assert(table.GetCount() == count + count2);
 
 		for (size_t i = 0; i < count2; ++i)
-			table.ExtractRow(count, i % 2 == 0);
+			table.ExtractRow(table[count]);
 		assert(table.GetCount() == count);
 
 		assert(table.SelectCount() == count);

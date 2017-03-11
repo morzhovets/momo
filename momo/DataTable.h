@@ -177,6 +177,7 @@ public:
 	DataTable(const DataTable& table)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
+		ColumnList& columnList = mCrew.GetColumnList();
 		mRaws.Reserve(table.GetCount());
 		try
 		{
@@ -185,14 +186,14 @@ public:
 				Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
 				try
 				{
-					mCrew.GetColumnList().CopyRaw(srcRaw, dstRaw);
+					columnList.CopyRaw(srcRaw, dstRaw);
 					try
 					{
 						mIndexes.AddRaw(dstRaw);
 					}
 					catch (...)
 					{
-						mCrew.GetColumnList().DestroyRaw(dstRaw);
+						columnList.DestroyRaw(dstRaw);
 						throw;
 					}
 				}
@@ -201,6 +202,7 @@ public:
 					mRawMemPool.Deallocate(dstRaw);
 					throw;
 				}
+				columnList.SetNumber(dstRaw, mRaws.GetCount());
 				mRaws.AddBackNogrow(dstRaw);
 			}
 		}
@@ -308,40 +310,51 @@ public:
 
 	RowRef AddRow(Row&& row)
 	{
-		MOMO_ASSERT(&row.GetColumnList() == &GetColumnList());
+		const ColumnList& columnList = GetColumnList();
+		MOMO_ASSERT(&row.GetColumnList() == &columnList);
 		mRaws.Reserve(mRaws.GetCount() + 1);
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
+		columnList.SetNumber(raw, mRaws.GetCount());
 		mRaws.AddBackNogrow(raw);
-		return RowRef(&GetColumnList(), raw);
+		return RowRef(&columnList, raw);
 	}
 
-	Row ExtractRow(size_t rowNumber, bool keepOrder = true)
+	Row ExtractRow(ConstRowRef rowRef)
+	{
+		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
+		return ExtractRow(rowRef.GetNumber());
+	}
+	
+	Row ExtractRow(size_t rowNumber)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
+		const ColumnList& columnList = GetColumnList();
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		Row row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
-		if (keepOrder)
-		{
-			mRaws.Remove(rowNumber, 1);
-		}
-		else
-		{
-			mRaws[rowNumber] = mRaws.GetBackItem();
-			mRaws.RemoveBack();
-		}
+		Row row(&columnList, raw, &mCrew.GetFreeRaws());
+		mRaws.Remove(rowNumber, 1);
+		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
+			columnList.SetNumber(mRaws[i], i);
 		return row;
+	}
+
+	RowRef UpdateRow(ConstRowRef rowRef, Row&& row)
+	{
+		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
+		return UpdateRow(rowRef.GetNumber(), std::move(row));
 	}
 
 	RowRef UpdateRow(size_t rowNumber, Row&& row)
 	{
 		MOMO_ASSERT(rowNumber < GetCount());
+		const ColumnList& columnList = GetColumnList();
 		Raw*& raw = mRaws[rowNumber];
 		mIndexes.UpdateRaw(raw, row.GetRaw());
 		pvFreeRaw(raw);
 		raw = row.ExtractRaw();
-		return RowRef(&GetColumnList(), raw);
+		columnList.SetNumber(raw, rowNumber);
+		return RowRef(&columnList, raw);
 	}
 
 	template<typename... Types>

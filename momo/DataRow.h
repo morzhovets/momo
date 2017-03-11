@@ -200,6 +200,11 @@ namespace internal
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
 		}
 
+		size_t GetNumber() const MOMO_NOEXCEPT
+		{
+			return mColumnList->GetNumber(mRaw);
+		}
+
 		const Raw* GetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
@@ -322,6 +327,11 @@ namespace internal
 		ItemRef<Type> operator[](const Column<Type>& column) const
 		{
 			return GetByOffset<Type>(mColumnList->GetOffset(column));
+		}
+
+		size_t GetNumber() const MOMO_NOEXCEPT
+		{
+			return mColumnList->GetNumber(mRaw);
 		}
 
 		const Raw* GetRaw() const MOMO_NOEXCEPT

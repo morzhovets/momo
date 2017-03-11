@@ -325,6 +325,16 @@ public:
 		ColumnTraits::Assign(std::forward<TypeArg>(itemArg), GetByOffset<Type>(raw, offset));
 	}
 
+	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
+	{
+		return *reinterpret_cast<const size_t*>(raw + mTotalSize - sizeof(size_t));
+	}
+
+	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
+	{
+		*reinterpret_cast<size_t*>(raw + mTotalSize - sizeof(size_t)) = number;
+	}
+
 private:
 	template<size_t edgeCount, typename Type, typename... Types>
 	void pvMakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment,
@@ -343,6 +353,9 @@ private:
 	template<size_t edgeCount>
 	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
 	{
+		pvCorrectOffset<size_t>(offset);
+		offset += sizeof(size_t);
+		maxAlignment = std::minmax(maxAlignment, alignof(size_t)).second;
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
@@ -459,9 +472,12 @@ public:
 private:
 	typedef momo::internal::ObjectManager<Raw, MemManager> RawManager;
 
-	static const size_t structSize = sizeof(Struct);
+	typedef std::bitset<sizeof(Struct)> MutOffsets;
 
-	typedef std::bitset<structSize> MutOffsets;
+	struct StructNumber : public Struct
+	{
+		size_t rowNumber;
+	};
 
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
@@ -510,7 +526,7 @@ public:
 
 	size_t GetTotalSize() const MOMO_NOEXCEPT
 	{
-		return structSize;
+		return sizeof(StructNumber);
 	}
 
 	void CreateRaw(Raw* raw)
@@ -543,16 +559,16 @@ public:
 	template<typename Type>
 	const Type& GetByOffset(const Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
-		MOMO_ASSERT(offset < structSize);
-		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
+		MOMO_ASSERT(offset < sizeof(Struct));
+		MOMO_ASSERT(offset % alignof(Type) == 0);
 		return *reinterpret_cast<const Type*>(reinterpret_cast<const char*>(raw) + offset);
 	}
 
 	template<typename Type>
 	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
-		MOMO_ASSERT(offset < structSize);
-		MOMO_ASSERT(offset % alignof(Type) == 0 || offset % alignof(Struct) == 0);
+		MOMO_ASSERT(offset < sizeof(Struct));
+		MOMO_ASSERT(offset % alignof(Type) == 0);
 		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
 	}
 
@@ -560,6 +576,16 @@ public:
 	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
 	{
 		GetByOffset<Type>(raw, offset) = std::forward<TypeArg>(itemArg);
+	}
+
+	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
+	{
+		return static_cast<const StructNumber*>(raw)->rowNumber;
+	}
+
+	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
+	{
+		static_cast<StructNumber*>(raw)->rowNumber = number;
 	}
 
 private:
