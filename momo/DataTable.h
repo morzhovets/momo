@@ -67,13 +67,21 @@ private:
 
 	typedef Array<Raw*, MemManagerPtr> Raws;
 
-public:
-	typedef internal::DataRowIterator<RowReference, typename Raws::Iterator> Iterator;
-	typedef typename Iterator::ConstIterator ConstIterator;
-
-private:
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
+public:
+	typedef internal::DataRowIterator<RowReference, typename Raws::ConstIterator> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
+
+	typedef internal::DataRowBounds<RowReference,
+		typename Indexes::UniqueHashRawBounds> UniqueHashRowBounds;
+	typedef typename UniqueHashRowBounds::ConstBounds UniqueHashConstRowBounds;
+
+	typedef internal::DataRowBounds<RowReference,
+		typename Indexes::MultiHashRawBounds> MultiHashRowBounds;
+	typedef typename MultiHashRowBounds::ConstBounds MultiHashConstRowBounds;
+
+private:
 	typedef momo::internal::BoolConstant<ColumnList::keepRowNumber> KeepRowNumber;
 
 	//? MemPoolSettings
@@ -182,18 +190,28 @@ public:
 	}
 
 	DataTable(const DataTable& table)
+		: DataTable(table, EmptyFilter())
+	{
+	}
+
+	template<typename Filter>
+	DataTable(const DataTable& table, const Filter& filter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
 		ColumnList& columnList = mCrew.GetColumnList();
-		mRaws.Reserve(table.GetCount());
+		if (std::is_same<Filter, EmptyFilter>::value)
+			mRaws.Reserve(table.GetCount());
 		try
 		{
-			for (const Raw* srcRaw : table.mRaws)
+			for (ConstRowReference srcRowRef : table)
 			{
+				if (!filter(srcRowRef))
+					continue;
+				mRaws.Reserve(mRaws.GetCount() + 1);
 				Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
 				try
 				{
-					columnList.CopyRaw(srcRaw, dstRaw);
+					columnList.CopyRaw(srcRowRef.GetRaw(), dstRaw);
 					try
 					{
 						mIndexes.AddRaw(dstRaw);
@@ -299,7 +317,7 @@ public:
 	{
 		pvFreeRaws();
 		mRaws.Clear();
-		mIndexes.Clear();
+		mIndexes.ClearRaws();
 	}
 
 	const ConstRowReference operator[](size_t index) const
@@ -491,8 +509,45 @@ public:
 		return pvSelectRec<size_t>(mRaws, filter);
 	}
 
-	//FindUnique
-	//FindMulti
+	template<typename Type, typename... Args>
+	UniqueHashConstRowBounds FindByUniqueHash(const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
+			{ return mIndexes.FindUniqueHash(sortedOffsets); };
+		return pvFind<UniqueHashConstRowBounds>(indexFinder, column, item, args...);
+	}
+
+	template<typename Type, typename... Args>
+	UniqueHashRowBounds FindByUniqueHash(const Column<Type>& column, const Type& item,
+		const Args&... args)
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
+			{ return mIndexes.FindUniqueHash(sortedOffsets); };
+		return pvFind<UniqueHashRowBounds>(indexFinder, column, item, args...);
+	}
+
+	template<typename Type, typename... Args>
+	MultiHashConstRowBounds FindByMultiHash(const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
+			{ return mIndexes.FindMultiHash(sortedOffsets); };
+		return pvFind<MultiHashConstRowBounds>(indexFinder, column, item, args...);
+	}
+
+	template<typename Type, typename... Args>
+	MultiHashRowBounds FindByMultiHash(const Column<Type>& column, const Type& item,
+		const Args&... args)
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
+			{ return mIndexes.FindMultiHash(sortedOffsets); };
+		return pvFind<MultiHashRowBounds>(indexFinder, column, item, args...);
+	}
 
 private:
 	size_t pvGetRawSize() const MOMO_NOEXCEPT
@@ -572,10 +627,10 @@ private:
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		const auto* uniqueHash = mIndexes.FindFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
-			return pvSelectRec<Result>(*uniqueHash, filter, OffsetItemTuple<>(), column, item, args...);
+			return pvSelectRec<Result>(*uniqueHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
 		const auto* multiHash = mIndexes.FindFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
-			return pvSelectRec<Result>(*multiHash, filter, OffsetItemTuple<>(), column, item, args...);
+			return pvSelectRec<Result>(*multiHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
 		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowReference rowRef)
 			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
 		return pvSelectRec<Result>(mRaws, newFilter);
@@ -607,15 +662,15 @@ private:
 	}
 
 	template<typename Result, typename Index, typename Filter, typename Tuple, typename Type, typename... Args>
-	Result pvSelectRec(const Index& index, const Filter& filter, const Tuple& tuple,
-		const Column<Type>& column, const Type& item, const Args&... args) const
+	Result pvSelectRec(const Index& index, const size_t* offsets, const Filter& filter, const Tuple& tuple,
+		const Column<Type>& /*column*/, const Type& item, const Args&... args) const
 	{
-		size_t offset = GetColumnList().GetOffset(column);
+		size_t offset = *offsets;
 		if (Indexes::HasOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
 				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return pvSelectRec<Result>(index, filter, newTuple, args...);
+			return pvSelectRec<Result>(index, offsets + 1, filter, newTuple, args...);
 		}
 		else
 		{
@@ -624,19 +679,20 @@ private:
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& filter(rowRef);
 			};
-			return pvSelectRec<Result>(index, newFilter, tuple, args...);
+			return pvSelectRec<Result>(index, offsets + 1, newFilter, tuple, args...);
 		}
 	}
 
 	template<typename Result, typename Index, typename Filter, typename Tuple>
-	Result pvSelectRec(const Index& index, const Filter& filter, const Tuple& tuple) const
+	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const Filter& filter,
+		const Tuple& tuple) const
 	{
 		return pvSelectRec<Result>(mIndexes.FindRaws(index, tuple), filter);
 	}
 
 #ifdef _MSC_VER	//?
 	template<typename Result, typename Index, typename Filter>
-	Result pvSelectRec(const Index&, const Filter&, const OffsetItemTuple<>&) const
+	Result pvSelectRec(const Index&, const size_t*, const Filter&, const OffsetItemTuple<>&) const
 	{
 		throw std::exception();
 	}
@@ -682,6 +738,35 @@ private:
 	size_t pvSelectRec(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
+	}
+
+	template<typename RowBounds, typename IndexFinder, typename Type, typename... Args>
+	RowBounds pvFind(IndexFinder indexFinder, const Column<Type>& column, const Type& item,
+		const Args&... args) const
+	{
+		static const size_t columnCount = 1 + sizeof...(Args) / 2;
+		std::array<size_t, columnCount> offsets;
+		pvGetOffsets(offsets.data(), column, item, args...);
+		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
+		const auto* index = indexFinder(sortedOffsets);
+		if (index == nullptr)
+			throw std::runtime_error("Index not found");
+		return pvFindRec<RowBounds>(*index, offsets.data(), OffsetItemTuple<>(), column, item, args...);
+	}
+
+	template<typename RowBounds, typename Index, typename Tuple, typename Type, typename... Args>
+	RowBounds pvFindRec(const Index& index, const size_t* offsets, const Tuple& tuple,
+		const Column<Type>& /*column*/, const Type& item, const Args&... args) const
+	{
+		auto newTuple = std::tuple_cat(tuple,
+			std::make_tuple(std::pair<size_t, const Type&>(*offsets, item)));
+		return pvFindRec<RowBounds>(index, offsets + 1, newTuple, args...);
+	}
+
+	template<typename RowBounds, typename Index, typename Tuple>
+	RowBounds pvFindRec(const Index& index, const size_t* /*offsets*/, const Tuple& tuple) const
+	{
+		return RowBounds(&GetColumnList(), mIndexes.FindRaws(index, tuple));
 	}
 
 private:

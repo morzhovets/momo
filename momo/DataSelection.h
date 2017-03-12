@@ -31,8 +31,7 @@ namespace internal
 		typedef const RowReference Reference;
 		typedef momo::internal::IteratorPointer<Reference> Pointer;
 
-		typedef DataRowIterator<typename RowReference::ConstReference,
-			typename RawIterator::ConstIterator> ConstIterator;
+		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
 
 	public:
 		DataRowIterator() MOMO_NOEXCEPT
@@ -80,6 +79,57 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		RawIterator mRawIterator;
+	};
+
+	template<typename TRowReference, typename TRawBounds>
+	class DataRowBounds
+	{
+	public:
+		typedef TRowReference RowReference;
+		typedef TRawBounds RawBounds;
+		typedef typename RowReference::ColumnList ColumnList;
+
+		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
+
+		typedef DataRowBounds<typename RowReference::ConstReference, RawBounds> ConstBounds;
+
+	public:
+		DataRowBounds() MOMO_NOEXCEPT
+			: mColumnList(nullptr)
+		{
+		}
+
+		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRawBounds(rawBounds)
+		{
+		}
+
+		operator ConstBounds() const MOMO_NOEXCEPT
+		{
+			return ConstBounds(mColumnList, mRawBounds);
+		}
+
+		Iterator GetBegin() const MOMO_NOEXCEPT
+		{
+			return Iterator(mRawBounds.GetBegin());
+		}
+
+		Iterator GetEnd() const MOMO_NOEXCEPT
+		{
+			return Iterator(mRawBounds.GetEnd());
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const DataRowBounds&, Iterator)
+
+		size_t GetCount() const MOMO_NOEXCEPT
+		{
+			return mRawBounds.GetCount();
+		}
+
+	private:
+		const ColumnList* mColumnList;
+		RawBounds mRawBounds;
 	};
 
 	template<typename TRowReference, typename TMemManager>

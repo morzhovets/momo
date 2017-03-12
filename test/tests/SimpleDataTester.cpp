@@ -111,6 +111,12 @@ public:
 		assert(table.Select(&Struct::dblCol, 1.0).GetCount() == 1);
 		assert(ctable.Select(&Struct::dblCol, 1.0).GetCount() == 1);
 
+		assert(table.FindByUniqueHash(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+		assert(ctable.FindByUniqueHash(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+
+		assert(table.FindByMultiHash(&Struct::strCol, std::string("1")).GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(&Struct::strCol, std::string("1")).GetCount() == count / 2);
+
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
 

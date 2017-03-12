@@ -172,7 +172,7 @@ namespace internal
 				typedef Raw* const* Iterator;
 
 			public:
-				explicit RawBounds(Raw* raw) MOMO_NOEXCEPT
+				explicit RawBounds(Raw* raw = nullptr) MOMO_NOEXCEPT
 				{
 					mRaws[0] = raw;
 				}
@@ -184,10 +184,15 @@ namespace internal
 
 				Iterator GetEnd() const MOMO_NOEXCEPT
 				{
-					return mRaws + ((mRaws[0] != nullptr) ? 1 : 0);
+					return mRaws + GetCount();
 				}
 
 				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
+
+				size_t GetCount() const MOMO_NOEXCEPT
+				{
+					return (mRaws[0] != nullptr) ? 1 : 0;
+				}
 
 			private:
 				Raw* mRaws[1];	//?
@@ -348,8 +353,8 @@ namespace internal
 					if (!!mapIter)
 						return mHashMultiMap.MakeIterator(keyIter, mapIter->value);
 				}
-				size_t rawNum = std::find(raws.GetBegin(), raws.GetEnd(), raw) - raws.GetBegin();
-				return mHashMultiMap.MakeIterator(keyIter, rawNum);
+				return mHashMultiMap.MakeIterator(keyIter,
+					std::find(raws.GetBegin(), raws.GetEnd(), raw) - raws.GetBegin());
 			}
 
 			template<typename... Types>
@@ -420,6 +425,10 @@ namespace internal
 		typedef Array<typename MultiHash::Iterator, 8> MultiHashIterators;
 
 		typedef Array<size_t> OffsetHashCodes;
+
+	public:
+		typedef typename UniqueHash::RawBounds UniqueHashRawBounds;
+		typedef typename MultiHash::RawBounds MultiHashRawBounds;
 
 	public:
 		DataIndexes(const ColumnList* columnList, MemManager& memManager)
@@ -497,7 +506,7 @@ namespace internal
 			return hash.Find(hashTupleKey);
 		}
 
-		void Clear() MOMO_NOEXCEPT
+		void ClearRaws() MOMO_NOEXCEPT
 		{
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.Clear();
@@ -597,6 +606,18 @@ namespace internal
 			}
 			for (size_t i = 0; i < multiHashCount; ++i)
 				mMultiHashes[i].Remove(oldMultiHashIters[i]);
+		}
+
+		template<size_t columnCount>
+		const UniqueHash* FindUniqueHash(const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+		{
+			return pvFindHash(mUniqueHashes, sortedOffsets);
+		}
+
+		template<size_t columnCount>
+		const MultiHash* FindMultiHash(const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+		{
+			return pvFindHash(mMultiHashes, sortedOffsets);
 		}
 
 		template<size_t columnCount>
