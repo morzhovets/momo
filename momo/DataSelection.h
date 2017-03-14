@@ -56,6 +56,13 @@ namespace internal
 			return *this;
 		}
 
+		DataRowIterator operator++(int)
+		{
+			DataRowIterator tempIter = *this;
+			++*this;
+			return tempIter;
+		}
+
 		Reference operator*() const
 		{
 			return RowReference(mColumnList, *mRawIterator);
@@ -132,20 +139,20 @@ namespace internal
 		RawBounds mRawBounds;
 	};
 
-	template<typename TRowReference, typename TMemManager>
+	template<typename TRowReference>
 	class DataSelection
 	{
 	public:
 		typedef TRowReference RowReference;
-		typedef TMemManager MemManager;
 		typedef typename RowReference::ColumnList ColumnList;
+		typedef typename ColumnList::MemManager MemManager;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
 		typedef typename RowReference::ConstReference ConstRowReference;
-		typedef DataSelection<ConstRowReference, MemManager> ConstSelection;
+		typedef DataSelection<ConstRowReference> ConstSelection;
 
 		typedef Array<Raw*, MemManager> Raws;
 
@@ -169,6 +176,18 @@ namespace internal
 			: mColumnList(selection.mColumnList),
 			mRaws(selection.mRaws)
 		{
+		}
+
+		template<typename Filter>
+		DataSelection(const DataSelection& selection, const Filter& filter)
+			: mColumnList(selection.mColumnList),
+			mRaws(MemManager(selection.GetMemManager()))
+		{
+			for (Raw* raw : selection.mRaws)
+			{
+				if (filter(ConstRowReference(mColumnList, raw)))
+					mRaws.AddBack(raw);
+			}
 		}
 
 		~DataSelection() MOMO_NOEXCEPT

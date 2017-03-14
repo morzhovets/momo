@@ -59,7 +59,7 @@ public:
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
 
-	typedef internal::DataSelection<RowReference, MemManager> Selection;
+	typedef internal::DataSelection<RowReference> Selection;
 	typedef typename Selection::ConstSelection ConstSelection;
 
 private:
@@ -315,9 +315,9 @@ public:
 
 	void Clear() MOMO_NOEXCEPT
 	{
+		mIndexes.ClearRaws();
 		pvFreeRaws();
 		mRaws.Clear();
-		mIndexes.ClearRaws();
 	}
 
 	const ConstRowReference operator[](size_t index) const
@@ -458,7 +458,7 @@ public:
 	template<typename Filter>
 	ConstSelection Select(const Filter& filter) const
 	{
-		return pvSelectRec<Selection>(mRaws, filter);
+		return pvMakeSelection(mRaws, filter, static_cast<Selection*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
@@ -482,7 +482,7 @@ public:
 	template<typename Filter>
 	Selection Select(const Filter& filter)
 	{
-		return pvSelectRec<Selection>(mRaws, filter);
+		return pvMakeSelection(mRaws, filter, static_cast<Selection*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
@@ -506,7 +506,7 @@ public:
 	template<typename Filter>
 	size_t SelectCount(const Filter& filter) const
 	{
-		return pvSelectRec<size_t>(mRaws, filter);
+		return pvMakeSelection(mRaws, filter, static_cast<size_t*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
@@ -633,7 +633,7 @@ private:
 			return pvSelectRec<Result>(*multiHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
 		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowReference rowRef)
 			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
-		return pvSelectRec<Result>(mRaws, newFilter);
+		return pvMakeSelection(mRaws, newFilter, static_cast<Result*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
@@ -687,7 +687,7 @@ private:
 	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const Filter& filter,
 		const Tuple& tuple) const
 	{
-		return pvSelectRec<Result>(mIndexes.FindRaws(index, tuple), filter);
+		return pvMakeSelection(mIndexes.FindRaws(index, tuple), filter, static_cast<Result*>(nullptr));
 	}
 
 #ifdef _MSC_VER	//?
@@ -698,14 +698,8 @@ private:
 	}
 #endif
 
-	template<typename Result, typename Raws, typename Filter>
-	Result pvSelectRec(const Raws& raws, const Filter& filter) const
-	{
-		return pvSelectRec(raws, filter, static_cast<Result*>(nullptr));
-	}
-
 	template<typename Raws, typename Filter>
-	Selection pvSelectRec(const Raws& raws, const Filter& filter, Selection*) const
+	Selection pvMakeSelection(const Raws& raws, const Filter& filter, Selection*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		MemManager memManager = GetMemManager();
@@ -719,7 +713,7 @@ private:
 	}
 
 	template<typename Raws>
-	Selection pvSelectRec(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
+	Selection pvMakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
 		return Selection(&GetColumnList(),
@@ -727,7 +721,7 @@ private:
 	}
 
 	template<typename Raws, typename Filter>
-	size_t pvSelectRec(const Raws& raws, const Filter& filter, size_t*) const
+	size_t pvMakeSelection(const Raws& raws, const Filter& filter, size_t*) const
 	{
 		const ColumnList* columnList = &GetColumnList();
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
@@ -735,7 +729,7 @@ private:
 	}
 
 	template<typename Raws>
-	size_t pvSelectRec(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
+	size_t pvMakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}

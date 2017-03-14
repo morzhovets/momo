@@ -695,8 +695,8 @@ namespace internal
 			for (const auto& hash : hashes)
 			{
 				const Offsets& curSortedOffsets = hash.GetSortedOffsets();
-				bool equal = std::equal(curSortedOffsets.GetBegin(), curSortedOffsets.GetEnd(),
-					sortedOffsets.begin(), sortedOffsets.end());
+				bool equal = curSortedOffsets.GetCount() == columnCount
+					&& std::equal(sortedOffsets.begin(), sortedOffsets.end(), curSortedOffsets.GetBegin());
 				if (equal)
 					return &hash;
 			}
