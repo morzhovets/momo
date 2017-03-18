@@ -69,16 +69,19 @@ private:
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
+	typedef typename Indexes::UniqueHash UniqueHashIndex;
+	typedef typename Indexes::MultiHash MultiHashIndex;
+
 public:
 	typedef internal::DataRowIterator<RowReference, typename Raws::ConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::DataRowBounds<RowReference,
-		typename Indexes::UniqueHashRawBounds> UniqueHashRowBounds;
+		typename UniqueHashIndex::RawBounds> UniqueHashRowBounds;
 	typedef typename UniqueHashRowBounds::ConstBounds UniqueHashConstRowBounds;
 
 	typedef internal::DataRowBounds<RowReference,
-		typename Indexes::MultiHashRawBounds> MultiHashRowBounds;
+		typename MultiHashIndex::RawBounds> MultiHashRowBounds;
 	typedef typename MultiHashRowBounds::ConstBounds MultiHashConstRowBounds;
 
 private:
@@ -402,25 +405,25 @@ public:
 	}
 
 	template<typename... Types>
-	bool HasUniqueHashIndex(const Column<Types>&... columns)
+	const void* GetUniqueHashIndex(const Column<Types>&... columns)
 	{
-		return mIndexes.HasUniqueHash(columns...);
+		return mIndexes.GetUniqueHash(columns...);
 	}
 
 	template<typename... Types>
-	bool HasMultiHashIndex(const Column<Types>&... columns)
+	const void* GetMultiHashIndex(const Column<Types>&... columns)
 	{
-		return mIndexes.HasMultiHash(columns...);
+		return mIndexes.GetMultiHash(columns...);
 	}
 
 	template<typename... Types>
-	bool AddUniqueHashIndex(const Column<Types>&... columns)
+	const void* AddUniqueHashIndex(const Column<Types>&... columns)
 	{
 		return mIndexes.AddUniqueHash(mRaws, columns...);
 	}
 
 	template<typename... Types>
-	bool AddMultiHashIndex(const Column<Types>&... columns)
+	const void* AddMultiHashIndex(const Column<Types>&... columns)
 	{
 		return mIndexes.AddMultiHash(mRaws, columns...);
 	}
@@ -510,43 +513,35 @@ public:
 	}
 
 	template<typename Type, typename... Args>
-	UniqueHashConstRowBounds FindByUniqueHash(const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	UniqueHashConstRowBounds FindByUniqueHash(const void* uniqueHashIndex,
+		const Column<Type>& column, const Type& item, const Args&... args) const
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
-			{ return mIndexes.FindUniqueHash(sortedOffsets); };
-		return pvFind<UniqueHashConstRowBounds>(indexFinder, column, item, args...);
+		return pvFind<UniqueHashConstRowBounds>(static_cast<const UniqueHashIndex*>(uniqueHashIndex),
+			column, item, args...);
 	}
 
 	template<typename Type, typename... Args>
-	UniqueHashRowBounds FindByUniqueHash(const Column<Type>& column, const Type& item,
-		const Args&... args)
+	UniqueHashRowBounds FindByUniqueHash(const void* uniqueHashIndex,
+		const Column<Type>& column, const Type& item, const Args&... args)
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
-			{ return mIndexes.FindUniqueHash(sortedOffsets); };
-		return pvFind<UniqueHashRowBounds>(indexFinder, column, item, args...);
+		return pvFind<UniqueHashRowBounds>(static_cast<const UniqueHashIndex*>(uniqueHashIndex),
+			column, item, args...);
 	}
 
 	template<typename Type, typename... Args>
-	MultiHashConstRowBounds FindByMultiHash(const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	MultiHashConstRowBounds FindByMultiHash(const void* multiHashIndex,
+		const Column<Type>& column, const Type& item, const Args&... args) const
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
-			{ return mIndexes.FindMultiHash(sortedOffsets); };
-		return pvFind<MultiHashConstRowBounds>(indexFinder, column, item, args...);
+		return pvFind<MultiHashConstRowBounds>(static_cast<const MultiHashIndex*>(multiHashIndex),
+			column, item, args...);
 	}
 
 	template<typename Type, typename... Args>
-	MultiHashRowBounds FindByMultiHash(const Column<Type>& column, const Type& item,
-		const Args&... args)
+	MultiHashRowBounds FindByMultiHash(const void* multiHashIndex,
+		const Column<Type>& column, const Type& item, const Args&... args)
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		auto indexFinder = [this] (const std::array<size_t, columnCount>& sortedOffsets)
-			{ return mIndexes.FindMultiHash(sortedOffsets); };
-		return pvFind<MultiHashRowBounds>(indexFinder, column, item, args...);
+		return pvFind<MultiHashRowBounds>(static_cast<const MultiHashIndex*>(multiHashIndex),
+			column, item, args...);
 	}
 
 private:
@@ -625,10 +620,10 @@ private:
 		std::array<size_t, columnCount> offsets;
 		pvGetOffsets(offsets.data(), column, item, args...);
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
-		const auto* uniqueHash = mIndexes.FindFitUniqueHash(sortedOffsets);
+		const UniqueHashIndex* uniqueHash = mIndexes.GetFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
 			return pvSelectRec<Result>(*uniqueHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
-		const auto* multiHash = mIndexes.FindFitMultiHash(sortedOffsets);
+		const MultiHashIndex* multiHash = mIndexes.GetFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
 			return pvSelectRec<Result>(*multiHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
 		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowReference rowRef)
@@ -734,15 +729,17 @@ private:
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
 
-	template<typename RowBounds, typename IndexFinder, typename Type, typename... Args>
-	RowBounds pvFind(IndexFinder indexFinder, const Column<Type>& column, const Type& item,
+	template<typename RowBounds, typename Index, typename Type, typename... Args>
+	RowBounds pvFind(const Index* index, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
 		static const size_t columnCount = 1 + sizeof...(Args) / 2;
 		std::array<size_t, columnCount> offsets;
 		pvGetOffsets(offsets.data(), column, item, args...);
-		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
-		const auto* index = indexFinder(sortedOffsets);
+		if (index == nullptr)
+			index = mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index);
+		else
+			MOMO_ASSERT(index == mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index));	//?
 		if (index == nullptr)
 			throw std::runtime_error("Index not found");
 		return pvFindRec<RowBounds>(*index, offsets.data(), OffsetItemTuple<>(), column, item, args...);
