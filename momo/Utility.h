@@ -62,19 +62,6 @@
 
 #define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_SWITCH8(var, Func, ...) \
-	switch (var) \
-	{ \
-		case 1: return Func<1>(__VA_ARGS__); \
-		case 2: return Func<2>(__VA_ARGS__); \
-		case 3: return Func<3>(__VA_ARGS__); \
-		case 4: return Func<4>(__VA_ARGS__); \
-		case 5: return Func<5>(__VA_ARGS__); \
-		case 6: return Func<6>(__VA_ARGS__); \
-		case 7: return Func<7>(__VA_ARGS__); \
-		case 8: return Func<8>(__VA_ARGS__); \
-	}
-
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
 	template<typename... Args> \
 	BaseClass##Proxy(Args&&... args) MOMO_NOEXCEPT \
@@ -182,7 +169,7 @@ namespace internal
 
 		static DivResult DivBySmall(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
-			MOMO_SWITCH8(mod, DivByConst, value);
+			MOMO_DIV_SWITCH(mod, DivByConst, value);
 			DivResult result;
 			result.quotient = value / mod;
 			result.remainder = value % mod;
