@@ -213,6 +213,8 @@ namespace internal
 			{
 			}
 
+			UniqueHash(const UniqueHash&) = delete;
+
 			~UniqueHash() MOMO_NOEXCEPT
 			{
 			}
@@ -224,6 +226,8 @@ namespace internal
 				mHashSet = std::move(uniqueHash.mHashSet);
 				return *this;
 			}
+
+			UniqueHash& operator=(const UniqueHash&) = delete;
 
 			const Offsets& GetSortedOffsets() const MOMO_NOEXCEPT
 			{
@@ -308,6 +312,8 @@ namespace internal
 			{
 			}
 
+			MultiHash(const MultiHash&) = delete;
+
 			~MultiHash() MOMO_NOEXCEPT
 			{
 			}
@@ -320,6 +326,8 @@ namespace internal
 				mHashMap = std::move(multiHash.mHashMap);
 				return *this;
 			}
+
+			MultiHash& operator=(const MultiHash&) = delete;
 
 			const Offsets& GetSortedOffsets() const MOMO_NOEXCEPT
 			{

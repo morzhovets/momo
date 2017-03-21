@@ -40,12 +40,16 @@ private:
 	using ItemManager = momo::internal::ObjectManager<Type, MemManager>;
 
 public:
-	template<typename Type>
-	static size_t GetCode(const Column<Type>& column) MOMO_NOEXCEPT
+	template<size_t vertexCount, typename Type>
+	static std::pair<size_t, size_t> GetVertices(const Column<Type>& column,
+		size_t /*codeParam*/) MOMO_NOEXCEPT
 	{
-		//? typeid(Type).hash_code()
-		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
-		//return offsetof(Struct, *column);
+		size_t code = reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
+		size_t vertex1 = code % vertexCount;
+		size_t vertex2 = (code / vertexCount) % vertexCount;
+		if (vertex1 == vertex2)	//?
+			++vertex2;
+		return std::make_pair(vertex1, vertex2);
 	}
 
 	template<typename Type>
@@ -87,18 +91,18 @@ public:
 };
 
 template<typename TColumnTraits,
-	size_t tLogMaxColumnCount = 7,
-	bool tKeepRowNumber = true>
+	bool tKeepRowNumber = true,
+	size_t tLogMaxColumnCount = 7>
 class DataColumnList
 {
 public:
 	typedef TColumnTraits ColumnTraits;
 	typedef typename ColumnTraits::MemManager MemManager;
 
+	static const bool keepRowNumber = tKeepRowNumber;
+
 	static const size_t logMaxColumnCount = tLogMaxColumnCount;
 	MOMO_STATIC_ASSERT(logMaxColumnCount <= 15);
-
-	static const bool keepRowNumber = tKeepRowNumber;
 
 	template<typename Type>
 	using Column = typename ColumnTraits::template Column<Type>;
@@ -108,6 +112,8 @@ public:
 private:
 	static const size_t logVertexCount = logMaxColumnCount + 1;	//?
 	static const size_t vertexCount = 1 << logVertexCount;
+
+	static const size_t maxCodeParam = 256;
 
 	template<size_t edgeCount>
 	class Graph
@@ -199,20 +205,12 @@ public:
 	explicit DataColumnList(MemManager&& memManager, const Column<Types>&... columns)
 		: mMutOffsets(std::move(memManager))
 	{
-		static const size_t columnCount = sizeof...(columns);
-		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
-		Graph<2 * columnCount> graph;
-		pvMakeGraph(graph, 0, 1, columns...);
-		mMutOffsets.SetCount(mTotalSize / 8 + 1, (unsigned char)0);
-		std::fill(mAddends.begin(), mAddends.end(), 0);
-		for (size_t v = 0; v < vertexCount; ++v)
-		{
-			if (!graph.HasEdge(v) || mAddends[v] != 0)
-				continue;
-			mAddends[v] = (size_t)1 << (8 * sizeof(size_t) - 1);
-			if (!graph.FillAddends(mAddends.data(), v))
-				throw std::runtime_error("Cannot create DataColumnListVar");	//?
-		}
+		mCodeParam = 0;
+		while (mCodeParam < maxCodeParam && !pvFillAddends(columns...))
+			++mCodeParam;
+		if (mCodeParam == maxCodeParam)
+			throw std::runtime_error("Cannot create DataColumnList");
+		mMutOffsets.SetCount((mTotalSize + 7) / 8, (unsigned char)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
 			{ pvCreate<void, Types...>(memManager, raw, 0); };
 		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
@@ -222,7 +220,8 @@ public:
 	}
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
-		: mTotalSize(columnList.mTotalSize),
+		: mCodeParam(columnList.mCodeParam),
+		mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
 		mMutOffsets(std::move(columnList.mMutOffsets)),
 		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
@@ -232,7 +231,8 @@ public:
 	}
 
 	DataColumnList(const DataColumnList& columnList)
-		: mTotalSize(columnList.mTotalSize),
+		: mCodeParam(columnList.mCodeParam),
+		mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
 		mMutOffsets(columnList.mMutOffsets),
 		mCreateFunc(columnList.mCreateFunc),
@@ -294,7 +294,7 @@ public:
 	}
 
 	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
+	size_t GetOffset(const Column<Type>& column) const
 	{
 		std::pair<size_t, size_t> vertices = pvGetVertices(column);
 		size_t addend1 = mAddends[vertices.first];
@@ -341,12 +341,32 @@ public:
 	}
 
 private:
+	template<typename... Types>
+	bool pvFillAddends(const Column<Types>&... columns)
+	{
+		static const size_t columnCount = sizeof...(columns);
+		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
+		Graph<2 * columnCount> graph;
+		pvMakeGraph(graph, 0, 1, columns...);
+		std::fill(mAddends.begin(), mAddends.end(), 0);
+		for (size_t v = 0; v < vertexCount; ++v)
+		{
+			if (!graph.HasEdge(v) || mAddends[v] != 0)
+				continue;
+			mAddends[v] = (size_t)1 << (8 * sizeof(size_t) - 1);
+			if (!graph.FillAddends(mAddends.data(), v))
+				return false;
+		}
+		return true;
+	}
+
 	template<size_t edgeCount, typename Type, typename... Types>
 	void pvMakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment,
-		const Column<Type>& column, const Column<Types>&... columns) MOMO_NOEXCEPT
+		const Column<Type>& column, const Column<Types>&... columns)
 	{
 		pvCorrectOffset<Type>(offset);
 		std::pair<size_t, size_t> vertices = pvGetVertices(column);
+		MOMO_ASSERT(vertices.first != vertices.second);
 		graph.AddEdge(vertices.first, vertices.second, offset);
 		graph.AddEdge(vertices.second, vertices.first, offset);
 		offset += ColumnTraits::template GetSize<Type>();
@@ -367,6 +387,12 @@ private:
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 	}
 
+	template<typename Type>
+	std::pair<size_t, size_t> pvGetVertices(const Column<Type>& column) const
+	{
+		return ColumnTraits::template GetVertices<vertexCount>(column, mCodeParam);
+	}
+
 	template<typename Type, typename... Types>
 	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
 	{
@@ -377,17 +403,6 @@ private:
 
 	void pvSetMutable() MOMO_NOEXCEPT
 	{
-	}
-
-	template<typename Type>
-	static std::pair<size_t, size_t> pvGetVertices(const Column<Type>& column) MOMO_NOEXCEPT
-	{
-		size_t code = ColumnTraits::GetCode(column);
-		size_t vertex1 = code & (vertexCount - 1);
-		size_t vertex2 = (code >> logVertexCount) & (vertexCount - 1);
-		if (vertex1 == vertex2)	//?
-			++vertex2;
-		return std::make_pair(vertex1, vertex2);
 	}
 
 	template<typename Void, typename Type, typename... Types>
@@ -456,6 +471,7 @@ private:
 	}
 
 private:
+	size_t mCodeParam;
 	size_t mTotalSize;
 	Addends mAddends;
 	MutOffsets mMutOffsets;
