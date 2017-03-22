@@ -44,7 +44,7 @@ public:
 	static std::pair<size_t, size_t> GetVertices(const Column<Type>& column,
 		size_t /*codeParam*/) MOMO_NOEXCEPT
 	{
-		size_t code = reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
+		size_t code = MOMO_OFFSET_OF(Struct, column);
 		size_t vertex1 = code % vertexCount;
 		size_t vertex2 = (code / vertexCount) % vertexCount;
 		if (vertex1 == vertex2)	//?
@@ -592,8 +592,7 @@ public:
 	template<typename Type>
 	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
-		return reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*column));
-		//return offsetof(Struct, *column);
+		return MOMO_OFFSET_OF(Struct, column);
 	}
 
 	template<typename Type>
