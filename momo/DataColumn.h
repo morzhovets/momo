@@ -35,20 +35,28 @@ public:
 	template<typename Type>
 	using Column = Type Struct::*;
 
+	static const size_t logVertexCount = 8;
+	static const size_t maxColumnCount = 200;
+
+	static const size_t maxCodeParam = 255;
+
 private:
 	template<typename Type>
 	using ItemManager = momo::internal::ObjectManager<Type, MemManager>;
 
 public:
-	template<size_t vertexCount, typename Type>
+	template<typename Type>
 	static std::pair<size_t, size_t> GetVertices(const Column<Type>& column,
-		size_t /*codeParam*/) MOMO_NOEXCEPT
+		size_t codeParam) MOMO_NOEXCEPT
 	{
-		size_t code = MOMO_OFFSET_OF(Struct, column);
-		size_t vertex1 = code % vertexCount;
-		size_t vertex2 = (code / vertexCount) % vertexCount;
-		if (vertex1 == vertex2)	//?
-			++vertex2;
+		static const size_t vertexCount1 = (1 << logVertexCount) - 1;
+		size_t offset = MOMO_OFFSET_OF(Struct, column);
+		MOMO_ASSERT(offset < (1 << 24));
+		size_t code = (offset << 4) ^ (codeParam >> 4) ^ ((codeParam & 15) << 28);
+		code = (code * 5) ^ (code >> 16);
+		size_t vertex1 = code & vertexCount1;
+		size_t vertex2 = (code >> logVertexCount) & vertexCount1;
+		vertex2 += (vertex1 == vertex2) ? 1 : 0;
 		return std::make_pair(vertex1, vertex2);
 	}
 
@@ -91,8 +99,7 @@ public:
 };
 
 template<typename TColumnTraits,
-	bool tKeepRowNumber = true,
-	size_t tLogMaxColumnCount = 7>
+	bool tKeepRowNumber = true>
 class DataColumnList
 {
 public:
@@ -101,19 +108,17 @@ public:
 
 	static const bool keepRowNumber = tKeepRowNumber;
 
-	static const size_t logMaxColumnCount = tLogMaxColumnCount;
-	MOMO_STATIC_ASSERT(logMaxColumnCount <= 15);
-
 	template<typename Type>
 	using Column = typename ColumnTraits::template Column<Type>;
 
 	typedef char Raw;
 
 private:
-	static const size_t logVertexCount = logMaxColumnCount + 1;	//?
-	static const size_t vertexCount = 1 << logVertexCount;
+	static const size_t logVertexCount = ColumnTraits::logVertexCount;
+	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
+	static const size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
-	static const size_t maxCodeParam = 256;
+	static const size_t vertexCount = 1 << logVertexCount;
 
 	template<size_t edgeCount>
 	class Graph
@@ -187,7 +192,7 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
-	static const size_t mutOffsetsIntCapacity = (1 << logMaxColumnCount) * sizeof(void*);
+	static const size_t mutOffsetsIntCapacity = maxColumnCount * sizeof(void*);
 	typedef ArrayIntCap<mutOffsetsIntCapacity, unsigned char, MemManager> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
@@ -206,9 +211,9 @@ public:
 		: mMutOffsets(std::move(memManager))
 	{
 		mCodeParam = 0;
-		while (mCodeParam < maxCodeParam && !pvFillAddends(columns...))
+		while (mCodeParam <= maxCodeParam && !pvFillAddends(columns...))
 			++mCodeParam;
-		if (mCodeParam == maxCodeParam)
+		if (mCodeParam > maxCodeParam)
 			throw std::runtime_error("Cannot create DataColumnList");
 		mMutOffsets.SetCount((mTotalSize + 7) / 8, (unsigned char)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
@@ -296,7 +301,7 @@ public:
 	template<typename Type>
 	size_t GetOffset(const Column<Type>& column) const
 	{
-		std::pair<size_t, size_t> vertices = pvGetVertices(column);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
@@ -345,7 +350,7 @@ private:
 	bool pvFillAddends(const Column<Types>&... columns)
 	{
 		static const size_t columnCount = sizeof...(columns);
-		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < (1 << logMaxColumnCount));
+		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < maxColumnCount);
 		Graph<2 * columnCount> graph;
 		pvMakeGraph(graph, 0, 1, columns...);
 		std::fill(mAddends.begin(), mAddends.end(), 0);
@@ -365,7 +370,7 @@ private:
 		const Column<Type>& column, const Column<Types>&... columns)
 	{
 		pvCorrectOffset<Type>(offset);
-		std::pair<size_t, size_t> vertices = pvGetVertices(column);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		MOMO_ASSERT(vertices.first != vertices.second);
 		graph.AddEdge(vertices.first, vertices.second, offset);
 		graph.AddEdge(vertices.second, vertices.first, offset);
@@ -385,12 +390,6 @@ private:
 			maxAlignment = std::minmax(maxAlignment, alignof(size_t)).second;
 		}
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
-	}
-
-	template<typename Type>
-	std::pair<size_t, size_t> pvGetVertices(const Column<Type>& column) const
-	{
-		return ColumnTraits::template GetVertices<vertexCount>(column, mCodeParam);
 	}
 
 	template<typename Type, typename... Types>
