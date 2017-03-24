@@ -422,16 +422,28 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
+	//typename std::enable_if<std::is_constructible<value_type, Value>::value, std::pair<iterator, bool>>::type
 	//insert(Value&& value)
 
 	//template<typename Value>
 	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
 	//insert(const_iterator hint, Value&& value)
 
-	//iterator insert(const value_type& value)
+	//std::pair<iterator, bool> insert(const value_type& value)
 
 	//iterator insert(const_iterator hint, const value_type& value)
+
+	std::pair<iterator, bool> insert(value_type&& value)
+	{
+		return pvEmplace(nullptr, std::forward_as_tuple(value.first),
+			std::forward_as_tuple(std::move(value.second)));
+	}
+
+	iterator insert(const_iterator hint, value_type&& value)
+	{
+		return pvEmplace(hint, std::forward_as_tuple(value.first),
+			std::forward_as_tuple(std::move(value.second))).first;
+	}
 
 	template<typename First, typename Second>
 	typename std::enable_if<std::is_constructible<key_type, const First&>::value
