@@ -399,6 +399,17 @@ public:
 
 	//iterator insert(const_iterator hint, const value_type& value)
 
+	iterator insert(value_type&& value)
+	{
+		return pvEmplace(std::forward_as_tuple(value.first),
+			std::forward_as_tuple(std::move(value.second)));
+	}
+
+	iterator insert(const_iterator, value_type&& value)
+	{
+		return insert(std::move(value));
+	}
+
 	template<typename First, typename Second>
 	typename std::enable_if<std::is_constructible<key_type, const First&>::value
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
