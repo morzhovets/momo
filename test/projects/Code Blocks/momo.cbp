@@ -6,9 +6,65 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
+			<Target title="Debug GCC C++11">
+				<Option output="bin/Debug GCC C++11/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug GCC C++11/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=c++11" />
+					<Add option="-Wno-unused-local-typedefs" />
+				</Compiler>
+			</Target>
+			<Target title="Release GCC C++11">
+				<Option output="bin/Release GCC C++11/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release GCC C++11/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug Clang C++11">
+				<Option output="bin/Debug Clang C++11/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug Clang C++11/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=c++11" />
+					<Add option="-Wno-unused-local-typedefs" />
+				</Compiler>
+			</Target>
+			<Target title="Release Clang C++11">
+				<Option output="bin/Release Clang C++11/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release Clang C++11/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug GCC C++14">
+				<Option output="bin/Debug GCC C++14/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug GCC C++14/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -18,9 +74,9 @@
 					<Add option="-Wno-unused-local-typedefs" />
 				</Compiler>
 			</Target>
-			<Target title="Release">
-				<Option output="bin/Release/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+			<Target title="Release GCC C++14">
+				<Option output="bin/Release GCC C++14/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release GCC C++14/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -34,9 +90,9 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Debug LLVM">
-				<Option output="bin/Debug LLVM/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug LLVM/" />
+			<Target title="Debug Clang C++14">
+				<Option output="bin/Debug Clang C++14/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug Clang C++14/" />
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
@@ -46,9 +102,9 @@
 					<Add option="-Wno-unused-local-typedefs" />
 				</Compiler>
 			</Target>
-			<Target title="Release LLVM">
-				<Option output="bin/Release LLVM/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release LLVM/" />
+			<Target title="Release Clang C++14">
+				<Option output="bin/Release Clang C++14/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release Clang C++14/" />
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
