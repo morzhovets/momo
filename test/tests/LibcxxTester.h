@@ -14,12 +14,23 @@
 #include <string>
 #include <cmath>
 
-#define _LIBCPP_STD_VER 14
+#ifdef _MSC_VER
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#define _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
-#undef _LIBCPP_STD_VER
+#if _MSC_VER >= 1900
+#define _LIBCPP_STD_VER 14
+#else
 #define _LIBCPP_STD_VER 11
+#define _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
+#endif
+
+#else
+
+#if __cplusplus >= 201402L
+#define _LIBCPP_STD_VER 14
+#else
+#define _LIBCPP_STD_VER 11
+#endif
+
 #endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
