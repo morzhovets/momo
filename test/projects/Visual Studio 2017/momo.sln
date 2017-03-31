@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "momo", "momo.vcxproj", "{7C8E9B67-BC92-4A33-BB40-52C769C3074D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "momo_clang_lib", "clang\momo_clang_lib.vcxproj", "{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,14 @@ Global
 		{7C8E9B67-BC92-4A33-BB40-52C769C3074D}.Release|Win32.Build.0 = Release|Win32
 		{7C8E9B67-BC92-4A33-BB40-52C769C3074D}.Release|x64.ActiveCfg = Release|x64
 		{7C8E9B67-BC92-4A33-BB40-52C769C3074D}.Release|x64.Build.0 = Release|x64
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Debug|Win32.Build.0 = Debug|Win32
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Debug|x64.ActiveCfg = Debug|x64
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Debug|x64.Build.0 = Debug|x64
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Release|Win32.ActiveCfg = Release|Win32
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Release|Win32.Build.0 = Release|Win32
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Release|x64.ActiveCfg = Release|x64
+		{8058F72A-84E7-4189-961C-0E7C6CF6B4EE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

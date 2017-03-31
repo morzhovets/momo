@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8058f72a-84e7-4189-961c-0e7c6cf6b4ee}</ProjectGuid>
+    <Keyword>Clang</Keyword>
+    <RootNamespace>momo_clang_lib</RootNamespace>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_clang_c2</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_clang_c2</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_clang_c2</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_clang_c2</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\LibcxxArrayTester.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLim4.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOneI1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterUnlimP.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMultiMapTesterLimP.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterLim4.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterLimP.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterLimP1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOneI1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterUnlimP.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxTester.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxTreeMapTester.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxTreeSetTester.cpp" />
+    <ClCompile Include="..\..\..\tests\SimpleArrayTester.cpp" />
+    <ClCompile Include="..\..\..\tests\SimpleDataTester.cpp" />
+    <ClCompile Include="..\..\..\tests\SimpleHashTester.cpp" />
+    <ClCompile Include="..\..\..\tests\SimpleTreeTester.cpp" />
+    <ClCompile Include="..\..\..\tests\SpeedMapTester.cpp" />
+    <ClCompile Include="..\..\..\tests\TemplHashTester.cpp" />
+    <ClCompile Include="..\..\..\tests\TemplTreeTester.cpp" />
+    <ClCompile Include="momo_clang_lib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="momo_clang_lib.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
