@@ -90,7 +90,7 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 #define MOMO_OFFSET_OF(Struct, memberPtr) offsetof(Struct, *memberPtr)
 #else
 #define MOMO_OFFSET_OF(Struct, memberPtr) \
@@ -118,7 +118,7 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning (disable: 4127)	// conditional expression is constant
 #pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
 #pragma warning (disable: 4510)	// default constructor could not be generated
