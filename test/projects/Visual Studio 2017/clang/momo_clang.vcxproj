@@ -27,22 +27,22 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141_clang_c2</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141_clang_c2</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141_clang_c2</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141_clang_c2</PlatformToolset>
   </PropertyGroup>
@@ -61,9 +61,14 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">-Wno-unused-local-typedefs %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">c++1y</CppLanguageStandard>
+      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">c++1y</CppLanguageStandard>
+      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">c++1y</CppLanguageStandard>
+      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\main.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxArrayTester.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLim4.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP.cpp" />
@@ -86,10 +91,6 @@
     <ClCompile Include="..\..\..\tests\SpeedMapTester.cpp" />
     <ClCompile Include="..\..\..\tests\TemplHashTester.cpp" />
     <ClCompile Include="..\..\..\tests\TemplTreeTester.cpp" />
-    <ClCompile Include="momo_clang_lib.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="momo_clang_lib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
