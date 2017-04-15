@@ -45,6 +45,11 @@ namespace internal
 			ItemManager::Destroy(memManager, item);
 		}
 
+		static void Destroy(Item& item) MOMO_NOEXCEPT
+		{
+			ItemManager::Destroy(item);
+		}
+
 		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 		{
 			ItemManager::Relocate(memManager, srcItem, dstItem);
@@ -303,7 +308,7 @@ namespace internal
 		void Clear() MOMO_NOEXCEPT
 		{
 			if (!IsEmpty())
-				ItemTraits::Destroy(*mMemManager, *&mItemBuffer);	//? MemManager&
+				ItemTraits::Destroy(*&mItemBuffer);
 			mMemManager = nullptr;
 		}
 

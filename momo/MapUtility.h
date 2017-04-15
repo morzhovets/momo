@@ -200,6 +200,12 @@ namespace internal
 			ValueManager::Destroy(memManager, value);
 		}
 
+		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
+		{
+			KeyManager::Destroy(key);
+			ValueManager::Destroy(value);
+		}
+
 		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
@@ -562,6 +568,11 @@ namespace internal
 		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
 			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
+		}
+
+		static void Destroy(Item& item) MOMO_NOEXCEPT
+		{
+			KeyValueTraits::Destroy(*item.GetKeyPtr(), *item.GetValuePtr());
 		}
 
 		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
