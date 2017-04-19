@@ -16,7 +16,7 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 
 #### The main ideas
 
-- The implementation of `set/map` is based on a b-tree.
+- The implementation of `set/map` is based on a B-tree.
 
 - `unordered_set/map` are hash tables with buckets in the form of small arrays.
 
@@ -24,7 +24,7 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 
 #### Usage
 
-Just copy the folder `momo` (with License) in your source code.
+Just copy the folder `momo` in your source code. This folder contains only header files.
 
 Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, namespace `momo::stdish`.
 
@@ -42,8 +42,8 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 #### Supported compilers
 
-- MS Visual Studio (2013+)
+- MS Visual C++ (internal version 12.0+, VS version 2013+)
 
-- GCC (4.9+, possibly 4.8+)
+- GCC (4.9+) with -std=c++11
 
-- Clang (3.3+, possibly 3.1+)
+- Clang (3.3+) with -std=c++11
