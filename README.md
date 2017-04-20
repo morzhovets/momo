@@ -3,7 +3,7 @@
 This project contains an implementation of the C++ containers, similar to the standard `set/map`
 and `unordered_set/map`, but much more efficient in memory usage. As for the operation speed, these containers are also better than the standard ones in most cases.
 
-Classes are designed in close conformity with the standard C++14 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++17 **including exception safety guarantees**.
 
 #### Deviations from the standard
 
@@ -42,7 +42,7 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 #### Supported compilers
 
-- MS Visual C++ (internal version 12.0+, VS version 2013+)
+- MS Visual C++ (VS 2013+, internal version 12.0+)
 
 - GCC (4.9+) with -std=c++11
 
