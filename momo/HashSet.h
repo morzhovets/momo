@@ -720,7 +720,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			extItem.Reset(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
@@ -771,7 +771,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			extItem.Reset(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
@@ -793,7 +793,7 @@ public:
 			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
 			{
 				if (std::addressof(srcItem) == std::addressof(dstItem))
-					ItemTraits::Relocate(memManager, srcItem, newItem);
+					ItemTraits::Relocate(&memManager, srcItem, newItem);
 				else
 					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
 			};
@@ -847,7 +847,7 @@ public:
 				auto replaceFunc = [&memManager, newItem] (Item& srcItem, Item& dstItem)
 				{
 					if (std::addressof(srcItem) == std::addressof(dstItem))
-						ItemTraits::Relocate(memManager, srcItem, newItem);
+						ItemTraits::Relocate(&memManager, srcItem, newItem);
 					else
 						ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
 				};
@@ -1149,7 +1149,7 @@ private:
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 				auto relocateCreator = [this, pitem] (Item* newItem)
-					{ ItemTraits::Relocate(GetMemManager(), *pitem, newItem); };
+					{ ItemTraits::Relocate(&GetMemManager(), *pitem, newItem); };
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator);
 				bucket.DecCount(bucketParams);
 			}

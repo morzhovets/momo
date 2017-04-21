@@ -200,7 +200,7 @@ namespace internal
 			ValueManager::Destroyer::Destroy(memManager, value);
 		}
 
-		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void Relocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
 			pvRelocate(memManager, srcKey, srcValue, dstKey, dstValue,
@@ -258,37 +258,40 @@ namespace internal
 
 	private:
 		template<bool isValueNothrowRelocatable>
-		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::true_type /*isKeyNothrowRelocatable*/,
 			BoolConstant<isValueNothrowRelocatable>)
 		{
-			ValueManager::Relocate(memManager, srcValue, dstValue);
-			KeyManager::Relocate(memManager, srcKey, dstKey);
+			ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);
+			KeyManager::Relocator::Relocate(memManager, srcKey, dstKey);
 		}
 
-		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::Relocate(memManager, srcKey, dstKey);
-			ValueManager::Relocate(memManager, srcValue, dstValue);
+			KeyManager::Relocator::Relocate(memManager, srcKey, dstKey);
+			ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);
 		}
 
-		static void pvRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void pvRelocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::Copy(memManager, srcKey, dstKey);
+			if (memManager != nullptr)
+				KeyManager::Copy(*memManager, srcKey, dstKey);
+			else
+				new(dstKey) Key(std::move(srcKey));	//? basic exception safety
 			try
 			{
-				ValueManager::Relocate(memManager, srcValue, dstValue);
+				ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);
 			}
 			catch (...)
 			{
-				KeyManager::Destroy(memManager, *dstKey);
+				KeyManager::Destroyer::Destroy(memManager, *dstKey);
 				throw;
 			}
-			KeyManager::Destroy(memManager, srcKey);
+			KeyManager::Destroyer::Destroy(memManager, srcKey);
 		}
 
 		template<bool isValueNothrowAnywayAssignable>
@@ -564,7 +567,7 @@ namespace internal
 			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
 		}
 
-		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
 		{
 			KeyValueTraits::Relocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());

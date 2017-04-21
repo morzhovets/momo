@@ -705,7 +705,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			extItem.Reset(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
@@ -756,7 +756,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			extItem.Reset(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
@@ -778,7 +778,7 @@ public:
 		auto replaceFunc1 = [&memManager, &extItem] (Item& srcItem)
 		{
 			auto itemCreator = [&memManager, &srcItem] (Item* newItem)
-				{ ItemTraits::Relocate(memManager, srcItem, newItem); };
+				{ ItemTraits::Relocate(&memManager, srcItem, newItem); };
 			extItem.Set(memManager, itemCreator);
 		};
 		auto replaceFunc2 = [&memManager, &extItem] (Item& srcItem, Item& dstItem)
@@ -833,7 +833,7 @@ public:
 			{
 				MemManager& memManager = GetMemManager();
 				auto replaceFunc1 = [&memManager, newItem] (Item& srcItem)
-					{ ItemTraits::Relocate(memManager, srcItem, newItem); };
+					{ ItemTraits::Relocate(&memManager, srcItem, newItem); };
 				auto replaceFunc2 = [&memManager, newItem] (Item& srcItem, Item& dstItem)
 					{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
 				iter = pvRemove(iter, replaceFunc1, replaceFunc2);
@@ -1242,7 +1242,7 @@ private:
 		{
 			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &item] (Item* newItem)
-				{ ItemTraits::Relocate(memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
 		};
 		parentNode->Remove(*mNodeParams, index, itemRemover);

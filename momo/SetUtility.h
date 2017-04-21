@@ -45,9 +45,9 @@ namespace internal
 			ItemManager::Destroyer::Destroy(memManager, item);
 		}
 
-		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
 		{
-			ItemManager::Relocate(memManager, srcItem, dstItem);
+			ItemManager::Relocator::Relocate(memManager, srcItem, dstItem);
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
@@ -282,7 +282,7 @@ namespace internal
 			: mMemManager(extractedItem.mMemManager)
 		{
 			if (mMemManager != nullptr)
-				ItemTraits::Relocate(*mMemManager, *&extractedItem.mItemBuffer, &mItemBuffer);	//?
+				ItemTraits::Relocate(nullptr, *&extractedItem.mItemBuffer, &mItemBuffer);
 			extractedItem.mMemManager = nullptr;
 		}
 

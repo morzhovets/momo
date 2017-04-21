@@ -347,11 +347,12 @@ namespace internal
 			ValueManager::Destroy(*memManager, value);
 		}
 
-		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
+		static void Relocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
-			HashMultiMapKeyValueTraits::RelocateKey(memManager, srcKey, dstKey);
-			ValueManager::Relocate(memManager, srcValue, dstValue);
+			MOMO_ASSERT(memManager != nullptr);
+			HashMultiMapKeyValueTraits::RelocateKey(*memManager, srcKey, dstKey);
+			ValueManager::Relocate(*memManager, srcValue, dstValue);
 		}
 
 		static void Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
