@@ -7,6 +7,7 @@
 
   namespace momo:
     struct IsTriviallyRelocatable
+    struct IsNothrowMoveConstructible
     class ObjectDestroyer
     class ObjectRelocator
 
@@ -25,6 +26,24 @@ namespace momo
 template<typename Object>
 struct IsTriviallyRelocatable
 	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
+{
+};
+
+template<typename Object, typename MemManager>
+struct IsNothrowMoveConstructible
+	: public std::is_nothrow_move_constructible<Object>
+{
+};
+
+template<typename Object, typename Allocator>
+struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
+	: public std::false_type
+{
+};
+
+template<typename Object, typename AllocObject>
+struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
+	: public std::is_nothrow_move_constructible<Object>
 {
 };
 
@@ -74,24 +93,6 @@ private:
 
 namespace internal
 {
-	template<typename Object, typename MemManager>
-	struct IsNothrowMoveConstructible
-		: public std::is_nothrow_move_constructible<Object>
-	{
-	};
-
-	template<typename Object, typename Allocator>
-	struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
-		: public std::false_type
-	{
-	};
-
-	template<typename Object, typename AllocObject>
-	struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
-		: public std::is_nothrow_move_constructible<Object>
-	{
-	};
-
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
