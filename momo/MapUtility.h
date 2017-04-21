@@ -194,16 +194,10 @@ namespace internal
 			KeyManager::CopyExec(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager& memManager, Key& key, Value& value) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Key& key, Value& value) MOMO_NOEXCEPT
 		{
-			KeyManager::Destroy(memManager, key);
-			ValueManager::Destroy(memManager, value);
-		}
-
-		static void Destroy(Key& key, Value& value) MOMO_NOEXCEPT
-		{
-			KeyManager::Destroy(key);
-			ValueManager::Destroy(value);
+			KeyManager::Destroyer::Destroy(memManager, key);
+			ValueManager::Destroyer::Destroy(memManager, value);
 		}
 
 		static void Relocate(MemManager& memManager, Key& srcKey, Value& srcValue,
@@ -565,14 +559,9 @@ namespace internal
 			return *item.GetKeyPtr();
 		}
 
-		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Item& item) MOMO_NOEXCEPT
 		{
 			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
-		}
-
-		static void Destroy(Item& item) MOMO_NOEXCEPT
-		{
-			KeyValueTraits::Destroy(*item.GetKeyPtr(), *item.GetValuePtr());
 		}
 
 		static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)

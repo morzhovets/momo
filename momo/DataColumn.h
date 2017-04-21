@@ -79,9 +79,9 @@ public:
 	}
 
 	template<typename Type>
-	static void Destroy(MemManager* /*memManager*/, Type* item /*, const Column<Type>& column*/) MOMO_NOEXCEPT
+	static void Destroy(MemManager* memManager, Type* item /*, const Column<Type>& column*/) MOMO_NOEXCEPT
 	{
-		ItemManager<Type>::Destroy(*item);
+		ItemManager<Type>::Destroyer::Destroy(memManager, *item);
 	}
 
 	template<typename Type>
@@ -575,7 +575,7 @@ public:
 
 	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
 	{
-		RawManager::Destroy(*raw);
+		RawManager::Destroyer::Destroy(nullptr, *raw);
 	}
 
 	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT

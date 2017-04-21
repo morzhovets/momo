@@ -22,11 +22,8 @@
 //#define MOMO_USE_UNORDERED_HINT_ITERATORS
 
 // If your program does not use exceptions, define it as `true`.
-// On the contrary, for strong safety it can be defined as
-// `std::is_nothrow_move_constructible<Object>::value`.
-#define MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object) \
-	(std::is_nothrow_move_constructible<Object>::value \
-	|| (!std::is_copy_constructible<Object>::value && !momo::IsTriviallyRelocatable<Object>::value))
+// On the contrary, for strong safety it can be defined as `false`.
+#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible<Object>::value)
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)

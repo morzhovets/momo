@@ -241,7 +241,7 @@ namespace internal
 	public:
 		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
 		{
-			TreeSetItemTraits::Destroy(memManager, item);
+			TreeSetItemTraits::Destroy(&memManager, item);
 		}
 
 		template<typename Iterator>
@@ -765,7 +765,7 @@ public:
 	ConstIterator Remove(ConstIterator iter)
 	{
 		auto replaceFunc1 = [this] (Item& srcItem)
-			{ ItemTraits::Destroy(GetMemManager(), srcItem); };
+			{ ItemTraits::Destroy(&GetMemManager(), srcItem); };
 		auto replaceFunc2 = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
 		return pvRemove(iter, replaceFunc1, replaceFunc2);
@@ -953,7 +953,7 @@ private:
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i < count; ++i)
-			ItemTraits::Destroy(GetMemManager(), *node->GetItemPtr(i));
+			ItemTraits::Destroy(&GetMemManager(), *node->GetItemPtr(i));
 		if (!node->IsLeaf())
 		{
 			for (size_t i = 0; i <= count; ++i)

@@ -372,7 +372,7 @@ namespace internal
 		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < count; ++i)
-				HashSetItemTraits::Destroy(memManager, items[i]);
+				HashSetItemTraits::Destroy(&memManager, items[i]);
 		}
 
 		template<typename ItemCreator>

@@ -7,7 +7,8 @@
 
   namespace momo:
     struct IsTriviallyRelocatable
-    struct IsNothrowMoveConstructible
+    class ObjectDestroyer
+    class ObjectRelocator
 
 \**********************************************************/
 
@@ -27,26 +28,70 @@ struct IsTriviallyRelocatable
 {
 };
 
-template<typename Object, typename MemManager, bool onRelocate>
-struct IsNothrowMoveConstructible
-	: public internal::BoolConstant<MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object)>
+template<typename Object, typename MemManager>
+class ObjectDestroyer
 {
+public:
+	static void Destroy(MemManager* /*memManager*/, Object& object) MOMO_NOEXCEPT
+	{
+		(void)object;	// vs warning
+		object.~Object();
+	}
 };
 
-template<typename Object, typename Allocator>
-struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>, false>
-	: public std::false_type
+template<typename Object, typename MemManager>
+class ObjectRelocator
 {
-};
+public:
+	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
-template<typename Object, typename AllocObject>
-struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>, false>
-	: public internal::BoolConstant<MOMO_IS_NOTHROW_MOVE_CONSTRUCTIBLE(Object)>
-{
+	static const bool isNothrowRelocatable = isTriviallyRelocatable
+		|| std::is_nothrow_move_constructible<Object>::value
+		|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object);
+
+public:
+	static void Relocate(MemManager* memManager, Object& srcObject,
+		Object* dstObject) MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+	{
+		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
+		pvRelocate(memManager, srcObject, dstObject, IsTriviallyRelocatable<Object>());
+	}
+
+private:
+	static void pvRelocate(MemManager* /*memManager*/, Object& srcObject, Object* dstObject,
+		std::true_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT
+	{
+		memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+	}
+
+	static void pvRelocate(MemManager* memManager, Object& srcObject, Object* dstObject,
+		std::false_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+	{
+		new(dstObject) Object(std::move(srcObject));
+		ObjectDestroyer<Object, MemManager>::Destroy(memManager, srcObject);
+	}
 };
 
 namespace internal
 {
+	template<typename Object, typename MemManager>
+	struct IsNothrowMoveConstructible
+		: public std::is_nothrow_move_constructible<Object>
+	{
+	};
+
+	template<typename Object, typename Allocator>
+	struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
+		: public std::false_type
+	{
+	};
+
+	template<typename Object, typename AllocObject>
+	struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
+		: public std::is_nothrow_move_constructible<Object>
+	{
+	};
+
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
@@ -78,15 +123,17 @@ namespace internal
 		typedef TObject Object;
 		typedef TMemManager MemManager;
 
-		static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
+		typedef ObjectDestroyer<Object, MemManager> Destroyer;
+		typedef ObjectRelocator<Object, MemManager> Relocator;
+
+		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
+
+		static const bool isNothrowRelocatable = Relocator::isNothrowRelocatable;
 
 		static const bool isNothrowMoveConstructible =
-			IsNothrowMoveConstructible<Object, MemManager, false>::value;
+			IsNothrowMoveConstructible<Object, MemManager>::value;
 
 		static const bool isNothrowSwappable = MOMO_IS_NOTHROW_SWAPPABLE(Object);
-
-		static const bool isNothrowRelocatable = isTriviallyRelocatable
-			|| IsNothrowMoveConstructible<Object, MemManager, true>::value;
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
@@ -179,7 +226,7 @@ namespace internal
 				catch (...)
 				{
 					// srcObject has been changed!
-					pvDestroy(memManager, *dstObject);
+					Destroy(memManager, *dstObject);
 					throw;
 				}
 			}
@@ -196,20 +243,14 @@ namespace internal
 			}
 			catch (...)
 			{
-				pvDestroy(memManager, *dstObject);
+				Destroy(memManager, *dstObject);
 				throw;
 			}
 		}
 
 		static void Destroy(MemManager& memManager, Object& object) MOMO_NOEXCEPT
 		{
-			pvDestroy(memManager, object);
-		}
-
-		static void Destroy(Object& object) MOMO_NOEXCEPT
-		{
-			(void)object;	// vs warning
-			object.~Object();
+			Destroyer::Destroy(&memManager, object);
 		}
 
 		template<typename Iterator>
@@ -218,14 +259,13 @@ namespace internal
 			MOMO_CHECK_TYPE(Object, *begin);
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, ++iter)
-				pvDestroy(memManager, *iter);
+				Destroy(memManager, *iter);
 		}
 
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
-			MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-			pvRelocate(memManager, srcObject, dstObject, BoolConstant<isTriviallyRelocatable>());
+			Relocator::Relocate(&memManager, srcObject, dstObject);
 		}
 
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)
@@ -240,7 +280,7 @@ namespace internal
 			MOMO_NOEXCEPT_IF(isNothrowAnywayAssignable)
 		{
 			AssignAnyway(memManager, srcObject, dstObject);
-			pvDestroy(memManager, srcObject);
+			Destroy(memManager, srcObject);
 		}
 
 		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
@@ -286,34 +326,6 @@ namespace internal
 		}
 
 	private:
-		template<typename MemManager>
-		static void pvDestroy(MemManager& /*memManager*/, Object& object) MOMO_NOEXCEPT
-		{
-			(void)object;	// vs warning
-			object.~Object();
-		}
-
-		template<typename Allocator>
-		static void pvDestroy(MemManagerStd<Allocator>& memManager, Object& object) MOMO_NOEXCEPT
-		{
-			std::allocator_traits<Allocator>::template rebind_traits<char>::destroy(
-				memManager.GetCharAllocator(), std::addressof(object));
-		}
-
-		static void pvRelocate(MemManager& /*memManager*/, Object& srcObject, Object* dstObject,
-			std::true_type /*isTriviallyRelocatable*/) MOMO_NOEXCEPT
-		{
-			memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
-		}
-
-		static void pvRelocate(MemManager& memManager, Object& srcObject, Object* dstObject,
-			std::false_type /*isTriviallyRelocatable*/)
-			MOMO_NOEXCEPT_IF((IsNothrowMoveConstructible<Object, MemManager, true>::value))
-		{
-			Move(memManager, std::move(srcObject), dstObject);
-			pvDestroy(memManager, srcObject);
-		}
-
 		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,
@@ -412,7 +424,7 @@ namespace internal
 			{
 				RelocateCreate(memManager, std::next(srcBegin), std::next(dstBegin), count - 1,
 					Creator<Object>(memManager, std::move(*srcBegin)), std::addressof(*dstBegin));
-				pvDestroy(memManager, *srcBegin);
+				Destroy(memManager, *srcBegin);
 			}
 		}
 
