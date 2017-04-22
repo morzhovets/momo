@@ -455,7 +455,7 @@ public:
 		MemManager& memManager = mTreeSet.GetMemManager();
 		typename TreeSet::ExtractedItem extItem;
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
-		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		typename TreeSet::InsertResult res = mTreeSet.Insert(std::move(extItem));
 		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}
@@ -466,7 +466,7 @@ public:
 		MemManager& memManager = mTreeSet.GetMemManager();
 		typename TreeSet::ExtractedItem extItem;
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
-		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		if (!pvCheckHint(hint, extItem.GetItem()))
 			return mTreeSet.Insert(std::move(extItem)).iterator;
 		return mTreeSet.Add(hint, std::move(extItem));

@@ -437,7 +437,7 @@ public:
 		MemManager& memManager = mHashSet.GetMemManager();
 		typename HashSet::ExtractedItem extItem;
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
-		extItem.Set(memManager, ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
+		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(extItem));
 		return std::pair<iterator, bool>(res.iterator, res.inserted);
 	}

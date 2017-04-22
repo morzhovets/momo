@@ -267,7 +267,7 @@ namespace internal
 
 	public:
 		SetExtractedItem() MOMO_NOEXCEPT
-			: mMemManager(nullptr)
+			: mHasItem(false)
 		{
 		}
 
@@ -279,11 +279,11 @@ namespace internal
 		}
 
 		SetExtractedItem(SetExtractedItem&& extractedItem) //MOMO_NOEXCEPT_IF
-			: mMemManager(extractedItem.mMemManager)
+			: mHasItem(extractedItem.mHasItem)
 		{
-			if (mMemManager != nullptr)
+			if (mHasItem)
 				ItemTraits::Relocate(nullptr, *&extractedItem.mItemBuffer, &mItemBuffer);
-			extractedItem.mMemManager = nullptr;
+			extractedItem.mHasItem = false;
 		}
 
 		SetExtractedItem(const SetExtractedItem&) = delete;
@@ -297,53 +297,47 @@ namespace internal
 
 		bool IsEmpty() const MOMO_NOEXCEPT
 		{
-			return mMemManager == nullptr;
+			return !mHasItem;
 		}
 
 		void Clear() MOMO_NOEXCEPT
 		{
-			if (!IsEmpty())
+			if (mHasItem)
 				ItemTraits::Destroy(nullptr, *&mItemBuffer);
-			mMemManager = nullptr;
-		}
-
-		const MemManager& GetMemManager() const
-		{
-			MOMO_CHECK(!IsEmpty());
-			return *mMemManager;
+			mHasItem = false;
 		}
 
 		const Item& GetItem() const
 		{
-			MOMO_CHECK(!IsEmpty());
+			MOMO_CHECK(mHasItem);
 			return *&mItemBuffer;
 		}
 
 		Item& GetItem()
 		{
-			MOMO_CHECK(!IsEmpty());
+			MOMO_CHECK(mHasItem);
 			return *&mItemBuffer;
 		}
 
 		template<typename ItemCreator>
-		void Set(MemManager& memManager, const ItemCreator& itemCreator)
+		void Create(const ItemCreator& itemCreator)
 		{
-			MOMO_CHECK(IsEmpty());
+			MOMO_CHECK(!mHasItem);
 			itemCreator(&mItemBuffer);
-			mMemManager = &memManager;
+			mHasItem = true;
 		}
 
 		template<typename ItemRemover>
-		void Reset(const ItemRemover& itemRemover)
+		void Remove(const ItemRemover& itemRemover)
 		{
-			MOMO_CHECK(!IsEmpty());
+			MOMO_CHECK(mHasItem);
 			itemRemover(*&mItemBuffer);
-			mMemManager = nullptr;
+			mHasItem = false;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		MemManager* mMemManager;
+		bool mHasItem;
 	};
 }
 

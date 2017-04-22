@@ -721,7 +721,7 @@ public:
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(&memManager, item, newItem); };
-			extItem.Reset(itemRemover);
+			extItem.Remove(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
@@ -772,7 +772,7 @@ public:
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
 				{ ItemTraits::Relocate(&memManager, item, newItem); };
-			extItem.Reset(itemRemover);
+			extItem.Remove(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
 	}
@@ -797,7 +797,7 @@ public:
 				else
 					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
 			};
-			extItem.Set(memManager, itemCreator);
+			extItem.Create(itemCreator);
 		};
 		return pvRemove(iter, replaceFunc);
 	}

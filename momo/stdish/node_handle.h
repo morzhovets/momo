@@ -28,7 +28,7 @@ namespace internal
 
 	public:
 		typedef typename SetExtractedItem::Item value_type;
-		typedef typename SetExtractedItem::MemManager::Allocator allocator_type;
+		//allocator_type;
 
 	public:
 		set_node_handle() MOMO_NOEXCEPT
@@ -66,15 +66,12 @@ namespace internal
 			return empty();
 		}
 
-		allocator_type get_allocator() const
-		{
-			return allocator_type(mSetExtractedItem.GetMemManager().GetCharAllocator());
-		}
-
 		value_type& value() const
 		{
 			return mSetExtractedItem.GetItem();
 		}
+
+		//allocator_type get_allocator() const
 
 		//void swap(set_node_handle&)
 		//friend void swap(set_node_handle&, set_node_handle&)
@@ -98,7 +95,7 @@ namespace internal
 	public:
 		typedef typename MapExtractedPair::Key key_type;
 		typedef typename MapExtractedPair::Value mapped_type;
-		typedef typename MapExtractedPair::MemManager::Allocator allocator_type;
+		//allocator_type;
 
 	public:
 		map_node_handle() MOMO_NOEXCEPT
@@ -136,11 +133,6 @@ namespace internal
 			return empty();
 		}
 
-		allocator_type get_allocator() const
-		{
-			return allocator_type(mMapExtractedPair.GetMemManager().GetCharAllocator());
-		}
-
 		key_type& key() const
 		{
 			return mMapExtractedPair.GetKey();
@@ -150,6 +142,8 @@ namespace internal
 		{
 			return mMapExtractedPair.GetValue();
 		}
+
+		//allocator_type get_allocator() const
 
 		//void swap(map_node_handle&)
 		//friend void swap(map_node_handle&, map_node_handle&)

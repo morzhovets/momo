@@ -740,11 +740,6 @@ namespace internal
 			mSetExtractedItem.Clear();
 		}
 
-		const MemManager& GetMemManager() const
-		{
-			return mSetExtractedItem.GetMemManager();
-		}
-
 		const Key& GetKey() const
 		{
 			return *mSetExtractedItem.GetItem().GetKeyPtr();
@@ -766,19 +761,19 @@ namespace internal
 		}
 
 		template<typename PairCreator>
-		void Set(MemManager& memManager, const PairCreator& pairCreator)
+		void Create(const PairCreator& pairCreator)
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 				{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
-			mSetExtractedItem.Set(memManager, itemCreator);
+			mSetExtractedItem.Create(itemCreator);
 		}
 
 		template<typename PairRemover>
-		void Reset(const PairRemover& pairRemover)
+		void Remove(const PairRemover& pairRemover)
 		{
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)
 				{ pairRemover(*item.GetKeyPtr(), *item.GetValuePtr()); };
-			mSetExtractedItem.Reset(itemRemover);
+			mSetExtractedItem.Remove(itemRemover);
 		}
 
 	protected:
