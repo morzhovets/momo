@@ -50,6 +50,7 @@ public:
 	typedef TColumnList ColumnList;
 	typedef TDataTraits DataTraits;
 	typedef typename ColumnList::MemManager MemManager;
+	typedef typename ColumnList::Settings Settings;
 	typedef typename ColumnList::Raw Raw;
 
 	template<typename Type>
@@ -65,10 +66,12 @@ public:
 private:
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef Array<Raw*, MemManagerPtr> Raws;
+	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*, MemManagerPtr>,
+		momo::internal::NestedArraySettings<typename Settings::RawsSettings>> Raws;
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
+	typedef typename Indexes::UniqueIndexViolation UniqueIndexViolation;
 	typedef typename Indexes::UniqueHash UniqueHashIndex;
 	typedef typename Indexes::MultiHash MultiHashIndex;
 
@@ -84,8 +87,14 @@ public:
 		typename MultiHashIndex::RawBounds> MultiHashRowBounds;
 	typedef typename MultiHashRowBounds::ConstBounds MultiHashConstRowBounds;
 
+	struct TryResult
+	{
+		RowReference rowRef;
+		const void* uniqueHashIndex;
+	};
+
 private:
-	typedef momo::internal::BoolConstant<ColumnList::keepRowNumber> KeepRowNumber;
+	typedef momo::internal::BoolConstant<Settings::keepRowNumber> KeepRowNumber;
 
 	//? MemPoolSettings
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
@@ -201,7 +210,6 @@ public:
 	DataTable(const DataTable& table, const Filter& filter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
-		ColumnList& columnList = mCrew.GetColumnList();
 		if (std::is_same<Filter, EmptyFilter>::value)
 			mRaws.Reserve(table.GetCount());
 		try
@@ -211,23 +219,14 @@ public:
 				if (!filter(srcRowRef))
 					continue;
 				mRaws.Reserve(mRaws.GetCount() + 1);
-				Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
+				Raw* dstRaw = pvCopyRaw(srcRowRef.GetRaw());
 				try
 				{
-					columnList.CopyRaw(srcRowRef.GetRaw(), dstRaw);
-					try
-					{
-						mIndexes.AddRaw(dstRaw);
-					}
-					catch (...)
-					{
-						columnList.DestroyRaw(dstRaw);
-						throw;
-					}
+					mIndexes.AddRaw(dstRaw);
 				}
 				catch (...)
 				{
-					mRawMemPool.Deallocate(dstRaw);
+					pvFreeRaw(dstRaw);
 					throw;
 				}
 				pvSetNumber(dstRaw, mRaws.GetCount(), KeepRowNumber());
@@ -323,14 +322,35 @@ public:
 		mRaws.Clear();
 	}
 
-	const ConstRowReference operator[](size_t index) const
+	void Reserve(size_t capacity)
 	{
-		return ConstRowReference(&GetColumnList(), mRaws[index]);
+		mRaws.Reserve(capacity);
+		mIndexes.Reserve(capacity);
 	}
 
-	const RowReference operator[](size_t index)
+	const ConstRowReference operator[](size_t rowNumber) const
 	{
-		return RowReference(&GetColumnList(), mRaws[index]);
+		return pvGet<ConstRowReference>(rowNumber);
+	}
+
+	const RowReference operator[](size_t rowNumber)
+	{
+		return pvGet<RowReference>(rowNumber);
+	}
+
+	Row NewRow()
+	{
+		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		try
+		{
+			mCrew.GetColumnList().CreateRaw(raw);
+		}
+		catch (...)
+		{
+			mRawMemPool.Deallocate(raw);
+			throw;
+		}
+		return pvNewRow(raw);
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -341,26 +361,21 @@ public:
 		return row;
 	}
 
-	Row NewRow()
+	Row NewRow(const Row& row)
 	{
-		pvFreeNewRaws();
-		return Row(&GetColumnList(), pvCreateRaw(), &mCrew.GetFreeRaws());
+		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
+		return pvNewRow(pvCopyRaw(row.GetRaw()));
 	}
 
-	template<typename Type, typename TypeArg, typename... Args>
-	RowReference AddRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
+	Row NewRow(ConstRowReference rowRef)
 	{
-		return AddRow(NewRow(column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...));
-	}
-
-	RowReference AddRow()
-	{
-		return AddRow(NewRow());
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		return pvNewRow(pvCopyRaw(rowRef.GetRaw()));
 	}
 
 	RowReference AddRow(Row&& row)
 	{
-		MOMO_ASSERT(&row.GetColumnList() == &GetColumnList());
+		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
 		mRaws.Reserve(mRaws.GetCount() + 1);
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
@@ -369,15 +384,58 @@ public:
 		return RowReference(&GetColumnList(), raw);
 	}
 
+	template<typename Type, typename TypeArg, typename... Args>
+	RowReference AddRow(const Column<Type>& column, TypeArg&& itemArg, Args&&... args)
+	{
+		return AddRow(NewRow(column, std::forward<TypeArg>(itemArg), std::forward<Args>(args)...));
+	}
+
+	TryResult TryAddRow(Row&& row)
+	{
+		try
+		{
+			return { AddRow(std::move(row)), nullptr };
+		}
+		catch (const UniqueIndexViolation& exception)
+		{
+			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+		}
+	}
+
+	RowReference InsertRow(size_t rowNumber, Row&& row)
+	{
+		MOMO_CHECK(rowNumber <= GetCount());
+		Raw* raw = row.GetRaw();
+		RowReference rowRef = AddRow(std::move(row));
+		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
+		{
+			pvSetNumber(raw, i, KeepRowNumber());
+			std::swap(raw, mRaws[i]);
+		}
+		return rowRef;
+	}
+
+	TryResult TryInsertRow(size_t rowNumber, Row&& row)
+	{
+		try
+		{
+			return { InsertRow(rowNumber, std::move(row)), nullptr };
+		}
+		catch (const UniqueIndexViolation& exception)
+		{
+			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+		}
+	}
+
 	Row ExtractRow(ConstRowReference rowRef)
 	{
-		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 		return ExtractRow(rowRef.GetNumber());
 	}
 	
 	Row ExtractRow(size_t rowNumber)
 	{
-		MOMO_ASSERT(rowNumber < GetCount());
+		MOMO_CHECK(rowNumber < GetCount());
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
 		Row row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
@@ -389,13 +447,13 @@ public:
 
 	RowReference UpdateRow(ConstRowReference rowRef, Row&& row)
 	{
-		MOMO_ASSERT(&rowRef.GetColumnList() == &GetColumnList());
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 		return UpdateRow(rowRef.GetNumber(), std::move(row));
 	}
 
 	RowReference UpdateRow(size_t rowNumber, Row&& row)
 	{
-		MOMO_ASSERT(rowNumber < GetCount());
+		MOMO_CHECK(rowNumber < GetCount());
 		Raw*& raw = mRaws[rowNumber];
 		mIndexes.UpdateRaw(raw, row.GetRaw());
 		pvFreeRaw(raw);
@@ -404,14 +462,26 @@ public:
 		return RowReference(&GetColumnList(), raw);
 	}
 
+	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
+	{
+		try
+		{
+			return { UpdateRow(rowNumber, std::move(row)), nullptr };
+		}
+		catch (const UniqueIndexViolation& exception)
+		{
+			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+		}
+	}
+
 	template<typename... Types>
-	const void* GetUniqueHashIndex(const Column<Types>&... columns)
+	const void* GetUniqueHashIndex(const Column<Types>&... columns) const
 	{
 		return mIndexes.GetUniqueHash(columns...);
 	}
 
 	template<typename... Types>
-	const void* GetMultiHashIndex(const Column<Types>&... columns)
+	const void* GetMultiHashIndex(const Column<Types>&... columns) const
 	{
 		return mIndexes.GetMultiHash(columns...);
 	}
@@ -438,6 +508,18 @@ public:
 	bool RemoveMultiHashIndex(const Column<Types>&... columns)
 	{
 		return mIndexes.RemoveMultiHash(columns...);
+	}
+
+	ConstSelection SelectEmpty() const
+	{
+		MemManager memManager = GetMemManager();
+		return ConstSelection(&GetColumnList(), SelectionRaws(std::move(memManager)));
+	}
+
+	Selection SelectEmpty()
+	{
+		MemManager memManager = GetMemManager();
+		return Selection(&GetColumnList(), SelectionRaws(std::move(memManager)));
 	}
 
 	template<typename Type, typename... Args>
@@ -512,6 +594,18 @@ public:
 		return pvMakeSelection(mRaws, filter, static_cast<size_t*>(nullptr));
 	}
 
+	UniqueHashConstRowBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
+	{
+		return pvFindByUniqueHash<UniqueHashConstRowBounds>(
+			static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
+	}
+
+	UniqueHashRowBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row)
+	{
+		return pvFindByUniqueHash<UniqueHashRowBounds>(
+			static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
+	}
+
 	template<typename Type, typename... Args>
 	UniqueHashConstRowBounds FindByUniqueHash(const void* uniqueHashIndex,
 		const Column<Type>& column, const Type& item, const Args&... args) const
@@ -550,19 +644,26 @@ private:
 		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
 	}
 
-	Raw* pvCreateRaw()
+	template<typename RowReference>
+	RowReference pvGet(size_t rowNumber)
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		MOMO_CHECK(rowNumber < GetCount());
+		return RowReference(&GetColumnList(), mRaws[rowNumber]);
+	}
+
+	Raw* pvCopyRaw(const Raw* srcRaw)
+	{
+		Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			mCrew.GetColumnList().CreateRaw(raw);
+			mCrew.GetColumnList().CopyRaw(srcRaw, dstRaw);
 		}
 		catch (...)
 		{
-			mRawMemPool.Deallocate(raw);
+			mRawMemPool.Deallocate(dstRaw);
 			throw;
 		}
-		return raw;
+		return dstRaw;
 	}
 
 	void pvFreeRaws() MOMO_NOEXCEPT
@@ -589,6 +690,12 @@ private:
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}
+	}
+
+	Row pvNewRow(Raw* raw) MOMO_NOEXCEPT
+	{
+		pvFreeNewRaws();
+		return Row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -729,6 +836,14 @@ private:
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
 
+	template<typename RowBounds>
+	RowBounds pvFindByUniqueHash(const UniqueHashIndex* uniqueHashIndex, const Row& row) const
+	{
+		MOMO_CHECK(uniqueHashIndex != nullptr);
+		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
+		return RowBounds(&GetColumnList(), mIndexes.FindRaws(*uniqueHashIndex, row.GetRaw()));
+	}
+
 	template<typename RowBounds, typename Index, typename Type, typename... Args>
 	RowBounds pvFindByHash(const Index* index, const Column<Type>& column, const Type& item,
 		const Args&... args) const
@@ -739,7 +854,7 @@ private:
 		if (index == nullptr)
 			index = mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index);
 		else
-			MOMO_ASSERT(index == mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index));	//?
+			MOMO_EXTRA_CHECK(index == mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index));	//?
 		if (index == nullptr)
 			throw std::runtime_error("Index not found");
 		return pvFindByHashRec<RowBounds>(*index, offsets.data(), OffsetItemTuple<>(), column, item, args...);

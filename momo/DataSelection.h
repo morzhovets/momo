@@ -139,6 +139,12 @@ namespace internal
 		RawBounds mRawBounds;
 	};
 
+	template<typename DataSettings>
+	struct DataSelectionRawsSettings : DataSettings::RawsSettings
+	{
+		static const CheckMode checkMode = DataSettings::checkMode;	//?
+	};
+
 	template<typename TRowReference>
 	class DataSelection
 	{
@@ -146,6 +152,7 @@ namespace internal
 		typedef TRowReference RowReference;
 		typedef typename RowReference::ColumnList ColumnList;
 		typedef typename ColumnList::MemManager MemManager;
+		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
@@ -154,17 +161,34 @@ namespace internal
 		typedef typename RowReference::ConstReference ConstRowReference;
 		typedef DataSelection<ConstRowReference> ConstSelection;
 
-		typedef Array<Raw*, MemManager> Raws;
+		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
+			DataSelectionRawsSettings<Settings>> Raws;
 
 		typedef DataRowIterator<RowReference, typename Raws::ConstIterator> ConstIterator;
 		typedef ConstIterator Iterator;
 
 	public:
+		//explicit DataSelection(const ColumnList* columnList)
+		//	: mColumnList(columnList),
+		//	mRaws(MemManager(columnList->GetMemManager()))
+		//{
+		//}
+
 		DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaws(std::move(raws))
 		{
 		}
+
+		//template<typename RowIterator>
+		//DataSelection(const ColumnList* columnList, RowIterator rowBegin, RowIterator rowEnd)
+		//	: DataSelection(columnList)
+		//{
+		//	mRaws.Reserve(std::distance(rowBegin, rowEnd));
+		//	for (RowIterator rowIter = rowBegin; rowIter != rowEnd; ++rowIter)
+		//	{
+		//	}
+		//}
 
 		DataSelection(DataSelection&& selection) MOMO_NOEXCEPT
 			: mColumnList(selection.mColumnList),
@@ -266,9 +290,37 @@ namespace internal
 			mRaws.Clear();
 		}
 
+		void Reserve(size_t capacity)
+		{
+			mRaws.Reserve(capacity);
+		}
+
 		const RowReference operator[](size_t index) const
 		{
 			return RowReference(mColumnList, mRaws[index]);
+		}
+
+		void Add(RowReference rowRef)
+		{
+			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
+			mRaws.AddBack(rowRef.GetRaw());
+		}
+
+		void Insert(size_t index, RowReference rowRef)
+		{
+			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
+			mRaws.Insert(index, rowRef.GetRaw());
+		}
+
+		void Remove(size_t index, size_t count)
+		{
+			mRaws.Remove(index, count);
+		}
+
+		void Update(size_t index, RowReference rowRef)
+		{
+			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
+			mRaws[index] = rowRef.GetRaw();
 		}
 
 		DataSelection&& Reverse() && MOMO_NOEXCEPT
@@ -295,6 +347,14 @@ namespace internal
 		{
 			pvSort(rowComparer);
 			return *this;
+		}
+
+		template<typename RowPredicate>
+		size_t BinarySearch(const RowPredicate& rowPred) const
+		{
+			auto rawPred = [this, &rowPred] (const Raw*, const Raw* raw)
+				{ return rowPred(ConstRowReference(mColumnList, raw)); };
+			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
 	private:

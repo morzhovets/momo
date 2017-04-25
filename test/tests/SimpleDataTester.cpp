@@ -18,9 +18,8 @@
 #include <string>
 #include <iostream>
 
-class SimpleDataTester
+namespace
 {
-private:
 	struct Struct
 	{
 		int intCol;
@@ -28,6 +27,13 @@ private:
 		std::string strCol;
 	};
 
+	const auto intCol = &Struct::intCol;
+	const auto dblCol = &Struct::dblCol;
+	const auto strCol = &Struct::strCol;
+}
+
+class SimpleDataTester
+{
 public:
 	static void TestAll()
 	{
@@ -37,7 +43,7 @@ public:
 
 		std::cout << "momo::experimental::DataColumnList: " << std::flush;
 		typedef momo::experimental::DataColumnList<momo::experimental::DataColumnTraits<Struct>> Columns;
-		TestData(Columns(&Struct::strCol, &Struct::intCol, &Struct::dblCol));
+		TestData(Columns(strCol, intCol, dblCol));
 		std::cout << "ok" << std::endl;
 	}
 
@@ -50,45 +56,47 @@ public:
 		static const size_t count = 1024;
 		static const size_t count2 = 10;
 
-		columns.SetMutable(&Struct::dblCol);
+		columns.SetMutable(dblCol);
 
 		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
-		assert(table.AddUniqueHashIndex(&Struct::intCol, &Struct::strCol));
-		assert(table.AddMultiHashIndex(&Struct::intCol));
-		assert(table.AddMultiHashIndex(&Struct::strCol));
+		assert(table.AddUniqueHashIndex(intCol, strCol));
+		assert(table.AddMultiHashIndex(intCol));
+		assert(table.AddMultiHashIndex(strCol));
+
+		table.Reserve(count);
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(&Struct::intCol, (int)i);
-			table.AddRow(std::move(row));
+			DataRow row = table.NewRow(intCol, (int)i);
+			assert(table.TryAddRow(std::move(row)).uniqueHashIndex == nullptr);
 		}
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(&Struct::intCol, (int)i / 2);
-			row[&Struct::strCol] = (i % 2 == 0) ? "0" : "1";
-			table.UpdateRow(table[i], std::move(row));
+			DataRow row = table.NewRow(intCol, (int)i / 2);
+			row[strCol] = (i % 2 == 0) ? "0" : "1";
+			assert(table.TryUpdateRow(i, std::move(row)).uniqueHashIndex == nullptr);
 		}
 
 		for (size_t i = 0; i < count; ++i)
-			table[i][&Struct::dblCol] = (double)i / 2;
+			table[i][dblCol] = (double)i / 2;
 
 		for (auto row : table) { (void)row; }
 		for (auto row : ctable) { (void)row; }
 		for (auto row : table.Select()) { (void)row; }
 		for (auto row : ctable.Select()) { (void)row; }
 
-		assert(table.GetUniqueHashIndex(&Struct::intCol, &Struct::strCol));
-		assert(table.GetMultiHashIndex(&Struct::intCol));
-		assert(table.RemoveUniqueHashIndex(&Struct::intCol, &Struct::strCol));
-		assert(table.RemoveMultiHashIndex(&Struct::intCol));
-		assert(table.AddUniqueHashIndex(&Struct::intCol, &Struct::strCol));
-		assert(table.AddMultiHashIndex(&Struct::intCol));
+		assert(table.GetUniqueHashIndex(intCol, strCol));
+		assert(table.GetMultiHashIndex(intCol));
+		assert(table.RemoveUniqueHashIndex(intCol, strCol));
+		assert(table.RemoveMultiHashIndex(intCol));
+		assert(table.AddUniqueHashIndex(intCol, strCol));
+		assert(table.AddMultiHashIndex(intCol));
 
 		for (size_t i = 0; i < count2; ++i)
-			table.AddRow(&Struct::intCol, (int)(count + i));
+			assert(table.TryInsertRow(count, table.NewRow(intCol, (int)(count + i))).uniqueHashIndex == nullptr);
 		assert(table.GetCount() == count + count2);
 
 		for (size_t i = 0; i < count2; ++i)
@@ -99,23 +107,28 @@ public:
 		assert(table.Select().GetCount() == count);
 		assert(ctable.Select().GetCount() == count);
 
-		assert(table.SelectCount(&Struct::strCol, std::string("0"), &Struct::intCol, 1) == 1);
-		assert(table.Select(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
-		assert(ctable.Select(&Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+		assert(table.SelectCount(strCol, std::string("0"), intCol, 1) == 1);
+		assert(table.Select(strCol, std::string("1"), intCol, 0).GetCount() == 1);
+		assert(ctable.Select(strCol, std::string("1"), intCol, 0).GetCount() == 1);
 
-		assert(table.SelectCount(&Struct::strCol, std::string("0")) == count / 2);
-		assert(table.Select(&Struct::strCol, std::string("1")).GetCount() == count / 2);
-		assert(ctable.Select(&Struct::strCol, std::string("1")).GetCount() == count / 2);
+		assert(table.SelectCount(strCol, std::string("0")) == count / 2);
+		assert(table.Select(strCol, std::string("1")).GetCount() == count / 2);
+		assert(ctable.Select(strCol, std::string("1")).GetCount() == count / 2);
 
-		assert(table.SelectCount(&Struct::dblCol, 0.0) == 1);
-		assert(table.Select(&Struct::dblCol, 1.0).GetCount() == 1);
-		assert(ctable.Select(&Struct::dblCol, 1.0).GetCount() == 1);
+		assert(table.SelectCount(dblCol, 0.0) == 1);
+		assert(table.Select(dblCol, 1.0).GetCount() == 1);
+		assert(ctable.Select(dblCol, 1.0).GetCount() == 1);
 
-		assert(table.FindByUniqueHash(nullptr, &Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
-		assert(ctable.FindByUniqueHash(nullptr, &Struct::strCol, std::string("1"), &Struct::intCol, 0).GetCount() == 1);
+		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
+			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
+		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
+			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
 
-		assert(table.FindByMultiHash(nullptr, &Struct::strCol, std::string("1")).GetCount() == count / 2);
-		assert(ctable.FindByMultiHash(nullptr, &Struct::strCol, std::string("1")).GetCount() == count / 2);
+		assert(table.FindByUniqueHash(nullptr, strCol, std::string("1"), intCol, 0).GetCount() == 1);
+		assert(ctable.FindByUniqueHash(nullptr, strCol, std::string("1"), intCol, 0).GetCount() == 1);
+
+		assert(table.FindByMultiHash(nullptr, strCol, std::string("1")).GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(nullptr, strCol, std::string("1")).GetCount() == count / 2);
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);

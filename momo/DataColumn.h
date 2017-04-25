@@ -6,6 +6,7 @@
   momo/DataColumn.h
 
   namespace momo::experimental:
+    struct DataSettings
     class DataColumnTraits
     class DataColumnList
     class DataColumnListStatic
@@ -23,6 +24,19 @@ namespace momo
 
 namespace experimental
 {
+
+template<bool tKeepRowNumber = true>
+struct DataSettings
+{
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+
+	static const bool keepRowNumber = tKeepRowNumber;
+
+	typedef ArraySettings<> RawsSettings;
+
+	static const size_t indexIteratorsInternalCapacity = 8;
+};
 
 template<typename TStruct,
 	typename TMemManager = MemManagerDefault>
@@ -99,14 +113,13 @@ public:
 };
 
 template<typename TColumnTraits,
-	bool tKeepRowNumber = true>
+	typename TSettings = DataSettings<>>
 class DataColumnList
 {
 public:
 	typedef TColumnTraits ColumnTraits;
+	typedef TSettings Settings;
 	typedef typename ColumnTraits::MemManager MemManager;
-
-	static const bool keepRowNumber = tKeepRowNumber;
 
 	template<typename Type>
 	using Column = typename ColumnTraits::template Column<Type>;
@@ -193,7 +206,8 @@ private:
 	typedef std::array<size_t, vertexCount> Addends;
 
 	static const size_t mutOffsetsIntCapacity = maxColumnCount * sizeof(void*);
-	typedef ArrayIntCap<mutOffsetsIntCapacity, unsigned char, MemManager> MutOffsets;
+	typedef Array<unsigned char, MemManager, ArrayItemTraits<unsigned char, MemManager>,
+		momo::internal::NestedArraySettings<ArraySettings<mutOffsetsIntCapacity>>> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
@@ -304,10 +318,10 @@ public:
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
-		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
+		MOMO_EXTRA_CHECK(addend1 != 0 && addend2 != 0);
 		size_t offset = addend1 + addend2;
-		MOMO_ASSERT(offset < mTotalSize);
-		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
+		MOMO_EXTRA_CHECK(offset < mTotalSize);
+		MOMO_EXTRA_CHECK(offset % ColumnTraits::template GetAlignment<Type>() == 0);
 		return offset;
 	}
 
@@ -335,13 +349,13 @@ public:
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
 	{
-		MOMO_STATIC_ASSERT(keepRowNumber);
+		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		return *reinterpret_cast<const size_t*>(raw + mTotalSize - sizeof(size_t));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
 	{
-		MOMO_STATIC_ASSERT(keepRowNumber);
+		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		*reinterpret_cast<size_t*>(raw + mTotalSize - sizeof(size_t)) = number;
 	}
 
@@ -371,7 +385,7 @@ private:
 	{
 		pvCorrectOffset<Type>(offset);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
-		MOMO_ASSERT(vertices.first != vertices.second);
+		MOMO_EXTRA_CHECK(vertices.first != vertices.second);
 		graph.AddEdge(vertices.first, vertices.second, offset);
 		graph.AddEdge(vertices.second, vertices.first, offset);
 		offset += ColumnTraits::template GetSize<Type>();
@@ -383,7 +397,7 @@ private:
 	template<size_t edgeCount>
 	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
 	{
-		if (keepRowNumber)
+		if (Settings::keepRowNumber)
 		{
 			pvCorrectOffset<size_t>(offset);
 			offset += sizeof(size_t);
@@ -481,14 +495,13 @@ private:
 
 template<typename TStruct,
 	typename TMemManager = MemManagerDefault,
-	bool tKeepRowNumber = true>
+	typename TSettings = DataSettings<>>
 class DataColumnListStatic
 {
 public:
 	typedef TStruct Struct;
 	typedef TMemManager MemManager;
-
-	static const bool keepRowNumber = tKeepRowNumber;
+	typedef TSettings Settings;
 
 	template<typename Type>
 	using Column = Type Struct::*;
@@ -514,7 +527,7 @@ private:
 	{
 	};
 
-	struct StructNumber : public Struct, public Number<void, keepRowNumber>
+	struct StructNumber : public Struct, public Number<void, Settings::keepRowNumber>
 	{
 	};
 
@@ -618,13 +631,13 @@ public:
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
 	{
-		MOMO_STATIC_ASSERT(keepRowNumber);
+		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		return static_cast<const StructNumber*>(raw)->rowNumber;
 	}
 
 	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
 	{
-		MOMO_STATIC_ASSERT(keepRowNumber);
+		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		static_cast<StructNumber*>(raw)->rowNumber = number;
 	}
 
