@@ -70,7 +70,7 @@ namespace internal
 
 	public:
 		static const CheckMode checkMode = HashMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const ExtraCheckMode extraCheckMode = HashMapSettings::extraCheckMode;
 		static const bool checkVersion = HashMapSettings::checkVersion;
 
 		static const bool overloadIfCannotGrow = HashMapSettings::overloadIfCannotGrow;
