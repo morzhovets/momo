@@ -1067,12 +1067,12 @@ private:
 			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount,
 				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
 		}
-		catch (...)	// std::bad_alloc&
+		catch (const std::bad_alloc& exception)
 		{
 			if (Settings::overloadIfCannotGrow && hasBuckets)
 				return pvAddNogrow(hashCode, itemCreator, bucketIndex);
 			else
-				throw;
+				throw exception;
 		}
 		Item* pitem;
 		try

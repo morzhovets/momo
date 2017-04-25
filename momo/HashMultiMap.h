@@ -393,7 +393,7 @@ namespace internal
 	public:
 		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
-		static const bool checkVersion = HashMultiMapSettings::checkVersion;
+		static const bool checkVersion = HashMultiMapSettings::checkKeyVersion;
 	};
 }
 
@@ -483,7 +483,7 @@ struct HashMultiMapSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
