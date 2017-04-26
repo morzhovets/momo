@@ -326,14 +326,6 @@ public:
 	}
 
 	template<typename Type>
-	const Type& GetByOffset(const Raw* raw, size_t offset) const MOMO_NOEXCEPT
-	{
-		MOMO_ASSERT(offset < mTotalSize);
-		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
-		return *reinterpret_cast<const Type*>(raw + offset);
-	}
-
-	template<typename Type>
 	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < mTotalSize);
@@ -605,14 +597,6 @@ public:
 	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
 		return MOMO_OFFSET_OF(Struct, column);
-	}
-
-	template<typename Type>
-	const Type& GetByOffset(const Raw* raw, size_t offset) const MOMO_NOEXCEPT
-	{
-		MOMO_ASSERT(offset < sizeof(Struct));
-		MOMO_ASSERT(offset % alignof(Type) == 0);
-		return *reinterpret_cast<const Type*>(reinterpret_cast<const char*>(raw) + offset);
 	}
 
 	template<typename Type>

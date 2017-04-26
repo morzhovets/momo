@@ -66,18 +66,12 @@ namespace internal
 
 		typedef Array<size_t> Offsets;
 
-		typedef std::function<size_t(const Raw*, size_t*)> HashFunc;
-		typedef std::function<bool(const Raw*, const Raw*)> EqualFunc;
+		typedef std::function<size_t(Raw*, size_t*)> HashFunc;
+		typedef std::function<bool(Raw*, Raw*)> EqualFunc;
 
 		struct HashRawKey
 		{
 			Raw* raw;
-			size_t hashCode;
-		};
-
-		struct HashConstRawKey
-		{
-			const Raw* raw;
 			size_t hashCode;
 		};
 
@@ -124,7 +118,7 @@ namespace internal
 		{
 		public:
 			template<typename KeyArg>
-			struct IsValidKeyArg : public std::is_same<KeyArg, HashConstRawKey>
+			struct IsValidKeyArg : std::false_type
 			{
 			};
 
@@ -150,11 +144,6 @@ namespace internal
 				return key1.hashCode == key2.hashCode && mEqualFunc(key1.raw, key2.raw);
 			}
 
-			bool IsEqual(const HashConstRawKey& key1, const HashRawKey& key2) const
-			{
-				return key1.hashCode == key2.hashCode && mEqualFunc(key1.raw, key2.raw);
-			}
-
 			template<typename... Types>
 			bool IsEqual(const HashTupleKey<Types...>& key1, const HashRawKey& key2) const
 			{
@@ -169,7 +158,7 @@ namespace internal
 				const auto& pair = std::get<number>(key1.tuple);
 				const auto& item1 = pair.second;
 				typedef typename std::decay<decltype(item1)>::type Type;
-				const Type& item2 = key1.columnList->template GetByOffset<Type>(key2.raw, pair.first);
+				const Type& item2 = key1.columnList->template GetByOffset<const Type>(key2.raw, pair.first);
 				return DataTraits::IsEqual(item1, item2) && pvIsEqual<number + 1>(key1, key2);
 			}
 
@@ -293,10 +282,10 @@ namespace internal
 				return iter;
 			}
 
-			RawBounds Find(const Raw* raw) const
+			RawBounds Find(Raw* raw) const
 			{
 				size_t hashCode = mHashFunc(raw, nullptr);
-				Iterator iter = mHashSet.Find(HashConstRawKey{ raw, hashCode });
+				Iterator iter = mHashSet.Find({ raw, hashCode });
 				return RawBounds(!!iter ? iter->raw : nullptr);
 			}
 
@@ -560,7 +549,7 @@ namespace internal
 			return pvRemoveHash(mMultiHashes, columns...);
 		}
 
-		typename UniqueHash::RawBounds FindRaws(const UniqueHash& uniqueHash, const Raw* raw) const
+		typename UniqueHash::RawBounds FindRaws(const UniqueHash& uniqueHash, Raw* raw) const
 		{
 			return uniqueHash.Find(raw);	//?
 		}
@@ -793,14 +782,14 @@ namespace internal
 			const auto* hash = pvGetHash(hashes, sortedOffsets);
 			if (hash != nullptr)
 				return hash;
-			auto hashFunc = [columnList, offsets] (const Raw* raw, size_t* hashCodes)
+			auto hashFunc = [columnList, offsets] (Raw* raw, size_t* hashCodes)
 			{
 				if (hashCodes == nullptr)
 					return pvGetHashCode<void, Types...>(columnList, raw, offsets.data());
 				else
 					return pvGetHashCode<void, Types...>(columnList, raw, offsets.data(), hashCodes);
 			};
-			auto equalFunc = [columnList, offsets] (const Raw* raw1, const Raw* raw2)
+			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets.data()); };
 			typename Hashes::Item newHash(
 				Offsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr()), hashFunc, equalFunc);
@@ -821,22 +810,21 @@ namespace internal
 		}
 
 		template<typename Void, typename Type, typename... Types>
-		static size_t pvGetHashCode(const ColumnList* columnList, const Raw* raw,
-			const size_t* offsets)
+		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw, const size_t* offsets)
 		{
 			return pvGetHashCode<Type>(columnList, raw, *offsets)
 				+ pvGetHashCode<void, Types...>(columnList, raw, offsets + 1);
 		}
 
 		template<typename Void>
-		static size_t pvGetHashCode(const ColumnList* /*columnList*/, const Raw* /*raw*/,
+		static size_t pvGetHashCode(const ColumnList* /*columnList*/, Raw* /*raw*/,
 			const size_t* /*offsets*/) MOMO_NOEXCEPT
 		{
 			return 0;
 		}
 
 		template<typename Void, typename Type, typename... Types>
-		static size_t pvGetHashCode(const ColumnList* columnList, const Raw* raw,
+		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw,
 			const size_t* offsets, size_t* hashCodes)
 		{
 			size_t& hashCode = hashCodes[*offsets];
@@ -846,7 +834,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		static size_t pvGetHashCode(const ColumnList* /*columnList*/, const Raw* /*raw*/,
+		static size_t pvGetHashCode(const ColumnList* /*columnList*/, Raw* /*raw*/,
 			const size_t* /*offsets*/, size_t* /*hashCodes*/) MOMO_NOEXCEPT
 		{
 			return 0;
@@ -869,9 +857,9 @@ namespace internal
 		}
 
 		template<typename Type>
-		static size_t pvGetHashCode(const ColumnList* columnList, const Raw* raw, size_t offset)
+		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw, size_t offset)
 		{
-			const Type& item = columnList->template GetByOffset<Type>(raw, offset);
+			const Type& item = columnList->template GetByOffset<const Type>(raw, offset);
 			return pvGetHashCode(item, offset);
 		}
 
@@ -882,17 +870,17 @@ namespace internal
 		}
 
 		template<typename Void, typename Type, typename... Types>
-		static bool pvIsEqual(const ColumnList* columnList, const Raw* raw1, const Raw* raw2,
+		static bool pvIsEqual(const ColumnList* columnList, Raw* raw1, Raw* raw2,
 			const size_t* offsets)
 		{
-			const Type& item1 = columnList->template GetByOffset<Type>(raw1, *offsets);
-			const Type& item2 = columnList->template GetByOffset<Type>(raw2, *offsets);
+			const Type& item1 = columnList->template GetByOffset<const Type>(raw1, *offsets);
+			const Type& item2 = columnList->template GetByOffset<const Type>(raw2, *offsets);
 			return DataTraits::IsEqual(item1, item2)
 				&& pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets + 1);
 		}
 
 		template<typename Void>
-		static bool pvIsEqual(const ColumnList* /*columnList*/, const Raw* /*raw1*/, const Raw* /*raw2*/,
+		static bool pvIsEqual(const ColumnList* /*columnList*/, Raw* /*raw1*/, Raw* /*raw2*/,
 			const size_t* /*offsets*/) MOMO_NOEXCEPT
 		{
 			return true;

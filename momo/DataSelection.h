@@ -139,9 +139,13 @@ namespace internal
 		RawBounds mRawBounds;
 	};
 
-	template<typename DataSettings>
-	struct DataSelectionRawsSettings : DataSettings::RawsSettings
+	template<typename TDataSettings>
+	struct DataSelectionRawsSettings : TDataSettings::RawsSettings
 	{
+	protected:
+		typedef TDataSettings DataSettings;
+
+	public:
 		static const CheckMode checkMode = DataSettings::checkMode;	//?
 	};
 
@@ -166,6 +170,12 @@ namespace internal
 
 		typedef DataRowIterator<RowReference, typename Raws::ConstIterator> ConstIterator;
 		typedef ConstIterator Iterator;
+
+	private:
+		struct RowReferenceProxy : public RowReference
+		{
+			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+		};
 
 	public:
 		//explicit DataSelection(const ColumnList* columnList)
@@ -303,13 +313,13 @@ namespace internal
 		void Add(RowReference rowRef)
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
-			mRaws.AddBack(rowRef.GetRaw());
+			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 		}
 
 		void Insert(size_t index, RowReference rowRef)
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
-			mRaws.Insert(index, rowRef.GetRaw());
+			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
 
 		void Remove(size_t index, size_t count)
@@ -320,7 +330,7 @@ namespace internal
 		void Update(size_t index, RowReference rowRef)
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
-			mRaws[index] = rowRef.GetRaw();
+			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
 		}
 
 		DataSelection&& Reverse() && MOMO_NOEXCEPT
@@ -352,7 +362,7 @@ namespace internal
 		template<typename RowPredicate>
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
-			auto rawPred = [this, &rowPred] (const Raw*, const Raw* raw)
+			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
 				{ return rowPred(ConstRowReference(mColumnList, raw)); };
 			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
@@ -366,7 +376,7 @@ namespace internal
 		template<typename RowComparer>
 		void pvSort(const RowComparer& rowComparer)
 		{
-			auto rawComparer = [this, &rowComparer] (const Raw* raw1, const Raw* raw2)
+			auto rawComparer = [this, &rowComparer] (Raw* raw1, Raw* raw2)
 			{
 				return rowComparer(ConstRowReference(mColumnList, raw1),
 					ConstRowReference(mColumnList, raw2));

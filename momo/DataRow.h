@@ -91,8 +91,7 @@ namespace internal
 		template<typename Type>
 		const Type& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<Type>(
-				static_cast<const Raw*>(mRaw), offset);
+			return mColumnList->template GetByOffset<const Type>(mRaw, offset);
 		}
 
 		template<typename Type>
@@ -152,6 +151,12 @@ namespace internal
 			return mRaw;
 		}
 
+	protected:
+		Raw* ptGetRaw() const MOMO_NOEXCEPT
+		{
+			return mRaw;
+		}
+
 	private:
 		const ColumnList* mColumnList;
 		Raw* mRaw;
@@ -171,7 +176,7 @@ namespace internal
 		typedef DataConstRowReference ConstReference;
 
 	public:
-		DataConstRowReference(const ColumnList* columnList, const Raw* raw) MOMO_NOEXCEPT
+		DataConstRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{
@@ -185,7 +190,7 @@ namespace internal
 		template<typename Type>
 		const Type& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<Type>(mRaw, offset);
+			return mColumnList->template GetByOffset<const Type>(mRaw, offset);
 		}
 
 		template<typename Type>
@@ -215,9 +220,15 @@ namespace internal
 			return mRaw;
 		}
 
+	protected:
+		Raw* ptGetRaw() const MOMO_NOEXCEPT
+		{
+			return mRaw;
+		}
+
 	private:
 		const ColumnList* mColumnList;
-		const Raw* mRaw;
+		Raw* mRaw;
 	};
 
 	template<typename TColumnList>
@@ -274,8 +285,7 @@ namespace internal
 
 			const Type& Get() const
 			{
-				return mColumnList->template GetByOffset<Type>(
-					static_cast<const Raw*>(mRaw), mOffset);
+				return mColumnList->template GetByOffset<const Type>(mRaw, mOffset);
 			}
 
 		private:
@@ -340,6 +350,12 @@ namespace internal
 		}
 
 		const Raw* operator->() const MOMO_NOEXCEPT
+		{
+			return mRaw;
+		}
+
+	protected:
+		Raw* ptGetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
 		}

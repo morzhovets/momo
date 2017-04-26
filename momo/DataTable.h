@@ -184,6 +184,11 @@ private:
 		Data* mData;
 	};
 
+	struct RowProxy : public Row
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw, Raw*)
+	};
+
 public:
 	explicit DataTable(ColumnList&& columnList = ColumnList())
 		: mCrew(std::move(columnList)),
@@ -841,7 +846,8 @@ private:
 	{
 		MOMO_CHECK(uniqueHashIndex != nullptr);
 		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
-		return RowBounds(&GetColumnList(), mIndexes.FindRaws(*uniqueHashIndex, row.GetRaw()));
+		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row));
+		return RowBounds(&GetColumnList(), raws);
 	}
 
 	template<typename RowBounds, typename Index, typename Type, typename... Args>
