@@ -27,6 +27,7 @@ namespace internal
 		typedef TRowReference RowReference;
 		typedef TRawIterator RawIterator;
 		typedef typename RowReference::ColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
 
 		typedef const RowReference Reference;
 		typedef momo::internal::IteratorPointer<Reference> Pointer;
@@ -39,54 +40,71 @@ namespace internal
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 		};
 
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetColumnList, const ColumnList*)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetRawIterator, RawIterator)
+		};
+
 	public:
 		DataRowIterator() MOMO_NOEXCEPT
 			: mColumnList(nullptr)
 		{
 		}
 
-		DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT	//pt
+		operator ConstIterator() const MOMO_NOEXCEPT
+		{
+			return ConstIteratorProxy(mColumnList, mRawIterator);
+		}
+
+		DataRowIterator& operator+=(ptrdiff_t diff)
+		{
+			mRawIterator += diff;
+			return *this;
+		}
+
+		ptrdiff_t operator-(ConstIterator iter) const
+		{
+			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
+			return mRawIterator - ConstIteratorProxy::GetRawIterator(iter);
+		}
+
+		Pointer operator->() const
+		{
+			MOMO_CHECK(mColumnList != nullptr);
+			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator));
+		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return mColumnList == ConstIteratorProxy::GetColumnList(iter)
+				&& mRawIterator == ConstIteratorProxy::GetRawIterator(iter);
+		}
+
+		bool operator<(ConstIterator iter) const
+		{
+			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
+			return mRawIterator < ConstIteratorProxy::GetRawIterator(iter);
+		}
+
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
+
+	protected:
+		DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRawIterator(rawIter)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		const ColumnList* ptGetColumnList() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mColumnList, mRawIterator);
+			return mColumnList;
 		}
 
-		DataRowIterator& operator++()
+		RawIterator ptGetRawIterator() const MOMO_NOEXCEPT
 		{
-			++mRawIterator;
-			return *this;
-		}
-
-		DataRowIterator operator++(int)
-		{
-			DataRowIterator tempIter = *this;
-			++*this;
-			return tempIter;
-		}
-
-		Reference operator*() const
-		{
-			return RowReferenceProxy(mColumnList, *mRawIterator);
-		}
-
-		Pointer operator->() const
-		{
-			return Pointer(**this);
-		}
-
-		bool operator==(DataRowIterator iter) const MOMO_NOEXCEPT
-		{
-			return mRawIterator == iter.mRawIterator;
-		}
-
-		bool operator!=(DataRowIterator iter) const MOMO_NOEXCEPT
-		{
-			return !(*this == iter);
+			return mRawIterator;
 		}
 
 	private:
@@ -105,6 +123,17 @@ namespace internal
 		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
 
 		typedef DataRowBounds<typename RowReference::ConstReference, RawBounds> ConstBounds;
+	
+	private:
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		};
+
+		struct ConstBoundsProxy : public ConstBounds
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
+		};
 
 	public:
 		DataRowBounds() MOMO_NOEXCEPT
@@ -112,25 +141,19 @@ namespace internal
 		{
 		}
 
-		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT	//pt
-			: mColumnList(columnList),
-			mRawBounds(rawBounds)
-		{
-		}
-
 		operator ConstBounds() const MOMO_NOEXCEPT
 		{
-			return ConstBounds(mColumnList, mRawBounds);
+			return ConstBoundsProxy(mColumnList, mRawBounds);
 		}
 
 		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return Iterator(mRawBounds.GetBegin());
+			return IteratorProxy(mColumnList, mRawBounds.GetBegin());
 		}
 
 		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return Iterator(mRawBounds.GetEnd());
+			return IteratorProxy(mColumnList, mRawBounds.GetEnd());
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataRowBounds&, Iterator)
@@ -138,6 +161,18 @@ namespace internal
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return mRawBounds.GetCount();
+		}
+
+		RowReference& operator[](size_t index) const
+		{
+			return GetBegin()[index];
+		}
+
+	protected:
+		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRawBounds(rawBounds)
+		{
 		}
 
 	private:
@@ -184,6 +219,12 @@ namespace internal
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+		};
+
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			typedef typename DataSelection::ConstIterator ConstIterator;	//? vs
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		};
 
 		struct ConstSelectionProxy : public ConstSelection
@@ -253,12 +294,12 @@ namespace internal
 
 		ConstIterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mColumnList, mRaws.GetBegin());
+			return ConstIteratorProxy(mColumnList, mRaws.GetBegin());
 		}
 
 		ConstIterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mColumnList, mRaws.GetEnd());
+			return ConstIteratorProxy(mColumnList, mRaws.GetEnd());
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
@@ -402,7 +443,7 @@ namespace std
 	template<typename RR, typename RI>
 	struct iterator_traits<momo::experimental::internal::DataRowIterator<RR, RI>>
 	{
-		typedef forward_iterator_tag iterator_category;
+		typedef random_access_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
 		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Pointer pointer;
 		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Reference reference;
