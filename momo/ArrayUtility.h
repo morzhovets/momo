@@ -48,9 +48,9 @@
 	{ \
 		return *this + (-diff); \
 	} \
-	Pointer operator->() const \
+	Reference operator*() const \
 	{ \
-		return std::addressof(**this); \
+		return *operator->(); \
 	} \
 	Reference operator[](ptrdiff_t diff) const \
 	{ \
@@ -128,10 +128,10 @@ namespace internal
 			return mIndex - iter.GetIndex();
 		}
 
-		Reference operator*() const
+		Pointer operator->() const
 		{
 			MOMO_CHECK(mArray != nullptr);
-			return (*mArray)[mIndex];
+			return std::addressof((*mArray)[mIndex]);
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT

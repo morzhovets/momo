@@ -73,10 +73,10 @@ namespace internal
 			return mItemPtr - iter.GetItemPtr();
 		}
 
-		Reference operator*() const
+		Pointer operator->() const
 		{
 			MOMO_CHECK(mItemPtr != nullptr);
-			return *mItemPtr;
+			return mItemPtr;
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
