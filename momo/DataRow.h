@@ -26,20 +26,17 @@ namespace internal
 	{
 	public:
 		typedef TColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
 		using Column = typename ColumnList::template Column<Type>;
 
+	protected:
 		typedef std::atomic<Raw*> FreeRaws;
 
 	public:
-		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
-			: mColumnList(columnList),
-			mRaw(raw),
-			mFreeRaws(freeRaws)
-		{
-		}
+		DataRow() = delete;
 
 		DataRow(DataRow&& row) MOMO_NOEXCEPT
 			: mColumnList(row.mColumnList),
@@ -152,6 +149,13 @@ namespace internal
 		}
 
 	protected:
+		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRaw(raw),
+			mFreeRaws(freeRaws)
+		{
+		}
+
 		Raw* ptGetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
@@ -168,6 +172,7 @@ namespace internal
 	{
 	public:
 		typedef TColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
@@ -176,11 +181,7 @@ namespace internal
 		typedef DataConstRowReference ConstReference;
 
 	public:
-		DataConstRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
-			: mColumnList(columnList),
-			mRaw(raw)
-		{
-		}
+		DataConstRowReference() = delete;
 
 		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
@@ -221,6 +222,12 @@ namespace internal
 		}
 
 	protected:
+		DataConstRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRaw(raw)
+		{
+		}
+
 		Raw* ptGetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
@@ -236,6 +243,7 @@ namespace internal
 	{
 	public:
 		typedef TColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Type>
@@ -247,7 +255,7 @@ namespace internal
 		class ItemReference
 		{
 		public:
-			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT
+			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT	//pt
 				: mColumnList(columnList),
 				mRaw(raw),
 				mOffset(offset)
@@ -292,8 +300,7 @@ namespace internal
 			template<typename TypeArg>
 			ItemReference& pvAssign(TypeArg&& itemArg)
 			{
-				if (!mColumnList->IsMutable(mOffset))
-					throw std::runtime_error("Item is read only");
+				MOMO_CHECK(mColumnList->IsMutable(mOffset));
 				mColumnList->template Assign<Type>(mRaw, mOffset, std::forward<TypeArg>(itemArg));
 				return *this;
 			}
@@ -304,16 +311,18 @@ namespace internal
 			size_t mOffset;
 		};
 
-	public:
-		DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
-			: mColumnList(columnList),
-			mRaw(raw)
+	private:
+		struct ConstReferenceProxy : public ConstReference
 		{
-		}
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstReference)
+		};
+
+	public:
+		DataRowReference() = delete;
 
 		operator ConstReference() const MOMO_NOEXCEPT
 		{
-			return ConstReference(mColumnList, mRaw);
+			return ConstReferenceProxy(mColumnList, mRaw);
 		}
 
 		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
@@ -355,6 +364,12 @@ namespace internal
 		}
 
 	protected:
+		DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRaw(raw)
+		{
+		}
+
 		Raw* ptGetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;

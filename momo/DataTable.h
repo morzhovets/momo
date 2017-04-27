@@ -99,8 +99,6 @@ private:
 	//? MemPoolSettings
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
 
-	typedef typename Selection::Raws SelectionRaws;
-
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;
 
@@ -186,7 +184,24 @@ private:
 
 	struct RowProxy : public Row
 	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Row)
 		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw, Raw*)
+	};
+
+	struct ConstRowReferenceProxy : public ConstRowReference
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowReference)
+	};
+
+	struct RowReferenceProxy : public RowReference
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
+	};
+
+	struct SelectionProxy : public Selection
+	{
+		typedef typename Selection::Raws Raws;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Selection)
 	};
 
 public:
@@ -335,12 +350,14 @@ public:
 
 	const ConstRowReference operator[](size_t rowNumber) const
 	{
-		return pvGet<ConstRowReference>(rowNumber);
+		MOMO_CHECK(rowNumber < GetCount());
+		return pvMakeConstRowReference(mRaws[rowNumber]);
 	}
 
 	const RowReference operator[](size_t rowNumber)
 	{
-		return pvGet<RowReference>(rowNumber);
+		MOMO_CHECK(rowNumber < GetCount());
+		return pvMakeRowReference(mRaws[rowNumber]);
 	}
 
 	Row NewRow()
@@ -386,7 +403,7 @@ public:
 		Raw* raw = row.ExtractRaw();
 		pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
 		mRaws.AddBackNogrow(raw);
-		return RowReference(&GetColumnList(), raw);
+		return pvMakeRowReference(raw);
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -403,7 +420,7 @@ public:
 		}
 		catch (const UniqueIndexViolation& exception)
 		{
-			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
 		}
 	}
 
@@ -428,7 +445,7 @@ public:
 		}
 		catch (const UniqueIndexViolation& exception)
 		{
-			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
 		}
 	}
 
@@ -443,11 +460,10 @@ public:
 		MOMO_CHECK(rowNumber < GetCount());
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		Row row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 		mRaws.Remove(rowNumber, 1);
 		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i, KeepRowNumber());
-		return row;
+		return pvNewRow(raw);
 	}
 
 	RowReference UpdateRow(ConstRowReference rowRef, Row&& row)
@@ -464,7 +480,7 @@ public:
 		pvFreeRaw(raw);
 		raw = row.ExtractRaw();
 		pvSetNumber(raw, rowNumber, KeepRowNumber());
-		return RowReference(&GetColumnList(), raw);
+		return pvMakeRowReference(raw);
 	}
 
 	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
@@ -475,7 +491,7 @@ public:
 		}
 		catch (const UniqueIndexViolation& exception)
 		{
-			return { RowReference(&GetColumnList(), exception.raw), &exception.uniqueHash };
+			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
 		}
 	}
 
@@ -649,11 +665,14 @@ private:
 		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
 	}
 
-	template<typename RowReference>
-	RowReference pvGet(size_t rowNumber)
+	ConstRowReference pvMakeConstRowReference(Raw* raw) const MOMO_NOEXCEPT
 	{
-		MOMO_CHECK(rowNumber < GetCount());
-		return RowReference(&GetColumnList(), mRaws[rowNumber]);
+		return ConstRowReferenceProxy(&GetColumnList(), raw);
+	}
+
+	RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
+	{
+		return RowReferenceProxy(&GetColumnList(), raw);
 	}
 
 	Raw* pvCopyRaw(const Raw* srcRaw)
@@ -700,7 +719,7 @@ private:
 	Row pvNewRow(Raw* raw) MOMO_NOEXCEPT
 	{
 		pvFreeNewRaws();
-		return Row(&GetColumnList(), raw, &mCrew.GetFreeRaws());
+		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
 	template<typename Type, typename TypeArg, typename... Args>
@@ -808,31 +827,29 @@ private:
 	template<typename Raws, typename Filter>
 	Selection pvMakeSelection(const Raws& raws, const Filter& filter, Selection*) const
 	{
-		const ColumnList* columnList = &GetColumnList();
 		MemManager memManager = GetMemManager();
-		SelectionRaws selRaws(std::move(memManager));
+		typename SelectionProxy::Raws selRaws(std::move(memManager));
 		for (Raw* raw : raws)
 		{
-			if (filter(ConstRowReference(columnList, raw)))
+			if (filter(pvMakeConstRowReference(raw)))
 				selRaws.AddBack(raw);
 		}
-		return Selection(columnList, std::move(selRaws));
+		return SelectionProxy(&GetColumnList(), std::move(selRaws));
 	}
 
 	template<typename Raws>
 	Selection pvMakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
-		return Selection(&GetColumnList(),
-			SelectionRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager)));
+		typename SelectionProxy::Raws selRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager));
+		return SelectionProxy(&GetColumnList(), std::move(selRaws));
 	}
 
 	template<typename Raws, typename Filter>
 	size_t pvMakeSelection(const Raws& raws, const Filter& filter, size_t*) const
 	{
-		const ColumnList* columnList = &GetColumnList();
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
-			[&filter, columnList] (Raw* raw) { return filter(ConstRowReference(columnList, raw)); });
+			[this, &filter] (Raw* raw) { return filter(pvMakeConstRowReference(raw)); });
 	}
 
 	template<typename Raws>

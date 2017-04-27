@@ -33,13 +33,19 @@ namespace internal
 
 		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
 
+	private:
+		struct RowReferenceProxy : public RowReference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
+		};
+
 	public:
 		DataRowIterator() MOMO_NOEXCEPT
 			: mColumnList(nullptr)
 		{
 		}
 
-		DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT
+		DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT	//pt
 			: mColumnList(columnList),
 			mRawIterator(rawIter)
 		{
@@ -65,7 +71,7 @@ namespace internal
 
 		Reference operator*() const
 		{
-			return RowReference(mColumnList, *mRawIterator);
+			return RowReferenceProxy(mColumnList, *mRawIterator);
 		}
 
 		Pointer operator->() const
@@ -106,7 +112,7 @@ namespace internal
 		{
 		}
 
-		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
+		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT	//pt
 			: mColumnList(columnList),
 			mRawBounds(rawBounds)
 		{
@@ -165,40 +171,28 @@ namespace internal
 		typedef typename RowReference::ConstReference ConstRowReference;
 		typedef DataSelection<ConstRowReference> ConstSelection;
 
+	protected:
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
 			DataSelectionRawsSettings<Settings>> Raws;
 
+	public:
 		typedef DataRowIterator<RowReference, typename Raws::ConstIterator> ConstIterator;
 		typedef ConstIterator Iterator;
 
 	private:
 		struct RowReferenceProxy : public RowReference
 		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
 		};
 
-	public:
-		//explicit DataSelection(const ColumnList* columnList)
-		//	: mColumnList(columnList),
-		//	mRaws(MemManager(columnList->GetMemManager()))
-		//{
-		//}
-
-		DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
-			: mColumnList(columnList),
-			mRaws(std::move(raws))
+		struct ConstSelectionProxy : public ConstSelection
 		{
-		}
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstSelection)
+		};
 
-		//template<typename RowIterator>
-		//DataSelection(const ColumnList* columnList, RowIterator rowBegin, RowIterator rowEnd)
-		//	: DataSelection(columnList)
-		//{
-		//	mRaws.Reserve(std::distance(rowBegin, rowEnd));
-		//	for (RowIterator rowIter = rowBegin; rowIter != rowEnd; ++rowIter)
-		//	{
-		//	}
-		//}
+	public:
+		DataSelection() = delete;
 
 		DataSelection(DataSelection&& selection) MOMO_NOEXCEPT
 			: mColumnList(selection.mColumnList),
@@ -219,7 +213,7 @@ namespace internal
 		{
 			for (Raw* raw : selection.mRaws)
 			{
-				if (filter(ConstRowReference(mColumnList, raw)))
+				if (filter(pvMakeRowReference(raw)))
 					mRaws.AddBack(raw);
 			}
 		}
@@ -243,12 +237,12 @@ namespace internal
 
 		operator ConstSelection() && MOMO_NOEXCEPT
 		{
-			return ConstSelection(mColumnList, std::move(mRaws));
+			return ConstSelectionProxy(mColumnList, std::move(mRaws));
 		}
 
 		operator ConstSelection() const&
 		{
-			return ConstSelection(mColumnList, Raws(mRaws));
+			return ConstSelectionProxy(mColumnList, Raws(mRaws));
 		}
 
 		void Swap(DataSelection& selection) MOMO_NOEXCEPT
@@ -307,7 +301,7 @@ namespace internal
 
 		const RowReference operator[](size_t index) const
 		{
-			return RowReference(mColumnList, mRaws[index]);
+			return pvMakeRowReference(mRaws[index]);
 		}
 
 		void Add(RowReference rowRef)
@@ -363,11 +357,23 @@ namespace internal
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
-				{ return rowPred(ConstRowReference(mColumnList, raw)); };
+				{ return rowPred(pvMakeRowReference(raw)); };
 			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
+	protected:
+		DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
+			: mColumnList(columnList),
+			mRaws(std::move(raws))
+		{
+		}
+
 	private:
+		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
+		{
+			return RowReferenceProxy(mColumnList, row);
+		}
+
 		void pvReverse() MOMO_NOEXCEPT
 		{
 			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
@@ -377,10 +383,7 @@ namespace internal
 		void pvSort(const RowComparer& rowComparer)
 		{
 			auto rawComparer = [this, &rowComparer] (Raw* raw1, Raw* raw2)
-			{
-				return rowComparer(ConstRowReference(mColumnList, raw1),
-					ConstRowReference(mColumnList, raw2));
-			};
+				{ return rowComparer(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };
 			std::sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
 		}
 

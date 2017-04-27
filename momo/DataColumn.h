@@ -318,10 +318,10 @@ public:
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
-		MOMO_EXTRA_CHECK(addend1 != 0 && addend2 != 0);
+		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
 		size_t offset = addend1 + addend2;
-		MOMO_EXTRA_CHECK(offset < mTotalSize);
-		MOMO_EXTRA_CHECK(offset % ColumnTraits::template GetAlignment<Type>() == 0);
+		MOMO_ASSERT(offset < mTotalSize);
+		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
 		return offset;
 	}
 
