@@ -371,7 +371,7 @@ namespace internal
 	private:
 		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 		{
-			return RowReferenceProxy(mColumnList, row);
+			return RowReferenceProxy(mColumnList, raw);
 		}
 
 		void pvReverse() MOMO_NOEXCEPT

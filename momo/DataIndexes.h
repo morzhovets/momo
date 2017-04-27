@@ -26,13 +26,6 @@ namespace internal
 		static const bool checkVersion = false;
 	};
 
-	struct DataHashMapSettings : public momo::HashMapSettings
-	{
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-	};
-
 	struct DataHashMultiMapSettings : public momo::HashMultiMapSettings
 	{
 		static const CheckMode checkMode = CheckMode::assertion;
@@ -187,7 +180,7 @@ namespace internal
 			}
 
 		public:
-			Raw* raw;
+			Raw* raw;	//?
 			const UniqueHash& uniqueHash;
 		};
 
@@ -274,12 +267,22 @@ namespace internal
 				mHashSet.Reserve(capacity);
 			}
 
-			Iterator Find(Raw* raw, size_t* hashCodes)
+			Iterator FindExisting(Raw* raw, size_t* hashCodes) const MOMO_NOEXCEPT
 			{
-				size_t hashCode = mHashFunc(raw, hashCodes);
-				Iterator iter = mHashSet.Find({ raw, hashCode });
-				MOMO_ASSERT(!!iter);
-				return iter;
+				try
+				{
+					size_t hashCode = mHashFunc(raw, hashCodes);
+					Iterator iter = mHashSet.Find({ raw, hashCode });
+					MOMO_ASSERT(!!iter);
+					return iter;
+				}
+				catch (...)
+				{
+					Iterator iter = mHashSet.GetBegin();
+					while (iter->raw != raw)
+						++iter;
+					return iter;
+				}
 			}
 
 			RawBounds Find(Raw* raw) const
@@ -334,13 +337,8 @@ namespace internal
 				HashMultiMapKeyValueTraits<HashRawKey, Raw*, MemManagerPtr>,
 				DataHashMultiMapSettings> HashMultiMap;
 
-			typedef momo::HashMap<Raw*, size_t, momo::HashTraits<Raw*>, MemManagerPtr,
-				HashMapKeyValueTraits<Raw*, size_t, MemManagerPtr>, DataHashMapSettings> HashMap;	//?
-
-			static const size_t rawFastCount = 8;
-
 		public:
-			typedef typename HashMultiMap::Iterator Iterator;
+			typedef typename HashMultiMap::ConstIterator Iterator;
 
 			typedef typename HashMultiMap::ConstValueBounds RawBounds;
 
@@ -349,16 +347,14 @@ namespace internal
 				: mSortedOffsets(std::move(sortedOffsets)),
 				mHashFunc(std::move(hashFunc)),
 				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(equalFunc)),
-					MemManagerPtr(mSortedOffsets.GetMemManager())),
-				mHashMap(typename HashMap::HashTraits(), MemManagerPtr(mSortedOffsets.GetMemManager()))
+					MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
 
 			MultiHash(MultiHash&& multiHash) MOMO_NOEXCEPT
 				: mSortedOffsets(std::move(multiHash.mSortedOffsets)),
 				mHashFunc(std::move(multiHash.mHashFunc)),
-				mHashMultiMap(std::move(multiHash.mHashMultiMap)),
-				mHashMap(std::move(multiHash.mHashMap))
+				mHashMultiMap(std::move(multiHash.mHashMultiMap))
 			{
 			}
 
@@ -373,7 +369,6 @@ namespace internal
 				mSortedOffsets = std::move(multiHash.mSortedOffsets);
 				mHashFunc = std::move(multiHash.mHashFunc);
 				mHashMultiMap = std::move(multiHash.mHashMultiMap);
-				mHashMap = std::move(multiHash.mHashMap);
 				return *this;
 			}
 
@@ -389,20 +384,25 @@ namespace internal
 				return mHashMultiMap.GetKeyCount();
 			}
 
-			Iterator Find(Raw* raw, size_t* hashCodes)
+			Iterator FindExisting(Raw* raw, size_t* hashCodes) const MOMO_NOEXCEPT
 			{
-				size_t hashCode = mHashFunc(raw, hashCodes);
-				auto keyIter = mHashMultiMap.Find({ raw, hashCode });
-				MOMO_ASSERT(!!keyIter);
-				auto raws = keyIter->values;
-				if (raws.GetCount() > rawFastCount)
+				try
 				{
-					auto mapIter = mHashMap.Find(raw);
-					if (!!mapIter)
-						return mHashMultiMap.MakeIterator(keyIter, mapIter->value);
+					size_t hashCode = mHashFunc(raw, hashCodes);
+					auto keyIter = mHashMultiMap.Find({ raw, hashCode });
+					MOMO_ASSERT(!!keyIter);
+					auto raws = keyIter->values;
+					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);
+					MOMO_ASSERT(rawPtr != raws.GetEnd());
+					return mHashMultiMap.MakeIterator(keyIter, rawPtr - raws.GetBegin());
 				}
-				return mHashMultiMap.MakeIterator(keyIter,
-					std::find(raws.GetBegin(), raws.GetEnd(), raw) - raws.GetBegin());
+				catch (...)
+				{
+					Iterator iter = mHashMultiMap.GetBegin();
+					while (iter->value != raw)
+						++iter;
+					return iter;
+				}
 			}
 
 			template<typename... Types>
@@ -415,46 +415,22 @@ namespace internal
 			void Clear() MOMO_NOEXCEPT
 			{
 				mHashMultiMap.Clear();
-				mHashMap.Clear();
 			}
 
 			Iterator Add(Raw* raw, size_t* hashCodes)
 			{
 				size_t hashCode = mHashFunc(raw, hashCodes);
-				Iterator iter = mHashMultiMap.Add({ raw, hashCode }, raw);
-				auto raws = iter.GetKeyIterator()->values;
-				if (raws.GetCount() > rawFastCount)
-				{
-					try
-					{
-						mHashMap.Insert(raw, iter.GetValuePtr() - raws.GetBegin());
-					}
-					catch (...)
-					{
-						mHashMultiMap.Remove(iter);
-						throw;
-					}
-				}
-				return iter;
+				return mHashMultiMap.Add({ raw, hashCode }, raw);
 			}
 
 			void Remove(Iterator iter) MOMO_NOEXCEPT
 			{
 				Raw* raw = iter->value;
 				auto keyIter = iter.GetKeyIterator();
-				auto raws = keyIter->values;
-				Raw* lastRaw = *(raws.GetEnd() - 1);
-				if (raw != lastRaw)
-				{
-					auto mapIter = mHashMap.Find(lastRaw);
-					if (!!mapIter)
-						mapIter->value = iter.GetValuePtr() - raws.GetBegin();
-				}
 				mHashMultiMap.Remove(iter);
-				mHashMap.Remove(raw);
 				if (keyIter->key.raw == raw)
 				{
-					raws = keyIter->values;
+					auto raws = keyIter->values;
 					if (raws.GetCount() > 0)
 						mHashMultiMap.ResetKey(keyIter, { raws[0], keyIter->key.hashCode });
 					else
@@ -466,7 +442,6 @@ namespace internal
 			Offsets mSortedOffsets;
 			HashFunc mHashFunc;
 			HashMultiMap mHashMultiMap;
-			HashMap mHashMap;
 		};
 
 	private:
@@ -609,9 +584,9 @@ namespace internal
 			MultiHashIterators multiHashIters(multiHashCount, pvGetMemManagerPtr());
 			size_t* hashCodes = nullptr;
 			for (size_t i = 0; i < uniqueHashCount; ++i)
-				uniqueHashIters[i] = mUniqueHashes[i].Find(raw, hashCodes);
+				uniqueHashIters[i] = mUniqueHashes[i].FindExisting(raw, hashCodes);
 			for (size_t i = 0; i < multiHashCount; ++i)
-				multiHashIters[i] = mMultiHashes[i].Find(raw, hashCodes);
+				multiHashIters[i] = mMultiHashes[i].FindExisting(raw, hashCodes);
 			for (size_t i = 0; i < uniqueHashCount; ++i)
 				mUniqueHashes[i].Remove(uniqueHashIters[i]);
 			for (size_t i = 0; i < multiHashCount; ++i)
@@ -639,13 +614,13 @@ namespace internal
 					{
 						if (newIter->raw != newRaw)
 							throw UniqueIndexViolation(newIter->raw, mUniqueHashes[i]);
-						oldUniqueHashIters[i] = mUniqueHashes[i].Find(oldRaw, nullptr);
+						oldUniqueHashIters[i] = mUniqueHashes[i].FindExisting(oldRaw, nullptr);
 					}
 				}
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
 					newMultiHashIters[multiHashIndex] = mMultiHashes[multiHashIndex].Add(newRaw, nullptr);
 				for (size_t i = 0; i < multiHashCount; ++i)
-					oldMultiHashIters[i] = mMultiHashes[i].Find(oldRaw, nullptr);
+					oldMultiHashIters[i] = mMultiHashes[i].FindExisting(oldRaw, nullptr);
 			}
 			catch (...)
 			{
