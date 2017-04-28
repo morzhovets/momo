@@ -485,6 +485,10 @@ struct HashMultiMapSettings
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
+
+	static const size_t valueArrayMaxFastCount = 7;
+	typedef MemPoolParams<> ValueArrayMemPoolParams;
+	typedef ArraySettings<> ValueArraySettings;
 };
 
 template<typename TKey, typename TValue,
@@ -505,7 +509,9 @@ public:
 private:
 	typedef internal::HashMultiMapArrayBucketItemTraits<KeyValueTraits> ArrayBucketItemTraits;
 
-	typedef internal::ArrayBucket<ArrayBucketItemTraits, 7, MemPoolParams<>, ArraySettings<>> ValueArray;
+	typedef internal::ArrayBucket<ArrayBucketItemTraits, Settings::valueArrayMaxFastCount,
+		typename Settings::ValueArrayMemPoolParams,
+		typename Settings::ValueArraySettings> ValueArray;
 
 	typedef typename ValueArray::Params ValueArrayParams;
 
