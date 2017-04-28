@@ -66,7 +66,12 @@ namespace internal
 			return empty();
 		}
 
-		value_type& value() const
+		const value_type& value() const
+		{
+			return mSetExtractedItem.GetItem();
+		}
+
+		value_type& value() //const
 		{
 			return mSetExtractedItem.GetItem();
 		}
@@ -83,7 +88,7 @@ namespace internal
 		}
 
 	private:
-		mutable SetExtractedItem mSetExtractedItem;
+		SetExtractedItem mSetExtractedItem;
 	};
 
 	template<typename TMapExtractedPair>
@@ -133,12 +138,22 @@ namespace internal
 			return empty();
 		}
 
-		key_type& key() const
+		const key_type& key() const
 		{
 			return mMapExtractedPair.GetKey();
 		}
 
-		mapped_type& mapped() const
+		key_type& key() //const
+		{
+			return mMapExtractedPair.GetKey();
+		}
+
+		const mapped_type& mapped() const
+		{
+			return mMapExtractedPair.GetValue();
+		}
+
+		mapped_type& mapped() //const
 		{
 			return mMapExtractedPair.GetValue();
 		}
@@ -155,7 +170,7 @@ namespace internal
 		}
 
 	private:
-		mutable MapExtractedPair mMapExtractedPair;
+		MapExtractedPair mMapExtractedPair;
 	};
 
 	template<typename Iterator, typename NodeHandle>
