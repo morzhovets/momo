@@ -889,7 +889,7 @@ public:
 		pvRemoveBack(count);
 	}
 
-	void Remove(size_t index, size_t count)
+	void Remove(size_t index, size_t count = 1)
 	{
 		ArrayShifter::Remove(*this, index, count);
 	}
