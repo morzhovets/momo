@@ -34,8 +34,6 @@ struct DataSettings
 	static const bool keepRowNumber = tKeepRowNumber;
 
 	typedef ArraySettings<> RawsSettings;
-
-	static const size_t indexIteratorsInternalCapacity = 8;
 };
 
 template<typename TStruct,

@@ -55,7 +55,7 @@ namespace internal
 
 		template<typename Item, size_t internalCapacity = 0>
 		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item, MemManagerPtr>,
-			momo::internal::NestedArraySettings<ArraySettings<internalCapacity>>>;
+			momo::internal::NestedArraySettings<ArraySettings<internalCapacity, false>>>;	//?
 
 		typedef Array<size_t> Offsets;
 
@@ -267,22 +267,9 @@ namespace internal
 				mHashSet.Reserve(capacity);
 			}
 
-			Iterator FindExisting(Raw* raw, size_t* hashCodes) const MOMO_NOEXCEPT
+			void Clear() MOMO_NOEXCEPT
 			{
-				try
-				{
-					size_t hashCode = mHashFunc(raw, hashCodes);
-					Iterator iter = mHashSet.Find({ raw, hashCode });
-					MOMO_ASSERT(!!iter);
-					return iter;
-				}
-				catch (...)
-				{
-					Iterator iter = mHashSet.GetBegin();
-					while (iter->raw != raw)
-						++iter;
-					return iter;
-				}
+				mHashSet.Clear();
 			}
 
 			RawBounds Find(Raw* raw) const
@@ -299,35 +286,71 @@ namespace internal
 				return RawBounds(!!iter ? iter->raw : nullptr);
 			}
 
-			void Clear() MOMO_NOEXCEPT
+			void FindExisting(Raw* raw) MOMO_NOEXCEPT
 			{
-				mHashSet.Clear();
+				MOMO_ASSERT(!mIterator);
+				try
+				{
+					size_t hashCode = mHashFunc(raw, nullptr);
+					mIterator = mHashSet.Find({ raw, hashCode });
+					MOMO_ASSERT(!!mIterator);
+				}
+				catch (...)
+				{
+					mIterator = mHashSet.GetBegin();
+					while (mIterator->raw != raw)
+						++mIterator;
+				}
 			}
 
-			Iterator Add(Raw* raw, size_t* hashCodes)
+			void Add(Raw* raw, size_t* hashCodes)
 			{
+				MOMO_ASSERT(!mIterator);
 				size_t hashCode = mHashFunc(raw, hashCodes);
 				auto insRes = mHashSet.Insert({ raw, hashCode });
 				if (!insRes.inserted)
 					throw UniqueIndexViolation(insRes.iterator->raw, *this);
-				return insRes.iterator;
+				mIterator = insRes.iterator;
 			}
 
-			Iterator Insert(Raw* raw, size_t* hashCodes)
+			void Insert(Raw* raw)
 			{
-				size_t hashCode = mHashFunc(raw, hashCodes);
-				return mHashSet.Insert({ raw, hashCode }).iterator;
+				MOMO_ASSERT(!mIterator);
+				size_t hashCode = mHashFunc(raw, nullptr);
+				mIterator = mHashSet.Insert({ raw, hashCode }).iterator;
 			}
 
-			void Remove(Iterator iter) MOMO_NOEXCEPT
+			void Remove() MOMO_NOEXCEPT
 			{
-				mHashSet.Remove(iter);
+				MOMO_ASSERT(!!mIterator);
+				mHashSet.Remove(mIterator);
+				mIterator = Iterator();
+			}
+
+			void ResetRaw(Raw* raw) MOMO_NOEXCEPT
+			{
+				MOMO_ASSERT(!!mIterator);
+				mHashSet.ResetKey(mIterator, { raw, mIterator->hashCode });
+				mIterator = Iterator();
+			}
+
+			void Accept() MOMO_NOEXCEPT
+			{
+				MOMO_ASSERT(!!mIterator);
+				mIterator = Iterator();
+			}
+
+			Raw* GetCurrentRaw() const MOMO_NOEXCEPT
+			{
+				MOMO_ASSERT(!!mIterator);
+				return mIterator->raw;
 			}
 
 		private:
 			Offsets mSortedOffsets;
 			HashFunc mHashFunc;
 			HashSet mHashSet;
+			Iterator mIterator;
 		};
 
 		class MultiHash
@@ -384,25 +407,9 @@ namespace internal
 				return mHashMultiMap.GetKeyCount();
 			}
 
-			Iterator FindExisting(Raw* raw, size_t* hashCodes) const MOMO_NOEXCEPT
+			void Clear() MOMO_NOEXCEPT
 			{
-				try
-				{
-					size_t hashCode = mHashFunc(raw, hashCodes);
-					auto keyIter = mHashMultiMap.Find({ raw, hashCode });
-					MOMO_ASSERT(!!keyIter);
-					auto raws = keyIter->values;
-					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);
-					MOMO_ASSERT(rawPtr != raws.GetEnd());
-					return mHashMultiMap.MakeIterator(keyIter, rawPtr - raws.GetBegin());
-				}
-				catch (...)
-				{
-					Iterator iter = mHashMultiMap.GetBegin();
-					while (iter->value != raw)
-						++iter;
-					return iter;
-				}
+				mHashMultiMap.Clear();
 			}
 
 			template<typename... Types>
@@ -412,22 +419,40 @@ namespace internal
 				return !!keyIter ? keyIter->values : RawBounds();
 			}
 
-			void Clear() MOMO_NOEXCEPT
+			void FindExisting(Raw* raw) MOMO_NOEXCEPT
 			{
-				mHashMultiMap.Clear();
+				MOMO_ASSERT(!mIterator);
+				try
+				{
+					size_t hashCode = mHashFunc(raw, nullptr);
+					auto keyIter = mHashMultiMap.Find({ raw, hashCode });
+					MOMO_ASSERT(!!keyIter);
+					auto raws = keyIter->values;
+					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);
+					MOMO_ASSERT(rawPtr != raws.GetEnd());
+					mIterator = mHashMultiMap.MakeIterator(keyIter, rawPtr - raws.GetBegin());
+				}
+				catch (...)
+				{
+					mIterator = mHashMultiMap.GetBegin();
+					while (mIterator->value != raw)
+						++mIterator;
+				}
 			}
 
-			Iterator Add(Raw* raw, size_t* hashCodes)
+			void Add(Raw* raw, size_t* hashCodes)
 			{
+				MOMO_ASSERT(!mIterator);
 				size_t hashCode = mHashFunc(raw, hashCodes);
-				return mHashMultiMap.Add({ raw, hashCode }, raw);
+				mIterator = mHashMultiMap.Add({ raw, hashCode }, raw);
 			}
 
-			void Remove(Iterator iter) MOMO_NOEXCEPT
+			void Remove() MOMO_NOEXCEPT
 			{
-				Raw* raw = iter->value;
-				auto keyIter = iter.GetKeyIterator();
-				mHashMultiMap.Remove(iter);
+				MOMO_ASSERT(!!mIterator);
+				Raw* raw = mIterator->value;
+				auto keyIter = mIterator.GetKeyIterator();
+				mHashMultiMap.Remove(mIterator);
 				if (keyIter->key.raw == raw)
 				{
 					auto raws = keyIter->values;
@@ -436,22 +461,26 @@ namespace internal
 					else
 						mHashMultiMap.RemoveKey(keyIter);
 				}
+				mIterator = Iterator();
+			}
+
+			void Accept() MOMO_NOEXCEPT
+			{
+				MOMO_ASSERT(!!mIterator);
+				mIterator = Iterator();
 			}
 
 		private:
 			Offsets mSortedOffsets;
 			HashFunc mHashFunc;
 			HashMultiMap mHashMultiMap;
+			Iterator mIterator;
 		};
 
 	private:
 		typedef Array<UniqueHash> UniqueHashes;
-		typedef Array<typename UniqueHash::Iterator,
-			Settings::indexIteratorsInternalCapacity> UniqueHashIterators;
 
 		typedef Array<MultiHash> MultiHashes;
-		typedef Array<typename MultiHash::Iterator,
-			Settings::indexIteratorsInternalCapacity> MultiHashIterators;
 
 		typedef Array<size_t> OffsetHashCodes;
 
@@ -553,95 +582,96 @@ namespace internal
 		void AddRaw(Raw* raw)
 		{
 			size_t uniqueHashCount = mUniqueHashes.GetCount();
-			UniqueHashIterators uniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
 			size_t uniqueHashIndex = 0;
 			size_t multiHashCount = mMultiHashes.GetCount();
-			MultiHashIterators multiHashIters(multiHashCount, pvGetMemManagerPtr());
 			size_t multiHashIndex = 0;
 			size_t* hashCodes = nullptr;
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
-					uniqueHashIters[uniqueHashIndex] = mUniqueHashes[uniqueHashIndex].Add(raw, hashCodes);
+					mUniqueHashes[uniqueHashIndex].Add(raw, hashCodes);
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
-					multiHashIters[multiHashIndex] = mMultiHashes[multiHashIndex].Add(raw, hashCodes);
+					mMultiHashes[multiHashIndex].Add(raw, hashCodes);
 			}
 			catch (...)
 			{
 				for (size_t i = 0; i < uniqueHashIndex; ++i)
-					mUniqueHashes[i].Remove(uniqueHashIters[i]);
+					mUniqueHashes[i].Remove();
 				for (size_t i = 0; i < multiHashIndex; ++i)
-					mMultiHashes[i].Remove(multiHashIters[i]);
+					mMultiHashes[i].Remove();
 				throw;
 			}
+			for (UniqueHash& uniqueHash : mUniqueHashes)
+				uniqueHash.Accept();
+			for (MultiHash& multiHash : mMultiHashes)
+				multiHash.Accept();
 		}
 
 		void RemoveRaw(Raw* raw)
 		{
-			size_t uniqueHashCount = mUniqueHashes.GetCount();
-			UniqueHashIterators uniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
-			size_t multiHashCount = mMultiHashes.GetCount();
-			MultiHashIterators multiHashIters(multiHashCount, pvGetMemManagerPtr());
-			size_t* hashCodes = nullptr;
-			for (size_t i = 0; i < uniqueHashCount; ++i)
-				uniqueHashIters[i] = mUniqueHashes[i].FindExisting(raw, hashCodes);
-			for (size_t i = 0; i < multiHashCount; ++i)
-				multiHashIters[i] = mMultiHashes[i].FindExisting(raw, hashCodes);
-			for (size_t i = 0; i < uniqueHashCount; ++i)
-				mUniqueHashes[i].Remove(uniqueHashIters[i]);
-			for (size_t i = 0; i < multiHashCount; ++i)
-				mMultiHashes[i].Remove(multiHashIters[i]);
+			for (UniqueHash& uniqueHash : mUniqueHashes)
+			{
+				uniqueHash.FindExisting(raw);
+				uniqueHash.Remove();
+			}
+			for (MultiHash& multiHash : mMultiHashes)
+			{
+				multiHash.FindExisting(raw);
+				multiHash.Remove();
+			}
 		}
 
 		void UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
 			size_t uniqueHashCount = mUniqueHashes.GetCount();
-			UniqueHashIterators oldUniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
-			UniqueHashIterators newUniqueHashIters(uniqueHashCount, pvGetMemManagerPtr());
 			size_t uniqueHashIndex = 0;
 			size_t multiHashCount = mMultiHashes.GetCount();
-			MultiHashIterators oldMultiHashIters(multiHashCount, pvGetMemManagerPtr());
-			MultiHashIterators newMultiHashIters(multiHashCount, pvGetMemManagerPtr());
 			size_t multiHashIndex = 0;
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
-					newUniqueHashIters[uniqueHashIndex] = mUniqueHashes[uniqueHashIndex].Insert(newRaw, nullptr);
-				for (size_t i = 0; i < uniqueHashCount; ++i)
+					mUniqueHashes[uniqueHashIndex].Insert(newRaw);
+				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
-					auto newIter = newUniqueHashIters[i];
-					if (newIter->raw != oldRaw)
-					{
-						if (newIter->raw != newRaw)
-							throw UniqueIndexViolation(newIter->raw, mUniqueHashes[i]);
-						oldUniqueHashIters[i] = mUniqueHashes[i].FindExisting(oldRaw, nullptr);
-					}
+					Raw* raw = uniqueHash.GetCurrentRaw();
+					if (raw != oldRaw && raw != newRaw)
+						throw UniqueIndexViolation(raw, uniqueHash);
 				}
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
-					newMultiHashIters[multiHashIndex] = mMultiHashes[multiHashIndex].Add(newRaw, nullptr);
-				for (size_t i = 0; i < multiHashCount; ++i)
-					oldMultiHashIters[i] = mMultiHashes[i].FindExisting(oldRaw, nullptr);
+					mMultiHashes[multiHashIndex].Add(newRaw, nullptr);
 			}
 			catch (...)
 			{
 				for (size_t i = 0; i < uniqueHashIndex; ++i)
 				{
-					auto newIter = newUniqueHashIters[i];
-					if (newIter->raw == newRaw)
-						mUniqueHashes[i].Remove(newIter);
+					if (mUniqueHashes[i].GetCurrentRaw() == newRaw)
+						mUniqueHashes[i].Remove();
+					else
+						mUniqueHashes[i].Accept();
 				}
 				for (size_t i = 0; i < multiHashIndex; ++i)
-					mMultiHashes[i].Remove(newMultiHashIters[i]);
+					mMultiHashes[i].Remove();
 				throw;
 			}
-			for (size_t i = 0; i < uniqueHashCount; ++i)
+			for (UniqueHash& uniqueHash : mUniqueHashes)
 			{
-				auto oldIter = oldUniqueHashIters[i];
-				if (!!oldIter)
-					mUniqueHashes[i].Remove(oldIter);
+				if (uniqueHash.GetCurrentRaw() == oldRaw)
+				{
+					uniqueHash.ResetRaw(newRaw);
+				}
+				else
+				{
+					uniqueHash.Accept();
+					uniqueHash.FindExisting(oldRaw);
+					uniqueHash.Remove();
+				}
 			}
-			for (size_t i = 0; i < multiHashCount; ++i)
-				mMultiHashes[i].Remove(oldMultiHashIters[i]);
+			for (MultiHash& multiHash : mMultiHashes)
+			{
+				multiHash.Accept();
+				multiHash.FindExisting(oldRaw);
+				multiHash.Remove();
+			}
 		}
 
 		template<size_t columnCount>
@@ -766,11 +796,15 @@ namespace internal
 			};
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets.data()); };
-			typename Hashes::Item newHash(
-				Offsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr()), hashFunc, equalFunc);
+			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr());
+			typename Hashes::Item newHash(std::move(newHashOffsets), hashFunc, equalFunc);
 			for (Raw* raw : raws)
+			{
 				newHash.Add(raw, nullptr);
-			hashes.AddBack(std::move(newHash));
+				newHash.Accept();
+			}
+			hashes.Reserve(hashes.GetCount() + 1);
+			hashes.AddBackNogrow(std::move(newHash));
 			return hashes.GetItems() + hashes.GetCount() - 1;
 		}
 

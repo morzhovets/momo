@@ -345,10 +345,29 @@ namespace internal
 			return pvMakeRowReference(mRaws[index]);
 		}
 
+		template<typename RowIterator>
+		void Assign(RowIterator begin, RowIterator end)
+		{
+			size_t count = pvCheck(begin, end);
+			mRaws.Reserve(count);
+			mRaws.Clear(false);
+			for (RowIterator iter = begin; iter != end; ++iter)
+				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(*iter));
+		}
+
 		void Add(RowReference rowRef)
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
+		}
+
+		template<typename RowIterator>
+		void Add(RowIterator begin, RowIterator end)
+		{
+			size_t count = pvCheck(begin, end);
+			mRaws.Reserve(mRaws.GetCount() + count);
+			for (RowIterator iter = begin; iter != end; ++iter)
+				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(*iter));
 		}
 
 		void Insert(size_t index, RowReference rowRef)
@@ -357,7 +376,17 @@ namespace internal
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		void Remove(size_t index, size_t count)
+		template<typename RowIterator>
+		void Insert(size_t index, RowIterator begin, RowIterator end)
+		{
+			size_t count = pvCheck(begin, end);
+			mRaws.Reserve(mRaws.GetCount() + count);
+			mRaws.Insert(index, count, nullptr);
+			for (RowIterator iter = begin; iter != end; ++iter, ++index)
+				mRaws[index] = RowReferenceProxy::GetRaw(*iter);
+		}
+
+		void Remove(size_t index, size_t count = 1)
 		{
 			mRaws.Remove(index, count);
 		}
@@ -366,6 +395,18 @@ namespace internal
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
+		}
+
+		template<typename Filter>
+		void Erase(const Filter& filter)	//?
+		{
+			size_t index = 0;
+			for (Raw* raw : mRaws)
+			{
+				if (!filter(pvMakeRowReference(raw)))
+					mRaws[index++] = raw;
+			}
+			mRaws.RemoveBack(mRaws.GetCount() - index);
 		}
 
 		DataSelection&& Reverse() && MOMO_NOEXCEPT
@@ -413,6 +454,16 @@ namespace internal
 		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 		{
 			return RowReferenceProxy(mColumnList, raw);
+		}
+
+		template<typename RowIterator>
+		size_t pvCheck(RowIterator begin, RowIterator end)
+		{
+			MOMO_STATIC_ASSERT(momo::internal::IsForwardIterator<RowIterator>::value);
+			size_t count = 0;
+			for (RowIterator iter = begin; iter != end; ++iter, ++count)
+				MOMO_CHECK(&iter->GetColumnList() == mColumnList);
+			return count;
 		}
 
 		void pvReverse() MOMO_NOEXCEPT
