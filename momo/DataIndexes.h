@@ -237,7 +237,8 @@ namespace internal
 			UniqueHash(UniqueHash&& uniqueHash) MOMO_NOEXCEPT
 				: mSortedOffsets(std::move(uniqueHash.mSortedOffsets)),
 				mHashFunc(std::move(uniqueHash.mHashFunc)),
-				mHashSet(std::move(uniqueHash.mHashSet))
+				mHashSet(std::move(uniqueHash.mHashSet)),
+				mIterator(uniqueHash.mIterator)
 			{
 			}
 
@@ -252,6 +253,7 @@ namespace internal
 				mSortedOffsets = std::move(uniqueHash.mSortedOffsets);
 				mHashFunc = std::move(uniqueHash.mHashFunc);
 				mHashSet = std::move(uniqueHash.mHashSet);
+				mIterator = uniqueHash.mIterator;
 				return *this;
 			}
 
@@ -377,7 +379,8 @@ namespace internal
 			MultiHash(MultiHash&& multiHash) MOMO_NOEXCEPT
 				: mSortedOffsets(std::move(multiHash.mSortedOffsets)),
 				mHashFunc(std::move(multiHash.mHashFunc)),
-				mHashMultiMap(std::move(multiHash.mHashMultiMap))
+				mHashMultiMap(std::move(multiHash.mHashMultiMap)),
+				mIterator(multiHash.mIterator)
 			{
 			}
 
@@ -392,6 +395,7 @@ namespace internal
 				mSortedOffsets = std::move(multiHash.mSortedOffsets);
 				mHashFunc = std::move(multiHash.mHashFunc);
 				mHashMultiMap = std::move(multiHash.mHashMultiMap);
+				mIterator = multiHash.mIterator;
 				return *this;
 			}
 
@@ -630,12 +634,11 @@ namespace internal
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
-					mUniqueHashes[uniqueHashIndex].Insert(newRaw);
-				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
-					Raw* raw = uniqueHash.GetCurrentRaw();
+					mUniqueHashes[uniqueHashIndex].Insert(newRaw);
+					Raw* raw = mUniqueHashes[uniqueHashIndex].GetCurrentRaw();
 					if (raw != oldRaw && raw != newRaw)
-						throw UniqueIndexViolation(raw, uniqueHash);
+						throw UniqueIndexViolation(raw, mUniqueHashes[uniqueHashIndex]);
 				}
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
 					mMultiHashes[multiHashIndex].Add(newRaw, nullptr);

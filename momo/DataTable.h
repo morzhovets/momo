@@ -250,34 +250,19 @@ public:
 	DataTable(const DataTable& table, const Filter& filter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
-		if (std::is_same<Filter, EmptyFilter>::value)
-			mRaws.Reserve(table.GetCount());
-		try
-		{
-			for (ConstRowReference srcRowRef : table)
-			{
-				if (!filter(srcRowRef))
-					continue;
-				mRaws.Reserve(mRaws.GetCount() + 1);
-				Raw* dstRaw = pvCopyRaw(srcRowRef.GetRaw());
-				try
-				{
-					mIndexes.AddRaw(dstRaw);
-				}
-				catch (...)
-				{
-					pvFreeRaw(dstRaw);
-					throw;
-				}
-				pvSetNumber(dstRaw, mRaws.GetCount(), KeepRowNumber());
-				mRaws.AddBackNogrow(dstRaw);
-			}
-		}
-		catch (...)
-		{
-			pvFreeRaws();
-			throw;
-		}
+		pvFill(table, filter);
+	}
+
+	explicit DataTable(const ConstSelection& selection)
+		: DataTable(ColumnList(selection.GetColumnList()))
+	{
+		pvFill(selection, EmptyFilter());
+	}
+
+	explicit DataTable(const Selection& selection)
+		: DataTable(ColumnList(selection.GetColumnList()))
+	{
+		pvFill(selection, EmptyFilter());
 	}
 
 	~DataTable() MOMO_NOEXCEPT
@@ -678,6 +663,39 @@ public:
 	}
 
 private:
+	template<typename Rows, typename Filter>
+	void pvFill(const Rows& rows, const Filter& filter)
+	{
+		if (std::is_same<Filter, EmptyFilter>::value)
+			Reserve(rows.GetCount());
+		try
+		{
+			for (ConstRowReference rowRef : rows)
+			{
+				if (!filter(rowRef))
+					continue;
+				mRaws.Reserve(mRaws.GetCount() + 1);
+				Raw* raw = pvCopyRaw(rowRef.GetRaw());
+				try
+				{
+					mIndexes.AddRaw(raw);
+				}
+				catch (...)
+				{
+					pvFreeRaw(raw);
+					throw;
+				}
+				pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
+				mRaws.AddBackNogrow(raw);
+			}
+		}
+		catch (...)
+		{
+			pvFreeRaws();
+			throw;
+		}
+	}
+
 	size_t pvGetRawSize() const MOMO_NOEXCEPT
 	{
 		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
