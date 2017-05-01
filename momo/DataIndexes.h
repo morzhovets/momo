@@ -348,6 +348,19 @@ namespace internal
 				return mIterator->raw;
 			}
 
+			template<typename RawFilter>
+			void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+			{
+				Iterator iter = mHashSet.GetBegin();
+				while (!!iter)
+				{
+					if (rawFilter(iter->raw))
+						++iter;
+					else
+						iter = mHashSet.Remove(iter);
+				}
+			}
+
 		private:
 			Offsets mSortedOffsets;
 			HashFunc mHashFunc;
@@ -454,17 +467,7 @@ namespace internal
 			void Remove() MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(!!mIterator);
-				Raw* raw = mIterator->value;
-				auto keyIter = mIterator.GetKeyIterator();
-				mHashMultiMap.Remove(mIterator);
-				if (keyIter->key.raw == raw)
-				{
-					auto raws = keyIter->values;
-					if (raws.GetCount() > 0)
-						mHashMultiMap.ResetKey(keyIter, { raws[0], keyIter->key.hashCode });
-					else
-						mHashMultiMap.RemoveKey(keyIter);
-				}
+				pvRemove(mIterator);
 				mIterator = Iterator();
 			}
 
@@ -472,6 +475,36 @@ namespace internal
 			{
 				MOMO_ASSERT(!!mIterator);
 				mIterator = Iterator();
+			}
+
+			template<typename RawFilter>
+			void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+			{
+				Iterator iter = mHashMultiMap.GetBegin();
+				while (!!iter)
+				{
+					if (rawFilter(iter->value))
+						++iter;
+					else
+						iter = pvRemove(iter);
+				}
+			}
+
+		private:
+			Iterator pvRemove(Iterator iter) MOMO_NOEXCEPT
+			{
+				Raw* raw = iter->value;
+				auto keyIter = mIterator.GetKeyIterator();
+				Iterator resIter = mHashMultiMap.Remove(iter);
+				if (keyIter->key.raw == raw)
+				{
+					auto raws = keyIter->values;
+					if (raws.GetCount() > 0)
+						mHashMultiMap.ResetKey(keyIter, { raws[0], keyIter->key.hashCode });
+					else
+						resIter = mHashMultiMap.RemoveKey(keyIter);
+				}
+				return resIter;
 			}
 
 		private:
@@ -589,7 +622,7 @@ namespace internal
 			size_t uniqueHashIndex = 0;
 			size_t multiHashCount = mMultiHashes.GetCount();
 			size_t multiHashIndex = 0;
-			size_t* hashCodes = nullptr;
+			size_t* hashCodes = nullptr;	//?
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
@@ -675,6 +708,15 @@ namespace internal
 				multiHash.FindExisting(oldRaw);
 				multiHash.Remove();
 			}
+		}
+
+		template<typename RawFilter>
+		void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+		{
+			for (UniqueHash& uniqueHash : mUniqueHashes)
+				uniqueHash.FilterRaws(rawFilter);
+			for (MultiHash& multiHash : mMultiHashes)
+				multiHash.FilterRaws(rawFilter);
 		}
 
 		template<size_t columnCount>

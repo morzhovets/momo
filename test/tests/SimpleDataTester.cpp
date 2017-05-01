@@ -133,6 +133,13 @@ public:
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
 
+		table = DataTable(table.Select());
+		table = DataTable(ctable.Select());
+
+		//table.AssignRows(table.GetBegin(), table.GetEnd());
+		table.RemoveRows(table.GetBegin(), table.GetBegin());
+		table.RemoveRows([] (typename DataTable::ConstRowReference) { return false; });
+
 		table.Clear();
 		assert(table.IsEmpty());
 	}

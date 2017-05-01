@@ -89,12 +89,14 @@ public:
 
 	struct TryResult
 	{
-		RowReference rowRef;
+		RowReference rowReference;
 		const void* uniqueHashIndex;
 	};
 
 private:
 	typedef momo::internal::BoolConstant<Settings::keepRowNumber> KeepRowNumber;
+
+	static const size_t invalidRowNumber = SIZE_MAX;
 
 	//? MemPoolSettings
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
@@ -102,7 +104,7 @@ private:
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;
 
-	struct EmptyFilter
+	struct EmptyRowFilter
 	{
 		bool operator()(ConstRowReference /*rowRef*/) const MOMO_NOEXCEPT
 		{
@@ -196,6 +198,7 @@ private:
 	struct RowReferenceProxy : public RowReference
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
+		MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
 	};
 
 	struct ConstIteratorProxy : public ConstIterator
@@ -242,27 +245,27 @@ public:
 	}
 
 	DataTable(const DataTable& table)
-		: DataTable(table, EmptyFilter())
+		: DataTable(table, EmptyRowFilter())
 	{
 	}
 
-	template<typename Filter>
-	DataTable(const DataTable& table, const Filter& filter)
+	template<typename RowFilter>
+	DataTable(const DataTable& table, const RowFilter& rowFilter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
-		pvFill(table, filter);
+		pvFill(table, rowFilter);
 	}
 
 	explicit DataTable(const ConstSelection& selection)
 		: DataTable(ColumnList(selection.GetColumnList()))
 	{
-		pvFill(selection, EmptyFilter());
+		pvFill(selection, EmptyRowFilter());
 	}
 
 	explicit DataTable(const Selection& selection)
 		: DataTable(ColumnList(selection.GetColumnList()))
 	{
-		pvFill(selection, EmptyFilter());
+		pvFill(selection, EmptyRowFilter());
 	}
 
 	~DataTable() MOMO_NOEXCEPT
@@ -406,7 +409,7 @@ public:
 		mRaws.Reserve(mRaws.GetCount() + 1);
 		mIndexes.AddRaw(row.GetRaw());
 		Raw* raw = row.ExtractRaw();
-		pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
+		pvSetNumber(raw, mRaws.GetCount());
 		mRaws.AddBackNogrow(raw);
 		return pvMakeRowReference(raw);
 	}
@@ -432,13 +435,11 @@ public:
 	RowReference InsertRow(size_t rowNumber, Row&& row)
 	{
 		MOMO_CHECK(rowNumber <= GetCount());
-		Raw* raw = row.GetRaw();
 		RowReference rowRef = AddRow(std::move(row));
-		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
-		{
-			pvSetNumber(raw, i, KeepRowNumber());
-			std::swap(raw, mRaws[i]);
-		}
+		for (size_t i = mRaws.GetCount() - 1; i > rowNumber; --i)
+			mRaws[i] = mRaws[i - 1];
+		mRaws[rowNumber] = RowReferenceProxy::GetRaw(rowRef);
+		pvSetNumbers(rowNumber);
 		return rowRef;
 	}
 
@@ -466,8 +467,7 @@ public:
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
 		mRaws.Remove(rowNumber, 1);
-		for (size_t i = rowNumber, count = mRaws.GetCount(); i < count; ++i)
-			pvSetNumber(mRaws[i], i, KeepRowNumber());
+		pvSetNumbers(rowNumber);
 		return pvNewRow(raw);
 	}
 
@@ -484,7 +484,7 @@ public:
 		mIndexes.UpdateRaw(raw, row.GetRaw());
 		pvFreeRaw(raw);
 		raw = row.ExtractRaw();
-		pvSetNumber(raw, rowNumber, KeepRowNumber());
+		pvSetNumber(raw, rowNumber);
 		return pvMakeRowReference(raw);
 	}
 
@@ -498,6 +498,53 @@ public:
 		{
 			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
 		}
+	}
+
+	//template<typename RowIterator>
+	//void AssignRows(RowIterator begin, RowIterator end)
+	//{
+	//	pvSetInvalidNumbers(begin, end);
+	//	auto rawFilter = [this] (Raw* raw)
+	//		{ return GetColumnList().GetNumber(raw) == invalidRowNumber; };
+	//	pvFilterRaws(rawFilter);
+	//}
+
+	template<typename RowIterator>
+	void RemoveRows(RowIterator begin, RowIterator end)
+	{
+		pvSetInvalidNumbers(begin, end);
+		auto rawFilter = [this] (Raw* raw)
+			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
+		pvFilterRaws(rawFilter);
+	}
+
+	template<typename RowFilter>
+	void RemoveRows(const RowFilter& rowFilter)
+	{
+		auto newRowFilter = [&rowFilter] (ConstRowReference rowRef)
+			{ return !rowFilter(rowRef); };
+		FilterRows(newRowFilter);
+	}
+
+	template<typename RowFilter>
+	void FilterRows(const RowFilter& rowFilter)
+	{
+		try
+		{
+			for (Raw* raw : mRaws)
+			{
+				if (!rowFilter(pvMakeConstRowReference(raw)))
+					pvSetNumber(raw, invalidRowNumber);
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		auto rawFilter = [this] (Raw* raw)
+			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
+		pvFilterRaws(rawFilter);
 	}
 
 	template<typename... Types>
@@ -551,73 +598,73 @@ public:
 	template<typename Type, typename... Args>
 	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
 	{
-		return Select(EmptyFilter(), column, item, args...);
+		return Select(EmptyRowFilter(), column, item, args...);
 	}
 
-	template<typename Filter, typename Type, typename... Args>
-	ConstSelection Select(const Filter& filter, const Column<Type>& column, const Type& item,
+	template<typename RowFilter, typename Type, typename... Args>
+	ConstSelection Select(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
-		return pvSelect<Selection>(filter, column, item, args...);
+		return pvSelect<Selection>(rowFilter, column, item, args...);
 	}
 
 	ConstSelection Select() const
 	{
-		return Select(EmptyFilter());
+		return Select(EmptyRowFilter());
 	}
 
-	template<typename Filter>
-	ConstSelection Select(const Filter& filter) const
+	template<typename RowFilter>
+	ConstSelection Select(const RowFilter& rowFilter) const
 	{
-		return pvMakeSelection(mRaws, filter, static_cast<Selection*>(nullptr));
+		return pvMakeSelection(mRaws, rowFilter, static_cast<Selection*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
 	Selection Select(const Column<Type>& column, const Type& item, const Args&... args)
 	{
-		return Select(EmptyFilter(), column, item, args...);
+		return Select(EmptyRowFilter(), column, item, args...);
 	}
 
-	template<typename Filter, typename Type, typename... Args>
-	Selection Select(const Filter& filter, const Column<Type>& column, const Type& item,
+	template<typename RowFilter, typename Type, typename... Args>
+	Selection Select(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
 		const Args&... args)
 	{
-		return pvSelect<Selection>(filter, column, item, args...);
+		return pvSelect<Selection>(rowFilter, column, item, args...);
 	}
 
 	Selection Select()
 	{
-		return Select(EmptyFilter());
+		return Select(EmptyRowFilter());
 	}
 
-	template<typename Filter>
-	Selection Select(const Filter& filter)
+	template<typename RowFilter>
+	Selection Select(const RowFilter& rowFilter)
 	{
-		return pvMakeSelection(mRaws, filter, static_cast<Selection*>(nullptr));
+		return pvMakeSelection(mRaws, rowFilter, static_cast<Selection*>(nullptr));
 	}
 
 	template<typename Type, typename... Args>
 	size_t SelectCount(const Column<Type>& column, const Type& item, const Args&... args) const
 	{
-		return SelectCount(EmptyFilter(), column, item, args...);
+		return SelectCount(EmptyRowFilter(), column, item, args...);
 	}
 
-	template<typename Filter, typename Type, typename... Args>
-	size_t SelectCount(const Filter& filter, const Column<Type>& column, const Type& item,
+	template<typename RowFilter, typename Type, typename... Args>
+	size_t SelectCount(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
-		return pvSelect<size_t>(filter, column, item, args...);
+		return pvSelect<size_t>(rowFilter, column, item, args...);
 	}
 
 	size_t SelectCount() const
 	{
-		return SelectCount(EmptyFilter());
+		return SelectCount(EmptyRowFilter());
 	}
 
-	template<typename Filter>
-	size_t SelectCount(const Filter& filter) const
+	template<typename RowFilter>
+	size_t SelectCount(const RowFilter& rowFilter) const
 	{
-		return pvMakeSelection(mRaws, filter, static_cast<size_t*>(nullptr));
+		return pvMakeSelection(mRaws, rowFilter, static_cast<size_t*>(nullptr));
 	}
 
 	ConstRowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
@@ -663,16 +710,16 @@ public:
 	}
 
 private:
-	template<typename Rows, typename Filter>
-	void pvFill(const Rows& rows, const Filter& filter)
+	template<typename Rows, typename RowFilter>
+	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
-		if (std::is_same<Filter, EmptyFilter>::value)
+		if (std::is_same<RowFilter, EmptyRowFilter>::value)
 			Reserve(rows.GetCount());
 		try
 		{
 			for (ConstRowReference rowRef : rows)
 			{
-				if (!filter(rowRef))
+				if (!rowFilter(rowRef))
 					continue;
 				mRaws.Reserve(mRaws.GetCount() + 1);
 				Raw* raw = pvCopyRaw(rowRef.GetRaw());
@@ -685,7 +732,6 @@ private:
 					pvFreeRaw(raw);
 					throw;
 				}
-				pvSetNumber(raw, mRaws.GetCount(), KeepRowNumber());
 				mRaws.AddBackNogrow(raw);
 			}
 		}
@@ -694,6 +740,7 @@ private:
 			pvFreeRaws();
 			throw;
 		}
+		pvSetNumbers();
 	}
 
 	size_t pvGetRawSize() const MOMO_NOEXCEPT
@@ -770,6 +817,17 @@ private:
 	{
 	}
 
+	void pvSetNumbers(size_t beginIndex = 0) MOMO_NOEXCEPT
+	{
+		for (size_t i = beginIndex, count = mRaws.GetCount(); i < count; ++i)
+			pvSetNumber(mRaws[i], i);
+	}
+
+	void pvSetNumber(Raw* raw, size_t number) MOMO_NOEXCEPT
+	{
+		pvSetNumber(raw, number, KeepRowNumber());
+	}
+
 	void pvSetNumber(Raw* raw, size_t number, std::true_type /*keepRowNumber*/) MOMO_NOEXCEPT
 	{
 		GetColumnList().SetNumber(raw, number);
@@ -779,8 +837,42 @@ private:
 	{
 	}
 
-	template<typename Result, typename Filter, typename Type, typename... Args>
-	Result pvSelect(const Filter& filter, const Column<Type>& column, const Type& item,
+	template<typename RowIterator>
+	void pvSetInvalidNumbers(RowIterator begin, RowIterator end)
+	{
+		try
+		{
+			for (RowIterator iter = begin; iter != end; ++iter)
+			{
+				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
+				pvSetNumber(RowReferenceProxy::GetRaw(*iter), invalidRowNumber);
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+	}
+
+	template<typename RawFilter>
+	void pvFilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+	{
+		mIndexes.FilterRaws(rawFilter);
+		size_t index = 0;
+		for (Raw* raw : mRaws)
+		{
+			if (rawFilter(raw))
+				mRaws[index++] = raw;
+			else
+				pvFreeRaw(raw);
+		}
+		mRaws.RemoveBack(mRaws.GetCount() - index);
+		pvSetNumbers();
+	}
+
+	template<typename Result, typename RowFilter, typename Type, typename... Args>
+	Result pvSelect(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
 		const Args&... args) const
 	{
 		static const size_t columnCount = 1 + sizeof...(Args) / 2;
@@ -789,12 +881,18 @@ private:
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		const UniqueHashIndex* uniqueHash = mIndexes.GetFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
-			return pvSelectRec<Result>(*uniqueHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
+		{
+			return pvSelectRec<Result>(*uniqueHash, offsets.data(), rowFilter,
+				OffsetItemTuple<>(), column, item, args...);
+		}
 		const MultiHashIndex* multiHash = mIndexes.GetFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
-			return pvSelectRec<Result>(*multiHash, offsets.data(), filter, OffsetItemTuple<>(), column, item, args...);
-		auto newFilter = [&offsets, &filter, &column, &item, &args...] (ConstRowReference rowRef)
-			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && filter(rowRef); };
+		{
+			return pvSelectRec<Result>(*multiHash, offsets.data(), rowFilter,
+				OffsetItemTuple<>(), column, item, args...);
+		}
+		auto newFilter = [&offsets, &rowFilter, &column, &item, &args...] (ConstRowReference rowRef)
+			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && rowFilter(rowRef); };
 		return pvMakeSelection(mRaws, newFilter, static_cast<Result*>(nullptr));
 	}
 
@@ -823,73 +921,76 @@ private:
 		return true;
 	}
 
-	template<typename Result, typename Index, typename Filter, typename Tuple, typename Type, typename... Args>
-	Result pvSelectRec(const Index& index, const size_t* offsets, const Filter& filter, const Tuple& tuple,
-		const Column<Type>& /*column*/, const Type& item, const Args&... args) const
+	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Type,
+		typename... Args>
+	Result pvSelectRec(const Index& index, const size_t* offsets, const RowFilter& rowFilter,
+		const Tuple& tuple, const Column<Type>& /*column*/, const Type& item, const Args&... args) const
 	{
 		size_t offset = *offsets;
 		if (Indexes::HasOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
 				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return pvSelectRec<Result>(index, offsets + 1, filter, newTuple, args...);
+			return pvSelectRec<Result>(index, offsets + 1, rowFilter, newTuple, args...);
 		}
 		else
 		{
-			auto newFilter = [&filter, offset, &item] (ConstRowReference rowRef)
+			auto newFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
 			{
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
-					&& filter(rowRef);
+					&& rowFilter(rowRef);
 			};
 			return pvSelectRec<Result>(index, offsets + 1, newFilter, tuple, args...);
 		}
 	}
 
-	template<typename Result, typename Index, typename Filter, typename Tuple>
-	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const Filter& filter,
+	template<typename Result, typename Index, typename RowFilter, typename Tuple>
+	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const RowFilter& rowFilter,
 		const Tuple& tuple) const
 	{
-		return pvMakeSelection(mIndexes.FindRaws(index, tuple), filter, static_cast<Result*>(nullptr));
+		return pvMakeSelection(mIndexes.FindRaws(index, tuple), rowFilter,
+			static_cast<Result*>(nullptr));
 	}
 
 #ifdef _MSC_VER	//?
-	template<typename Result, typename Index, typename Filter>
-	Result pvSelectRec(const Index&, const size_t*, const Filter&, const OffsetItemTuple<>&) const
+	template<typename Result, typename Index, typename RowFilter>
+	Result pvSelectRec(const Index&, const size_t*, const RowFilter&, const OffsetItemTuple<>&) const
 	{
 		throw std::exception();
 	}
 #endif
 
-	template<typename Raws, typename Filter>
-	Selection pvMakeSelection(const Raws& raws, const Filter& filter, Selection*) const
+	template<typename Raws, typename RowFilter>
+	Selection pvMakeSelection(const Raws& raws, const RowFilter& rowFilter, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
 		typename SelectionProxy::Raws selRaws(std::move(memManager));
 		for (Raw* raw : raws)
 		{
-			if (filter(pvMakeConstRowReference(raw)))
+			if (rowFilter(pvMakeConstRowReference(raw)))
 				selRaws.AddBack(raw);
 		}
 		return SelectionProxy(&GetColumnList(), std::move(selRaws));
 	}
 
 	template<typename Raws>
-	Selection pvMakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, Selection*) const
+	Selection pvMakeSelection(const Raws& raws, const EmptyRowFilter& /*rowFilter*/, Selection*) const
 	{
 		MemManager memManager = GetMemManager();
 		typename SelectionProxy::Raws selRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager));
 		return SelectionProxy(&GetColumnList(), std::move(selRaws));
 	}
 
-	template<typename Raws, typename Filter>
-	size_t pvMakeSelection(const Raws& raws, const Filter& filter, size_t*) const
+	template<typename Raws, typename RowFilter>
+	size_t pvMakeSelection(const Raws& raws, const RowFilter& rowFilter, size_t*) const
 	{
 		return std::count_if(raws.GetBegin(), raws.GetEnd(),
-			[this, &filter] (Raw* raw) { return filter(pvMakeConstRowReference(raw)); });
+			[this, &rowFilter] (Raw* raw) { return rowFilter(pvMakeConstRowReference(raw)); });
 	}
 
 	template<typename Raws>
-	size_t pvMakeSelection(const Raws& raws, const EmptyFilter& /*filter*/, size_t*) const MOMO_NOEXCEPT
+	size_t pvMakeSelection(const Raws& raws, const EmptyRowFilter& /*rowFilter*/,
+		size_t*) const MOMO_NOEXCEPT
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}

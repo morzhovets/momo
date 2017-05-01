@@ -247,14 +247,14 @@ namespace internal
 		{
 		}
 
-		template<typename Filter>
-		DataSelection(const DataSelection& selection, const Filter& filter)
+		template<typename RowFilter>
+		DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
 			: mColumnList(selection.mColumnList),
 			mRaws(MemManager(selection.GetMemManager()))
 		{
 			for (Raw* raw : selection.mRaws)
 			{
-				if (filter(pvMakeRowReference(raw)))
+				if (rowFilter(pvMakeRowReference(raw)))
 					mRaws.AddBack(raw);
 			}
 		}
@@ -345,6 +345,12 @@ namespace internal
 			return pvMakeRowReference(mRaws[index]);
 		}
 
+		void Set(size_t index, RowReference rowRef)
+		{
+			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
+			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
+		}
+
 		template<typename RowIterator>
 		void Assign(RowIterator begin, RowIterator end)
 		{
@@ -386,24 +392,26 @@ namespace internal
 				mRaws[index] = RowReferenceProxy::GetRaw(*iter);
 		}
 
-		void Remove(size_t index, size_t count = 1)
+		void Remove(size_t index, size_t count)
 		{
 			mRaws.Remove(index, count);
 		}
 
-		void Update(size_t index, RowReference rowRef)
+		template<typename RowFilter>
+		void Remove(const RowFilter& rowFilter)
 		{
-			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
-			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
+			auto newRowFilter = [&rowFilter] (RowReference rowRef)
+				{ return !rowFilter(rowRef); };
+			Filter(newRowFilter);
 		}
 
-		template<typename Filter>
-		void Erase(const Filter& filter)	//?
+		template<typename RowFilter>
+		void Filter(const RowFilter& rowFilter)	//?
 		{
 			size_t index = 0;
 			for (Raw* raw : mRaws)
 			{
-				if (!filter(pvMakeRowReference(raw)))
+				if (rowFilter(pvMakeRowReference(raw)))
 					mRaws[index++] = raw;
 			}
 			mRaws.RemoveBack(mRaws.GetCount() - index);
