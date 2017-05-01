@@ -136,7 +136,7 @@ public:
 		table = DataTable(table.Select());
 		table = DataTable(ctable.Select());
 
-		//table.AssignRows(table.GetBegin(), table.GetEnd());
+		table.AssignRows(table.GetBegin(), table.GetEnd());
 		table.RemoveRows(table.GetBegin(), table.GetBegin());
 		table.RemoveRows([] (typename DataTable::ConstRowReference) { return false; });
 

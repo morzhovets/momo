@@ -500,22 +500,60 @@ public:
 		}
 	}
 
-	//template<typename RowIterator>
-	//void AssignRows(RowIterator begin, RowIterator end)
-	//{
-	//	pvSetInvalidNumbers(begin, end);
-	//	auto rawFilter = [this] (Raw* raw)
-	//		{ return GetColumnList().GetNumber(raw) == invalidRowNumber; };
-	//	pvFilterRaws(rawFilter);
-	//}
+	template<typename RowIterator>
+	void AssignRows(RowIterator begin, RowIterator end)
+	{
+		for (Raw* raw : mRaws)
+			pvSetNumber(raw, invalidRowNumber);
+		try
+		{
+			size_t number = 0;
+			for (RowIterator iter = begin; iter != end; ++iter)
+			{
+				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
+				Raw* raw = RowReferenceProxy::GetRaw(*iter);
+				if (GetColumnList().GetNumber(raw) != invalidRowNumber)
+					continue;
+				pvSetNumber(raw, number);
+				++number;
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		pvRemoveInvalidRaws();
+		for (size_t i = 0, count = mRaws.GetCount(); i < count; ++i)
+		{
+			Raw*& raw = mRaws[i];
+			while (true)
+			{
+				size_t number = GetColumnList().GetNumber(raw);
+				if (number == i)
+					break;
+				std::swap(raw, mRaws[number]);
+			}
+		}
+	}
 
 	template<typename RowIterator>
 	void RemoveRows(RowIterator begin, RowIterator end)
 	{
-		pvSetInvalidNumbers(begin, end);
-		auto rawFilter = [this] (Raw* raw)
-			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
-		pvFilterRaws(rawFilter);
+		try
+		{
+			for (RowIterator iter = begin; iter != end; ++iter)
+			{
+				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
+				pvSetNumber(RowReferenceProxy::GetRaw(*iter), invalidRowNumber);
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		pvRemoveInvalidRaws();
 	}
 
 	template<typename RowFilter>
@@ -542,9 +580,7 @@ public:
 			pvSetNumbers();
 			throw;
 		}
-		auto rawFilter = [this] (Raw* raw)
-			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
-		pvFilterRaws(rawFilter);
+		pvRemoveInvalidRaws();
 	}
 
 	template<typename... Types>
@@ -837,37 +873,20 @@ private:
 	{
 	}
 
-	template<typename RowIterator>
-	void pvSetInvalidNumbers(RowIterator begin, RowIterator end)
+	void pvRemoveInvalidRaws() MOMO_NOEXCEPT
 	{
-		try
-		{
-			for (RowIterator iter = begin; iter != end; ++iter)
-			{
-				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
-				pvSetNumber(RowReferenceProxy::GetRaw(*iter), invalidRowNumber);
-			}
-		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
-	}
-
-	template<typename RawFilter>
-	void pvFilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
-	{
+		auto rawFilter = [this] (Raw* raw)
+			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
 		mIndexes.FilterRaws(rawFilter);
-		size_t index = 0;
+		size_t number = 0;
 		for (Raw* raw : mRaws)
 		{
 			if (rawFilter(raw))
-				mRaws[index++] = raw;
+				mRaws[number++] = raw;
 			else
 				pvFreeRaw(raw);
 		}
-		mRaws.RemoveBack(mRaws.GetCount() - index);
+		mRaws.RemoveBack(mRaws.GetCount() - number);
 		pvSetNumbers();
 	}
 
