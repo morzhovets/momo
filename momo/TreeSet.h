@@ -72,7 +72,7 @@ namespace internal
 					mNode = mNode->GetChild(0);
 				mItemIndex = 0;
 			}
-			pvMove();
+			pvMoveIf();
 			return *this;
 		}
 
@@ -135,7 +135,7 @@ namespace internal
 			mItemIndex(itemIndex)
 		{
 			if (move)
-				pvMove();
+				pvMoveIf();
 		}
 
 		Node* ptGetNode() const MOMO_NOEXCEPT
@@ -156,11 +156,15 @@ namespace internal
 		}
 
 	private:
+		void pvMoveIf() MOMO_NOEXCEPT
+		{
+			if (mItemIndex == mNode->GetCount())
+				pvMove();
+		}
+
 		void pvMove() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(mNode->IsLeaf());
-			if (mItemIndex < mNode->GetCount())
-				return;
 			while (true)
 			{
 				Node* parentNode = mNode->GetParent();

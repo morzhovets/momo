@@ -237,7 +237,7 @@ namespace internal
 			if (ptIsMovable())
 			{
 				++mItemPtr;
-				pvMove();
+				pvMoveIf();
 			}
 			else
 			{
@@ -269,7 +269,7 @@ namespace internal
 			mItemPtr(pitem)
 		{
 			if (movable)
-				pvMove();
+				pvMoveIf();
 		}
 
 		HashSetConstIterator(const Buckets* buckets, size_t hashCode,
@@ -315,10 +315,14 @@ namespace internal
 		}
 
 	private:
+		void pvMoveIf() MOMO_NOEXCEPT
+		{
+			if (mItemPtr == pvGetBucketBounds().GetEnd())
+				pvMove();
+		}
+
 		void pvMove() MOMO_NOEXCEPT
 		{
-			if (mItemPtr != pvGetBucketBounds().GetEnd())
-				return;
 			size_t bucketCount = mBuckets->GetCount();
 			while (true)
 			{
@@ -336,7 +340,7 @@ namespace internal
 				mBuckets = nextBuckets;
 				mBucketIndex = 0;
 				mItemPtr = pvGetBucketBounds().GetBegin();
-				return pvMove();	//?
+				return pvMoveIf();	//?
 			}
 			*this = HashSetConstIterator();
 		}

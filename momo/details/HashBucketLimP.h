@@ -355,17 +355,17 @@ namespace internal
 
 		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
 		{
-			return pvGetBounds();
+			return pvGetBounds0();
 		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return pvGetBounds();
+			return pvGetBounds0();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return pvGetBounds().GetCount() == maxCount;
+			return pvGetBounds0().GetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -381,7 +381,7 @@ namespace internal
 		{
 			if (!pvIsEmpty())
 			{
-				Bounds bounds = pvGetBounds();
+				Bounds bounds = pvGetBounds1();
 				Item* items = bounds.GetBegin();
 				ItemTraits::Destroy(params.GetMemManager(), items, bounds.GetCount());
 				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
@@ -406,7 +406,7 @@ namespace internal
 			else
 			{
 				size_t memPoolIndex = pvGetMemPoolIndex();
-				Bounds bounds = pvGetBounds();
+				Bounds bounds = pvGetBounds1();
 				size_t count = bounds.GetCount();
 				Item* items = bounds.GetBegin();
 				MOMO_ASSERT(count <= memPoolIndex);
@@ -434,10 +434,9 @@ namespace internal
 
 		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
-			Bounds bounds = pvGetBounds();
-			size_t count = bounds.GetCount();
-			MOMO_ASSERT(count > 0);
-			if (count == 1)
+			MOMO_ASSERT(!pvIsEmpty());
+			Bounds bounds = pvGetBounds1();
+			if (bounds.GetCount() == 1)
 			{
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(bounds.GetBegin());
@@ -474,10 +473,15 @@ namespace internal
 			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
-		Bounds pvGetBounds() const MOMO_NOEXCEPT
+		Bounds pvGetBounds0() const MOMO_NOEXCEPT
 		{
 			if (pvIsEmpty())
 				return Bounds();
+			return pvGetBounds1();
+		}
+
+		Bounds pvGetBounds1() const MOMO_NOEXCEPT
+		{
 			uintptr_t memPoolIndex = (uintptr_t)pvGetMemPoolIndex();
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
 			uintptr_t mod = UIntMath<uintptr_t>::Ceil(memPoolIndex,
