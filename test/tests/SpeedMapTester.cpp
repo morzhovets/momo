@@ -98,10 +98,10 @@ public:
 	void TestAll()
 	{
 		TestStdUnorderedMap<std::allocator<std::pair<const Key, size_t>>>("std::unordered_map");
-		TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
 		TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
-		TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
 		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
+		//TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
+		//TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 
 		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, size_t>>>("std::map + pool_allocator");
@@ -114,16 +114,21 @@ private:
 	void pvTestMap(const std::string& mapTitle)
 	{
 		Map map;
+		std::mt19937 mt;
 		{
 			Timer timer(mapTitle + " insert: ", mStream);
 			for (const Key& key : mKeys)
 				map[key] = 0;
 		}
+
+		std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mt);
 		{
 			Timer timer(mapTitle + " find: ", mStream);
 			for (const Key& key : mKeys)
 				map[key] = 0;
 		}
+
+		std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mt);
 		{
 			Timer timer(mapTitle + " erase: ", mStream);
 			for (const Key& key : mKeys)
