@@ -47,9 +47,13 @@ struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObje
 {
 };
 
-template<typename Object, typename MemManager>
+template<typename TObject, typename TMemManager>
 class ObjectDestroyer
 {
+public:
+	typedef TObject Object;
+	typedef TMemManager MemManager;
+
 public:
 	static void Destroy(MemManager* /*memManager*/, Object& object) MOMO_NOEXCEPT
 	{
@@ -58,10 +62,13 @@ public:
 	}
 };
 
-template<typename Object, typename MemManager>
+template<typename TObject, typename TMemManager>
 class ObjectRelocator
 {
 public:
+	typedef TObject Object;
+	typedef TMemManager MemManager;
+
 	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
 	static const bool isNothrowRelocatable = isTriviallyRelocatable
