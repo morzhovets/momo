@@ -27,25 +27,25 @@
 class SpeedMapTesterKey
 {
 public:
-	SpeedMapTesterKey(uint32_t ui, SpeedMapTesterKey* ptr)
+	SpeedMapTesterKey(SpeedMapTesterKey* ptr, uint32_t value) MOMO_NOEXCEPT
+		: mPtr(ptr),
+		mValue(value)
 	{
-		mPtr = ptr;
-		mInt = ui;
 	}
 
-	uint32_t GetInt() const MOMO_NOEXCEPT
+	uint32_t GetPtrValue() const MOMO_NOEXCEPT
 	{
-		return mPtr->mInt;
+		return mPtr->mValue;
 	}
 
 	bool operator==(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
 	{
-		return GetInt() == key.GetInt();
+		return GetPtrValue() == key.GetPtrValue();
 	}
 
 	bool operator<(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
 	{
-		return GetInt() < key.GetInt();
+		return GetPtrValue() < key.GetPtrValue();
 	}
 
 	friend void swap(SpeedMapTesterKey& key1, SpeedMapTesterKey& key2) MOMO_NOEXCEPT
@@ -55,7 +55,7 @@ public:
 
 private:
 	SpeedMapTesterKey* mPtr;
-	uint32_t mInt;
+	uint32_t mValue;
 };
 
 namespace std
@@ -65,7 +65,7 @@ namespace std
 	{
 		size_t operator()(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
 		{
-			return std::hash<uint32_t>()(key.GetInt());
+			return std::hash<uint32_t>()(key.GetPtrValue());
 		}
 	};
 }
@@ -151,8 +151,8 @@ public:
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 
 		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, uint32_t>>>("std::map + pool_allocator");
-		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("TreeNodePrm");
 		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("TreeNodeSwp");
+		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("TreeNodePrm");
 	}
 
 private:
@@ -194,7 +194,7 @@ SpeedMapTester<SpeedMapTesterKey>::SpeedMapTester(size_t count, std::ostream& st
 	std::mt19937 mt;
 	mKeys.Reserve(count);
 	for (size_t i = 0; i < count; ++i)
-		mKeys.AddBack(SpeedMapTesterKey(mt(), mKeys.GetItems() + i));
+		mKeys.AddBack(SpeedMapTesterKey(mKeys.GetItems() + i, mt()));
 	std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mt);
 }
 
@@ -230,8 +230,8 @@ void TestSpeedMap()
 	const size_t count = 1 << 12;
 #endif
 
-	//SpeedMapTester<SpeedMapTesterKey> speedMapTester(count, std::cout);
-	SpeedMapTester<uint32_t> speedMapTester(count, std::cout);
+	SpeedMapTester<SpeedMapTesterKey> speedMapTester(count, std::cout);
+	//SpeedMapTester<uint32_t> speedMapTester(count, std::cout);
 	//SpeedMapTester<std::string> speedMapTester(count, std::cout);
 
 	for (size_t i = 0; i < 3; ++i)
