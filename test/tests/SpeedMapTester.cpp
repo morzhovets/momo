@@ -24,6 +24,52 @@
 #include <map>
 #include <random>
 
+class SpeedMapTesterKey
+{
+public:
+	SpeedMapTesterKey(uint32_t ui, SpeedMapTesterKey* ptr)
+	{
+		mPtr = ptr;
+		mInt = ui;
+	}
+
+	uint32_t GetInt() const MOMO_NOEXCEPT
+	{
+		return mPtr->mInt;
+	}
+
+	bool operator==(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
+	{
+		return GetInt() == key.GetInt();
+	}
+
+	bool operator<(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
+	{
+		return GetInt() < key.GetInt();
+	}
+
+	friend void swap(SpeedMapTesterKey& key1, SpeedMapTesterKey& key2) MOMO_NOEXCEPT
+	{
+		std::swap(key1.mPtr, key2.mPtr);
+	}
+
+private:
+	SpeedMapTesterKey* mPtr;
+	uint32_t mInt;
+};
+
+namespace std
+{
+	template<>
+	struct hash<SpeedMapTesterKey>
+	{
+		size_t operator()(const SpeedMapTesterKey& key) const MOMO_NOEXCEPT
+		{
+			return std::hash<uint32_t>()(key.GetInt());
+		}
+	};
+}
+
 template<typename TKey>
 class SpeedMapTester
 {
@@ -66,16 +112,16 @@ public:
 	template<typename Allocator>
 	void TestStdUnorderedMap(const std::string& mapTitle)
 	{
-		typedef std::unordered_map<Key, size_t, std::hash<Key>, std::equal_to<Key>, Allocator> Map;
+		typedef std::unordered_map<Key, uint32_t, std::hash<Key>, std::equal_to<Key>, Allocator> Map;
 		pvTestMap<Map>(mapTitle);
 	}
 
 	template<typename HashBucket>
 	void TestHashMap(const std::string& mapTitle)
 	{
-		typedef momo::stdish::unordered_map<Key, size_t, std::hash<Key>, std::equal_to<Key>,
-			std::allocator<std::pair<const Key, size_t>>,
-			momo::HashMap<Key, size_t,
+		typedef momo::stdish::unordered_map<Key, uint32_t, std::hash<Key>, std::equal_to<Key>,
+			std::allocator<std::pair<const Key, uint32_t>>,
+			momo::HashMap<Key, uint32_t,
 				momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>>> Map;
 		pvTestMap<Map>(mapTitle);
 	}
@@ -83,28 +129,28 @@ public:
 	template<typename Allocator>
 	void TestStdMap(const std::string& mapTitle)
 	{
-		typedef std::map<Key, size_t, std::less<Key>, Allocator> Map;
+		typedef std::map<Key, uint32_t, std::less<Key>, Allocator> Map;
 		pvTestMap<Map>(mapTitle);
 	}
 
 	template<typename TreeNode>
 	void TestTreeMap(const std::string& mapTitle)
 	{
-		typedef momo::stdish::map<Key, size_t, std::less<Key>, std::allocator<std::pair<const Key, size_t>>,
-			momo::TreeMap<Key, size_t, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>>> Map;
+		typedef momo::stdish::map<Key, uint32_t, std::less<Key>, std::allocator<std::pair<const Key, uint32_t>>,
+			momo::TreeMap<Key, uint32_t, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>>> Map;
 		pvTestMap<Map>(mapTitle);
 	}
 
 	void TestAll()
 	{
-		TestStdUnorderedMap<std::allocator<std::pair<const Key, size_t>>>("std::unordered_map");
+		TestStdUnorderedMap<std::allocator<std::pair<const Key, uint32_t>>>("std::unordered_map");
 		TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
 		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
 		//TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
 		//TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 
-		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, size_t>>>("std::map + pool_allocator");
+		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, uint32_t>>>("std::map + pool_allocator");
 		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("TreeNodePrm");
 		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("TreeNodeSwp");
 	}
@@ -142,6 +188,17 @@ private:
 };
 
 template<>
+SpeedMapTester<SpeedMapTesterKey>::SpeedMapTester(size_t count, std::ostream& stream)
+	: mStream(stream)
+{
+	std::mt19937 mt;
+	mKeys.Reserve(count);
+	for (size_t i = 0; i < count; ++i)
+		mKeys.AddBack(SpeedMapTesterKey(mt(), mKeys.GetItems() + i));
+	std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mt);
+}
+
+template<>
 SpeedMapTester<uint32_t>::SpeedMapTester(size_t count, std::ostream& stream)
 	: mStream(stream)
 {
@@ -173,8 +230,10 @@ void TestSpeedMap()
 	const size_t count = 1 << 12;
 #endif
 
+	//SpeedMapTester<SpeedMapTesterKey> speedMapTester(count, std::cout);
 	SpeedMapTester<uint32_t> speedMapTester(count, std::cout);
 	//SpeedMapTester<std::string> speedMapTester(count, std::cout);
+
 	for (size_t i = 0; i < 3; ++i)
 	{
 		std::cout << std::endl;
