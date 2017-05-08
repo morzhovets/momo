@@ -111,7 +111,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef ArrayIntCap<maxFastCount, MemPool, MemManagerDummy> MemPools;
+			typedef NestedArrayIntCap<maxFastCount, MemPool, MemManagerDummy> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)

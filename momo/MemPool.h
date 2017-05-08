@@ -133,7 +133,7 @@ public:
 private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
-	typedef ArrayIntCap<Params::cachedFreeBlockCount, void*,
+	typedef internal::NestedArrayIntCap<Params::cachedFreeBlockCount, void*,
 		internal::MemManagerDummy> CachedFreeBlocks;
 
 	typedef internal::UIntMath<size_t> SMath;

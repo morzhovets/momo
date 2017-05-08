@@ -54,7 +54,7 @@ namespace internal
 				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
 
 		private:
-			typedef ArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
+			typedef NestedArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
 			static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 

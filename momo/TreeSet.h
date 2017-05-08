@@ -352,8 +352,8 @@ private:
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef ArrayIntCap<4, Node*, MemManagerPtr> Nodes;
-		typedef ArrayIntCap<4, Segment, MemManagerPtr> Segments;
+		typedef internal::NestedArrayIntCap<4, Node*, MemManagerPtr> Nodes;
+		typedef internal::NestedArrayIntCap<4, Segment, MemManagerPtr> Segments;
 
 		typedef internal::TreeSetRelocatorIterator<Segment, Item> Iterator;
 

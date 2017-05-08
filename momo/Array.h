@@ -1107,6 +1107,10 @@ namespace internal
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 	};
+
+	template<size_t internalCapacity, typename Item, typename MemManager>
+	using NestedArrayIntCap = Array<Item, MemManager, ArrayItemTraits<Item, MemManager>,
+		NestedArraySettings<ArraySettings<internalCapacity>>>;
 }
 
 } // namespace momo

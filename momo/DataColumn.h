@@ -204,8 +204,7 @@ private:
 	typedef std::array<size_t, vertexCount> Addends;
 
 	static const size_t mutOffsetsIntCapacity = maxColumnCount * sizeof(void*);
-	typedef Array<unsigned char, MemManager, ArrayItemTraits<unsigned char, MemManager>,
-		momo::internal::NestedArraySettings<ArraySettings<mutOffsetsIntCapacity>>> MutOffsets;
+	typedef momo::internal::NestedArrayIntCap<mutOffsetsIntCapacity, unsigned char, MemManager> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;

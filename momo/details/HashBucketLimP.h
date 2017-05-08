@@ -56,7 +56,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef ArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
+			typedef NestedArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -299,7 +299,7 @@ namespace internal
 		class Params
 		{
 		private:
-			typedef ArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
+			typedef NestedArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
 		public:
 			explicit Params(MemManager& memManager)
