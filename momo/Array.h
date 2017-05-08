@@ -115,16 +115,6 @@ namespace internal
 	{
 		typedef ArrayIndexIterator<Array, typename Array::Item> Iterator;
 	};
-
-	template<typename TBaseArraySettings>
-	struct NestedArraySettings : public TBaseArraySettings	//?
-	{
-	protected:
-		typedef TBaseArraySettings BaseArraySettings;
-
-	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-	};
 }
 
 template<typename TItem, typename TMemManager>
@@ -1105,6 +1095,19 @@ template<size_t tInternalCapacity, typename TItem,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<tInternalCapacity>>
 using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, TSettings>;
+
+namespace internal
+{
+	template<typename TBaseArraySettings = ArraySettings<>>
+	struct NestedArraySettings : public TBaseArraySettings
+	{
+	protected:
+		typedef TBaseArraySettings BaseArraySettings;
+
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+	};
+}
 
 } // namespace momo
 

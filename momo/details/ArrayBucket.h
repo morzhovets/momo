@@ -103,7 +103,7 @@ namespace internal
 
 		static const size_t arrayAlignment = std::alignment_of<Array>::value;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 

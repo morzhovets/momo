@@ -45,7 +45,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
 		typedef BucketMemory<MemPool, unsigned char*> Memory;
 
@@ -279,7 +279,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 

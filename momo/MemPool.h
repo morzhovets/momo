@@ -509,6 +509,12 @@ private:
 
 namespace internal
 {
+	struct NestedMemPoolSettings
+	{
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+	};
+
 	template<size_t tBlockCount, typename TMemManager>
 	class MemPoolUInt32
 	{
@@ -521,7 +527,8 @@ namespace internal
 		static const uint32_t nullPtr = UINT32_MAX;
 
 	private:
-		typedef Array<char*, MemManager> Buffers;
+		typedef Array<char*, MemManager, ArrayItemTraits<char*, MemManager>,
+			NestedArraySettings<>> Buffers;
 
 	public:
 		MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)

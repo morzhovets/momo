@@ -98,8 +98,8 @@ private:
 
 	static const size_t invalidRowNumber = SIZE_MAX;
 
-	//? MemPoolSettings
-	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
+	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
+		momo::internal::NestedMemPoolSettings> RawMemPool;
 
 	template<typename... Types>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Types...>;

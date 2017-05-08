@@ -63,7 +63,7 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr> MemPool;
+		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
