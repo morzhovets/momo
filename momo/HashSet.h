@@ -472,6 +472,11 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
 	};
 
+	struct ConstBucketBoundsProxy : public ConstBucketBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
+	};
+
 public:
 	explicit HashSet(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
@@ -878,7 +883,7 @@ public:
 		{
 			size_t curBucketCount = bkts->GetCount();
 			if (curBucketIndex < curBucketCount)
-				return ConstBucketBounds(bkts->GetBucketBounds(curBucketIndex));
+				return ConstBucketBoundsProxy(bkts->GetBucketBounds(curBucketIndex));
 			curBucketIndex -= curBucketCount;
 		}
 		MOMO_ASSERT(false);

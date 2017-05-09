@@ -83,11 +83,7 @@ namespace internal
 
 	public:
 		HashMultiMapKeyBounds() MOMO_NOEXCEPT
-		{
-		}
-
-		explicit HashMultiMapKeyBounds(Iterator begin) MOMO_NOEXCEPT
-			: mBegin(begin)
+			: mCount(0)
 		{
 		}
 
@@ -108,8 +104,21 @@ namespace internal
 
 		MOMO_FRIENDS_BEGIN_END(const HashMultiMapKeyBounds&, KeyIterator)
 
+		size_t GetCount() const MOMO_NOEXCEPT	//?
+		{
+			return mCount;
+		}
+
+	protected:
+		HashMultiMapKeyBounds(KeyIterator begin, size_t count) MOMO_NOEXCEPT
+			: mBegin(begin),
+			mCount(count)
+		{
+		}
+
 	private:
 		KeyIterator mBegin;
+		size_t mCount;
 	};
 
 	template<typename TKey, typename TValue>
@@ -662,6 +671,16 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(KeyIterator, GetBaseIterator, HashMapIterator)
 	};
 
+	struct ConstKeyBoundsProxy : public ConstKeyBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstKeyBounds)
+	};
+
+	struct KeyBoundsProxy : public KeyBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(KeyBounds)
+	};
+
 public:
 	explicit HashMultiMap(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
@@ -806,12 +825,12 @@ public:
 
 	ConstKeyBounds GetKeyBounds() const MOMO_NOEXCEPT
 	{
-		return ConstKeyBounds(ConstKeyIteratorProxy(mHashMap.GetBegin()));
+		return ConstKeyBoundsProxy(ConstKeyIteratorProxy(mHashMap.GetBegin()), GetKeyCount());
 	}
 
 	KeyBounds GetKeyBounds() MOMO_NOEXCEPT
 	{
-		return KeyBounds(KeyIteratorProxy(mHashMap.GetBegin()));
+		return KeyBoundsProxy(KeyIteratorProxy(mHashMap.GetBegin()), GetKeyCount());
 	}
 
 	size_t GetKeyCount() const MOMO_NOEXCEPT

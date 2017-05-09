@@ -162,6 +162,16 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
 	};
 
+	struct ConstBucketBoundsProxy : public ConstBucketBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
+	};
+
+	struct BucketBoundsProxy : public BucketBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(BucketBounds)
+	};
+
 public:
 	explicit HashMap(const HashTraits& hashTraits = HashTraits(),
 		MemManager&& memManager = MemManager())
@@ -529,12 +539,12 @@ public:
 
 	ConstBucketBounds GetBucketBounds(size_t bucketIndex) const
 	{
-		return ConstBucketBounds(mHashSet.GetBucketBounds(bucketIndex));
+		return ConstBucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
 	BucketBounds GetBucketBounds(size_t bucketIndex)
 	{
-		return BucketBounds(mHashSet.GetBucketBounds(bucketIndex));
+		return BucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
 	size_t GetBucketIndex(const Key& key) const

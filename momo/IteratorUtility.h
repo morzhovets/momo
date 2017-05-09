@@ -352,11 +352,6 @@ namespace internal
 		{
 		}
 
-		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) MOMO_NOEXCEPT
-			: mBaseBucketBounds(bounds)
-		{
-		}
-
 		operator ConstBounds() const MOMO_NOEXCEPT
 		{
 			return ConstBounds(mBaseBucketBounds);
@@ -377,6 +372,12 @@ namespace internal
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return mBaseBucketBounds.GetCount();
+		}
+
+	protected:
+		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) MOMO_NOEXCEPT
+			: mBaseBucketBounds(bounds)
+		{
 		}
 
 	private:
