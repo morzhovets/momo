@@ -391,7 +391,7 @@ private:
 		Node* CreateNode(bool isLeaf, size_t count)
 		{
 			mNewNodes.Reserve(mNewNodes.GetCount() + 1);
-			Node* node = &Node::Create(mNodeParams, isLeaf, count);
+			Node* node = Node::Create(mNodeParams, isLeaf, count);
 			mNewNodes.AddBackNogrow(node);
 			return node;
 		}
@@ -1042,7 +1042,7 @@ private:
 				throw;
 			}
 		}
-		mRootNode = &Node::Create(*mNodeParams, true, 0);
+		mRootNode = Node::Create(*mNodeParams, true, 0);
 		try
 		{
 			return pvAdd<false>(GetEnd(), itemCreator);

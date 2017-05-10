@@ -129,7 +129,7 @@ namespace internal
 
 		Node& operator=(const Node&) = delete;
 
-		static Node& Create(Params& params, bool isLeaf, size_t count)
+		static Node* Create(Params& params, bool isLeaf, size_t count)
 		{
 			MOMO_ASSERT(count <= maxCapacity);
 			Node* node;
@@ -150,7 +150,7 @@ namespace internal
 			node->mParent = nullptr;
 			node->mCounter.count = (unsigned char)count;
 			node->pvInitIndices(IsContinuous());
-			return *node;
+			return node;
 		}
 
 		void Destroy(Params& params) MOMO_NOEXCEPT

@@ -52,31 +52,31 @@ namespace internal
 
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
 
-		static HashSetBuckets& Create(MemManager& memManager, size_t bucketCount,
+		static HashSetBuckets* Create(MemManager& memManager, size_t bucketCount,
 			BucketParams* bucketParams)
 		{
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
 			size_t bufferSize = pvGetBufferSize(bucketCount);
-			HashSetBuckets& resBuckets = *memManager.template Allocate<HashSetBuckets>(bufferSize);
-			resBuckets.mCount = 0;
-			resBuckets.mNextBuckets = nullptr;
-			Bucket* buckets = resBuckets.pvGetBuckets();
+			HashSetBuckets* resBuckets = memManager.template Allocate<HashSetBuckets>(bufferSize);
+			resBuckets->mCount = 0;
+			resBuckets->mNextBuckets = nullptr;
+			Bucket* buckets = resBuckets->pvGetBuckets();
 			try
 			{
-				size_t& curBucketCount = resBuckets.mCount;
+				size_t& curBucketCount = resBuckets->mCount;
 				for (; curBucketCount < bucketCount; ++curBucketCount)
 					new(buckets + curBucketCount) Bucket();
 				if (bucketParams == nullptr)
-					resBuckets.mBucketParams = &pvCreateBucketParams(memManager);
+					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
 				else
-					resBuckets.mBucketParams = bucketParams;
+					resBuckets->mBucketParams = bucketParams;
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < resBuckets.mCount; ++i)
+				for (size_t i = 0; i < resBuckets->mCount; ++i)
 					buckets[i].~Bucket();
-				memManager.Deallocate(&resBuckets, bufferSize);
+				memManager.Deallocate(resBuckets, bufferSize);
 				throw;
 			}
 			return resBuckets;
@@ -174,7 +174,7 @@ namespace internal
 			return sizeof(HashSetBuckets) + bucketCount * sizeof(Bucket);
 		}
 
-		static BucketParams& pvCreateBucketParams(MemManager& memManager)
+		static BucketParams* pvCreateBucketParams(MemManager& memManager)
 		{
 			BucketParams* bucketParams = memManager.template Allocate<BucketParams>(
 				sizeof(BucketParams));
@@ -187,7 +187,7 @@ namespace internal
 				memManager.Deallocate(bucketParams, sizeof(BucketParams));
 				throw;
 			}
-			return *bucketParams;
+			return bucketParams;
 		}
 
 	private:
@@ -533,7 +533,7 @@ public:
 				break;
 			bucketCount <<= 1;
 		}
-		mBuckets = &Buckets::Create(GetMemManager(), bucketCount, nullptr);
+		mBuckets = Buckets::Create(GetMemManager(), bucketCount, nullptr);
 		BucketParams& bucketParams = mBuckets->GetBucketParams();
 		try
 		{
@@ -658,10 +658,10 @@ public:
 				break;
 			newBucketCount <<= 1;
 		}
-		Buckets& newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
+		Buckets* newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
 			(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
-		newBuckets.SetNextBuckets(mBuckets);
-		mBuckets = &newBuckets;
+		newBuckets->SetNextBuckets(mBuckets);
+		mBuckets = newBuckets;
 		mCapacity = newCapacity;
 		mCrew.IncVersion();
 		if (mBuckets->GetNextBuckets() != nullptr)
@@ -1073,7 +1073,7 @@ private:
 		Buckets* newBuckets;
 		try
 		{
-			newBuckets = &Buckets::Create(GetMemManager(), newBucketCount,
+			newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
 				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
 		}
 		catch (const std::bad_alloc& exception)
