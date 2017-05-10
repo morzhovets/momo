@@ -120,9 +120,10 @@ class SpeedMapTester
 public:
 	typedef TKey Key;
 	typedef uint32_t Value;
-	typedef SpeedMapKeys<Key> Keys;
 
 private:
+	typedef SpeedMapKeys<Key> Keys;
+
 	class Timer
 	{
 	private:
@@ -170,10 +171,10 @@ public:
 	template<typename HashBucket>
 	void TestHashMap(const std::string& mapTitle)
 	{
-		typedef momo::stdish::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>,
-			std::allocator<std::pair<const Key, Value>>,
-			momo::HashMap<Key, Value,
-				momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>>> Map;
+		typedef std::allocator<std::pair<const Key, Value>> Allocator;
+		typedef momo::stdish::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, Allocator,
+			momo::HashMap<Key, Value, momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>,
+			momo::MemManagerStd<Allocator>>> Map;
 		pvTestMap<Map>(mapTitle);
 	}
 
@@ -187,8 +188,10 @@ public:
 	template<typename TreeNode>
 	void TestTreeMap(const std::string& mapTitle)
 	{
-		typedef momo::stdish::map<Key, Value, std::less<Key>, std::allocator<std::pair<const Key, Value>>,
-			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>>> Map;
+		typedef std::allocator<std::pair<const Key, Value>> Allocator;
+		typedef momo::stdish::map<Key, Value, std::less<Key>, Allocator,
+			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>,
+			momo::MemManagerStd<Allocator>>> Map;
 		pvTestMap<Map>(mapTitle);
 	}
 
