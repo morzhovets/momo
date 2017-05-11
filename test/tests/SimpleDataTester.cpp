@@ -132,16 +132,17 @@ public:
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
-
-		table = DataTable(table.Select());
-		table = DataTable(ctable.Select());
+		tableCopy = DataTable(table.Select());
+		assert(tableCopy.GetCount() == count);
+		tableCopy = DataTable(ctable.Select());
+		assert(tableCopy.GetCount() == count);
 
 		table.AssignRows(table.GetBegin(), table.GetEnd());
 		table.RemoveRows(table.GetBegin(), table.GetBegin());
-		table.RemoveRows([] (typename DataTable::ConstRowReference) { return false; });
+		table.RemoveRows([] (typename DataTable::ConstRowReference) { return true; });
 
-		table.Clear();
 		assert(table.IsEmpty());
+		table.Clear();
 	}
 };
 
