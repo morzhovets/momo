@@ -119,7 +119,7 @@ class SpeedMapTester
 {
 public:
 	typedef TKey Key;
-	typedef uint32_t Value;
+	typedef size_t Value;
 
 private:
 	typedef SpeedMapKeys<Key> Keys;
@@ -157,6 +157,7 @@ public:
 	explicit SpeedMapTester(size_t count, std::ostream& stream = std::cout)
 		: mRandom(),
 		mKeys(count, mRandom),
+		mKeys2(count, mRandom),
 		mStream(stream)
 	{
 	}
@@ -220,15 +221,25 @@ private:
 				map[key] = 0;
 		}
 
-		std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
 		{
-			Timer timer(mapTitle + " find: ", mStream);
+			std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
+			Timer timer(mapTitle + " find existing: ", mStream);
 			for (const Key& key : mKeys)
-				map[key] = 0;
+				map[key] = 1;
 		}
 
-		std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
 		{
+			Timer timer(mapTitle + " find random: ", mStream);
+			for (const Key& key : mKeys2)
+			{
+				auto it = map.find(key);
+				if (it != map.end())
+					it->second = 2;
+			}
+		}
+
+		{
+			std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
 			Timer timer(mapTitle + " erase: ", mStream);
 			for (const Key& key : mKeys)
 				map.erase(key);
@@ -238,6 +249,7 @@ private:
 private:
 	std::mt19937 mRandom;
 	Keys mKeys;
+	Keys mKeys2;
 	std::ostream& mStream;
 };
 
