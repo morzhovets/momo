@@ -53,16 +53,16 @@ private:
 			return *pvGetPtr();
 		}
 
-		static unsigned char GetState(const TemplItem* item) MOMO_NOEXCEPT
+		static momo::HashBucketOneState GetState(const TemplItem* item) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(size > 1);
-			return item->pvGetPtr()[1];
+			return (momo::HashBucketOneState)item->pvGetPtr()[1];
 		}
 
-		static void SetState(TemplItem* item, unsigned char state) MOMO_NOEXCEPT
+		static void SetState(TemplItem* item, momo::HashBucketOneState state) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(size > 1);
-			item->pvGetPtr()[1] = state;
+			item->pvGetPtr()[1] = (unsigned char)state;
 		}
 
 	private:

@@ -34,11 +34,6 @@ namespace internal
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
 
-	private:
-		static const unsigned char stateEmpty = 0;
-		static const unsigned char stateFull = 1;
-		static const unsigned char stateRemoved = 2;
-
 	public:
 		class Params
 		{
@@ -68,7 +63,7 @@ namespace internal
 	public:
 		BucketOneI() MOMO_NOEXCEPT
 		{
-			pvSetState(stateEmpty);
+			pvSetState(HashBucketOneState::empty);
 		}
 
 		BucketOneI(const BucketOneI&) = delete;
@@ -92,19 +87,19 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return pvGetState() == stateFull;
+			return pvGetState() == HashBucketOneState::full;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return pvGetState() != stateEmpty;
+			return pvGetState() != HashBucketOneState::empty;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			pvSetState(stateEmpty);
+			pvSetState(HashBucketOneState::empty);
 		}
 
 		template<typename ItemCreator>
@@ -112,23 +107,23 @@ namespace internal
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			pvSetState(stateFull);
+			pvSetState(HashBucketOneState::full);
 			return &mItemBuffer;
 		}
 
 		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
-			pvSetState(stateRemoved);
+			pvSetState(HashBucketOneState::removed);
 		}
 
 	private:
-		unsigned char pvGetState() const MOMO_NOEXCEPT
+		HashBucketOneState pvGetState() const MOMO_NOEXCEPT
 		{
 			return Stater::GetState(&mItemBuffer);
 		}
 
-		void pvSetState(unsigned char state) MOMO_NOEXCEPT
+		void pvSetState(HashBucketOneState state) MOMO_NOEXCEPT
 		{
 			Stater::SetState(&mItemBuffer, state);
 		}

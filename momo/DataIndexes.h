@@ -147,21 +147,22 @@ namespace internal
 		class HashBucketStater
 		{
 		public:
-			static unsigned char GetState(const HashRawKey* key) MOMO_NOEXCEPT
+			static HashBucketOneState GetState(const HashRawKey* key) MOMO_NOEXCEPT
 			{
-				return (key->raw != nullptr) ? (unsigned char)1 : (unsigned char)key->hashCode;
+				return (key->raw != nullptr) ? HashBucketOneState::full
+					: (HashBucketOneState)key->hashCode;
 			}
 
 			template<typename Item>
-			static unsigned char GetState(const Item* item) MOMO_NOEXCEPT
+			static HashBucketOneState GetState(const Item* item) MOMO_NOEXCEPT
 			{
 				return GetState(item->GetKeyPtr());
 			}
 
-			static void SetState(HashRawKey* key, unsigned char state) MOMO_NOEXCEPT
+			static void SetState(HashRawKey* key, HashBucketOneState state) MOMO_NOEXCEPT
 			{
-				MOMO_ASSERT(state != (unsigned char)1 || key->raw != nullptr);
-				if (state != (unsigned char)1)
+				MOMO_ASSERT(state != HashBucketOneState::full || key->raw != nullptr);
+				if (state != HashBucketOneState::full)
 				{
 					key->raw = nullptr;
 					key->hashCode = (size_t)state;
@@ -169,7 +170,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			static void SetState(Item* item, unsigned char state) MOMO_NOEXCEPT
+			static void SetState(Item* item, HashBucketOneState state) MOMO_NOEXCEPT
 			{
 				return SetState(item->GetKeyPtr(), state);
 			}

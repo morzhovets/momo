@@ -33,11 +33,6 @@ namespace internal
 		typedef BucketBounds<Item> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
 
-	private:
-		static const unsigned char stateEmpty = 0;
-		static const unsigned char stateFull = 1;
-		static const unsigned char stateRemoved = 2;
-
 	public:
 		class Params
 		{
@@ -66,7 +61,7 @@ namespace internal
 
 	public:
 		BucketOneI1() MOMO_NOEXCEPT
-			: mState(stateEmpty)
+			: mState(HashBucketOneState::empty)
 		{
 		}
 
@@ -91,19 +86,19 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return mState == stateFull;
+			return mState == HashBucketOneState::full;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return mState != stateEmpty;
+			return mState != HashBucketOneState::empty;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			mState = stateEmpty;
+			mState = HashBucketOneState::empty;
 		}
 
 		template<typename ItemCreator>
@@ -111,19 +106,19 @@ namespace internal
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			mState = stateFull;
+			mState = HashBucketOneState::full;
 			return &mItemBuffer;
 		}
 
 		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
-			mState = stateRemoved;
+			mState = HashBucketOneState::removed;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		unsigned char mState;
+		HashBucketOneState mState;
 	};
 }
 
