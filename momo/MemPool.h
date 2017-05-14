@@ -564,15 +564,12 @@ namespace internal
 		}
 
 		template<typename ResType = void>
-		const ResType* GetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
-		{
-			return pvGetRealPointer<const ResType>(ptr);
-		}
-
-		template<typename ResType = void>
 		ResType* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
 		{
-			return pvGetRealPointer<ResType>(ptr);
+			MOMO_ASSERT(ptr != nullPtr);
+			char* buffer = mBuffers[ptr / blockCount];
+			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
+			return static_cast<ResType*>(realPtr);
 		}
 
 		uint32_t Allocate()
@@ -597,15 +594,6 @@ namespace internal
 		}
 
 	private:
-		template<typename ResType>
-		ResType* pvGetRealPointer(uint32_t ptr) const MOMO_NOEXCEPT
-		{
-			MOMO_ASSERT(ptr != nullPtr);
-			char* buffer = mBuffers[ptr / blockCount];
-			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
-			return static_cast<ResType*>(realPtr);
-		}
-
 		uint32_t& pvGetNextBlock(void* realPtr) MOMO_NOEXCEPT
 		{
 			return *static_cast<uint32_t*>(realPtr);

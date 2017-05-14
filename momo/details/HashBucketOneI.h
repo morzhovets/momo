@@ -32,7 +32,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
-		typedef typename Bounds::ConstBounds ConstBounds;
 
 	public:
 		class Params
@@ -74,11 +73,6 @@ namespace internal
 		}
 
 		BucketOneI& operator=(const BucketOneI&) = delete;
-
-		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
-		{
-			return IsFull() ? ConstBounds(&mItemBuffer, 1) : ConstBounds();
-		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{

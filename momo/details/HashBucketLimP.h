@@ -40,7 +40,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
-		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -107,14 +106,12 @@ namespace internal
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 
-		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
-		{
-			return pvGetBounds();
-		}
-
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return pvGetBounds();
+			if (pvIsEmpty())
+				return Bounds();
+			else
+				return Bounds(pvGetItems(), pvGetCount());
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -245,14 +242,6 @@ namespace internal
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
-		Bounds pvGetBounds() const MOMO_NOEXCEPT
-		{
-			if (pvIsEmpty())
-				return Bounds();
-			else
-				return Bounds(pvGetItems(), pvGetCount());
-		}
-
 	private:
 		uintptr_t mPtr;
 	};
@@ -274,7 +263,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
-		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -353,19 +341,18 @@ namespace internal
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 
-		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
-		{
-			return pvGetBounds0();
-		}
-
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return pvGetBounds0();
+			if (pvIsEmpty())
+				return Bounds();
+			return pvGetBounds();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return pvGetBounds0().GetCount() == maxCount;
+			if (pvIsEmpty())
+				return false;
+			return pvGetBounds().GetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -381,7 +368,7 @@ namespace internal
 		{
 			if (!pvIsEmpty())
 			{
-				Bounds bounds = pvGetBounds1();
+				Bounds bounds = pvGetBounds();
 				Item* items = bounds.GetBegin();
 				ItemTraits::Destroy(params.GetMemManager(), items, bounds.GetCount());
 				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
@@ -406,7 +393,7 @@ namespace internal
 			else
 			{
 				size_t memPoolIndex = pvGetMemPoolIndex();
-				Bounds bounds = pvGetBounds1();
+				Bounds bounds = pvGetBounds();
 				size_t count = bounds.GetCount();
 				Item* items = bounds.GetBegin();
 				MOMO_ASSERT(count <= memPoolIndex);
@@ -435,7 +422,7 @@ namespace internal
 		void DecCount(Params& params) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			Bounds bounds = pvGetBounds1();
+			Bounds bounds = pvGetBounds();
 			if (bounds.GetCount() == 1)
 			{
 				size_t memPoolIndex = pvGetMemPoolIndex();
@@ -473,14 +460,7 @@ namespace internal
 			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
-		Bounds pvGetBounds0() const MOMO_NOEXCEPT
-		{
-			if (pvIsEmpty())
-				return Bounds();
-			return pvGetBounds1();
-		}
-
-		Bounds pvGetBounds1() const MOMO_NOEXCEPT
+		Bounds pvGetBounds() const MOMO_NOEXCEPT
 		{
 			uintptr_t memPoolIndex = (uintptr_t)pvGetMemPoolIndex();
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;

@@ -37,7 +37,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
-		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -106,11 +105,6 @@ namespace internal
 		}
 
 		BucketLimP1& operator=(const BucketLimP1&) = delete;
-
-		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
-		{
-			return ConstBounds(pvGetItems(), pvGetCount());
-		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{

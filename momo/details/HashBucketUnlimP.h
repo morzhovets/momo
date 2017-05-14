@@ -68,7 +68,6 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
-		typedef typename ArrayBucket::ConstBounds ConstBounds;
 		typedef typename ArrayBucket::Bounds Bounds;
 
 		typedef typename ArrayBucket::Params Params;
@@ -85,11 +84,6 @@ namespace internal
 		}
 
 		BucketUnlimP& operator=(const BucketUnlimP&) = delete;
-
-		ConstBounds GetBounds(const Params& /*params*/) const MOMO_NOEXCEPT
-		{
-			return mArrayBucket.GetBounds();
-		}
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{

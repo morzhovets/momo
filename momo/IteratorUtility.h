@@ -347,6 +347,11 @@ namespace internal
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(BucketIterator)
 		};
 
+		struct ConstBoundsProxy : public ConstBounds
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
+		};
+
 	public:
 		HashDerivedBucketBounds() MOMO_NOEXCEPT
 		{
@@ -354,7 +359,7 @@ namespace internal
 
 		operator ConstBounds() const MOMO_NOEXCEPT
 		{
-			return ConstBounds(mBaseBucketBounds);
+			return ConstBoundsProxy(mBaseBucketBounds);
 		}
 
 		Iterator GetBegin() const MOMO_NOEXCEPT

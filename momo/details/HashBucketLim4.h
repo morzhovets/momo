@@ -36,7 +36,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef BucketBounds<Item> Bounds;
-		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -92,12 +91,6 @@ namespace internal
 				return mMemPools[0].GetMemManager().GetBaseMemManager();
 			}
 
-			const MemPool& GetMemPool(size_t memPoolIndex) const MOMO_NOEXCEPT
-			{
-				MOMO_ASSERT(memPoolIndex > 0);
-				return mMemPools[memPoolIndex - 1];
-			}
-
 			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
@@ -123,14 +116,14 @@ namespace internal
 
 		BucketLim4& operator=(const BucketLim4&) = delete;
 
-		ConstBounds GetBounds(const Params& params) const MOMO_NOEXCEPT
-		{
-			return pvGetBounds<ConstBounds>(params);
-		}
-
 		Bounds GetBounds(Params& params) MOMO_NOEXCEPT
 		{
-			return pvGetBounds<Bounds>(params);
+			if (pvIsEmpty())
+				return Bounds();
+			Data data = pvGetData();
+			MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
+			Item* items = memPool.template GetRealPointer<Item>(data.pointer);
+			return Bounds(items, data.count);
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -260,17 +253,6 @@ namespace internal
 			data.pointer = divRes.quotient;
 			data.count = (size_t)divRes.remainder + 1;
 			return data;
-		}
-
-		template<typename Bounds, typename Params>
-		Bounds pvGetBounds(Params& params) const MOMO_NOEXCEPT
-		{
-			if (pvIsEmpty())
-				return Bounds();
-			Data data = pvGetData();
-			auto& memPool = params.GetMemPool(pvGetMemPoolIndex());
-			auto* items = memPool.template GetRealPointer<typename Bounds::Item>(data.pointer);
-			return Bounds(items, data.count);
 		}
 
 	private:
