@@ -118,7 +118,7 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
+		void AcceptRemove(Params& /*params*/, size_t /*index*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
 			pvSetState(HashBucketOneState::removed);

@@ -209,7 +209,7 @@ namespace internal
 			}
 		}
 
-		void DecCount(Params& params) MOMO_NOEXCEPT
+		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Data data = pvGetData();

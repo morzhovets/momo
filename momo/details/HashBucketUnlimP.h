@@ -120,7 +120,7 @@ namespace internal
 			return GetBounds(params).GetEnd() - 1;
 		}
 
-		void DecCount(Params& params) MOMO_NOEXCEPT
+		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
 		{
 			mArrayBucket.RemoveBack(params);
 		}

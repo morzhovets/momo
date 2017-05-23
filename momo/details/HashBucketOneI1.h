@@ -112,8 +112,10 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
+		void AcceptRemove(Params& /*params*/, size_t index) MOMO_NOEXCEPT
 		{
+			(void)index;
+			MOMO_ASSERT(index == 0);
 			MOMO_ASSERT(IsFull());
 			mCodeState = (unsigned char)2;
 		}

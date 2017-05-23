@@ -186,7 +186,7 @@ namespace internal
 			}
 		}
 
-		void DecCount(Params& params) MOMO_NOEXCEPT
+		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
@@ -429,7 +429,7 @@ namespace internal
 			}
 		}
 
-		void DecCount(Params& params) MOMO_NOEXCEPT
+		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Bounds bounds = pvGetBounds();

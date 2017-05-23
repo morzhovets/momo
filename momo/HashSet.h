@@ -1089,7 +1089,7 @@ private:
 		Item& bucketBack = *(bucketBounds.GetEnd() - 1);
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
 		replaceFunc(bucketBack, bucketBegin[itemIndex]);
-		bucket.DecCount(bucketParams);
+		bucket.AcceptRemove(bucketParams, itemIndex);
 		--mCount;
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
@@ -1134,7 +1134,7 @@ private:
 				auto relocateCreator = [this, pitem] (Item* newItem)
 					{ ItemTraits::Relocate(&GetMemManager(), *pitem, newItem); };
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator, hashCode);
-				bucket.DecCount(bucketParams);
+				bucket.AcceptRemove(bucketParams, pitem - bucketBounds.GetBegin());
 			}
 		}
 		buckets->Destroy(GetMemManager(), false);
