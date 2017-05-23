@@ -114,7 +114,7 @@ namespace internal
 				return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}
@@ -353,7 +353,7 @@ namespace internal
 			return pvGetBounds();
 		}
 
-		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}

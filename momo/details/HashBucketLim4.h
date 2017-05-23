@@ -126,7 +126,7 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
-		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}

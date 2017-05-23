@@ -78,7 +78,7 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
 		{
 			return true;
 		}

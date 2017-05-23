@@ -947,7 +947,8 @@ private:
 				BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
 				for (const Item& item : bucketBounds)
 				{
-					if (!bucket.TestIndex(std::addressof(item) - bucketBounds.GetBegin()))
+					size_t itemIndex = std::addressof(item) - bucketBounds.GetBegin();
+					if (!bucket.TestIndex(itemIndex, hashCode))
 						continue;
 					if (hashTraits.IsEqual(key, ItemTraits::GetKey(item)))
 						return pvMakeIterator(*bkts, bucketIndex, std::addressof(item), false);
