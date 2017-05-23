@@ -6,6 +6,7 @@
   momo/details/HashBucketOneI.h
 
   namespace momo:
+    enum class HashBucketOneState
     struct HashBucketOneI
 
 \**********************************************************/
@@ -17,6 +18,13 @@
 
 namespace momo
 {
+
+enum class HashBucketOneState : unsigned char
+{
+	empty = 0,
+	full = 1,
+	removed = 2,
+};
 
 namespace internal
 {

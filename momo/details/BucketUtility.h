@@ -5,9 +5,6 @@
 
   momo/details/BucketUtility.h
 
-  namespace momo:
-    enum class HashBucketOneState
-
 \**********************************************************/
 
 #pragma once
@@ -167,12 +164,5 @@ namespace internal
 		}
 	};
 }
-
-enum class HashBucketOneState : unsigned char
-{
-	empty = 0,
-	full = 1,
-	removed = 2,
-};
 
 } // namespace momo
