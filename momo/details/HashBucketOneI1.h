@@ -60,7 +60,7 @@ namespace internal
 
 	public:
 		BucketOneI1() MOMO_NOEXCEPT
-			: mState(HashBucketOneState::empty)
+			: mCodeState(0)
 		{
 		}
 
@@ -78,46 +78,49 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
 		{
-			return true;
+			(void)index;
+			MOMO_ASSERT(index == 0);
+			MOMO_ASSERT(IsFull());
+			return hashCode >> (sizeof(size_t) * 8 - 7) == (size_t)mCodeState >> 1;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return mState == HashBucketOneState::full;
+			return (mCodeState & 1) == (unsigned char)1;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return mState != HashBucketOneState::empty;
+			return mCodeState != (unsigned char)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			mState = HashBucketOneState::empty;
+			mCodeState = (unsigned char)0;
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			mState = HashBucketOneState::full;
+			mCodeState = (unsigned char)((hashCode >> (sizeof(size_t) * 8 - 8)) | 1);
 			return &mItemBuffer;
 		}
 
 		void DecCount(Params& /*params*/) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(IsFull());
-			mState = HashBucketOneState::removed;
+			mCodeState = (unsigned char)2;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		HashBucketOneState mState;
+		unsigned char mCodeState;
 	};
 }
 
