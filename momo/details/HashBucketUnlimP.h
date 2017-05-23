@@ -90,6 +90,11 @@ namespace internal
 			return mArrayBucket.GetBounds();
 		}
 
+		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
 		bool IsFull() const MOMO_NOEXCEPT
 		{
 			return false;
@@ -109,7 +114,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			mArrayBucket.AddBackCrt(params, itemCreator);
 			return GetBounds(params).GetEnd() - 1;

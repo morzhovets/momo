@@ -187,7 +187,6 @@ namespace internal
 		typedef TSettings Settings;
 		typedef typename Buckets::Bucket Bucket;
 		typedef typename Bucket::Item Item;
-		typedef typename Bucket::Bounds BucketBounds;
 
 	public:
 		typedef const Item& Reference;
@@ -197,6 +196,8 @@ namespace internal
 
 	private:
 		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
+
+		typedef internal::BucketBounds<Item> BucketBounds;
 
 	public:
 		HashSetConstIterator() MOMO_NOEXCEPT
@@ -422,6 +423,8 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
+	typedef internal::BucketBounds<Item> BucketBounds;
+
 	typedef internal::ArrayPtrIterator<const Item, Settings> ConstBucketIterator;
 
 	template<typename... ItemArgs>
@@ -435,8 +438,7 @@ public:
 
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
-	typedef internal::HashDerivedBucketBounds<ConstBucketIterator,
-		typename Bucket::Bounds> ConstBucketBounds;
+	typedef internal::HashDerivedBucketBounds<ConstBucketIterator, BucketBounds> ConstBucketBounds;
 
 private:
 	struct ConstIteratorProxy : public ConstIterator
@@ -519,7 +521,7 @@ public:
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
-					Creator<const Item&>(GetMemManager(), item));
+					Creator<const Item&>(GetMemManager(), item), hashCode);
 			}
 		}
 		catch (...)
@@ -942,8 +944,11 @@ private:
 			{
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
-				for (const Item& item : bucket.GetBounds(bucketParams))
+				BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
+				for (const Item& item : bucketBounds)
 				{
+					if (!bucket.TestIndex(std::addressof(item) - bucketBounds.GetBegin()))
+						continue;
 					if (hashTraits.IsEqual(key, ItemTraits::GetKey(item)))
 						return pvMakeIterator(*bkts, bucketIndex, std::addressof(item), false);
 				}
@@ -1026,7 +1031,8 @@ private:
 	Item* pvAddNogrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
 		bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
-		return (*mBuckets)[bucketIndex].AddBackCrt(mBuckets->GetBucketParams(), itemCreator);
+		Bucket& bucket = (*mBuckets)[bucketIndex];
+		return bucket.AddBackCrt(mBuckets->GetBucketParams(), itemCreator, hashCode);
 	}
 
 	template<typename ItemCreator>
@@ -1055,7 +1061,7 @@ private:
 		{
 			bucketIndex = pvGetBucketIndexForAdd(*newBuckets, hashCode);
 			pitem = (*newBuckets)[bucketIndex].AddBackCrt(newBuckets->GetBucketParams(),
-				itemCreator);
+				itemCreator, hashCode);
 		}
 		catch (...)
 		{
@@ -1077,7 +1083,7 @@ private:
 		BucketParams& bucketParams = buckets->GetBucketParams();
 		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
 		Bucket& bucket = (*buckets)[bucketIndex];
-		typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
+		BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
 		Item* bucketBegin = bucketBounds.GetBegin();
 		Item& bucketBack = *(bucketBounds.GetEnd() - 1);
 		size_t itemIndex = std::addressof(*iter) - bucketBegin;
@@ -1118,7 +1124,7 @@ private:
 		BucketParams& bucketParams = buckets->GetBucketParams();
 		for (Bucket& bucket : *buckets)
 		{
-			typename Bucket::Bounds bucketBounds = bucket.GetBounds(bucketParams);
+			BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
 			for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
 			{
 				--pitem;
@@ -1126,7 +1132,7 @@ private:
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 				auto relocateCreator = [this, pitem] (Item* newItem)
 					{ ItemTraits::Relocate(&GetMemManager(), *pitem, newItem); };
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator);
+				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator, hashCode);
 				bucket.DecCount(bucketParams);
 			}
 		}

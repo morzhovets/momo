@@ -126,6 +126,11 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
+		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
 		bool IsFull() const MOMO_NOEXCEPT
 		{
 			if (pvIsEmpty())
@@ -158,7 +163,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 			{

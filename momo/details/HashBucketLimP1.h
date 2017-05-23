@@ -111,6 +111,11 @@ namespace internal
 			return Bounds(pvGetItems(), pvGetCount());
 		}
 
+		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
 		bool IsFull() const MOMO_NOEXCEPT
 		{
 			return pvGetCount() == maxCount;
@@ -133,7 +138,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			Item* items = pvGetItems();
 			if (items == nullptr)

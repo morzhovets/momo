@@ -78,6 +78,11 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
+		bool TestIndex(size_t /*index*/) const MOMO_NOEXCEPT
+		{
+			return true;
+		}
+
 		bool IsFull() const MOMO_NOEXCEPT
 		{
 			return mState == HashBucketOneState::full;
@@ -96,7 +101,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator)
+		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
