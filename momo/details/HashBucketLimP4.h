@@ -20,7 +20,42 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
+	template<typename Item, size_t size = sizeof(Item*)>
+	struct BucketLimP4PointerSelector;
+
+	template<typename Item>
+	struct BucketLimP4PointerSelector<Item, 4>
+	{
+		typedef Item* Pointer;
+	};
+
+	template<typename Item>
+	struct BucketLimP4PointerSelector<Item, 8>
+	{
+		class Pointer
+		{
+		public:
+			Pointer& operator=(Item* ptr) MOMO_NOEXCEPT
+			{
+				uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
+				mFirst = (uint32_t)intPtr;
+				mSecond = (uint32_t)(intPtr >> 32);
+				return *this;
+			}
+
+			operator Item*() const MOMO_NOEXCEPT
+			{
+				uint64_t intPtr = ((uint64_t)mSecond << 32) | (uint64_t)mFirst;
+				return reinterpret_cast<Item*>(intPtr);
+			}
+
+		private:
+			uint32_t mFirst;
+			uint32_t mSecond;
+		};
+	};
+
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
 	class BucketLimP4
 	{
 	protected:
@@ -29,8 +64,6 @@ namespace internal
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
-
-		static const size_t alignment = tAlignment;
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -44,6 +77,8 @@ namespace internal
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
 		typedef BucketMemory<MemPool, Item*> Memory;
+
+		typedef typename BucketLimP4PointerSelector<Item>::Pointer Pointer;
 
 	public:
 		class Params
@@ -208,7 +243,7 @@ namespace internal
 	private:
 		void pvSetState(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			*&mItemPtrBuffer = items;
+			mItemPtr = items;
 			mCodeState &= ~((uint32_t)15 << 28);
 			mCodeState |= (uint32_t)((memPoolIndex << 2) | count) << 28;
 		}
@@ -239,27 +274,25 @@ namespace internal
 
 		Item* pvGetItems() const MOMO_NOEXCEPT
 		{
-			return *&mItemPtrBuffer;
+			return mItemPtr;
 		}
 
 	private:
-		ObjectBuffer<Item*, alignment> mItemPtrBuffer;
+		Pointer mItemPtr;
 		uint32_t mCodeState;
 	};
 }
 
 template<size_t tMaxCount = 3,
-	typename TMemPoolParams = MemPoolParams<>,
-	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
+	typename TMemPoolParams = MemPoolParams<>>
 struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t alignment = tAlignment;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits>
-	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams, alignment>;
+	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams>;
 };
 
 } // namespace momo
