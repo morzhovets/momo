@@ -63,7 +63,7 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -129,21 +129,23 @@ namespace internal
 	public:
 		BucketLimP4() MOMO_NOEXCEPT
 		{
-			pvSetState(nullptr, pvGetMemPoolIndex(1), 0);
+			pvSetState0(pvGetMemPoolIndex(1));
 		}
 
 		BucketLimP4(const BucketLimP4&) = delete;
 
 		~BucketLimP4() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(pvGetItems() == nullptr);
+			MOMO_ASSERT(mItemPtr == nullptr);
 		}
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(pvGetItems(), pvGetCount());
+			Item* items = mItemPtr;
+			size_t count = pvGetCount() - ((items == nullptr) ? 1 : 0);
+			return Bounds(items, count);
 		}
 
 		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
@@ -154,6 +156,8 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
+			if (maxCount == 1 && mItemPtr == nullptr)
+				return false;
 			return pvGetCount() == maxCount;
 		}
 
@@ -164,19 +168,19 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			Item* items = pvGetItems();
+			Item* items = mItemPtr;
 			if (items != nullptr)
 			{
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
 			}
-			pvSetState(nullptr, pvGetMemPoolIndex(1), 0);
+			pvSetState0(pvGetMemPoolIndex(1));
 		}
 
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
-			Item* items = pvGetItems();
+			Item* items = mItemPtr;
 			if (items == nullptr)
 			{
 				size_t newCount = 1;
@@ -219,33 +223,39 @@ namespace internal
 
 		void AcceptRemove(Params& params, size_t index) MOMO_NOEXCEPT
 		{
+			Item* items = mItemPtr;
+			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
-			MOMO_ASSERT(count > 0);
 			if (count == 1)
 			{
 				MOMO_ASSERT(index == 0);
 				size_t memPoolIndex = pvGetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(pvGetItems());
+				params.GetMemPool(memPoolIndex).Deallocate(items);
 				if (memPoolIndex != pvGetMemPoolIndex(maxCount))
 					memPoolIndex = pvGetMemPoolIndex(1);
-				pvSetState(nullptr, memPoolIndex, 0);
+				pvSetState0(memPoolIndex);
 			}
 			else
 			{
 				MOMO_ASSERT(index < count);
+				mCodeState -= (uint32_t)1 << 28;
 				size_t hashCode = (size_t)((mCodeState >> (count * 7 - 7)) & 127);
 				hashCode <<= sizeof(size_t) * 8 - 7;
 				pvSetCode(index, hashCode);
-				mCodeState -= (uint32_t)1 << 28;
 			}
 		}
 
 	private:
+		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
+		{
+			pvSetState(nullptr, memPoolIndex, 1);
+		}
+
 		void pvSetState(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			mItemPtr = items;
-			mCodeState &= ~((uint32_t)15 << 28);
-			mCodeState |= (uint32_t)((memPoolIndex << 2) | count) << 28;
+			mCodeState &= ((uint32_t)1 << 28) - 1;
+			mCodeState |= (uint32_t)(((memPoolIndex - 1) << 2) | (count - 1)) << 28;
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -258,12 +268,12 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			return (size_t)(mCodeState >> 30);
+			return (size_t)(mCodeState >> 30) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			return (size_t)((mCodeState >> 28) & 3);
+			return (size_t)((mCodeState >> 28) & 3) + 1;
 		}
 
 		void pvSetCode(size_t index, size_t hashCode) MOMO_NOEXCEPT
@@ -272,18 +282,13 @@ namespace internal
 			mCodeState |= (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 7) << (index * 7));
 		}
 
-		Item* pvGetItems() const MOMO_NOEXCEPT
-		{
-			return mItemPtr;
-		}
-
 	private:
 		Pointer mItemPtr;
 		uint32_t mCodeState;
 	};
 }
 
-template<size_t tMaxCount = 3,
+template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
 struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 {
