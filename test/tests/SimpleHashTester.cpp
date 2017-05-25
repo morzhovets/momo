@@ -17,6 +17,7 @@
 #include "../../momo/HashMap.h"
 #include "../../momo/HashMultiMap.h"
 #include "../../momo/details/HashBucketLim4.h"
+#include "../../momo/details/HashBucketLimP4.h"
 
 #include <string>
 #include <iostream>
@@ -31,6 +32,7 @@ public:
 		TestStrHash<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
 		TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
 		TestStrHash<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
+		TestStrHash<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
 	}
 
 	template<typename HashBucket>
