@@ -191,6 +191,7 @@
     <ClInclude Include="..\..\..\momo\details\ArrayBucket.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP1.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketLimP4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI1.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />
