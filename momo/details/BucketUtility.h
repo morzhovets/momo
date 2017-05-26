@@ -135,9 +135,9 @@ namespace internal
 			if (maxCount == 1)
 				return (bucketCount / 4) * 3;
 			else if (maxCount == 2)
-				return bucketCount;
-			else
 				return bucketCount + bucketCount / 2;
+			else
+				return bucketCount * 2;
 		}
 
 		static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
