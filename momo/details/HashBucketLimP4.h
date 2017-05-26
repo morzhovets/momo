@@ -76,7 +76,8 @@ namespace internal
 
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			ItemTraits::alignment, MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount>;
+			ItemTraits::alignment, MemPoolParams::blockCount,
+			(memPoolIndex <= maxCount) ? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
 		using MemPool = momo::MemPool<MemPoolParamsStatic<memPoolIndex>, MemManagerPtr,
@@ -101,8 +102,10 @@ namespace internal
 
 		public:
 			explicit Params(MemManager& memManager)
-				: mMemPools(MemManagerPtr(memManager), MemManagerPtr(memManager),
-					MemManagerPtr(memManager), MemManagerPtr(memManager))
+				: mMemPools(MemPool<1>(MemManagerPtr(memManager)),
+					MemPool<2>(MemManagerPtr(memManager)),
+					MemPool<3>(MemManagerPtr(memManager)),
+					MemPool<4>(MemManagerPtr(memManager)))
 			{
 			}
 
