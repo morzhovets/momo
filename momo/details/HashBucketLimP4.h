@@ -284,7 +284,7 @@ namespace internal
 		template<size_t memPoolIndex, typename ItemCreator>
 		Item* pvAddBack0(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
-			Memory<memPoolIndex> memory(params.GetMemPool<memPoolIndex>());
+			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
 			itemCreator(items);
 			pvSetState(memory.Extract(), memPoolIndex, 1);
@@ -293,16 +293,17 @@ namespace internal
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAddBack(Params& params, const ItemCreator& itemCreator, size_t hashCode, Item* items)
+		Item* pvAddBack(Params& params, const ItemCreator& itemCreator, size_t hashCode,
+			Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
 			size_t newCount = count + 1;
-			Memory<newMemPoolIndex> memory(params.GetMemPool<newMemPoolIndex>());
+			Memory<newMemPoolIndex> memory(params.template GetMemPool<newMemPoolIndex>());
 			Item* newItems = memory.GetPointer();
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
-			params.GetMemPool<memPoolIndex>().Deallocate(items);
+			params.template GetMemPool<memPoolIndex>().Deallocate(items);
 			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			pvSetCode(count, hashCode);
 			return newItems + count;
@@ -313,16 +314,16 @@ namespace internal
 			switch (memPoolIndex)
 			{
 			case 1:
-				params.GetMemPool<1>().Deallocate(items);
+				params.template GetMemPool<1>().Deallocate(items);
 				break;
 			case 2:
-				params.GetMemPool<2>().Deallocate(items);
+				params.template GetMemPool<2>().Deallocate(items);
 				break;
 			case 3:
-				params.GetMemPool<3>().Deallocate(items);
+				params.template GetMemPool<3>().Deallocate(items);
 				break;
 			case 4:
-				params.GetMemPool<4>().Deallocate(items);
+				params.template GetMemPool<4>().Deallocate(items);
 				break;
 			default:
 				MOMO_ASSERT(false);
