@@ -69,9 +69,6 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -97,6 +94,15 @@
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleDataTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP4.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  tests/LibcxxHashMapTesterOneI1.cpp
+  tests/LibcxxHashMapTesterLimP4.cpp
 
 \**********************************************************/
 
@@ -15,8 +15,8 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOneI1
-#define LIBCXX_TEST_BUCKET_NAME "onei1"
+#define LIBCXX_TEST_BUCKET momo::HashBucketLimP4<>
+#define LIBCXX_TEST_BUCKET_NAME "limp4"
 
 #include "LibcxxHashMapTester.h"
 
