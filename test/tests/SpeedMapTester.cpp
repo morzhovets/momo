@@ -27,12 +27,12 @@
 class SpeedMapKey
 {
 public:
-	explicit SpeedMapKey(uint32_t* ptr) MOMO_NOEXCEPT
+	explicit SpeedMapKey(uint64_t* ptr) MOMO_NOEXCEPT
 		: mPtr(ptr)
 	{
 	}
 
-	uint32_t GetInt() const MOMO_NOEXCEPT
+	uint64_t GetInt() const MOMO_NOEXCEPT
 	{
 		return *mPtr;
 	}
@@ -48,7 +48,7 @@ public:
 	}
 
 private:
-	uint32_t* mPtr;
+	uint64_t* mPtr;
 };
 
 namespace std
@@ -58,7 +58,7 @@ namespace std
 	{
 		size_t operator()(const SpeedMapKey& key) const MOMO_NOEXCEPT
 		{
-			return std::hash<uint32_t>()(key.GetInt());
+			return std::hash<uint64_t>()(key.GetInt());
 		}
 	};
 }
@@ -70,7 +70,7 @@ template<>
 class SpeedMapKeys<SpeedMapKey> : public momo::Array<SpeedMapKey>
 {
 public:
-	SpeedMapKeys(size_t count, std::mt19937& random)
+	SpeedMapKeys(size_t count, std::mt19937_64& random)
 	{
 		mInts.Reserve(count);
 		Reserve(count);
@@ -83,14 +83,14 @@ public:
 	}
 
 private:
-	momo::Array<uint32_t> mInts;
+	momo::Array<uint64_t> mInts;
 };
 
 template<>
-class SpeedMapKeys<uint32_t> : public momo::Array<uint32_t>
+class SpeedMapKeys<uint64_t> : public momo::Array<uint64_t>
 {
 public:
-	SpeedMapKeys(size_t count, std::mt19937& random)
+	SpeedMapKeys(size_t count, std::mt19937_64& random)
 	{
 		Reserve(count);
 		for (size_t i = 0; i < count; ++i)
@@ -102,13 +102,13 @@ template<>
 class SpeedMapKeys<std::string> : public momo::Array<std::string>
 {
 public:
-	SpeedMapKeys(size_t count, std::mt19937& random)
+	SpeedMapKeys(size_t count, std::mt19937_64& random)
 	{
 		Reserve(count);
 		for (size_t i = 0; i < count; ++i)
 		{
 			std::stringstream sstream;
-			sstream << random();
+			sstream << (uint32_t)random();
 			AddBackNogrow(sstream.str());
 		}
 	}
@@ -119,7 +119,7 @@ class SpeedMapTester
 {
 public:
 	typedef TKey Key;
-	typedef size_t Value;
+	typedef uint64_t Value;
 
 private:
 	typedef SpeedMapKeys<Key> Keys;
@@ -200,9 +200,11 @@ public:
 	{
 		TestStdUnorderedMap<std::allocator<std::pair<const Key, Value>>>("std::unordered_map");
 		TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
-		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
 		//TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
+		TestHashMap<momo::HashBucketLimP4<>>("HashMapLimP4");
 		//TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
+		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
+		TestHashMap<momo::HashBucketOneIA>("HashMapOneIA");
 		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
 
 		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, Value>>>("std::map + pool_allocator");
@@ -247,7 +249,7 @@ private:
 	}
 
 private:
-	std::mt19937 mRandom;
+	std::mt19937_64 mRandom;
 	Keys mKeys;
 	Keys mKeys2;
 	std::ostream& mStream;
@@ -256,13 +258,13 @@ private:
 void TestSpeedMap()
 {
 #ifdef NDEBUG
-	const size_t count = 1 << 21;
+	const size_t count = 3 << 20;
 #else
 	const size_t count = 1 << 12;
 #endif
 
 	SpeedMapTester<SpeedMapKey> speedMapTester(count);
-	//SpeedMapTester<uint32_t> speedMapTester(count);
+	//SpeedMapTester<uint64_t> speedMapTester(count);
 	//SpeedMapTester<std::string> speedMapTester(count);
 
 	for (size_t i = 0; i < 3; ++i)
