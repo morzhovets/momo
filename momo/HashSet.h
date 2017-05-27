@@ -945,13 +945,13 @@ private:
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
 				BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
-				for (const Item& item : bucketBounds)
+				for (size_t i = 0, count = bucketBounds.GetCount(); i < count; ++i)
 				{
-					size_t itemIndex = std::addressof(item) - bucketBounds.GetBegin();
-					if (!bucket.TestIndex(itemIndex, hashCode))
+					if (!bucket.TestIndex(i, hashCode))
 						continue;
-					if (hashTraits.IsEqual(key, ItemTraits::GetKey(item)))
-						return pvMakeIterator(*bkts, bucketIndex, std::addressof(item), false);
+					const Item* pitem = bucketBounds.GetBegin() + i;
+					if (hashTraits.IsEqual(key, ItemTraits::GetKey(*pitem)))
+						return pvMakeIterator(*bkts, bucketIndex, pitem, false);
 				}
 				if (!bucket.WasFull())
 					break;

@@ -20,7 +20,7 @@ namespace internal
 	class BucketBounds
 	{
 	public:
-		typedef TItem Item;	//?
+		typedef TItem Item;
 
 		typedef Item* Iterator;
 
@@ -29,25 +29,19 @@ namespace internal
 	public:
 		BucketBounds() MOMO_NOEXCEPT
 			: mBegin(nullptr),
-			mEnd(nullptr)
-		{
-		}
-
-		BucketBounds(Item* begin, Item* end) MOMO_NOEXCEPT
-			: mBegin(begin),
-			mEnd(end)
+			mCount(0)
 		{
 		}
 
 		BucketBounds(Item* begin, size_t count) MOMO_NOEXCEPT
 			: mBegin(begin),
-			mEnd(begin + count)
+			mCount(count)
 		{
 		}
 
 		operator ConstBounds() const MOMO_NOEXCEPT
 		{
-			return ConstBounds(mBegin, mEnd);
+			return ConstBounds(mBegin, mCount);
 		}
 
 		Item* GetBegin() const MOMO_NOEXCEPT
@@ -57,25 +51,25 @@ namespace internal
 
 		Item* GetEnd() const MOMO_NOEXCEPT
 		{
-			return mEnd;
+			return mBegin + mCount;
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const BucketBounds&, Item*)
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
-			return mEnd - mBegin;
+			return mCount;
 		}
 
 		Item& operator[](size_t index) const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(index < GetCount());
+			MOMO_ASSERT(index < mCount);
 			return mBegin[index];
 		}
 
 	private:
 		Item* mBegin;
-		Item* mEnd;
+		size_t mCount;
 	};
 
 	template<typename TMemPool, typename TPointer,
