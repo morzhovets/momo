@@ -90,7 +90,9 @@ public:
 		TestHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
 
 		TestHashSet<momo::HashBucketOneIA, 1, 1>("momo::HashBucketOneIA");
-		TestHashSet<momo::HashBucketOneIA, 4, 2>("momo::HashBucketOneIA");
+		TestHashSet<momo::HashBucketOneIA, 6, 2>("momo::HashBucketOneIA");
+		TestHashSet<momo::HashBucketOneIA, 4, 4>("momo::HashBucketOneIA");
+		TestHashSet<momo::HashBucketOneIA, 8, 8>("momo::HashBucketOneIA");
 
 		TestHashSet<momo::HashBucketOneI<TemplItem<2, 2>>, 2, 2>("momo::HashBucketOneI");
 		TestHashSet<momo::HashBucketOneI<TemplItem<4, 2>>, 4, 2>("momo::HashBucketOneI");
