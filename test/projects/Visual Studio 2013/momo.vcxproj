@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketLim4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOneIA.h" />
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />
     <ClInclude Include="..\..\..\momo\MapUtility.h" />

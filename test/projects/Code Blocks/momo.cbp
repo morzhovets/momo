@@ -150,6 +150,7 @@
 		<Unit filename="../../../momo/details/HashBucketLimP4.h" />
 		<Unit filename="../../../momo/details/HashBucketOneI.h" />
 		<Unit filename="../../../momo/details/HashBucketOneI1.h" />
+		<Unit filename="../../../momo/details/HashBucketOneIA.h" />
 		<Unit filename="../../../momo/details/HashBucketUnlimP.h" />
 		<Unit filename="../../../momo/details/TreeNode.h" />
 		<Unit filename="../../../momo/stdish/map.h" />
