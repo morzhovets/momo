@@ -20,6 +20,7 @@
 #include "details/HashBucketLimP1.h"
 #include "details/HashBucketLimP4.h"
 #include "details/HashBucketUnlimP.h"
+#include "details/HashBucketOneIA.h"
 #include "details/HashBucketOneI1.h"
 #include "details/HashBucketOneI.h"
 //#include "details/HashBucketLim4.h"

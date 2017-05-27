@@ -26,12 +26,13 @@ class SimpleHashTester
 public:
 	static void TestAll()
 	{
-		TestStrHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		TestStrHash<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
 		TestStrHash<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
-		TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
-		TestStrHash<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
+		TestStrHash<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
 		TestStrHash<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
+		TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+		TestStrHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestStrHash<momo::HashBucketOneIA>("momo::HashBucketOneIA");
+		TestStrHash<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
 	}
 
 	template<typename HashBucket>
