@@ -78,7 +78,7 @@ public:
 };
 
 template<typename TKey>
-using HashTraitsOpen = HashTraits<TKey, HashBucketOneI1>;
+using HashTraitsOpen = HashTraits<TKey, HashBucketOneIA>;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>
