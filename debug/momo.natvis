@@ -63,13 +63,37 @@
     </Expand>
 </Type>
 
-<Type Name="momo::internal::BucketOneI1&lt;*&gt;">
-    <DisplayString Condition="mState != stateFull">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="mState == stateFull">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
+<Type Name="momo::internal::BucketLimP4&lt;*&gt;">
+    <DisplayString Condition="*(Item**)&amp;mItemPtr == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="*(Item**)&amp;mItemPtr != 0">{{ Count={((mCodeState >> 28) & 3) + 1} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">mState == stateFull ? 1 : 0</Item>
+        <Item Name="[Count]">*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) & 3) + 1</Item>
         <ArrayItems>
-            <Size>mState == stateFull ? 1 : 0</Size>
+            <Size>*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) & 3) + 1</Size>
+            <ValuePointer>*(Item**)&amp;mItemPtr</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::BucketOneI1&lt;*&gt;">
+    <DisplayString Condition="mState != HashBucketOneState::full">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="mState == HashBucketOneState::full">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">mState == HashBucketOneState::full ? 1 : 0</Item>
+        <ArrayItems>
+            <Size>mState == HashBucketOneState::full ? 1 : 0</Size>
+            <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::BucketOneIA&lt;*&gt;">
+    <DisplayString Condition="(mCodeState &amp; 1) == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="(mCodeState &amp; 1) != 0">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">(mCodeState &amp; 1) != 0 ? 1 : 0</Item>
+        <ArrayItems>
+            <Size>(mCodeState &amp; 1) != 0 ? 1 : 0</Size>
             <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
         </ArrayItems>
     </Expand>
