@@ -65,11 +65,11 @@
 
 <Type Name="momo::internal::BucketLimP4&lt;*&gt;">
     <DisplayString Condition="*(Item**)&amp;mItemPtr == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="*(Item**)&amp;mItemPtr != 0">{{ Count={((mCodeState >> 28) & 3) + 1} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
+    <DisplayString Condition="*(Item**)&amp;mItemPtr != 0">{{ Count={((mCodeState >> 28) &amp; 3) + 1} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) & 3) + 1</Item>
+        <Item Name="[Count]">*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) &amp; 3) + 1</Item>
         <ArrayItems>
-            <Size>*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) & 3) + 1</Size>
+            <Size>*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) &amp; 3) + 1</Size>
             <ValuePointer>*(Item**)&amp;mItemPtr</ValuePointer>
         </ArrayItems>
     </Expand>
