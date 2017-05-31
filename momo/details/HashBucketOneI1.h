@@ -32,7 +32,6 @@ namespace internal
 
 		typedef BucketBounds<Item> Bounds;
 
-	public:
 		class Params
 		{
 		public:
@@ -116,8 +115,8 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 		HashBucketOneState mState;
+		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 	};
 }
 

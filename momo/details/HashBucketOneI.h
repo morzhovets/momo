@@ -33,7 +33,6 @@ namespace internal
 
 		typedef BucketBounds<Item> Bounds;
 
-	public:
 		class Params
 		{
 		public:
