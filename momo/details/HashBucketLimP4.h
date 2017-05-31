@@ -57,7 +57,7 @@ namespace internal
 		{
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
 			MOMO_ASSERT((intPtr & 1) == 0);
-			mIntPtr1 = (uint32_t)intPtr;
+			mIntPtr1 = (uint32_t)intPtr | (uint32_t)(lastBit ? 1 : 0);
 			mIntPtr2 = (uint32_t)(intPtr >> 32);
 		}
 
