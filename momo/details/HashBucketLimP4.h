@@ -21,38 +21,61 @@ namespace momo
 namespace internal
 {
 	template<typename Item, size_t size = sizeof(Item*)>
-	struct BucketLimP4PointerSelector;
+	class BucketLimP4Pointer;
 
 	template<typename Item>
-	struct BucketLimP4PointerSelector<Item, 4>
+	class BucketLimP4Pointer<Item, 4>
 	{
-		typedef Item* Pointer;
+	public:
+		void Set(Item* ptr, bool lastBit) MOMO_NOEXCEPT
+		{
+			mIntPtr = reinterpret_cast<uint32_t>(ptr);
+			MOMO_ASSERT((mIntPtr & 1) == 0);
+			mIntPtr |= (uint32_t)(lastBit ? 1 : 0);
+		}
+
+		Item* GetPointer() const MOMO_NOEXCEPT
+		{
+			uint32_t intPtr = mIntPtr & ~(uint32_t)1;
+			return reinterpret_cast<Item*>(intPtr);
+		}
+
+		bool GetLastBit() const MOMO_NOEXCEPT
+		{
+			return (mIntPtr & 1) != 0;
+		}
+
+	private:
+		uint32_t mIntPtr;
 	};
 
 	template<typename Item>
-	struct BucketLimP4PointerSelector<Item, 8>
+	class BucketLimP4Pointer<Item, 8>
 	{
-		class Pointer
+	public:
+		void Set(Item* ptr, bool lastBit) MOMO_NOEXCEPT
 		{
-		public:
-			Pointer& operator=(Item* ptr) MOMO_NOEXCEPT
-			{
-				uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-				mFirst = (uint32_t)intPtr;
-				mSecond = (uint32_t)(intPtr >> 32);
-				return *this;
-			}
+			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
+			MOMO_ASSERT((intPtr & 1) == 0);
+			mIntPtr1 = (uint32_t)intPtr;
+			mIntPtr2 = (uint32_t)(intPtr >> 32);
+		}
 
-			operator Item*() const MOMO_NOEXCEPT
-			{
-				uint64_t intPtr = ((uint64_t)mSecond << 32) | (uint64_t)mFirst;
-				return reinterpret_cast<Item*>(intPtr);
-			}
+		Item* GetPointer() const MOMO_NOEXCEPT
+		{
+			uint64_t intPtr = ((uint64_t)mIntPtr2 << 32) | (uint64_t)mIntPtr1;
+			intPtr &= ~(uint64_t)1;
+			return reinterpret_cast<Item*>(intPtr);
+		}
 
-		private:
-			uint32_t mFirst;
-			uint32_t mSecond;
-		};
+		bool GetLastBit() const MOMO_NOEXCEPT
+		{
+			return (mIntPtr1 & 1) != 0;
+		}
+
+	private:
+		uint32_t mIntPtr1;
+		uint32_t mIntPtr2;
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
@@ -74,9 +97,11 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
+		static const size_t itemAlignment = (ItemTraits::alignment > 1) ? ItemTraits::alignment : 2;
+
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			ItemTraits::alignment, MemPoolParams::blockCount,
+			itemAlignment, MemPoolParams::blockCount,
 			(memPoolIndex <= maxCount) ? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
@@ -86,19 +111,13 @@ namespace internal
 		template<size_t memPoolIndex>
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
-		typedef typename BucketLimP4PointerSelector<Item>::Pointer Pointer;
+		typedef BucketLimP4Pointer<Item> Pointer;
 
 	public:
 		class Params
 		{
-		public:
-			static const bool skipFirstMemPool = false;
-				//(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
-
 		private:
 			typedef std::tuple<MemPool<1>, MemPool<2>, MemPool<3>, MemPool<4>> MemPools;
-
-			//static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -142,27 +161,25 @@ namespace internal
 
 		~BucketLimP4() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mItemPtr == nullptr);
+			MOMO_ASSERT(mItemPtr.GetPointer() == nullptr);
 		}
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			Item* items = mItemPtr;
-			size_t count = pvGetCount() - ((items == nullptr) ? 1 : 0);
-			return Bounds(items, count);
+			return Bounds(mItemPtr.GetPointer(), pvGetCount());
 		}
 
 		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
 		{
-			return hashCode >> (sizeof(size_t) * 8 - 7)
-				== (size_t)((mCodeState >> (index * 7)) & 127);
+			return hashCode >> (sizeof(size_t) * 8 - 8)
+				== (size_t)((mCodeState >> (index * 8)) & 255);
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 1 && mItemPtr == nullptr)
+			if (maxCount == 1 && mItemPtr.GetPointer() == nullptr)
 				return false;
 			return pvGetCount() == maxCount;
 		}
@@ -174,7 +191,7 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			Item* items = mItemPtr;
+			Item* items = mItemPtr.GetPointer();
 			if (items != nullptr)
 			{
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
@@ -186,7 +203,7 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
-			Item* items = mItemPtr;
+			Item* items = mItemPtr.GetPointer();
 			if (items == nullptr)
 			{
 				if (pvGetMemPoolIndex() == 1)
@@ -216,8 +233,8 @@ namespace internal
 				else
 				{
 					itemCreator(items + count);
-					mCodeState += (uint32_t)1 << 28;
 					pvSetCode(count, hashCode);
+					pvSetState(items, memPoolIndex, count + 1);
 					return items + count;
 				}
 			}
@@ -225,7 +242,7 @@ namespace internal
 
 		void AcceptRemove(Params& params, size_t index) MOMO_NOEXCEPT
 		{
-			Item* items = mItemPtr;
+			Item* items = mItemPtr.GetPointer();
 			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
 			if (count == 1)
@@ -240,48 +257,51 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(index < count);
-				mCodeState -= (uint32_t)1 << 28;
-				size_t hashCode = (size_t)((mCodeState >> (count * 7 - 7)) & 127);
-				hashCode <<= sizeof(size_t) * 8 - 7;
+				size_t hashCode = (size_t)((mCodeState >> (count * 8 - 8)) & 255);
+				hashCode <<= sizeof(size_t) * 8 - 8;
 				pvSetCode(index, hashCode);
+				pvSetState(items, pvGetMemPoolIndex(), count - 1);
 			}
 		}
 
 	private:
 		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			pvSetState(nullptr, memPoolIndex, 1);
+			pvSetState(nullptr, memPoolIndex, 0);
 		}
 
 		void pvSetState(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			mItemPtr = items;
-			mCodeState &= ((uint32_t)1 << 28) - 1;
-			mCodeState |= (uint32_t)(((memPoolIndex - 1) << 2) | (count - 1)) << 28;
+			if (maxCount < 4 || count < 4)
+			{
+				mItemPtr.Set(items, false);
+				mCodeState &= ((uint32_t)1 << 28) - 1;
+				mCodeState |= (uint32_t)(((memPoolIndex - 1) << 2) | count) << 28;
+			}
+			else
+			{
+				mItemPtr.Set(items, true);
+			}
 		}
-
-		//static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
-		//{
-		//	MOMO_ASSERT(0 < count && count <= maxCount);
-		//	if (Params::skipFirstMemPool && count == 1)
-		//		return 2;
-		//	return count;
-		//}
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
+			if (maxCount == 4 && mItemPtr.GetLastBit())
+				return 4;
 			return (size_t)(mCodeState >> 30) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			return (size_t)((mCodeState >> 28) & 3) + 1;
+			if (maxCount == 4 && mItemPtr.GetLastBit())
+				return 4;
+			return (size_t)((mCodeState >> 28) & 3);
 		}
 
 		void pvSetCode(size_t index, size_t hashCode) MOMO_NOEXCEPT
 		{
-			mCodeState &= ~((uint32_t)127 << (index * 7));
-			mCodeState |= (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 7) << (index * 7));
+			mCodeState &= ~((uint32_t)255 << (index * 8));
+			mCodeState |= (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 8) << (index * 8));
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
@@ -307,8 +327,8 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			pvSetCode(count, hashCode);
+			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			return newItems + count;
 		}
 
