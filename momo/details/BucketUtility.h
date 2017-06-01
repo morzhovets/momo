@@ -130,7 +130,7 @@ namespace internal
 		{
 			MOMO_ASSERT(bucketCount > 0);
 			if (maxCount == 1)
-				return (bucketCount / 4) * 3;
+				return (bucketCount / 8) * 5;
 			else if (maxCount == 2)
 				return bucketCount + bucketCount / 2;
 			else
