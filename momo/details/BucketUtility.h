@@ -118,6 +118,36 @@ namespace internal
 		Pointer mPtr;
 	};
 
+	template<typename TMemManager>
+	class BucketParamsOpen
+	{
+	public:
+		typedef TMemManager MemManager;
+
+	public:
+		explicit BucketParamsOpen(MemManager& memManager) MOMO_NOEXCEPT
+			: mMemManager(memManager)
+		{
+		}
+
+		BucketParamsOpen(const BucketParamsOpen&) = delete;
+
+		~BucketParamsOpen() MOMO_NOEXCEPT
+		{
+		}
+
+		BucketParamsOpen& operator=(const BucketParamsOpen&) = delete;
+
+		MemManager& GetMemManager() MOMO_NOEXCEPT
+		{
+			return mMemManager;
+		}
+
+	private:
+		MemManager& mMemManager;
+	};
+
+
 	template<size_t tMaxCount>
 	struct HashBucketBase
 	{

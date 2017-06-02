@@ -32,30 +32,7 @@ namespace internal
 
 		typedef BucketBounds<Item> Bounds;
 
-		class Params
-		{
-		public:
-			explicit Params(MemManager& memManager) MOMO_NOEXCEPT
-				: mMemManager(memManager)
-			{
-			}
-
-			Params(const Params&) = delete;
-
-			~Params() MOMO_NOEXCEPT
-			{
-			}
-
-			Params& operator=(const Params&) = delete;
-
-			MemManager& GetMemManager() MOMO_NOEXCEPT
-			{
-				return mMemManager;
-			}
-
-		private:
-			MemManager& mMemManager;
-		};
+		typedef BucketParamsOpen<MemManager> Params;
 
 	public:
 		BucketOneI1() MOMO_NOEXCEPT
