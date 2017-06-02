@@ -30,6 +30,8 @@ namespace momo
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
+typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketDefaultOpen;
+
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>
 class HashTraits
@@ -78,7 +80,7 @@ public:
 };
 
 template<typename TKey>
-using HashTraitsOpen = HashTraits<TKey, HashBucketOneIA>;
+using HashTraitsOpen = HashTraits<TKey, HashBucketDefaultOpen>;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>

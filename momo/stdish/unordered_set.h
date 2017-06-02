@@ -626,7 +626,7 @@ template<typename TKey,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using unordered_set_open = unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOneIA>,
+	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketDefaultOpen>,
 		MemManagerStd<TAllocator>>>;
 
 } // namespace stdish
