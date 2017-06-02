@@ -3,10 +3,10 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  momo/details/HashBucketMulti.h
+  momo/details/HashBucketOpen1.h
 
   namespace momo:
-    struct HashBucketMulti
+    struct HashBucketOpen1
 
 \**********************************************************/
 
@@ -21,12 +21,13 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount>
-	class BucketMulti
+	class BucketOpen1
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
 		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 128);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -34,50 +35,26 @@ namespace internal
 
 		typedef BucketBounds<Item> Bounds;
 
-		class Params
-		{
-		public:
-			explicit Params(MemManager& memManager) MOMO_NOEXCEPT
-				: mMemManager(memManager)
-			{
-			}
-
-			Params(const Params&) = delete;
-
-			~Params() MOMO_NOEXCEPT
-			{
-			}
-
-			Params& operator=(const Params&) = delete;
-
-			MemManager& GetMemManager() MOMO_NOEXCEPT
-			{
-				return mMemManager;
-			}
-
-		private:
-			MemManager& mMemManager;
-		};
+		typedef BucketParamsOpen<MemManager> Params;
 
 	public:
-		BucketMulti() MOMO_NOEXCEPT
+		BucketOpen1() MOMO_NOEXCEPT
 		{
-			mCount = (unsigned char)0;
-			mWasFull = false;
+			mState = 0;
 		}
 
-		BucketMulti(const BucketMulti&) = delete;
+		BucketOpen1(const BucketOpen1&) = delete;
 
-		~BucketMulti() MOMO_NOEXCEPT
+		~BucketOpen1() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mCount == (unsigned char)0);
+			MOMO_ASSERT(pvGetCount() == 0);
 		}
 
-		BucketMulti& operator=(const BucketMulti&) = delete;
+		BucketOpen1& operator=(const BucketOpen1&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(&mItems[0], (size_t)mCount);
+			return Bounds(&mItems[0], pvGetCount());
 		}
 
 		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
@@ -87,51 +64,54 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return (size_t)mCount == maxCount;
+			return pvGetCount() == maxCount;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return mWasFull;
+			return (mState & 128) != 0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], (size_t)mCount);
-			mCount = (unsigned char)0;
-			mWasFull = false;
+			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], pvGetCount());
+			mState = 0;
 		}
 
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
-			MOMO_ASSERT(!IsFull());
-			Item* pitem = &mItems[mCount];
+			size_t count = pvGetCount();
+			MOMO_ASSERT(count < maxCount);
+			Item* pitem = &mItems[count];
 			itemCreator(pitem);
-			++mCount;
-			mWasFull |= IsFull();
+			++mState;
+			mState |= (uint8_t)(IsFull() ? 128 : 0);
 			return pitem;
 		}
 
 		void AcceptRemove(Params& /*params*/, size_t /*index*/) MOMO_NOEXCEPT
 		{
-			--mCount;
+			MOMO_ASSERT(pvGetCount() > 0);
+			--mState;
 		}
 
 	private:
-		unsigned char mCount;
-		bool mWasFull;
+		size_t pvGetCount() const MOMO_NOEXCEPT
+		{
+			return (size_t)(mState & 127);
+		}
+
+	private:
+		uint8_t mState;
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
 
 template<size_t tMaxCount>
-struct HashBucketMulti : public internal::HashBucketBase<tMaxCount>
+struct HashBucketOpen1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-
-	template<typename ItemTraits>
-	using Bucket = internal::BucketMulti<ItemTraits, maxCount>;
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
@@ -142,6 +122,9 @@ struct HashBucketMulti : public internal::HashBucketBase<tMaxCount>
 	{
 		return 1;
 	}
+
+	template<typename ItemTraits>
+	using Bucket = internal::BucketOpen1<ItemTraits, maxCount>;
 };
 
 } // namespace momo
