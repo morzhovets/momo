@@ -11,6 +11,10 @@
 
 #ifdef TEST_SPEED_MAP
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "../../momo/stdish/unordered_map.h"
 #include "../../momo/stdish/map.h"
 #include "../../momo/stdish/pool_allocator.h"
@@ -18,11 +22,15 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <chrono>
+#include <ctime>
+#include <random>
+#include <cmath>
+#include <climits>
 #include <unordered_map>
 #include <map>
-#include <random>
 
 class SpeedMapKey
 {
@@ -67,35 +75,53 @@ template<typename Key>
 class SpeedMapKeys;
 
 template<>
-class SpeedMapKeys<SpeedMapKey> : public momo::Array<SpeedMapKey>
-{
-public:
-	SpeedMapKeys(size_t count, std::mt19937_64& random)
-	{
-		mInts.Reserve(count);
-		Reserve(count);
-		for (size_t i = 0; i < count; ++i)
-		{
-			mInts.AddBackNogrow(random());
-			AddBackNogrow(SpeedMapKey(mInts.GetItems() + i));
-		}
-		std::shuffle(GetBegin(), GetEnd(), random);
-	}
-
-private:
-	momo::Array<uint64_t> mInts;
-};
-
-template<>
 class SpeedMapKeys<uint64_t> : public momo::Array<uint64_t>
 {
 public:
 	SpeedMapKeys(size_t count, std::mt19937_64& random)
 	{
 		Reserve(count);
-		for (size_t i = 0; i < count; ++i)
-			AddBackNogrow(random());
+		uint64_t* begin = GetItems();
+		uint64_t* end = begin + count;
+		while (true)
+		{
+			for (size_t i = GetCount(); i < count; ++i)
+				AddBackNogrow(random());
+			std::sort(begin, end);
+			size_t newCount = std::unique(begin, end) - begin;
+			if (newCount == count)
+				break;
+			SetCount(newCount);
+		}
+		std::shuffle(begin, end, random);
 	}
+
+	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	{
+		return "uint64_t";
+	}
+};
+
+template<>
+class SpeedMapKeys<SpeedMapKey> : public momo::Array<SpeedMapKey>
+{
+public:
+	SpeedMapKeys(size_t count, std::mt19937_64& random)
+		: mData(count, random)
+	{
+		Reserve(count);
+		for (size_t i = 0; i < count; ++i)
+			AddBackNogrow(SpeedMapKey(mData.GetItems() + i));
+		std::shuffle(GetBegin(), GetEnd(), random);
+	}
+
+	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	{
+		return "SpeedMapKey";
+	}
+
+private:
+	SpeedMapKeys<uint64_t> mData;
 };
 
 template<>
@@ -105,12 +131,28 @@ public:
 	SpeedMapKeys(size_t count, std::mt19937_64& random)
 	{
 		Reserve(count);
-		for (size_t i = 0; i < count; ++i)
+		std::string* begin = GetItems();
+		std::string* end = begin + count;
+		while (true)
 		{
-			std::stringstream sstream;
-			sstream << (uint32_t)random();
-			AddBackNogrow(sstream.str());
+			for (size_t i = GetCount(); i < count; ++i)
+			{
+				std::stringstream sstream;
+				sstream << random() % 100000000;
+				AddBackNogrow(sstream.str());
+			}
+			std::sort(begin, end);
+			size_t newCount = std::unique(begin, end) - begin;
+			if (newCount == count)
+				break;
+			SetCount(newCount);
 		}
+		std::shuffle(begin, end, random);
+	}
+
+	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	{
+		return "std::string";
 	}
 };
 
@@ -124,154 +166,248 @@ public:
 private:
 	typedef SpeedMapKeys<Key> Keys;
 
-	class Timer
-	{
-	private:
 #if defined(_MSC_VER) && _MSC_VER < 1900
-		typedef std::chrono::system_clock Clock;
+	typedef std::chrono::system_clock Clock;
 #else
-		typedef std::chrono::steady_clock Clock;
+	typedef std::chrono::steady_clock Clock;
 #endif
 
-	public:
-		Timer(const std::string& title, std::ostream& stream)
-			: mStream(stream)
-		{
-			mStream << title << std::flush;
-			mStartTime = Clock::now();
-		}
+	typedef std::chrono::time_point<Clock> TimePoint;
+	typedef int64_t TickCount;
 
-		~Timer()
-		{
-			auto diff = Clock::now() - mStartTime;
-			auto count = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
-			mStream << count << std::endl;
-		}
-
-	private:
-		std::ostream& mStream;
-		std::chrono::time_point<Clock> mStartTime;
+	struct TestResult
+	{
+		TickCount insertTime = LLONG_MAX;
+		TickCount findExistingTime = LLONG_MAX;
+		TickCount findRandomTime = LLONG_MAX;
+		TickCount eraseTime = LLONG_MAX;
 	};
 
 public:
-	explicit SpeedMapTester(size_t count, std::ostream& stream = std::cout)
+	explicit SpeedMapTester(size_t maxKeyCount, size_t runCount, std::ostream& resStream,
+		std::ostream& procStream = std::cout)
 		: mRandom(),
-		mKeys(count, mRandom),
-		mKeys2(count, mRandom),
-		mStream(stream)
+		mKeys(maxKeyCount, mRandom),
+		mKeys2(maxKeyCount, mRandom),
+		mRunCount(runCount),
+		mResStream(resStream),
+		mProcStream(procStream)
 	{
-	}
+		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		mResStream << std::ctime(&now) << " " << Keys::GetKeyTitle() << " "
+			<< sizeof(void*) * 8 << "bit" << std::endl;
+		mResStream << "title;count;"
+			<< "insert (norm);find existing (norm);find random (norm);erase (norm);"
+			<< "insert (real);find existing (real);find random (real);erase (real)"
+			<< std::endl;
 
-	template<typename Allocator>
-	void TestStdUnorderedMap(const std::string& mapTitle)
-	{
-		typedef std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, Allocator> Map;
-		pvTestMap<Map>(mapTitle);
+		mProcStream << "key title: " << Keys::GetKeyTitle() << "\n" << std::endl;
 	}
 
 	template<typename HashBucket>
-	void TestHashMap(const std::string& mapTitle)
+	void TestHashBucket(const std::string& mapTitle, float maxLoadFactor = 0.0, bool reserve = false)
 	{
 		typedef std::allocator<std::pair<const Key, Value>> Allocator;
 		typedef momo::stdish::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, Allocator,
 			momo::HashMap<Key, Value, momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>,
-			momo::MemManagerStd<Allocator>>> Map;
-		pvTestMap<Map>(mapTitle);
+			momo::MemManagerStd<Allocator>>> HashMap;
+		TestHashMap<HashMap>(mapTitle, maxLoadFactor, reserve);
 	}
 
-	template<typename Allocator>
-	void TestStdMap(const std::string& mapTitle)
+	template<typename HashMap>
+	void TestHashMap(const std::string& mapTitle, float maxLoadFactor = 0.0, bool reserve = false)
 	{
-		typedef std::map<Key, Value, std::less<Key>, Allocator> Map;
-		pvTestMap<Map>(mapTitle);
+		float trueMaxLoadFactor = maxLoadFactor;
+		if (maxLoadFactor == 0)
+			trueMaxLoadFactor = HashMap().max_load_factor();
+
+		uint64_t bucketCount = 1 << 30;
+		while ((uint64_t)(bucketCount * trueMaxLoadFactor) + 1 > (uint64_t)mKeys.GetCount())
+			bucketCount /= 2;
+		size_t keyCount = (size_t)(bucketCount * trueMaxLoadFactor);
+
+		pvTestHashMap<HashMap>(mapTitle, keyCount / 2, trueMaxLoadFactor, reserve);
+		pvTestHashMap<HashMap>(mapTitle, keyCount / 2 + 1, trueMaxLoadFactor, reserve);
+		pvTestHashMap<HashMap>(mapTitle, keyCount / 3 * 2, trueMaxLoadFactor, reserve);
+		pvTestHashMap<HashMap>(mapTitle, keyCount / 6 * 5, trueMaxLoadFactor, reserve);
+		pvTestHashMap<HashMap>(mapTitle, keyCount, trueMaxLoadFactor, reserve);
+		pvTestHashMap<HashMap>(mapTitle, keyCount + 1, trueMaxLoadFactor, reserve);
 	}
 
 	template<typename TreeNode>
-	void TestTreeMap(const std::string& mapTitle)
+	void TestTreeNode(const std::string& mapTitle)
 	{
 		typedef std::allocator<std::pair<const Key, Value>> Allocator;
 		typedef momo::stdish::map<Key, Value, std::less<Key>, Allocator,
 			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>,
-			momo::MemManagerStd<Allocator>>> Map;
-		pvTestMap<Map>(mapTitle);
+			momo::MemManagerStd<Allocator>>> TreeMap;
+		TestTreeMap<TreeMap>(mapTitle);
+	}
+
+	template<typename TreeMap>
+	void TestTreeMap(const std::string& mapTitle)
+	{
+		pvTestTreeMap<TreeMap>(mapTitle, mKeys.GetCount() / 7);
+		pvTestTreeMap<TreeMap>(mapTitle, mKeys.GetCount() / 5);
 	}
 
 	void TestAll()
 	{
-		TestStdUnorderedMap<std::allocator<std::pair<const Key, Value>>>("std::unordered_map");
-		TestHashMap<momo::HashBucketLimP<>>("HashMapLimP");
-		//TestHashMap<momo::HashBucketLimP1<>>("HashMapLimP1");
-		TestHashMap<momo::HashBucketLimP4<>>("HashMapLimP4");
-		//TestHashMap<momo::HashBucketUnlimP<>>("HashMapUnlimP");
-		TestHashMap<momo::HashBucketOneI1>("HashMapOneI1");
-		TestHashMap<momo::HashBucketOneIA>("HashMapOneIA");
-		//TestHashMap<momo::HashBucketLim4<>>("HashMapLim4");
+		TestHashMap<std::unordered_map<Key, Value>>("std::unordered_map");
+		//TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
+		//TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
+		TestHashBucket<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
+		//TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+		//TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestHashBucket<momo::HashBucketOneIA>("momo::HashBucketOneIA");
+		//TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
 
-		TestStdMap<momo::stdish::pool_allocator<std::pair<const Key, Value>>>("std::map + pool_allocator");
-		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("TreeNodeSwp");
-		TestTreeMap<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("TreeNodePrm");
+		TestTreeMap<std::map<Key, Value>>("std::map");
+		TestTreeNode<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("momo::TreeNode<32, 4, <>, true>");
+		TestTreeNode<momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>("momo::TreeNode<32, 4, <>, false>");
 	}
 
 private:
-	template<typename Map>
-	void pvTestMap(const std::string& mapTitle)
+	template<typename HashMap>
+	void pvTestHashMap(const std::string& mapTitle, size_t keyCount, float maxLoadFactor, bool reserve)
 	{
-		Map map;
+		auto afterCreate = [maxLoadFactor, reserve, keyCount] (HashMap& map)
 		{
-			Timer timer(mapTitle + " insert: ", mStream);
-			for (const Key& key : mKeys)
-				map[key] = 0;
-		}
+			map.max_load_factor(maxLoadFactor);
+			if (reserve)
+				map.reserve(keyCount);
+		};
 
-		{
-			std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
-			Timer timer(mapTitle + " find existing: ", mStream);
-			for (const Key& key : mKeys)
-				map[key] = 1;
-		}
+		std::stringstream sstream;
+		sstream << mapTitle << " mlf=" << maxLoadFactor;
+		if (reserve)
+			sstream << " rsrv";
+		std::string trueMapTitle = sstream.str();
 
+		TestResult res = pvTestMap<HashMap>(trueMapTitle, keyCount, afterCreate);
+
+		double norm = (double)keyCount / 1e3;
+		pvOutputResult(trueMapTitle, keyCount, res,
+			res.insertTime / norm, res.findExistingTime / norm,
+			res.findRandomTime / norm, res.eraseTime / norm);
+	}
+
+	template<typename TreeMap>
+	void pvTestTreeMap(const std::string& mapTitle, size_t keyCount)
+	{
+		auto afterCreate = [] (TreeMap&) { };
+
+		TestResult res = pvTestMap<TreeMap>(mapTitle, keyCount, afterCreate);
+
+		double norm = (double)keyCount * log2((double)keyCount) / 1e3;
+		pvOutputResult(mapTitle, keyCount, res,
+			res.insertTime / norm, res.findExistingTime / norm,
+			res.findRandomTime / norm, res.eraseTime / norm);
+	}
+
+	template<typename Map, typename AfterCreate>
+	TestResult pvTestMap(const std::string& mapTitle, size_t keyCount, AfterCreate afterCreate)
+	{
+		mProcStream << "key count: " << keyCount << std::endl;
+		TestResult res;
+
+		for (size_t t = 1; t <= mRunCount; ++t)
 		{
-			Timer timer(mapTitle + " find random: ", mStream);
-			for (const Key& key : mKeys2)
+			TimePoint start;
+
+			Map map;
+			afterCreate(map);
+
+			std::shuffle(mKeys.GetBegin(), mKeys.GetBegin() + keyCount, mRandom);
+			start = pvStart(t, mapTitle + " insert: ");
+			for (size_t i = 0; i < keyCount; ++i)
+				map.emplace(mKeys[i], 0);
+			TickCount insertTime = pvFinish(start);
+			res.insertTime = std::minmax(res.insertTime, insertTime).first;
+
+			std::shuffle(mKeys.GetBegin(), mKeys.GetBegin() + keyCount, mRandom);
+			start = pvStart(t, mapTitle + " find existing: ");
+			for (size_t i = 0; i < keyCount; ++i)
 			{
-				auto it = map.find(key);
-				if (it != map.end())
-					it->second = 2;
+				if (map.find(mKeys[i]) == map.end())
+					mProcStream << "";
 			}
+			TickCount findExistingTime = pvFinish(start);
+			res.findExistingTime = std::minmax(res.findExistingTime, findExistingTime).first;
+
+			start = pvStart(t, mapTitle + " find random: ");
+			for (size_t i = 0; i < keyCount; ++i)
+			{
+				if (map.find(mKeys2[i]) != map.end())
+					mProcStream << "";
+			}
+			TickCount findRandomTime = pvFinish(start);
+			res.findRandomTime = std::minmax(res.findRandomTime, findRandomTime).first;
+
+			std::shuffle(mKeys.GetBegin(), mKeys.GetBegin() + keyCount, mRandom);
+			start = pvStart(t, mapTitle + " erase: ");
+			for (size_t i = 0; i < keyCount; ++i)
+				map.erase(mKeys[i]);
+			TickCount eraseTime = pvFinish(start);
+			res.eraseTime = std::minmax(res.eraseTime, eraseTime).first;
 		}
 
-		{
-			std::shuffle(mKeys.GetBegin(), mKeys.GetEnd(), mRandom);
-			Timer timer(mapTitle + " erase: ", mStream);
-			for (const Key& key : mKeys)
-				map.erase(key);
-		}
+		return res;
+	}
+
+	TimePoint pvStart(size_t number, const std::string& output)
+	{
+		mProcStream << number << ") " << output << std::flush;
+		return Clock::now();
+	}
+
+	TickCount pvFinish(TimePoint start)
+	{
+		auto diff = Clock::now() - start;
+		TickCount count = std::chrono::duration_cast<std::chrono::microseconds>(diff).count();
+		mProcStream << count / 1000 << " ms" << std::endl;
+		return count;
+	}
+
+	void pvOutputResult(const std::string& mapTitle, size_t keyCount, TestResult testRes,
+		double insertTime, double findExistingTime, double findRandomTime, double eraseTime)
+	{
+		mResStream << mapTitle << ";" << keyCount << ";"
+			<< insertTime << ";" << findExistingTime << ";"
+			<< findRandomTime << ";" << eraseTime << ";"
+			<< testRes.insertTime << ";" << testRes.findExistingTime << ";"
+			<< testRes.findRandomTime << ";" << testRes.eraseTime << std::endl;
+
+		mProcStream << "insert time: " << insertTime << std::endl;
+		mProcStream << "find existing time: " << findExistingTime << std::endl;
+		mProcStream << "find random time: " << findRandomTime << std::endl;
+		mProcStream << "erase time: " << eraseTime << std::endl;
+		mProcStream << std::endl;
 	}
 
 private:
 	std::mt19937_64 mRandom;
 	Keys mKeys;
 	Keys mKeys2;
-	std::ostream& mStream;
+	size_t mRunCount;
+	std::ostream& mResStream;
+	std::ostream& mProcStream;
 };
 
 void TestSpeedMap()
 {
+	std::cout << "TestSpeedMap started" << std::endl;
+
 #ifdef NDEBUG
-	const size_t count = 3 << 20;
+	const size_t maxKeyCount = (1 << 21) + 1;
+	std::ofstream resStream("bench.csv", std::ios_base::app);
 #else
-	const size_t count = 1 << 12;
+	const size_t maxKeyCount = (1 << 12) + 1;
+	std::stringstream resStream;
 #endif
-
-	SpeedMapTester<SpeedMapKey> speedMapTester(count);
-	//SpeedMapTester<uint64_t> speedMapTester(count);
-	//SpeedMapTester<std::string> speedMapTester(count);
-
-	for (size_t i = 0; i < 3; ++i)
-	{
-		std::cout << std::endl;
-		speedMapTester.TestAll();
-	}
+	
+	//SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
+	SpeedMapTester<SpeedMapKey>(maxKeyCount, 3, resStream).TestAll();
 }
 
 static int testSpeedMap = (TestSpeedMap(), 0);
