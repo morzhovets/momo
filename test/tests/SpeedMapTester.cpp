@@ -175,12 +175,13 @@ private:
 	typedef std::chrono::time_point<Clock> TimePoint;
 	typedef int64_t TickCount;
 
+	template<typename Time = TickCount>
 	struct TestResult
 	{
-		TickCount insertTime = LLONG_MAX;
-		TickCount findExistingTime = LLONG_MAX;
-		TickCount findRandomTime = LLONG_MAX;
-		TickCount eraseTime = LLONG_MAX;
+		Time insertTime;
+		Time findExistingTime;
+		Time findRandomTime;
+		Time eraseTime;
 	};
 
 public:
@@ -222,16 +223,25 @@ public:
 			trueMaxLoadFactor = HashMap().max_load_factor();
 
 		uint64_t bucketCount = 1 << 30;
-		while ((uint64_t)(bucketCount * trueMaxLoadFactor) + 1 > (uint64_t)mKeys.GetCount())
+		while ((uint64_t)((double)bucketCount * trueMaxLoadFactor) + 1 > (uint64_t)mKeys.GetCount())
 			bucketCount /= 2;
-		size_t keyCount = (size_t)(bucketCount * trueMaxLoadFactor);
 
-		pvTestHashMap<HashMap>(mapTitle, keyCount / 2, trueMaxLoadFactor, reserve);
-		pvTestHashMap<HashMap>(mapTitle, keyCount / 2 + 1, trueMaxLoadFactor, reserve);
-		pvTestHashMap<HashMap>(mapTitle, keyCount / 3 * 2, trueMaxLoadFactor, reserve);
-		pvTestHashMap<HashMap>(mapTitle, keyCount / 6 * 5, trueMaxLoadFactor, reserve);
-		pvTestHashMap<HashMap>(mapTitle, keyCount, trueMaxLoadFactor, reserve);
-		pvTestHashMap<HashMap>(mapTitle, keyCount + 1, trueMaxLoadFactor, reserve);
+		size_t keyCount0 = (size_t)(bucketCount * trueMaxLoadFactor);
+		size_t keyCounts[] = { keyCount0 / 2, keyCount0 / 2 + 1, keyCount0 / 4 * 3, keyCount0, keyCount0 + 1 };
+
+		TestResult<double> maxNormRes = { 0.0, 0.0, 0.0, 0.0 };
+		for (size_t keyCount : keyCounts)
+		{
+			TestResult<double> normRes = pvTestHashMap<HashMap>(mapTitle, keyCount,
+				trueMaxLoadFactor, reserve);
+			maxNormRes.insertTime = std::minmax(maxNormRes.insertTime, normRes.insertTime).second;
+			maxNormRes.findExistingTime = std::minmax(maxNormRes.findExistingTime, normRes.findExistingTime).second;
+			maxNormRes.findRandomTime = std::minmax(maxNormRes.findRandomTime, normRes.findRandomTime).second;
+			maxNormRes.eraseTime = std::minmax(maxNormRes.eraseTime, normRes.eraseTime).second;
+		}
+
+		mResStream << ";;" << maxNormRes.insertTime << ";" << maxNormRes.findExistingTime << ";"
+			<< maxNormRes.findRandomTime << ";" << maxNormRes.eraseTime << ";;;;" << std::endl;
 	}
 
 	template<typename TreeNode>
@@ -269,7 +279,7 @@ public:
 
 private:
 	template<typename HashMap>
-	void pvTestHashMap(const std::string& mapTitle, size_t keyCount, float maxLoadFactor, bool reserve)
+	TestResult<double> pvTestHashMap(const std::string& mapTitle, size_t keyCount, float maxLoadFactor, bool reserve)
 	{
 		auto afterCreate = [maxLoadFactor, reserve, keyCount] (HashMap& map)
 		{
@@ -284,32 +294,36 @@ private:
 			sstream << " rsrv";
 		std::string trueMapTitle = sstream.str();
 
-		TestResult res = pvTestMap<HashMap>(trueMapTitle, keyCount, afterCreate);
+		TestResult<> res = pvTestMap<HashMap>(trueMapTitle, keyCount, afterCreate);
 
 		double norm = (double)keyCount / 1e3;
-		pvOutputResult(trueMapTitle, keyCount, res,
-			res.insertTime / norm, res.findExistingTime / norm,
-			res.findRandomTime / norm, res.eraseTime / norm);
+		TestResult<double> normRes = pvMakeNormResult(res, norm);
+
+		pvOutputResult(trueMapTitle, keyCount, res, normRes);
+
+		return normRes;
 	}
 
 	template<typename TreeMap>
-	void pvTestTreeMap(const std::string& mapTitle, size_t keyCount)
+	TestResult<double> pvTestTreeMap(const std::string& mapTitle, size_t keyCount)
 	{
 		auto afterCreate = [] (TreeMap&) { };
 
-		TestResult res = pvTestMap<TreeMap>(mapTitle, keyCount, afterCreate);
+		TestResult<> res = pvTestMap<TreeMap>(mapTitle, keyCount, afterCreate);
 
 		double norm = (double)keyCount * log2((double)keyCount) / 1e3;
-		pvOutputResult(mapTitle, keyCount, res,
-			res.insertTime / norm, res.findExistingTime / norm,
-			res.findRandomTime / norm, res.eraseTime / norm);
+		TestResult<double> normRes = pvMakeNormResult(res, norm);
+
+		pvOutputResult(mapTitle, keyCount, res, normRes);
+
+		return normRes;
 	}
 
 	template<typename Map, typename AfterCreate>
-	TestResult pvTestMap(const std::string& mapTitle, size_t keyCount, AfterCreate afterCreate)
+	TestResult<> pvTestMap(const std::string& mapTitle, size_t keyCount, AfterCreate afterCreate)
 	{
 		mProcStream << "key count: " << keyCount << std::endl;
-		TestResult res;
+		TestResult<> res = { LLONG_MAX, LLONG_MAX, LLONG_MAX, LLONG_MAX };
 
 		for (size_t t = 1; t <= mRunCount; ++t)
 		{
@@ -369,19 +383,25 @@ private:
 		return count;
 	}
 
-	void pvOutputResult(const std::string& mapTitle, size_t keyCount, TestResult testRes,
-		double insertTime, double findExistingTime, double findRandomTime, double eraseTime)
+	TestResult<double> pvMakeNormResult(TestResult<> res, double norm)
+	{
+		return { res.insertTime / norm, res.findExistingTime / norm,
+			res.findRandomTime / norm, res.eraseTime / norm };
+	}
+
+	void pvOutputResult(const std::string& mapTitle, size_t keyCount, TestResult<> testRes,
+		TestResult<double> normTestRes)
 	{
 		mResStream << mapTitle << ";" << keyCount << ";"
-			<< insertTime << ";" << findExistingTime << ";"
-			<< findRandomTime << ";" << eraseTime << ";"
+			<< normTestRes.insertTime << ";" << normTestRes.findExistingTime << ";"
+			<< normTestRes.findRandomTime << ";" << normTestRes.eraseTime << ";"
 			<< testRes.insertTime << ";" << testRes.findExistingTime << ";"
 			<< testRes.findRandomTime << ";" << testRes.eraseTime << std::endl;
 
-		mProcStream << "insert time: " << insertTime << std::endl;
-		mProcStream << "find existing time: " << findExistingTime << std::endl;
-		mProcStream << "find random time: " << findRandomTime << std::endl;
-		mProcStream << "erase time: " << eraseTime << std::endl;
+		mProcStream << "insert time: " << normTestRes.insertTime << std::endl;
+		mProcStream << "find existing time: " << normTestRes.findExistingTime << std::endl;
+		mProcStream << "find random time: " << normTestRes.findRandomTime << std::endl;
+		mProcStream << "erase time: " << normTestRes.eraseTime << std::endl;
 		mProcStream << std::endl;
 	}
 
