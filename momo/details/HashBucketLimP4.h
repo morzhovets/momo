@@ -173,8 +173,7 @@ namespace internal
 
 		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
 		{
-			return hashCode >> (sizeof(size_t) * 8 - 8)
-				== (size_t)((mCodeState >> (index * 8)) & 255);
+			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8)) == mCodeState[index];
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -257,8 +256,7 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(index < count);
-				size_t hashCode = (size_t)((mCodeState >> (count * 8 - 8)) & 255);
-				hashCode <<= sizeof(size_t) * 8 - 8;
+				size_t hashCode = (size_t)mCodeState[count - 1] << (sizeof(size_t) * 8 - 8);
 				pvSetCode(index, hashCode);
 				pvSetState(items, pvGetMemPoolIndex(), count - 1);
 			}
@@ -275,8 +273,7 @@ namespace internal
 			if (maxCount < 4 || count < 4)
 			{
 				mItemPtr.Set(items, false);
-				mCodeState &= ((uint32_t)1 << 28) - 1;
-				mCodeState |= (uint32_t)(((memPoolIndex - 1) << 2) | count) << 28;
+				mCodeState[3] = (uint8_t)(((memPoolIndex - 1) << 2) | count);
 			}
 			else
 			{
@@ -288,20 +285,19 @@ namespace internal
 		{
 			if (maxCount == 4 && mItemPtr.GetLastBit())
 				return 4;
-			return (size_t)(mCodeState >> 30) + 1;
+			return (size_t)(mCodeState[3] >> 2) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
 			if (maxCount == 4 && mItemPtr.GetLastBit())
 				return 4;
-			return (size_t)((mCodeState >> 28) & 3);
+			return (size_t)(mCodeState[3] & 3);
 		}
 
 		void pvSetCode(size_t index, size_t hashCode) MOMO_NOEXCEPT
 		{
-			mCodeState &= ~((uint32_t)255 << (index * 8));
-			mCodeState |= (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 8) << (index * 8));
+			mCodeState[index] = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
@@ -355,7 +351,7 @@ namespace internal
 
 	private:
 		Pointer mItemPtr;
-		uint32_t mCodeState;
+		uint8_t mCodeState[4];
 	};
 }
 
