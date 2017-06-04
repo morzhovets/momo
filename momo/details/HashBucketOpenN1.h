@@ -112,7 +112,7 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount>
+template<size_t tMaxCount = 3>
 struct HashBucketOpenN1 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
