@@ -23,6 +23,8 @@
 #include "details/HashBucketOneIA.h"
 #include "details/HashBucketOneI1.h"
 #include "details/HashBucketOneI.h"
+#include "details/HashBucketOpen1.h"
+#include "details/HashBucketOpenN1.h"
 //#include "details/HashBucketLim4.h"
 
 namespace momo

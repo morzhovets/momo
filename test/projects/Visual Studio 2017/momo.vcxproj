@@ -152,6 +152,7 @@
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp" />
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpenN1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterUnlimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp" />
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpen1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxTester.cpp" />
     <ClCompile Include="..\..\tests\LibcxxTreeMapTester.cpp" />
@@ -198,6 +200,8 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI1.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneIA.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOpen1.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOpenN1.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />
     <ClInclude Include="..\..\..\momo\MemPool.h" />

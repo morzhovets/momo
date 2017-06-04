@@ -151,6 +151,8 @@
 		<Unit filename="../../../momo/details/HashBucketOneI.h" />
 		<Unit filename="../../../momo/details/HashBucketOneI1.h" />
 		<Unit filename="../../../momo/details/HashBucketOneIA.h" />
+		<Unit filename="../../../momo/details/HashBucketOpen1.h" />
+		<Unit filename="../../../momo/details/HashBucketOpenN1.h" />
 		<Unit filename="../../../momo/details/HashBucketUnlimP.h" />
 		<Unit filename="../../../momo/details/TreeNode.h" />
 		<Unit filename="../../../momo/stdish/map.h" />
@@ -169,6 +171,7 @@
 		<Unit filename="../../tests/LibcxxHashMapTesterLimP1.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTesterLimP4.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTesterOneIA.cpp" />
+		<Unit filename="../../tests/LibcxxHashMapTesterOpenN1.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTesterUnlimP.cpp" />
 		<Unit filename="../../tests/LibcxxHashMultiMapTester.h" />
 		<Unit filename="../../tests/LibcxxHashMultiMapTesterLimP.cpp" />
@@ -178,6 +181,7 @@
 		<Unit filename="../../tests/LibcxxHashSetTesterLimP1.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTesterLimP4.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTesterOneI1.cpp" />
+		<Unit filename="../../tests/LibcxxHashSetTesterOpen1.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTesterUnlimP.cpp" />
 		<Unit filename="../../tests/LibcxxMapTests.h" />
 		<Unit filename="../../tests/LibcxxSetTests.h" />
