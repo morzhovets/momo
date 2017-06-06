@@ -222,26 +222,30 @@ public:
 		if (maxLoadFactor == 0)
 			trueMaxLoadFactor = HashMap().max_load_factor();
 
-		uint64_t bucketCount = 1 << 30;
-		while ((uint64_t)((double)bucketCount * trueMaxLoadFactor) + 1 > (uint64_t)mKeys.GetCount())
-			bucketCount /= 2;
-
-		size_t keyCount0 = (size_t)(bucketCount * trueMaxLoadFactor);
-		size_t keyCounts[] = { keyCount0 / 2, keyCount0 / 2 + 1, keyCount0 / 4 * 3, keyCount0, keyCount0 + 1 };
-
 		TestResult<double> maxNormRes = { 0.0, 0.0, 0.0, 0.0 };
-		for (size_t keyCount : keyCounts)
+		TestResult<double> avgNormRes = { 0.0, 0.0, 0.0, 0.0 };
+
+		for (size_t i = 9; i <= 16; ++i)
 		{
+			size_t keyCount = mKeys.GetCount() / 16 * i;
 			TestResult<double> normRes = pvTestHashMap<HashMap>(mapTitle, keyCount,
 				trueMaxLoadFactor, reserve);
+
 			maxNormRes.insertTime = std::minmax(maxNormRes.insertTime, normRes.insertTime).second;
 			maxNormRes.findExistingTime = std::minmax(maxNormRes.findExistingTime, normRes.findExistingTime).second;
 			maxNormRes.findRandomTime = std::minmax(maxNormRes.findRandomTime, normRes.findRandomTime).second;
 			maxNormRes.eraseTime = std::minmax(maxNormRes.eraseTime, normRes.eraseTime).second;
+
+			avgNormRes.insertTime += normRes.insertTime / 8.0;
+			avgNormRes.findExistingTime += normRes.findExistingTime / 8.0;
+			avgNormRes.findRandomTime += normRes.findRandomTime / 8.0;
+			avgNormRes.eraseTime += normRes.eraseTime / 8.0;
 		}
 
-		mResStream << ";;" << maxNormRes.insertTime << ";" << maxNormRes.findExistingTime << ";"
+		mResStream << ";max;" << maxNormRes.insertTime << ";" << maxNormRes.findExistingTime << ";"
 			<< maxNormRes.findRandomTime << ";" << maxNormRes.eraseTime << ";;;;" << std::endl;
+		mResStream << ";avg;" << avgNormRes.insertTime << ";" << avgNormRes.findExistingTime << ";"
+			<< avgNormRes.findRandomTime << ";" << avgNormRes.eraseTime << ";;;;" << std::endl;
 	}
 
 	template<typename TreeNode>
@@ -270,6 +274,8 @@ public:
 		//TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
 		//TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
 		TestHashBucket<momo::HashBucketOneIA>("momo::HashBucketOneIA");
+		//TestHashBucket<momo::HashBucketOpen1<>>("momo::HashBucketOpen1<>");
+		//TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
 		//TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
 
 		TestTreeMap<std::map<Key, Value>>("std::map");
@@ -419,14 +425,14 @@ void TestSpeedMap()
 	std::cout << "TestSpeedMap started" << std::endl;
 
 #ifdef NDEBUG
-	const size_t maxKeyCount = (1 << 21) + 1;
+	const size_t maxKeyCount = 1 << 21;
 	std::ofstream resStream("bench.csv", std::ios_base::app);
 #else
-	const size_t maxKeyCount = (1 << 12) + 1;
+	const size_t maxKeyCount = 1 << 12;
 	std::stringstream resStream;
 #endif
 	
-	//SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
+	SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
 	SpeedMapTester<SpeedMapKey>(maxKeyCount, 3, resStream).TestAll();
 }
 
