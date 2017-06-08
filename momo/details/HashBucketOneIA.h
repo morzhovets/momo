@@ -21,27 +21,27 @@ namespace momo
 namespace internal
 {
 	template<size_t size>
-	struct BucketOneIACodeStateSelector
+	struct BucketOneIAHashStateSelector
 	{
-		typedef unsigned char CodeState;
+		typedef uint8_t HashState;
 	};
 
 	template<>
-	struct BucketOneIACodeStateSelector<2>
+	struct BucketOneIAHashStateSelector<2>
 	{
-		typedef uint16_t CodeState;
+		typedef uint16_t HashState;
 	};
 
 	template<>
-	struct BucketOneIACodeStateSelector<4>
+	struct BucketOneIAHashStateSelector<4>
 	{
-		typedef uint32_t CodeState;
+		typedef uint32_t HashState;
 	};
 
 	template<>
-	struct BucketOneIACodeStateSelector<8>
+	struct BucketOneIAHashStateSelector<8>
 	{
-		typedef uint64_t CodeState;
+		typedef uint64_t HashState;
 	};
 
 	template<typename TItemTraits>
@@ -59,15 +59,15 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const size_t codeStateSize = (ItemTraits::alignment < sizeof(size_t))
+		static const size_t hashStateSize = (ItemTraits::alignment < sizeof(size_t))
 			? ItemTraits::alignment : sizeof(size_t);
-		static const size_t hashCodeShift = (sizeof(size_t) - codeStateSize) * 8;
+		static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
 
-		typedef typename BucketOneIACodeStateSelector<codeStateSize>::CodeState CodeState;
+		typedef typename BucketOneIAHashStateSelector<hashStateSize>::HashState HashState;
 
 	public:
 		BucketOneIA() MOMO_NOEXCEPT
-			: mCodeState(0)
+			: mHashState(0)
 		{
 		}
 
@@ -90,26 +90,26 @@ namespace internal
 		{
 			if (!IsFull())
 				return nullptr;
-			if (hashCode >> (hashCodeShift + 1) != (size_t)(mCodeState >> 1))
+			if (hashCode >> (hashCodeShift + 1) != (size_t)(mHashState >> 1))
 				return nullptr;
 			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return (mCodeState & 1) == (CodeState)1;
+			return (mHashState & 1) == (HashState)1;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return mCodeState != (CodeState)0;
+			return mHashState != (HashState)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			mCodeState = (CodeState)0;
+			mHashState = (HashState)0;
 		}
 
 		template<typename ItemCreator>
@@ -117,7 +117,7 @@ namespace internal
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			mCodeState = (CodeState)((hashCode >> hashCodeShift) | 1);
+			mHashState = (HashState)((hashCode >> hashCodeShift) | 1);
 			return &mItemBuffer;
 		}
 
@@ -126,12 +126,12 @@ namespace internal
 			(void)index;
 			MOMO_ASSERT(index == 0);
 			MOMO_ASSERT(IsFull());
-			mCodeState = (CodeState)2;
+			mHashState = (HashState)2;
 		}
 
 	private:
+		HashState mHashState;
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		CodeState mCodeState;
 	};
 }
 

@@ -39,8 +39,8 @@ namespace internal
 
 	public:
 		BucketOpen1() MOMO_NOEXCEPT
+			: mState(0)
 		{
-			mState = 0;
 		}
 
 		BucketOpen1(const BucketOpen1&) = delete;
@@ -82,7 +82,7 @@ namespace internal
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], pvGetCount());
-			mState = 0;
+			mState = (uint8_t)0;
 		}
 
 		template<typename ItemCreator>

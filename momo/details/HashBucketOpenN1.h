@@ -39,8 +39,8 @@ namespace internal
 
 	public:
 		BucketOpenN1() MOMO_NOEXCEPT
+			: mState(0)
 		{
-			mState = 0;
 		}
 
 		BucketOpenN1(const BucketOpenN1&) = delete;
@@ -60,11 +60,11 @@ namespace internal
 		template<typename Predicate>
 		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
-			uint8_t hashByte = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			uint8_t hashByte = pvGetHashByte(hashCode);
 			size_t count = pvGetCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				if (mCodes[i] == hashByte && pred(*&mItems[i]))
+				if (mHashes[i] == hashByte && pred(*&mItems[i]))
 					return &mItems[i];
 			}
 			return nullptr;
@@ -77,13 +77,13 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return (mState & 128) != 0;
+			return (mState & 128) != (uint8_t)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], pvGetCount());
-			mState = 0;
+			mState = (uint8_t)0;
 		}
 
 		template<typename ItemCreator>
@@ -93,7 +93,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = &mItems[count];
 			itemCreator(pitem);
-			mCodes[count] = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			mHashes[count] = pvGetHashByte(hashCode);
 			++mState;
 			mState |= (uint8_t)(IsFull() ? 128 : 0);
 			return pitem;
@@ -103,7 +103,7 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
-			mCodes[index] = mCodes[count - 1];
+			mHashes[index] = mHashes[count - 1];
 			--mState;
 		}
 
@@ -113,9 +113,14 @@ namespace internal
 			return (size_t)(mState & 127);
 		}
 
+		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
+		{
+			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+		}
+
 	private:
 		uint8_t mState;
-		uint8_t mCodes[maxCount];
+		uint8_t mHashes[maxCount];
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }

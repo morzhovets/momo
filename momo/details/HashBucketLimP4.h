@@ -174,12 +174,12 @@ namespace internal
 		template<typename Predicate>
 		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
-			uint8_t hashByte = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			uint8_t hashByte = pvGetHashByte(hashCode);
 			const Item* items = mItemPtr.GetPointer();
 			size_t count = pvGetCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				if (mCodeState[i] == hashByte && pred(items[i]))
+				if (mHashesState[i] == hashByte && pred(items[i]))
 					return items + i;
 			}
 			return nullptr;
@@ -241,7 +241,7 @@ namespace internal
 				else
 				{
 					itemCreator(items + count);
-					pvSetCode(count, hashCode);
+					pvSetHash(count, hashCode);
 					pvSetState(items, memPoolIndex, count + 1);
 					return items + count;
 				}
@@ -265,8 +265,8 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(index < count);
-				size_t hashCode = (size_t)mCodeState[count - 1] << (sizeof(size_t) * 8 - 8);
-				pvSetCode(index, hashCode);
+				size_t hashCode = (size_t)mHashesState[count - 1] << (sizeof(size_t) * 8 - 8);
+				pvSetHash(index, hashCode);
 				pvSetState(items, pvGetMemPoolIndex(), count - 1);
 			}
 		}
@@ -282,7 +282,7 @@ namespace internal
 			if (maxCount < 4 || count < 4)
 			{
 				mItemPtr.Set(items, false);
-				mCodeState[3] = (uint8_t)(((memPoolIndex - 1) << 2) | count);
+				mHashesState[3] = (uint8_t)(((memPoolIndex - 1) << 2) | count);
 			}
 			else
 			{
@@ -294,19 +294,24 @@ namespace internal
 		{
 			if (maxCount == 4 && mItemPtr.GetLastBit())
 				return 4;
-			return (size_t)(mCodeState[3] >> 2) + 1;
+			return (size_t)(mHashesState[3] >> 2) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
 			if (maxCount == 4 && mItemPtr.GetLastBit())
 				return 4;
-			return (size_t)(mCodeState[3] & 3);
+			return (size_t)(mHashesState[3] & 3);
 		}
 
-		void pvSetCode(size_t index, size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
 		{
-			mCodeState[index] = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+		}
+
+		void pvSetHash(size_t index, size_t hashCode) MOMO_NOEXCEPT
+		{
+			mHashesState[index] = pvGetHashByte(hashCode);
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
@@ -316,7 +321,7 @@ namespace internal
 			Item* items = memory.GetPointer();
 			itemCreator(items);
 			pvSetState(memory.Extract(), memPoolIndex, 1);
-			pvSetCode(0, hashCode);
+			pvSetHash(0, hashCode);
 			return items;
 		}
 
@@ -332,7 +337,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			pvSetCode(count, hashCode);
+			pvSetHash(count, hashCode);
 			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			return newItems + count;
 		}
@@ -360,7 +365,7 @@ namespace internal
 
 	private:
 		Pointer mItemPtr;
-		uint8_t mCodeState[4];
+		uint8_t mHashesState[4];
 	};
 }
 
