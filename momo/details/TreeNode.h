@@ -49,14 +49,14 @@ namespace internal
 		template<size_t capacity>
 		struct Counter<capacity, false>
 		{
-			unsigned char count;
+			uint8_t count;
 		};
 
 		template<size_t capacity>
 		struct Counter<capacity, true>
 		{
-			unsigned char count;
-			unsigned char indices[capacity];
+			uint8_t count;
+			uint8_t indices[capacity];
 		};
 
 		typedef ObjectBuffer<Item, ItemTraits::alignment> ItemBuffer;
@@ -139,16 +139,16 @@ namespace internal
 				if (leafMemPoolIndex >= leafMemPoolCount)
 					leafMemPoolIndex = leafMemPoolCount - 1;
 				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
-				node->mMemPoolIndex = (unsigned char)leafMemPoolIndex;
+				node->mMemPoolIndex = (uint8_t)leafMemPoolIndex;
 			}
 			else
 			{
 				char* ptr = params.GetInternalMemPool().template Allocate<char>();
 				node = reinterpret_cast<Node*>(ptr + internalOffset);
-				node->mMemPoolIndex = (unsigned char)leafMemPoolCount;
+				node->mMemPoolIndex = (uint8_t)leafMemPoolCount;
 			}
 			node->mParent = nullptr;
-			node->mCounter.count = (unsigned char)count;
+			node->mCounter.count = (uint8_t)count;
 			node->pvInitIndices(IsContinuous());
 			return node;
 		}
@@ -257,7 +257,7 @@ namespace internal
 		void pvInitIndices(std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
-				mCounter.indices[i] = (unsigned char)i;
+				mCounter.indices[i] = (uint8_t)i;
 		}
 
 		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) MOMO_NOEXCEPT
@@ -280,7 +280,7 @@ namespace internal
 		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
 			std::false_type /*isContinuous*/) MOMO_NOEXCEPT
 		{
-			unsigned char realIndex = mCounter.indices[count];
+			uint8_t realIndex = mCounter.indices[count];
 			memmove(mCounter.indices + index + 1, mCounter.indices + index, count - index);
 			mCounter.indices[index] = realIndex;
 		}
@@ -307,14 +307,14 @@ namespace internal
 			std::false_type /*isContinuous*/)
 		{
 			itemRemover(*GetItemPtr(index));
-			unsigned char realIndex = mCounter.indices[index];
+			uint8_t realIndex = mCounter.indices[index];
 			memmove(mCounter.indices + index, mCounter.indices + index + 1, count - index - 1);
 			mCounter.indices[count - 1] = realIndex;
 		}
 
 	private:
 		Node* mParent;
-		unsigned char mMemPoolIndex;
+		uint8_t mMemPoolIndex;
 		Counter<maxCapacity, !isContinuous> mCounter;
 		ItemBuffer mFirstItem;
 	};

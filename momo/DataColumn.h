@@ -204,7 +204,7 @@ private:
 	typedef std::array<size_t, vertexCount> Addends;
 
 	static const size_t mutOffsetsIntCapacity = maxColumnCount * sizeof(void*);
-	typedef momo::internal::NestedArrayIntCap<mutOffsetsIntCapacity, unsigned char, MemManager> MutOffsets;
+	typedef momo::internal::NestedArrayIntCap<mutOffsetsIntCapacity, uint8_t, MemManager> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
@@ -226,7 +226,7 @@ public:
 			++mCodeParam;
 		if (mCodeParam > maxCodeParam)
 			throw std::runtime_error("Cannot create DataColumnList");
-		mMutOffsets.SetCount((mTotalSize + 7) / 8, (unsigned char)0);
+		mMutOffsets.SetCount((mTotalSize + 7) / 8, (uint8_t)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
 			{ pvCreate<void, Types...>(memManager, raw, 0); };
 		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
@@ -281,7 +281,7 @@ public:
 
 	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
 	{
-		return (mMutOffsets[offset / 8] & (unsigned char)(1 << (offset % 8))) != 0;
+		return (mMutOffsets[offset / 8] & (uint8_t)(1 << (offset % 8))) != 0;
 	}
 
 	size_t GetTotalSize() const MOMO_NOEXCEPT
@@ -399,7 +399,7 @@ private:
 	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
 	{
 		size_t offset = GetOffset(column);
-		mMutOffsets[offset / 8] |= (unsigned char)(1 << (offset % 8));
+		mMutOffsets[offset / 8] |= (uint8_t)(1 << (offset % 8));
 		pvSetMutable(columns...);
 	}
 

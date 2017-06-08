@@ -46,7 +46,7 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, unsigned char*> Memory;
+		typedef BucketMemory<MemPool, uint8_t*> Memory;
 
 		static const uintptr_t ptrNull = UIntPtrConst::null;
 		static const uintptr_t ptrNullWasFull = UIntPtrConst::invalid;
@@ -217,17 +217,17 @@ namespace internal
 			return mPtr == ptrNull || mPtr == ptrNullWasFull;
 		}
 
-		unsigned char* pvGetPtr() const MOMO_NOEXCEPT
+		uint8_t* pvGetPtr() const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return reinterpret_cast<unsigned char*>(mPtr);
+			return reinterpret_cast<uint8_t*>(mPtr);
 		}
 
-		void pvSet(unsigned char* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		void pvSet(uint8_t* ptr, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = reinterpret_cast<uintptr_t>(ptr);
-			*ptr = (unsigned char)((memPoolIndex << 4) | count);
+			*ptr = (uint8_t)((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -251,7 +251,7 @@ namespace internal
 			return pvGetItems(pvGetPtr());
 		}
 
-		static Item* pvGetItems(unsigned char* ptr) MOMO_NOEXCEPT
+		static Item* pvGetItems(uint8_t* ptr) MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}

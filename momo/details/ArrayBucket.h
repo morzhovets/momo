@@ -105,7 +105,7 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, unsigned char*> Memory;
+		typedef BucketMemory<MemPool, uint8_t*> Memory;
 
 	public:
 		class Params
@@ -202,7 +202,7 @@ namespace internal
 				Memory memory(params.GetArrayMemPool());
 				new(&pvGetArray(memory.GetPointer())) Array(bounds.GetBegin(),
 					bounds.GetEnd(), MemManagerPtr(memManager));
-				pvSet(memory.Extract(), (unsigned char)0);
+				pvSet(memory.Extract(), (uint8_t)0);
 			}
 		}
 
@@ -296,7 +296,7 @@ namespace internal
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
 							new(&pvGetArray(memory.GetPointer())) Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
-							pvSet(memory.Extract(), (unsigned char)0);
+							pvSet(memory.Extract(), (uint8_t)0);
 						}
 					}
 					else
@@ -342,16 +342,16 @@ namespace internal
 		}
 
 	private:
-		void pvSet(unsigned char* ptr, unsigned char state) MOMO_NOEXCEPT
+		void pvSet(uint8_t* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
 			*mPtr = state;
 		}
 
-		static unsigned char pvMakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		static uint8_t pvMakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			return (unsigned char)((memPoolIndex << 4) | count);
+			return (uint8_t)((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -378,7 +378,7 @@ namespace internal
 			return pvGetFastItems(mPtr);
 		}
 
-		static Item* pvGetFastItems(unsigned char* ptr) MOMO_NOEXCEPT
+		static Item* pvGetFastItems(uint8_t* ptr) MOMO_NOEXCEPT
 		{
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
@@ -389,7 +389,7 @@ namespace internal
 			return pvGetArray(mPtr);
 		}
 
-		static Array& pvGetArray(unsigned char* ptr) MOMO_NOEXCEPT
+		static Array& pvGetArray(uint8_t* ptr) MOMO_NOEXCEPT
 		{
 			return *reinterpret_cast<Array*>(ptr + arrayAlignment);
 		}
@@ -412,7 +412,7 @@ namespace internal
 		}
 
 	private:
-		unsigned char* mPtr;
+		uint8_t* mPtr;
 	};
 }
 

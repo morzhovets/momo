@@ -192,7 +192,7 @@ namespace internal
 	};
 }
 
-enum class HashBucketOneState : unsigned char
+enum class HashBucketOneState : uint8_t
 {
 	empty = 0,
 	full = 1,

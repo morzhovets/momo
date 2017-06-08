@@ -208,7 +208,7 @@ namespace internal
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
 			*&mItemPtrBuffer = items;
-			mState = (unsigned char)((memPoolIndex << 4) | count);
+			mState = (uint8_t)((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
@@ -236,7 +236,7 @@ namespace internal
 
 	private:
 		ObjectBuffer<Item*, alignment> mItemPtrBuffer;
-		unsigned char mState;
+		uint8_t mState;
 	};
 }
 
