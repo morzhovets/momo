@@ -90,9 +90,15 @@ namespace internal
 			return mArrayBucket.GetBounds();
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
 		{
-			return true;
+			for (const Item& item : mArrayBucket.GetBounds())
+			{
+				if (pred(item))
+					return std::addressof(item);
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

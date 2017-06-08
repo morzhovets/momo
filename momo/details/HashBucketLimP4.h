@@ -171,9 +171,18 @@ namespace internal
 			return Bounds(mItemPtr.GetPointer(), pvGetCount());
 		}
 
-		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
-			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8)) == mCodeState[index];
+			uint8_t hashByte = (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			const Item* items = mItemPtr.GetPointer();
+			size_t count = pvGetCount();
+			for (size_t i = 0; i < count; ++i)
+			{
+				if (mCodeState[i] == hashByte && pred(items[i]))
+					return items + i;
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

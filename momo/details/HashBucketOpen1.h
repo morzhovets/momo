@@ -57,9 +57,16 @@ namespace internal
 			return Bounds(&mItems[0], pvGetCount());
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
 		{
-			return true;
+			size_t count = pvGetCount();
+			for (size_t i = 0; i < count; ++i)
+			{
+				if (pred(*&mItems[i]))
+					return &mItems[i];
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

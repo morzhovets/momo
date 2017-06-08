@@ -936,6 +936,8 @@ private:
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t hashCode = hashTraits.GetHashCode(key);
+		auto pred = [&key, &hashTraits] (const Item& item)
+			{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			BucketParams& bucketParams = bkts->GetBucketParams();
@@ -944,15 +946,9 @@ private:
 			{
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
-				BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
-				for (size_t i = 0, count = bucketBounds.GetCount(); i < count; ++i)
-				{
-					if (!bucket.TestIndex(i, hashCode))
-						continue;
-					const Item* pitem = bucketBounds.GetBegin() + i;
-					if (hashTraits.IsEqual(key, ItemTraits::GetKey(*pitem)))
-						return pvMakeIterator(*bkts, bucketIndex, pitem, false);
-				}
+				const Item* pitem = bucket.Find(bucketParams, pred, hashCode);
+				if (pitem != nullptr)
+					return pvMakeIterator(*bkts, bucketIndex, pitem, false);
 				if (!bucket.WasFull())
 					break;
 			}

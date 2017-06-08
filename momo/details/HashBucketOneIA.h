@@ -85,12 +85,14 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		bool TestIndex(size_t index, size_t hashCode) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
-			(void)index;
-			MOMO_ASSERT(index == 0);
-			MOMO_ASSERT(IsFull());
-			return hashCode >> (hashCodeShift + 1) == (size_t)(mCodeState >> 1);
+			if (!IsFull())
+				return nullptr;
+			if (hashCode >> (hashCodeShift + 1) != (size_t)(mCodeState >> 1))
+				return nullptr;
+			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

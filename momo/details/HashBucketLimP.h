@@ -110,13 +110,22 @@ namespace internal
 		{
 			if (pvIsEmpty())
 				return Bounds();
-			else
-				return Bounds(pvGetItems(), pvGetCount());
+			return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
 		{
-			return true;
+			if (pvIsEmpty())
+				return nullptr;
+			size_t count = pvGetCount();
+			const Item* items = pvGetItems();
+			for (size_t i = 0; i < count; ++i)
+			{
+				if (pred(items[i]))
+					return items + i;
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -353,9 +362,17 @@ namespace internal
 			return pvGetBounds();
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
 		{
-			return true;
+			if (pvIsEmpty())
+				return nullptr;
+			for (const Item& item : pvGetBounds())
+			{
+				if (pred(item))
+					return std::addressof(item);
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

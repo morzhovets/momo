@@ -54,9 +54,10 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		bool TestIndex(size_t /*index*/, size_t /*hashCode*/) const MOMO_NOEXCEPT
+		template<typename Predicate>
+		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
 		{
-			return true;
+			return (IsFull() && pred(*&mItemBuffer)) ? &mItemBuffer : nullptr;
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
