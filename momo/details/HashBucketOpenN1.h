@@ -37,10 +37,13 @@ namespace internal
 
 		typedef BucketParamsOpen<MemManager> Params;
 
+	private:
+		static const uint8_t emptyHash = 255;
+
 	public:
 		BucketOpenN1() MOMO_NOEXCEPT
-			: mState(0)
 		{
+			pvSetEmpty();
 		}
 
 		BucketOpenN1(const BucketOpenN1&) = delete;
@@ -61,8 +64,7 @@ namespace internal
 		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
 			uint8_t hashByte = pvGetHashByte(hashCode);
-			size_t count = pvGetCount();
-			for (size_t i = 0; i < count; ++i)
+			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashes[i] == hashByte && pred(*&mItems[i]))
 					return &mItems[i];
@@ -83,7 +85,7 @@ namespace internal
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], pvGetCount());
-			mState = (uint8_t)0;
+			pvSetEmpty();
 		}
 
 		template<typename ItemCreator>
@@ -104,6 +106,7 @@ namespace internal
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
 			mHashes[index] = mHashes[count - 1];
+			mHashes[count - 1] = emptyHash;
 			--mState;
 		}
 
@@ -115,7 +118,15 @@ namespace internal
 
 		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
 		{
-			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
+			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
+			return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
+		}
+
+		void pvSetEmpty() MOMO_NOEXCEPT
+		{
+			mState = (uint8_t)0;
+			for (uint8_t& h : mHashes)
+				h = emptyHash;
 		}
 
 	private:
