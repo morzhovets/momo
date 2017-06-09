@@ -88,9 +88,7 @@ namespace internal
 		template<typename Predicate>
 		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
-			if (!IsFull())
-				return nullptr;
-			if (hashCode >> (hashCodeShift + 1) != (size_t)(mHashState >> 1))
+			if (mHashState != (HashState)((hashCode >> hashCodeShift) | 1))
 				return nullptr;
 			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
