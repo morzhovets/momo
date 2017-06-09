@@ -27,50 +27,35 @@ namespace internal
 	class BucketLimP4Pointer<Item, 4>
 	{
 	public:
-		void Set(Item* ptr, bool lastBit) MOMO_NOEXCEPT
+		void Set(Item* ptr) MOMO_NOEXCEPT
 		{
-			mIntPtr = reinterpret_cast<uint32_t>(ptr);
-			MOMO_ASSERT((mIntPtr & 1) == 0);
-			mIntPtr |= (uint32_t)(lastBit ? 1 : 0);
+			mPtr = ptr;
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			uint32_t intPtr = mIntPtr & ~(uint32_t)1;
-			return reinterpret_cast<Item*>(intPtr);
-		}
-
-		bool GetLastBit() const MOMO_NOEXCEPT
-		{
-			return (mIntPtr & 1) != 0;
+			return mPtr;
 		}
 
 	private:
-		uint32_t mIntPtr;
+		Item* mPtr;
 	};
 
 	template<typename Item>
 	class BucketLimP4Pointer<Item, 8>
 	{
 	public:
-		void Set(Item* ptr, bool lastBit) MOMO_NOEXCEPT
+		void Set(Item* ptr) MOMO_NOEXCEPT
 		{
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			MOMO_ASSERT((intPtr & 1) == 0);
-			mIntPtr1 = (uint32_t)intPtr | (uint32_t)(lastBit ? 1 : 0);
+			mIntPtr1 = (uint32_t)intPtr;
 			mIntPtr2 = (uint32_t)(intPtr >> 32);
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
 			uint64_t intPtr = ((uint64_t)mIntPtr2 << 32) | (uint64_t)mIntPtr1;
-			intPtr &= ~(uint64_t)1;
 			return reinterpret_cast<Item*>(intPtr);
-		}
-
-		bool GetLastBit() const MOMO_NOEXCEPT
-		{
-			return (mIntPtr1 & 1) != 0;
 		}
 
 	private:
@@ -97,11 +82,9 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		static const size_t itemAlignment = (ItemTraits::alignment > 1) ? ItemTraits::alignment : 2;
-
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			itemAlignment, MemPoolParams::blockCount,
+			ItemTraits::alignment, MemPoolParams::blockCount,
 			(memPoolIndex <= maxCount) ? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
@@ -112,6 +95,8 @@ namespace internal
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
 		typedef BucketLimP4Pointer<Item> Pointer;
+
+		static const uint8_t emptyHash = 240;
 
 	public:
 		class Params
@@ -176,8 +161,7 @@ namespace internal
 		{
 			uint8_t hashByte = pvGetHashByte(hashCode);
 			const Item* items = mItemPtr.GetPointer();
-			size_t count = pvGetCount();
-			for (size_t i = 0; i < count; ++i)
+			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashesState[i] == hashByte && pred(items[i]))
 					return items + i;
@@ -187,8 +171,6 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 1 && mItemPtr.GetPointer() == nullptr)
-				return false;
 			return pvGetCount() == maxCount;
 		}
 
@@ -241,7 +223,7 @@ namespace internal
 				else
 				{
 					itemCreator(items + count);
-					pvSetHash(count, hashCode);
+					mHashesState[count] = pvGetHashByte(hashCode);
 					pvSetState(items, memPoolIndex, count + 1);
 					return items + count;
 				}
@@ -253,10 +235,10 @@ namespace internal
 			Item* items = mItemPtr.GetPointer();
 			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
+			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (count == 1)
 			{
 				MOMO_ASSERT(index == 0);
-				size_t memPoolIndex = pvGetMemPoolIndex();
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
 					memPoolIndex = 1;
@@ -265,53 +247,45 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(index < count);
-				size_t hashCode = (size_t)mHashesState[count - 1] << (sizeof(size_t) * 8 - 8);
-				pvSetHash(index, hashCode);
-				pvSetState(items, pvGetMemPoolIndex(), count - 1);
+				mHashesState[index] = mHashesState[count - 1];
+				mHashesState[count - 1] = emptyHash;
+				pvSetState(items, memPoolIndex, count - 1);
 			}
 		}
 
 	private:
 		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
+			for (uint8_t& h : mHashesState)
+				h = emptyHash;
 			pvSetState(nullptr, memPoolIndex, 0);
 		}
 
 		void pvSetState(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
+			mItemPtr.Set(items);
 			if (maxCount < 4 || count < 4)
-			{
-				mItemPtr.Set(items, false);
-				mHashesState[3] = (uint8_t)(((memPoolIndex - 1) << 2) | count);
-			}
-			else
-			{
-				mItemPtr.Set(items, true);
-			}
+				mHashesState[3] = emptyHash + (uint8_t)((count << 2) | (memPoolIndex - 1));
 		}
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 4 && mItemPtr.GetLastBit())
+			if (maxCount == 4 && mHashesState[3] < emptyHash)
 				return 4;
-			return (size_t)(mHashesState[3] >> 2) + 1;
+			return (size_t)(mHashesState[3] & 3) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 4 && mItemPtr.GetLastBit())
+			if (maxCount == 4 && mHashesState[3] < emptyHash)
 				return 4;
-			return (size_t)(mHashesState[3] & 3);
+			return (size_t)((mHashesState[3] >> 2) & 3);
 		}
 
 		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
 		{
-			return (uint8_t)(hashCode >> (sizeof(size_t) * 8 - 8));
-		}
-
-		void pvSetHash(size_t index, size_t hashCode) MOMO_NOEXCEPT
-		{
-			mHashesState[index] = pvGetHashByte(hashCode);
+			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
+			return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
@@ -320,8 +294,8 @@ namespace internal
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
 			itemCreator(items);
+			mHashesState[0] = pvGetHashByte(hashCode);
 			pvSetState(memory.Extract(), memPoolIndex, 1);
-			pvSetHash(0, hashCode);
 			return items;
 		}
 
@@ -337,7 +311,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			pvSetHash(count, hashCode);
+			mHashesState[count] = pvGetHashByte(hashCode);
 			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			return newItems + count;
 		}
