@@ -139,10 +139,10 @@ private:
 	typedef internal::UIntMath<size_t> SMath;
 	typedef internal::UIntMath<uintptr_t> PMath;
 
-	struct BufferChars
+	struct BufferBytes
 	{
-		signed char firstFreeBlockIndex;
-		signed char freeBlockCount;
+		int8_t firstFreeBlockIndex;
+		int8_t freeBlockCount;
 	};
 
 	struct BufferPointers
@@ -383,47 +383,47 @@ private:
 
 	size_t pvNewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
 	{
-		BufferChars& chars = pvGetBufferChars(buffer);
-		block = pvGetNextFreeBlockIndex(buffer, chars.firstFreeBlockIndex);
-		chars.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
-		--chars.freeBlockCount;
-		return (size_t)chars.freeBlockCount;
+		BufferBytes& bytes = pvGetBufferBytes(buffer);
+		block = pvGetNextFreeBlockIndex(buffer, bytes.firstFreeBlockIndex);
+		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
+		--bytes.freeBlockCount;
+		return (size_t)bytes.freeBlockCount;
 	}
 
 	size_t pvDeleteBlock(uintptr_t block, uintptr_t& buffer) MOMO_NOEXCEPT
 	{
-		signed char blockIndex = pvGetBlockIndex(block, buffer);
-		BufferChars& chars = pvGetBufferChars(buffer);
-		pvGetNextFreeBlockIndex(block) = chars.firstFreeBlockIndex;
-		chars.firstFreeBlockIndex = blockIndex;
-		++chars.freeBlockCount;
-		return (size_t)chars.freeBlockCount;
+		int8_t blockIndex = pvGetBlockIndex(block, buffer);
+		BufferBytes& bytes = pvGetBufferBytes(buffer);
+		pvGetNextFreeBlockIndex(block) = bytes.firstFreeBlockIndex;
+		bytes.firstFreeBlockIndex = blockIndex;
+		++bytes.freeBlockCount;
+		return (size_t)bytes.freeBlockCount;
 	}
 
-	signed char& pvGetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
+	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
 	{
-		return *reinterpret_cast<signed char*>(block);
+		return *reinterpret_cast<int8_t*>(block);
 	}
 
-	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, signed char index) const MOMO_NOEXCEPT
+	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const MOMO_NOEXCEPT
 	{
 		return buffer + (intptr_t)index * (intptr_t)Params::blockSize
 			+ ((intptr_t)Params::blockAlignment & -(intptr_t)(index >= 0));
 	}
 
-	signed char pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
+	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
 		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
 		{
 			buffer = block - index * Params::blockSize - Params::blockAlignment;
-			return (signed char)index;
+			return (int8_t)index;
 		}
 		else
 		{
 			buffer = block + (Params::blockCount - index) * Params::blockSize;
-			return (signed char)index - (signed char)Params::blockCount;
+			return (int8_t)index - (int8_t)Params::blockCount;
 		}
 	}
 
@@ -437,11 +437,11 @@ private:
 		if (((block / Params::blockSize) % Params::blockCount) == 0)
 			block += Params::blockAlignment;
 		uintptr_t buffer;
-		signed char blockIndex = pvGetBlockIndex(block, buffer);
+		int8_t blockIndex = pvGetBlockIndex(block, buffer);
 		pvGetFirstBlockIndex(buffer) = blockIndex;
-		BufferChars& chars = pvGetBufferChars(buffer);
-		chars.firstFreeBlockIndex = blockIndex;
-		chars.freeBlockCount = (signed char)Params::blockCount;
+		BufferBytes& bytes = pvGetBufferBytes(buffer);
+		bytes.firstFreeBlockIndex = blockIndex;
+		bytes.freeBlockCount = (int8_t)Params::blockCount;
 		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		pointers.prevBuffer = nullPtr;
 		pointers.nextBuffer = nullPtr;
@@ -452,7 +452,7 @@ private:
 			pvGetNextFreeBlockIndex(block) = blockIndex;
 			block = pvGetNextFreeBlockIndex(buffer, blockIndex);
 		}
-		pvGetNextFreeBlockIndex(block) = (signed char)(-128);
+		pvGetNextFreeBlockIndex(block) = (int8_t)(-128);
 		return buffer;
 	}
 
@@ -481,17 +481,17 @@ private:
 			+ ((Params::blockAlignment <= 2) ? 2 : 0);
 	}
 
-	signed char& pvGetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
+	int8_t& pvGetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
 	{
-		return *reinterpret_cast<signed char*>(buffer);
+		return *reinterpret_cast<int8_t*>(buffer);
 	}
 
-	BufferChars& pvGetBufferChars(uintptr_t buffer) MOMO_NOEXCEPT
+	BufferBytes& pvGetBufferBytes(uintptr_t buffer) MOMO_NOEXCEPT
 	{
 		if (Params::blockAlignment > 2)
-			return *reinterpret_cast<BufferChars*>(buffer + 1);
+			return *reinterpret_cast<BufferBytes*>(buffer + 1);
 		else
-			return *reinterpret_cast<BufferChars*>(&pvGetBufferPointers(buffer) + 1);
+			return *reinterpret_cast<BufferBytes*>(&pvGetBufferPointers(buffer) + 1);
 	}
 
 	BufferPointers& pvGetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
