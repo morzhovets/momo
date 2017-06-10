@@ -121,7 +121,7 @@ private:
 
 	typedef internal::MapValueReferencer<HashMap> ValueReferencer;
 
-	typedef typename HashSet::ExtractedItem SetExtractedItem;
+	typedef typename HashSet::ExtractedItem HashSetExtractedItem;
 
 	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
 	typedef internal::HashDerivedIterator<typename HashSetConstBucketBounds::Iterator,
@@ -139,7 +139,7 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
-	typedef internal::MapExtractedPair<SetExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<HashSetExtractedItem> ExtractedPair;
 
 	typedef internal::HashDerivedBucketBounds<BucketIterator,
 		HashSetConstBucketBounds> BucketBounds;
@@ -159,7 +159,7 @@ private:
 
 	struct ExtractedPairProxy : private ExtractedPair
 	{
-		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, HashSetExtractedItem&)
 	};
 
 	struct ConstBucketBoundsProxy : public ConstBucketBounds

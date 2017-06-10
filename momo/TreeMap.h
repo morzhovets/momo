@@ -159,7 +159,7 @@ private:
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
-	typedef typename TreeSet::ExtractedItem SetExtractedItem;
+	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
 
 public:
 	typedef internal::TreeDerivedIterator<TreeSetConstIterator, Reference> Iterator;
@@ -170,7 +170,7 @@ public:
 	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
 	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
 
-	typedef internal::MapExtractedPair<SetExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
 
 private:
 	struct ConstIteratorProxy : public ConstIterator
@@ -186,7 +186,7 @@ private:
 
 	struct ExtractedPairProxy : private ExtractedPair
 	{
-		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, SetExtractedItem&)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, TreeSetExtractedItem&)
 	};
 
 public:
