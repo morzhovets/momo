@@ -82,11 +82,13 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = (unsigned char)i;
 
+		std::mt19937 mt;
+
 		{
 			std::set<unsigned char> sset;
 			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> mset;
 
-			std::shuffle(array, array + count, std::mt19937());
+			std::shuffle(array, array + count, mt);
 			for (unsigned char c : array)
 			{
 				sset.insert(c);
@@ -95,7 +97,7 @@ public:
 				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
 			}
 
-			std::shuffle(array, array + count, std::mt19937());
+			std::shuffle(array, array + count, mt);
 			for (unsigned char c : array)
 			{
 				sset.erase(c);

@@ -179,16 +179,18 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = (unsigned char)i;
 
+		std::mt19937 mt;
+
 		typedef TemplItem<size, alignment> Item;
 		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>> HashSet;
 		HashSet set;
 
-		std::shuffle(array, array + count, std::mt19937());
+		std::shuffle(array, array + count, mt);
 		for (unsigned char c : array)
 			assert(set.Insert(Item(c)).inserted);
 		assert(set.GetCount() == count);
 
-		std::shuffle(array, array + count, std::mt19937());
+		std::shuffle(array, array + count, mt);
 		for (unsigned char c : array)
 			assert(set.Remove(Item(c)));
 		assert(set.IsEmpty());
