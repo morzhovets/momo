@@ -125,8 +125,7 @@ namespace internal
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
 			mState = (uint8_t)0;
-			for (uint8_t& h : mHashes)
-				h = emptyHash;
+			std::fill_n(mHashes, maxCount, (uint8_t)emptyHash);
 		}
 
 	private:

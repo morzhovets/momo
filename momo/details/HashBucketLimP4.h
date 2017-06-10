@@ -21,46 +21,38 @@ namespace momo
 namespace internal
 {
 	template<typename Item, size_t size = sizeof(Item*)>
-	class BucketLimP4Pointer;
+	struct BucketLimP4PointerSelector;
 
 	template<typename Item>
-	class BucketLimP4Pointer<Item, 4>
+	struct BucketLimP4PointerSelector<Item, 4>
 	{
-	public:
-		void Set(Item* ptr) MOMO_NOEXCEPT
-		{
-			mPtr = ptr;
-		}
-
-		Item* GetPointer() const MOMO_NOEXCEPT
-		{
-			return mPtr;
-		}
-
-	private:
-		Item* mPtr;
+		typedef Item* Pointer;
 	};
 
 	template<typename Item>
-	class BucketLimP4Pointer<Item, 8>
+	struct BucketLimP4PointerSelector<Item, 8>
 	{
-	public:
-		void Set(Item* ptr) MOMO_NOEXCEPT
+		class Pointer
 		{
-			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			mIntPtr1 = (uint32_t)intPtr;
-			mIntPtr2 = (uint32_t)(intPtr >> 32);
-		}
+		public:
+			Pointer& operator=(Item* ptr) MOMO_NOEXCEPT
+			{
+				uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
+				mIntPtr1 = (uint32_t)intPtr;
+				mIntPtr2 = (uint32_t)(intPtr >> 32);
+				return *this;
+			}
 
-		Item* GetPointer() const MOMO_NOEXCEPT
-		{
-			uint64_t intPtr = ((uint64_t)mIntPtr2 << 32) | (uint64_t)mIntPtr1;
-			return reinterpret_cast<Item*>(intPtr);
-		}
+			operator Item*() const MOMO_NOEXCEPT
+			{
+				uint64_t intPtr = ((uint64_t)mIntPtr2 << 32) | (uint64_t)mIntPtr1;
+				return reinterpret_cast<Item*>(intPtr);
+			}
 
-	private:
-		uint32_t mIntPtr1;
-		uint32_t mIntPtr2;
+		private:
+			uint32_t mIntPtr1;
+			uint32_t mIntPtr2;
+		};
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
@@ -94,7 +86,7 @@ namespace internal
 		template<size_t memPoolIndex>
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
-		typedef BucketLimP4Pointer<Item> Pointer;
+		typedef typename BucketLimP4PointerSelector<Item>::Pointer Pointer;
 
 		static const uint8_t emptyHash = 240;
 
@@ -146,21 +138,21 @@ namespace internal
 
 		~BucketLimP4() MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mItemPtr.GetPointer() == nullptr);
+			MOMO_ASSERT(mItemPtr == nullptr);
 		}
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(mItemPtr.GetPointer(), pvGetCount());
+			return Bounds(mItemPtr, pvGetCount());
 		}
 
 		template<typename Predicate>
 		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
 		{
 			uint8_t hashByte = pvGetHashByte(hashCode);
-			const Item* items = mItemPtr.GetPointer();
+			const Item* items = mItemPtr;
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashesState[i] == hashByte && pred(items[i]))
@@ -181,7 +173,7 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			Item* items = mItemPtr.GetPointer();
+			Item* items = mItemPtr;
 			if (items != nullptr)
 			{
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
@@ -193,7 +185,7 @@ namespace internal
 		template<typename ItemCreator>
 		Item* AddBackCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
-			Item* items = mItemPtr.GetPointer();
+			Item* items = mItemPtr;
 			if (items == nullptr)
 			{
 				if (pvGetMemPoolIndex() == 1)
@@ -232,7 +224,7 @@ namespace internal
 
 		void AcceptRemove(Params& params, size_t index) MOMO_NOEXCEPT
 		{
-			Item* items = mItemPtr.GetPointer();
+			Item* items = mItemPtr;
 			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
 			size_t memPoolIndex = pvGetMemPoolIndex();
@@ -256,14 +248,13 @@ namespace internal
 	private:
 		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			for (uint8_t& h : mHashesState)
-				h = emptyHash;
+			std::fill_n(mHashesState, 4, (uint8_t)emptyHash);
 			pvSetState(nullptr, memPoolIndex, 0);
 		}
 
 		void pvSetState(Item* items, size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
 		{
-			mItemPtr.Set(items);
+			mItemPtr = items;
 			if (maxCount < 4 || count < 4)
 				mHashesState[3] = emptyHash + (uint8_t)((count << 2) | (memPoolIndex - 1));
 		}
