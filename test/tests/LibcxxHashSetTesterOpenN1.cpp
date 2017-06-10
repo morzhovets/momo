@@ -3,7 +3,7 @@
   This file is distributed under the MIT License.
   See accompanying file LICENSE for details.
 
-  tests/LibcxxHashSetTesterOpen1.cpp
+  tests/LibcxxHashSetTesterOpenN1.cpp
 
 \**********************************************************/
 
@@ -15,8 +15,8 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOpen1<1>
-#define LIBCXX_TEST_BUCKET_NAME "open1"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN1<1>
+#define LIBCXX_TEST_BUCKET_NAME "openn1"
 
 #include "LibcxxHashSetTester.h"
 
