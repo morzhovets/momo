@@ -65,11 +65,12 @@
 
 <Type Name="momo::internal::BucketLimP4&lt;*&gt;">
     <DisplayString Condition="*(Item**)&amp;mItemPtr == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="*(Item**)&amp;mItemPtr != 0">{{ Count={((mCodeState >> 28) &amp; 3) + 1} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
+    <DisplayString Condition="mHashesState[3] >= 240">{{ Count={((mHashesState[3] >> 2) &amp; 3)} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
+    <DisplayString Condition="mHashesState[3] &lt; 240">{{ Count=4 FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) &amp; 3) + 1</Item>
+        <Item Name="[Count]">mHashesState[3] >= 240 ? (mHashesState[3] >> 2) &amp; 3 : 4</Item>
         <ArrayItems>
-            <Size>*(Item**)&amp;mItemPtr == 0 ? 0 : ((mCodeState >> 28) &amp; 3) + 1</Size>
+            <Size>mHashesState[3] >= 240 ? (mHashesState[3] >> 2) &amp; 3 : 4</Size>
             <ValuePointer>*(Item**)&amp;mItemPtr</ValuePointer>
         </ArrayItems>
     </Expand>
@@ -88,12 +89,12 @@
 </Type>
 
 <Type Name="momo::internal::BucketOneIA&lt;*&gt;">
-    <DisplayString Condition="(mCodeState &amp; 1) == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(mCodeState &amp; 1) != 0">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
+    <DisplayString Condition="(mHashState &amp; 1) == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="(mHashState &amp; 1) != 0">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">(mCodeState &amp; 1) != 0 ? 1 : 0</Item>
+        <Item Name="[Count]">(mHashState &amp; 1) != 0 ? 1 : 0</Item>
         <ArrayItems>
-            <Size>(mCodeState &amp; 1) != 0 ? 1 : 0</Size>
+            <Size>(mHashState &amp; 1) != 0 ? 1 : 0</Size>
             <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
         </ArrayItems>
     </Expand>
