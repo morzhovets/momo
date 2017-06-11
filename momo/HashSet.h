@@ -511,7 +511,7 @@ public:
 			{
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams,
+				(*mBuckets)[bucketIndex].AddCrt(bucketParams,
 					Creator<const Item&>(GetMemManager(), item), hashCode);
 			}
 		}
@@ -1020,7 +1020,7 @@ private:
 	{
 		bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 		Bucket& bucket = (*mBuckets)[bucketIndex];
-		return bucket.AddBackCrt(mBuckets->GetBucketParams(), itemCreator, hashCode);
+		return bucket.AddCrt(mBuckets->GetBucketParams(), itemCreator, hashCode);
 	}
 
 	template<typename ItemCreator>
@@ -1048,7 +1048,7 @@ private:
 		try
 		{
 			bucketIndex = pvGetBucketIndexForAdd(*newBuckets, hashCode);
-			pitem = (*newBuckets)[bucketIndex].AddBackCrt(newBuckets->GetBucketParams(),
+			pitem = (*newBuckets)[bucketIndex].AddCrt(newBuckets->GetBucketParams(),
 				itemCreator, hashCode);
 		}
 		catch (...)
@@ -1109,6 +1109,7 @@ private:
 			buckets->ExtractNextBuckets();
 		}
 		const HashTraits& hashTraits = GetHashTraits();
+		MemManager& memManager = GetMemManager();
 		BucketParams& bucketParams = buckets->GetBucketParams();
 		for (Bucket& bucket : *buckets)
 		{
@@ -1118,13 +1119,13 @@ private:
 				--pitem;
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
-				auto relocateCreator = [this, pitem] (Item* newItem)
-					{ ItemTraits::Relocate(&GetMemManager(), *pitem, newItem); };
-				(*mBuckets)[bucketIndex].AddBackCrt(bucketParams, relocateCreator, hashCode);
+				auto relocateCreator = [&memManager, pitem] (Item* newItem)
+					{ ItemTraits::Relocate(&memManager, *pitem, newItem); };
+				(*mBuckets)[bucketIndex].AddCrt(bucketParams, relocateCreator, hashCode);
 				bucket.AcceptRemove(bucketParams, pitem - bucketBounds.GetBegin());
 			}
 		}
-		buckets->Destroy(GetMemManager(), false);
+		buckets->Destroy(memManager, false);
 	}
 
 private:

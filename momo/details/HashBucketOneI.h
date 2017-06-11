@@ -79,7 +79,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddBackCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Item* AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
