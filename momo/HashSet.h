@@ -196,7 +196,7 @@ namespace internal
 	private:
 		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
 
-		typedef internal::BucketBounds<Item> BucketBounds;
+		typedef typename Bucket::Bounds BucketBounds;
 
 	public:
 		HashSetConstIterator() MOMO_NOEXCEPT
@@ -419,17 +419,16 @@ private:
 	typedef typename HashBucket::template Bucket<BucketItemTraits> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
+	typedef typename Bucket::Bounds BucketBounds;
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
-
-	typedef internal::BucketBounds<Item> BucketBounds;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
-	typedef ConstIterator Iterator;
+	typedef ConstIterator Iterator;	//?
 
 	typedef internal::InsertResult<ConstIterator> InsertResult;
 
@@ -446,11 +445,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetHashCode, size_t)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBuckets, Buckets*)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
-	};
-
-	struct ConstBucketBoundsProxy : public ConstBucketBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
 	};
 
 public:
@@ -861,7 +855,7 @@ public:
 			BucketParams& bucketParams = bkts->GetBucketParams();
 			size_t curBucketCount = bkts->GetCount();
 			if (curBucketIndex < curBucketCount)
-				return ConstBucketBoundsProxy((*bkts)[curBucketIndex].GetBounds(bucketParams));
+				return (*bkts)[curBucketIndex].GetBounds(bucketParams);
 			curBucketIndex -= curBucketCount;
 		}
 		MOMO_ASSERT(false);
