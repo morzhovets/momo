@@ -182,6 +182,18 @@ namespace internal
 		Reference mReference;
 	};
 
+	template<typename Iterator>
+	struct ConstIteratorSelector
+	{
+		typedef typename Iterator::ConstIterator ConstIterator;
+	};
+
+	template<typename Object>
+	struct ConstIteratorSelector<Object*>
+	{
+		typedef const Object* ConstIterator;
+	};
+
 	template<typename TBaseIterator, typename TReference>
 	class HashDerivedIterator
 	{
@@ -193,7 +205,7 @@ namespace internal
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef HashDerivedIterator<typename BaseIterator::ConstIterator,
+		typedef HashDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
 			typename Reference::ConstReference> ConstIterator;
 
 	private:
@@ -263,7 +275,7 @@ namespace internal
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef TreeDerivedIterator<typename BaseIterator::ConstIterator,
+		typedef TreeDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
 			typename Reference::ConstReference> ConstIterator;
 
 	private:
@@ -338,7 +350,7 @@ namespace internal
 	public:
 		typedef BucketIterator Iterator;
 
-		typedef HashDerivedBucketBounds<typename BucketIterator::ConstIterator,
+		typedef HashDerivedBucketBounds<typename ConstIteratorSelector<Iterator>::ConstIterator,
 			typename BaseBucketBounds::ConstBounds> ConstBounds;
 
 	private:

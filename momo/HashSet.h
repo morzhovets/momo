@@ -24,7 +24,6 @@
 #include "HashTraits.h"
 #include "SetUtility.h"
 #include "IteratorUtility.h"
-#include "Array.h"
 
 namespace momo
 {
@@ -425,8 +424,6 @@ private:
 
 	typedef internal::BucketBounds<Item> BucketBounds;
 
-	typedef internal::ArrayPtrIterator<const Item, Settings> ConstBucketIterator;
-
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
@@ -438,7 +435,7 @@ public:
 
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
-	typedef internal::HashDerivedBucketBounds<ConstBucketIterator, BucketBounds> ConstBucketBounds;
+	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 private:
 	struct ConstIteratorProxy : public ConstIterator
