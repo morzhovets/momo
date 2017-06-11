@@ -222,7 +222,8 @@ namespace internal
 			}
 		}
 
-		void AcceptRemove(Params& params, size_t index) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
 			Item* items = mItemPtr;
 			MOMO_ASSERT(items != nullptr);
@@ -230,18 +231,23 @@ namespace internal
 			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (count == 1)
 			{
-				MOMO_ASSERT(index == 0);
+				MOMO_ASSERT(pitem == items);
+				itemReplacer(*items, *items);
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
 					memPoolIndex = 1;
 				pvSetState0(memPoolIndex);
+				return nullptr;
 			}
 			else
 			{
+				size_t index = pitem - items;
 				MOMO_ASSERT(index < count);
+				itemReplacer(items[count - 1], items[index]);
 				mHashesState[index] = mHashesState[count - 1];
 				mHashesState[count - 1] = emptyHash;
 				pvSetState(items, memPoolIndex, count - 1);
+				return items + index;
 			}
 		}
 

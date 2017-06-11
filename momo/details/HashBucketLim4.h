@@ -209,20 +209,33 @@ namespace internal
 			}
 		}
 
-		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Data data = pvGetData();
-			if (data.count == 1)
+			size_t count = data.count;
+			uint32_t ptr = data.pointer;
+			size_t memPoolIndex = pvGetMemPoolIndex();
+			MemPool& memPool = params.GetMemPool(memPoolIndex);
+			Item* items = memPool.template GetRealPointer<Item>(ptr);
+			if (count == 1)
 			{
+				MOMO_ASSERT(pitem == items);
+				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(data.pointer);
+				memPool.Deallocate(ptr);
 				mPtrState = (memPoolIndex < pvGetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
+				return nullptr;
 			}
 			else
 			{
+				size_t index = pitem - items;
+				MOMO_ASSERT(index < count);
+				itemReplacer(items[count - 1], items[index]);
 				--mPtrState;
+				return items + index;
 			}
 		}
 

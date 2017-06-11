@@ -101,13 +101,17 @@ namespace internal
 			return pitem;
 		}
 
-		void AcceptRemove(Params& /*params*/, size_t index) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			MOMO_ASSERT(count > 0);
+			size_t index = pitem - &mItems[0];
+			MOMO_ASSERT(index < count);
+			itemReplacer(*&mItems[count - 1], *&mItems[index]);
 			mHashes[index] = mHashes[count - 1];
 			mHashes[count - 1] = emptyHash;
 			--mState;
+			return &mItems[index];
 		}
 
 	private:

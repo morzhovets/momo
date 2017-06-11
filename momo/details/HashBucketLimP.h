@@ -195,19 +195,28 @@ namespace internal
 			}
 		}
 
-		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
+			Item* items = pvGetItems();
 			if (count == 1)
 			{
+				MOMO_ASSERT(pitem == items);
+				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(pvGetPtr());
 				mPtr = (memPoolIndex < pvGetMemPoolIndex(maxCount)) ? ptrNull : ptrNullWasFull;
+				return nullptr;
 			}
 			else
 			{
+				size_t index = pitem - items;
+				MOMO_ASSERT(index < count);
+				itemReplacer(items[count - 1], items[index]);
 				--*pvGetPtr();
+				return items + index;
 			}
 		}
 
@@ -446,20 +455,30 @@ namespace internal
 			}
 		}
 
-		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Bounds bounds = pvGetBounds();
-			if (bounds.GetCount() == 1)
+			Item* items = bounds.GetBegin();
+			size_t count = bounds.GetCount();
+			if (count == 1)
 			{
+				MOMO_ASSERT(pitem == items);
+				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
-				params.GetMemPool(memPoolIndex).Deallocate(bounds.GetBegin());
+				params.GetMemPool(memPoolIndex).Deallocate(items);
 				mPtrState = (memPoolIndex < pvGetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
+				return nullptr;
 			}
 			else
 			{
+				size_t index = pitem - items;
+				MOMO_ASSERT(index < count);
+				itemReplacer(items[count - 1], items[index]);
 				mPtrState -= modMemPoolIndex;
+				return items + index;
 			}
 		}
 

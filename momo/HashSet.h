@@ -1071,18 +1071,12 @@ private:
 		BucketParams& bucketParams = buckets->GetBucketParams();
 		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
 		Bucket& bucket = (*buckets)[bucketIndex];
-		BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
-		Item* bucketBegin = bucketBounds.GetBegin();
-		Item& bucketBack = *(bucketBounds.GetEnd() - 1);
-		size_t itemIndex = std::addressof(*iter) - bucketBegin;
-		replaceFunc(bucketBack, bucketBegin[itemIndex]);
-		bucket.AcceptRemove(bucketParams, itemIndex);
+		Item* pitem = bucket.Remove(bucketParams, std::addressof(*iter), replaceFunc);
 		--mCount;
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
 			return ConstIterator();
-		return pvMakeIterator(*buckets, bucketIndex,
-			bucket.GetBounds(bucketParams).GetBegin() + itemIndex, true);
+		return pvMakeIterator(*buckets, bucketIndex, pitem, true);
 	}
 
 	void pvMoveItems() MOMO_NOEXCEPT
@@ -1108,22 +1102,22 @@ private:
 			pvMoveItems(nextBuckets);
 			buckets->ExtractNextBuckets();
 		}
-		const HashTraits& hashTraits = GetHashTraits();
 		MemManager& memManager = GetMemManager();
 		BucketParams& bucketParams = buckets->GetBucketParams();
+		auto itemReplacer = [this, &memManager, &bucketParams] (Item& /*backItem*/, Item& item)
+		{
+			size_t hashCode = GetHashTraits().GetHashCode(ItemTraits::GetKey(item));
+			size_t bucketIndexForAdd = pvGetBucketIndexForAdd(*mBuckets, hashCode);
+			auto relocateCreator = [&memManager, &item] (Item* newItem)
+				{ ItemTraits::Relocate(&memManager, item, newItem); };
+			(*mBuckets)[bucketIndexForAdd].AddCrt(bucketParams, relocateCreator, hashCode);
+		};
 		for (Bucket& bucket : *buckets)
 		{
 			BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
-			for (Item* pitem = bucketBounds.GetEnd(); pitem != bucketBounds.GetBegin(); )
-			{
-				--pitem;
-				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(*pitem));
-				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
-				auto relocateCreator = [&memManager, pitem] (Item* newItem)
-					{ ItemTraits::Relocate(&memManager, *pitem, newItem); };
-				(*mBuckets)[bucketIndex].AddCrt(bucketParams, relocateCreator, hashCode);
-				bucket.AcceptRemove(bucketParams, pitem - bucketBounds.GetBegin());
-			}
+			Item* pitem = bucketBounds.GetEnd();
+			for (size_t c = bucketBounds.GetCount(); c > 0; --c)
+				pitem = bucket.Remove(bucketParams, pitem - 1, itemReplacer);
 		}
 		buckets->Destroy(memManager, false);
 	}

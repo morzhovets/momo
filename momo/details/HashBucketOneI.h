@@ -87,10 +87,15 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		void AcceptRemove(Params& /*params*/, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
+			(void)pitem;
+			MOMO_ASSERT(pitem == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
+			itemReplacer(*&mItemBuffer, *&mItemBuffer);
 			pvSetState(HashBucketOneState::removed);
+			return nullptr;
 		}
 
 	private:

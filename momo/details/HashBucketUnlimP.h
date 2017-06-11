@@ -126,9 +126,16 @@ namespace internal
 			return GetBounds(params).GetEnd() - 1;
 		}
 
-		void AcceptRemove(Params& params, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
+			Bounds bounds = GetBounds(params);
+			size_t count = bounds.GetCount();
+			size_t index = pitem - bounds.GetBegin();
+			MOMO_ASSERT(index < count);
+			itemReplacer(bounds[count - 1], bounds[index]);
 			mArrayBucket.RemoveBack(params);
+			return GetBounds(params).GetBegin() + index;
 		}
 
 	private:

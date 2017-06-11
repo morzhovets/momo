@@ -97,10 +97,15 @@ namespace internal
 			return pitem;
 		}
 
-		void AcceptRemove(Params& /*params*/, size_t /*index*/) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
-			MOMO_ASSERT(pvGetCount() > 0);
+			size_t count = pvGetCount();
+			size_t index = pitem - &mItems[0];
+			MOMO_ASSERT(index < count);
+			itemReplacer(*&mItems[count - 1], *&mItems[index]);
 			--mState;
+			return &mItems[index];
 		}
 
 	private:

@@ -119,12 +119,15 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		void AcceptRemove(Params& /*params*/, size_t index) MOMO_NOEXCEPT
+		template<typename ItemReplacer>
+		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
 		{
-			(void)index;
-			MOMO_ASSERT(index == 0);
+			(void)pitem;
+			MOMO_ASSERT(pitem == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
+			itemReplacer(*&mItemBuffer, *&mItemBuffer);
 			mHashState = (HashState)2;
+			return nullptr;
 		}
 
 	private:
