@@ -37,7 +37,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef Item* Iterator;
-		typedef BucketBounds<Item> Bounds;
+		typedef BucketBounds<Iterator> Bounds;
 
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;

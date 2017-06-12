@@ -12,31 +12,31 @@
 
 #pragma once
 
-#include "../Utility.h"
+#include "../IteratorUtility.h"
 
 namespace momo
 {
 
 namespace internal
 {
-	template<typename TItem>
+	template<typename TIterator>
 	class BucketBounds
 	{
 	public:
-		typedef TItem Item;
+		typedef TIterator Iterator;
 
-		typedef Item* Iterator;
+		typedef BucketBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
 
-		typedef BucketBounds<const Item> ConstBounds;
+		typedef typename std::iterator_traits<Iterator>::reference Reference;
 
 	public:
 		BucketBounds() MOMO_NOEXCEPT
-			: mBegin(nullptr),
+			: mBegin(),
 			mCount(0)
 		{
 		}
 
-		BucketBounds(Item* begin, size_t count) MOMO_NOEXCEPT
+		BucketBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
 			: mBegin(begin),
 			mCount(count)
 		{
@@ -47,31 +47,31 @@ namespace internal
 			return ConstBounds(mBegin, mCount);
 		}
 
-		Item* GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
 			return mBegin;
 		}
 
-		Item* GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
 			return mBegin + mCount;
 		}
 
-		MOMO_FRIENDS_BEGIN_END(const BucketBounds&, Item*)
+		MOMO_FRIENDS_BEGIN_END(const BucketBounds&, Iterator)
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return mCount;
 		}
 
-		Item& operator[](size_t index) const MOMO_NOEXCEPT
+		Reference operator[](size_t index) const MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(index < mCount);
 			return mBegin[index];
 		}
 
 	private:
-		Item* mBegin;
+		Iterator mBegin;
 		size_t mCount;
 	};
 
@@ -146,7 +146,6 @@ namespace internal
 	private:
 		MemManager& mMemManager;
 	};
-
 
 	template<size_t tMaxCount>
 	struct HashBucketBase

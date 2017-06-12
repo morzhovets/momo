@@ -68,8 +68,9 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
-		typedef Item* Iterator;
+		//typedef Item* Iterator;
 		typedef typename ArrayBucket::Bounds Bounds;
+		typedef typename Bounds::Iterator Iterator;
 
 		typedef typename ArrayBucket::Params Params;
 

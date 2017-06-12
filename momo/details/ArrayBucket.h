@@ -90,7 +90,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
-		typedef BucketBounds<Item> Bounds;
+		typedef BucketBounds<Item*> Bounds;
 		typedef typename Bounds::ConstBounds ConstBounds;
 
 	private:
