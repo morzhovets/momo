@@ -79,7 +79,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
@@ -88,10 +88,10 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
 		{
-			(void)pitem;
-			MOMO_ASSERT(pitem == &mItemBuffer);
+			(void)iter;
+			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
 			itemReplacer(*&mItemBuffer, *&mItemBuffer);
 			mState = HashBucketOneState::removed;

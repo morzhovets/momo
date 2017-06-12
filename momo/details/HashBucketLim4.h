@@ -169,7 +169,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 			{
@@ -216,7 +216,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Data data = pvGetData();
@@ -227,7 +227,7 @@ namespace internal
 			Item* items = memPool.template GetRealPointer<Item>(ptr);
 			if (count == 1)
 			{
-				MOMO_ASSERT(pitem == items);
+				MOMO_ASSERT(iter == items);
 				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				memPool.Deallocate(ptr);
@@ -237,7 +237,7 @@ namespace internal
 			}
 			else
 			{
-				size_t index = pitem - items;
+				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
 				itemReplacer(items[count - 1], items[index]);
 				--mPtrState;

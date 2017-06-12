@@ -184,7 +184,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
 			Item* items = mItemPtr;
 			if (items == nullptr)
@@ -224,7 +224,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			Item* items = mItemPtr;
 			MOMO_ASSERT(items != nullptr);
@@ -232,7 +232,7 @@ namespace internal
 			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (count == 1)
 			{
-				MOMO_ASSERT(pitem == items);
+				MOMO_ASSERT(iter == items);
 				itemReplacer(*items, *items);
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
@@ -242,7 +242,7 @@ namespace internal
 			}
 			else
 			{
-				size_t index = pitem - items;
+				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
 				itemReplacer(items[count - 1], items[index]);
 				mHashesState[index] = mHashesState[count - 1];

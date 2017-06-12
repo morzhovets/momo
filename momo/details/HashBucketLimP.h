@@ -156,7 +156,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 			{
@@ -197,14 +197,14 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
 			Item* items = pvGetItems();
 			if (count == 1)
 			{
-				MOMO_ASSERT(pitem == items);
+				MOMO_ASSERT(iter == items);
 				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(pvGetPtr());
@@ -213,7 +213,7 @@ namespace internal
 			}
 			else
 			{
-				size_t index = pitem - items;
+				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
 				itemReplacer(items[count - 1], items[index]);
 				--*pvGetPtr();
@@ -415,7 +415,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 			{
@@ -458,7 +458,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Bounds bounds = pvGetBounds();
@@ -466,7 +466,7 @@ namespace internal
 			size_t count = bounds.GetCount();
 			if (count == 1)
 			{
-				MOMO_ASSERT(pitem == items);
+				MOMO_ASSERT(iter == items);
 				itemReplacer(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
@@ -476,7 +476,7 @@ namespace internal
 			}
 			else
 			{
-				size_t index = pitem - items;
+				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
 				itemReplacer(items[count - 1], items[index]);
 				mPtrState -= modMemPoolIndex;

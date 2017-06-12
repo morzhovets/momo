@@ -121,18 +121,18 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
 		{
 			mArrayBucket.AddBackCrt(params, itemCreator);
 			return GetBounds(params).GetEnd() - 1;
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& params, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			Bounds bounds = GetBounds(params);
 			size_t count = bounds.GetCount();
-			size_t index = pitem - bounds.GetBegin();
+			size_t index = iter - bounds.GetBegin();
 			MOMO_ASSERT(index < count);
 			itemReplacer(bounds[count - 1], bounds[index]);
 			mArrayBucket.RemoveBack(params);

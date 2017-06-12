@@ -90,7 +90,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Item* AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode)
+		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
@@ -103,10 +103,10 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Item* Remove(Params& /*params*/, const Item* pitem, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = pitem - &mItems[0];
+			size_t index = iter - &mItems[0];
 			MOMO_ASSERT(index < count);
 			itemReplacer(*&mItems[count - 1], *&mItems[index]);
 			mHashes[index] = mHashes[count - 1];

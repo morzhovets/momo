@@ -1122,9 +1122,9 @@ private:
 		for (Bucket& bucket : *buckets)
 		{
 			BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
-			Item* pitem = bucketBounds.GetEnd();
+			BucketIterator bucketIter = bucketBounds.GetEnd();
 			for (size_t c = bucketBounds.GetCount(); c > 0; --c)
-				pitem = bucket.Remove(bucketParams, pitem - 1, itemReplacer);
+				bucketIter = bucket.Remove(bucketParams, std::prev(bucketIter), itemReplacer);
 		}
 		buckets->Destroy(memManager, false);
 	}
