@@ -33,7 +33,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
-		typedef Item* Iterator;
+		typedef std::reverse_iterator<Item*> Iterator;
 		typedef BucketBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
@@ -58,7 +58,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
 		{
-			return Bounds(&mItems[0], pvGetCount());
+			return Bounds(Iterator(&mItems[0] + maxCount), pvGetCount());
 		}
 
 		template<typename Predicate>
@@ -68,9 +68,9 @@ namespace internal
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashes[i] == hashByte && pred(*&mItems[i]))
-					return &mItems[i];
+					return Iterator(&mItems[i] + 1);
 			}
-			return nullptr;
+			return Iterator(nullptr);
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
@@ -85,7 +85,8 @@ namespace internal
 
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(params.GetMemManager(), &mItems[0], pvGetCount());
+			size_t count = pvGetCount();
+			ItemTraits::Destroy(params.GetMemManager(), &mItems[0] + maxCount - count, count);
 			pvSetEmpty();
 		}
 
@@ -94,25 +95,25 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* pitem = &mItems[count];
+			Item* pitem = &mItems[maxCount - 1 - count];
 			itemCreator(pitem);
-			mHashes[count] = pvGetHashByte(hashCode);
+			mHashes[maxCount - 1 - count] = pvGetHashByte(hashCode);
 			++mState;
 			mState |= (uint8_t)(IsFull() ? 128 : 0);
-			return pitem;
+			return Iterator(pitem + 1);
 		}
 
 		template<typename ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = iter - &mItems[0];
+			size_t index = iter - Iterator(&mItems[0] + maxCount);
 			MOMO_ASSERT(index < count);
-			itemReplacer(*&mItems[count - 1], *&mItems[index]);
-			mHashes[index] = mHashes[count - 1];
-			mHashes[count - 1] = emptyHash;
+			itemReplacer(*&mItems[maxCount - count], *&mItems[maxCount - 1 - index]);
+			mHashes[maxCount - 1 - index] = mHashes[maxCount - count];
+			mHashes[maxCount - count] = emptyHash;
 			--mState;
-			return &mItems[index];
+			return iter;
 		}
 
 	private:

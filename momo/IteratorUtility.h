@@ -194,6 +194,12 @@ namespace internal
 		typedef const Object* ConstIterator;
 	};
 
+	template<typename Object>
+	struct ConstIteratorSelector<std::reverse_iterator<Object*>>
+	{
+		typedef std::reverse_iterator<const Object*> ConstIterator;
+	};
+
 	template<typename TBaseIterator, typename TReference>
 	class HashDerivedIterator
 	{
