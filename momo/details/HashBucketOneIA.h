@@ -54,6 +54,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef BucketBounds<Item> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
@@ -86,7 +87,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& /*params*/, const Predicate& pred, size_t hashCode) const
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			if (mHashState != (HashState)((hashCode >> hashCodeShift) | 1))
 				return nullptr;

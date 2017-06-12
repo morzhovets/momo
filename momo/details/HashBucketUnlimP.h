@@ -68,6 +68,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef typename ArrayBucket::Bounds Bounds;
 
 		typedef typename ArrayBucket::Params Params;
@@ -91,9 +92,9 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
+		Iterator Find(Params& params, const Predicate& pred, size_t /*hashCode*/)
 		{
-			for (const Item& item : mArrayBucket.GetBounds())
+			for (Item& item : GetBounds(params))
 			{
 				if (pred(item))
 					return std::addressof(item);

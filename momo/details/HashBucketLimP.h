@@ -39,6 +39,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef BucketBounds<Item> Bounds;
 
 	private:
@@ -114,12 +115,12 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;
 			size_t count = pvGetCount();
-			const Item* items = pvGetItems();
+			Item* items = pvGetItems();
 			for (size_t i = 0; i < count; ++i)
 			{
 				if (pred(items[i]))
@@ -285,6 +286,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef BucketBounds<Item> Bounds;
 
 	private:
@@ -372,11 +374,11 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;
-			for (const Item& item : pvGetBounds())
+			for (Item& item : pvGetBounds())
 			{
 				if (pred(item))
 					return std::addressof(item);

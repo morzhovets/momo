@@ -36,6 +36,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef BucketBounds<Item> Bounds;
 
 	private:
@@ -112,10 +113,10 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/) const
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			size_t count = pvGetCount();
-			const Item* items = pvGetItems();
+			Item* items = pvGetItems();
 			for (size_t i = 0; i < count; ++i)
 			{
 				if (pred(items[i]))

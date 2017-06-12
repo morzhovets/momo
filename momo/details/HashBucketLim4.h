@@ -35,6 +35,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
+		typedef Item* Iterator;
 		typedef BucketBounds<Item> Bounds;
 
 	private:
@@ -118,13 +119,18 @@ namespace internal
 
 		Bounds GetBounds(Params& params) MOMO_NOEXCEPT
 		{
-			return pvGetBounds(params);
+			if (pvIsEmpty())
+				return Bounds();
+			Data data = pvGetData();
+			MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
+			Item* items = memPool.template GetRealPointer<Item>(data.pointer);
+			return Bounds(items, data.count);
 		}
 
 		template<typename Predicate>
-		const Item* Find(Params& params, const Predicate& pred, size_t /*hashCode*/) const
+		Iterator Find(Params& params, const Predicate& pred, size_t /*hashCode*/)
 		{
-			for (const Item& item : pvGetBounds(params))
+			for (Item& item : GetBounds(params))
 			{
 				if (pred(item))
 					return std::addressof(item);
@@ -243,16 +249,6 @@ namespace internal
 		bool pvIsEmpty() const MOMO_NOEXCEPT
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
-		}
-
-		Bounds pvGetBounds(Params& params) const MOMO_NOEXCEPT
-		{
-			if (pvIsEmpty())
-				return Bounds();
-			Data data = pvGetData();
-			MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
-			Item* items = memPool.template GetRealPointer<Item>(data.pointer);
-			return Bounds(items, data.count);
 		}
 
 		void pvSet(uint32_t ptr, size_t memPoolIndex, size_t count)
