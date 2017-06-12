@@ -203,7 +203,7 @@ namespace internal
 		HashSetConstIterator() MOMO_NOEXCEPT
 			: mBuckets(nullptr),
 			mHashCode(0),
-			mBucketIterator()
+			mBucketIterator(nullptr)
 		{
 		}
 
@@ -211,7 +211,7 @@ namespace internal
 
 		HashSetConstIterator& operator++()
 		{
-			MOMO_CHECK(mBucketIterator != BucketIterator());
+			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			MOMO_CHECK(IteratorVersion::Check());
 			if (ptIsMovable())
 			{
@@ -227,7 +227,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(mBucketIterator != BucketIterator());
+			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			MOMO_CHECK(IteratorVersion::Check());
 			return std::addressof(*mBucketIterator);	//?
 		}
@@ -255,26 +255,26 @@ namespace internal
 			: IteratorVersion(version),
 			mBuckets(buckets),
 			mHashCode(hashCode),
-			mBucketIterator()
+			mBucketIterator(nullptr)
 		{
 		}
 
 		bool ptIsMovable() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
+			MOMO_ASSERT(mBucketIterator != BucketIterator(nullptr) && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
 		size_t ptGetBucketIndex() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
+			MOMO_ASSERT(mBucketIterator != BucketIterator(nullptr) && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
 		size_t ptGetHashCode() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator == BucketIterator());
+			MOMO_ASSERT(mBucketIterator == BucketIterator(nullptr));
 			return mHashCode;
 		}
 
@@ -293,7 +293,7 @@ namespace internal
 			(void)version;
 			(void)empty;
 			MOMO_CHECK(empty || mBuckets != nullptr);
-			MOMO_CHECK(empty ^ (mBucketIterator != BucketIterator()));
+			MOMO_CHECK(empty ^ (mBucketIterator != BucketIterator(nullptr)));
 			MOMO_CHECK(IteratorVersion::Check(version));
 		}
 
@@ -947,7 +947,7 @@ private:
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
 				BucketIterator bucketIter = bucket.Find(bucketParams, pred, hashCode);
-				if (bucketIter != BucketIterator())
+				if (bucketIter != BucketIterator(nullptr))
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
 				if (!bucket.WasFull())
 					break;

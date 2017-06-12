@@ -31,7 +31,7 @@ namespace internal
 
 	public:
 		BucketBounds() MOMO_NOEXCEPT
-			: mBegin(),
+			: mBegin(nullptr),
 			mCount(0)
 		{
 		}
