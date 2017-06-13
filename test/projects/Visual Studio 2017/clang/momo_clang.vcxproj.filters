@@ -84,25 +84,25 @@
     <ClCompile Include="..\..\..\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOneIA.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP4.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP4.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterLimP4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpenN1.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpenN1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpen1.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpen1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpen1.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpen1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpenN1.cpp">
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpenN1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
   </ItemGroup>
