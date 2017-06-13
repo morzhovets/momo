@@ -244,11 +244,11 @@ namespace internal
 			{
 				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
-				itemReplacer(items[count - 1], items[index]);
+				itemReplacer(items[count - 1], *iter);
 				mHashesState[index] = mHashesState[count - 1];
 				mHashesState[count - 1] = emptyHash;
 				pvSetState(items, memPoolIndex, count - 1);
-				return items + index;
+				return iter;
 			}
 		}
 

@@ -229,7 +229,6 @@ namespace internal
 			{
 				MOMO_ASSERT(iter == items);
 				itemReplacer(*items, *items);
-				size_t memPoolIndex = pvGetMemPoolIndex();
 				memPool.Deallocate(ptr);
 				mPtrState = (memPoolIndex < pvGetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
@@ -237,11 +236,10 @@ namespace internal
 			}
 			else
 			{
-				size_t index = iter - items;
-				MOMO_ASSERT(index < count);
-				itemReplacer(items[count - 1], items[index]);
+				MOMO_ASSERT(items <= iter && iter < items + count);
+				itemReplacer(items[count - 1], *iter);
 				--mPtrState;
-				return items + index;
+				return iter;
 			}
 		}
 

@@ -102,11 +102,10 @@ namespace internal
 		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = iter - &mItems[0];
-			MOMO_ASSERT(index < count);
-			itemReplacer(*&mItems[count - 1], *&mItems[index]);
+			MOMO_ASSERT(&mItems[0] <= iter && iter < &mItems[0] + count);
+			itemReplacer(*&mItems[count - 1], *iter);
 			--mState;
-			return &mItems[index];
+			return iter;
 		}
 
 	private:

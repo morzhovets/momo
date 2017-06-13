@@ -206,11 +206,10 @@ namespace internal
 			}
 			else
 			{
-				size_t index = iter - items;
-				MOMO_ASSERT(index < count);
-				itemReplacer(items[count - 1], items[index]);
+				MOMO_ASSERT(items <= iter && iter < items + count);
+				itemReplacer(items[count - 1], *iter);
 				--mState;
-				return items + index;
+				return iter;
 			}
 		}
 
