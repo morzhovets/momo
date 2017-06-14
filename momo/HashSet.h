@@ -942,7 +942,8 @@ private:
 		{
 			BucketParams& bucketParams = bkts->GetBucketParams();
 			size_t bucketCount = bkts->GetCount();
-			for (size_t probe = 0; probe < bucketCount; ++probe)
+			size_t probe = 0;
+			while (true)
 			{
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
@@ -950,6 +951,9 @@ private:
 				if (bucketIter != BucketIterator(nullptr))
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
 				if (!bucket.WasFull())
+					break;
+				++probe;
+				if (probe >= bucketCount)
 					break;
 			}
 		}
@@ -966,11 +970,15 @@ private:
 	size_t pvGetBucketIndexForAdd(Buckets& buckets, size_t hashCode) const
 	{
 		size_t bucketCount = buckets.GetCount();
-		for (size_t probe = 0; probe < bucketCount; ++probe)
+		size_t probe = 0;
+		while (true)
 		{
 			size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 			if (!buckets[bucketIndex].IsFull())
 				return bucketIndex;
+			++probe;
+			if (probe >= bucketCount)
+				break;
 		}
 		throw std::runtime_error("momo::HashSet is full");
 	}
