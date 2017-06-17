@@ -148,7 +148,7 @@ struct HashBucketOpenN1 : public internal::HashBucketBase<tMaxCount>
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
-		return (bucketCount * maxCount / 8) * 5;
+		return (bucketCount * maxCount / 3) * 2;
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
