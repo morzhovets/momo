@@ -76,6 +76,7 @@
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP4.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOneIA.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpen1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpenN.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpenN1.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterUnlimP.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMultiMapTesterLimP.cpp" />
@@ -85,6 +86,7 @@
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterLimP4.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOneI1.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpen1.cpp" />
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpenN.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpenN1.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterUnlimP.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxTester.cpp" />
