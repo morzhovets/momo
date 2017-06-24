@@ -231,7 +231,7 @@ public:
 	explicit DataTable(ColumnList&& columnList = ColumnList())
 		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
-		mRawMemPool(typename RawMemPool::Params(pvGetRawSize()), MemManagerPtr(GetMemManager())),
+		mRawMemPool(pvCreateRawMemPool()),
 		mIndexes(&GetColumnList(), GetMemManager())
 	{
 	}
@@ -746,6 +746,13 @@ public:
 	}
 
 private:
+	RawMemPool pvCreateRawMemPool()
+	{
+		size_t size = std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
+		size_t alignment = std::minmax(GetColumnList().GetAlignment(), MOMO_ALIGNMENT_OF(void*)).second;
+		return RawMemPool(typename RawMemPool::Params(size, alignment), MemManagerPtr(GetMemManager()));
+	}
+
 	template<typename Rows, typename RowFilter>
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
@@ -777,11 +784,6 @@ private:
 			throw;
 		}
 		pvSetNumbers();
-	}
-
-	size_t pvGetRawSize() const MOMO_NOEXCEPT
-	{
-		return std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
 	}
 
 	ConstRowReference pvMakeConstRowReference(Raw* raw) const MOMO_NOEXCEPT

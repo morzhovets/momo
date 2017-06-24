@@ -237,8 +237,9 @@ public:
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
 		: mCodeParam(columnList.mCodeParam),
-		mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
+		mTotalSize(columnList.mTotalSize),
+		mAlignment(columnList.mAlignment),
 		mMutOffsets(std::move(columnList.mMutOffsets)),
 		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
 		mDestroyFunc(std::move(columnList.mDestroyFunc)),
@@ -248,8 +249,9 @@ public:
 
 	DataColumnList(const DataColumnList& columnList)
 		: mCodeParam(columnList.mCodeParam),
-		mTotalSize(columnList.mTotalSize),
 		mAddends(columnList.mAddends),
+		mTotalSize(columnList.mTotalSize),
+		mAlignment(columnList.mAlignment),
 		mMutOffsets(columnList.mMutOffsets),
 		mCreateFunc(columnList.mCreateFunc),
 		mDestroyFunc(columnList.mDestroyFunc),
@@ -287,6 +289,11 @@ public:
 	size_t GetTotalSize() const MOMO_NOEXCEPT
 	{
 		return mTotalSize;
+	}
+
+	size_t GetAlignment() const MOMO_NOEXCEPT
+	{
+		return mAlignment;
 	}
 
 	void CreateRaw(Raw* raw)
@@ -390,9 +397,10 @@ private:
 		{
 			pvCorrectOffset<size_t>(offset);
 			offset += sizeof(size_t);
-			maxAlignment = std::minmax(maxAlignment, alignof(size_t)).second;
+			maxAlignment = std::minmax(maxAlignment, MOMO_ALIGNMENT_OF(size_t)).second;
 		}
 		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
+		mAlignment = maxAlignment;
 	}
 
 	template<typename Type, typename... Types>
@@ -474,8 +482,9 @@ private:
 
 private:
 	size_t mCodeParam;
-	size_t mTotalSize;
 	Addends mAddends;
+	size_t mTotalSize;
+	size_t mAlignment;
 	MutOffsets mMutOffsets;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
@@ -570,6 +579,11 @@ public:
 		return sizeof(StructNumber);
 	}
 
+	size_t GetAlignment() const MOMO_NOEXCEPT
+	{
+		return MOMO_ALIGNMENT_OF(StructNumber);
+	}
+
 	void CreateRaw(Raw* raw)
 	{
 		(typename RawManager::template Creator<>(mMemManager))(raw);
@@ -600,7 +614,7 @@ public:
 	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		MOMO_ASSERT(offset % alignof(Type) == 0);
+		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Type) == 0);
 		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
 	}
 
