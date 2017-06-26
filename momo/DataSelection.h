@@ -163,7 +163,7 @@ namespace internal
 			return mRawBounds.GetCount();
 		}
 
-		RowReference& operator[](size_t index) const
+		RowReference operator[](size_t index) const
 		{
 			return GetBegin()[index];
 		}
