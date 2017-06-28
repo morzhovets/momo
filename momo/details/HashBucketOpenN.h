@@ -27,7 +27,7 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 8);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -39,7 +39,8 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyHash = 248;
+		static const uint8_t maskCount = (maxCount <= 4) ? 3 : 7;
+		static const uint8_t emptyHash = (maxCount <= 4) ? 248 : 240;
 
 	public:
 		BucketOpenN() MOMO_NOEXCEPT
@@ -82,7 +83,7 @@ namespace internal
 		{
 			if (mState < emptyHash)
 				return true;
-			return (mState & 4) != (uint8_t)0;
+			return (mState & (maskCount + 1)) != (uint8_t)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -117,7 +118,7 @@ namespace internal
 			if (count < maxCount)
 				--mState;
 			else
-				mState = emptyHash + 4 + maxCount - 1;
+				mState = emptyHash + maskCount + maxCount;
 			return iter;
 		}
 
@@ -126,7 +127,7 @@ namespace internal
 		{
 			if (mState < emptyHash)
 				return maxCount;
-			return (size_t)(mState & 3);
+			return (size_t)(mState & maskCount);
 		}
 
 		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
