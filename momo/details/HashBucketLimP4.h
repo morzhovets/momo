@@ -75,10 +75,14 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
+		static const size_t minMemPoolIndex =
+			(maxCount > 1 && ItemTraits::alignment == sizeof(Item)) ? 2 : 1;
+
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
 			ItemTraits::alignment, MemPoolParams::blockCount,
-			(memPoolIndex <= maxCount) ? MemPoolParams::cachedFreeBlockCount : 0>;
+			(minMemPoolIndex <= memPoolIndex && memPoolIndex <= maxCount)
+				? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
 		using MemPool = momo::MemPool<MemPoolParamsStatic<memPoolIndex>, MemManagerPtr,
@@ -132,7 +136,7 @@ namespace internal
 	public:
 		BucketLimP4() MOMO_NOEXCEPT
 		{
-			pvSetState0(1);
+			pvSetState0(minMemPoolIndex);
 		}
 
 		BucketLimP4(const BucketLimP4&) = delete;
@@ -180,23 +184,24 @@ namespace internal
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				pvDeallocate(params, pvGetMemPoolIndex(), items);
 			}
-			pvSetState0(1);
+			pvSetState0(minMemPoolIndex);
 		}
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
 			Item* items = mItemPtr;
+			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (items == nullptr)
 			{
-				if (pvGetMemPoolIndex() == 1)
-					return pvAddBack0<1>(params, itemCreator, hashCode);
+				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
+				if (memPoolIndex == minMemPoolIndex)
+					return pvAdd0<minMemPoolIndex>(params, itemCreator, hashCode);
 				else
-					return pvAddBack0<maxCount>(params, itemCreator, hashCode);
+					return pvAdd0<maxCount>(params, itemCreator, hashCode);
 			}
 			else
 			{
-				size_t memPoolIndex = pvGetMemPoolIndex();
 				size_t count = pvGetCount();
 				MOMO_ASSERT(count <= memPoolIndex);
 				MOMO_ASSERT(count < maxCount);
@@ -205,12 +210,12 @@ namespace internal
 					switch (memPoolIndex)
 					{
 					case 1:
-						return pvAddBack<1>(params, itemCreator, hashCode, items);
+						return pvAdd<1>(params, itemCreator, hashCode, items);
 					case 2:
-						return pvAddBack<2>(params, itemCreator, hashCode, items);
+						return pvAdd<2>(params, itemCreator, hashCode, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
-						return pvAddBack<3>(params, itemCreator, hashCode, items);
+						return pvAdd<3>(params, itemCreator, hashCode, items);
 					}
 				}
 				else
@@ -236,7 +241,7 @@ namespace internal
 				itemReplacer(*items, *items);
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
-					memPoolIndex = 1;
+					memPoolIndex = minMemPoolIndex;
 				pvSetState0(memPoolIndex);
 				return nullptr;
 			}
@@ -287,7 +292,7 @@ namespace internal
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAddBack0(Params& params, const ItemCreator& itemCreator, size_t hashCode)
+		Item* pvAdd0(Params& params, const ItemCreator& itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
@@ -298,7 +303,7 @@ namespace internal
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAddBack(Params& params, const ItemCreator& itemCreator, size_t hashCode,
+		Item* pvAdd(Params& params, const ItemCreator& itemCreator, size_t hashCode,
 			Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
