@@ -75,11 +75,6 @@ public:
 	{
 		return key1 == key2;
 	}
-
-	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
-	{
-		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
-	}
 };
 
 template<typename TKey>
@@ -143,11 +138,6 @@ public:
 	bool IsEqual(const Key& key1, const Key& key2) const
 	{
 		return key1 == key2;
-	}
-
-	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
-	{
-		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 	}
 
 private:
@@ -218,11 +208,6 @@ public:
 	bool IsEqual(const Key& key1, const Key& key2) const
 	{
 		return mEqualFunc(key1, key2);
-	}
-
-	size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const MOMO_NOEXCEPT
-	{
-		return HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 	}
 
 	const HashFunc& GetHashFunc() const MOMO_NOEXCEPT

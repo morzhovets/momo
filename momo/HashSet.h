@@ -962,7 +962,7 @@ private:
 
 	size_t pvGetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) const
 	{
-		size_t bucketIndex = GetHashTraits().GetBucketIndex(hashCode, bucketCount, probe);
+		size_t bucketIndex = HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
 		MOMO_ASSERT(bucketIndex < bucketCount);
 		return bucketIndex;
 	}
