@@ -81,7 +81,7 @@ namespace internal
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
 			ItemTraits::alignment, MemPoolParams::blockCount,
-			(minMemPoolIndex <= memPoolIndex && memPoolIndex <= maxCount)
+			(/*minMemPoolIndex <= memPoolIndex &&*/ memPoolIndex <= maxCount)	// vs2013
 				? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
