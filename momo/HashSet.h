@@ -50,21 +50,22 @@ namespace internal
 
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
 
-		static HashSetBuckets* Create(MemManager& memManager, size_t bucketCount,
+		static HashSetBuckets* Create(MemManager& memManager, size_t logBucketCount,
 			BucketParams* bucketParams)
 		{
+			size_t bucketCount = (size_t)1 << logBucketCount;
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
-			size_t bufferSize = pvGetBufferSize(bucketCount);
+			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			HashSetBuckets* resBuckets = memManager.template Allocate<HashSetBuckets>(bufferSize);
-			resBuckets->mCount = 0;
+			resBuckets->mLogCount = logBucketCount;
 			resBuckets->mNextBuckets = nullptr;
 			Bucket* buckets = resBuckets->pvGetBuckets();
+			size_t bucketIndex = 0;
 			try
 			{
-				size_t& curBucketCount = resBuckets->mCount;
-				for (; curBucketCount < bucketCount; ++curBucketCount)
-					new(buckets + curBucketCount) Bucket();
+				for (; bucketIndex < bucketCount; ++bucketIndex)
+					new(buckets + bucketIndex) Bucket();
 				if (bucketParams == nullptr)
 					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
 				else
@@ -72,7 +73,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < resBuckets->mCount; ++i)
+				for (size_t i = 0; i < bucketIndex; ++i)
 					buckets[i].~Bucket();
 				memManager.Deallocate(resBuckets, bufferSize);
 				throw;
@@ -92,7 +93,7 @@ namespace internal
 				mBucketParams->~BucketParams();
 				memManager.Deallocate(mBucketParams, sizeof(BucketParams));
 			}
-			memManager.Deallocate(this, pvGetBufferSize(bucketCount));
+			memManager.Deallocate(this, pvGetBufferSize(GetLogCount()));
 		}
 
 		Bucket* GetBegin() MOMO_NOEXCEPT
@@ -127,7 +128,12 @@ namespace internal
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
-			return mCount;
+			return (size_t)1 << mLogCount;
+		}
+
+		size_t GetLogCount() const MOMO_NOEXCEPT
+		{
+			return mLogCount;
 		}
 
 		Bucket& operator[](size_t index) MOMO_NOEXCEPT
@@ -146,9 +152,9 @@ namespace internal
 			return reinterpret_cast<Bucket*>(this + 1);
 		}
 
-		static size_t pvGetBufferSize(size_t bucketCount) MOMO_NOEXCEPT
+		static size_t pvGetBufferSize(size_t logBucketCount) MOMO_NOEXCEPT
 		{
-			return sizeof(HashSetBuckets) + bucketCount * sizeof(Bucket);
+			return sizeof(HashSetBuckets) + (sizeof(Bucket) << logBucketCount);
 		}
 
 		static BucketParams* pvCreateBucketParams(MemManager& memManager)
@@ -168,7 +174,7 @@ namespace internal
 		}
 
 	private:
-		size_t mCount;
+		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
 		union
 		{
@@ -504,15 +510,15 @@ public:
 		if (mCount == 0)
 			return;
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t bucketCount = (size_t)1 << hashTraits.GetLogStartBucketCount();
+		size_t logBucketCount = hashTraits.GetLogStartBucketCount();
 		while (true)
 		{
-			mCapacity = hashTraits.CalcCapacity(bucketCount);
+			mCapacity = hashTraits.CalcCapacity((size_t)1 << logBucketCount);
 			if (mCapacity >= mCount)
 				break;
-			bucketCount <<= 1;
+			++logBucketCount;
 		}
-		mBuckets = Buckets::Create(GetMemManager(), bucketCount, nullptr);
+		mBuckets = Buckets::Create(GetMemManager(), logBucketCount, nullptr);
 		BucketParams& bucketParams = mBuckets->GetBucketParams();
 		try
 		{
@@ -629,16 +635,16 @@ public:
 		if (capacity <= mCapacity)
 			return;
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t newBucketCount = pvGetNewBucketCount();
+		size_t newLogBucketCount = pvGetNewLogBucketCount();
 		size_t newCapacity;
 		while (true)
 		{
-			newCapacity = hashTraits.CalcCapacity(newBucketCount);
+			newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount);
 			if (newCapacity >= capacity)
 				break;
-			newBucketCount <<= 1;
+			++newLogBucketCount;
 		}
-		Buckets* newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
+		Buckets* newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
 			(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
 		newBuckets->SetNextBuckets(mBuckets);
 		mBuckets = newBuckets;
@@ -901,15 +907,15 @@ private:
 		buckets->Destroy(GetMemManager(), destroyBucketParams);
 	}
 
-	size_t pvGetNewBucketCount() const
+	size_t pvGetNewLogBucketCount() const
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		if (mBuckets == nullptr)
-			return (size_t)1 << hashTraits.GetLogStartBucketCount();
-		size_t bucketCount = mBuckets->GetCount();
-		size_t shift = hashTraits.GetBucketCountShift(bucketCount);
+			return hashTraits.GetLogStartBucketCount();
+		size_t logBucketCount = mBuckets->GetLogCount();
+		size_t shift = hashTraits.GetBucketCountShift((size_t)1 << logBucketCount);
 		MOMO_CHECK(shift > 0);
-		return bucketCount << shift;
+		return logBucketCount + shift;
 	}
 
 	ConstIterator pvMakeIterator(Buckets& buckets, size_t bucketIndex, BucketIterator bucketIter,
@@ -1041,14 +1047,14 @@ private:
 	BucketIterator pvAddGrow(size_t hashCode, const ItemCreator& itemCreator, size_t& bucketIndex)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t newBucketCount = pvGetNewBucketCount();
-		size_t newCapacity = hashTraits.CalcCapacity(newBucketCount);
+		size_t newLogBucketCount = pvGetNewLogBucketCount();
+		size_t newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount);
 		MOMO_CHECK(newCapacity > mCount);
 		bool hasBuckets = (mBuckets != nullptr);
 		Buckets* newBuckets;
 		try
 		{
-			newBuckets = Buckets::Create(GetMemManager(), newBucketCount,
+			newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
 				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
 		}
 		catch (const std::bad_alloc& exception)
