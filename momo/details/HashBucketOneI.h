@@ -80,7 +80,8 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/,
+			size_t /*logBucketCount*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);

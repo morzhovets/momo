@@ -527,7 +527,7 @@ public:
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				size_t bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 				(*mBuckets)[bucketIndex].AddCrt(bucketParams,
-					Creator<const Item&>(GetMemManager(), item), hashCode);
+					Creator<const Item&>(GetMemManager(), item), hashCode, logBucketCount);
 			}
 		}
 		catch (...)
@@ -1040,7 +1040,8 @@ private:
 	{
 		bucketIndex = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 		Bucket& bucket = (*mBuckets)[bucketIndex];
-		return bucket.AddCrt(mBuckets->GetBucketParams(), itemCreator, hashCode);
+		return bucket.AddCrt(mBuckets->GetBucketParams(), itemCreator, hashCode,
+			mBuckets->GetLogCount());
 	}
 
 	template<typename ItemCreator>
@@ -1069,7 +1070,7 @@ private:
 		{
 			bucketIndex = pvGetBucketIndexForAdd(*newBuckets, hashCode);
 			bucketIter = (*newBuckets)[bucketIndex].AddCrt(newBuckets->GetBucketParams(),
-				itemCreator, hashCode);
+				itemCreator, hashCode, newLogBucketCount);
 		}
 		catch (...)
 		{
@@ -1131,7 +1132,8 @@ private:
 			size_t bucketIndexForAdd = pvGetBucketIndexForAdd(*mBuckets, hashCode);
 			auto relocateCreator = [&memManager, &item] (Item* newItem)
 				{ ItemTraits::Relocate(&memManager, item, newItem); };
-			(*mBuckets)[bucketIndexForAdd].AddCrt(bucketParams, relocateCreator, hashCode);
+			(*mBuckets)[bucketIndexForAdd].AddCrt(bucketParams, relocateCreator, hashCode,
+				mBuckets->GetLogCount());
 		};
 		for (Bucket& bucket : *buckets)
 		{

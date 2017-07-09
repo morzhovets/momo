@@ -122,7 +122,8 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/,
+			size_t /*logBucketCount*/)
 		{
 			mArrayBucket.AddBackCrt(params, itemCreator);
 			return GetBounds(params).GetEnd() - 1;

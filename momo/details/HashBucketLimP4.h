@@ -188,7 +188,8 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode)
+		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode,
+			size_t /*logBucketCount*/)
 		{
 			Item* items = mItemPtr;
 			size_t memPoolIndex = pvGetMemPoolIndex();
