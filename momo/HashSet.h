@@ -947,13 +947,15 @@ private:
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			BucketParams& bucketParams = bkts->GetBucketParams();
+			size_t logBucketCount = bkts->GetLogCount();
 			size_t bucketCount = bkts->GetCount();
 			size_t probe = 0;
 			while (true)
 			{
 				size_t bucketIndex = pvGetBucketIndex(hashCode, bucketCount, probe);
 				Bucket& bucket = (*bkts)[bucketIndex];
-				BucketIterator bucketIter = bucket.Find(bucketParams, pred, hashCode);
+				BucketIterator bucketIter = bucket.Find(bucketParams, pred, hashCode,
+					logBucketCount);
 				if (bucketIter != BucketIterator(nullptr))
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
 				if (!bucket.WasFull())

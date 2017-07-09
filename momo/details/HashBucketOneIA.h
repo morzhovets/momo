@@ -87,7 +87,8 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
+			size_t /*logBucketCount*/)
 		{
 			if (mHashState != (HashState)((hashCode >> hashCodeShift) | 1))
 				return nullptr;

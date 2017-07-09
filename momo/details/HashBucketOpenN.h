@@ -63,7 +63,8 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
+			size_t /*logBucketCount*/)
 		{
 			uint8_t hashByte = pvGetHashByte(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
