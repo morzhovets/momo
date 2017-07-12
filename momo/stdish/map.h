@@ -9,8 +9,7 @@
     class map
 
   This class is similar to `std::map`, but much more efficient in
-  memory usage and operation speed.
-  The implementation is based on a B-tree.
+  memory usage. The implementation is based on a B-tree.
 
   Deviations from the `std::map`:
   1. Container items must be movable (preferably without exceptions)
