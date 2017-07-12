@@ -170,7 +170,7 @@ namespace internal
 		{
 			size_t capacity = maxCapacity;
 			if (IsLeaf())
-				return capacity -= capacityStep * (size_t)mMemPoolIndex;
+				capacity -= capacityStep * (size_t)mMemPoolIndex;
 			return capacity;
 		}
 
