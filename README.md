@@ -3,7 +3,7 @@
 This project contains an implementation of the C++ containers, similar to the standard `set/map`
 and `unordered_set/map`, but much more efficient in memory usage.
 As for the operation speed, these containers are also better than the standard ones in most cases 
-(**benchmarks** of unordered containers: [first](https://morzhovets.github.io/), [second](https://morzhovets.github.io/bench_arch)).
+([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu)).
 
 Classes are designed in close conformity with the standard C++17 **including exception safety guarantees**.
 
