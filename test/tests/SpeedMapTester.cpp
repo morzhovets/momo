@@ -273,7 +273,7 @@ public:
 		TestHashBucket<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
 		//TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
 		//TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		//TestHashBucket<momo::HashBucketOneIA>("momo::HashBucketOneIA");
+		//TestHashBucket<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
 		//TestHashBucket<momo::HashBucketOpen1<>>("momo::HashBucketOpen1<>");
 		TestHashBucket<momo::HashBucketOpenN<>>("momo::HashBucketOpenN<>");
 		TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");

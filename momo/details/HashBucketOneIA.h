@@ -44,11 +44,13 @@ namespace internal
 		typedef uint64_t HashState;
 	};
 
-	template<typename TItemTraits>
+	template<typename TItemTraits, size_t tStateSize>
 	class BucketOneIA
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
+
+		static const size_t stateSize = tStateSize;
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -60,11 +62,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const size_t hashStateSize = (ItemTraits::alignment < sizeof(size_t))
-			? ItemTraits::alignment : sizeof(size_t);
-		static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
-
-		typedef typename BucketOneIAHashStateSelector<hashStateSize>::HashState HashState;
+		typedef typename BucketOneIAHashStateSelector<stateSize>::HashState HashState;
 
 	public:
 		BucketOneIA() MOMO_NOEXCEPT
@@ -88,9 +86,9 @@ namespace internal
 
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
-			size_t /*logBucketCount*/)
+			size_t logBucketCount)
 		{
-			if (mHashState != (HashState)((hashCode >> hashCodeShift) | 1))
+			if (mHashState != pvGetHashState(hashCode, logBucketCount))
 				return nullptr;
 			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
@@ -114,11 +112,11 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode,
-			size_t /*logBucketCount*/, size_t /*probe*/)
+			size_t logBucketCount, size_t /*probe*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			mHashState = (HashState)((hashCode >> hashCodeShift) | 1);
+			mHashState = pvGetHashState(hashCode, logBucketCount);
 			return &mItemBuffer;
 		}
 
@@ -134,10 +132,21 @@ namespace internal
 		}
 
 		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
 			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
 		{
-			return hashCodeFullGetter();
+			(void)iter;
+			MOMO_ASSERT(iter == &mItemBuffer);
+			if (sizeof(HashState) < sizeof(size_t))
+				return hashCodeFullGetter();
+			return (size_t)(mHashState >> 1);
+		}
+
+	private:
+		static HashState pvGetHashState(size_t hashCode, size_t logBucketCount) MOMO_NOEXCEPT
+		{
+			size_t shift = (sizeof(HashState) < sizeof(size_t)) ? logBucketCount : 0;
+			return ((HashState)(hashCode >> shift) << 1) | 1;
 		}
 
 	private:
@@ -146,10 +155,14 @@ namespace internal
 	};
 }
 
+template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
 struct HashBucketOneIA : public internal::HashBucketBase<1>
 {
+	static const size_t stateSize = tStateSize;
+
 	template<typename ItemTraits>
-	using Bucket = internal::BucketOneIA<ItemTraits>;
+	using Bucket = internal::BucketOneIA<ItemTraits,
+		(stateSize == 0) ? ItemTraits::alignment : stateSize>;
 };
 
 } // namespace momo

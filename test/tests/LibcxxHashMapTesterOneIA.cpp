@@ -15,7 +15,7 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOneIA
+#define LIBCXX_TEST_BUCKET momo::HashBucketOneIA<>
 #define LIBCXX_TEST_BUCKET_NAME "oneia"
 
 #include "LibcxxHashMapTester.h"

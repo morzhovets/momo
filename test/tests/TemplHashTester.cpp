@@ -89,13 +89,13 @@ public:
 		TestHashSet<momo::HashBucketOneI1, 1, 1>("momo::HashBucketOneI1");
 		TestHashSet<momo::HashBucketOneI1, 4, 2>("momo::HashBucketOneI1");
 
-		TestHashSet<momo::HashBucketOneIA, 1, 1>("momo::HashBucketOneIA");
-		TestHashSet<momo::HashBucketOneIA, 6, 2>("momo::HashBucketOneIA");
-		TestHashSet<momo::HashBucketOneIA, 4, 4>("momo::HashBucketOneIA");
-		TestHashSet<momo::HashBucketOneIA, 8, 8>("momo::HashBucketOneIA");
-
 		TestHashSet<momo::HashBucketOneI<TemplItem<2, 2>>, 2, 2>("momo::HashBucketOneI");
 		TestHashSet<momo::HashBucketOneI<TemplItem<4, 2>>, 4, 2>("momo::HashBucketOneI");
+
+		TestHashSet<momo::HashBucketOneIA<0>, 1, 1>("momo::HashBucketOneIA<0>");
+		TestHashSet<momo::HashBucketOneIA<4>, 6, 2>("momo::HashBucketOneIA<4>");
+		TestHashSet<momo::HashBucketOneIA<2>, 4, 4>("momo::HashBucketOneIA<2>");
+		TestHashSet<momo::HashBucketOneIA<8>, 8, 8>("momo::HashBucketOneIA<8>");
 
 		TestHashSet<momo::HashBucketOpen1<1>, 4, 2>("momo::HashBucketOpen1<1>");
 		TestHashSet<momo::HashBucketOpen1<3>, 1, 1>("momo::HashBucketOpen1<3>");

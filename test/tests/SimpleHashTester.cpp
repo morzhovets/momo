@@ -31,7 +31,7 @@ public:
 		TestStrHash<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
 		TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
 		TestStrHash<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		TestStrHash<momo::HashBucketOneIA>("momo::HashBucketOneIA");
+		TestStrHash<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
 		TestStrHash<momo::HashBucketOpen1<>>("momo::HashBucketOpen1<>");
 		TestStrHash<momo::HashBucketOpenN<>>("momo::HashBucketOpenN<>");
 		TestStrHash<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
