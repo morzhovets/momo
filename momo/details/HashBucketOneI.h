@@ -82,7 +82,7 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/,
-			size_t /*logBucketCount*/)
+			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
@@ -99,6 +99,13 @@ namespace internal
 			itemReplacer(*&mItemBuffer, *&mItemBuffer);
 			pvSetState(HashBucketOneState::removed);
 			return nullptr;
+		}
+
+		template<typename HashCodeFullGetter>
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		{
+			return hashCodeFullGetter();
 		}
 
 	private:

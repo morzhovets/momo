@@ -124,7 +124,7 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t /*hashCode*/,
-			size_t /*logBucketCount*/)
+			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			mArrayBucket.AddBackCrt(params, itemCreator);
 			return GetBounds(params).GetEnd() - 1;
@@ -140,6 +140,13 @@ namespace internal
 			itemReplacer(bounds[count - 1], bounds[index]);
 			mArrayBucket.RemoveBack(params);
 			return GetBounds(params).GetBegin() + index;
+		}
+
+		template<typename HashCodeFullGetter>
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		{
+			return hashCodeFullGetter();
 		}
 
 	private:

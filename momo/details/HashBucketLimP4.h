@@ -190,7 +190,7 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode,
-			size_t /*logBucketCount*/)
+			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			Item* items = mItemPtr;
 			size_t memPoolIndex = pvGetMemPoolIndex();
@@ -257,6 +257,13 @@ namespace internal
 				pvSetState(items, memPoolIndex, count - 1);
 				return iter;
 			}
+		}
+
+		template<typename HashCodeFullGetter>
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		{
+			return hashCodeFullGetter();
 		}
 
 	private:
