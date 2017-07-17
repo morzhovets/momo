@@ -55,7 +55,8 @@ namespace internal
 		};
 	};
 
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
+		size_t tLogBucketCountStep>
 	class BucketLimP4
 	{
 	protected:
@@ -64,6 +65,9 @@ namespace internal
 
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
+
+		static const size_t logBucketCountStep = tLogBucketCountStep;
+		MOMO_STATIC_ASSERT(0 < logBucketCountStep && logBucketCountStep <= 4);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -94,6 +98,7 @@ namespace internal
 		typedef typename BucketLimP4PointerSelector<Item>::Pointer Pointer;
 
 		static const uint8_t emptyHash = 240;
+		MOMO_STATIC_ASSERT(emptyHash == (emptyHash >> logBucketCountStep) << logBucketCountStep);
 
 	public:
 		class Params
@@ -155,9 +160,9 @@ namespace internal
 
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
-			size_t /*logBucketCount*/)
+			size_t logBucketCount)
 		{
-			uint8_t hashByte = pvGetHashByte(hashCode);
+			uint8_t hashByte = pvGetHashByte(hashCode, logBucketCount);
 			Item* items = mItemPtr;
 			for (size_t i = 0; i < maxCount; ++i)
 			{
@@ -190,7 +195,7 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode,
-			size_t /*logBucketCount*/, size_t /*probe*/)
+			size_t logBucketCount, size_t /*probe*/)
 		{
 			Item* items = mItemPtr;
 			size_t memPoolIndex = pvGetMemPoolIndex();
@@ -198,9 +203,9 @@ namespace internal
 			{
 				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
 				if (memPoolIndex == minMemPoolIndex)
-					return pvAdd0<minMemPoolIndex>(params, itemCreator, hashCode);
+					return pvAdd0<minMemPoolIndex>(params, itemCreator, hashCode, logBucketCount);
 				else
-					return pvAdd0<maxCount>(params, itemCreator, hashCode);
+					return pvAdd0<maxCount>(params, itemCreator, hashCode, logBucketCount);
 			}
 			else
 			{
@@ -212,18 +217,18 @@ namespace internal
 					switch (memPoolIndex)
 					{
 					case 1:
-						return pvAdd<1>(params, itemCreator, hashCode, items);
+						return pvAdd<1>(params, itemCreator, hashCode, logBucketCount, items);
 					case 2:
-						return pvAdd<2>(params, itemCreator, hashCode, items);
+						return pvAdd<2>(params, itemCreator, hashCode, logBucketCount, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
-						return pvAdd<3>(params, itemCreator, hashCode, items);
+						return pvAdd<3>(params, itemCreator, hashCode, logBucketCount, items);
 					}
 				}
 				else
 				{
 					itemCreator(items + count);
-					mHashesState[count] = pvGetHashByte(hashCode);
+					mHashesState[count] = pvGetHashByte(hashCode, logBucketCount);
 					pvSetState(items, memPoolIndex, count + 1);
 					return items + count;
 				}
@@ -260,10 +265,21 @@ namespace internal
 		}
 
 		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
+			size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
 		{
-			return hashCodeFullGetter();
+			if (logBucketCountStep == 1)
+				return hashCodeFullGetter();
+			size_t truncLogBucketCount = logBucketCount / logBucketCountStep * logBucketCountStep;
+			if (newLogBucketCount >= truncLogBucketCount + logBucketCountStep)
+				return hashCodeFullGetter();
+			BucketLimP4* prevBucket = this - 1
+				+ ((bucketIndex > 0) ? (size_t)0 : (size_t)1 << logBucketCount);
+			if (prevBucket->WasFull())
+				return hashCodeFullGetter();
+			Item* items = mItemPtr;
+			size_t index = iter - items;
+			return ((size_t)mHashesState[index] << truncLogBucketCount) | bucketIndex;
 		}
 
 	private:
@@ -294,26 +310,37 @@ namespace internal
 			return (size_t)((mHashesState[3] >> 2) & 3);
 		}
 
-		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvGetHashByte(size_t hashCode, size_t logBucketCount) MOMO_NOEXCEPT
 		{
-			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
-			return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
+			if (logBucketCountStep == 1)
+			{
+				uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
+				return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
+			}
+			else
+			{
+				size_t truncLogBucketCount = logBucketCount / logBucketCountStep * logBucketCountStep;
+				uint32_t hashCode32 = (uint32_t)(hashCode >> truncLogBucketCount);
+				//return (uint8_t)(hashCode32 % emptyHash);
+				return (uint8_t)(hashCode32 - (hashCode32 / emptyHash) * emptyHash);
+			}
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAdd0(Params& params, const ItemCreator& itemCreator, size_t hashCode)
+		Item* pvAdd0(Params& params, const ItemCreator& itemCreator, size_t hashCode,
+			size_t logBucketCount)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
 			itemCreator(items);
-			mHashesState[0] = pvGetHashByte(hashCode);
+			mHashesState[0] = pvGetHashByte(hashCode, logBucketCount);
 			pvSetState(memory.Extract(), memPoolIndex, 1);
 			return items;
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
 		Item* pvAdd(Params& params, const ItemCreator& itemCreator, size_t hashCode,
-			Item* items)
+			size_t logBucketCount, Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
@@ -323,7 +350,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			mHashesState[count] = pvGetHashByte(hashCode);
+			mHashesState[count] = pvGetHashByte(hashCode, logBucketCount);
 			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			return newItems + count;
 		}
@@ -356,15 +383,17 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	typename TMemPoolParams = MemPoolParams<>>
+	typename TMemPoolParams = MemPoolParams<>,
+	size_t tLogBucketCountStep = 1>
 struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
+	static const size_t logBucketCountStep = tLogBucketCountStep;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits>
-	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams>;
+	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams, logBucketCountStep>;
 };
 
 } // namespace momo
