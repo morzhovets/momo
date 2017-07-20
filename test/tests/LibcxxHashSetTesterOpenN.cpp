@@ -15,7 +15,7 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN<8>
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN<1>
 #define LIBCXX_TEST_BUCKET_NAME "openn"
 
 #include "LibcxxHashSetTester.h"
