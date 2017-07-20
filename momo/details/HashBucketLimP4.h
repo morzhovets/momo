@@ -97,7 +97,7 @@ namespace internal
 
 		typedef typename BucketLimP4PointerSelector<Item>::Pointer Pointer;
 
-		static const uint8_t emptyHash = 240;
+		static const uint8_t emptyHash = (logBucketCountStep == 1) ? 240 : 128;
 		MOMO_STATIC_ASSERT(emptyHash == (emptyHash >> logBucketCountStep) << logBucketCountStep);
 
 	public:
@@ -166,7 +166,7 @@ namespace internal
 			Item* items = mItemPtr;
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashesState[i] == hashByte && pred(items[i]))
+				if (mHashes[i] == hashByte && pred(items[i]))
 					return items + i;
 			}
 			return nullptr;
@@ -228,7 +228,7 @@ namespace internal
 				else
 				{
 					itemCreator(items + count);
-					mHashesState[count] = pvGetHashByte(hashCode, logBucketCount);
+					mHashes[count] = pvGetHashByte(hashCode, logBucketCount);
 					pvSetState(items, memPoolIndex, count + 1);
 					return items + count;
 				}
@@ -257,8 +257,8 @@ namespace internal
 				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
 				itemReplacer(items[count - 1], *iter);
-				mHashesState[index] = mHashesState[count - 1];
-				mHashesState[count - 1] = emptyHash;
+				mHashes[index] = mHashes[count - 1];
+				mHashes[count - 1] = emptyHash;
 				pvSetState(items, memPoolIndex, count - 1);
 				return iter;
 			}
@@ -279,13 +279,13 @@ namespace internal
 				return hashCodeFullGetter();
 			Item* items = mItemPtr;
 			size_t index = iter - items;
-			return ((size_t)mHashesState[index] << truncLogBucketCount) | bucketIndex;
+			return bucketIndex | ((size_t)mHashes[index] << truncLogBucketCount);
 		}
 
 	private:
 		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			std::fill_n(mHashesState, 4, (uint8_t)emptyHash);
+			std::fill_n(mHashes, 4, (uint8_t)emptyHash);
 			pvSetState(nullptr, memPoolIndex, 0);
 		}
 
@@ -293,21 +293,21 @@ namespace internal
 		{
 			mItemPtr = items;
 			if (maxCount < 4 || count < 4)
-				mHashesState[3] = emptyHash + (uint8_t)((count << 2) | (memPoolIndex - 1));
+				mStater.state = emptyHash + (uint8_t)((count << 2) | (memPoolIndex - 1));
 		}
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 4 && mHashesState[3] < emptyHash)
+			if (maxCount == 4 && mStater.state < emptyHash)
 				return 4;
-			return (size_t)(mHashesState[3] & 3) + 1;
+			return (size_t)(mStater.state & 3) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			if (maxCount == 4 && mHashesState[3] < emptyHash)
+			if (maxCount == 4 && mStater.state < emptyHash)
 				return 4;
-			return (size_t)((mHashesState[3] >> 2) & 3);
+			return (size_t)((mStater.state >> 2) & 3);
 		}
 
 		static uint8_t pvGetHashByte(size_t hashCode, size_t logBucketCount) MOMO_NOEXCEPT
@@ -321,8 +321,8 @@ namespace internal
 			{
 				size_t truncLogBucketCount = logBucketCount / logBucketCountStep * logBucketCountStep;
 				uint32_t hashCode32 = (uint32_t)(hashCode >> truncLogBucketCount);
-				//return (uint8_t)(hashCode32 % emptyHash);
-				return (uint8_t)(hashCode32 - (hashCode32 / emptyHash) * emptyHash);
+				return (uint8_t)(hashCode32 % emptyHash);
+				//return (uint8_t)(hashCode32 - (hashCode32 / emptyHash) * emptyHash);
 			}
 		}
 
@@ -333,7 +333,7 @@ namespace internal
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
 			itemCreator(items);
-			mHashesState[0] = pvGetHashByte(hashCode, logBucketCount);
+			mHashes[0] = pvGetHashByte(hashCode, logBucketCount);
 			pvSetState(memory.Extract(), memPoolIndex, 1);
 			return items;
 		}
@@ -350,7 +350,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			mHashesState[count] = pvGetHashByte(hashCode, logBucketCount);
+			mHashes[count] = pvGetHashByte(hashCode, logBucketCount);
 			pvSetState(memory.Extract(), newMemPoolIndex, newCount);
 			return newItems + count;
 		}
@@ -378,7 +378,15 @@ namespace internal
 
 	private:
 		Pointer mItemPtr;
-		uint8_t mHashesState[4];
+		union
+		{
+			uint8_t mHashes[4];
+			struct
+			{
+				uint8_t padding[3];
+				uint8_t state;
+			} mStater;
+		};
 	};
 }
 
