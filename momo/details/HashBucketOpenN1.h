@@ -40,6 +40,7 @@ namespace internal
 
 	private:
 		static const uint8_t emptyHash = 255;
+		static const uint8_t maskCount = 127;
 
 	public:
 		BucketOpenN1() MOMO_NOEXCEPT
@@ -81,7 +82,7 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			return (mState & 128) != (uint8_t)0;
+			return (mState & (maskCount + 1)) != (uint8_t)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -101,7 +102,7 @@ namespace internal
 			itemCreator(pitem);
 			mHashes[maxCount - 1 - count] = pvGetHashByte(hashCode);
 			++mState;
-			mState |= (uint8_t)(IsFull() ? 128 : 0);
+			mState |= (uint8_t)(IsFull() ? maskCount + 1 : 0);
 			return Iterator(pitem + 1);
 		}
 
@@ -128,7 +129,7 @@ namespace internal
 	private:
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			return (size_t)(mState & 127);
+			return (size_t)(mState & maskCount);
 		}
 
 		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT

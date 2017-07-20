@@ -39,8 +39,8 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t maskCount = (maxCount <= 4) ? 3 : 7;
 		static const uint8_t emptyHash = (maxCount <= 4) ? 248 : 240;
+		static const uint8_t maskCount = (maxCount <= 4) ? 3 : 7;
 
 	public:
 		BucketOpenN() MOMO_NOEXCEPT
@@ -120,7 +120,7 @@ namespace internal
 			if (count < maxCount)
 				--mState;
 			else
-				mState = emptyHash + maskCount + maxCount;
+				mState = emptyHash + maskCount + (uint8_t)maxCount;
 			return iter;
 		}
 
