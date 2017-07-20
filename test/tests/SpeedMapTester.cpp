@@ -275,6 +275,7 @@ public:
 		//TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
 		//TestHashBucket<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
 		//TestHashBucket<momo::HashBucketOpen1<>>("momo::HashBucketOpen1<>");
+		TestHashBucket<momo::HashBucketOpen2N<>>("momo::HashBucketOpen2N<>");
 		TestHashBucket<momo::HashBucketOpenN<>>("momo::HashBucketOpenN<>");
 		TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
 		//TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");

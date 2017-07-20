@@ -24,6 +24,7 @@
 #include "details/HashBucketOneI1.h"
 #include "details/HashBucketOneI.h"
 #include "details/HashBucketOpen1.h"
+#include "details/HashBucketOpen2N.h"
 #include "details/HashBucketOpenN.h"
 #include "details/HashBucketOpenN1.h"
 //#include "details/HashBucketLim4.h"

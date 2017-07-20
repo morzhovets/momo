@@ -102,6 +102,11 @@ public:
 		TestHashSet<momo::HashBucketOpen1<3>, 8, 4>("momo::HashBucketOpen1<3>");
 		TestHashSet<momo::HashBucketOpen1<7>, 4, 4>("momo::HashBucketOpen1<7>");
 
+		TestHashSet<momo::HashBucketOpen2N<1, 8>, 4, 2>("momo::HashBucketOpen2N<1, 8>");
+		TestHashSet<momo::HashBucketOpen2N<4, 4>, 1, 1>("momo::HashBucketOpen2N<4, 4>");
+		TestHashSet<momo::HashBucketOpen2N<5, 2>, 8, 4>("momo::HashBucketOpen2N<5, 2>");
+		TestHashSet<momo::HashBucketOpen2N<8, 1>, 4, 4>("momo::HashBucketOpen2N<8, 1>");
+
 		TestHashSet<momo::HashBucketOpenN<1>, 4, 2>("momo::HashBucketOpenN<1>");
 		TestHashSet<momo::HashBucketOpenN<4>, 1, 1>("momo::HashBucketOpenN<4>");
 		TestHashSet<momo::HashBucketOpenN<5>, 8, 4>("momo::HashBucketOpenN<5>");
