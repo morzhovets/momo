@@ -111,5 +111,11 @@
     <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpenN.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpen2N.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpen2N.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -120,6 +120,12 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpenN.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpen2N.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpen2N.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
@@ -273,6 +279,9 @@
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketOpenN.h">
+      <Filter>Header Files\momo\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\details\HashBucketOpen2N.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
   </ItemGroup>
