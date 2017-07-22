@@ -43,6 +43,7 @@ namespace internal
 
 	private:
 		static const uint8_t emptyHash = 128;
+		static const uint8_t emptyProbe = 255;
 		static const uint8_t maskCount = 63;
 
 		static const size_t logBucketCountAddend = 4;
@@ -83,7 +84,7 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return pvGetCount() == maxCount;
+			return mState < emptyHash;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -111,11 +112,10 @@ namespace internal
 			uint8_t* hashProbe = mHashProbes[maxCount - 1 - count];
 			hashProbe[0] = (uint8_t)(hashCode >> hashCodeShift);
 			size_t probeShift = pvGetProbeShift(logBucketCount);
-			hashProbe[1] = (uint8_t)((hashCode >> logBucketCount) << probeShift);
-			if ((probe << 1) + 1 < ((size_t)1 << probeShift))
-				hashProbe[1] |= probe << 1;
+			if (probe < ((size_t)1 << probeShift))
+				hashProbe[1] = (uint8_t)(((hashCode >> logBucketCount) << probeShift) | probe);
 			else
-				hashProbe[1] |= 1;
+				hashProbe[1] = emptyProbe;
 			if (count + 1 < maxCount)
 				++mState;
 			return Iterator(pitem + 1);
@@ -144,11 +144,14 @@ namespace internal
 		{
 			size_t index = std::addressof(*iter) - &mItems[0];
 			uint8_t* hashProbe = mHashProbes[index];
-			if ((hashProbe[1] & 1) == 1 || !pvCheckNewLogBucketCount(logBucketCount, newLogBucketCount))
+			bool useFullGetter = (hashProbe[1] == emptyProbe ||
+				(logBucketCount + logBucketCountAddend) / logBucketCountStep
+				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
+			if (useFullGetter)
 				return hashCodeFullGetter();
 			size_t probeShift = pvGetProbeShift(logBucketCount);
 			MOMO_ASSERT(probeShift > 0);
-			size_t probe = (size_t)((uint8_t)(hashProbe[1] << (8 - probeShift)) >> (9 - probeShift));
+			size_t probe = (size_t)hashProbe[1] & (((size_t)1 << probeShift) - 1);
 			size_t bucketCount = (size_t)1 << logBucketCount;
 			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
 				| (((size_t)hashProbe[1] >> probeShift) << logBucketCount)
@@ -172,13 +175,6 @@ namespace internal
 		static size_t pvGetProbeShift(size_t logBucketCount) MOMO_NOEXCEPT
 		{
 			return (logBucketCount + logBucketCountAddend + 1) % logBucketCountStep;
-		}
-
-		static bool pvCheckNewLogBucketCount(size_t logBucketCount,
-			size_t newLogBucketCount) MOMO_NOEXCEPT
-		{
-			return (logBucketCount + logBucketCountAddend) / logBucketCountStep
-				== (newLogBucketCount + logBucketCountAddend) / logBucketCountStep;
 		}
 
 	private:
