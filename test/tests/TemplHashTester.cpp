@@ -102,10 +102,10 @@ public:
 		TestHashSet<momo::HashBucketOpen1<3>, 8, 4>("momo::HashBucketOpen1<3>");
 		TestHashSet<momo::HashBucketOpen1<7>, 4, 4>("momo::HashBucketOpen1<7>");
 
-		TestHashSet<momo::HashBucketOpen2N<1, 8>, 4, 2>("momo::HashBucketOpen2N<1, 8>");
-		TestHashSet<momo::HashBucketOpen2N<4, 4>, 1, 1>("momo::HashBucketOpen2N<4, 4>");
-		TestHashSet<momo::HashBucketOpen2N<5, 2>, 8, 4>("momo::HashBucketOpen2N<5, 2>");
-		TestHashSet<momo::HashBucketOpen2N<8, 1>, 4, 4>("momo::HashBucketOpen2N<8, 1>");
+		TestHashSet<momo::HashBucketOpen2N<1,  true>, 4, 2>("momo::HashBucketOpen2N<1,  true>");
+		TestHashSet<momo::HashBucketOpen2N<4, false>, 1, 1>("momo::HashBucketOpen2N<4, false>");
+		TestHashSet<momo::HashBucketOpen2N<5,  true>, 8, 4>("momo::HashBucketOpen2N<5,  true>");
+		TestHashSet<momo::HashBucketOpen2N<8, false>, 4, 4>("momo::HashBucketOpen2N<8, false>");
 
 		TestHashSet<momo::HashBucketOpenN<1>, 4, 2>("momo::HashBucketOpenN<1>");
 		TestHashSet<momo::HashBucketOpenN<4>, 1, 1>("momo::HashBucketOpenN<4>");

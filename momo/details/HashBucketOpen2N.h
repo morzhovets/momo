@@ -20,7 +20,7 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tMaxCount, size_t tLogBucketCountStep>
+	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
 	class BucketOpen2N
 	{
 	protected:
@@ -29,8 +29,7 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 64);
 
-		static const size_t logBucketCountStep = tLogBucketCountStep;
-		MOMO_STATIC_ASSERT(0 < logBucketCountStep && logBucketCountStep <= 8);
+		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -43,10 +42,11 @@ namespace internal
 
 	private:
 		static const uint8_t emptyHash = 128;
-		static const uint8_t emptyProbe = 255;
+		static const uint8_t emptyHashProbe = 255;
 		static const uint8_t maskCount = 63;
 
-		static const size_t logBucketCountAddend = 4;
+		static const size_t logBucketCountStep = 8;
+		static const size_t logBucketCountAddend = 6;
 		static const size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
@@ -111,11 +111,14 @@ namespace internal
 			itemCreator(pitem);
 			uint8_t* hashProbe = mHashProbes[maxCount - 1 - count];
 			hashProbe[0] = (uint8_t)(hashCode >> hashCodeShift);
-			size_t probeShift = pvGetProbeShift(logBucketCount);
-			if (probe < ((size_t)1 << probeShift))
-				hashProbe[1] = (uint8_t)(((hashCode >> logBucketCount) << probeShift) | probe);
-			else
-				hashProbe[1] = emptyProbe;
+			if (useHashCodePartGetter)
+			{
+				size_t probeShift = pvGetProbeShift(logBucketCount);
+				if (probe < ((size_t)1 << probeShift))
+					hashProbe[1] = (uint8_t)(((hashCode >> logBucketCount) << probeShift) | probe);
+				else
+					hashProbe[1] = emptyHashProbe;
+			}
 			if (count + 1 < maxCount)
 				++mState;
 			return Iterator(pitem + 1);
@@ -129,7 +132,8 @@ namespace internal
 			MOMO_ASSERT(index >= maxCount - count);
 			itemReplacer(*&mItems[maxCount - count], *&mItems[index]);
 			mHashProbes[index][0] = mHashProbes[maxCount - count][0];
-			mHashProbes[index][1] = mHashProbes[maxCount - count][1];
+			if (useHashCodePartGetter)
+				mHashProbes[index][1] = mHashProbes[maxCount - count][1];
 			mHashProbes[maxCount - count][0] = emptyHash;
 			if (count < maxCount)
 				--mState;
@@ -142,9 +146,11 @@ namespace internal
 		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
 			size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
 		{
+			if (!useHashCodePartGetter)
+				return hashCodeFullGetter();
 			size_t index = std::addressof(*iter) - &mItems[0];
 			uint8_t* hashProbe = mHashProbes[index];
-			bool useFullGetter = (hashProbe[1] == emptyProbe ||
+			bool useFullGetter = (hashProbe[1] == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
 			if (useFullGetter)
@@ -188,11 +194,11 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	size_t tLogBucketCountStep = 8>
+	bool tUseHashCodePartGetter = true>
 struct HashBucketOpen2N : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const size_t logBucketCountStep = tLogBucketCountStep;
+	static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
@@ -205,7 +211,7 @@ struct HashBucketOpen2N : public internal::HashBucketBase<tMaxCount>
 	}
 
 	template<typename ItemTraits>
-	using Bucket = internal::BucketOpen2N<ItemTraits, maxCount, logBucketCountStep>;
+	using Bucket = internal::BucketOpen2N<ItemTraits, maxCount, useHashCodePartGetter>;
 };
 
 } // namespace momo
