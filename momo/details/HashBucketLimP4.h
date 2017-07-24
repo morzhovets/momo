@@ -117,7 +117,7 @@ namespace internal
 
 		typedef BucketLimP4PtrState<Item> PtrState;
 
-		static const uint8_t emptyMask = 128;
+		static const uint8_t maskEmpty = 128;
 		static const uint8_t emptyHashProbe = 255;
 
 		static const size_t logBucketCountStep = 8;
@@ -198,7 +198,7 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return mHashes[maxCount - 1] < emptyMask;
+			return mHashes[maxCount - 1] < maskEmpty;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -303,7 +303,7 @@ namespace internal
 			Item* items = mPtrState.GetPointer();
 			size_t index = iter - items;
 			size_t hashProbe = (size_t)mHashes[3 - index];
-			bool useFullGetter = ((uint8_t)(hashProbe + 1) <= emptyMask ||
+			bool useFullGetter = ((uint8_t)(hashProbe + 1) <= maskEmpty ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
 			if (useFullGetter)
@@ -312,7 +312,7 @@ namespace internal
 			size_t probe = hashProbe & (((size_t)1 << probeShift) - 1);
 			size_t bucketCount = (size_t)1 << logBucketCount;
 			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
-				| (((hashProbe - (size_t)emptyMask) >> probeShift) << logBucketCount)
+				| (((hashProbe - (size_t)maskEmpty) >> probeShift) << logBucketCount)
 				| ((size_t)mHashes[index] << hashCodeShift);
 		}
 
@@ -337,7 +337,7 @@ namespace internal
 		{
 			size_t count = maxCount;
 			for (size_t i = 0; i < maxCount; ++i)
-				count -= (size_t)(mHashes[i] / emptyMask);
+				count -= (size_t)(mHashes[i] / maskEmpty);
 			return count;
 		}
 
@@ -358,7 +358,7 @@ namespace internal
 				return;
 			size_t probeShift = pvGetProbeShift(logBucketCount);
 			mHashes[3 - index] = (probe < (size_t)1 << probeShift)
-				? emptyMask | (uint8_t)((hashCode >> logBucketCount) << probeShift) | (uint8_t)probe
+				? maskEmpty | (uint8_t)((hashCode >> logBucketCount) << probeShift) | (uint8_t)probe
 				: emptyHashProbe;
 		}
 
@@ -417,7 +417,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>,
-	bool tUseHashCodePartGetter = false>
+	bool tUseHashCodePartGetter = true>
 struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
