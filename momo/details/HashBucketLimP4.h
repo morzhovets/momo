@@ -335,10 +335,8 @@ namespace internal
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			size_t count = maxCount;
-			for (size_t i = 0; i < maxCount; ++i)
-				count -= (size_t)(mHashes[i] / maskEmpty);
-			return count;
+			return (mHashes[1] >= maskEmpty) ? ((mHashes[0] < maskEmpty) ? 1 : 0)
+				: 2 + ((mHashes[2] < maskEmpty) ? 1 : 0) + ((mHashes[3] < maskEmpty) ? 1 : 0);
 		}
 
 		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
