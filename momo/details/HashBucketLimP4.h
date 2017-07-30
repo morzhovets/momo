@@ -20,57 +20,69 @@ namespace momo
 
 namespace internal
 {
-	template<typename Item, size_t size = sizeof(Item*)>
+	template<typename TItem, uint32_t tMaskState, size_t tSize = sizeof(TItem*)>
 	class BucketLimP4PtrState;
 
-	template<typename Item>
-	class BucketLimP4PtrState<Item, 4>
+	template<typename TItem, uint32_t tMaskState>
+	class BucketLimP4PtrState<TItem, tMaskState, 4>
 	{
 	public:
-		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		typedef TItem Item;
+
+		static const uint32_t maskState = tMaskState;
+		static const size_t size = 4;
+
+	public:
+		void Set(Item* ptr, uint32_t state) MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(state < 4);
+			MOMO_ASSERT(state <= maskState);
 			mPtrState = reinterpret_cast<uint32_t>(ptr);
-			MOMO_ASSERT(mPtrState % 4 == 0);
-			mPtrState |= (uint32_t)state;
+			MOMO_ASSERT((mPtrState & maskState) == 0);
+			mPtrState |= state;
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			return reinterpret_cast<Item*>(mPtrState & ~(uint32_t)3);
+			return reinterpret_cast<Item*>(mPtrState & ~maskState);
 		}
 
-		uint8_t GetState() const MOMO_NOEXCEPT
+		uint32_t GetState() const MOMO_NOEXCEPT
 		{
-			return (uint8_t)(mPtrState & (uint32_t)3);
+			return mPtrState & maskState;
 		}
 
 	private:
 		uint32_t mPtrState;
 	};
 
-	template<typename Item>
-	class BucketLimP4PtrState<Item, 8>
+	template<typename TItem, uint32_t tMaskState>
+	class BucketLimP4PtrState<TItem, tMaskState, 8>
 	{
 	public:
-		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		typedef TItem Item;
+
+		static const uint32_t maskState = tMaskState;
+		static const size_t size = 8;
+
+	public:
+		void Set(Item* ptr, uint32_t state) MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(state < 4);
+			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			MOMO_ASSERT(intPtr % 4 == 0);
-			mPtrState1 = (uint32_t)(intPtr) | (uint32_t)state;
+			MOMO_ASSERT(((uint32_t)intPtr & maskState) == 0);
+			mPtrState1 = (uint32_t)(intPtr) | state;
 			mPtrState2 = (uint32_t)(intPtr >> 32);
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			uint64_t intPtr = ((uint64_t)mPtrState2 << 32) | (uint64_t)(mPtrState1 & ~(uint32_t)3);
+			uint64_t intPtr = ((uint64_t)mPtrState2 << 32) | (uint64_t)(mPtrState1 & ~maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
-		uint8_t GetState() const MOMO_NOEXCEPT
+		uint32_t GetState() const MOMO_NOEXCEPT
 		{
-			return (uint8_t)(mPtrState1 & (uint32_t)3);
+			return mPtrState1 & maskState;
 		}
 
 	private:
@@ -90,6 +102,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
 
 		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
+		MOMO_STATIC_ASSERT(!useHashCodePartGetter || ItemTraits::alignment >= 4);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -101,12 +114,14 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		static const size_t itemAlignment = (ItemTraits::alignment > 4) ? ItemTraits::alignment : 4;
+		static const size_t minMemPoolIndex =
+			(maxCount > 1 && ItemTraits::alignment == sizeof(Item)) ? 2 : 1;
 
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			itemAlignment, MemPoolParams::blockCount,
-			(memPoolIndex <= maxCount) ? MemPoolParams::cachedFreeBlockCount : 0>;
+			ItemTraits::alignment, MemPoolParams::blockCount,
+			(/*minMemPoolIndex <= memPoolIndex &&*/ memPoolIndex <= maxCount)	// vs2013
+				? MemPoolParams::cachedFreeBlockCount : 0>;
 
 		template<size_t memPoolIndex>
 		using MemPool = momo::MemPool<MemPoolParamsStatic<memPoolIndex>, MemManagerPtr,
@@ -115,7 +130,7 @@ namespace internal
 		template<size_t memPoolIndex>
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
-		typedef BucketLimP4PtrState<Item> PtrState;
+		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0> PtrState;
 
 		static const uint8_t maskEmpty = 128;
 		static const uint8_t emptyHashProbe = 255;
@@ -165,7 +180,7 @@ namespace internal
 	public:
 		BucketLimP4() MOMO_NOEXCEPT
 		{
-			pvSetState0(1);
+			pvSetState0(minMemPoolIndex);
 		}
 
 		BucketLimP4(const BucketLimP4&) = delete;
@@ -214,7 +229,7 @@ namespace internal
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				pvDeallocate(params, pvGetMemPoolIndex(), items);
 			}
-			pvSetState0(1);
+			pvSetState0(minMemPoolIndex);
 		}
 
 		template<typename ItemCreator>
@@ -225,10 +240,10 @@ namespace internal
 			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (items == nullptr)
 			{
-				MOMO_ASSERT(memPoolIndex == 1 || memPoolIndex == maxCount);
+				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
 				pvSetHashProbe(0, hashCode, logBucketCount, probe);
-				if (memPoolIndex == 1)
-					return pvAdd0<1>(params, itemCreator, hashCode);
+				if (memPoolIndex == minMemPoolIndex)
+					return pvAdd0<minMemPoolIndex>(params, itemCreator, hashCode);
 				else
 					return pvAdd0<maxCount>(params, itemCreator, hashCode);
 			}
@@ -276,7 +291,7 @@ namespace internal
 				itemReplacer(*items, *items);
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
-					memPoolIndex = 1;
+					memPoolIndex = minMemPoolIndex;
 				pvSetState0(memPoolIndex);
 				return nullptr;
 			}
@@ -325,12 +340,19 @@ namespace internal
 
 		void pvSetState(Item* items, size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			mPtrState.Set(items, (uint8_t)memPoolIndex - 1);
+			mPtrState.Set(items, useHashCodePartGetter ? (uint32_t)memPoolIndex - 1 : 0);
+			if (!useHashCodePartGetter && (maxCount < 4 || !IsFull()))
+				mHashes[3] = maskEmpty + (uint8_t)memPoolIndex - 1;
 		}
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
 		{
-			return (size_t)mPtrState.GetState() + 1;
+			if (useHashCodePartGetter)
+				return (size_t)mPtrState.GetState() + 1;
+			else if (maxCount == 4 && IsFull())
+				return 4;
+			else
+				return (size_t)(mHashes[3] & 3) + 1;
 		}
 
 		size_t pvGetCount() const MOMO_NOEXCEPT
@@ -425,7 +447,7 @@ struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 
 	template<typename ItemTraits>
 	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams,
-		useHashCodePartGetter>;
+		useHashCodePartGetter && ItemTraits::alignment >= 4>;
 };
 
 } // namespace momo
