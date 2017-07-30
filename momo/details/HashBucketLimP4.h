@@ -102,7 +102,6 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
 
 		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
-		MOMO_STATIC_ASSERT(!useHashCodePartGetter || ItemTraits::alignment >= 4);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -114,12 +113,15 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
+		static const size_t itemAlignment = (!useHashCodePartGetter || ItemTraits::alignment > 4)
+			? ItemTraits::alignment : 4;
+
 		static const size_t minMemPoolIndex =
-			(maxCount > 1 && ItemTraits::alignment == sizeof(Item)) ? 2 : 1;
+			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
 
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			ItemTraits::alignment, MemPoolParams::blockCount,
+			itemAlignment, MemPoolParams::blockCount,
 			(/*minMemPoolIndex <= memPoolIndex &&*/ memPoolIndex <= maxCount)	// vs2013
 				? MemPoolParams::cachedFreeBlockCount : 0>;
 
@@ -180,7 +182,7 @@ namespace internal
 	public:
 		BucketLimP4() MOMO_NOEXCEPT
 		{
-			pvSetState0(minMemPoolIndex);
+			pvSetEmpty(minMemPoolIndex);
 		}
 
 		BucketLimP4(const BucketLimP4&) = delete;
@@ -229,7 +231,7 @@ namespace internal
 				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				pvDeallocate(params, pvGetMemPoolIndex(), items);
 			}
-			pvSetState0(minMemPoolIndex);
+			pvSetEmpty(minMemPoolIndex);
 		}
 
 		template<typename ItemCreator>
@@ -272,7 +274,7 @@ namespace internal
 						pvSetHashProbe(1, hashCode, logBucketCount, probe);
 					itemCreator(items + count);
 					mHashes[count] = pvGetHashByte(hashCode);
-					pvSetState(items, memPoolIndex);
+					pvSetPtrState(items, memPoolIndex);
 					return items + count;
 				}
 			}
@@ -292,7 +294,7 @@ namespace internal
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
 					memPoolIndex = minMemPoolIndex;
-				pvSetState0(memPoolIndex);
+				pvSetEmpty(memPoolIndex);
 				return nullptr;
 			}
 			else
@@ -304,7 +306,7 @@ namespace internal
 				mHashes[count - 1] = emptyHashProbe;
 				if (useHashCodePartGetter && index == 0)
 					mHashes[3] = (count == 2) ? mHashes[2] : emptyHashProbe;
-				pvSetState(items, memPoolIndex);
+				pvSetPtrState(items, memPoolIndex);
 				return iter;
 			}
 		}
@@ -332,13 +334,13 @@ namespace internal
 		}
 
 	private:
-		void pvSetState0(size_t memPoolIndex) MOMO_NOEXCEPT
+		void pvSetEmpty(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
 			std::fill_n(mHashes, 4, (uint8_t)emptyHashProbe);
-			pvSetState(nullptr, memPoolIndex);
+			pvSetPtrState(nullptr, memPoolIndex);
 		}
 
-		void pvSetState(Item* items, size_t memPoolIndex) MOMO_NOEXCEPT
+		void pvSetPtrState(Item* items, size_t memPoolIndex) MOMO_NOEXCEPT
 		{
 			mPtrState.Set(items, useHashCodePartGetter ? (uint32_t)memPoolIndex - 1 : 0);
 			if (!useHashCodePartGetter && (maxCount < 4 || !IsFull()))
@@ -389,7 +391,7 @@ namespace internal
 			Item* items = memory.GetPointer();
 			itemCreator(items);
 			mHashes[0] = pvGetHashByte(hashCode);
-			pvSetState(memory.Extract(), memPoolIndex);
+			pvSetPtrState(memory.Extract(), memPoolIndex);
 			return items;
 		}
 
@@ -404,7 +406,7 @@ namespace internal
 				itemCreator, newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
 			mHashes[count] = pvGetHashByte(hashCode);
-			pvSetState(memory.Extract(), newMemPoolIndex);
+			pvSetPtrState(memory.Extract(), newMemPoolIndex);
 			return newItems + count;
 		}
 
@@ -447,7 +449,7 @@ struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 
 	template<typename ItemTraits>
 	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams,
-		useHashCodePartGetter && ItemTraits::alignment >= 4>;
+		useHashCodePartGetter && sizeof(typename ItemTraits::Item) >= 4>;
 };
 
 } // namespace momo
