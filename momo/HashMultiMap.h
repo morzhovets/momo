@@ -9,6 +9,7 @@
     class HashMultiMapKeyValueTraits
     struct HashMultiMapSettings
     class HashMultiMap
+    class HashMultiMapOpen
 
   All `HashMultiMap` functions and constructors have strong exception
   safety, but not the following cases:
@@ -1148,6 +1149,9 @@ private:
 	size_t mValueCount;
 	ValueCrew mValueCrew;
 };
+
+template<typename TKey, typename TValue>
+using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 } // namespace momo
 

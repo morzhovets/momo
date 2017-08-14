@@ -9,6 +9,7 @@
     class HashMapKeyValueTraits
     struct HashMapSettings
     class HashMap
+    class HashMapOpen
 
   All `HashMap` functions and constructors have strong exception safety,
   but not the following cases:
@@ -593,5 +594,8 @@ private:
 private:
 	HashSet mHashSet;
 };
+
+template<typename TKey, typename TValue>
+using HashMapOpen = HashMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 } // namespace momo

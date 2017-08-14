@@ -9,6 +9,7 @@
     class HashSetItemTraits
     struct HashSetSettings
     class HashSet
+    class HashSetOpen
 
   All `HashSet` functions and constructors have strong exception safety,
   but not the following cases:
@@ -1161,6 +1162,9 @@ private:
 	size_t mCapacity;
 	Buckets* mBuckets;
 };
+
+template<typename TKey>
+using HashSetOpen = HashSet<TKey, HashTraitsOpen<TKey>>;
 
 } // namespace momo
 
