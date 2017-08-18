@@ -6,7 +6,9 @@
   momo/HashTraits.h
 
   namespace momo:
+    class HashCoder
     struct HashBucketDefault
+    struct HashBucketDefaultOpen
     class HashTraits
     class HashTraitsOpen
     class HashTraitsVar
@@ -31,6 +33,19 @@
 
 namespace momo
 {
+
+template<typename TKey>
+class HashCoder
+{
+public:
+	typedef TKey Key;
+
+public:
+	static size_t GetHashCode(const Key& key)
+	{
+		return std::hash<Key>()(key);
+	}
+};
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
@@ -69,7 +84,7 @@ public:
 
 	size_t GetHashCode(const Key& key) const
 	{
-		return std::hash<Key>()(key);
+		return HashCoder<Key>::GetHashCode(key);
 	}
 
 	bool IsEqual(const Key& key1, const Key& key2) const
@@ -133,7 +148,7 @@ public:
 
 	size_t GetHashCode(const Key& key) const
 	{
-		return std::hash<Key>()(key);
+		return HashCoder<Key>::GetHashCode(key);
 	}
 
 	bool IsEqual(const Key& key1, const Key& key2) const
