@@ -6,7 +6,7 @@
   momo/HashTraits.h
 
   namespace momo:
-    class HashCoder
+    struct HashCoder
     struct HashBucketDefault
     struct HashBucketDefaultOpen
     class HashTraits
@@ -34,18 +34,22 @@
 namespace momo
 {
 
-template<typename TKey>
-class HashCoder
+template<typename Key,
+	typename Result = size_t>
+struct HashCoder : public std::hash<Key>
 {
-public:
-	typedef TKey Key;
+};
 
-public:
-	static size_t GetHashCode(const Key& key)
+#ifdef MOMO_HASH_CODER
+template<typename Key>
+struct HashCoder<Key, decltype(MOMO_HASH_CODER(Key()))>
+{
+	decltype(MOMO_HASH_CODER(Key())) operator()(const Key& key) const
 	{
-		return std::hash<Key>()(key);
+		return MOMO_HASH_CODER(key);
 	}
 };
+#endif
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
@@ -84,7 +88,8 @@ public:
 
 	size_t GetHashCode(const Key& key) const
 	{
-		return HashCoder<Key>::GetHashCode(key);
+		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<Key>>::value);
+		return HashCoder<Key>()(key);
 	}
 
 	bool IsEqual(const Key& key1, const Key& key2) const
@@ -148,7 +153,7 @@ public:
 
 	size_t GetHashCode(const Key& key) const
 	{
-		return HashCoder<Key>::GetHashCode(key);
+		return HashCoder<Key>()(key);
 	}
 
 	bool IsEqual(const Key& key1, const Key& key2) const
@@ -163,7 +168,7 @@ private:
 };
 
 template<typename TKey,
-	typename THashFunc = std::hash<TKey>,
+	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
 class HashTraitsStd

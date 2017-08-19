@@ -43,7 +43,7 @@ namespace stdish
 {
 
 template<typename TKey,
-	typename THashFunc = std::hash<TKey>,
+	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>,
 	typename THashSet = HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc>,
@@ -622,7 +622,7 @@ private:
 };
 
 template<typename TKey,
-	typename THashFunc = std::hash<TKey>,
+	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using unordered_set_open = unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,

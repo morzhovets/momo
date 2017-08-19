@@ -32,7 +32,7 @@ public:
 	template<typename Type>
 	static size_t GetHashCode(const Type& item)
 	{
-		return HashCoder<Type>::GetHashCode(item);
+		return HashCoder<Type>()(item);
 	}
 
 	template<typename Type>

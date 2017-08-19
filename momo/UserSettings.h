@@ -65,6 +65,8 @@
 // Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
 
+//#define MOMO_HASH_CODER(key) hash_value(key)
+
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
 

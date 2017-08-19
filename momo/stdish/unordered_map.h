@@ -47,7 +47,7 @@ namespace stdish
 {
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = std::hash<TKey>,
+	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
 	typename THashMap = HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc>,
@@ -904,7 +904,7 @@ private:
 };
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = std::hash<TKey>,
+	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_map_open = unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
