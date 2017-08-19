@@ -42,9 +42,9 @@ struct HashCoder : public std::hash<Key>
 
 #ifdef MOMO_HASH_CODER
 template<typename Key>
-struct HashCoder<Key, decltype(MOMO_HASH_CODER(Key()))>
+struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
-	decltype(MOMO_HASH_CODER(Key())) operator()(const Key& key) const
+	auto operator()(const Key& key) const -> decltype(MOMO_HASH_CODER(key))
 	{
 		return MOMO_HASH_CODER(key);
 	}
