@@ -300,7 +300,7 @@ namespace internal
 			(void)version;
 			(void)empty;
 			MOMO_CHECK(empty || mBuckets != nullptr);
-			MOMO_CHECK(empty ^ (mBucketIterator != BucketIterator(nullptr)));
+			MOMO_CHECK(empty != (mBucketIterator != BucketIterator(nullptr)));
 			MOMO_CHECK(IteratorVersion::Check(version));
 		}
 
