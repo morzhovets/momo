@@ -1092,9 +1092,8 @@ private:
 
 template<size_t tInternalCapacity, typename TItem,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
-	typename TSettings = ArraySettings<tInternalCapacity>>
-using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, TSettings>;
+	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>>
+using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, ArraySettings<tInternalCapacity>>;
 
 namespace internal
 {
