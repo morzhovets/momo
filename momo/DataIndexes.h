@@ -133,7 +133,6 @@ namespace internal
 		struct HashRawKey
 		{
 			Raw* raw;
-			size_t hashCode;
 		};
 
 		template<typename... Types>
@@ -144,39 +143,7 @@ namespace internal
 			const ColumnList* columnList;
 		};
 
-		class HashBucketStater
-		{
-		public:
-			static HashBucketOneState GetState(const HashRawKey* key) MOMO_NOEXCEPT
-			{
-				return (key->raw != nullptr) ? HashBucketOneState::full
-					: (HashBucketOneState)key->hashCode;
-			}
-
-			template<typename Item>
-			static HashBucketOneState GetState(const Item* item) MOMO_NOEXCEPT
-			{
-				return GetState(item->GetKeyPtr());
-			}
-
-			static void SetState(HashRawKey* key, HashBucketOneState state) MOMO_NOEXCEPT
-			{
-				MOMO_ASSERT(state != HashBucketOneState::full || key->raw != nullptr);
-				if (state != HashBucketOneState::full)
-				{
-					key->raw = nullptr;
-					key->hashCode = (size_t)state;
-				}
-			}
-
-			template<typename Item>
-			static void SetState(Item* item, HashBucketOneState state) MOMO_NOEXCEPT
-			{
-				return SetState(item->GetKeyPtr(), state);
-			}
-		};
-
-		class HashTraits : public momo::HashTraits<HashRawKey, HashBucketOneI<HashBucketStater>>
+		class HashTraits : public momo::HashTraitsOpen<HashRawKey>
 		{
 		public:
 			template<typename KeyArg>
@@ -190,26 +157,32 @@ namespace internal
 			};
 
 		public:
-			explicit HashTraits(EqualFunc&& equalFunc)
-				: mEqualFunc(std::move(equalFunc))
+			HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)
+				: mHashFunc(std::move(hashFunc)),
+				mEqualFunc(std::move(equalFunc))
 			{
 			}
 
-			template<typename HashKey>
-			size_t GetHashCode(const HashKey& key) const MOMO_NOEXCEPT
+			size_t GetHashCode(const HashRawKey& key) const
+			{
+				return mHashFunc(key.raw, nullptr);
+			}
+
+			template<typename... Types>
+			size_t GetHashCode(const HashTupleKey<Types...>& key) const MOMO_NOEXCEPT
 			{
 				return key.hashCode;
 			}
 
 			bool IsEqual(const HashRawKey& key1, const HashRawKey& key2) const
 			{
-				return key1.hashCode == key2.hashCode && mEqualFunc(key1.raw, key2.raw);
+				return mEqualFunc(key1.raw, key2.raw);
 			}
 
 			template<typename... Types>
 			bool IsEqual(const HashTupleKey<Types...>& key1, const HashRawKey& key2) const
 			{
-				return key1.hashCode == key2.hashCode && pvIsEqual<0>(key1, key2);
+				return pvIsEqual<0>(key1, key2);
 			}
 
 		private:
@@ -232,6 +205,7 @@ namespace internal
 			}
 
 		private:
+			HashFunc mHashFunc;
 			EqualFunc mEqualFunc;
 		};
 
@@ -299,15 +273,13 @@ namespace internal
 		public:
 			UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashFunc(std::move(hashFunc)),
-				mHashSet(typename HashSet::HashTraits(std::move(equalFunc)),
+				mHashSet(typename HashSet::HashTraits(std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
 
 			UniqueHash(UniqueHash&& uniqueHash) MOMO_NOEXCEPT
 				: mSortedOffsets(std::move(uniqueHash.mSortedOffsets)),
-				mHashFunc(std::move(uniqueHash.mHashFunc)),
 				mHashSet(std::move(uniqueHash.mHashSet)),
 				mIterator(uniqueHash.mIterator)
 			{
@@ -322,7 +294,6 @@ namespace internal
 			UniqueHash& operator=(UniqueHash&& uniqueHash) MOMO_NOEXCEPT
 			{
 				mSortedOffsets = std::move(uniqueHash.mSortedOffsets);
-				mHashFunc = std::move(uniqueHash.mHashFunc);
 				mHashSet = std::move(uniqueHash.mHashSet);
 				mIterator = uniqueHash.mIterator;
 				return *this;
@@ -347,8 +318,7 @@ namespace internal
 
 			RawBounds Find(Raw* raw) const
 			{
-				size_t hashCode = mHashFunc(raw, nullptr);
-				Iterator iter = mHashSet.Find({ raw, hashCode });
+				Iterator iter = mHashSet.Find({ raw });
 				return RawBounds(!!iter ? iter->raw : nullptr);
 			}
 
@@ -364,8 +334,7 @@ namespace internal
 				MOMO_ASSERT(!mIterator);
 				try
 				{
-					size_t hashCode = mHashFunc(raw, nullptr);
-					mIterator = mHashSet.Find({ raw, hashCode });
+					mIterator = mHashSet.Find({ raw });
 					MOMO_ASSERT(!!mIterator);
 				}
 				catch (...)
@@ -376,11 +345,10 @@ namespace internal
 				}
 			}
 
-			void Add(Raw* raw, size_t* hashCodes)
+			void Add(Raw* raw, size_t* /*hashCodes*/)
 			{
 				MOMO_ASSERT(!mIterator);
-				size_t hashCode = mHashFunc(raw, hashCodes);
-				auto insRes = mHashSet.Insert({ raw, hashCode });
+				auto insRes = mHashSet.Insert({ raw });
 				if (!insRes.inserted)
 					throw UniqueIndexViolation(insRes.iterator->raw, *this);
 				mIterator = insRes.iterator;
@@ -389,8 +357,7 @@ namespace internal
 			void Insert(Raw* raw)
 			{
 				MOMO_ASSERT(!mIterator);
-				size_t hashCode = mHashFunc(raw, nullptr);
-				mIterator = mHashSet.Insert({ raw, hashCode }).iterator;
+				mIterator = mHashSet.Insert({ raw }).iterator;
 			}
 
 			void Remove() MOMO_NOEXCEPT
@@ -403,7 +370,7 @@ namespace internal
 			void ResetRaw(Raw* raw) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(!!mIterator);
-				mHashSet.ResetKey(mIterator, { raw, mIterator->hashCode });
+				mHashSet.ResetKey(mIterator, { raw });
 				mIterator = Iterator();
 			}
 
@@ -434,7 +401,6 @@ namespace internal
 
 		private:
 			Offsets mSortedOffsets;
-			HashFunc mHashFunc;
 			HashSet mHashSet;
 			Iterator mIterator;
 		};
@@ -486,8 +452,7 @@ namespace internal
 		public:
 			MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashFunc(std::move(hashFunc)),
-				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(equalFunc)),
+				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager())),
 				mRawIndex(0)
 			{
@@ -495,7 +460,6 @@ namespace internal
 
 			MultiHash(MultiHash&& multiHash) MOMO_NOEXCEPT
 				: mSortedOffsets(std::move(multiHash.mSortedOffsets)),
-				mHashFunc(std::move(multiHash.mHashFunc)),
 				mHashMultiMap(std::move(multiHash.mHashMultiMap)),
 				mKeyIterator(multiHash.mKeyIterator),
 				mRawIndex(multiHash.mRawIndex)
@@ -511,7 +475,6 @@ namespace internal
 			MultiHash& operator=(MultiHash&& multiHash) MOMO_NOEXCEPT
 			{
 				mSortedOffsets = std::move(multiHash.mSortedOffsets);
-				mHashFunc = std::move(multiHash.mHashFunc);
 				mHashMultiMap = std::move(multiHash.mHashMultiMap);
 				mKeyIterator = multiHash.mKeyIterator;
 				mRawIndex = multiHash.mRawIndex;
@@ -546,8 +509,7 @@ namespace internal
 				MOMO_ASSERT(!mKeyIterator);
 				try
 				{
-					size_t hashCode = mHashFunc(raw, nullptr);
-					mKeyIterator = mHashMultiMap.Find({ raw, hashCode });
+					mKeyIterator = mHashMultiMap.Find({ raw });
 					MOMO_ASSERT(!!mKeyIterator);
 					pvFindExisting(raw);
 				}
@@ -559,11 +521,10 @@ namespace internal
 				}
 			}
 
-			void Add(Raw* raw, size_t* hashCodes)
+			void Add(Raw* raw, size_t* /*hashCodes*/)
 			{
 				MOMO_ASSERT(!mKeyIterator);
-				size_t hashCode = mHashFunc(raw, hashCodes);
-				mKeyIterator = mHashMultiMap.InsertKey({ raw, hashCode });
+				mKeyIterator = mHashMultiMap.InsertKey({ raw });
 				if (mKeyIterator->key.raw != raw)
 					mHashMultiMap.Add(mKeyIterator, raw);
 				mRawIndex = mKeyIterator->values.GetCount();
@@ -579,8 +540,7 @@ namespace internal
 				else if (mKeyIterator->values.GetCount() > 0)
 				{
 					size_t valueCount = mKeyIterator->values.GetCount();
-					mHashMultiMap.ResetKey(mKeyIterator,
-						{ mKeyIterator->values[valueCount - 1], mKeyIterator->key.hashCode });
+					mHashMultiMap.ResetKey(mKeyIterator, { mKeyIterator->values[valueCount - 1] });
 					mHashMultiMap.Remove(mKeyIterator, valueCount - 1);
 				}
 				else
@@ -621,8 +581,7 @@ namespace internal
 						keyIter = mHashMultiMap.RemoveKey(keyIter).GetKeyIterator();
 						continue;
 					}
-					mHashMultiMap.ResetKey(keyIter,
-						{ keyIter->values[valueCount - 1], keyIter->key.hashCode });
+					mHashMultiMap.ResetKey(keyIter, { keyIter->values[valueCount - 1] });
 					mHashMultiMap.Remove(keyIter, valueCount - 1);
 					++keyIter;
 				}
@@ -646,7 +605,6 @@ namespace internal
 
 		private:
 			Offsets mSortedOffsets;
-			HashFunc mHashFunc;
 			HashMultiMap mHashMultiMap;
 			KeyIterator mKeyIterator;
 			size_t mRawIndex;
@@ -663,16 +621,14 @@ namespace internal
 		DataIndexes(const ColumnList* columnList, MemManager& memManager)
 			: mColumnList(columnList),
 			mUniqueHashes(MemManagerPtr(memManager)),
-			mMultiHashes(MemManagerPtr(memManager)),
-			mOffsetHashCodes(columnList->GetTotalSize(), (size_t)0, MemManagerPtr(memManager))
+			mMultiHashes(MemManagerPtr(memManager))
 		{
 		}
 
 		DataIndexes(DataIndexes&& indexes) MOMO_NOEXCEPT
 			: mColumnList(indexes.mColumnList),
 			mUniqueHashes(std::move(indexes.mUniqueHashes)),
-			mMultiHashes(std::move(indexes.mMultiHashes)),
-			mOffsetHashCodes(std::move(indexes.mOffsetHashCodes))
+			mMultiHashes(std::move(indexes.mMultiHashes))
 		{
 		}
 
@@ -689,7 +645,6 @@ namespace internal
 			std::swap(mColumnList, indexes.mColumnList);
 			mUniqueHashes.Swap(indexes.mUniqueHashes);
 			mMultiHashes.Swap(indexes.mMultiHashes);
-			mOffsetHashCodes.Swap(indexes.mOffsetHashCodes);
 		}
 
 		template<typename... Types>
@@ -926,7 +881,7 @@ namespace internal
 	private:
 		MemManagerPtr pvGetMemManagerPtr() const MOMO_NOEXCEPT
 		{
-			return mOffsetHashCodes.GetMemManager();
+			return mUniqueHashes.GetMemManager();
 		}
 
 		template<typename Hashes, typename... Types>
@@ -1082,7 +1037,6 @@ namespace internal
 		const ColumnList* mColumnList;
 		UniqueHashes mUniqueHashes;
 		MultiHashes mMultiHashes;
-		OffsetHashCodes mOffsetHashCodes;
 	};
 }
 
