@@ -80,7 +80,7 @@ namespace internal
 			if (mRawIndex > 0)
 				return &mKeyIterator->values[mRawIndex - 1];
 			else
-				return &mKeyIterator->key.raw;
+				return &mKeyIterator->key;
 		}
 
 		bool operator==(DataMultiHashIterator iter) const MOMO_NOEXCEPT
@@ -127,13 +127,8 @@ namespace internal
 
 		typedef Array<size_t> Offsets;
 
-		typedef std::function<size_t(Raw*, size_t*)> HashFunc;
+		typedef std::function<size_t(Raw*)> HashFunc;
 		typedef std::function<bool(Raw*, Raw*)> EqualFunc;
-
-		struct HashRawKey
-		{
-			Raw* raw;
-		};
 
 		template<typename... Types>
 		struct HashTupleKey
@@ -143,7 +138,7 @@ namespace internal
 			const ColumnList* columnList;
 		};
 
-		class HashTraits : public momo::HashTraitsOpen<HashRawKey>
+		class HashTraits : public momo::HashTraitsOpen<Raw*>
 		{
 		public:
 			template<typename KeyArg>
@@ -163,9 +158,9 @@ namespace internal
 			{
 			}
 
-			size_t GetHashCode(const HashRawKey& key) const
+			size_t GetHashCode(Raw* key) const
 			{
-				return mHashFunc(key.raw, nullptr);
+				return mHashFunc(key);
 			}
 
 			template<typename... Types>
@@ -174,31 +169,31 @@ namespace internal
 				return key.hashCode;
 			}
 
-			bool IsEqual(const HashRawKey& key1, const HashRawKey& key2) const
+			bool IsEqual(Raw* key1, Raw* key2) const
 			{
-				return mEqualFunc(key1.raw, key2.raw);
+				return mEqualFunc(key1, key2);
 			}
 
 			template<typename... Types>
-			bool IsEqual(const HashTupleKey<Types...>& key1, const HashRawKey& key2) const
+			bool IsEqual(const HashTupleKey<Types...>& key1, Raw* key2) const
 			{
 				return pvIsEqual<0>(key1, key2);
 			}
 
 		private:
 			template<size_t index, typename... Types>
-			bool pvIsEqual(const HashTupleKey<Types...>& key1, const HashRawKey& key2,
+			bool pvIsEqual(const HashTupleKey<Types...>& key1, Raw* key2,
 				typename std::enable_if<(index < sizeof...(Types)), int>::type = 0) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
 				const auto& item1 = pair.second;
 				typedef typename std::decay<decltype(item1)>::type Type;
-				const Type& item2 = key1.columnList->template GetByOffset<const Type>(key2.raw, pair.first);
+				const Type& item2 = key1.columnList->template GetByOffset<const Type>(key2, pair.first);
 				return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 			}
 
 			template<size_t index, typename... Types>
-			bool pvIsEqual(const HashTupleKey<Types...>& /*key1*/, const HashRawKey& /*key2*/,
+			bool pvIsEqual(const HashTupleKey<Types...>& /*key1*/, Raw* /*key2*/,
 				typename std::enable_if<(index == sizeof...(Types)), int>::type = 0) const MOMO_NOEXCEPT
 			{
 				return true;
@@ -230,8 +225,8 @@ namespace internal
 		class UniqueHash
 		{
 		private:
-			typedef momo::HashSet<HashRawKey, HashTraits, MemManagerPtr,
-				HashSetItemTraits<HashRawKey, HashRawKey, MemManagerPtr>, DataHashSetSettings> HashSet;
+			typedef momo::HashSet<Raw*, HashTraits, MemManagerPtr,
+				HashSetItemTraits<Raw*, Raw*, MemManagerPtr>, DataHashSetSettings> HashSet;
 
 			typedef typename HashSet::ConstIterator Iterator;
 
@@ -318,15 +313,15 @@ namespace internal
 
 			RawBounds Find(Raw* raw) const
 			{
-				Iterator iter = mHashSet.Find({ raw });
-				return RawBounds(!!iter ? iter->raw : nullptr);
+				Iterator iter = mHashSet.Find(raw);
+				return RawBounds(!!iter ? *iter : nullptr);
 			}
 
 			template<typename... Types>
 			RawBounds Find(const HashTupleKey<Types...>& hashTupleKey) const
 			{
 				Iterator iter = mHashSet.Find(hashTupleKey);
-				return RawBounds(!!iter ? iter->raw : nullptr);
+				return RawBounds(!!iter ? *iter: nullptr);
 			}
 
 			void FindExisting(Raw* raw) MOMO_NOEXCEPT
@@ -334,30 +329,30 @@ namespace internal
 				MOMO_ASSERT(!mIterator);
 				try
 				{
-					mIterator = mHashSet.Find({ raw });
+					mIterator = mHashSet.Find(raw);
 					MOMO_ASSERT(!!mIterator);
 				}
 				catch (...)
 				{
 					mIterator = mHashSet.GetBegin();
-					while (mIterator->raw != raw)
+					while (*mIterator != raw)
 						++mIterator;
 				}
 			}
 
-			void Add(Raw* raw, size_t* /*hashCodes*/)
+			void Add(Raw* raw)
 			{
 				MOMO_ASSERT(!mIterator);
-				auto insRes = mHashSet.Insert({ raw });
+				auto insRes = mHashSet.Insert(raw);
 				if (!insRes.inserted)
-					throw UniqueIndexViolation(insRes.iterator->raw, *this);
+					throw UniqueIndexViolation(*insRes.iterator, *this);
 				mIterator = insRes.iterator;
 			}
 
 			void Insert(Raw* raw)
 			{
 				MOMO_ASSERT(!mIterator);
-				mIterator = mHashSet.Insert({ raw }).iterator;
+				mIterator = mHashSet.Insert(raw).iterator;
 			}
 
 			void Remove() MOMO_NOEXCEPT
@@ -370,7 +365,7 @@ namespace internal
 			void ResetRaw(Raw* raw) MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(!!mIterator);
-				mHashSet.ResetKey(mIterator, { raw });
+				mHashSet.ResetKey(mIterator, raw);
 				mIterator = Iterator();
 			}
 
@@ -383,7 +378,7 @@ namespace internal
 			Raw* GetCurrentRaw() const MOMO_NOEXCEPT
 			{
 				MOMO_ASSERT(!!mIterator);
-				return mIterator->raw;
+				return *mIterator;
 			}
 
 			template<typename RawFilter>
@@ -392,7 +387,7 @@ namespace internal
 				Iterator iter = mHashSet.GetBegin();
 				while (!!iter)
 				{
-					if (rawFilter(iter->raw))
+					if (rawFilter(*iter))
 						++iter;
 					else
 						iter = mHashSet.Remove(iter);
@@ -408,8 +403,8 @@ namespace internal
 		class MultiHash
 		{
 		private:
-			typedef momo::HashMultiMap<HashRawKey, Raw*, HashTraits, MemManagerPtr,
-				HashMultiMapKeyValueTraits<HashRawKey, Raw*, MemManagerPtr>,
+			typedef momo::HashMultiMap<Raw*, Raw*, HashTraits, MemManagerPtr,
+				HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
 				DataHashMultiMapSettings> HashMultiMap;
 
 			typedef typename HashMultiMap::ConstKeyIterator KeyIterator;
@@ -509,7 +504,7 @@ namespace internal
 				MOMO_ASSERT(!mKeyIterator);
 				try
 				{
-					mKeyIterator = mHashMultiMap.Find({ raw });
+					mKeyIterator = mHashMultiMap.Find(raw);
 					MOMO_ASSERT(!!mKeyIterator);
 					pvFindExisting(raw);
 				}
@@ -521,11 +516,11 @@ namespace internal
 				}
 			}
 
-			void Add(Raw* raw, size_t* /*hashCodes*/)
+			void Add(Raw* raw)
 			{
 				MOMO_ASSERT(!mKeyIterator);
-				mKeyIterator = mHashMultiMap.InsertKey({ raw });
-				if (mKeyIterator->key.raw != raw)
+				mKeyIterator = mHashMultiMap.InsertKey(raw);
+				if (mKeyIterator->key != raw)
 					mHashMultiMap.Add(mKeyIterator, raw);
 				mRawIndex = mKeyIterator->values.GetCount();
 			}
@@ -540,7 +535,7 @@ namespace internal
 				else if (mKeyIterator->values.GetCount() > 0)
 				{
 					size_t valueCount = mKeyIterator->values.GetCount();
-					mHashMultiMap.ResetKey(mKeyIterator, { mKeyIterator->values[valueCount - 1] });
+					mHashMultiMap.ResetKey(mKeyIterator, mKeyIterator->values[valueCount - 1]);
 					mHashMultiMap.Remove(mKeyIterator, valueCount - 1);
 				}
 				else
@@ -570,7 +565,7 @@ namespace internal
 						else
 							mHashMultiMap.Remove(keyIter, valueIndex);
 					}
-					if (rawFilter(keyIter->key.raw))
+					if (rawFilter(keyIter->key))
 					{
 						++keyIter;
 						continue;
@@ -581,7 +576,7 @@ namespace internal
 						keyIter = mHashMultiMap.RemoveKey(keyIter).GetKeyIterator();
 						continue;
 					}
-					mHashMultiMap.ResetKey(keyIter, { keyIter->values[valueCount - 1] });
+					mHashMultiMap.ResetKey(keyIter, keyIter->values[valueCount - 1]);
 					mHashMultiMap.Remove(keyIter, valueCount - 1);
 					++keyIter;
 				}
@@ -590,7 +585,7 @@ namespace internal
 		private:
 			bool pvFindExisting(Raw* raw) MOMO_NOEXCEPT
 			{
-				if (mKeyIterator->key.raw == raw)
+				if (mKeyIterator->key == raw)
 				{
 					mRawIndex = 0;
 					return true;
@@ -612,10 +607,7 @@ namespace internal
 
 	private:
 		typedef Array<UniqueHash> UniqueHashes;
-
 		typedef Array<MultiHash> MultiHashes;
-
-		typedef Array<size_t> OffsetHashCodes;
 
 	public:
 		DataIndexes(const ColumnList* columnList, MemManager& memManager)
@@ -715,13 +707,12 @@ namespace internal
 			size_t uniqueHashIndex = 0;
 			size_t multiHashCount = mMultiHashes.GetCount();
 			size_t multiHashIndex = 0;
-			size_t* hashCodes = nullptr;	//?
 			try
 			{
 				for (; uniqueHashIndex < uniqueHashCount; ++uniqueHashIndex)
-					mUniqueHashes[uniqueHashIndex].Add(raw, hashCodes);
+					mUniqueHashes[uniqueHashIndex].Add(raw);
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
-					mMultiHashes[multiHashIndex].Add(raw, hashCodes);
+					mMultiHashes[multiHashIndex].Add(raw);
 			}
 			catch (...)
 			{
@@ -767,7 +758,7 @@ namespace internal
 						throw UniqueIndexViolation(raw, mUniqueHashes[uniqueHashIndex]);
 				}
 				for (; multiHashIndex < multiHashCount; ++multiHashIndex)
-					mMultiHashes[multiHashIndex].Add(newRaw, nullptr);
+					mMultiHashes[multiHashIndex].Add(newRaw);
 			}
 			catch (...)
 			{
@@ -925,20 +916,15 @@ namespace internal
 			const auto* hash = pvGetHash(hashes, sortedOffsets);
 			if (hash != nullptr)
 				return hash;
-			auto hashFunc = [columnList, offsets] (Raw* raw, size_t* hashCodes)
-			{
-				if (hashCodes == nullptr)
-					return pvGetHashCode<void, Types...>(columnList, raw, offsets.data());
-				else
-					return pvGetHashCode<void, Types...>(columnList, raw, offsets.data(), hashCodes);
-			};
+			auto hashFunc = [columnList, offsets] (Raw* raw)
+				{ return pvGetHashCode<void, Types...>(columnList, raw, offsets.data()); };
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets.data()); };
 			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr());
 			typename Hashes::Item newHash(std::move(newHashOffsets), hashFunc, equalFunc);
 			for (Raw* raw : raws)
 			{
-				newHash.Add(raw, nullptr);
+				newHash.Add(raw);
 				newHash.Accept();
 			}
 			hashes.Reserve(hashes.GetCount() + 1);
@@ -966,23 +952,6 @@ namespace internal
 		template<typename Void>
 		static size_t pvGetHashCode(const ColumnList* /*columnList*/, Raw* /*raw*/,
 			const size_t* /*offsets*/) MOMO_NOEXCEPT
-		{
-			return 0;
-		}
-
-		template<typename Void, typename Type, typename... Types>
-		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw,
-			const size_t* offsets, size_t* hashCodes)
-		{
-			size_t& hashCode = hashCodes[*offsets];
-			if (hashCode == 0)
-				hashCode = pvGetHashCode<Type>(columnList, raw, *offsets);
-			return hashCode + pvGetHashCode<void, Types...>(columnList, raw, offsets + 1, hashCodes);	//?
-		}
-
-		template<typename Void>
-		static size_t pvGetHashCode(const ColumnList* /*columnList*/, Raw* /*raw*/,
-			const size_t* /*offsets*/, size_t* /*hashCodes*/) MOMO_NOEXCEPT
 		{
 			return 0;
 		}
