@@ -217,8 +217,6 @@
 		<Unit filename="../../tests/SimpleHashTesterUnlimP.cpp" />
 		<Unit filename="../../tests/SimpleTreeTester.cpp" />
 		<Unit filename="../../tests/SpeedMapTester.cpp" />
-		<Unit filename="../../tests/TemplHashTester.cpp" />
-		<Unit filename="../../tests/TemplTreeTester.cpp" />
 		<Unit filename="../../tests/TestSettings.h" />
 		<Extensions>
 			<code_completion />

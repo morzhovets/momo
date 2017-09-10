@@ -69,9 +69,6 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\TemplHashTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxTreeSetTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -82,9 +79,6 @@
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\TemplTreeTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleTreeTester.cpp">

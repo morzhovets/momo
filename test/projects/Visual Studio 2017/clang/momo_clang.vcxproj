@@ -109,8 +109,6 @@
     <ClCompile Include="..\..\..\tests\SimpleHashTesterUnlimP.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleTreeTester.cpp" />
     <ClCompile Include="..\..\..\tests\SpeedMapTester.cpp" />
-    <ClCompile Include="..\..\..\tests\TemplHashTester.cpp" />
-    <ClCompile Include="..\..\..\tests\TemplTreeTester.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
