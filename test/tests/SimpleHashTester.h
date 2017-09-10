@@ -13,10 +13,86 @@
 
 #include <string>
 #include <iostream>
+#include <random>
 
 class SimpleHashTester
 {
+private:
+	template<size_t size, size_t alignment>
+	class TemplItem
+	{
+	public:
+		template<typename HashBucket>
+		class HashTraits : public momo::HashTraits<TemplItem, HashBucket>
+		{
+		public:
+			size_t GetHashCode(const TemplItem& key) const
+			{
+				return std::hash<unsigned char>()(key.GetValue());
+			}
+
+			bool IsEqual(const TemplItem& key1, const TemplItem& key2) const
+			{
+				return key1.GetValue() == key2.GetValue();
+			}
+		};
+
+	public:
+		explicit TemplItem(unsigned char value) MOMO_NOEXCEPT
+		{
+			*pvGetPtr() = value;
+		}
+
+		unsigned char GetValue() const MOMO_NOEXCEPT
+		{
+			return *pvGetPtr();
+		}
+
+	private:
+		const unsigned char* pvGetPtr() const MOMO_NOEXCEPT
+		{
+			return reinterpret_cast<const unsigned char*>(&mStorage);
+		}
+
+		unsigned char* pvGetPtr() MOMO_NOEXCEPT
+		{
+			return reinterpret_cast<unsigned char*>(&mStorage);
+		}
+
+	private:
+		typename std::aligned_storage<size, alignment>::type mStorage;
+	};
+
 public:
+	template<typename HashBucket, size_t size, size_t alignment>
+	static void TestTemplHashSet(const char* bucketName)
+	{
+		std::cout << bucketName << ": TemplItem<" << size << ", " << alignment << ">: " << std::flush;
+
+		static const size_t count = 256;
+		static unsigned char array[count];
+		for (size_t i = 0; i < count; ++i)
+			array[i] = (unsigned char)i;
+
+		std::mt19937 mt;
+
+		typedef TemplItem<size, alignment> Item;
+		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>> HashSet;
+		HashSet set;
+
+		std::shuffle(array, array + count, mt);
+		for (unsigned char c : array)
+			assert(set.Insert(Item(c)).inserted);
+		assert(set.GetCount() == count);
+
+		std::shuffle(array, array + count, mt);
+		for (unsigned char c : array)
+			assert(set.Remove(Item(c)));
+		assert(set.IsEmpty());
+
+		std::cout << "ok" << std::endl;
+	}
+
 	template<typename HashBucket>
 	static void TestStrHash(const char* bucketName)
 	{

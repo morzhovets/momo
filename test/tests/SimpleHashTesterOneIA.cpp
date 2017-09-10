@@ -15,7 +15,16 @@
 
 #include "SimpleHashTester.h"
 
-static int testSimpleHash =
-	(SimpleHashTester::TestStrHash<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>"), 0);
+static int testSimpleHash = []
+{
+	SimpleHashTester::TestStrHash<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
+
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<0>, 1, 1>("momo::HashBucketOneIA<0>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<4>, 6, 2>("momo::HashBucketOneIA<4>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<2>, 4, 4>("momo::HashBucketOneIA<2>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<8>, 8, 8>("momo::HashBucketOneIA<8>");
+
+	return 0;
+}();
 
 #endif // TEST_SIMPLE_HASH
