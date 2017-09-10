@@ -18,11 +18,105 @@
 
 #include <string>
 #include <iostream>
+#include <random>
+#include <set>
 
 class SimpleTreeTester
 {
 public:
-	static void TestAll()
+	static void TestCharAll()
+	{
+		TestCharTreeNode3<  1, 1, 127>();
+		TestCharTreeNode3<  2, 1,  66>();
+		TestCharTreeNode3<  3, 1,  32>();
+		TestCharTreeNode3<  4, 1,  15>();
+		TestCharTreeNode3<  5, 1,   1>();
+		TestCharTreeNode3< 10, 1,   3>();
+		TestCharTreeNode3<101, 1,   2>();
+		TestCharTreeNode3<255, 1,   1>();
+
+		TestCharTreeNode3<  4, 2, 127>();
+		TestCharTreeNode3<  5, 2,  66>();
+		TestCharTreeNode3<  6, 2,  32>();
+		TestCharTreeNode3<  7, 2,  15>();
+		TestCharTreeNode3< 12, 2,   1>();
+		TestCharTreeNode3< 55, 2,   3>();
+		TestCharTreeNode3<111, 2,   2>();
+		TestCharTreeNode3<255, 2,   1>();
+
+		TestCharTreeNode3<  6, 3, 127>();
+		TestCharTreeNode3<  7, 3,  66>();
+		TestCharTreeNode3<  8, 3,  32>();
+		TestCharTreeNode3<  9, 3,  15>();
+		TestCharTreeNode3< 14, 3,   1>();
+		TestCharTreeNode3< 77, 3,   3>();
+		TestCharTreeNode3<121, 3,   2>();
+		TestCharTreeNode3<255, 3,   1>();
+
+		TestCharTreeNode3< 37,   7, 127>();
+		TestCharTreeNode3< 42,  15,  66>();
+		TestCharTreeNode3< 65,  23,  32>();
+		TestCharTreeNode3< 77,  30,  15>();
+		TestCharTreeNode3< 88,  31,   1>();
+		TestCharTreeNode3<104,  33,   3>();
+		TestCharTreeNode3<204, 100,   2>();
+		TestCharTreeNode3<255, 127,   1>();
+	}
+
+	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount>
+	static void TestCharTreeNode3()
+	{
+		static const bool useSwap = (maxCapacity + capacityStep) % 2 == 0;
+		TestCharTreeNode4<maxCapacity, capacityStep, memPoolBlockCount, useSwap>();
+	}
+
+	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount, bool useSwap>
+	static void TestCharTreeNode4()
+	{
+		std::cout << "momo::TreeNode<" << maxCapacity << ", " << capacityStep << ", "
+			<< memPoolBlockCount << ", " << (useSwap ? "true" : "false") << ">: " << std::flush;
+
+		typedef momo::TreeNode<maxCapacity, capacityStep,
+			momo::MemPoolParams<memPoolBlockCount>, useSwap> TreeNode;
+
+		static const size_t count = 256;
+		static unsigned char array[count];
+		for (size_t i = 0; i < count; ++i)
+			array[i] = (unsigned char)i;
+
+		std::mt19937 mt;
+
+		{
+			std::set<unsigned char> sset;
+			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> mset;
+
+			std::shuffle(array, array + count, mt);
+			for (unsigned char c : array)
+			{
+				sset.insert(c);
+				assert(mset.Insert(c).inserted);
+				assert(mset.GetCount() == sset.size());
+				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
+			}
+
+			std::shuffle(array, array + count, mt);
+			for (unsigned char c : array)
+			{
+				sset.erase(c);
+				assert(mset.Remove(c));
+				assert(mset.GetCount() == sset.size());
+				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
+			}
+
+			assert(mset.IsEmpty());
+			mset.Insert(128);
+			assert(mset.GetCount() == 1);
+		}
+
+		std::cout << "ok" << std::endl;
+	}
+
+	static void TestStrAll()
 	{
 		std::cout << "momo::TreeSet: " << std::flush;
 		TestStrTreeSet();
@@ -113,6 +207,6 @@ public:
 	}
 };
 
-static int testSimpleTree = (SimpleTreeTester::TestAll(), 0);
+static int testSimpleTree = (SimpleTreeTester::TestStrAll(), SimpleTreeTester::TestCharAll(), 0);
 
 #endif // TEST_SIMPLE_TREE
