@@ -1090,6 +1090,18 @@ private:
 	Data mData;
 };
 
+#ifdef MOMO_HAS_CPP17
+template<typename ArgIterator,
+	typename MemManager = MemManagerDefault>
+Array(ArgIterator, ArgIterator, MemManager = MemManager())
+	-> Array<typename std::iterator_traits<ArgIterator>::value_type, MemManager>;
+
+template<typename Item,
+	typename MemManager = MemManagerDefault>
+Array(std::initializer_list<Item>, MemManager = MemManager())
+	-> Array<Item, MemManager>;
+#endif
+
 template<size_t tInternalCapacity, typename TItem,
 	typename TMemManager = MemManagerDefault,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>>

@@ -676,4 +676,16 @@ private:
 	size_t mCount;
 };
 
+#ifdef MOMO_HAS_CPP17
+template<typename ArgIterator,
+	typename MemManager = MemManagerDefault>
+SegmentedArray(ArgIterator, ArgIterator, MemManager = MemManager())
+	-> SegmentedArray<typename std::iterator_traits<ArgIterator>::value_type, MemManager>;
+
+template<typename Item,
+	typename MemManager = MemManagerDefault>
+SegmentedArray(std::initializer_list<Item>, MemManager = MemManager())
+	-> SegmentedArray<Item, MemManager>;
+#endif
+
 } // namespace momo

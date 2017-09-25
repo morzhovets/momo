@@ -483,6 +483,13 @@ private:
 	Array mArray;
 };
 
+#ifdef MOMO_HAS_CPP17
+template<typename Iterator,
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
+vector(Iterator, Iterator, Allocator = Allocator())
+	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
+#endif
+
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector_intcap = vector<TValue, TAllocator,
