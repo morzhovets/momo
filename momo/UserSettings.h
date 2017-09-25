@@ -11,6 +11,10 @@
 
 #pragma once
 
+#if __cplusplus >= 201703L
+#define MOMO_HAS_CPP17
+#endif
+
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,
@@ -33,8 +37,11 @@
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
 
-// C++17: `std::is_nothrow_swappable_v<Object>`
+#ifdef MOMO_HAS_CPP17
+#define MOMO_IS_NOTHROW_SWAPPABLE(Object) std::is_nothrow_swappable_v<Object>
+#else
 #define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
+#endif
 
 // If your platform does not require data alignment, define it as `1`
 #define MOMO_MAX_ALIGNMENT (std::alignment_of<std::max_align_t>::value)
