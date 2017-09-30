@@ -20,25 +20,25 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItem, uint32_t tMaskState, size_t tSize = sizeof(TItem*)>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
 	class BucketLimP4PtrState;
 
-	template<typename TItem, uint32_t tMaskState>
-	class BucketLimP4PtrState<TItem, tMaskState, 4>
+	template<typename TItem, uint8_t tMaskState>
+	class BucketLimP4PtrState<TItem, tMaskState, 32>
 	{
 	public:
 		typedef TItem Item;
 
-		static const uint32_t maskState = tMaskState;
-		static const size_t size = 4;
+		static const uint8_t maskState = tMaskState;
+		static const size_t bitCount = 32;
 
 	public:
-		void Set(Item* ptr, uint32_t state) MOMO_NOEXCEPT
+		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(state <= maskState);
 			mPtrState = reinterpret_cast<uint32_t>(ptr);
-			MOMO_ASSERT((mPtrState & maskState) == 0);
-			mPtrState |= state;
+			MOMO_ASSERT(((uint8_t)mPtrState & maskState) == 0);
+			mPtrState |= (uint32_t)state;
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
@@ -46,31 +46,69 @@ namespace internal
 			return reinterpret_cast<Item*>(mPtrState & ~maskState);
 		}
 
-		uint32_t GetState() const MOMO_NOEXCEPT
+		uint8_t GetState() const MOMO_NOEXCEPT
 		{
-			return mPtrState & maskState;
+			return (uint8_t)mPtrState & maskState;
 		}
 
 	private:
 		uint32_t mPtrState;
 	};
 
-	template<typename TItem, uint32_t tMaskState>
-	class BucketLimP4PtrState<TItem, tMaskState, 8>
+	template<typename TItem, uint8_t tMaskState>
+	class BucketLimP4PtrState<TItem, tMaskState, 48>
 	{
 	public:
 		typedef TItem Item;
 
-		static const uint32_t maskState = tMaskState;
-		static const size_t size = 8;
+		static const uint8_t maskState = tMaskState;
+		static const size_t bitCount = 48;
 
 	public:
-		void Set(Item* ptr, uint32_t state) MOMO_NOEXCEPT
+		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			MOMO_ASSERT(((uint32_t)intPtr & maskState) == 0);
-			mPtrState1 = (uint32_t)(intPtr) | state;
+			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
+			mPtrState1 = (uint16_t)(intPtr) | (uint16_t)state;
+			mPtrState2 = (uint16_t)(intPtr >> 16);
+			mPtrState3 = (uint16_t)(intPtr >> 32);
+		}
+
+		Item* GetPointer() const MOMO_NOEXCEPT
+		{
+			uint64_t intPtr = ((uint64_t)mPtrState3 << 32) | ((uint64_t)mPtrState2 << 16)
+				| (uint64_t)(mPtrState1 & ~(uint16_t)maskState);
+			return reinterpret_cast<Item*>(intPtr);
+		}
+
+		uint8_t GetState() const MOMO_NOEXCEPT
+		{
+			return (uint8_t)mPtrState1 & maskState;
+		}
+
+	private:
+		uint16_t mPtrState1;
+		uint16_t mPtrState2;
+		uint16_t mPtrState3;
+	};
+
+	template<typename TItem, uint8_t tMaskState>
+	class BucketLimP4PtrState<TItem, tMaskState, 64>
+	{
+	public:
+		typedef TItem Item;
+
+		static const uint8_t maskState = tMaskState;
+		static const size_t bitCount = 64;
+
+	public:
+		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(state <= maskState);
+			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
+			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
+			mPtrState1 = (uint32_t)(intPtr) | (uint32_t)state;
 			mPtrState2 = (uint32_t)(intPtr >> 32);
 		}
 
@@ -80,9 +118,9 @@ namespace internal
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
-		uint32_t GetState() const MOMO_NOEXCEPT
+		uint8_t GetState() const MOMO_NOEXCEPT
 		{
-			return mPtrState1 & maskState;
+			return (uint8_t)mPtrState1 & maskState;
 		}
 
 	private:
@@ -132,7 +170,8 @@ namespace internal
 		template<size_t memPoolIndex>
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
-		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0> PtrState;
+		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
+			MemManager::ptrUsefulBitCount> PtrState;
 
 		static const uint8_t maskEmpty = 128;
 		static const uint8_t emptyHashProbe = 255;
@@ -342,9 +381,10 @@ namespace internal
 
 		void pvSetPtrState(Item* items, size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			mPtrState.Set(items, useHashCodePartGetter ? (uint32_t)memPoolIndex - 1 : 0);
+			uint8_t memPoolIndex1 = (uint8_t)memPoolIndex - 1;
+			mPtrState.Set(items, useHashCodePartGetter ? memPoolIndex1 : 0);
 			if (!useHashCodePartGetter && (maxCount < 4 || !IsFull()))
-				mHashes[3] = maskEmpty + (uint8_t)memPoolIndex - 1;
+				mHashes[3] = maskEmpty + memPoolIndex1;
 		}
 
 		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
