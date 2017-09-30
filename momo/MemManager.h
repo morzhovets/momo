@@ -26,6 +26,8 @@
     static const bool canReallocate = true;
     static const bool canReallocateInplace = true;
 
+    static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
+
   public:
     UserMemManager();
     UserMemManager(UserMemManager&& memManager) noexcept;
@@ -53,11 +55,34 @@
 namespace momo
 {
 
+namespace internal
+{
+	template<size_t ptrUsefulBitCount>
+	struct MemManagerCheckPtr
+	{
+		explicit MemManagerCheckPtr(void* ptr) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(ptrUsefulBitCount < sizeof(void*) * 8);
+			MOMO_ASSERT((uintptr_t)ptr >> ptrUsefulBitCount == (uintptr_t)0);
+		}
+	};
+
+	template<>
+	struct MemManagerCheckPtr<sizeof(void*) * 8>
+	{
+		explicit MemManagerCheckPtr(void* /*ptr*/) MOMO_NOEXCEPT
+		{
+		}
+	};
+}
+
 class MemManagerCpp
 {
 public:
 	static const bool canReallocate = false;
 	static const bool canReallocateInplace = false;
+
+	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
 	MemManagerCpp() MOMO_NOEXCEPT
@@ -83,6 +108,7 @@ public:
 	{
 		MOMO_ASSERT(size > 0);
 		void* ptr = operator new(size);
+		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
 		return static_cast<ResType*>(ptr);
 	}
 
@@ -99,6 +125,8 @@ class MemManagerC
 public:
 	static const bool canReallocate = true;
 	static const bool canReallocateInplace = false;
+
+	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
 	MemManagerC() MOMO_NOEXCEPT
@@ -126,6 +154,7 @@ public:
 		void* ptr = malloc(size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
+		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
 		return static_cast<ResType*>(ptr);
 	}
 
@@ -145,6 +174,7 @@ public:
 		void* newPtr = realloc(ptr, newSize);
 		if (newPtr == nullptr)
 			throw std::bad_alloc();
+		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(newPtr);
 		return static_cast<ResType*>(newPtr);
 	}
 };
@@ -155,6 +185,8 @@ class MemManagerWin
 public:
 	static const bool canReallocate = false;
 	static const bool canReallocateInplace = true;
+
+	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
 	MemManagerWin() MOMO_NOEXCEPT
@@ -182,6 +214,7 @@ public:
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
+		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
 		return static_cast<ResType*>(ptr);
 	}
 
@@ -201,6 +234,7 @@ public:
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 	//	if (newPtr == nullptr)
 	//		throw std::bad_alloc();
+	//	(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(newPtr);
 	//	return static_cast<ResType*>(newPtr);
 	//}
 
@@ -228,6 +262,8 @@ public:
 
 	static const bool canReallocate = false;
 	static const bool canReallocateInplace = false;
+
+	static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 public:
 	MemManagerStd() MOMO_NOEXCEPT_IF(noexcept(CharAllocator()))
@@ -471,6 +507,8 @@ namespace internal
 		static const bool canReallocate = BaseMemManager::canReallocate;
 		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
 
+		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
+
 	public:
 		MemManagerPtr() MOMO_NOEXCEPT
 		{
@@ -530,6 +568,8 @@ namespace internal
 
 		static const bool canReallocate = BaseMemManager::canReallocate;
 		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
+
+		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& memManager) MOMO_NOEXCEPT
