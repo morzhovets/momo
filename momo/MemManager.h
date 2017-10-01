@@ -367,6 +367,8 @@ namespace internal
 		static const bool canReallocate = false;
 		static const bool canReallocateInplace = false;
 
+		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
+
 	public:
 		MemManagerDummy() MOMO_NOEXCEPT
 		{
