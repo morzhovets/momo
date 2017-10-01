@@ -20,11 +20,12 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount, typename = void>
 	class BucketLimP4PtrState;
 
-	template<typename TItem, uint8_t tMaskState>
-	class BucketLimP4PtrState<TItem, tMaskState, 32>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
+		typename std::enable_if<(tBitCount <= 32)>::type>
 	{
 	public:
 		typedef TItem Item;
@@ -43,7 +44,7 @@ namespace internal
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			return reinterpret_cast<Item*>(mPtrState & ~maskState);
+			return reinterpret_cast<Item*>(mPtrState & ~(uint32_t)maskState);
 		}
 
 		uint8_t GetState() const MOMO_NOEXCEPT
@@ -55,8 +56,9 @@ namespace internal
 		uint32_t mPtrState;
 	};
 
-	template<typename TItem, uint8_t tMaskState>
-	class BucketLimP4PtrState<TItem, tMaskState, 48>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
+		typename std::enable_if<(32 < tBitCount && tBitCount <= 48)>::type>
 	{
 	public:
 		typedef TItem Item;
@@ -70,31 +72,30 @@ namespace internal
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
 			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
-			mPtrState1 = (uint16_t)(intPtr) | (uint16_t)state;
-			mPtrState2 = (uint16_t)(intPtr >> 16);
-			mPtrState3 = (uint16_t)(intPtr >> 32);
+			mPtrState[0] = (uint16_t)(intPtr) | (uint16_t)state;
+			mPtrState[1] = (uint16_t)(intPtr >> 16);
+			mPtrState[2] = (uint16_t)(intPtr >> 32);
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			uint64_t intPtr = ((uint64_t)mPtrState3 << 32) | ((uint64_t)mPtrState2 << 16)
-				| (uint64_t)(mPtrState1 & ~(uint16_t)maskState);
+			uint64_t intPtr = ((uint64_t)mPtrState[2] << 32) | ((uint64_t)mPtrState[1] << 16)
+				| (uint64_t)(mPtrState[0] & ~(uint16_t)maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
 		uint8_t GetState() const MOMO_NOEXCEPT
 		{
-			return (uint8_t)mPtrState1 & maskState;
+			return (uint8_t)mPtrState[0] & maskState;
 		}
 
 	private:
-		uint16_t mPtrState1;
-		uint16_t mPtrState2;
-		uint16_t mPtrState3;
+		uint16_t mPtrState[3];
 	};
 
-	template<typename TItem, uint8_t tMaskState>
-	class BucketLimP4PtrState<TItem, tMaskState, 64>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
+		typename std::enable_if<(48 < tBitCount && tBitCount <= 64)>::type>
 	{
 	public:
 		typedef TItem Item;
@@ -108,24 +109,24 @@ namespace internal
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
 			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
-			mPtrState1 = (uint32_t)(intPtr) | (uint32_t)state;
-			mPtrState2 = (uint32_t)(intPtr >> 32);
+			mPtrState[0] = (uint32_t)(intPtr) | (uint32_t)state;
+			mPtrState[1] = (uint32_t)(intPtr >> 32);
 		}
 
 		Item* GetPointer() const MOMO_NOEXCEPT
 		{
-			uint64_t intPtr = ((uint64_t)mPtrState2 << 32) | (uint64_t)(mPtrState1 & ~maskState);
+			uint64_t intPtr = ((uint64_t)mPtrState[1] << 32)
+				| (uint64_t)(mPtrState[0] & ~(uint32_t)maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
 		uint8_t GetState() const MOMO_NOEXCEPT
 		{
-			return (uint8_t)mPtrState1 & maskState;
+			return (uint8_t)mPtrState[0] & maskState;
 		}
 
 	private:
-		uint32_t mPtrState1;
-		uint32_t mPtrState2;
+		uint32_t mPtrState[2];
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
