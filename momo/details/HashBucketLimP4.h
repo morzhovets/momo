@@ -176,6 +176,10 @@ namespace internal
 		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
 			MemManager::ptrUsefulBitCount> PtrState;
 
+		MOMO_STATIC_ASSERT(PtrState::bitCount % 8 == 0);
+		static const size_t hashCount = 4 +
+			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
+
 		static const uint8_t maskEmpty = 128;
 		static const uint8_t emptyHashProbe = 255;
 
@@ -304,16 +308,17 @@ namespace internal
 						pvSetHashProbe(1, hashCode, logBucketCount, probe);
 						return pvAdd<1>(params, itemCreator, hashCode, items);
 					case 2:
+						pvSetHashProbe(2, hashCode, logBucketCount, probe);
 						return pvAdd<2>(params, itemCreator, hashCode, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
+						pvSetHashProbe(3, hashCode, logBucketCount, probe);
 						return pvAdd<3>(params, itemCreator, hashCode, items);
 					}
 				}
 				else
 				{
-					if (count == 1)
-						pvSetHashProbe(1, hashCode, logBucketCount, probe);
+					pvSetHashProbe(count, hashCode, logBucketCount, probe);
 					itemCreator(items + count);
 					mHashes[count] = pvGetHashByte(hashCode);
 					pvSetPtrState(items, memPoolIndex);
@@ -346,8 +351,8 @@ namespace internal
 				itemReplacer(items[count - 1], *iter);
 				mHashes[index] = mHashes[count - 1];
 				mHashes[count - 1] = emptyHashProbe;
-				if (useHashCodePartGetter && index == 0)
-					mHashes[3] = (count == 2) ? mHashes[2] : emptyHashProbe;
+				if (useHashCodePartGetter && hashCount - 1 - index >= count)
+					mHashes[hashCount - 1 - index] = emptyHashProbe;	//?
 				pvSetPtrState(items, memPoolIndex);
 				return iter;
 			}
@@ -361,7 +366,7 @@ namespace internal
 				return hashCodeFullGetter();
 			Item* items = mPtrState.GetPointer();
 			size_t index = iter - items;
-			size_t hashProbe = (size_t)mHashes[3 - index];
+			size_t hashProbe = (size_t)mHashes[hashCount - 1 - index];
 			bool useFullGetter = ((uint8_t)(hashProbe + 1) <= maskEmpty ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
@@ -378,7 +383,7 @@ namespace internal
 	private:
 		void pvSetEmpty(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
-			std::fill_n(mHashes, 4, (uint8_t)emptyHashProbe);
+			std::fill_n(mHashes, hashCount, (uint8_t)emptyHashProbe);
 			pvSetPtrState(nullptr, memPoolIndex);
 		}
 
@@ -419,10 +424,10 @@ namespace internal
 		void pvSetHashProbe(size_t index, size_t hashCode, size_t logBucketCount,
 			size_t probe) MOMO_NOEXCEPT
 		{
-			if (!useHashCodePartGetter)
+			if (!useHashCodePartGetter || hashCount - 1 - index <= index)
 				return;
 			size_t probeShift = pvGetProbeShift(logBucketCount);
-			mHashes[3 - index] = (probe < (size_t)1 << probeShift)
+			mHashes[hashCount - 1 - index] = (probe < (size_t)1 << probeShift)
 				? maskEmpty | (uint8_t)((hashCode >> logBucketCount) << probeShift) | (uint8_t)probe
 				: emptyHashProbe;
 		}
@@ -476,7 +481,7 @@ namespace internal
 
 	private:
 		PtrState mPtrState;
-		uint8_t mHashes[4];
+		uint8_t mHashes[hashCount];
 	};
 }
 
