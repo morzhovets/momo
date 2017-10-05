@@ -16,12 +16,12 @@
 </Type>
 
 <Type Name="momo::internal::HashSetBuckets&lt;*&gt;">
-    <DisplayString>{{ BucketCount={mCount} }}</DisplayString>
+    <DisplayString>{{ BucketCount={(size_t)1 &lt;&lt; mLogCount} }}</DisplayString>
     <Expand>
-        <Item Name="[BucketCount]">mCount</Item>
+        <Item Name="[BucketCount]">(size_t)1 &lt;&lt; mLogCount</Item>
         <Item Name="[NextBuckets]">mNextBuckets</Item>
         <ArrayItems>
-            <Size>mCount</Size>
+            <Size>(size_t)1 &lt;&lt; mLogCount</Size>
             <ValuePointer>(Bucket*)(this + 1)</ValuePointer>
         </ArrayItems>
     </Expand>
@@ -64,14 +64,15 @@
 </Type>
 
 <Type Name="momo::internal::BucketLimP4&lt;*&gt;">
-    <DisplayString Condition="*(Item**)&amp;mItemPtr == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="mHashesState[3] >= 240">{{ Count={((mHashesState[3] >> 2) &amp; 3)} FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
-    <DisplayString Condition="mHashesState[3] &lt; 240">{{ Count=4 FirstItem={**(Item**)&amp;mItemPtr} }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState &lt; 4">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; useHashCodePartGetter">{{ Count={(4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7))} FirstItem={*(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)} }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; !useHashCodePartGetter">{{ Count={(4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7))} FirstItem={**(Item**)&amp;mPtrState} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">mHashesState[3] >= 240 ? (mHashesState[3] >> 2) &amp; 3 : 4</Item>
+        <Item Name="[Count]">4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7)</Item>
         <ArrayItems>
-            <Size>mHashesState[3] >= 240 ? (mHashesState[3] >> 2) &amp; 3 : 4</Size>
-            <ValuePointer>*(Item**)&amp;mItemPtr</ValuePointer>
+            <Size>4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7)</Size>
+            <ValuePointer Condition="useHashCodePartGetter">(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)</ValuePointer>
+            <ValuePointer Condition="!useHashCodePartGetter">*(Item**)&amp;mPtrState</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
