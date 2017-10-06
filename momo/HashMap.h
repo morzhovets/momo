@@ -553,6 +553,11 @@ public:
 		return mHashSet.GetBucketIndex(key);
 	}
 
+	ConstIterator MakeIterator(size_t hashCode) const MOMO_NOEXCEPT
+	{
+		return ConstIteratorProxy(mHashSet.MakeIterator(hashCode));
+	}
+
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		//?

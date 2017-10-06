@@ -901,6 +901,11 @@ public:
 		}
 	}
 
+	ConstIterator MakeIterator(size_t hashCode) const MOMO_NOEXCEPT
+	{
+		return ConstIteratorProxy(mBuckets, hashCode, mCrew.GetVersion());
+	}
+
 private:
 	void pvDestroy() MOMO_NOEXCEPT
 	{
@@ -977,7 +982,7 @@ private:
 					break;
 			}
 		}
-		return ConstIteratorProxy(mBuckets, hashCode, mCrew.GetVersion());
+		return MakeIterator(hashCode);
 	}
 
 	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
