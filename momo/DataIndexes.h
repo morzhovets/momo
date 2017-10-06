@@ -181,9 +181,9 @@ namespace internal
 			}
 
 		private:
-			template<size_t index, typename... Types>
-			bool pvIsEqual(const HashTupleKey<Types...>& key1, Raw* key2,
-				typename std::enable_if<(index < sizeof...(Types)), int>::type = 0) const
+			template<size_t index, typename... Types,
+				typename std::enable_if<(index < sizeof...(Types)), int>::type = 0>
+			bool pvIsEqual(const HashTupleKey<Types...>& key1, Raw* key2) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
 				const auto& item1 = pair.second;
@@ -192,9 +192,9 @@ namespace internal
 				return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 			}
 
-			template<size_t index, typename... Types>
-			bool pvIsEqual(const HashTupleKey<Types...>& /*key1*/, Raw* /*key2*/,
-				typename std::enable_if<(index == sizeof...(Types)), int>::type = 0) const MOMO_NOEXCEPT
+			template<size_t index, typename... Types,
+				typename std::enable_if<(index == sizeof...(Types)), int>::type = 0>
+			bool pvIsEqual(const HashTupleKey<Types...>& /*key1*/, Raw* /*key2*/) const MOMO_NOEXCEPT
 			{
 				return true;
 			}
@@ -956,18 +956,18 @@ namespace internal
 			return 0;
 		}
 
-		template<size_t index, typename... Types>
-		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& tuple,
-			typename std::enable_if<(index < sizeof...(Types)), int>::type = 0)
+		template<size_t index, typename... Types,
+			typename std::enable_if<(index < sizeof...(Types)), int>::type = 0>
+		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& tuple)
 		{
 			const auto& pair = std::get<index>(tuple);
 			const auto& item = pair.second;
 			return pvGetHashCode(item, pair.first) + pvGetHashCode<index + 1>(tuple);	//?
 		}
 
-		template<size_t index, typename... Types>
-		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& /*tuple*/,
-			typename std::enable_if<(index == sizeof...(Types)), int>::type = 0) MOMO_NOEXCEPT
+		template<size_t index, typename... Types,
+			typename std::enable_if<(index == sizeof...(Types)), int>::type = 0>
+		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& /*tuple*/) MOMO_NOEXCEPT
 		{
 			return 0;
 		}

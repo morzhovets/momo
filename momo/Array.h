@@ -897,9 +897,9 @@ private:
 			AddBackNogrowCrt(itemCreator);
 	}
 
-	template<typename ArgIterator>
-	void pvFill(ArgIterator begin, ArgIterator end,
-		typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
+	template<typename ArgIterator,
+		typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0>
+	void pvFill(ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
@@ -908,9 +908,9 @@ private:
 			AddBackNogrowCrt(IterCreator(memManager, *iter));
 	}
 
-	template<typename ArgIterator>
-	void pvFill(ArgIterator begin, ArgIterator end,
-		typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0)
+	template<typename ArgIterator,
+		typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0>
+	void pvFill(ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
