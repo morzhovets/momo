@@ -139,7 +139,7 @@ public:
 	}
 
 	set(set&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
+		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value)
 		: mTreeSet(pvCreateSet(std::move(right), alloc))
 	{
 	}
@@ -159,7 +159,7 @@ public:
 	}
 
 	set& operator=(set&& right)
-		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)

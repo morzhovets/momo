@@ -114,6 +114,19 @@ namespace internal
 	template<bool value>
 	using BoolConstant = std::integral_constant<bool, value>;
 
+	template<typename Allocator,
+		typename = bool>
+	struct IsAlwaysEqualAllocator : public std::is_empty<Allocator>
+	{
+	};
+
+	template<typename Allocator>
+	struct IsAlwaysEqualAllocator<Allocator,
+		decltype(std::allocator_traits<Allocator>::is_always_equal::value)>
+		: public std::allocator_traits<Allocator>::is_always_equal
+	{
+	};
+
 	template<size_t... sequence>
 	struct Sequence
 	{

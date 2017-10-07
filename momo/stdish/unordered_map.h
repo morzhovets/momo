@@ -222,7 +222,7 @@ public:
 	}
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value))
+		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value)
 		: mHashMap(pvCreateMap(std::move(right), alloc))
 	{
 	}
@@ -242,7 +242,7 @@ public:
 	}
 
 	unordered_map& operator=(unordered_map&& right)
-		MOMO_NOEXCEPT_IF((std::is_same<allocator_type, std::allocator<value_type>>::value) ||
+		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
