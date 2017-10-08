@@ -121,9 +121,8 @@ namespace internal
 	};
 
 	template<typename Allocator>
-	struct IsAlwaysEqualAllocator<Allocator,
-		decltype(std::allocator_traits<Allocator>::is_always_equal::value)>
-		: public std::allocator_traits<Allocator>::is_always_equal
+	struct IsAlwaysEqualAllocator<Allocator, decltype(Allocator::is_always_equal::value)>
+		: public Allocator::is_always_equal
 	{
 	};
 
