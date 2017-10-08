@@ -62,6 +62,7 @@ namespace internal
 	{
 		explicit MemManagerCheckPtr(void* ptr) MOMO_NOEXCEPT
 		{
+			(void)ptr;
 			MOMO_STATIC_ASSERT(ptrUsefulBitCount < sizeof(void*) * 8);
 			MOMO_ASSERT((uintptr_t)ptr >> ptrUsefulBitCount == (uintptr_t)0);
 		}
