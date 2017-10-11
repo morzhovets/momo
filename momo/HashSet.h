@@ -836,7 +836,8 @@ public:
 	template<typename Set>
 	void MergeTo(Set& dstSet)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<ItemTraits, typename Set::ItemTraits>::value));
+		MOMO_STATIC_ASSERT((std::is_same<Key, typename Set::Key>::value));
+		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
 		ConstIterator iter = GetBegin();
 		while (!!iter)
 		{
