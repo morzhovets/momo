@@ -85,6 +85,11 @@ namespace internal
 			return (mState & (maskCount + 1)) != (uint8_t)0;
 		}
 
+		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
+		{
+			return ((size_t)1 << logBucketCount) - 1;
+		}
+
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = pvGetCount();

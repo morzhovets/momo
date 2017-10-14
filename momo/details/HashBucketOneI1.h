@@ -72,6 +72,11 @@ namespace internal
 			return mState != HashBucketOneState::empty;
 		}
 
+		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
+		{
+			return ((size_t)1 << logBucketCount) - 1;
+		}
+
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
