@@ -588,6 +588,11 @@ public:
 		return IteratorProxy(mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
 	}
 
+	iterator erase(iterator where)
+	{
+		return erase(static_cast<const_iterator>(where));
+	}
+
 	iterator erase(const_iterator first, const_iterator last)
 	{
 		if (first == begin() && last == end())

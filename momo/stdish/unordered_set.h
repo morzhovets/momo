@@ -362,9 +362,6 @@ public:
 	}
 
 	//iterator find(const key_type& key)
-	//{
-	//	return mHashSet.Find(key);
-	//}
 
 	size_type count(const key_type& key) const
 	{
@@ -380,12 +377,6 @@ public:
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
-	//{
-	//	iterator iter = find(key);
-	//	if (iter == end())
-	//		return std::pair<iterator, iterator>(end(), end());
-	//	return std::pair<iterator, iterator>(iter, std::next(iter));
-	//}
 
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
@@ -457,6 +448,8 @@ public:
 	{
 		return mHashSet.Remove(where);
 	}
+
+	//iterator erase(iterator where)
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
