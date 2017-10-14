@@ -139,6 +139,7 @@ namespace internal
 
 		Bucket& operator[](size_t index) MOMO_NOEXCEPT
 		{
+			MOMO_ASSERT(index < GetCount());
 			return pvGetBuckets()[index];
 		}
 
@@ -898,7 +899,7 @@ public:
 		{
 			MOMO_ASSERT(buckets == mBuckets);
 			size_t hashCode = ConstIteratorProxy::GetHashCode(iter);
-			return HashBucket::GetBucketIndex(hashCode, mBuckets->GetCount(), 0);	//?
+			return HashBucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());	//?
 		}
 	}
 
@@ -966,21 +967,23 @@ private:
 			BucketParams& bucketParams = bkts->GetBucketParams();
 			size_t logBucketCount = bkts->GetLogCount();
 			size_t bucketCount = bkts->GetCount();
+			size_t bucketIndex = HashBucket::GetStartBucketIndex(hashCode, bucketCount);
+			Bucket* bucket = &(*bkts)[bucketIndex];
+			size_t maxProbe = bucket->GetMaxProbe(logBucketCount);
 			size_t probe = 0;
 			while (true)
 			{
-				size_t bucketIndex = HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
-				MOMO_ASSERT(bucketIndex < bucketCount);
-				Bucket& bucket = (*bkts)[bucketIndex];
-				BucketIterator bucketIter = bucket.Find(bucketParams, pred, hashCode,
+				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode,
 					logBucketCount);
 				if (bucketIter != BucketIterator(nullptr))
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
-				if (!bucket.WasFull())
+				if (!bucket->WasFull())
 					break;
 				++probe;
-				if (probe >= bucketCount)
+				if (probe > maxProbe)
 					break;
+				bucketIndex = HashBucket::GetNextBucketIndex(bucketIndex, bucketCount, probe);
+				bucket = &(*bkts)[bucketIndex];
 			}
 		}
 		return MakeIterator(hashCode);
@@ -1037,21 +1040,21 @@ private:
 	template<typename ItemCreator>
 	ItemPosition pvAddNogrow(Buckets& buckets, size_t hashCode, const ItemCreator& itemCreator)
 	{
-		ItemPosition itemPos;
 		size_t bucketCount = buckets.GetCount();
+		size_t bucketIndex = HashBucket::GetStartBucketIndex(hashCode, bucketCount);
+		Bucket* bucket = &buckets[bucketIndex];
 		size_t probe = 0;
-		while (true)
+		while (bucket->IsFull())
 		{
-			itemPos.bucketIndex = HashBucket::GetBucketIndex(hashCode, bucketCount, probe);
-			MOMO_ASSERT(itemPos.bucketIndex < bucketCount);
-			if (!buckets[itemPos.bucketIndex].IsFull())
-				break;
 			++probe;
 			if (probe >= bucketCount)
 				throw std::runtime_error("momo::HashSet is full");
+			bucketIndex = HashBucket::GetNextBucketIndex(bucketIndex, bucketCount, probe);
+			bucket = &buckets[bucketIndex];
 		}
-		Bucket& bucket = buckets[itemPos.bucketIndex];
-		itemPos.bucketIterator = bucket.AddCrt(buckets.GetBucketParams(), itemCreator, hashCode,
+		ItemPosition itemPos;
+		itemPos.bucketIndex = bucketIndex;
+		itemPos.bucketIterator = bucket->AddCrt(buckets.GetBucketParams(), itemCreator, hashCode,
 			buckets.GetLogCount(), probe);
 		return itemPos;
 	}

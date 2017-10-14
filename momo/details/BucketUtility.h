@@ -177,10 +177,15 @@ namespace internal
 				return (bucketCount < (1 << 20)) ? 2 : 1;
 		}
 
-		static size_t GetBucketIndex(size_t hashCode, size_t bucketCount,
-			size_t probe) MOMO_NOEXCEPT
+		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) MOMO_NOEXCEPT
 		{
-			return (hashCode + probe) & (bucketCount - 1);	// linear probing
+			return hashCode & (bucketCount - 1);
+		}
+
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
+			size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 		}
 
 		static void CheckMaxLoadFactor(float maxLoadFactor)
