@@ -141,5 +141,14 @@
     <ClCompile Include="..\..\..\tests\SimpleHashTesterUnlimP.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOpen2N2.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\LibcxxHashSetTesterOpen2N2.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen2N2.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
