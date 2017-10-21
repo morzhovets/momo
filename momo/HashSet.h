@@ -975,13 +975,11 @@ private:
 			{
 				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode,
 					logBucketCount);
-				if (bucketIter != BucketIterator(nullptr))
+				if (bucketIter != BucketIterator(nullptr))	// vs2013
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
-				if (!bucket->WasFull())
+				if (!bucket->WasFull() || probe >= maxProbe)
 					break;
 				++probe;
-				if (probe > maxProbe)
-					break;
 				bucketIndex = HashBucket::GetNextBucketIndex(bucketIndex, bucketCount, probe);
 				bucket = &(*bkts)[bucketIndex];
 			}

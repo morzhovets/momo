@@ -483,7 +483,7 @@ private:
 	Array mArray;
 };
 
-#ifdef MOMO_HAS_CPP17
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename Iterator,
 	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
 vector(Iterator, Iterator, Allocator = Allocator())

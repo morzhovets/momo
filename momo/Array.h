@@ -1090,7 +1090,7 @@ private:
 	Data mData;
 };
 
-#ifdef MOMO_HAS_CPP17
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename ArgIterator,
 	typename MemManager = MemManagerDefault>
 Array(ArgIterator, ArgIterator, MemManager = MemManager())

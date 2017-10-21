@@ -49,11 +49,7 @@
 		return ref.GetEnd(); \
 	}
 
-#ifdef MOMO_HAS_CPP17
-#define MOMO_STATIC_ASSERT(expr) static_assert(expr)
-#else
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
-#endif
 
 #define MOMO_CHECK_TYPE(Type, var) \
 	MOMO_STATIC_ASSERT((std::is_same<Type, typename std::decay<decltype(var)>::type>::value))
