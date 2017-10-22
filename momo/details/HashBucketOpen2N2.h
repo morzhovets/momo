@@ -93,7 +93,7 @@ namespace internal
 
 		size_t GetMaxProbe(size_t /*logBucketCount*/) const MOMO_NOEXCEPT
 		{
-			return (size_t)mMaxProbe[0] << mMaxProbe[1];
+			return (size_t)mState[0] << (mState[1] >> 2);
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -123,6 +123,7 @@ namespace internal
 			}
 			if (probe > 0)
 				pvSetMaxProbe(hashCode, logBucketCount, probe);
+			++mState[1];
 			return Iterator(pitem + 1);
 		}
 
@@ -137,6 +138,7 @@ namespace internal
 			mHashes[maxCount - count] = emptyHash;
 			if (useHashCodePartGetter)
 				mHashProbes[index] = mHashProbes[maxCount - count];
+			--mState[1];
 			return iter;
 		}
 
@@ -165,22 +167,14 @@ namespace internal
 	private:
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			switch (maxCount)
-			{
-			case 1:
-				return (mHashes[0] < emptyHash) ? 1 : 0;
-			case 2:
-				return (mHashes[1] < emptyHash) ? ((mHashes[0] < emptyHash) ? 2 : 1) : 0;
-			default:
-				return (mHashes[1] < emptyHash) ? ((mHashes[0] < emptyHash) ? 3 : 2)
-					: ((mHashes[2] < emptyHash) ? 1 : 0);
-			}
+			return (size_t)(mState[1] & 3);
 		}
 
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
 			std::fill_n(mHashes, maxCount, (uint8_t)emptyHash);
-			mMaxProbe[0] = mMaxProbe[1] = (uint8_t)0;
+			mState[0] = (uint8_t)0;
+			mState[1] = (uint8_t)0;
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) MOMO_NOEXCEPT
@@ -191,15 +185,16 @@ namespace internal
 		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) MOMO_NOEXCEPT
 		{
 			size_t bucketCount = (size_t)1 << logBucketCount;
-			size_t trueBucketIndex = hashCode & (bucketCount - 1);
-			size_t thisBucketIndex = (hashCode + probe) & (bucketCount - 1);
-			BucketOpen2N2* trueBucket = this - (ptrdiff_t)thisBucketIndex
-				+ (ptrdiff_t)trueBucketIndex;
-			if (probe <= trueBucket->GetMaxProbe(logBucketCount))
+			size_t startBucketIndex = HashBucketBase<maxCount>::GetStartBucketIndex(hashCode,
+				bucketCount);
+			size_t thisBucketIndex = (startBucketIndex + probe) & (bucketCount - 1);
+			BucketOpen2N2* startBucket = this - (ptrdiff_t)thisBucketIndex
+				+ (ptrdiff_t)startBucketIndex;
+			if (probe <= startBucket->GetMaxProbe(logBucketCount))
 				return;
 			if (probe <= (size_t)255)
 			{
-				trueBucket->mMaxProbe[0] = (uint8_t)probe;
+				startBucket->mState[0] = (uint8_t)probe;
 				return;
 			}
 			size_t maxProbe0 = probe - 1;
@@ -209,14 +204,15 @@ namespace internal
 				maxProbe0 >>= 1;
 				++maxProbe1;
 			}
-			trueBucket->mMaxProbe[0] = (uint8_t)maxProbe0 + 1;
-			trueBucket->mMaxProbe[1] = (uint8_t)maxProbe1;
+			startBucket->mState[0] = (uint8_t)maxProbe0 + 1;
+			startBucket->mState[1] &= (uint8_t)3;
+			startBucket->mState[1] |= (uint8_t)(maxProbe1 << 2);
 		}
 
 	private:
+		uint8_t mState[2];
 		uint8_t mHashes[maxCount];
 		uint8_t mHashProbes[maxCount];
-		uint8_t mMaxProbe[2];
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
@@ -236,6 +232,12 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
 	{
 		return 1;
+	}
+
+	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
+		size_t /*probe*/) MOMO_NOEXCEPT
+	{
+		return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 	}
 
 	template<typename ItemTraits>
