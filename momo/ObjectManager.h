@@ -178,7 +178,7 @@ namespace internal
 			void operator()(Object* newObject) const
 			{
 				pvCreate(mMemManager, newObject,
-					typename MakeSequence<sizeof...(Args)>::Sequence());
+					typename SequenceMaker<sizeof...(Args)>::Sequence());
 			}
 
 		private:

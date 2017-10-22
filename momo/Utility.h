@@ -100,7 +100,8 @@ enum class ExtraCheckMode
 
 namespace internal
 {
-	template<size_t size, typename Default = void>
+	template<size_t size,
+		typename Default = void>
 	struct UIntSelector
 	{
 		typedef Default UInt;
@@ -162,19 +163,20 @@ namespace internal
 	};
 
 	template<size_t count, size_t... sequence>
-	struct MakeSequence : public MakeSequence<count - 1, count - 1, sequence...>
+	struct SequenceMaker : public SequenceMaker<count - 1, count - 1, sequence...>
 	{
 	};
 
 	template<size_t... sequence>
-	struct MakeSequence<0, sequence...>
+	struct SequenceMaker<0, sequence...>
 	{
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 
 	template<typename TUInt>
-	struct UIntMath
+	class UIntMath
 	{
+	public:
 		typedef TUInt UInt;
 
 		struct DivResult
@@ -183,6 +185,7 @@ namespace internal
 			UInt remainder;
 		};
 
+	public:
 		static UInt Ceil(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(value != 0 && mod != 0);
