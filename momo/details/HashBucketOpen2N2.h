@@ -237,7 +237,7 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
 		size_t /*probe*/) MOMO_NOEXCEPT
 	{
-		return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
+		return (bucketIndex + 1) & (bucketCount - 1);
 	}
 
 	template<typename ItemTraits>

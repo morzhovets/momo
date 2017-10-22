@@ -500,6 +500,12 @@ struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 
 	typedef TMemPoolParams MemPoolParams;
 
+	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
+		size_t /*probe*/) MOMO_NOEXCEPT
+	{
+		return (bucketIndex + 1) & (bucketCount - 1);
+	}
+
 	template<typename ItemTraits>
 	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams,
 		useHashCodePartGetter && sizeof(typename ItemTraits::Item) >= 4>;

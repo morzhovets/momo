@@ -215,6 +215,12 @@ struct HashBucketOpen2N : public internal::HashBucketBase<tMaxCount>
 		return 1;
 	}
 
+	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
+		size_t /*probe*/) MOMO_NOEXCEPT
+	{
+		return (bucketIndex + 1) & (bucketCount - 1);
+	}
+
 	template<typename ItemTraits>
 	using Bucket = internal::BucketOpen2N<ItemTraits, maxCount, useHashCodePartGetter>;
 };
