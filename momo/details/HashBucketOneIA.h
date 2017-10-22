@@ -20,30 +20,6 @@ namespace momo
 
 namespace internal
 {
-	template<size_t size>
-	struct BucketOneIAHashStateSelector
-	{
-		typedef uint8_t HashState;
-	};
-
-	template<>
-	struct BucketOneIAHashStateSelector<2>
-	{
-		typedef uint16_t HashState;
-	};
-
-	template<>
-	struct BucketOneIAHashStateSelector<4>
-	{
-		typedef uint32_t HashState;
-	};
-
-	template<>
-	struct BucketOneIAHashStateSelector<8>
-	{
-		typedef uint64_t HashState;
-	};
-
 	template<typename TItemTraits, size_t tStateSize>
 	class BucketOneIA
 	{
@@ -62,7 +38,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef typename BucketOneIAHashStateSelector<stateSize>::HashState HashState;
+		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
 
 	public:
 		BucketOneIA() MOMO_NOEXCEPT

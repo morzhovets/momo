@@ -100,6 +100,36 @@ enum class ExtraCheckMode
 
 namespace internal
 {
+	template<size_t size, typename Default = void>
+	struct UIntSelector
+	{
+		typedef Default UInt;
+	};
+
+	template<typename Default>
+	struct UIntSelector<1, Default>
+	{
+		typedef uint8_t UInt;
+	};
+
+	template<typename Default>
+	struct UIntSelector<2, Default>
+	{
+		typedef uint16_t UInt;
+	};
+
+	template<typename Default>
+	struct UIntSelector<4, Default>
+	{
+		typedef uint32_t UInt;
+	};
+
+	template<typename Default>
+	struct UIntSelector<8, Default>
+	{
+		typedef uint64_t UInt;
+	};
+
 	struct UIntPtrConst
 	{
 		static const uintptr_t null = MOMO_NULL_UINTPTR;
