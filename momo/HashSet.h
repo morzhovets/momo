@@ -430,7 +430,8 @@ private:
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
 	typedef typename HashTraits::HashBucket HashBucket;
-	typedef typename HashBucket::template Bucket<BucketItemTraits> Bucket;
+	typedef typename HashBucket::template Bucket<BucketItemTraits,
+		HashTraits::useHashCodePartGetter> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 

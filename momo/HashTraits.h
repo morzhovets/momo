@@ -7,6 +7,7 @@
 
   namespace momo:
     struct HashCoder
+    struct IsFastHashable
     struct HashBucketDefault
     struct HashBucketDefaultOpen
     class HashTraits
@@ -52,6 +53,11 @@ struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 };
 #endif
 
+template<typename Key>
+struct IsFastHashable : public internal::BoolConstant<MOMO_IS_FAST_HASHABLE(Key)>
+{
+};
+
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketDefaultOpen;
@@ -66,6 +72,8 @@ public:
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
+
+	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
 
 public:
 	HashTraits() MOMO_NOEXCEPT
@@ -115,6 +123,8 @@ public:
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
+
+	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
 
 public:
 	explicit HashTraitsVar(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
@@ -182,6 +192,8 @@ public:
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
+
+	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,

@@ -273,7 +273,7 @@ struct HashBucketLimP1 : public internal::HashBucketBase<tMaxCount>
 
 	typedef TMemPoolParams MemPoolParams;
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLimP1<ItemTraits, maxCount, MemPoolParams, alignment>;
 };
 

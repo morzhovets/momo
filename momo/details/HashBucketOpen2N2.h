@@ -217,12 +217,10 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = 3,
-	bool tUseHashCodePartGetter = true>
+template<size_t tMaxCount = 3>
 struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
@@ -240,7 +238,7 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 		return (bucketIndex + 1) & (bucketCount - 1);
 	}
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOpen2N2<ItemTraits, maxCount, useHashCodePartGetter>;
 };
 

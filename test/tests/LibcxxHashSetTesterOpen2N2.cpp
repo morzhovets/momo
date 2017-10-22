@@ -15,7 +15,7 @@
 
 #include "../../momo/Utility.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOpen2N2<1, false>
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpen2N2<1>
 #define LIBCXX_TEST_BUCKET_NAME "open2n2"
 
 #include "LibcxxHashSetTester.h"

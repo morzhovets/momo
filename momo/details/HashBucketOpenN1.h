@@ -171,7 +171,7 @@ struct HashBucketOpenN1 : public internal::HashBucketBase<tMaxCount>
 		return 1;
 	}
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOpenN1<ItemTraits, maxCount>;
 };
 

@@ -303,7 +303,7 @@ struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
 	static const size_t logMaxCount = tLogMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLim4<ItemTraits, logMaxCount, memPoolBlockCount>;
 };
 

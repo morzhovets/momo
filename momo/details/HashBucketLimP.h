@@ -580,7 +580,7 @@ private:
 	};
 
 public:
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = typename Bucketer<ItemTraits>::Bucket;
 };
 

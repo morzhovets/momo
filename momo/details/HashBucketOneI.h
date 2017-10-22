@@ -134,7 +134,7 @@ struct HashBucketOneI : public internal::HashBucketBase<1>
 {
 	typedef TStater Stater;
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneI<ItemTraits, Stater>;
 };
 

@@ -176,7 +176,7 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 		return hashCode & (bucketCount - 1);
 	}
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketUnlimP<ItemTraits, maxFastCount, MemPoolParams, ArraySettings>;
 };
 

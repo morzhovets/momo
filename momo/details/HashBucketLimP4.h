@@ -491,12 +491,10 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	typename TMemPoolParams = MemPoolParams<>,
-	bool tUseHashCodePartGetter = true>
+	typename TMemPoolParams = MemPoolParams<>>
 struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
-	static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	typedef TMemPoolParams MemPoolParams;
 
@@ -506,7 +504,7 @@ struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 		return (bucketIndex + 1) & (bucketCount - 1);
 	}
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams,
 		useHashCodePartGetter && sizeof(typename ItemTraits::Item) >= 4>;
 };

@@ -180,7 +180,7 @@ struct HashBucketOpenN : public internal::HashBucketBase<tMaxCount>
 		return 1;
 	}
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOpenN<ItemTraits, maxCount>;
 };
 

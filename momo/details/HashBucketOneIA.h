@@ -165,7 +165,7 @@ struct HashBucketOneIA : public internal::HashBucketBase<1>
 {
 	static const size_t stateSize = tStateSize;
 
-	template<typename ItemTraits>
+	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneIA<ItemTraits,
 		(stateSize == 0) ? ItemTraits::alignment : stateSize>;
 };
