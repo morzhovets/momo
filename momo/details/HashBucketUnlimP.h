@@ -169,11 +169,11 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 	typedef TMemPoolParams MemPoolParams;
 	typedef TArraySettings ArraySettings;
 
-	static size_t GetBucketIndex(size_t hashCode, size_t bucketCount, size_t probe) MOMO_NOEXCEPT
+	static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*bucketCount*/,
+		size_t /*probe*/) MOMO_NOEXCEPT
 	{
-		(void)probe;
-		MOMO_ASSERT(probe == 0);
-		return hashCode & (bucketCount - 1);
+		MOMO_ASSERT(false);
+		return bucketIndex;
 	}
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
