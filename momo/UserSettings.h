@@ -100,13 +100,6 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#define MOMO_OFFSET_OF(Struct, memberPtr) offsetof(Struct, *memberPtr)
-#else
-#define MOMO_OFFSET_OF(Struct, memberPtr) \
-	reinterpret_cast<size_t>(std::addressof(reinterpret_cast<Struct*>(0)->*memberPtr))
-#endif
-
 #define MOMO_DIV_SWITCH(mod, DivByConst, value) \
 	switch (mod) \
 	{ \

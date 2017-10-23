@@ -27,9 +27,9 @@ namespace
 		std::string strCol;
 	};
 
-	const auto intCol = &Struct::intCol;
-	const auto dblCol = &Struct::dblCol;
-	const auto strCol = &Struct::strCol;
+	MOMO_DECLARE_DATA_COLUMN(Struct, intCol);
+	MOMO_DECLARE_DATA_COLUMN(Struct, dblCol);
+	MOMO_DECLARE_DATA_COLUMN(Struct, strCol);
 }
 
 class SimpleDataTester

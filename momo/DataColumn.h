@@ -7,6 +7,7 @@
 
   namespace momo::experimental:
     struct DataSettings
+    class DataColumn
     class DataColumnTraits
     class DataColumnList
     class DataColumnListStatic
@@ -18,6 +19,10 @@
 #include "Array.h"
 
 #include <bitset>
+
+#define MOMO_DECLARE_DATA_COLUMN(Struct, name) \
+	constexpr momo::experimental::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
+	name(offsetof(Struct, name))
 
 namespace momo
 {
@@ -36,6 +41,30 @@ struct DataSettings
 	typedef ArraySettings<> RawsSettings;
 };
 
+template<typename TType, typename TStruct>
+class DataColumn
+{
+public:
+	typedef TType Type;
+	typedef TStruct Struct;
+
+public:
+	//constexpr DataColumn(Type Struct::*field) MOMO_NOEXCEPT
+
+	explicit constexpr DataColumn(size_t offset) MOMO_NOEXCEPT
+		: mOffset(offset)
+	{
+	}
+
+	constexpr size_t GetOffset() const MOMO_NOEXCEPT
+	{
+		return mOffset;
+	}
+
+private:
+	size_t mOffset;
+};
+
 template<typename TStruct,
 	typename TMemManager = MemManagerDefault>
 class DataColumnTraits
@@ -45,7 +74,7 @@ public:
 	typedef TMemManager MemManager;
 
 	template<typename Type>
-	using Column = Type Struct::*;
+	using Column = DataColumn<Type, Struct>;
 
 	static const size_t logVertexCount = 8;
 	static const size_t maxColumnCount = 200;
@@ -61,8 +90,8 @@ public:
 	static std::pair<size_t, size_t> GetVertices(const Column<Type>& column,
 		size_t codeParam) MOMO_NOEXCEPT
 	{
-		static const size_t vertexCount1 = (1 << logVertexCount) - 1;
-		size_t offset = MOMO_OFFSET_OF(Struct, column);
+		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
+		size_t offset = column.GetOffset();
 		MOMO_ASSERT(offset < (1 << 24));
 		size_t code = (offset << 4) ^ (codeParam >> 4) ^ ((codeParam & 15) << 28);
 		code = (code * 5) ^ (code >> 16);
@@ -502,7 +531,7 @@ public:
 	typedef TSettings Settings;
 
 	template<typename Type>
-	using Column = Type Struct::*;
+	using Column = DataColumn<Type, Struct>;
 
 	typedef Struct Raw;
 
@@ -607,7 +636,7 @@ public:
 	template<typename Type>
 	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
 	{
-		return MOMO_OFFSET_OF(Struct, column);
+		return column.GetOffset();
 	}
 
 	template<typename Type>
