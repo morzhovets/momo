@@ -236,23 +236,23 @@ public:
 		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
-	template<typename ResType = void>
-	ResType* Allocate()
+	template<typename Result = void>
+	Result* Allocate()
 	{
-		ResType* pblock;
+		Result* pblock;
 		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
 		{
-			pblock = static_cast<ResType*>(mCachedFreeBlocks.GetBackItem());
+			pblock = static_cast<Result*>(mCachedFreeBlocks.GetBackItem());
 			mCachedFreeBlocks.RemoveBack();
 		}
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = reinterpret_cast<ResType*>(pvNewBlock());
+				pblock = reinterpret_cast<Result*>(pvNewBlock());
 			else if (maxAlignment % Params::blockAlignment == 0)
-				pblock = GetMemManager().template Allocate<ResType>(pvGetBufferSize0());
+				pblock = GetMemManager().template Allocate<Result>(pvGetBufferSize0());
 			else
-				pblock = reinterpret_cast<ResType*>(pvNewBlock1());
+				pblock = reinterpret_cast<Result*>(pvNewBlock1());
 		}
 		++mAllocCount;
 		return pblock;
@@ -563,13 +563,13 @@ namespace internal
 			return mBuffers.GetMemManager();
 		}
 
-		template<typename ResType = void>
-		ResType* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
+		template<typename Result = void>
+		Result* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = mBuffers[ptr / blockCount];
 			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
-			return static_cast<ResType*>(realPtr);
+			return static_cast<Result*>(realPtr);
 		}
 
 		uint32_t Allocate()
