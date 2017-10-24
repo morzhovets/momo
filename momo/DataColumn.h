@@ -43,13 +43,13 @@ struct DataSettings
 };
 
 template<typename Column,
-	typename Type = typename Column::Type>
+	typename Item = typename Column::Item>
 class DataEqualer
 {
 	friend Column;
 
 public:
-	DataEqualer(const Column& column, const Type& item) MOMO_NOEXCEPT
+	DataEqualer(const Column& column, const Item& item) MOMO_NOEXCEPT
 		: mColumn(column),
 		mItem(item)
 	{
@@ -68,7 +68,7 @@ public:
 		return mColumn;
 	}
 
-	const Type& GetItem() const MOMO_NOEXCEPT
+	const Item& GetItem() const MOMO_NOEXCEPT
 	{
 		return mItem;
 	}
@@ -82,20 +82,20 @@ protected:
 
 private:
 	const Column& mColumn;
-	const Type& mItem;
+	const Item& mItem;
 };
 
-template<typename TType, typename TStruct>
+template<typename TItem, typename TStruct>
 class DataColumn
 {
 public:
-	typedef TType Type;
+	typedef TItem Item;
 	typedef TStruct Struct;
 
 	typedef DataEqualer<DataColumn> Equaler;
 
 public:
-	//constexpr DataColumn(Type Struct::*field) MOMO_NOEXCEPT
+	//constexpr DataColumn(Item Struct::*field) MOMO_NOEXCEPT
 
 	constexpr explicit DataColumn(size_t offset) MOMO_NOEXCEPT
 		: mOffset(offset)
@@ -107,7 +107,7 @@ public:
 		return mOffset;
 	}
 
-	Equaler operator==(const Type& item) const MOMO_NOEXCEPT
+	Equaler operator==(const Item& item) const MOMO_NOEXCEPT
 	{
 		//class EqualerProxy : public Equaler
 		//{
@@ -130,8 +130,8 @@ public:
 	typedef TStruct Struct;
 	typedef TMemManager MemManager;
 
-	template<typename Type>
-	using Column = DataColumn<Type, Struct>;
+	template<typename Item>
+	using Column = DataColumn<Item, Struct>;
 
 	static const size_t logVertexCount = 8;
 	static const size_t maxColumnCount = 200;
@@ -139,12 +139,12 @@ public:
 	static const size_t maxCodeParam = 255;
 
 private:
-	template<typename Type>
-	using ItemManager = momo::internal::ObjectManager<Type, MemManager>;
+	template<typename Item>
+	using ItemManager = momo::internal::ObjectManager<Item, MemManager>;
 
 public:
-	template<typename Type>
-	static std::pair<size_t, size_t> GetVertices(const Column<Type>& column,
+	template<typename Item>
+	static std::pair<size_t, size_t> GetVertices(const Column<Item>& column,
 		size_t codeParam) MOMO_NOEXCEPT
 	{
 		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
@@ -158,41 +158,41 @@ public:
 		return std::make_pair(vertex1, vertex2);
 	}
 
-	template<typename Type>
-	static constexpr size_t GetSize(/*const Column<Type>& column*/) MOMO_NOEXCEPT
+	template<typename Item>
+	static constexpr size_t GetSize(/*const Column<Item>& column*/) MOMO_NOEXCEPT
 	{
-		return sizeof(Type);
+		return sizeof(Item);
 	}
 
-	template<typename Type>
-	static constexpr size_t GetAlignment(/*const Column<Type>& column*/) MOMO_NOEXCEPT
+	template<typename Item>
+	static constexpr size_t GetAlignment(/*const Column<Item>& column*/) MOMO_NOEXCEPT
 	{
-		return MOMO_ALIGNMENT_OF(Type);
+		return MOMO_ALIGNMENT_OF(Item);
 	}
 
-	template<typename Type>
-	static void Create(MemManager& memManager, Type* item /*, const Column<Type>& column*/)
+	template<typename Item>
+	static void Create(MemManager& memManager, Item* item /*, const Column<Item>& column*/)
 	{
-		(typename ItemManager<Type>::template Creator<>(memManager))(item);
+		(typename ItemManager<Item>::template Creator<>(memManager))(item);
 	}
 
-	template<typename Type>
-	static void Destroy(MemManager* memManager, Type* item /*, const Column<Type>& column*/) MOMO_NOEXCEPT
+	template<typename Item>
+	static void Destroy(MemManager* memManager, Item* item /*, const Column<Item>& column*/) MOMO_NOEXCEPT
 	{
-		ItemManager<Type>::Destroyer::Destroy(memManager, *item);
+		ItemManager<Item>::Destroyer::Destroy(memManager, *item);
 	}
 
-	template<typename Type>
-	static void Copy(MemManager& memManager, const Type* srcItem, Type* dstItem
-		/*, const Column<Type>& column*/)
+	template<typename Item>
+	static void Copy(MemManager& memManager, const Item* srcItem, Item* dstItem
+		/*, const Column<Item>& column*/)
 	{
-		ItemManager<Type>::Copy(memManager, *srcItem, dstItem);
+		ItemManager<Item>::Copy(memManager, *srcItem, dstItem);
 	}
 
-	template<typename TypeArg, typename Type>
-	static void Assign(TypeArg&& itemArg, Type& item)
+	template<typename ItemArg, typename Item>
+	static void Assign(ItemArg&& itemArg, Item& item)
 	{
-		item = std::forward<TypeArg>(itemArg);
+		item = std::forward<ItemArg>(itemArg);
 	}
 };
 
@@ -205,8 +205,8 @@ public:
 	typedef TSettings Settings;
 	typedef typename ColumnTraits::MemManager MemManager;
 
-	template<typename Type>
-	using Column = typename ColumnTraits::template Column<Type>;
+	template<typename Item>
+	using Column = typename ColumnTraits::template Column<Item>;
 
 	typedef char Raw;
 
@@ -297,14 +297,14 @@ private:
 	typedef std::function<void(MemManager&, const Raw*, Raw*)> CopyFunc;
 
 public:
-	template<typename... Types>
-	explicit DataColumnList(const Column<Types>&... columns)
+	template<typename... Items>
+	explicit DataColumnList(const Column<Items>&... columns)
 		: DataColumnList(MemManager(), columns...)
 	{
 	}
 
-	template<typename... Types>
-	explicit DataColumnList(MemManager&& memManager, const Column<Types>&... columns)
+	template<typename... Items>
+	explicit DataColumnList(MemManager&& memManager, const Column<Items>&... columns)
 		: mMutOffsets(std::move(memManager))
 	{
 		mCodeParam = 0;
@@ -314,11 +314,11 @@ public:
 			throw std::runtime_error("Cannot create DataColumnList");
 		mMutOffsets.SetCount((mTotalSize + 7) / 8, (uint8_t)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
-			{ pvCreate<void, Types...>(memManager, raw, 0); };
+			{ pvCreate<void, Items...>(memManager, raw, 0); };
 		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
-			{ pvDestroy<void, Types...>(memManager, raw, 0); };
+			{ pvDestroy<void, Items...>(memManager, raw, 0); };
 		mCopyFunc = [] (MemManager& memManager, const Raw* srcRaw, Raw* dstRaw)
-			{ pvCopy<void, Types...>(memManager, srcRaw, dstRaw, 0); };
+			{ pvCopy<void, Items...>(memManager, srcRaw, dstRaw, 0); };
 	}
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
@@ -361,8 +361,8 @@ public:
 		return mMutOffsets.GetMemManager();
 	}
 
-	template<typename... Types>
-	void SetMutable(const Column<Types>&... columns)
+	template<typename... Items>
+	void SetMutable(const Column<Items>&... columns)
 	{
 		pvSetMutable(columns...);
 	}
@@ -402,8 +402,8 @@ public:
 		mCopyFunc(GetMemManager(), srcRaw, dstRaw);
 	}
 
-	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const
+	template<typename Item>
+	size_t GetOffset(const Column<Item>& column) const
 	{
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
@@ -411,22 +411,22 @@ public:
 		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
 		size_t offset = addend1 + addend2;
 		MOMO_ASSERT(offset < mTotalSize);
-		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
+		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
 		return offset;
 	}
 
-	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
+	template<typename Item>
+	Item& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Type>() == 0);
-		return *reinterpret_cast<Type*>(raw + offset);
+		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
+		return *reinterpret_cast<Item*>(raw + offset);
 	}
 
-	template<typename Type, typename TypeArg>
-	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
+	template<typename Item, typename ItemArg>
+	void Assign(Raw* raw, size_t offset, ItemArg&& itemArg) const
 	{
-		ColumnTraits::Assign(std::forward<TypeArg>(itemArg), GetByOffset<Type>(raw, offset));
+		ColumnTraits::Assign(std::forward<ItemArg>(itemArg), GetByOffset<Item>(raw, offset));
 	}
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
@@ -442,8 +442,8 @@ public:
 	}
 
 private:
-	template<typename... Types>
-	bool pvFillAddends(const Column<Types>&... columns)
+	template<typename... Items>
+	bool pvFillAddends(const Column<Items>&... columns)
 	{
 		static const size_t columnCount = sizeof...(columns);
 		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < maxColumnCount);
@@ -461,18 +461,18 @@ private:
 		return true;
 	}
 
-	template<size_t edgeCount, typename Type, typename... Types>
+	template<size_t edgeCount, typename Item, typename... Items>
 	void pvMakeGraph(Graph<edgeCount>& graph, size_t offset, size_t maxAlignment,
-		const Column<Type>& column, const Column<Types>&... columns)
+		const Column<Item>& column, const Column<Items>&... columns)
 	{
-		pvCorrectOffset<Type>(offset);
+		pvCorrectOffset<Item>(offset);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(column, mCodeParam);
 		MOMO_EXTRA_CHECK(vertices.first != vertices.second);
 		graph.AddEdge(vertices.first, vertices.second, offset);
 		graph.AddEdge(vertices.second, vertices.first, offset);
-		offset += ColumnTraits::template GetSize<Type>();
+		offset += ColumnTraits::template GetSize<Item>();
 		maxAlignment = std::minmax(maxAlignment,
-			ColumnTraits::template GetAlignment<Type>()).second;
+			ColumnTraits::template GetAlignment<Item>()).second;
 		pvMakeGraph(graph, offset, maxAlignment, columns...);
 	}
 
@@ -489,8 +489,8 @@ private:
 		mAlignment = maxAlignment;
 	}
 
-	template<typename Type, typename... Types>
-	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
+	template<typename Item, typename... Items>
+	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		size_t offset = GetOffset(column);
 		mMutOffsets[offset / 8] |= (uint8_t)(1 << (offset % 8));
@@ -501,18 +501,18 @@ private:
 	{
 	}
 
-	template<typename Void, typename Type, typename... Types>
+	template<typename Void, typename Item, typename... Items>
 	static void pvCreate(MemManager& memManager, Raw* raw, size_t offset)
 	{
-		pvCorrectOffset<Type>(offset);
-		ColumnTraits::Create(memManager, reinterpret_cast<Type*>(raw + offset));
+		pvCorrectOffset<Item>(offset);
+		ColumnTraits::Create(memManager, reinterpret_cast<Item*>(raw + offset));
 		try
 		{
-			pvCreate<void, Types...>(memManager, raw, offset + ColumnTraits::template GetSize<Type>());
+			pvCreate<void, Items...>(memManager, raw, offset + ColumnTraits::template GetSize<Item>());
 		}
 		catch (...)
 		{
-			ColumnTraits::Destroy(&memManager, reinterpret_cast<Type*>(raw + offset));
+			ColumnTraits::Destroy(&memManager, reinterpret_cast<Item*>(raw + offset));
 			throw;
 		}
 	}
@@ -522,12 +522,12 @@ private:
 	{
 	}
 
-	template<typename Void, typename Type, typename... Types>
+	template<typename Void, typename Item, typename... Items>
 	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) MOMO_NOEXCEPT
 	{
-		pvCorrectOffset<Type>(offset);
-		ColumnTraits::Destroy(memManager, reinterpret_cast<Type*>(raw + offset));
-		pvDestroy<void, Types...>(memManager, raw, offset + ColumnTraits::template GetSize<Type>());
+		pvCorrectOffset<Item>(offset);
+		ColumnTraits::Destroy(memManager, reinterpret_cast<Item*>(raw + offset));
+		pvDestroy<void, Items...>(memManager, raw, offset + ColumnTraits::template GetSize<Item>());
 	}
 
 	template<typename Void>
@@ -535,20 +535,20 @@ private:
 	{
 	}
 
-	template<typename Void, typename Type, typename... Types>
+	template<typename Void, typename Item, typename... Items>
 	static void pvCopy(MemManager& memManager, const Raw* srcRaw, Raw* dstRaw, size_t offset)
 	{
-		pvCorrectOffset<Type>(offset);
-		ColumnTraits::Copy(memManager, reinterpret_cast<const Type*>(srcRaw + offset),
-			reinterpret_cast<Type*>(dstRaw + offset));
+		pvCorrectOffset<Item>(offset);
+		ColumnTraits::Copy(memManager, reinterpret_cast<const Item*>(srcRaw + offset),
+			reinterpret_cast<Item*>(dstRaw + offset));
 		try
 		{
-			pvCopy<void, Types...>(memManager, srcRaw, dstRaw,
-				offset + ColumnTraits::template GetSize<Type>());
+			pvCopy<void, Items...>(memManager, srcRaw, dstRaw,
+				offset + ColumnTraits::template GetSize<Item>());
 		}
 		catch (...)
 		{
-			ColumnTraits::Destroy(&memManager, reinterpret_cast<Type*>(dstRaw + offset));
+			ColumnTraits::Destroy(&memManager, reinterpret_cast<Item*>(dstRaw + offset));
 			throw;
 		}
 	}
@@ -559,10 +559,10 @@ private:
 	{
 	}
 
-	template<typename Type>
+	template<typename Item>
 	static void pvCorrectOffset(size_t& offset) MOMO_NOEXCEPT
 	{
-		static const size_t alignment = ColumnTraits::template GetAlignment<Type>();
+		static const size_t alignment = ColumnTraits::template GetAlignment<Item>();
 		offset = ((offset + alignment - 1) / alignment) * alignment;
 	}
 
@@ -587,8 +587,8 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-	template<typename Type>
-	using Column = DataColumn<Type, Struct>;
+	template<typename Item>
+	using Column = DataColumn<Item, Struct>;
 
 	typedef Struct Raw;
 
@@ -649,8 +649,8 @@ public:
 		return mMemManager;
 	}
 
-	template<typename... Types>
-	void SetMutable(const Column<Types>&... columns)
+	template<typename... Items>
+	void SetMutable(const Column<Items>&... columns)
 	{
 		pvSetMutable(columns...);
 	}
@@ -690,24 +690,24 @@ public:
 		RawManager::Copy(mMemManager, *srcRaw, dstRaw);
 	}
 
-	template<typename Type>
-	size_t GetOffset(const Column<Type>& column) const MOMO_NOEXCEPT
+	template<typename Item>
+	size_t GetOffset(const Column<Item>& column) const MOMO_NOEXCEPT
 	{
 		return column.GetOffset();
 	}
 
-	template<typename Type>
-	Type& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
+	template<typename Item>
+	Item& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Type) == 0);
-		return *reinterpret_cast<Type*>(reinterpret_cast<char*>(raw) + offset);
+		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
+		return *reinterpret_cast<Item*>(reinterpret_cast<char*>(raw) + offset);
 	}
 
-	template<typename Type, typename TypeArg>
-	void Assign(Raw* raw, size_t offset, TypeArg&& itemArg) const
+	template<typename Item, typename ItemArg>
+	void Assign(Raw* raw, size_t offset, ItemArg&& itemArg) const
 	{
-		GetByOffset<Type>(raw, offset) = std::forward<TypeArg>(itemArg);
+		GetByOffset<Item>(raw, offset) = std::forward<ItemArg>(itemArg);
 	}
 
 	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
@@ -723,8 +723,8 @@ public:
 	}
 
 private:
-	template<typename Type, typename... Types>
-	void pvSetMutable(const Column<Type>& column, const Column<Types>&... columns)
+	template<typename Item, typename... Items>
+	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		mMutOffsets.set(GetOffset(column));
 		pvSetMutable(columns...);

@@ -29,8 +29,8 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
 
 	protected:
 		typedef std::atomic<Raw*> FreeRaws;
@@ -85,38 +85,38 @@ namespace internal
 			return *mColumnList;
 		}
 
-		template<typename Type>
-		const Type& GetByOffset(size_t offset) const
+		template<typename Item>
+		const Item& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<const Type>(mRaw, offset);
+			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
 		}
 
-		template<typename Type>
-		Type& GetByOffset(size_t offset)
+		template<typename Item>
+		Item& GetByOffset(size_t offset)
 		{
-			return mColumnList->template GetByOffset<Type>(mRaw, offset);
+			return mColumnList->template GetByOffset<Item>(mRaw, offset);
 		}
 
-		template<typename Type>
-		const Type& GetByColumn(const Column<Type>& column) const
+		template<typename Item>
+		const Item& GetByColumn(const Column<Item>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
-		template<typename Type>
-		Type& GetByColumn(const Column<Type>& column)
+		template<typename Item>
+		Item& GetByColumn(const Column<Item>& column)
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
-		template<typename Type>
-		const Type& operator[](const Column<Type>& column) const
+		template<typename Item>
+		const Item& operator[](const Column<Item>& column) const
 		{
 			return GetByColumn(column);
 		}
 
-		template<typename Type>
-		Type& operator[](const Column<Type>& column)
+		template<typename Item>
+		Item& operator[](const Column<Item>& column)
 		{
 			return GetByColumn(column);
 		}
@@ -175,8 +175,8 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
 
 		typedef DataConstRowReference ConstReference;
 
@@ -188,22 +188,22 @@ namespace internal
 			return *mColumnList;
 		}
 
-		template<typename Type>
-		const Type& GetByOffset(size_t offset) const
+		template<typename Item>
+		const Item& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<const Type>(mRaw, offset);
+			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
 		}
 
-		template<typename Type>
-		const Type& GetByColumn(const Column<Type>& column) const
+		template<typename Item>
+		const Item& GetByColumn(const Column<Item>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
-		template<typename Type>
-		const Type& operator[](const Column<Type>& column) const
+		template<typename Item>
+		const Item& operator[](const Column<Item>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		size_t GetNumber() const MOMO_NOEXCEPT
@@ -246,12 +246,12 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
 
 		typedef DataConstRowReference<ColumnList> ConstReference;
 
-		template<typename Type>
+		template<typename Item>
 		class ItemReference
 		{
 		public:
@@ -280,28 +280,28 @@ namespace internal
 				return pvAssign(itemRef.Get());
 			}
 
-			template<typename TypeArg>
-			ItemReference& operator=(TypeArg&& itemArg)
+			template<typename ItemArg>
+			ItemReference& operator=(ItemArg&& itemArg)
 			{
-				return pvAssign(std::forward<TypeArg>(itemArg));
+				return pvAssign(std::forward<ItemArg>(itemArg));
 			}
 
-			operator const Type&() const
+			operator const Item&() const
 			{
 				return Get();
 			}
 
-			const Type& Get() const
+			const Item& Get() const
 			{
-				return mColumnList->template GetByOffset<const Type>(mRaw, mOffset);
+				return mColumnList->template GetByOffset<const Item>(mRaw, mOffset);
 			}
 
 		private:
-			template<typename TypeArg>
-			ItemReference& pvAssign(TypeArg&& itemArg)
+			template<typename ItemArg>
+			ItemReference& pvAssign(ItemArg&& itemArg)
 			{
 				MOMO_CHECK(mColumnList->IsMutable(mOffset));
-				mColumnList->template Assign<Type>(mRaw, mOffset, std::forward<TypeArg>(itemArg));
+				mColumnList->template Assign<Item>(mRaw, mOffset, std::forward<ItemArg>(itemArg));
 				return *this;
 			}
 
@@ -330,22 +330,22 @@ namespace internal
 			return *mColumnList;
 		}
 
-		template<typename Type>
-		ItemReference<Type> GetByOffset(size_t offset) const
+		template<typename Item>
+		ItemReference<Item> GetByOffset(size_t offset) const
 		{
-			return ItemReference<Type>(mColumnList, mRaw, offset);
+			return ItemReference<Item>(mColumnList, mRaw, offset);
 		}
 
-		template<typename Type>
-		ItemReference<Type> GetByColumn(const Column<Type>& column) const
+		template<typename Item>
+		ItemReference<Item> GetByColumn(const Column<Item>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
-		template<typename Type>
-		ItemReference<Type> operator[](const Column<Type>& column) const
+		template<typename Item>
+		ItemReference<Item> operator[](const Column<Item>& column) const
 		{
-			return GetByOffset<Type>(mColumnList->GetOffset(column));
+			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		size_t GetNumber() const MOMO_NOEXCEPT

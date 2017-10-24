@@ -200,8 +200,8 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
 
 		typedef typename RowReference::ConstReference ConstRowReference;
 		typedef DataSelection<ConstRowReference> ConstSelection;

@@ -112,11 +112,11 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Type>
-		using Column = typename ColumnList::template Column<Type>;
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
 
-		template<typename... Types>
-		using OffsetItemTuple = std::tuple<std::pair<size_t, const Types&>...>;
+		template<typename... Items>
+		using OffsetItemTuple = std::tuple<std::pair<size_t, const Items&>...>;
 
 	private:
 		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -130,10 +130,10 @@ namespace internal
 		typedef std::function<size_t(Raw*)> HashFunc;
 		typedef std::function<bool(Raw*, Raw*)> EqualFunc;
 
-		template<typename... Types>
+		template<typename... Items>
 		struct HashTupleKey
 		{
-			OffsetItemTuple<Types...> tuple;
+			OffsetItemTuple<Items...> tuple;
 			size_t hashCode;
 			const ColumnList* columnList;
 		};
@@ -146,8 +146,8 @@ namespace internal
 			{
 			};
 
-			template<typename... Types>
-			struct IsValidKeyArg<HashTupleKey<Types...>> : public std::true_type
+			template<typename... Items>
+			struct IsValidKeyArg<HashTupleKey<Items...>> : public std::true_type
 			{
 			};
 
@@ -163,8 +163,8 @@ namespace internal
 				return mHashFunc(key);
 			}
 
-			template<typename... Types>
-			size_t GetHashCode(const HashTupleKey<Types...>& key) const MOMO_NOEXCEPT
+			template<typename... Items>
+			size_t GetHashCode(const HashTupleKey<Items...>& key) const MOMO_NOEXCEPT
 			{
 				return key.hashCode;
 			}
@@ -174,27 +174,27 @@ namespace internal
 				return mEqualFunc(key1, key2);
 			}
 
-			template<typename... Types>
-			bool IsEqual(const HashTupleKey<Types...>& key1, Raw* key2) const
+			template<typename... Items>
+			bool IsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
 				return pvIsEqual<0>(key1, key2);
 			}
 
 		private:
-			template<size_t index, typename... Types,
-				typename std::enable_if<(index < sizeof...(Types)), int>::type = 0>
-			bool pvIsEqual(const HashTupleKey<Types...>& key1, Raw* key2) const
+			template<size_t index, typename... Items,
+				typename std::enable_if<(index < sizeof...(Items)), int>::type = 0>
+			bool pvIsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
 				const auto& item1 = pair.second;
-				typedef typename std::decay<decltype(item1)>::type Type;
-				const Type& item2 = key1.columnList->template GetByOffset<const Type>(key2, pair.first);
+				typedef typename std::decay<decltype(item1)>::type Item;
+				const Item& item2 = key1.columnList->template GetByOffset<const Item>(key2, pair.first);
 				return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 			}
 
-			template<size_t index, typename... Types,
-				typename std::enable_if<(index == sizeof...(Types)), int>::type = 0>
-			bool pvIsEqual(const HashTupleKey<Types...>& /*key1*/, Raw* /*key2*/) const MOMO_NOEXCEPT
+			template<size_t index, typename... Items,
+				typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
+			bool pvIsEqual(const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const MOMO_NOEXCEPT
 			{
 				return true;
 			}
@@ -317,8 +317,8 @@ namespace internal
 				return RawBounds(!!iter ? *iter : nullptr);
 			}
 
-			template<typename... Types>
-			RawBounds Find(const HashTupleKey<Types...>& hashTupleKey) const
+			template<typename... Items>
+			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
 			{
 				Iterator iter = mHashSet.Find(hashTupleKey);
 				return RawBounds(!!iter ? *iter: nullptr);
@@ -493,8 +493,8 @@ namespace internal
 				mHashMultiMap.Clear();
 			}
 
-			template<typename... Types>
-			RawBounds Find(const HashTupleKey<Types...>& hashTupleKey) const
+			template<typename... Items>
+			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
 			{
 				return RawBounds(mHashMultiMap.Find(hashTupleKey));
 			}
@@ -639,38 +639,38 @@ namespace internal
 			mMultiHashes.Swap(indexes.mMultiHashes);
 		}
 
-		template<typename... Types>
-		const UniqueHash* GetUniqueHash(const Column<Types>&... columns) const
+		template<typename... Items>
+		const UniqueHash* GetUniqueHash(const Column<Items>&... columns) const
 		{
 			return pvGetHash(mUniqueHashes, columns...);
 		}
 
-		template<typename... Types>
-		const MultiHash* GetMultiHash(const Column<Types>&... columns) const
+		template<typename... Items>
+		const MultiHash* GetMultiHash(const Column<Items>&... columns) const
 		{
 			return pvGetHash(mMultiHashes, columns...);
 		}
 
-		template<typename Raws, typename... Types>
-		const UniqueHash* AddUniqueHash(const Raws& raws, const Column<Types>&... columns)
+		template<typename Raws, typename... Items>
+		const UniqueHash* AddUniqueHash(const Raws& raws, const Column<Items>&... columns)
 		{
 			return pvAddHash(mUniqueHashes, raws, columns...);
 		}
 
-		template<typename Raws, typename... Types>
-		const MultiHash* AddMultiHash(const Raws& raws, const Column<Types>&... columns)
+		template<typename Raws, typename... Items>
+		const MultiHash* AddMultiHash(const Raws& raws, const Column<Items>&... columns)
 		{
 			return pvAddHash(mMultiHashes, raws, columns...);
 		}
 
-		template<typename... Types>
-		bool RemoveUniqueHash(const Column<Types>&... columns)
+		template<typename... Items>
+		bool RemoveUniqueHash(const Column<Items>&... columns)
 		{
 			return pvRemoveHash(mUniqueHashes, columns...);
 		}
 
-		template<typename... Types>
-		bool RemoveMultiHash(const Column<Types>&... columns)
+		template<typename... Items>
+		bool RemoveMultiHash(const Column<Items>&... columns)
 		{
 			return pvRemoveHash(mMultiHashes, columns...);
 		}
@@ -680,10 +680,10 @@ namespace internal
 			return uniqueHash.Find(raw);	//?
 		}
 
-		template<typename Hash, typename... Types>
-		typename Hash::RawBounds FindRaws(const Hash& hash, const OffsetItemTuple<Types...>& tuple) const
+		template<typename Hash, typename... Items>
+		typename Hash::RawBounds FindRaws(const Hash& hash, const OffsetItemTuple<Items...>& tuple) const
 		{
-			HashTupleKey<Types...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple), mColumnList };
+			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple), mColumnList };
 			return hash.Find(hashTupleKey);
 		}
 
@@ -877,11 +877,11 @@ namespace internal
 			return mUniqueHashes.GetMemManager();
 		}
 
-		template<typename Hashes, typename... Types>
+		template<typename Hashes, typename... Items>
 		const typename Hashes::Item* pvGetHash(const Hashes& hashes,
-			const Column<Types>&... columns) const
+			const Column<Items>&... columns) const
 		{
-			static const size_t columnCount = sizeof...(Types);
+			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};	// C++11
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			return pvGetHash(hashes, sortedOffsets);
@@ -902,12 +902,12 @@ namespace internal
 			return nullptr;
 		}
 
-		template<typename Hashes, typename Raws, typename... Types>
+		template<typename Hashes, typename Raws, typename... Items>
 		const typename Hashes::Item* pvAddHash(Hashes& hashes, const Raws& raws,
-			const Column<Types>&... columns)
+			const Column<Items>&... columns)
 		{
 			const ColumnList* columnList = mColumnList;
-			static const size_t columnCount = sizeof...(Types);
+			static const size_t columnCount = sizeof...(columns);
 			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
 			for (size_t offset : offsets)
@@ -920,9 +920,9 @@ namespace internal
 			if (hash != nullptr)
 				return hash;
 			auto hashFunc = [columnList, offsets] (Raw* raw)
-				{ return pvGetHashCode<void, Types...>(columnList, raw, offsets.data()); };
+				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets.data()); };
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
-				{ return pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets.data()); };
+				{ return pvIsEqual<void, Items...>(columnList, raw1, raw2, offsets.data()); };
 			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr());
 			typename Hashes::Item newHash(std::move(newHashOffsets), hashFunc, equalFunc);
 			for (Raw* raw : raws)
@@ -935,8 +935,8 @@ namespace internal
 			return hashes.GetItems() + hashes.GetCount() - 1;
 		}
 
-		template<typename Hashes, typename... Types>
-		bool pvRemoveHash(Hashes& hashes, const Column<Types>&... columns)
+		template<typename Hashes, typename... Items>
+		bool pvRemoveHash(Hashes& hashes, const Column<Items>&... columns)
 		{
 			const auto* hash = pvGetHash(hashes, columns...);
 			if (hash == nullptr)
@@ -945,11 +945,11 @@ namespace internal
 			return true;
 		}
 
-		template<typename Void, typename Type, typename... Types>
+		template<typename Void, typename Item, typename... Items>
 		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw, const size_t* offsets)
 		{
-			return pvGetHashCode<Type>(columnList, raw, *offsets)
-				+ pvGetHashCode<void, Types...>(columnList, raw, offsets + 1);
+			return pvGetHashCode<Item>(columnList, raw, *offsets)
+				+ pvGetHashCode<void, Items...>(columnList, raw, offsets + 1);
 		}
 
 		template<typename Void>
@@ -959,43 +959,43 @@ namespace internal
 			return 0;
 		}
 
-		template<size_t index, typename... Types,
-			typename std::enable_if<(index < sizeof...(Types)), int>::type = 0>
-		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& tuple)
+		template<size_t index, typename... Items,
+			typename std::enable_if<(index < sizeof...(Items)), int>::type = 0>
+		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& tuple)
 		{
 			const auto& pair = std::get<index>(tuple);
 			const auto& item = pair.second;
 			return pvGetHashCode(item, pair.first) + pvGetHashCode<index + 1>(tuple);	//?
 		}
 
-		template<size_t index, typename... Types,
-			typename std::enable_if<(index == sizeof...(Types)), int>::type = 0>
-		static size_t pvGetHashCode(const OffsetItemTuple<Types...>& /*tuple*/) MOMO_NOEXCEPT
+		template<size_t index, typename... Items,
+			typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
+		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& /*tuple*/) MOMO_NOEXCEPT
 		{
 			return 0;
 		}
 
-		template<typename Type>
+		template<typename Item>
 		static size_t pvGetHashCode(const ColumnList* columnList, Raw* raw, size_t offset)
 		{
-			const Type& item = columnList->template GetByOffset<const Type>(raw, offset);
+			const Item& item = columnList->template GetByOffset<const Item>(raw, offset);
 			return pvGetHashCode(item, offset);
 		}
 
-		template<typename Type>
-		static size_t pvGetHashCode(const Type& item, size_t /*offset*/)
+		template<typename Item>
+		static size_t pvGetHashCode(const Item& item, size_t /*offset*/)
 		{
 			return DataTraits::GetHashCode(item);	//?
 		}
 
-		template<typename Void, typename Type, typename... Types>
+		template<typename Void, typename Item, typename... Items>
 		static bool pvIsEqual(const ColumnList* columnList, Raw* raw1, Raw* raw2,
 			const size_t* offsets)
 		{
-			const Type& item1 = columnList->template GetByOffset<const Type>(raw1, *offsets);
-			const Type& item2 = columnList->template GetByOffset<const Type>(raw2, *offsets);
+			const Item& item1 = columnList->template GetByOffset<const Item>(raw1, *offsets);
+			const Item& item2 = columnList->template GetByOffset<const Item>(raw2, *offsets);
 			return DataTraits::IsEqual(item1, item2)
-				&& pvIsEqual<void, Types...>(columnList, raw1, raw2, offsets + 1);
+				&& pvIsEqual<void, Items...>(columnList, raw1, raw2, offsets + 1);
 		}
 
 		template<typename Void>
