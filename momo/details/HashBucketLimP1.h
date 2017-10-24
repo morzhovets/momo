@@ -113,8 +113,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/,
-			size_t /*logBucketCount*/)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			size_t count = pvGetCount();
 			Item* items = pvGetItems();

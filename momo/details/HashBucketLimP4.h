@@ -246,8 +246,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
-			size_t /*logBucketCount*/)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			uint8_t hashByte = pvGetHashByte(hashCode);
 			Item* items = mPtrState.GetPointer();

@@ -115,8 +115,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/,
-			size_t /*logBucketCount*/)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;
@@ -387,8 +386,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/,
-			size_t /*logBucketCount*/)
+		Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;

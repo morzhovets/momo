@@ -966,16 +966,14 @@ private:
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			BucketParams& bucketParams = bkts->GetBucketParams();
-			size_t logBucketCount = bkts->GetLogCount();
 			size_t bucketCount = bkts->GetCount();
 			size_t bucketIndex = HashBucket::GetStartBucketIndex(hashCode, bucketCount);
 			Bucket* bucket = &(*bkts)[bucketIndex];
-			size_t maxProbe = bucket->GetMaxProbe(logBucketCount);
+			size_t maxProbe = bucket->GetMaxProbe(bkts->GetLogCount());
 			size_t probe = 0;
 			while (true)
 			{
-				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode,
-					logBucketCount);
+				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
 				if (bucketIter != BucketIterator(nullptr))	// vs2013
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
 				if (!bucket->WasFull() || probe >= maxProbe)
