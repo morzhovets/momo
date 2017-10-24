@@ -204,9 +204,9 @@ public:
 	{
 		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
 		mLogStartBucketCount = (uint8_t)internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
-		startBucketCount = (size_t)1 << mLogStartBucketCount;
-		size_t startCapacity = HashBucket::CalcCapacity(startBucketCount);
-		mMaxLoadFactor = (float)startCapacity / (float)startBucketCount;
+		static const size_t testBucketCount = 1 << 16;
+		size_t testCapacity = HashBucket::CalcCapacity(testBucketCount);
+		mMaxLoadFactor = (float)testCapacity / (float)testBucketCount;
 		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
