@@ -73,12 +73,6 @@ public:
 		return mItem;
 	}
 
-	//template<typename ConstRowReference>
-	//bool operator()(ConstRowReference rowRef) const
-	//{
-	//	return rowRef[mColumn] == mItem;	//?
-	//}
-
 protected:
 	DataEqualer(DataEqualer&& equaler) MOMO_NOEXCEPT
 		: mColumn(equaler.mColumn),
