@@ -62,9 +62,9 @@ namespace internal
 
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode,
-			size_t logBucketCount)
+			size_t /*logBucketCount*/)
 		{
-			if (mHashState != pvGetHashState(hashCode, logBucketCount))
+			if (mHashState != pvGetHashState(hashCode))
 				return nullptr;
 			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
@@ -93,11 +93,11 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode,
-			size_t logBucketCount, size_t /*probe*/)
+			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
-			mHashState = pvGetHashState(hashCode, logBucketCount);
+			mHashState = pvGetHashState(hashCode);
 			return &mItemBuffer;
 		}
 
@@ -124,10 +124,19 @@ namespace internal
 		}
 
 	private:
-		static HashState pvGetHashState(size_t hashCode, size_t logBucketCount) MOMO_NOEXCEPT
+		template<size_t hashStateSize = sizeof(HashState),
+			typename std::enable_if<(hashStateSize < sizeof(size_t)), int>::type = 0>
+		static HashState pvGetHashState(size_t hashCode) MOMO_NOEXCEPT
 		{
-			size_t shift = (sizeof(HashState) < sizeof(size_t)) ? logBucketCount : 0;
-			return ((HashState)(hashCode >> shift) << 1) | 1;
+			static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
+			return (HashState)(hashCode >> hashCodeShift) | 1;
+		}
+
+		template<size_t hashStateSize = sizeof(HashState),
+			typename std::enable_if<(hashStateSize >= sizeof(size_t)), int>::type = 0>
+		static HashState pvGetHashState(size_t hashCode) MOMO_NOEXCEPT
+		{
+			return ((HashState)hashCode << 1) | 1;
 		}
 
 	private:
