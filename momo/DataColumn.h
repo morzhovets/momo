@@ -7,6 +7,7 @@
 
   namespace momo::experimental:
     struct DataSettings
+    class DataEqualer
     class DataColumn
     class DataColumnTraits
     class DataColumnList
@@ -41,6 +42,55 @@ struct DataSettings
 	typedef ArraySettings<> RawsSettings;
 };
 
+template<typename Column,
+	typename Type = typename Column::Type>
+class DataEqualer
+{
+	friend Column;
+
+public:
+	DataEqualer(const Column& column, const Type& item) MOMO_NOEXCEPT
+		: mColumn(column),
+		mItem(item)
+	{
+	}
+
+	DataEqualer(const DataEqualer&) = delete;
+
+	~DataEqualer() MOMO_NOEXCEPT
+	{
+	}
+
+	DataEqualer& operator=(const DataEqualer&) = delete;
+
+	const Column& GetColumn() const MOMO_NOEXCEPT
+	{
+		return mColumn;
+	}
+
+	const Type& GetItem() const MOMO_NOEXCEPT
+	{
+		return mItem;
+	}
+
+	//template<typename ConstRowReference>
+	//bool operator()(ConstRowReference rowRef) const
+	//{
+	//	return rowRef[mColumn] == mItem;	//?
+	//}
+
+protected:
+	DataEqualer(DataEqualer&& equaler) MOMO_NOEXCEPT
+		: mColumn(equaler.mColumn),
+		mItem(equaler.mItem)
+	{
+	}
+
+private:
+	const Column& mColumn;
+	const Type& mItem;
+};
+
 template<typename TType, typename TStruct>
 class DataColumn
 {
@@ -48,10 +98,12 @@ public:
 	typedef TType Type;
 	typedef TStruct Struct;
 
+	typedef DataEqualer<DataColumn> Equaler;
+
 public:
 	//constexpr DataColumn(Type Struct::*field) MOMO_NOEXCEPT
 
-	explicit constexpr DataColumn(size_t offset) MOMO_NOEXCEPT
+	constexpr explicit DataColumn(size_t offset) MOMO_NOEXCEPT
 		: mOffset(offset)
 	{
 	}
@@ -59,6 +111,17 @@ public:
 	constexpr size_t GetOffset() const MOMO_NOEXCEPT
 	{
 		return mOffset;
+	}
+
+	Equaler operator==(const Type& item) const MOMO_NOEXCEPT
+	{
+		//class EqualerProxy : public Equaler
+		//{
+		//public:
+		//	using Equaler::Equaler;
+		//};
+		Equaler equaler(*this, item);
+		return equaler;
 	}
 
 private:

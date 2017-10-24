@@ -107,28 +107,28 @@ public:
 		assert(table.Select().GetCount() == count);
 		assert(ctable.Select().GetCount() == count);
 
-		assert(table.SelectCount(strCol, std::string("0"), intCol, 1) == 1);
-		assert(table.Select(strCol, std::string("1"), intCol, 0).GetCount() == 1);
-		assert(ctable.Select(strCol, std::string("1"), intCol, 0).GetCount() == 1);
+		assert(table.SelectCount(strCol == "0", intCol == 1) == 1);
+		assert(table.Select(strCol == "1", intCol == 0).GetCount() == 1);
+		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
 
-		assert(table.SelectCount(strCol, std::string("0")) == count / 2);
-		assert(table.Select(strCol, std::string("1")).GetCount() == count / 2);
-		assert(ctable.Select(strCol, std::string("1")).GetCount() == count / 2);
+		assert(table.SelectCount(strCol == "0") == count / 2);
+		assert(table.Select(strCol == "1").GetCount() == count / 2);
+		assert(ctable.Select(strCol == "1").GetCount() == count / 2);
 
-		assert(table.SelectCount(dblCol, 0.0) == 1);
-		assert(table.Select(dblCol, 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol, 1.0).GetCount() == 1);
+		assert(table.SelectCount(dblCol == 0.0) == 1);
+		assert(table.Select(dblCol == 1.0).GetCount() == 1);
+		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
 
 		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
 
-		assert(table.FindByUniqueHash(nullptr, strCol, std::string("1"), intCol, 0).GetCount() == 1);
-		assert(ctable.FindByUniqueHash(nullptr, strCol, std::string("1"), intCol, 0).GetCount() == 1);
+		assert(table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
+		assert(ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
 
-		assert(table.FindByMultiHash(nullptr, strCol, std::string("1")).GetCount() == count / 2);
-		assert(ctable.FindByMultiHash(nullptr, strCol, std::string("1")).GetCount() == count / 2);
+		assert(table.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);

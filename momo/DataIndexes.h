@@ -818,7 +818,8 @@ namespace internal
 		}
 
 		template<size_t columnCount>
-		const UniqueHash* GetFitUniqueHash(const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+		const UniqueHash* GetFitUniqueHash(
+			const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
 		{
 			for (const UniqueHash& uniqueHash : mUniqueHashes)
 			{
@@ -832,7 +833,8 @@ namespace internal
 		}
 
 		template<size_t columnCount>
-		const MultiHash* GetFitMultiHash(const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+		const MultiHash* GetFitMultiHash(
+			const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
 		{
 			const MultiHash* resMultiHash = nullptr;
 			size_t maxKeyCount = 0;
@@ -906,6 +908,7 @@ namespace internal
 		{
 			const ColumnList* columnList = mColumnList;
 			static const size_t columnCount = sizeof...(Types);
+			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
 			for (size_t offset : offsets)
 			{

@@ -56,6 +56,9 @@ public:
 	template<typename Type>
 	using Column = typename ColumnList::template Column<Type>;
 
+	template<typename Type>
+	using Equaler = DataEqualer<Column<Type>, Type>;
+
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
@@ -583,40 +586,40 @@ public:
 		pvRemoveInvalidRaws();
 	}
 
-	template<typename... Types>
-	const void* GetUniqueHashIndex(const Column<Types>&... columns) const
+	template<typename Type, typename... Types>
+	const void* GetUniqueHashIndex(const Column<Type>& column, const Column<Types>&... columns) const
 	{
-		return mIndexes.GetUniqueHash(columns...);
+		return mIndexes.GetUniqueHash(column, columns...);
 	}
 
-	template<typename... Types>
-	const void* GetMultiHashIndex(const Column<Types>&... columns) const
+	template<typename Type, typename... Types>
+	const void* GetMultiHashIndex(const Column<Type>& column, const Column<Types>&... columns) const
 	{
-		return mIndexes.GetMultiHash(columns...);
+		return mIndexes.GetMultiHash(column, columns...);
 	}
 
-	template<typename... Types>
-	const void* AddUniqueHashIndex(const Column<Types>&... columns)
+	template<typename Type, typename... Types>
+	const void* AddUniqueHashIndex(const Column<Type>& column, const Column<Types>&... columns)
 	{
-		return mIndexes.AddUniqueHash(mRaws, columns...);
+		return mIndexes.AddUniqueHash(mRaws, column, columns...);
 	}
 
-	template<typename... Types>
-	const void* AddMultiHashIndex(const Column<Types>&... columns)
+	template<typename Type, typename... Types>
+	const void* AddMultiHashIndex(const Column<Type>& column, const Column<Types>&... columns)
 	{
-		return mIndexes.AddMultiHash(mRaws, columns...);
+		return mIndexes.AddMultiHash(mRaws, column, columns...);
 	}
 
-	template<typename... Types>
-	bool RemoveUniqueHashIndex(const Column<Types>&... columns)
+	template<typename Type, typename... Types>
+	bool RemoveUniqueHashIndex(const Column<Type>& column, const Column<Types>&... columns)
 	{
-		return mIndexes.RemoveUniqueHash(columns...);
+		return mIndexes.RemoveUniqueHash(column, columns...);
 	}
 
-	template<typename... Types>
-	bool RemoveMultiHashIndex(const Column<Types>&... columns)
+	template<typename Type, typename... Types>
+	bool RemoveMultiHashIndex(const Column<Type>& column, const Column<Types>&... columns)
 	{
-		return mIndexes.RemoveMultiHash(columns...);
+		return mIndexes.RemoveMultiHash(column, columns...);
 	}
 
 	ConstSelection SelectEmpty() const
@@ -631,76 +634,40 @@ public:
 		return Selection(&GetColumnList(), SelectionRaws(std::move(memManager)));
 	}
 
-	template<typename Type, typename... Args>
-	ConstSelection Select(const Column<Type>& column, const Type& item, const Args&... args) const
+	template<typename... Types>
+	ConstSelection Select(const Equaler<Types>&... equalers) const
 	{
-		return Select(EmptyRowFilter(), column, item, args...);
+		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter, typename Type, typename... Args>
-	ConstSelection Select(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	template<typename RowFilter, typename... Types>
+	ConstSelection Select(const RowFilter& rowFilter, const Equaler<Types>&... equalers) const
 	{
-		return pvSelect<Selection>(rowFilter, column, item, args...);
+		return pvSelect<Selection>(rowFilter, equalers...);
 	}
 
-	ConstSelection Select() const
+	template<typename... Types>
+	Selection Select(const Equaler<Types>&... equalers)
 	{
-		return Select(EmptyRowFilter());
+		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter>
-	ConstSelection Select(const RowFilter& rowFilter) const
+	template<typename RowFilter, typename... Types>
+	Selection Select(const RowFilter& rowFilter, const Equaler<Types>&... equalers)
 	{
-		return pvMakeSelection(mRaws, rowFilter, static_cast<Selection*>(nullptr));
+		return pvSelect<Selection>(rowFilter, equalers...);
 	}
 
-	template<typename Type, typename... Args>
-	Selection Select(const Column<Type>& column, const Type& item, const Args&... args)
+	template<typename... Types>
+	size_t SelectCount(const Equaler<Types>&... equalers) const
 	{
-		return Select(EmptyRowFilter(), column, item, args...);
+		return pvSelect<size_t>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter, typename Type, typename... Args>
-	Selection Select(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
-		const Args&... args)
+	template<typename RowFilter, typename... Types>
+	size_t SelectCount(const RowFilter& rowFilter, const Equaler<Types>&... equalers) const
 	{
-		return pvSelect<Selection>(rowFilter, column, item, args...);
-	}
-
-	Selection Select()
-	{
-		return Select(EmptyRowFilter());
-	}
-
-	template<typename RowFilter>
-	Selection Select(const RowFilter& rowFilter)
-	{
-		return pvMakeSelection(mRaws, rowFilter, static_cast<Selection*>(nullptr));
-	}
-
-	template<typename Type, typename... Args>
-	size_t SelectCount(const Column<Type>& column, const Type& item, const Args&... args) const
-	{
-		return SelectCount(EmptyRowFilter(), column, item, args...);
-	}
-
-	template<typename RowFilter, typename Type, typename... Args>
-	size_t SelectCount(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
-		const Args&... args) const
-	{
-		return pvSelect<size_t>(rowFilter, column, item, args...);
-	}
-
-	size_t SelectCount() const
-	{
-		return SelectCount(EmptyRowFilter());
-	}
-
-	template<typename RowFilter>
-	size_t SelectCount(const RowFilter& rowFilter) const
-	{
-		return pvMakeSelection(mRaws, rowFilter, static_cast<size_t*>(nullptr));
+		return pvSelect<size_t>(rowFilter, equalers...);
 	}
 
 	ConstRowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
@@ -713,36 +680,36 @@ public:
 		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
 	}
 
-	template<typename Type, typename... Args>
+	template<typename Type, typename... Types>
 	ConstRowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex,
-		const Column<Type>& column, const Type& item, const Args&... args) const
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers) const
 	{
-		return pvFindByHash<RowUniqueHashBoundsProxy>(static_cast<const UniqueHashIndex*>(uniqueHashIndex),
-			column, item, args...);
+		return pvFindByHash<RowUniqueHashBoundsProxy>(
+			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
-	template<typename Type, typename... Args>
+	template<typename Type, typename... Types>
 	RowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex,
-		const Column<Type>& column, const Type& item, const Args&... args)
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers)
 	{
-		return pvFindByHash<RowUniqueHashBoundsProxy>(static_cast<const UniqueHashIndex*>(uniqueHashIndex),
-			column, item, args...);
+		return pvFindByHash<RowUniqueHashBoundsProxy>(
+			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
-	template<typename Type, typename... Args>
+	template<typename Type, typename... Types>
 	ConstRowMultiHashBounds FindByMultiHash(const void* multiHashIndex,
-		const Column<Type>& column, const Type& item, const Args&... args) const
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers) const
 	{
-		return pvFindByHash<RowMultiHashBoundsProxy>(static_cast<const MultiHashIndex*>(multiHashIndex),
-			column, item, args...);
+		return pvFindByHash<RowMultiHashBoundsProxy>(
+			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
 	}
 
-	template<typename Type, typename... Args>
+	template<typename Type, typename... Types>
 	RowMultiHashBounds FindByMultiHash(const void* multiHashIndex,
-		const Column<Type>& column, const Type& item, const Args&... args)
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers)
 	{
-		return pvFindByHash<RowMultiHashBoundsProxy>(static_cast<const MultiHashIndex*>(multiHashIndex),
-			column, item, args...);
+		return pvFindByHash<RowMultiHashBoundsProxy>(
+			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
 	}
 
 private:
@@ -892,49 +859,43 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename Result, typename RowFilter, typename Type, typename... Args>
-	Result pvSelect(const RowFilter& rowFilter, const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	template<typename Result, typename RowFilter, typename... Types,
+		typename std::enable_if<(sizeof...(Types) > 0), int>::type = 0>
+	Result pvSelect(const RowFilter& rowFilter, const Equaler<Types>&... equalers) const
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		std::array<size_t, columnCount> offsets;
-		pvGetOffsets(offsets.data(), column, item, args...);
+		static const size_t columnCount = sizeof...(equalers);
+		const ColumnList& columnList = GetColumnList();
+		std::array<size_t, columnCount> offsets = {{ columnList.GetOffset(equalers.GetColumn())... }};
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		const UniqueHashIndex* uniqueHash = mIndexes.GetFitUniqueHash(sortedOffsets);
 		if (uniqueHash != nullptr)
 		{
 			return pvSelectRec<Result>(*uniqueHash, offsets.data(), rowFilter,
-				OffsetItemTuple<>(), column, item, args...);
+				OffsetItemTuple<>(), equalers...);
 		}
 		const MultiHashIndex* multiHash = mIndexes.GetFitMultiHash(sortedOffsets);
 		if (multiHash != nullptr)
 		{
 			return pvSelectRec<Result>(*multiHash, offsets.data(), rowFilter,
-				OffsetItemTuple<>(), column, item, args...);
+				OffsetItemTuple<>(), equalers...);
 		}
-		auto newFilter = [&offsets, &rowFilter, &column, &item, &args...] (ConstRowReference rowRef)
-			{ return pvIsSatisfied(rowRef, offsets.data(), column, item, args...) && rowFilter(rowRef); };
+		auto newFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
+			{ return pvIsSatisfied(rowRef, offsets.data(), equalers...) && rowFilter(rowRef); };
 		return pvMakeSelection(mRaws, newFilter, static_cast<Result*>(nullptr));
 	}
 
-	template<typename Type, typename... Args>
-	void pvGetOffsets(size_t* offsets, const Column<Type>& column, const Type& /*item*/,
-		const Args&... args) const
+	template<typename Result, typename RowFilter>
+	Result pvSelect(const RowFilter& rowFilter) const
 	{
-		*offsets = GetColumnList().GetOffset(column);
-		pvGetOffsets(offsets + 1, args...);
+		return pvMakeSelection(mRaws, rowFilter, static_cast<Result*>(nullptr));
 	}
 
-	void pvGetOffsets(size_t* /*offsets*/) const MOMO_NOEXCEPT
-	{
-	}
-
-	template<typename Type, typename... Args>
+	template<typename Type, typename... Types>
 	static bool pvIsSatisfied(ConstRowReference rowRef, const size_t* offsets,
-		const Column<Type>& /*column*/, const Type& item, const Args&... args)
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers)
 	{
-		return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(*offsets), item)
-			&& pvIsSatisfied(rowRef, offsets + 1, args...);
+		return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(*offsets), equaler.GetItem())
+			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
 	}
 
 	static bool pvIsSatisfied(ConstRowReference /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
@@ -943,16 +904,17 @@ private:
 	}
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Type,
-		typename... Args>
+		typename... Types>
 	Result pvSelectRec(const Index& index, const size_t* offsets, const RowFilter& rowFilter,
-		const Tuple& tuple, const Column<Type>& /*column*/, const Type& item, const Args&... args) const
+		const Tuple& tuple, const Equaler<Type>& equaler, const Equaler<Types>&... equalers) const
 	{
 		size_t offset = *offsets;
+		const Type& item = equaler.GetItem();
 		if (Indexes::HasOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
 				std::make_tuple(std::pair<size_t, const Type&>(offset, item)));
-			return pvSelectRec<Result>(index, offsets + 1, rowFilter, newTuple, args...);
+			return pvSelectRec<Result>(index, offsets + 1, rowFilter, newTuple, equalers...);
 		}
 		else
 		{
@@ -961,7 +923,7 @@ private:
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Type>(offset), item)
 					&& rowFilter(rowRef);
 			};
-			return pvSelectRec<Result>(index, offsets + 1, newFilter, tuple, args...);
+			return pvSelectRec<Result>(index, offsets + 1, newFilter, tuple, equalers...);
 		}
 	}
 
@@ -1024,34 +986,33 @@ private:
 		return RowUniqueHashBoundsProxy(&GetColumnList(), raws);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename Type, typename... Args>
-	RowBoundsProxy pvFindByHash(const Index* index, const Column<Type>& column, const Type& item,
-		const Args&... args) const
+	template<typename RowBoundsProxy, typename Index, typename... Types>
+	RowBoundsProxy pvFindByHash(const Index* index, const Equaler<Types>&... equalers) const
 	{
-		static const size_t columnCount = 1 + sizeof...(Args) / 2;
-		std::array<size_t, columnCount> offsets;
-		pvGetOffsets(offsets.data(), column, item, args...);
+		static const size_t columnCount = sizeof...(equalers);
+		const ColumnList& columnList = GetColumnList();
+		std::array<size_t, columnCount> offsets = {{ columnList.GetOffset(equalers.GetColumn())... }};
 		if (index == nullptr)
 			index = mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index);
 		else
 			MOMO_EXTRA_CHECK(index == mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index));	//?
 		if (index == nullptr)
 			throw std::runtime_error("Index not found");
-		return pvFindByHashRec<RowBoundsProxy>(*index, offsets.data(), OffsetItemTuple<>(),
-			column, item, args...);
+		return pvFindByHashRec<RowBoundsProxy>(*index, offsets.data(), OffsetItemTuple<>(), equalers...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Type, typename... Args>
+	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Type, typename... Types>
 	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* offsets, const Tuple& tuple,
-		const Column<Type>& /*column*/, const Type& item, const Args&... args) const
+		const Equaler<Type>& equaler, const Equaler<Types>&... equalers) const
 	{
 		auto newTuple = std::tuple_cat(tuple,
-			std::make_tuple(std::pair<size_t, const Type&>(*offsets, item)));
-		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, newTuple, args...);
+			std::make_tuple(std::pair<size_t, const Type&>(*offsets, equaler.GetItem())));
+		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, newTuple, equalers...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple>
-	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/, const Tuple& tuple) const
+	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/,
+		const Tuple& tuple) const
 	{
 		return RowBoundsProxy(&GetColumnList(), mIndexes.FindRaws(index, tuple));
 	}
