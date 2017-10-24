@@ -57,7 +57,7 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equaler = DataEqualer<Column<Item>, Item>;
+	using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;
 
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;
@@ -897,7 +897,7 @@ private:
 	static bool pvIsSatisfied(ConstRowReference rowRef, const size_t* offsets,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
 	{
-		return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(*offsets), equaler.GetItem())
+		return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(*offsets), equaler.GetItemArg())
 			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
 	}
 
@@ -912,7 +912,7 @@ private:
 		const Tuple& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		size_t offset = *offsets;
-		const Item& item = equaler.GetItem();
+		const Item& item = equaler.GetItemArg();
 		if (Indexes::HasOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
@@ -1009,7 +1009,7 @@ private:
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		auto newTuple = std::tuple_cat(tuple,
-			std::make_tuple(std::pair<size_t, const Item&>(*offsets, equaler.GetItem())));
+			std::make_tuple(std::pair<size_t, const Item&>(*offsets, equaler.GetItemArg())));
 		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, newTuple, equalers...);
 	}
 

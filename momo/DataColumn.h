@@ -6,9 +6,10 @@
   momo/DataColumn.h
 
   namespace momo::experimental:
-    struct DataSettings
-    class DataEqualer
+    enum class DataOperatorType
+    class DataOperator
     class DataColumn
+    struct DataSettings
     class DataColumnTraits
     class DataColumnList
     class DataColumnListStatic
@@ -31,58 +32,57 @@ namespace momo
 namespace experimental
 {
 
-template<bool tKeepRowNumber = true>
-struct DataSettings
+enum class DataOperatorType
 {
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-
-	static const bool keepRowNumber = tKeepRowNumber;
-
-	typedef ArraySettings<> RawsSettings;
+	equal,
 };
 
-template<typename Column,
-	typename Item = typename Column::Item>
-class DataEqualer
+template<DataOperatorType tType, typename TColumn, typename TItemArg>
+class DataOperator
 {
+public:
+	typedef TColumn Column;
+	typedef TItemArg ItemArg;
+
+	static const DataOperatorType type = tType;
+
 	friend Column;
 
 public:
-	DataEqualer(const Column& column, const Item& item) MOMO_NOEXCEPT
+	DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
 		: mColumn(column),
-		mItem(item)
+		mItemArg(std::forward<ItemArg>(itemArg))
 	{
 	}
 
-	DataEqualer(const DataEqualer&) = delete;
+	DataOperator(const DataOperator&) = delete;
 
-	~DataEqualer() MOMO_NOEXCEPT
+	~DataOperator() MOMO_NOEXCEPT
 	{
 	}
 
-	DataEqualer& operator=(const DataEqualer&) = delete;
+	DataOperator& operator=(const DataOperator&) = delete;
 
 	const Column& GetColumn() const MOMO_NOEXCEPT
 	{
 		return mColumn;
 	}
 
-	const Item& GetItem() const MOMO_NOEXCEPT
+	ItemArg&& GetItemArg() const MOMO_NOEXCEPT
 	{
-		return mItem;
+		return std::forward<ItemArg>(mItemArg);
 	}
 
 protected:
-	DataEqualer(DataEqualer&& equaler) MOMO_NOEXCEPT
-		: mColumn(equaler.mColumn),
-		mItem(equaler.mItem)
+	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
+		: mColumn(oper.mColumn),
+		mItemArg(std::forward<ItemArg>(oper.mItemArg))
 	{
 	}
 
 private:
 	const Column& mColumn;
-	const Item& mItem;
+	ItemArg&& mItemArg;
 };
 
 template<typename TItem, typename TStruct>
@@ -92,7 +92,7 @@ public:
 	typedef TItem Item;
 	typedef TStruct Struct;
 
-	typedef DataEqualer<DataColumn> Equaler;
+	typedef DataOperator<DataOperatorType::equal, DataColumn, const Item&> Equaler;
 
 public:
 	//constexpr DataColumn(Item Struct::*field) MOMO_NOEXCEPT
@@ -109,17 +109,23 @@ public:
 
 	Equaler operator==(const Item& item) const MOMO_NOEXCEPT
 	{
-		//class EqualerProxy : public Equaler
-		//{
-		//public:
-		//	using Equaler::Equaler;
-		//};
 		Equaler equaler(*this, item);
 		return equaler;
 	}
 
 private:
 	size_t mOffset;
+};
+
+template<bool tKeepRowNumber = true>
+struct DataSettings
+{
+	static const CheckMode checkMode = CheckMode::bydefault;
+	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+
+	static const bool keepRowNumber = tKeepRowNumber;
+
+	typedef ArraySettings<> RawsSettings;
 };
 
 template<typename TStruct,
