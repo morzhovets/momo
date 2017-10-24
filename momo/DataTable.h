@@ -59,6 +59,9 @@ public:
 	template<typename Item>
 	using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;
 
+	template<typename Item, typename ItemArg>
+	using Assigner = DataOperator<DataOperatorType::assign, Column<Item>, ItemArg>;
+
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
@@ -386,11 +389,11 @@ public:
 		return pvNewRow(raw);
 	}
 
-	template<typename Item, typename ItemArg, typename... Args>
-	Row NewRow(const Column<Item>& column, ItemArg&& itemArg, Args&&... args)
+	template<typename Item, typename ItemArg, typename... Assigners>
+	Row NewRow(const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
 	{
 		Row row = NewRow();
-		pvFillRaw(row.GetRaw(), column, std::forward<ItemArg>(itemArg), std::forward<Args>(args)...);
+		pvFillRaw(row.GetRaw(), assigner, std::forward<Assigners>(assigners)...);
 		return row;
 	}
 
@@ -417,10 +420,10 @@ public:
 		return pvMakeRowReference(raw);
 	}
 
-	template<typename Item, typename ItemArg, typename... Args>
-	RowReference AddRow(const Column<Item>& column, ItemArg&& itemArg, Args&&... args)
+	template<typename Item, typename ItemArg, typename... Assigners>
+	RowReference AddRow(const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
 	{
-		return AddRow(NewRow(column, std::forward<ItemArg>(itemArg), std::forward<Args>(args)...));
+		return AddRow(NewRow(assigner, std::forward<Assigners>(assigners)...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -463,7 +466,7 @@ public:
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 		return ExtractRow(rowRef.GetNumber());
 	}
-	
+
 	Row ExtractRow(size_t rowNumber)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
@@ -813,12 +816,13 @@ private:
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
-	template<typename Item, typename ItemArg, typename... Args>
-	void pvFillRaw(Raw* raw, const Column<Item>& column, ItemArg&& itemArg, Args&&... args)
+	template<typename Item, typename ItemArg, typename... Assigners>
+	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
 	{
-		size_t offset = GetColumnList().GetOffset(column);
-		GetColumnList().template Assign<Item>(raw, offset, std::forward<ItemArg>(itemArg));
-		pvFillRaw(raw, std::forward<Args>(args)...);
+		size_t offset = GetColumnList().GetOffset(assigner.GetColumn());
+		GetColumnList().template Assign<Item>(raw, offset,
+			std::forward<ItemArg>(assigner.GetItemArg()));
+		pvFillRaw(raw, std::forward<Assigners>(assigners)...);
 	}
 
 	void pvFillRaw(Raw* /*raw*/) MOMO_NOEXCEPT

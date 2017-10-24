@@ -35,6 +35,7 @@ namespace experimental
 enum class DataOperatorType
 {
 	equal,
+	assign,
 };
 
 template<DataOperatorType tType, typename TColumn, typename TItemArg>
@@ -46,7 +47,7 @@ public:
 
 	static const DataOperatorType type = tType;
 
-	friend Column;
+	friend Column;	//?
 
 public:
 	DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
@@ -94,6 +95,9 @@ public:
 
 	typedef DataOperator<DataOperatorType::equal, DataColumn, const Item&> Equaler;
 
+	template<typename ItemArg>
+	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
+
 public:
 	//constexpr DataColumn(Item Struct::*field) MOMO_NOEXCEPT
 
@@ -111,6 +115,13 @@ public:
 	{
 		Equaler equaler(*this, item);
 		return equaler;
+	}
+
+	template<typename ItemArg>
+	Assigner<ItemArg> operator=(ItemArg&& itemArg) const MOMO_NOEXCEPT
+	{
+		Assigner<ItemArg> assigner(*this, std::forward<ItemArg>(itemArg));
+		return assigner;
 	}
 
 private:

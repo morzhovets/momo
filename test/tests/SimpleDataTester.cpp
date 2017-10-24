@@ -69,13 +69,13 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(intCol, (int)i);
+			DataRow row = table.NewRow(intCol = (int)i);
 			assert(table.TryAddRow(std::move(row)).uniqueHashIndex == nullptr);
 		}
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(intCol, (int)i / 2);
+			DataRow row = table.NewRow(intCol = (int)i / 2);
 			row[strCol] = (i % 2 == 0) ? "0" : "1";
 			assert(table.TryUpdateRow(i, std::move(row)).uniqueHashIndex == nullptr);
 		}
@@ -96,7 +96,7 @@ public:
 		assert(table.AddMultiHashIndex(intCol));
 
 		for (size_t i = 0; i < count2; ++i)
-			assert(table.TryInsertRow(count, table.NewRow(intCol, (int)(count + i))).uniqueHashIndex == nullptr);
+			assert(table.TryInsertRow(count, table.NewRow(intCol = (int)(count + i))).uniqueHashIndex == nullptr);
 		assert(table.GetCount() == count + count2);
 
 		for (size_t i = 0; i < count2; ++i)
@@ -120,9 +120,9 @@ public:
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
 
 		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
+			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol, std::string("1"), intCol, 0)).GetCount() == 1);
+			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
 		assert(table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
 		assert(ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
