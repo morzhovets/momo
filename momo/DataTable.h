@@ -644,7 +644,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()())>
+		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
 	ConstSelection Select(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
@@ -657,7 +657,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()())>
+		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
 	Selection Select(const RowFilter& rowFilter, const Equaler<Items>&... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
@@ -670,7 +670,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()())>
+		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
 	size_t SelectCount(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);

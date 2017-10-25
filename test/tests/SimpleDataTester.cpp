@@ -103,6 +103,8 @@ public:
 			table.ExtractRow(table[count]);
 		assert(table.GetCount() == count);
 
+		auto emptyFilter = [] (typename DataTable::ConstRowReference) { return true; };
+
 		assert(table.SelectCount() == count);
 		assert(table.Select().GetCount() == count);
 		assert(ctable.Select().GetCount() == count);
@@ -111,9 +113,9 @@ public:
 		assert(table.Select(strCol == "1", intCol == 0).GetCount() == 1);
 		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
 
-		assert(table.SelectCount(strCol == "0") == count / 2);
-		assert(table.Select(strCol == "1").GetCount() == count / 2);
-		assert(ctable.Select(strCol == "1").GetCount() == count / 2);
+		assert(table.SelectCount(emptyFilter, strCol == "0") == count / 2);
+		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
+		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 
 		assert(table.SelectCount(dblCol == 0.0) == 1);
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);
@@ -139,7 +141,7 @@ public:
 
 		table.AssignRows(table.GetBegin(), table.GetEnd());
 		table.RemoveRows(table.GetBegin(), table.GetBegin());
-		table.RemoveRows([] (typename DataTable::ConstRowReference) { return true; });
+		table.RemoveRows(emptyFilter);
 
 		assert(table.IsEmpty());
 		table.Clear();
