@@ -390,10 +390,10 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	Row NewRow(const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
+	Row NewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
 	{
 		Row row = NewRow();
-		pvFillRaw(row.GetRaw(), assigner, std::forward<Assigners>(assigners)...);
+		pvFillRaw(row.GetRaw(), assigner, assigners...);
 		return row;
 	}
 
@@ -421,9 +421,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	RowReference AddRow(const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
+	RowReference AddRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
 	{
-		return AddRow(NewRow(assigner, std::forward<Assigners>(assigners)...));
+		return AddRow(NewRow(assigner, assigners...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -438,6 +438,12 @@ public:
 		}
 	}
 
+	template<typename Item, typename ItemArg, typename... Assigners>
+	TryResult TryAddRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	{
+		return TryAddRow(NewRow(assigner, assigners...));
+	}
+
 	RowReference InsertRow(size_t rowNumber, Row&& row)
 	{
 		MOMO_CHECK(rowNumber <= GetCount());
@@ -447,6 +453,13 @@ public:
 		mRaws[rowNumber] = RowReferenceProxy::GetRaw(rowRef);
 		pvSetNumbers(rowNumber);
 		return rowRef;
+	}
+
+	template<typename Item, typename ItemArg, typename... Assigners>
+	RowReference InsertRow(size_t rowNumber, const Assigner<Item, ItemArg>& assigner,
+		const Assigners&... assigners)
+	{
+		return InsertRow(rowNumber, NewRow(assigner, assigners...));
 	}
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
@@ -459,6 +472,13 @@ public:
 		{
 			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
 		}
+	}
+
+	template<typename Item, typename ItemArg, typename... Assigners>
+	TryResult TryInsertRow(size_t rowNumber, const Assigner<Item, ItemArg>& assigner,
+		const Assigners&... assigners)
+	{
+		return TryInsertRow(rowNumber, NewRow(assigner, assigners...));
 	}
 
 	Row ExtractRow(ConstRowReference rowRef)
@@ -627,14 +647,12 @@ public:
 
 	ConstSelection SelectEmpty() const
 	{
-		MemManager memManager = GetMemManager();
-		return ConstSelection(&GetColumnList(), SelectionRaws(std::move(memManager)));
+		return pvSelectEmpty();
 	}
 
 	Selection SelectEmpty()
 	{
-		MemManager memManager = GetMemManager();
-		return Selection(&GetColumnList(), SelectionRaws(std::move(memManager)));
+		return pvSelectEmpty();
 	}
 
 	template<typename... Items>
@@ -817,12 +835,13 @@ private:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner, Assigners&&... assigners)
+	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
 	{
-		size_t offset = GetColumnList().GetOffset(assigner.GetColumn());
-		GetColumnList().template Assign<Item>(raw, offset,
+		const ColumnList& columnList = GetColumnList();
+		size_t offset = columnList.GetOffset(assigner.GetColumn());
+		columnList.template Assign<Item>(raw, offset,
 			std::forward<ItemArg>(assigner.GetItemArg()));
-		pvFillRaw(raw, std::forward<Assigners>(assigners)...);
+		pvFillRaw(raw, assigners...);
 	}
 
 	void pvFillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
@@ -864,6 +883,12 @@ private:
 		}
 		mRaws.RemoveBack(mRaws.GetCount() - number);
 		pvSetNumbers();
+	}
+
+	Selection pvSelectEmpty() const
+	{
+		MemManager memManager = GetMemManager();
+		return SelectionProxy(&GetColumnList(), typename SelectionProxy::Raws(std::move(memManager)));
 	}
 
 	template<typename Result, typename RowFilter, typename... Items,

@@ -103,6 +103,9 @@ public:
 			table.ExtractRow(table[count]);
 		assert(table.GetCount() == count);
 
+		assert(table.SelectEmpty().IsEmpty());
+		assert(ctable.SelectEmpty().IsEmpty());
+
 		auto emptyFilter = [] (typename DataTable::ConstRowReference) { return true; };
 
 		assert(table.SelectCount() == count);
