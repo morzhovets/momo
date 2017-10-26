@@ -125,7 +125,7 @@ private:
 	};
 
 #ifdef MOMO_USE_NODE_HANDLE
-	struct NodeTypeProxy : public node_type
+	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
 		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair,
