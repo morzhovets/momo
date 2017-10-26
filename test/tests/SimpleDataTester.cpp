@@ -125,6 +125,14 @@ public:
 		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 
+		auto selection = table.Select(strCol == "0");
+		for (const std::string& s : selection.GetItemBounds(strCol))
+			assert(s == "0");
+
+		auto cselection = ctable.Select(strCol == "1");
+		for (const std::string& s : cselection.GetItemBounds(strCol))
+			assert(s == "1");
+
 		assert(table.SelectCount(dblCol == 0.0) == 1);
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);

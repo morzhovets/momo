@@ -353,9 +353,16 @@ namespace internal
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
 			DataSelectionRawsSettings<Settings>> Raws;
 
+	private:
+		typedef momo::internal::ArrayBounds<Raw* const*> RawBounds;
+		typedef DataRowBounds<RowReference, RawBounds> RowBounds;
+
 	public:
 		typedef DataRowIterator<RowReference, typename Raws::ConstIterator> ConstIterator;
 		typedef ConstIterator Iterator;
+
+		template<typename Item>
+		using ItemBounds = DataItemBounds<Item, RowBounds, Settings>;
 
 	private:
 		struct RowReferenceProxy : public RowReference
@@ -373,6 +380,11 @@ namespace internal
 		struct ConstSelectionProxy : public ConstSelection
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstSelection)
+		};
+
+		struct RowBoundsProxy : public RowBounds
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowBounds)
 		};
 
 	public:
@@ -492,6 +504,14 @@ namespace internal
 		{
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
+		}
+
+		template<typename Item>
+		ItemBounds<Item> GetItemBounds(const Column<Item>& column) const
+		{
+			size_t offset = mColumnList->GetOffset(column);
+			RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());
+			return ItemBounds<Item>(offset, RowBoundsProxy(mColumnList, rawBounds));
 		}
 
 		template<typename RowIterator>
