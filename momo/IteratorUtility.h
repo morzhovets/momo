@@ -213,6 +213,8 @@ namespace internal
 	public:
 		typedef TReference Reference;
 
+		typedef const Reference* Pointer;
+
 		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
 
 	public:
@@ -228,7 +230,7 @@ namespace internal
 			return ConstPointer(mReference);
 		}
 
-		const Reference* operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const MOMO_NOEXCEPT
 		{
 			return std::addressof(mReference);
 		}
@@ -236,6 +238,16 @@ namespace internal
 		Reference operator*() const MOMO_NOEXCEPT
 		{
 			return mReference;
+		}
+
+		bool operator!() const MOMO_NOEXCEPT
+		{
+			return false;
+		}
+
+		explicit operator bool() const MOMO_NOEXCEPT
+		{
+			return true;
 		}
 
 	private:
@@ -247,6 +259,8 @@ namespace internal
 	{
 	public:
 		typedef Object& Reference;
+
+		typedef Object* Pointer;
 
 		typedef IteratorPointer<const Object&> ConstPointer;
 
@@ -263,7 +277,7 @@ namespace internal
 			return ConstPointer(*mPointer);
 		}
 
-		Object* operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const MOMO_NOEXCEPT
 		{
 			return mPointer;
 		}
@@ -271,6 +285,16 @@ namespace internal
 		Reference operator*() const MOMO_NOEXCEPT
 		{
 			return *mPointer;
+		}
+
+		bool operator!() const MOMO_NOEXCEPT
+		{
+			return false;
+		}
+
+		explicit operator bool() const MOMO_NOEXCEPT
+		{
+			return true;
 		}
 
 	private:
