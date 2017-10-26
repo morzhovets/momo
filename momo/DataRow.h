@@ -357,6 +357,56 @@ namespace internal
 		const ColumnList* mColumnList;
 		Raw* mRaw;
 	};
+
+	template<typename TRowBounds>
+	class DataRowPointer : public TRowBounds
+	{
+	public:
+		typedef TRowBounds RowBounds;
+		typedef typename RowBounds::Reference Reference;
+
+		typedef typename RowBounds::Iterator Pointer;	//?
+
+		typedef DataRowPointer<typename RowBounds::ConstBounds> ConstPointer;
+
+	private:
+		typedef typename Reference::ColumnList::Settings Settings;
+
+	public:
+		using RowBounds::RowBounds;
+
+		explicit DataRowPointer(RowBounds rowBounds) MOMO_NOEXCEPT
+			: RowBounds(rowBounds)
+		{
+		}
+
+		operator ConstPointer() const MOMO_NOEXCEPT
+		{
+			return ConstPointer(static_cast<const RowBounds&>(*this));
+		}
+
+		Pointer operator->() const
+		{
+			MOMO_CHECK(RowBounds::GetCount() == 1);
+			return RowBounds::GetBegin();
+		}
+
+		Reference operator*() const
+		{
+			MOMO_CHECK(RowBounds::GetCount() == 1);
+			return *RowBounds::GetBegin();
+		}
+
+		bool operator!() const MOMO_NOEXCEPT
+		{
+			return RowBounds::GetCount() == 0;
+		}
+
+		explicit operator bool() const MOMO_NOEXCEPT
+		{
+			return RowBounds::GetCount() > 0;
+		}
+	};
 }
 
 } // namespace experimental

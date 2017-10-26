@@ -138,12 +138,12 @@ public:
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
 
 		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
+			table.NewRow(strCol = "1", intCol = 0))->GetByColumn(intCol) == 0);
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
-		assert(table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
-		assert(ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0).GetCount() == 1);
+		assert((bool)table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0));
+		assert((*ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0))[strCol] == "1");
 
 		assert(table.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
 		assert(ctable.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);

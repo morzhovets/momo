@@ -88,13 +88,13 @@ public:
 	typedef internal::DataRowIterator<RowReference, typename Raws::ConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::DataRowBounds<RowReference,
-		typename UniqueHashIndex::RawBounds> RowUniqueHashBounds;
-	typedef typename RowUniqueHashBounds::ConstBounds ConstRowUniqueHashBounds;
+	typedef internal::DataRowPointer<internal::DataRowBounds<RowReference,
+		typename UniqueHashIndex::RawBounds>> RowHashPointer;
+	typedef typename RowHashPointer::ConstPointer ConstRowHashPointer;
 
 	typedef internal::DataRowBounds<RowReference,
-		typename MultiHashIndex::RawBounds> RowMultiHashBounds;
-	typedef typename RowMultiHashBounds::ConstBounds ConstRowMultiHashBounds;
+		typename MultiHashIndex::RawBounds> RowHashBounds;
+	typedef typename RowHashBounds::ConstBounds ConstRowHashBounds;
 
 	template<typename Item>
 	using ItemBounds = internal::DataItemBounds<Item, RowBounds, Settings>;
@@ -231,14 +231,14 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Selection)
 	};
 
-	struct RowUniqueHashBoundsProxy : public RowUniqueHashBounds
+	struct RowHashPointerProxy : public RowHashPointer
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowUniqueHashBounds)
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowHashPointer)
 	};
 
-	struct RowMultiHashBoundsProxy : public RowMultiHashBounds
+	struct RowHashBoundsProxy : public RowHashBounds
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowMultiHashBounds)
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowHashBounds)
 	};
 
 	struct RowBoundsProxy : public RowBounds
@@ -719,45 +719,45 @@ public:
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
 
-	ConstRowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
+	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
 	{
 		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
 	}
 
-	RowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex, const Row& row)
+	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex, const Row& row)
 	{
 		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex,
+	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
-		return pvFindByHash<RowUniqueHashBoundsProxy>(
+		return pvFindByHash<RowHashPointerProxy>(
 			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowUniqueHashBounds FindByUniqueHash(const void* uniqueHashIndex,
+	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
 	{
-		return pvFindByHash<RowUniqueHashBoundsProxy>(
+		return pvFindByHash<RowHashPointerProxy>(
 			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowMultiHashBounds FindByMultiHash(const void* multiHashIndex,
+	ConstRowHashBounds FindByMultiHash(const void* multiHashIndex,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
-		return pvFindByHash<RowMultiHashBoundsProxy>(
+		return pvFindByHash<RowHashBoundsProxy>(
 			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowMultiHashBounds FindByMultiHash(const void* multiHashIndex,
+	RowHashBounds FindByMultiHash(const void* multiHashIndex,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
 	{
-		return pvFindByHash<RowMultiHashBoundsProxy>(
+		return pvFindByHash<RowHashBoundsProxy>(
 			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
 	}
 
@@ -1044,12 +1044,12 @@ private:
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
 
-	RowUniqueHashBounds pvFindByUniqueHash(const UniqueHashIndex* uniqueHashIndex, const Row& row) const
+	RowHashPointer pvFindByUniqueHash(const UniqueHashIndex* uniqueHashIndex, const Row& row) const
 	{
 		MOMO_CHECK(uniqueHashIndex != nullptr);
 		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
 		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row));
-		return RowUniqueHashBoundsProxy(&GetColumnList(), raws);
+		return RowHashPointerProxy(&GetColumnList(), raws);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>
