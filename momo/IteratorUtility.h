@@ -11,6 +11,68 @@
 
 #include "Utility.h"
 
+#define MOMO_MORE_ARRAY_ITERATOR_OPERATORS(Iterator) \
+	Iterator& operator++() \
+	{ \
+		return *this += 1; \
+	} \
+	Iterator operator++(int) \
+	{ \
+		Iterator tempIter = *this; \
+		++*this; \
+		return tempIter; \
+	} \
+	Iterator& operator--() \
+	{ \
+		return *this -= 1; \
+	} \
+	Iterator operator--(int) \
+	{ \
+		Iterator tempIter = *this; \
+		--*this; \
+		return tempIter; \
+	} \
+	Iterator operator+(ptrdiff_t diff) const \
+	{ \
+		return Iterator(*this) += diff; \
+	} \
+	friend Iterator operator+(ptrdiff_t diff, Iterator iter) \
+	{ \
+		return iter + diff; \
+	} \
+	Iterator& operator-=(ptrdiff_t diff) \
+	{ \
+		return *this += (-diff); \
+	} \
+	Iterator operator-(ptrdiff_t diff) const \
+	{ \
+		return *this + (-diff); \
+	} \
+	Reference operator*() const \
+	{ \
+		return *operator->(); \
+	} \
+	Reference operator[](ptrdiff_t diff) const \
+	{ \
+		return *(*this + diff); \
+	} \
+	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	{ \
+		return !(*this == iter); \
+	} \
+	bool operator>(ConstIterator iter) const \
+	{ \
+		return iter < *this; \
+	} \
+	bool operator<=(ConstIterator iter) const \
+	{ \
+		return !(iter < *this); \
+	} \
+	bool operator>=(ConstIterator iter) const \
+	{ \
+		return iter <= *this; \
+	}
+
 #define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
@@ -154,9 +216,7 @@ namespace internal
 		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
 
 	public:
-		//IteratorPointer() MOMO_NOEXCEPT
-		//{
-		//}
+		IteratorPointer() = delete;
 
 		explicit IteratorPointer(Reference ref) MOMO_NOEXCEPT
 			: mReference(ref)
@@ -170,7 +230,7 @@ namespace internal
 
 		const Reference* operator->() const MOMO_NOEXCEPT
 		{
-			return &mReference;
+			return std::addressof(mReference);
 		}
 
 		Reference operator*() const MOMO_NOEXCEPT
@@ -180,6 +240,41 @@ namespace internal
 
 	private:
 		Reference mReference;
+	};
+
+	template<typename Object>
+	class IteratorPointer<Object&>
+	{
+	public:
+		typedef Object& Reference;
+
+		typedef IteratorPointer<const Object&> ConstPointer;
+
+	public:
+		IteratorPointer() = delete;
+
+		explicit IteratorPointer(Reference ref) MOMO_NOEXCEPT
+			: mPointer(std::addressof(ref))
+		{
+		}
+
+		operator ConstPointer() const MOMO_NOEXCEPT
+		{
+			return ConstPointer(*mPointer);
+		}
+
+		Object* operator->() const MOMO_NOEXCEPT
+		{
+			return mPointer;
+		}
+
+		Reference operator*() const MOMO_NOEXCEPT
+		{
+			return *mPointer;
+		}
+
+	private:
+		Object* mPointer;
 	};
 
 	template<typename Iterator>
@@ -198,6 +293,62 @@ namespace internal
 	struct ConstIteratorSelector<std::reverse_iterator<Object*>>
 	{
 		typedef std::reverse_iterator<const Object*> ConstIterator;
+	};
+
+	template<typename TIterator>
+	class ArrayBounds
+	{
+	public:
+		typedef TIterator Iterator;
+
+		typedef ArrayBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
+
+		typedef typename std::iterator_traits<Iterator>::reference Reference;
+
+	public:
+		ArrayBounds() MOMO_NOEXCEPT
+			: mBegin(),	//?
+			mCount(0)
+		{
+		}
+
+		ArrayBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
+			: mBegin(begin),
+			mCount(count)
+		{
+		}
+
+		operator ConstBounds() const MOMO_NOEXCEPT
+		{
+			return ConstBounds(mBegin, mCount);
+		}
+
+		Iterator GetBegin() const MOMO_NOEXCEPT
+		{
+			return mBegin;
+		}
+
+		Iterator GetEnd() const MOMO_NOEXCEPT
+		{
+			return mBegin + mCount;
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const ArrayBounds&, Iterator)
+
+		size_t GetCount() const MOMO_NOEXCEPT
+		{
+			return mCount;
+		}
+
+		Reference operator[](size_t index) const MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(index < mCount);	//?
+			return mBegin[index];
+		}
+
+	private:
+		Iterator mBegin;
+		size_t mCount;
 	};
 
 	template<typename TBaseIterator, typename TReference>

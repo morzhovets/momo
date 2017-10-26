@@ -10,68 +10,7 @@
 #pragma once
 
 #include "ObjectManager.h"
-
-#define MOMO_MORE_ARRAY_ITERATOR_OPERATORS(Iterator) \
-	Iterator& operator++() \
-	{ \
-		return *this += 1; \
-	} \
-	Iterator operator++(int) \
-	{ \
-		Iterator tempIter = *this; \
-		++*this; \
-		return tempIter; \
-	} \
-	Iterator& operator--() \
-	{ \
-		return *this -= 1; \
-	} \
-	Iterator operator--(int) \
-	{ \
-		Iterator tempIter = *this; \
-		--*this; \
-		return tempIter; \
-	} \
-	Iterator operator+(ptrdiff_t diff) const \
-	{ \
-		return Iterator(*this) += diff; \
-	} \
-	friend Iterator operator+(ptrdiff_t diff, Iterator iter) \
-	{ \
-		return iter + diff; \
-	} \
-	Iterator& operator-=(ptrdiff_t diff) \
-	{ \
-		return *this += (-diff); \
-	} \
-	Iterator operator-(ptrdiff_t diff) const \
-	{ \
-		return *this + (-diff); \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	Reference operator[](ptrdiff_t diff) const \
-	{ \
-		return *(*this + diff); \
-	} \
-	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
-	{ \
-		return !(*this == iter); \
-	} \
-	bool operator>(ConstIterator iter) const \
-	{ \
-		return iter < *this; \
-	} \
-	bool operator<=(ConstIterator iter) const \
-	{ \
-		return !(iter < *this); \
-	} \
-	bool operator>=(ConstIterator iter) const \
-	{ \
-		return iter <= *this; \
-	}
+#include "IteratorUtility.h"
 
 namespace momo
 {

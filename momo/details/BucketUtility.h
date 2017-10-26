@@ -20,60 +20,7 @@ namespace momo
 namespace internal
 {
 	template<typename TIterator>
-	class BucketBounds
-	{
-	public:
-		typedef TIterator Iterator;
-
-		typedef BucketBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
-
-		typedef typename std::iterator_traits<Iterator>::reference Reference;
-
-	public:
-		BucketBounds() MOMO_NOEXCEPT
-			: mBegin(nullptr),
-			mCount(0)
-		{
-		}
-
-		BucketBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
-			: mBegin(begin),
-			mCount(count)
-		{
-		}
-
-		operator ConstBounds() const MOMO_NOEXCEPT
-		{
-			return ConstBounds(mBegin, mCount);
-		}
-
-		Iterator GetBegin() const MOMO_NOEXCEPT
-		{
-			return mBegin;
-		}
-
-		Iterator GetEnd() const MOMO_NOEXCEPT
-		{
-			return mBegin + mCount;
-		}
-
-		MOMO_FRIENDS_BEGIN_END(const BucketBounds&, Iterator)
-
-		size_t GetCount() const MOMO_NOEXCEPT
-		{
-			return mCount;
-		}
-
-		Reference operator[](size_t index) const MOMO_NOEXCEPT
-		{
-			MOMO_ASSERT(index < mCount);
-			return mBegin[index];
-		}
-
-	private:
-		Iterator mBegin;
-		size_t mCount;
-	};
+	using BucketBounds = ArrayBounds<TIterator>;
 
 	template<typename TMemPool, typename TPointer,
 		TPointer nullPtr = TPointer(nullptr)>
