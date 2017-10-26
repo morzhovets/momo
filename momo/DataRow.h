@@ -26,7 +26,6 @@ namespace internal
 	{
 	public:
 		typedef TColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Item>
@@ -168,108 +167,60 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataConstRowReference
+	class DataConstItemReferencer
 	{
 	public:
 		typedef TColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Item>
-		using Column = typename ColumnList::template Column<Item>;
+		typedef DataConstItemReferencer ConstReferencer;
 
-		typedef DataConstRowReference ConstReference;
+		template<typename Item>
+		using ItemReference = const Item&;
 
 	public:
-		DataConstRowReference() = delete;
-
-		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
-		{
-			return *mColumnList;
-		}
-
 		template<typename Item>
-		const Item& GetByOffset(size_t offset) const
+		static ItemReference<Item> GetReference(const ColumnList* columnList, Raw* raw,
+			size_t offset)
 		{
-			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
+			return columnList->template GetByOffset<const Item>(raw, offset);
 		}
-
-		template<typename Item>
-		const Item& GetByColumn(const Column<Item>& column) const
-		{
-			return GetByOffset<Item>(mColumnList->GetOffset(column));
-		}
-
-		template<typename Item>
-		const Item& operator[](const Column<Item>& column) const
-		{
-			return GetByOffset<Item>(mColumnList->GetOffset(column));
-		}
-
-		size_t GetNumber() const MOMO_NOEXCEPT
-		{
-			return mColumnList->GetNumber(mRaw);
-		}
-
-		const Raw* GetRaw() const MOMO_NOEXCEPT
-		{
-			return mRaw;
-		}
-
-		const Raw* operator->() const MOMO_NOEXCEPT
-		{
-			return mRaw;
-		}
-
-	protected:
-		DataConstRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
-			: mColumnList(columnList),
-			mRaw(raw)
-		{
-		}
-
-		Raw* ptGetRaw() const MOMO_NOEXCEPT
-		{
-			return mRaw;
-		}
-
-	private:
-		const ColumnList* mColumnList;
-		Raw* mRaw;
 	};
 
 	template<typename TColumnList>
-	class DataRowReference
+	class DataItemReferencer
 	{
 	public:
 		typedef TColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Item>
-		using Column = typename ColumnList::template Column<Item>;
-
-		typedef DataConstRowReference<ColumnList> ConstReference;
+		typedef DataConstItemReferencer<ColumnList> ConstReferencer;
 
 		template<typename Item>
 		class ItemReference
 		{
+		private:
+			typedef typename ColumnList::Settings Settings;
+
 		public:
-			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT	//pt
+			typedef typename ConstReferencer::template ItemReference<Item> ConstReference;
+
+		public:
+			ItemReference() = delete;
+
+			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT	//?
 				: mColumnList(columnList),
 				mRaw(raw),
 				mOffset(offset)
 			{
 			}
 
-			ItemReference(ItemReference&& itemRef) MOMO_NOEXCEPT
+			ItemReference(const ItemReference& itemRef) MOMO_NOEXCEPT
 				: mColumnList(itemRef.mColumnList),
 				mRaw(itemRef.mRaw),
 				mOffset(itemRef.mOffset)
 			{
 			}
-
-			ItemReference(const ItemReference&) = delete;
 
 			~ItemReference() MOMO_NOEXCEPT
 			{
@@ -311,6 +262,33 @@ namespace internal
 			size_t mOffset;
 		};
 
+	public:
+		template<typename Item>
+		static ItemReference<Item> GetReference(const ColumnList* columnList, Raw* raw,
+			size_t offset)
+		{
+			return ItemReference<Item>(columnList, raw, offset);
+		}
+	};
+
+	template<typename TItemReferencer>
+	class DataRowReference
+	{
+	protected:
+		typedef TItemReferencer ItemReferencer;
+
+	public:
+		typedef typename ItemReferencer::ColumnList ColumnList;
+		typedef typename ColumnList::Raw Raw;
+
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
+
+		typedef DataRowReference<typename ItemReferencer::ConstReferencer> ConstReference;
+
+		template<typename Item>
+		using ItemReference = typename ItemReferencer::template ItemReference<Item>;
+
 	private:
 		struct ConstReferenceProxy : public ConstReference
 		{
@@ -333,7 +311,7 @@ namespace internal
 		template<typename Item>
 		ItemReference<Item> GetByOffset(size_t offset) const
 		{
-			return ItemReference<Item>(mColumnList, mRaw, offset);
+			return ItemReferencer::template GetReference<Item>(mColumnList, mRaw, offset);
 		}
 
 		template<typename Item>

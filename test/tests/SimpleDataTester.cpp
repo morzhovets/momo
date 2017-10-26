@@ -73,6 +73,11 @@ public:
 			assert(table.TryAddRow(std::move(row)).uniqueHashIndex == nullptr);
 		}
 
+		for (const std::string& s : table.GetItemBounds(strCol))
+			assert(s.empty());
+		for (const std::string& s : ctable.GetItemBounds(strCol))
+			assert(s.empty());
+
 		for (size_t i = 0; i < count; ++i)
 		{
 			DataRow row = table.NewRow(intCol = (int)i / 2);

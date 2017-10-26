@@ -23,18 +23,20 @@ namespace internal
 	template<typename TRowReference, typename TRawIterator>
 	class DataRowIterator
 	{
-	public:
+	protected:
 		typedef TRowReference RowReference;
 		typedef TRawIterator RawIterator;
 		typedef typename RowReference::ColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
 
+	public:
 		typedef const RowReference Reference;
 		typedef momo::internal::IteratorPointer<Reference> Pointer;
 
 		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
 
 	private:
+		typedef typename ColumnList::Settings Settings;
+
 		struct RowReferenceProxy : public RowReference
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
@@ -115,15 +117,18 @@ namespace internal
 	template<typename TRowReference, typename TRawBounds>
 	class DataRowBounds
 	{
-	public:
+	protected:
 		typedef TRowReference RowReference;
 		typedef TRawBounds RawBounds;
 		typedef typename RowReference::ColumnList ColumnList;
 
+	public:
 		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
 
 		typedef DataRowBounds<typename RowReference::ConstReference, RawBounds> ConstBounds;
-	
+
+		typedef RowReference Reference;
+
 	private:
 		struct IteratorProxy : public Iterator
 		{
@@ -163,7 +168,7 @@ namespace internal
 			return mRawBounds.GetCount();
 		}
 
-		RowReference operator[](size_t index) const
+		Reference operator[](size_t index) const
 		{
 			return GetBegin()[index];
 		}
@@ -178,6 +183,145 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		RawBounds mRawBounds;
+	};
+
+	template<typename TItem, typename TRowIterator, typename TSettings>
+	class DataItemIterator
+	{
+	public:
+		typedef TItem Item;
+		typedef TRowIterator RowIterator;
+
+	protected:
+		typedef TSettings Settings;
+
+	public:
+		typedef typename RowIterator::Reference::template ItemReference<Item> Reference;
+		typedef momo::internal::IteratorPointer<Reference> Pointer;
+
+		typedef DataItemIterator<Item, typename RowIterator::ConstIterator, Settings> ConstIterator;
+
+	public:
+		DataItemIterator() MOMO_NOEXCEPT
+			: mOffset(0)
+		{
+		}
+
+		DataItemIterator(size_t offset, RowIterator rowIter) MOMO_NOEXCEPT
+			: mOffset(offset),
+			mRowIterator(rowIter)
+		{
+		}
+
+		operator ConstIterator() const MOMO_NOEXCEPT
+		{
+			return ConstIterator(mOffset, mRowIterator);
+		}
+
+		DataItemIterator& operator+=(ptrdiff_t diff)
+		{
+			mRowIterator += diff;
+			return *this;
+		}
+
+		ptrdiff_t operator-(ConstIterator iter) const
+		{
+			MOMO_CHECK(mOffset == iter.GetOffset());
+			return mRowIterator - iter.GetRowIterator();
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(mRowIterator->template GetByOffset<Item>(mOffset));
+		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return mOffset == iter.GetOffset() && mRowIterator == iter.GetRowIterator();
+		}
+
+		bool operator<(ConstIterator iter) const
+		{
+			MOMO_CHECK(mOffset == iter.GetOffset());
+			return mRowIterator < iter.GetRowIterator();
+		}
+
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataItemIterator)
+
+		size_t GetOffset() const MOMO_NOEXCEPT
+		{
+			return mOffset;
+		}
+
+		RowIterator GetRowIterator() const MOMO_NOEXCEPT
+		{
+			return mRowIterator;
+		}
+
+	private:
+		size_t mOffset;
+		RowIterator mRowIterator;
+	};
+
+	template<typename TItem, typename TRowBounds, typename TSettings>
+	class DataItemBounds
+	{
+	public:
+		typedef TItem Item;
+		typedef TRowBounds RowBounds;
+
+	protected:
+		typedef TSettings Settings;
+
+	public:
+		typedef DataItemIterator<Item, typename RowBounds::Iterator, Settings> Iterator;
+
+		typedef DataItemBounds<Item, typename RowBounds::ConstBounds, Settings> ConstBounds;
+
+		typedef typename Iterator::Reference Reference;
+
+	public:
+		DataItemBounds() MOMO_NOEXCEPT
+			: mOffset(0)
+		{
+		}
+
+		DataItemBounds(size_t offset, RowBounds rowBounds) MOMO_NOEXCEPT
+			: mOffset(offset),
+			mRowBounds(rowBounds)
+		{
+		}
+
+		operator ConstBounds() const MOMO_NOEXCEPT
+		{
+			return ConstBounds(mOffset, mRowBounds);
+		}
+
+		Iterator GetBegin() const MOMO_NOEXCEPT
+		{
+			return Iterator(mOffset, mRowBounds.GetBegin());
+		}
+
+		Iterator GetEnd() const MOMO_NOEXCEPT
+		{
+			return Iterator(mOffset, mRowBounds.GetEnd());
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const DataItemBounds&, Iterator)
+
+		size_t GetCount() const MOMO_NOEXCEPT
+		{
+			return mRowBounds.GetCount();
+		}
+
+		Reference operator[](size_t index) const
+		{
+			return GetBegin()[index];
+		}
+
+	private:
+		size_t mOffset;
+		RowBounds mRowBounds;
 	};
 
 	template<typename TDataSettings>
@@ -203,8 +347,7 @@ namespace internal
 		template<typename Item>
 		using Column = typename ColumnList::template Column<Item>;
 
-		typedef typename RowReference::ConstReference ConstRowReference;
-		typedef DataSelection<ConstRowReference> ConstSelection;
+		typedef DataSelection<typename RowReference::ConstReference> ConstSelection;
 
 	protected:
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
@@ -507,5 +650,15 @@ namespace std
 		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Pointer pointer;
 		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Reference reference;
 		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::RowReference value_type;
+	};
+
+	template<typename I, typename RI, typename S>
+	struct iterator_traits<momo::experimental::internal::DataItemIterator<I, RI, S>>
+	{
+		typedef random_access_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef typename momo::experimental::internal::DataItemIterator<I, RI, S>::Pointer pointer;
+		typedef typename momo::experimental::internal::DataItemIterator<I, RI, S>::Reference reference;
+		typedef typename momo::experimental::internal::DataItemIterator<I, RI, S>::Item value_type;
 	};
 } // namespace std

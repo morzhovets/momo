@@ -63,7 +63,7 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, Column<Item>, ItemArg>;
 
 	typedef internal::DataRow<ColumnList> Row;
-	typedef internal::DataRowReference<ColumnList> RowReference;
+	typedef internal::DataRowReference<internal::DataItemReferencer<ColumnList>> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
 
 	typedef internal::DataSelection<RowReference> Selection;
@@ -81,6 +81,9 @@ private:
 	typedef typename Indexes::UniqueHash UniqueHashIndex;
 	typedef typename Indexes::MultiHash MultiHashIndex;
 
+	typedef momo::internal::ArrayBounds<Raw* const*> RawBounds;
+	typedef internal::DataRowBounds<RowReference, RawBounds> RowBounds;
+
 public:
 	typedef internal::DataRowIterator<RowReference, typename Raws::ConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -92,6 +95,11 @@ public:
 	typedef internal::DataRowBounds<RowReference,
 		typename MultiHashIndex::RawBounds> RowMultiHashBounds;
 	typedef typename RowMultiHashBounds::ConstBounds ConstRowMultiHashBounds;
+
+	template<typename Item>
+	using ItemBounds = internal::DataItemBounds<Item, RowBounds, Settings>;
+	template<typename Item>
+	using ConstItemBounds = typename ItemBounds<Item>::ConstBounds;
 
 	struct TryResult
 	{
@@ -233,6 +241,11 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowMultiHashBounds)
 	};
 
+	struct RowBoundsProxy : public RowBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowBounds)
+	};
+
 public:
 	explicit DataTable(ColumnList&& columnList = ColumnList())
 		: mCrew(std::move(columnList)),
@@ -372,6 +385,18 @@ public:
 	{
 		MOMO_CHECK(rowNumber < GetCount());
 		return pvMakeRowReference(mRaws[rowNumber]);
+	}
+
+	template<typename Item>
+	ConstItemBounds<Item> GetItemBounds(const Column<Item>& column) const
+	{
+		return pvGetItemBounds(column);
+	}
+
+	template<typename Item>
+	ItemBounds<Item> GetItemBounds(const Column<Item>& column)
+	{
+		return pvGetItemBounds(column);
 	}
 
 	Row NewRow()
@@ -785,6 +810,15 @@ private:
 	RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 	{
 		return RowReferenceProxy(&GetColumnList(), raw);
+	}
+
+	template<typename Item>
+	ItemBounds<Item> pvGetItemBounds(const Column<Item>& column) const
+	{
+		const ColumnList& columnList = GetColumnList();
+		size_t offset = columnList.GetOffset(column);
+		RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());
+		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds));
 	}
 
 	Raw* pvCopyRaw(const Raw* srcRaw)

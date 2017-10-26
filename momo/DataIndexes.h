@@ -40,6 +40,8 @@ namespace internal
 	protected:
 		typedef TColumnList ColumnList;
 		typedef TKeyIterator KeyIterator;
+
+	private:
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
@@ -314,14 +316,14 @@ namespace internal
 			RawBounds Find(Raw* raw) const
 			{
 				Iterator iter = mHashSet.Find(raw);
-				return RawBounds(!!iter ? *iter : nullptr);
+				return !!iter ? RawBounds(*iter) : RawBounds();
 			}
 
 			template<typename... Items>
 			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
 			{
 				Iterator iter = mHashSet.Find(hashTupleKey);
-				return RawBounds(!!iter ? *iter: nullptr);
+				return !!iter ? RawBounds(*iter) : RawBounds();
 			}
 
 			void FindExisting(Raw* raw) MOMO_NOEXCEPT
@@ -418,7 +420,7 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
-				RawBounds(KeyIterator keyIter = KeyIterator()) MOMO_NOEXCEPT
+				explicit RawBounds(KeyIterator keyIter) MOMO_NOEXCEPT
 					: mKeyIterator(keyIter)
 				{
 				}
