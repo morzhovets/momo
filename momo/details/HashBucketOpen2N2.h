@@ -41,12 +41,34 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyHash = 128;
+		template<size_t count, bool useHashCodePartGetter>
+		struct HashData;
+
+		template<size_t count>
+		struct HashData<count, false>
+		{
+			union
+			{
+				uint16_t hashes[count];
+				uint8_t hashProbes[count];
+			};
+		};
+
+		template<size_t count>
+		struct HashData<count, true>
+		{
+			uint8_t hashes[count];
+			uint8_t hashProbes[count];
+		};
+
+		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt Hash;
+
+		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(Hash) * 8 + 1;
+		static const Hash emptyHash = (Hash)1 << (sizeof(Hash) * 8 - 1);
 		static const uint8_t emptyHashProbe = 255;
 
 		static const size_t logBucketCountStep = 8;
 		static const size_t logBucketCountAddend = 6;
-		static const size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
 		BucketOpen2N2() MOMO_NOEXCEPT
@@ -71,10 +93,10 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t hashByte = (uint8_t)(hashCode >> hashCodeShift);
+			Hash hash = pvGetShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashes[i] == hashByte && pred(*&mItems[i]))
+				if (mHashData.hashes[i] == hash && pred(*&mItems[i]))
 					return Iterator(&mItems[i] + 1);
 			}
 			return Iterator(nullptr);
@@ -82,7 +104,7 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return mHashes[0] < emptyHash;
+			return mHashData.hashes[0] < emptyHash;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
@@ -110,10 +132,10 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = &mItems[maxCount - 1 - count];
 			itemCreator(pitem);
-			mHashes[maxCount - 1 - count] = (uint8_t)(hashCode >> hashCodeShift);
+			mHashData.hashes[maxCount - 1 - count] = pvGetShortHash(hashCode);
 			if (useHashCodePartGetter)
 			{
-				uint8_t& hashProbe = mHashProbes[maxCount - 1 - count];
+				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);
 				if (probe < ((size_t)1 << probeShift))
 					hashProbe = (uint8_t)(((hashCode >> logBucketCount) << probeShift) | probe);
@@ -133,10 +155,10 @@ namespace internal
 			size_t index = std::addressof(*iter) - &mItems[0];
 			MOMO_ASSERT(index >= maxCount - count);
 			itemReplacer(*&mItems[maxCount - count], *&mItems[index]);
-			mHashes[index] = mHashes[maxCount - count];
-			mHashes[maxCount - count] = emptyHash;
+			mHashData.hashes[index] = mHashData.hashes[maxCount - count];
+			mHashData.hashes[maxCount - count] = emptyHash;
 			if (useHashCodePartGetter)
-				mHashProbes[index] = mHashProbes[maxCount - count];
+				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
 			--mState[1];
 			return iter;
 		}
@@ -148,7 +170,7 @@ namespace internal
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
 			size_t index = std::addressof(*iter) - &mItems[0];
-			uint8_t hashProbe = mHashProbes[index];
+			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
@@ -160,7 +182,7 @@ namespace internal
 			size_t bucketCount = (size_t)1 << logBucketCount;
 			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
 				| (((size_t)hashProbe >> probeShift) << logBucketCount)
-				| ((size_t)mHashes[index] << hashCodeShift);
+				| ((size_t)mHashData.hashes[index] << hashCodeShift);
 		}
 
 	private:
@@ -171,9 +193,14 @@ namespace internal
 
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
-			std::fill_n(mHashes, maxCount, (uint8_t)emptyHash);
+			std::fill_n(mHashData.hashes, maxCount, (Hash)emptyHash);
 			mState[0] = (uint8_t)0;
 			mState[1] = (uint8_t)0;
+		}
+
+		static Hash pvGetShortHash(size_t hashCode) MOMO_NOEXCEPT
+		{
+			return (Hash)(hashCode >> hashCodeShift);
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) MOMO_NOEXCEPT
@@ -210,8 +237,7 @@ namespace internal
 
 	private:
 		uint8_t mState[2];
-		uint8_t mHashes[maxCount];
-		uint8_t mHashProbes[maxCount];
+		HashData<maxCount, useHashCodePartGetter> mHashData;
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
