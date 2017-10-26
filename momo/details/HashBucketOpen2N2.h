@@ -36,7 +36,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef std::reverse_iterator<Item*> Iterator;
-		typedef BucketBounds<Iterator> Bounds;
+		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
 

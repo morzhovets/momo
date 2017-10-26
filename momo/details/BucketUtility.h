@@ -19,9 +19,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename TIterator>
-	using BucketBounds = ArrayBounds<TIterator>;
-
 	template<typename TMemPool, typename TPointer,
 		TPointer nullPtr = TPointer(nullptr)>
 	class BucketMemory

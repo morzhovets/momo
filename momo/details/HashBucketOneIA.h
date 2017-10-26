@@ -33,7 +33,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 		typedef Item* Iterator;
-		typedef BucketBounds<Iterator> Bounds;
+		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
 
