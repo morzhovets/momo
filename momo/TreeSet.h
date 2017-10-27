@@ -195,6 +195,9 @@ namespace internal
 		typedef TSegment Segment;
 		typedef TItem Item;
 
+		typedef Item& Reference;
+		typedef Item* Pointer;
+
 	public:
 		explicit TreeSetRelocatorIterator(Segment* segmentPtr) MOMO_NOEXCEPT
 			: mSegmentPtr(segmentPtr),
@@ -213,12 +216,12 @@ namespace internal
 			return *this;
 		}
 
-		Item* operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const MOMO_NOEXCEPT
 		{
 			return mSegmentPtr->node->GetItemPtr(mItemIndex);
 		}
 
-		Item& operator*() const MOMO_NOEXCEPT
+		Reference operator*() const MOMO_NOEXCEPT
 		{
 			return *operator->();
 		}

@@ -158,8 +158,6 @@ namespace internal
 	protected:
 		typedef TSettings Settings;
 
-		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
-
 	public:
 		typedef typename KeyIterator::Reference::Key Key;
 
@@ -170,6 +168,8 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 	private:
+		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
+
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -266,34 +266,35 @@ namespace internal
 		Value* mValuePtr;
 	};
 
-	template<typename TKeyValueTraits>
+	template<typename THashMultiMapKeyValueTraits>
 	class HashMultiMapArrayBucketItemTraits
 	{
 	protected:
-		typedef TKeyValueTraits KeyValueTraits;	//?
+		typedef THashMultiMapKeyValueTraits HashMultiMapKeyValueTraits;
 
 	public:
-		typedef typename KeyValueTraits::Value Item;
-		typedef typename KeyValueTraits::MemManager MemManager;
+		typedef typename HashMultiMapKeyValueTraits::Value Item;
+		typedef typename HashMultiMapKeyValueTraits::MemManager MemManager;
 
-		static const size_t alignment = KeyValueTraits::valueAlignment;
+		static const size_t alignment = HashMultiMapKeyValueTraits::valueAlignment;
 
 	public:
 		static void Copy(MemManager& memManager, const Item& srcItem, Item* dstItem)
 		{
-			typename KeyValueTraits::template ValueCreator<const Item&>(memManager, srcItem)(dstItem);
+			typename HashMultiMapKeyValueTraits::template ValueCreator<const Item&>(
+				memManager, srcItem)(dstItem);
 		}
 
 		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
 		{
-			KeyValueTraits::DestroyValues(memManager, items, count);
+			HashMultiMapKeyValueTraits::DestroyValues(memManager, items, count);
 		}
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, const ItemCreator& itemCreator, Item* newItem)
 		{
-			KeyValueTraits::RelocateCreateValues(memManager, srcItems, dstItems,
+			HashMultiMapKeyValueTraits::RelocateCreateValues(memManager, srcItems, dstItems,
 				count, itemCreator, newItem);
 		}
 	};

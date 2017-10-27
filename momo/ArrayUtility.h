@@ -162,7 +162,7 @@ namespace internal
 
 	public:
 		template<typename ItemCreator>
-		explicit ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
+		ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
 			: mMemManager(memManager)
 		{
 			itemCreator(&mItemBuffer);

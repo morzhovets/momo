@@ -78,13 +78,13 @@ namespace internal
 
 		operator ConstReference() MOMO_NOEXCEPT
 		{
-			return ConstReference(this->first, this->second);
+			return ConstReference(RefPair::first, RefPair::second);
 		}
 
 		template<typename First, typename Second>
 		bool operator==(const std::pair<First, Second>& pair) const
 		{
-			return this->first == pair.first && this->second == pair.second;
+			return RefPair::first == pair.first && RefPair::second == pair.second;
 		}
 
 		template<typename First, typename Second>
@@ -109,6 +109,9 @@ namespace internal
 		typedef TSetIterator SetIterator;
 		typedef TKey Key;
 
+		typedef Key& Reference;
+		typedef Key* Pointer;
+
 	public:
 		explicit MapKeyIterator(SetIterator setIterator) MOMO_NOEXCEPT
 			: mSetIterator(setIterator)
@@ -121,9 +124,14 @@ namespace internal
 			return *this;
 		}
 
-		Key& operator*() const MOMO_NOEXCEPT
+		Pointer operator->() const MOMO_NOEXCEPT
 		{
-			return *mSetIterator->GetKeyPtr();
+			return mSetIterator->GetKeyPtr();
+		}
+
+		Reference operator*() const MOMO_NOEXCEPT
+		{
+			return *operator->();
 		}
 
 	private:
@@ -137,6 +145,9 @@ namespace internal
 		typedef TSetIterator SetIterator;
 		typedef TValue Value;
 
+		typedef Value& Reference;
+		typedef Value* Pointer;
+
 	public:
 		explicit MapValueIterator(SetIterator setIterator) MOMO_NOEXCEPT
 			: mSetIterator(setIterator)
@@ -149,9 +160,14 @@ namespace internal
 			return *this;
 		}
 
-		Value& operator*() const MOMO_NOEXCEPT
+		Pointer operator->() const MOMO_NOEXCEPT
 		{
-			return *mSetIterator->GetValuePtr();
+			return mSetIterator->GetValuePtr();
+		}
+
+		Reference operator*() const MOMO_NOEXCEPT
+		{
+			return *operator->();
 		}
 
 	private:
