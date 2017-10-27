@@ -73,9 +73,9 @@ public:
 			assert(table.TryAddRow(std::move(row)).uniqueHashIndex == nullptr);
 		}
 
-		for (const std::string& s : table.GetItemBounds(strCol))
+		for (const std::string& s : table.GetColumnItems(strCol))
 			assert(s.empty());
-		for (const std::string& s : ctable.GetItemBounds(strCol))
+		for (const std::string& s : ctable.GetColumnItems(strCol))
 			assert(s.empty());
 
 		for (size_t i = 0; i < count; ++i)
@@ -126,11 +126,11 @@ public:
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 
 		auto selection = table.Select(strCol == "0");
-		for (const std::string& s : selection.GetItemBounds(strCol))
+		for (const std::string& s : selection.GetColumnItems(strCol))
 			assert(s == "0");
 
 		auto cselection = ctable.Select(strCol == "1");
-		for (const std::string& s : cselection.GetItemBounds(strCol))
+		for (const std::string& s : cselection.GetColumnItems(strCol))
 			assert(s == "1");
 
 		assert(table.SelectCount(dblCol == 0.0) == 1);

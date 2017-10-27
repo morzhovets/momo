@@ -29,6 +29,7 @@ class DataTraits
 public:
 	typedef MemPoolParams<> RawMemPoolParams;
 
+public:
 	template<typename Item>
 	static size_t GetHashCode(const Item& item)
 	{
@@ -388,15 +389,15 @@ public:
 	}
 
 	template<typename Item>
-	ConstItemBounds<Item> GetItemBounds(const Column<Item>& column) const
+	ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 	{
-		return pvGetItemBounds(column);
+		return pvGetColumnItems(column);
 	}
 
 	template<typename Item>
-	ItemBounds<Item> GetItemBounds(const Column<Item>& column)
+	ItemBounds<Item> GetColumnItems(const Column<Item>& column)
 	{
-		return pvGetItemBounds(column);
+		return pvGetColumnItems(column);
 	}
 
 	Row NewRow()
@@ -813,7 +814,7 @@ private:
 	}
 
 	template<typename Item>
-	ItemBounds<Item> pvGetItemBounds(const Column<Item>& column) const
+	ItemBounds<Item> pvGetColumnItems(const Column<Item>& column) const
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(column);

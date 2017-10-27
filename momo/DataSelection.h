@@ -130,6 +130,8 @@ namespace internal
 		typedef RowReference Reference;
 
 	private:
+		typedef typename ColumnList::Settings Settings;
+
 		struct IteratorProxy : public Iterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
@@ -170,6 +172,7 @@ namespace internal
 
 		Reference operator[](size_t index) const
 		{
+			MOMO_CHECK(index < GetCount());
 			return GetBegin()[index];
 		}
 
@@ -316,6 +319,7 @@ namespace internal
 
 		Reference operator[](size_t index) const
 		{
+			MOMO_CHECK(index < GetCount());
 			return GetBegin()[index];
 		}
 
@@ -507,7 +511,7 @@ namespace internal
 		}
 
 		template<typename Item>
-		ItemBounds<Item> GetItemBounds(const Column<Item>& column) const
+		ItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 		{
 			size_t offset = mColumnList->GetOffset(column);
 			RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());

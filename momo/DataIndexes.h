@@ -153,6 +153,8 @@ namespace internal
 			{
 			};
 
+			static const bool useHashCodePartGetter = true;
+
 		public:
 			HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mHashFunc(std::move(hashFunc)),
