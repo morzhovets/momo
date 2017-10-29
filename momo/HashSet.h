@@ -429,9 +429,10 @@ private:
 
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
+	static const bool useHashCodePartGetter = !HashTraits::isFastHashable;
+
 	typedef typename HashTraits::HashBucket HashBucket;
-	typedef typename HashBucket::template Bucket<BucketItemTraits,
-		HashTraits::useHashCodePartGetter> Bucket;
+	typedef typename HashBucket::template Bucket<BucketItemTraits, useHashCodePartGetter> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 
@@ -439,6 +440,9 @@ private:
 	typedef typename Bucket::Bounds BucketBounds;
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
+
+	static const bool isItemsNothrowRelocatable = HashTraits::isFastHashable
+		&& ItemTraits::isNothrowRelocatable && HashBucket::isNothrowAddableIfNothrowCreatable;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
@@ -982,6 +986,8 @@ private:
 				bucketIndex = HashBucket::GetNextBucketIndex(bucketIndex, bucketCount, probe);
 				bucket = &(*bkts)[bucketIndex];
 			}
+			if (isItemsNothrowRelocatable)
+				break;
 		}
 		return MakeIterator(hashCode);
 	}
@@ -1074,8 +1080,7 @@ private:
 		{
 			if (Settings::overloadIfCannotGrow && hasBuckets)
 				return pvAddNogrow(*mBuckets, hashCode, itemCreator);
-			else
-				throw exception;
+			throw exception;
 		}
 		ItemPosition itemPos;
 		try
@@ -1126,7 +1131,7 @@ private:
 		}
 	}
 
-	void pvRelocateItems(Buckets* buckets)
+	void pvRelocateItems(Buckets* buckets) MOMO_NOEXCEPT_IF(isItemsNothrowRelocatable)
 	{
 		Buckets* nextBuckets = buckets->GetNextBuckets();
 		if (nextBuckets != nullptr)
@@ -1148,10 +1153,12 @@ private:
 			for (size_t c = bucketBounds.GetCount(); c > 0; --c)
 			{
 				--bucketIter;
-				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter,
-					i, buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, hashCode, &memManager] (Item& /*backItem*/, Item& item)
+				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
+					buckets->GetLogCount(), mBuckets->GetLogCount());
+				auto itemReplacer = [this, hashCode, &memManager] (Item& backItem, Item& item)
 				{
+					(void)backItem;
+					MOMO_ASSERT(std::addressof(backItem) == std::addressof(item));
 					auto relocateCreator = [&memManager, &item] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, item, newItem); };
 					pvAddNogrow(*mBuckets, hashCode, relocateCreator);

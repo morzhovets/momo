@@ -153,7 +153,7 @@ namespace internal
 			{
 			};
 
-			static const bool useHashCodePartGetter = true;
+			static const bool isFastHashable = false;
 
 		public:
 			HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)

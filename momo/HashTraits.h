@@ -73,7 +73,7 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
 
-	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
+	static const bool isFastHashable = IsFastHashable<Key>::value;
 
 public:
 	HashTraits() MOMO_NOEXCEPT
@@ -124,7 +124,7 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
 
-	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
+	static const bool isFastHashable = IsFastHashable<Key>::value;
 
 public:
 	explicit HashTraitsVar(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
@@ -193,7 +193,7 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
 
-	static const bool useHashCodePartGetter = !IsFastHashable<Key>::value;
+	static const bool isFastHashable = IsFastHashable<Key>::value;
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
