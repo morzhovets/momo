@@ -429,7 +429,7 @@ private:
 
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
-	static const bool useHashCodePartGetter = !HashTraits::isFastHashable;
+	static const bool useHashCodePartGetter = !HashTraits::isFastNothrowHashable;
 
 	typedef typename HashTraits::HashBucket HashBucket;
 	typedef typename HashBucket::template Bucket<BucketItemTraits, useHashCodePartGetter> Bucket;
@@ -441,7 +441,7 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
-	static const bool isItemsNothrowRelocatable = HashTraits::isFastHashable
+	static const bool isItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
 		&& ItemTraits::isNothrowRelocatable && HashBucket::isNothrowAddableIfNothrowCreatable;
 
 	template<typename... ItemArgs>

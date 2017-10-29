@@ -73,7 +73,7 @@
 
 //#define MOMO_HASH_CODER(key) hash_value(key)
 
-#define MOMO_IS_FAST_HASHABLE(Key) (std::is_arithmetic<Key>::value)
+#define MOMO_IS_FAST_NOTHROW_HASHABLE(Key) (std::is_arithmetic<Key>::value)
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
