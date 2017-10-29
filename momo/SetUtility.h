@@ -30,6 +30,8 @@ namespace internal
 	public:
 		static const size_t alignment = ItemManager::alignment;
 
+		static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+
 		template<typename... ItemArgs>
 		using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
@@ -46,6 +48,7 @@ namespace internal
 		}
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
+			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
 		{
 			ItemManager::Relocator::Relocate(memManager, srcItem, dstItem);
 		}
@@ -278,7 +281,8 @@ namespace internal
 			set.Remove(iter, *this);
 		}
 
-		SetExtractedItem(SetExtractedItem&& extractedItem) //MOMO_NOEXCEPT_IF
+		SetExtractedItem(SetExtractedItem&& extractedItem)
+			MOMO_NOEXCEPT_IF(ItemTraits::isNothrowRelocatable)
 			: mHasItem(extractedItem.mHasItem)
 		{
 			if (mHasItem)

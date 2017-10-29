@@ -190,6 +190,9 @@ namespace internal
 		static const size_t keyAlignment = KeyManager::alignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
+		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
@@ -220,8 +223,8 @@ namespace internal
 			Key* dstKey, Value* dstValue)
 		{
 			pvRelocate(memManager, srcKey, srcValue, dstKey, dstValue,
-				BoolConstant<KeyManager::isNothrowRelocatable>(),
-				BoolConstant<ValueManager::isNothrowRelocatable>());
+				BoolConstant<isKeyNothrowRelocatable>(),
+				BoolConstant<isValueNothrowRelocatable>());
 		}
 
 		static void Replace(MemManager& memManager, Key& srcKey, Value& srcValue,
@@ -238,8 +241,7 @@ namespace internal
 			MOMO_ASSERT(std::addressof(srcKey) != std::addressof(midKey));
 			MOMO_ASSERT(std::addressof(srcValue) != std::addressof(midValue));
 			pvReplaceRelocate(memManager, srcKey, srcValue, midKey, midValue, dstKey, dstValue,
-				BoolConstant<KeyManager::isNothrowRelocatable>(),
-				BoolConstant<ValueManager::isNothrowRelocatable>(),
+				BoolConstant<isKeyNothrowRelocatable>(), BoolConstant<isValueNothrowRelocatable>(),
 				BoolConstant<KeyManager::isNothrowAnywayAssignable>(),
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 		}
@@ -250,8 +252,8 @@ namespace internal
 			size_t count, const Func& func)
 		{
 			pvRelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
-				count, func, BoolConstant<KeyManager::isNothrowRelocatable>(),
-				BoolConstant<ValueManager::isNothrowRelocatable>());
+				count, func, BoolConstant<isKeyNothrowRelocatable>(),
+				BoolConstant<isValueNothrowRelocatable>());
 		}
 
 		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Key& dstKey)
@@ -547,6 +549,9 @@ namespace internal
 	public:
 		static const size_t alignment = ItemManager::alignment;
 
+		static const bool isNothrowRelocatable =
+			KeyValueTraits::isKeyNothrowRelocatable && KeyValueTraits::isValueNothrowRelocatable;
+
 		template<typename ItemArg>
 		class Creator
 		{
@@ -733,7 +738,8 @@ namespace internal
 			map.Remove(iter, *this);
 		}
 
-		MapExtractedPair(MapExtractedPair&& extractedPair) //MOMO_NOEXCEPT_IF
+		MapExtractedPair(MapExtractedPair&& extractedPair)
+			MOMO_NOEXCEPT_IF(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
 			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
 		{
 		}

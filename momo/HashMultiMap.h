@@ -318,6 +318,10 @@ namespace internal
 		static const size_t keyAlignment = HashMultiMapKeyValueTraits::keyAlignment;
 		static const size_t valueAlignment = ValueManager::alignment;
 
+		static const bool isKeyNothrowRelocatable =
+			HashMultiMapKeyValueTraits::isKeyNothrowRelocatable;
+		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+
 		template<typename ValueArg>
 		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{

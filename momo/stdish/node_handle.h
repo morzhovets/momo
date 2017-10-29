@@ -35,7 +35,8 @@ namespace internal
 		{
 		}
 
-		set_node_handle(set_node_handle&& node) //MOMO_NOEXCEPT_IF
+		set_node_handle(set_node_handle&& node)
+			MOMO_NOEXCEPT_IF(noexcept(SetExtractedItem(std::move(node.mSetExtractedItem))))
 			: mSetExtractedItem(std::move(node.mSetExtractedItem))
 		{
 		}
@@ -107,7 +108,8 @@ namespace internal
 		{
 		}
 
-		map_node_handle(map_node_handle&& node) //MOMO_NOEXCEPT_IF
+		map_node_handle(map_node_handle&& node)
+			MOMO_NOEXCEPT_IF(noexcept(MapExtractedPair(std::move(node.mMapExtractedPair))))
 			: mMapExtractedPair(std::move(node.mMapExtractedPair))
 		{
 		}
