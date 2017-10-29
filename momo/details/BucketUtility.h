@@ -99,6 +99,8 @@ namespace internal
 
 		static const size_t logStartBucketCount = 4;
 
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(bucketCount > 0);

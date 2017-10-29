@@ -127,6 +127,7 @@ namespace internal
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
+			MOMO_NOEXCEPT_IF(noexcept(itemCreator(std::declval<Item*>())))
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
@@ -246,6 +247,8 @@ template<size_t tMaxCount = 3>
 struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
+
+	static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{

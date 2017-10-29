@@ -87,6 +87,7 @@ namespace internal
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
+			MOMO_NOEXCEPT_IF(noexcept(itemCreator(std::declval<Item*>())))
 		{
 			MOMO_ASSERT(!IsFull());
 			itemCreator(&mItemBuffer);
@@ -132,6 +133,8 @@ template<typename TStater>
 struct HashBucketOneI : public internal::HashBucketBase<1>
 {
 	typedef TStater Stater;
+
+	static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneI<ItemTraits, Stater>;
