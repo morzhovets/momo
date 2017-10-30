@@ -269,7 +269,7 @@ namespace internal
 		template<typename Item>
 		struct ItemReferenceProxy : public ItemReference<Item>	//?
 		{
-			typedef ItemReference<Item> ItemReference;
+			typedef typename DataItemReferencer::template ItemReference<Item> ItemReference;	// gcc
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ItemReference)
 		};
 
