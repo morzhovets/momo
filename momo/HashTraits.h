@@ -6,8 +6,8 @@
   momo/HashTraits.h
 
   namespace momo:
+    struct IsFastNothrowHashable
     struct HashCoder
-    struct IsFastHashable
     struct HashBucketDefault
     struct HashBucketDefaultOpen
     class HashTraits
@@ -36,6 +36,11 @@
 namespace momo
 {
 
+template<typename Key>
+struct IsFastNothrowHashable : public internal::BoolConstant<MOMO_IS_FAST_NOTHROW_HASHABLE(Key)>
+{
+};
+
 template<typename Key,
 	typename Result = size_t>
 struct HashCoder : public std::hash<Key>
@@ -46,17 +51,13 @@ struct HashCoder : public std::hash<Key>
 template<typename Key>
 struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
-	auto operator()(const Key& key) const -> decltype(MOMO_HASH_CODER(key))
+	decltype(MOMO_HASH_CODER(std::declval<const Key&>())) operator()(const Key& key) const
+		MOMO_NOEXCEPT_IF(IsFastNothrowHashable<Key>::value)
 	{
 		return MOMO_HASH_CODER(key);
 	}
 };
 #endif
-
-template<typename Key>
-struct IsFastNothrowHashable : public internal::BoolConstant<MOMO_IS_FAST_NOTHROW_HASHABLE(Key)>
-{
-};
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
@@ -193,7 +194,7 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;	//?
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
