@@ -188,7 +188,7 @@ public:
 	}
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value)
+		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mHashSet(pvCreateSet(std::move(right), alloc))
 	{
 	}
@@ -208,7 +208,7 @@ public:
 	}
 
 	unordered_set& operator=(unordered_set&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value ||
+		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)

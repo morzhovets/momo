@@ -147,12 +147,12 @@ namespace internal
 
 	template<typename Allocator,
 		typename = bool>
-	struct IsAlwaysEqualAllocator : public std::is_empty<Allocator>
+	struct IsAllocatorAlwaysEqual : public std::is_empty<Allocator>
 	{
 	};
 
 	template<typename Allocator>
-	struct IsAlwaysEqualAllocator<Allocator, decltype(Allocator::is_always_equal::value)>
+	struct IsAllocatorAlwaysEqual<Allocator, decltype(Allocator::is_always_equal::value)>
 		: public Allocator::is_always_equal
 	{
 	};

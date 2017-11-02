@@ -200,7 +200,7 @@ public:
 	}
 
 	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value)
+		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
 	{
 	}
@@ -220,7 +220,7 @@ public:
 	}
 
 	unordered_multimap& operator=(unordered_multimap&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAlwaysEqualAllocator<allocator_type>::value ||
+		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
