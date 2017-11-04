@@ -441,7 +441,7 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
-	static const bool isItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
+	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
 		&& ItemTraits::isNothrowRelocatable && HashBucket::isNothrowAddableIfNothrowCreatable;
 
 	template<typename... ItemArgs>
@@ -986,7 +986,7 @@ private:
 				bucketIndex = HashBucket::GetNextBucketIndex(bucketIndex, bucketCount, probe);
 				bucket = &(*bkts)[bucketIndex];
 			}
-			if (isItemsNothrowRelocatable)
+			if (areItemsNothrowRelocatable)
 				break;
 		}
 		return MakeIterator(hashCode);
@@ -1131,7 +1131,7 @@ private:
 		}
 	}
 
-	void pvRelocateItems(Buckets* buckets) MOMO_NOEXCEPT_IF(isItemsNothrowRelocatable)
+	void pvRelocateItems(Buckets* buckets) MOMO_NOEXCEPT_IF(areItemsNothrowRelocatable)
 	{
 		Buckets* nextBuckets = buckets->GetNextBuckets();
 		if (nextBuckets != nullptr)
