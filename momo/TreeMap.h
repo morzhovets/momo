@@ -167,8 +167,8 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
-	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
+	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
+	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
 
 	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
 
@@ -519,15 +519,15 @@ public:
 	ValueReferenceRKey operator[](Key&& key)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
-		return ValueReferenceRKey(*this, iter,
-			pvIsEqual(iter, static_cast<const Key&>(key)) ? nullptr : std::addressof(key));
+		return pvIsEqual(iter, static_cast<const Key&>(key)) ? ValueReferenceRKey(*this, iter)
+			: ValueReferenceRKey(*this, iter, std::move(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
 		Iterator iter = LowerBound(key);
-		return ValueReferenceCKey(*this, iter,
-			pvIsEqual(iter, key) ? nullptr : std::addressof(key));
+		return pvIsEqual(iter, key) ? ValueReferenceCKey(*this, iter)
+			: ValueReferenceCKey(*this, iter, key);
 	}
 #else
 	ValueReferenceRKey operator[](Key&& key)

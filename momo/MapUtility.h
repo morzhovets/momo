@@ -628,31 +628,46 @@ namespace internal
 	private:
 		typedef typename Map::Value Value;
 
+	public:
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		typedef typename Map::Key Key;
-		typedef typename Map::KeyValueTraits KeyValueTraits;
-		typedef typename Map::Iterator Iterator;
-		typedef typename Map::Settings Settings;
-
-		template<typename RKey, typename PKey>
+		template<typename TKeyReference>
 		class ValueReference
 		{
+		protected:
+			typedef TKeyReference KeyReference;
+
+			typedef typename Map::Iterator Iterator;
+
 		public:
-			ValueReference(Map& map, Iterator iter, PKey pkey) MOMO_NOEXCEPT
+			typedef const Value& ConstReference;
+
+		private:
+			typedef typename Map::KeyValueTraits KeyValueTraits;
+			typedef typename Map::Settings Settings;
+
+			typedef typename std::add_pointer<KeyReference>::type KeyPointer;
+
+		public:
+			ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
 				: mMap(map),
 				mIter(iter),
-				mKeyPtr(pkey)
+				mKeyPtr(nullptr)
 			{
 			}
 
-			ValueReference(ValueReference&& valueRef) MOMO_NOEXCEPT
+			ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
+				: mMap(map),
+				mIter(iter),
+				mKeyPtr(std::addressof(keyRef))
+			{
+			}
+
+			ValueReference(const ValueReference& valueRef) MOMO_NOEXCEPT
 				: mMap(valueRef.mMap),
 				mIter(valueRef.mIter),
 				mKeyPtr(valueRef.mKeyPtr)
 			{
 			}
-
-			ValueReference(const ValueReference&) = delete;
 
 			~ValueReference() MOMO_NOEXCEPT
 			{
@@ -693,7 +708,7 @@ namespace internal
 				{
 					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
 						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
-					mIter = mMap.AddCrt(mIter, std::forward<RKey>(*mKeyPtr), valueCreator);
+					mIter = mMap.AddCrt(mIter, std::forward<KeyReference>(*mKeyPtr), valueCreator);
 				}
 				mKeyPtr = nullptr;
 				return *this;
@@ -702,16 +717,11 @@ namespace internal
 		private:
 			Map& mMap;
 			Iterator mIter;
-			PKey mKeyPtr;
+			KeyPointer mKeyPtr;
 		};
-
-	public:
-		typedef ValueReference<Key&&, Key*> ValueReferenceRKey;
-		typedef ValueReference<const Key&, const Key*> ValueReferenceCKey;
 #else
-	public:
-		typedef Value& ValueReferenceRKey;
-		typedef Value& ValueReferenceCKey;
+		template<typename TKeyReference>
+		using ValueReference = Value&;
 #endif
 	};
 

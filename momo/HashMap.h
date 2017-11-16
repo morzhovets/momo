@@ -137,8 +137,8 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef typename ValueReferencer::ValueReferenceRKey ValueReferenceRKey;
-	typedef typename ValueReferencer::ValueReferenceCKey ValueReferenceCKey;
+	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
+	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
 
 	typedef internal::MapExtractedPair<HashSetExtractedItem> ExtractedPair;
 
@@ -470,13 +470,14 @@ public:
 	ValueReferenceRKey operator[](Key&& key)
 	{
 		Iterator iter = Find(static_cast<const Key&>(key));
-		return ValueReferenceRKey(*this, iter, !!iter ? nullptr : std::addressof(key));
+		return !!iter ? ValueReferenceRKey(*this, iter)
+			: ValueReferenceRKey(*this, iter, std::move(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
 		Iterator iter = Find(key);
-		return ValueReferenceCKey(*this, iter, !!iter ? nullptr : std::addressof(key));
+		return !!iter ? ValueReferenceCKey(*this, iter) : ValueReferenceCKey(*this, iter, key);
 	}
 #else
 	ValueReferenceRKey operator[](Key&& key)
