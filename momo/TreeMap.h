@@ -515,31 +515,21 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
 	ValueReferenceRKey operator[](Key&& key)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
-		return pvIsEqual(iter, static_cast<const Key&>(key)) ? ValueReferenceRKey(*this, iter)
-			: ValueReferenceRKey(*this, iter, std::move(key));
+		return pvIsEqual(iter, static_cast<const Key&>(key))
+			? ValueReferencer::template GetReference<Key&&>(*this, iter)
+			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
 		Iterator iter = LowerBound(key);
-		return pvIsEqual(iter, key) ? ValueReferenceCKey(*this, iter)
-			: ValueReferenceCKey(*this, iter, key);
+		return pvIsEqual(iter, key)
+			? ValueReferencer::template GetReference<const Key&>(*this, iter)
+			: ValueReferencer::template GetReference<const Key&>(*this, iter, key);
 	}
-#else
-	ValueReferenceRKey operator[](Key&& key)
-	{
-		return pvInsert(std::move(key), ValueCreator<>(GetMemManager())).iterator->value;
-	}
-
-	ValueReferenceCKey operator[](const Key& key)
-	{
-		return pvInsert(key, ValueCreator<>(GetMemManager())).iterator->value;
-	}
-#endif
 
 	Iterator Remove(ConstIterator iter)
 	{

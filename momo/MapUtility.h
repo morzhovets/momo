@@ -622,45 +622,33 @@ namespace internal
 	template<typename TMap>
 	class MapValueReferencer
 	{
-	protected:
+	public:
 		typedef TMap Map;
+
+		typedef typename Map::Iterator Iterator;
 
 	private:
 		typedef typename Map::Value Value;
+		typedef typename Map::KeyValueTraits KeyValueTraits;
 
-	public:
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
+	public:
 		template<typename TKeyReference>
 		class ValueReference
 		{
 		protected:
 			typedef TKeyReference KeyReference;
 
-			typedef typename Map::Iterator Iterator;
-
 		public:
 			typedef const Value& ConstReference;
 
 		private:
-			typedef typename Map::KeyValueTraits KeyValueTraits;
 			typedef typename Map::Settings Settings;
 
 			typedef typename std::add_pointer<KeyReference>::type KeyPointer;
 
 		public:
-			ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
-				: mMap(map),
-				mIter(iter),
-				mKeyPtr(nullptr)
-			{
-			}
-
-			ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
-				: mMap(map),
-				mIter(iter),
-				mKeyPtr(std::addressof(keyRef))
-			{
-			}
+			ValueReference() = delete;
 
 			ValueReference(const ValueReference& valueRef) MOMO_NOEXCEPT
 				: mMap(valueRef.mMap),
@@ -695,6 +683,21 @@ namespace internal
 				return mIter->value;
 			}
 
+		protected:
+			ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
+				: mMap(map),
+				mIter(iter),
+				mKeyPtr(nullptr)
+			{
+			}
+
+			ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
+				: mMap(map),
+				mIter(iter),
+				mKeyPtr(std::addressof(keyRef))
+			{
+			}
+
 		private:
 			template<typename ValueArg>
 			ValueReference& pvAssign(ValueArg&& valueArg)
@@ -719,9 +722,48 @@ namespace internal
 			Iterator mIter;
 			KeyPointer mKeyPtr;
 		};
+
+	private:
+		template<typename KeyReference>
+		struct ValueReferenceProxy : public ValueReference<KeyReference>
+		{
+			typedef typename MapValueReferencer::template ValueReference<KeyReference> ValueReference;	// gcc
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ValueReference)
+		};
+
+	public:
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter) MOMO_NOEXCEPT
+		{
+			return ValueReferenceProxy<KeyReference>(map, iter);
+		}
+
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
+			KeyReference keyRef) MOMO_NOEXCEPT
+		{
+			return ValueReferenceProxy<KeyReference>(map, iter,
+				std::forward<KeyReference>(keyRef));
+		}
 #else
-		template<typename TKeyReference>
+	public:
+		template<typename KeyReference>
 		using ValueReference = Value&;
+
+	public:
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) MOMO_NOEXCEPT
+		{
+			return iter->value;
+		}
+
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
+			KeyReference keyRef)
+		{
+			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
+			return map.AddCrt(iter, std::forward<KeyReference>(keyRef), valueCreator)->value;
+		}
 #endif
 	};
 
