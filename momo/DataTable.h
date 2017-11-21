@@ -203,6 +203,7 @@ private:
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Row)
 		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw, Raw*)
+		MOMO_DECLARE_PROXY_FUNCTION(Row, ExtractRaw, Raw*)
 	};
 
 	struct ConstRowReferenceProxy : public ConstRowReference
@@ -440,7 +441,7 @@ public:
 		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
 		mRaws.Reserve(mRaws.GetCount() + 1);
 		mIndexes.AddRaw(row.GetRaw());
-		Raw* raw = row.ExtractRaw();
+		Raw* raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, mRaws.GetCount());
 		mRaws.AddBackNogrow(raw);
 		return pvMakeRowReference(raw);
@@ -535,7 +536,7 @@ public:
 		Raw*& raw = mRaws[rowNumber];
 		mIndexes.UpdateRaw(raw, row.GetRaw());
 		pvFreeRaw(raw);
-		raw = row.ExtractRaw();
+		raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, rowNumber);
 		return pvMakeRowReference(raw);
 	}

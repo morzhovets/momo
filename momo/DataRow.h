@@ -130,13 +130,6 @@ namespace internal
 			return mRaw;
 		}
 
-		Raw* ExtractRaw() MOMO_NOEXCEPT
-		{
-			Raw* raw = mRaw;
-			mRaw = nullptr;
-			return raw;
-		}
-
 		const Raw* operator->() const MOMO_NOEXCEPT
 		{
 			return mRaw;
@@ -158,6 +151,13 @@ namespace internal
 		Raw* ptGetRaw() const MOMO_NOEXCEPT
 		{
 			return mRaw;
+		}
+
+		Raw* ptExtractRaw() MOMO_NOEXCEPT
+		{
+			Raw* raw = mRaw;
+			mRaw = nullptr;
+			return raw;
 		}
 
 	private:
