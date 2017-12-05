@@ -562,8 +562,8 @@ public:
 		mTreeSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), newKey);
 	}
 
-	template<typename Map>
-	void MergeFrom(Map& srcMap)
+	template<typename RMap>
+	void MergeFrom(RMap&& srcMap)
 	{
 		srcMap.MergeTo(mTreeSet);
 	}

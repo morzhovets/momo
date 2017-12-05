@@ -833,8 +833,8 @@ public:
 		ItemTraits::AssignKey(GetMemManager(), newKey, item);
 	}
 
-	template<typename Set>
-	void MergeFrom(Set& srcSet)
+	template<typename RSet>
+	void MergeFrom(RSet&& srcSet)
 	{
 		srcSet.MergeTo(*this);
 	}
