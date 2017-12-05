@@ -33,7 +33,7 @@
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
 
-#if __cplusplus >= 201703L
+#ifdef __cpp_lib_is_swappable
 #define MOMO_IS_NOTHROW_SWAPPABLE(Object) std::is_nothrow_swappable_v<Object>
 #else
 #define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
@@ -121,7 +121,7 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
-#if __cplusplus >= 201703L
+#ifdef __cpp_deduction_guides
 #define MOMO_HAS_DEDUCTION_GUIDES
 #endif
 
