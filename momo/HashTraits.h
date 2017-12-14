@@ -165,6 +165,7 @@ public:
 
 	size_t GetHashCode(const Key& key) const
 	{
+		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<Key>>::value);
 		return HashCoder<Key>()(key);
 	}
 
@@ -194,7 +195,9 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;	//?
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
+		&& (std::is_same<HashFunc, HashCoder<Key>>::value
+		|| std::is_same<HashFunc, std::hash<Key>>::value);
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
