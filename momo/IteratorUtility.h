@@ -243,8 +243,6 @@ namespace internal
 	public:
 		typedef TReference Reference;
 
-		typedef const typename std::remove_reference<Reference>::type* Pointer;
-
 	private:
 		typedef typename ConstReferenceSelector<Reference>::ConstReference ConstReference;
 
@@ -264,7 +262,7 @@ namespace internal
 			return ConstPointer(mReference);
 		}
 
-		Pointer operator->() const MOMO_NOEXCEPT
+		typename std::remove_reference<const Reference>::type* operator->() const MOMO_NOEXCEPT
 		{
 			return std::addressof(mReference);
 		}

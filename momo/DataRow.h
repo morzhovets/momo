@@ -378,8 +378,6 @@ namespace internal
 	public:
 		typedef typename RowBounds::Reference Reference;
 
-		typedef typename RowBounds::Iterator Pointer;	//?
-
 		typedef DataRowPointer<typename RowBounds::ConstBounds> ConstPointer;
 
 	private:
@@ -398,7 +396,7 @@ namespace internal
 			return ConstPointer(static_cast<const RowBounds&>(*this));
 		}
 
-		Pointer operator->() const
+		typename RowBounds::Iterator operator->() const
 		{
 			MOMO_CHECK(RowBounds::GetCount() == 1);
 			return RowBounds::GetBegin();
