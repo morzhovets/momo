@@ -207,15 +207,49 @@ namespace internal
 		}
 	};
 
+	template<typename Reference>
+	struct ConstReferenceSelector
+	{
+		typedef typename Reference::ConstReference ConstReference;
+	};
+
+	template<typename Object>
+	struct ConstReferenceSelector<Object&>
+	{
+		typedef const Object& ConstReference;
+	};
+
+	template<typename Iterator>
+	struct ConstIteratorSelector
+	{
+		typedef typename Iterator::ConstIterator ConstIterator;
+	};
+
+	template<typename Object>
+	struct ConstIteratorSelector<Object*>
+	{
+		typedef const Object* ConstIterator;
+	};
+
+	template<typename Object>
+	struct ConstIteratorSelector<std::reverse_iterator<Object*>>
+	{
+		typedef std::reverse_iterator<const Object*> ConstIterator;
+	};
+
 	template<typename TReference>
 	class IteratorPointer
 	{
 	public:
 		typedef TReference Reference;
 
-		typedef const Reference* Pointer;
+		typedef const typename std::remove_reference<Reference>::type* Pointer;
 
-		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
+	private:
+		typedef typename ConstReferenceSelector<Reference>::ConstReference ConstReference;
+
+	public:
+		typedef IteratorPointer<ConstReference> ConstPointer;
 
 	public:
 		IteratorPointer() = delete;
@@ -252,71 +286,6 @@ namespace internal
 
 	private:
 		Reference mReference;
-	};
-
-	template<typename Object>
-	class IteratorPointer<Object&>
-	{
-	public:
-		typedef Object& Reference;
-
-		typedef Object* Pointer;
-
-		typedef IteratorPointer<const Object&> ConstPointer;
-
-	public:
-		IteratorPointer() = delete;
-
-		explicit IteratorPointer(Reference ref) MOMO_NOEXCEPT
-			: mPointer(std::addressof(ref))
-		{
-		}
-
-		operator ConstPointer() const MOMO_NOEXCEPT
-		{
-			return ConstPointer(*mPointer);
-		}
-
-		Pointer operator->() const MOMO_NOEXCEPT
-		{
-			return mPointer;
-		}
-
-		Reference operator*() const MOMO_NOEXCEPT
-		{
-			return *mPointer;
-		}
-
-		bool operator!() const MOMO_NOEXCEPT
-		{
-			return false;
-		}
-
-		explicit operator bool() const MOMO_NOEXCEPT
-		{
-			return true;
-		}
-
-	private:
-		Object* mPointer;
-	};
-
-	template<typename Iterator>
-	struct ConstIteratorSelector
-	{
-		typedef typename Iterator::ConstIterator ConstIterator;
-	};
-
-	template<typename Object>
-	struct ConstIteratorSelector<Object*>
-	{
-		typedef const Object* ConstIterator;
-	};
-
-	template<typename Object>
-	struct ConstIteratorSelector<std::reverse_iterator<Object*>>
-	{
-		typedef std::reverse_iterator<const Object*> ConstIterator;
 	};
 
 	template<typename TIterator>
@@ -387,7 +356,7 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef HashDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			typename Reference::ConstReference> ConstIterator;
+			typename ConstReferenceSelector<Reference>::ConstReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
@@ -457,7 +426,7 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef TreeDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			typename Reference::ConstReference> ConstIterator;
+			typename ConstReferenceSelector<Reference>::ConstReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
