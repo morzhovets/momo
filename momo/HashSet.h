@@ -913,6 +913,13 @@ public:
 		return ConstIteratorProxy(mBuckets, hashCode, mCrew.GetVersion());
 	}
 
+	void CheckIterator(ConstIterator iter) const
+	{
+		if (ConstIteratorProxy::GetBuckets(iter) == nullptr)	//?
+			return;
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), !iter);
+	}
+
 private:
 	void pvDestroy() MOMO_NOEXCEPT
 	{

@@ -1079,15 +1079,28 @@ public:
 	{
 		if (!iter)
 			return Iterator();
-		ConstKeyIterator keyIter = iter.GetKeyIterator();
-		return MakeIterator(MakeMutableKeyIterator(keyIter),
-			iter.GetValuePtr() - keyIter->values.GetBegin());
+		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
+		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
+		return MakeIterator(keyIter, iter.GetValuePtr() - keyIter->values.GetBegin());
 	}
 
 	KeyIterator MakeMutableKeyIterator(ConstKeyIterator keyIter)
 	{
 		return KeyIteratorProxy(mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter)));
+	}
+
+	void CheckIterator(ConstIterator iter) const
+	{
+		if (!iter)
+			return;
+		CheckKeyIterator(iter.GetKeyIterator());
+		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
+	}
+
+	void CheckKeyIterator(ConstKeyIterator keyIter) const
+	{
+		mHashMap.CheckIterator(ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 	}
 
 private:

@@ -851,6 +851,13 @@ public:
 		}
 	}
 
+	void CheckIterator(ConstIterator iter) const
+	{
+		if (iter == ConstIterator())
+			return;
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+	}
+
 private:
 	void pvDestroy() MOMO_NOEXCEPT
 	{

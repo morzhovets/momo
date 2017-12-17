@@ -550,8 +550,13 @@ public:
 
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
-		//?
+		CheckIterator(iter);
 		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
+	}
+
+	void CheckIterator(ConstIterator iter) const
+	{
+		mHashSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter));
 	}
 
 private:

@@ -576,8 +576,13 @@ public:
 
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
-		//?
+		CheckIterator(iter);
 		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
+	}
+
+	void CheckIterator(ConstIterator iter) const
+	{
+		mTreeSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter));
 	}
 
 private:
