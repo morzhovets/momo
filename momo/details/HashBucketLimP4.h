@@ -34,12 +34,14 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 32;
 
+		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+
 	public:
 		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(state <= maskState);
 			mPtrState = (uint32_t)reinterpret_cast<uintptr_t>(ptr);
-			MOMO_ASSERT(((uint8_t)mPtrState & maskState) == 0);
+			MOMO_ASSERT(((uint8_t)mPtrState & maskState) == (uint8_t)0);
 			mPtrState |= (uint32_t)state;
 		}
 
@@ -68,12 +70,14 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 48;
 
+		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+
 	public:
 		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
+			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
 			mPtrState[0] = (uint16_t)intPtr | (uint16_t)state;
 			mPtrState[1] = (uint16_t)(intPtr >> 16);
 			mPtrState[2] = (uint16_t)(intPtr >> 32);
@@ -105,12 +109,14 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 64;
 
+		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+
 	public:
 		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
-			MOMO_ASSERT(((uint8_t)intPtr & maskState) == 0);
+			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
 			mPtrState[0] = (uint32_t)intPtr | (uint32_t)state;
 			mPtrState[1] = (uint32_t)(intPtr >> 32);
 		}
@@ -356,7 +362,10 @@ namespace internal
 				mHashes[index] = mHashes[count - 1];
 				mHashes[count - 1] = emptyHashProbe;
 				if (useHashCodePartGetter && hashCount - 1 - index >= count)
-					mHashes[hashCount - 1 - index] = emptyHashProbe;	//?
+				{
+					mHashes[hashCount - 1 - index] = (hashCount - count >= count)
+						? mHashes[hashCount - count] : emptyHashProbe;
+				}
 				pvSetPtrState(items, memPoolIndex);
 				return iter;
 			}
