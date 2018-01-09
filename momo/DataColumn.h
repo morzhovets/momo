@@ -171,7 +171,7 @@ public:
 		code = (code * 5) ^ (code >> 16);
 		size_t vertex1 = code & vertexCount1;
 		size_t vertex2 = (code >> logVertexCount) & vertexCount1;
-		vertex2 += (vertex1 == vertex2) ? 1 : 0;
+		vertex2 ^= (vertex1 == vertex2) ? 1 : 0;
 		return std::make_pair(vertex1, vertex2);
 	}
 
