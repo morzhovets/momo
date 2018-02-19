@@ -9,7 +9,7 @@
     struct IsFastNothrowHashable
     struct HashCoder
     struct HashBucketDefault
-    struct HashBucketDefaultOpen
+    struct HashBucketOpenDefault
     class HashTraits
     class HashTraitsOpen
     class HashTraitsVar
@@ -61,7 +61,7 @@ struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
-typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketDefaultOpen;
+typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>
@@ -109,7 +109,7 @@ public:
 };
 
 template<typename TKey>
-using HashTraitsOpen = HashTraits<TKey, HashBucketDefaultOpen>;
+using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault>

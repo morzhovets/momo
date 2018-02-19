@@ -653,7 +653,7 @@ template<typename TKey, typename TMapped,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap_open = unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketDefaultOpen>,
+	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>;
 
 } // namespace stdish
