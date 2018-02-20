@@ -5,11 +5,16 @@
 
   momo/DataColumn.h
 
+  macros:
+    MOMO_DATA_COLUMN_STRUCT
+    MOMO_DATA_COLUMN_STRING
+
   namespace momo::experimental:
     enum class DataOperatorType
     class DataOperator
     class DataColumn
     struct DataSettings
+    struct DataStructDefault
     class DataColumnTraits
     class DataColumnList
     class DataColumnListStatic
@@ -22,15 +27,47 @@
 
 #include <bitset>
 
-#define MOMO_DECLARE_DATA_COLUMN(Struct, name) \
+#define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::experimental::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
 	name(offsetof(Struct, name))
+
+#define MOMO_DATA_COLUMN_STRING(Type, name) \
+	constexpr momo::experimental::DataColumn<Type, momo::experimental::DataStructDefault> \
+	name(momo::experimental::internal::StrHasher<size_t>::GetHashCode(#name))
 
 namespace momo
 {
 
 namespace experimental
 {
+
+namespace internal
+{
+	template<typename TUInt>
+	class StrHasher
+	{
+	public:
+		typedef TUInt UInt;
+
+	public:
+		// Fowler–Noll–Vo hash function (1a)
+		static constexpr UInt GetHashCode(const char* str) MOMO_NOEXCEPT;
+	};
+
+	template<>
+	constexpr inline uint32_t StrHasher<uint32_t>::GetHashCode(const char* str) MOMO_NOEXCEPT
+	{
+		return (*str == '\0') ? 2166136261u
+			: (GetHashCode(str + 1) ^ (uint32_t)(unsigned char)*str) * 16777619u;
+	}
+
+	template<>
+	constexpr inline uint64_t StrHasher<uint64_t>::GetHashCode(const char* str) MOMO_NOEXCEPT
+	{
+		return (*str == '\0') ? 14695981039346656037ull
+			: (GetHashCode(str + 1) ^ (uint64_t)(unsigned char)*str) * 1099511628211ull;
+	}
+}
 
 enum class DataOperatorType
 {
@@ -50,11 +87,7 @@ public:
 	friend Column;	//?
 
 public:
-	DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
-		: mColumn(column),
-		mItemArg(std::forward<ItemArg>(itemArg))
-	{
-	}
+	DataOperator() = delete;
 
 	DataOperator(const DataOperator&) = delete;
 
@@ -75,6 +108,12 @@ public:
 	}
 
 protected:
+	DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
+		: mColumn(column),
+		mItemArg(std::forward<ItemArg>(itemArg))
+	{
+	}
+
 	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
 		: mColumn(oper.mColumn),
 		mItemArg(std::forward<ItemArg>(oper.mItemArg))
@@ -99,16 +138,14 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
 
 public:
-	//constexpr DataColumn(Item Struct::*field) MOMO_NOEXCEPT
-
-	constexpr explicit DataColumn(size_t offset) MOMO_NOEXCEPT
-		: mOffset(offset)
+	constexpr explicit DataColumn(size_t code) MOMO_NOEXCEPT
+		: mCode(code)
 	{
 	}
 
-	constexpr size_t GetOffset() const MOMO_NOEXCEPT
+	constexpr size_t GetCode() const MOMO_NOEXCEPT
 	{
-		return mOffset;
+		return mCode;
 	}
 
 	Equaler operator==(const Item& item) const MOMO_NOEXCEPT
@@ -125,7 +162,7 @@ public:
 	}
 
 private:
-	size_t mOffset;
+	size_t mCode;
 };
 
 template<bool tKeepRowNumber = true>
@@ -139,7 +176,11 @@ struct DataSettings
 	typedef ArraySettings<> RawsSettings;
 };
 
-template<typename TStruct,
+struct DataStructDefault
+{
+};
+
+template<typename TStruct = DataStructDefault,
 	typename TMemManager = MemManagerDefault>
 class DataColumnTraits
 {
@@ -165,10 +206,9 @@ public:
 		size_t codeParam) MOMO_NOEXCEPT
 	{
 		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
-		size_t offset = column.GetOffset();
-		MOMO_ASSERT(offset < (1 << 24));
-		size_t code = (offset << 4) ^ (codeParam >> 4) ^ ((codeParam & 15) << 28);
-		code = (code * 5) ^ (code >> 16);
+		size_t code = column.GetCode();
+		code ^= (codeParam >> 4) ^ ((codeParam & 15) << 28);
+		code += code >> 16;
 		size_t vertex1 = code & vertexCount1;
 		size_t vertex2 = (code >> logVertexCount) & vertexCount1;
 		vertex2 ^= (vertex1 == vertex2) ? 1 : 0;
@@ -213,7 +253,7 @@ public:
 	}
 };
 
-template<typename TColumnTraits,
+template<typename TColumnTraits = DataColumnTraits<>,
 	typename TSettings = DataSettings<>>
 class DataColumnList
 {
@@ -710,7 +750,7 @@ public:
 	template<typename Item>
 	size_t GetOffset(const Column<Item>& column) const MOMO_NOEXCEPT
 	{
-		return column.GetOffset();
+		return column.GetCode();	//?
 	}
 
 	template<typename Item>

@@ -22,14 +22,18 @@ namespace
 {
 	struct Struct
 	{
-		int intCol;
-		double dblCol;
-		std::string strCol;
+		int intStruct;
+		double dblStruct;
+		std::string strStruct;
 	};
 
-	MOMO_DECLARE_DATA_COLUMN(Struct, intCol);
-	MOMO_DECLARE_DATA_COLUMN(Struct, dblCol);
-	MOMO_DECLARE_DATA_COLUMN(Struct, strCol);
+	MOMO_DATA_COLUMN_STRUCT(Struct, intStruct);
+	MOMO_DATA_COLUMN_STRUCT(Struct, dblStruct);
+	MOMO_DATA_COLUMN_STRUCT(Struct, strStruct);
+
+	MOMO_DATA_COLUMN_STRING(int, intString);
+	MOMO_DATA_COLUMN_STRING(double, dblString);
+	MOMO_DATA_COLUMN_STRING(std::string, strString);
 }
 
 class SimpleDataTester
@@ -38,17 +42,24 @@ public:
 	static void TestAll()
 	{
 		std::cout << "momo::experimental::DataColumnListStatic: " << std::flush;
-		TestData(momo::experimental::DataColumnListStatic<Struct>());
+		TestData(momo::experimental::DataColumnListStatic<Struct>(),
+			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::experimental::DataColumnList: " << std::flush;
-		typedef momo::experimental::DataColumnList<momo::experimental::DataColumnTraits<Struct>> Columns;
-		TestData(Columns(strCol, intCol, dblCol));
+		std::cout << "momo::experimental::DataColumnList (struct): " << std::flush;
+		TestData(momo::experimental::DataColumnList<momo::experimental::DataColumnTraits<Struct>>(
+			intStruct, dblStruct, strStruct), intStruct, dblStruct, strStruct);
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::experimental::DataColumnList (string): " << std::flush;
+		TestData(momo::experimental::DataColumnList<>(intString, dblString, strString),
+			intString, dblString, strString);
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename DataColumnList>
-	static void TestData(DataColumnList&& columns)
+	template<typename DataColumnList, typename IntCol, typename DblCol, typename StrCol>
+	static void TestData(DataColumnList&& columns,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef momo::experimental::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;

@@ -43,7 +43,7 @@ public:
 	}
 };
 
-template<typename TColumnList,
+template<typename TColumnList = DataColumnList<>,
 	typename TDataTraits = DataTraits>
 class DataTable
 {
