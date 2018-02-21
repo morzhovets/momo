@@ -140,7 +140,7 @@ namespace internal
 			const ColumnList* columnList;
 		};
 
-		class HashTraits : public momo::HashTraitsOpen<Raw*>
+		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
 		public:
 			template<typename KeyArg>

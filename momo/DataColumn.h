@@ -7,6 +7,7 @@
 
   macros:
     MOMO_DATA_COLUMN_STRUCT
+    MOMO_DATA_COLUMN_STRING_TAG
     MOMO_DATA_COLUMN_STRING
 
   namespace momo::experimental:
@@ -31,9 +32,13 @@
 	constexpr momo::experimental::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
 	name(offsetof(Struct, name))
 
-#define MOMO_DATA_COLUMN_STRING(Type, name) \
-	constexpr momo::experimental::DataColumn<Type, momo::experimental::DataStructDefault> \
+#define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
+	MOMO_STATIC_ASSERT(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
+	constexpr momo::experimental::DataColumn<Type, Tag> \
 	name(momo::experimental::internal::StrHasher<size_t>::GetHashCode(#name))
+
+#define MOMO_DATA_COLUMN_STRING(Type, name) \
+	MOMO_DATA_COLUMN_STRING_TAG(momo::experimental::DataStructDefault, Type, name)
 
 namespace momo
 {
@@ -354,18 +359,19 @@ private:
 	typedef std::function<void(MemManager&, const Raw*, Raw*)> CopyFunc;
 
 public:
-	template<typename... Items>
-	explicit DataColumnList(const Column<Items>&... columns)
-		: DataColumnList(MemManager(), columns...)
+	template<typename Item, typename... Items>
+	explicit DataColumnList(const Column<Item>& column, const Column<Items>&... columns)
+		: DataColumnList(MemManager(), column, columns...)
 	{
 	}
 
-	template<typename... Items>
-	explicit DataColumnList(MemManager&& memManager, const Column<Items>&... columns)
+	template<typename Item, typename... Items>
+	explicit DataColumnList(MemManager&& memManager, const Column<Item>& column,
+		const Column<Items>&... columns)
 		: mMutOffsets(std::move(memManager))
 	{
 		mCodeParam = 0;
-		while (mCodeParam <= maxCodeParam && !pvFillAddends(columns...))
+		while (mCodeParam <= maxCodeParam && !pvFillAddends(column, columns...))
 			++mCodeParam;
 		if (mCodeParam > maxCodeParam)
 			throw std::runtime_error("Cannot create DataColumnList");
@@ -503,7 +509,7 @@ private:
 	bool pvFillAddends(const Column<Items>&... columns)
 	{
 		static const size_t columnCount = sizeof...(columns);
-		MOMO_STATIC_ASSERT(0 < columnCount && columnCount < maxColumnCount);
+		MOMO_STATIC_ASSERT(columnCount <= maxColumnCount);
 		Graph<2 * columnCount> graph;
 		pvMakeGraph(graph, 0, 1, columns...);
 		std::fill(mAddends.begin(), mAddends.end(), 0);
@@ -648,6 +654,8 @@ public:
 	using Column = DataColumn<Item, Struct>;
 
 	typedef Struct Raw;
+
+	MOMO_STATIC_ASSERT(std::is_class<Struct>::value);
 
 private:
 	typedef momo::internal::ObjectManager<Raw, MemManager> RawManager;

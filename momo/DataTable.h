@@ -29,6 +29,8 @@ class DataTraits
 public:
 	typedef MemPoolParams<> RawMemPoolParams;
 
+	typedef HashBucketOpenDefault HashBucket;
+
 public:
 	template<typename Item>
 	static size_t GetHashCode(const Item& item)
@@ -254,6 +256,19 @@ public:
 		mRaws(MemManagerPtr(GetMemManager())),
 		mRawMemPool(pvCreateRawMemPool()),
 		mIndexes(&GetColumnList(), GetMemManager())
+	{
+	}
+
+	template<typename Item, typename... Items>
+	explicit DataTable(const Column<Item>& column, const Column<Items>&... columns)
+		: DataTable(ColumnList(column, columns...))
+	{
+	}
+
+	template<typename Item, typename... Items>
+	DataTable(MemManager&& memManager, const Column<Item>& column,
+		const Column<Items>&... columns)
+		: DataTable(ColumnList(std::move(memManager), column, columns...))
 	{
 	}
 
