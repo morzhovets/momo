@@ -377,11 +377,11 @@ public:
 			throw std::runtime_error("Cannot create DataColumnList");
 		mMutOffsets.SetCount((mTotalSize + 7) / 8, (uint8_t)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
-			{ pvCreate<void, Items...>(memManager, raw, 0); };
+			{ pvCreate<void, Item, Items...>(memManager, raw, 0); };
 		mDestroyFunc = [] (MemManager* memManager, Raw* raw)
-			{ pvDestroy<void, Items...>(memManager, raw, 0); };
+			{ pvDestroy<void, Item, Items...>(memManager, raw, 0); };
 		mCopyFunc = [] (MemManager& memManager, const Raw* srcRaw, Raw* dstRaw)
-			{ pvCopy<void, Items...>(memManager, srcRaw, dstRaw, 0); };
+			{ pvCopy<void, Item, Items...>(memManager, srcRaw, dstRaw, 0); };
 	}
 
 	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
