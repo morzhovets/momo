@@ -51,7 +51,7 @@ namespace internal
 		}
 
 		template<typename Array>
-		ArrayPtrIterator(Array* array, size_t index) MOMO_NOEXCEPT
+		explicit ArrayPtrIterator(Array* array, size_t index) MOMO_NOEXCEPT
 			: mItemPtr(array->GetItems() + index)
 		{
 		}
@@ -534,7 +534,7 @@ public:
 		pvFill(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
-	Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
+	explicit Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
 		pvFill(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
@@ -542,7 +542,7 @@ public:
 
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	Array(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
+	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? std::distance(begin, end) : 0,
 			std::move(memManager))
 	{

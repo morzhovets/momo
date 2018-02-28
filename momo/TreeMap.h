@@ -190,8 +190,12 @@ private:
 	};
 
 public:
-	explicit TreeMap(const TreeTraits& treeTraits = TreeTraits(),
-		MemManager&& memManager = MemManager())
+	TreeMap()
+		: TreeMap(TreeTraits())
+	{
+	}
+
+	explicit TreeMap(const TreeTraits& treeTraits, MemManager&& memManager = MemManager())
 		: mTreeSet(treeTraits, std::move(memManager))
 	{
 	}

@@ -152,7 +152,7 @@ namespace internal
 		static const bool checkVersion = true;
 
 	public:
-		IteratorVersion() MOMO_NOEXCEPT
+		explicit IteratorVersion() MOMO_NOEXCEPT
 			: mContainerVersion(nullptr),
 			mVersion(0)
 		{
@@ -188,7 +188,7 @@ namespace internal
 		static const bool checkVersion = false;
 
 	public:
-		IteratorVersion() MOMO_NOEXCEPT
+		explicit IteratorVersion() MOMO_NOEXCEPT
 		{
 		}
 
@@ -297,13 +297,13 @@ namespace internal
 		typedef typename std::iterator_traits<Iterator>::reference Reference;
 
 	public:
-		ArrayBounds() MOMO_NOEXCEPT
+		explicit ArrayBounds() MOMO_NOEXCEPT
 			: mBegin(),	//?
 			mCount(0)
 		{
 		}
 
-		ArrayBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
+		explicit ArrayBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
 			: mBegin(begin),
 			mCount(count)
 		{
@@ -370,7 +370,7 @@ namespace internal
 		};
 
 	public:
-		HashDerivedIterator() MOMO_NOEXCEPT
+		explicit HashDerivedIterator() MOMO_NOEXCEPT
 		{
 		}
 
@@ -440,7 +440,7 @@ namespace internal
 		};
 
 	public:
-		TreeDerivedIterator() MOMO_NOEXCEPT
+		explicit TreeDerivedIterator() MOMO_NOEXCEPT
 		{
 		}
 
@@ -513,7 +513,7 @@ namespace internal
 		};
 
 	public:
-		HashDerivedBucketBounds() MOMO_NOEXCEPT
+		explicit HashDerivedBucketBounds() MOMO_NOEXCEPT
 		{
 		}
 

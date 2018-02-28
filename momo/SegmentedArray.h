@@ -204,7 +204,7 @@ public:
 		pvIncCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
 	}
 
-	SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
+	explicit SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		pvIncCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
@@ -212,7 +212,7 @@ public:
 
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	SegmentedArray(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
+	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		try

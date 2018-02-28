@@ -52,12 +52,12 @@ namespace internal
 		typedef DataMultiHashIterator ConstIterator;
 
 	public:
-		DataMultiHashIterator() MOMO_NOEXCEPT
+		explicit DataMultiHashIterator() MOMO_NOEXCEPT
 			: mRawIndex(0)
 		{
 		}
 
-		DataMultiHashIterator(KeyIterator keyIter, size_t rawIndex) MOMO_NOEXCEPT
+		explicit DataMultiHashIterator(KeyIterator keyIter, size_t rawIndex) MOMO_NOEXCEPT
 			: mKeyIterator(keyIter),
 			mRawIndex(rawIndex)
 		{
@@ -156,7 +156,7 @@ namespace internal
 			static const bool isFastNothrowHashable = false;
 
 		public:
-			HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mHashFunc(std::move(hashFunc)),
 				mEqualFunc(std::move(equalFunc))
 			{
@@ -214,7 +214,7 @@ namespace internal
 		class UniqueIndexViolation : public std::runtime_error
 		{
 		public:
-			UniqueIndexViolation(Raw* raw, const UniqueHash& uniqueHash)
+			explicit UniqueIndexViolation(Raw* raw, const UniqueHash& uniqueHash)
 				: std::runtime_error("Unique index violation"),
 				raw(raw),
 				uniqueHash(uniqueHash)
@@ -270,7 +270,7 @@ namespace internal
 			};
 
 		public:
-			UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
 				mHashSet(typename HashSet::HashTraits(std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager()))
@@ -449,7 +449,7 @@ namespace internal
 			};
 
 		public:
-			MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
 				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager())),
@@ -614,7 +614,7 @@ namespace internal
 		typedef Array<MultiHash> MultiHashes;
 
 	public:
-		DataIndexes(const ColumnList* columnList, MemManager& memManager)
+		explicit DataIndexes(const ColumnList* columnList, MemManager& memManager)
 			: mColumnList(columnList),
 			mUniqueHashes(MemManagerPtr(memManager)),
 			mMultiHashes(MemManagerPtr(memManager))

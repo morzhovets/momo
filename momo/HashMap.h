@@ -174,8 +174,12 @@ private:
 	};
 
 public:
-	explicit HashMap(const HashTraits& hashTraits = HashTraits(),
-		MemManager&& memManager = MemManager())
+	HashMap()
+		: HashMap(HashTraits())
+	{
+	}
+
+	explicit HashMap(const HashTraits& hashTraits, MemManager&& memManager = MemManager())
 		: mHashSet(hashTraits, std::move(memManager))
 	{
 	}

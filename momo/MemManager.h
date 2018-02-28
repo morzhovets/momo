@@ -29,7 +29,7 @@
     static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
   public:
-    UserMemManager();
+    explicit UserMemManager();
     UserMemManager(UserMemManager&& memManager) noexcept;
     UserMemManager(const UserMemManager& memManager);
     ~UserMemManager() noexcept;
@@ -86,7 +86,7 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	MemManagerCpp() MOMO_NOEXCEPT
+	explicit MemManagerCpp() MOMO_NOEXCEPT
 	{
 	}
 
@@ -130,7 +130,7 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	MemManagerC() MOMO_NOEXCEPT
+	explicit MemManagerC() MOMO_NOEXCEPT
 	{
 	}
 
@@ -190,7 +190,7 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	MemManagerWin() MOMO_NOEXCEPT
+	explicit MemManagerWin() MOMO_NOEXCEPT
 	{
 	}
 
@@ -267,7 +267,7 @@ public:
 	static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 public:
-	MemManagerStd() MOMO_NOEXCEPT_IF(noexcept(CharAllocator()))
+	explicit MemManagerStd() MOMO_NOEXCEPT_IF(noexcept(CharAllocator()))
 	{
 	}
 
@@ -371,7 +371,7 @@ namespace internal
 		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 	public:
-		MemManagerDummy() MOMO_NOEXCEPT
+		explicit MemManagerDummy() MOMO_NOEXCEPT
 		{
 		}
 
@@ -513,7 +513,7 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
 
 	public:
-		MemManagerPtr() MOMO_NOEXCEPT
+		explicit MemManagerPtr() MOMO_NOEXCEPT
 		{
 		}
 

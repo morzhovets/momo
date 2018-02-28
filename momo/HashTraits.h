@@ -77,7 +77,7 @@ public:
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;
 
 public:
-	HashTraits() MOMO_NOEXCEPT
+	explicit HashTraits() MOMO_NOEXCEPT
 	{
 	}
 

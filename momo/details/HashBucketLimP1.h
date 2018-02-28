@@ -93,7 +93,7 @@ namespace internal
 		};
 
 	public:
-		BucketLimP1() MOMO_NOEXCEPT
+		explicit BucketLimP1() MOMO_NOEXCEPT
 		{
 			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
 		}

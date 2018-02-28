@@ -232,7 +232,7 @@ namespace internal
 		};
 
 	public:
-		BucketLimP4() MOMO_NOEXCEPT
+		explicit BucketLimP4() MOMO_NOEXCEPT
 		{
 			pvSetEmpty(minMemPoolIndex);
 		}

@@ -61,7 +61,7 @@ public:
 		pvCorrectBlockSize();
 	}
 
-	MemPoolParams(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
+	explicit MemPoolParams(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
 		: blockSize(blockSize),
 		blockAlignment(blockAlignment)
 	{
@@ -531,7 +531,7 @@ namespace internal
 			NestedArraySettings<>> Buffers;
 
 	public:
-		MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)
+		explicit MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),

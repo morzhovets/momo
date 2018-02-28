@@ -37,7 +37,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	public:
-		BucketOneI() MOMO_NOEXCEPT
+		explicit BucketOneI() MOMO_NOEXCEPT
 		{
 			pvSetState(HashBucketOneState::empty);
 		}

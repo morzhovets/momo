@@ -41,7 +41,7 @@ namespace internal
 		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
 
 	public:
-		BucketOneIA() MOMO_NOEXCEPT
+		explicit BucketOneIA() MOMO_NOEXCEPT
 			: mHashState(0)
 		{
 		}

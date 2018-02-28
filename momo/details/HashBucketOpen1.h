@@ -39,7 +39,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	public:
-		BucketOpen1() MOMO_NOEXCEPT
+		explicit BucketOpen1() MOMO_NOEXCEPT
 			: mState(0)
 		{
 		}

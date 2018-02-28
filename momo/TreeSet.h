@@ -48,7 +48,7 @@ namespace internal
 		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
 
 	public:
-		TreeSetConstIterator() MOMO_NOEXCEPT
+		explicit TreeSetConstIterator() MOMO_NOEXCEPT
 			: mNode(nullptr),
 			mItemIndex(0)
 		{
@@ -128,7 +128,7 @@ namespace internal
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)
 
 	protected:
-		TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
+		explicit TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
 			bool move) MOMO_NOEXCEPT
 			: IteratorVersion(version),
 			mNode(&node),
@@ -497,8 +497,12 @@ private:
 	};
 
 public:
-	explicit TreeSet(const TreeTraits& treeTraits = TreeTraits(),
-		MemManager&& memManager = MemManager())
+	TreeSet()
+		: TreeSet(TreeTraits())
+	{
+	}
+
+	explicit TreeSet(const TreeTraits& treeTraits, MemManager&& memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
 		mRootNode(nullptr),

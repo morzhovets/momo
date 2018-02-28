@@ -45,7 +45,7 @@ public:
 		&& std::is_same<KeyArg, typename TreeTraits::KeyArg>::value>;
 
 public:
-	TreeTraits() MOMO_NOEXCEPT
+	explicit TreeTraits() MOMO_NOEXCEPT
 	{
 	}
 

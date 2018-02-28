@@ -103,7 +103,7 @@ namespace internal
 		};
 
 	public:
-		BucketLim4() MOMO_NOEXCEPT
+		explicit BucketLim4() MOMO_NOEXCEPT
 			: mPtrState(stateNull)
 		{
 		}

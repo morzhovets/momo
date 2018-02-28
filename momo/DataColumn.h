@@ -113,7 +113,7 @@ public:
 	}
 
 protected:
-	DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
+	explicit DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
 		: mColumn(column),
 		mItemArg(std::forward<ItemArg>(itemArg))
 	{

@@ -75,7 +75,7 @@ namespace internal
 		typedef typename ArrayBucket::Params Params;
 
 	public:
-		BucketUnlimP() MOMO_NOEXCEPT
+		explicit BucketUnlimP() MOMO_NOEXCEPT
 		{
 		}
 

@@ -50,7 +50,7 @@ namespace internal
 		};
 
 	public:
-		DataRowIterator() MOMO_NOEXCEPT
+		explicit DataRowIterator() MOMO_NOEXCEPT
 			: mColumnList(nullptr)
 		{
 		}
@@ -93,7 +93,7 @@ namespace internal
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
 
 	protected:
-		DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT
+		explicit DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRawIterator(rawIter)
 		{
@@ -143,7 +143,7 @@ namespace internal
 		};
 
 	public:
-		DataRowBounds() MOMO_NOEXCEPT
+		explicit DataRowBounds() MOMO_NOEXCEPT
 			: mColumnList(nullptr)
 		{
 		}
@@ -177,7 +177,7 @@ namespace internal
 		}
 
 	protected:
-		DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
+		explicit DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRawBounds(rawBounds)
 		{
@@ -205,12 +205,12 @@ namespace internal
 		typedef DataItemIterator<Item, typename RowIterator::ConstIterator, Settings> ConstIterator;
 
 	public:
-		DataItemIterator() MOMO_NOEXCEPT
+		explicit DataItemIterator() MOMO_NOEXCEPT
 			: mOffset(0)
 		{
 		}
 
-		DataItemIterator(size_t offset, RowIterator rowIter) MOMO_NOEXCEPT
+		explicit DataItemIterator(size_t offset, RowIterator rowIter) MOMO_NOEXCEPT
 			: mOffset(offset),
 			mRowIterator(rowIter)
 		{
@@ -284,12 +284,12 @@ namespace internal
 		typedef typename Iterator::Reference Reference;
 
 	public:
-		DataItemBounds() MOMO_NOEXCEPT
+		explicit DataItemBounds() MOMO_NOEXCEPT
 			: mOffset(0)
 		{
 		}
 
-		DataItemBounds(size_t offset, RowBounds rowBounds) MOMO_NOEXCEPT
+		explicit DataItemBounds(size_t offset, RowBounds rowBounds) MOMO_NOEXCEPT
 			: mOffset(offset),
 			mRowBounds(rowBounds)
 		{
@@ -619,7 +619,7 @@ namespace internal
 		}
 
 	protected:
-		DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
+		explicit DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaws(std::move(raws))
 		{

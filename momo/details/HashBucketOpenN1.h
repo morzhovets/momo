@@ -43,7 +43,7 @@ namespace internal
 		static const uint8_t maskCount = 127;
 
 	public:
-		BucketOpenN1() MOMO_NOEXCEPT
+		explicit BucketOpenN1() MOMO_NOEXCEPT
 		{
 			pvSetEmpty();
 		}

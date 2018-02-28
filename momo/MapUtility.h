@@ -30,7 +30,7 @@ namespace internal
 		typedef MapReference<Key, const Value, SetReference> ConstReference;
 
 	public:
-		MapReference(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit MapReference(const Key& key, Value& value) MOMO_NOEXCEPT
 			: key(key),
 			value(value)
 		{
@@ -71,7 +71,7 @@ namespace internal
 		typedef std::pair<const Key&, Value&> RefPair;
 
 	public:
-		MapReferenceStd(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit MapReferenceStd(const Key& key, Value& value) MOMO_NOEXCEPT
 			: RefPair(key, value)
 		{
 		}
@@ -558,7 +558,7 @@ namespace internal
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		public:
-			Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
+			explicit Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
 				: mMemManager(memManager),
 				mItem(item)
 			{
@@ -684,14 +684,14 @@ namespace internal
 			}
 
 		protected:
-			ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
+			explicit ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
 				: mMap(map),
 				mIter(iter),
 				mKeyPtr(nullptr)
 			{
 			}
 
-			ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
+			explicit ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
 				: mMap(map),
 				mIter(iter),
 				mKeyPtr(std::addressof(keyRef))
@@ -780,12 +780,12 @@ namespace internal
 		typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
-		MapExtractedPair() MOMO_NOEXCEPT
+		explicit MapExtractedPair() MOMO_NOEXCEPT
 		{
 		}
 
 		template<typename Map>
-		MapExtractedPair(Map& map, typename Map::ConstIterator iter)
+		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)
 		{
 			map.Remove(iter, *this);
 		}

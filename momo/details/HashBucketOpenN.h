@@ -43,7 +43,7 @@ namespace internal
 		static const uint8_t maskCount = (maxCount <= 4) ? 3 : 7;
 
 	public:
-		BucketOpenN() MOMO_NOEXCEPT
+		explicit BucketOpenN() MOMO_NOEXCEPT
 		{
 			pvSetEmpty();
 		}

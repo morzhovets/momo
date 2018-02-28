@@ -35,13 +35,13 @@ namespace internal
 		typedef typename Array::Settings Settings;
 
 	public:
-		ArrayIndexIterator() MOMO_NOEXCEPT
+		explicit ArrayIndexIterator() MOMO_NOEXCEPT
 			: mArray(nullptr),
 			mIndex(0)
 		{
 		}
 
-		ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
+		explicit ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
 			: mArray(array),
 			mIndex(index)
 		{
@@ -162,7 +162,7 @@ namespace internal
 
 	public:
 		template<typename ItemCreator>
-		ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
+		explicit ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
 			: mMemManager(memManager)
 		{
 			itemCreator(&mItemBuffer);

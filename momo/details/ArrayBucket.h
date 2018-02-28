@@ -157,7 +157,7 @@ namespace internal
 		};
 
 	public:
-		ArrayBucket() MOMO_NOEXCEPT
+		explicit ArrayBucket() MOMO_NOEXCEPT
 			: mPtr(nullptr)
 		{
 		}

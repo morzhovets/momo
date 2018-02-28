@@ -103,7 +103,7 @@ namespace internal
 		};
 
 	public:
-		SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
+		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
 			mData = memManager.template Allocate<Data>(sizeof(Data));
 			mData->version = 0;
@@ -201,7 +201,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(!keepVersion);
 
 	public:
-		SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
+		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 			: ContainerTraits(containerTraits),
 			MemManager(std::move(memManager))
 		{
@@ -269,13 +269,13 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
-		SetExtractedItem() MOMO_NOEXCEPT
+		explicit SetExtractedItem() MOMO_NOEXCEPT
 			: mHasItem(false)
 		{
 		}
 
 		template<typename Set>
-		SetExtractedItem(Set& set, typename Set::ConstIterator iter)
+		explicit SetExtractedItem(Set& set, typename Set::ConstIterator iter)
 			: SetExtractedItem()
 		{
 			set.Remove(iter, *this);

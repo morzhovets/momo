@@ -48,7 +48,7 @@ namespace internal
 			typename HashMapReference::ConstReference> ConstReference;
 
 	public:
-		HashMultiMapKeyReference(const Key& key, const Values& values) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyReference(const Key& key, const Values& values) MOMO_NOEXCEPT
 			: key(key),
 			values(values)
 		{
@@ -83,7 +83,7 @@ namespace internal
 		typedef HashMultiMapKeyBounds<typename KeyIterator::ConstIterator> ConstBounds;
 
 	public:
-		HashMultiMapKeyBounds() MOMO_NOEXCEPT
+		explicit HashMultiMapKeyBounds() MOMO_NOEXCEPT
 			: mCount(0)
 		{
 		}
@@ -111,7 +111,7 @@ namespace internal
 		}
 
 	protected:
-		HashMultiMapKeyBounds(KeyIterator begin, size_t count) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyBounds(KeyIterator begin, size_t count) MOMO_NOEXCEPT
 			: mBegin(begin),
 			mCount(count)
 		{
@@ -132,7 +132,7 @@ namespace internal
 		typedef HashMultiMapReference<Key, const Value> ConstReference;
 
 	public:
-		HashMultiMapReference(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit HashMultiMapReference(const Key& key, Value& value) MOMO_NOEXCEPT
 			: key(key),
 			value(value)
 		{
@@ -176,7 +176,7 @@ namespace internal
 		};
 
 	public:
-		HashMultiMapIterator() MOMO_NOEXCEPT
+		explicit HashMultiMapIterator() MOMO_NOEXCEPT
 			: mValuePtr(nullptr)
 		{
 		}
@@ -220,7 +220,7 @@ namespace internal
 		}
 
 	protected:
-		HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
+		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
 			bool move) MOMO_NOEXCEPT
 			: IteratorVersion(&version),
 			mKeyIterator(keyIter),
@@ -230,7 +230,7 @@ namespace internal
 				pvMove();
 		}
 
-		HashMultiMapIterator(KeyIterator keyIter, Value* pvalue,
+		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue,
 			IteratorVersion version) MOMO_NOEXCEPT
 			: IteratorVersion(version),
 			mKeyIterator(keyIter),
@@ -688,8 +688,12 @@ private:
 	};
 
 public:
-	explicit HashMultiMap(const HashTraits& hashTraits = HashTraits(),
-		MemManager&& memManager = MemManager())
+	HashMultiMap()
+		: HashMultiMap(HashTraits())
+	{
+	}
+
+	explicit HashMultiMap(const HashTraits& hashTraits, MemManager&& memManager = MemManager())
 		: mHashMap(hashTraits, std::move(memManager)),
 		mValueCount(0),
 		mValueCrew(GetMemManager())

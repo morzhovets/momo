@@ -93,7 +93,7 @@ namespace internal
 		};
 
 	public:
-		BucketLimP() MOMO_NOEXCEPT
+		explicit BucketLimP() MOMO_NOEXCEPT
 			: mPtr(ptrNull)
 		{
 		}
@@ -364,7 +364,7 @@ namespace internal
 		};
 
 	public:
-		BucketLimP() MOMO_NOEXCEPT
+		explicit BucketLimP() MOMO_NOEXCEPT
 			: mPtrState(stateNull)
 		{
 		}

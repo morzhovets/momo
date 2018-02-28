@@ -266,7 +266,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	DataTable(MemManager&& memManager, const Column<Item>& column,
+	explicit DataTable(MemManager&& memManager, const Column<Item>& column,
 		const Column<Items>&... columns)
 		: DataTable(ColumnList(std::move(memManager), column, columns...))
 	{

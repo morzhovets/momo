@@ -141,7 +141,7 @@ namespace internal
 		}
 
 	protected:
-		DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
+		explicit DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw),
 			mFreeRaws(freeRaws)
@@ -353,7 +353,7 @@ namespace internal
 		}
 
 	protected:
-		DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
+		explicit DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
 			: mColumnList(columnList),
 			mRaw(raw)
 		{

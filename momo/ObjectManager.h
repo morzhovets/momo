@@ -161,7 +161,7 @@ namespace internal
 			{
 			}
 
-			Creator(MemManager& memManager, std::tuple<Args...>&& args) MOMO_NOEXCEPT
+			explicit Creator(MemManager& memManager, std::tuple<Args...>&& args) MOMO_NOEXCEPT
 				: mMemManager(memManager),
 				mArgs(std::move(args))
 			{

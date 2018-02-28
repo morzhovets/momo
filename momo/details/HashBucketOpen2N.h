@@ -77,7 +77,7 @@ namespace internal
 		static const size_t logBucketCountAddend = 6;
 
 	public:
-		BucketOpen2N() MOMO_NOEXCEPT
+		explicit BucketOpen2N() MOMO_NOEXCEPT
 		{
 			pvSetEmpty();
 		}

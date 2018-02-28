@@ -208,7 +208,7 @@ namespace internal
 		typedef typename Bucket::Bounds BucketBounds;
 
 	public:
-		HashSetConstIterator() MOMO_NOEXCEPT
+		explicit HashSetConstIterator() MOMO_NOEXCEPT
 			: mBuckets(nullptr),
 			mHashCode(0),
 			mBucketIterator(nullptr)
@@ -248,8 +248,8 @@ namespace internal
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
 
 	protected:
-		HashSetConstIterator(Buckets& buckets, size_t bucketIndex, BucketIterator bucketIter,
-			const size_t* version, bool movable) MOMO_NOEXCEPT
+		explicit HashSetConstIterator(Buckets& buckets, size_t bucketIndex,
+			BucketIterator bucketIter, const size_t* version, bool movable) MOMO_NOEXCEPT
 			: IteratorVersion(version),
 			mBuckets(&buckets),
 			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
@@ -259,7 +259,8 @@ namespace internal
 				pvMoveIf();
 		}
 
-		HashSetConstIterator(Buckets* buckets, size_t hashCode, const size_t* version) MOMO_NOEXCEPT
+		explicit HashSetConstIterator(Buckets* buckets, size_t hashCode,
+			const size_t* version) MOMO_NOEXCEPT
 			: IteratorVersion(version),
 			mBuckets(buckets),
 			mHashCode(hashCode),
@@ -476,8 +477,12 @@ private:
 	};
 
 public:
-	explicit HashSet(const HashTraits& hashTraits = HashTraits(),
-		MemManager&& memManager = MemManager())
+	HashSet()
+		: HashSet(HashTraits())
+	{
+	}
+
+	explicit HashSet(const HashTraits& hashTraits, MemManager&& memManager = MemManager())
 		: mCrew(hashTraits, std::move(memManager)),
 		mCount(0),
 		mCapacity(0),
