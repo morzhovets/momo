@@ -31,9 +31,18 @@ namespace
 	MOMO_DATA_COLUMN_STRUCT(Struct, dblStruct);
 	MOMO_DATA_COLUMN_STRUCT(Struct, strStruct);
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning (push)
+#pragma warning (disable: 4307)	// integral constant overflow
+#endif
+
 	MOMO_DATA_COLUMN_STRING(int, intString);
 	MOMO_DATA_COLUMN_STRING(double, dblString);
 	MOMO_DATA_COLUMN_STRING(std::string, strString);
+
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning (pop)
+#endif
 }
 
 class SimpleDataTester

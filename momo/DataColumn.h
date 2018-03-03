@@ -30,12 +30,12 @@
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::experimental::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
-	name(offsetof(Struct, name))
+	name((uint64_t)offsetof(Struct, name))
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
 	MOMO_STATIC_ASSERT(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
 	constexpr momo::experimental::DataColumn<Type, Tag> \
-	name(momo::experimental::internal::StrHasher<size_t>::GetHashCode(#name))
+	name(momo::experimental::internal::StrHasher::GetHashCode64(#name))
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::experimental::DataStructDefault, Type, name)
@@ -48,30 +48,20 @@ namespace experimental
 
 namespace internal
 {
-	template<typename TUInt>
 	class StrHasher
 	{
-	public:
-		typedef TUInt UInt;
+	private:
+		static const uint64_t fnvBasis64 = 14695981039346656037ull;
+		static const uint64_t fnvPrime64 = 1099511628211ull;
 
 	public:
 		// Fowler–Noll–Vo hash function (1a)
-		static constexpr UInt GetHashCode(const char* str) MOMO_NOEXCEPT;
+		constexpr static uint64_t GetHashCode64(const char* str) MOMO_NOEXCEPT
+		{
+			return (*str == '\0') ? fnvBasis64
+				: (GetHashCode64(str + 1) ^ (uint64_t)(unsigned char)*str) * fnvPrime64;
+		}
 	};
-
-	template<>
-	constexpr inline uint32_t StrHasher<uint32_t>::GetHashCode(const char* str) MOMO_NOEXCEPT
-	{
-		return (*str == '\0') ? 2166136261u
-			: (GetHashCode(str + 1) ^ (uint32_t)(unsigned char)*str) * 16777619u;
-	}
-
-	template<>
-	constexpr inline uint64_t StrHasher<uint64_t>::GetHashCode(const char* str) MOMO_NOEXCEPT
-	{
-		return (*str == '\0') ? 14695981039346656037ull
-			: (GetHashCode(str + 1) ^ (uint64_t)(unsigned char)*str) * 1099511628211ull;
-	}
 }
 
 enum class DataOperatorType
@@ -141,12 +131,12 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
 
 public:
-	constexpr explicit DataColumn(size_t code) MOMO_NOEXCEPT
+	constexpr explicit DataColumn(uint64_t code) MOMO_NOEXCEPT
 		: mCode(code)
 	{
 	}
 
-	constexpr size_t GetCode() const MOMO_NOEXCEPT
+	constexpr uint64_t GetCode() const MOMO_NOEXCEPT
 	{
 		return mCode;
 	}
@@ -163,7 +153,7 @@ public:
 	}
 
 private:
-	size_t mCode;
+	uint64_t mCode;
 };
 
 template<bool tKeepRowNumber = true>
@@ -207,7 +197,8 @@ public:
 		size_t codeParam) MOMO_NOEXCEPT
 	{
 		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
-		size_t code = column.GetCode();
+		uint64_t code64 = column.GetCode();
+		size_t code = (size_t)(code64 + (code64 >> 32));
 		code ^= (codeParam >> 4) ^ ((codeParam & 15) << 28);
 		code += code >> 16;
 		size_t vertex1 = code & vertexCount1;
@@ -754,7 +745,7 @@ public:
 	template<typename Item>
 	size_t GetOffset(const Column<Item>& column) const MOMO_NOEXCEPT
 	{
-		return column.GetCode();	//?
+		return (size_t)column.GetCode();	//?
 	}
 
 	template<typename Item>
