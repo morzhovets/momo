@@ -432,11 +432,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	Row NewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	Row NewRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		Row row = NewRow();
-		pvFillRaw(row.GetRaw(), assigner, assigners...);
-		return row;
+		return pvNewRow(assigner, assigners...);
 	}
 
 	Row NewRow(const Row& row)
@@ -463,9 +461,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	RowReference AddRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return AddRow(NewRow(assigner, assigners...));
+		return AddRow(pvNewRow(assigner, assigners...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -481,9 +479,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	TryResult TryAddRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return TryAddRow(NewRow(assigner, assigners...));
+		return TryAddRow(pvNewRow(assigner, assigners...));
 	}
 
 	RowReference InsertRow(size_t rowNumber, Row&& row)
@@ -498,10 +496,10 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	RowReference InsertRow(size_t rowNumber, const Assigner<Item, ItemArg>& assigner,
-		const Assigners&... assigners)
+	RowReference InsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
+		Assigners... assigners)
 	{
-		return InsertRow(rowNumber, NewRow(assigner, assigners...));
+		return InsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
@@ -517,10 +515,10 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
-	TryResult TryInsertRow(size_t rowNumber, const Assigner<Item, ItemArg>& assigner,
-		const Assigners&... assigners)
+	TryResult TryInsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
+		Assigners... assigners)
 	{
-		return TryInsertRow(rowNumber, NewRow(assigner, assigners...));
+		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
 
 	Row ExtractRow(ConstRowReference rowRef)
@@ -698,40 +696,40 @@ public:
 	}
 
 	template<typename... Items>
-	ConstSelection Select(const Equaler<Items>&... equalers) const
+	ConstSelection Select(Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
 	template<typename RowFilter, typename... Items,
 		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	ConstSelection Select(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
+	ConstSelection Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
 
 	template<typename... Items>
-	Selection Select(const Equaler<Items>&... equalers)
+	Selection Select(Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
 	template<typename RowFilter, typename... Items,
 		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	Selection Select(const RowFilter& rowFilter, const Equaler<Items>&... equalers)
+	Selection Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
 
 	template<typename... Items>
-	size_t SelectCount(const Equaler<Items>&... equalers) const
+	size_t SelectCount(Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(EmptyRowFilter(), equalers...);
 	}
 
 	template<typename RowFilter, typename... Items,
 		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	size_t SelectCount(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
+	size_t SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
@@ -747,32 +745,32 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
+	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex, Equaler<Item> equaler,
+		Equaler<Items>... equalers) const
 	{
 		return pvFindByHash<RowHashPointerProxy>(
 			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
+	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex, Equaler<Item> equaler,
+		Equaler<Items>... equalers)
 	{
 		return pvFindByHash<RowHashPointerProxy>(
 			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashBounds FindByMultiHash(const void* multiHashIndex,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
+	ConstRowHashBounds FindByMultiHash(const void* multiHashIndex, Equaler<Item> equaler,
+		Equaler<Items>... equalers) const
 	{
 		return pvFindByHash<RowHashBoundsProxy>(
 			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashBounds FindByMultiHash(const void* multiHashIndex,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
+	RowHashBounds FindByMultiHash(const void* multiHashIndex, Equaler<Item> equaler,
+		Equaler<Items>... equalers)
 	{
 		return pvFindByHash<RowHashBoundsProxy>(
 			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
@@ -883,6 +881,14 @@ private:
 	{
 		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
+	}
+
+	template<typename Item, typename ItemArg, typename... Assigners>
+	Row pvNewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	{
+		Row row = NewRow();
+		pvFillRaw(row.GetRaw(), assigner, assigners...);
+		return row;
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>

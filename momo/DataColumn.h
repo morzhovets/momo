@@ -89,10 +89,21 @@ public:
 
 	static const DataOperatorType type = tType;
 
-	friend Column;	//?
-
 public:
-	DataOperator() = delete;
+	explicit DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
+		: mColumn(column),
+		mItemArg(std::forward<ItemArg>(itemArg))
+	{
+	}
+
+#if __cplusplus < 201703L	//?
+	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
+		: mColumn(oper.mColumn),
+		mItemArg(std::forward<ItemArg>(oper.mItemArg))
+	{
+		//MOMO_ASSERT(false);
+	}
+#endif
 
 	DataOperator(const DataOperator&) = delete;
 
@@ -110,19 +121,6 @@ public:
 	ItemArg&& GetItemArg() const MOMO_NOEXCEPT
 	{
 		return std::forward<ItemArg>(mItemArg);
-	}
-
-protected:
-	explicit DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
-		: mColumn(column),
-		mItemArg(std::forward<ItemArg>(itemArg))
-	{
-	}
-
-	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
-		: mColumn(oper.mColumn),
-		mItemArg(std::forward<ItemArg>(oper.mItemArg))
-	{
 	}
 
 private:
@@ -155,15 +153,13 @@ public:
 
 	Equaler operator==(const Item& item) const MOMO_NOEXCEPT
 	{
-		Equaler equaler(*this, item);
-		return equaler;
+		return Equaler(*this, item);
 	}
 
 	template<typename ItemArg>
 	Assigner<ItemArg> operator=(ItemArg&& itemArg) const MOMO_NOEXCEPT
 	{
-		Assigner<ItemArg> assigner(*this, std::forward<ItemArg>(itemArg));
-		return assigner;
+		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
 
 private:
