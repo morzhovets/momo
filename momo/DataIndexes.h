@@ -123,11 +123,7 @@ namespace internal
 	private:
 		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		template<typename Item, size_t internalCapacity = 0>
-		using Array = momo::Array<Item, MemManagerPtr, ArrayItemTraits<Item, MemManagerPtr>,
-			momo::internal::NestedArraySettings<ArraySettings<internalCapacity, false>>>;	//?
-
-		typedef Array<size_t> Offsets;
+		typedef momo::internal::NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
 		typedef std::function<size_t(Raw*)> HashFunc;
 		typedef std::function<bool(Raw*, Raw*)> EqualFunc;
@@ -610,20 +606,22 @@ namespace internal
 		};
 
 	private:
-		typedef Array<UniqueHash> UniqueHashes;
-		typedef Array<MultiHash> MultiHashes;
+		template<typename Hash>
+		using Hashes = Array<Hash, MemManagerPtr, ArrayItemTraits<Hash, MemManagerPtr>,
+			momo::internal::NestedArraySettings<ArraySettings<0, false>>>;	//?
+
+		typedef Hashes<UniqueHash> UniqueHashes;
+		typedef Hashes<MultiHash> MultiHashes;
 
 	public:
-		explicit DataIndexes(const ColumnList* columnList, MemManager& memManager)
-			: mColumnList(columnList),
-			mUniqueHashes(MemManagerPtr(memManager)),
+		explicit DataIndexes(MemManager& memManager)
+			: mUniqueHashes(MemManagerPtr(memManager)),
 			mMultiHashes(MemManagerPtr(memManager))
 		{
 		}
 
 		DataIndexes(DataIndexes&& indexes) MOMO_NOEXCEPT
-			: mColumnList(indexes.mColumnList),
-			mUniqueHashes(std::move(indexes.mUniqueHashes)),
+			: mUniqueHashes(std::move(indexes.mUniqueHashes)),
 			mMultiHashes(std::move(indexes.mMultiHashes))
 		{
 		}
@@ -638,45 +636,48 @@ namespace internal
 
 		void Swap(DataIndexes& indexes) MOMO_NOEXCEPT
 		{
-			std::swap(mColumnList, indexes.mColumnList);
 			mUniqueHashes.Swap(indexes.mUniqueHashes);
 			mMultiHashes.Swap(indexes.mMultiHashes);
 		}
 
 		template<typename... Items>
-		const UniqueHash* GetUniqueHash(const Column<Items>&... columns) const
+		const UniqueHash* GetUniqueHash(const ColumnList* columnList,
+			const Column<Items>&... columns) const
 		{
-			return pvGetHash(mUniqueHashes, columns...);
+			return pvGetHash(columnList, mUniqueHashes, columns...);
 		}
 
 		template<typename... Items>
-		const MultiHash* GetMultiHash(const Column<Items>&... columns) const
+		const MultiHash* GetMultiHash(const ColumnList* columnList,
+			const Column<Items>&... columns) const
 		{
-			return pvGetHash(mMultiHashes, columns...);
+			return pvGetHash(columnList, mMultiHashes, columns...);
 		}
 
 		template<typename Raws, typename... Items>
-		const UniqueHash* AddUniqueHash(const Raws& raws, const Column<Items>&... columns)
+		const UniqueHash* AddUniqueHash(const ColumnList* columnList, const Raws& raws,
+			const Column<Items>&... columns)
 		{
-			return pvAddHash(mUniqueHashes, raws, columns...);
+			return pvAddHash(columnList, mUniqueHashes, raws, columns...);
 		}
 
 		template<typename Raws, typename... Items>
-		const MultiHash* AddMultiHash(const Raws& raws, const Column<Items>&... columns)
+		const MultiHash* AddMultiHash(const ColumnList* columnList, const Raws& raws,
+			const Column<Items>&... columns)
 		{
-			return pvAddHash(mMultiHashes, raws, columns...);
+			return pvAddHash(columnList, mMultiHashes, raws, columns...);
 		}
 
 		template<typename... Items>
-		bool RemoveUniqueHash(const Column<Items>&... columns)
+		bool RemoveUniqueHash(const ColumnList* columnList, const Column<Items>&... columns)
 		{
-			return pvRemoveHash(mUniqueHashes, columns...);
+			return pvRemoveHash(columnList, mUniqueHashes, columns...);
 		}
 
 		template<typename... Items>
-		bool RemoveMultiHash(const Column<Items>&... columns)
+		bool RemoveMultiHash(const ColumnList* columnList, const Column<Items>&... columns)
 		{
-			return pvRemoveHash(mMultiHashes, columns...);
+			return pvRemoveHash(columnList, mMultiHashes, columns...);
 		}
 
 		typename UniqueHash::RawBounds FindRaws(const UniqueHash& uniqueHash, Raw* raw) const
@@ -685,9 +686,10 @@ namespace internal
 		}
 
 		template<typename Hash, typename... Items>
-		typename Hash::RawBounds FindRaws(const Hash& hash, const OffsetItemTuple<Items...>& tuple) const
+		typename Hash::RawBounds FindRaws(const ColumnList* columnList, const Hash& hash,
+			const OffsetItemTuple<Items...>& tuple) const
 		{
-			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple), mColumnList };
+			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple), columnList };
 			return hash.Find(hashTupleKey);
 		}
 
@@ -876,17 +878,12 @@ namespace internal
 		}
 
 	private:
-		MemManagerPtr pvGetMemManagerPtr() const MOMO_NOEXCEPT
-		{
-			return mUniqueHashes.GetMemManager();
-		}
-
 		template<typename Hashes, typename... Items>
-		const typename Hashes::Item* pvGetHash(const Hashes& hashes,
+		const typename Hashes::Item* pvGetHash(const ColumnList* columnList, const Hashes& hashes,
 			const Column<Items>&... columns) const
 		{
 			static const size_t columnCount = sizeof...(columns);
-			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};	// C++11
+			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			return pvGetHash(hashes, sortedOffsets);
 		}
@@ -907,10 +904,9 @@ namespace internal
 		}
 
 		template<typename Hashes, typename Raws, typename... Items>
-		const typename Hashes::Item* pvAddHash(Hashes& hashes, const Raws& raws,
-			const Column<Items>&... columns)
+		const typename Hashes::Item* pvAddHash(const ColumnList* columnList, Hashes& hashes,
+			const Raws& raws, const Column<Items>&... columns)
 		{
-			const ColumnList* columnList = mColumnList;
 			static const size_t columnCount = sizeof...(columns);
 			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
@@ -927,7 +923,8 @@ namespace internal
 				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets.data()); };
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Items...>(columnList, raw1, raw2, offsets.data()); };
-			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(), pvGetMemManagerPtr());
+			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(),
+				MemManagerPtr(hashes.GetMemManager()));
 			typename Hashes::Item newHash(std::move(newHashOffsets), hashFunc, equalFunc);
 			for (Raw* raw : raws)
 			{
@@ -940,9 +937,10 @@ namespace internal
 		}
 
 		template<typename Hashes, typename... Items>
-		bool pvRemoveHash(Hashes& hashes, const Column<Items>&... columns)
+		bool pvRemoveHash(const ColumnList* columnList, Hashes& hashes,
+			const Column<Items>&... columns)
 		{
-			const auto* hash = pvGetHash(hashes, columns...);
+			const auto* hash = pvGetHash(columnList, hashes, columns...);
 			if (hash == nullptr)
 				return false;
 			hashes.Remove(hash - hashes.GetItems(), 1);
@@ -1010,7 +1008,6 @@ namespace internal
 		}
 
 	private:
-		const ColumnList* mColumnList;
 		UniqueHashes mUniqueHashes;
 		MultiHashes mMultiHashes;
 	};

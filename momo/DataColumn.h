@@ -184,8 +184,9 @@ public:
 
 	static const size_t logVertexCount = 8;
 	static const size_t maxColumnCount = 200;
-
 	static const size_t maxCodeParam = 255;
+
+	static const size_t mutOffsetsInternalCapacity = 0;
 
 private:
 	template<typename Item>
@@ -338,8 +339,8 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
-	static const size_t mutOffsetsIntCapacity = maxColumnCount * sizeof(void*);
-	typedef momo::internal::NestedArrayIntCap<mutOffsetsIntCapacity, uint8_t, MemManager> MutOffsets;
+	typedef momo::internal::NestedArrayIntCap<ColumnTraits::mutOffsetsInternalCapacity,
+		uint8_t, MemManager> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;

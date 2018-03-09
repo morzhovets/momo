@@ -27,7 +27,7 @@ namespace experimental
 class DataTraits
 {
 public:
-	typedef MemPoolParams<> RawMemPoolParams;
+	typedef MemPoolParams<MemPoolConst::defaultBlockCount, 0> RawMemPoolParams;
 
 	typedef HashBucketOpenDefault HashBucket;
 
@@ -255,7 +255,7 @@ public:
 		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
 		mRawMemPool(pvCreateRawMemPool()),
-		mIndexes(&GetColumnList(), GetMemManager())
+		mIndexes(GetMemManager())
 	{
 	}
 
@@ -652,37 +652,37 @@ public:
 	template<typename Item, typename... Items>
 	const void* GetUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return mIndexes.GetUniqueHash(column, columns...);
+		return mIndexes.GetUniqueHash(&GetColumnList(), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	const void* GetMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return mIndexes.GetMultiHash(column, columns...);
+		return mIndexes.GetMultiHash(&GetColumnList(), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	const void* AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.AddUniqueHash(mRaws, column, columns...);
+		return mIndexes.AddUniqueHash(&GetColumnList(), mRaws, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	const void* AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.AddMultiHash(mRaws, column, columns...);
+		return mIndexes.AddMultiHash(&GetColumnList(), mRaws, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	bool RemoveUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.RemoveUniqueHash(column, columns...);
+		return mIndexes.RemoveUniqueHash(&GetColumnList(), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	bool RemoveMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.RemoveMultiHash(column, columns...);
+		return mIndexes.RemoveMultiHash(&GetColumnList(), column, columns...);
 	}
 
 	ConstSelection SelectEmpty() const
@@ -1020,7 +1020,7 @@ private:
 	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const RowFilter& rowFilter,
 		const Tuple& tuple) const
 	{
-		return pvMakeSelection(mIndexes.FindRaws(index, tuple), rowFilter,
+		return pvMakeSelection(mIndexes.FindRaws(&GetColumnList(), index, tuple), rowFilter,
 			static_cast<Result*>(nullptr));
 	}
 
@@ -1069,10 +1069,11 @@ private:
 
 	RowHashPointer pvFindByUniqueHash(const UniqueHashIndex* uniqueHashIndex, const Row& row) const
 	{
+		const ColumnList* columnList = &GetColumnList();
 		MOMO_CHECK(uniqueHashIndex != nullptr);
-		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
+		MOMO_CHECK(&row.GetColumnList() == columnList);
 		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row));
-		return RowHashPointerProxy(&GetColumnList(), raws);
+		return RowHashPointerProxy(columnList, raws);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>
@@ -1103,7 +1104,8 @@ private:
 	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/,
 		const Tuple& tuple) const
 	{
-		return RowBoundsProxy(&GetColumnList(), mIndexes.FindRaws(index, tuple));
+		const ColumnList* columnList = &GetColumnList();
+		return RowBoundsProxy(columnList, mIndexes.FindRaws(columnList, index, tuple));
 	}
 
 private:
