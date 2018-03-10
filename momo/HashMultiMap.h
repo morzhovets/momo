@@ -149,7 +149,7 @@ namespace internal
 	};
 
 	template<typename TKeyIterator, typename TValue, typename TSettings>
-	class HashMultiMapIterator : private IteratorVersion<TSettings::checkValueVersion>
+	class HashMultiMapIterator : private VersionKeeper<TSettings::checkValueVersion>
 	{
 	public:
 		typedef TKeyIterator KeyIterator;
@@ -168,7 +168,7 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 	private:
-		typedef internal::IteratorVersion<Settings::checkValueVersion> IteratorVersion;
+		typedef internal::VersionKeeper<Settings::checkValueVersion> VersionKeeper;
 
 		struct ConstIteratorProxy : public ConstIterator
 		{
@@ -189,7 +189,7 @@ namespace internal
 		HashMultiMapIterator& operator++()
 		{
 			MOMO_CHECK(mValuePtr != nullptr);
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			++mValuePtr;
 			pvMove();
 			return *this;
@@ -198,7 +198,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mValuePtr != nullptr);
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			return Pointer(Reference(mKeyIterator->key, *mValuePtr));
 		}
 
@@ -222,7 +222,7 @@ namespace internal
 	protected:
 		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
 			bool move) MOMO_NOEXCEPT
-			: IteratorVersion(&version),
+			: VersionKeeper(&version),
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
 		{
@@ -231,8 +231,8 @@ namespace internal
 		}
 
 		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue,
-			IteratorVersion version) MOMO_NOEXCEPT
-			: IteratorVersion(version),
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
 		{
@@ -242,7 +242,7 @@ namespace internal
 		{
 			(void)version;
 			MOMO_CHECK(mValuePtr != nullptr);
-			MOMO_CHECK(IteratorVersion::Check(&version));
+			MOMO_CHECK(VersionKeeper::Check(&version));
 		}
 
 	private:

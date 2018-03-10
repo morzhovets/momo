@@ -31,7 +31,7 @@ namespace momo
 namespace internal
 {
 	template<typename TNode, typename TSettings>
-	class TreeSetConstIterator : private IteratorVersion<TSettings::checkVersion>
+	class TreeSetConstIterator : private VersionKeeper<TSettings::checkVersion>
 	{
 	protected:
 		typedef TNode Node;
@@ -45,7 +45,7 @@ namespace internal
 		typedef TreeSetConstIterator ConstIterator;
 
 	private:
-		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
+		typedef internal::VersionKeeper<Settings::checkVersion> VersionKeeper;
 
 	public:
 		explicit TreeSetConstIterator() MOMO_NOEXCEPT
@@ -59,7 +59,7 @@ namespace internal
 		TreeSetConstIterator& operator++()
 		{
 			MOMO_CHECK(mNode != nullptr);
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			if (mNode->IsLeaf())
 			{
 				++mItemIndex;
@@ -79,7 +79,7 @@ namespace internal
 		TreeSetConstIterator& operator--()
 		{
 			MOMO_CHECK(mNode != nullptr);
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			Node* node = mNode;
 			size_t itemIndex = mItemIndex;
 			if (!node->IsLeaf())
@@ -116,7 +116,7 @@ namespace internal
 		{
 			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(mItemIndex < mNode->GetCount());
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
@@ -130,7 +130,7 @@ namespace internal
 	protected:
 		explicit TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
 			bool move) MOMO_NOEXCEPT
-			: IteratorVersion(version),
+			: VersionKeeper(version),
 			mNode(&node),
 			mItemIndex(itemIndex)
 		{
@@ -152,7 +152,7 @@ namespace internal
 		{
 			(void)version;
 			MOMO_CHECK(mNode != nullptr);
-			MOMO_CHECK(IteratorVersion::Check(version));
+			MOMO_CHECK(VersionKeeper::Check(version));
 		}
 
 	private:

@@ -187,7 +187,7 @@ namespace internal
 	};
 
 	template<typename TBuckets, typename TSettings>
-	class HashSetConstIterator : private IteratorVersion<TSettings::checkVersion>
+	class HashSetConstIterator : private VersionKeeper<TSettings::checkVersion>
 	{
 	protected:
 		typedef TBuckets Buckets;
@@ -202,7 +202,7 @@ namespace internal
 		typedef HashSetConstIterator ConstIterator;
 
 	private:
-		typedef internal::IteratorVersion<Settings::checkVersion> IteratorVersion;
+		typedef internal::VersionKeeper<Settings::checkVersion> VersionKeeper;
 
 		typedef typename Bucket::Iterator BucketIterator;
 		typedef typename Bucket::Bounds BucketBounds;
@@ -220,7 +220,7 @@ namespace internal
 		HashSetConstIterator& operator++()
 		{
 			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			if (ptIsMovable())
 			{
 				++mBucketIterator;
@@ -236,7 +236,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
-			MOMO_CHECK(IteratorVersion::Check());
+			MOMO_CHECK(VersionKeeper::Check());
 			return std::addressof(*mBucketIterator);	//?
 		}
 
@@ -250,7 +250,7 @@ namespace internal
 	protected:
 		explicit HashSetConstIterator(Buckets& buckets, size_t bucketIndex,
 			BucketIterator bucketIter, const size_t* version, bool movable) MOMO_NOEXCEPT
-			: IteratorVersion(version),
+			: VersionKeeper(version),
 			mBuckets(&buckets),
 			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
 			mBucketIterator(bucketIter)
@@ -261,7 +261,7 @@ namespace internal
 
 		explicit HashSetConstIterator(Buckets* buckets, size_t hashCode,
 			const size_t* version) MOMO_NOEXCEPT
-			: IteratorVersion(version),
+			: VersionKeeper(version),
 			mBuckets(buckets),
 			mHashCode(hashCode),
 			mBucketIterator(nullptr)
@@ -303,7 +303,7 @@ namespace internal
 			(void)empty;
 			MOMO_CHECK(empty || mBuckets != nullptr);
 			MOMO_CHECK(empty != (mBucketIterator != BucketIterator(nullptr)));
-			MOMO_CHECK(IteratorVersion::Check(version));
+			MOMO_CHECK(VersionKeeper::Check(version));
 		}
 
 	private:

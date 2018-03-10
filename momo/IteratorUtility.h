@@ -143,22 +143,22 @@ namespace internal
 	};
 
 	template<bool tCheckVersion>
-	class IteratorVersion;
+	class VersionKeeper;
 
 	template<>
-	class IteratorVersion<true>
+	class VersionKeeper<true>
 	{
 	public:
 		static const bool checkVersion = true;
 
 	public:
-		explicit IteratorVersion() MOMO_NOEXCEPT
+		explicit VersionKeeper() MOMO_NOEXCEPT
 			: mContainerVersion(nullptr),
 			mVersion(0)
 		{
 		}
 
-		explicit IteratorVersion(const size_t* version) MOMO_NOEXCEPT
+		explicit VersionKeeper(const size_t* version) MOMO_NOEXCEPT
 			: mContainerVersion(version),
 			mVersion(*version)
 		{
@@ -182,17 +182,17 @@ namespace internal
 	};
 
 	template<>
-	class IteratorVersion<false>
+	class VersionKeeper<false>
 	{
 	public:
 		static const bool checkVersion = false;
 
 	public:
-		explicit IteratorVersion() MOMO_NOEXCEPT
+		explicit VersionKeeper() MOMO_NOEXCEPT
 		{
 		}
 
-		explicit IteratorVersion(const size_t* /*version*/) MOMO_NOEXCEPT
+		explicit VersionKeeper(const size_t* /*version*/) MOMO_NOEXCEPT
 		{
 		}
 
