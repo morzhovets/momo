@@ -54,9 +54,8 @@ namespace internal
 
 		ArrayIndexIterator& operator+=(ptrdiff_t diff)
 		{
-			MOMO_CHECK(mArray != nullptr);
 			size_t newIndex = mIndex + diff;
-			MOMO_CHECK(newIndex <= mArray->GetCount());
+			MOMO_CHECK((mArray != nullptr) ? newIndex <= mArray->GetCount() : diff == 0);
 			mIndex = newIndex;
 			return *this;
 		}
