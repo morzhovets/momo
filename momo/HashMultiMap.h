@@ -173,6 +173,7 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetValuePtr, const Value*)
 		};
 
 	public:
@@ -204,7 +205,7 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mValuePtr == iter.GetValuePtr();
+			return mValuePtr == ConstIteratorProxy::GetValuePtr(iter);
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMultiMapIterator)
@@ -212,11 +213,6 @@ namespace internal
 		KeyIterator GetKeyIterator() const MOMO_NOEXCEPT
 		{
 			return mKeyIterator;
-		}
-
-		Value* GetValuePtr() const MOMO_NOEXCEPT
-		{
-			return mValuePtr;
 		}
 
 	protected:
@@ -236,6 +232,11 @@ namespace internal
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
 		{
+		}
+
+		Value* ptGetValuePtr() const MOMO_NOEXCEPT
+		{
+			return mValuePtr;
 		}
 
 		void ptCheck(const size_t& version) const
@@ -656,6 +657,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetValuePtr, const Value*)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
 	};
 
@@ -1008,7 +1010,7 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(iter.GetKeyIterator()));
 		ValueArray& valueArray = hashMapIter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
-		size_t valueIndex = iter.GetValuePtr() - valueBounds.GetBegin();
+		size_t valueIndex = ConstIteratorProxy::GetValuePtr(iter) - valueBounds.GetBegin();
 		KeyValueTraits::AssignAnywayValue(GetMemManager(), *(valueBounds.GetEnd() - 1),
 			valueBounds.GetBegin()[valueIndex]);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());
@@ -1085,7 +1087,8 @@ public:
 			return Iterator();
 		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
-		return MakeIterator(keyIter, iter.GetValuePtr() - keyIter->values.GetBegin());
+		return MakeIterator(keyIter,
+			ConstIteratorProxy::GetValuePtr(iter) - keyIter->values.GetBegin());
 	}
 
 	KeyIterator MakeMutableKeyIterator(ConstKeyIterator keyIter)
