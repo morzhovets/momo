@@ -65,7 +65,9 @@ namespace internal
 
 		DataMultiHashIterator& operator+=(ptrdiff_t diff)
 		{
-			mRawIndex += diff;
+			size_t newRawIndex = mRawIndex + diff;
+			MOMO_CHECK(!!mKeyIterator ? newRawIndex <= mKeyIterator->values.GetCount() + 1 : diff == 0);
+			mRawIndex = newRawIndex;
 			return *this;
 		}
 
@@ -614,7 +616,7 @@ namespace internal
 		typedef Hashes<MultiHash> MultiHashes;
 
 	public:
-		explicit DataIndexes(MemManager& memManager)
+		explicit DataIndexes(MemManager& memManager) MOMO_NOEXCEPT
 			: mUniqueHashes(MemManagerPtr(memManager)),
 			mMultiHashes(MemManagerPtr(memManager))
 		{

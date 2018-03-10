@@ -521,7 +521,7 @@ namespace internal
 		template<typename RowIterator>
 		void Assign(RowIterator begin, RowIterator end)
 		{
-			size_t count = pvCheck(begin, end);
+			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(count);
 			mRaws.Clear(false);
 			for (RowIterator iter = begin; iter != end; ++iter)
@@ -537,7 +537,7 @@ namespace internal
 		template<typename RowIterator>
 		void Add(RowIterator begin, RowIterator end)
 		{
-			size_t count = pvCheck(begin, end);
+			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(mRaws.GetCount() + count);
 			for (RowIterator iter = begin; iter != end; ++iter)
 				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(*iter));
@@ -552,7 +552,7 @@ namespace internal
 		template<typename RowIterator>
 		void Insert(size_t index, RowIterator begin, RowIterator end)
 		{
-			size_t count = pvCheck(begin, end);
+			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(mRaws.GetCount() + count);
 			mRaws.Insert(index, count, nullptr);
 			for (RowIterator iter = begin; iter != end; ++iter, ++index)
@@ -632,7 +632,7 @@ namespace internal
 		}
 
 		template<typename RowIterator>
-		size_t pvCheck(RowIterator begin, RowIterator end)
+		size_t pvGetCount(RowIterator begin, RowIterator end)
 		{
 			MOMO_STATIC_ASSERT(momo::internal::IsForwardIterator<RowIterator>::value);
 			size_t count = 0;
