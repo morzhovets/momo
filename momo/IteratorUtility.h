@@ -166,8 +166,7 @@ namespace internal
 
 		bool Check() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mContainerVersion != nullptr);
-			return *mContainerVersion == mVersion;
+			return mContainerVersion != nullptr && *mContainerVersion == mVersion;
 		}
 
 		bool Check(const size_t* version) const MOMO_NOEXCEPT

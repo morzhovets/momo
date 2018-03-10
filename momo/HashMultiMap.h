@@ -158,6 +158,8 @@ namespace internal
 	protected:
 		typedef TSettings Settings;
 
+		typedef internal::VersionKeeper<Settings::checkValueVersion> VersionKeeper;
+
 	public:
 		typedef typename KeyIterator::Reference::Key Key;
 
@@ -168,8 +170,6 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 	private:
-		typedef internal::VersionKeeper<Settings::checkValueVersion> VersionKeeper;
-
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -188,8 +188,8 @@ namespace internal
 
 		HashMultiMapIterator& operator++()
 		{
-			MOMO_CHECK(mValuePtr != nullptr);
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mValuePtr != nullptr);
 			++mValuePtr;
 			pvMove();
 			return *this;
@@ -197,8 +197,8 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(mValuePtr != nullptr);
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mValuePtr != nullptr);
 			return Pointer(Reference(mKeyIterator->key, *mValuePtr));
 		}
 
@@ -241,8 +241,8 @@ namespace internal
 		void ptCheck(const size_t& version) const
 		{
 			(void)version;
-			MOMO_CHECK(mValuePtr != nullptr);
 			MOMO_CHECK(VersionKeeper::Check(&version));
+			MOMO_CHECK(mValuePtr != nullptr);
 		}
 
 	private:

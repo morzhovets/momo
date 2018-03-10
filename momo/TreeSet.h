@@ -58,8 +58,8 @@ namespace internal
 
 		TreeSetConstIterator& operator++()
 		{
-			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mNode != nullptr);
 			if (mNode->IsLeaf())
 			{
 				++mItemIndex;
@@ -78,8 +78,8 @@ namespace internal
 
 		TreeSetConstIterator& operator--()
 		{
-			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mNode != nullptr);
 			Node* node = mNode;
 			size_t itemIndex = mItemIndex;
 			if (!node->IsLeaf())
@@ -114,9 +114,9 @@ namespace internal
 
 		Pointer operator->() const
 		{
+			MOMO_CHECK(VersionKeeper::Check());
 			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(mItemIndex < mNode->GetCount());
-			MOMO_CHECK(VersionKeeper::Check());
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
@@ -151,8 +151,8 @@ namespace internal
 		void ptCheck(const size_t* version) const
 		{
 			(void)version;
-			MOMO_CHECK(mNode != nullptr);
 			MOMO_CHECK(VersionKeeper::Check(version));
+			MOMO_CHECK(mNode != nullptr);
 		}
 
 	private:

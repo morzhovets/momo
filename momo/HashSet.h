@@ -219,8 +219,8 @@ namespace internal
 
 		HashSetConstIterator& operator++()
 		{
-			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			if (ptIsMovable())
 			{
 				++mBucketIterator;
@@ -235,8 +235,8 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			MOMO_CHECK(VersionKeeper::Check());
+			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			return std::addressof(*mBucketIterator);	//?
 		}
 
@@ -301,9 +301,9 @@ namespace internal
 		{
 			(void)version;
 			(void)empty;
+			MOMO_CHECK(VersionKeeper::Check(version));
 			MOMO_CHECK(empty || mBuckets != nullptr);
 			MOMO_CHECK(empty != (mBucketIterator != BucketIterator(nullptr)));
-			MOMO_CHECK(VersionKeeper::Check(version));
 		}
 
 	private:
