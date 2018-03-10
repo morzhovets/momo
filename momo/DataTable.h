@@ -137,6 +137,8 @@ private:
 		struct Data
 		{
 			ColumnList columnList;
+			size_t changeVersion;
+			size_t removeVersion;
 			FreeRaws freeRaws;
 		};
 
@@ -145,6 +147,8 @@ private:
 		{
 			mData = columnList.GetMemManager().template Allocate<Data>(sizeof(Data));
 			new(&mData->columnList) ColumnList(std::move(columnList));
+			mData->changeVersion = 0;
+			mData->removeVersion = 0;
 			new(&mData->freeRaws) FreeRaws(nullptr);
 		}
 
@@ -189,6 +193,18 @@ private:
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->columnList;
+		}
+
+		size_t& GetChangeVersion() MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(!IsNull());
+			return mData->changeVersion;
+		}
+
+		size_t& GetRemoveVersion() MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(!IsNull());
+			return mData->removeVersion;
 		}
 
 		FreeRaws& GetFreeRaws() MOMO_NOEXCEPT
@@ -384,6 +400,8 @@ public:
 		mIndexes.ClearRaws();
 		pvFreeRaws();
 		mRaws.Clear();
+		++mCrew.GetChangeVersion();
+		++mCrew.GetRemoveVersion();
 	}
 
 	void Reserve(size_t capacity)
@@ -428,7 +446,7 @@ public:
 			mRawMemPool.Deallocate(raw);
 			throw;
 		}
-		return pvNewRow(raw);
+		return pvMakeRow(raw);
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -440,13 +458,13 @@ public:
 	Row NewRow(const Row& row)
 	{
 		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
-		return pvNewRow(pvCopyRaw(row.GetRaw()));
+		return pvMakeRow(pvCopyRaw(row.GetRaw()));
 	}
 
 	Row NewRow(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return pvNewRow(pvCopyRaw(rowRef.GetRaw()));
+		return pvMakeRow(pvCopyRaw(rowRef.GetRaw()));
 	}
 
 	RowReference AddRow(Row&& row)
@@ -457,6 +475,7 @@ public:
 		Raw* raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, mRaws.GetCount());
 		mRaws.AddBackNogrow(raw);
+		++mCrew.GetChangeVersion();
 		return pvMakeRowReference(raw);
 	}
 
@@ -534,7 +553,9 @@ public:
 		mIndexes.RemoveRaw(raw);
 		mRaws.Remove(rowNumber, 1);
 		pvSetNumbers(rowNumber);
-		return pvNewRow(raw);
+		++mCrew.GetChangeVersion();
+		++mCrew.GetRemoveVersion();
+		return pvMakeRow(raw);
 	}
 
 	RowReference UpdateRow(ConstRowReference rowRef, Row&& row)
@@ -551,6 +572,8 @@ public:
 		pvFreeRaw(raw);
 		raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, rowNumber);
+		++mCrew.GetChangeVersion();
+		++mCrew.GetRemoveVersion();
 		return pvMakeRowReference(raw);
 	}
 
@@ -877,7 +900,7 @@ private:
 		}
 	}
 
-	Row pvNewRow(Raw* raw) MOMO_NOEXCEPT
+	Row pvMakeRow(Raw* raw) MOMO_NOEXCEPT
 	{
 		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
@@ -940,6 +963,8 @@ private:
 		}
 		mRaws.RemoveBack(mRaws.GetCount() - number);
 		pvSetNumbers();
+		++mCrew.GetChangeVersion();
+		++mCrew.GetRemoveVersion();
 	}
 
 	Selection pvSelectEmpty() const
