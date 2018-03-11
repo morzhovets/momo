@@ -142,13 +142,16 @@ namespace internal
 		bool inserted;
 	};
 
-	template<bool tCheckVersion>
+	template<typename TSettings,
+		bool tCheckVersion = TSettings::checkVersion>
 	class VersionKeeper;
 
-	template<>
-	class VersionKeeper<true>
+	template<typename TSettings>
+	class VersionKeeper<TSettings, true>
 	{
 	public:
+		typedef TSettings Settings;
+
 		static const bool checkVersion = true;
 
 	public:
@@ -164,15 +167,15 @@ namespace internal
 		{
 		}
 
-		bool Check() const MOMO_NOEXCEPT
+		void Check() const
 		{
-			return mContainerVersion != nullptr && *mContainerVersion == mVersion;
+			MOMO_CHECK(mContainerVersion != nullptr && *mContainerVersion == mVersion);
 		}
 
-		bool Check(const size_t* version) const MOMO_NOEXCEPT
+		void Check(const size_t* version) const
 		{
 			MOMO_ASSERT(version != nullptr);
-			return mContainerVersion == version && mVersion == *version;
+			MOMO_CHECK(mContainerVersion == version && mVersion == *version);
 		}
 
 	private:
@@ -180,10 +183,12 @@ namespace internal
 		size_t mVersion;
 	};
 
-	template<>
-	class VersionKeeper<false>
+	template<typename TSettings>
+	class VersionKeeper<TSettings, false>
 	{
 	public:
+		typedef TSettings Settings;
+
 		static const bool checkVersion = false;
 
 	public:
@@ -195,14 +200,12 @@ namespace internal
 		{
 		}
 
-		bool Check() const MOMO_NOEXCEPT
+		void Check() const
 		{
-			return true;
 		}
 
-		bool Check(const size_t* /*version*/) const MOMO_NOEXCEPT
+		void Check(const size_t* /*version*/) const
 		{
-			return true;
 		}
 	};
 

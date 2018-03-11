@@ -187,7 +187,7 @@ namespace internal
 	};
 
 	template<typename TBuckets, typename TSettings>
-	class HashSetConstIterator : private VersionKeeper<TSettings::checkVersion>
+	class HashSetConstIterator : private VersionKeeper<TSettings>
 	{
 	protected:
 		typedef TBuckets Buckets;
@@ -202,7 +202,7 @@ namespace internal
 		typedef HashSetConstIterator ConstIterator;
 
 	private:
-		typedef internal::VersionKeeper<Settings::checkVersion> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 		typedef typename Bucket::Iterator BucketIterator;
 		typedef typename Bucket::Bounds BucketBounds;
@@ -219,7 +219,7 @@ namespace internal
 
 		HashSetConstIterator& operator++()
 		{
-			MOMO_CHECK(VersionKeeper::Check());
+			VersionKeeper::Check();
 			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			if (ptIsMovable())
 			{
@@ -235,7 +235,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(VersionKeeper::Check());
+			VersionKeeper::Check();
 			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
 			return std::addressof(*mBucketIterator);	//?
 		}
@@ -299,9 +299,8 @@ namespace internal
 
 		void ptCheck(const size_t* version, bool empty) const
 		{
-			(void)version;
 			(void)empty;
-			MOMO_CHECK(VersionKeeper::Check(version));
+			VersionKeeper::Check(version);
 			MOMO_CHECK(empty || mBuckets != nullptr);
 			MOMO_CHECK(empty != (mBucketIterator != BucketIterator(nullptr)));
 		}
