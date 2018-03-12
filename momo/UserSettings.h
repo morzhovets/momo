@@ -125,6 +125,10 @@
 #define MOMO_HAS_DEDUCTION_GUIDES
 #endif
 
+#ifdef __cpp_guaranteed_copy_elision
+#define MOMO_GUARANTEED_COPY_ELISION
+#endif
+
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning (disable: 4127)	// conditional expression is constant
 #pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated

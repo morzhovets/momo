@@ -86,7 +86,7 @@ public:
 	{
 	}
 
-#if __cplusplus < 201703L	//?
+#ifndef MOMO_GUARANTEED_COPY_ELISION
 	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
 		: mColumn(oper.mColumn),
 		mItemArg(std::forward<ItemArg>(oper.mItemArg))
