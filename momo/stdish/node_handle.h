@@ -64,7 +64,7 @@ namespace internal
 
 		explicit operator bool() const MOMO_NOEXCEPT
 		{
-			return empty();
+			return !empty();
 		}
 
 		const value_type& value() const
@@ -72,7 +72,7 @@ namespace internal
 			return mSetExtractedItem.GetItem();
 		}
 
-		value_type& value() //const
+		value_type& value()
 		{
 			return mSetExtractedItem.GetItem();
 		}
@@ -137,7 +137,7 @@ namespace internal
 
 		explicit operator bool() const MOMO_NOEXCEPT
 		{
-			return empty();
+			return !empty();
 		}
 
 		const key_type& key() const
@@ -145,7 +145,7 @@ namespace internal
 			return mMapExtractedPair.GetKey();
 		}
 
-		key_type& key() //const
+		key_type& key()
 		{
 			return mMapExtractedPair.GetKey();
 		}
@@ -155,7 +155,7 @@ namespace internal
 			return mMapExtractedPair.GetValue();
 		}
 
-		mapped_type& mapped() //const
+		mapped_type& mapped()
 		{
 			return mMapExtractedPair.GetValue();
 		}
