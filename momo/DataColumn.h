@@ -86,7 +86,7 @@ public:
 	{
 	}
 
-#ifndef MOMO_GUARANTEED_COPY_ELISION
+#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
 	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
 		: mColumn(oper.mColumn),
 		mItemArg(std::forward<ItemArg>(oper.mItemArg))

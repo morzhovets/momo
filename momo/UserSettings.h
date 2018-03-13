@@ -126,7 +126,7 @@
 #endif
 
 #ifdef __cpp_guaranteed_copy_elision
-#define MOMO_GUARANTEED_COPY_ELISION
+#define MOMO_HAS_GUARANTEED_COPY_ELISION
 #endif
 
 #if defined(_MSC_VER) && !defined(__clang__)
