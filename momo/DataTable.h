@@ -104,10 +104,12 @@ public:
 	template<typename Item>
 	using ConstItemBounds = typename ItemBounds<Item>::ConstBounds;
 
+	typedef const void* IndexHandle;
+
 	struct TryResult
 	{
 		RowReference rowReference;
-		const void* uniqueHashIndex;
+		IndexHandle uniqueHashIndex;
 	};
 
 private:
@@ -673,25 +675,25 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	const void* GetUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
+	IndexHandle GetUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return mIndexes.GetUniqueHash(&GetColumnList(), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	const void* GetMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
+	IndexHandle GetMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return mIndexes.GetMultiHash(&GetColumnList(), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	const void* AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	IndexHandle AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		return mIndexes.AddUniqueHash(&GetColumnList(), mRaws, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	const void* AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	IndexHandle AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		return mIndexes.AddMultiHash(&GetColumnList(), mRaws, column, columns...);
 	}
@@ -757,18 +759,18 @@ public:
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
 
-	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex, const Row& row) const
+	ConstRowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, const Row& row) const
 	{
 		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
 	}
 
-	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex, const Row& row)
+	RowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, const Row& row)
 	{
 		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashPointer FindByUniqueHash(const void* uniqueHashIndex, Equaler<Item> equaler,
+	ConstRowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers) const
 	{
 		return pvFindByHash<RowHashPointerProxy>(
@@ -776,7 +778,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	RowHashPointer FindByUniqueHash(const void* uniqueHashIndex, Equaler<Item> equaler,
+	RowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers)
 	{
 		return pvFindByHash<RowHashPointerProxy>(
@@ -784,7 +786,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashBounds FindByMultiHash(const void* multiHashIndex, Equaler<Item> equaler,
+	ConstRowHashBounds FindByMultiHash(IndexHandle multiHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers) const
 	{
 		return pvFindByHash<RowHashBoundsProxy>(
@@ -792,7 +794,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	RowHashBounds FindByMultiHash(const void* multiHashIndex, Equaler<Item> equaler,
+	RowHashBounds FindByMultiHash(IndexHandle multiHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers)
 	{
 		return pvFindByHash<RowHashBoundsProxy>(
