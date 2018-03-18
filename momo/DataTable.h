@@ -113,6 +113,8 @@ public:
 	};
 
 private:
+	typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
 	typedef momo::internal::BoolConstant<Settings::keepRowNumber> KeepRowNumber;
 
 	static const size_t invalidRowNumber = SIZE_MAX;
@@ -197,10 +199,22 @@ private:
 			return mData->columnList;
 		}
 
+		const size_t& GetChangeVersion() const MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(!IsNull());
+			return mData->changeVersion;
+		}
+
 		size_t& GetChangeVersion() MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->changeVersion;
+		}
+
+		const size_t& GetRemoveVersion() const MOMO_NOEXCEPT
+		{
+			MOMO_ASSERT(!IsNull());
+			return mData->removeVersion;
 		}
 
 		size_t& GetRemoveVersion() MOMO_NOEXCEPT
@@ -350,22 +364,26 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		return ConstIteratorProxy(&GetColumnList(), mRaws.GetBegin());
+		return ConstIteratorProxy(&GetColumnList(), mRaws.GetBegin(),
+			VersionKeeper(&mCrew.GetChangeVersion()));
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
-		return IteratorProxy(&GetColumnList(), mRaws.GetBegin());
+		return IteratorProxy(&GetColumnList(), mRaws.GetBegin(),
+			VersionKeeper(&mCrew.GetChangeVersion()));
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
-		return ConstIteratorProxy(&GetColumnList(), mRaws.GetEnd());
+		return ConstIteratorProxy(&GetColumnList(), mRaws.GetEnd(),
+			VersionKeeper(&mCrew.GetChangeVersion()));
 	}
 
 	Iterator GetEnd() MOMO_NOEXCEPT
 	{
-		return IteratorProxy(&GetColumnList(), mRaws.GetEnd());
+		return IteratorProxy(&GetColumnList(), mRaws.GetEnd(),
+			VersionKeeper(&mCrew.GetChangeVersion()));
 	}
 
 	MOMO_FRIEND_SWAP(DataTable)
@@ -844,12 +862,13 @@ private:
 
 	ConstRowReference pvMakeConstRowReference(Raw* raw) const MOMO_NOEXCEPT
 	{
-		return ConstRowReferenceProxy(&GetColumnList(), raw);
+		return ConstRowReferenceProxy(&GetColumnList(), raw,
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 	{
-		return RowReferenceProxy(&GetColumnList(), raw);
+		return RowReferenceProxy(&GetColumnList(), raw, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename Item>
@@ -858,7 +877,8 @@ private:
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(column);
 		RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());
-		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds));
+		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
+			VersionKeeper(&mCrew.GetChangeVersion())));
 	}
 
 	Raw* pvCopyRaw(const Raw* srcRaw)
@@ -972,7 +992,8 @@ private:
 	Selection pvSelectEmpty() const
 	{
 		MemManager memManager = GetMemManager();
-		return SelectionProxy(&GetColumnList(), typename SelectionProxy::Raws(std::move(memManager)));
+		return SelectionProxy(&GetColumnList(), typename SelectionProxy::Raws(std::move(memManager)),
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename Result, typename RowFilter, typename... Items,
@@ -1069,7 +1090,8 @@ private:
 			if (rowFilter(pvMakeConstRowReference(raw)))
 				selRaws.AddBack(raw);
 		}
-		return SelectionProxy(&GetColumnList(), std::move(selRaws));
+		return SelectionProxy(&GetColumnList(), std::move(selRaws),
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename Raws>
@@ -1077,7 +1099,8 @@ private:
 	{
 		MemManager memManager = GetMemManager();
 		typename SelectionProxy::Raws selRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager));
-		return SelectionProxy(&GetColumnList(), std::move(selRaws));
+		return SelectionProxy(&GetColumnList(), std::move(selRaws),
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename Raws, typename RowFilter>
@@ -1100,7 +1123,7 @@ private:
 		MOMO_CHECK(uniqueHashIndex != nullptr);
 		MOMO_CHECK(&row.GetColumnList() == columnList);
 		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row));
-		return RowHashPointerProxy(columnList, raws);
+		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>
@@ -1127,12 +1150,22 @@ private:
 		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, newTuple, equalers...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename Tuple>
-	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/,
+	template<typename RowBoundsProxy, typename Tuple>
+	RowBoundsProxy pvFindByHashRec(const UniqueHashIndex& uniqueHashIndex, const size_t* /*offsets*/,
 		const Tuple& tuple) const
 	{
 		const ColumnList* columnList = &GetColumnList();
-		return RowBoundsProxy(columnList, mIndexes.FindRaws(columnList, index, tuple));
+		return RowBoundsProxy(columnList, mIndexes.FindRaws(columnList, uniqueHashIndex, tuple),
+			VersionKeeper(&mCrew.GetRemoveVersion()));
+	}
+
+	template<typename RowBoundsProxy, typename Tuple>
+	RowBoundsProxy pvFindByHashRec(const MultiHashIndex& multiHashIndex, const size_t* /*offsets*/,
+		const Tuple& tuple) const
+	{
+		const ColumnList* columnList = &GetColumnList();
+		return RowBoundsProxy(columnList, mIndexes.FindRaws(columnList, multiHashIndex, tuple),
+			VersionKeeper(&mCrew.GetChangeVersion()));
 	}
 
 private:

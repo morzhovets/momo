@@ -161,6 +161,7 @@ struct DataSettings
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 
 	static const bool keepRowNumber = tKeepRowNumber;
 

@@ -132,12 +132,12 @@ namespace internal
 
 		const Raw* operator->() const MOMO_NOEXCEPT
 		{
-			return mRaw;
+			return GetRaw();
 		}
 
 		Raw* operator->() MOMO_NOEXCEPT
 		{
-			return mRaw;
+			return GetRaw();
 		}
 
 	protected:
@@ -283,13 +283,15 @@ namespace internal
 	};
 
 	template<typename TItemReferencer>
-	class DataRowReference : private TItemReferencer
+	class DataRowReference : private TItemReferencer,
+		private momo::internal::VersionKeeper<typename TItemReferencer::ColumnList::Settings>
 	{
 	protected:
 		typedef TItemReferencer ItemReferencer;
 
 	public:
 		typedef typename ItemReferencer::ColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Item>
@@ -299,6 +301,9 @@ namespace internal
 
 		template<typename Item>
 		using ItemReference = typename ItemReferencer::template ItemReference<Item>;
+
+	protected:
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 	private:
 		struct ConstReferenceProxy : public ConstReference
@@ -311,7 +316,7 @@ namespace internal
 
 		operator ConstReference() const MOMO_NOEXCEPT
 		{
-			return ConstReferenceProxy(mColumnList, mRaw);
+			return ConstReferenceProxy(mColumnList, mRaw, *this);
 		}
 
 		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
@@ -322,6 +327,7 @@ namespace internal
 		template<typename Item>
 		ItemReference<Item> GetByOffset(size_t offset) const
 		{
+			VersionKeeper::Check();
 			return ItemReferencer::template ptGetReference<Item>(mColumnList, mRaw, offset);
 		}
 
@@ -337,24 +343,28 @@ namespace internal
 			return GetByColumn(column);
 		}
 
-		size_t GetNumber() const MOMO_NOEXCEPT
+		size_t GetNumber() const
 		{
+			VersionKeeper::Check();
 			return mColumnList->GetNumber(mRaw);
 		}
 
-		const Raw* GetRaw() const MOMO_NOEXCEPT
+		const Raw* GetRaw() const
 		{
+			VersionKeeper::Check();
 			return mRaw;
 		}
 
-		const Raw* operator->() const MOMO_NOEXCEPT
+		const Raw* operator->() const
 		{
-			return mRaw;
+			return GetRaw();
 		}
 
 	protected:
-		explicit DataRowReference(const ColumnList* columnList, Raw* raw) MOMO_NOEXCEPT
-			: mColumnList(columnList),
+		explicit DataRowReference(const ColumnList* columnList, Raw* raw,
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
+			mColumnList(columnList),
 			mRaw(raw)
 		{
 		}
@@ -415,7 +425,7 @@ namespace internal
 
 		explicit operator bool() const MOMO_NOEXCEPT
 		{
-			return RowBounds::GetCount() > 0;
+			return !!*this;
 		}
 	};
 }

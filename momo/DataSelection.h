@@ -21,12 +21,15 @@ namespace experimental
 namespace internal
 {
 	template<typename TRowReference, typename TRawIterator>
-	class DataRowIterator
+	class DataRowIterator : private momo::internal::VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
 		typedef TRowReference RowReference;
 		typedef TRawIterator RawIterator;
 		typedef typename RowReference::ColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
+
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef const RowReference Reference;
@@ -35,8 +38,6 @@ namespace internal
 		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
 
 	private:
-		typedef typename ColumnList::Settings Settings;
-
 		struct RowReferenceProxy : public RowReference
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
@@ -57,11 +58,12 @@ namespace internal
 
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, mRawIterator);
+			return ConstIteratorProxy(mColumnList, mRawIterator, *this);
 		}
 
 		DataRowIterator& operator+=(ptrdiff_t diff)
 		{
+			//VersionKeeper::Check();
 			mRawIterator += diff;
 			return *this;
 		}
@@ -74,8 +76,9 @@ namespace internal
 
 		Pointer operator->() const
 		{
+			VersionKeeper::Check();
 			MOMO_CHECK(mColumnList != nullptr);
-			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator));
+			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
@@ -93,8 +96,10 @@ namespace internal
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
 
 	protected:
-		explicit DataRowIterator(const ColumnList* columnList, RawIterator rawIter) MOMO_NOEXCEPT
-			: mColumnList(columnList),
+		explicit DataRowIterator(const ColumnList* columnList, RawIterator rawIter,
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
+			mColumnList(columnList),
 			mRawIterator(rawIter)
 		{
 		}
@@ -115,12 +120,15 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TRawBounds>
-	class DataRowBounds
+	class DataRowBounds : private momo::internal::VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
 		typedef TRowReference RowReference;
 		typedef TRawBounds RawBounds;
 		typedef typename RowReference::ColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
+
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
@@ -130,8 +138,6 @@ namespace internal
 		typedef RowReference Reference;
 
 	private:
-		typedef typename ColumnList::Settings Settings;
-
 		struct IteratorProxy : public Iterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
@@ -150,23 +156,24 @@ namespace internal
 
 		operator ConstBounds() const MOMO_NOEXCEPT
 		{
-			return ConstBoundsProxy(mColumnList, mRawBounds);
+			return ConstBoundsProxy(mColumnList, mRawBounds, *this);
 		}
 
 		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return IteratorProxy(mColumnList, mRawBounds.GetBegin());
+			return IteratorProxy(mColumnList, mRawBounds.GetBegin(), *this);
 		}
 
 		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return IteratorProxy(mColumnList, mRawBounds.GetEnd());
+			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataRowBounds&, Iterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const
 		{
+			VersionKeeper::Check();
 			return mRawBounds.GetCount();
 		}
 
@@ -177,8 +184,10 @@ namespace internal
 		}
 
 	protected:
-		explicit DataRowBounds(const ColumnList* columnList, RawBounds rawBounds) MOMO_NOEXCEPT
-			: mColumnList(columnList),
+		explicit DataRowBounds(const ColumnList* columnList, RawBounds rawBounds,
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
+			mColumnList(columnList),
 			mRawBounds(rawBounds)
 		{
 		}
@@ -312,7 +321,7 @@ namespace internal
 
 		MOMO_FRIENDS_BEGIN_END(const DataItemBounds&, Iterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const
 		{
 			return mRowBounds.GetCount();
 		}
@@ -340,6 +349,7 @@ namespace internal
 
 	template<typename TRowReference>
 	class DataSelection
+		: private momo::internal::VersionKeeper<typename TRowReference::ColumnList::Settings>
 	{
 	public:
 		typedef TRowReference RowReference;
@@ -354,6 +364,8 @@ namespace internal
 		typedef DataSelection<typename RowReference::ConstReference> ConstSelection;
 
 	protected:
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
 			DataSelectionRawsSettings<Settings>> Raws;
 
@@ -395,20 +407,23 @@ namespace internal
 		DataSelection() = delete;
 
 		DataSelection(DataSelection&& selection) MOMO_NOEXCEPT
-			: mColumnList(selection.mColumnList),
+			: VersionKeeper(selection),
+			mColumnList(selection.mColumnList),
 			mRaws(std::move(selection.mRaws))
 		{
 		}
 
 		DataSelection(const DataSelection& selection)
-			: mColumnList(selection.mColumnList),
+			: VersionKeeper(selection),
+			mColumnList(selection.mColumnList),
 			mRaws(selection.mRaws)
 		{
 		}
 
 		template<typename RowFilter>
 		DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
-			: mColumnList(selection.mColumnList),
+			: VersionKeeper(selection),
+			mColumnList(selection.mColumnList),
 			mRaws(MemManager(selection.GetMemManager()))
 		{
 			for (Raw* raw : selection.mRaws)
@@ -437,12 +452,12 @@ namespace internal
 
 		operator ConstSelection() && MOMO_NOEXCEPT
 		{
-			return ConstSelectionProxy(mColumnList, std::move(mRaws));
+			return ConstSelectionProxy(mColumnList, std::move(mRaws), *this);
 		}
 
 		operator ConstSelection() const&
 		{
-			return ConstSelectionProxy(mColumnList, Raws(mRaws));
+			return ConstSelectionProxy(mColumnList, Raws(mRaws), *this);
 		}
 
 		void Swap(DataSelection& selection) MOMO_NOEXCEPT
@@ -453,12 +468,12 @@ namespace internal
 
 		ConstIterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, mRaws.GetBegin());
+			return ConstIteratorProxy(mColumnList, mRaws.GetBegin(), *this);
 		}
 
 		ConstIterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, mRaws.GetEnd());
+			return ConstIteratorProxy(mColumnList, mRaws.GetEnd(), *this);
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
@@ -515,7 +530,7 @@ namespace internal
 		{
 			size_t offset = mColumnList->GetOffset(column);
 			RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());
-			return ItemBounds<Item>(offset, RowBoundsProxy(mColumnList, rawBounds));
+			return ItemBounds<Item>(offset, RowBoundsProxy(mColumnList, rawBounds, *this));
 		}
 
 		template<typename RowIterator>
@@ -614,13 +629,15 @@ namespace internal
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
-				{ return rowPred(pvMakeRowReference(raw)); };
+				{ return rowPred(pvMakeRowReference(raw)); };	//?
 			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
 	protected:
-		explicit DataSelection(const ColumnList* columnList, Raws&& raws) MOMO_NOEXCEPT
-			: mColumnList(columnList),
+		explicit DataSelection(const ColumnList* columnList, Raws&& raws,
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
+			mColumnList(columnList),
 			mRaws(std::move(raws))
 		{
 		}
@@ -628,7 +645,7 @@ namespace internal
 	private:
 		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 		{
-			return RowReferenceProxy(mColumnList, raw);
+			return RowReferenceProxy(mColumnList, raw, *this);
 		}
 
 		template<typename RowIterator>
@@ -650,7 +667,7 @@ namespace internal
 		void pvSort(const RowComparer& rowComparer)
 		{
 			auto rawComparer = [this, &rowComparer] (Raw* raw1, Raw* raw2)
-				{ return rowComparer(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };
+				{ return rowComparer(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };	//?
 			std::sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
 		}
 
