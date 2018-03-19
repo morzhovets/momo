@@ -337,16 +337,6 @@ namespace internal
 		RowBounds mRowBounds;
 	};
 
-	template<typename TDataSettings>
-	struct DataSelectionRawsSettings : TDataSettings::RawsSettings
-	{
-	protected:
-		typedef TDataSettings DataSettings;
-
-	public:
-		static const CheckMode checkMode = DataSettings::checkMode;	//?
-	};
-
 	template<typename TRowReference>
 	class DataSelection
 		: private momo::internal::VersionKeeper<typename TRowReference::ColumnList::Settings>
@@ -367,7 +357,7 @@ namespace internal
 		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
-			DataSelectionRawsSettings<Settings>> Raws;
+			momo::internal::NestedArraySettings<typename Settings::RawsSettings>> Raws;
 
 	private:
 		typedef momo::internal::ArrayBounds<Raw* const*> RawBounds;
@@ -462,6 +452,7 @@ namespace internal
 
 		void Swap(DataSelection& selection) MOMO_NOEXCEPT
 		{
+			std::swap(static_cast<VersionKeeper&>(*this), static_cast<VersionKeeper&>(selection));
 			std::swap(mColumnList, selection.mColumnList);
 			mRaws.Swap(selection.mRaws);
 		}
@@ -516,11 +507,13 @@ namespace internal
 
 		const RowReference operator[](size_t index) const
 		{
+			MOMO_CHECK(index < GetCount());
 			return pvMakeRowReference(mRaws[index]);
 		}
 
 		void Set(size_t index, RowReference rowRef)
 		{
+			MOMO_CHECK(index < GetCount());
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
 		}
@@ -560,6 +553,7 @@ namespace internal
 
 		void Insert(size_t index, RowReference rowRef)
 		{
+			MOMO_CHECK(index <= GetCount());
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
@@ -567,6 +561,7 @@ namespace internal
 		template<typename RowIterator>
 		void Insert(size_t index, RowIterator begin, RowIterator end)
 		{
+			MOMO_CHECK(index <= GetCount());
 			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(mRaws.GetCount() + count);
 			mRaws.Insert(index, count, nullptr);
@@ -576,6 +571,7 @@ namespace internal
 
 		void Remove(size_t index, size_t count)
 		{
+			MOMO_CHECK(index + count <= GetCount());
 			mRaws.Remove(index, count);
 		}
 
