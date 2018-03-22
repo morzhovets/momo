@@ -394,7 +394,7 @@ private:
 
 		void pvCreateMove(Data&& data) MOMO_NOEXCEPT
 		{
-			pvMoveData(std::move(data), HasInternalCapacity());
+			pvMoveData(data, HasInternalCapacity());
 			mCount = data.mCount;
 			data.mCount = maskInternal;
 		}
@@ -414,16 +414,16 @@ private:
 			}
 		}
 
-		void pvMoveData(Data&& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvMoveData(Data& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
 				ItemTraits::Relocate(GetMemManager(), &data.mInternalData, &mInternalData, data.GetCount());
 			else
-				pvMoveData(std::move(data), std::false_type());
+				pvMoveData(data, std::false_type());
 		}
 
-		void pvMoveData(Data&& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvMoveData(Data& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
 			mExternalData = data.mExternalData;
 			data.mExternalData.items = nullptr;
