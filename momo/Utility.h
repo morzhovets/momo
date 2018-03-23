@@ -34,17 +34,18 @@
 #endif
 
 #define MOMO_FRIEND_SWAP(Object) \
-	friend void swap(Object& object1, Object& object2) MOMO_NOEXCEPT \
+	friend void swap(Object& object1, Object& object2) \
+		MOMO_NOEXCEPT_IF(noexcept(object1.Swap(object2))) \
 	{ \
 		object1.Swap(object2); \
 	}
 
 #define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
-	friend Iterator begin(Reference ref) MOMO_NOEXCEPT \
+	friend Iterator begin(Reference ref) MOMO_NOEXCEPT_IF(noexcept(ref.GetBegin())) \
 	{ \
 		return ref.GetBegin(); \
 	} \
-	friend Iterator end(Reference ref) MOMO_NOEXCEPT \
+	friend Iterator end(Reference ref) MOMO_NOEXCEPT_IF(noexcept(ref.GetEnd())) \
 	{ \
 		return ref.GetEnd(); \
 	}
@@ -64,7 +65,8 @@
 
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
 	template<typename... Args> \
-	BaseClass##Proxy(Args&&... args) MOMO_NOEXCEPT \
+	BaseClass##Proxy(Args&&... args) \
+		MOMO_NOEXCEPT_IF((std::is_nothrow_constructible<BaseClass, Args&&...>::value)) \
 		: BaseClass(std::forward<Args>(args)...) \
 	{ \
 	}
