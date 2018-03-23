@@ -71,7 +71,7 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(DataMultiHashIterator iter) const
+		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
 			return mRawIndex - iter.mRawIndex;
@@ -80,20 +80,20 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(!!mKeyIterator);
-			MOMO_CHECK(mRawIndex <= mKeyIterator->values.GetCount());
+			//MOMO_CHECK(mRawIndex <= mKeyIterator->values.GetCount());
 			if (mRawIndex > 0)
 				return &mKeyIterator->values[mRawIndex - 1];
 			else
 				return &mKeyIterator->key;
 		}
 
-		bool operator==(DataMultiHashIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
 			return mKeyIterator == iter.mKeyIterator
 				&& mRawIndex == iter.mRawIndex;
 		}
 
-		bool operator<(DataMultiHashIterator iter) const
+		bool operator<(ConstIterator iter) const
 		{
 			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
 			return mRawIndex < iter.mRawIndex;
@@ -425,19 +425,19 @@ namespace internal
 				{
 				}
 
-				Iterator GetBegin() const MOMO_NOEXCEPT
+				Iterator GetBegin() const //MOMO_NOEXCEPT
 				{
 					return Iterator(mKeyIterator, 0);
 				}
 
-				Iterator GetEnd() const MOMO_NOEXCEPT
+				Iterator GetEnd() const //MOMO_NOEXCEPT
 				{
 					return GetBegin() + GetCount();
 				}
 
 				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
 
-				size_t GetCount() const MOMO_NOEXCEPT
+				size_t GetCount() const //MOMO_NOEXCEPT
 				{
 					return !!mKeyIterator ? mKeyIterator->values.GetCount() + 1 : 0;
 				}

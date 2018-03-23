@@ -84,11 +84,13 @@ private:
 	typedef typename Indexes::UniqueHash UniqueHashIndex;
 	typedef typename Indexes::MultiHash MultiHashIndex;
 
-	typedef momo::internal::ArrayBounds<Raw* const*> RawBounds;
+	typedef typename Raws::ConstIterator RawIterator;
+
+	typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
 	typedef internal::DataRowBounds<RowReference, RawBounds> RowBounds;
 
 public:
-	typedef internal::DataRowIterator<RowReference, typename Raws::ConstIterator> Iterator;
+	typedef internal::DataRowIterator<RowReference, RawIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::DataRowPointer<internal::DataRowBounds<RowReference,
@@ -876,7 +878,7 @@ private:
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(column);
-		RawBounds rawBounds(mRaws.GetItems(), mRaws.GetCount());
+		RawBounds rawBounds(mRaws.GetBegin(), mRaws.GetCount());
 		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
 			VersionKeeper(&mCrew.GetChangeVersion())));
 	}
