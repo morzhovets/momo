@@ -67,7 +67,7 @@ public:
 	typedef ptrdiff_t difference_type;
 
 	typedef std::pair<const key_type, mapped_type> value_type;
-	
+
 	class value_compare
 	{
 	public:
@@ -865,7 +865,7 @@ private:
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
-	
+
 	template<typename Hint, typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
 	{

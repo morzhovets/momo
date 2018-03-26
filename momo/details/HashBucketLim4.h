@@ -44,7 +44,7 @@ namespace internal
 		typedef MemPoolUInt32<memPoolBlockCount, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
-		
+
 		static const size_t maxCount = 1 << logMaxCount;
 
 		static const uint32_t stateNull = ((uint32_t)1 << (32 - logMaxCount)) - 1;

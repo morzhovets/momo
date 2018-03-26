@@ -18,7 +18,7 @@
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
   But in case of the function `insert`, receiving pair of iterators, it's
-  not allowed to pass iterators pointing to the items within the container. 
+  not allowed to pass iterators pointing to the items within the container.
 
 \**********************************************************/
 

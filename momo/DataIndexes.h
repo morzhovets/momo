@@ -302,7 +302,7 @@ namespace internal
 			{
 				return mSortedOffsets;
 			}
-			
+
 			void Reserve(size_t capacity)
 			{
 				mHashSet.Reserve(capacity);
