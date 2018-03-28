@@ -179,10 +179,16 @@ namespace internal
 		using ItemReference = const Item&;
 
 	protected:
+		typedef typename ColumnList::Settings Settings;
+
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
+	protected:
 		template<typename Item>
 		static ItemReference<Item> ptGetReference(const ColumnList* columnList, Raw* raw,
-			size_t offset)
+			size_t offset, VersionKeeper version)
 		{
+			version.Check();
 			return columnList->template GetByOffset<const Item>(raw, offset);
 		}
 	};
@@ -196,22 +202,26 @@ namespace internal
 
 		typedef DataConstItemReferencer<ColumnList> ConstReferencer;
 
+	protected:
+		typedef typename ColumnList::Settings Settings;
+
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
+	public:
 		template<typename TItem>
-		class ItemReference
+		class ItemReference : private VersionKeeper
 		{
 		public:
 			typedef TItem Item;
 
 			typedef typename ConstReferencer::template ItemReference<Item> ConstReference;
 
-		private:
-			typedef typename ColumnList::Settings Settings;
-
 		public:
 			ItemReference() = delete;
 
 			ItemReference(const ItemReference& itemRef) MOMO_NOEXCEPT
-				: mColumnList(itemRef.mColumnList),
+				: VersionKeeper(itemRef),
+				mColumnList(itemRef.mColumnList),
 				mRaw(itemRef.mRaw),
 				mOffset(itemRef.mOffset)
 			{
@@ -239,12 +249,15 @@ namespace internal
 
 			const Item& Get() const
 			{
+				VersionKeeper::Check();
 				return mColumnList->template GetByOffset<const Item>(mRaw, mOffset);
 			}
 
 		protected:
-			ItemReference(const ColumnList* columnList, Raw* raw, size_t offset) MOMO_NOEXCEPT
-				: mColumnList(columnList),
+			explicit ItemReference(const ColumnList* columnList, Raw* raw, size_t offset,
+				VersionKeeper version) MOMO_NOEXCEPT
+				: VersionKeeper(version),
+				mColumnList(columnList),
 				mRaw(raw),
 				mOffset(offset)
 			{
@@ -254,6 +267,7 @@ namespace internal
 			template<typename ItemArg>
 			ItemReference& pvAssign(ItemArg&& itemArg)
 			{
+				VersionKeeper::Check();
 				MOMO_CHECK(mColumnList->IsMutable(mOffset));
 				mColumnList->template Assign<Item>(mRaw, mOffset, std::forward<ItemArg>(itemArg));
 				return *this;
@@ -276,9 +290,9 @@ namespace internal
 	protected:
 		template<typename Item>
 		static ItemReference<Item> ptGetReference(const ColumnList* columnList, Raw* raw,
-			size_t offset)
+			size_t offset, VersionKeeper version)
 		{
-			return ItemReferenceProxy<Item>(columnList, raw, offset);
+			return ItemReferenceProxy<Item>(columnList, raw, offset, version);
 		}
 	};
 
@@ -327,8 +341,7 @@ namespace internal
 		template<typename Item>
 		ItemReference<Item> GetByOffset(size_t offset) const
 		{
-			VersionKeeper::Check();
-			return ItemReferencer::template ptGetReference<Item>(mColumnList, mRaw, offset);
+			return ItemReferencer::template ptGetReference<Item>(mColumnList, mRaw, offset, *this);
 		}
 
 		template<typename Item>

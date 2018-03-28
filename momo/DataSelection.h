@@ -64,8 +64,8 @@ namespace internal
 
 		DataRowIterator& operator+=(ptrdiff_t diff)
 		{
-			if (mColumnList != nullptr || diff != 0)
-				VersionKeeper::Check();
+			//if (mColumnList != nullptr || diff != 0)
+			//	VersionKeeper::Check();
 			mRawIterator += diff;
 			return *this;
 		}
@@ -73,15 +73,15 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
-			ptCheck();
-			ConstIteratorProxy::Check(iter);
+			//ptCheck();
+			//ConstIteratorProxy::Check(iter);
 			return mRawIterator - ConstIteratorProxy::GetRawIterator(iter);
 		}
 
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mColumnList != nullptr);
-			VersionKeeper::Check();
+			VersionKeeper::Check();	//?
 			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
 		}
 
@@ -118,11 +118,11 @@ namespace internal
 			return mRawIterator;
 		}
 
-		void ptCheck() const
-		{
-			if (mColumnList != nullptr)
-				VersionKeeper::Check();
-		}
+		//void ptCheck() const
+		//{
+		//	if (mColumnList != nullptr)
+		//		VersionKeeper::Check();
+		//}
 
 	private:
 		const ColumnList* mColumnList;
@@ -169,23 +169,20 @@ namespace internal
 			return ConstBoundsProxy(mColumnList, mRawBounds, *this);
 		}
 
-		Iterator GetBegin() const
+		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
-			pvCheck();
 			return IteratorProxy(mColumnList, mRawBounds.GetBegin(), *this);
 		}
 
-		Iterator GetEnd() const
+		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
-			pvCheck();
 			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataRowBounds&, Iterator)
 
-		size_t GetCount() const
+		size_t GetCount() const MOMO_NOEXCEPT
 		{
-			pvCheck();
 			return mRawBounds.GetCount();
 		}
 
@@ -328,19 +325,19 @@ namespace internal
 			return ConstBounds(mOffset, mRowBounds);
 		}
 
-		Iterator GetBegin() const
+		Iterator GetBegin() const MOMO_NOEXCEPT
 		{
 			return Iterator(mOffset, mRowBounds.GetBegin());
 		}
 
-		Iterator GetEnd() const
+		Iterator GetEnd() const MOMO_NOEXCEPT
 		{
 			return Iterator(mOffset, mRowBounds.GetEnd());
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataItemBounds&, Iterator)
 
-		size_t GetCount() const
+		size_t GetCount() const MOMO_NOEXCEPT
 		{
 			return mRowBounds.GetCount();
 		}
@@ -534,6 +531,7 @@ namespace internal
 
 		void Set(size_t index, RowReference rowRef)
 		{
+			rowRef.GetRaw();	// check
 			MOMO_CHECK(index < GetCount());
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
@@ -559,6 +557,7 @@ namespace internal
 
 		void Add(RowReference rowRef)
 		{
+			rowRef.GetRaw();	// check
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 		}
@@ -574,6 +573,7 @@ namespace internal
 
 		void Insert(size_t index, RowReference rowRef)
 		{
+			rowRef.GetRaw();	// check
 			MOMO_CHECK(index <= GetCount());
 			MOMO_CHECK(mColumnList == &rowRef.GetColumnList());
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
