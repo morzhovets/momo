@@ -48,7 +48,6 @@ namespace internal
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetColumnList, const ColumnList*)
 			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetRawIterator, RawIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
 		};
 
 	public:
@@ -64,8 +63,6 @@ namespace internal
 
 		DataRowIterator& operator+=(ptrdiff_t diff)
 		{
-			//if (mColumnList != nullptr || diff != 0)
-			//	VersionKeeper::Check();
 			mRawIterator += diff;
 			return *this;
 		}
@@ -73,15 +70,12 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
-			//ptCheck();
-			//ConstIteratorProxy::Check(iter);
 			return mRawIterator - ConstIteratorProxy::GetRawIterator(iter);
 		}
 
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mColumnList != nullptr);
-			VersionKeeper::Check();	//?
 			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
 		}
 
@@ -117,12 +111,6 @@ namespace internal
 		{
 			return mRawIterator;
 		}
-
-		//void ptCheck() const
-		//{
-		//	if (mColumnList != nullptr)
-		//		VersionKeeper::Check();
-		//}
 
 	private:
 		const ColumnList* mColumnList;
@@ -199,13 +187,6 @@ namespace internal
 			mColumnList(columnList),
 			mRawBounds(rawBounds)
 		{
-		}
-
-	private:
-		void pvCheck() const
-		{
-			if (mColumnList != nullptr)
-				VersionKeeper::Check();
 		}
 
 	private:
@@ -373,7 +354,7 @@ namespace internal
 		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
-			momo::internal::NestedArraySettings<typename Settings::RawsSettings>> Raws;
+			momo::internal::NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
 		typedef typename Raws::ConstIterator RawIterator;

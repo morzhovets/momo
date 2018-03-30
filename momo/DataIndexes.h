@@ -82,6 +82,8 @@ namespace internal
 
 		Pointer operator->() const
 		{
+			MOMO_CHECK(mRaw != nullptr);
+			MOMO_CHECK(mRaws != nullptr || mRawIndex == 0);
 			return (mRawIndex > 0) ? &mRaws[mRawIndex - 1] : &mRaw;
 		}
 

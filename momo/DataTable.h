@@ -76,7 +76,7 @@ private:
 	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*, MemManagerPtr>,
-		momo::internal::NestedArraySettings<typename Settings::RawsSettings>> Raws;
+		momo::internal::NestedArraySettings<typename Settings::TableRawsSettings>> Raws;
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
@@ -367,25 +367,25 @@ public:
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
 		return ConstIteratorProxy(&GetColumnList(), mRaws.GetBegin(),
-			VersionKeeper(&mCrew.GetChangeVersion()));
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
 		return IteratorProxy(&GetColumnList(), mRaws.GetBegin(),
-			VersionKeeper(&mCrew.GetChangeVersion()));
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
 		return ConstIteratorProxy(&GetColumnList(), mRaws.GetEnd(),
-			VersionKeeper(&mCrew.GetChangeVersion()));
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	Iterator GetEnd() MOMO_NOEXCEPT
 	{
 		return IteratorProxy(&GetColumnList(), mRaws.GetEnd(),
-			VersionKeeper(&mCrew.GetChangeVersion()));
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	MOMO_FRIEND_SWAP(DataTable)
@@ -880,7 +880,7 @@ private:
 		size_t offset = columnList.GetOffset(column);
 		RawBounds rawBounds(mRaws.GetBegin(), mRaws.GetCount());
 		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
-			VersionKeeper(&mCrew.GetChangeVersion())));
+			VersionKeeper(&mCrew.GetRemoveVersion())));
 	}
 
 	Raw* pvCopyRaw(const Raw* srcRaw)
@@ -1167,7 +1167,7 @@ private:
 	{
 		const ColumnList* columnList = &GetColumnList();
 		return RowBoundsProxy(columnList, mIndexes.FindRaws(columnList, multiHashIndex, tuple),
-			VersionKeeper(&mCrew.GetChangeVersion()));
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 private:

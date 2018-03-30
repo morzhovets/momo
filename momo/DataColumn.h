@@ -165,7 +165,8 @@ struct DataSettings
 
 	static const bool keepRowNumber = tKeepRowNumber;
 
-	typedef ArraySettings<> RawsSettings;
+	typedef ArraySettings<0, true, false> TableRawsSettings;
+	typedef ArraySettings<2, true, false> SelectionRawsSettings;
 };
 
 struct DataStructDefault
