@@ -1068,16 +1068,12 @@ public:
 
 	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const
 	{
-		ConstValueBounds valueBounds = keyIter->values;
-		MOMO_CHECK(valueIndex < valueBounds.GetCount());
-		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, false);
+		return pvMakeIterator<ConstIterator>(keyIter, valueIndex);
 	}
 
 	Iterator MakeIterator(KeyIterator keyIter, size_t valueIndex)
 	{
-		ValueBounds valueBounds = keyIter->values;
-		MOMO_CHECK(valueIndex < valueBounds.GetCount());
-		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, false);
+		return pvMakeIterator<Iterator>(keyIter, valueIndex);
 	}
 
 	Iterator MakeMutableIterator(ConstIterator iter)
@@ -1086,8 +1082,9 @@ public:
 			return Iterator();
 		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
-		return MakeIterator(keyIter,
-			ConstIteratorProxy::GetValuePtr(iter) - keyIter->values.GetBegin());
+		Value* valueBegin = keyIter->values.GetBegin();
+		return pvMakeIterator(keyIter,
+			valueBegin + (ConstIteratorProxy::GetValuePtr(iter) - valueBegin), false);
 	}
 
 	KeyIterator MakeMutableKeyIterator(ConstKeyIterator keyIter)
@@ -1134,6 +1131,15 @@ private:
 	Iterator pvMakeIterator(KeyIterator keyIter, Value* pvalue, bool move) const MOMO_NOEXCEPT
 	{
 		return IteratorProxy(keyIter, pvalue, mValueCrew.GetValueVersion(), move);
+	}
+
+	template<typename Iterator, typename KeyIterator>
+	Iterator pvMakeIterator(KeyIterator keyIter, size_t valueIndex) const
+	{
+		CheckKeyIterator(keyIter);
+		auto valueBounds = keyIter->values;
+		MOMO_CHECK(valueIndex < valueBounds.GetCount());
+		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, false);
 	}
 
 	template<typename RKey, typename ValueCreator>
