@@ -269,8 +269,9 @@ public:
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
-		clear();	//?
-		insert(values);
+		HashMap hashMap(mHashMap.GetHashTraits(), MemManager(get_allocator()));
+		hashMap.InsertFS(values.begin(), values.end());
+		mHashMap = std::move(hashMap);
 		return *this;
 	}
 

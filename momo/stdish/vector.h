@@ -421,16 +421,14 @@ public:
 
 	void assign(size_type count, const value_type& value)
 	{
-		clear();	//?
-		insert(end(), count, value);
+		mArray = Array(count, value, MemManager(get_allocator()));
 	}
 
 	template<typename Iterator,
 		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	void assign(Iterator first, Iterator last)
 	{
-		clear();	//?
-		insert(end(), first, last);
+		mArray = Array(first, last, MemManager(get_allocator()));
 	}
 
 	void assign(std::initializer_list<value_type> values)

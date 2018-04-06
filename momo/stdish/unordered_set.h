@@ -235,8 +235,7 @@ public:
 
 	unordered_set& operator=(std::initializer_list<value_type> values)
 	{
-		clear();	//?
-		insert(values);
+		mHashSet = HashSet(values, mHashSet.GetHashTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 

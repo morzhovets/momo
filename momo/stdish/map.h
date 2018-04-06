@@ -225,8 +225,9 @@ public:
 
 	map& operator=(std::initializer_list<value_type> values)
 	{
-		clear();	//?
-		insert(values);
+		TreeMap treeMap(mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
+		treeMap.InsertFS(values.begin(), values.end());
+		mTreeMap = std::move(treeMap);
 		return *this;
 	}
 

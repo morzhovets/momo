@@ -247,8 +247,9 @@ public:
 
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
 	{
-		clear();	//?
-		insert(values);
+		HashMultiMap hashMultiMap(mHashMultiMap.GetHashTraits(), MemManager(get_allocator()));
+		hashMultiMap.AddFS(values.begin(), values.end());
+		mHashMultiMap = std::move(hashMultiMap);
 		return *this;
 	}
 

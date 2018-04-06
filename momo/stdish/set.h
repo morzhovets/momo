@@ -186,8 +186,7 @@ public:
 
 	set& operator=(std::initializer_list<value_type> values)
 	{
-		clear();	//?
-		insert(values);
+		mTreeSet = TreeSet(values, mTreeSet.GetTreeTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 
