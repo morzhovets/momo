@@ -890,6 +890,7 @@ public:
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
+		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
 		if (internal::IsForwardIterator<ArgIterator>::value)
 		{
 			size_t count = std::distance(begin, end);
@@ -1116,6 +1117,15 @@ private:
 		const Item* items = GetItems();
 		std::less<const Item*> less;
 		return (!less(pitem, items) && less(pitem, items + GetCount())) ? pitem - items : SIZE_MAX;
+	}
+
+	template<typename ItemArg>
+	bool pvIsInside(const ItemArg& itemArg) const MOMO_NOEXCEPT
+	{
+		const void* pitem = std::addressof(itemArg);
+		const Item* items = GetItems();
+		std::less<const void*> less;
+		return !less(pitem, items) && less(pitem, items + GetCount());
 	}
 
 private:
