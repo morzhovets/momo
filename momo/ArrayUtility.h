@@ -22,10 +22,9 @@ namespace internal
 	{
 	protected:
 		typedef TItem Item;
+		typedef TArray Array;
 
 	public:
-		typedef TArray Array;	//?
-
 		typedef Item& Reference;
 		typedef Item* Pointer;
 
@@ -34,6 +33,13 @@ namespace internal
 	private:
 		typedef typename Array::Settings Settings;
 
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetArray, Array*)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetIndex, size_t)
+		};
+
 	public:
 		explicit ArrayIndexIterator() MOMO_NOEXCEPT
 			: mArray(nullptr),
@@ -41,15 +47,9 @@ namespace internal
 		{
 		}
 
-		explicit ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
-			: mArray(array),
-			mIndex(index)
-		{
-		}
-
 		operator ConstIterator() const MOMO_NOEXCEPT
 		{
-			return ConstIterator(mArray, mIndex);
+			return ConstIteratorProxy(mArray, mIndex);
 		}
 
 		ArrayIndexIterator& operator+=(ptrdiff_t diff)
@@ -62,8 +62,8 @@ namespace internal
 
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
-			MOMO_CHECK(mArray == iter.GetArray());
-			return mIndex - iter.GetIndex();
+			MOMO_CHECK(mArray == ConstIteratorProxy::GetArray(iter));
+			return mIndex - ConstIteratorProxy::GetIndex(iter);
 		}
 
 		Pointer operator->() const
@@ -74,23 +74,31 @@ namespace internal
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mArray == iter.GetArray() && mIndex == iter.GetIndex();
+			return mArray == ConstIteratorProxy::GetArray(iter)
+				&& mIndex == ConstIteratorProxy::GetIndex(iter);
 		}
 
 		bool operator<(ConstIterator iter) const
 		{
-			MOMO_CHECK(mArray == iter.GetArray());
-			return mIndex < iter.GetIndex();
+			MOMO_CHECK(mArray == ConstIteratorProxy::GetArray(iter));
+			return mIndex < ConstIteratorProxy::GetIndex(iter);
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
-		Array* GetArray() const MOMO_NOEXCEPT
+	protected:
+		explicit ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
+			: mArray(array),
+			mIndex(index)
+		{
+		}
+
+		Array* ptGetArray() const MOMO_NOEXCEPT
 		{
 			return mArray;
 		}
 
-		size_t GetIndex() const MOMO_NOEXCEPT
+		size_t ptGetIndex() const MOMO_NOEXCEPT
 		{
 			return mIndex;
 		}

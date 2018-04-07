@@ -186,6 +186,16 @@ private:
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;
 
+	struct ConstIteratorProxy : public ConstIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+	};
+
+	struct IteratorProxy : public Iterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+	};
+
 public:
 	SegmentedArray() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
 		: SegmentedArray(MemManager())
@@ -307,22 +317,22 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		return ConstIterator(this, 0);
+		return ConstIteratorProxy(this, 0);
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
-		return Iterator(this, 0);
+		return IteratorProxy(this, 0);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
-		return ConstIterator(this, mCount);
+		return ConstIteratorProxy(this, mCount);
 	}
 
 	Iterator GetEnd() MOMO_NOEXCEPT
 	{
-		return Iterator(this, mCount);
+		return IteratorProxy(this, mCount);
 	}
 
 	MOMO_FRIEND_SWAP(SegmentedArray)

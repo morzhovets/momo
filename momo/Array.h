@@ -45,14 +45,8 @@ namespace internal
 		typedef ArrayPtrIterator<const Item, Settings> ConstIterator;
 
 	public:
-		explicit ArrayPtrIterator(Pointer pitem = nullptr) MOMO_NOEXCEPT
+		explicit ArrayPtrIterator(Item* pitem = nullptr) MOMO_NOEXCEPT
 			: mItemPtr(pitem)
-		{
-		}
-
-		template<typename Array>
-		explicit ArrayPtrIterator(Array* array, size_t index) MOMO_NOEXCEPT
-			: mItemPtr(array->GetItems() + index)
 		{
 		}
 
@@ -92,7 +86,7 @@ namespace internal
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayPtrIterator)
 
-		Pointer GetItemPtr() const MOMO_NOEXCEPT
+		Item* GetItemPtr() const MOMO_NOEXCEPT
 		{
 			return mItemPtr;
 		}
@@ -102,18 +96,55 @@ namespace internal
 	};
 
 	template<typename Array, bool usePtrIterator = Array::Settings::usePtrIterator>
-	struct ArrayIteratorSelector;
+	class ArrayIteratorSelector;
 
 	template<typename Array>
-	struct ArrayIteratorSelector<Array, true>
+	class ArrayIteratorSelector<Array, true>
 	{
+	public:
 		typedef ArrayPtrIterator<typename Array::Item, typename Array::Settings> Iterator;
+		typedef typename Iterator::ConstIterator ConstIterator;
+
+	public:
+		static ConstIterator MakeIterator(const Array& array, size_t index) MOMO_NOEXCEPT
+		{
+			return ConstIterator(array.GetItems() + index);
+		}
+
+		static Iterator MakeIterator(Array& array, size_t index) MOMO_NOEXCEPT
+		{
+			return Iterator(array.GetItems() + index);
+		}
 	};
 
 	template<typename Array>
-	struct ArrayIteratorSelector<Array, false>
+	class ArrayIteratorSelector<Array, false>
 	{
+	public:
 		typedef ArrayIndexIterator<Array, typename Array::Item> Iterator;
+		typedef typename Iterator::ConstIterator ConstIterator;
+
+	private:
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		};
+
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		};
+
+	public:
+		static ConstIterator MakeIterator(const Array& array, size_t index) MOMO_NOEXCEPT
+		{
+			return ConstIteratorProxy(&array, index);
+		}
+
+		static Iterator MakeIterator(Array& array, size_t index) MOMO_NOEXCEPT
+		{
+			return IteratorProxy(&array, index);
+		}
 	};
 }
 
@@ -512,10 +543,11 @@ private:
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<Array> ArrayShifter;
+	typedef typename internal::ArrayIteratorSelector<Array> IteratorSelector;
 
 public:
-	typedef typename internal::ArrayIteratorSelector<Array>::Iterator Iterator;
-	typedef typename Iterator::ConstIterator ConstIterator;
+	typedef typename IteratorSelector::ConstIterator ConstIterator;
+	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
 	Array() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
@@ -608,22 +640,22 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		return ConstIterator(this, 0);
+		return IteratorSelector::MakeIterator(*this, 0);
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
-		return Iterator(this, 0);
+		return IteratorSelector::MakeIterator(*this, 0);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
-		return ConstIterator(this, GetCount());
+		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
 
 	Iterator GetEnd() MOMO_NOEXCEPT
 	{
-		return Iterator(this, GetCount());
+		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
 
 	MOMO_FRIEND_SWAP(Array)
