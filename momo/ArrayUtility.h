@@ -17,22 +17,22 @@ namespace momo
 
 namespace internal
 {
-	template<typename TArray, typename TItem>
+	template<typename TArray, typename TItem,
+		typename TSettings = typename TArray::Settings>
 	class ArrayIndexIterator
 	{
 	protected:
 		typedef TItem Item;
 		typedef TArray Array;
+		typedef TSettings Settings;
 
 	public:
 		typedef Item& Reference;
 		typedef Item* Pointer;
 
-		typedef ArrayIndexIterator<const Array, const Item> ConstIterator;
+		typedef ArrayIndexIterator<const Array, const Item, Settings> ConstIterator;
 
 	private:
-		typedef typename Array::Settings Settings;
-
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -299,8 +299,8 @@ namespace internal
 
 namespace std
 {
-	template<typename A, typename I>
-	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
+	template<typename A, typename I, typename S>
+	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I, S>>
 		: public iterator_traits<I*>
 	{
 	};

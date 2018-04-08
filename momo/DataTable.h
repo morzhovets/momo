@@ -84,7 +84,8 @@ private:
 	typedef typename Indexes::UniqueHash UniqueHashIndex;
 	typedef typename Indexes::MultiHash MultiHashIndex;
 
-	typedef typename Raws::ConstIterator RawIterator;
+	//typedef typename Raws::ConstIterator RawIterator;
+	typedef momo::internal::ArrayIndexIterator<const Raws, Raw* const, Settings> RawIterator;
 
 	typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
 	typedef internal::DataRowBounds<RowReference, RawBounds> RowBounds;
@@ -253,9 +254,9 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
 	};
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct RawIteratorProxy : public RawIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(RawIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -366,26 +367,22 @@ public:
 
 	ConstIterator GetBegin() const MOMO_NOEXCEPT
 	{
-		return ConstIteratorProxy(&GetColumnList(), mRaws.GetBegin(),
-			VersionKeeper(&mCrew.GetRemoveVersion()));
+		return pvMakeIterator(0);
 	}
 
 	Iterator GetBegin() MOMO_NOEXCEPT
 	{
-		return IteratorProxy(&GetColumnList(), mRaws.GetBegin(),
-			VersionKeeper(&mCrew.GetRemoveVersion()));
+		return pvMakeIterator(0);
 	}
 
 	ConstIterator GetEnd() const MOMO_NOEXCEPT
 	{
-		return ConstIteratorProxy(&GetColumnList(), mRaws.GetEnd(),
-			VersionKeeper(&mCrew.GetRemoveVersion()));
+		return pvMakeIterator(GetCount());
 	}
 
 	Iterator GetEnd() MOMO_NOEXCEPT
 	{
-		return IteratorProxy(&GetColumnList(), mRaws.GetEnd(),
-			VersionKeeper(&mCrew.GetRemoveVersion()));
+		return pvMakeIterator(GetCount());
 	}
 
 	MOMO_FRIEND_SWAP(DataTable)
@@ -873,12 +870,23 @@ private:
 		return RowReferenceProxy(&GetColumnList(), raw, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+	Iterator pvMakeIterator(size_t index) const MOMO_NOEXCEPT
+	{
+		return IteratorProxy(&GetColumnList(), pvMakeRawIterator(index),
+			VersionKeeper(&mCrew.GetRemoveVersion()));
+	}
+
+	RawIterator pvMakeRawIterator(size_t index) const MOMO_NOEXCEPT
+	{
+		return RawIteratorProxy(&mRaws, index);
+	}
+
 	template<typename Item>
 	ItemBounds<Item> pvGetColumnItems(const Column<Item>& column) const
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(column);
-		RawBounds rawBounds(mRaws.GetBegin(), mRaws.GetCount());
+		RawBounds rawBounds(pvMakeRawIterator(0), GetCount());
 		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
 			VersionKeeper(&mCrew.GetRemoveVersion())));
 	}

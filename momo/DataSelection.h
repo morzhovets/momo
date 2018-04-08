@@ -357,7 +357,8 @@ namespace internal
 			momo::internal::NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
-		typedef typename Raws::ConstIterator RawIterator;
+		//typedef typename Raws::ConstIterator RawIterator;
+		typedef momo::internal::ArrayIndexIterator<const Raws, Raw* const, Settings> RawIterator;
 
 		typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
 		typedef DataRowBounds<RowReference, RawBounds> RowBounds;
@@ -374,6 +375,11 @@ namespace internal
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+		};
+
+		struct RawIteratorProxy : public RawIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(RawIterator)
 		};
 
 		struct ConstIteratorProxy : public ConstIterator
@@ -458,12 +464,12 @@ namespace internal
 
 		ConstIterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, mRaws.GetBegin(), *this);
+			return ConstIteratorProxy(mColumnList, pvMakeRawIterator(0), *this);
 		}
 
 		ConstIterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, mRaws.GetEnd(), *this);
+			return ConstIteratorProxy(mColumnList, pvMakeRawIterator(GetCount()), *this);
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
@@ -522,7 +528,7 @@ namespace internal
 		ItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 		{
 			size_t offset = mColumnList->GetOffset(column);
-			RawBounds rawBounds(mRaws.GetBegin(), mRaws.GetCount());
+			RawBounds rawBounds(pvMakeRawIterator(0), GetCount());
 			return ItemBounds<Item>(offset, RowBoundsProxy(mColumnList, rawBounds, *this));
 		}
 
@@ -644,6 +650,11 @@ namespace internal
 		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
 		{
 			return RowReferenceProxy(mColumnList, raw, *this);
+		}
+
+		RawIterator pvMakeRawIterator(size_t index) const MOMO_NOEXCEPT
+		{
+			return RawIteratorProxy(&mRaws, index);
 		}
 
 		template<typename RowIterator>
