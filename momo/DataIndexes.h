@@ -62,7 +62,7 @@ namespace internal
 			: mRaw(raw),
 			mRawIndex(rawIndex)
 		{
-			MOMO_ASSERT(rawIndex <= (size_t)((raw != nullptr) ? 1 : 0));
+			//MOMO_ASSERT(rawIndex <= (size_t)((raw != nullptr) ? 1 : 0));
 		}
 
 		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
@@ -105,6 +105,7 @@ namespace internal
 
 	template<typename TColumnList, typename TKeyIterator>
 	class DataRawMultiHashIterator
+		: private momo::internal::VersionKeeper<typename TColumnList::Settings>
 	{
 	protected:
 		typedef TColumnList ColumnList;
@@ -122,24 +123,32 @@ namespace internal
 
 		typedef DataRawMultiHashIterator ConstIterator;
 
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
 	public:
 		explicit DataRawMultiHashIterator() MOMO_NOEXCEPT
 			: mRawIndex(0)
 		{
 		}
 
-		explicit DataRawMultiHashIterator(KeyIterator keyIter, size_t rawIndex) MOMO_NOEXCEPT
-			: mKeyIterator(keyIter),
+		explicit DataRawMultiHashIterator(KeyIterator keyIter, size_t rawIndex,
+			VersionKeeper version) MOMO_NOEXCEPT
+			: VersionKeeper(version),
+			mKeyIterator(keyIter),
 			mRawIndex(rawIndex)
 		{
-			MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->values.GetCount() + 1 : 0));
+			//MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->values.GetCount() + 1 : 0));
 		}
 
 		DataRawMultiHashIterator& operator+=(ptrdiff_t diff)
 		{
-			size_t newRawIndex = mRawIndex + diff;
-			MOMO_CHECK(!!mKeyIterator ? newRawIndex <= mKeyIterator->values.GetCount() + 1 : diff == 0);
-			mRawIndex = newRawIndex;
+			if (diff != 0)
+			{
+				VersionKeeper::Check();
+				size_t newRawIndex = mRawIndex + diff;
+				MOMO_CHECK(!!mKeyIterator && newRawIndex <= mKeyIterator->values.GetCount() + 1);
+				mRawIndex = newRawIndex;
+			}
 			return *this;
 		}
 
@@ -151,6 +160,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
+			VersionKeeper::Check();
 			MOMO_CHECK(!!mKeyIterator && mRawIndex <= mKeyIterator->values.GetCount());
 			if (mRawIndex > 0)
 				return &mKeyIterator->values[mRawIndex - 1];
@@ -194,6 +204,8 @@ namespace internal
 		using OffsetItemTuple = std::tuple<std::pair<size_t, const Items&>...>;
 
 	private:
+		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+
 		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 		typedef momo::internal::NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
@@ -384,13 +396,13 @@ namespace internal
 				mHashSet.Clear();
 			}
 
-			RawBounds Find(Raw* raw) const
+			RawBounds Find(Raw* raw, VersionKeeper /*version*/) const
 			{
 				return pvFind(raw);
 			}
 
 			template<typename... Items>
-			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
+			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey, VersionKeeper /*version*/) const
 			{
 				return pvFind(hashTupleKey);
 			}
@@ -489,7 +501,7 @@ namespace internal
 			typedef typename HashMultiMap::ConstKeyIterator KeyIterator;
 
 		public:
-			class RawBounds
+			class RawBounds : private VersionKeeper
 			{
 			public:
 				typedef DataRawMultiHashIterator<ColumnList, KeyIterator> Iterator;
@@ -497,20 +509,21 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
-				explicit RawBounds(KeyIterator keyIter) MOMO_NOEXCEPT
-					: mKeyIterator(keyIter),
+				explicit RawBounds(KeyIterator keyIter, VersionKeeper version) MOMO_NOEXCEPT
+					: VersionKeeper(version),
+					mKeyIterator(keyIter),
 					mRawCount(!!keyIter ? keyIter->values.GetCount() + 1 : 0)
 				{
 				}
 
 				Iterator GetBegin() const MOMO_NOEXCEPT
 				{
-					return Iterator(mKeyIterator, 0);
+					return Iterator(mKeyIterator, 0, *this);
 				}
 
 				Iterator GetEnd() const MOMO_NOEXCEPT
 				{
-					return Iterator(mKeyIterator, mRawCount);
+					return Iterator(mKeyIterator, mRawCount, *this);
 				}
 
 				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
@@ -575,9 +588,9 @@ namespace internal
 			}
 
 			template<typename... Items>
-			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
+			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey, VersionKeeper version) const
 			{
-				return RawBounds(mHashMultiMap.Find(hashTupleKey));
+				return RawBounds(mHashMultiMap.Find(hashTupleKey), version);
 			}
 
 			void FindExisting(Raw* raw) MOMO_NOEXCEPT
@@ -761,17 +774,18 @@ namespace internal
 			return pvRemoveHash(columnList, mMultiHashes, columns...);
 		}
 
-		typename UniqueHash::RawBounds FindRaws(const UniqueHash& uniqueHash, Raw* raw) const
+		typename UniqueHash::RawBounds FindRaws(const ColumnList* /*columnList*/,
+			const UniqueHash& uniqueHash, Raw* raw, VersionKeeper version) const
 		{
-			return uniqueHash.Find(raw);	//?
+			return uniqueHash.Find(raw, version);	//?
 		}
 
 		template<typename Hash, typename... Items>
 		typename Hash::RawBounds FindRaws(const ColumnList* columnList, const Hash& hash,
-			const OffsetItemTuple<Items...>& tuple) const
+			const OffsetItemTuple<Items...>& tuple, VersionKeeper version) const
 		{
 			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple), columnList };
-			return hash.Find(hashTupleKey);
+			return hash.Find(hashTupleKey, version);
 		}
 
 		void ClearRaws() MOMO_NOEXCEPT
