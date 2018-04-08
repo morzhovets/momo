@@ -35,138 +35,146 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataRawHashIterator
+	class DataRawUniqueHashIterator
 	{
 	protected:
 		typedef TColumnList ColumnList;
 
 	public:
-		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		typedef Raw* const& Reference;
 		typedef Raw* const* Pointer;
 
-		typedef DataRawHashIterator ConstIterator;
+		typedef DataRawUniqueHashIterator ConstIterator;
+
+	private:
+		typedef typename ColumnList::Settings Settings;
 
 	public:
-		explicit DataRawHashIterator() MOMO_NOEXCEPT
+		explicit DataRawUniqueHashIterator() MOMO_NOEXCEPT
 			: mRaw(nullptr),
-			mRaws(nullptr),
 			mRawIndex(0)
 		{
 		}
 
-		explicit DataRawHashIterator(Raw* raw, Raw* const* raws, size_t rawIndex) MOMO_NOEXCEPT
+		explicit DataRawUniqueHashIterator(Raw* raw, size_t rawIndex) MOMO_NOEXCEPT
 			: mRaw(raw),
-			mRaws(raws),
 			mRawIndex(rawIndex)
 		{
-			MOMO_ASSERT(pvCheckParams(raw, raws, rawIndex));
+			MOMO_ASSERT(rawIndex <= (size_t)((raw != nullptr) ? 1 : 0));
 		}
 
-		DataRawHashIterator& operator+=(ptrdiff_t diff)
+		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
 		{
-			ptrdiff_t newRawIndex = (ptrdiff_t)mRawIndex + diff;
-			MOMO_CHECK(newRawIndex >= 0);
-			MOMO_CHECK(pvCheckParams(mRaw, mRaws, (size_t)newRawIndex));
-			mRawIndex = (size_t)newRawIndex;
+			size_t newRawIndex = mRawIndex + diff;
+			MOMO_CHECK(mRawIndex <= (size_t)((mRaw != nullptr) ? 1 : 0));
+			mRawIndex = newRawIndex;
 			return *this;
 		}
 
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
-			MOMO_CHECK(mRaw == iter.mRaw && mRaws == iter.mRaws);
+			MOMO_CHECK(mRaw == iter.mRaw);
 			return mRawIndex - iter.mRawIndex;
 		}
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(mRaw != nullptr);
-			MOMO_CHECK(mRaws != nullptr || mRawIndex == 0);
-			return (mRawIndex > 0) ? &mRaws[mRawIndex - 1] : &mRaw;
+			MOMO_CHECK(mRaw != nullptr && mRawIndex == 0);
+			return &mRaw;
 		}
 
 		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
 		{
-			return mRaw == iter.mRaw && mRaws == iter.mRaws && mRawIndex == iter.mRawIndex;
+			return mRaw == iter.mRaw && mRawIndex == iter.mRawIndex;
 		}
 
 		bool operator<(ConstIterator iter) const
 		{
-			MOMO_CHECK(mRaw == iter.mRaw && mRaws == iter.mRaws);
+			MOMO_CHECK(mRaw == iter.mRaw);
 			return mRawIndex < iter.mRawIndex;
 		}
 
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawHashIterator)
-
-	private:
-		static bool pvCheckParams(Raw* raw, Raw* const* raws, size_t rawIndex) MOMO_NOEXCEPT
-		{
-			if (raw == nullptr)
-				return raws == nullptr && rawIndex == 0;
-			if (raws == nullptr)
-				return rawIndex <= 1;
-			return true;
-		}
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawUniqueHashIterator)
 
 	private:
 		Raw* mRaw;
-		Raw* const* mRaws;
 		size_t mRawIndex;
 	};
 
-	template<typename TColumnList>
-	class DataRawHashBounds
+	template<typename TColumnList, typename TKeyIterator>
+	class DataRawMultiHashIterator
 	{
 	protected:
 		typedef TColumnList ColumnList;
 
 	public:
+		typedef TKeyIterator KeyIterator;
+
+	private:
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		typedef DataRawHashIterator<ColumnList> Iterator;
+	public:
+		typedef Raw* const& Reference;
+		typedef Raw* const* Pointer;
 
-		typedef DataRawHashBounds ConstBounds;
+		typedef DataRawMultiHashIterator ConstIterator;
 
 	public:
-		explicit DataRawHashBounds() MOMO_NOEXCEPT
-			: mRaw(nullptr),
-			mRaws(nullptr),
-			mRawCount(0)
+		explicit DataRawMultiHashIterator() MOMO_NOEXCEPT
+			: mRawIndex(0)
 		{
 		}
 
-		explicit DataRawHashBounds(Raw* raw, Raw* const* raws, size_t rawCount) MOMO_NOEXCEPT
-			: mRaw(raw),
-			mRaws(raws),
-			mRawCount(rawCount)
+		explicit DataRawMultiHashIterator(KeyIterator keyIter, size_t rawIndex) MOMO_NOEXCEPT
+			: mKeyIterator(keyIter),
+			mRawIndex(rawIndex)
 		{
-			//MOMO_ASSERT(pvCheckParams(raw, raws, rawCount));
+			MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->values.GetCount() + 1 : 0));
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		DataRawMultiHashIterator& operator+=(ptrdiff_t diff)
 		{
-			return Iterator(mRaw, mRaws, 0);
+			size_t newRawIndex = mRawIndex + diff;
+			MOMO_CHECK(!!mKeyIterator ? newRawIndex <= mKeyIterator->values.GetCount() + 1 : diff == 0);
+			mRawIndex = newRawIndex;
+			return *this;
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		ptrdiff_t operator-(ConstIterator iter) const
 		{
-			return Iterator(mRaw, mRaws, mRawCount);
+			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
+			return mRawIndex - iter.mRawIndex;
 		}
 
-		MOMO_FRIENDS_BEGIN_END(const DataRawHashBounds&, Iterator)
-
-		size_t GetCount() const MOMO_NOEXCEPT
+		Pointer operator->() const
 		{
-			return mRawCount;
+			MOMO_CHECK(!!mKeyIterator && mRawIndex <= mKeyIterator->values.GetCount());
+			if (mRawIndex > 0)
+				return &mKeyIterator->values[mRawIndex - 1];
+			else
+				return &mKeyIterator->key;
 		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return mKeyIterator == iter.mKeyIterator
+				&& mRawIndex == iter.mRawIndex;
+		}
+
+		bool operator<(ConstIterator iter) const
+		{
+			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
+			return mRawIndex < iter.mRawIndex;
+		}
+
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawMultiHashIterator)
 
 	private:
-		Raw* mRaw;
-		Raw* const* mRaws;
-		size_t mRawCount;
+		KeyIterator mKeyIterator;
+		size_t mRawIndex;
 	};
 
 	template<typename TColumnList, typename TDataTraits>
@@ -296,7 +304,39 @@ namespace internal
 			typedef typename HashSet::ConstIterator Iterator;
 
 		public:
-			typedef DataRawHashBounds<ColumnList> RawBounds;
+			class RawBounds
+			{
+			public:
+				typedef DataRawUniqueHashIterator<ColumnList> Iterator;
+
+				typedef RawBounds ConstBounds;
+
+			public:
+				explicit RawBounds(Raw* raw) MOMO_NOEXCEPT
+					: mRaw(raw)
+				{
+				}
+
+				Iterator GetBegin() const MOMO_NOEXCEPT
+				{
+					return Iterator(mRaw, 0);
+				}
+
+				Iterator GetEnd() const MOMO_NOEXCEPT
+				{
+					return Iterator(mRaw, GetCount());
+				}
+
+				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
+
+				size_t GetCount() const MOMO_NOEXCEPT
+				{
+					return (mRaw != nullptr) ? 1 : 0;
+				}
+
+			private:
+				Raw* mRaw;
+			};
 
 		public:
 			explicit UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
@@ -430,7 +470,7 @@ namespace internal
 			RawBounds pvFind(const Key& key) const
 			{
 				Iterator iter = mHashSet.Find(key);
-				return !!iter ? RawBounds(*iter, nullptr, 1) : RawBounds();
+				return RawBounds(!!iter ? *iter : nullptr);
 			}
 
 		private:
@@ -449,7 +489,41 @@ namespace internal
 			typedef typename HashMultiMap::ConstKeyIterator KeyIterator;
 
 		public:
-			typedef DataRawHashBounds<ColumnList> RawBounds;
+			class RawBounds
+			{
+			public:
+				typedef DataRawMultiHashIterator<ColumnList, KeyIterator> Iterator;
+
+				typedef RawBounds ConstBounds;
+
+			public:
+				explicit RawBounds(KeyIterator keyIter) MOMO_NOEXCEPT
+					: mKeyIterator(keyIter),
+					mRawCount(!!keyIter ? keyIter->values.GetCount() + 1 : 0)
+				{
+				}
+
+				Iterator GetBegin() const MOMO_NOEXCEPT
+				{
+					return Iterator(mKeyIterator, 0);
+				}
+
+				Iterator GetEnd() const MOMO_NOEXCEPT
+				{
+					return Iterator(mKeyIterator, mRawCount);
+				}
+
+				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
+
+				size_t GetCount() const MOMO_NOEXCEPT
+				{
+					return mRawCount;
+				}
+
+			private:
+				KeyIterator mKeyIterator;
+				size_t mRawCount;
+			};
 
 		public:
 			explicit MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
@@ -503,11 +577,7 @@ namespace internal
 			template<typename... Items>
 			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey) const
 			{
-				KeyIterator keyIter = mHashMultiMap.Find(hashTupleKey);
-				if (!keyIter)
-					return RawBounds();
-				return RawBounds(keyIter->key, keyIter->values.GetBegin(),
-					keyIter->values.GetCount() + 1);
+				return RawBounds(mHashMultiMap.Find(hashTupleKey));
 			}
 
 			void FindExisting(Raw* raw) MOMO_NOEXCEPT
@@ -1031,7 +1101,13 @@ namespace internal
 namespace std
 {
 	template<typename CL>
-	struct iterator_traits<momo::experimental::internal::DataRawHashIterator<CL>>
+	struct iterator_traits<momo::experimental::internal::DataRawUniqueHashIterator<CL>>
+		: public iterator_traits<typename CL::Raw* const*>
+	{
+	};
+
+	template<typename CL, typename KI>
+	struct iterator_traits<momo::experimental::internal::DataRawMultiHashIterator<CL, KI>>
 		: public iterator_traits<typename CL::Raw* const*>
 	{
 	};
