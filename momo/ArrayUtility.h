@@ -36,7 +36,7 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetArray, Array*)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetArray, const Array*)
 			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetIndex, size_t)
 		};
 
