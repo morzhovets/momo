@@ -84,8 +84,7 @@ private:
 	typedef typename Indexes::UniqueHash UniqueHashIndex;
 	typedef typename Indexes::MultiHash MultiHashIndex;
 
-	//typedef typename Raws::ConstIterator RawIterator;
-	typedef momo::internal::ArrayIndexIterator<const Raws, Raw* const, Settings> RawIterator;
+	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
 	typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
 	typedef internal::DataRowBounds<RowReference, RawBounds> RowBounds;
@@ -252,11 +251,6 @@ private:
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 		MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
-	};
-
-	struct RawIteratorProxy : public RawIterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RawIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -872,13 +866,8 @@ private:
 
 	Iterator pvMakeIterator(size_t index) const MOMO_NOEXCEPT
 	{
-		return IteratorProxy(&GetColumnList(), pvMakeRawIterator(index),
+		return IteratorProxy(&GetColumnList(), RawIterator(mRaws, index),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
-	}
-
-	RawIterator pvMakeRawIterator(size_t index) const MOMO_NOEXCEPT
-	{
-		return RawIteratorProxy(&mRaws, index);
 	}
 
 	template<typename Item>
@@ -886,7 +875,7 @@ private:
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(column);
-		RawBounds rawBounds(pvMakeRawIterator(0), GetCount());
+		RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
 		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
 			VersionKeeper(&mCrew.GetRemoveVersion())));
 	}

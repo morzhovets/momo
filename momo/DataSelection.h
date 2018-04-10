@@ -20,6 +20,86 @@ namespace experimental
 
 namespace internal
 {
+	template<typename TRaws, typename TSettings>
+	class DataRawIterator
+		: private momo::internal::ArrayIndexIterator<const TRaws, const typename TRaws::Item>
+	{
+	protected:
+		typedef TRaws Raws;
+		typedef TSettings Settings;
+
+	private:
+		typedef typename Raws::Item RawPtr;
+
+		typedef momo::internal::ArrayIndexIterator<const Raws, const RawPtr> ArrayIndexIterator;
+
+	public:
+		typedef const RawPtr& Reference;
+		typedef const RawPtr* Pointer;
+
+		typedef DataRawIterator ConstIterator;
+
+	public:
+		explicit DataRawIterator() MOMO_NOEXCEPT
+		{
+		}
+
+		explicit DataRawIterator(const Raws& raws, size_t index) MOMO_NOEXCEPT
+			: ArrayIndexIterator(&raws, index)
+		{
+		}
+
+		//operator ConstIterator() const MOMO_NOEXCEPT
+
+		DataRawIterator& operator+=(ptrdiff_t diff)
+		{
+			const Raws* raws = pvGetRaws();
+			size_t newIndex = pvGetIndex() + diff;
+			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
+			ArrayIndexIterator::operator+=(diff);
+			return *this;
+		}
+
+		ptrdiff_t operator-(ConstIterator iter) const
+		{
+			MOMO_CHECK(pvGetRaws() == iter.pvGetRaws());
+			return ArrayIndexIterator::operator-(iter);
+		}
+
+		Pointer operator->() const
+		{
+			const Raws* raws = pvGetRaws();
+			size_t index = pvGetIndex();
+			MOMO_CHECK(raws != nullptr && index < raws->GetCount());
+			return ArrayIndexIterator::operator->();
+			//return raws->GetItems() + index;
+		}
+
+		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		{
+			return ArrayIndexIterator::operator==(iter);
+		}
+
+		bool operator<(ConstIterator iter) const
+		{
+			MOMO_CHECK(pvGetRaws() == iter.pvGetRaws());
+			return ArrayIndexIterator::operator<(iter);
+		}
+
+		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
+
+	private:
+		const Raws* pvGetRaws() const MOMO_NOEXCEPT
+		{
+			return ArrayIndexIterator::ptGetArray();
+		}
+
+		size_t pvGetIndex() const MOMO_NOEXCEPT
+		{
+			return ArrayIndexIterator::ptGetIndex();
+		}
+	};
+
 	template<typename TRowReference, typename TRawIterator>
 	class DataRowIterator : private momo::internal::VersionKeeper<typename TRowReference::Settings>
 	{
@@ -357,8 +437,7 @@ namespace internal
 			momo::internal::NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
-		//typedef typename Raws::ConstIterator RawIterator;
-		typedef momo::internal::ArrayIndexIterator<const Raws, Raw* const, Settings> RawIterator;
+		typedef DataRawIterator<Raws, Settings> RawIterator;
 
 		typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
 		typedef DataRowBounds<RowReference, RawBounds> RowBounds;
@@ -375,11 +454,6 @@ namespace internal
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
-		};
-
-		struct RawIteratorProxy : public RawIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(RawIterator)
 		};
 
 		struct ConstIteratorProxy : public ConstIterator
@@ -464,12 +538,12 @@ namespace internal
 
 		ConstIterator GetBegin() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, pvMakeRawIterator(0), *this);
+			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, 0), *this);
 		}
 
 		ConstIterator GetEnd() const MOMO_NOEXCEPT
 		{
-			return ConstIteratorProxy(mColumnList, pvMakeRawIterator(GetCount()), *this);
+			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, GetCount()), *this);
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
@@ -528,7 +602,7 @@ namespace internal
 		ItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 		{
 			size_t offset = mColumnList->GetOffset(column);
-			RawBounds rawBounds(pvMakeRawIterator(0), GetCount());
+			RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
 			return ItemBounds<Item>(offset, RowBoundsProxy(mColumnList, rawBounds, *this));
 		}
 
@@ -652,11 +726,6 @@ namespace internal
 			return RowReferenceProxy(mColumnList, raw, *this);
 		}
 
-		RawIterator pvMakeRawIterator(size_t index) const MOMO_NOEXCEPT
-		{
-			return RawIteratorProxy(&mRaws, index);
-		}
-
 		template<typename RowIterator>
 		size_t pvGetCount(RowIterator begin, RowIterator end)
 		{
@@ -692,6 +761,12 @@ namespace internal
 
 namespace std
 {
+	template<typename R, typename S>
+	struct iterator_traits<momo::experimental::internal::DataRawIterator<R, S>>
+		: public iterator_traits<const typename R::Item*>
+	{
+	};
+
 	template<typename RR, typename RI>
 	struct iterator_traits<momo::experimental::internal::DataRowIterator<RR, RI>>
 	{
