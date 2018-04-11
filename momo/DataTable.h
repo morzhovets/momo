@@ -43,6 +43,18 @@ public:
 	{
 		return item1 == item2;
 	}
+
+	template<typename Item>
+	static int Compare(const Item& item1, const Item& item2)
+	{
+		return (item1 < item2) ? -1 : (item1 == item2) ? 0 : 1;
+	}
+
+	template<typename Iterator, typename Comparer>
+	static void Sort(Iterator begin, Iterator end, const Comparer& comparer)
+	{
+		std::stable_sort(begin, end, comparer);
+	}
 };
 
 template<typename TColumnList = DataColumnList<>,
@@ -69,7 +81,7 @@ public:
 	typedef internal::DataRowReference<internal::DataItemReferencer<ColumnList>> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
 
-	typedef internal::DataSelection<RowReference> Selection;
+	typedef internal::DataSelection<RowReference, DataTraits> Selection;
 	typedef typename Selection::ConstSelection ConstSelection;
 
 private:

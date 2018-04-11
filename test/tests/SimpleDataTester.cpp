@@ -153,6 +153,10 @@ public:
 		for (const std::string& s : cselection.GetColumnItems(strCol))
 			assert(s == "1");
 
+		cselection = table.Select().SortBy(strCol);
+		for (size_t i = 0; i < count; ++i)
+			assert(cselection[i][strCol] == ((i < count / 2) ? "0" : "1"));
+
 		assert(table.SelectCount(dblCol == 0.0) == 1);
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);

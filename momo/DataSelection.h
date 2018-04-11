@@ -414,12 +414,13 @@ namespace internal
 		RowBounds mRowBounds;
 	};
 
-	template<typename TRowReference>
+	template<typename TRowReference, typename TDataTraits>
 	class DataSelection
 		: private momo::internal::VersionKeeper<typename TRowReference::ColumnList::Settings>
 	{
 	public:
 		typedef TRowReference RowReference;
+		typedef TDataTraits DataTraits;
 		typedef typename RowReference::ColumnList ColumnList;
 		typedef typename ColumnList::MemManager MemManager;
 		typedef typename ColumnList::Settings Settings;
@@ -428,7 +429,10 @@ namespace internal
 		template<typename Item>
 		using Column = typename ColumnList::template Column<Item>;
 
-		typedef DataSelection<typename RowReference::ConstReference> ConstSelection;
+		template<typename Item>
+		using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;	//?
+
+		typedef DataSelection<typename RowReference::ConstReference, DataTraits> ConstSelection;
 
 	protected:
 		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
@@ -689,6 +693,20 @@ namespace internal
 			return *this;
 		}
 
+		template<typename Item, typename... Items>
+		DataSelection&& SortBy(const Column<Item>& column, const Column<Items>&... columns) &&
+		{
+			pvSortBy(column, columns...);
+			return std::move(*this);
+		}
+
+		template<typename Item, typename... Items>
+		DataSelection& SortBy(const Column<Item>& column, const Column<Items>&... columns) &
+		{
+			pvSortBy(column, columns...);
+			return *this;
+		}
+
 		template<typename RowComparer>
 		DataSelection&& Sort(const RowComparer& rowComparer) &&
 		{
@@ -741,12 +759,41 @@ namespace internal
 			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
 		}
 
+		template<typename... Items>
+		void pvSortBy(const Column<Items>&... columns)
+		{
+			static const size_t columnCount = sizeof...(columns);
+			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
+			auto rawComparer = [this, &offsets] (Raw* raw1, Raw* raw2)
+				{ return pvIsLess<void, Items...>(raw1, raw2, offsets.data()); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+		}
+
 		template<typename RowComparer>
 		void pvSort(const RowComparer& rowComparer)
 		{
 			auto rawComparer = [this, &rowComparer] (Raw* raw1, Raw* raw2)
 				{ return rowComparer(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };	//?
-			std::sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+		}
+
+		template<typename Void, typename Item, typename... Items>
+		bool pvIsLess(Raw* raw1, Raw* raw2, const size_t* offsets) const
+		{
+			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw1, *offsets);
+			const Item& item2 = mColumnList->template GetByOffset<const Item>(raw2, *offsets);
+			int cmp = DataTraits::Compare(item1, item2);
+			if (cmp < 0)
+				return true;
+			if (cmp > 0)
+				return false;
+			return pvIsLess<void, Items...>(raw1, raw2, offsets + 1);
+		}
+
+		template<typename Void>
+		bool pvIsLess(Raw* /*raw1*/, Raw* /*raw2*/, const size_t* /*offsets*/) const MOMO_NOEXCEPT
+		{
+			return false;
 		}
 
 	private:
