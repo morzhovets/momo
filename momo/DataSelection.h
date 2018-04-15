@@ -721,6 +721,18 @@ namespace internal
 			return *this;
 		}
 
+		template<typename Item, typename... Items>
+		size_t LowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		{
+			return pvBinarySearch<-1>(equaler, equalers...);
+		}
+
+		template<typename Item, typename... Items>
+		size_t UpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		{
+			return pvBinarySearch<0>(equaler, equalers...);
+		}
+
 		template<typename RowPredicate>
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
@@ -765,8 +777,25 @@ namespace internal
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawComparer = [this, &offsets] (Raw* raw1, Raw* raw2)
-				{ return pvIsLess<void, Items...>(raw1, raw2, offsets.data()); };
+				{ return pvCompare<void, Items...>(offsets.data(), raw1, raw2) < 0; };
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+		}
+
+		template<typename Void, typename Item, typename... Items>
+		int pvCompare(const size_t* offsets, Raw* raw1, Raw* raw2) const
+		{
+			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw1, *offsets);
+			const Item& item2 = mColumnList->template GetByOffset<const Item>(raw2, *offsets);
+			int cmp = DataTraits::Compare(item1, item2);
+			if (cmp != 0)
+				return cmp;
+			return pvCompare<void, Items...>(offsets + 1, raw1, raw2);
+		}
+
+		template<typename Void>
+		int pvCompare(const size_t* /*offsets*/, Raw* /*raw1*/, Raw* /*raw2*/) const MOMO_NOEXCEPT
+		{
+			return 0;
 		}
 
 		template<typename RowComparer>
@@ -777,23 +806,32 @@ namespace internal
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
 		}
 
-		template<typename Void, typename Item, typename... Items>
-		bool pvIsLess(Raw* raw1, Raw* raw2, const size_t* offsets) const
+		template<int bound, typename... Items>
+		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
 		{
-			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw1, *offsets);
-			const Item& item2 = mColumnList->template GetByOffset<const Item>(raw2, *offsets);
+			static const size_t columnCount = sizeof...(equalers);
+			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(equalers.GetColumn())... }};
+			auto rawPred = [this, &offsets, &equalers...] (Raw*, Raw* raw)
+				{ return pvCompare<void>(offsets.data(), raw, equalers...) > bound; };
+			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
+		}
+
+		template<typename Void, typename Item, typename... Items>
+		int pvCompare(const size_t* offsets, Raw* raw, const Equaler<Item>& equaler,
+			const Equaler<Items>&... equalers) const
+		{
+			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw, *offsets);
+			const Item& item2 = equaler.GetItemArg();
 			int cmp = DataTraits::Compare(item1, item2);
-			if (cmp < 0)
-				return true;
-			if (cmp > 0)
-				return false;
-			return pvIsLess<void, Items...>(raw1, raw2, offsets + 1);
+			if (cmp != 0)
+				return cmp;
+			return pvCompare<void>(offsets + 1, raw, equalers...);
 		}
 
 		template<typename Void>
-		bool pvIsLess(Raw* /*raw1*/, Raw* /*raw2*/, const size_t* /*offsets*/) const MOMO_NOEXCEPT
+		int pvCompare(const size_t* /*offsets*/, Raw* /*raw*/) const MOMO_NOEXCEPT
 		{
-			return false;
+			return 0;
 		}
 
 	private:

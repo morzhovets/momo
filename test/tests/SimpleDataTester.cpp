@@ -157,6 +157,15 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			assert(cselection[i][strCol] == ((i < count / 2) ? "0" : "1"));
 
+		assert(cselection.LowerBound(strCol == "") == 0);
+		assert(cselection.UpperBound(strCol == "") == 0);
+		assert(cselection.LowerBound(strCol == "0") == 0);
+		assert(cselection.UpperBound(strCol == "0") == count / 2);
+		assert(cselection.LowerBound(strCol == "1") == count / 2);
+		assert(cselection.UpperBound(strCol == "1") == count);
+		assert(cselection.LowerBound(strCol == "2") == count);
+		assert(cselection.UpperBound(strCol == "2") == count);
+
 		assert(table.SelectCount(dblCol == 0.0) == 1);
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
