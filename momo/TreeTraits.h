@@ -66,7 +66,7 @@ public:
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TTreeNode = TreeNodeDefault>
-class TreeTraitsStd
+class TreeTraitsStd : private TLessFunc
 {
 public:
 	typedef TKey Key;
@@ -81,23 +81,20 @@ public:
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
-		: mLessFunc(lessFunc)
+		: LessFunc(lessFunc)
 	{
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		return mLessFunc(key1, key2);
+		return LessFunc::operator()(key1, key2);
 	}
 
 	const LessFunc& GetLessFunc() const MOMO_NOEXCEPT
 	{
-		return mLessFunc;
+		return *this;
 	}
-
-private:
-	LessFunc mLessFunc;
 };
 
 } // namespace momo
