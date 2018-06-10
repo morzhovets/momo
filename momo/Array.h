@@ -256,11 +256,7 @@ private:
 	private:
 		typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
-		static const bool hasInternalCapacity = (internalCapacity > 0);
-		static const size_t maskInternal = hasInternalCapacity
-			? (size_t)1 << (8 * sizeof(size_t) - 1) : 0;
-
-		typedef internal::BoolConstant<hasInternalCapacity> HasInternalCapacity;
+		typedef internal::BoolConstant<(internalCapacity > 0)> HasInternalCapacity;
 
 	public:
 		explicit Data(MemManager&& memManager) MOMO_NOEXCEPT
@@ -269,15 +265,15 @@ private:
 			pvCreate(HasInternalCapacity());
 		}
 
-		explicit Data(size_t capacity, MemManager&& memManager = MemManager())
+		explicit Data(size_t capacity, MemManager&& memManager)
 			: MemManagerWrapper(std::move(memManager))
 		{
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
+				mItems = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
 				mCount = 0;
-				mExternalData.items = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
-				mExternalData.capacity = capacity;
+				mCapacity = capacity;
 			}
 			else
 			{
@@ -288,7 +284,7 @@ private:
 		Data(Data&& data) MOMO_NOEXCEPT
 			: MemManagerWrapper(std::move(data.pvGetMemManagerWrapper()))
 		{
-			pvCreateMove(std::move(data));
+			pvCreateMove(std::move(data), HasInternalCapacity());
 		}
 
 		Data(const Data&) = delete;
@@ -304,7 +300,7 @@ private:
 			{
 				pvDestroy();
 				pvGetMemManagerWrapper() = std::move(data.pvGetMemManagerWrapper());
-				pvCreateMove(std::move(data));
+				pvCreateMove(std::move(data), HasInternalCapacity());
 			}
 			return *this;
 		}
@@ -313,12 +309,12 @@ private:
 
 		const Item* GetItems() const MOMO_NOEXCEPT
 		{
-			return pvGetItems(&mInternalData, HasInternalCapacity());
+			return mItems;
 		}
 
 		Item* GetItems() MOMO_NOEXCEPT
 		{
-			return pvGetItems(&mInternalData, HasInternalCapacity());
+			return mItems;
 		}
 
 		const MemManager& GetMemManager() const MOMO_NOEXCEPT
@@ -333,7 +329,7 @@ private:
 
 		size_t GetCapacity() const MOMO_NOEXCEPT
 		{
-			return pvIsInternal() ? internalCapacity : mExternalData.capacity;
+			return pvIsInternal() ? internalCapacity : mCapacity;
 		}
 
 		bool SetCapacity(size_t capacity)
@@ -348,14 +344,13 @@ private:
 
 		size_t GetCount() const MOMO_NOEXCEPT
 		{
-			return mCount & ~maskInternal;
+			return mCount;
 		}
 
 		void SetCount(size_t count) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(count <= GetCapacity());
-			mCount &= maskInternal;
-			mCount |= count;
+			mCount = count;
 		}
 
 		void Clear() MOMO_NOEXCEPT
@@ -382,9 +377,9 @@ private:
 					throw;
 				}
 				pvDeallocate();
-				mExternalData.items = items;
-				mExternalData.capacity = capacity;
+				mItems = items;
 				mCount = count;
+				mCapacity = capacity;
 			}
 			else
 			{
@@ -405,98 +400,83 @@ private:
 
 		static void pvCheckCapacity(size_t capacity)
 		{
-			static const size_t maxCapacity = (sizeof(Item) > 1) ? SIZE_MAX / sizeof(Item)
-				: (internalCapacity > 0) ? SIZE_MAX / 2 : SIZE_MAX - 1;
-			if (capacity > maxCapacity)
+			if (capacity > SIZE_MAX / sizeof(Item))
 				throw std::length_error("momo::Array length error");
 		}
 
 		void pvCreate(std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
-			mCount = maskInternal;
+			mItems = &mInternalItems;
+			mCount = 0;
 		}
 
 		void pvCreate(std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
+			mItems = nullptr;
 			mCount = 0;
-			mExternalData.items = nullptr;
-			mExternalData.capacity = 0;
+			mCapacity = 0;
 		}
 
-		void pvCreateMove(Data&& data) MOMO_NOEXCEPT
+		void pvCreateMove(Data&& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
 		{
-			pvMoveData(data, HasInternalCapacity());
+			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			if (data.pvIsInternal())
+			{
+				mItems = &mInternalItems;
+				ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
+			}
+			else
+			{
+				mItems = data.mItems;
+				mCapacity = data.mCapacity;
+			}
 			mCount = data.mCount;
-			data.mCount = maskInternal;
+			data.pvCreate(std::true_type());
+		}
+
+		void pvCreateMove(Data&& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		{
+			mItems = data.mItems;
+			mCount = data.mCount;
+			mCapacity = data.mCapacity;
+			data.pvCreate(std::false_type());
 		}
 
 		void pvDestroy() MOMO_NOEXCEPT
 		{
-			ItemTraits::Destroy(GetMemManager(), GetItems(), GetCount());
+			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
 			pvDeallocate();
 		}
 
 		void pvDeallocate() MOMO_NOEXCEPT
 		{
 			if (GetCapacity() > internalCapacity)
-			{
-				GetMemManager().Deallocate(mExternalData.items,
-					mExternalData.capacity * sizeof(Item));
-			}
-		}
-
-		void pvMoveData(Data& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
-		{
-			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
-			if (data.pvIsInternal())
-				ItemTraits::Relocate(GetMemManager(), &data.mInternalData, &mInternalData, data.GetCount());
-			else
-				pvMoveData(data, std::false_type());
-		}
-
-		void pvMoveData(Data& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
-		{
-			mExternalData = data.mExternalData;
-			data.mExternalData.items = nullptr;
-			data.mExternalData.capacity = 0;
+				GetMemManager().Deallocate(mItems, mCapacity * sizeof(Item));
 		}
 
 		bool pvIsInternal() const MOMO_NOEXCEPT
 		{
-			return (mCount & maskInternal) != 0;
-		}
-
-		template<typename Item>
-		Item* pvGetItems(Item* internalData,
-			std::true_type /*hasInternalCapacity*/) const MOMO_NOEXCEPT
-		{
-			return pvIsInternal() ? internalData : mExternalData.items;
-		}
-
-		Item* pvGetItems(const void* /*internalData*/,
-			std::false_type /*hasInternalCapacity*/) const MOMO_NOEXCEPT
-		{
-			return mExternalData.items;
+			return mItems == &mInternalItems;
 		}
 
 		template<bool canReallocateInplace>
 		bool pvSetCapacity(size_t capacity, std::true_type /*canReallocate*/,
 			internal::BoolConstant<canReallocateInplace>)
 		{
-			mExternalData.items = GetMemManager().template Reallocate<Item>(mExternalData.items,
-				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
-			mExternalData.capacity = capacity;
+			mItems = GetMemManager().template Reallocate<Item>(mItems,
+				mCapacity * sizeof(Item), capacity * sizeof(Item));
+			mCapacity = capacity;
 			return true;
 		}
 
 		bool pvSetCapacity(size_t capacity, std::false_type /*canReallocate*/,
 			std::true_type /*canReallocateInplace*/) MOMO_NOEXCEPT
 		{
-			bool reallocDone = GetMemManager().ReallocateInplace(mExternalData.items,
-				mExternalData.capacity * sizeof(Item), capacity * sizeof(Item));
+			bool reallocDone = GetMemManager().ReallocateInplace(mItems,
+				mCapacity * sizeof(Item), capacity * sizeof(Item));
 			if (!reallocDone)
 				return false;
-			mExternalData.capacity = capacity;
+			mCapacity = capacity;
 			return true;
 		}
 
@@ -514,8 +494,9 @@ private:
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
 			relocateFunc(&internalData);
 			pvDeallocate();
-			ItemTraits::Relocate(GetMemManager(), &internalData, &mInternalData, count);
-			mCount = maskInternal | count;
+			mItems = &mInternalItems;
+			ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
+			mCount = count;
 		}
 
 		template<typename RelocateFunc>
@@ -529,15 +510,12 @@ private:
 		}
 
 	private:
+		Item* mItems;
 		size_t mCount;
 		union
 		{
-			struct
-			{
-				Item* items;
-				size_t capacity;
-			} mExternalData;
-			internal::ArrayBuffer<ItemTraits, internalCapacity> mInternalData;
+			size_t mCapacity;
+			internal::ArrayBuffer<ItemTraits, internalCapacity> mInternalItems;
 		};
 	};
 
