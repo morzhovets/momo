@@ -784,20 +784,11 @@ public:
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
 		MOMO_CHECK(extItem.IsEmpty());
-		MemManager& memManager = GetMemManager();
-		auto replaceFunc1 = [&memManager, &extItem] (Item& srcItem)
-		{
-			auto itemCreator = [&memManager, &srcItem] (Item* newItem)
-				{ ItemTraits::Relocate(&memManager, srcItem, newItem); };
-			extItem.Create(itemCreator);
-		};
-		auto replaceFunc2 = [&memManager, &extItem] (Item& srcItem, Item& dstItem)
-		{
-			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
-				{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
-			extItem.Create(itemCreator);
-		};
-		return pvRemove(iter, replaceFunc1, replaceFunc2);
+		ConstIterator resIter;
+		auto itemCreator = [this, iter, &resIter] (Item* newItem)
+			{ resIter = pvRemove(iter, newItem); };
+		extItem.Create(itemCreator);
+		return resIter;
 	}
 
 	bool Remove(const Key& key)
@@ -837,20 +828,38 @@ public:
 	{
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename Set::Key>::value));
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
+		pvMergeTo(dstSet);
+	}
+
+	void MergeTo(TreeSet& dstTreeSet)
+	{
+		if (!std::is_empty<TreeTraits>::value)	//?
+			return pvMergeTo(dstTreeSet);
+		size_t count = GetCount();
+		if (count == 0)
+			return;
+		size_t dstCount = dstTreeSet.GetCount();
+		if (count * internal::UIntMath<size_t>::Log2(count + dstCount) < count + dstCount)	//?
+			return pvMergeTo(dstTreeSet);
 		ConstIterator iter = GetBegin();
+		ConstIterator dstIter = dstTreeSet.GetBegin();
+		const TreeTraits& treeTraits = dstTreeSet.GetTreeTraits();
 		while (iter != GetEnd())
 		{
-			auto itemCreator = [this, &iter] (Item* newItem)
+			const Key& key = ItemTraits::GetKey(*iter);
+			while (dstIter != dstTreeSet.GetEnd() && treeTraits.IsLess(ItemTraits::GetKey(*dstIter), key))
+				++dstIter;
+			if (dstTreeSet.pvIsEqual(dstIter, key))
 			{
-				MemManager& memManager = GetMemManager();
-				auto replaceFunc1 = [&memManager, newItem] (Item& srcItem)
-					{ ItemTraits::Relocate(&memManager, srcItem, newItem); };
-				auto replaceFunc2 = [&memManager, newItem] (Item& srcItem, Item& dstItem)
-					{ ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem); };
-				iter = pvRemove(iter, replaceFunc1, replaceFunc2);
-			};
-			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
+				++dstIter;
+			}
+			else
+			{
+				auto itemCreator = [this, &iter] (Item* newItem)
+					{ iter = pvRemove(iter, newItem); };
+				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
+			}
 		}
 	}
 
@@ -1163,6 +1172,15 @@ private:
 		return pvMakeIterator(node, itemIndex, true);
 	}
 
+	ConstIterator pvRemove(ConstIterator iter, Item* extItem)
+	{
+		auto replaceFunc1 = [this, extItem] (Item& srcItem)
+			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
+		auto replaceFunc2 = [this, extItem] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem); };
+		return pvRemove(iter, replaceFunc1, replaceFunc2);
+	}
+
 	template<typename ReplaceFunc1, typename ReplaceFunc2>
 	Node* pvRemoveInternal(Node* node, size_t itemIndex, ReplaceFunc1 replaceFunc1,
 		ReplaceFunc2 replaceFunc2)
@@ -1280,6 +1298,19 @@ private:
 		}
 		node2->Destroy(*mNodeParams);
 		return true;
+	}
+
+	template<typename Set>
+	void pvMergeTo(Set& dstSet)
+	{
+		ConstIterator iter = GetBegin();
+		while (iter != GetEnd())
+		{
+			auto itemCreator = [this, &iter] (Item* newItem)
+				{ iter = pvRemove(iter, newItem); };
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
+				++iter;
+		}
 	}
 
 private:
