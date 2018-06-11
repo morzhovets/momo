@@ -522,7 +522,7 @@ public:
 	ValueReferenceRKey operator[](Key&& key)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
-		return pvIsEqual(iter, static_cast<const Key&>(key))
+		return !pvIsGreater(iter, static_cast<const Key&>(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
 			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
 	}
@@ -530,7 +530,7 @@ public:
 	ValueReferenceCKey operator[](const Key& key)
 	{
 		Iterator iter = LowerBound(key);
-		return pvIsEqual(iter, key)
+		return !pvIsGreater(iter, key)
 			? ValueReferencer::template GetReference<const Key&>(*this, iter)
 			: ValueReferencer::template GetReference<const Key&>(*this, iter, key);
 	}
@@ -590,16 +590,16 @@ public:
 	}
 
 private:
-	bool pvIsEqual(ConstIterator iter, const Key& key) const
+	bool pvIsGreater(ConstIterator iter, const Key& key) const
 	{
-		return iter != GetEnd() && !GetTreeTraits().IsLess(key, iter->key);
+		return iter == GetEnd() || GetTreeTraits().IsLess(key, iter->key);
 	}
 
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, const ValueCreator& valueCreator)
 	{
 		Iterator iter = LowerBound(static_cast<const Key&>(key));
-		if (pvIsEqual(iter, static_cast<const Key&>(key)))
+		if (!pvIsGreater(iter, static_cast<const Key&>(key)))
 			return InsertResult(iter, false);
 		iter = pvAdd<false>(iter, std::forward<RKey>(key), valueCreator);
 		return InsertResult(iter, true);

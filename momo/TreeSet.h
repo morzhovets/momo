@@ -673,14 +673,14 @@ public:
 
 	bool HasKey(const Key& key) const
 	{
-		return pvIsEqual(pvLowerBound(key), key);
+		return !pvIsGreater(pvLowerBound(key), key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
 	{
-		return pvIsEqual(pvLowerBound(key), key);
+		return !pvIsGreater(pvLowerBound(key), key);
 	}
 
 	template<typename ItemCreator>
@@ -786,7 +786,7 @@ public:
 		MOMO_CHECK(extItem.IsEmpty());
 		ConstIterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
-			{ resIter = pvRemove(iter, newItem); };
+			{ resIter = pvExtract(iter, newItem); };
 		extItem.Create(itemCreator);
 		return resIter;
 	}
@@ -794,7 +794,7 @@ public:
 	bool Remove(const Key& key)
 	{
 		ConstIterator iter = LowerBound(key);
-		if (!pvIsEqual(iter, key))
+		if (pvIsGreater(iter, key))
 			return false;
 		Remove(iter);
 		return true;
@@ -849,16 +849,16 @@ public:
 			const Key& key = ItemTraits::GetKey(*iter);
 			while (dstIter != dstTreeSet.GetEnd() && treeTraits.IsLess(ItemTraits::GetKey(*dstIter), key))
 				++dstIter;
-			if (dstTreeSet.pvIsEqual(dstIter, key))
+			if (dstTreeSet.pvIsGreater(dstIter, key))
 			{
-				++iter;
-				++dstIter;
+				auto itemCreator = [this, &iter] (Item* newItem)
+					{ iter = pvExtract(iter, newItem); };
+				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
 			}
 			else
 			{
-				auto itemCreator = [this, &iter] (Item* newItem)
-					{ iter = pvRemove(iter, newItem); };
-				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
+				++iter;
+				++dstIter;
 			}
 		}
 	}
@@ -888,9 +888,9 @@ private:
 	}
 
 	template<typename KeyArg>
-	bool pvIsEqual(ConstIterator iter, const KeyArg& key) const
+	bool pvIsGreater(ConstIterator iter, const KeyArg& key) const
 	{
-		return iter != GetEnd() && !GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
+		return iter == GetEnd() || GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
 	bool pvExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
@@ -935,7 +935,7 @@ private:
 	ConstIterator pvUpperBound(const KeyArg& key) const
 	{
 		ConstIterator iter = pvLowerBound(key);
-		if (pvIsEqual(iter, key))
+		if (!pvIsGreater(iter, key))
 			++iter;
 		return iter;
 	}
@@ -944,7 +944,7 @@ private:
 	ConstIterator pvFind(const KeyArg& key) const
 	{
 		ConstIterator iter = pvLowerBound(key);
-		return pvIsEqual(iter, key) ? iter : GetEnd();
+		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 
 	template<typename KeyArg>
@@ -1004,7 +1004,7 @@ private:
 	InsertResult pvInsert(const Key& key, const ItemCreator& itemCreator)
 	{
 		ConstIterator iter = LowerBound(key);
-		if (pvIsEqual(iter, key))
+		if (!pvIsGreater(iter, key))
 			return InsertResult(iter, false);
 		iter = pvAdd<extraCheck>(iter, itemCreator);
 		return InsertResult(iter, true);
@@ -1172,7 +1172,7 @@ private:
 		return pvMakeIterator(node, itemIndex, true);
 	}
 
-	ConstIterator pvRemove(ConstIterator iter, Item* extItem)
+	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
 	{
 		auto replaceFunc1 = [this, extItem] (Item& srcItem)
 			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
@@ -1307,7 +1307,7 @@ private:
 		while (iter != GetEnd())
 		{
 			auto itemCreator = [this, &iter] (Item* newItem)
-				{ iter = pvRemove(iter, newItem); };
+				{ iter = pvExtract(iter, newItem); };
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
 		}
