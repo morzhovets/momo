@@ -796,19 +796,11 @@ public:
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
 		MOMO_CHECK(extItem.IsEmpty());
-		MemManager& memManager = GetMemManager();
-		auto replaceFunc = [&memManager, &extItem] (Item& srcItem, Item& dstItem)
-		{
-			auto itemCreator = [&memManager, &srcItem, &dstItem] (Item* newItem)
-			{
-				if (std::addressof(srcItem) == std::addressof(dstItem))
-					ItemTraits::Relocate(&memManager, srcItem, newItem);
-				else
-					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
-			};
-			extItem.Create(itemCreator);
-		};
-		return pvRemove(iter, replaceFunc);
+		ConstIterator resIter;
+		auto itemCreator = [this, iter, &resIter] (Item* newItem)
+			{ resIter = pvExtract(iter, newItem); };
+		extItem.Create(itemCreator);
+		return resIter;
 	}
 
 	bool Remove(const Key& key)
@@ -852,17 +844,7 @@ public:
 		while (!!iter)
 		{
 			auto itemCreator = [this, &iter] (Item* newItem)
-			{
-				MemManager& memManager = GetMemManager();
-				auto replaceFunc = [&memManager, newItem] (Item& srcItem, Item& dstItem)
-				{
-					if (std::addressof(srcItem) == std::addressof(dstItem))
-						ItemTraits::Relocate(&memManager, srcItem, newItem);
-					else
-						ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
-				};
-				iter = pvRemove(iter, replaceFunc);
-			};
+				{ iter = pvExtract(iter, newItem); };
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
 		}
@@ -1125,6 +1107,19 @@ private:
 		if (!ConstIteratorProxy::IsMovable(iter))
 			return ConstIterator();
 		return pvMakeIterator(*buckets, bucketIndex, bucketIter, true);
+	}
+
+	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
+	{
+		auto replaceFunc = [this, extItem] (Item& srcItem, Item& dstItem)
+		{
+			MemManager& memManager = GetMemManager();
+			if (std::addressof(srcItem) == std::addressof(dstItem))
+				ItemTraits::Relocate(&memManager, srcItem, extItem);
+			else
+				ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, extItem);
+		};
+		return pvRemove(iter, replaceFunc);
 	}
 
 	void pvRelocateItems() MOMO_NOEXCEPT
