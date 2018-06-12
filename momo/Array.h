@@ -556,7 +556,7 @@ public:
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? std::distance(begin, end) : 0,
 			std::move(memManager))
 	{
-		pvFill(begin, end);
+		pvFill(begin, end, internal::IsForwardIterator<ArgIterator>());
 	}
 
 	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
@@ -572,7 +572,7 @@ public:
 	Array(const Array& array, bool shrink = true)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		pvFill(array.GetBegin(), array.GetEnd());
+		pvFill(array.GetBegin(), array.GetEnd(), std::true_type());
 	}
 
 	Array(const Array& array, MemManager&& memManager)
@@ -908,9 +908,8 @@ private:
 			AddBackNogrowCrt(itemCreator);
 	}
 
-	template<typename ArgIterator,
-		typename std::enable_if<internal::IsForwardIterator<ArgIterator>::value, int>::type = 0>
-	void pvFill(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator>
+	void pvFill(ArgIterator begin, ArgIterator end, std::true_type /*isForwardIterator*/)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
@@ -919,9 +918,8 @@ private:
 			AddBackNogrowCrt(IterCreator(memManager, *iter));
 	}
 
-	template<typename ArgIterator,
-		typename std::enable_if<!internal::IsForwardIterator<ArgIterator>::value, int>::type = 0>
-	void pvFill(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator>
+	void pvFill(ArgIterator begin, ArgIterator end, std::false_type /*isForwardIterator*/)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
