@@ -193,8 +193,8 @@ public:
 		map.Remove(s3);
 		map.Remove("s4");
 		std::pair<std::string, std::string> pair("s4", s4);
-		map.InsertFS(&pair, &pair + 1);
-		map.InsertKV(map.Find(s2), std::next(map.Find(s2)));	//?
+		map.Insert(&pair, &pair + 1);
+		map.Insert(map.Find(s2), std::next(map.Find(s2)));	//?
 		assert(map.GetCount() == 3);
 		map.Remove(s4);
 		for (auto ref : map)

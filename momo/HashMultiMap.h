@@ -13,8 +13,7 @@
 
   All `HashMultiMap` functions and constructors have strong exception
   safety, but not the following cases:
-  1. Functions `Add`, `AddKV`, `AddFS` receiving many items have
-    basic exception safety.
+  1. Functions `Add` receiving many items have basic exception safety.
   2. If any constructor throws exception, input argument `memManager`
     may be changed.
   3. In case default `KeyValueTraits`: If function `Add`, `AddVar` or
@@ -701,13 +700,13 @@ public:
 	{
 	}
 
-	HashMultiMap(std::initializer_list<std::pair<Key, Value>> keyValuePairs,
+	HashMultiMap(std::initializer_list<std::pair<Key, Value>> pairs,
 		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
 		try
 		{
-			Add(keyValuePairs);
+			Add(pairs);
 		}
 		catch (...)
 		{
@@ -965,24 +964,15 @@ public:
 	}
 
 	template<typename ArgIterator>
-	void AddKV(ArgIterator begin, ArgIterator end)
+	void Add(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_TYPE(Key, begin->key);
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddVar(iter->key, iter->value);
+			pvAdd(*iter);
 	}
 
-	template<typename ArgIterator>
-	void AddFS(ArgIterator begin, ArgIterator end)
+	void Add(std::initializer_list<std::pair<Key, Value>> pairs)	//?
 	{
-		MOMO_CHECK_TYPE(Key, begin->first);
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddVar(iter->first, iter->second);
-	}
-
-	void Add(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
-	{
-		AddFS(keyValuePairs.begin(), keyValuePairs.end());
+		Add(pairs.begin(), pairs.end());
 	}
 
 	KeyIterator InsertKey(Key&& key)
@@ -1157,6 +1147,29 @@ private:
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key), valuesCreator));
 		return pvMakeIterator(keyIter, keyIter->values.GetBegin(), false);
+	}
+
+	template<typename KeyArg, typename ValueArg>
+	Iterator pvAdd(std::pair<KeyArg, ValueArg>&& pair)
+	{
+		MOMO_CHECK_TYPE(Key, pair.first);
+		return AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+	}
+
+	template<typename KeyArg, typename ValueArg>
+	Iterator pvAdd(const std::pair<KeyArg, ValueArg>& pair)
+	{
+		MOMO_CHECK_TYPE(Key, pair.first);
+		return AddVar(pair.first, pair.second);
+	}
+
+	template<typename Pair,
+		typename = decltype(std::declval<Pair>().key),
+		typename = decltype(std::declval<Pair>().value)>
+	Iterator pvAdd(const Pair& pair)
+	{
+		MOMO_CHECK_TYPE(Key, pair.key);
+		return AddVar(pair.key, pair.value);
 	}
 
 	template<typename ValueCreator>

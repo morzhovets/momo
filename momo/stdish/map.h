@@ -226,7 +226,7 @@ public:
 	map& operator=(std::initializer_list<value_type> values)
 	{
 		TreeMap treeMap(mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
-		treeMap.InsertFS(values.begin(), values.end());
+		treeMap.Insert(values.begin(), values.end());
 		mTreeMap = std::move(treeMap);
 		return *this;
 	}
@@ -525,13 +525,13 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
-			insert(*iter);
+		pvInsert(first, last,
+			std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		mTreeMap.Insert(values.begin(), values.end());
 	}
 
 	std::pair<iterator, bool> emplace()
@@ -865,6 +865,19 @@ private:
 		TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
 			std::forward<RKey>(std::get<0>(key)), mappedCreator);
 		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+	}
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
+	{
+		mTreeMap.Insert(first, last);
+	}
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
+	{
+		for (Iterator iter = first; iter != last; ++iter)
+			insert(*iter);
 	}
 
 	template<typename Hint, typename RKey, typename MappedArg>

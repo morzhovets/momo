@@ -185,8 +185,8 @@ public:
 		assert(map.GetCapacity() >= 100);
 		map.Shrink();
 		std::pair<std::string, std::string> pair("s4", s4);
-		map.InsertFS(&pair, &pair + 1);
-		map.InsertKV(map.Find(s2), std::next(map.Find(s2)));	//?
+		map.Insert(&pair, &pair + 1);
+		map.Insert(map.Find(s2), std::next(map.Find(s2)));	//?
 		assert(map.GetCount() == 3);
 		map.Remove(s4);
 		for (auto ref : map)
@@ -235,8 +235,8 @@ public:
 		mmap.RemoveKey(keyIter);
 		mmap.Shrink();
 		std::pair<std::string, std::string> pair("k3", v3);
-		mmap.AddFS(&pair, &pair + 1);
-		mmap.AddKV(mmap.GetBegin(), mmap.GetBegin());	//?
+		mmap.Add(&pair, &pair + 1);
+		mmap.Add(mmap.GetBegin(), mmap.GetBegin());	//?
 		for (auto ref : mmap)
 			assert(ref.key == "k3");
 		for (auto ref : (const HashMultiMap&)mmap)

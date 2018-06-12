@@ -270,7 +270,7 @@ public:
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
 		HashMap hashMap(mHashMap.GetHashTraits(), MemManager(get_allocator()));
-		hashMap.InsertFS(values.begin(), values.end());
+		hashMap.Insert(values.begin(), values.end());
 		mHashMap = std::move(hashMap);
 		return *this;
 	}
@@ -339,7 +339,7 @@ public:
 		HashTraits hashTraits(mHashMap.GetHashTraits(), maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
 		hashMap.Reserve(size());
-		hashMap.InsertFS(begin(), end());
+		hashMap.Insert(begin(), end());
 		mHashMap = std::move(hashMap);
 	}
 
@@ -487,13 +487,13 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
-			insert(*iter);
+		pvInsert(first, last,
+			std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		mHashMap.Insert(values.begin(), values.end());
 	}
 
 	std::pair<iterator, bool> emplace()
@@ -893,6 +893,19 @@ private:
 		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 #endif
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
+	{
+		mHashMap.Insert(first, last);
+	}
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
+	{
+		for (Iterator iter = first; iter != last; ++iter)
+			insert(*iter);
+	}
 
 	template<typename Hint, typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)

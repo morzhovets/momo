@@ -12,8 +12,7 @@
 
   All `TreeMap` functions and constructors have strong exception safety,
   but not the following cases:
-  1. Functions `Insert`, `InsertKV`, `InsertFS` receiving many items have
-    basic exception safety.
+  1. Functions `Insert` receiving many items have basic exception safety.
   2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
@@ -200,11 +199,11 @@ public:
 	{
 	}
 
-	TreeMap(std::initializer_list<std::pair<Key, Value>> keyValuePairs,
+	TreeMap(std::initializer_list<std::pair<Key, Value>> pairs,
 		const TreeTraits& treeTraits = TreeTraits(), MemManager&& memManager = MemManager())
 		: TreeMap(treeTraits, std::move(memManager))
 	{
-		Insert(keyValuePairs);
+		Insert(pairs);
 	}
 
 	TreeMap(TreeMap&& treeMap) MOMO_NOEXCEPT
@@ -436,26 +435,17 @@ public:
 	}
 
 	template<typename ArgIterator>
-	size_t InsertKV(ArgIterator begin, ArgIterator end)
+	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_TYPE(Key, begin->key);
-		auto insertFunc = [this] (ArgIterator iter)
-			{ return InsertVar(iter->key, iter->value); };
-		return pvInsert(begin, end, insertFunc);
+		size_t count = 0;
+		for (ArgIterator iter = begin; iter != end; ++iter)
+			count += pvInsert(*iter).inserted ? 1 : 0;
+		return count;
 	}
 
-	template<typename ArgIterator>
-	size_t InsertFS(ArgIterator begin, ArgIterator end)
+	size_t Insert(std::initializer_list<std::pair<Key, Value>> pairs)	//?
 	{
-		MOMO_CHECK_TYPE(Key, begin->first);
-		auto insertFunc = [this] (ArgIterator iter)
-			{ return InsertVar(iter->first, iter->second); };
-		return pvInsert(begin, end, insertFunc);
-	}
-
-	size_t Insert(std::initializer_list<std::pair<Key, Value>> keyValuePairs)
-	{
-		return InsertFS(keyValuePairs.begin(), keyValuePairs.end());
+		return Insert(pairs.begin(), pairs.end());
 	}
 
 	template<typename PairCreator, bool extraCheck = true>
@@ -605,13 +595,27 @@ private:
 		return InsertResult(iter, true);
 	}
 
-	template<typename ArgIterator, typename InsertFunc>
-	size_t pvInsert(ArgIterator begin, ArgIterator end, InsertFunc insertFunc)
+	template<typename KeyArg, typename ValueArg>
+	InsertResult pvInsert(std::pair<KeyArg, ValueArg>&& pair)
 	{
-		size_t count = 0;
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += insertFunc(iter).inserted ? 1 : 0;
-		return count;
+		MOMO_CHECK_TYPE(Key, pair.first);
+		return InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+	}
+
+	template<typename KeyArg, typename ValueArg>
+	InsertResult pvInsert(const std::pair<KeyArg, ValueArg>& pair)
+	{
+		MOMO_CHECK_TYPE(Key, pair.first);
+		return InsertVar(pair.first, pair.second);
+	}
+
+	template<typename Pair,
+		typename = decltype(std::declval<Pair>().key),
+		typename = decltype(std::declval<Pair>().value)>
+	InsertResult pvInsert(const Pair& pair)
+	{
+		MOMO_CHECK_TYPE(Key, pair.key);
+		return InsertVar(pair.key, pair.value);
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>

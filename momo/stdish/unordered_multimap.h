@@ -248,7 +248,7 @@ public:
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
 	{
 		HashMultiMap hashMultiMap(mHashMultiMap.GetHashTraits(), MemManager(get_allocator()));
-		hashMultiMap.AddFS(values.begin(), values.end());
+		hashMultiMap.Add(values.begin(), values.end());
 		mHashMultiMap = std::move(hashMultiMap);
 		return *this;
 	}
@@ -447,13 +447,13 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
-			insert(*iter);
+		pvInsert(first, last,
+			std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
-		insert(values.begin(), values.end());
+		mHashMultiMap.Add(values.begin(), values.end());
 	}
 
 	iterator emplace()
@@ -643,6 +643,19 @@ private:
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), mappedCreator));
+	}
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
+	{
+		mHashMultiMap.Add(first, last);
+	}
+
+	template<typename Iterator>
+	void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
+	{
+		for (Iterator iter = first; iter != last; ++iter)
+			insert(*iter);
 	}
 
 private:
