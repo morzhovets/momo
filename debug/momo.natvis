@@ -2,15 +2,14 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
 <Type Name="momo::Array&lt;*&gt;">
-    <DisplayString>{{ Count={mData.mCount &amp; (Data::maskInternal - 1)} }}</DisplayString>
+    <DisplayString>{{ Count={mData.mCount} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">mData.mCount &amp; (Data::maskInternal - 1)</Item>
-        <Item Condition="(mData.mCount &amp; Data::maskInternal) == 0" Name="[Capacity]">mData.mExternalData.capacity</Item>
-        <Item Condition="(mData.mCount &amp; Data::maskInternal) != 0" Name="[Capacity]">internalCapacity</Item>
+        <Item Name="[Count]">mData.mCount</Item>
+        <Item Condition="(void*)mData.mItems != (void*)&amp;mData.mInternalItems" Name="[Capacity]">mData.mCapacity</Item>
+        <Item Condition="(void*)mData.mItems == (void*)&amp;mData.mInternalItems" Name="[Capacity]">internalCapacity</Item>
         <ArrayItems>
-            <Size>mData.mCount &amp; (Data::maskInternal - 1)</Size>
-            <ValuePointer Condition="(mData.mCount &amp; Data::maskInternal) == 0">mData.mExternalData.items</ValuePointer>
-            <ValuePointer Condition="(mData.mCount &amp; Data::maskInternal) != 0">(Item*)&amp;mData.mInternalData</ValuePointer>
+            <Size>mData.mCount</Size>
+            <ValuePointer>mData.mItems</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
@@ -46,7 +45,7 @@
             <Size>mPtr == 0 ? 0 : (size_t)(*mPtr >> 4) != 0 ? (size_t)(*mPtr &amp; 15) : ((Array*)(mPtr + sizeof(void*)))->mData.mCount</Size>
             <ValuePointer Condition="mPtr == 0">(Item*)0</ValuePointer>
             <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0">(Item*)(mPtr + ItemTraits::alignment)</ValuePointer>
-            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">((Array*)(mPtr + sizeof(void*)))->mData.mExternalData.items</ValuePointer>
+            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">((Array*)(mPtr + sizeof(void*)))->mData.mItems</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
