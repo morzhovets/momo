@@ -367,6 +367,11 @@ public:
 		return mHashSet.HasKey(key) ? 1 : 0;
 	}
 
+	bool contains(const key_type& key) const
+	{
+		return mHashSet.HasKey(key);
+	}
+
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = find(key);

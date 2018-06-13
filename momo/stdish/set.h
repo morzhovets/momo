@@ -334,6 +334,17 @@ public:
 		return mTreeSet.HasKey(key) ? 1 : 0;
 	}
 
+	bool contains(const key_type& key) const
+	{
+		return mTreeSet.HasKey(key);
+	}
+
+	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	bool contains(const KeyArg& key) const
+	{
+		return mTreeSet.HasKey(key);
+	}
+
 	const_iterator lower_bound(const key_type& key) const
 	{
 		return mTreeSet.LowerBound(key);

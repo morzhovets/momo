@@ -388,6 +388,17 @@ public:
 		return mTreeMap.HasKey(key) ? 1 : 0;
 	}
 
+	bool contains(const key_type& key) const
+	{
+		return mTreeMap.HasKey(key);
+	}
+
+	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	bool contains(const KeyArg& key) const
+	{
+		return mTreeMap.HasKey(key);
+	}
+
 	const_iterator lower_bound(const key_type& key) const
 	{
 		return ConstIteratorProxy(mTreeMap.LowerBound(key));

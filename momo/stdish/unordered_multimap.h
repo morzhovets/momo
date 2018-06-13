@@ -362,6 +362,11 @@ public:
 		return !!keyIter ? keyIter->values.GetCount() : 0;
 	}
 
+	bool contains(const key_type& key) const
+	{
+		return count(key) > 0;
+	}
+
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
