@@ -725,9 +725,35 @@ public:
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_TYPE(Item, *begin);
-		size_t count = 0;
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += Insert(*iter).inserted ? 1 : 0;
+		MOMO_STATIC_ASSERT(std::is_reference<decltype(*begin)>::value);
+		if (begin == end)
+			return 0;
+		const TreeTraits& treeTraits = GetTreeTraits();
+		MemManager& memManager = GetMemManager();
+		ArgIterator iter = begin;
+		InsertResult res = Insert(*iter);
+		size_t count = res.inserted ? 1 : 0;
+		++iter;
+		for (; iter != end; ++iter)
+		{
+			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(*iter));
+			const Key& prevKey = ItemTraits::GetKey(*res.iterator);
+			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.iterator), key))
+			{
+				res = Insert(*iter);
+			}
+			else if (treeTraits.IsLess(prevKey, key))
+			{
+				res.iterator = pvAdd<false>(std::next(res.iterator), 
+					Creator<decltype(*iter)>(memManager, *iter));
+				res.inserted = true;
+			}
+			else
+			{
+				res.inserted = false;
+			}
+			count += res.inserted ? 1 : 0;
+		}
 		return count;
 	}
 

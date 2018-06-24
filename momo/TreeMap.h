@@ -437,9 +437,39 @@ public:
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		size_t count = 0;
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += pvInsert(*iter).inserted ? 1 : 0;
+		if (begin == end)
+			return 0;
+		const TreeTraits& treeTraits = GetTreeTraits();
+		MemManager& memManager = GetMemManager();
+		ArgIterator iter = begin;
+		auto pair0 = pvConvertPair(*iter);
+		typedef decltype(pair0.first) KeyArg;
+		typedef decltype(pair0.second) ValueArg;
+		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
+			std::forward<ValueArg>(pair0.second));
+		size_t count = res.inserted ? 1 : 0;
+		++iter;
+		for (; iter != end; ++iter)
+		{
+			auto pair = pvConvertPair(*iter);
+			const Key& key = pair.first;
+			const Key& prevKey = res.iterator->key;
+			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.iterator), key))
+			{
+				res = InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+			}
+			else if (treeTraits.IsLess(prevKey, key))
+			{
+				res.iterator = pvAdd<false>(std::next(res.iterator), std::forward<KeyArg>(pair.first),
+					ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(pair.second)));
+				res.inserted = true;
+			}
+			else
+			{
+				res.inserted = false;
+			}
+			count += res.inserted ? 1 : 0;
+		}
 		return count;
 	}
 
@@ -596,26 +626,29 @@ private:
 	}
 
 	template<typename KeyArg, typename ValueArg>
-	InsertResult pvInsert(std::pair<KeyArg, ValueArg>&& pair)
+	static std::pair<KeyArg&&, ValueArg&&> pvConvertPair(
+		std::pair<KeyArg, ValueArg>&& pair) MOMO_NOEXCEPT
 	{
 		MOMO_CHECK_TYPE(Key, pair.first);
-		return InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+		return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
+			std::forward<ValueArg>(pair.second));
 	}
 
 	template<typename KeyArg, typename ValueArg>
-	InsertResult pvInsert(const std::pair<KeyArg, ValueArg>& pair)
+	static std::pair<const KeyArg&, const ValueArg&> pvConvertPair(
+		const std::pair<KeyArg, ValueArg>& pair) MOMO_NOEXCEPT
 	{
 		MOMO_CHECK_TYPE(Key, pair.first);
-		return InsertVar(pair.first, pair.second);
+		return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 	}
 
 	template<typename Pair,
-		typename = decltype(std::declval<Pair>().key),
-		typename = decltype(std::declval<Pair>().value)>
-	InsertResult pvInsert(const Pair& pair)
+		typename KeyArg = decltype(std::declval<Pair>().key),
+		typename ValueArg = decltype(std::declval<Pair>().value)>
+	static std::pair<const KeyArg&, const ValueArg&> pvConvertPair(const Pair& pair) MOMO_NOEXCEPT
 	{
 		MOMO_CHECK_TYPE(Key, pair.key);
-		return InsertVar(pair.key, pair.value);
+		return std::pair<const KeyArg&, const ValueArg&>(pair.key, pair.value);
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
