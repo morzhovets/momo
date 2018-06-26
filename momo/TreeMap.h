@@ -442,7 +442,7 @@ public:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		ArgIterator iter = begin;
-		auto pair0 = pvConvertPair(*iter);
+		auto pair0 = pvConvertPair<ArgIterator>(*iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
 		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
@@ -451,7 +451,7 @@ public:
 		++iter;
 		for (; iter != end; ++iter)
 		{
-			auto pair = pvConvertPair(*iter);
+			auto pair = pvConvertPair<ArgIterator>(*iter);
 			const Key& key = pair.first;
 			const Key& prevKey = res.iterator->key;
 			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.iterator), key))
@@ -625,30 +625,35 @@ private:
 		return InsertResult(iter, true);
 	}
 
-	template<typename KeyArg, typename ValueArg>
+	template<typename ArgIterator, typename KeyArg, typename ValueArg>
 	static std::pair<KeyArg&&, ValueArg&&> pvConvertPair(
 		std::pair<KeyArg, ValueArg>&& pair) MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(std::is_reference<
+			typename std::iterator_traits<ArgIterator>::reference>::value);
 		MOMO_CHECK_TYPE(Key, pair.first);
 		return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 			std::forward<ValueArg>(pair.second));
 	}
 
-	template<typename KeyArg, typename ValueArg>
+	template<typename ArgIterator, typename KeyArg, typename ValueArg>
 	static std::pair<const KeyArg&, const ValueArg&> pvConvertPair(
 		const std::pair<KeyArg, ValueArg>& pair) MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(std::is_reference<
+			typename std::iterator_traits<ArgIterator>::reference>::value);
 		MOMO_CHECK_TYPE(Key, pair.first);
 		return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 	}
 
-	template<typename Pair,
+	template<typename ArgIterator, typename Pair,
 		typename KeyArg = decltype(std::declval<Pair>().key),
 		typename ValueArg = decltype(std::declval<Pair>().value)>
-	static std::pair<const KeyArg&, const ValueArg&> pvConvertPair(const Pair& pair) MOMO_NOEXCEPT
+	static std::pair<KeyArg, ValueArg> pvConvertPair(const Pair& pair) MOMO_NOEXCEPT
 	{
+		MOMO_STATIC_ASSERT(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
 		MOMO_CHECK_TYPE(Key, pair.key);
-		return std::pair<const KeyArg&, const ValueArg&>(pair.key, pair.value);
+		return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
