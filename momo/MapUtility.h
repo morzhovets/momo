@@ -859,6 +859,42 @@ namespace internal
 	private:
 		SetExtractedItem mSetExtractedItem;
 	};
+
+	template<typename TIterator>
+	class MapPairConverter
+	{
+	public:
+		typedef TIterator Iterator;
+
+	public:
+		template<typename Pair,
+			typename KeyArg = decltype(std::declval<Pair>().key),
+			typename ValueArg = decltype(std::declval<Pair>().value)>
+		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
+			return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
+		}
+
+		template<typename KeyArg, typename ValueArg>
+		static std::pair<KeyArg&&, ValueArg&&> Convert(
+			std::pair<KeyArg, ValueArg>&& pair) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
+				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
+				std::forward<ValueArg>(pair.second));
+		}
+
+		template<typename KeyArg, typename ValueArg>
+		static std::pair<const KeyArg&, const ValueArg&> Convert(
+			const std::pair<KeyArg, ValueArg>& pair) MOMO_NOEXCEPT
+		{
+			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
+				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
+		}
+	};
 }
 
 } // namespace momo

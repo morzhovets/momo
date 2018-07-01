@@ -390,7 +390,15 @@ public:
 	{
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += pvInsert(*iter).inserted ? 1 : 0;
+		{
+			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
+			typedef decltype(pair.first) KeyArg;
+			typedef decltype(pair.second) ValueArg;
+			MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+			InsertResult res = InsertVar(std::forward<KeyArg>(pair.first),
+				std::forward<ValueArg>(pair.second));
+			count += res.inserted ? 1 : 0;
+		}
 		return count;
 	}
 
@@ -562,29 +570,6 @@ private:
 			return InsertResult(iter, false);
 		iter = pvAdd<false>(iter, std::forward<RKey>(key), valueCreator);
 		return InsertResult(iter, true);
-	}
-
-	template<typename KeyArg, typename ValueArg>
-	InsertResult pvInsert(std::pair<KeyArg, ValueArg>&& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.first);
-		return InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
-	}
-
-	template<typename KeyArg, typename ValueArg>
-	InsertResult pvInsert(const std::pair<KeyArg, ValueArg>& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.first);
-		return InsertVar(pair.first, pair.second);
-	}
-
-	template<typename Pair,
-		typename = decltype(std::declval<Pair>().key),
-		typename = decltype(std::declval<Pair>().value)>
-	InsertResult pvInsert(const Pair& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.key);
-		return InsertVar(pair.key, pair.value);
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>

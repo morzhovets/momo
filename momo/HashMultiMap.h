@@ -967,7 +967,13 @@ public:
 	void Add(ArgIterator begin, ArgIterator end)
 	{
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			pvAdd(*iter);
+		{
+			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
+			typedef decltype(pair.first) KeyArg;
+			typedef decltype(pair.second) ValueArg;
+			MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+			AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+		}
 	}
 
 	void Add(std::initializer_list<std::pair<Key, Value>> pairs)	//?
@@ -1147,29 +1153,6 @@ private:
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key), valuesCreator));
 		return pvMakeIterator(keyIter, keyIter->values.GetBegin(), false);
-	}
-
-	template<typename KeyArg, typename ValueArg>
-	Iterator pvAdd(std::pair<KeyArg, ValueArg>&& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.first);
-		return AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
-	}
-
-	template<typename KeyArg, typename ValueArg>
-	Iterator pvAdd(const std::pair<KeyArg, ValueArg>& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.first);
-		return AddVar(pair.first, pair.second);
-	}
-
-	template<typename Pair,
-		typename = decltype(std::declval<Pair>().key),
-		typename = decltype(std::declval<Pair>().value)>
-	Iterator pvAdd(const Pair& pair)
-	{
-		MOMO_CHECK_TYPE(Key, pair.key);
-		return AddVar(pair.key, pair.value);
 	}
 
 	template<typename ValueCreator>
