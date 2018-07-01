@@ -52,8 +52,9 @@
 
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
 
-#define MOMO_CHECK_TYPE(Type, var) \
-	MOMO_STATIC_ASSERT((std::is_same<Type, typename std::decay<decltype(var)>::type>::value))
+#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) MOMO_STATIC_ASSERT((std::is_same<Type, \
+	typename std::decay<typename std::iterator_traits<Iterator>::reference>::type>::value) \
+	&& std::is_reference<typename std::iterator_traits<Iterator>::reference>::value)
 
 #define MOMO_CHECK(expr) \
 	do { \

@@ -738,7 +738,7 @@ public:
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_TYPE(Item, *begin);
+		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
 			count += Insert(*iter).inserted ? 1 : 0;

@@ -724,8 +724,7 @@ public:
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_TYPE(Item, *begin);
-		MOMO_STATIC_ASSERT(std::is_reference<decltype(*begin)>::value);
+		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);
 		if (begin == end)
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
