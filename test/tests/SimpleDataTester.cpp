@@ -171,7 +171,7 @@ public:
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
 
 		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0))->GetByColumn(intCol) == 0);
+			table.NewRow(strCol = "1", intCol = 0))->Get(intCol) == 0);
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
