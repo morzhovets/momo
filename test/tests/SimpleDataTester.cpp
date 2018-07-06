@@ -106,7 +106,9 @@ public:
 		}
 
 		for (size_t i = 0; i < count; ++i)
-			table[i][dblCol] = (double)i / 2;
+			table[i].GetMutable(dblCol) = (double)i / 3;
+		for (size_t i = 0; i < count; ++i)
+			table[i].Set(dblCol, (double)i / 2);
 
 		for (auto row : table) { (void)row; }
 		for (auto row : ctable) { (void)row; }
@@ -170,12 +172,13 @@ public:
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
 
-		assert(table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0))->Get(intCol) == 0);
+		assert((*table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
+			table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
 		assert((bool)table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0));
+		assert((*table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0))[strCol] == "1");
 		assert((*ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0))[strCol] == "1");
 
 		assert(table.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
