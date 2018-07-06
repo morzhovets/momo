@@ -78,7 +78,7 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, Column<Item>, ItemArg>;
 
 	typedef internal::DataRow<ColumnList> Row;
-	typedef internal::DataRowReference<internal::DataItemReferencer<ColumnList>> RowReference;
+	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
 
 	typedef internal::DataSelection<RowReference, DataTraits> Selection;
@@ -99,7 +99,7 @@ private:
 	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
 	typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
-	typedef internal::DataRowBounds<RowReference, RawBounds> RowBounds;
+	typedef internal::DataRowBounds<ConstRowReference, RawBounds> ConstRowBounds;
 
 public:
 	typedef internal::DataRowIterator<RowReference, RawIterator> Iterator;
@@ -114,9 +114,7 @@ public:
 	typedef typename RowHashBounds::ConstBounds ConstRowHashBounds;
 
 	template<typename Item>
-	using ItemBounds = internal::DataItemBounds<Item, RowBounds, Settings>;
-	template<typename Item>
-	using ConstItemBounds = typename ItemBounds<Item>::ConstBounds;
+	using ConstItemBounds = internal::DataConstItemBounds<Item, ConstRowBounds, Settings>;
 
 	typedef const void* IndexHandle;
 
@@ -286,9 +284,9 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowHashBounds)
 	};
 
-	struct RowBoundsProxy : public RowBounds
+	struct ConstRowBoundsProxy : public ConstRowBounds
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowBounds)
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowBounds)
 	};
 
 public:
@@ -450,13 +448,11 @@ public:
 	template<typename Item>
 	ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 	{
-		return pvGetColumnItems(column);
-	}
-
-	template<typename Item>
-	ItemBounds<Item> GetColumnItems(const Column<Item>& column)
-	{
-		return pvGetColumnItems(column);
+		const ColumnList& columnList = GetColumnList();
+		size_t offset = columnList.GetOffset(column);
+		RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
+		return ConstItemBounds<Item>(offset, ConstRowBoundsProxy(&columnList, rawBounds,
+			VersionKeeper(&mCrew.GetRemoveVersion())));
 	}
 
 	Row NewRow()
@@ -880,16 +876,6 @@ private:
 	{
 		return IteratorProxy(&GetColumnList(), RawIterator(mRaws, index),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
-	}
-
-	template<typename Item>
-	ItemBounds<Item> pvGetColumnItems(const Column<Item>& column) const
-	{
-		const ColumnList& columnList = GetColumnList();
-		size_t offset = columnList.GetOffset(column);
-		RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
-		return ItemBounds<Item>(offset, RowBoundsProxy(&columnList, rawBounds,
-			VersionKeeper(&mCrew.GetRemoveVersion())));
 	}
 
 	Raw* pvCopyRaw(const Raw* srcRaw)

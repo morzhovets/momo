@@ -167,171 +167,24 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataConstItemReferencer
+	class DataConstRowReference
+		: private momo::internal::VersionKeeper<typename TColumnList::Settings>
 	{
 	public:
 		typedef TColumnList ColumnList;
-		typedef typename ColumnList::Raw Raw;
-
-		typedef DataConstItemReferencer ConstReferencer;
-
-		template<typename Item>
-		using ItemReference = const Item&;
-
-	protected:
-		typedef typename ColumnList::Settings Settings;
-
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
-
-	protected:
-		template<typename Item>
-		static ItemReference<Item> ptGetReference(const ColumnList* columnList, Raw* raw,
-			size_t offset, VersionKeeper version)
-		{
-			version.Check();
-			return columnList->template GetByOffset<const Item>(raw, offset);
-		}
-	};
-
-	template<typename TColumnList>
-	class DataItemReferencer
-	{
-	public:
-		typedef TColumnList ColumnList;
-		typedef typename ColumnList::Raw Raw;
-
-		typedef DataConstItemReferencer<ColumnList> ConstReferencer;
-
-	protected:
-		typedef typename ColumnList::Settings Settings;
-
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
-
-	public:
-		template<typename TItem>
-		class ItemReference : private VersionKeeper
-		{
-		public:
-			typedef TItem Item;
-
-			typedef typename ConstReferencer::template ItemReference<Item> ConstReference;
-
-		public:
-			ItemReference() = delete;
-
-			ItemReference(const ItemReference& itemRef) MOMO_NOEXCEPT
-				: VersionKeeper(itemRef),
-				mColumnList(itemRef.mColumnList),
-				mRaw(itemRef.mRaw),
-				mOffset(itemRef.mOffset)
-			{
-			}
-
-			~ItemReference() MOMO_NOEXCEPT
-			{
-			}
-
-			ItemReference& operator=(const ItemReference& itemRef)
-			{
-				return pvAssign(itemRef.Get());
-			}
-
-			template<typename ItemArg>
-			ItemReference& operator=(ItemArg&& itemArg)
-			{
-				return pvAssign(std::forward<ItemArg>(itemArg));
-			}
-
-			operator const Item&() const
-			{
-				return Get();
-			}
-
-			const Item& Get() const
-			{
-				VersionKeeper::Check();
-				return mColumnList->template GetByOffset<const Item>(mRaw, mOffset);
-			}
-
-		protected:
-			explicit ItemReference(const ColumnList* columnList, Raw* raw, size_t offset,
-				VersionKeeper version) MOMO_NOEXCEPT
-				: VersionKeeper(version),
-				mColumnList(columnList),
-				mRaw(raw),
-				mOffset(offset)
-			{
-			}
-
-		private:
-			template<typename ItemArg>
-			ItemReference& pvAssign(ItemArg&& itemArg)
-			{
-				VersionKeeper::Check();
-				MOMO_CHECK(mColumnList->IsMutable(mOffset));
-				mColumnList->template Assign<Item>(mRaw, mOffset, std::forward<ItemArg>(itemArg));
-				return *this;
-			}
-
-		private:
-			const ColumnList* mColumnList;
-			Raw* mRaw;
-			size_t mOffset;
-		};
-
-	private:
-		template<typename Item>
-		struct ItemReferenceProxy : public ItemReference<Item>	//?
-		{
-			typedef typename DataItemReferencer::template ItemReference<Item> ItemReference;	// gcc
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ItemReference)
-		};
-
-	protected:
-		template<typename Item>
-		static ItemReference<Item> ptGetReference(const ColumnList* columnList, Raw* raw,
-			size_t offset, VersionKeeper version)
-		{
-			return ItemReferenceProxy<Item>(columnList, raw, offset, version);
-		}
-	};
-
-	template<typename TItemReferencer>
-	class DataRowReference : private TItemReferencer,
-		private momo::internal::VersionKeeper<typename TItemReferencer::ColumnList::Settings>
-	{
-	protected:
-		typedef TItemReferencer ItemReferencer;
-
-	public:
-		typedef typename ItemReferencer::ColumnList ColumnList;
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
 		template<typename Item>
 		using Column = typename ColumnList::template Column<Item>;
 
-		typedef DataRowReference<typename ItemReferencer::ConstReferencer> ConstReference;
-
-		template<typename Item>
-		using ItemReference = typename ItemReferencer::template ItemReference<Item>;
+		typedef DataConstRowReference ConstReference;
 
 	protected:
 		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
-	private:
-		struct ConstReferenceProxy : public ConstReference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstReference)
-		};
-
 	public:
-		DataRowReference() = delete;
-
-		operator ConstReference() const MOMO_NOEXCEPT
-		{
-			return ConstReferenceProxy(mColumnList, mRaw, *this);
-		}
+		DataConstRowReference() = delete;
 
 		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
 		{
@@ -339,27 +192,27 @@ namespace internal
 		}
 
 		template<typename Item>
-		ItemReference<Item> GetByOffset(size_t offset) const
+		const Item& GetByOffset(size_t offset) const
 		{
-			return ItemReferencer::template ptGetReference<Item>(mColumnList, mRaw, offset, *this);
+			VersionKeeper::Check();
+			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
 		}
 
 		template<typename Item>
-		ItemReference<Item> Get(const Column<Item>& column) const
+		const Item& Get(const Column<Item>& column) const
 		{
 			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Item>
-		ItemReference<Item> operator[](const Column<Item>& column) const
+		const Item& operator[](const Column<Item>& column) const
 		{
 			return Get(column);
 		}
 
 		size_t GetNumber() const
 		{
-			VersionKeeper::Check();
-			return mColumnList->GetNumber(mRaw);
+			return mColumnList->GetNumber(GetRaw());
 		}
 
 		const Raw* GetRaw() const
@@ -374,7 +227,7 @@ namespace internal
 		}
 
 	protected:
-		explicit DataRowReference(const ColumnList* columnList, Raw* raw,
+		explicit DataConstRowReference(const ColumnList* columnList, Raw* raw,
 			VersionKeeper version) MOMO_NOEXCEPT
 			: VersionKeeper(version),
 			mColumnList(columnList),
@@ -390,6 +243,55 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		Raw* mRaw;
+	};
+
+	template<typename TColumnList>
+	class DataRowReference : public DataConstRowReference<TColumnList>
+	{
+	public:
+		typedef TColumnList ColumnList;
+		typedef typename ColumnList::Settings Settings;
+		typedef typename ColumnList::Raw Raw;
+
+		template<typename Item>
+		using Column = typename ColumnList::template Column<Item>;
+
+		typedef DataConstRowReference<ColumnList> ConstReference;
+
+	public:
+		using ConstReference::ConstReference;
+
+		template<typename Item>
+		Item& GetMutableByOffset(size_t offset) const
+		{
+			ConstReference::GetRaw();	// check
+			const ColumnList& columnList = ConstReference::GetColumnList();
+			MOMO_CHECK(columnList.IsMutable(offset));
+			return columnList.template GetByOffset<Item>(ConstReference::ptGetRaw(), offset);
+		}
+
+		template<typename Item>
+		Item& GetMutable(const Column<Item>& column) const
+		{
+			return GetMutableByOffset<Item>(ConstReference::GetColumnList().GetOffset(column));
+		}
+
+		template<typename Item, typename ItemArg>
+		void SetByOffset(size_t offset, ItemArg&& itemArg) const
+		{
+			ConstReference::GetRaw();	// check
+			const ColumnList& columnList = ConstReference::GetColumnList();
+			MOMO_CHECK(columnList.IsMutable(offset));
+			columnList.template Assign<Item>(ConstReference::ptGetRaw(), offset,
+				std::forward<ItemArg>(itemArg));
+		}
+
+		template<typename Item, typename ItemArg>
+		void Set(const Column<Item>& column, ItemArg&& itemArg) const
+		{
+			SetByOffset<Item>(ConstReference::GetColumnList().GetOffset(column),
+				std::forward<ItemArg>(itemArg));
+		}
 	};
 
 	template<typename TRowBounds>
