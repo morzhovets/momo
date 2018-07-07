@@ -14,6 +14,7 @@
 #undef NDEBUG
 
 #include "../../momo/Utility.h"
+#include "../../momo/details/HashBucketOpenN.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketOpenN<>
 #define LIBCXX_TEST_BUCKET_NAME "openn"

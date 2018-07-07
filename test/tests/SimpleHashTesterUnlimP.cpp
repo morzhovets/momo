@@ -15,6 +15,8 @@
 
 #include "SimpleHashTester.h"
 
+#include "../../momo/details/HashBucketUnlimP.h"
+
 #define BUCKET(maxCount, blockCount) \
 	momo::HashBucketUnlimP<maxCount, momo::MemPoolParams<blockCount, (blockCount % 2) * 16>>
 

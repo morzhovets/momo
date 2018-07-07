@@ -15,6 +15,8 @@
 
 #include "SimpleHashTester.h"
 
+#include "../../momo/details/HashBucketOpenN.h"
+
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketOpenN<>>("momo::HashBucketOpenN<>");
