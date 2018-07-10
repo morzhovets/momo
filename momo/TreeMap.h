@@ -577,14 +577,11 @@ public:
 		return ExtractedPair(*this, iter);	// need RVO for exception safety
 	}
 
-	void ResetKey(ConstIterator iter, Key&& newKey)
+	template<typename KeyArg, bool extraCheck = true>
+	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		mTreeSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), std::move(newKey));
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		mTreeSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), newKey);
+		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetBaseIterator(iter),
+			std::forward<KeyArg>(keyArg));
 	}
 
 	template<typename RMap>

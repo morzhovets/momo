@@ -817,16 +817,14 @@ public:
 		return ExtractedItem(*this, iter);	// need RVO for exception safety
 	}
 
-	void ResetKey(ConstIterator iter, Key&& newKey)
+	template<typename KeyArg, bool extraCheck = true>
+	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		Item& item = pvGetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(GetMemManager(), std::move(newKey), item);
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		Item& item = pvGetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(GetMemManager(), newKey, item);
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
+		MOMO_CHECK(ConstIteratorProxy::GetBuckets(iter) != nullptr);
+		Item& item = *ConstIteratorProxy::GetBucketIterator(iter);
+		ItemTraits::AssignKey(GetMemManager(), std::forward<KeyArg>(keyArg), item);
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter));
 	}
 
 	template<typename RSet>
@@ -983,15 +981,6 @@ private:
 				break;
 		}
 		return MakeIterator(hashCode);
-	}
-
-	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
-	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		MOMO_CHECK(ConstIteratorProxy::GetBuckets(iter) != nullptr);
-		(void)newKey;
-		MOMO_EXTRA_CHECK(GetHashTraits().IsEqual(ItemTraits::GetKey(*iter), newKey));
-		return *ConstIteratorProxy::GetBucketIterator(iter);
 	}
 
 	template<bool extraCheck, typename ItemCreator>

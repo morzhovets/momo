@@ -503,14 +503,11 @@ public:
 		return ExtractedPair(*this, iter);	// need RVO for exception safety
 	}
 
-	void ResetKey(ConstIterator iter, Key&& newKey)
+	template<typename KeyArg, bool extraCheck = true>
+	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		mHashSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), std::move(newKey));
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		mHashSet.ResetKey(ConstIteratorProxy::GetBaseIterator(iter), newKey);
+		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetBaseIterator(iter),
+			std::forward<KeyArg>(keyArg));
 	}
 
 	template<typename RMap>

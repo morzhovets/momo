@@ -387,14 +387,10 @@ namespace internal
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
-		static void AssignKey(MemManager& memManager, Key&& srcKey, Key& dstKey)
+		template<typename KeyArg>
+		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Key& key)
 		{
-			HashMultiMapKeyValueTraits::AssignKey(memManager, std::move(srcKey), dstKey);
-		}
-
-		static void AssignKey(MemManager& memManager, const Key& srcKey, Key& dstKey)
-		{
-			HashMultiMapKeyValueTraits::AssignKey(memManager, srcKey, dstKey);
+			HashMultiMapKeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), key);
 		}
 	};
 
@@ -477,14 +473,10 @@ public:
 			valueCreator, newValue);
 	}
 
-	static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Key& dstKey)
+	template<typename KeyArg>
+	static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
 	{
-		dstKey = std::move(srcKey);
-	}
-
-	static void AssignKey(MemManager& /*memManager*/, const Key& srcKey, Key& dstKey)
-	{
-		dstKey = srcKey;
+		key = std::forward<KeyArg>(keyArg);
 	}
 
 	static void AssignAnywayValue(MemManager& memManager, Value& srcValue, Value& dstValue)
@@ -1052,14 +1044,11 @@ public:
 		return valueCount;
 	}
 
-	void ResetKey(ConstKeyIterator keyIter, Key&& newKey)
+	template<typename KeyArg, bool extraCheck = true>
+	void ResetKey(ConstKeyIterator keyIter, KeyArg&& keyArg)
 	{
-		mHashMap.ResetKey(ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(newKey));
-	}
-
-	void ResetKey(ConstKeyIterator keyIter, const Key& newKey)
-	{
-		mHashMap.ResetKey(ConstKeyIteratorProxy::GetBaseIterator(keyIter), newKey);
+		mHashMap.template ResetKey<KeyArg, extraCheck>(
+			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::forward<KeyArg>(keyArg));
 	}
 
 	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const

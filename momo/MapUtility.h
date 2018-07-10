@@ -256,14 +256,10 @@ namespace internal
 				BoolConstant<isValueNothrowRelocatable>());
 		}
 
-		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Key& dstKey)
+		template<typename KeyArg>
+		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
 		{
-			dstKey = std::move(srcKey);
-		}
-
-		static void AssignKey(MemManager& /*memManager*/, const Key& srcKey, Key& dstKey)
-		{
-			dstKey = srcKey;
+			key = std::forward<KeyArg>(keyArg);
 		}
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
@@ -608,14 +604,10 @@ namespace internal
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
-		static void AssignKey(MemManager& memManager, Key&& srcKey, Item& dstItem)
+		template<typename KeyArg>
+		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
-			KeyValueTraits::AssignKey(memManager, std::move(srcKey), *dstItem.GetKeyPtr());
-		}
-
-		static void AssignKey(MemManager& memManager, const Key& srcKey, Item& dstItem)
-		{
-			KeyValueTraits::AssignKey(memManager, srcKey, *dstItem.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
 		}
 	};
 

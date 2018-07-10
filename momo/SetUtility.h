@@ -64,16 +64,10 @@ namespace internal
 			ItemManager::ReplaceRelocate(memManager, srcItem, midItem, dstItem);
 		}
 
-		static void AssignKey(MemManager& /*memManager*/, Key&& srcKey, Item& dstItem)
+		template<typename KeyArg>
+		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Item& item)
 		{
-			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
-			dstItem = std::move(srcKey);
-		}
-
-		static void AssignKey(MemManager& /*memManager*/, const Key& srcKey, Item& dstItem)
-		{
-			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
-			dstItem = srcKey;
+			item = std::forward<KeyArg>(keyArg);
 		}
 	};
 

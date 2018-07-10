@@ -830,16 +830,15 @@ public:
 		return ExtractedItem(*this, iter);	// need RVO for exception safety
 	}
 
-	void ResetKey(ConstIterator iter, Key&& newKey)
+	template<typename KeyArg, bool extraCheck = true>
+	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		Item& item = pvGetItemForReset(iter, static_cast<const Key&>(newKey));
-		ItemTraits::AssignKey(GetMemManager(), std::move(newKey), item);
-	}
-
-	void ResetKey(ConstIterator iter, const Key& newKey)
-	{
-		Item& item = pvGetItemForReset(iter, newKey);
-		ItemTraits::AssignKey(GetMemManager(), newKey, item);
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		MOMO_CHECK(iter != GetEnd());
+		Node* node = ConstIteratorProxy::GetNode(iter);
+		Item& item = *node->GetItemPtr(ConstIteratorProxy::GetItemIndex(iter));
+		ItemTraits::AssignKey(GetMemManager(), std::forward<KeyArg>(keyArg), item);
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter));
 	}
 
 	template<typename RSet>
@@ -1012,17 +1011,6 @@ private:
 				pvDestroy(node->GetChild(i));
 		}
 		node->Destroy(*mNodeParams);
-	}
-
-	Item& pvGetItemForReset(ConstIterator iter, const Key& newKey)
-	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
-		MOMO_CHECK(iter != GetEnd());
-		(void)newKey;
-		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(ItemTraits::GetKey(*iter), newKey));
-		MOMO_EXTRA_CHECK(!GetTreeTraits().IsLess(newKey, ItemTraits::GetKey(*iter)));
-		Node* node = ConstIteratorProxy::GetNode(iter);
-		return *node->GetItemPtr(ConstIteratorProxy::GetItemIndex(iter));
 	}
 
 	template<bool extraCheck, typename ItemCreator>
