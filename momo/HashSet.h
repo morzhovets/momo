@@ -838,14 +838,14 @@ public:
 	{
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename Set::Key>::value));
 		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
-		ConstIterator iter = GetBegin();
-		while (!!iter)
-		{
-			auto itemCreator = [this, &iter] (Item* newItem)
-				{ iter = pvExtract(iter, newItem); };
-			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
-				++iter;
-		}
+		pvMergeTo(dstSet);
+	}
+
+	void MergeTo(HashSet& dstHashSet)
+	{
+		if (this == &dstHashSet)
+			return;
+		pvMergeTo(dstHashSet);
 	}
 
 	size_t GetBucketCount() const MOMO_NOEXCEPT
@@ -1162,6 +1162,19 @@ private:
 			}
 		}
 		buckets->Destroy(memManager, false);
+	}
+
+	template<typename Set>
+	void pvMergeTo(Set& dstSet)
+	{
+		ConstIterator iter = GetBegin();
+		while (!!iter)
+		{
+			auto itemCreator = [this, &iter] (Item* newItem)
+				{ iter = pvExtract(iter, newItem); };
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
+				++iter;
+		}
 	}
 
 private:
