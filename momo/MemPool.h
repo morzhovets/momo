@@ -69,6 +69,11 @@ public:
 		pvCorrectBlockSize();
 	}
 
+	bool IsEqual(const MemPoolParams& params) const MOMO_NOEXCEPT
+	{
+		return blockSize == params.blockSize && blockAlignment == params.blockAlignment;
+	}
+
 private:
 	void pvCorrectBlockSize() MOMO_NOEXCEPT
 	{
@@ -109,6 +114,12 @@ public:
 			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
 
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
+
+public:
+	bool IsEqual(const MemPoolParamsStatic& /*params*/) const MOMO_NOEXCEPT
+	{
+		return true;
+	}
 };
 
 struct MemPoolSettings
@@ -273,6 +284,37 @@ public:
 			pvDeleteBlock(pblock);
 		}
 		--mAllocCount;
+	}
+
+	void MergeFrom(MemPool& memPool)
+	{
+		if (this == &memPool)
+			return;
+		//MOMO_STATIC_ASSERT(std::is_empty<MemManager>::value);
+		MOMO_CHECK(std::is_empty<MemManager>::value);
+		MOMO_CHECK(static_cast<const Params&>(*this).IsEqual(memPool));
+		if (Params::cachedFreeBlockCount > 0)
+			memPool.pvFlushDeallocate();
+		mAllocCount += memPool.mAllocCount;
+		memPool.mAllocCount = 0;
+		if (memPool.mBufferHead == nullPtr)
+			return;
+		if (mBufferHead == nullPtr)
+		{
+			std::swap(mBufferHead, memPool.mBufferHead);
+			return;
+		}
+		uintptr_t buffer = mBufferHead;
+		while (true)
+		{
+			BufferPointers& pointers = pvGetBufferPointers(buffer);
+			if (pointers.nextBuffer == nullPtr)
+				break;
+			buffer = pointers.nextBuffer;
+		}
+		pvGetBufferPointers(buffer).nextBuffer = memPool.mBufferHead;
+		pvGetBufferPointers(memPool.mBufferHead).prevBuffer = buffer;
+		memPool.mBufferHead = nullPtr;
 	}
 
 private:
