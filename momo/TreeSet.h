@@ -857,34 +857,46 @@ public:
 
 	void MergeTo(TreeSet& dstTreeSet)
 	{
-		if (!std::is_empty<TreeTraits>::value)	//?
+		if (this == &dstTreeSet)
+			return;
+		if (!std::is_empty<TreeTraits>::value)
 			return pvMergeTo(dstTreeSet);
 		size_t count = GetCount();
 		if (count == 0)
 			return;
 		size_t dstCount = dstTreeSet.GetCount();
-		if (count * internal::UIntMath<size_t>::Log2(count + dstCount) < count + dstCount)	//?
-			return pvMergeTo(dstTreeSet);
-		ConstIterator iter = GetBegin();
-		ConstIterator dstIter = dstTreeSet.GetBegin();
-		const TreeTraits& treeTraits = dstTreeSet.GetTreeTraits();
-		while (iter != GetEnd())
+		if (std::is_empty<MemManager>::value)
 		{
-			const Key& key = ItemTraits::GetKey(*iter);
-			while (dstIter != dstTreeSet.GetEnd() && treeTraits.IsLess(ItemTraits::GetKey(*dstIter), key))
-				++dstIter;
-			if (dstTreeSet.pvIsGreater(dstIter, key))
+			if (dstCount == 0)
 			{
-				auto itemCreator = [this, &iter] (Item* newItem)
-					{ iter = pvExtract(iter, newItem); };
-				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
+				std::swap(mCount, dstTreeSet.mCount);
+				std::swap(mRootNode, dstTreeSet.mRootNode);
+				std::swap(mNodeParams, dstTreeSet.mNodeParams);
+				mCrew.IncVersion();
+				dstTreeSet.mCrew.IncVersion();
+				return;
 			}
-			else
+			Node* newRootNode = nullptr;
+			if (pvIsLess(*this, dstTreeSet))
+				newRootNode = pvMergeFast(*this, dstTreeSet);
+			else if (pvIsLess(dstTreeSet, *this))
+				newRootNode = pvMergeFast(dstTreeSet, *this);
+			if (newRootNode != nullptr)
 			{
-				++iter;
-				++dstIter;
+				dstTreeSet.mCount += mCount + 1;
+				mCount = 0;
+				dstTreeSet.mRootNode = newRootNode;
+				mRootNode = nullptr;
+				dstTreeSet.mNodeParams->MergeFrom(*mNodeParams);
+				mCrew.IncVersion();
+				dstTreeSet.mCrew.IncVersion();
+				return;
 			}
 		}
+		if (count * internal::UIntMath<size_t>::Log2(count + dstCount) < count + dstCount)	//?
+			pvMergeTo(dstTreeSet);
+		else
+			pvMergeToLinear(dstTreeSet);
 	}
 
 	void CheckIterator(ConstIterator iter) const
@@ -1324,6 +1336,105 @@ private:
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
 		}
+	}
+
+	void pvMergeToLinear(TreeSet& dstTreeSet)
+	{
+		ConstIterator iter = GetBegin();
+		ConstIterator dstIter = dstTreeSet.GetBegin();
+		const TreeTraits& treeTraits = dstTreeSet.GetTreeTraits();
+		while (iter != GetEnd())
+		{
+			const Key& key = ItemTraits::GetKey(*iter);
+			while (dstIter != dstTreeSet.GetEnd() && treeTraits.IsLess(ItemTraits::GetKey(*dstIter), key))
+				++dstIter;
+			if (dstTreeSet.pvIsGreater(dstIter, key))
+			{
+				auto itemCreator = [this, &iter] (Item* newItem)
+					{ iter = pvExtract(iter, newItem); };
+				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
+			}
+			else
+			{
+				++iter;
+				++dstIter;
+			}
+		}
+	}
+
+	bool pvIsLess(const TreeSet& treeSet1, const TreeSet& treeSet2) const
+	{
+		MOMO_ASSERT(!treeSet1.IsEmpty() && !treeSet2.IsEmpty());
+		return GetTreeTraits().IsLess(ItemTraits::GetKey(*std::prev(treeSet1.GetEnd())),
+			ItemTraits::GetKey(*treeSet2.GetBegin()));
+	}
+
+	Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)
+	{
+		size_t height1 = treeSet1.pvGetHeight();
+		size_t height2 = treeSet2.pvGetHeight();
+		if (height1 < height2)
+		{
+			Node* node = treeSet2.mRootNode;
+			for (size_t i = height1 + 1; i < height2; ++i)
+				node = node->GetChild(0);
+			MOMO_ASSERT(!node->IsLeaf());
+			size_t itemCount = node->GetCount();
+			if (itemCount == nodeMaxCapacity)
+				return nullptr;
+			treeSet1.pvExtract(std::prev(treeSet1.GetEnd()), node->GetItemPtr(itemCount));
+			Node* childNode = node->GetChild(0);
+			node->AcceptBackItem(*mNodeParams, 0);
+			node->SetChild(1, childNode);
+			node->SetChild(0, treeSet1.mRootNode);
+			treeSet1.mRootNode->SetParent(node);
+			return treeSet2.mRootNode;
+		}
+		else if (height1 > height2)
+		{
+			Node* node = treeSet1.mRootNode;
+			for (size_t i = height2 + 1; i < height1; ++i)
+				node = node->GetChild(node->GetCount());
+			MOMO_ASSERT(!node->IsLeaf());
+			size_t itemCount = node->GetCount();
+			if (itemCount == nodeMaxCapacity)
+				return nullptr;
+			treeSet2.pvExtract(treeSet2.GetBegin(), node->GetItemPtr(itemCount));
+			Node* childNode = node->GetChild(itemCount);
+			node->AcceptBackItem(*mNodeParams, itemCount);
+			node->SetChild(itemCount, childNode);
+			node->SetChild(itemCount + 1, treeSet2.mRootNode);
+			treeSet2.mRootNode->SetParent(node);
+			return treeSet1.mRootNode;
+		}
+		else
+		{
+			Node* rootNode = Node::Create(*mNodeParams, false, 0);
+			try
+			{
+				treeSet1.pvExtract(std::prev(treeSet1.GetEnd()), rootNode->GetItemPtr(0));
+			}
+			catch (...)
+			{
+				rootNode->Destroy(*mNodeParams);
+				throw;
+			}
+			rootNode->AcceptBackItem(*mNodeParams, 0);
+			rootNode->SetChild(0, treeSet1.mRootNode);
+			rootNode->SetChild(1, treeSet2.mRootNode);
+			treeSet1.mRootNode->SetParent(rootNode);
+			treeSet2.mRootNode->SetParent(rootNode);
+			return rootNode;
+		}
+	}
+
+	size_t pvGetHeight() const MOMO_NOEXCEPT
+	{
+		MOMO_ASSERT(mRootNode != nullptr);
+		size_t height = 1;
+		for (Node* node = mRootNode; !node->IsLeaf(); node = node->GetChild(0))
+			++height;
+		return height;
 	}
 
 private:

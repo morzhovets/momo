@@ -115,6 +115,13 @@ namespace internal
 				return mLeafMemPools[leafMemPoolIndex];
 			}
 
+			void MergeFrom(Params& params) MOMO_NOEXCEPT
+			{
+				mInternalMemPool.MergeFrom(params.mInternalMemPool);
+				for (size_t i = 0; i < leafMemPoolCount; ++i)
+					mLeafMemPools[i].MergeFrom(params.mLeafMemPools[i]);
+			}
+
 		private:
 			MemPool mInternalMemPool;
 			LeafMemPools mLeafMemPools;
