@@ -876,16 +876,16 @@ public:
 				dstTreeSet.mCrew.IncVersion();
 				return;
 			}
-			Node* newRootNode = nullptr;
+			Node* rootNode = nullptr;
 			if (pvIsLess(*this, dstTreeSet))
-				newRootNode = pvMergeFast(*this, dstTreeSet);
+				rootNode = pvMergeFast(*this, dstTreeSet);
 			else if (pvIsLess(dstTreeSet, *this))
-				newRootNode = pvMergeFast(dstTreeSet, *this);
-			if (newRootNode != nullptr)
+				rootNode = pvMergeFast(dstTreeSet, *this);
+			if (rootNode != nullptr)
 			{
-				dstTreeSet.mCount += mCount + 1;
+				dstTreeSet.mCount += mCount;
 				mCount = 0;
-				dstTreeSet.mRootNode = newRootNode;
+				dstTreeSet.mRootNode = rootNode;
 				mRootNode = nullptr;
 				dstTreeSet.mNodeParams->MergeFrom(*mNodeParams);
 				mCrew.IncVersion();
@@ -1369,62 +1369,89 @@ private:
 			ItemTraits::GetKey(*treeSet2.GetBegin()));
 	}
 
-	Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)
+	static Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)
 	{
 		size_t height1 = treeSet1.pvGetHeight();
 		size_t height2 = treeSet2.pvGetHeight();
-		if (height1 < height2)
+		TreeSet* treeSetPtr1 = &treeSet1;
+		TreeSet* treeSetPtr2 = &treeSet2;
+		bool swap = false;
+		if (height1 > height2)
 		{
-			Node* node = treeSet2.mRootNode;
-			for (size_t i = height1 + 1; i < height2; ++i)
-				node = node->GetChild(0);
-			MOMO_ASSERT(!node->IsLeaf());
-			size_t itemCount = node->GetCount();
-			if (itemCount == nodeMaxCapacity)
-				return nullptr;
-			treeSet1.pvExtract(std::prev(treeSet1.GetEnd()), node->GetItemPtr(itemCount));
-			Node* childNode = node->GetChild(0);
-			node->AcceptBackItem(*mNodeParams, 0);
-			node->SetChild(1, childNode);
-			node->SetChild(0, treeSet1.mRootNode);
-			treeSet1.mRootNode->SetParent(node);
-			return treeSet2.mRootNode;
+			swap = true;
+			std::swap(height1, height2);
+			std::swap(treeSetPtr1, treeSetPtr2);
 		}
-		else if (height1 > height2)
+		Node* rootNode1 = treeSetPtr1->mRootNode;
+		Node* node2 = treeSetPtr2->mRootNode;
+		for (size_t i = height1; i < height2; ++i)
+			node2 = node2->GetChild(swap ? node2->GetCount() : 0);
+		try
 		{
-			Node* node = treeSet1.mRootNode;
-			for (size_t i = height2 + 1; i < height1; ++i)
-				node = node->GetChild(node->GetCount());
-			MOMO_ASSERT(!node->IsLeaf());
-			size_t itemCount = node->GetCount();
-			if (itemCount == nodeMaxCapacity)
-				return nullptr;
-			treeSet2.pvExtract(treeSet2.GetBegin(), node->GetItemPtr(itemCount));
-			Node* childNode = node->GetChild(itemCount);
-			node->AcceptBackItem(*mNodeParams, itemCount);
-			node->SetChild(itemCount, childNode);
-			node->SetChild(itemCount + 1, treeSet2.mRootNode);
-			treeSet2.mRootNode->SetParent(node);
-			return treeSet1.mRootNode;
+			while (true)
+			{
+				node2 = node2->GetParent();
+				if (node2 != nullptr && node2->GetCount() < nodeMaxCapacity)
+					break;
+				Node* newRootNode1 = Node::Create(*treeSetPtr1->mNodeParams, false, 0);
+				newRootNode1->SetChild(0, rootNode1);
+				rootNode1->SetParent(newRootNode1);
+				rootNode1 = newRootNode1;
+				if (node2 == nullptr)
+				{
+					node2 = rootNode1;
+					break;
+				}
+			}
+			Node* node1 = ConstIteratorProxy::GetNode(
+				swap ? treeSetPtr1->GetBegin() : std::prev(treeSetPtr1->GetEnd()));
+			auto itemRemover = [treeSetPtr1, node2] (Item& item)
+			{
+				ItemTraits::Relocate(&treeSetPtr1->GetMemManager(), item,
+					node2->GetItemPtr(node2->GetCount()));
+			};
+			if (node1->IsLeaf())
+			{
+				node1->Remove(*treeSetPtr1->mNodeParams,
+					swap ? 0 : node1->GetCount() - 1, itemRemover);
+			}
+			else
+			{
+				Node* node10 = node1->GetChild(swap ? 0 : node1->GetCount());
+				Node* node11 = node1->GetChild(swap ? 1 : node1->GetCount() - 1);
+				node1->Remove(*treeSetPtr1->mNodeParams,
+					swap ? 0 : node1->GetCount() - 1, itemRemover);
+				treeSetPtr1->pvDestroy(node10);
+				node1->SetChild(swap ? 0 : node1->GetCount(), node11);
+			}
+		}
+		catch (...)
+		{
+			Node* node1 = treeSetPtr1->mRootNode->GetParent();
+			treeSetPtr1->mRootNode->SetParent(nullptr);
+			while (node1 != nullptr)
+			{
+				Node* nextNode1 = node1->GetParent();
+				node1->Destroy(*treeSetPtr1->mNodeParams);
+				node1 = nextNode1;
+			}
+			throw;
+		}
+		Node* childNode2 = node2->GetChild(swap ? node2->GetCount() : 0);
+		node2->AcceptBackItem(*treeSetPtr2->mNodeParams, swap ? node2->GetCount() : 0);
+		if (node2 == rootNode1)
+		{
+			node2->SetChild(swap ? 1 : 0, childNode2);
+			node2->SetChild(swap ? 0 : 1, treeSetPtr2->mRootNode);
+			treeSetPtr2->mRootNode->SetParent(node2);
+			return rootNode1;
 		}
 		else
 		{
-			Node* rootNode = Node::Create(*mNodeParams, false, 0);
-			try
-			{
-				treeSet1.pvExtract(std::prev(treeSet1.GetEnd()), rootNode->GetItemPtr(0));
-			}
-			catch (...)
-			{
-				rootNode->Destroy(*mNodeParams);
-				throw;
-			}
-			rootNode->AcceptBackItem(*mNodeParams, 0);
-			rootNode->SetChild(0, treeSet1.mRootNode);
-			rootNode->SetChild(1, treeSet2.mRootNode);
-			treeSet1.mRootNode->SetParent(rootNode);
-			treeSet2.mRootNode->SetParent(rootNode);
-			return rootNode;
+			node2->SetChild(swap ? node2->GetCount() : 0, rootNode1);
+			node2->SetChild(swap ? node2->GetCount() - 1 : 1, childNode2);
+			rootNode1->SetParent(node2);
+			return treeSetPtr2->mRootNode;
 		}
 	}
 
