@@ -78,6 +78,7 @@ public:
 
 		typedef momo::TreeNode<maxCapacity, capacityStep,
 			momo::MemPoolParams<memPoolBlockCount>, useSwap> TreeNode;
+		typedef momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> TreeSet;
 
 		static const size_t count = 256;
 		static unsigned char array[count];
@@ -86,9 +87,27 @@ public:
 
 		std::mt19937 mt;
 
+		//if (maxCapacity > 1)
+		//{
+		//	for (size_t i = 0; i <= count; ++i)
+		//	{
+		//		TreeSet set1, set2;
+		//		set1.Insert(array, array + i);
+		//		set2.Insert(array + i, array + count);
+		//		//if (mt() % 2 == 0)
+		//		//	std::swap(set1, set2);
+		//		set1.MergeFrom(set2);
+		//		assert(set1.GetCount() == count);
+		//		assert(set2.IsEmpty());
+		//		assert(std::equal(set1.GetBegin(), set1.GetEnd(), array));
+		//		set2.Insert(set1.GetBegin(), set1.GetEnd());
+		//		assert(std::equal(set2.GetBegin(), set2.GetEnd(), array));
+		//	}
+		//}
+
 		{
 			std::set<unsigned char> sset;
-			momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> mset;
+			TreeSet mset;
 
 			std::shuffle(array, array + count, mt);
 			for (unsigned char c : array)
