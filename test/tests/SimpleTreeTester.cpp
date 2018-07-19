@@ -26,52 +26,54 @@ class SimpleTreeTester
 public:
 	static void TestCharAll()
 	{
-		TestCharTreeNode3<  1, 1, 127>();
-		TestCharTreeNode3<  2, 1,  66>();
-		TestCharTreeNode3<  3, 1,  32>();
-		TestCharTreeNode3<  4, 1,  15>();
-		TestCharTreeNode3<  5, 1,   1>();
-		TestCharTreeNode3< 10, 1,   3>();
-		TestCharTreeNode3<101, 1,   2>();
-		TestCharTreeNode3<255, 1,   1>();
+		std::mt19937 mt;
 
-		TestCharTreeNode3<  4, 2, 127>();
-		TestCharTreeNode3<  5, 2,  66>();
-		TestCharTreeNode3<  6, 2,  32>();
-		TestCharTreeNode3<  7, 2,  15>();
-		TestCharTreeNode3< 12, 2,   1>();
-		TestCharTreeNode3< 55, 2,   3>();
-		TestCharTreeNode3<111, 2,   2>();
-		TestCharTreeNode3<255, 2,   1>();
+		TestCharTreeNode3<  1, 1, 127>(mt);
+		TestCharTreeNode3<  2, 1,  66>(mt);
+		TestCharTreeNode3<  3, 1,  32>(mt);
+		TestCharTreeNode3<  4, 1,  15>(mt);
+		TestCharTreeNode3<  5, 1,   1>(mt);
+		TestCharTreeNode3< 10, 1,   3>(mt);
+		TestCharTreeNode3<101, 1,   2>(mt);
+		TestCharTreeNode3<255, 1,   1>(mt);
 
-		TestCharTreeNode3<  6, 3, 127>();
-		TestCharTreeNode3<  7, 3,  66>();
-		TestCharTreeNode3<  8, 3,  32>();
-		TestCharTreeNode3<  9, 3,  15>();
-		TestCharTreeNode3< 14, 3,   1>();
-		TestCharTreeNode3< 77, 3,   3>();
-		TestCharTreeNode3<121, 3,   2>();
-		TestCharTreeNode3<255, 3,   1>();
+		TestCharTreeNode3<  4, 2, 127>(mt);
+		TestCharTreeNode3<  5, 2,  66>(mt);
+		TestCharTreeNode3<  6, 2,  32>(mt);
+		TestCharTreeNode3<  7, 2,  15>(mt);
+		TestCharTreeNode3< 12, 2,   1>(mt);
+		TestCharTreeNode3< 55, 2,   3>(mt);
+		TestCharTreeNode3<111, 2,   2>(mt);
+		TestCharTreeNode3<255, 2,   1>(mt);
 
-		TestCharTreeNode3< 37,   7, 127>();
-		TestCharTreeNode3< 42,  15,  66>();
-		TestCharTreeNode3< 65,  23,  32>();
-		TestCharTreeNode3< 77,  30,  15>();
-		TestCharTreeNode3< 88,  31,   1>();
-		TestCharTreeNode3<104,  33,   3>();
-		TestCharTreeNode3<204, 100,   2>();
-		TestCharTreeNode3<255, 127,   1>();
+		TestCharTreeNode3<  6, 3, 127>(mt);
+		TestCharTreeNode3<  7, 3,  66>(mt);
+		TestCharTreeNode3<  8, 3,  32>(mt);
+		TestCharTreeNode3<  9, 3,  15>(mt);
+		TestCharTreeNode3< 14, 3,   1>(mt);
+		TestCharTreeNode3< 77, 3,   3>(mt);
+		TestCharTreeNode3<121, 3,   2>(mt);
+		TestCharTreeNode3<255, 3,   1>(mt);
+
+		TestCharTreeNode3< 37,   7, 127>(mt);
+		TestCharTreeNode3< 42,  15,  66>(mt);
+		TestCharTreeNode3< 65,  23,  32>(mt);
+		TestCharTreeNode3< 77,  30,  15>(mt);
+		TestCharTreeNode3< 88,  31,   1>(mt);
+		TestCharTreeNode3<104,  33,   3>(mt);
+		TestCharTreeNode3<204, 100,   2>(mt);
+		TestCharTreeNode3<255, 127,   1>(mt);
 	}
 
 	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount>
-	static void TestCharTreeNode3()
+	static void TestCharTreeNode3(std::mt19937& mt)
 	{
 		static const bool useSwap = (maxCapacity + capacityStep) % 2 == 0;
-		TestCharTreeNode4<maxCapacity, capacityStep, memPoolBlockCount, useSwap>();
+		TestCharTreeNode4<maxCapacity, capacityStep, memPoolBlockCount, useSwap>(mt);
 	}
 
 	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount, bool useSwap>
-	static void TestCharTreeNode4()
+	static void TestCharTreeNode4(std::mt19937& mt)
 	{
 		std::cout << "momo::TreeNode<" << maxCapacity << ", " << capacityStep << ", "
 			<< memPoolBlockCount << ", " << (useSwap ? "true" : "false") << ">: " << std::flush;
@@ -85,25 +87,27 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = (unsigned char)i;
 
-		std::mt19937 mt;
-
-		//if (maxCapacity > 1)
-		//{
-		//	for (size_t i = 0; i <= count; ++i)
-		//	{
-		//		TreeSet set1, set2;
-		//		set1.Insert(array, array + i);
-		//		set2.Insert(array + i, array + count);
-		//		//if (mt() % 2 == 0)
-		//		//	std::swap(set1, set2);
-		//		set1.MergeFrom(set2);
-		//		assert(set1.GetCount() == count);
-		//		assert(set2.IsEmpty());
-		//		assert(std::equal(set1.GetBegin(), set1.GetEnd(), array));
-		//		set2.Insert(set1.GetBegin(), set1.GetEnd());
-		//		assert(std::equal(set2.GetBegin(), set2.GetEnd(), array));
-		//	}
-		//}
+		if (maxCapacity > 1)
+		{
+			for (size_t i = 0; i <= count; ++i)
+			{
+				TreeSet set1, set2;
+				set1.Insert(array, array + i);
+				set2.Insert(array + i, array + count);
+				if (i > 0)
+					set1.Remove(array[i - 1]);
+				if (mt() % 2 == 0)
+					std::swap(set1, set2);
+				set1.MergeFrom(set2);
+				if (i > 0)
+					set1.Insert(array[i - 1]);
+				assert(set1.GetCount() == count);
+				assert(set2.IsEmpty());
+				assert(std::equal(set1.GetBegin(), set1.GetEnd(), array));
+				set2.Insert(set1.GetBegin(), set1.GetEnd());
+				assert(std::equal(set2.GetBegin(), set2.GetEnd(), array));
+			}
+		}
 
 		{
 			std::set<unsigned char> sset;
