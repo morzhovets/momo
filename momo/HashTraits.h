@@ -148,7 +148,7 @@ public:
 	{
 		HashBucket::CheckMaxLoadFactor(maxLoadFactor);
 		mCalcCapacityFunc = [maxLoadFactor] (size_t bucketCount)
-			{ return (size_t)((float)bucketCount * maxLoadFactor); };
+			{ return static_cast<size_t>(static_cast<float>(bucketCount) * maxLoadFactor); };
 	}
 
 	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
@@ -213,7 +213,7 @@ public:
 		mLogStartBucketCount = (uint8_t)internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
 		static const size_t testBucketCount = 1 << 16;
 		size_t testCapacity = HashBucket::CalcCapacity(testBucketCount);
-		mMaxLoadFactor = (float)testCapacity / (float)testBucketCount;
+		mMaxLoadFactor = static_cast<float>(testCapacity) / static_cast<float>(testBucketCount);
 		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
@@ -228,7 +228,7 @@ public:
 
 	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
 	{
-		return (size_t)((float)bucketCount * mMaxLoadFactor);
+		return static_cast<size_t>(static_cast<float>(bucketCount) * mMaxLoadFactor);
 	}
 
 	size_t GetBucketCountShift(size_t bucketCount) const MOMO_NOEXCEPT

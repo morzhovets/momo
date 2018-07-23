@@ -570,8 +570,8 @@ public:
 		size_t count = size();
 		size_t bucketCount = bucket_count();
 		if (count == 0 && bucketCount == 0)
-			return 0;
-		return (float)count / (float)bucketCount;
+			return 0.0;
+		return static_cast<float>(count) / static_cast<float>(bucketCount);
 	}
 
 	bool operator==(const unordered_set& right) const
