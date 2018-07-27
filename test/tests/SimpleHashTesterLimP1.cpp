@@ -27,7 +27,7 @@ static int testSimpleHash = []
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1, 16, 1),  1, 1>("momo::HashBucketLimP1< 1, 16, 1>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1, 99, 2),  2, 1>("momo::HashBucketLimP1< 1, 99, 2>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 2, 32, 4), 16, 8>("momo::HashBucketLimP1< 2, 32, 4>");
-	SimpleHashTester::TestTemplHashSet<BUCKET( 3,  1, 8),  4, 4>("momo::HashBucketLimP1< 3,  1, 8>");
+	SimpleHashTester::TestTemplHashSet<BUCKET( 3,  1, 4),  4, 4>("momo::HashBucketLimP1< 3,  1, 4>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 4,  2, 1),  4, 4>("momo::HashBucketLimP1< 4,  2, 1>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 7, 11, 2),  6, 2>("momo::HashBucketLimP1< 7, 11, 2>");
 	SimpleHashTester::TestTemplHashSet<BUCKET(15,  1, 4), 11, 1>("momo::HashBucketLimP1<15,  1, 4>");
