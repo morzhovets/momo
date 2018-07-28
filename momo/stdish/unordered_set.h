@@ -21,7 +21,7 @@
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
     references to items become invalid and should not be used.
-  3. Functions `begin`, `cbegin` and iterator increment take
+  3. Functions `clear`, `begin`, `cbegin` and iterator increment take
     O(bucket_count) time in worst case.
   4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
     functions `erase` can throw exceptions.

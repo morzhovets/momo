@@ -27,7 +27,7 @@
   5. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  6. Functions `begin`, `cbegin` and iterator increment take
+  6. Functions `clear`, `begin`, `cbegin` and iterator increment take
     O(bucket_count) time in worst case.
   7. Functions `erase` can throw exceptions thrown by `key_type` and
     `mapped_type` move assignment operators.

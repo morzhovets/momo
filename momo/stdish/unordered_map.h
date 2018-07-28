@@ -24,7 +24,7 @@
   3. Type `reference` is not the same as `value_type&`, so
     `for (auto& p : map)` is illegal, but `for (auto p : map)` or
     `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4. Functions `begin`, `cbegin` and iterator increment take
+  4. Functions `clear`, `begin`, `cbegin` and iterator increment take
     O(bucket_count) time in worst case.
   5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
     or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
