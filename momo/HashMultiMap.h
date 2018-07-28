@@ -382,10 +382,10 @@ namespace internal
 		template<typename KeyIterator, typename ValueIterator, typename Func>
 		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, const Func& func)
+			size_t count, Func&& func)
 		{
 			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
-				count, func);
+				count, std::forward<Func>(func));
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
@@ -432,16 +432,15 @@ public:
 
 public:
 	template<typename Func>
-	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey, const Func& func)
+	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey, Func&& func)
 	{
-		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, func);
+		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::forward<Func>(func));
 	}
 
 	template<typename Func>
-	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey,
-		const Func& func)
+	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey, Func&& func)
 	{
-		KeyManager::CopyExec(memManager, srcKey, dstKey, func);
+		KeyManager::CopyExec(memManager, srcKey, dstKey, std::forward<Func>(func));
 	}
 
 	static void DestroyKey(MemManager& memManager, Key& key) MOMO_NOEXCEPT
@@ -462,9 +461,10 @@ public:
 
 	template<typename KeyIterator, typename Func>
 	static void RelocateExecKeys(MemManager& memManager, KeyIterator srcKeyBegin,
-		KeyIterator dstKeyBegin, size_t count, const Func& func)
+		KeyIterator dstKeyBegin, size_t count, Func&& func)
 	{
-		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, func);
+		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
+			std::forward<Func>(func));
 	}
 
 	template<typename ValueCreator>

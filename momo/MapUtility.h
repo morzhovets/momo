@@ -251,10 +251,10 @@ namespace internal
 		template<typename KeyIterator, typename ValueIterator, typename Func>
 		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, const Func& func)
+			size_t count, Func&& func)
 		{
 			pvRelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
-				count, func, BoolConstant<isKeyNothrowRelocatable>(),
+				count, std::forward<Func>(func), BoolConstant<isKeyNothrowRelocatable>(),
 				BoolConstant<isValueNothrowRelocatable>());
 		}
 
@@ -439,27 +439,29 @@ namespace internal
 			bool isValueNothrowRelocatable>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, const Func& func, std::true_type /*isKeyNothrowRelocatable*/,
+			size_t count, Func&& func, std::true_type /*isKeyNothrowRelocatable*/,
 			BoolConstant<isValueNothrowRelocatable>)
 		{
-			ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin, count, func);
+			ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin, count,
+				std::forward<Func>(func));
 			KeyManager::Relocate(memManager, srcKeyBegin, dstKeyBegin, count);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
+			size_t count, Func&& func, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
-			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, func);
+			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
+				std::forward<Func>(func));
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Func>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, const Func& func, std::false_type /*isKeyNothrowRelocatable*/,
+			size_t count, Func&& func, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
 			size_t keyIndex = 0;
@@ -474,7 +476,7 @@ namespace internal
 				ValueIterator dstValueIter = dstValueBegin;
 				for (; valueIndex < count; ++valueIndex, ++srcValueIter, ++dstValueIter)
 					ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
-				func();
+				std::forward<Func>(func)();
 			}
 			catch (...)
 			{

@@ -219,11 +219,11 @@ namespace internal
 
 		template<typename Func>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			const Func& func)
+			Func&& func)
 		{
 			if (isNothrowMoveConstructible)
 			{
-				func();
+				std::forward<Func>(func)();
 				Move(memManager, std::move(srcObject), dstObject);
 			}
 			else
@@ -231,7 +231,7 @@ namespace internal
 				Move(memManager, std::move(srcObject), dstObject);
 				try
 				{
-					func();
+					std::forward<Func>(func)();
 				}
 				catch (...)
 				{
@@ -244,12 +244,12 @@ namespace internal
 
 		template<typename Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
-			const Func& func)
+			Func&& func)
 		{
 			Copy(memManager, srcObject, dstObject);
 			try
 			{
-				func();
+				std::forward<Func>(func)();
 			}
 			catch (...)
 			{
@@ -320,10 +320,10 @@ namespace internal
 
 		template<typename Iterator, typename Func>
 		static void RelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, const Func& func)
+			size_t count, Func&& func)
 		{
 			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
-			pvRelocateExec(memManager, srcBegin, dstBegin, count, func,
+			pvRelocateExec(memManager, srcBegin, dstBegin, count, std::forward<Func>(func),
 				BoolConstant<isNothrowRelocatable>());
 		}
 
@@ -441,15 +441,15 @@ namespace internal
 
 		template<typename Iterator, typename Func>
 		static void pvRelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, const Func& func, std::true_type /*isNothrowRelocatable*/)
+			size_t count, Func&& func, std::true_type /*isNothrowRelocatable*/)
 		{
-			func();
+			std::forward<Func>(func)();
 			Relocate(memManager, srcBegin, dstBegin, count);
 		}
 
 		template<typename Iterator, typename Func>
 		static void pvRelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, const Func& func, std::false_type /*isNothrowRelocatable*/)
+			size_t count, Func&& func, std::false_type /*isNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
@@ -458,7 +458,7 @@ namespace internal
 				Iterator dstIter = dstBegin;
 				for (; index < count; ++index, ++srcIter, ++dstIter)
 					Copy(memManager, *srcIter, std::addressof(*dstIter));
-				func();
+				std::forward<Func>(func)();
 			}
 			catch (...)
 			{
