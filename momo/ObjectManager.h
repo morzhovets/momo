@@ -209,7 +209,7 @@ namespace internal
 		static void Move(MemManager& memManager, Object&& srcObject, Object* dstObject)
 			MOMO_NOEXCEPT_IF(isNothrowMoveConstructible)
 		{
-			Creator<Object>(memManager, std::move(srcObject))(dstObject);
+			Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 		}
 
 		static void Copy(MemManager& memManager, const Object& srcObject, Object* dstObject)
@@ -434,7 +434,7 @@ namespace internal
 			if (count > 0)
 			{
 				RelocateCreate(memManager, std::next(srcBegin), std::next(dstBegin), count - 1,
-					Creator<Object>(memManager, std::move(*srcBegin)), std::addressof(*dstBegin));
+					Creator<Object&&>(memManager, std::move(*srcBegin)), std::addressof(*dstBegin));
 				Destroy(memManager, *srcBegin);
 			}
 		}

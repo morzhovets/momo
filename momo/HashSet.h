@@ -714,7 +714,7 @@ public:
 	InsertResult Insert(Item&& item)
 	{
 		const Key& key = ItemTraits::GetKey(static_cast<const Item&>(item));
-		return pvInsert<false>(key, Creator<Item>(GetMemManager(), std::move(item)));
+		return pvInsert<false>(key, Creator<Item&&>(GetMemManager(), std::move(item)));
 	}
 
 	InsertResult Insert(const Item& item)

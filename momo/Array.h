@@ -795,7 +795,7 @@ public:
 	{
 		if (GetCount() < GetCapacity())
 		{
-			pvAddBackNogrow(typename ItemTraits::template Creator<Item>(
+			pvAddBackNogrow(typename ItemTraits::template Creator<Item&&>(
 				GetMemManager(), std::move(item)));
 		}
 		else
@@ -839,7 +839,7 @@ public:
 		size_t itemIndex = pvIndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			InsertCrt(index, typename ItemTraits::template Creator<Item>(
+			InsertCrt(index, typename ItemTraits::template Creator<Item&&>(
 				GetMemManager(), std::move(item)));
 		}
 		else
@@ -1044,14 +1044,15 @@ private:
 		size_t itemIndex = pvIndexOf(static_cast<const Item&>(item));
 		pvGrow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
-		typename ItemTraits::template Creator<Item>(GetMemManager(),
+		typename ItemTraits::template Creator<Item&&>(GetMemManager(),
 			std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
 		mData.SetCount(newCount);
 	}
 
 	void pvAddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
 	{
-		pvAddBackGrow(typename ItemTraits::template Creator<Item>(GetMemManager(), std::move(item)));
+		pvAddBackGrow(typename ItemTraits::template Creator<Item&&>(GetMemManager(),
+			std::move(item)));
 	}
 
 	void pvAddBackGrow(const Item& item)
