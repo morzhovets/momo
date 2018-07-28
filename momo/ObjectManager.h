@@ -177,7 +177,7 @@ namespace internal
 
 			Creator& operator=(const Creator&) = delete;
 
-			void operator()(Object* newObject) const
+			void operator()(Object* newObject) //&&	// vs2013
 			{
 				pvCreate(mMemManager, newObject,
 					typename SequenceMaker<sizeof...(Args)>::Sequence());
@@ -186,14 +186,14 @@ namespace internal
 		private:
 			template<typename MemManager, size_t... sequence>
 			void pvCreate(MemManager& /*memManager*/, Object* newObject,
-				Sequence<sequence...>) const
+				Sequence<sequence...>)
 			{
 				new(newObject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 			template<typename Allocator, size_t... sequence>
 			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
-				Sequence<sequence...>) const
+				Sequence<sequence...>)
 			{
 				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
 					memManager.GetCharAllocator(), newObject,
@@ -311,9 +311,10 @@ namespace internal
 
 		template<typename Iterator, typename ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, const ObjectCreator& objectCreator, Object* newObject)
+			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
-			auto func = [&objectCreator, newObject] () { objectCreator(newObject); };
+			auto func = [&objectCreator, newObject] ()
+				{ std::forward<ObjectCreator>(objectCreator)(newObject); };
 			RelocateExec(memManager, srcBegin, dstBegin, count, func);
 		}
 

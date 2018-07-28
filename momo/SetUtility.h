@@ -318,10 +318,10 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		void Create(const ItemCreator& itemCreator)
+		void Create(ItemCreator&& itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
-			itemCreator(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 			mHasItem = true;
 		}
 

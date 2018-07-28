@@ -169,10 +169,10 @@ namespace internal
 
 	public:
 		template<typename ItemCreator>
-		explicit ArrayItemHandler(MemManager& memManager, const ItemCreator& itemCreator)
+		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
 			: mMemManager(memManager)
 		{
-			itemCreator(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 		}
 
 		ArrayItemHandler(const ArrayItemHandler&) = delete;

@@ -818,7 +818,7 @@ private:
 
 	template<typename Hint, typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		MemManager& memManager = mTreeMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -843,7 +843,7 @@ private:
 				keyDestroyed = true;
 				try
 				{
-					mappedCreator(newMapped);
+					std::forward<MappedCreator>(mappedCreator)(newMapped);
 				}
 				catch (...)
 				{
@@ -867,14 +867,14 @@ private:
 		typename Key = typename std::decay<RKey>::type,
 		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		std::pair<iterator, bool> res = pvFind(hint,
 			static_cast<const key_type&>(std::get<0>(key)));
 		if (!res.second)
 			return res;
 		TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
-			std::forward<RKey>(std::get<0>(key)), mappedCreator);
+			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
 		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 

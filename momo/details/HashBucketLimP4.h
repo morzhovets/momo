@@ -291,7 +291,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Iterator AddCrt(Params& params, const ItemCreator& itemCreator, size_t hashCode,
+		Iterator AddCrt(Params& params, ItemCreator&& itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 		{
 			Item* items = mPtrState.GetPointer();
@@ -301,9 +301,9 @@ namespace internal
 				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
 				pvSetHashProbe(0, hashCode, logBucketCount, probe);
 				if (memPoolIndex == minMemPoolIndex)
-					return pvAdd0<minMemPoolIndex>(params, itemCreator, hashCode);
+					return pvAdd0<minMemPoolIndex>(params, std::forward<ItemCreator>(itemCreator), hashCode);
 				else
-					return pvAdd0<maxCount>(params, itemCreator, hashCode);
+					return pvAdd0<maxCount>(params, std::forward<ItemCreator>(itemCreator), hashCode);
 			}
 			else
 			{
@@ -316,20 +316,23 @@ namespace internal
 					{
 					case 1:
 						pvSetHashProbe(1, hashCode, logBucketCount, probe);
-						return pvAdd<1>(params, itemCreator, hashCode, items);
+						return pvAdd<1>(params, std::forward<ItemCreator>(itemCreator),
+							hashCode, items);
 					case 2:
 						pvSetHashProbe(2, hashCode, logBucketCount, probe);
-						return pvAdd<2>(params, itemCreator, hashCode, items);
+						return pvAdd<2>(params, std::forward<ItemCreator>(itemCreator),
+							hashCode, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
 						pvSetHashProbe(3, hashCode, logBucketCount, probe);
-						return pvAdd<3>(params, itemCreator, hashCode, items);
+						return pvAdd<3>(params, std::forward<ItemCreator>(itemCreator),
+							hashCode, items);
 					}
 				}
 				else
 				{
 					pvSetHashProbe(count, hashCode, logBucketCount, probe);
-					itemCreator(items + count);
+					std::forward<ItemCreator>(itemCreator)(items + count);
 					mHashes[count] = pvGetHashByte(hashCode);
 					pvSetPtrState(items, memPoolIndex);
 					return items + count;
@@ -446,25 +449,25 @@ namespace internal
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAdd0(Params& params, const ItemCreator& itemCreator, size_t hashCode)
+		Item* pvAdd0(Params& params, ItemCreator&& itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
-			itemCreator(items);
+			std::forward<ItemCreator>(itemCreator)(items);
 			mHashes[0] = pvGetHashByte(hashCode);
 			pvSetPtrState(memory.Extract(), memPoolIndex);
 			return items;
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>
-		Item* pvAdd(Params& params, const ItemCreator& itemCreator, size_t hashCode, Item* items)
+		Item* pvAdd(Params& params, ItemCreator&& itemCreator, size_t hashCode, Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
 			Memory<newMemPoolIndex> memory(params.template GetMemPool<newMemPoolIndex>());
 			Item* newItems = memory.GetPointer();
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
-				itemCreator, newItems + count);
+				std::forward<ItemCreator>(itemCreator), newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
 			mHashes[count] = pvGetHashByte(hashCode);
 			pvSetPtrState(memory.Extract(), newMemPoolIndex);

@@ -291,10 +291,10 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, const ItemCreator& itemCreator, Item* newItem)
+			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
 			HashMultiMapKeyValueTraits::RelocateCreateValues(memManager, srcItems, dstItems,
-				count, itemCreator, newItem);
+				count, std::forward<ItemCreator>(itemCreator), newItem);
 		}
 	};
 
@@ -339,18 +339,20 @@ namespace internal
 
 	public:
 		template<typename ValueCreator>
-		static void Create(MemManager& memManager, Key&& key, const ValueCreator& valueCreator,
+		static void Create(MemManager& memManager, Key&& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
 			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
-		static void Create(MemManager& memManager, const Key& key, const ValueCreator& valueCreator,
+		static void Create(MemManager& memManager, const Key& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, func);
 		}
 
@@ -467,10 +469,10 @@ public:
 
 	template<typename ValueCreator>
 	static void RelocateCreateValues(MemManager& memManager, Value* srcValues, Value* dstValues,
-		size_t count, const ValueCreator& valueCreator, Value* newValue)
+		size_t count, ValueCreator&& valueCreator, Value* newValue)
 	{
 		ValueManager::RelocateCreate(memManager, srcValues, dstValues, count,
-			valueCreator, newValue);
+			std::forward<ValueCreator>(valueCreator), newValue);
 	}
 
 	template<typename KeyArg>
@@ -882,9 +884,9 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddCrt(Key&& key, const ValueCreator& valueCreator)
+	Iterator AddCrt(Key&& key, ValueCreator&& valueCreator)
 	{
-		return pvAdd(std::move(key), valueCreator);
+		return pvAdd(std::move(key), std::forward<ValueCreator>(valueCreator));
 	}
 
 	template<typename... ValueArgs>
@@ -905,9 +907,9 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddCrt(const Key& key, const ValueCreator& valueCreator)
+	Iterator AddCrt(const Key& key, ValueCreator&& valueCreator)
 	{
-		return pvAdd(key, valueCreator);
+		return pvAdd(key, std::forward<ValueCreator>(valueCreator));
 	}
 
 	template<typename... ValueArgs>
@@ -928,12 +930,12 @@ public:
 	}
 
 	template<typename ValueCreator>
-	Iterator AddCrt(ConstKeyIterator keyIter, const ValueCreator& valueCreator)
+	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator&& valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 		ValueArray& valueArray = hashMapIter->value;
-		pvAddValue(valueArray, valueCreator);
+		pvAddValue(valueArray, std::forward<ValueCreator>(valueCreator));
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter),
 			valueArray.GetBounds().GetEnd() - 1, false);
 	}
@@ -1128,26 +1130,28 @@ private:
 	}
 
 	template<typename RKey, typename ValueCreator>
-	Iterator pvAdd(RKey&& key, const ValueCreator& valueCreator)
+	Iterator pvAdd(RKey&& key, ValueCreator&& valueCreator)
 	{
 		KeyIterator keyIter = Find(static_cast<const Key&>(key));
 		if (!!keyIter)
-			return AddCrt(keyIter, valueCreator);
+			return AddCrt(keyIter, std::forward<ValueCreator>(valueCreator));
 		auto valuesCreator = [this, &valueCreator] (ValueArray* newValueArray)
 		{
 			ValueArray valueArray;
-			this->pvAddValue(valueArray, valueCreator);
+			this->pvAddValue(valueArray, std::forward<ValueCreator>(valueCreator));
 			new(newValueArray) ValueArray(std::move(valueArray));
 		};
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
-			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key), valuesCreator));
+			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key),
+			std::move(valuesCreator)));
 		return pvMakeIterator(keyIter, keyIter->values.GetBegin(), false);
 	}
 
 	template<typename ValueCreator>
-	void pvAddValue(ValueArray& valueArray, const ValueCreator& valueCreator)
+	void pvAddValue(ValueArray& valueArray, ValueCreator&& valueCreator)
 	{
-		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), valueCreator);
+		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(),
+			std::forward<ValueCreator>(valueCreator));
 		++mValueCount;
 		++mValueCrew.GetValueVersion();
 	}

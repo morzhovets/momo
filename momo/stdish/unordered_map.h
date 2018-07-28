@@ -805,7 +805,7 @@ private:
 
 	template<typename Hint, typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -830,7 +830,7 @@ private:
 				keyDestroyed = true;
 				try
 				{
-					mappedCreator(newMapped);
+					std::forward<MappedCreator>(mappedCreator)(newMapped);
 				}
 				catch (...)
 				{
@@ -853,17 +853,17 @@ private:
 		typename Key = typename std::decay<RKey>::type,
 		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
-			std::forward<RKey>(std::get<0>(key)), mappedCreator);
+			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
 		return std::pair<iterator, bool>(IteratorProxy(res.iterator), res.inserted);
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 	template<typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
@@ -874,7 +874,7 @@ private:
 			KeyCreator(memManager, std::move(keyArgs))(newKey);
 			try
 			{
-				mappedCreator(newMapped);
+				std::forward<MappedCreator>(mappedCreator)(newMapped);
 			}
 			catch (...)
 			{
@@ -891,10 +891,10 @@ private:
 		typename Key = typename std::decay<RKey>::type,
 		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
-		const MappedCreator& mappedCreator)
+		MappedCreator&& mappedCreator)
 	{
 		HashMapIterator resIter = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
-			std::forward<RKey>(std::get<0>(key)), mappedCreator);
+			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
 		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
 	}
 #endif

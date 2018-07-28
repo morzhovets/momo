@@ -275,9 +275,10 @@ public:
 public:
 	template<typename Iterator, typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-		size_t count, const ItemCreator& itemCreator, Item* newItem)
+		size_t count, ItemCreator&& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count, itemCreator, newItem);
+		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
+			std::forward<ItemCreator>(itemCreator), newItem);
 	}
 
 	template<typename Iterator>
@@ -444,13 +445,13 @@ private:
 		}
 
 		template<typename ItemCreator>
-		void RelocateCreate(const ItemCreator& itemCreator, Item* pitem)
+		void RelocateCreate(ItemCreator&& itemCreator, Item* pitem)
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
 			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(),
 				Iterator(mSrcSegments.GetItems()), Iterator(mDstSegments.GetItems()),
-				mItemCount, itemCreator, pitem);
+				mItemCount, std::forward<ItemCreator>(itemCreator), pitem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();
 			mItemCount = 0;
@@ -684,9 +685,9 @@ public:
 	}
 
 	template<typename ItemCreator>
-	InsertResult InsertCrt(const Key& key, const ItemCreator& itemCreator)
+	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
 	{
-		return pvInsert<true>(key, itemCreator);
+		return pvInsert<true>(key, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
@@ -762,9 +763,9 @@ public:
 	}
 
 	template<typename ItemCreator, bool extraCheck = true>
-	ConstIterator AddCrt(ConstIterator iter, const ItemCreator& itemCreator)
+	ConstIterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
 	{
-		return pvAdd<extraCheck>(iter, itemCreator);
+		return pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
@@ -1026,20 +1027,20 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	InsertResult pvInsert(const Key& key, const ItemCreator& itemCreator)
+	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
 		ConstIterator iter = LowerBound(key);
 		if (!pvIsGreater(iter, key))
 			return InsertResult(iter, false);
-		iter = pvAdd<extraCheck>(iter, itemCreator);
+		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
 		return InsertResult(iter, true);
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	ConstIterator pvAdd(ConstIterator iter, const ItemCreator& itemCreator)
+	ConstIterator pvAdd(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		if (mRootNode == nullptr)
-			return pvAddFirst(iter, itemCreator);
+			return pvAddFirst(iter, std::forward<ItemCreator>(itemCreator));
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
 		Node* node = ConstIteratorProxy::GetNode(iter);
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
@@ -1053,16 +1054,16 @@ private:
 		size_t itemCount = node->GetCount();
 		if (itemCount < node->GetCapacity())
 		{
-			itemCreator(node->GetItemPtr(itemCount));
+			std::forward<ItemCreator>(itemCreator)(node->GetItemPtr(itemCount));
 			node->AcceptBackItem(*mNodeParams, itemIndex);
 		}
 		else
 		{
 			Relocator relocator(*mNodeParams);
 			if (itemCount < nodeMaxCapacity)
-				pvAddGrow(relocator, node, itemIndex, itemCreator);
+				pvAddGrow(relocator, node, itemIndex, std::forward<ItemCreator>(itemCreator));
 			else
-				pvAddSplit(relocator, node, itemIndex, itemCreator);
+				pvAddSplit(relocator, node, itemIndex, std::forward<ItemCreator>(itemCreator));
 		}
 		++mCount;
 		mCrew.IncVersion();
@@ -1072,7 +1073,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	ConstIterator pvAddFirst(ConstIterator iter, const ItemCreator& itemCreator)
+	ConstIterator pvAddFirst(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
@@ -1093,7 +1094,7 @@ private:
 		mRootNode = Node::Create(*mNodeParams, true, 0);
 		try
 		{
-			return pvAdd<false>(GetEnd(), itemCreator);
+			return pvAdd<false>(GetEnd(), std::forward<ItemCreator>(itemCreator));
 		}
 		catch (...)
 		{
@@ -1104,11 +1105,11 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddGrow(Relocator& relocator, Node*& node, size_t itemIndex,
-		const ItemCreator& itemCreator)
+	void pvAddGrow(Relocator& relocator, Node*& node, size_t itemIndex, ItemCreator&& itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
-		relocator.RelocateCreate(itemCreator, newNode->GetItemPtr(itemIndex));
+		relocator.RelocateCreate(std::forward<ItemCreator>(itemCreator),
+			newNode->GetItemPtr(itemIndex));
 		Node* parentNode = node->GetParent();
 		if (parentNode == nullptr)
 			mRootNode = newNode;
@@ -1120,7 +1121,7 @@ private:
 
 	template<typename ItemCreator>
 	void pvAddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
-		const ItemCreator& itemCreator)
+		ItemCreator&& itemCreator)
 	{
 		Node* node = leafNode;
 		size_t itemIndex = leafItemIndex;
@@ -1154,7 +1155,8 @@ private:
 			splitRes.newNode->SetChild(splitRes.newItemIndex, childNewNode1);
 			splitRes.newNode->SetChild(splitRes.newItemIndex + 1, childNewNode2);
 		}
-		relocator.RelocateCreate(itemCreator, leafNode->GetItemPtr(leafItemIndex));
+		relocator.RelocateCreate(std::forward<ItemCreator>(itemCreator),
+			leafNode->GetItemPtr(leafItemIndex));
 		if (node->GetParent() == nullptr)
 			mRootNode = node;
 		node->AcceptBackItem(*mNodeParams, itemIndex);

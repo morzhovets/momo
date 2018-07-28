@@ -85,12 +85,12 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
-		Iterator AddCrt(Params& /*params*/, const ItemCreator& itemCreator, size_t /*hashCode*/,
+		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
-			MOMO_NOEXCEPT_IF(noexcept(itemCreator(std::declval<Item*>())))
+			MOMO_NOEXCEPT_IF(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			MOMO_ASSERT(!IsFull());
-			itemCreator(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 			pvSetState(HashBucketOneState::full);
 			return &mItemBuffer;
 		}

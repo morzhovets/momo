@@ -211,13 +211,13 @@ public:
 	explicit SegmentedArray(size_t count, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		pvIncCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		SetCount(count);
 	}
 
 	explicit SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		pvIncCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		SetCount(count, item);
 	}
 
 	template<typename ArgIterator,
@@ -281,12 +281,12 @@ public:
 		return array;
 	}
 
-	template<typename ItemCreator>
-	static SegmentedArray CreateCrt(size_t count, const ItemCreator& itemCreator,
+	template<typename MultiItemCreator>
+	static SegmentedArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
 		MemManager&& memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
-		array.pvIncCount(count, itemCreator);
+		array.pvIncCount(count, multiItemCreator);
 		return array;
 	}
 
@@ -354,20 +354,26 @@ public:
 		return mCount;
 	}
 
-	template<typename ItemCreator>
-	void SetCountCrt(size_t count, const ItemCreator& itemCreator)
+	template<typename MultiItemCreator>
+	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
 	{
-		pvSetCount(count, itemCreator);
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count)
 	{
-		pvSetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		MemManager& memManager = GetMemManager();
+		auto multiItemCreator = [&memManager] (Item* newItem)
+			{ (typename ItemTraits::template Creator<>(memManager))(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		pvSetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		MemManager& memManager = GetMemManager();
+		auto multiItemCreator = [&memManager, &item] (Item* newItem)
+			{ typename ItemTraits::template Creator<const Item&>(memManager, item)(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -430,10 +436,10 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackNogrowCrt(const ItemCreator& itemCreator)
+	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		MOMO_CHECK(mCount < GetCapacity());
-		pvAddBackNogrow(itemCreator);
+		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
@@ -454,19 +460,19 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackCrt(const ItemCreator& itemCreator)
+	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		size_t initCapacity = GetCapacity();
 		if (mCount < initCapacity)
 		{
-			pvAddBackNogrow(itemCreator);
+			pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
 		}
 		else
 		{
 			pvIncCapacity(initCapacity + 1);
 			try
 			{
-				itemCreator(mSegments.GetBackItem());
+				std::forward<ItemCreator>(itemCreator)(mSegments.GetBackItem());
 				++mCount;
 			}
 			catch (...)
@@ -495,9 +501,9 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void InsertCrt(size_t index, const ItemCreator& itemCreator)
+	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
-		ItemHandler itemHandler(GetMemManager(), itemCreator);
+		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
 		std::move_iterator<Item*> begin(&itemHandler);
 		Insert(index, begin, begin + 1);
 	}
@@ -521,8 +527,9 @@ public:
 
 	void Insert(size_t index, size_t count, const Item& item)
 	{
-		typename ItemTraits::template Creator<const Item&> itemCreator(GetMemManager(), item);
-		ItemHandler itemHandler(GetMemManager(), itemCreator);
+		MemManager& memManager = GetMemManager();
+		ItemHandler itemHandler(memManager,
+			typename ItemTraits::template Creator<const Item&>(memManager, item));
 		Reserve(mCount + count);
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
@@ -576,25 +583,25 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddBackNogrow(const ItemCreator& itemCreator)
+	void pvAddBackNogrow(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
-		itemCreator(mSegments[segIndex] + itemIndex);
+		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
 		++mCount;
 	}
 
-	template<typename ItemCreator>
-	void pvSetCount(size_t count, const ItemCreator& itemCreator)
+	template<typename MultiItemCreator>
+	void pvSetCount(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		if (count < mCount)
 			pvDecCount(count);
 		else if (count > mCount)
-			pvIncCount(count, itemCreator);
+			pvIncCount(count, multiItemCreator);
 	}
 
-	template<typename ItemCreator>
-	void pvIncCount(size_t count, const ItemCreator& itemCreator)
+	template<typename MultiItemCreator>
+	void pvIncCount(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();
@@ -609,7 +616,7 @@ private:
 				Item* segment = mSegments[segIndex];
 				size_t itemCount = Settings::GetItemCount(segIndex);
 				for (; itemIndex < itemCount && mCount < count; ++itemIndex, ++mCount)
-					itemCreator(segment + itemIndex);
+					multiItemCreator(segment + itemIndex);
 				if (itemIndex == itemCount)
 				{
 					++segIndex;
@@ -630,6 +637,7 @@ private:
 		MOMO_ASSERT(count <= mCount);
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		MemManager& memManager = GetMemManager();
 		while (mCount > count)
 		{
 			if (itemIndex == 0)
@@ -638,7 +646,7 @@ private:
 				itemIndex = Settings::GetItemCount(segIndex);
 			}
 			size_t delCount = std::minmax(itemIndex, mCount - count).first;
-			ItemTraits::Destroy(GetMemManager(), mSegments[segIndex] + itemIndex - delCount, delCount);
+			ItemTraits::Destroy(memManager, mSegments[segIndex] + itemIndex - delCount, delCount);
 			itemIndex -= delCount;
 			mCount -= delCount;
 		}

@@ -199,17 +199,19 @@ namespace internal
 	public:
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, Key&& key,
-			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
+			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
 			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
-			const ValueCreator& valueCreator, Key* newKey, Value* newValue)
+			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] () { valueCreator(newValue); };
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
 			KeyManager::CopyExec(memManager, key, newKey, func);
 		}
 
@@ -560,11 +562,11 @@ namespace internal
 			{
 			}
 
-			void operator()(Item* newItem) const
+			void operator()(Item* newItem) //&&	// vs2013
 			{
 				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
 					mMemManager, *mItem.GetValuePtr());
-				KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), valueCreator,
+				KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator),
 					newItem->GetKeyPtr(), newItem->GetValuePtr());
 			}
 
@@ -703,7 +705,8 @@ namespace internal
 				{
 					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
 						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
-					mIter = mMap.AddCrt(mIter, std::forward<KeyReference>(*mKeyPtr), valueCreator);
+					mIter = mMap.AddCrt(mIter, std::forward<KeyReference>(*mKeyPtr),
+						std::move(valueCreator));
 				}
 				mKeyPtr = nullptr;
 				return *this;
@@ -754,7 +757,8 @@ namespace internal
 			KeyReference keyRef)
 		{
 			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
-			return map.AddCrt(iter, std::forward<KeyReference>(keyRef), valueCreator)->value;
+			return map.AddCrt(iter, std::forward<KeyReference>(keyRef),
+				std::move(valueCreator))->value;
 		}
 #endif
 	};
@@ -827,10 +831,13 @@ namespace internal
 		}
 
 		template<typename PairCreator>
-		void Create(const PairCreator& pairCreator)
+		void Create(PairCreator&& pairCreator)
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-				{ pairCreator(newItem->GetKeyPtr(), newItem->GetValuePtr()); };
+			{
+				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
+					newItem->GetValuePtr());
+			};
 			mSetExtractedItem.Create(itemCreator);
 		}
 

@@ -188,9 +188,10 @@ public:
 
 	template<typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-		size_t count, const ItemCreator& itemCreator, Item* newItem)
+		size_t count, ItemCreator&& itemCreator, Item* newItem)
 	{
-		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count, itemCreator, newItem);
+		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count,
+			std::forward<ItemCreator>(itemCreator), newItem);
 	}
 };
 
@@ -541,13 +542,15 @@ public:
 	explicit Array(size_t count, MemManager&& memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
-		pvFill(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		for (size_t i = 0; i < count; ++i)
+			AddBackNogrowVar();
 	}
 
 	explicit Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
-		pvFill(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		for (size_t i = 0; i < count; ++i)
+			AddBackNogrow(item);
 	}
 
 	template<typename ArgIterator,
@@ -585,12 +588,13 @@ public:
 		return Array(Data(capacity, std::move(memManager)));
 	}
 
-	template<typename ItemCreator>
-	static Array CreateCrt(size_t count, const ItemCreator& itemCreator,
+	template<typename MultiItemCreator>
+	static Array CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
 		MemManager&& memManager = MemManager())
 	{
 		Array array = CreateCap(count, std::move(memManager));
-		array.pvFill(count, itemCreator);
+		for (size_t i = 0; i < count; ++i)
+			AddBackNogrowCrt(multiItemCreator);
 		return array;
 	}
 
@@ -665,20 +669,26 @@ public:
 		return mData.GetCount();
 	}
 
-	template<typename ItemCreator>
-	void SetCountCrt(size_t count, const ItemCreator& itemCreator)
+	template<typename MultiItemCreator>
+	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
 	{
-		pvSetCount(count, itemCreator);
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count)
 	{
-		pvSetCount(count, typename ItemTraits::template Creator<>(GetMemManager()));
+		MemManager& memManager = GetMemManager();
+		auto multiItemCreator = [&memManager] (Item* newItem)
+			{ (typename ItemTraits::template Creator<>(memManager))(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		pvSetCount(count, typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+		MemManager& memManager = GetMemManager();
+		auto multiItemCreator = [&memManager, &item] (Item* newItem)
+			{ typename ItemTraits::template Creator<const Item&>(memManager, item)(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -742,10 +752,10 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackNogrowCrt(const ItemCreator& itemCreator)
+	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		MOMO_CHECK(GetCount() < GetCapacity());
-		pvAddBackNogrow(itemCreator);
+		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
@@ -766,12 +776,12 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void AddBackCrt(const ItemCreator& itemCreator)
+	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		if (GetCount() < GetCapacity())
-			pvAddBackNogrow(itemCreator);
+			pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
 		else
-			pvAddBackGrow(itemCreator);
+			pvAddBackGrow(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
@@ -808,9 +818,9 @@ public:
 	}
 
 	template<typename ItemCreator>
-	void InsertCrt(size_t index, const ItemCreator& itemCreator)
+	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
-		ItemHandler itemHandler(GetMemManager(), itemCreator);
+		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
 		std::move_iterator<Item*> begin(&itemHandler);
 		Insert(index, begin, begin + 1);
 	}
@@ -852,8 +862,9 @@ public:
 		size_t itemIndex = pvIndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 		{
-			typename ItemTraits::template Creator<const Item&> itemCreator(GetMemManager(), item);
-			ItemHandler itemHandler(GetMemManager(), itemCreator);
+			MemManager& memManager = GetMemManager();
+			ItemHandler itemHandler(memManager,
+				typename ItemTraits::template Creator<const Item&>(memManager, item));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
 			ArrayShifter::Insert(*this, index, count, *&itemHandler);
@@ -901,13 +912,6 @@ private:
 	{
 	}
 
-	template<typename ItemCreator>
-	void pvFill(size_t count, const ItemCreator& itemCreator)
-	{
-		for (size_t i = 0; i < count; ++i)
-			AddBackNogrowCrt(itemCreator);
-	}
-
 	template<typename ArgIterator>
 	void pvFill(ArgIterator begin, ArgIterator end, std::true_type /*isForwardIterator*/)
 	{
@@ -949,8 +953,8 @@ private:
 		}
 	}
 
-	template<typename ItemCreator>
-	void pvSetCount(size_t count, const ItemCreator& itemCreator)
+	template<typename MultiItemCreator>
+	void pvSetCount(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		size_t newCount = count;
 		size_t initCount = GetCount();
@@ -966,7 +970,7 @@ private:
 			try
 			{
 				for (; index < newCount; ++index)
-					itemCreator(items + index);
+					multiItemCreator(items + index);
 			}
 			catch (...)
 			{
@@ -979,13 +983,13 @@ private:
 		{
 			size_t newCapacity = pvGrowCapacity(initCapacity, newCount,
 				ArrayGrowCause::reserve, false);
-			auto relocateFunc = [this, initCount, newCount, &itemCreator] (Item* newItems)
+			auto relocateFunc = [this, initCount, newCount, &multiItemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
 				try
 				{
 					for (; index < newCount; ++index)
-						itemCreator(newItems + index);
+						multiItemCreator(newItems + index);
 					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
 				}
 				catch (...)
@@ -1006,15 +1010,15 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddBackNogrow(const ItemCreator& itemCreator)
+	void pvAddBackNogrow(ItemCreator&& itemCreator)
 	{
 		size_t count = GetCount();
-		itemCreator(GetItems() + count);
+		std::forward<ItemCreator>(itemCreator)(GetItems() + count);
 		mData.SetCount(count + 1);
 	}
 
 	template<typename ItemCreator>
-	void pvAddBackGrow(const ItemCreator& itemCreator)
+	void pvAddBackGrow(ItemCreator&& itemCreator)
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
@@ -1022,7 +1026,7 @@ private:
 		auto relocateFunc = [this, initCount, &itemCreator] (Item* newItems)
 		{
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
-				itemCreator, newItems + initCount);
+				std::forward<ItemCreator>(itemCreator), newItems + initCount);
 		};
 		mData.Reset(newCapacity, newCount, relocateFunc);
 	}
@@ -1061,17 +1065,18 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		typename ItemTraits::template Creator<const Item&>(GetMemManager(), item)(&itemBuffer);
+		MemManager& memManager = GetMemManager();
+		typename ItemTraits::template Creator<const Item&>(memManager, item)(&itemBuffer);
 		try
 		{
 			pvGrow(newCount, ArrayGrowCause::add);
 		}
 		catch (...)
 		{
-			ItemTraits::Destroy(GetMemManager(), &itemBuffer, 1);
+			ItemTraits::Destroy(memManager, &itemBuffer, 1);
 			throw;
 		}
-		ItemTraits::Relocate(GetMemManager(), &itemBuffer, GetItems() + initCount, 1);
+		ItemTraits::Relocate(memManager, &itemBuffer, GetItems() + initCount, 1);
 		mData.SetCount(newCount);
 	}
 
