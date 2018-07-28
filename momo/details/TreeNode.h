@@ -237,11 +237,11 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
-		void Remove(Params& params, size_t index, const ItemRemover& itemRemover)
+		void Remove(Params& params, size_t index, ItemRemover&& itemRemover)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			pvRemove(params, index, count, itemRemover, IsContinuous());
+			pvRemove(params, index, count, std::forward<ItemRemover>(itemRemover), IsContinuous());
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
@@ -293,13 +293,13 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
-		void pvRemove(Params& params, size_t index, size_t count, const ItemRemover& itemRemover,
+		void pvRemove(Params& params, size_t index, size_t count, ItemRemover&& itemRemover,
 			std::true_type /*isContinuous*/)
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 			try
 			{
-				itemRemover(*GetItemPtr(count - 1));
+				std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
 			}
 			catch (...)
 			{
@@ -310,10 +310,10 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
-		void pvRemove(Params& /*params*/, size_t index, size_t count, const ItemRemover& itemRemover,
+		void pvRemove(Params& /*params*/, size_t index, size_t count, ItemRemover&& itemRemover,
 			std::false_type /*isContinuous*/)
 		{
-			itemRemover(*GetItemPtr(index));
+			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
 			uint8_t realIndex = mCounter.indices[index];
 			memmove(mCounter.indices + index, mCounter.indices + index + 1, count - index - 1);
 			mCounter.indices[count - 1] = realIndex;

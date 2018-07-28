@@ -842,10 +842,12 @@ namespace internal
 		}
 
 		template<typename PairRemover>
-		void Remove(const PairRemover& pairRemover)
+		void Remove(PairRemover&& pairRemover)
 		{
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)
-				{ pairRemover(*item.GetKeyPtr(), *item.GetValuePtr()); };
+			{
+				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+			};
 			mSetExtractedItem.Remove(itemRemover);
 		}
 

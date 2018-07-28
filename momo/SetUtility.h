@@ -326,10 +326,10 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
-		void Remove(const ItemRemover& itemRemover)
+		void Remove(ItemRemover&& itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
-			itemRemover(*&mItemBuffer);
+			std::forward<ItemRemover>(itemRemover)(*&mItemBuffer);
 			mHasItem = false;
 		}
 
