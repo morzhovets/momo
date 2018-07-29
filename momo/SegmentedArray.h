@@ -357,23 +357,28 @@ public:
 	template<typename MultiItemCreator>
 	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
 	{
-		pvSetCount(count, multiItemCreator);
+		if (count < mCount)
+			pvDecCount(count);
+		else if (count > mCount)
+			pvIncCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count)
 	{
+		typedef typename ItemTraits::template Creator<> Creator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager] (Item* newItem)
-			{ (typename ItemTraits::template Creator<>(memManager))(newItem); };
-		pvSetCount(count, multiItemCreator);
+			{ (Creator(memManager))(newItem); };
+		SetCountCrt(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
+		typedef typename ItemTraits::template Creator<const Item&> Creator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager, &item] (Item* newItem)
-			{ typename ItemTraits::template Creator<const Item&>(memManager, item)(newItem); };
-		pvSetCount(count, multiItemCreator);
+			{ Creator(memManager, item)(newItem); };
+		SetCountCrt(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const MOMO_NOEXCEPT
@@ -589,15 +594,6 @@ private:
 		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
 		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
 		++mCount;
-	}
-
-	template<typename MultiItemCreator>
-	void pvSetCount(size_t count, const MultiItemCreator& multiItemCreator)
-	{
-		if (count < mCount)
-			pvDecCount(count);
-		else if (count > mCount)
-			pvIncCount(count, multiItemCreator);
 	}
 
 	template<typename MultiItemCreator>
