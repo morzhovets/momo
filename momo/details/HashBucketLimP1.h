@@ -194,7 +194,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);
@@ -202,7 +202,7 @@ namespace internal
 			if (count == 1)
 			{
 				MOMO_ASSERT(iter == items);
-				itemReplacer(*items, *items);
+				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
 				if (memPoolIndex != pvGetMemPoolIndex(maxCount))
@@ -213,7 +213,7 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(items <= iter && iter < items + count);
-				itemReplacer(items[count - 1], *iter);
+				std::forward<ItemReplacer>(itemReplacer)(items[count - 1], *iter);
 				--mState;
 				return iter;
 			}

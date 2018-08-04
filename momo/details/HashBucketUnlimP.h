@@ -135,13 +135,13 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			Bounds bounds = GetBounds(params);
 			size_t count = bounds.GetCount();
 			size_t index = iter - bounds.GetBegin();
 			MOMO_ASSERT(index < count);
-			itemReplacer(bounds[count - 1], bounds[index]);
+			std::forward<ItemReplacer>(itemReplacer)(bounds[count - 1], bounds[index]);
 			mArrayBucket.RemoveBack(params);
 			return GetBounds(params).GetBegin() + index;
 		}

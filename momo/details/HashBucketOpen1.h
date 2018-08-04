@@ -106,11 +106,11 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(&mItems[0] <= iter && iter < &mItems[0] + count);
-			itemReplacer(*&mItems[count - 1], *iter);
+			std::forward<ItemReplacer>(itemReplacer)(*&mItems[count - 1], *iter);
 			--mState;
 			return iter;
 		}

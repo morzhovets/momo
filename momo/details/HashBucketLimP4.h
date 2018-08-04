@@ -341,7 +341,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			Item* items = mPtrState.GetPointer();
 			MOMO_ASSERT(items != nullptr);
@@ -350,7 +350,7 @@ namespace internal
 			if (count == 1)
 			{
 				MOMO_ASSERT(iter == items);
-				itemReplacer(*items, *items);
+				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
 				pvDeallocate(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
 					memPoolIndex = minMemPoolIndex;
@@ -361,7 +361,7 @@ namespace internal
 			{
 				size_t index = iter - items;
 				MOMO_ASSERT(index < count);
-				itemReplacer(items[count - 1], *iter);
+				std::forward<ItemReplacer>(itemReplacer)(items[count - 1], *iter);
 				mHashes[index] = mHashes[count - 1];
 				mHashes[count - 1] = emptyHashProbe;
 				if (useHashCodePartGetter && hashCount - 1 - index >= count)

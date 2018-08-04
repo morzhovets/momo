@@ -95,12 +95,12 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			(void)iter;
 			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
-			itemReplacer(*&mItemBuffer, *&mItemBuffer);
+			std::forward<ItemReplacer>(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
 			mState = HashBucketOneState::removed;
 			return nullptr;
 		}

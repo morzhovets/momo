@@ -150,12 +150,12 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, const ItemReplacer& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
 			size_t index = std::addressof(*iter) - &mItems[0];
 			MOMO_ASSERT(index >= maxCount - count);
-			itemReplacer(*&mItems[maxCount - count], *&mItems[index]);
+			std::forward<ItemReplacer>(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
 			mHashData.hashes[index] = mHashData.hashes[maxCount - count];
 			mHashData.hashes[maxCount - count] = emptyHash;
 			if (useHashCodePartGetter)
