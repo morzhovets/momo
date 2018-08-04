@@ -789,9 +789,9 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto replaceFunc = [this] (Item& srcItem, Item& dstItem)
+		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, replaceFunc);
+		return pvRemove(iter, itemReplacer);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -1081,8 +1081,8 @@ private:
 		return itemPos;
 	}
 
-	template<typename ReplaceFunc>
-	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc replaceFunc)
+	template<typename ItemReplacer>
+	ConstIterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		Buckets* buckets = ConstIteratorProxy::GetBuckets(iter);
@@ -1091,7 +1091,7 @@ private:
 		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
 		Bucket& bucket = (*buckets)[bucketIndex];
 		BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
-		bucketIter = bucket.Remove(bucketParams, bucketIter, replaceFunc);
+		bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
 		--mCount;
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
@@ -1101,7 +1101,7 @@ private:
 
 	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
 	{
-		auto replaceFunc = [this, extItem] (Item& srcItem, Item& dstItem)
+		auto itemReplacer = [this, extItem] (Item& srcItem, Item& dstItem)
 		{
 			MemManager& memManager = GetMemManager();
 			if (std::addressof(srcItem) == std::addressof(dstItem))
@@ -1109,7 +1109,7 @@ private:
 			else
 				ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, extItem);
 		};
-		return pvRemove(iter, replaceFunc);
+		return pvRemove(iter, itemReplacer);
 	}
 
 	void pvRelocateItems() MOMO_NOEXCEPT

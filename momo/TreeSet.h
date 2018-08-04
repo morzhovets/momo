@@ -800,11 +800,11 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto replaceFunc1 = [this] (Item& srcItem)
+		auto itemReplacer1 = [this] (Item& srcItem)
 			{ ItemTraits::Destroy(&GetMemManager(), srcItem); };
-		auto replaceFunc2 = [this] (Item& srcItem, Item& dstItem)
+		auto itemReplacer2 = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, replaceFunc1, replaceFunc2);
+		return pvRemove(iter, itemReplacer1, itemReplacer2);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -1177,8 +1177,9 @@ private:
 		}
 	}
 
-	template<typename ReplaceFunc1, typename ReplaceFunc2>
-	ConstIterator pvRemove(ConstIterator iter, ReplaceFunc1 replaceFunc1, ReplaceFunc2 replaceFunc2)
+	template<typename ItemReplacer1, typename ItemReplacer2>
+	ConstIterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
+		ItemReplacer2 itemReplacer2)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
 		MOMO_CHECK(iter != GetEnd());
@@ -1186,12 +1187,12 @@ private:
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (node->IsLeaf())
 		{
-			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
+			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
 			pvRebalance(node, node);
 		}
 		else
 		{
-			node = pvRemoveInternal(node, itemIndex, replaceFunc1, replaceFunc2);
+			node = pvRemoveInternal(node, itemIndex, itemReplacer1, itemReplacer2);
 			itemIndex = 0;
 		}
 		--mCount;
@@ -1201,16 +1202,16 @@ private:
 
 	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
 	{
-		auto replaceFunc1 = [this, extItem] (Item& srcItem)
+		auto itemReplacer1 = [this, extItem] (Item& srcItem)
 			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
-		auto replaceFunc2 = [this, extItem] (Item& srcItem, Item& dstItem)
+		auto itemReplacer2 = [this, extItem] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem); };
-		return pvRemove(iter, replaceFunc1, replaceFunc2);
+		return pvRemove(iter, itemReplacer1, itemReplacer2);
 	}
 
-	template<typename ReplaceFunc1, typename ReplaceFunc2>
-	Node* pvRemoveInternal(Node* node, size_t itemIndex, ReplaceFunc1 replaceFunc1,
-		ReplaceFunc2 replaceFunc2)
+	template<typename ItemReplacer1, typename ItemReplacer2>
+	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemReplacer1 itemReplacer1,
+		ItemReplacer2 itemReplacer2)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1222,7 +1223,7 @@ private:
 		{
 			Node* leftNode = node->GetChild(itemIndex);
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			node->Remove(*mNodeParams, itemIndex, replaceFunc1);
+			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
 			pvDestroy(leftNode);
 			node->SetChild(itemIndex, rightNode);
 			resNode = rightNode;
@@ -1230,8 +1231,8 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemRemover = [node, itemIndex, replaceFunc2] (Item& item)
-				{ replaceFunc2(item, *node->GetItemPtr(itemIndex)); };
+			auto itemRemover = [node, itemIndex, itemReplacer2] (Item& item)
+				{ itemReplacer2(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
 			{
 				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
