@@ -62,65 +62,47 @@ enum class SegmentedArrayItemCountFunc
 	cnst = 1,
 };
 
-namespace internal
-{
-	template<SegmentedArrayItemCountFunc tItemCountFunc>
-	struct SegmentedArrayLogFirstItemCounter;
-
-	template<>
-	struct SegmentedArrayLogFirstItemCounter<SegmentedArrayItemCountFunc::sqrt>
-	{
-		static const size_t defaultLogFirstItemCount = 3;
-	};
-
-	template<>
-	struct SegmentedArrayLogFirstItemCounter<SegmentedArrayItemCountFunc::cnst>
-	{
-		static const size_t defaultLogFirstItemCount = 5;
-	};
-}
-
 template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::sqrt,
-	size_t tLogFirstItemCount =
-		internal::SegmentedArrayLogFirstItemCounter<tItemCountFunc>::defaultLogFirstItemCount>
+	size_t tLogInitialItemCount =
+		(tItemCountFunc == SegmentedArrayItemCountFunc::sqrt) ? 3 : 5>
 struct SegmentedArraySettings;
 
-template<size_t tLogFirstItemCount>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogFirstItemCount>
+template<size_t tLogInitialItemCount>
+struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItemCount>
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
-	static const size_t logFirstItemCount = tLogFirstItemCount;
+	static const size_t logInitialItemCount = tLogInitialItemCount;
 
 	typedef ArraySettings<> SegmentsSettings;
 
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
-		size_t index1 = (index >> logFirstItemCount) + 1;
-		size_t index2 = index & (((size_t)1 << logFirstItemCount) - 1);
+		size_t index1 = (index >> logInitialItemCount) + 1;
+		size_t index2 = index & (((size_t)1 << logInitialItemCount) - 1);
 		size_t logItemCount = pvIndexToLogItemCount(index1);
 		size_t itemIndex1 = index1 & (((size_t)1 << logItemCount) - 1);
 		size_t itemIndex2 = index2;
 		segIndex = (index1 >> logItemCount) + ((size_t)1 << logItemCount) - 2;
-		itemIndex = (itemIndex1 << logFirstItemCount) + itemIndex2;
+		itemIndex = (itemIndex1 << logInitialItemCount) + itemIndex2;
 	}
 
 	static size_t GetIndex(size_t segIndex, size_t itemIndex) MOMO_NOEXCEPT
 	{
-		size_t itemIndex1 = itemIndex >> logFirstItemCount;
-		size_t itemIndex2 = itemIndex & (((size_t)1 << logFirstItemCount) - 1);
+		size_t itemIndex1 = itemIndex >> logInitialItemCount;
+		size_t itemIndex2 = itemIndex & (((size_t)1 << logInitialItemCount) - 1);
 		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
 		size_t index1 = ((segIndex + 2 - ((size_t)1 << logItemCount)) << logItemCount) + itemIndex1;
 		size_t index2 = itemIndex2;
-		size_t index = ((index1 - 1) << logFirstItemCount) + index2;
+		size_t index = ((index1 - 1) << logInitialItemCount) + index2;
 		return index;
 	}
 
 	static size_t GetItemCount(size_t segIndex) MOMO_NOEXCEPT
 	{
 		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
-		return (size_t)1 << (logItemCount + logFirstItemCount);
+		return (size_t)1 << (logItemCount + logInitialItemCount);
 	}
 
 private:
@@ -135,30 +117,30 @@ private:
 	}
 };
 
-template<size_t tLogFirstItemCount>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogFirstItemCount>
+template<size_t tLogInitialItemCount>
+struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItemCount>
 {
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
-	static const size_t logFirstItemCount = tLogFirstItemCount;
+	static const size_t logInitialItemCount = tLogInitialItemCount;
 
 	typedef ArraySettings<> SegmentsSettings;
 
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
-		segIndex = index >> logFirstItemCount;
-		itemIndex = index & (((size_t)1 << logFirstItemCount) - 1);
+		segIndex = index >> logInitialItemCount;
+		itemIndex = index & (((size_t)1 << logInitialItemCount) - 1);
 	}
 
 	static size_t GetIndex(size_t segIndex, size_t itemIndex) MOMO_NOEXCEPT
 	{
-		return (segIndex << logFirstItemCount) + itemIndex;
+		return (segIndex << logInitialItemCount) + itemIndex;
 	}
 
 	static size_t GetItemCount(size_t /*segIndex*/) MOMO_NOEXCEPT
 	{
-		return (size_t)1 << logFirstItemCount;
+		return (size_t)1 << logInitialItemCount;
 	}
 };
 
