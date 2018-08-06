@@ -39,7 +39,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyHash = (maxCount <= 4) ? 248 : 240;
+		static const uint8_t emptyShortHash = (maxCount <= 4) ? 248 : 240;
 		static const uint8_t maskCount = (maxCount <= 4) ? 3 : 7;
 
 	public:
@@ -65,10 +65,10 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t hashByte = pvGetHashByte(hashCode);
+			uint8_t shortHash = pvGetShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashes[i] == hashByte && pred(*&mItems[i]))
+				if (mShortHashes[i] == shortHash && pred(*&mItems[i]))
 					return Iterator(&mItems[i] + 1);
 			}
 			return Iterator(nullptr);
@@ -81,7 +81,7 @@ namespace internal
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			if (mState < emptyHash)
+			if (mState < emptyShortHash)
 				return true;
 			return (mState & (maskCount + 1)) != (uint8_t)0;
 		}
@@ -107,7 +107,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = &mItems[maxCount - 1 - count];
 			std::forward<ItemCreator>(itemCreator)(pitem);
-			mHashes[maxCount - 1 - count] = pvGetHashByte(hashCode);
+			mShortHashes[maxCount - 1 - count] = pvGetShortHash(hashCode);
 			if (count + 1 < maxCount)
 				++mState;
 			return Iterator(pitem + 1);
@@ -121,12 +121,12 @@ namespace internal
 			MOMO_ASSERT(index < count);
 			std::forward<ItemReplacer>(itemReplacer)(*&mItems[maxCount - count],
 				*&mItems[maxCount - 1 - index]);
-			mHashes[maxCount - 1 - index] = mHashes[maxCount - count];
-			mHashes[maxCount - count] = emptyHash;
+			mShortHashes[maxCount - 1 - index] = mShortHashes[maxCount - count];
+			mShortHashes[maxCount - count] = emptyShortHash;
 			if (count < maxCount)
 				--mState;
 			else
-				mState = emptyHash + maskCount + (uint8_t)maxCount;
+				mState = emptyShortHash + maskCount + (uint8_t)maxCount;
 			return iter;
 		}
 
@@ -140,27 +140,27 @@ namespace internal
 	private:
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			if (mState < emptyHash)
+			if (mState < emptyShortHash)
 				return maxCount;
 			return (size_t)(mState & maskCount);
 		}
 
-		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvGetShortHash(size_t hashCode) MOMO_NOEXCEPT
 		{
 			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
-			return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
+			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
 		}
 
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
-			std::fill_n(mHashes, maxCount, (uint8_t)emptyHash);
+			std::fill_n(mShortHashes, maxCount, (uint8_t)emptyShortHash);
 		}
 
 	private:
 		union
 		{
 			uint8_t mState;
-			uint8_t mHashes[maxCount];
+			uint8_t mShortHashes[maxCount];
 		};
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};

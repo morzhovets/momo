@@ -39,7 +39,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyHash = 255;
+		static const uint8_t emptyShortHash = 255;
 		static const uint8_t maskCount = 127;
 
 	public:
@@ -65,10 +65,10 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t hashByte = pvGetHashByte(hashCode);
+			uint8_t shortHash = pvGetShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashes[i] == hashByte && pred(*&mItems[i]))
+				if (mShortHashes[i] == shortHash && pred(*&mItems[i]))
 					return Iterator(&mItems[i] + 1);
 			}
 			return Iterator(nullptr);
@@ -105,7 +105,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = &mItems[maxCount - 1 - count];
 			std::forward<ItemCreator>(itemCreator)(pitem);
-			mHashes[maxCount - 1 - count] = pvGetHashByte(hashCode);
+			mShortHashes[maxCount - 1 - count] = pvGetShortHash(hashCode);
 			++mState;
 			mState |= (uint8_t)(IsFull() ? maskCount + 1 : 0);
 			return Iterator(pitem + 1);
@@ -119,8 +119,8 @@ namespace internal
 			MOMO_ASSERT(index < count);
 			std::forward<ItemReplacer>(itemReplacer)(*&mItems[maxCount - count],
 				*&mItems[maxCount - 1 - index]);
-			mHashes[maxCount - 1 - index] = mHashes[maxCount - count];
-			mHashes[maxCount - count] = emptyHash;
+			mShortHashes[maxCount - 1 - index] = mShortHashes[maxCount - count];
+			mShortHashes[maxCount - count] = emptyShortHash;
 			--mState;
 			return iter;
 		}
@@ -138,21 +138,21 @@ namespace internal
 			return (size_t)(mState & maskCount);
 		}
 
-		static uint8_t pvGetHashByte(size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvGetShortHash(size_t hashCode) MOMO_NOEXCEPT
 		{
 			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
-			return (uint8_t)((hashCode24 * (uint32_t)emptyHash) >> 24);
+			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
 		}
 
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
 			mState = (uint8_t)0;
-			std::fill_n(mHashes, maxCount, (uint8_t)emptyHash);
+			std::fill_n(mShortHashes, maxCount, (uint8_t)emptyShortHash);
 		}
 
 	private:
 		uint8_t mState;
-		uint8_t mHashes[maxCount];
+		uint8_t mShortHashes[maxCount];
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
