@@ -594,7 +594,7 @@ public:
 	{
 		Array array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			AddBackNogrowCrt(multiItemCreator);
+			array.AddBackNogrowCrt(multiItemCreator);
 		return array;
 	}
 
