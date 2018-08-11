@@ -255,11 +255,14 @@ namespace internal
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			uint8_t shortHash = pvGetShortHash(hashCode);
-			Item* items = mPtrState.GetPointer();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mShortHashes[i] == shortHash && pred(items[i]))
-					return items + i;
+				if (mShortHashes[i] == shortHash)
+				{
+					Item* items = mPtrState.GetPointer();
+					if (pred(items[i]))
+						return items + i;
+				}
 			}
 			return nullptr;
 		}
