@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, typename TStater>
-	class BucketOneI
+	class BucketOneI : public BucketBase<1>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -35,6 +35,8 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	public:
 		explicit BucketOneI() MOMO_NOEXCEPT
@@ -72,11 +74,6 @@ namespace internal
 			return pvGetState() != HashBucketOneState::empty;
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (IsFull())
@@ -106,13 +103,6 @@ namespace internal
 			return nullptr;
 		}
 
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
-		{
-			return hashCodeFullGetter();
-		}
-
 	private:
 		HashBucketOneState pvGetState() const MOMO_NOEXCEPT
 		{
@@ -133,8 +123,6 @@ template<typename TStater>
 struct HashBucketOneI : public internal::HashBucketBase<1>
 {
 	typedef TStater Stater;
-
-	static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneI<ItemTraits, Stater>;

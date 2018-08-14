@@ -92,14 +92,46 @@ namespace internal
 	};
 
 	template<size_t tMaxCount>
+	class BucketBase
+	{
+	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(maxCount > 0);
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
+	public:
+		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
+		{
+			return ((size_t)1 << logBucketCount) - 1;
+		}
+
+		template<typename HashCodeFullGetter, typename Iterator>	//?
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		{
+			return hashCodeFullGetter();
+		}
+
+		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) MOMO_NOEXCEPT
+		{
+			return hashCode & (bucketCount - 1);
+		}
+
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
+		}
+	};
+
+	template<size_t tMaxCount>
 	struct HashBucketBase
 	{
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(maxCount > 0);
 
 		static const size_t logStartBucketCount = 4;
-
-		static const bool isNothrowAddableIfNothrowCreatable = false;
 
 		static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 		{
@@ -121,17 +153,6 @@ namespace internal
 				return (bucketCount < (1 << 16)) ? 2 : 1;
 			else
 				return (bucketCount < (1 << 20)) ? 2 : 1;
-		}
-
-		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) MOMO_NOEXCEPT
-		{
-			return hashCode & (bucketCount - 1);
-		}
-
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
-			size_t /*probe*/) MOMO_NOEXCEPT
-		{
-			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 		}
 
 		static void CheckMaxLoadFactor(float maxLoadFactor)

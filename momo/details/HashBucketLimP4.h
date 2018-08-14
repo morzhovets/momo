@@ -139,7 +139,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
 		bool tUseHashCodePartGetter>
-	class BucketLimP4
+	class BucketLimP4 : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -277,11 +277,6 @@ namespace internal
 			return pvGetMemPoolIndex() == maxCount;
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			Item* items = mPtrState.GetPointer();
@@ -399,6 +394,12 @@ namespace internal
 				| ((size_t)mShortHashes[index] << hashCodeShift);
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);
+		}
+
 	private:
 		void pvSetEmpty(size_t memPoolIndex) MOMO_NOEXCEPT
 		{
@@ -511,12 +512,6 @@ struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
 	static const size_t maxCount = tMaxCount;
 
 	typedef TMemPoolParams MemPoolParams;
-
-	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
-		size_t /*probe*/) MOMO_NOEXCEPT
-	{
-		return (bucketIndex + 1) & (bucketCount - 1);
-	}
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLimP4<ItemTraits, maxCount, MemPoolParams,

@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tStateSize>
-	class BucketOneIA
+	class BucketOneIA : public BucketBase<1>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -36,6 +36,8 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
@@ -76,11 +78,6 @@ namespace internal
 		bool WasFull() const MOMO_NOEXCEPT
 		{
 			return mHashState != (HashState)0;
-		}
-
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -149,8 +146,6 @@ template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
 struct HashBucketOneIA : public internal::HashBucketBase<1>
 {
 	static const size_t stateSize = tStateSize;
-
-	static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneIA<ItemTraits,

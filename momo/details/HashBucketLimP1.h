@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
-	class BucketLimP1
+	class BucketLimP1 : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -135,11 +135,6 @@ namespace internal
 			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			Item* items = pvGetItems();
@@ -217,13 +212,6 @@ namespace internal
 				--mState;
 				return iter;
 			}
-		}
-
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
-		{
-			return hashCodeFullGetter();
 		}
 
 	private:

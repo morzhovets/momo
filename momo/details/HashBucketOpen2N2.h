@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
-	class BucketOpen2N2
+	class BucketOpen2N2 : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -39,6 +39,8 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		template<size_t count, bool useHashCodePartGetter>
@@ -186,6 +188,12 @@ namespace internal
 				| ((size_t)mHashData.shortHashes[index] << hashCodeShift);
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);
+		}
+
 	private:
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
@@ -212,7 +220,7 @@ namespace internal
 		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) MOMO_NOEXCEPT
 		{
 			size_t bucketCount = (size_t)1 << logBucketCount;
-			size_t startBucketIndex = HashBucketBase<maxCount>::GetStartBucketIndex(hashCode,
+			size_t startBucketIndex = BucketBase<maxCount>::GetStartBucketIndex(hashCode,
 				bucketCount);
 			size_t thisBucketIndex = (startBucketIndex + probe) & (bucketCount - 1);
 			BucketOpen2N2* startBucket = this - (ptrdiff_t)thisBucketIndex
@@ -248,8 +256,6 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
 
-	static const bool isNothrowAddableIfNothrowCreatable = true;
-
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
 		return (bucketCount * maxCount / 6) * 5;
@@ -258,12 +264,6 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase<tMaxCount>
 	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
 	{
 		return 1;
-	}
-
-	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
-		size_t /*probe*/) MOMO_NOEXCEPT
-	{
-		return (bucketIndex + 1) & (bucketCount - 1);
 	}
 
 	template<typename ItemTraits, bool useHashCodePartGetter>

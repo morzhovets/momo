@@ -24,7 +24,7 @@ namespace internal
 	class BucketLimP;
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false> : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -145,11 +145,6 @@ namespace internal
 			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (!pvIsEmpty())
@@ -226,13 +221,6 @@ namespace internal
 			}
 		}
 
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
-		{
-			return hashCodeFullGetter();
-		}
-
 	private:
 		bool pvIsEmpty() const MOMO_NOEXCEPT
 		{
@@ -283,7 +271,7 @@ namespace internal
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true> : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -414,11 +402,6 @@ namespace internal
 			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			if (!pvIsEmpty())
@@ -499,13 +482,6 @@ namespace internal
 				mPtrState -= modMemPoolIndex;
 				return iter;
 			}
-		}
-
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
-		{
-			return hashCodeFullGetter();
 		}
 
 	private:

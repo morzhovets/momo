@@ -49,7 +49,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
 		typename TArraySettings>
-	class BucketUnlimP
+	class BucketUnlimP : public BucketBase<SIZE_MAX>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -113,11 +113,6 @@ namespace internal
 			return false;
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			Bounds bounds = GetBounds(params);
@@ -146,11 +141,11 @@ namespace internal
 			return GetBounds(params).GetBegin() + index;
 		}
 
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t /*bucketCount*/, size_t /*probe*/) MOMO_NOEXCEPT
 		{
-			return hashCodeFullGetter();
+			MOMO_ASSERT(false);
+			return bucketIndex;
 		}
 
 	private:
@@ -167,13 +162,6 @@ struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
 
 	typedef TMemPoolParams MemPoolParams;
 	typedef TArraySettings ArraySettings;
-
-	static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*bucketCount*/,
-		size_t /*probe*/) MOMO_NOEXCEPT
-	{
-		MOMO_ASSERT(false);
-		return bucketIndex;
-	}
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketUnlimP<ItemTraits, maxFastCount, MemPoolParams, ArraySettings>;

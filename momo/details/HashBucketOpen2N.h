@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
-	class BucketOpen2N
+	class BucketOpen2N : public BucketBase<tMaxCount>
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -39,6 +39,8 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		template<size_t count, bool useHashCodePartGetter>
@@ -120,11 +122,6 @@ namespace internal
 			return (mHashData.state & (maskCount + 1)) != (ShortHash)0;
 		}
 
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
-		{
-			return ((size_t)1 << logBucketCount) - 1;
-		}
-
 		void Clear(Params& params) MOMO_NOEXCEPT
 		{
 			size_t count = pvGetCount();
@@ -196,6 +193,12 @@ namespace internal
 				| ((size_t)mHashData.shortHashes[index] << hashCodeShift);
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);
+		}
+
 	private:
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
@@ -230,8 +233,6 @@ struct HashBucketOpen2N : public internal::HashBucketBase<tMaxCount>
 {
 	static const size_t maxCount = tMaxCount;
 
-	static const bool isNothrowAddableIfNothrowCreatable = true;
-
 	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
 	{
 		return (bucketCount * maxCount / 8) * 5;
@@ -240,12 +241,6 @@ struct HashBucketOpen2N : public internal::HashBucketBase<tMaxCount>
 	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
 	{
 		return 1;
-	}
-
-	static size_t GetNextBucketIndex(size_t bucketIndex, size_t bucketCount,
-		size_t /*probe*/) MOMO_NOEXCEPT
-	{
-		return (bucketIndex + 1) & (bucketCount - 1);
 	}
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
