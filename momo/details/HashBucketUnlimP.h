@@ -49,7 +49,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
 		typename TArraySettings>
-	class BucketUnlimP : public BucketBase<SIZE_MAX>
+	class BucketUnlimP : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -65,6 +65,10 @@ namespace internal
 			ArraySettings> ArrayBucket;
 
 	public:
+		static const size_t maxCount = SIZE_MAX;
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

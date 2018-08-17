@@ -21,18 +21,20 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
-	class BucketLimP1 : public BucketBase<tMaxCount>
+	class BucketLimP1 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
-
 		static const size_t alignment = tAlignment;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

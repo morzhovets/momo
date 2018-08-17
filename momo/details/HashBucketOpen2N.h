@@ -21,17 +21,19 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
-	class BucketOpen2N : public BucketBase<tMaxCount>
+	class BucketOpen2N : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 64);
-
 		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 64);
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -39,8 +41,6 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
-
-		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		template<size_t count, bool useHashCodePartGetter>

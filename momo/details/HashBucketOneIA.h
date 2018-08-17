@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tStateSize>
-	class BucketOneIA : public BucketBase<1>
+	class BucketOneIA : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -29,6 +29,10 @@ namespace internal
 		static const size_t stateSize = tStateSize;
 
 	public:
+		static const size_t maxCount = 1;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -36,8 +40,6 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
-
-		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;

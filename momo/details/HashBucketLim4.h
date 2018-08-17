@@ -21,7 +21,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tLogMaxCount, size_t tMemPoolBlockCount>
-	class BucketLim4 : public BucketBase<(1 << tLogMaxCount)>
+	class BucketLim4 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -32,6 +32,10 @@ namespace internal
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	public:
+		static const size_t maxCount = (size_t)1 << logMaxCount;
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -44,8 +48,6 @@ namespace internal
 		typedef MemPoolUInt32<memPoolBlockCount, MemManagerPtr> MemPool;
 
 		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
-
-		static const size_t maxCount = 1 << logMaxCount;
 
 		static const uint32_t stateNull = ((uint32_t)1 << (32 - logMaxCount)) - 1;
 		static const uint32_t stateNullWasFull = stateNull - 1;

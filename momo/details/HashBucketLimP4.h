@@ -139,18 +139,20 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
 		bool tUseHashCodePartGetter>
-	class BucketLimP4 : public BucketBase<tMaxCount>
+	class BucketLimP4 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
-
 		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

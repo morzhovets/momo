@@ -21,17 +21,19 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
-	class BucketOpen2N2 : public BucketBase<tMaxCount>
+	class BucketOpen2N2 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
-
 		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -39,8 +41,6 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
-
-		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	private:
 		template<size_t count, bool useHashCodePartGetter>
@@ -220,8 +220,7 @@ namespace internal
 		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) MOMO_NOEXCEPT
 		{
 			size_t bucketCount = (size_t)1 << logBucketCount;
-			size_t startBucketIndex = BucketBase<maxCount>::GetStartBucketIndex(hashCode,
-				bucketCount);
+			size_t startBucketIndex = BucketBase::GetStartBucketIndex(hashCode, bucketCount);
 			size_t thisBucketIndex = (startBucketIndex + probe) & (bucketCount - 1);
 			BucketOpen2N2* startBucket = this - (ptrdiff_t)thisBucketIndex
 				+ (ptrdiff_t)startBucketIndex;

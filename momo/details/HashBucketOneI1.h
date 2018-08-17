@@ -21,12 +21,16 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits>
-	class BucketOneI1 : public BucketBase<1>
+	class BucketOneI1 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
 	public:
+		static const size_t maxCount = 1;
+
+		static const bool isNothrowAddableIfNothrowCreatable = true;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -34,8 +38,6 @@ namespace internal
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;
-
-		static const bool isNothrowAddableIfNothrowCreatable = true;
 
 	public:
 		explicit BucketOneI1() MOMO_NOEXCEPT

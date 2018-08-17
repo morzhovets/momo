@@ -24,18 +24,20 @@ namespace internal
 	class BucketLimP;
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false> : public BucketBase<tMaxCount>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false> : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
-
 		static const bool usePtrState = false;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -271,18 +273,20 @@ namespace internal
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
-	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true> : public BucketBase<tMaxCount>
+	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true> : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
-
 		static const bool usePtrState = true;
 
 	public:
+		static const size_t maxCount = tMaxCount;
+		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
+
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

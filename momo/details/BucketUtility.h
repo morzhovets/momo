@@ -91,15 +91,8 @@ namespace internal
 		MemManager& mMemManager;
 	};
 
-	template<size_t tMaxCount>
 	class BucketBase
 	{
-	public:
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(maxCount > 0);
-
-		static const bool isNothrowAddableIfNothrowCreatable = false;
-
 	public:
 		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
 		{
