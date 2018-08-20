@@ -12,7 +12,6 @@
     struct HashBucketOpenDefault
     class HashTraits
     class HashTraitsOpen
-    class HashTraitsVar
     class HashTraitsStd
 
 \**********************************************************/
@@ -113,75 +112,6 @@ public:
 
 template<typename TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
-
-template<typename TKey,
-	typename THashBucket = HashBucketDefault>
-class HashTraitsVar
-{
-public:
-	typedef TKey Key;
-	typedef THashBucket HashBucket;
-
-	typedef std::function<size_t(size_t)> CalcCapacityFunc;
-	typedef std::function<size_t(size_t)> GetBucketCountShiftFunc;
-
-	template<typename KeyArg>
-	using IsValidKeyArg = std::false_type;
-
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;
-
-public:
-	explicit HashTraitsVar(const CalcCapacityFunc& calcCapacityFunc = HashBucket::CalcCapacity,
-		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
-		size_t logStartBucketCount = HashBucket::logStartBucketCount)
-		: mCalcCapacityFunc(calcCapacityFunc),
-		mGetBucketCountShiftFunc(getBucketCountShiftFunc),
-		mLogStartBucketCount(logStartBucketCount)
-	{
-	}
-
-	explicit HashTraitsVar(float maxLoadFactor,
-		GetBucketCountShiftFunc getBucketCountShiftFunc = HashBucket::GetBucketCountShift,
-		size_t logStartBucketCount = HashBucket::logStartBucketCount)
-		: mGetBucketCountShiftFunc(getBucketCountShiftFunc),
-		mLogStartBucketCount(logStartBucketCount)
-	{
-		HashBucket::CheckMaxLoadFactor(maxLoadFactor);
-		mCalcCapacityFunc = [maxLoadFactor] (size_t bucketCount)
-			{ return static_cast<size_t>(static_cast<float>(bucketCount) * maxLoadFactor); };
-	}
-
-	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
-	{
-		return mCalcCapacityFunc(bucketCount);
-	}
-
-	size_t GetBucketCountShift(size_t bucketCount) const MOMO_NOEXCEPT
-	{
-		return mGetBucketCountShiftFunc(bucketCount);
-	}
-
-	size_t GetLogStartBucketCount() const MOMO_NOEXCEPT
-	{
-		return mLogStartBucketCount;
-	}
-
-	size_t GetHashCode(const Key& key) const
-	{
-		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<Key>>::value);
-		return HashCoder<Key>()(key);
-	}
-
-	bool IsEqual(const Key& key1, const Key& key2) const
-	{
-		return key1 == key2;
-	}
-
-private:
-	CalcCapacityFunc mCalcCapacityFunc;
-	GetBucketCountShiftFunc mGetBucketCountShiftFunc;
-	size_t mLogStartBucketCount;
-};
 
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
