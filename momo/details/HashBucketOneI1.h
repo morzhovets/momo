@@ -110,7 +110,7 @@ namespace internal
 	};
 }
 
-struct HashBucketOneI1 : public internal::HashBucketBase<1>
+struct HashBucketOneI1 : public internal::HashBucketBase
 {
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneI1<ItemTraits>;

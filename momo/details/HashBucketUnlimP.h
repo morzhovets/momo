@@ -160,7 +160,7 @@ namespace internal
 template<size_t tMaxFastCount = 7,
 	typename TMemPoolParams = MemPoolParams<>,
 	typename TArraySettings = ArraySettings<>>
-struct HashBucketUnlimP : public internal::HashBucketBase<SIZE_MAX>
+struct HashBucketUnlimP : public internal::HashBucketBase
 {
 	static const size_t maxFastCount = tMaxFastCount;
 

@@ -118,40 +118,31 @@ namespace internal
 		}
 	};
 
-	template<size_t tMaxCount>
 	struct HashBucketBase
 	{
-		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(maxCount > 0);
-
 		static const size_t logStartBucketCount = 4;
 
-		static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
+		static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(bucketCount > 0);
-			if (maxCount == 1)
+			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);
+			if (bucketMaxItemCount == 1)
 				return (bucketCount / 8) * 5;
-			else if (maxCount == 2)
+			else if (bucketMaxItemCount == 2)
 				return bucketCount + bucketCount / 2;
 			else
 				return bucketCount * 2;
 		}
 
-		static size_t GetBucketCountShift(size_t bucketCount) MOMO_NOEXCEPT
+		static size_t GetBucketCountShift(size_t bucketCount,
+			size_t bucketMaxItemCount) MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(bucketCount > 0);
-			if (maxCount == 1)
+			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);
+			if (bucketMaxItemCount == 1)
 				return 1;
-			else if (maxCount == 2)
+			else if (bucketMaxItemCount == 2)
 				return (bucketCount < (1 << 16)) ? 2 : 1;
 			else
 				return (bucketCount < (1 << 20)) ? 2 : 1;
-		}
-
-		static void CheckMaxLoadFactor(float maxLoadFactor)
-		{
-			if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(maxCount))
-				throw std::out_of_range("invalid hash load factor");
 		}
 	};
 }

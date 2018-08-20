@@ -157,16 +157,17 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4>
-struct HashBucketOpenN : public internal::HashBucketBase<tMaxCount>
+struct HashBucketOpenN : public internal::HashBucketBase
 {
 	static const size_t maxCount = tMaxCount;
 
-	static size_t CalcCapacity(size_t bucketCount) MOMO_NOEXCEPT
+	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
 	{
 		return (bucketCount * maxCount / 8) * 5;
 	}
 
-	static size_t GetBucketCountShift(size_t /*bucketCount*/) MOMO_NOEXCEPT
+	static size_t GetBucketCountShift(size_t /*bucketCount*/,
+		size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
 	{
 		return 1;
 	}

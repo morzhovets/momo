@@ -145,7 +145,7 @@ namespace internal
 }
 
 template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
-struct HashBucketOneIA : public internal::HashBucketBase<1>
+struct HashBucketOneIA : public internal::HashBucketBase
 {
 	static const size_t stateSize = tStateSize;
 

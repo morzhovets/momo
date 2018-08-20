@@ -287,7 +287,7 @@ namespace internal
 
 template<size_t tLogMaxCount = 2,
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
-struct HashBucketLim4 : public internal::HashBucketBase<1 << tLogMaxCount>
+struct HashBucketLim4 : public internal::HashBucketBase
 {
 	static const size_t logMaxCount = tLogMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;

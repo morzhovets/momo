@@ -122,7 +122,7 @@ namespace internal
 }
 
 template<typename TStater>
-struct HashBucketOneI : public internal::HashBucketBase<1>
+struct HashBucketOneI : public internal::HashBucketBase
 {
 	typedef TStater Stater;
 

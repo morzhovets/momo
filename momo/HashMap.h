@@ -146,6 +146,8 @@ public:
 		HashSetConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
+	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
+
 private:
 	struct ConstIteratorProxy : public ConstIterator
 	{

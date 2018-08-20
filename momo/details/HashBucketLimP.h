@@ -532,7 +532,7 @@ namespace internal
 template<size_t tMaxCount = sizeof(void*),
 	typename TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
-struct HashBucketLimP : public internal::HashBucketBase<tMaxCount>
+struct HashBucketLimP : public internal::HashBucketBase
 {
 	static const size_t maxCount = tMaxCount;
 	static const bool usePtrState = tUsePtrState;

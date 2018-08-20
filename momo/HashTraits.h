@@ -83,14 +83,14 @@ public:
 	{
 	}
 
-	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
+	size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) const MOMO_NOEXCEPT
 	{
-		return HashBucket::CalcCapacity(bucketCount);
+		return HashBucket::CalcCapacity(bucketCount, bucketMaxItemCount);
 	}
 
-	size_t GetBucketCountShift(size_t bucketCount) const MOMO_NOEXCEPT
+	size_t GetBucketCountShift(size_t bucketCount, size_t bucketMaxItemCount) const MOMO_NOEXCEPT
 	{
-		return HashBucket::GetBucketCountShift(bucketCount);
+		return HashBucket::GetBucketCountShift(bucketCount, bucketMaxItemCount);
 	}
 
 	size_t GetLogStartBucketCount() const MOMO_NOEXCEPT
@@ -137,14 +137,11 @@ public:
 		const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 		: mHashFunc(hashFunc),
-		mEqualFunc(equalFunc)
+		mEqualFunc(equalFunc),
+		mMaxLoadFactor(0.0)
 	{
 		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
 		mLogStartBucketCount = (uint8_t)internal::UIntMath<size_t>::Log2(startBucketCount - 1) + 1;
-		static const size_t testBucketCount = 1 << 16;
-		size_t testCapacity = HashBucket::CalcCapacity(testBucketCount);
-		mMaxLoadFactor = static_cast<float>(testCapacity) / static_cast<float>(testBucketCount);
-		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
 	HashTraitsStd(const HashTraitsStd& hashTraits, float maxLoadFactor)
@@ -153,17 +150,17 @@ public:
 		mLogStartBucketCount(hashTraits.mLogStartBucketCount),
 		mMaxLoadFactor(maxLoadFactor)
 	{
-		HashBucket::CheckMaxLoadFactor(mMaxLoadFactor);
 	}
 
-	size_t CalcCapacity(size_t bucketCount) const MOMO_NOEXCEPT
+	size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) const MOMO_NOEXCEPT
 	{
-		return static_cast<size_t>(static_cast<float>(bucketCount) * mMaxLoadFactor);
+		return static_cast<size_t>(static_cast<float>(bucketCount)
+			* GetMaxLoadFactor(bucketMaxItemCount));
 	}
 
-	size_t GetBucketCountShift(size_t bucketCount) const MOMO_NOEXCEPT
+	size_t GetBucketCountShift(size_t bucketCount, size_t bucketMaxItemCount) const MOMO_NOEXCEPT
 	{
-		return HashBucket::GetBucketCountShift(bucketCount);
+		return HashBucket::GetBucketCountShift(bucketCount, bucketMaxItemCount);
 	}
 
 	size_t GetLogStartBucketCount() const MOMO_NOEXCEPT
@@ -191,8 +188,15 @@ public:
 		return mEqualFunc;
 	}
 
-	float GetMaxLoadFactor() const MOMO_NOEXCEPT
+	float GetMaxLoadFactor(size_t bucketMaxItemCount) const MOMO_NOEXCEPT
 	{
+		if (mMaxLoadFactor == 0.0)
+		{
+			static const size_t testBucketCount = 1 << 16;
+			size_t testCapacity = HashBucket::CalcCapacity(testBucketCount, bucketMaxItemCount);
+			MOMO_ASSERT(testCapacity > 0);
+			mMaxLoadFactor = static_cast<float>(testCapacity) / static_cast<float>(testBucketCount);
+		}
 		return mMaxLoadFactor;
 	}
 
@@ -200,7 +204,7 @@ private:
 	HashFunc mHashFunc;
 	EqualFunc mEqualFunc;
 	uint8_t mLogStartBucketCount;
-	float mMaxLoadFactor;
+	mutable float mMaxLoadFactor;
 };
 
 } // namespace momo

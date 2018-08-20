@@ -293,13 +293,15 @@ public:
 
 	float max_load_factor() const MOMO_NOEXCEPT
 	{
-		return mHashSet.GetHashTraits().GetMaxLoadFactor();
+		return mHashSet.GetHashTraits().GetMaxLoadFactor(HashSet::bucketMaxItemCount);
 	}
 
 	void max_load_factor(float maxLoadFactor)
 	{
 		if (maxLoadFactor == max_load_factor())
 			return;
+		if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(HashSet::bucketMaxItemCount))
+			throw std::out_of_range("invalid load factor");
 		HashTraits hashTraits(mHashSet.GetHashTraits(), maxLoadFactor);
 		HashSet hashSet(hashTraits, MemManager(get_allocator()));
 		hashSet.Reserve(size());
@@ -347,7 +349,7 @@ public:
 		bucketCount = std::minmax(bucketCount, (size_t)2).second;
 		size_t logBucketCount = momo::internal::UIntMath<size_t>::Log2(bucketCount - 1) + 1;
 		bucketCount = (size_t)1 << logBucketCount;
-		reserve(mHashSet.GetHashTraits().CalcCapacity(bucketCount));
+		reserve(mHashSet.GetHashTraits().CalcCapacity(bucketCount, HashSet::bucketMaxItemCount));
 	}
 
 	void reserve(size_type count)

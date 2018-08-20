@@ -509,7 +509,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
-struct HashBucketLimP4 : public internal::HashBucketBase<tMaxCount>
+struct HashBucketLimP4 : public internal::HashBucketBase
 {
 	static const size_t maxCount = tMaxCount;
 

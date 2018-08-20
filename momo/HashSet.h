@@ -458,6 +458,8 @@ public:
 
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
+	static const size_t bucketMaxItemCount = Bucket::maxCount;
+
 private:
 	struct ItemPosition
 	{
@@ -531,7 +533,7 @@ public:
 		size_t logBucketCount = hashTraits.GetLogStartBucketCount();
 		while (true)
 		{
-			mCapacity = hashTraits.CalcCapacity((size_t)1 << logBucketCount);
+			mCapacity = hashTraits.CalcCapacity((size_t)1 << logBucketCount, bucketMaxItemCount);
 			if (mCapacity >= mCount)
 				break;
 			++logBucketCount;
@@ -654,7 +656,8 @@ public:
 		size_t newCapacity;
 		while (true)
 		{
-			newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount);
+			newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount,
+				bucketMaxItemCount);
 			if (newCapacity >= capacity)
 				break;
 			++newLogBucketCount;
@@ -928,7 +931,8 @@ private:
 		if (mBuckets == nullptr)
 			return hashTraits.GetLogStartBucketCount();
 		size_t logBucketCount = mBuckets->GetLogCount();
-		size_t shift = hashTraits.GetBucketCountShift((size_t)1 << logBucketCount);
+		size_t shift = hashTraits.GetBucketCountShift((size_t)1 << logBucketCount,
+			bucketMaxItemCount);
 		MOMO_CHECK(shift > 0);
 		return logBucketCount + shift;
 	}
@@ -1051,7 +1055,8 @@ private:
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
-		size_t newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount);
+		size_t newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount,
+			bucketMaxItemCount);
 		MOMO_CHECK(newCapacity > mCount);
 		bool hasBuckets = (mBuckets != nullptr);
 		Buckets* newBuckets;
