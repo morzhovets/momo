@@ -202,14 +202,14 @@ public:
 	static void TestStrHashMultiMap()
 	{
 		typedef momo::HashMultiMap<std::string, std::string,
-			momo::HashTraitsVar<std::string, HashBucket>> HashMultiMap;
+			momo::HashTraits<std::string, HashBucket>> HashMultiMap;
 		std::string k1 = "k1";
 		std::string v1 = "v1";
 		std::string k2 = "k2";
 		std::string v2 = "v2";
 		std::string k3 = "k3";
 		std::string v3 = "v3";
-		HashMultiMap mmap({ {"k1", "v1"}, {k1, "v2"} }, typename HashMultiMap::HashTraits(1));
+		HashMultiMap mmap = { {"k1", "v1"}, {k1, "v2"} };
 		mmap.Add("k2", v1);
 		mmap.Add(k2, v2);
 		mmap.Add(mmap.InsertKey(k3), "v3");
