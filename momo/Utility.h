@@ -33,6 +33,10 @@
 #include <Windows.h>
 #endif
 
+#ifdef MOMO_USE_SSE2
+#include <emmintrin.h>
+#endif
+
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
 		MOMO_NOEXCEPT_IF(noexcept(object1.Swap(object2))) \
