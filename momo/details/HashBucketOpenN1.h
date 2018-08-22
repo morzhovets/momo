@@ -52,6 +52,8 @@ namespace internal
 		static const uint8_t emptyShortHash = 248;
 		static const uint8_t infProbe = 255;
 
+		typedef typename std::conditional<useSSE2, int64_t, int8_t>::type State8;
+
 	public:
 		explicit BucketOpenN1() MOMO_NOEXCEPT
 		{
@@ -80,9 +82,9 @@ namespace internal
 			if (useSSE2)
 			{
 				__m128i shortHashes = _mm_set1_epi8(shortHash);
-				__m128i thisShortHashes = _mm_set_epi64x(mState8, (int64_t)0);
+				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0, (int64_t)mState8);
 				int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
-				mask >>= 9;
+				mask &= (1 << maxCount) - 1;
 				while (mask != 0)
 				{
 					size_t index = (size_t)pvGetCountTrailingZeros((uint8_t)mask);
@@ -200,6 +202,7 @@ namespace internal
 
 		void pvSetEmpty() MOMO_NOEXCEPT
 		{
+			mState8 = (State8)(-1);
 			mMaxProbe = (uint8_t)0;
 			std::fill_n(mShortHashes, maxCount, (uint8_t)emptyShortHash);
 		}
@@ -248,10 +251,10 @@ namespace internal
 		{
 			struct
 			{
-				uint8_t mMaxProbe;
 				uint8_t mShortHashes[maxCount];
+				uint8_t mMaxProbe;
 			};
-			typename std::conditional<useSSE2, int64_t, int8_t>::type mState8;
+			State8 mState8;
 		};
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
