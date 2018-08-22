@@ -89,17 +89,17 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#if defined(_M_AMD64) || defined(_M_X64)
-#define MOMO_USE_SSE2
-#elif _M_IX86_FP == 2
-#define MOMO_USE_SSE2
-#endif
-#else
-#ifdef __SSE2__
-#define MOMO_USE_SSE2
-#endif
-#endif
+//#if defined(_MSC_VER) && !defined(__clang__)
+//#if defined(_M_AMD64) || defined(_M_X64)
+//#define MOMO_USE_SSE2
+//#elif _M_IX86_FP == 2
+//#define MOMO_USE_SSE2
+//#endif
+//#else
+//#ifdef __SSE2__
+//#define MOMO_USE_SSE2
+//#endif
+//#endif
 
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR ((uintptr_t)(void*)nullptr)
