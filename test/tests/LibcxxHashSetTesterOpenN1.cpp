@@ -16,7 +16,7 @@
 #include "../../momo/Utility.h"
 #include "../../momo/details/HashBucketOpenN1.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN1<1, false>
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN1<false, 1>
 #define LIBCXX_TEST_BUCKET_NAME "openn1"
 
 #include "LibcxxHashSetTester.h"
