@@ -12,10 +12,11 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-std=c++11" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-msse2" />
 				</Compiler>
 			</Target>
 			<Target title="Release GCC C++11">
@@ -25,9 +26,10 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-Wall" />
 					<Add option="-std=c++11" />
+					<Add option="-Wall" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
@@ -41,9 +43,10 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-Wall" />
-					<Add option="-g" />
 					<Add option="-std=c++11" />
+					<Add option="-g" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-msse2" />
 				</Compiler>
 			</Target>
 			<Target title="Release Clang C++11">
@@ -56,6 +59,7 @@
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
@@ -72,6 +76,7 @@
 					<Add option="-g" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-msse2" />
 				</Compiler>
 			</Target>
 			<Target title="Release GCC C++17">
@@ -84,6 +89,7 @@
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
@@ -100,6 +106,7 @@
 					<Add option="-g" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-msse2" />
 				</Compiler>
 			</Target>
 			<Target title="Release Clang C++17">
@@ -112,6 +119,7 @@
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
+					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
