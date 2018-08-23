@@ -150,5 +150,8 @@
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen2N2.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen8.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

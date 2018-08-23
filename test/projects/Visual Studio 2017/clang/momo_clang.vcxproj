@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen1.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen2N.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen2N2.cpp" />
+    <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen8.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpenN.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpenN1.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterUnlimP.cpp" />
