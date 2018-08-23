@@ -20,6 +20,7 @@
 
 #include "details/HashBucketLimP4.h"
 #include "details/HashBucketOpen2N2.h"
+#include "details/HashBucketOpen8.h"
 
 #ifdef MOMO_INCLUDE_OLD_HASH_BUCKETS
 #include "details/HashBucketLim4.h"
