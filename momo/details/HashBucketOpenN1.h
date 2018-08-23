@@ -162,6 +162,12 @@ namespace internal
 			return iter;
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+		{
+			return (bucketIndex + 1) & (bucketCount - 1);
+		}
+
 	private:
 		uint8_t pvGetState() const MOMO_NOEXCEPT
 		{
