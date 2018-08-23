@@ -30,6 +30,7 @@
 #include "../../momo/details/HashBucketOpen1.h"
 #include "../../momo/details/HashBucketOpen2N.h"
 #include "../../momo/details/HashBucketOpen2N2.h"
+#include "../../momo/details/HashBucketOpen8.h"
 #include "../../momo/details/HashBucketOpenN.h"
 #include "../../momo/details/HashBucketOpenN1.h"
 
@@ -291,6 +292,7 @@ public:
 		//TestHashBucket<momo::HashBucketOpen1<>>("momo::HashBucketOpen1<>");
 		//TestHashBucket<momo::HashBucketOpen2N<>>("momo::HashBucketOpen2N<>");
 		TestHashBucket<momo::HashBucketOpen2N2<>>("momo::HashBucketOpen2N2<>");
+		TestHashBucket<momo::HashBucketOpen8>("momo::HashBucketOpen8");
 		//TestHashBucket<momo::HashBucketOpenN<>>("momo::HashBucketOpenN<>");
 		//TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
 

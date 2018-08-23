@@ -186,6 +186,7 @@
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen1.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen2N.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen2N2.cpp" />
+    <ClCompile Include="..\..\tests\SimpleHashTesterOpen8.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpenN.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpenN1.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterUnlimP.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketLim4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOpen2N2.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOpen8.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOpenN.h" />
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />

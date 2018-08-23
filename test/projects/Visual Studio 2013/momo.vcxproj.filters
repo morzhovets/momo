@@ -159,6 +159,9 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpen2N2.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\SimpleHashTesterOpen8.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
@@ -321,6 +324,9 @@
       <Filter>Header Files\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketOpen2N2.h">
+      <Filter>Header Files\momo\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\momo\details\HashBucketOpen8.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
   </ItemGroup>

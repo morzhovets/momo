@@ -162,6 +162,7 @@
 		<Unit filename="../../../momo/details/HashBucketOpen1.h" />
 		<Unit filename="../../../momo/details/HashBucketOpen2N.h" />
 		<Unit filename="../../../momo/details/HashBucketOpen2N2.h" />
+		<Unit filename="../../../momo/details/HashBucketOpen8.h" />
 		<Unit filename="../../../momo/details/HashBucketOpenN.h" />
 		<Unit filename="../../../momo/details/HashBucketOpenN1.h" />
 		<Unit filename="../../../momo/details/HashBucketUnlimP.h" />
@@ -224,6 +225,7 @@
 		<Unit filename="../../tests/SimpleHashTesterOpen1.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterOpen2N.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterOpen2N2.cpp" />
+		<Unit filename="../../tests/SimpleHashTesterOpen8.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterOpenN.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterOpenN1.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterUnlimP.cpp" />
