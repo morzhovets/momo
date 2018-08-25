@@ -111,6 +111,18 @@ LIBCXX_TEST_END
 
 #endif
 
+LIBCXX_TEST_BEGIN(empty)
+#include "libcxx/vector/vector.capacity/empty.pass.cpp"
+LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(max_size)
+//#include "libcxx/vector/vector.capacity/max_size.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(size)
+#include "libcxx/vector/vector.capacity/size.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cons_assign_copy)
 #include "libcxx/vector/vector.cons/assign_copy.pass.cpp"
 LIBCXX_TEST_END
@@ -160,6 +172,10 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cons_copy_alloc)
 #include "libcxx/vector/vector.cons/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(cons_deduct)
+//#include "libcxx/vector/vector.cons/deduct.pass.cpp"
+//LIBCXX_TEST_END
 
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(cons_default_recursive)
@@ -216,6 +232,10 @@ LIBCXX_TEST_END
 
 #endif
 #endif
+
+LIBCXX_TEST_BEGIN(modifiers_clear)
+#include "libcxx/vector/vector.modifiers/clear.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "libcxx/vector/vector.modifiers/emplace.pass.cpp"
