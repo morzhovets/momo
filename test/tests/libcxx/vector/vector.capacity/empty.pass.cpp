@@ -13,27 +13,28 @@
 
 // bool empty() const noexcept;
 
-#include <vector>
-#include <cassert>
+//#include <vector>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::vector<int> C;
+    typedef vector<int> C;
     C c;
-    ASSERT_NOEXCEPT(c.empty());
+    //ASSERT_NOEXCEPT(c.empty());
     assert(c.empty());
     c.push_back(C::value_type(1));
     assert(!c.empty());
     c.clear();
     assert(c.empty());
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef std::vector<int, min_allocator<int>> C;
+    typedef vector<int, min_allocator<int>> C;
     C c;
     ASSERT_NOEXCEPT(c.empty());
     assert(c.empty());

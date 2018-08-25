@@ -13,18 +13,18 @@
 
 // size_type size() const noexcept;
 
-#include <vector>
-#include <cassert>
+//#include <vector>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::vector<int> C;
+    typedef vector<int> C;
     C c;
-    ASSERT_NOEXCEPT(c.size());
+    //ASSERT_NOEXCEPT(c.size());
     assert(c.size() == 0);
     c.push_back(C::value_type(2));
     assert(c.size() == 1);
@@ -39,9 +39,10 @@ int main()
     c.erase(c.begin());
     assert(c.size() == 0);
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef std::vector<int, min_allocator<int>> C;
+    typedef vector<int, min_allocator<int>> C;
     C c;
     ASSERT_NOEXCEPT(c.size());
     assert(c.size() == 0);
