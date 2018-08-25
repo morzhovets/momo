@@ -77,20 +77,16 @@ public:
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-#ifdef MOMO_USE_NODE_HANDLE
 	typedef internal::set_node_handle<typename TreeSet::ExtractedItem> node_type;
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
-#endif
 
 private:
-#ifdef MOMO_USE_NODE_HANDLE
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
 		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem,
 			typename NodeType::SetExtractedItem&)
 	};
-#endif
 
 public:
 	set()
@@ -483,7 +479,6 @@ public:
 		return mTreeSet.Remove(key) ? 1 : 0;
 	}
 
-#ifdef MOMO_USE_NODE_HANDLE
 	insert_return_type insert(node_type&& node)
 	{
 		if (node.empty())
@@ -518,7 +513,6 @@ public:
 	{
 		mTreeSet.MergeFrom(set.get_nested_container());
 	}
-#endif
 
 	bool operator==(const set& right) const
 	{

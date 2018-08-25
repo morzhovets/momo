@@ -101,10 +101,8 @@ public:
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-#ifdef MOMO_USE_NODE_HANDLE
 	typedef internal::map_node_handle<typename TreeMap::ExtractedPair> node_type;
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
-#endif
 
 private:
 	struct ConstIteratorProxy : public const_iterator
@@ -122,14 +120,12 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, TreeMapIterator)
 	};
 
-#ifdef MOMO_USE_NODE_HANDLE
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
 		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair,
 			typename NodeType::MapExtractedPair&)
 	};
-#endif
 
 public:
 	map()
@@ -707,7 +703,6 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
-#ifdef MOMO_USE_NODE_HANDLE
 	insert_return_type insert(node_type&& node)
 	{
 		if (node.empty())
@@ -745,7 +740,6 @@ public:
 	{
 		mTreeMap.MergeFrom(map.get_nested_container());
 	}
-#endif
 
 	bool operator==(const map& right) const
 	{

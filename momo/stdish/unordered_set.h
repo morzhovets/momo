@@ -81,23 +81,19 @@ public:
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
-#ifdef MOMO_USE_NODE_HANDLE
 	typedef internal::set_node_handle<typename HashSet::ExtractedItem> node_type;
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
-#endif
 
 	typedef typename HashSet::ConstBucketBounds::Iterator const_local_iterator;
 	typedef const_local_iterator local_iterator;
 
 private:
-#ifdef MOMO_USE_NODE_HANDLE
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
 		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem,
 			typename NodeType::SetExtractedItem&)
 	};
-#endif
 
 public:
 	unordered_set()
@@ -476,7 +472,6 @@ public:
 		return mHashSet.Remove(key) ? 1 : 0;
 	}
 
-#ifdef MOMO_USE_NODE_HANDLE
 	insert_return_type insert(node_type&& node)
 	{
 		if (node.empty())
@@ -514,7 +509,6 @@ public:
 	{
 		mHashSet.MergeFrom(set.get_nested_container());
 	}
-#endif
 
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{

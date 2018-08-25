@@ -87,10 +87,8 @@ public:
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
-#ifdef MOMO_USE_NODE_HANDLE
 	typedef internal::map_node_handle<typename HashMap::ExtractedPair> node_type;
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
-#endif
 
 	typedef momo::internal::HashDerivedIterator<typename HashMap::BucketBounds::Iterator,
 		reference> local_iterator;
@@ -124,14 +122,12 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(LocalIterator)
 	};
 
-#ifdef MOMO_USE_NODE_HANDLE
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
 		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair,
 			typename NodeType::MapExtractedPair&)
 	};
-#endif
 
 public:
 	unordered_map()
@@ -663,7 +659,6 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
-#ifdef MOMO_USE_NODE_HANDLE
 	insert_return_type insert(node_type&& node)
 	{
 		if (node.empty())
@@ -703,7 +698,6 @@ public:
 	{
 		mHashMap.MergeFrom(map.get_nested_container());
 	}
-#endif
 
 	size_type max_bucket_count() const MOMO_NOEXCEPT
 	{
