@@ -15,9 +15,9 @@
 
 // insert_return_type insert(node_type&&);
 
-#include <set>
-#include <type_traits>
-#include "min_allocator.h"
+//#include <set>
+//#include <type_traits>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -74,10 +74,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::set<int> m;
+    set<int> m;
     test(m);
-    std::set<int, std::less<int>, min_allocator<int>> m2;
+    set<int, std::less<int>, min_allocator<int>> m2;
     test(m2);
 }

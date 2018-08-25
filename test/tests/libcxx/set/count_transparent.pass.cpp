@@ -18,13 +18,13 @@
 // template<typename K>
 //     const_iterator lower_bound(const K& x) const;  // C++14
 
-#include <cassert>
-#include <set>
-#include <utility>
+//#include <cassert>
+//#include <set>
+//#include <utility>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "test_macros.h"
 
 struct Comp {
   using is_transparent = void;
@@ -43,8 +43,8 @@ struct Comp {
   }
 };
 
-int main() {
-  std::set<std::pair<int, int>, Comp> s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
+void main() {
+  set<std::pair<int, int>, Comp> s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
 
   auto cnt = s.count(1);
   assert(cnt == 3);

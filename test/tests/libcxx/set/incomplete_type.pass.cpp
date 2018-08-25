@@ -9,13 +9,13 @@
 
 // <set>
 
-// Check that std::set and its iterators can be instantiated with an incomplete
+// Check that set and its iterators can be instantiated with an incomplete
 // type.
 
-#include <set>
+//#include <set>
 
 struct A {
-    typedef std::set<A> Set;
+    typedef set<A> Set;
     int data;
     Set m;
     Set::iterator it;
@@ -24,6 +24,6 @@ struct A {
 
 inline bool operator==(A const& L, A const& R) { return &L == &R; }
 inline bool operator<(A const& L, A const& R)  { return L.data < R.data; }
-int main() {
+void main() {
     A a;
 }
