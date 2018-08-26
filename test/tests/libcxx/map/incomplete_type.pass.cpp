@@ -9,13 +9,13 @@
 
 // <map>
 
-// Check that std::map and its iterators can be instantiated with an incomplete
+// Check that map and its iterators can be instantiated with an incomplete
 // type.
 
-#include <map>
+//#include <map>
 
 struct A {
-    typedef std::map<A, A> Map;
+    typedef map<A, A> Map;
     int data;
     Map m;
     Map::iterator it;
@@ -24,6 +24,6 @@ struct A {
 
 inline bool operator==(A const& L, A const& R) { return &L == &R; }
 inline bool operator<(A const& L, A const& R)  { return L.data < R.data; }
-int main() {
+void main() {
     A a;
 }

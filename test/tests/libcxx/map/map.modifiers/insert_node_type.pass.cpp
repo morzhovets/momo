@@ -15,9 +15,9 @@
 
 // insert_return_type insert(node_type&&);
 
-#include <map>
-#include <type_traits>
-#include "min_allocator.h"
+//#include <map>
+//#include <type_traits>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -76,10 +76,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::map<int, int> m;
+    map<int, int> m;
     test(m);
-    std::map<int, int, std::less<int>, min_allocator<std::pair<const int, int>>> m2;
+    map<int, int, std::less<int>, min_allocator<std::pair<const int, int>>> m2;
     test(m2);
 }

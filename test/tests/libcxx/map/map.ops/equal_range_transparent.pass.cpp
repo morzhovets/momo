@@ -19,13 +19,13 @@
 //         pair<const_iterator,const_iterator> equal_range(const K& x) const;
 //         // C++14
 
-#include <cassert>
-#include <map>
-#include <utility>
+//#include <cassert>
+//#include <map>
+//#include <utility>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "test_macros.h"
 
 struct Comp {
   using is_transparent = void;
@@ -44,8 +44,8 @@ struct Comp {
   }
 };
 
-int main() {
-  std::map<std::pair<int, int>, int, Comp> s{
+void main() {
+  map<std::pair<int, int>, int, Comp> s{
       {{2, 1}, 1}, {{1, 2}, 2}, {{1, 3}, 3}, {{1, 4}, 4}, {{2, 2}, 5}};
 
   auto er = s.equal_range(1);
