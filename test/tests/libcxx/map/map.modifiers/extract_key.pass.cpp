@@ -33,7 +33,9 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
         assert(t.key() == *copy);
         t.key() = *first; // We should be able to mutate key.
         assert(t.key() == *first);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 
@@ -64,7 +66,7 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_map =
             map<int, int, std::less<int>,
@@ -73,4 +75,5 @@ void main()
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
+#endif
 }

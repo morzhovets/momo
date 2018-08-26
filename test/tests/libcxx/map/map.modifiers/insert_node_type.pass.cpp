@@ -80,6 +80,8 @@ void main()
 {
     map<int, int> m;
     test(m);
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     map<int, int, std::less<int>, min_allocator<std::pair<const int, int>>> m2;
     test(m2);
+#endif
 }
