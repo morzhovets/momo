@@ -164,7 +164,7 @@ public:
 		assert(*iter == "s1");
 		auto es = set.Extract(iter);
 		assert(es.GetItem() == "s1");
-		set.Remove(set.Add(set.LowerBound(s1), std::move(es)), es);
+		set.Remove(set.Add(set.GetLowerBound(s1), std::move(es)), es);
 		assert(es.GetItem() == s1);
 		set.Insert(std::move(es));
 		assert(es.IsEmpty());
@@ -172,8 +172,8 @@ public:
 		iter = set.Find("s1");
 		assert(iter == set.GetEnd());
 		set.Insert(&s1, &s1 + 1);
-		set.ResetKey(set.LowerBound("s1"), s1);
-		set.ResetKey(set.UpperBound(s1), "s2");
+		set.ResetKey(set.GetLowerBound("s1"), s1);
+		set.ResetKey(set.GetUpperBound(s1), "s2");
 		set.Remove("s2");
 		for (const std::string& s : set)
 			assert(s == "s1" || s == "s3");
@@ -195,8 +195,8 @@ public:
 		map[s5] = "s5";
 		assert((std::string)map["s5"] == s5);
 		map["s6"] = "s6";
-		map.ResetKey(map.LowerBound("s1"), s1);
-		map.ResetKey(map.UpperBound(s1), "s2");
+		map.ResetKey(map.GetLowerBound("s1"), s1);
+		map.ResetKey(map.GetUpperBound(s1), "s2");
 		map = map;
 		map = std::move(map);
 		assert(map.GetCount() == 6);
@@ -208,7 +208,7 @@ public:
 		assert(iter2->key == s5 && iter2->value == s5);
 		auto ep = map.Extract(iter2);
 		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
-		map.Remove(map.Add(map.LowerBound(s5), std::move(ep)), ep);
+		map.Remove(map.Add(map.GetLowerBound(s5), std::move(ep)), ep);
 		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
 		map.Insert(std::move(ep));
 		assert(ep.IsEmpty());

@@ -298,52 +298,52 @@ public:
 		mTreeSet.Clear();
 	}
 
-	ConstIterator LowerBound(const Key& key) const
+	ConstIterator GetLowerBound(const Key& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.LowerBound(key));
+		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
-	Iterator LowerBound(const Key& key)
+	Iterator GetLowerBound(const Key& key)
 	{
-		return IteratorProxy(mTreeSet.LowerBound(key));
-	}
-
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type LowerBound(const KeyArg& key) const
-	{
-		return ConstIteratorProxy(mTreeSet.LowerBound(key));
+		return IteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type LowerBound(const KeyArg& key)
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetLowerBound(const KeyArg& key) const
 	{
-		return IteratorProxy(mTreeSet.LowerBound(key));
-	}
-
-	ConstIterator UpperBound(const Key& key) const
-	{
-		return ConstIteratorProxy(mTreeSet.UpperBound(key));
-	}
-
-	Iterator UpperBound(const Key& key)
-	{
-		return IteratorProxy(mTreeSet.UpperBound(key));
+		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type UpperBound(const KeyArg& key) const
+	typename std::enable_if<isValidKeyArg, Iterator>::type GetLowerBound(const KeyArg& key)
 	{
-		return ConstIteratorProxy(mTreeSet.UpperBound(key));
+		return IteratorProxy(mTreeSet.GetLowerBound(key));
+	}
+
+	ConstIterator GetUpperBound(const Key& key) const
+	{
+		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
+	}
+
+	Iterator GetUpperBound(const Key& key)
+	{
+		return IteratorProxy(mTreeSet.GetUpperBound(key));
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type UpperBound(const KeyArg& key)
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetUpperBound(const KeyArg& key) const
 	{
-		return IteratorProxy(mTreeSet.UpperBound(key));
+		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, Iterator>::type GetUpperBound(const KeyArg& key)
+	{
+		return IteratorProxy(mTreeSet.GetUpperBound(key));
 	}
 
 	ConstIterator Find(const Key& key) const
@@ -545,7 +545,7 @@ public:
 
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		Iterator iter = LowerBound(static_cast<const Key&>(key));
+		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
 		return !pvIsGreater(iter, static_cast<const Key&>(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
 			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
@@ -553,7 +553,7 @@ public:
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		Iterator iter = LowerBound(key);
+		Iterator iter = GetLowerBound(key);
 		return !pvIsGreater(iter, key)
 			? ValueReferencer::template GetReference<const Key&>(*this, iter)
 			: ValueReferencer::template GetReference<const Key&>(*this, iter, key);
@@ -619,7 +619,7 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Iterator iter = LowerBound(static_cast<const Key&>(key));
+		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
 		if (!pvIsGreater(iter, static_cast<const Key&>(key)))
 			return InsertResult(iter, false);
 		iter = pvAdd<false>(iter, std::forward<RKey>(key),

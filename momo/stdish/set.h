@@ -343,7 +343,7 @@ public:
 
 	const_iterator lower_bound(const key_type& key) const
 	{
-		return mTreeSet.LowerBound(key);
+		return mTreeSet.GetLowerBound(key);
 	}
 
 	//iterator lower_bound(const key_type& key)
@@ -351,7 +351,7 @@ public:
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator lower_bound(const KeyArg& key) const
 	{
-		return mTreeSet.LowerBound(key);
+		return mTreeSet.GetLowerBound(key);
 	}
 
 	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
@@ -359,7 +359,7 @@ public:
 
 	const_iterator upper_bound(const key_type& key) const
 	{
-		return mTreeSet.UpperBound(key);
+		return mTreeSet.GetUpperBound(key);
 	}
 
 	//iterator upper_bound(const key_type& key)
@@ -367,7 +367,7 @@ public:
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator upper_bound(const KeyArg& key) const
 	{
-		return mTreeSet.UpperBound(key);
+		return mTreeSet.GetUpperBound(key);
 	}
 
 	//template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>

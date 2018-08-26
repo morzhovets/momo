@@ -636,28 +636,28 @@ public:
 		mCrew.IncVersion();
 	}
 
-	ConstIterator LowerBound(const Key& key) const
+	ConstIterator GetLowerBound(const Key& key) const
 	{
-		return pvLowerBound(key);
+		return pvGetLowerBound(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type LowerBound(const KeyArg& key) const
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetLowerBound(const KeyArg& key) const
 	{
-		return pvLowerBound(key);
+		return pvGetLowerBound(key);
 	}
 
-	ConstIterator UpperBound(const Key& key) const
+	ConstIterator GetUpperBound(const Key& key) const
 	{
-		return pvUpperBound(key);
+		return pvGetUpperBound(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type UpperBound(const KeyArg& key) const
+	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetUpperBound(const KeyArg& key) const
 	{
-		return pvUpperBound(key);
+		return pvGetUpperBound(key);
 	}
 
 	ConstIterator Find(const Key& key) const
@@ -674,14 +674,14 @@ public:
 
 	bool ContainsKey(const Key& key) const
 	{
-		return !pvIsGreater(pvLowerBound(key), key);
+		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
 	{
-		return !pvIsGreater(pvLowerBound(key), key);
+		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
 
 	template<typename ItemCreator>
@@ -819,7 +819,7 @@ public:
 
 	bool Remove(const Key& key)
 	{
-		ConstIterator iter = LowerBound(key);
+		ConstIterator iter = GetLowerBound(key);
 		if (pvIsGreater(iter, key))
 			return false;
 		Remove(iter);
@@ -950,7 +950,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvLowerBound(const KeyArg& key) const
+	ConstIterator pvGetLowerBound(const KeyArg& key) const
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -958,7 +958,7 @@ private:
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t index = pvLowerBound(node, key);
+			size_t index = pvGetLowerBound(node, key);
 			if (index < node->GetCount())
 				iter = pvMakeIterator(node, index, false);
 			if (node->IsLeaf())
@@ -969,9 +969,9 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvUpperBound(const KeyArg& key) const
+	ConstIterator pvGetUpperBound(const KeyArg& key) const
 	{
-		ConstIterator iter = pvLowerBound(key);
+		ConstIterator iter = pvGetLowerBound(key);
 		if (!pvIsGreater(iter, key))
 			++iter;
 		return iter;
@@ -980,12 +980,12 @@ private:
 	template<typename KeyArg>
 	ConstIterator pvFind(const KeyArg& key) const
 	{
-		ConstIterator iter = pvLowerBound(key);
+		ConstIterator iter = pvGetLowerBound(key);
 		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 
 	template<typename KeyArg>
-	size_t pvLowerBound(Node* node, const KeyArg& key) const
+	size_t pvGetLowerBound(Node* node, const KeyArg& key) const
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = node->GetCount();
@@ -1029,7 +1029,7 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
-		ConstIterator iter = LowerBound(key);
+		ConstIterator iter = GetLowerBound(key);
 		if (!pvIsGreater(iter, key))
 			return InsertResult(iter, false);
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));

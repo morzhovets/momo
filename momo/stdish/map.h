@@ -397,46 +397,46 @@ public:
 
 	const_iterator lower_bound(const key_type& key) const
 	{
-		return ConstIteratorProxy(mTreeMap.LowerBound(key));
+		return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
 	}
 
 	iterator lower_bound(const key_type& key)
 	{
-		return IteratorProxy(mTreeMap.LowerBound(key));
+		return IteratorProxy(mTreeMap.GetLowerBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator lower_bound(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mTreeMap.LowerBound(key));
+		return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	iterator lower_bound(const KeyArg& key)
 	{
-		return IteratorProxy(mTreeMap.LowerBound(key));
+		return IteratorProxy(mTreeMap.GetLowerBound(key));
 	}
 
 	const_iterator upper_bound(const key_type& key) const
 	{
-		return ConstIteratorProxy(mTreeMap.UpperBound(key));
+		return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
 	}
 
 	iterator upper_bound(const key_type& key)
 	{
-		return IteratorProxy(mTreeMap.UpperBound(key));
+		return IteratorProxy(mTreeMap.GetUpperBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	const_iterator upper_bound(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mTreeMap.UpperBound(key));
+		return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	iterator upper_bound(const KeyArg& key)
 	{
-		return IteratorProxy(mTreeMap.UpperBound(key));
+		return IteratorProxy(mTreeMap.GetUpperBound(key));
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
