@@ -15,6 +15,10 @@ LIBCXX_TEST_BEGIN(count)
 #include "libcxx/set/count.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(count_transparent)
+#include "libcxx/set/count_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(emplace)
 #include "libcxx/set/emplace.pass.cpp"
 LIBCXX_TEST_END
@@ -31,6 +35,10 @@ LIBCXX_TEST_BEGIN(equal_range)
 #include "libcxx/set/equal_range.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(equal_range_transparent)
+#include "libcxx/set/equal_range_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(erase_iter)
 #include "libcxx/set/erase_iter.pass.cpp"
 LIBCXX_TEST_END
@@ -43,9 +51,21 @@ LIBCXX_TEST_BEGIN(erase_key)
 #include "libcxx/set/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(extract_iterator)
+//#include "libcxx/set/extract_iterator.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(extract_key)
+#include "libcxx/set/extract_key.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(find)
 #include "libcxx/set/find.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(incomplete_type)
+//#include "libcxx/set/incomplete_type.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/set/insert_cv.pass.cpp"
@@ -66,6 +86,18 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(insert_iter_rv)
 #include "libcxx/set/insert_iter_rv.pass.cpp"
 LIBCXX_TEST_END
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+
+LIBCXX_TEST_BEGIN(insert_node_type)
+#include "libcxx/set/insert_node_type.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(insert_node_type_hint)
+#include "libcxx/set/insert_node_type_hint.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
 
 LIBCXX_TEST_BEGIN(insert_rv)
 #include "libcxx/set/insert_rv.pass.cpp"
