@@ -972,7 +972,7 @@ private:
 	ConstIterator pvGetUpperBound(const KeyArg& key) const
 	{
 		ConstIterator iter = pvGetLowerBound(key);
-		if (!pvIsGreater(iter, key))
+		while (!pvIsGreater(iter, key))	//?
 			++iter;
 		return iter;
 	}

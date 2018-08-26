@@ -381,7 +381,8 @@ public:
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	size_type count(const KeyArg& key) const
 	{
-		return mTreeMap.ContainsKey(key) ? 1 : 0;
+		std::pair<const_iterator, const_iterator> bounds = equal_range(key);
+		return std::distance(bounds.first, bounds.second);
 	}
 
 	bool contains(const key_type& key) const
@@ -441,30 +442,30 @@ public:
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		return equal_range<key_type, key_compare, void>(key);
-	}
-
-	std::pair<iterator, iterator> equal_range(const key_type& key)
-	{
-		return equal_range<key_type, key_compare, void>(key);
-	}
-
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
-	{
 		const_iterator iter = lower_bound(key);
 		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
 	}
 
-	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-	std::pair<iterator, iterator> equal_range(const KeyArg& key)
+	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = lower_bound(key);
 		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<iterator, iterator>(iter, iter);
 		return std::pair<iterator, iterator>(iter, std::next(iter));
+	}
+
+	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
+	{
+		return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
+	}
+
+	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
+	std::pair<iterator, iterator> equal_range(const KeyArg& key)
+	{
+		return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
 	}
 
 	//template<typename Value>
