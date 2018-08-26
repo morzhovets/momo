@@ -30,7 +30,9 @@ void test(Container& c)
         typename Container::node_type t = c.extract(first++);
         --sz;
         assert(t.value() == key_value);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 
@@ -51,10 +53,11 @@ void main()
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_set = set<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
+#endif
 }
