@@ -419,6 +419,24 @@ public:
 		return mTreeSet.Add(hint, value);
 	}
 
+	insert_return_type insert(node_type&& node)
+	{
+		if (node.empty())
+			return { end(), false, node_type() };
+		typename TreeSet::InsertResult res = mTreeSet.Insert(
+			std::move(NodeTypeProxy::GetExtractedItem(node)));
+		return { res.iterator, res.inserted, res.inserted ? node_type() : std::move(node) };
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+		if (node.empty())
+			return end();
+		if (!pvCheckHint(hint, node.value()))
+			return insert(std::move(node)).position;
+		return mTreeSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
+	}
+
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
@@ -478,24 +496,6 @@ public:
 	size_type erase(const key_type& key)
 	{
 		return mTreeSet.Remove(key) ? 1 : 0;
-	}
-
-	insert_return_type insert(node_type&& node)
-	{
-		if (node.empty())
-			return { end(), false, node_type() };
-		typename TreeSet::InsertResult res = mTreeSet.Insert(
-			std::move(NodeTypeProxy::GetExtractedItem(node)));
-		return { res.iterator, res.inserted, res.inserted ? node_type() : std::move(node) };
-	}
-
-	iterator insert(const_iterator hint, node_type&& node)
-	{
-		if (node.empty())
-			return end();
-		if (!pvCheckHint(hint, node.value()))
-			return insert(std::move(node)).position;
-		return mTreeSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
 	}
 
 	node_type extract(const_iterator where)

@@ -530,6 +530,27 @@ public:
 			std::forward_as_tuple(std::forward<Second>(value.second))).first;
 	}
 
+	insert_return_type insert(node_type&& node)
+	{
+		if (node.empty())
+			return { end(), false, node_type() };
+		typename TreeMap::InsertResult res = mTreeMap.Insert(
+			std::move(NodeTypeProxy::GetExtractedPair(node)));
+		return { IteratorProxy(res.iterator), res.inserted,
+			res.inserted ? node_type() : std::move(node) };
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+		if (node.empty())
+			return end();
+		std::pair<iterator, bool> res = pvFind(hint, node.key());
+		if (!res.second)
+			return res.first;
+		return IteratorProxy(mTreeMap.Add(IteratorProxy::GetBaseIterator(res.first),
+			std::move(NodeTypeProxy::GetExtractedPair(node))));
+	}
+
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
@@ -702,27 +723,6 @@ public:
 	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
 	{
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
-	}
-
-	insert_return_type insert(node_type&& node)
-	{
-		if (node.empty())
-			return { end(), false, node_type() };
-		typename TreeMap::InsertResult res = mTreeMap.Insert(
-			std::move(NodeTypeProxy::GetExtractedPair(node)));
-		return { IteratorProxy(res.iterator), res.inserted,
-			res.inserted ? node_type() : std::move(node) };
-	}
-
-	iterator insert(const_iterator hint, node_type&& node)
-	{
-		if (node.empty())
-			return end();
-		std::pair<iterator, bool> res = pvFind(hint, node.key());
-		if (!res.second)
-			return res.first;
-		return IteratorProxy(mTreeMap.Add(IteratorProxy::GetBaseIterator(res.first),
-			std::move(NodeTypeProxy::GetExtractedPair(node))));
 	}
 
 	node_type extract(const_iterator where)
