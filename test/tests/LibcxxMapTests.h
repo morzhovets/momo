@@ -7,6 +7,10 @@
 
 \**********************************************************/
 
+//LIBCXX_TEST_BEGIN(incomplete_type)
+//#include "libcxx/map/incomplete_type.pass.cpp"
+//LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(types)
 #include "libcxx/map/types.pass.cpp"
 LIBCXX_TEST_END
@@ -151,6 +155,14 @@ LIBCXX_TEST_BEGIN(modifiers_erase_key)
 #include "libcxx/map/map.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
+//#include "libcxx/map/map.modifiers/extract_iterator.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_extract_key)
+#include "libcxx/map/map.modifiers/extract_key.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_cv)
 #include "libcxx/map/map.modifiers/insert_cv.pass.cpp"
 LIBCXX_TEST_END
@@ -171,6 +183,18 @@ LIBCXX_TEST_BEGIN(modifiers_insert_iter_rv)
 #include "libcxx/map/map.modifiers/insert_iter_rv.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+
+LIBCXX_TEST_BEGIN(modifiers_insert_node_type)
+#include "libcxx/map/map.modifiers/insert_node_type.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_insert_node_type_hint)
+#include "libcxx/map/map.modifiers/insert_node_type_hint.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "libcxx/map/map.modifiers/insert_or_assign.pass.cpp"
 LIBCXX_TEST_END
@@ -187,8 +211,16 @@ LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/map/map.ops/count.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_count_transparent)
+#include "libcxx/map/map.ops/count_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_equal_range)
 #include "libcxx/map/map.ops/equal_range.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_equal_range_transparent)
+#include "libcxx/map/map.ops/equal_range_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_find)
