@@ -370,16 +370,16 @@ public:
 		return IteratorProxy(mTreeSet.Find(key));
 	}
 
-	bool HasKey(const Key& key) const
+	bool ContainsKey(const Key& key) const
 	{
-		return mTreeSet.HasKey(key);
+		return mTreeSet.ContainsKey(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
+	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
 	{
-		return mTreeSet.HasKey(key);
+		return mTreeSet.ContainsKey(key);
 	}
 
 	template<typename ValueCreator>

@@ -401,12 +401,12 @@ public:
 
 	size_type count(const key_type& key) const
 	{
-		return mHashMap.HasKey(key) ? 1 : 0;
+		return mHashMap.ContainsKey(key) ? 1 : 0;
 	}
 
 	bool contains(const key_type& key) const
 	{
-		return mHashMap.HasKey(key);
+		return mHashMap.ContainsKey(key);
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const

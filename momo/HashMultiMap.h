@@ -871,16 +871,16 @@ public:
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	bool HasKey(const Key& key) const
+	bool ContainsKey(const Key& key) const
 	{
-		return mHashMap.HasKey(key);
+		return mHashMap.ContainsKey(key);
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type HasKey(const KeyArg& key) const
+	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
 	{
-		return mHashMap.HasKey(key);
+		return mHashMap.ContainsKey(key);
 	}
 
 	template<typename ValueCreator>

@@ -159,7 +159,7 @@ public:
 		set = set;
 		set = std::move(set);
 		assert(set.GetCount() == 3);
-		assert(set.HasKey("s2"));
+		assert(set.ContainsKey("s2"));
 		TreeSet::ConstIterator iter = set.Find("s1");
 		assert(*iter == "s1");
 		auto es = set.Extract(iter);
@@ -200,7 +200,7 @@ public:
 		map = map;
 		map = std::move(map);
 		assert(map.GetCount() == 6);
-		assert(map.HasKey(s2));
+		assert(map.ContainsKey(s2));
 		TreeMap::ConstIterator iter1 = map.Find(s1);
 		assert(iter1->key == s1 && iter1->value == s1);
 		map.Remove(s1);

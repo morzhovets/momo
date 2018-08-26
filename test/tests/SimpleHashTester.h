@@ -120,7 +120,7 @@ public:
 		set = set;
 		set = std::move(set);
 		assert(set.GetCount() == 3);
-		assert(set.HasKey("s2"));
+		assert(set.ContainsKey("s2"));
 		typename HashSet::ConstIterator iter = set.Find("s1");
 		assert(*iter == "s1");
 		auto es = set.Extract(iter);
@@ -166,7 +166,7 @@ public:
 		map = map;
 		map = std::move(map);
 		assert(map.GetCount() == 6);
-		assert(map.HasKey(s2));
+		assert(map.ContainsKey(s2));
 		typename HashMap::ConstIterator iter1 = map.Find(s1);
 		assert(iter1->key == s1 && iter1->value == s1);
 		map.Remove(s1);
@@ -220,7 +220,7 @@ public:
 		mmap = std::move(mmap);
 		assert(mmap.GetKeyCount() == 3);
 		assert(mmap.GetValueCount() == 6);
-		assert(mmap.HasKey(k2));
+		assert(mmap.ContainsKey(k2));
 		mmap.RemoveKey(k1);
 		auto keyIter = mmap.Find(k2);
 		mmap.Remove(keyIter, 0);

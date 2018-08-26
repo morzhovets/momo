@@ -375,24 +375,24 @@ public:
 
 	size_type count(const key_type& key) const
 	{
-		return mTreeMap.HasKey(key) ? 1 : 0;
+		return mTreeMap.ContainsKey(key) ? 1 : 0;
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	size_type count(const KeyArg& key) const
 	{
-		return mTreeMap.HasKey(key) ? 1 : 0;
+		return mTreeMap.ContainsKey(key) ? 1 : 0;
 	}
 
 	bool contains(const key_type& key) const
 	{
-		return mTreeMap.HasKey(key);
+		return mTreeMap.ContainsKey(key);
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	bool contains(const KeyArg& key) const
 	{
-		return mTreeMap.HasKey(key);
+		return mTreeMap.ContainsKey(key);
 	}
 
 	const_iterator lower_bound(const key_type& key) const
