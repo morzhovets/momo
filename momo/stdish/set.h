@@ -321,14 +321,13 @@ public:
 
 	size_type count(const key_type& key) const
 	{
-		return mTreeSet.ContainsKey(key) ? 1 : 0;
+		return mTreeSet.GetKeyCount(key);
 	}
 
 	template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
 	size_type count(const KeyArg& key) const
 	{
-		std::pair<const_iterator, const_iterator> bounds = equal_range(key);
-		return std::distance(bounds.first, bounds.second);
+		return mTreeSet.GetKeyCount(key);
 	}
 
 	bool contains(const key_type& key) const

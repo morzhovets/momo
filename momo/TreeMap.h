@@ -382,6 +382,18 @@ public:
 		return mTreeSet.ContainsKey(key);
 	}
 
+	size_t GetKeyCount(const Key& key) const
+	{
+		return mTreeSet.GetKeyCount(key);
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, size_t>::type GetKeyCount(const KeyArg& key) const
+	{
+		return mTreeSet.GetKeyCount(key);
+	}
+
 	template<typename ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator&& valueCreator)
 	{

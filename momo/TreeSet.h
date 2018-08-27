@@ -684,6 +684,21 @@ public:
 		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
 
+	size_t GetKeyCount(const Key& key) const
+	{
+		return ContainsKey(key) ? 1 : 0;
+	}
+
+	template<typename KeyArg,
+		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
+	typename std::enable_if<isValidKeyArg, size_t>::type GetKeyCount(const KeyArg& key) const
+	{
+		size_t count = 0;
+		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); ++iter)
+			++count;
+		return count;
+	}
+
 	template<typename ItemCreator>
 	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
 	{
