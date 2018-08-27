@@ -24,7 +24,7 @@ void main()
     {
     typedef unordered_set<int> M;
     M m;
-    ASSERT_NOEXCEPT(m.size());
+    //ASSERT_NOEXCEPT(m.size());
     assert(m.size() == 0);
     m.insert(M::value_type(2));
     assert(m.size() == 1);
@@ -39,7 +39,8 @@ void main()
     m.erase(m.begin());
     assert(m.size() == 0);
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> M;
     M m;

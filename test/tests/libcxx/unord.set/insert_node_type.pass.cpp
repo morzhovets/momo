@@ -78,6 +78,8 @@ void main()
 {
     unordered_set<int> m;
     test(m);
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> m2;
     test(m2);
+#endif
 }

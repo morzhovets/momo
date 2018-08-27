@@ -24,14 +24,15 @@ void main()
     {
     typedef unordered_set<int> M;
     M m;
-    ASSERT_NOEXCEPT(m.empty());
+    //ASSERT_NOEXCEPT(m.empty());
     assert(m.empty());
     m.insert(M::value_type(1));
     assert(!m.empty());
     m.clear();
     assert(m.empty());
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> M;
     M m;

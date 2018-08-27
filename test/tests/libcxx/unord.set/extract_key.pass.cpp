@@ -31,7 +31,9 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
         assert(!t.empty());
         --sz;
         assert(t.value() == *copy);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 
@@ -61,11 +63,12 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_set = unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
+#endif
 }
