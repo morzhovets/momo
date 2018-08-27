@@ -15,9 +15,9 @@
 
 // node_type extract(key_type const&);
 
-#include <unordered_set>
-#include "min_allocator.h"
-#include "Counter.h"
+//#include <unordered_set>
+//#include "min_allocator.h"
+//#include "Counter.h"
 
 template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
@@ -44,16 +44,16 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
     }
 }
 
-int main()
+void main()
 {
     {
-        std::unordered_set<int> m = {1, 2, 3, 4, 5, 6};
+        unordered_set<int> m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
 
     {
-        std::unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
+        unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
         {
             Counter<int> keys[] = {1, 2, 3, 4, 5, 6};
             assert(Counter_base::gConstructed == 6+6);
@@ -63,7 +63,7 @@ int main()
     }
 
     {
-        using min_alloc_set = std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
+        using min_alloc_set = unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));

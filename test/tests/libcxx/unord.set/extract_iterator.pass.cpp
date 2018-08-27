@@ -15,9 +15,9 @@
 
 // node_type extract(const_iterator);
 
-#include <unordered_set>
-#include "min_allocator.h"
-#include "Counter.h"
+//#include <unordered_set>
+//#include "min_allocator.h"
+//#include "Counter.h"
 
 template <class Container>
 void test(Container& c)
@@ -37,23 +37,23 @@ void test(Container& c)
     assert(c.size() == 0);
 }
 
-int main()
+void main()
 {
     {
-        using set_type = std::unordered_set<int>;
+        using set_type = unordered_set<int>;
         set_type m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
 
     {
-        std::unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
+        unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
         assert(Counter_base::gConstructed == 6);
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
 
     {
-        using min_alloc_set = std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
+        using min_alloc_set = unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         test(m);
     }

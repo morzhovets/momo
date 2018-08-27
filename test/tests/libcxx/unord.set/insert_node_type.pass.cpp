@@ -15,9 +15,9 @@
 
 // insert_return_type insert(node_type&&);
 
-#include <unordered_set>
-#include <type_traits>
-#include "min_allocator.h"
+//#include <unordered_set>
+//#include <type_traits>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -74,10 +74,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::unordered_set<int> m;
+    unordered_set<int> m;
     test(m);
-    std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> m2;
+    unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> m2;
     test(m2);
 }
