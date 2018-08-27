@@ -967,13 +967,31 @@ private:
 	template<typename KeyArg>
 	ConstIterator pvGetLowerBound(const KeyArg& key) const
 	{
+		const TreeTraits& treeTraits = GetTreeTraits();
+		auto pred = [&treeTraits, &key] (const Item& item)
+			{ return !treeTraits.IsLess(ItemTraits::GetKey(item), key); };
+		return pvFindFirst(pred);
+	}
+
+	template<typename KeyArg>
+	ConstIterator pvGetUpperBound(const KeyArg& key) const
+	{
+		const TreeTraits& treeTraits = GetTreeTraits();
+		auto pred = [&treeTraits, &key] (const Item& item)
+			{ return treeTraits.IsLess(key, ItemTraits::GetKey(item)); };
+		return pvFindFirst(pred);
+	}
+
+	template<typename Predicate>
+	ConstIterator pvFindFirst(const Predicate& pred) const
+	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
 		ConstIterator iter = GetEnd();
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t index = pvGetLowerBound(node, key);
+			size_t index = pvFindFirst(node, pred);
 			if (index < node->GetCount())
 				iter = pvMakeIterator(node, index, false);
 			if (node->IsLeaf())
@@ -983,24 +1001,8 @@ private:
 		return iter;
 	}
 
-	template<typename KeyArg>
-	ConstIterator pvGetUpperBound(const KeyArg& key) const
-	{
-		ConstIterator iter = pvGetLowerBound(key);
-		while (!pvIsGreater(iter, key))	//?
-			++iter;
-		return iter;
-	}
-
-	template<typename KeyArg>
-	ConstIterator pvFind(const KeyArg& key) const
-	{
-		ConstIterator iter = pvGetLowerBound(key);
-		return !pvIsGreater(iter, key) ? iter : GetEnd();
-	}
-
-	template<typename KeyArg>
-	size_t pvGetLowerBound(Node* node, const KeyArg& key) const
+	template<typename Predicate>
+	size_t pvFindFirst(Node* node, const Predicate& pred) const
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = node->GetCount();
@@ -1008,8 +1010,7 @@ private:
 		{
 			for (; leftIndex < rightIndex; ++leftIndex)
 			{
-				const Item& item = *node->GetItemPtr(leftIndex);
-				if (!GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
+				if (pred(*node->GetItemPtr(leftIndex)))
 					break;
 			}
 		}
@@ -1018,14 +1019,20 @@ private:
 			while (leftIndex < rightIndex)
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
-				const Item& item = *node->GetItemPtr(middleIndex);
-				if (GetTreeTraits().IsLess(ItemTraits::GetKey(item), key))
-					leftIndex = middleIndex + 1;
-				else
+				if (pred(*node->GetItemPtr(middleIndex)))
 					rightIndex = middleIndex;
+				else
+					leftIndex = middleIndex + 1;
 			}
 		}
 		return leftIndex;
+	}
+
+	template<typename KeyArg>
+	ConstIterator pvFind(const KeyArg& key) const
+	{
+		ConstIterator iter = pvGetLowerBound(key);
+		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 
 	void pvDestroy(Node* node) MOMO_NOEXCEPT
