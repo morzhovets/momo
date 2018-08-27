@@ -253,7 +253,6 @@ public:
 	size_type max_size() const MOMO_NOEXCEPT
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
-		//return std::minmax(Array::maxCapacity, get_allocator().max_size()).second;
 	}
 
 	size_type size() const MOMO_NOEXCEPT
