@@ -39,6 +39,10 @@ LIBCXX_TEST_END
 //#include "libcxx/unord.multimap/db_local_iterators_8.pass.cpp"
 //LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(empty)
+#include "libcxx/unord.multimap/empty.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "libcxx/unord.multimap/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -58,6 +62,10 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "libcxx/unord.multimap/find_non_const.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(incomplete)
+//#include "libcxx/unord.multimap/incomplete.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "libcxx/unord.multimap/iterators.pass.cpp"
@@ -90,6 +98,10 @@ LIBCXX_TEST_END
 //LIBCXX_TEST_BEGIN(reserve)
 //#include "libcxx/unord.multimap/reserve.pass.cpp"
 //LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(size)
+#include "libcxx/unord.multimap/size.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(swap_member)
 #include "libcxx/unord.multimap/swap_member.pass.cpp"
