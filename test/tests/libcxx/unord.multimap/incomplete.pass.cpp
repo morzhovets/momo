@@ -10,10 +10,10 @@
 
 // <unordered_map>
 
-// Check that std::unordered_multimap and its iterators can be instantiated with an incomplete
+// Check that unordered_multimap and its iterators can be instantiated with an incomplete
 // type.
 
-#include <unordered_map>
+//#include <unordered_map>
 
 template <class Tp>
 struct MyHash {
@@ -22,7 +22,7 @@ struct MyHash {
 };
 
 struct A {
-    typedef std::unordered_multimap<A, A, MyHash<A> > Map;
+    typedef unordered_multimap<A, A, MyHash<A> > Map;
     Map m;
     Map::iterator it;
     Map::const_iterator cit;
@@ -32,6 +32,6 @@ struct A {
 
 inline bool operator==(A const& L, A const& R) { return &L == &R; }
 
-int main() {
+void main() {
     A a;
 }
