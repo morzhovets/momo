@@ -51,6 +51,10 @@ LIBCXX_TEST_BEGIN(emplace_hint)
 #include "libcxx/unord.set/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(empty)
+#include "libcxx/unord.set/empty.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "libcxx/unord.set/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -99,6 +103,14 @@ LIBCXX_TEST_BEGIN(erase_range)
 #include "libcxx/unord.set/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(extract_iterator)
+//#include "libcxx/unord.set/extract_iterator.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(extract_key)
+#include "libcxx/unord.set/extract_key.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(find_const)
 #include "libcxx/unord.set/find_const.pass.cpp"
 LIBCXX_TEST_END
@@ -106,6 +118,10 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "libcxx/unord.set/find_non_const.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(incomplete)
+//#include "libcxx/unord.set/incomplete.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_const_lvalue)
 #include "libcxx/unord.set/insert_const_lvalue.pass.cpp"
@@ -122,6 +138,18 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(insert_init)
 #include "libcxx/unord.set/insert_init.pass.cpp"
 LIBCXX_TEST_END
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+
+LIBCXX_TEST_BEGIN(insert_node_type)
+#include "libcxx/unord.set/insert_node_type.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(insert_node_type_hint)
+#include "libcxx/unord.set/insert_node_type_hint.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
 
 LIBCXX_TEST_BEGIN(insert_range)
 #include "libcxx/unord.set/insert_range.pass.cpp"
@@ -161,6 +189,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(reserve)
 #include "libcxx/unord.set/reserve.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(size)
+#include "libcxx/unord.set/size.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(swap_member)
