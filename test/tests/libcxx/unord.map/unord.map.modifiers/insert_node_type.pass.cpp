@@ -15,8 +15,8 @@
 
 // insert_return_type insert(node_type&&);
 
-#include <unordered_map>
-#include "min_allocator.h"
+//#include <unordered_map>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -75,10 +75,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::unordered_map<int, int> m;
+    unordered_map<int, int> m;
     test(m);
-    std::unordered_map<int, int, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, int>>> m2;
+    unordered_map<int, int, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, int>>> m2;
     test(m2);
 }

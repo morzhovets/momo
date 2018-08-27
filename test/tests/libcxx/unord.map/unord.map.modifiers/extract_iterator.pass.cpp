@@ -15,9 +15,9 @@
 
 // node_type extract(const_iterator);
 
-#include <unordered_map>
-#include "min_allocator.h"
-#include "Counter.h"
+//#include <unordered_map>
+//#include "min_allocator.h"
+//#include "Counter.h"
 
 template <class Container>
 void test(Container& c)
@@ -41,16 +41,16 @@ void test(Container& c)
     assert(c.size() == 0);
 }
 
-int main()
+void main()
 {
     {
-        using map_type = std::unordered_map<int, int>;
+        using map_type = unordered_map<int, int>;
         map_type m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         test(m);
     }
 
     {
-        std::unordered_map<Counter<int>, Counter<int>> m =
+        unordered_map<Counter<int>, Counter<int>> m =
             {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         assert(Counter_base::gConstructed == 12);
         test(m);
@@ -59,7 +59,7 @@ int main()
 
     {
         using min_alloc_map =
-            std::unordered_map<int, int, std::hash<int>, std::equal_to<int>,
+            unordered_map<int, int, std::hash<int>, std::equal_to<int>,
                                min_allocator<std::pair<const int, int>>>;
         min_alloc_map m = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}};
         test(m);

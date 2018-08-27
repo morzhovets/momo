@@ -13,16 +13,16 @@
 
 // size_type size() const noexcept;
 
-#include <unordered_map>
-#include <cassert>
+//#include <unordered_map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::unordered_map<int, double> M;
+    typedef unordered_map<int, double> M;
     M m;
     ASSERT_NOEXCEPT(m.size());
     assert(m.size() == 0);
@@ -41,7 +41,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::unordered_map<int, double, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef unordered_map<int, double, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, double>>> M;
     M m;
     ASSERT_NOEXCEPT(m.size());
     assert(m.size() == 0);
