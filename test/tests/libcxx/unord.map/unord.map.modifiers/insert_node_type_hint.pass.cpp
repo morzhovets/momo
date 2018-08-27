@@ -59,6 +59,8 @@ void main()
 {
     unordered_map<int, int> m;
     test(m);
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     unordered_map<int, int, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, int>>> m2;
     test(m2);
+#endif
 }

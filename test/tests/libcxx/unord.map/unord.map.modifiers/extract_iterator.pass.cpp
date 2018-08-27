@@ -34,7 +34,9 @@ void test(Container& c)
         assert(t.key() == key_value);
         t.key() = some_key;
         assert(t.key() == some_key);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 
@@ -56,7 +58,7 @@ void main()
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_map =
             unordered_map<int, int, std::hash<int>, std::equal_to<int>,
@@ -64,4 +66,5 @@ void main()
         min_alloc_map m = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}};
         test(m);
     }
+#endif
 }
