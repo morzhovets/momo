@@ -39,6 +39,10 @@ LIBCXX_TEST_BEGIN(db_local_iterators_8)
 #include "libcxx/unord.map/db_local_iterators_8.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(empty)
+#include "libcxx/unord.map/empty.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "libcxx/unord.map/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -58,6 +62,10 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "libcxx/unord.map/find_non_const.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(incomplete_type)
+//#include "libcxx/unord.map/incomplete_type.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "libcxx/unord.map/iterators.pass.cpp"
@@ -89,6 +97,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(reserve)
 #include "libcxx/unord.map/reserve.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(size)
+#include "libcxx/unord.map/size.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(swap_member)
@@ -275,6 +287,14 @@ LIBCXX_TEST_BEGIN(modifiers_erase_range)
 #include "libcxx/unord.map/unord.map.modifiers/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
+//#include "libcxx/unord.map/unord.map.modifiers/extract_iterator.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_extract_key)
+#include "libcxx/unord.map/unord.map.modifiers/extract_key.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_const_lvalue)
 #include "libcxx/unord.map/unord.map.modifiers/insert_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
@@ -290,6 +310,18 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "libcxx/unord.map/unord.map.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+
+LIBCXX_TEST_BEGIN(modifiers_insert_node_type)
+#include "libcxx/unord.map/unord.map.modifiers/insert_node_type.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_insert_node_type_hint)
+#include "libcxx/unord.map/unord.map.modifiers/insert_node_type_hint.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "libcxx/unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"
