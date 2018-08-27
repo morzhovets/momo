@@ -725,13 +725,13 @@ namespace internal
 		}
 
 		template<typename Item, typename... Items>
-		size_t LowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		size_t GetLowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
 			return pvBinarySearch<-1>(equaler, equalers...);
 		}
 
 		template<typename Item, typename... Items>
-		size_t UpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		size_t GetUpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
 			return pvBinarySearch<0>(equaler, equalers...);
 		}
