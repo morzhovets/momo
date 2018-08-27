@@ -228,81 +228,81 @@ LIBCXX_TEST_BEGIN(swap_swap_non_member)
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_clear)
-#include "libcxx/unord.map/unorder.map.modifiers/clear.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/clear.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
-#include "libcxx/unord.map/unorder.map.modifiers/emplace.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/emplace.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
-#include "libcxx/unord.map/unorder.map.modifiers/emplace_hint.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_const_iter)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_const_iter.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_const_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_db1)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_db1.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_db1.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_db2)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_db2.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_db2.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db1)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_iter_db1.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_iter_db1.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db2)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_iter_db2.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_iter_db2.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db3)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_iter_db3.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_iter_db3.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db4)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_iter_iter_db4.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_key)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_key.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_range)
-#include "libcxx/unord.map/unorder.map.modifiers/erase_range.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_const_lvalue)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_const_lvalue.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_hint_const_lvalue)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_hint_const_lvalue.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_hint_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_hint_rvalue)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_hint_rvalue.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_hint_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_init)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_init.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_or_assign.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_range)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_range.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
-#include "libcxx/unord.map/unorder.map.modifiers/insert_rvalue.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_try_emplace)
-#include "libcxx/unord.map/unorder.map.modifiers/try.emplace.pass.cpp"
+#include "libcxx/unord.map/unord.map.modifiers/try.emplace.pass.cpp"
 LIBCXX_TEST_END
