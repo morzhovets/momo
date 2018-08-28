@@ -472,7 +472,7 @@ public:
 			{
 				res = InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 			}
-			else if (treeTraits.IsLess(prevKey, key))
+			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
 				res.iterator = pvAdd<false>(std::next(res.iterator), std::forward<KeyArg>(pair.first),
 					ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(pair.second)));
@@ -557,6 +557,7 @@ public:
 
 	ValueReferenceRKey operator[](Key&& key)
 	{
+		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
 		return !pvIsGreater(iter, static_cast<const Key&>(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
@@ -565,6 +566,7 @@ public:
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
+		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(key);
 		return !pvIsGreater(iter, key)
 			? ValueReferencer::template GetReference<const Key&>(*this, iter)
@@ -582,7 +584,7 @@ public:
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
-	bool Remove(const Key& key)
+	size_t Remove(const Key& key)
 	{
 		return mTreeSet.Remove(key);
 	}
@@ -631,9 +633,13 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
-		if (!pvIsGreater(iter, static_cast<const Key&>(key)))
-			return InsertResult(iter, false);
+		Iterator iter = GetUpperBound(static_cast<const Key&>(key));
+		if (!TreeTraits::multiKey && iter != GetBegin())
+		{
+			Iterator prevIter = std::prev(iter);
+			if (!GetTreeTraits().IsLess(prevIter->key, static_cast<const Key&>(key)))
+				return InsertResult(prevIter, false);
+		}
 		iter = pvAdd<false>(iter, std::forward<RKey>(key),
 			std::forward<ValueCreator>(valueCreator));
 		return InsertResult(iter, true);

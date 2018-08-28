@@ -27,7 +27,7 @@ template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
-	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc,
+	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, false,
 		momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, TKey, momo::MemManagerStd<TAllocator>>,

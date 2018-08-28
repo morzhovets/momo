@@ -686,17 +686,14 @@ public:
 
 	size_t GetKeyCount(const Key& key) const
 	{
-		return ContainsKey(key) ? 1 : 0;
+		return TreeTraits::multiKey ? pvGetKeyCount(key) : ContainsKey(key) ? 1 : 0;
 	}
 
 	template<typename KeyArg,
 		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
 	typename std::enable_if<isValidKeyArg, size_t>::type GetKeyCount(const KeyArg& key) const
 	{
-		size_t count = 0;
-		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); ++iter)
-			++count;
-		return count;
+		return pvGetKeyCount(key);
 	}
 
 	template<typename ItemCreator>
@@ -757,7 +754,7 @@ public:
 			{
 				res = Insert(*iter);
 			}
-			else if (treeTraits.IsLess(prevKey, key))
+			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
 				res.iterator = pvAdd<false>(std::next(res.iterator), 
 					Creator<decltype(*iter)>(memManager, *iter));
@@ -832,13 +829,12 @@ public:
 		return resIter;
 	}
 
-	bool Remove(const Key& key)
+	size_t Remove(const Key& key)
 	{
-		ConstIterator iter = GetLowerBound(key);
-		if (pvIsGreater(iter, key))
-			return false;
-		Remove(iter);
-		return true;
+		size_t count = 0;
+		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); iter = Remove(iter))
+			++count;
+		return count;
 	}
 
 	ExtractedItem Extract(ConstIterator iter)
@@ -893,9 +889,9 @@ public:
 				return;
 			}
 			Node* rootNode = nullptr;
-			if (pvIsLess(*this, dstTreeSet))
+			if (pvIsOrdered(*this, dstTreeSet))
 				rootNode = pvMergeFast(*this, dstTreeSet);
-			else if (pvIsLess(dstTreeSet, *this))
+			else if (pvIsOrdered(dstTreeSet, *this))
 				rootNode = pvMergeFast(dstTreeSet, *this);
 			if (rootNode != nullptr)
 			{
@@ -945,17 +941,30 @@ private:
 		return iter == GetEnd() || GetTreeTraits().IsLess(key, ItemTraits::GetKey(*iter));
 	}
 
+	bool pvIsOrdered(ConstIterator iter1, ConstIterator iter2) const
+	{
+		const Key& key1 = ItemTraits::GetKey(*iter1);
+		const Key& key2 = ItemTraits::GetKey(*iter2);
+		const TreeTraits& treeTraits = GetTreeTraits();
+		return TreeTraits::multiKey ? treeTraits.IsLess(key1, key2)
+			: !treeTraits.IsLess(key2, key1);
+	}
+
+	bool pvIsOrdered(const TreeSet& treeSet1, const TreeSet& treeSet2) const
+	{
+		MOMO_ASSERT(!treeSet1.IsEmpty() && !treeSet2.IsEmpty());
+		return pvIsOrdered(std::prev(treeSet1.GetEnd()), treeSet2.GetBegin());
+	}
+
 	bool pvExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
 	{
 		try
 		{
-			const TreeTraits& treeTraits = GetTreeTraits();
-			const Key& key = ItemTraits::GetKey(*iter);
-			bool res = (iter == GetBegin()
-				|| treeTraits.IsLess(ItemTraits::GetKey(*std::prev(iter)), key));
-			res = res && (iter == std::prev(GetEnd())
-				|| treeTraits.IsLess(key, ItemTraits::GetKey(*std::next(iter))));
-			return res;
+			if (iter != GetBegin() && !pvIsOrdered(std::prev(iter), iter))
+				return false;
+			if (iter != std::prev(GetEnd()) && !pvIsOrdered(iter, std::next(iter)))
+				return false;
+			return true;
 		}
 		catch (...)
 		{
@@ -1031,8 +1040,17 @@ private:
 	template<typename KeyArg>
 	ConstIterator pvFind(const KeyArg& key) const
 	{
-		ConstIterator iter = pvGetLowerBound(key);
+		ConstIterator iter = pvGetLowerBound(key);	//?
 		return !pvIsGreater(iter, key) ? iter : GetEnd();
+	}
+
+	template<typename KeyArg>
+	size_t pvGetKeyCount(const KeyArg& key) const
+	{
+		size_t count = 0;
+		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); ++iter)
+			++count;
+		return count;
 	}
 
 	void pvDestroy(Node* node) MOMO_NOEXCEPT
@@ -1051,9 +1069,13 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
-		ConstIterator iter = GetLowerBound(key);
-		if (!pvIsGreater(iter, key))
-			return InsertResult(iter, false);
+		ConstIterator iter = pvGetUpperBound(key);
+		if (!TreeTraits::multiKey && iter != GetBegin())
+		{
+			ConstIterator prevIter = std::prev(iter);
+			if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
+				return InsertResult(prevIter, false);
+		}
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
 		return InsertResult(iter, true);
 	}
@@ -1367,13 +1389,11 @@ private:
 	{
 		ConstIterator iter = GetBegin();
 		ConstIterator dstIter = dstTreeSet.GetBegin();
-		const TreeTraits& treeTraits = dstTreeSet.GetTreeTraits();
 		while (iter != GetEnd())
 		{
-			const Key& key = ItemTraits::GetKey(*iter);
-			while (dstIter != dstTreeSet.GetEnd() && treeTraits.IsLess(ItemTraits::GetKey(*dstIter), key))
+			while (dstIter != dstTreeSet.GetEnd() && pvIsOrdered(dstIter, iter))
 				++dstIter;
-			if (dstTreeSet.pvIsGreater(dstIter, key))
+			if (TreeTraits::multiKey || dstTreeSet.pvIsGreater(dstIter, ItemTraits::GetKey(*iter)))
 			{
 				auto itemCreator = [this, &iter] (Item* newItem)
 					{ iter = pvExtract(iter, newItem); };
@@ -1385,13 +1405,6 @@ private:
 				++dstIter;
 			}
 		}
-	}
-
-	bool pvIsLess(const TreeSet& treeSet1, const TreeSet& treeSet2) const
-	{
-		MOMO_ASSERT(!treeSet1.IsEmpty() && !treeSet2.IsEmpty());
-		return GetTreeTraits().IsLess(ItemTraits::GetKey(*std::prev(treeSet1.GetEnd())),
-			ItemTraits::GetKey(*treeSet2.GetBegin()));
 	}
 
 	static Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)

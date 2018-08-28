@@ -28,6 +28,7 @@ struct IsFastComparable : public internal::BoolConstant<MOMO_IS_FAST_COMPARABLE(
 typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
 
 template<typename TKey,
+	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault,
 	bool tUseLinearSearch = IsFastComparable<TKey>::value,
 	typename TKeyArg = void>
@@ -38,6 +39,7 @@ public:
 	typedef TTreeNode TreeNode;
 	typedef TKeyArg KeyArg;
 
+	static const bool multiKey = tMultiKey;
 	static const bool useLinearSearch = tUseLinearSearch;
 
 	template<typename KeyArg>
@@ -65,6 +67,7 @@ public:
 
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
+	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
 class TreeTraitsStd : private TLessFunc
 {
@@ -72,6 +75,8 @@ public:
 	typedef TKey Key;
 	typedef TLessFunc LessFunc;
 	typedef TTreeNode TreeNode;
+
+	static const bool multiKey = tMultiKey;
 
 	static const bool useLinearSearch =
 		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;

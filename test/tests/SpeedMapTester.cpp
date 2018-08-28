@@ -265,7 +265,7 @@ public:
 	{
 		typedef std::allocator<std::pair<const Key, Value>> Allocator;
 		typedef momo::stdish::map<Key, Value, std::less<Key>, Allocator,
-			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, TreeNode>,
+			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, false, TreeNode>,
 			momo::MemManagerStd<Allocator>>> TreeMap;
 		TestTreeMap<TreeMap>(mapTitle);
 	}

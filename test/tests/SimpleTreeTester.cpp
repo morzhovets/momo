@@ -80,7 +80,7 @@ public:
 
 		typedef momo::TreeNode<maxCapacity, capacityStep,
 			momo::MemPoolParams<memPoolBlockCount>, useSwap> TreeNode;
-		typedef momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, TreeNode>> TreeSet;
+		typedef momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, false, TreeNode>> TreeSet;
 
 		static const size_t count = 256;
 		static unsigned char array[count];
