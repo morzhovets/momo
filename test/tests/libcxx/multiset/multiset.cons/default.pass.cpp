@@ -13,40 +13,40 @@
 
 // multiset();
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    std::multiset<int> m;
+    multiset<int> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
 #if TEST_STD_VER >= 11
     {
-    std::multiset<int, std::less<int>, min_allocator<int>> m;
+    multiset<int, std::less<int>, min_allocator<int>> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
     {
     typedef explicit_allocator<int> A;
         {
-        std::multiset<int, std::less<int>, A> m;
+        multiset<int, std::less<int>, A> m;
         assert(m.empty());
         assert(m.begin() == m.end());
         }
         {
         A a;
-        std::multiset<int, std::less<int>, A> m(a);
+        multiset<int, std::less<int>, A> m(a);
         assert(m.empty());
         assert(m.begin() == m.end());
         }
     }
     {
-    std::multiset<int> m = {};
+    multiset<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }

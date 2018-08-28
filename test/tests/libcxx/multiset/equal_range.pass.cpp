@@ -14,18 +14,18 @@
 // pair<iterator,iterator>             equal_range(const key_type& k);
 // pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "private_constructor.hpp"
+//#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
 
-int main()
+void main()
 {
     {
     typedef int V;
-    typedef std::multiset<int> M;
+    typedef multiset<int> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -104,7 +104,7 @@ int main()
 #if TEST_STD_VER >= 11
     {
     typedef int V;
-    typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+    typedef multiset<int, std::less<int>, min_allocator<int>> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -184,7 +184,7 @@ int main()
 #if TEST_STD_VER > 11
     {
     typedef int V;
-    typedef std::multiset<V, std::less<>> M;
+    typedef multiset<V, std::less<>> M;
     typedef std::pair<M::iterator, M::iterator> R;
     V ar[] =
     {
@@ -224,7 +224,7 @@ int main()
 
     {
     typedef PrivateConstructor V;
-    typedef std::multiset<V, std::less<>> M;
+    typedef multiset<V, std::less<>> M;
     typedef std::pair<M::iterator, M::iterator> R;
 
     M m;

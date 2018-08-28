@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     multiset(InputIterator first, InputIterator last);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "min_allocator.h"
+//#include "test_iterators.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef int V;
@@ -36,7 +36,7 @@ int main()
         3,
         3
     };
-    std::multiset<V> m(input_iterator<const int*>(ar),
+    multiset<V> m(input_iterator<const int*>(ar),
                   input_iterator<const int*>(ar+sizeof(ar)/sizeof(ar[0])));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);
@@ -65,7 +65,7 @@ int main()
         3,
         3
     };
-    std::multiset<V, std::less<V>, min_allocator<V>> m(input_iterator<const int*>(ar),
+    multiset<V, std::less<V>, min_allocator<V>> m(input_iterator<const int*>(ar),
                   input_iterator<const int*>(ar+sizeof(ar)/sizeof(ar[0])));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);

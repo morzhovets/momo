@@ -20,13 +20,13 @@
 //     pair<const_iterator,const_iterator> equal_range(const K& x) const;  //
 //     C++14
 
-#include <cassert>
-#include <set>
-#include <utility>
+//#include <cassert>
+//#include <set>
+//#include <utility>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "test_macros.h"
 
 struct Comp {
   using is_transparent = void;
@@ -45,8 +45,8 @@ struct Comp {
   }
 };
 
-int main() {
-  std::multiset<std::pair<int, int>, Comp> s{{2, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2}};
+void main() {
+  multiset<std::pair<int, int>, Comp> s{{2, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2}};
 
   auto er = s.equal_range(1);
   long nels = 0;

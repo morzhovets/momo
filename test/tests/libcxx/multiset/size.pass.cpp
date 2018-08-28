@@ -13,15 +13,15 @@
 
 // size_type size() const;
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::multiset<int> M;
+    typedef multiset<int> M;
     M m;
     assert(m.size() == 0);
     m.insert(M::value_type(2));
@@ -39,7 +39,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+    typedef multiset<int, std::less<int>, min_allocator<int>> M;
     M m;
     assert(m.size() == 0);
     m.insert(M::value_type(2));

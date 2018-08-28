@@ -13,16 +13,16 @@
 
 // void swap(multiset& m);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef int V;
-    typedef std::multiset<int> M;
+    typedef multiset<int> M;
     {
         M m1;
         M m2;
@@ -99,7 +99,7 @@ int main()
 #if TEST_STD_VER >= 11
     {
     typedef int V;
-    typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+    typedef multiset<int, std::less<int>, min_allocator<int>> M;
     {
         M m1;
         M m2;

@@ -13,13 +13,13 @@
 
 // multiset(const multiset& m, const allocator_type& a);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "../../../test_compare.h"
-#include "test_allocator.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
     typedef int V;
     V ar[] =
@@ -36,8 +36,8 @@ int main()
     };
     typedef test_compare<std::less<int> > C;
     typedef test_allocator<V> A;
-    std::multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
-    std::multiset<int, C, A> m(mo, A(3));
+    multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
+    multiset<int, C, A> m(mo, A(3));
     assert(m.get_allocator() == A(3));
     assert(m.key_comp() == C(5));
     assert(m.size() == 9);

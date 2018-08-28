@@ -13,15 +13,15 @@
 
 // iterator insert(const_iterator position, const value_type& v);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-        typedef std::multiset<int> M;
+        typedef multiset<int> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));
@@ -46,7 +46,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));

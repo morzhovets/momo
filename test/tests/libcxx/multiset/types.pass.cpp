@@ -29,15 +29,15 @@
 //     ...
 // };
 
-#include <set>
-#include <type_traits>
+//#include <set>
+//#include <type_traits>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::multiset<int> C;
+    typedef multiset<int> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
@@ -52,7 +52,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multiset<int, std::less<int>, min_allocator<int>> C;
+    typedef multiset<int, std::less<int>, min_allocator<int>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");

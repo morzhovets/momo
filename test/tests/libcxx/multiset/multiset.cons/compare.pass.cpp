@@ -17,15 +17,15 @@
 // key_compare    key_comp() const;
 // value_compare value_comp() const;
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "../../../test_compare.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef test_compare<std::less<int> > C;
-    const std::multiset<int, C> m(C(3));
+    const multiset<int, C> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));

@@ -13,10 +13,10 @@
 
 // iterator insert(const value_type& v);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
 template<class Container>
 void do_insert_cv_test()
@@ -49,12 +49,12 @@ void do_insert_cv_test()
     assert(*r == 3);
 }
 
-int main()
+void main()
 {
-    do_insert_cv_test<std::multiset<int> >();
+    do_insert_cv_test<multiset<int> >();
 #if TEST_STD_VER >= 11
     {
-        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef multiset<int, std::less<int>, min_allocator<int>> M;
         do_insert_cv_test<M>();
     }
 #endif

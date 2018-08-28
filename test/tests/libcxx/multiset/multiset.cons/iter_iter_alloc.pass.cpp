@@ -15,15 +15,15 @@
 //     multiset(InputIterator first, InputIterator last,
 //         const value_compare& comp, const allocator_type& a);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "test_iterators.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
+//#include "test_macros.h"
+//#include "test_iterators.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef int V;
@@ -41,7 +41,7 @@ int main()
     };
     typedef test_compare<std::less<V> > C;
     typedef test_allocator<V> A;
-    std::multiset<V, C, A> m(input_iterator<const V*>(ar),
+    multiset<V, C, A> m(input_iterator<const V*>(ar),
                         input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])),
                         C(5), A(7));
     assert(m.value_comp() == C(5));
@@ -76,7 +76,7 @@ int main()
     typedef test_allocator<V> A;
     typedef test_compare<std::less<int> > C;
     A a;
-    std::multiset<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
+    multiset<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
 
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);

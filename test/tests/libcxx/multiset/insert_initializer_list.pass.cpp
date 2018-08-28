@@ -15,16 +15,16 @@
 
 // void insert(initializer_list<value_type> il);
 
-#include <set>
-#include <cassert>
-#include <cstddef>
+//#include <set>
+//#include <cassert>
+//#include <cstddef>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::multiset<int> C;
+    typedef multiset<int> C;
     typedef C::value_type V;
     C m = {10, 8};
     m.insert({1, 2, 3, 4, 5, 6});
@@ -41,7 +41,7 @@ int main()
     assert(*++i == V(10));
     }
     {
-    typedef std::multiset<int, std::less<int>, min_allocator<int>> C;
+    typedef multiset<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;
     C m = {10, 8};
     m.insert({1, 2, 3, 4, 5, 6});

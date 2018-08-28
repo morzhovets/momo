@@ -16,17 +16,17 @@
 // template <class... Args>
 //   iterator emplace(Args&&... args);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "../../Emplaceable.h"
-#include "DefaultOnly.h"
-#include "min_allocator.h"
+//#include "../../Emplaceable.h"
+//#include "DefaultOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-        typedef std::multiset<DefaultOnly> M;
+        typedef multiset<DefaultOnly> M;
         typedef M::iterator R;
         M m;
         assert(DefaultOnly::count == 0);
@@ -44,7 +44,7 @@ int main()
     }
     assert(DefaultOnly::count == 0);
     {
-        typedef std::multiset<Emplaceable> M;
+        typedef multiset<Emplaceable> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace();
@@ -61,7 +61,7 @@ int main()
         assert(*r == Emplaceable(2, 3.5));
     }
     {
-        typedef std::multiset<int> M;
+        typedef multiset<int> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace(M::value_type(2));
@@ -70,7 +70,7 @@ int main()
         assert(*r == 2);
     }
     {
-        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
         M m;
         R r = m.emplace(M::value_type(2));

@@ -13,16 +13,16 @@
 
 // void swap(multiset& m);
 
-#include <set>
-#include <cassert>
-#include "test_allocator.h"
-#include "../../../test_compare.h"
+//#include <set>
+//#include <cassert>
+//#include "test_allocator.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef int V;
     {
-    typedef std::multiset<int> M;
+    typedef multiset<int> M;
     {
         M m1;
         M m2;

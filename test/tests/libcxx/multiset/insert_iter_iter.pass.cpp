@@ -14,16 +14,16 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "min_allocator.h"
+//#include "test_iterators.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-        typedef std::multiset<int> M;
+        typedef multiset<int> M;
         typedef int V;
         V ar[] =
         {
@@ -53,7 +53,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef int V;
         V ar[] =
         {

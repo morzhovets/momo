@@ -15,9 +15,9 @@
 
 // iterator insert(node_type&&);
 
-#include <set>
-#include <type_traits>
-#include "min_allocator.h"
+//#include <set>
+//#include <type_traits>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -68,10 +68,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::multiset<int> m;
+    multiset<int> m;
     test(m);
-    std::multiset<int, std::less<int>, min_allocator<int>> m2;
+    multiset<int, std::less<int>, min_allocator<int>> m2;
     test(m2);
 }

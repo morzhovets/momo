@@ -15,16 +15,16 @@
 
 // iterator insert(const_iterator position, value_type&& v);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "min_allocator.h"
+//#include "MoveOnly.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-        typedef std::multiset<MoveOnly> M;
+        typedef multiset<MoveOnly> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));
@@ -48,7 +48,7 @@ int main()
         assert(*r == 3);
     }
     {
-        typedef std::multiset<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
+        typedef multiset<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));

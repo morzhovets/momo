@@ -15,21 +15,21 @@
 
 // multiset& operator=(multiset&& s);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "MoveOnly.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<V> A;
-        typedef std::multiset<MoveOnly, C, A> M;
+        typedef multiset<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -68,7 +68,7 @@ int main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<V> A;
-        typedef std::multiset<MoveOnly, C, A> M;
+        typedef multiset<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -107,7 +107,7 @@ int main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef other_allocator<V> A;
-        typedef std::multiset<MoveOnly, C, A> M;
+        typedef multiset<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -146,7 +146,7 @@ int main()
         typedef MoveOnly V;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef min_allocator<V> A;
-        typedef std::multiset<MoveOnly, C, A> M;
+        typedef multiset<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {

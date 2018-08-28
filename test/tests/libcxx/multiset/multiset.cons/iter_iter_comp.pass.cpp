@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     multiset(InputIterator first, InputIterator last, const value_compare& comp);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_iterators.h"
-#include "../../../test_compare.h"
+//#include "test_iterators.h"
+//#include "../../../test_compare.h"
 
-int main()
+void main()
 {
     typedef int V;
     V ar[] =
@@ -36,7 +36,7 @@ int main()
         3
     };
     typedef test_compare<std::less<V> > C;
-    std::multiset<V, C> m(input_iterator<const V*>(ar),
+    multiset<V, C> m(input_iterator<const V*>(ar),
                      input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])), C(5));
     assert(m.value_comp() == C(5));
     assert(m.size() == 9);

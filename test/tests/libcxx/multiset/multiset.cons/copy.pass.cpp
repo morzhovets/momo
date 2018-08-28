@@ -13,14 +13,14 @@
 
 // multiset(const multiset& m);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
+//#include "test_macros.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef int V;
@@ -38,8 +38,8 @@ int main()
         };
         typedef test_compare<std::less<int> > C;
         typedef test_allocator<V> A;
-        std::multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
-        std::multiset<int, C, A> m = mo;
+        multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
+        multiset<int, C, A> m = mo;
         assert(m.get_allocator() == A(7));
         assert(m.key_comp() == C(5));
         assert(m.size() == 9);
@@ -85,8 +85,8 @@ int main()
         };
         typedef test_compare<std::less<int> > C;
         typedef other_allocator<V> A;
-        std::multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
-        std::multiset<int, C, A> m = mo;
+        multiset<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
+        multiset<int, C, A> m = mo;
         assert(m.get_allocator() == A(-2));
         assert(m.key_comp() == C(5));
         assert(m.size() == 9);

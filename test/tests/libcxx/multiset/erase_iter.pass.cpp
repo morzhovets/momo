@@ -13,10 +13,10 @@
 
 // iterator erase(const_iterator position);
 
-#include <set>
-#include <cassert>
+//#include <set>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
 struct TemplateConstructor
 {
@@ -26,10 +26,10 @@ struct TemplateConstructor
 
 bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return false; }
 
-int main()
+void main()
 {
     {
-        typedef std::multiset<int> M;
+        typedef multiset<int> M;
         typedef int V;
         typedef M::iterator I;
         V ar[] =
@@ -108,7 +108,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef int V;
         typedef M::iterator I;
         V ar[] =
@@ -190,7 +190,7 @@ int main()
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
-        typedef std::multiset<T> C;
+        typedef multiset<T> C;
         typedef C::iterator I;
 
         C c;
