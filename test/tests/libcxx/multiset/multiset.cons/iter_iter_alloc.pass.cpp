@@ -79,7 +79,7 @@ void main()
     multiset<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
 
     assert(m.size() == 9);
-    assert(distance(m.begin(), m.end()) == 9);
+    assert(std::distance(m.begin(), m.end()) == 9);
     assert(*std::next(m.begin(), 0) == 1);
     assert(*std::next(m.begin(), 1) == 1);
     assert(*std::next(m.begin(), 2) == 1);

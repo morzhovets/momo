@@ -31,7 +31,9 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
         assert(!t.empty());
         --sz;
         assert(t.value() == *copy);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 

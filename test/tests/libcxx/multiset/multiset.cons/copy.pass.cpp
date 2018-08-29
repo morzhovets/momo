@@ -90,7 +90,7 @@ void main()
         assert(m.get_allocator() == A(-2));
         assert(m.key_comp() == C(5));
         assert(m.size() == 9);
-        assert(distance(m.begin(), m.end()) == 9);
+        assert(std::distance(m.begin(), m.end()) == 9);
         assert(*std::next(m.begin(), 0) == 1);
         assert(*std::next(m.begin(), 1) == 1);
         assert(*std::next(m.begin(), 2) == 1);
@@ -104,7 +104,7 @@ void main()
         assert(mo.get_allocator() == A(7));
         assert(mo.key_comp() == C(5));
         assert(mo.size() == 9);
-        assert(distance(mo.begin(), mo.end()) == 9);
+        assert(std::distance(mo.begin(), mo.end()) == 9);
         assert(*std::next(mo.begin(), 0) == 1);
         assert(*std::next(mo.begin(), 1) == 1);
         assert(*std::next(mo.begin(), 2) == 1);

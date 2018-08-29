@@ -25,6 +25,7 @@
 
 void main()
 {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef multiset<DefaultOnly> M;
         typedef M::iterator R;
@@ -43,6 +44,7 @@ void main()
         assert(DefaultOnly::count == 2);
     }
     assert(DefaultOnly::count == 0);
+#endif
     {
         typedef multiset<Emplaceable> M;
         typedef M::iterator R;
