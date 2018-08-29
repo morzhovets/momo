@@ -32,10 +32,11 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     }
+#endif
     {
     map<int, double> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-#endif
+//#endif
 }

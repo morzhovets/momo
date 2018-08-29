@@ -32,10 +32,11 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     }
+#endif
     {
     set<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-#endif
+//#endif
 }

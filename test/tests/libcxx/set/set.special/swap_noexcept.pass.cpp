@@ -48,10 +48,10 @@ struct some_comp2
     typedef std::true_type propagate_on_container_swap;
 };
 
-#if TEST_STD_VER >= 14
+//#if TEST_STD_VER >= 14
 template <typename T>
 void swap(some_comp2<T>&, some_comp2<T>&) noexcept {}
-#endif
+//#endif
 
 template <class T>
 struct some_alloc
@@ -116,7 +116,7 @@ void main()
         static_assert(!noexcept(swap(c1, c2)), "");
     }
 
-#if TEST_STD_VER >= 14
+//#if TEST_STD_VER >= 14
     { // POCS allocator, throwable swap for comp
     typedef set<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
     C c1, c2;
@@ -143,7 +143,7 @@ void main()
     C c1, c2;
     static_assert( noexcept(swap(c1, c2)), "");
     }
-#endif
+//#endif
 
 #endif
 }
