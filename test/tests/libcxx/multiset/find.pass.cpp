@@ -166,7 +166,7 @@ void main()
         }
     }
 #endif
-#if TEST_STD_VER > 11
+#if _LIBCPP_STD_VER > 11
     {
     typedef int V;
     typedef multiset<V, std::less<>> M;

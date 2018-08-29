@@ -187,7 +187,7 @@ void main()
         assert(i == m.end());
     }
 #endif
-#if TEST_STD_VER >= 14
+//#if TEST_STD_VER >= 14
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
@@ -200,5 +200,5 @@ void main()
         if (it != c.end())
             c.erase(it);
     }
-#endif
+//#endif
 }

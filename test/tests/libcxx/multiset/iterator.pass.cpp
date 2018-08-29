@@ -198,7 +198,7 @@ void main()
                 assert(*i == j);
     }
 #endif
-#if TEST_STD_VER > 11
+//#if TEST_STD_VER > 11
     { // N3644 testing
         typedef multiset<int> C;
         C::iterator ii1{}, ii2{};
@@ -214,5 +214,5 @@ void main()
         assert (!(ii1 != cii ));
         assert (!(cii != ii1 ));
     }
-#endif
+//#endif
 }
