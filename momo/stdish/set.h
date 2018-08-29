@@ -7,11 +7,12 @@
 
   namespace momo::stdish:
     class set
+    class multiset
 
-  This class is similar to `std::set`, but much more efficient in
-  memory usage. The implementation is based on a B-tree.
+  This classes are similar to `std::set` and `std::multiset`, but much
+  more efficient in memory usage. The implementation is based on a B-tree.
 
-  Deviations from the `std::set`:
+  Deviations from `std::set` and `std::multiset`:
   1. Container items must be movable (preferably without exceptions)
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
@@ -376,6 +377,8 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
+		if (TreeTraits::multiKey)
+			return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
 		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
@@ -494,7 +497,7 @@ public:
 
 	size_type erase(const key_type& key)
 	{
-		return mTreeSet.Remove(key) ? 1 : 0;
+		return mTreeSet.Remove(key);
 	}
 
 	node_type extract(const_iterator where)
@@ -554,11 +557,20 @@ private:
 		return treeSet;
 	}
 
-	bool pvCheckHint(const_iterator hint, const key_type& key) const
+	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
-		return (hint == begin() || treeTraits.IsLess(*std::prev(hint), key))
-			&& (hint == end() || treeTraits.IsLess(key, *hint));
+		return TreeTraits::multiKey ? !treeTraits.IsLess(key2, key1)
+			: treeTraits.IsLess(key1, key2);
+	}
+
+	bool pvCheckHint(const_iterator hint, const key_type& key) const
+	{
+		if (hint != begin() && !pvIsOrdered(*std::prev(hint), key))
+			return false;
+		if (hint != end() && !pvIsOrdered(key, *hint))
+			return false;
+		return true;
 	}
 
 	template<typename Iterator>
@@ -577,6 +589,57 @@ private:
 private:
 	TreeSet mTreeSet;
 };
+
+#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
+template<typename TKey,
+	typename TLessFunc = std::less<TKey>,
+	typename TAllocator = std::allocator<TKey>,
+	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessFunc, true>,
+		MemManagerStd<TAllocator>>>
+class multiset : public set<TKey, TLessFunc, TAllocator, TTreeSet>
+{
+private:
+	typedef set<TKey, TLessFunc, TAllocator, TTreeSet> Set;
+
+public:
+	using typename Set::value_type;
+	using typename Set::iterator;
+	using typename Set::node_type;
+
+	typedef iterator insert_return_type;
+
+public:
+	using Set::Set;
+
+	friend void swap(multiset& left, multiset& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+
+	using Set::insert;
+
+	iterator insert(value_type&& value)
+	{
+		return Set::insert(std::move(value)).first;
+	}
+
+	iterator insert(const value_type& value)
+	{
+		return Set::insert(value).first;
+	}
+
+	iterator insert(node_type&& node)
+	{
+		return Set::insert(std::move(node)).position;
+	}
+
+	template<typename... ValueArgs>
+	iterator emplace(ValueArgs&&... valueArgs)
+	{
+		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+	}
+};
+#endif
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename Iterator,
