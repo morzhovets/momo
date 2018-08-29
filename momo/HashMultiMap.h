@@ -330,11 +330,14 @@ namespace internal
 			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
 
 		public:
-			//using BaseCreator::BaseCreator;	// vs2013
+#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
+			using BaseCreator::BaseCreator;
+#else
 			explicit ValueCreator(MemManager& memManager, ValueArg&& valueArg)
 				: BaseCreator(memManager, std::forward<ValueArg>(valueArg))
 			{
 			}
+#endif
 		};
 
 	public:
