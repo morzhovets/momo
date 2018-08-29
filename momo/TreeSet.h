@@ -946,8 +946,8 @@ private:
 		const Key& key1 = ItemTraits::GetKey(*iter1);
 		const Key& key2 = ItemTraits::GetKey(*iter2);
 		const TreeTraits& treeTraits = GetTreeTraits();
-		return TreeTraits::multiKey ? treeTraits.IsLess(key1, key2)
-			: !treeTraits.IsLess(key2, key1);
+		return TreeTraits::multiKey ? !treeTraits.IsLess(key2, key1)
+			: treeTraits.IsLess(key1, key2);
 	}
 
 	bool pvIsOrdered(const TreeSet& treeSet1, const TreeSet& treeSet2) const

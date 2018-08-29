@@ -633,16 +633,15 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Iterator iter = GetUpperBound(static_cast<const Key&>(key));
-		if (!TreeTraits::multiKey && iter != GetBegin())
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
-			Iterator prevIter = std::prev(iter);
-			if (!GetTreeTraits().IsLess(prevIter->key, static_cast<const Key&>(key)))
-				return InsertResult(prevIter, false);
-		}
-		iter = pvAdd<false>(iter, std::forward<RKey>(key),
-			std::forward<ValueCreator>(valueCreator));
-		return InsertResult(iter, true);
+			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
+				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
+				newItem->GetValuePtr());
+		};
+		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
+			static_cast<const Key&>(key), itemCreator);
+		return InsertResult(IteratorProxy(res.iterator), res.inserted);
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
