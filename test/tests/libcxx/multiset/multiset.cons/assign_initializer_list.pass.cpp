@@ -37,6 +37,7 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef multiset<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;
@@ -52,4 +53,5 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     }
+#endif
 }

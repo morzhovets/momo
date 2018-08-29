@@ -115,7 +115,8 @@ void main()
             for (int k = 0; k < 3; ++k, ++i)
                 assert(*i == j);
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         V ar[] =

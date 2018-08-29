@@ -51,10 +51,11 @@ void main()
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_set = multiset<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
+#endif
 }

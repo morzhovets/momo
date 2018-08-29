@@ -41,7 +41,8 @@ void main()
         m.clear();
         assert(m.size() == 0);
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef int V;

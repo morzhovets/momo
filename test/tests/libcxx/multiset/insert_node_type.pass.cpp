@@ -72,6 +72,8 @@ void main()
 {
     multiset<int> m;
     test(m);
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     multiset<int, std::less<int>, min_allocator<int>> m2;
     test(m2);
+#endif
 }

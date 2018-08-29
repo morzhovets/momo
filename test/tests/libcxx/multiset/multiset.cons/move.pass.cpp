@@ -77,6 +77,7 @@ void main()
         assert(mo.size() == 0);
         assert(distance(mo.begin(), mo.end()) == 0);
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         V ar[] =
@@ -114,4 +115,5 @@ void main()
         assert(mo.size() == 0);
         assert(distance(mo.begin(), mo.end()) == 0);
     }
+#endif
 }

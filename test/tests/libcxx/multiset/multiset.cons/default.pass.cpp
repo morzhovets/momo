@@ -25,7 +25,8 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     multiset<int, std::less<int>, min_allocator<int>> m;
     assert(m.empty());
@@ -45,10 +46,11 @@ void main()
         assert(m.begin() == m.end());
         }
     }
+#endif
     {
     multiset<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-#endif
+//#endif
 }

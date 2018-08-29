@@ -69,6 +69,7 @@ void main()
         assert(m.size() == 1);
         assert(*r == 2);
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef multiset<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
@@ -78,4 +79,5 @@ void main()
         assert(m.size() == 1);
         assert(*r == 2);
     }
+#endif
 }
