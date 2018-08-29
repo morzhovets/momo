@@ -28,7 +28,7 @@ void main()
       typedef multiset<int, std::less<int>, A> C;
       C c;
       assert(c.max_size() <= 10);
-      LIBCPP_ASSERT(c.max_size() == 10);
+      //LIBCPP_ASSERT(c.max_size() == 10);
     }
     {
       typedef limited_allocator<int, (size_t)-1> A;
@@ -37,7 +37,7 @@ void main()
           std::numeric_limits<C::difference_type>::max();
       C c;
       assert(c.max_size() <= max_dist);
-      LIBCPP_ASSERT(c.max_size() == max_dist);
+      //LIBCPP_ASSERT(c.max_size() == max_dist);
     }
     {
       typedef multiset<char> C;
