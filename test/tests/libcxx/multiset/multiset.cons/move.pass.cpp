@@ -35,8 +35,10 @@ void main()
         assert(m.size() == 0);
         assert(std::distance(m.begin(), m.end()) == 0);
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(mo.get_allocator() == A(test_alloc_base::moved_value));
         assert(mo.key_comp() == C(5));
+#endif
         assert(mo.size() == 0);
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }
@@ -72,8 +74,10 @@ void main()
         assert(*std::next(m.begin(), 7) == 3);
         assert(*std::next(m.begin(), 8) == 3);
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(mo.get_allocator() == A(test_alloc_base::moved_value));
         assert(mo.key_comp() == C(5));
+#endif
         assert(mo.size() == 0);
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }

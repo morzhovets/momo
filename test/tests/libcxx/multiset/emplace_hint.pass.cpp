@@ -58,7 +58,11 @@ void main()
         assert(m.size() == 2);
         assert(*r == Emplaceable(2, 3.5));
         r = m.emplace_hint(m.cbegin(), 2, 3.5);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(r == next(m.begin()));
+#else
+        assert(r == next(next(m.begin())));
+#endif
         assert(m.size() == 3);
         assert(*r == Emplaceable(2, 3.5));
     }
