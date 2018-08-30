@@ -127,9 +127,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>
-				::propagate_on_container_move_assignment::value;
-			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
+			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mArray = pvCreateArray(std::move(right), alloc);
 		}
 		return *this;
@@ -139,9 +139,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>
-				::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = propagate ? right.get_allocator() : get_allocator();
+			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
+			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mArray = Array(right.mArray, MemManager(alloc));
 		}
 		return *this;
