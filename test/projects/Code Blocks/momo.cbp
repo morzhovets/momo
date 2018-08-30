@@ -198,10 +198,12 @@
 		<Unit filename="../../tests/LibcxxHashSetTesterOpenN1.cpp" />
 		<Unit filename="../../tests/LibcxxHashSetTesterUnlimP.cpp" />
 		<Unit filename="../../tests/LibcxxMapTests.h" />
+		<Unit filename="../../tests/LibcxxMultiSetTests.h" />
 		<Unit filename="../../tests/LibcxxSetTests.h" />
 		<Unit filename="../../tests/LibcxxTester.cpp" />
 		<Unit filename="../../tests/LibcxxTester.h" />
 		<Unit filename="../../tests/LibcxxTreeMapTester.cpp" />
+		<Unit filename="../../tests/LibcxxTreeMultiSetTester.cpp" />
 		<Unit filename="../../tests/LibcxxTreeSetTester.cpp" />
 		<Unit filename="../../tests/LibcxxUnorderedMapTests.h" />
 		<Unit filename="../../tests/LibcxxUnorderedMultiMapTests.h" />
