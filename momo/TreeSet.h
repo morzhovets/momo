@@ -829,8 +829,24 @@ public:
 		return resIter;
 	}
 
+	ConstIterator Remove(ConstIterator begin, ConstIterator end)
+	{
+		if (begin == GetBegin() && end == GetEnd())
+		{
+			Clear();
+			return GetEnd();
+		}
+		// basic exception safety
+		size_t count = std::distance(begin, end);
+		ConstIterator iter = begin;
+		for (size_t i = 0; i < count; ++i)
+			iter = Remove(iter);
+		return iter;
+	}
+
 	size_t Remove(const Key& key)
 	{
+		// basic exception safety
 		size_t count = 0;
 		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); iter = Remove(iter))
 			++count;

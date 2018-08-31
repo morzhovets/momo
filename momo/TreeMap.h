@@ -584,6 +584,12 @@ public:
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
+	Iterator Remove(ConstIterator begin, ConstIterator end)
+	{
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetBaseIterator(begin),
+			ConstIteratorProxy::GetBaseIterator(end)));
+	}
+
 	size_t Remove(const Key& key)
 	{
 		return mTreeSet.Remove(key);

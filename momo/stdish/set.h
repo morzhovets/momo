@@ -483,16 +483,7 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == begin() && last == end())
-		{
-			clear();
-			return end();
-		}
-		size_t count = std::distance(first, last);
-		iterator iter = first;
-		for (size_t i = 0; i < count; ++i)
-			iter = erase(iter);
-		return iter;
+		return mTreeSet.Remove(first, last);
 	}
 
 	size_type erase(const key_type& key)

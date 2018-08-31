@@ -627,21 +627,8 @@ namespace internal
 
 		iterator erase(const_iterator first, const_iterator last)
 		{
-			if (first == begin() && last == end())
-			{
-				clear();
-				return end();
-			}
-			if (first == last)
-			{
-				return IteratorProxy(mTreeMap.MakeMutableIterator(
-					ConstIteratorProxy::GetBaseIterator(first)));
-			}
-			size_t count = std::distance(first, last);
-			iterator iter = erase(first);
-			for (size_t i = 1; i < count; ++i)
-				iter = erase(iter);
-			return iter;
+			return IteratorProxy(mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(first),
+				ConstIteratorProxy::GetBaseIterator(last)));
 		}
 
 		size_type erase(const key_type& key)
