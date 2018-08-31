@@ -49,10 +49,10 @@ struct some_comp2
     bool operator()(const T&, const T&) const { return false; }
 };
 
-#if TEST_STD_VER >= 14
+//#if TEST_STD_VER >= 14
 template <typename T>
 void swap(some_comp2<T>&, some_comp2<T>&) noexcept {}
-#endif
+//#endif
 
 template <class T>
 struct some_alloc
@@ -114,7 +114,7 @@ void main()
         static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 
-#if TEST_STD_VER >= 14
+//#if TEST_STD_VER >= 14
     { // POCS allocator, throwable swap for comp
     typedef multimap<MoveOnly, MoveOnly, some_comp <MoveOnly>, some_alloc <V>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
@@ -137,5 +137,5 @@ void main()
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
-#endif
+//#endif
 }
