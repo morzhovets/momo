@@ -15,9 +15,9 @@
 
 // node_type extract(const_iterator);
 
-#include <map>
-#include "min_allocator.h"
-#include "Counter.h"
+//#include <map>
+//#include "min_allocator.h"
+//#include "Counter.h"
 
 template <class Container>
 void test(Container& c)
@@ -41,16 +41,16 @@ void test(Container& c)
     assert(c.size() == 0);
 }
 
-int main()
+void main()
 {
     {
-        using map_type = std::multimap<int, int>;
+        using map_type = multimap<int, int>;
         map_type m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         test(m);
     }
 
     {
-        std::multimap<Counter<int>, Counter<int>> m =
+        multimap<Counter<int>, Counter<int>> m =
             {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         assert(Counter_base::gConstructed == 12);
         test(m);
@@ -59,7 +59,7 @@ int main()
 
     {
         using min_alloc_map =
-            std::multimap<int, int, std::less<int>,
+            multimap<int, int, std::less<int>,
                      min_allocator<std::pair<const int, int>>>;
         min_alloc_map m = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}};
         test(m);

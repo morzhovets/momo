@@ -15,13 +15,13 @@
 //     multimap(InputIterator first, InputIterator last,
 //              const key_compare& comp);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;
@@ -38,7 +38,7 @@ int main()
         V(3, 2),
     };
     typedef test_compare<std::less<int> > C;
-    std::multimap<int, double, C> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
+    multimap<int, double, C> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
     assert(m.key_comp() == C(5));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);
@@ -68,7 +68,7 @@ int main()
         V(3, 2),
     };
     typedef test_compare<std::less<int> > C;
-    std::multimap<int, double, C, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
+    multimap<int, double, C, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5));
     assert(m.key_comp() == C(5));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);

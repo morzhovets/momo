@@ -16,17 +16,17 @@
 // template <class P>
 //   iterator insert(P&& p);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "min_allocator.h"
-#include "test_macros.h"
+//#include "MoveOnly.h"
+//#include "min_allocator.h"
+//#include "test_macros.h"
 
 template <class Container>
 void do_insert_rv_test()
 {
-    typedef std::multimap<int, MoveOnly> M;
+    typedef multimap<int, MoveOnly> M;
     typedef typename M::iterator R;
     typedef typename M::value_type VT;
     M m;
@@ -55,15 +55,15 @@ void do_insert_rv_test()
     assert(r->second == 3);
 }
 
-int main()
+void main()
 {
-    do_insert_rv_test<std::multimap<int, MoveOnly>>();
+    do_insert_rv_test<multimap<int, MoveOnly>>();
     {
-        typedef std::multimap<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
+        typedef multimap<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
         do_insert_rv_test<M>();
     }
     {
-        typedef std::multimap<int, MoveOnly> M;
+        typedef multimap<int, MoveOnly> M;
         typedef M::iterator R;
         M m;
         R r = m.insert({2, MoveOnly(2)});

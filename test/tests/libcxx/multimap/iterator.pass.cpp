@@ -26,14 +26,14 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-#include <map>
-#include <cassert>
-#include <cstddef>
+//#include <map>
+//#include <cassert>
+//#include <cstddef>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::pair<const int, double> V;
@@ -64,12 +64,12 @@ int main()
             V(8, 1.5),
             V(8, 2)
         };
-        std::multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
-        std::multimap<int, double>::iterator i;
+        multimap<int, double>::iterator i;
         i = m.begin();
-        std::multimap<int, double>::const_iterator k = i;
+        multimap<int, double>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= 8; ++j)
             for (double d = 1; d <= 2; d += .5, ++i)
@@ -109,12 +109,12 @@ int main()
             V(8, 1.5),
             V(8, 2)
         };
-        const std::multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
-        std::multimap<int, double>::const_iterator i;
+        multimap<int, double>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= 8; ++j)
             for (double d = 1; d <= 2; d += .5, ++i)
@@ -153,12 +153,12 @@ int main()
             V(8, 1.5),
             V(8, 2)
         };
-        std::multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
-        std::multimap<int, double, std::less<int>, min_allocator<V>>::iterator i;
+        multimap<int, double, std::less<int>, min_allocator<V>>::iterator i;
         i = m.begin();
-        std::multimap<int, double, std::less<int>, min_allocator<V>>::const_iterator k = i;
+        multimap<int, double, std::less<int>, min_allocator<V>>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= 8; ++j)
             for (double d = 1; d <= 2; d += .5, ++i)
@@ -198,12 +198,12 @@ int main()
             V(8, 1.5),
             V(8, 2)
         };
-        const std::multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
-        std::multimap<int, double, std::less<int>, min_allocator<V>>::const_iterator i;
+        multimap<int, double, std::less<int>, min_allocator<V>>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= 8; ++j)
             for (double d = 1; d <= 2; d += .5, ++i)
@@ -215,7 +215,7 @@ int main()
 #endif
 #if TEST_STD_VER > 11
     { // N3644 testing
-        typedef std::multimap<int, double> C;
+        typedef multimap<int, double> C;
         C::iterator ii1{}, ii2{};
         C::iterator ii4 = ii1;
         C::const_iterator cii{};

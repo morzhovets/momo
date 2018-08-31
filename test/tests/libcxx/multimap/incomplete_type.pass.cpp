@@ -9,13 +9,13 @@
 
 // <map>
 
-// Check that std::multimap and its iterators can be instantiated with an incomplete
+// Check that multimap and its iterators can be instantiated with an incomplete
 // type.
 
-#include <map>
+//#include <map>
 
 struct A {
-    typedef std::multimap<A, A> Map;
+    typedef multimap<A, A> Map;
     int data;
     Map m;
     Map::iterator it;
@@ -24,6 +24,6 @@ struct A {
 
 inline bool operator==(A const& L, A const& R) { return &L == &R; }
 inline bool operator<(A const& L, A const& R)  { return L.data < R.data; }
-int main() {
+void main() {
     A a;
 }

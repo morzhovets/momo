@@ -13,40 +13,40 @@
 
 // multimap();
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    std::multimap<int, double> m;
+    multimap<int, double> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
 #if TEST_STD_VER >= 11
     {
-    std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> m;
+    multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
     {
     typedef explicit_allocator<std::pair<const int, double>> A;
         {
-        std::multimap<int, double, std::less<int>, A> m;
+        multimap<int, double, std::less<int>, A> m;
         assert(m.empty());
         assert(m.begin() == m.end());
         }
         {
         A a;
-        std::multimap<int, double, std::less<int>, A> m(a);
+        multimap<int, double, std::less<int>, A> m(a);
         assert(m.empty());
         assert(m.begin() == m.end());
         }
     }
     {
-    std::multimap<int, double> m = {};
+    multimap<int, double> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }

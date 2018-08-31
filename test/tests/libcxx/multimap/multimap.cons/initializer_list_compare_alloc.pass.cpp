@@ -15,18 +15,18 @@
 
 // multimap(initializer_list<value_type> il, const key_compare& comp, const allocator_type& a);
 
-#include <map>
-#include <cassert>
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include <map>
+//#include <cassert>
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef test_allocator<std::pair<const int, double> > A;
-    typedef std::multimap<int, double, Cmp, A> C;
+    typedef multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {
@@ -60,7 +60,7 @@ int main()
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef min_allocator<std::pair<const int, double> > A;
-    typedef std::multimap<int, double, Cmp, A> C;
+    typedef multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {
@@ -95,7 +95,7 @@ int main()
     typedef test_compare<std::less<int> > C;
     typedef std::pair<const int, double> V;
     typedef min_allocator<V> A;
-    typedef std::multimap<int, double, C, A> M;
+    typedef multimap<int, double, C, A> M;
     A a;
     M m ({ {1, 1},
            {1, 1.5},
@@ -125,7 +125,7 @@ int main()
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef explicit_allocator<std::pair<const int, double> > A;
-    typedef std::multimap<int, double, Cmp, A> C;
+    typedef multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {

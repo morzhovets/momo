@@ -14,13 +14,13 @@
 // template <class InputIterator>
 //     multimap(InputIterator first, InputIterator last);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::pair<const int, double> V;
@@ -36,7 +36,7 @@ int main()
         V(3, 1.5),
         V(3, 2),
     };
-    std::multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    multimap<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);
     assert(*m.begin() == V(1, 1));
@@ -64,7 +64,7 @@ int main()
         V(3, 1.5),
         V(3, 2),
     };
-    std::multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    multimap<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);
     assert(*m.begin() == V(1, 1));
@@ -94,7 +94,7 @@ int main()
     };
     typedef min_allocator<std::pair<const int, double>> A;
     A a;
-    std::multimap<int, double, std::less<int>, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
+    multimap<int, double, std::less<int>, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
     assert(m.size() == 9);
     assert(distance(m.begin(), m.end()) == 9);
     assert(*m.begin() == V(1, 1));

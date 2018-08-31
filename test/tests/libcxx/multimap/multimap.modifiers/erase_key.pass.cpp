@@ -13,15 +13,15 @@
 
 // size_type erase(const key_type& k);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-        typedef std::multimap<int, double> M;
+        typedef multimap<int, double> M;
         typedef std::pair<int, double> P;
         typedef M::size_type I;
         P ar[] =
@@ -86,7 +86,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef std::pair<int, double> P;
         typedef M::size_type I;
         P ar[] =

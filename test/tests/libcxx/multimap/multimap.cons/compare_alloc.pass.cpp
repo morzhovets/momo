@@ -13,19 +13,19 @@
 
 // multimap(const key_compare& comp, const allocator_type& a);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef test_compare<std::less<int> > C;
     typedef test_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(C(4), A(5));
+    multimap<int, double, C, A> m(C(4), A(5));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(4));
@@ -35,7 +35,7 @@ int main()
     {
     typedef test_compare<std::less<int> > C;
     typedef min_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(C(4), A());
+    multimap<int, double, C, A> m(C(4), A());
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(4));
@@ -44,7 +44,7 @@ int main()
     {
     typedef test_compare<std::less<int> > C;
     typedef explicit_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(C(4), A{});
+    multimap<int, double, C, A> m(C(4), A{});
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(4));

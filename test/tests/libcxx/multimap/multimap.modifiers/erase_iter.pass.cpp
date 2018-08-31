@@ -13,10 +13,10 @@
 
 // iterator erase(const_iterator position);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
 struct TemplateConstructor
 {
@@ -26,10 +26,10 @@ struct TemplateConstructor
 
 bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return false; }
 
-int main()
+void main()
 {
     {
-        typedef std::multimap<int, double> M;
+        typedef multimap<int, double> M;
         typedef std::pair<int, double> P;
         typedef M::iterator I;
         P ar[] =
@@ -157,7 +157,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef std::pair<int, double> P;
         typedef M::iterator I;
         P ar[] =
@@ -288,7 +288,7 @@ int main()
     {
     //  This is LWG #2059
         typedef TemplateConstructor T;
-        typedef std::multimap<T, int> C;
+        typedef multimap<T, int> C;
         typedef C::iterator I;
 
         C c;

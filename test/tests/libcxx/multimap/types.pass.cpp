@@ -29,15 +29,15 @@
 //     ...
 // };
 
-#include <map>
-#include <type_traits>
+//#include <map>
+//#include <type_traits>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::multimap<int, double> C;
+    typedef multimap<int, double> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");
@@ -52,7 +52,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
+    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");

@@ -13,15 +13,15 @@
 
 // bool empty() const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "min_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
-    typedef std::multimap<int, double> M;
+    typedef multimap<int, double> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1, 1.5));
@@ -31,7 +31,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1, 1.5));

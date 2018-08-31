@@ -15,8 +15,8 @@
 
 // iterator insert(const_iterator hint, node_type&&);
 
-#include <map>
-#include "min_allocator.h"
+//#include <map>
+//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -55,10 +55,10 @@ void test(Container& c)
     }
 }
 
-int main()
+void main()
 {
-    std::multimap<int, int> m;
+    multimap<int, int> m;
     test(m);
-    std::multimap<int, int, std::less<int>, min_allocator<std::pair<const int, int>>> m2;
+    multimap<int, int, std::less<int>, min_allocator<std::pair<const int, int>>> m2;
     test(m2);
 }

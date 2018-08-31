@@ -15,9 +15,9 @@
 
 // node_type extract(key_type const&);
 
-#include <map>
-#include "min_allocator.h"
-#include "Counter.h"
+//#include <map>
+//#include "min_allocator.h"
+//#include "Counter.h"
 
 template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
@@ -46,16 +46,16 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
     }
 }
 
-int main()
+void main()
 {
     {
-        std::multimap<int, int> m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
+        multimap<int, int> m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
 
     {
-        std::multimap<Counter<int>, Counter<int>> m =
+        multimap<Counter<int>, Counter<int>> m =
             {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         {
             Counter<int> keys[] = {1, 2, 3, 4, 5, 6};
@@ -67,7 +67,7 @@ int main()
 
     {
         using min_alloc_map =
-            std::multimap<int, int, std::less<int>,
+            multimap<int, int, std::less<int>,
                           min_allocator<std::pair<const int, int>>>;
         min_alloc_map m = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}};
         int keys[] = {1, 2, 3, 4, 5, 6};

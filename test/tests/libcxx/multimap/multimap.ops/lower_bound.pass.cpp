@@ -14,19 +14,19 @@
 //       iterator lower_bound(const key_type& k);
 // const_iterator lower_bound(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "is_transparent.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "is_transparent.h"
 
-int main()
+void main()
 {
     typedef std::pair<const int, double> V;
     {
-    typedef std::multimap<int, double> M;
+    typedef multimap<int, double> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -90,7 +90,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -155,7 +155,7 @@ int main()
 #endif
 #if TEST_STD_VER > 11
     {
-    typedef std::multimap<int, double, std::less<>> M;
+    typedef multimap<int, double, std::less<>> M;
     typedef M::iterator R;
     V ar[] =
     {
@@ -203,7 +203,7 @@ int main()
 
     {
     typedef PrivateConstructor PC;
-    typedef std::multimap<PC, double, std::less<>> M;
+    typedef multimap<PC, double, std::less<>> M;
     typedef M::iterator R;
 
     M m;

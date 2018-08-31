@@ -13,11 +13,11 @@
 
 // iterator insert(const_iterator position, const value_type& v);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
 template <class Container>
 void do_insert_hint_test()
@@ -55,12 +55,12 @@ void do_insert_hint_test()
     assert(r->second == 4.5);
 }
 
-int main()
+void main()
 {
-    do_insert_hint_test<std::multimap<int, double> >();
+    do_insert_hint_test<multimap<int, double> >();
 #if TEST_STD_VER >= 11
     {
-        typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         do_insert_hint_test<M>();
     }
 #endif

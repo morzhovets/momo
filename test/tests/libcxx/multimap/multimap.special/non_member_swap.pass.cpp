@@ -15,17 +15,17 @@
 //   void
 //   swap(multimap<Key, T, Compare, Allocator>& x, multimap<Key, T, Compare, Allocator>& y);
 
-#include <map>
-#include <cassert>
-#include "test_allocator.h"
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include <map>
+//#include <cassert>
+//#include "test_allocator.h"
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     typedef std::pair<const int, double> V;
     {
-    typedef std::multimap<int, double> M;
+    typedef multimap<int, double> M;
     {
         M m1;
         M m2;
@@ -102,7 +102,7 @@ int main()
     {
         typedef test_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::multimap<int, double, C, A> M;
+        typedef multimap<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),
@@ -136,7 +136,7 @@ int main()
     {
         typedef other_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::multimap<int, double, C, A> M;
+        typedef multimap<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),
@@ -169,7 +169,7 @@ int main()
     }
 #if TEST_STD_VER >= 11
     {
-    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     {
         M m1;
         M m2;
@@ -246,7 +246,7 @@ int main()
     {
         typedef min_allocator<V> A;
         typedef test_compare<std::less<int> > C;
-        typedef std::multimap<int, double, C, A> M;
+        typedef multimap<int, double, C, A> M;
         V ar1[] =
         {
             V(1, 1),

@@ -13,18 +13,18 @@
 
 // explicit multimap(const allocator_type& a);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef std::less<int> C;
     typedef test_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(A(5));
+    multimap<int, double, C, A> m(A(5));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.get_allocator() == A(5));
@@ -33,7 +33,7 @@ int main()
     {
     typedef std::less<int> C;
     typedef min_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(A{});
+    multimap<int, double, C, A> m(A{});
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.get_allocator() == A());
@@ -41,7 +41,7 @@ int main()
     {
     typedef std::less<int> C;
     typedef explicit_allocator<std::pair<const int, double> > A;
-    std::multimap<int, double, C, A> m(A{});
+    multimap<int, double, C, A> m(A{});
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.get_allocator() == A{});

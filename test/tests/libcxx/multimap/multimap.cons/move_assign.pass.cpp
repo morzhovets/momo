@@ -15,22 +15,22 @@
 
 // multimap& operator=(multimap&& m);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "MoveOnly.h"
-#include "../../../test_compare.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "MoveOnly.h"
+//#include "../../../test_compare.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<VC> A;
-        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -70,7 +70,7 @@ int main()
         typedef std::pair<const MoveOnly, MoveOnly> VC;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef test_allocator<VC> A;
-        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -110,7 +110,7 @@ int main()
         typedef std::pair<const MoveOnly, MoveOnly> VC;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef other_allocator<VC> A;
-        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -150,7 +150,7 @@ int main()
         typedef std::pair<const MoveOnly, MoveOnly> VC;
         typedef test_compare<std::less<MoveOnly> > C;
         typedef min_allocator<VC> A;
-        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {

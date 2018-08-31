@@ -15,16 +15,16 @@
 
 // multimap(initializer_list<value_type> il, const key_compare& comp = key_compare());
 
-#include <map>
-#include <cassert>
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+//#include <map>
+//#include <cassert>
+//#include "../../../test_compare.h"
+//#include "min_allocator.h"
 
-int main()
+void main()
 {
     {
     typedef test_compare<std::less<int> > Cmp;
-    typedef std::multimap<int, double, Cmp> C;
+    typedef multimap<int, double, Cmp> C;
     typedef C::value_type V;
     C m(
            {
@@ -56,7 +56,7 @@ int main()
     }
     {
     typedef test_compare<std::less<int> > Cmp;
-    typedef std::multimap<int, double, Cmp, min_allocator<std::pair<const int, double>>> C;
+    typedef multimap<int, double, Cmp, min_allocator<std::pair<const int, double>>> C;
     typedef C::value_type V;
     C m(
            {

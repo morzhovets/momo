@@ -16,13 +16,13 @@
 // template<typename K>
 //   size_type count(const K& x) const;        // C++14
 
-#include <cassert>
-#include <map>
-#include <utility>
+//#include <cassert>
+//#include <map>
+//#include <utility>
 
-#include "min_allocator.h"
-#include "private_constructor.hpp"
-#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "private_constructor.hpp"
+//#include "test_macros.h"
 
 struct Comp {
   using is_transparent = void;
@@ -41,8 +41,8 @@ struct Comp {
   }
 };
 
-int main() {
-  std::multimap<std::pair<int, int>, int, Comp> s{
+void main() {
+  multimap<std::pair<int, int>, int, Comp> s{
       {{2, 1}, 1}, {{1, 1}, 2}, {{1, 1}, 3}, {{1, 1}, 4}, {{2, 2}, 5}};
 
   auto cnt = s.count(1);

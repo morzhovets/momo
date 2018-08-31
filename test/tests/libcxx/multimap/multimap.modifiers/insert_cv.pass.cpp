@@ -13,11 +13,11 @@
 
 // iterator insert(const value_type& v);
 
-#include <map>
-#include <cassert>
+//#include <map>
+//#include <cassert>
 
-#include "test_macros.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "min_allocator.h"
 
 template <class Container>
 void do_insert_test() {
@@ -54,15 +54,15 @@ void do_insert_test() {
     assert(r->second == 3.5);
 }
 
-int main()
+void main()
 {
     {
-        typedef std::multimap<int, double> Container;
+        typedef multimap<int, double> Container;
         do_insert_test<Container>();
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> Container;
+        typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> Container;
         do_insert_test<Container>();
     }
 #endif
