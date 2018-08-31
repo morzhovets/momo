@@ -440,6 +440,8 @@ namespace internal
 		std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 		{
 			const_iterator iter = lower_bound(key);
+			if (TreeTraits::multiKey)
+				return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
 			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 				return std::pair<const_iterator, const_iterator>(iter, iter);
 			return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
@@ -448,6 +450,8 @@ namespace internal
 		std::pair<iterator, iterator> equal_range(const key_type& key)
 		{
 			iterator iter = lower_bound(key);
+			if (TreeTraits::multiKey)
+				return std::pair<iterator, iterator>(iter, upper_bound(key));
 			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 				return std::pair<iterator, iterator>(iter, iter);
 			return std::pair<iterator, iterator>(iter, std::next(iter));
@@ -466,7 +470,8 @@ namespace internal
 		}
 
 		//template<typename Value>
-		//typename std::enable_if<std::is_constructible<value_type, Value>::value, std::pair<iterator, bool>>::type
+		//typename std::enable_if<std::is_constructible<value_type, Value>::value,
+		//	std::pair<iterator, bool>>::type
 		//insert(Value&& value)
 
 		//template<typename Value>
@@ -712,23 +717,33 @@ namespace internal
 			return treeMap;
 		}
 
+		bool pvIsOrdered(const key_type& key1, const key_type& key2) const
+		{
+			const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
+			return TreeTraits::multiKey ? !treeTraits.IsLess(key2, key1)
+				: treeTraits.IsLess(key1, key2);
+		}
+
 		std::pair<iterator, bool> pvFind(std::nullptr_t /*hint*/, const key_type& key)
 		{
-			iterator resHint = lower_bound(key);
-			bool isNewKey = (resHint == end() || mTreeMap.GetTreeTraits().IsLess(key, resHint->first));
-			return std::pair<iterator, bool>(resHint, isNewKey);
+			iterator iter = upper_bound(key);
+			if (!TreeTraits::multiKey && iter != begin())
+			{
+				iterator prevIter = std::prev(iter);
+				if (!mTreeMap.GetTreeTraits().IsLess(prevIter->first, key))
+					return std::pair<iterator, bool>(prevIter, false);
+			}
+			return std::pair<iterator, bool>(iter, true);
 		}
 
 		std::pair<iterator, bool> pvFind(const_iterator hint, const key_type& key)
 		{
-			const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
-			if (hint != begin() && !treeTraits.IsLess(std::prev(hint)->first, key))
+			if (hint != begin() && !pvIsOrdered(std::prev(hint)->first, key))
 				return pvFind(nullptr, key);
-			if (hint != end() && !treeTraits.IsLess(key, hint->first))
+			if (hint != end() && !pvIsOrdered(key, hint->first))
 				return pvFind(nullptr, key);
-			iterator resHint = IteratorProxy(mTreeMap.MakeMutableIterator(
-				ConstIteratorProxy::GetBaseIterator(hint)));
-			return std::pair<iterator, bool>(resHint, true);
+			return std::pair<iterator, bool>(IteratorProxy(mTreeMap.MakeMutableIterator(
+				ConstIteratorProxy::GetBaseIterator(hint))), true);
 		}
 
 		template<typename Hint, typename... KeyArgs, typename MappedCreator>
@@ -736,7 +751,8 @@ namespace internal
 			MappedCreator&& mappedCreator)
 		{
 			MemManager& memManager = mTreeMap.GetMemManager();
-			typedef momo::internal::ObjectBuffer<key_type, TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
+			typedef momo::internal::ObjectBuffer<key_type,
+				TreeMap::KeyValueTraits::keyAlignment> KeyBuffer;
 			typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 			typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 			KeyBuffer keyBuffer;
@@ -832,6 +848,9 @@ public:
 #ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
 	using BaseMap::BaseMap;
 #else
+	using typename BaseMap::allocator_type;
+	using typename BaseMap::key_compare;
+
 	map()
 	{
 	}
@@ -984,6 +1003,75 @@ private:
 		return res;
 	}
 };
+
+#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
+template<typename TKey, typename TMapped,
+	typename TLessFunc = std::less<TKey>,
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
+	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessFunc, true>,
+		MemManagerStd<TAllocator>>>
+class multimap : public internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap>
+{
+private:
+	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> BaseMap;
+
+public:
+	using typename BaseMap::key_type;
+	using typename BaseMap::mapped_type;
+	using typename BaseMap::value_type;
+	using typename BaseMap::iterator;
+	using typename BaseMap::node_type;
+
+	typedef iterator insert_return_type;
+
+public:
+	using BaseMap::BaseMap;
+
+	friend void swap(multimap& left, multimap& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+
+	using BaseMap::insert;
+
+	iterator insert(const value_type& value)
+	{
+		return BaseMap::insert(value).first;
+	}
+
+	iterator insert(value_type&& value)
+	{
+		return BaseMap::insert(std::move(value)).first;
+	}
+
+	template<typename First, typename Second>
+	typename std::enable_if<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
+	insert(const std::pair<First, Second>& value)
+	{
+		return BaseMap::insert(value).first;
+	}
+
+	template<typename First, typename Second>
+	typename std::enable_if<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
+	insert(std::pair<First, Second>&& value)
+	{
+		return BaseMap::insert(std::move(value)).first;
+	}
+
+	iterator insert(node_type&& node)
+	{
+		return BaseMap::insert(std::move(node)).position;
+	}
+
+	template<typename... ValueArgs>
+	iterator emplace(ValueArgs&&... valueArgs)
+	{
+		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+	}
+};
+#endif
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename Iterator,
