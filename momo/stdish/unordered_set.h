@@ -615,52 +615,75 @@ private:
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
-template<typename Iterator,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
-unordered_set(Iterator, Iterator, Allocator = Allocator())
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type,
-		HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>;
 
-template<typename Iterator,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
-unordered_set(Iterator, Iterator, size_t, Allocator = Allocator())
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type,
-		HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>;
+template<typename TKey,
+	typename THashFunc = HashCoder<TKey>,
+	typename TEqualFunc = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<TKey>>
+class unordered_set_open : public unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
+	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+		MemManagerStd<TAllocator>>>
+{
+private:
+	typedef unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
+		HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+		MemManagerStd<TAllocator>>> UnorderedSet;
 
-template<typename Iterator, typename HashFunc,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
-unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator())
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc,
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>;
+public:
+	using UnorderedSet::UnorderedSet;
 
-template<typename Iterator, typename HashFunc, typename EqualFunc,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
-unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator())
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc,
-		EqualFunc, Allocator>;
+	friend void swap(unordered_set_open& left, unordered_set_open& right) MOMO_NOEXCEPT
+	{
+		left.swap(right);
+	}
+};
 
-template<typename Key,
-	typename Allocator = std::allocator<Key>>
-unordered_set(std::initializer_list<Key>, Allocator = Allocator())
-	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>;
-
-template<typename Key,
-	typename Allocator = std::allocator<Key>>
-unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator())
-	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>;
-
-template<typename Key, typename HashFunc,
-	typename Allocator = std::allocator<Key>>
-unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator())
-	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>;
-
-template<typename Key, typename HashFunc, typename EqualFunc,
-	typename Allocator = std::allocator<Key>>
-unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator())
+#define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
+template<typename Iterator, \
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+unordered_set(Iterator, Iterator, Allocator = Allocator()) \
+	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, \
+		HashCoder<typename std::iterator_traits<Iterator>::value_type>, \
+		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+template<typename Iterator, \
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
+	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, \
+		HashCoder<typename std::iterator_traits<Iterator>::value_type>, \
+		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+template<typename Iterator, typename HashFunc, \
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
+	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc, \
+		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+template<typename Iterator, typename HashFunc, typename EqualFunc, \
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
+	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc, \
+		EqualFunc, Allocator>; \
+template<typename Key, \
+	typename Allocator = std::allocator<Key>> \
+unordered_set(std::initializer_list<Key>, Allocator = Allocator()) \
+	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+template<typename Key, \
+	typename Allocator = std::allocator<Key>> \
+unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
+	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+template<typename Key, typename HashFunc, \
+	typename Allocator = std::allocator<Key>> \
+unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
+template<typename Key, typename HashFunc, typename EqualFunc, \
+	typename Allocator = std::allocator<Key>> \
+unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
-#endif
+
+MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
+MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
+
+#undef MOMO_DECLARE_DEDUCTION_GUIDES
+
+#else
 
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
@@ -669,6 +692,8 @@ template<typename TKey,
 using unordered_set_open = unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
 	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>;
+
+#endif
 
 } // namespace stdish
 
