@@ -57,6 +57,7 @@ void main()
     assert(m.key_comp() == Cmp(4));
     assert(m.get_allocator() == A(5));
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef min_allocator<std::pair<const int, double> > A;
@@ -156,4 +157,5 @@ void main()
     assert(m.key_comp() == Cmp(4));
     assert(m.get_allocator() == A{});
     }
+#endif
 }

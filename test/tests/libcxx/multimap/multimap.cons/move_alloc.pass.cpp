@@ -190,6 +190,7 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
@@ -268,4 +269,5 @@ void main()
         assert(m3.key_comp() == C(5));
         assert(m1.empty());
     }
+#endif
 }

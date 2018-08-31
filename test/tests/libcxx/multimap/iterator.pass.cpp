@@ -123,7 +123,8 @@ void main()
                 assert(i->second == d);
             }
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<const int, double> V;
         V ar[] =
@@ -213,7 +214,7 @@ void main()
             }
     }
 #endif
-#if TEST_STD_VER > 11
+//#if TEST_STD_VER > 11
     { // N3644 testing
         typedef multimap<int, double> C;
         C::iterator ii1{}, ii2{};
@@ -229,5 +230,5 @@ void main()
         assert (!(ii1 != cii ));
         assert (!(cii != ii1 ));
     }
-#endif
+//#endif
 }

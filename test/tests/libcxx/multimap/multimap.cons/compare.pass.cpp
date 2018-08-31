@@ -30,7 +30,8 @@ void main()
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef test_compare<std::less<int> > C;
     const multimap<int, double, C, min_allocator<std::pair<const int, double>>> m(C(3));

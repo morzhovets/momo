@@ -50,6 +50,7 @@ void main()
     assert(*++i == V(3, 1.5));
     assert(*++i == V(3, 2));
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
     typedef C::value_type V;
@@ -78,4 +79,5 @@ void main()
     assert(*++i == V(3, 1.5));
     assert(*++i == V(3, 2));
     }
+#endif
 }

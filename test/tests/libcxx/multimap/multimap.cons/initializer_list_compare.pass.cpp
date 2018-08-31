@@ -54,6 +54,7 @@ void main()
     assert(*++i == V(3, 2));
     assert(m.key_comp() == Cmp(4));
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef test_compare<std::less<int> > Cmp;
     typedef multimap<int, double, Cmp, min_allocator<std::pair<const int, double>>> C;
@@ -86,4 +87,5 @@ void main()
     assert(*++i == V(3, 2));
     assert(m.key_comp() == Cmp(4));
     }
+#endif
 }

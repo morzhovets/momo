@@ -58,10 +58,12 @@ void do_insert_rv_test()
 void main()
 {
     do_insert_rv_test<multimap<int, MoveOnly>>();
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef multimap<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
         do_insert_rv_test<M>();
     }
+#endif
     {
         typedef multimap<int, MoveOnly> M;
         typedef M::iterator R;

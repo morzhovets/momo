@@ -85,6 +85,7 @@ void main()
         assert(m.begin()->first == 2);
         assert(m.begin()->second == 3.5);
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef multimap<int, DefaultOnly, std::less<int>, min_allocator<std::pair<const int, DefaultOnly>>> M;
         typedef M::iterator R;
@@ -145,4 +146,5 @@ void main()
         assert(m.begin()->first == 2);
         assert(m.begin()->second == 3.5);
     }
+#endif
 }

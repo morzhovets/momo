@@ -48,7 +48,7 @@ void main()
         assert(mo.get_allocator() == A(7));
         assert(mo.key_comp() == C(5));
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
     {
         typedef std::pair<const int, double> V;
         V ar[] =
@@ -74,6 +74,7 @@ void main()
         assert(mo.get_allocator() == A(7));
         assert(mo.key_comp() == C(5));
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<const int, double> V;
         V ar[] =

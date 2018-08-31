@@ -57,7 +57,8 @@ void main()
         assert(r == 0);
     }
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     {

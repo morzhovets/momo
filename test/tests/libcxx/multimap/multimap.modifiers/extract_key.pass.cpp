@@ -64,7 +64,7 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
-
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         using min_alloc_map =
             multimap<int, int, std::less<int>,
@@ -73,4 +73,5 @@ void main()
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
+#endif
 }
