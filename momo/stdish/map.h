@@ -7,11 +7,12 @@
 
   namespace momo::stdish:
     class map
+    class multimap
 
-  This class is similar to `std::map`, but much more efficient in
-  memory usage. The implementation is based on a B-tree.
+  This classes are similar to `std::map` and `std::multimap`, but much
+  more efficient in memory usage. The implementation is based on a B-tree.
 
-  Deviations from the `std::map`:
+  Deviations from `std::map` and `std::multimap`:
   1. Container items must be movable (preferably without exceptions)
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
