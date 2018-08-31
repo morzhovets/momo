@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\tests\LibcxxTreeMultiSetTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\LibcxxTreeMultiMapTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
@@ -327,6 +330,9 @@
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\tests\LibcxxMultiSetTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\LibcxxMultiMapTests.h">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>
