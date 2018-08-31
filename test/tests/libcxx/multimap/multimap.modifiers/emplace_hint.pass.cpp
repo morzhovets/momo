@@ -25,6 +25,7 @@
 
 void main()
 {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef multimap<int, DefaultOnly> M;
         typedef M::iterator R;
@@ -54,6 +55,7 @@ void main()
         assert(DefaultOnly::count == 3);
     }
     assert(DefaultOnly::count == 0);
+#endif
     {
         typedef multimap<int, Emplaceable> M;
         typedef M::iterator R;

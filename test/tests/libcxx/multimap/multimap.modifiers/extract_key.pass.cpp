@@ -33,7 +33,9 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
         assert(t.key() == *copy);
         t.key() = *first; // We should be able to mutate key.
         assert(t.key() == *first);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
+#endif
         assert(sz == c.size());
     }
 

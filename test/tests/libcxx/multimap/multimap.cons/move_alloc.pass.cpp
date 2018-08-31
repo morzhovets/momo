@@ -149,7 +149,11 @@ void main()
         typedef std::pair<const int, T> VC;
         typedef test_allocator<VC> A;
         typedef std::less<int> C;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         typedef multimap<const int, T, C, A> M;
+#else
+        typedef multimap<int, T, C, A> M;
+#endif
         typedef V* I;
         Counter_base::gConstructed = 0;
         {
