@@ -256,7 +256,7 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t shortHash = pvGetShortHash(hashCode);
+			uint8_t shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mShortHashes[i] == shortHash)
@@ -333,7 +333,7 @@ namespace internal
 				{
 					pvSetHashProbe(count, hashCode, logBucketCount, probe);
 					std::forward<ItemCreator>(itemCreator)(items + count);
-					mShortHashes[count] = pvGetShortHash(hashCode);
+					mShortHashes[count] = pvCalcShortHash(hashCode);
 					pvSetPtrState(items, memPoolIndex);
 					return items + count;
 				}
@@ -433,7 +433,7 @@ namespace internal
 				: 2 + ((mShortHashes[2] < maskEmpty) ? 1 : 0) + ((mShortHashes[3] < maskEmpty) ? 1 : 0);
 		}
 
-		static uint8_t pvGetShortHash(size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvCalcShortHash(size_t hashCode) MOMO_NOEXCEPT
 		{
 			return (uint8_t)(hashCode >> hashCodeShift);
 		}
@@ -460,7 +460,7 @@ namespace internal
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
 			std::forward<ItemCreator>(itemCreator)(items);
-			mShortHashes[0] = pvGetShortHash(hashCode);
+			mShortHashes[0] = pvCalcShortHash(hashCode);
 			pvSetPtrState(memory.Extract(), memPoolIndex);
 			return items;
 		}
@@ -475,7 +475,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				std::forward<ItemCreator>(itemCreator), newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			mShortHashes[count] = pvGetShortHash(hashCode);
+			mShortHashes[count] = pvCalcShortHash(hashCode);
 			pvSetPtrState(memory.Extract(), newMemPoolIndex);
 			return newItems + count;
 		}

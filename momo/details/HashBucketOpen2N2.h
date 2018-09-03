@@ -95,7 +95,7 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			ShortHash shortHash = pvGetShortHash(hashCode);
+			ShortHash shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashData.shortHashes[i] == shortHash && pred(*&mItems[i]))
@@ -135,7 +135,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = &mItems[maxCount - 1 - count];
 			std::forward<ItemCreator>(itemCreator)(pitem);
-			mHashData.shortHashes[maxCount - 1 - count] = pvGetShortHash(hashCode);
+			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if (useHashCodePartGetter)
 			{
 				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
@@ -207,7 +207,7 @@ namespace internal
 			mState[1] = (uint8_t)0;
 		}
 
-		static ShortHash pvGetShortHash(size_t hashCode) MOMO_NOEXCEPT
+		static ShortHash pvCalcShortHash(size_t hashCode) MOMO_NOEXCEPT
 		{
 			return (ShortHash)(hashCode >> hashCodeShift);
 		}
