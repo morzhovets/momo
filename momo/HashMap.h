@@ -39,15 +39,16 @@ namespace internal
 	template<typename TKeyValuePair>
 	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
+	private:
+		typedef internal::MapNestedSetItemTraits<TKeyValuePair> MapNestedSetItemTraits;
+
 	protected:
-		typedef TKeyValuePair KeyValuePair;
-		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
-		typedef typename KeyValueTraits::Key Key;
-		typedef typename KeyValueTraits::Value Value;
+		using typename MapNestedSetItemTraits::Key;
+		using typename MapNestedSetItemTraits::Value;
 
 	public:
-		typedef KeyValuePair Item;
-		typedef typename KeyValueTraits::MemManager MemManager;
+		using typename MapNestedSetItemTraits::Item;
+		using typename MapNestedSetItemTraits::MemManager;
 
 	public:
 		template<typename ItemCreator>

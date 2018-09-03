@@ -38,15 +38,17 @@ namespace internal
 	template<typename TKeyValuePair>
 	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
 	{
+	private:
+		typedef internal::MapNestedSetItemTraits<TKeyValuePair> MapNestedSetItemTraits;
+
 	protected:
-		typedef TKeyValuePair KeyValuePair;
-		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
-		typedef typename KeyValueTraits::Key Key;
-		typedef typename KeyValueTraits::Value Value;
+		using typename MapNestedSetItemTraits::KeyValueTraits;
+		using typename MapNestedSetItemTraits::Key;
+		using typename MapNestedSetItemTraits::Value;
 
 	public:
-		typedef KeyValuePair Item;
-		typedef typename KeyValueTraits::MemManager MemManager;
+		using typename MapNestedSetItemTraits::Item;
+		using typename MapNestedSetItemTraits::MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
@@ -90,10 +92,13 @@ namespace internal
 template<typename TKey, typename TValue, typename TMemManager>
 class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
+private:
+	typedef internal::MapKeyValueTraits<TKey, TValue, TMemManager> MapKeyValueTraits;
+
 public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef TMemManager MemManager;
+	using typename MapKeyValueTraits::Key;
+	using typename MapKeyValueTraits::Value;
+	using typename MapKeyValueTraits::MemManager;
 
 private:
 	typedef internal::ObjectManager<Key, MemManager> KeyManager;

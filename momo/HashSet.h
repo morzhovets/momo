@@ -383,10 +383,12 @@ namespace internal
 template<typename TKey, typename TItem, typename TMemManager>
 struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem, TMemManager>
 {
+private:
+	typedef internal::SetItemTraits<TKey, TItem, TMemManager> SetItemTraits;
+
 public:
-	typedef TKey Key;
-	typedef TItem Item;
-	typedef TMemManager MemManager;
+	using typename SetItemTraits::Item;
+	using typename SetItemTraits::MemManager;
 
 private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
