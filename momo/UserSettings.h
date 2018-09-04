@@ -66,7 +66,11 @@
 #define MOMO_DEFAULT_HASH_BUCKET HashBucketLimP4<>
 
 // Default bucket type in open addressing hash tables
+#ifdef __linux__
+#define MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpen8
+#else
 #define MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpen2N2<>
+#endif
 
 // Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
