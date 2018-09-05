@@ -3,7 +3,7 @@
 This project contains an implementation of the C++ containers, similar to the standard `set/map`
 and `unordered_set/map`, but much more efficient in memory usage.
 As for the operation speed, these containers are also better than the standard ones in most cases 
-([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_arch), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_arch), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
+([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
 Classes are designed in close conformity with the standard C++17 **including exception safety guarantees**.
 
@@ -36,9 +36,11 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 - `stdish::vector_intcap` is vector with internal capacity. This vector doesn't need dynamic memory while its size is not greater than user-defined constant.
 
-- `stdish::pool_allocator` is allocator with a pool of memory for containers like `std::list`. Each copy of the container keeps its own memory pool. Memory is released not only after destruction of the object, but also in case of removal sufficient number of items.
-
 - `stdish::unordered_multimap` is similar to `std::unordered_multimap`, but each of duplicate keys is stored only once.
+
+- `stdish::multiset` and `stdish::multimap` are similar to `std::multiset` and `std::multimap`.
+
+- `stdish::pool_allocator` is allocator with a pool of memory for containers like `std::list`. Each copy of the container keeps its own memory pool. Memory is released not only after destruction of the object, but also in case of removal sufficient number of items.
 
 - Folder `momo` also contains many of the analogous classes with non-standard interface, but more flexible, namely `HashSet`, `HashMap`, `HashMultiMap`, `TreeSet`, `TreeMap`, `Array`, `SegmentedArray`, `MemPool`.
 
