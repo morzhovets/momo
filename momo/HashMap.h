@@ -43,6 +43,7 @@ namespace internal
 		typedef internal::MapNestedSetItemTraits<TKeyValuePair> MapNestedSetItemTraits;
 
 	protected:
+		using typename MapNestedSetItemTraits::KeyValueTraits;
 		using typename MapNestedSetItemTraits::Key;
 		using typename MapNestedSetItemTraits::Value;
 
