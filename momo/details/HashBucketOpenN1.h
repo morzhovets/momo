@@ -81,6 +81,7 @@ namespace internal
 #ifdef MOMO_USE_SSE2
 			if (useSSE2)
 			{
+				MOMO_PREFETCH_RANGE(this, sizeof(*this));
 				__m128i shortHashes = _mm_set1_epi8(shortHash);
 				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0, (int64_t)mData8);
 				int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));

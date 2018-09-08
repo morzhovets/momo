@@ -125,6 +125,14 @@
 		case 4: return DivByConst<4>(value); \
 	}
 
+#ifdef MOMO_USE_SSE2
+#define MOMO_PREFETCH_RANGE(ptr, size) \
+	for (size_t offset = 0; offset < (size_t)size; offset += 64) \
+		_mm_prefetch(reinterpret_cast<const char*>(ptr) + offset, _MM_HINT_T0);
+#else
+#define MOMO_PREFETCH_RANGE(ptr, size)
+#endif
+
 #define MOMO_ASSERT(expr) assert(expr)
 
 #define MOMO_NOEXCEPT noexcept

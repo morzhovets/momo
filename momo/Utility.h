@@ -35,6 +35,7 @@
 
 #ifdef MOMO_USE_SSE2
 #include <emmintrin.h>
+#include <xmmintrin.h>
 #endif
 
 #define MOMO_FRIEND_SWAP(Object) \
