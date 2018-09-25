@@ -848,9 +848,15 @@ public:
 
 	size_t Remove(const Key& key)
 	{
+		ConstIterator iter = pvGetLowerBound(key);
+		if (pvIsGreater(iter, key))
+			return 0;
+		iter = Remove(iter);
+		if (!TreeTraits::multiKey)
+			return 1;
 		// basic exception safety
-		size_t count = 0;
-		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); iter = Remove(iter))
+		size_t count = 1;
+		for (; !pvIsGreater(iter, key); iter = Remove(iter))
 			++count;
 		return count;
 	}
