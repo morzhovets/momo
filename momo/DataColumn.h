@@ -55,7 +55,7 @@ namespace internal
 		static const uint64_t fnvPrime64 = 1099511628211ull;
 
 	public:
-		// Fowler–Noll–Vo hash function (1a)
+		// Fowler-Noll-Vo hash function (1a)
 		constexpr static uint64_t GetHashCode64(const char* str) MOMO_NOEXCEPT
 		{
 			return (*str == '\0') ? fnvBasis64
