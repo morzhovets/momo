@@ -749,17 +749,17 @@ namespace internal
 		}
 
 		template<typename Raws, typename... Items>
-		const UniqueHash* AddUniqueHash(const ColumnList* columnList, const Raws& raws,
+		void AddUniqueHash(const ColumnList* columnList, const Raws& raws,
 			const Column<Items>&... columns)
 		{
-			return pvAddHash(columnList, mUniqueHashes, raws, columns...);
+			pvAddHash(columnList, mUniqueHashes, raws, columns...);
 		}
 
 		template<typename Raws, typename... Items>
-		const MultiHash* AddMultiHash(const ColumnList* columnList, const Raws& raws,
+		void AddMultiHash(const ColumnList* columnList, const Raws& raws,
 			const Column<Items>&... columns)
 		{
-			return pvAddHash(columnList, mMultiHashes, raws, columns...);
+			pvAddHash(columnList, mMultiHashes, raws, columns...);
 		}
 
 		template<typename... Items>
@@ -999,8 +999,8 @@ namespace internal
 		}
 
 		template<typename Hashes, typename Raws, typename... Items>
-		const typename Hashes::Item* pvAddHash(const ColumnList* columnList, Hashes& hashes,
-			const Raws& raws, const Column<Items>&... columns)
+		void pvAddHash(const ColumnList* columnList, Hashes& hashes, const Raws& raws,
+			const Column<Items>&... columns)
 		{
 			static const size_t columnCount = sizeof...(columns);
 			MOMO_STATIC_ASSERT(columnCount > 0);
@@ -1011,9 +1011,8 @@ namespace internal
 					throw std::runtime_error("Cannot add index on mutable column");
 			}
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
-			const auto* hash = pvGetHash(hashes, sortedOffsets);
-			if (hash != nullptr)
-				return hash;
+			if (pvGetHash(hashes, sortedOffsets) != nullptr)
+				return;
 			auto hashFunc = [columnList, offsets] (Raw* raw)
 				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets.data()); };
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
@@ -1028,7 +1027,6 @@ namespace internal
 			}
 			hashes.Reserve(hashes.GetCount() + 1);
 			hashes.AddBackNogrow(std::move(newHash));
-			return hashes.GetItems() + hashes.GetCount() - 1;
 		}
 
 		template<typename Hashes, typename... Items>

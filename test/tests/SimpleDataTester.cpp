@@ -81,9 +81,9 @@ public:
 		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
-		assert(table.AddUniqueHashIndex(intCol, strCol));
-		assert(table.AddMultiHashIndex(intCol));
-		assert(table.AddMultiHashIndex(strCol));
+		table.AddUniqueHashIndex(intCol, strCol);
+		table.AddMultiHashIndex(intCol);
+		table.AddMultiHashIndex(strCol);
 
 		table.Reserve(count);
 
@@ -119,8 +119,8 @@ public:
 		assert(table.GetMultiHashIndex(intCol));
 		assert(table.RemoveUniqueHashIndex(intCol, strCol));
 		assert(table.RemoveMultiHashIndex(intCol));
-		assert(table.AddUniqueHashIndex(intCol, strCol));
-		assert(table.AddMultiHashIndex(intCol));
+		table.AddUniqueHashIndex(intCol, strCol);
+		table.AddMultiHashIndex(intCol);
 
 		for (size_t i = 0; i < count2; ++i)
 			assert(table.TryInsertRow(count, table.NewRow(intCol = (int)(count + i))).uniqueHashIndex == nullptr);
