@@ -300,7 +300,7 @@ namespace internal
 
 	public:
 		explicit ArrayBounds() MOMO_NOEXCEPT
-			: mBegin(),	//?
+			: mBegin(),
 			mCount(0)
 		{
 		}
@@ -373,6 +373,7 @@ namespace internal
 
 	public:
 		explicit HashDerivedIterator() MOMO_NOEXCEPT
+			: mBaseIterator()
 		{
 		}
 
@@ -443,6 +444,7 @@ namespace internal
 
 	public:
 		explicit TreeDerivedIterator() MOMO_NOEXCEPT
+			: mBaseIterator()
 		{
 		}
 
