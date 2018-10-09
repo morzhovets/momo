@@ -6,7 +6,7 @@
   momo/details/HashBucketOneI.h
 
   namespace momo:
-    struct HashBucketOneI
+    class HashBucketOneI
 
 \**********************************************************/
 
@@ -122,8 +122,9 @@ namespace internal
 }
 
 template<typename TStater>
-struct HashBucketOneI : public internal::HashBucketBase
+class HashBucketOneI : public internal::HashBucketBase
 {
+public:
 	typedef TStater Stater;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>

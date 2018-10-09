@@ -118,10 +118,12 @@ namespace internal
 		}
 	};
 
-	struct HashBucketBase
+	class HashBucketBase
 	{
+	public:
 		static const size_t logStartBucketCount = 4;
 
+	public:
 		static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) MOMO_NOEXCEPT
 		{
 			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);

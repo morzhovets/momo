@@ -6,7 +6,7 @@
   momo/details/TreeNode.h
 
   namespace momo:
-    struct TreeNode
+    class TreeNode
 
 \**********************************************************/
 
@@ -330,8 +330,9 @@ namespace internal
 template<size_t tMaxCapacity, size_t tCapacityStep,
 	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,
 	bool tIsContinuous = true>
-struct TreeNode
+class TreeNode
 {
+public:
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
 	static const bool isContinuous = tIsContinuous;

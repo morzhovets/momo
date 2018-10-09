@@ -6,7 +6,7 @@
   momo/details/HashBucketLim4.h
 
   namespace momo:
-    struct HashBucketLim4
+    class HashBucketLim4
 
 \**********************************************************/
 
@@ -287,8 +287,9 @@ namespace internal
 
 template<size_t tLogMaxCount = 2,
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
-struct HashBucketLim4 : public internal::HashBucketBase
+class HashBucketLim4 : public internal::HashBucketBase
 {
+public:
 	static const size_t logMaxCount = tLogMaxCount;
 	static const size_t memPoolBlockCount = tMemPoolBlockCount;
 

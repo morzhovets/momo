@@ -6,7 +6,7 @@
   momo/details/HashBucketLimP1.h
 
   namespace momo:
-    struct HashBucketLimP1
+    class HashBucketLimP1
 
 \**********************************************************/
 
@@ -255,8 +255,9 @@ namespace internal
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>,
 	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
-struct HashBucketLimP1 : public internal::HashBucketBase
+class HashBucketLimP1 : public internal::HashBucketBase
 {
+public:
 	static const size_t maxCount = tMaxCount;
 	static const size_t alignment = tAlignment;
 

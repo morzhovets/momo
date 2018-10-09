@@ -6,7 +6,7 @@
   momo/details/HashBucketLimP4.h
 
   namespace momo:
-    struct HashBucketLimP4
+    class HashBucketLimP4
 
 \**********************************************************/
 
@@ -509,8 +509,9 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
-struct HashBucketLimP4 : public internal::HashBucketBase
+class HashBucketLimP4 : public internal::HashBucketBase
 {
+public:
 	static const size_t maxCount = tMaxCount;
 
 	typedef TMemPoolParams MemPoolParams;

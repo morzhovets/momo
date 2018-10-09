@@ -6,7 +6,7 @@
   momo/details/HashBucketOpen2N2.h
 
   namespace momo:
-    struct HashBucketOpen2N2
+    class HashBucketOpen2N2
 
 \**********************************************************/
 
@@ -251,10 +251,15 @@ namespace internal
 }
 
 template<size_t tMaxCount = 3>
-struct HashBucketOpen2N2 : public internal::HashBucketBase
+class HashBucketOpen2N2 : public internal::HashBucketBase
 {
+public:
 	static const size_t maxCount = tMaxCount;
 
+	template<typename ItemTraits, bool useHashCodePartGetter>
+	using Bucket = internal::BucketOpen2N2<ItemTraits, maxCount, useHashCodePartGetter>;
+
+public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
 	{
 		return (bucketCount * maxCount / 6) * 5;
@@ -265,9 +270,6 @@ struct HashBucketOpen2N2 : public internal::HashBucketBase
 	{
 		return 1;
 	}
-
-	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOpen2N2<ItemTraits, maxCount, useHashCodePartGetter>;
 };
 
 } // namespace momo

@@ -6,7 +6,7 @@
   momo/details/HashBucketOneIA.h
 
   namespace momo:
-    struct HashBucketOneIA
+    class HashBucketOneIA
 
 \**********************************************************/
 
@@ -145,8 +145,9 @@ namespace internal
 }
 
 template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
-struct HashBucketOneIA : public internal::HashBucketBase
+class HashBucketOneIA : public internal::HashBucketBase
 {
+public:
 	static const size_t stateSize = tStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>

@@ -6,7 +6,7 @@
   momo/details/HashBucketOpen8.h
 
   namespace momo:
-    struct HashBucketOpen8
+    class HashBucketOpen8
 
 \**********************************************************/
 
@@ -20,8 +20,16 @@ namespace momo
 
 #ifdef MOMO_USE_SSE2
 
-struct HashBucketOpen8 : public internal::HashBucketBase
+class HashBucketOpen8 : public internal::HashBucketBase
 {
+public:
+	template<typename ItemTraits, bool useHashCodePartGetter>
+	using Bucket = typename std::conditional<
+		(useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
+		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
+		internal::BucketOpenN1<ItemTraits, true, 7, false>>::type;
+
+public:
 	static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) MOMO_NOEXCEPT
 	{
 		if (bucketMaxItemCount == 7)
@@ -35,12 +43,6 @@ struct HashBucketOpen8 : public internal::HashBucketBase
 	{
 		return 1;
 	}
-
-	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = typename std::conditional<
-		(useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
-		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
-		internal::BucketOpenN1<ItemTraits, true, 7, false>>::type;
 };
 
 #else

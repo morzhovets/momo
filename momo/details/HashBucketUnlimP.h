@@ -6,7 +6,7 @@
   momo/details/HashBucketUnlimP.h
 
   namespace momo:
-    struct HashBucketUnlimP
+    class HashBucketUnlimP
 
 \**********************************************************/
 
@@ -160,8 +160,9 @@ namespace internal
 template<size_t tMaxFastCount = 7,
 	typename TMemPoolParams = MemPoolParams<>,
 	typename TArraySettings = ArraySettings<>>
-struct HashBucketUnlimP : public internal::HashBucketBase
+class HashBucketUnlimP : public internal::HashBucketBase
 {
+public:
 	static const size_t maxFastCount = tMaxFastCount;
 
 	typedef TMemPoolParams MemPoolParams;

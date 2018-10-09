@@ -6,7 +6,7 @@
   momo/details/HashBucketLimP.h
 
   namespace momo:
-    struct HashBucketLimP
+    class HashBucketLimP
 
 \**********************************************************/
 
@@ -532,8 +532,9 @@ namespace internal
 template<size_t tMaxCount = sizeof(void*),
 	typename TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
-struct HashBucketLimP : public internal::HashBucketBase
+class HashBucketLimP : public internal::HashBucketBase
 {
+public:
 	static const size_t maxCount = tMaxCount;
 	static const bool usePtrState = tUsePtrState;
 
@@ -541,7 +542,7 @@ struct HashBucketLimP : public internal::HashBucketBase
 
 private:
 	template<typename ItemTraits>
-	struct Bucketer
+	class Bucketer
 	{
 	private:
 		static const size_t size = sizeof(typename ItemTraits::Item);

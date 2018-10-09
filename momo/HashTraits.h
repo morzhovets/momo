@@ -8,8 +8,8 @@
   namespace momo:
     struct IsFastNothrowHashable
     struct HashCoder
-    struct HashBucketDefault
-    struct HashBucketOpenDefault
+    class HashBucketDefault
+    class HashBucketOpenDefault
     class HashTraits
     class HashTraitsOpen
     class HashTraitsStd

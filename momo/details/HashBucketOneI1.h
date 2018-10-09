@@ -6,7 +6,7 @@
   momo/details/HashBucketOneI1.h
 
   namespace momo:
-    struct HashBucketOneI1
+    class HashBucketOneI1
 
 \**********************************************************/
 
@@ -110,8 +110,9 @@ namespace internal
 	};
 }
 
-struct HashBucketOneI1 : public internal::HashBucketBase
+class HashBucketOneI1 : public internal::HashBucketBase
 {
+public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOneI1<ItemTraits>;
 };

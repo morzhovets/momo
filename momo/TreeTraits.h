@@ -7,7 +7,7 @@
 
   namespace momo:
     struct IsFastComparable
-    struct TreeNodeDefault
+    class TreeNodeDefault
     class TreeTraits
     class TreeTraitsStd
 
