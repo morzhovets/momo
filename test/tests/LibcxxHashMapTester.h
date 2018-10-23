@@ -20,8 +20,9 @@ namespace
 #define _LIBCPP_DEBUG_LEVEL 1
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_unordered_map_" LIBCXX_TEST_BUCKET_NAME
-struct LibcxxHashMapSettings : public momo::HashMapSettings
+class LibcxxHashMapSettings : public momo::HashMapSettings
 {
+public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 template<typename TKey, typename TMapped,

@@ -21,8 +21,9 @@
 #include "../../momo/SegmentedArray.h"
 
 template<typename TValue, typename TMemManager>
-struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>
+class LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>
 {
+public:
 	static const bool isNothrowMoveConstructible =
 		momo::internal::ObjectManager<TValue, TMemManager>::isNothrowMoveConstructible;
 };
@@ -36,8 +37,9 @@ struct LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TV
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
 namespace libcxx_test_array_0
 {
-struct LibcxxArraySettings : public momo::ArraySettings<0, false>
+class LibcxxArraySettings : public momo::ArraySettings<0, false>
 {
+public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 template<typename TValue,
@@ -54,8 +56,9 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_5"
 namespace libcxx_test_array_5
 {
-struct LibcxxArraySettings : public momo::ArraySettings<5, false>
+class LibcxxArraySettings : public momo::ArraySettings<5, false>
 {
+public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 template<typename TValue,
@@ -75,9 +78,10 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
 namespace libcxx_test_segmented_array_sqrt
 {
-struct LibcxxSegmentedArraySettings
+class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 3>
 {
+public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 template<typename TValue,
@@ -93,9 +97,10 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
 namespace libcxx_test_segmented_array_cnst
 {
-struct LibcxxSegmentedArraySettings
+class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0>
 {
+public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 template<typename TValue,
