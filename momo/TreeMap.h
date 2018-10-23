@@ -7,7 +7,7 @@
 
   namespace momo:
     class TreeMapKeyValueTraits
-    struct TreeMapSettings
+    class TreeMapSettings
     class TreeMap
 
   All `TreeMap` functions and constructors have strong exception safety,
@@ -77,7 +77,7 @@ namespace internal
 	};
 
 	template<typename TTreeMapSettings>
-	struct TreeMapNestedSetSettings //: public TreeSetSettings
+	class TreeMapNestedSetSettings //: public TreeSetSettings
 	{
 	protected:
 		typedef TTreeMapSettings TreeMapSettings;
@@ -124,8 +124,9 @@ public:
 	}
 };
 
-struct TreeMapSettings
+class TreeMapSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;

@@ -7,7 +7,7 @@
 
   namespace momo:
     class TreeSetItemTraits
-    struct TreeSetSettings
+    class TreeSetSettings
     class TreeSet
 
   All `TreeSet` functions and constructors have strong exception safety,
@@ -290,8 +290,9 @@ public:
 	}
 };
 
-struct TreeSetSettings
+class TreeSetSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;

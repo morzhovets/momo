@@ -7,7 +7,7 @@
 
   namespace momo:
     class HashMultiMapKeyValueTraits
-    struct HashMultiMapSettings
+    class HashMultiMapSettings
     class HashMultiMap
     class HashMultiMapOpen
 
@@ -400,7 +400,7 @@ namespace internal
 	};
 
 	template<typename THashMultiMapSettings>
-	struct HashMultiMapNestedMapSettings : public HashMapSettings
+	class HashMultiMapNestedMapSettings : public HashMapSettings
 	{
 	protected:
 		typedef THashMultiMapSettings HashMultiMapSettings;
@@ -490,8 +490,9 @@ public:
 	}
 };
 
-struct HashMultiMapSettings
+class HashMultiMapSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;

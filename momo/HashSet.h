@@ -7,7 +7,7 @@
 
   namespace momo:
     class HashSetItemTraits
-    struct HashSetSettings
+    class HashSetSettings
     class HashSet
     class HashSetOpen
 
@@ -381,7 +381,7 @@ namespace internal
 }
 
 template<typename TKey, typename TItem, typename TMemManager>
-struct HashSetItemTraits : public internal::SetItemTraits<TKey, TItem, TMemManager>
+class HashSetItemTraits : public internal::SetItemTraits<TKey, TItem, TMemManager>
 {
 private:
 	typedef internal::SetItemTraits<TKey, TItem, TMemManager> SetItemTraits;
@@ -403,8 +403,9 @@ public:
 	}
 };
 
-struct HashSetSettings
+class HashSetSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;

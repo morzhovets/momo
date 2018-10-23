@@ -8,7 +8,7 @@
   namespace momo:
     class SegmentedArrayItemTraits
     enum class SegmentedArrayItemCountFunc
-    struct SegmentedArraySettings
+    class SegmentedArraySettings
     class SegmentedArray
 
   All `SegmentedArray` functions and constructors have strong exception safety,
@@ -65,11 +65,12 @@ enum class SegmentedArrayItemCountFunc
 template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::sqrt,
 	size_t tLogInitialItemCount =
 		(tItemCountFunc == SegmentedArrayItemCountFunc::sqrt) ? 3 : 5>
-struct SegmentedArraySettings;
+class SegmentedArraySettings;
 
 template<size_t tLogInitialItemCount>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItemCount>
+class SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItemCount>
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
@@ -77,6 +78,7 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItem
 
 	typedef ArraySettings<> SegmentsSettings;
 
+public:
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
 		size_t index1 = (index >> logInitialItemCount) + 1;
@@ -118,8 +120,9 @@ private:
 };
 
 template<size_t tLogInitialItemCount>
-struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItemCount>
+class SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItemCount>
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
@@ -127,6 +130,7 @@ struct SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItem
 
 	typedef ArraySettings<> SegmentsSettings;
 
+public:
 	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
 	{
 		segIndex = index >> logInitialItemCount;

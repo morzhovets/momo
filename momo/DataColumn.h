@@ -14,7 +14,7 @@
     enum class DataOperatorType
     class DataOperator
     class DataColumn
-    struct DataSettings
+    class DataSettings
     struct DataStructDefault
     class DataColumnTraits
     class DataColumnList
@@ -157,8 +157,9 @@ private:
 };
 
 template<bool tKeepRowNumber = true>
-struct DataSettings
+class DataSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;

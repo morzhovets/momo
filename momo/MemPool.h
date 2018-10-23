@@ -9,7 +9,7 @@
     struct MemPoolConst
     class MemPoolParams
     class MemPoolParamsStatic
-    struct MemPoolSettings
+    class MemPoolSettings
     class MemPool
 
 \**********************************************************/
@@ -122,8 +122,9 @@ public:
 	}
 };
 
-struct MemPoolSettings
+class MemPoolSettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
@@ -551,8 +552,9 @@ private:
 
 namespace internal
 {
-	struct NestedMemPoolSettings
+	class NestedMemPoolSettings
 	{
+	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 	};

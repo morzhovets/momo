@@ -19,15 +19,17 @@ namespace experimental
 
 namespace internal
 {
-	struct DataHashSetSettings : public momo::HashSetSettings
+	class DataHashSetSettings : public momo::HashSetSettings
 	{
+	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = false;
 	};
 
-	struct DataHashMultiMapSettings : public momo::HashMultiMapSettings
+	class DataHashMultiMapSettings : public momo::HashMultiMapSettings
 	{
+	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkKeyVersion = false;

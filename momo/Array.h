@@ -8,7 +8,7 @@
   namespace momo:
     class ArrayItemTraits
     enum class ArrayGrowCause
-    struct ArraySettings
+    class ArraySettings
     class Array
     class ArrayIntCap
 
@@ -204,14 +204,16 @@ enum class ArrayGrowCause
 template<size_t tInternalCapacity = 0,
 	bool tGrowOnReserve = true,
 	bool tUsePtrIterator = (tInternalCapacity == 0)>
-struct ArraySettings
+class ArraySettings
 {
+public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 
 	static const size_t internalCapacity = tInternalCapacity;
 	static const bool growOnReserve = tGrowOnReserve;
 	static const bool usePtrIterator = tUsePtrIterator;
 
+public:
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
 		ArrayGrowCause growCause, bool realloc)
 	{
@@ -1125,7 +1127,7 @@ using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, ArraySettings<tIntern
 namespace internal
 {
 	template<typename TBaseArraySettings = ArraySettings<>>
-	struct NestedArraySettings : public TBaseArraySettings
+	class NestedArraySettings : public TBaseArraySettings
 	{
 	protected:
 		typedef TBaseArraySettings BaseArraySettings;
