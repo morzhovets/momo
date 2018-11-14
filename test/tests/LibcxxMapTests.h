@@ -207,9 +207,11 @@ LIBCXX_TEST_BEGIN(modifiers_insert_rv)
 #include "libcxx/map/map.modifiers/insert_rv.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 LIBCXX_TEST_BEGIN(modifiers_merge)
 #include "libcxx/map/map.modifiers/merge.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_try_emplace)
 #include "libcxx/map/map.modifiers/try.emplace.pass.cpp"
