@@ -111,6 +111,10 @@ LIBCXX_TEST_END
 //#include "libcxx/multiset/max_size.pass.cpp"
 //LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(merge)
+#include "libcxx/multiset/merge.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(size)
 #include "libcxx/multiset/size.pass.cpp"
 LIBCXX_TEST_END

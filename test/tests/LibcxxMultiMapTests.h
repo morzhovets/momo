@@ -191,6 +191,10 @@ LIBCXX_TEST_BEGIN(modifiers_insert_rv)
 #include "libcxx/multimap/multimap.modifiers/insert_rv.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_merge)
+#include "libcxx/multimap/multimap.modifiers/merge.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/multimap/multimap.ops/count.pass.cpp"
 LIBCXX_TEST_END

@@ -115,6 +115,10 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "libcxx/set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(merge)
+#include "libcxx/set/merge.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(size)
 #include "libcxx/set/size.pass.cpp"
 LIBCXX_TEST_END
