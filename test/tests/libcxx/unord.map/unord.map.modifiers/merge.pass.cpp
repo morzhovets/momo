@@ -22,9 +22,11 @@
 // template <class H2, class P2>
 //   void merge(unordered_multimap<key_type, value_type, H2, P2, allocator_type>&& source);
 
-#include <unordered_map>
-#include "test_macros.h"
-#include "Counter.h"
+//#include <unordered_map>
+//#include "test_macros.h"
+//#include "Counter.h"
+
+#define unordered_multimap momo::stdish::unordered_map
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
@@ -52,11 +54,11 @@ struct throw_hasher
 };
 #endif
 
-int main()
+void main()
 {
     {
-        std::unordered_map<int, int> src{{1, 0}, {3, 0}, {5, 0}};
-        std::unordered_map<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
+        unordered_map<int, int> src{{1, 0}, {3, 0}, {5, 0}};
+        unordered_map<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
         dst.merge(src);
         assert(map_equal(src, {{5,0}}));
         assert(map_equal(dst, {{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}}));
@@ -65,7 +67,7 @@ int main()
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef std::unordered_map<Counter<int>, int, throw_hasher<Counter<int>>> map_type;
+        typedef unordered_map<Counter<int>, int, throw_hasher<Counter<int>>> map_type;
         map_type src({{1, 0}, {3, 0}, {5, 0}}, 0, throw_hasher<Counter<int>>(do_throw));
         map_type dst({{2, 0}, {4, 0}, {5, 0}}, 0, throw_hasher<Counter<int>>(do_throw));
 
@@ -106,9 +108,9 @@ int main()
         }
     };
     {
-        typedef std::unordered_map<Counter<int>, int, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_map_type;
-        typedef std::unordered_map<Counter<int>, int, hasher, equal> second_map_type;
-        typedef std::unordered_multimap<Counter<int>, int, hasher, equal> third_map_type;
+        typedef unordered_map<Counter<int>, int, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_map_type;
+        typedef unordered_map<Counter<int>, int, hasher, equal> second_map_type;
+        typedef unordered_multimap<Counter<int>, int, hasher, equal> third_map_type;
 
         {
             first_map_type first{{1, 0}, {2, 0}, {3, 0}};
@@ -146,16 +148,18 @@ int main()
         assert(Counter_base::gConstructed == 0);
     }
     {
-        std::unordered_map<int, int> first;
+        unordered_map<int, int> first;
         {
-            std::unordered_map<int, int> second;
+            unordered_map<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
         {
-            std::unordered_multimap<int, int> second;
+            unordered_multimap<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
     }
 }
+
+#undef unordered_multimap

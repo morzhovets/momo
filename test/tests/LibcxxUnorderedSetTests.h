@@ -183,6 +183,10 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "libcxx/unord.set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(merge)
+#include "libcxx/unord.set/merge.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(rehash)
 #include "libcxx/unord.set/rehash.pass.cpp"
 LIBCXX_TEST_END

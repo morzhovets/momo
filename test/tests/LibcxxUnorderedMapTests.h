@@ -335,6 +335,10 @@ LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "libcxx/unord.map/unord.map.modifiers/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_merge)
+#include "libcxx/unord.map/unord.map.modifiers/merge.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_try_emplace)
 #include "libcxx/unord.map/unord.map.modifiers/try.emplace.pass.cpp"
 LIBCXX_TEST_END
