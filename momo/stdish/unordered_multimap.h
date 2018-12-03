@@ -731,20 +731,20 @@ unordered_multimap(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = 
 		typename std::iterator_traits<Iterator>::value_type::second_type, HashFunc, EqualFunc, Allocator>; \
 template<typename Key, typename Mapped, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<const Key, Mapped>>, Allocator = Allocator()) \
+unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<const Key, Mapped>>, size_t, Allocator = Allocator()) \
+unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<const Key, Mapped>>, size_t, HashFunc, \
+unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, \
 	Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<const Key, Mapped>>, size_t, HashFunc, EqualFunc, \
+unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, EqualFunc, \
 	Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 
