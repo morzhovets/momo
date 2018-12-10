@@ -112,20 +112,59 @@ public:
 template<typename TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
 
+namespace internal
+{
+	template<typename TKey, typename THashFunc, typename TEqualFunc,
+		typename = size_t>
+	class HashTraitsStdBase
+	{
+	public:
+		typedef TKey Key;
+		typedef THashFunc HashFunc;
+		typedef TEqualFunc EqualFunc;
+
+	protected:
+		static const bool isValidKeyArg = false;
+	};
+
+	template<typename TKey, typename THashFunc, typename TEqualFunc>
+	class HashTraitsStdBase<TKey, THashFunc, TEqualFunc,
+		decltype(sizeof(typename THashFunc::transparent_key_equal))>
+	{
+	public:
+		typedef TKey Key;
+		typedef THashFunc HashFunc;
+		typedef typename THashFunc::transparent_key_equal EqualFunc;
+
+	protected:
+		static const bool isValidKeyArg = true;
+
+	private:
+		typedef typename EqualFunc::is_transparent IsTransparent;
+
+		MOMO_STATIC_ASSERT((std::is_same<TEqualFunc, EqualFunc>::value
+			|| std::is_same<TEqualFunc, std::equal_to<Key>>::value));
+	};
+}
+
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
-class HashTraitsStd
+class HashTraitsStd : public internal::HashTraitsStdBase<TKey, THashFunc, TEqualFunc>
 {
+private:
+	typedef internal::HashTraitsStdBase<TKey, THashFunc, TEqualFunc> HashTraitsStdBase;
+
 public:
-	typedef TKey Key;
-	typedef THashFunc HashFunc;
-	typedef TEqualFunc EqualFunc;
+	using typename HashTraitsStdBase::Key;
+	using typename HashTraitsStdBase::HashFunc;
+	using typename HashTraitsStdBase::EqualFunc;
+
 	typedef THashBucket HashBucket;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::false_type;
+	using IsValidKeyArg = internal::BoolConstant<HashTraitsStdBase::isValidKeyArg>;
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
 		&& (std::is_same<HashFunc, HashCoder<Key>>::value
@@ -175,8 +214,23 @@ public:
 		return mHashFunc(key);
 	}
 
+	template<typename KeyArg>
+	size_t GetHashCode(const KeyArg& key) const
+	{
+		MOMO_STATIC_ASSERT(IsValidKeyArg<KeyArg>::value);
+		return mHashFunc(key);
+	}
+
 	bool IsEqual(const Key& key1, const Key& key2) const
 	{
+		return mEqualFunc(key1, key2);
+	}
+
+	template<typename KeyArg1, typename KeyArg2>
+	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
+	{
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
 		return mEqualFunc(key1, key2);
 	}
 

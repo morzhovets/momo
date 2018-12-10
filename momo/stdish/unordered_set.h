@@ -57,9 +57,10 @@ private:
 
 public:
 	typedef TKey key_type;
-	typedef THashFunc hasher;
-	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
+
+	typedef typename HashTraits::HashFunc hasher;
+	typedef typename HashTraits::EqualFunc key_equal;
 
 	typedef HashSet nested_container_type;
 
@@ -360,7 +361,22 @@ public:
 
 	//iterator find(const key_type& key)
 
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	const_iterator find(const KeyArg& key) const
+	{
+		return ConstIteratorProxy(mHashSet.Find(key));
+	}
+
+	//template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	//iterator find(const KeyArg& key)
+
 	size_type count(const key_type& key) const
+	{
+		return mHashSet.ContainsKey(key) ? 1 : 0;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	size_type count(const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key) ? 1 : 0;
 	}
@@ -370,15 +386,31 @@ public:
 		return mHashSet.ContainsKey(key);
 	}
 
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	bool contains(const KeyArg& key) const
+	{
+		return mHashSet.ContainsKey(key);
+	}
+
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = find(key);
-		if (iter == end())
-			return std::pair<const_iterator, const_iterator>(end(), end());
-		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
+		return std::pair<const_iterator, const_iterator>(iter,
+			(iter != end()) ? std::next(iter) : iter);
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
+	{
+		const_iterator iter = find(key);
+		return std::pair<const_iterator, const_iterator>(iter,
+			(iter != end()) ? std::next(iter) : iter);
+	}
+
+	//template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	//std::pair<iterator, iterator> equal_range(const KeyArg& key)
 
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
