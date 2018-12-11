@@ -65,9 +65,10 @@ private:
 public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
-	typedef THashFunc hasher;
-	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
+
+	typedef typename HashTraits::HashFunc hasher;
+	typedef typename HashTraits::EqualFunc key_equal;
 
 	typedef HashMultiMap nested_container_type;
 
@@ -356,7 +357,26 @@ public:
 		return equal_range(key).first;
 	}
 
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	const_iterator find(const KeyArg& key) const
+	{
+		return equal_range(key).first;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	iterator find(const KeyArg& key)
+	{
+		return equal_range(key).first;
+	}
+
 	size_type count(const key_type& key) const
+	{
+		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
+		return !!keyIter ? keyIter->values.GetCount() : 0;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	size_type count(const KeyArg& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
 		return !!keyIter ? keyIter->values.GetCount() : 0;
@@ -367,30 +387,32 @@ public:
 		return count(key) > 0;
 	}
 
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	bool contains(const KeyArg& key) const
+	{
+		return count(key) > 0;
+	}
+
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
-		if (!keyIter)
-			return std::pair<const_iterator, const_iterator>(end(), end());
-		size_t count = keyIter->values.GetCount();
-		if (count == 0)	//?
-			return std::pair<const_iterator, const_iterator>(end(), end());
-		const_iterator first = ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, 0));
-		const_iterator last = ConstIteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
-		return std::pair<const_iterator, const_iterator>(first, last);
+		return pvEqualRange<const_iterator, ConstIteratorProxy>(mHashMultiMap, key);
 	}
 
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
-		typename HashMultiMap::KeyIterator keyIter = mHashMultiMap.Find(key);
-		if (!keyIter)
-			return std::pair<iterator, iterator>(end(), end());
-		size_t count = keyIter->values.GetCount();
-		if (count == 0)	//?
-			return std::pair<iterator, iterator>(end(), end());
-		iterator first = IteratorProxy(mHashMultiMap.MakeIterator(keyIter, 0));
-		iterator last = IteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1)));
-		return std::pair<iterator, iterator>(first, last);
+		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, key);
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
+	{
+		return pvEqualRange<const_iterator, ConstIteratorProxy>(mHashMultiMap, key);
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	std::pair<iterator, iterator> equal_range(const KeyArg& key)
+	{
+		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, key);
 	}
 
 	//template<typename Value>
@@ -607,6 +629,22 @@ private:
 			hashMultiMap.Add(ref.first, std::move(ref.second));
 		right.clear();
 		return hashMultiMap;
+	}
+
+	template<typename Iterator, typename IteratorProxy, typename HashMultiMap, typename KeyArg>
+	static std::pair<Iterator, Iterator> pvEqualRange(HashMultiMap& hashMultiMap,
+		const KeyArg& key)
+	{
+		Iterator end = IteratorProxy(hashMultiMap.GetEnd());
+		auto keyIter = hashMultiMap.Find(key);
+		if (!keyIter)
+			return std::pair<Iterator, Iterator>(end, end);
+		size_t count = keyIter->values.GetCount();
+		if (count == 0)	//?
+			return std::pair<Iterator, Iterator>(end, end);
+		Iterator first = IteratorProxy(hashMultiMap.MakeIterator(keyIter, 0));
+		Iterator last = IteratorProxy(std::next(hashMultiMap.MakeIterator(keyIter, count - 1)));
+		return std::pair<Iterator, Iterator>(first, last);
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>
