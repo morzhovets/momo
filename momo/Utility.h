@@ -181,6 +181,9 @@ namespace internal
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 
+	template<typename...>
+	using Void = void;
+
 	template<typename TUInt>
 	class UIntMath
 	{

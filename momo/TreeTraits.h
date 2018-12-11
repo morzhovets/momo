@@ -35,6 +35,18 @@ namespace internal
 		: public std::true_type
 	{
 	};
+
+	template<typename LessFunc,
+		typename = void>
+	struct TreeTraitsStdIsValidKeyArg : public std::false_type
+	{
+	};
+
+	template<typename LessFunc>
+	struct TreeTraitsStdIsValidKeyArg<LessFunc, Void<typename LessFunc::is_transparent>>
+		: public std::true_type
+	{
+	};
 }
 
 template<typename Key>
@@ -99,7 +111,7 @@ public:
 		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::true_type;
+	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
@@ -110,6 +122,8 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
 		return LessFunc::operator()(key1, key2);
 	}
 
