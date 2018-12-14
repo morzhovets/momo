@@ -181,8 +181,17 @@ namespace internal
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 
-	template<typename...>
-	using Void = void;
+	//template<typename...>
+	//using Void = void;
+
+	template<typename... Types>
+	struct VoidMaker
+	{
+		typedef void Void;
+	};
+
+	template<typename... Types>
+	using Void = typename VoidMaker<Types...>::Void;
 
 	template<typename TUInt>
 	class UIntMath
