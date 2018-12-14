@@ -108,7 +108,7 @@ public:
 	typedef THashBucket HashBucket;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::false_type;
+	using IsValidKeyArg = std::is_convertible<const KeyArg&, const Key&>;
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;
 
@@ -132,15 +132,20 @@ public:
 		return HashBucket::logStartBucketCount;
 	}
 
-	size_t GetHashCode(const Key& key) const
+	template<typename KeyArg>
+	size_t GetHashCode(const KeyArg& key) const
 	{
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
 		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<Key>>::value);
 		return HashCoder<Key>()(key);
 	}
 
-	bool IsEqual(const Key& key1, const Key& key2) const
+	template<typename KeyArg1, typename KeyArg2>
+	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		return key1 == key2;
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
+		return std::equal_to<Key>()(key1, key2);
 	}
 };
 
