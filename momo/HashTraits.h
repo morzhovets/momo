@@ -221,10 +221,11 @@ public:
 		return mHashFunc(key);
 	}
 
-	template<typename KeyArg>
-	bool IsEqual(const KeyArg& key1, const Key& key2) const
+	template<typename KeyArg1, typename KeyArg2>
+	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value));
 		return mEqualFunc(key1, key2);
 	}
 
