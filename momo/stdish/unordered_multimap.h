@@ -357,38 +357,13 @@ public:
 		return equal_range(key).first;
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	const_iterator find(const KeyArg& key) const
-	{
-		return equal_range(key).first;
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	iterator find(const KeyArg& key)
-	{
-		return equal_range(key).first;
-	}
-
 	size_type count(const key_type& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
 		return !!keyIter ? keyIter->values.GetCount() : 0;
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	size_type count(const KeyArg& key) const
-	{
-		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
-		return !!keyIter ? keyIter->values.GetCount() : 0;
-	}
-
 	bool contains(const key_type& key) const
-	{
-		return count(key) > 0;
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	bool contains(const KeyArg& key) const
 	{
 		return count(key) > 0;
 	}
@@ -403,6 +378,32 @@ public:
 		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, key);
 	}
 
+#ifdef MOMO_USE_UNORDERED_HETEROGENEOUS_LOOKUP
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	const_iterator find(const KeyArg& key) const
+	{
+		return equal_range(key).first;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	iterator find(const KeyArg& key)
+	{
+		return equal_range(key).first;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	size_type count(const KeyArg& key) const
+	{
+		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
+		return !!keyIter ? keyIter->values.GetCount() : 0;
+	}
+
+	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
+	bool contains(const KeyArg& key) const
+	{
+		return count(key) > 0;
+	}
+
 	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
 	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
 	{
@@ -414,6 +415,7 @@ public:
 	{
 		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, key);
 	}
+#endif
 
 	//template<typename Value>
 	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
