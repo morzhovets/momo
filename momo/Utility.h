@@ -234,7 +234,17 @@ namespace internal
 
 		static DivResult DivBySmall(UInt value, UInt mod) MOMO_NOEXCEPT
 		{
-			MOMO_DIV_SWITCH(mod, DivByConst, value);
+			switch (mod)
+			{
+			case 1:
+				return DivByConst<1>(value);
+			case 2:
+				return DivByConst<2>(value);
+			case 3:
+				return DivByConst<3>(value);
+			case 4:
+				return DivByConst<4>(value);
+			}
 			DivResult result;
 			result.quotient = value / mod;
 			result.remainder = value % mod;

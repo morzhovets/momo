@@ -112,15 +112,6 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
-#define MOMO_DIV_SWITCH(mod, DivByConst, value) \
-	switch (mod) \
-	{ \
-		case 1: return DivByConst<1>(value); \
-		case 2: return DivByConst<2>(value); \
-		case 3: return DivByConst<3>(value); \
-		case 4: return DivByConst<4>(value); \
-	}
-
 #ifdef MOMO_USE_SSE2
 #define MOMO_PREFETCH_RANGE(ptr, size) \
 	for (size_t offset = 0; offset < (size_t)size; offset += 64) \
