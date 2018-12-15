@@ -21,8 +21,9 @@ class test_hash
 public:
     explicit test_hash(int data = 0) : data_(data) {}
 
-    std::size_t
-    operator()(typename std::add_lvalue_reference<const typename C::argument_type>::type x) const
+    template<typename T>
+    std::size_t operator()(const T& x) const
+    //operator()(typename std::add_lvalue_reference<const typename C::argument_type>::type x) const
         {return C::operator()(x);}
 
     bool operator==(const test_hash& c) const
