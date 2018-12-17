@@ -49,13 +49,18 @@ public:
 	typedef std::true_type propagate_on_container_move_assignment;
 	typedef std::true_type propagate_on_container_swap;
 
-	template<typename Value, typename BaseAllocator, typename MemPoolParams>
-	friend class unsynchronized_pool_allocator;	//?
-
 private:
 	typedef mem_pool_params MemPoolParams;
 	typedef MemManagerStd<base_allocator_type> MemManager;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
+
+	template<typename Value>
+	struct PoolAllocatorProxy
+		: public unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>
+	{
+		typedef unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params> PoolAllocator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(PoolAllocator)
+	};
 
 public:
 	explicit unsynchronized_pool_allocator(const base_allocator_type& alloc = base_allocator_type())
@@ -68,13 +73,6 @@ public:
 	{
 	}
 
-	template<class Value>
-	unsynchronized_pool_allocator(const unsynchronized_pool_allocator<Value,
-		base_allocator_type, mem_pool_params>& alloc) MOMO_NOEXCEPT
-		: mMemPool(alloc.mMemPool)
-	{
-	}
-
 	~unsynchronized_pool_allocator() MOMO_NOEXCEPT
 	{
 	}
@@ -83,6 +81,13 @@ public:
 	{
 		mMemPool = alloc.mMemPool;
 		return *this;
+	}
+
+	template<class Value>
+	operator unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>() const
+		MOMO_NOEXCEPT
+	{
+		return PoolAllocatorProxy<Value>(mMemPool);
 	}
 
 	base_allocator_type get_base_allocator() const MOMO_NOEXCEPT
@@ -136,6 +141,12 @@ public:
 	bool operator!=(const unsynchronized_pool_allocator& alloc) const MOMO_NOEXCEPT
 	{
 		return !(*this == alloc);
+	}
+
+protected:
+	explicit unsynchronized_pool_allocator(const std::shared_ptr<MemPool>& memPool) MOMO_NOEXCEPT
+		: mMemPool(memPool)
+	{
 	}
 
 private:
