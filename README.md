@@ -40,7 +40,7 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 - `stdish::multiset` and `stdish::multimap` are similar to `std::multiset` and `std::multimap`.
 
-- `stdish::pool_allocator` is allocator with a pool of memory for containers like `std::list`. Each copy of the container keeps its own memory pool. Memory is released not only after destruction of the object, but also in case of removal sufficient number of items.
+- `stdish::unsynchronized_pool_allocator` is allocator with a pool of memory for containers like `std::list` or `std::map`. Each copy of the container keeps its own memory pool. Memory is released not only after destruction of the object, but also in case of removal sufficient number of items.
 
 - Folder `momo` also contains many of the analogous classes with non-standard interface, but more flexible, namely `HashSet`, `HashMap`, `HashMultiMap`, `TreeSet`, `TreeMap`, `Array`, `SegmentedArray`, `MemPool`.
 
