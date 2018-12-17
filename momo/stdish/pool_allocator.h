@@ -6,7 +6,7 @@
   momo/stdish/pool_allocator.h
 
   namespace momo::stdish:
-    class pool_allocator
+    class unsynchronized_pool_allocator
 
   Allocator with a pool of memory for containers like `std::list`,
   `std::forward_list`, `std::map`, `std::unordered_map`.
@@ -15,8 +15,6 @@
   Each copy of the container keeps its own memory pool.
   Memory is released not only after destruction of the object,
   but also in case of removal sufficient number of items.
-
-  Deviation from the `Allocator` concept: `pool_allocator(a) != a`.
 
 \**********************************************************/
 
@@ -33,7 +31,7 @@ namespace stdish
 template<typename TValue,
 	typename TBaseAllocator = std::allocator<char>,
 	typename TMemPoolParams = MemPoolParams<>>
-class pool_allocator
+class unsynchronized_pool_allocator
 {
 public:
 	typedef TValue value_type;
@@ -43,8 +41,6 @@ public:
 
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
-	typedef value_type& reference;
-	typedef const value_type& const_reference;
 
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
@@ -53,91 +49,69 @@ public:
 	typedef std::true_type propagate_on_container_move_assignment;
 	typedef std::true_type propagate_on_container_swap;
 
-	template<typename Value>
-	struct rebind
-	{
-		typedef pool_allocator<Value, base_allocator_type, mem_pool_params> other;
-	};
+	template<typename Value, typename BaseAllocator, typename MemPoolParams>
+	friend class unsynchronized_pool_allocator;	//?
 
 private:
-	typedef momo::MemPoolParamsStatic<sizeof(value_type), MOMO_ALIGNMENT_OF(value_type),
-		mem_pool_params::blockCount, mem_pool_params::cachedFreeBlockCount> MemPoolParams;
+	typedef mem_pool_params MemPoolParams;
 	typedef MemManagerStd<base_allocator_type> MemManager;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
 public:
-	pool_allocator()
+	explicit unsynchronized_pool_allocator(const base_allocator_type& alloc = base_allocator_type())
+		: mMemPool(std::allocate_shared<MemPool>(alloc, pvGetMemPoolParams(), MemManager(alloc)))
 	{
 	}
 
-	explicit pool_allocator(const base_allocator_type& alloc)
-		: mMemPool(MemManager(alloc))
-	{
-	}
-
-	pool_allocator(pool_allocator&& alloc) MOMO_NOEXCEPT
-		: mMemPool(std::move(alloc.mMemPool))
-	{
-	}
-
-	pool_allocator(const pool_allocator& alloc) MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.get_base_allocator())
+	unsynchronized_pool_allocator(const unsynchronized_pool_allocator& alloc) MOMO_NOEXCEPT
+		: mMemPool(alloc.mMemPool)
 	{
 	}
 
 	template<class Value>
-	pool_allocator(const pool_allocator<Value,
-		base_allocator_type, mem_pool_params>& alloc) MOMO_NOEXCEPT	//?
-		: pool_allocator(alloc.get_base_allocator())
+	unsynchronized_pool_allocator(const unsynchronized_pool_allocator<Value,
+		base_allocator_type, mem_pool_params>& alloc) MOMO_NOEXCEPT
+		: mMemPool(alloc.mMemPool)
 	{
 	}
 
-	~pool_allocator() MOMO_NOEXCEPT
+	~unsynchronized_pool_allocator() MOMO_NOEXCEPT
 	{
 	}
 
-	pool_allocator& operator=(pool_allocator&& alloc) MOMO_NOEXCEPT
+	unsynchronized_pool_allocator& operator=(const unsynchronized_pool_allocator& alloc) MOMO_NOEXCEPT
 	{
-		mMemPool = std::move(alloc.mMemPool);
+		mMemPool = alloc.mMemPool;
 		return *this;
 	}
 
-	pool_allocator& operator=(const pool_allocator& alloc) = delete;
-
 	base_allocator_type get_base_allocator() const MOMO_NOEXCEPT
 	{
-		return base_allocator_type(mMemPool.GetMemManager().GetCharAllocator());
+		return base_allocator_type(mMemPool->GetMemManager().GetCharAllocator());
 	}
 
-	pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
+	unsynchronized_pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
 	{
-		return pool_allocator(get_base_allocator());
+		return unsynchronized_pool_allocator(get_base_allocator());
 	}
 
-	pointer address(reference ref) const MOMO_NOEXCEPT
+	pointer allocate(size_type count)
 	{
-		return std::addressof(ref);
-	}
-
-	const_pointer address(const_reference ref) const MOMO_NOEXCEPT
-	{
-		return std::addressof(ref);
-	}
-
-	pointer allocate(size_type count, const void* = nullptr)
-	{
-		if (count == 1)
-			return mMemPool.template Allocate<value_type>();
-		else
-			return mMemPool.GetMemManager().template Allocate<value_type>(count * sizeof(value_type));
+		if (count > 1)
+			return mMemPool->GetMemManager().template Allocate<value_type>(count * sizeof(value_type));
+		MemPoolParams memPoolParams = pvGetMemPoolParams();
+		if (!mMemPool->GetParams().IsEqual(memPoolParams) && mMemPool->GetAllocateCount() == 0)
+			*mMemPool = MemPool(memPoolParams, MemManager(get_base_allocator()));
+		if (!mMemPool->GetParams().IsEqual(memPoolParams))
+			return mMemPool->GetMemManager().template Allocate<value_type>(sizeof(value_type));
+		return mMemPool->template Allocate<value_type>();
 	}
 
 	void deallocate(pointer ptr, size_type count) MOMO_NOEXCEPT
 	{
-		if (count == 1)
-			mMemPool.Deallocate(ptr);
-		else
-			mMemPool.GetMemManager().Deallocate(ptr, count * sizeof(value_type));
+		if (count > 1 || !mMemPool->GetParams().IsEqual(pvGetMemPoolParams()))
+			return mMemPool->GetMemManager().Deallocate(ptr, count * sizeof(value_type));
+		mMemPool->Deallocate(ptr);
 	}
 
 	template<typename Value, typename... ValueArgs>
@@ -145,51 +119,33 @@ public:
 	{
 		typedef typename momo::internal::ObjectManager<Value, MemManager>
 			::template Creator<ValueArgs...> ValueCreator;
-		ValueCreator(mMemPool.GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(ptr);
+		ValueCreator(mMemPool->GetMemManager(), std::forward<ValueArgs>(valueArgs)...)(ptr);
 	}
 
 	template<class Value>
 	void destroy(Value* ptr) MOMO_NOEXCEPT
 	{
-		momo::internal::ObjectManager<Value, MemManager>::Destroy(mMemPool.GetMemManager(), *ptr);
+		momo::internal::ObjectManager<Value, MemManager>::Destroy(mMemPool->GetMemManager(), *ptr);
 	}
 
-	size_type max_size() const MOMO_NOEXCEPT
+	bool operator==(const unsynchronized_pool_allocator& alloc) const MOMO_NOEXCEPT
 	{
-		return SIZE_MAX / sizeof(value_type);
+		return mMemPool == alloc.mMemPool;
 	}
 
-	bool operator==(const pool_allocator& alloc) const MOMO_NOEXCEPT
+	bool operator!=(const unsynchronized_pool_allocator& alloc) const MOMO_NOEXCEPT
 	{
-		return this == &alloc;
-	}
-
-	bool operator!=(const pool_allocator& alloc) const MOMO_NOEXCEPT
-	{
-		return this != &alloc;
+		return !(*this == alloc);
 	}
 
 private:
-	MemPool mMemPool;
-};
-
-template<typename TBaseAllocator, typename TMemPoolParams>
-class pool_allocator<void, TBaseAllocator, TMemPoolParams>
-{
-public:
-	typedef void value_type;
-
-	typedef TBaseAllocator base_allocator_type;
-	typedef TMemPoolParams mem_pool_params;
-
-	typedef void* pointer;
-	typedef const void* const_pointer;
-
-	template<typename Value>
-	struct rebind
+	static MemPoolParams pvGetMemPoolParams() MOMO_NOEXCEPT
 	{
-		typedef pool_allocator<Value, base_allocator_type, mem_pool_params> other;
-	};
+		return MemPoolParams(sizeof(value_type), MOMO_ALIGNMENT_OF(value_type));
+	}
+
+private:
+	std::shared_ptr<MemPool> mMemPool;
 };
 
 } // namespace stdish

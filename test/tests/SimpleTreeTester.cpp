@@ -15,6 +15,7 @@
 
 #include "../../momo/TreeSet.h"
 #include "../../momo/TreeMap.h"
+#include "../../momo/stdish/pool_allocator.h"
 
 #include <string>
 #include <iostream>
@@ -110,7 +111,8 @@ public:
 		}
 
 		{
-			std::set<unsigned char> sset;
+			std::set<unsigned char, std::less<unsigned char>,
+				momo::stdish::unsynchronized_pool_allocator<unsigned char>> sset;
 			TreeSet mset;
 
 			std::shuffle(array, array + count, mt);

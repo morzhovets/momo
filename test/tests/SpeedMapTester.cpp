@@ -17,7 +17,6 @@
 
 #include "../../momo/stdish/unordered_map.h"
 #include "../../momo/stdish/map.h"
-#include "../../momo/stdish/pool_allocator.h"
 
 #include "../../momo/details/HashBucketLim4.h"
 #include "../../momo/details/HashBucketLimP.h"
