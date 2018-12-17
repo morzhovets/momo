@@ -238,6 +238,11 @@ public:
 		return Params::blockCount;
 	}
 
+	const Params& GetParams() const MOMO_NOEXCEPT
+	{
+		return *this;
+	}
+
 	const MemManager& GetMemManager() const MOMO_NOEXCEPT
 	{
 		return pvGetMemManagerWrapper().GetMemManager();
@@ -285,6 +290,11 @@ public:
 			pvDeleteBlock(pblock);
 		}
 		--mAllocCount;
+	}
+
+	size_t GetAllocateCount() const MOMO_NOEXCEPT
+	{
+		return mAllocCount;
 	}
 
 	void MergeFrom(MemPool& memPool)
