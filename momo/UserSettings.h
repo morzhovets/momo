@@ -139,7 +139,7 @@
 #define MOMO_HAS_DEDUCTION_GUIDES
 #endif
 
-#ifdef __cpp_guaranteed_copy_elision
+#if defined(__cpp_guaranteed_copy_elision) && !defined(_MSC_VER)
 #define MOMO_HAS_GUARANTEED_COPY_ELISION
 #endif
 
