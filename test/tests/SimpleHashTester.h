@@ -15,6 +15,10 @@
 #include <iostream>
 #include <random>
 
+#ifdef __cpp_lib_string_view
+#include <string_view>
+#endif
+
 class SimpleHashTester
 {
 private:
@@ -96,24 +100,29 @@ public:
 	template<typename HashBucket>
 	static void TestStrHash(const char* bucketName)
 	{
+#ifdef __cpp_lib_string_view
+		typedef momo::HashTraits<std::string_view, HashBucket> HashTraits;
+#else
+		typedef momo::HashTraits<std::string, HashBucket> HashTraits;
+#endif
+
 		std::cout << bucketName << ": HashSet: " << std::flush;
-		TestStrHashSet<HashBucket>();
+		TestStrHashSet<HashTraits>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << bucketName << ": HashMap: " << std::flush;
-		TestStrHashMap<HashBucket>();
+		TestStrHashMap<HashTraits>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << bucketName << ": HashMultiMap: " << std::flush;
-		TestStrHashMultiMap<HashBucket>();
+		TestStrHashMultiMap<HashTraits>();
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename HashBucket>
+	template<typename HashTraits>
 	static void TestStrHashSet()
 	{
-		typedef momo::HashSet<std::string,
-			momo::HashTraits<std::string, HashBucket>> HashSet;
+		typedef momo::HashSet<std::string, HashTraits> HashSet;
 		std::string s1 = "s1";
 		HashSet set = { s1, "s2" };
 		set.Insert("s3");
@@ -145,11 +154,10 @@ public:
 		assert(set.IsEmpty());
 	}
 
-	template<typename HashBucket>
+	template<typename HashTraits>
 	static void TestStrHashMap()
 	{
-		typedef momo::HashMap<std::string, std::string,
-			momo::HashTraits<std::string, HashBucket>> HashMap;
+		typedef momo::HashMap<std::string, std::string, HashTraits> HashMap;
 		std::string s1 = "s1";
 		std::string s2 = "s2";
 		std::string s3 = "s3";
@@ -198,11 +206,10 @@ public:
 		assert(map.IsEmpty());
 	}
 
-	template<typename HashBucket>
+	template<typename HashTraits>
 	static void TestStrHashMultiMap()
 	{
-		typedef momo::HashMultiMap<std::string, std::string,
-			momo::HashTraits<std::string, HashBucket>> HashMultiMap;
+		typedef momo::HashMultiMap<std::string, std::string, HashTraits> HashMultiMap;
 		std::string k1 = "k1";
 		std::string v1 = "v1";
 		std::string k2 = "k2";
