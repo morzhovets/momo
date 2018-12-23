@@ -16,12 +16,7 @@
 
 #ifdef _MSC_VER
 
-#if _MSC_VER >= 1900
 #define _LIBCPP_STD_VER 14
-#else
-#define _LIBCPP_STD_VER 11
-#define _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
-#endif
 
 #else
 

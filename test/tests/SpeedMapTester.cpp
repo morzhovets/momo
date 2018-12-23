@@ -177,12 +177,7 @@ public:
 private:
 	typedef SpeedMapKeys<Key> Keys;
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-	typedef std::chrono::system_clock Clock;
-#else
 	typedef std::chrono::steady_clock Clock;
-#endif
-
 	typedef std::chrono::time_point<Clock> TimePoint;
 	typedef int64_t TickCount;
 

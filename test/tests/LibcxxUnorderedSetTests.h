@@ -139,8 +139,6 @@ LIBCXX_TEST_BEGIN(insert_init)
 #include "libcxx/unord.set/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "libcxx/unord.set/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
@@ -148,8 +146,6 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "libcxx/unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
-
-#endif
 
 LIBCXX_TEST_BEGIN(insert_range)
 #include "libcxx/unord.set/insert_range.pass.cpp"
@@ -183,11 +179,9 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "libcxx/unord.set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
 LIBCXX_TEST_BEGIN(merge)
 #include "libcxx/unord.set/merge.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(rehash)
 #include "libcxx/unord.set/rehash.pass.cpp"
