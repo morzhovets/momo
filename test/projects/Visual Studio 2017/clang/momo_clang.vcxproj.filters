@@ -132,11 +132,5 @@
     <ClCompile Include="..\..\..\tests\SimpleHashTesterOpen8.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\LibcxxTreeMultiSetTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\LibcxxTreeMultiMapTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
