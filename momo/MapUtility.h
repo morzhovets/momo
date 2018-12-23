@@ -564,7 +564,7 @@ namespace internal
 			{
 			}
 
-			void operator()(Item* newItem) //&&	// vs2013
+			void operator()(Item* newItem) &&
 			{
 				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
 					mMemManager, *mItem.GetValuePtr());

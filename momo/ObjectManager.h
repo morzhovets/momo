@@ -177,7 +177,7 @@ namespace internal
 
 			Creator& operator=(const Creator&) = delete;
 
-			void operator()(Object* newObject) //&&	// vs2013
+			void operator()(Object* newObject) &&
 			{
 				pvCreate(mMemManager, newObject,
 					typename SequenceMaker<sizeof...(Args)>::Sequence());
