@@ -105,7 +105,7 @@ namespace internal
 
 	private:
 		template<typename Map>
-		struct ConstIteratorProxy : public Map::const_iterator
+		struct ConstIteratorProxy : private Map::const_iterator
 		{
 			typedef typename Map::const_iterator ConstIterator;
 			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
