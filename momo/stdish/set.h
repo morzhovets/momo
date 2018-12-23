@@ -379,8 +379,6 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (TreeTraits::multiKey)
-			return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
 		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
@@ -552,9 +550,7 @@ private:
 
 	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 	{
-		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
-		return TreeTraits::multiKey ? !treeTraits.IsLess(key2, key1)
-			: treeTraits.IsLess(key1, key2);
+		return mTreeSet.GetTreeTraits().IsLess(key1, key2);
 	}
 
 	bool pvCheckHint(const_iterator hint, const key_type& key) const

@@ -446,8 +446,6 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (TreeTraits::multiKey)
-			return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
 		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<const_iterator, const_iterator>(iter, iter);
 		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
@@ -456,8 +454,6 @@ public:
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = lower_bound(key);
-		if (TreeTraits::multiKey)
-			return std::pair<iterator, iterator>(iter, upper_bound(key));
 		if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
 			return std::pair<iterator, iterator>(iter, iter);
 		return std::pair<iterator, iterator>(iter, std::next(iter));
@@ -779,15 +775,13 @@ private:
 
 	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 	{
-		const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();
-		return TreeTraits::multiKey ? !treeTraits.IsLess(key2, key1)
-			: treeTraits.IsLess(key1, key2);
+		return mTreeMap.GetTreeTraits().IsLess(key1, key2);
 	}
 
 	std::pair<iterator, bool> pvFind(std::nullptr_t /*hint*/, const key_type& key)
 	{
 		iterator iter = upper_bound(key);
-		if (!TreeTraits::multiKey && iter != begin())
+		if (iter != begin())
 		{
 			iterator prevIter = std::prev(iter);
 			if (!mTreeMap.GetTreeTraits().IsLess(prevIter->first, key))
