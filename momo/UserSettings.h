@@ -79,6 +79,8 @@
 
 //#define MOMO_HASH_CODER(key) hash_value(key)
 
+// If hash function is slow, hash bucket can store part of hash code
+// to avoid its recalculation during table grow
 #define MOMO_IS_FAST_NOTHROW_HASHABLE(Key) (std::is_arithmetic<Key>::value)
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
@@ -95,6 +97,7 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
+// Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
 #if defined(_M_AMD64) || defined(_M_X64)
 #define MOMO_USE_SSE2

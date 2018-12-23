@@ -12,7 +12,7 @@
   This classes are similar to `std::unordered_set`.
 
   `unordered_set` is much more efficient than standard one in
-  memory usage. Its implementation is based on hash tables with
+  memory usage. Its implementation is based on hash table with
   buckets in the form of small arrays.
   `unordered_set_open` is based on open addressing hash table.
 
@@ -25,6 +25,7 @@
     O(bucket_count) time in worst case.
   4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
     functions `erase` can throw exceptions.
+  5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.

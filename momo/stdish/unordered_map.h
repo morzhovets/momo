@@ -12,7 +12,7 @@
   This classes are similar to `std::unordered_map`.
 
   `unordered_map` is much more efficient than standard one in
-  memory usage. Its implementation is based on hash tables with
+  memory usage. Its implementation is based on hash table with
   buckets in the form of small arrays.
   `unordered_map_open` is based on open addressing hash table.
 
@@ -29,6 +29,7 @@
   5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
     or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
     functions `erase` can throw exceptions.
+  6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.

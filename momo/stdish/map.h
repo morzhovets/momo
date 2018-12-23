@@ -25,9 +25,12 @@
   5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
     or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
     functions `erase` can throw exceptions.
+  6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
 
   It is allowed to pass to functions `insert` and `emplace` references
   to items within the container.
+  Function `merge` can work fast, if container types are same and each
+  key from one container is less than each key from other container.
 
 \**********************************************************/
 

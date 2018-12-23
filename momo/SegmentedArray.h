@@ -18,6 +18,8 @@
   2. If any constructor throws exception, input argument `memManager`
     may be changed.
 
+  Swap and move operations invalidate all container iterators.
+
 \**********************************************************/
 
 #pragma once

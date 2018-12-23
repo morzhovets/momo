@@ -12,7 +12,8 @@
 
   All `TreeSet` functions and constructors have strong exception safety,
   but not the following cases:
-  1. Functions `Insert` receiving many items have basic exception safety.
+  1. Functions `Insert` and `Remove` receiving many items have basic
+    exception safety.
   2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
   3. If constructor receiving many items throws exception, input argument
     `memManager` may be changed.
@@ -839,7 +840,6 @@ public:
 			Clear();
 			return GetEnd();
 		}
-		// basic exception safety
 		size_t count = std::distance(begin, end);
 		ConstIterator iter = begin;
 		for (size_t i = 0; i < count; ++i)
