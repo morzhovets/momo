@@ -642,7 +642,7 @@ namespace internal
 
 		node_type extract(const_iterator where)
 		{
-			return node_type(mTreeMap, ConstIteratorProxy::GetBaseIterator(where));
+			return node_type(*this, where);	// need RVO for exception safety
 		}
 
 		node_type extract(const key_type& key)

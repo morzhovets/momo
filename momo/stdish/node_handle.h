@@ -44,8 +44,8 @@ namespace internal
 		set_node_handle(const set_node_handle&) = delete;
 
 		template<typename Set>
-		set_node_handle(Set& set, typename Set::ConstIterator iter)
-			: mSetExtractedItem(set, iter)
+		explicit set_node_handle(Set& set, typename Set::const_iterator iter)
+			: mSetExtractedItem(set.get_nested_container(), iter)
 		{
 		}
 
@@ -103,6 +103,15 @@ namespace internal
 		typedef typename MapExtractedPair::Value mapped_type;
 		//allocator_type;
 
+	private:
+		template<typename Map>
+		struct ConstIteratorProxy : public Map::const_iterator
+		{
+			typedef typename Map::const_iterator ConstIterator;
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
+				typename ConstIterator::BaseIterator)
+		};
+
 	public:
 		map_node_handle() MOMO_NOEXCEPT
 		{
@@ -117,8 +126,9 @@ namespace internal
 		map_node_handle(const map_node_handle&) = delete;
 
 		template<typename Map>
-		map_node_handle(Map& map, typename Map::ConstIterator iter)
-			: mMapExtractedPair(map, iter)
+		explicit map_node_handle(Map& map, typename Map::const_iterator iter)
+			: mMapExtractedPair(map.get_nested_container(),
+				ConstIteratorProxy<Map>::GetBaseIterator(iter))
 		{
 		}
 
