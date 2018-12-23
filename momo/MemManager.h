@@ -64,7 +64,7 @@ namespace internal
 		{
 			(void)ptr;
 			MOMO_STATIC_ASSERT(ptrUsefulBitCount < sizeof(void*) * 8);
-			MOMO_ASSERT((uintptr_t)ptr >> ptrUsefulBitCount == (uintptr_t)0);
+			MOMO_ASSERT(reinterpret_cast<uintptr_t>(ptr) >> ptrUsefulBitCount == (uintptr_t)0);
 		}
 	};
 
