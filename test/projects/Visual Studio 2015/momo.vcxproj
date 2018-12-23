@@ -172,7 +172,6 @@
     <ClCompile Include="..\..\tests\LibcxxTreeMultiSetTester.cpp" />
     <ClCompile Include="..\..\tests\LibcxxTreeSetTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp" />
-    <ClCompile Include="..\..\tests\SimpleDataTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP1.cpp" />
@@ -189,11 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\ArrayUtility.h" />
-    <ClInclude Include="..\..\..\momo\DataColumn.h" />
-    <ClInclude Include="..\..\..\momo\DataIndexes.h" />
-    <ClInclude Include="..\..\..\momo\DataRow.h" />
-    <ClInclude Include="..\..\..\momo\DataSelection.h" />
-    <ClInclude Include="..\..\..\momo\DataTable.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLim4.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOpen2N2.h" />

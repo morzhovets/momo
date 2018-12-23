@@ -63,9 +63,6 @@
     <ClCompile Include="..\..\..\tests\SimpleArrayTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\SimpleDataTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\SimpleTreeTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>

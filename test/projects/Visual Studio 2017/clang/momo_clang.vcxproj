@@ -95,7 +95,6 @@
     <ClCompile Include="..\..\..\tests\LibcxxTreeMultiSetTester.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxTreeSetTester.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleArrayTester.cpp" />
-    <ClCompile Include="..\..\..\tests\SimpleDataTester.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterLim4.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterLimP.cpp" />
     <ClCompile Include="..\..\..\tests\SimpleHashTesterLimP1.cpp" />

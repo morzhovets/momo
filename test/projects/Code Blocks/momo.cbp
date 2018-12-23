@@ -129,11 +129,6 @@
 		</Build>
 		<Unit filename="../../../momo/Array.h" />
 		<Unit filename="../../../momo/ArrayUtility.h" />
-		<Unit filename="../../../momo/DataColumn.h" />
-		<Unit filename="../../../momo/DataIndexes.h" />
-		<Unit filename="../../../momo/DataRow.h" />
-		<Unit filename="../../../momo/DataSelection.h" />
-		<Unit filename="../../../momo/DataTable.h" />
 		<Unit filename="../../../momo/HashMap.h" />
 		<Unit filename="../../../momo/HashMultiMap.h" />
 		<Unit filename="../../../momo/HashSet.h" />
@@ -212,7 +207,6 @@
 		<Unit filename="../../tests/LibcxxUnorderedSetTests.h" />
 		<Unit filename="../../tests/LibcxxVectorTests.h" />
 		<Unit filename="../../tests/SimpleArrayTester.cpp" />
-		<Unit filename="../../tests/SimpleDataTester.cpp" />
 		<Unit filename="../../tests/SimpleHashTester.h" />
 		<Unit filename="../../tests/SimpleHashTesterLim4.cpp" />
 		<Unit filename="../../tests/SimpleHashTesterLimP.cpp" />

@@ -81,9 +81,6 @@
     <ClCompile Include="..\..\tests\SimpleTreeTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\SimpleDataTester.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -289,21 +286,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketOneI.h">
       <Filter>Header Files\momo\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\DataColumn.h">
-      <Filter>Header Files\momo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\DataIndexes.h">
-      <Filter>Header Files\momo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\DataRow.h">
-      <Filter>Header Files\momo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\DataSelection.h">
-      <Filter>Header Files\momo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\DataTable.h">
-      <Filter>Header Files\momo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\stdish\node_handle.h">
       <Filter>Header Files\momo\stdish</Filter>
