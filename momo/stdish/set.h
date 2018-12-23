@@ -584,7 +584,6 @@ private:
 	TreeSet mTreeSet;
 };
 
-#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>,
@@ -633,7 +632,6 @@ public:
 		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 };
-#endif
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 

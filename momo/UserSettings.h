@@ -134,14 +134,11 @@
 #define MOMO_NOEXCEPT noexcept
 #define MOMO_NOEXCEPT_IF(expr) noexcept(expr)
 
-#define MOMO_HAS_INHERITING_CONSTRUCTORS
-
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #undef MOMO_NOEXCEPT
 #undef MOMO_NOEXCEPT_IF
 #define MOMO_NOEXCEPT throw()
 #define MOMO_NOEXCEPT_IF(expr)
-#undef MOMO_HAS_INHERITING_CONSTRUCTORS
 #endif
 
 #ifdef __cpp_deduction_guides

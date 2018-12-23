@@ -836,68 +836,7 @@ public:
 	using typename BaseMap::iterator;
 
 public:
-#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
 	using BaseMap::BaseMap;
-#else
-	using typename BaseMap::allocator_type;
-	using typename BaseMap::key_compare;
-
-	map()
-	{
-	}
-
-	explicit map(const allocator_type& alloc)
-		: map_base(alloc)
-	{
-	}
-
-	explicit map(const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
-		: map_base(lessFunc, alloc)
-	{
-	}
-
-	template<typename Iterator>
-	map(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
-		: map_base(first, last, alloc)
-	{
-	}
-
-	template<typename Iterator>
-	map(Iterator first, Iterator last, const key_compare& lessFunc,
-		const allocator_type& alloc = allocator_type())
-		: map_base(first, last, lessFunc, alloc)
-	{
-	}
-
-	map(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
-		: map_base(values, alloc)
-	{
-	}
-
-	map(std::initializer_list<value_type> values, const key_compare& lessFunc,
-		const allocator_type& alloc = allocator_type())
-		: map_base(values, lessFunc, alloc)
-	{
-	}
-
-	map(map&& right) MOMO_NOEXCEPT
-		: map_base(std::move(right))
-	{
-	}
-
-	map(map&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
-		: map_base(std::move(right), alloc)
-	{
-	}
-
-	//map(const map& right)
-
-	map(const map_base& right, const allocator_type& alloc)
-		: map_base(right, alloc)
-	{
-	}
-#endif
 
 	friend void swap(map& left, map& right) MOMO_NOEXCEPT
 	{
@@ -995,7 +934,6 @@ private:
 	}
 };
 
-#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
@@ -1062,7 +1000,6 @@ public:
 		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 };
-#endif
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 
