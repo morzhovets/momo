@@ -7,12 +7,11 @@
 
   namespace momo::stdish:
     class set
-    class multiset
 
-  This classes are similar to `std::set` and `std::multiset`, but much
-  more efficient in memory usage. The implementation is based on a B-tree.
+  This class is similar to `std::set`, but much more efficient in
+  memory usage. The implementation is based on a B-tree.
 
-  Deviations from `std::set` and `std::multiset`:
+  Deviations from `std::set`:
   1. Container items must be movable (preferably without exceptions)
     or copyable, similar to items of `std::vector`.
   2. After each addition or removal of the item all iterators and
@@ -584,57 +583,6 @@ private:
 	TreeSet mTreeSet;
 };
 
-#ifdef MOMO_HAS_INHERITING_CONSTRUCTORS
-template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessFunc, true>,
-		MemManagerStd<TAllocator>>>
-class multiset : public set<TKey, TLessFunc, TAllocator, TTreeSet>
-{
-private:
-	typedef set<TKey, TLessFunc, TAllocator, TTreeSet> Set;
-
-public:
-	using typename Set::value_type;
-	using typename Set::iterator;
-	using typename Set::node_type;
-
-	typedef iterator insert_return_type;
-
-public:
-	using Set::Set;
-
-	friend void swap(multiset& left, multiset& right) MOMO_NOEXCEPT
-	{
-		left.swap(right);
-	}
-
-	using Set::insert;
-
-	iterator insert(value_type&& value)
-	{
-		return Set::insert(std::move(value)).first;
-	}
-
-	iterator insert(const value_type& value)
-	{
-		return Set::insert(value).first;
-	}
-
-	iterator insert(node_type&& node)
-	{
-		return Set::insert(std::move(node)).position;
-	}
-
-	template<typename... ValueArgs>
-	iterator emplace(ValueArgs&&... valueArgs)
-	{
-		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
-	}
-};
-#endif
-
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
@@ -657,7 +605,6 @@ set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
-MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
 
