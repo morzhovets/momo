@@ -71,12 +71,13 @@
 
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
 	template<typename... Args> \
-	BaseClass##Proxy(Args&&... args) \
+	explicit BaseClass##Proxy(Args&&... args) \
 		noexcept((std::is_nothrow_constructible<BaseClass, Args&&...>::value)) \
 		: BaseClass(std::forward<Args>(args)...) \
 	{ \
 	}
 
+// Result = decltype((std::declval<Object&&>().*&BaseClass##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
 #define MOMO_DECLARE_PROXY_FUNCTION(BaseClass, Func, Result) \
 	template<typename Object, typename... Args> \
 	static Result Func(Object&& object, Args&&... args) \
