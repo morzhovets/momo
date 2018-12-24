@@ -26,7 +26,7 @@
 //#include "test_macros.h"
 //#include "Counter.h"
 
-using momo::stdish::multiset;
+//using momo::stdish::multiset;
 
 template <class Set>
 bool set_equal(const Set& set, Set other)
@@ -97,7 +97,8 @@ void main()
     {
         typedef set<Counter<int>, std::less<Counter<int>>> first_set_type;
         typedef set<Counter<int>, comparator> second_set_type;
-        typedef multiset<Counter<int>, comparator> third_set_type;
+        typedef set<Counter<int>, comparator> third_set_type;
+        //typedef multiset<Counter<int>, comparator> third_set_type;
 
         {
             first_set_type first{1, 2, 3};
@@ -142,7 +143,8 @@ void main()
             first.merge(std::move(second));
         }
         {
-            multiset<int> second;
+            set<int> second;
+            //multiset<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }

@@ -26,7 +26,7 @@
 //#include "test_macros.h"
 //#include "Counter.h"
 
-using momo::stdish::multimap;
+//using momo::stdish::multimap;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
@@ -97,7 +97,8 @@ void main()
     {
         typedef map<Counter<int>, int, std::less<Counter<int>>> first_map_type;
         typedef map<Counter<int>, int, comparator> second_map_type;
-        typedef multimap<Counter<int>, int, comparator> third_map_type;
+        typedef map<Counter<int>, int, comparator> third_map_type;
+        //typedef multimap<Counter<int>, int, comparator> third_map_type;
 
         {
             first_map_type first{{1, 0}, {2, 0}, {3, 0}};
@@ -143,7 +144,8 @@ void main()
             first.merge(std::move(second));
         }
         {
-            multimap<int, int> second;
+            map<int, int> second;
+           // multimap<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
