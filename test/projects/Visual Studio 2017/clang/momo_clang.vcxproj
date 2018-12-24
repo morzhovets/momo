@@ -68,7 +68,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\main.cpp" />
+    <ClCompile Include="..\..\..\tests\main.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxArrayTester.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLim4.cpp" />
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterLimP.cpp" />

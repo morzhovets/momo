@@ -173,7 +173,6 @@
 		<Unit filename="../../../momo/stdish/unordered_multimap.h" />
 		<Unit filename="../../../momo/stdish/unordered_set.h" />
 		<Unit filename="../../../momo/stdish/vector.h" />
-		<Unit filename="../../main.cpp" />
 		<Unit filename="../../tests/LibcxxArrayTester.cpp" />
 		<Unit filename="../../tests/LibcxxHashMapTester.h" />
 		<Unit filename="../../tests/LibcxxHashMapTesterLim4.cpp" />
@@ -228,6 +227,8 @@
 		<Unit filename="../../tests/SimpleTreeTester.cpp" />
 		<Unit filename="../../tests/SpeedMapTester.cpp" />
 		<Unit filename="../../tests/TestSettings.h" />
+		<Unit filename="../../tests/main.cpp" />
+		<Unit filename="../../tests/pch.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -72,7 +72,7 @@
     <ClCompile Include="..\..\..\tests\SpeedMapTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main.cpp">
+    <ClCompile Include="..\..\..\tests\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\LibcxxHashMapTesterOneIA.cpp">

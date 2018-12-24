@@ -7,6 +7,7 @@
 
 \**********************************************************/
 
+#include "pch.h"
 #include "TestSettings.h"
 
 #ifdef TEST_SPEED_MAP

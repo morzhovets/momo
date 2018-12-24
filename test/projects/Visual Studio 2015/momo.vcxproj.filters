@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -151,6 +148,9 @@
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxTreeMultiMapTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\main.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -333,6 +333,9 @@
       <Filter>Header Files\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\..\tests\LibcxxMultiMapTests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\pch.h">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>
