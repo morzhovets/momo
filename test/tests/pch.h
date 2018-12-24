@@ -34,9 +34,14 @@
 #include <array>
 #include <initializer_list>
 
-#include <iostream>
-#include <cfloat>
+#ifdef _MSC_VER //_WIN32
+#include <Windows.h>
+#endif
+
 #include <string>
-#include <cmath>
+#include <iostream>
+#include <random>
+
+#include "LibcxxTester.h"
 
 #endif // PCH_INCLUDED

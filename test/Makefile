@@ -8,14 +8,14 @@ clean:
 	mkdir build
 
 build/momo_gcc11:
-	g++ -std=c++11 $(CFLAGS) -o build/momo_gcc11 main.cpp $(TESTS)
+	g++ -std=c++11 $(CFLAGS) -o build/momo_gcc11 $(TESTS)
 
 build/momo_gcc17:
-	g++ -std=c++17 $(CFLAGS) -o build/momo_gcc17 main.cpp $(TESTS)
+	g++ -std=c++17 $(CFLAGS) -o build/momo_gcc17 $(TESTS)
 
 build/momo_clang11:
-	clang++ -std=c++11 $(CFLAGS) -o build/momo_clang11 main.cpp $(TESTS)
+	clang++ -std=c++11 $(CFLAGS) -o build/momo_clang11 $(TESTS)
 
 build/momo_clang17:
-	clang++ -std=c++17 $(CFLAGS) -o build/momo_clang17 main.cpp $(TESTS)
+	clang++ -std=c++17 $(CFLAGS) -o build/momo_clang17 $(TESTS)
 
