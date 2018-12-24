@@ -175,13 +175,13 @@ namespace internal
 		{
 		}
 
-		map_base(map_base&& right) MOMO_NOEXCEPT
+		map_base(map_base&& right) noexcept
 			: mTreeMap(std::move(right.mTreeMap))
 		{
 		}
 
 		map_base(map_base&& right, const allocator_type& alloc)
-			MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+			noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 			: mTreeMap(pvCreateMap(std::move(right), alloc))
 		{
 		}
@@ -196,12 +196,12 @@ namespace internal
 		{
 		}
 
-		~map_base() MOMO_NOEXCEPT
+		~map_base() noexcept
 		{
 		}
 
 		map_base& operator=(map_base&& right)
-			MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 		{
 			if (this != &right)
@@ -234,79 +234,79 @@ namespace internal
 			return *this;
 		}
 
-		void swap(map_base& right) MOMO_NOEXCEPT
+		void swap(map_base& right) noexcept
 		{
 			MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
 				|| get_allocator() == right.get_allocator());
 			mTreeMap.Swap(right.mTreeMap);
 		}
 
-		const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+		const nested_container_type& get_nested_container() const noexcept
 		{
 			return mTreeMap;
 		}
 
-		nested_container_type& get_nested_container() MOMO_NOEXCEPT
+		nested_container_type& get_nested_container() noexcept
 		{
 			return mTreeMap;
 		}
 
-		iterator begin() MOMO_NOEXCEPT
+		iterator begin() noexcept
 		{
 			return IteratorProxy(mTreeMap.GetBegin());
 		}
 
-		const_iterator begin() const MOMO_NOEXCEPT
+		const_iterator begin() const noexcept
 		{
 			return ConstIteratorProxy(mTreeMap.GetBegin());
 		}
 
-		iterator end() MOMO_NOEXCEPT
+		iterator end() noexcept
 		{
 			return IteratorProxy(mTreeMap.GetEnd());
 		}
 
-		const_iterator end() const MOMO_NOEXCEPT
+		const_iterator end() const noexcept
 		{
 			return ConstIteratorProxy(mTreeMap.GetEnd());
 		}
 
-		reverse_iterator rbegin() MOMO_NOEXCEPT
+		reverse_iterator rbegin() noexcept
 		{
 			return reverse_iterator(end());
 		}
 
-		const_reverse_iterator rbegin() const MOMO_NOEXCEPT
+		const_reverse_iterator rbegin() const noexcept
 		{
 			return const_reverse_iterator(end());
 		}
 
-		reverse_iterator rend() MOMO_NOEXCEPT
+		reverse_iterator rend() noexcept
 		{
 			return reverse_iterator(begin());
 		}
 
-		const_reverse_iterator rend() const MOMO_NOEXCEPT
+		const_reverse_iterator rend() const noexcept
 		{
 			return const_reverse_iterator(begin());
 		}
 
-		const_iterator cbegin() const MOMO_NOEXCEPT
+		const_iterator cbegin() const noexcept
 		{
 			return begin();
 		}
 
-		const_iterator cend() const MOMO_NOEXCEPT
+		const_iterator cend() const noexcept
 		{
 			return end();
 		}
 
-		const_reverse_iterator crbegin() const MOMO_NOEXCEPT
+		const_reverse_iterator crbegin() const noexcept
 		{
 			return rbegin();
 		}
 
-		const_reverse_iterator crend() const MOMO_NOEXCEPT
+		const_reverse_iterator crend() const noexcept
 		{
 			return rend();
 		}
@@ -328,27 +328,27 @@ namespace internal
 			return ValueCompareProxy(key_comp());
 		}
 
-		allocator_type get_allocator() const MOMO_NOEXCEPT
+		allocator_type get_allocator() const noexcept
 		{
 			return allocator_type(mTreeMap.GetMemManager().GetCharAllocator());
 		}
 
-		size_type max_size() const MOMO_NOEXCEPT
+		size_type max_size() const noexcept
 		{
 			return std::allocator_traits<allocator_type>::max_size(get_allocator());
 		}
 
-		size_type size() const MOMO_NOEXCEPT
+		size_type size() const noexcept
 		{
 			return mTreeMap.GetCount();
 		}
 
-		bool empty() const MOMO_NOEXCEPT
+		bool empty() const noexcept
 		{
 			return mTreeMap.IsEmpty();
 		}
 
-		void clear() MOMO_NOEXCEPT
+		void clear() noexcept
 		{
 			mTreeMap.Clear();
 		}
@@ -838,7 +838,7 @@ public:
 public:
 	using BaseMap::BaseMap;
 
-	friend void swap(map& left, map& right) MOMO_NOEXCEPT
+	friend void swap(map& left, map& right) noexcept
 	{
 		left.swap(right);
 	}
@@ -956,7 +956,7 @@ public:
 public:
 	using BaseMap::BaseMap;
 
-	friend void swap(multimap& left, multimap& right) MOMO_NOEXCEPT
+	friend void swap(multimap& left, multimap& right) noexcept
 	{
 		left.swap(right);
 	}

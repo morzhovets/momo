@@ -40,16 +40,16 @@ namespace internal
 		typedef DataRawIterator ConstIterator;
 
 	public:
-		explicit DataRawIterator() MOMO_NOEXCEPT
+		explicit DataRawIterator() noexcept
 		{
 		}
 
-		explicit DataRawIterator(const Raws& raws, size_t index) MOMO_NOEXCEPT
+		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
 			: ArrayIndexIterator(&raws, index)
 		{
 		}
 
-		//operator ConstIterator() const MOMO_NOEXCEPT
+		//operator ConstIterator() const noexcept
 
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
@@ -75,7 +75,7 @@ namespace internal
 			//return raws->GetItems() + index;
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return ArrayIndexIterator::operator==(iter);
 		}
@@ -89,12 +89,12 @@ namespace internal
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
 
 	private:
-		const Raws* pvGetRaws() const MOMO_NOEXCEPT
+		const Raws* pvGetRaws() const noexcept
 		{
 			return ArrayIndexIterator::ptGetArray();
 		}
 
-		size_t pvGetIndex() const MOMO_NOEXCEPT
+		size_t pvGetIndex() const noexcept
 		{
 			return ArrayIndexIterator::ptGetIndex();
 		}
@@ -131,12 +131,12 @@ namespace internal
 		};
 
 	public:
-		explicit DataRowIterator() MOMO_NOEXCEPT
+		explicit DataRowIterator() noexcept
 			: mColumnList(nullptr)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIteratorProxy(mColumnList, mRawIterator, *this);
 		}
@@ -159,7 +159,7 @@ namespace internal
 			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mColumnList == ConstIteratorProxy::GetColumnList(iter)
 				&& mRawIterator == ConstIteratorProxy::GetRawIterator(iter);
@@ -175,19 +175,19 @@ namespace internal
 
 	protected:
 		explicit DataRowIterator(const ColumnList* columnList, RawIterator rawIter,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mColumnList(columnList),
 			mRawIterator(rawIter)
 		{
 		}
 
-		const ColumnList* ptGetColumnList() const MOMO_NOEXCEPT
+		const ColumnList* ptGetColumnList() const noexcept
 		{
 			return mColumnList;
 		}
 
-		RawIterator ptGetRawIterator() const MOMO_NOEXCEPT
+		RawIterator ptGetRawIterator() const noexcept
 		{
 			return mRawIterator;
 		}
@@ -227,29 +227,29 @@ namespace internal
 		};
 
 	public:
-		explicit DataRowBounds() MOMO_NOEXCEPT
+		explicit DataRowBounds() noexcept
 			: mColumnList(nullptr)
 		{
 		}
 
-		operator ConstBounds() const MOMO_NOEXCEPT
+		operator ConstBounds() const noexcept
 		{
 			return ConstBoundsProxy(mColumnList, mRawBounds, *this);
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const noexcept
 		{
 			return IteratorProxy(mColumnList, mRawBounds.GetBegin(), *this);
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const noexcept
 		{
 			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataRowBounds&, Iterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mRawBounds.GetCount();
 		}
@@ -262,7 +262,7 @@ namespace internal
 
 	protected:
 		explicit DataRowBounds(const ColumnList* columnList, RawBounds rawBounds,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mColumnList(columnList),
 			mRawBounds(rawBounds)
@@ -291,18 +291,18 @@ namespace internal
 		typedef DataConstItemIterator ConstIterator;
 
 	public:
-		explicit DataConstItemIterator() MOMO_NOEXCEPT
+		explicit DataConstItemIterator() noexcept
 			: mOffset(0)
 		{
 		}
 
-		explicit DataConstItemIterator(size_t offset, RowIterator rowIter) MOMO_NOEXCEPT
+		explicit DataConstItemIterator(size_t offset, RowIterator rowIter) noexcept
 			: mOffset(offset),
 			mRowIterator(rowIter)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIterator(mOffset, mRowIterator);
 		}
@@ -324,7 +324,7 @@ namespace internal
 			return std::addressof(mRowIterator->template GetByOffset<Item>(mOffset));
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mOffset == iter.GetOffset() && mRowIterator == iter.GetRowIterator();
 		}
@@ -337,12 +337,12 @@ namespace internal
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)
 
-		size_t GetOffset() const MOMO_NOEXCEPT
+		size_t GetOffset() const noexcept
 		{
 			return mOffset;
 		}
 
-		RowIterator GetRowIterator() const MOMO_NOEXCEPT
+		RowIterator GetRowIterator() const noexcept
 		{
 			return mRowIterator;
 		}
@@ -370,35 +370,35 @@ namespace internal
 		typedef typename Iterator::Reference Reference;
 
 	public:
-		explicit DataConstItemBounds() MOMO_NOEXCEPT
+		explicit DataConstItemBounds() noexcept
 			: mOffset(0)
 		{
 		}
 
-		explicit DataConstItemBounds(size_t offset, RowBounds rowBounds) MOMO_NOEXCEPT
+		explicit DataConstItemBounds(size_t offset, RowBounds rowBounds) noexcept
 			: mOffset(offset),
 			mRowBounds(rowBounds)
 		{
 		}
 
-		operator ConstBounds() const MOMO_NOEXCEPT
+		operator ConstBounds() const noexcept
 		{
 			return ConstBounds(mOffset, mRowBounds);
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const noexcept
 		{
 			return Iterator(mOffset, mRowBounds.GetBegin());
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const noexcept
 		{
 			return Iterator(mOffset, mRowBounds.GetEnd());
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataConstItemBounds&, Iterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mRowBounds.GetCount();
 		}
@@ -481,7 +481,7 @@ namespace internal
 	public:
 		DataSelection() = delete;
 
-		DataSelection(DataSelection&& selection) MOMO_NOEXCEPT
+		DataSelection(DataSelection&& selection) noexcept
 			: VersionKeeper(selection),
 			mColumnList(selection.mColumnList),
 			mRaws(std::move(selection.mRaws))
@@ -508,11 +508,11 @@ namespace internal
 			}
 		}
 
-		~DataSelection() MOMO_NOEXCEPT
+		~DataSelection() noexcept
 		{
 		}
 
-		DataSelection& operator=(DataSelection&& selection) MOMO_NOEXCEPT
+		DataSelection& operator=(DataSelection&& selection) noexcept
 		{
 			DataSelection(std::move(selection)).Swap(*this);
 			return *this;
@@ -525,7 +525,7 @@ namespace internal
 			return *this;
 		}
 
-		operator ConstSelection() && MOMO_NOEXCEPT
+		operator ConstSelection() && noexcept
 		{
 			return ConstSelectionProxy(mColumnList, std::move(mRaws), *this);
 		}
@@ -535,19 +535,19 @@ namespace internal
 			return ConstSelectionProxy(mColumnList, Raws(mRaws), *this);
 		}
 
-		void Swap(DataSelection& selection) MOMO_NOEXCEPT
+		void Swap(DataSelection& selection) noexcept
 		{
 			std::swap(static_cast<VersionKeeper&>(*this), static_cast<VersionKeeper&>(selection));
 			std::swap(mColumnList, selection.mColumnList);
 			mRaws.Swap(selection.mRaws);
 		}
 
-		ConstIterator GetBegin() const MOMO_NOEXCEPT
+		ConstIterator GetBegin() const noexcept
 		{
 			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, 0), *this);
 		}
 
-		ConstIterator GetEnd() const MOMO_NOEXCEPT
+		ConstIterator GetEnd() const noexcept
 		{
 			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, GetCount()), *this);
 		}
@@ -555,32 +555,32 @@ namespace internal
 		MOMO_FRIEND_SWAP(DataSelection)
 		MOMO_FRIENDS_BEGIN_END(const DataSelection&, ConstIterator)
 
-		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
+		const ColumnList& GetColumnList() const noexcept
 		{
 			return *mColumnList;
 		}
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			return mRaws.GetMemManager();
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return mRaws.GetMemManager();
 		}
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mRaws.GetCount();
 		}
 
-		bool IsEmpty() const MOMO_NOEXCEPT
+		bool IsEmpty() const noexcept
 		{
 			return mRaws.IsEmpty();
 		}
 
-		void Clear() MOMO_NOEXCEPT
+		void Clear() noexcept
 		{
 			mRaws.Clear();
 		}
@@ -684,13 +684,13 @@ namespace internal
 			mRaws.RemoveBack(mRaws.GetCount() - index);
 		}
 
-		DataSelection&& Reverse() && MOMO_NOEXCEPT
+		DataSelection&& Reverse() && noexcept
 		{
 			pvReverse();
 			return std::move(*this);
 		}
 
-		DataSelection& Reverse() & MOMO_NOEXCEPT
+		DataSelection& Reverse() & noexcept
 		{
 			pvReverse();
 			return *this;
@@ -746,7 +746,7 @@ namespace internal
 
 	protected:
 		explicit DataSelection(const ColumnList* columnList, Raws&& raws,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mColumnList(columnList),
 			mRaws(std::move(raws))
@@ -754,7 +754,7 @@ namespace internal
 		}
 
 	private:
-		RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
+		RowReference pvMakeRowReference(Raw* raw) const noexcept
 		{
 			return RowReferenceProxy(mColumnList, raw, *this);
 		}
@@ -769,7 +769,7 @@ namespace internal
 			return count;
 		}
 
-		void pvReverse() MOMO_NOEXCEPT
+		void pvReverse() noexcept
 		{
 			std::reverse(mRaws.GetBegin(), mRaws.GetEnd());
 		}
@@ -796,7 +796,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		int pvCompare(const size_t* /*offsets*/, Raw* /*raw1*/, Raw* /*raw2*/) const MOMO_NOEXCEPT
+		int pvCompare(const size_t* /*offsets*/, Raw* /*raw1*/, Raw* /*raw2*/) const noexcept
 		{
 			return 0;
 		}
@@ -832,7 +832,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		int pvCompare(const size_t* /*offsets*/, Raw* /*raw*/) const MOMO_NOEXCEPT
+		int pvCompare(const size_t* /*offsets*/, Raw* /*raw*/) const noexcept
 		{
 			return 0;
 		}

@@ -56,7 +56,7 @@ namespace internal
 
 	public:
 		// Fowler-Noll-Vo hash function (1a)
-		constexpr static uint64_t GetHashCode64(const char* str) MOMO_NOEXCEPT
+		constexpr static uint64_t GetHashCode64(const char* str) noexcept
 		{
 			return (*str == '\0') ? fnvBasis64
 				: (GetHashCode64(str + 1) ^ (uint64_t)(unsigned char)*str) * fnvPrime64;
@@ -80,14 +80,14 @@ public:
 	static const DataOperatorType type = tType;
 
 public:
-	explicit DataOperator(const Column& column, ItemArg&& itemArg) MOMO_NOEXCEPT
+	explicit DataOperator(const Column& column, ItemArg&& itemArg) noexcept
 		: mColumn(column),
 		mItemArg(std::forward<ItemArg>(itemArg))
 	{
 	}
 
 #ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-	DataOperator(DataOperator&& oper) MOMO_NOEXCEPT
+	DataOperator(DataOperator&& oper) noexcept
 		: mColumn(oper.mColumn),
 		mItemArg(std::forward<ItemArg>(oper.mItemArg))
 	{
@@ -97,18 +97,18 @@ public:
 
 	DataOperator(const DataOperator&) = delete;
 
-	~DataOperator() MOMO_NOEXCEPT
+	~DataOperator() noexcept
 	{
 	}
 
 	DataOperator& operator=(const DataOperator&) = delete;
 
-	const Column& GetColumn() const MOMO_NOEXCEPT
+	const Column& GetColumn() const noexcept
 	{
 		return mColumn;
 	}
 
-	ItemArg&& GetItemArg() const MOMO_NOEXCEPT
+	ItemArg&& GetItemArg() const noexcept
 	{
 		return std::forward<ItemArg>(mItemArg);
 	}
@@ -131,23 +131,23 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
 
 public:
-	constexpr explicit DataColumn(uint64_t code) MOMO_NOEXCEPT
+	constexpr explicit DataColumn(uint64_t code) noexcept
 		: mCode(code)
 	{
 	}
 
-	constexpr uint64_t GetCode() const MOMO_NOEXCEPT
+	constexpr uint64_t GetCode() const noexcept
 	{
 		return mCode;
 	}
 
-	Equaler operator==(const Item& item) const MOMO_NOEXCEPT
+	Equaler operator==(const Item& item) const noexcept
 	{
 		return Equaler(*this, item);
 	}
 
 	template<typename ItemArg>
-	Assigner<ItemArg> operator=(ItemArg&& itemArg) const MOMO_NOEXCEPT
+	Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
 	{
 		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
@@ -198,7 +198,7 @@ private:
 public:
 	template<typename Item>
 	static std::pair<size_t, size_t> GetVertices(const Column<Item>& column,
-		size_t codeParam) MOMO_NOEXCEPT
+		size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
 		uint64_t code64 = column.GetCode();
@@ -212,13 +212,13 @@ public:
 	}
 
 	template<typename Item>
-	static constexpr size_t GetSize(/*const Column<Item>& column*/) MOMO_NOEXCEPT
+	static constexpr size_t GetSize(/*const Column<Item>& column*/) noexcept
 	{
 		return sizeof(Item);
 	}
 
 	template<typename Item>
-	static constexpr size_t GetAlignment(/*const Column<Item>& column*/) MOMO_NOEXCEPT
+	static constexpr size_t GetAlignment(/*const Column<Item>& column*/) noexcept
 	{
 		return MOMO_ALIGNMENT_OF(Item);
 	}
@@ -230,7 +230,7 @@ public:
 	}
 
 	template<typename Item>
-	static void Destroy(MemManager* memManager, Item* item /*, const Column<Item>& column*/) MOMO_NOEXCEPT
+	static void Destroy(MemManager* memManager, Item* item /*, const Column<Item>& column*/) noexcept
 	{
 		ItemManager<Item>::Destroyer::Destroy(memManager, *item);
 	}
@@ -282,7 +282,7 @@ private:
 		};
 
 	public:
-		Graph() MOMO_NOEXCEPT
+		Graph() noexcept
 		{
 			mEdgeNumber = 0;
 			std::fill(mEdges.begin(), mEdges.end(), nullptr);
@@ -290,13 +290,13 @@ private:
 
 		Graph(const Graph&) = delete;
 
-		~Graph() MOMO_NOEXCEPT
+		~Graph() noexcept
 		{
 		}
 
 		Graph& operator=(const Graph&) = delete;
 
-		void AddEdge(size_t vertex1, size_t vertex2, size_t value) MOMO_NOEXCEPT
+		void AddEdge(size_t vertex1, size_t vertex2, size_t value) noexcept
 		{
 			MOMO_ASSERT(mEdgeNumber < vertexCount * 2);
 			Edge* edge = &mEdgeStorage[mEdgeNumber];
@@ -307,12 +307,12 @@ private:
 			mEdges[vertex1] = edge;
 		}
 
-		bool HasEdge(size_t vertex) const MOMO_NOEXCEPT
+		bool HasEdge(size_t vertex) const noexcept
 		{
 			return mEdges[vertex] != nullptr;
 		}
 
-		bool FillAddends(size_t* addends, size_t vertex) const MOMO_NOEXCEPT
+		bool FillAddends(size_t* addends, size_t vertex) const noexcept
 		{
 			size_t addend = addends[vertex];
 			for (Edge* edge = mEdges[vertex]; edge != nullptr; edge = edge->nextEdge)
@@ -375,7 +375,7 @@ public:
 			{ pvCopy<void, Item, Items...>(memManager, srcRaw, dstRaw, 0); };
 	}
 
-	DataColumnList(DataColumnList&& columnList) MOMO_NOEXCEPT
+	DataColumnList(DataColumnList&& columnList) noexcept
 		: mCodeParam(columnList.mCodeParam),
 		mAddends(columnList.mAddends),
 		mTotalSize(columnList.mTotalSize),
@@ -399,18 +399,18 @@ public:
 	{
 	}
 
-	~DataColumnList() MOMO_NOEXCEPT
+	~DataColumnList() noexcept
 	{
 	}
 
 	DataColumnList& operator=(const DataColumnList&) = delete;
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mMutOffsets.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mMutOffsets.GetMemManager();
 	}
@@ -421,17 +421,17 @@ public:
 		pvSetMutable(columns...);
 	}
 
-	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
+	bool IsMutable(size_t offset) const noexcept
 	{
 		return (mMutOffsets[offset / 8] & (uint8_t)(1 << (offset % 8))) != 0;
 	}
 
-	size_t GetTotalSize() const MOMO_NOEXCEPT
+	size_t GetTotalSize() const noexcept
 	{
 		return mTotalSize;
 	}
 
-	size_t GetAlignment() const MOMO_NOEXCEPT
+	size_t GetAlignment() const noexcept
 	{
 		return mAlignment;
 	}
@@ -441,12 +441,12 @@ public:
 		mCreateFunc(GetMemManager(), raw);
 	}
 
-	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) const noexcept
 	{
 		mDestroyFunc(nullptr, raw);
 	}
 
-	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) noexcept
 	{
 		mDestroyFunc(&GetMemManager(), raw);
 	}
@@ -470,7 +470,7 @@ public:
 	}
 
 	template<typename Item>
-	Item& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
+	Item& GetByOffset(Raw* raw, size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
@@ -483,13 +483,13 @@ public:
 		ColumnTraits::Assign(std::forward<ItemArg>(itemArg), GetByOffset<Item>(raw, offset));
 	}
 
-	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
+	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		return *reinterpret_cast<const size_t*>(raw + mTotalSize - sizeof(size_t));
 	}
 
-	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
+	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		*reinterpret_cast<size_t*>(raw + mTotalSize - sizeof(size_t)) = number;
@@ -531,7 +531,7 @@ private:
 	}
 
 	template<size_t edgeCount>
-	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) MOMO_NOEXCEPT
+	void pvMakeGraph(Graph<edgeCount>& /*graph*/, size_t offset, size_t maxAlignment) noexcept
 	{
 		if (Settings::keepRowNumber)
 		{
@@ -551,7 +551,7 @@ private:
 		pvSetMutable(columns...);
 	}
 
-	void pvSetMutable() MOMO_NOEXCEPT
+	void pvSetMutable() noexcept
 	{
 	}
 
@@ -572,12 +572,12 @@ private:
 	}
 
 	template<typename Void>
-	static void pvCreate(MemManager& /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvCreate(MemManager& /*memManager*/, Raw* /*raw*/, size_t /*offset*/) noexcept
 	{
 	}
 
 	template<typename Void, typename Item, typename... Items>
-	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) noexcept
 	{
 		pvCorrectOffset<Item>(offset);
 		ColumnTraits::Destroy(memManager, reinterpret_cast<Item*>(raw + offset));
@@ -585,7 +585,7 @@ private:
 	}
 
 	template<typename Void>
-	static void pvDestroy(MemManager* /*memManager*/, Raw* /*raw*/, size_t /*offset*/) MOMO_NOEXCEPT
+	static void pvDestroy(MemManager* /*memManager*/, Raw* /*raw*/, size_t /*offset*/) noexcept
 	{
 	}
 
@@ -609,12 +609,12 @@ private:
 
 	template<typename Void>
 	static void pvCopy(MemManager& /*memManager*/, const Raw* /*srcRaw*/, Raw* /*dstRaw*/,
-		size_t /*offset*/) MOMO_NOEXCEPT
+		size_t /*offset*/) noexcept
 	{
 	}
 
 	template<typename Item>
-	static void pvCorrectOffset(size_t& offset) MOMO_NOEXCEPT
+	static void pvCorrectOffset(size_t& offset) noexcept
 	{
 		static const size_t alignment = ColumnTraits::template GetAlignment<Item>();
 		offset = ((offset + alignment - 1) / alignment) * alignment;
@@ -677,7 +677,7 @@ public:
 	{
 	}
 
-	DataColumnListStatic(DataColumnListStatic&& columnList) MOMO_NOEXCEPT
+	DataColumnListStatic(DataColumnListStatic&& columnList) noexcept
 		: mMemManager(std::move(columnList.mMemManager)),
 		mMutOffsets(columnList.mMutOffsets)
 	{
@@ -689,18 +689,18 @@ public:
 	{
 	}
 
-	~DataColumnListStatic() MOMO_NOEXCEPT
+	~DataColumnListStatic() noexcept
 	{
 	}
 
 	DataColumnListStatic& operator=(const DataColumnListStatic&) = delete;
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mMemManager;
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mMemManager;
 	}
@@ -711,17 +711,17 @@ public:
 		pvSetMutable(columns...);
 	}
 
-	bool IsMutable(size_t offset) const MOMO_NOEXCEPT
+	bool IsMutable(size_t offset) const noexcept
 	{
 		return mMutOffsets.test(offset);
 	}
 
-	size_t GetTotalSize() const MOMO_NOEXCEPT
+	size_t GetTotalSize() const noexcept
 	{
 		return sizeof(StructNumber);
 	}
 
-	size_t GetAlignment() const MOMO_NOEXCEPT
+	size_t GetAlignment() const noexcept
 	{
 		return MOMO_ALIGNMENT_OF(StructNumber);
 	}
@@ -731,12 +731,12 @@ public:
 		(typename RawManager::template Creator<>(mMemManager))(raw);
 	}
 
-	void DestroyRaw(Raw* raw) const MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) const noexcept
 	{
 		RawManager::Destroyer::Destroy(nullptr, *raw);
 	}
 
-	void DestroyRaw(Raw* raw) MOMO_NOEXCEPT
+	void DestroyRaw(Raw* raw) noexcept
 	{
 		RawManager::Destroy(mMemManager, *raw);
 	}
@@ -747,13 +747,13 @@ public:
 	}
 
 	template<typename Item>
-	size_t GetOffset(const Column<Item>& column) const MOMO_NOEXCEPT
+	size_t GetOffset(const Column<Item>& column) const noexcept
 	{
 		return (size_t)column.GetCode();	//?
 	}
 
 	template<typename Item>
-	Item& GetByOffset(Raw* raw, size_t offset) const MOMO_NOEXCEPT
+	Item& GetByOffset(Raw* raw, size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
 		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
@@ -766,13 +766,13 @@ public:
 		GetByOffset<Item>(raw, offset) = std::forward<ItemArg>(itemArg);
 	}
 
-	size_t GetNumber(const Raw* raw) const MOMO_NOEXCEPT
+	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		return static_cast<const StructNumber*>(raw)->rowNumber;
 	}
 
-	void SetNumber(Raw* raw, size_t number) const MOMO_NOEXCEPT
+	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
 		static_cast<StructNumber*>(raw)->rowNumber = number;
@@ -786,7 +786,7 @@ private:
 		pvSetMutable(columns...);
 	}
 
-	void pvSetMutable() MOMO_NOEXCEPT
+	void pvSetMutable() noexcept
 	{
 	}
 

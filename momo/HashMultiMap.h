@@ -47,19 +47,19 @@ namespace internal
 			typename HashMapReference::ConstReference> ConstReference;
 
 	public:
-		explicit HashMultiMapKeyReference(const Key& key, const Values& values) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyReference(const Key& key, const Values& values) noexcept
 			: key(key),
 			values(values)
 		{
 		}
 
-		operator ConstReference() const MOMO_NOEXCEPT
+		operator ConstReference() const noexcept
 		{
 			return ConstReference(key, values);
 		}
 
 	protected:
-		explicit HashMultiMapKeyReference(HashMapReference hashMapRef) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyReference(HashMapReference hashMapRef) noexcept
 			: key(hashMapRef.key),
 			values(hashMapRef.value.GetBounds())
 		{
@@ -82,35 +82,35 @@ namespace internal
 		typedef HashMultiMapKeyBounds<typename KeyIterator::ConstIterator> ConstBounds;
 
 	public:
-		explicit HashMultiMapKeyBounds() MOMO_NOEXCEPT
+		explicit HashMultiMapKeyBounds() noexcept
 			: mCount(0)
 		{
 		}
 
-		operator ConstBounds() const MOMO_NOEXCEPT
+		operator ConstBounds() const noexcept
 		{
 			return ConstBounds(mBegin);
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const noexcept
 		{
 			return mBegin;
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const noexcept
 		{
 			return KeyIterator();
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const HashMultiMapKeyBounds&, KeyIterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT	//?
+		size_t GetCount() const noexcept	//?
 		{
 			return mCount;
 		}
 
 	protected:
-		explicit HashMultiMapKeyBounds(KeyIterator begin, size_t count) MOMO_NOEXCEPT
+		explicit HashMultiMapKeyBounds(KeyIterator begin, size_t count) noexcept
 			: mBegin(begin),
 			mCount(count)
 		{
@@ -131,13 +131,13 @@ namespace internal
 		typedef HashMultiMapReference<Key, const Value> ConstReference;
 
 	public:
-		explicit HashMultiMapReference(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit HashMultiMapReference(const Key& key, Value& value) noexcept
 			: key(key),
 			value(value)
 		{
 		}
 
-		operator ConstReference() const MOMO_NOEXCEPT
+		operator ConstReference() const noexcept
 		{
 			return ConstReference(key, value);
 		}
@@ -176,12 +176,12 @@ namespace internal
 		};
 
 	public:
-		explicit HashMultiMapIterator() MOMO_NOEXCEPT
+		explicit HashMultiMapIterator() noexcept
 			: mValuePtr(nullptr)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIteratorProxy(mKeyIterator, mValuePtr, *this);
 		}
@@ -202,21 +202,21 @@ namespace internal
 			return Pointer(Reference(mKeyIterator->key, *mValuePtr));
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mValuePtr == ConstIteratorProxy::GetValuePtr(iter);
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMultiMapIterator)
 
-		KeyIterator GetKeyIterator() const MOMO_NOEXCEPT
+		KeyIterator GetKeyIterator() const noexcept
 		{
 			return mKeyIterator;
 		}
 
 	protected:
 		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
-			bool move) MOMO_NOEXCEPT
+			bool move) noexcept
 			: VersionKeeper(&version),
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
@@ -226,14 +226,14 @@ namespace internal
 		}
 
 		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mKeyIterator(keyIter),
 			mValuePtr(pvalue)
 		{
 		}
 
-		Value* ptGetValuePtr() const MOMO_NOEXCEPT
+		Value* ptGetValuePtr() const noexcept
 		{
 			return mValuePtr;
 		}
@@ -245,7 +245,7 @@ namespace internal
 		}
 
 	private:
-		void pvMove() MOMO_NOEXCEPT
+		void pvMove() noexcept
 		{
 			if (mValuePtr != mKeyIterator->values.GetEnd())
 				return;
@@ -284,7 +284,7 @@ namespace internal
 				memManager, srcItem)(dstItem);
 		}
 
-		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			HashMultiMapKeyValueTraits::DestroyValues(memManager, items, count);
 		}
@@ -352,7 +352,7 @@ namespace internal
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager* memManager, Key& key, Value& value) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
 		{
 			MOMO_ASSERT(memManager != nullptr);
 			HashMultiMapKeyValueTraits::DestroyKey(*memManager, key);
@@ -439,18 +439,18 @@ public:
 		KeyManager::CopyExec(memManager, srcKey, dstKey, std::forward<Func>(func));
 	}
 
-	static void DestroyKey(MemManager& memManager, Key& key) MOMO_NOEXCEPT
+	static void DestroyKey(MemManager& memManager, Key& key) noexcept
 	{
 		KeyManager::Destroy(memManager, key);
 	}
 
-	static void DestroyValues(MemManager& memManager, Value* values, size_t count) MOMO_NOEXCEPT
+	static void DestroyValues(MemManager& memManager, Value* values, size_t count) noexcept
 	{
 		ValueManager::Destroy(memManager, values, count);
 	}
 
 	static void RelocateKey(MemManager& memManager, Key& srcKey, Key* dstKey)
-		MOMO_NOEXCEPT_IF(isKeyNothrowRelocatable)
+		noexcept(isKeyNothrowRelocatable)
 	{
 		KeyManager::Relocate(memManager, srcKey, dstKey);
 	}
@@ -545,7 +545,7 @@ private:
 			}
 		}
 
-		ValueCrew(ValueCrew&& crew) MOMO_NOEXCEPT
+		ValueCrew(ValueCrew&& crew) noexcept
 			: mData(nullptr)
 		{
 			Swap(crew);
@@ -553,12 +553,12 @@ private:
 
 		ValueCrew(const ValueCrew&) = delete;
 
-		~ValueCrew() MOMO_NOEXCEPT
+		~ValueCrew() noexcept
 		{
 			MOMO_ASSERT(IsNull());
 		}
 
-		ValueCrew& operator=(ValueCrew&& crew) MOMO_NOEXCEPT
+		ValueCrew& operator=(ValueCrew&& crew) noexcept
 		{
 			ValueCrew(std::move(crew)).Swap(*this);
 			return *this;
@@ -566,12 +566,12 @@ private:
 
 		ValueCrew& operator=(const ValueCrew&) = delete;
 
-		void Swap(ValueCrew& crew) MOMO_NOEXCEPT
+		void Swap(ValueCrew& crew) noexcept
 		{
 			std::swap(mData, crew.mData);
 		}
 
-		void Destroy(MemManager& memManager) MOMO_NOEXCEPT
+		void Destroy(MemManager& memManager) noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			mData->~Data();
@@ -579,30 +579,30 @@ private:
 			mData = nullptr;
 		}
 
-		bool IsNull() const MOMO_NOEXCEPT
+		bool IsNull() const noexcept
 		{
 			return mData == nullptr;
 		}
 
-		const size_t& GetValueVersion() const MOMO_NOEXCEPT
+		const size_t& GetValueVersion() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->valueVersion;
 		}
 
-		size_t& GetValueVersion() MOMO_NOEXCEPT
+		size_t& GetValueVersion() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->valueVersion;
 		}
 
-		const ValueArrayParams& GetValueArrayParams() const MOMO_NOEXCEPT
+		const ValueArrayParams& GetValueArrayParams() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->valueArrayParams;
 		}
 
-		ValueArrayParams& GetValueArrayParams() MOMO_NOEXCEPT
+		ValueArrayParams& GetValueArrayParams() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->valueArrayParams;
@@ -707,7 +707,7 @@ public:
 		}
 	}
 
-	HashMultiMap(HashMultiMap&& hashMultiMap) MOMO_NOEXCEPT
+	HashMultiMap(HashMultiMap&& hashMultiMap) noexcept
 		: mHashMap(std::move(hashMultiMap.mHashMap)),
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(std::move(hashMultiMap.mValueCrew))
@@ -740,7 +740,7 @@ public:
 		}
 	}
 
-	~HashMultiMap() MOMO_NOEXCEPT
+	~HashMultiMap() noexcept
 	{
 		if (!mValueCrew.IsNull())
 		{
@@ -749,7 +749,7 @@ public:
 		}
 	}
 
-	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) MOMO_NOEXCEPT
+	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) noexcept
 	{
 		HashMultiMap(std::move(hashMultiMap)).Swap(*this);
 		return *this;
@@ -762,29 +762,29 @@ public:
 		return *this;
 	}
 
-	void Swap(HashMultiMap& hashMultiMap) MOMO_NOEXCEPT
+	void Swap(HashMultiMap& hashMultiMap) noexcept
 	{
 		mHashMap.Swap(hashMultiMap.mHashMap);
 		std::swap(mValueCount, hashMultiMap.mValueCount);
 		mValueCrew.Swap(hashMultiMap.mValueCrew);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return pvMakeIterator<ConstIterator>(GetKeyBounds().GetBegin());
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return pvMakeIterator<Iterator>(GetKeyBounds().GetBegin());
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return ConstIterator();
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return Iterator();
 	}
@@ -793,27 +793,27 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const HashMultiMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(HashMultiMap&, Iterator)
 
-	const HashTraits& GetHashTraits() const MOMO_NOEXCEPT
+	const HashTraits& GetHashTraits() const noexcept
 	{
 		return mHashMap.GetHashTraits();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mHashMap.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mHashMap.GetMemManager();
 	}
 
-	size_t GetValueCount() const MOMO_NOEXCEPT
+	size_t GetValueCount() const noexcept
 	{
 		return mValueCount;
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear() noexcept
 	{
 		if (!mValueCrew.IsNull())
 		{
@@ -824,17 +824,17 @@ public:
 		}
 	}
 
-	ConstKeyBounds GetKeyBounds() const MOMO_NOEXCEPT
+	ConstKeyBounds GetKeyBounds() const noexcept
 	{
 		return ConstKeyBoundsProxy(ConstKeyIteratorProxy(mHashMap.GetBegin()), GetKeyCount());
 	}
 
-	KeyBounds GetKeyBounds() MOMO_NOEXCEPT
+	KeyBounds GetKeyBounds() noexcept
 	{
 		return KeyBoundsProxy(KeyIteratorProxy(mHashMap.GetBegin()), GetKeyCount());
 	}
 
-	size_t GetKeyCount() const MOMO_NOEXCEPT
+	size_t GetKeyCount() const noexcept
 	{
 		return mHashMap.GetCount();
 	}
@@ -1091,7 +1091,7 @@ public:
 	}
 
 private:
-	void pvClearValueArrays() MOMO_NOEXCEPT
+	void pvClearValueArrays() noexcept
 	{
 		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
 		for (typename HashMap::Iterator::Reference ref : mHashMap)
@@ -1099,7 +1099,7 @@ private:
 	}
 
 	template<typename Iterator, typename KeyIterator>
-	Iterator pvMakeIterator(KeyIterator keyIter) const MOMO_NOEXCEPT
+	Iterator pvMakeIterator(KeyIterator keyIter) const noexcept
 	{
 		if (!keyIter)
 			return Iterator();
@@ -1107,12 +1107,12 @@ private:
 	}
 
 	ConstIterator pvMakeIterator(ConstKeyIterator keyIter, const Value* pvalue,
-		bool move) const MOMO_NOEXCEPT
+		bool move) const noexcept
 	{
 		return ConstIteratorProxy(keyIter, pvalue, mValueCrew.GetValueVersion(), move);
 	}
 
-	Iterator pvMakeIterator(KeyIterator keyIter, Value* pvalue, bool move) const MOMO_NOEXCEPT
+	Iterator pvMakeIterator(KeyIterator keyIter, Value* pvalue, bool move) const noexcept
 	{
 		return IteratorProxy(keyIter, pvalue, mValueCrew.GetValueVersion(), move);
 	}
@@ -1153,7 +1153,7 @@ private:
 		++mValueCrew.GetValueVersion();
 	}
 
-	void pvRemoveValues(ValueArray& valueArray) MOMO_NOEXCEPT
+	void pvRemoveValues(ValueArray& valueArray) noexcept
 	{
 		mValueCount -= valueArray.GetBounds().GetCount();
 		++mValueCrew.GetValueVersion();

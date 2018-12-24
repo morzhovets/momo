@@ -37,7 +37,7 @@ namespace internal
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		public:
-			explicit Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
+			explicit Creator(MemManager& memManager, const Item& item) noexcept
 				: mMemManager(memManager),
 				mItem(item)
 			{
@@ -54,7 +54,7 @@ namespace internal
 		};
 
 	public:
-		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			ArrayBucketItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
 		}
@@ -129,24 +129,24 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() MOMO_NOEXCEPT
+			~Params() noexcept
 			{
 			}
 
 			Params& operator=(const Params&) = delete;
 
-			MemManager& GetMemManager() MOMO_NOEXCEPT
+			MemManager& GetMemManager() noexcept
 			{
 				return mArrayMemPool.GetMemManager().GetBaseMemManager();
 			}
 
-			MemPool& GetFastMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
+			MemPool& GetFastMemPool(size_t memPoolIndex) noexcept
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
 				return mFastMemPools[memPoolIndex - 1];
 			}
 
-			MemPool& GetArrayMemPool() MOMO_NOEXCEPT
+			MemPool& GetArrayMemPool() noexcept
 			{
 				return mArrayMemPool;
 			}
@@ -157,12 +157,12 @@ namespace internal
 		};
 
 	public:
-		explicit ArrayBucket() MOMO_NOEXCEPT
+		explicit ArrayBucket() noexcept
 			: mPtr(nullptr)
 		{
 		}
 
-		ArrayBucket(ArrayBucket&& bucket) MOMO_NOEXCEPT
+		ArrayBucket(ArrayBucket&& bucket) noexcept
 			: mPtr(nullptr)
 		{
 			Swap(bucket);
@@ -206,12 +206,12 @@ namespace internal
 			}
 		}
 
-		~ArrayBucket() MOMO_NOEXCEPT
+		~ArrayBucket() noexcept
 		{
 			MOMO_ASSERT(mPtr == nullptr);
 		}
 
-		ArrayBucket& operator=(ArrayBucket&& bucket) MOMO_NOEXCEPT
+		ArrayBucket& operator=(ArrayBucket&& bucket) noexcept
 		{
 			ArrayBucket(std::move(bucket)).Swap(*this);
 			return *this;
@@ -219,22 +219,22 @@ namespace internal
 
 		ArrayBucket& operator=(const ArrayBucket& bucket) = delete;
 
-		void Swap(ArrayBucket& bucket) MOMO_NOEXCEPT
+		void Swap(ArrayBucket& bucket) noexcept
 		{
 			std::swap(mPtr, bucket.mPtr);
 		}
 
-		ConstBounds GetBounds() const MOMO_NOEXCEPT
+		ConstBounds GetBounds() const noexcept
 		{
 			return pvGetBounds();
 		}
 
-		Bounds GetBounds() MOMO_NOEXCEPT
+		Bounds GetBounds() noexcept
 		{
 			return pvGetBounds();
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			if (mPtr == nullptr)
 				return;
@@ -312,7 +312,7 @@ namespace internal
 			}
 		}
 
-		void RemoveBack(Params& params) MOMO_NOEXCEPT
+		void RemoveBack(Params& params) noexcept
 		{
 			size_t count = GetBounds().GetCount();
 			MOMO_ASSERT(count > 0);
@@ -342,59 +342,59 @@ namespace internal
 		}
 
 	private:
-		void pvSet(uint8_t* ptr, uint8_t state) MOMO_NOEXCEPT
+		void pvSet(uint8_t* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
 			*mPtr = state;
 		}
 
-		static uint8_t pvMakeState(size_t memPoolIndex, size_t count) MOMO_NOEXCEPT
+		static uint8_t pvMakeState(size_t memPoolIndex, size_t count) noexcept
 		{
 			return (uint8_t)((memPoolIndex << 4) | count);
 		}
 
-		static size_t pvGetFastMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		static size_t pvGetFastMemPoolIndex(size_t count) noexcept
 		{
 			MOMO_ASSERT(0 < count && count <= maxFastCount);
 			return count;
 		}
 
-		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(mPtr != nullptr);
 			return (size_t)(*mPtr >> 4);
 		}
 
-		size_t pvGetFastCount() const MOMO_NOEXCEPT
+		size_t pvGetFastCount() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
 			return (size_t)(*mPtr & 15);
 		}
 
-		Item* pvGetFastItems() const MOMO_NOEXCEPT
+		Item* pvGetFastItems() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
 			return pvGetFastItems(mPtr);
 		}
 
-		static Item* pvGetFastItems(uint8_t* ptr) MOMO_NOEXCEPT
+		static Item* pvGetFastItems(uint8_t* ptr) noexcept
 		{
 			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
 		}
 
-		Array& pvGetArray() const MOMO_NOEXCEPT
+		Array& pvGetArray() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() == 0);
 			return pvGetArray(mPtr);
 		}
 
-		static Array& pvGetArray(uint8_t* ptr) MOMO_NOEXCEPT
+		static Array& pvGetArray(uint8_t* ptr) noexcept
 		{
 			return *reinterpret_cast<Array*>(ptr + arrayAlignment);
 		}
 
-		Bounds pvGetBounds() const MOMO_NOEXCEPT
+		Bounds pvGetBounds() const noexcept
 		{
 			if (mPtr == nullptr)
 			{

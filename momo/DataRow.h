@@ -37,7 +37,7 @@ namespace internal
 	public:
 		DataRow() = delete;
 
-		DataRow(DataRow&& row) MOMO_NOEXCEPT
+		DataRow(DataRow&& row) noexcept
 			: mColumnList(row.mColumnList),
 			mRaw(row.mRaw),
 			mFreeRaws(row.mFreeRaws)
@@ -48,7 +48,7 @@ namespace internal
 
 		DataRow(const DataRow&) = delete;
 
-		~DataRow() MOMO_NOEXCEPT
+		~DataRow() noexcept
 		{
 			if (mRaw == nullptr)
 				return;
@@ -62,7 +62,7 @@ namespace internal
 			}
 		}
 
-		DataRow& operator=(DataRow&& row) MOMO_NOEXCEPT
+		DataRow& operator=(DataRow&& row) noexcept
 		{
 			DataRow(std::move(row)).Swap(*this);
 			return *this;
@@ -70,7 +70,7 @@ namespace internal
 
 		DataRow& operator=(const DataRow&) = delete;
 
-		void Swap(DataRow& row) MOMO_NOEXCEPT
+		void Swap(DataRow& row) noexcept
 		{
 			std::swap(mColumnList, row.mColumnList);
 			std::swap(mRaw, row.mRaw);
@@ -79,7 +79,7 @@ namespace internal
 
 		MOMO_FRIEND_SWAP(DataRow)
 
-		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
+		const ColumnList& GetColumnList() const noexcept
 		{
 			return *mColumnList;
 		}
@@ -120,40 +120,40 @@ namespace internal
 			return Get(column);
 		}
 
-		const Raw* GetRaw() const MOMO_NOEXCEPT
+		const Raw* GetRaw() const noexcept
 		{
 			return mRaw;
 		}
 
-		Raw* GetRaw() MOMO_NOEXCEPT
+		Raw* GetRaw() noexcept
 		{
 			return mRaw;
 		}
 
-		const Raw* operator->() const MOMO_NOEXCEPT
+		const Raw* operator->() const noexcept
 		{
 			return GetRaw();
 		}
 
-		Raw* operator->() MOMO_NOEXCEPT
+		Raw* operator->() noexcept
 		{
 			return GetRaw();
 		}
 
 	protected:
-		explicit DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) MOMO_NOEXCEPT
+		explicit DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) noexcept
 			: mColumnList(columnList),
 			mRaw(raw),
 			mFreeRaws(freeRaws)
 		{
 		}
 
-		Raw* ptGetRaw() const MOMO_NOEXCEPT
+		Raw* ptGetRaw() const noexcept
 		{
 			return mRaw;
 		}
 
-		Raw* ptExtractRaw() MOMO_NOEXCEPT
+		Raw* ptExtractRaw() noexcept
 		{
 			Raw* raw = mRaw;
 			mRaw = nullptr;
@@ -186,7 +186,7 @@ namespace internal
 	public:
 		DataConstRowReference() = delete;
 
-		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
+		const ColumnList& GetColumnList() const noexcept
 		{
 			return *mColumnList;
 		}
@@ -228,14 +228,14 @@ namespace internal
 
 	protected:
 		explicit DataConstRowReference(const ColumnList* columnList, Raw* raw,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mColumnList(columnList),
 			mRaw(raw)
 		{
 		}
 
-		Raw* ptGetRaw() const MOMO_NOEXCEPT
+		Raw* ptGetRaw() const noexcept
 		{
 			return mRaw;
 		}
@@ -311,12 +311,12 @@ namespace internal
 	public:
 		using RowBounds::RowBounds;
 
-		explicit DataRowPointer(RowBounds rowBounds) MOMO_NOEXCEPT
+		explicit DataRowPointer(RowBounds rowBounds) noexcept
 			: RowBounds(rowBounds)
 		{
 		}
 
-		operator ConstPointer() const MOMO_NOEXCEPT
+		operator ConstPointer() const noexcept
 		{
 			return ConstPointer(static_cast<const RowBounds&>(*this));
 		}
@@ -333,12 +333,12 @@ namespace internal
 			return *RowBounds::GetBegin();
 		}
 
-		bool operator!() const MOMO_NOEXCEPT
+		bool operator!() const noexcept
 		{
 			return RowBounds::GetCount() == 0;
 		}
 
-		explicit operator bool() const MOMO_NOEXCEPT
+		explicit operator bool() const noexcept
 		{
 			return !!*this;
 		}

@@ -42,23 +42,23 @@ private:
 		};
 
 	public:
-		explicit TemplItem(unsigned char value) MOMO_NOEXCEPT
+		explicit TemplItem(unsigned char value) noexcept
 		{
 			*pvGetPtr() = value;
 		}
 
-		unsigned char GetValue() const MOMO_NOEXCEPT
+		unsigned char GetValue() const noexcept
 		{
 			return *pvGetPtr();
 		}
 
 	private:
-		const unsigned char* pvGetPtr() const MOMO_NOEXCEPT
+		const unsigned char* pvGetPtr() const noexcept
 		{
 			return reinterpret_cast<const unsigned char*>(&mStorage);
 		}
 
-		unsigned char* pvGetPtr() MOMO_NOEXCEPT
+		unsigned char* pvGetPtr() noexcept
 		{
 			return reinterpret_cast<unsigned char*>(&mStorage);
 		}

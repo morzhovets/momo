@@ -68,16 +68,16 @@ public:
 	{
 	}
 
-	unsynchronized_pool_allocator(const unsynchronized_pool_allocator& alloc) MOMO_NOEXCEPT
+	unsynchronized_pool_allocator(const unsynchronized_pool_allocator& alloc) noexcept
 		: mMemPool(alloc.mMemPool)
 	{
 	}
 
-	~unsynchronized_pool_allocator() MOMO_NOEXCEPT
+	~unsynchronized_pool_allocator() noexcept
 	{
 	}
 
-	unsynchronized_pool_allocator& operator=(const unsynchronized_pool_allocator& alloc) MOMO_NOEXCEPT
+	unsynchronized_pool_allocator& operator=(const unsynchronized_pool_allocator& alloc) noexcept
 	{
 		mMemPool = alloc.mMemPool;
 		return *this;
@@ -85,17 +85,17 @@ public:
 
 	template<class Value>
 	operator unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>() const
-		MOMO_NOEXCEPT
+		noexcept
 	{
 		return PoolAllocatorProxy<Value>(mMemPool);
 	}
 
-	base_allocator_type get_base_allocator() const MOMO_NOEXCEPT
+	base_allocator_type get_base_allocator() const noexcept
 	{
 		return base_allocator_type(mMemPool->GetMemManager().GetCharAllocator());
 	}
 
-	unsynchronized_pool_allocator select_on_container_copy_construction() const MOMO_NOEXCEPT
+	unsynchronized_pool_allocator select_on_container_copy_construction() const noexcept
 	{
 		return unsynchronized_pool_allocator(get_base_allocator());
 	}
@@ -112,7 +112,7 @@ public:
 		return mMemPool->template Allocate<value_type>();
 	}
 
-	void deallocate(pointer ptr, size_type count) MOMO_NOEXCEPT
+	void deallocate(pointer ptr, size_type count) noexcept
 	{
 		if (count > 1 || !mMemPool->GetParams().IsEqual(pvGetMemPoolParams()))
 			return mMemPool->GetMemManager().Deallocate(ptr, count * sizeof(value_type));
@@ -128,29 +128,29 @@ public:
 	}
 
 	template<class Value>
-	void destroy(Value* ptr) MOMO_NOEXCEPT
+	void destroy(Value* ptr) noexcept
 	{
 		momo::internal::ObjectManager<Value, MemManager>::Destroy(mMemPool->GetMemManager(), *ptr);
 	}
 
-	bool operator==(const unsynchronized_pool_allocator& alloc) const MOMO_NOEXCEPT
+	bool operator==(const unsynchronized_pool_allocator& alloc) const noexcept
 	{
 		return mMemPool == alloc.mMemPool;
 	}
 
-	bool operator!=(const unsynchronized_pool_allocator& alloc) const MOMO_NOEXCEPT
+	bool operator!=(const unsynchronized_pool_allocator& alloc) const noexcept
 	{
 		return !(*this == alloc);
 	}
 
 protected:
-	explicit unsynchronized_pool_allocator(const std::shared_ptr<MemPool>& memPool) MOMO_NOEXCEPT
+	explicit unsynchronized_pool_allocator(const std::shared_ptr<MemPool>& memPool) noexcept
 		: mMemPool(memPool)
 	{
 	}
 
 private:
-	static MemPoolParams pvGetMemPoolParams() MOMO_NOEXCEPT
+	static MemPoolParams pvGetMemPoolParams() noexcept
 	{
 		return MemPoolParams(sizeof(value_type), MOMO_ALIGNMENT_OF(value_type));
 	}

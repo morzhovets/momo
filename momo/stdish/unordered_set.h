@@ -180,13 +180,13 @@ public:
 	{
 	}
 
-	unordered_set(unordered_set&& right) MOMO_NOEXCEPT
+	unordered_set(unordered_set&& right) noexcept
 		: mHashSet(std::move(right.mHashSet))
 	{
 	}
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mHashSet(pvCreateSet(std::move(right), alloc))
 	{
 	}
@@ -201,12 +201,12 @@ public:
 	{
 	}
 
-	~unordered_set() MOMO_NOEXCEPT
+	~unordered_set() noexcept
 	{
 	}
 
 	unordered_set& operator=(unordered_set&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
@@ -237,59 +237,59 @@ public:
 		return *this;
 	}
 
-	void swap(unordered_set& right) MOMO_NOEXCEPT
+	void swap(unordered_set& right) noexcept
 	{
 		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
 			|| get_allocator() == right.get_allocator());
 		mHashSet.Swap(right.mHashSet);
 	}
 
-	friend void swap(unordered_set& left, unordered_set& right) MOMO_NOEXCEPT
+	friend void swap(unordered_set& left, unordered_set& right) noexcept
 	{
 		left.swap(right);
 	}
 
-	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	const nested_container_type& get_nested_container() const noexcept
 	{
 		return mHashSet;
 	}
 
-	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	nested_container_type& get_nested_container() noexcept
 	{
 		return mHashSet;
 	}
 
-	iterator begin() MOMO_NOEXCEPT
+	iterator begin() noexcept
 	{
 		return mHashSet.GetBegin();
 	}
 
-	const_iterator begin() const MOMO_NOEXCEPT
+	const_iterator begin() const noexcept
 	{
 		return mHashSet.GetBegin();
 	}
 
-	iterator end() MOMO_NOEXCEPT
+	iterator end() noexcept
 	{
 		return mHashSet.GetEnd();
 	}
 
-	const_iterator end() const MOMO_NOEXCEPT
+	const_iterator end() const noexcept
 	{
 		return mHashSet.GetEnd();
 	}
 
-	const_iterator cbegin() const MOMO_NOEXCEPT
+	const_iterator cbegin() const noexcept
 	{
 		return begin();
 	}
 
-	const_iterator cend() const MOMO_NOEXCEPT
+	const_iterator cend() const noexcept
 	{
 		return end();
 	}
 
-	float max_load_factor() const MOMO_NOEXCEPT
+	float max_load_factor() const noexcept
 	{
 		return mHashSet.GetHashTraits().GetMaxLoadFactor(HashSet::bucketMaxItemCount);
 	}
@@ -317,27 +317,27 @@ public:
 		return mHashSet.GetHashTraits().GetEqualFunc();
 	}
 
-	allocator_type get_allocator() const MOMO_NOEXCEPT
+	allocator_type get_allocator() const noexcept
 	{
 		return allocator_type(mHashSet.GetMemManager().GetCharAllocator());
 	}
 
-	size_type max_size() const MOMO_NOEXCEPT
+	size_type max_size() const noexcept
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 	}
 
-	size_type size() const MOMO_NOEXCEPT
+	size_type size() const noexcept
 	{
 		return mHashSet.GetCount();
 	}
 
-	bool empty() const MOMO_NOEXCEPT
+	bool empty() const noexcept
 	{
 		return mHashSet.IsEmpty();
 	}
 
-	void clear() MOMO_NOEXCEPT
+	void clear() noexcept
 	{
 		mHashSet.Clear();
 	}
@@ -545,13 +545,13 @@ public:
 		mHashSet.MergeFrom(set.get_nested_container());
 	}
 
-	size_type max_bucket_count() const MOMO_NOEXCEPT
+	size_type max_bucket_count() const noexcept
 	{
 		return SIZE_MAX;
 		//return momo::internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 
-	size_type bucket_count() const MOMO_NOEXCEPT
+	size_type bucket_count() const noexcept
 	{
 		return mHashSet.GetBucketCount();
 	}
@@ -596,7 +596,7 @@ public:
 		return mHashSet.GetBucketIndex(key);
 	}
 
-	float load_factor() const MOMO_NOEXCEPT
+	float load_factor() const noexcept
 	{
 		size_t count = size();
 		size_t bucketCount = bucket_count();
@@ -667,7 +667,7 @@ private:
 public:
 	using UnorderedSet::UnorderedSet;
 
-	friend void swap(unordered_set_open& left, unordered_set_open& right) MOMO_NOEXCEPT
+	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
 	{
 		left.swap(right);
 	}

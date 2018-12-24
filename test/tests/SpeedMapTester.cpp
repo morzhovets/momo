@@ -47,22 +47,22 @@
 class SpeedMapKey
 {
 public:
-	explicit SpeedMapKey(uint64_t* ptr) MOMO_NOEXCEPT
+	explicit SpeedMapKey(uint64_t* ptr) noexcept
 		: mPtr(ptr)
 	{
 	}
 
-	uint64_t GetInt() const MOMO_NOEXCEPT
+	uint64_t GetInt() const noexcept
 	{
 		return *mPtr;
 	}
 
-	bool operator==(const SpeedMapKey& key) const MOMO_NOEXCEPT
+	bool operator==(const SpeedMapKey& key) const noexcept
 	{
 		return GetInt() == key.GetInt();
 	}
 
-	bool operator<(const SpeedMapKey& key) const MOMO_NOEXCEPT
+	bool operator<(const SpeedMapKey& key) const noexcept
 	{
 		return GetInt() < key.GetInt();
 	}
@@ -76,7 +76,7 @@ namespace std
 	template<>
 	struct hash<SpeedMapKey>
 	{
-		size_t operator()(const SpeedMapKey& key) const MOMO_NOEXCEPT
+		size_t operator()(const SpeedMapKey& key) const noexcept
 		{
 			return std::hash<uint64_t>()(key.GetInt());
 		}
@@ -108,7 +108,7 @@ public:
 		std::shuffle(begin, end, random);
 	}
 
-	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	static const char* GetKeyTitle() noexcept
 	{
 		return "uint64_t";
 	}
@@ -127,7 +127,7 @@ public:
 		std::shuffle(GetBegin(), GetEnd(), random);
 	}
 
-	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	static const char* GetKeyTitle() noexcept
 	{
 		return "SpeedMapKey";
 	}
@@ -162,7 +162,7 @@ public:
 		std::shuffle(begin, end, random);
 	}
 
-	static const char* GetKeyTitle() MOMO_NOEXCEPT
+	static const char* GetKeyTitle() noexcept
 	{
 		return "std::string";
 	}

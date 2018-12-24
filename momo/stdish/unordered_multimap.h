@@ -195,13 +195,13 @@ public:
 	{
 	}
 
-	unordered_multimap(unordered_multimap&& right) MOMO_NOEXCEPT
+	unordered_multimap(unordered_multimap&& right) noexcept
 		: mHashMultiMap(std::move(right.mHashMultiMap))
 	{
 	}
 
 	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
 	{
 	}
@@ -216,12 +216,12 @@ public:
 	{
 	}
 
-	~unordered_multimap() MOMO_NOEXCEPT
+	~unordered_multimap() noexcept
 	{
 	}
 
 	unordered_multimap& operator=(unordered_multimap&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
@@ -254,59 +254,59 @@ public:
 		return *this;
 	}
 
-	void swap(unordered_multimap& right) MOMO_NOEXCEPT
+	void swap(unordered_multimap& right) noexcept
 	{
 		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
 			|| get_allocator() == right.get_allocator());
 		mHashMultiMap.Swap(right.mHashMultiMap);
 	}
 
-	friend void swap(unordered_multimap& left, unordered_multimap& right) MOMO_NOEXCEPT
+	friend void swap(unordered_multimap& left, unordered_multimap& right) noexcept
 	{
 		left.swap(right);
 	}
 
-	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	const nested_container_type& get_nested_container() const noexcept
 	{
 		return mHashMultiMap;
 	}
 
-	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	nested_container_type& get_nested_container() noexcept
 	{
 		return mHashMultiMap;
 	}
 
-	iterator begin() MOMO_NOEXCEPT
+	iterator begin() noexcept
 	{
 		return IteratorProxy(mHashMultiMap.GetBegin());
 	}
 
-	const_iterator begin() const MOMO_NOEXCEPT
+	const_iterator begin() const noexcept
 	{
 		return ConstIteratorProxy(mHashMultiMap.GetBegin());
 	}
 
-	iterator end() MOMO_NOEXCEPT
+	iterator end() noexcept
 	{
 		return IteratorProxy(mHashMultiMap.GetEnd());
 	}
 
-	const_iterator end() const MOMO_NOEXCEPT
+	const_iterator end() const noexcept
 	{
 		return ConstIteratorProxy(mHashMultiMap.GetEnd());
 	}
 
-	const_iterator cbegin() const MOMO_NOEXCEPT
+	const_iterator cbegin() const noexcept
 	{
 		return begin();
 	}
 
-	const_iterator cend() const MOMO_NOEXCEPT
+	const_iterator cend() const noexcept
 	{
 		return end();
 	}
 
-	//float max_load_factor() const MOMO_NOEXCEPT
+	//float max_load_factor() const noexcept
 	//void max_load_factor(float maxLoadFactor)
 
 	hasher hash_function() const
@@ -319,27 +319,27 @@ public:
 		return mHashMultiMap.GetHashTraits().GetEqualFunc();
 	}
 
-	allocator_type get_allocator() const MOMO_NOEXCEPT
+	allocator_type get_allocator() const noexcept
 	{
 		return allocator_type(mHashMultiMap.GetMemManager().GetCharAllocator());
 	}
 
-	size_type max_size() const MOMO_NOEXCEPT
+	size_type max_size() const noexcept
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 	}
 
-	size_type size() const MOMO_NOEXCEPT
+	size_type size() const noexcept
 	{
 		return mHashMultiMap.GetValueCount();
 	}
 
-	bool empty() const MOMO_NOEXCEPT
+	bool empty() const noexcept
 	{
 		return size() == 0;
 	}
 
-	void clear() MOMO_NOEXCEPT
+	void clear() noexcept
 	{
 		mHashMultiMap.Clear();
 	}
@@ -583,8 +583,8 @@ public:
 	//node_type extract(const key_type& key)
 	//void merge(...)
 
-	//size_type max_bucket_count() const MOMO_NOEXCEPT
-	//size_type bucket_count() const MOMO_NOEXCEPT
+	//size_type max_bucket_count() const noexcept
+	//size_type bucket_count() const noexcept
 	//size_type bucket_size(size_type bucketIndex) const
 	//local_iterator begin(size_type bucketIndex)
 	//const_local_iterator begin(size_type bucketIndex) const
@@ -593,7 +593,7 @@ public:
 	//const_local_iterator cbegin(size_type bucketIndex) const
 	//const_local_iterator cend(size_type bucketIndex) const
 	//size_type bucket(const key_type& key) const
-	//float load_factor() const MOMO_NOEXCEPT
+	//float load_factor() const noexcept
 
 	bool operator==(const unordered_multimap& right) const
 	{
@@ -726,7 +726,7 @@ private:
 public:
 	using UnorderedMultiMap::UnorderedMultiMap;
 
-	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) MOMO_NOEXCEPT
+	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
 	{
 		left.swap(right);
 	}

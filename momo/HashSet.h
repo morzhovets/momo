@@ -82,7 +82,7 @@ namespace internal
 			return resBuckets;
 		}
 
-		void Destroy(MemManager& memManager, bool destroyBucketParams) MOMO_NOEXCEPT
+		void Destroy(MemManager& memManager, bool destroyBucketParams) noexcept
 		{
 			MOMO_ASSERT(mNextBuckets == nullptr);
 			size_t bucketCount = GetCount();
@@ -97,64 +97,64 @@ namespace internal
 			memManager.Deallocate(this, pvGetBufferSize(GetLogCount()));
 		}
 
-		Bucket* GetBegin() MOMO_NOEXCEPT
+		Bucket* GetBegin() noexcept
 		{
 			return pvGetBuckets();
 		}
 
-		Bucket* GetEnd() MOMO_NOEXCEPT
+		Bucket* GetEnd() noexcept
 		{
 			return pvGetBuckets() + GetCount();
 		}
 
 		MOMO_FRIENDS_BEGIN_END(HashSetBuckets&, Bucket*)
 
-		HashSetBuckets* GetNextBuckets() MOMO_NOEXCEPT
+		HashSetBuckets* GetNextBuckets() noexcept
 		{
 			return mNextBuckets;
 		}
 
-		HashSetBuckets* ExtractNextBuckets() MOMO_NOEXCEPT
+		HashSetBuckets* ExtractNextBuckets() noexcept
 		{
 			HashSetBuckets* nextBuckets = mNextBuckets;
 			mNextBuckets = nullptr;
 			return nextBuckets;
 		}
 
-		void SetNextBuckets(HashSetBuckets* nextBuckets) MOMO_NOEXCEPT
+		void SetNextBuckets(HashSetBuckets* nextBuckets) noexcept
 		{
 			MOMO_ASSERT(mNextBuckets == nullptr);
 			mNextBuckets = nextBuckets;
 		}
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return (size_t)1 << mLogCount;
 		}
 
-		size_t GetLogCount() const MOMO_NOEXCEPT
+		size_t GetLogCount() const noexcept
 		{
 			return mLogCount;
 		}
 
-		Bucket& operator[](size_t index) MOMO_NOEXCEPT
+		Bucket& operator[](size_t index) noexcept
 		{
 			MOMO_ASSERT(index < GetCount());
 			return pvGetBuckets()[index];
 		}
 
-		BucketParams& GetBucketParams() MOMO_NOEXCEPT
+		BucketParams& GetBucketParams() noexcept
 		{
 			return *mBucketParams;
 		}
 
 	private:
-		Bucket* pvGetBuckets() MOMO_NOEXCEPT
+		Bucket* pvGetBuckets() noexcept
 		{
 			return reinterpret_cast<Bucket*>(this + 1);
 		}
 
-		static size_t pvGetBufferSize(size_t logBucketCount) MOMO_NOEXCEPT
+		static size_t pvGetBufferSize(size_t logBucketCount) noexcept
 		{
 			return sizeof(HashSetBuckets) + (sizeof(Bucket) << logBucketCount);
 		}
@@ -208,14 +208,14 @@ namespace internal
 		typedef typename Bucket::Bounds BucketBounds;
 
 	public:
-		explicit HashSetConstIterator() MOMO_NOEXCEPT
+		explicit HashSetConstIterator() noexcept
 			: mBuckets(nullptr),
 			mHashCode(0),
 			mBucketIterator()
 		{
 		}
 
-		//operator ConstIterator() const MOMO_NOEXCEPT
+		//operator ConstIterator() const noexcept
 
 		HashSetConstIterator& operator++()
 		{
@@ -240,7 +240,7 @@ namespace internal
 			return std::addressof(*mBucketIterator);	//?
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mBucketIterator == iter.mBucketIterator;
 		}
@@ -249,7 +249,7 @@ namespace internal
 
 	protected:
 		explicit HashSetConstIterator(Buckets& buckets, size_t bucketIndex,
-			BucketIterator bucketIter, const size_t* version, bool movable) MOMO_NOEXCEPT
+			BucketIterator bucketIter, const size_t* version, bool movable) noexcept
 			: VersionKeeper(version),
 			mBuckets(&buckets),
 			mBucketIndex(bucketIndex + (movable ? 0 : buckets.GetCount())),
@@ -260,7 +260,7 @@ namespace internal
 		}
 
 		explicit HashSetConstIterator(Buckets* buckets, size_t hashCode,
-			const size_t* version) MOMO_NOEXCEPT
+			const size_t* version) noexcept
 			: VersionKeeper(version),
 			mBuckets(buckets),
 			mHashCode(hashCode),
@@ -268,31 +268,31 @@ namespace internal
 		{
 		}
 
-		bool ptIsMovable() const MOMO_NOEXCEPT
+		bool ptIsMovable() const noexcept
 		{
 			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
-		size_t ptGetBucketIndex() const MOMO_NOEXCEPT
+		size_t ptGetBucketIndex() const noexcept
 		{
 			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
-		size_t ptGetHashCode() const MOMO_NOEXCEPT
+		size_t ptGetHashCode() const noexcept
 		{
 			MOMO_ASSERT(mBucketIterator == BucketIterator());
 			return mHashCode;
 		}
 
-		Buckets* ptGetBuckets() const MOMO_NOEXCEPT
+		Buckets* ptGetBuckets() const noexcept
 		{
 			return mBuckets;
 		}
 
-		BucketIterator ptGetBucketIterator() const MOMO_NOEXCEPT
+		BucketIterator ptGetBucketIterator() const noexcept
 		{
 			return mBucketIterator;
 		}
@@ -306,13 +306,13 @@ namespace internal
 		}
 
 	private:
-		void pvMoveIf() MOMO_NOEXCEPT
+		void pvMoveIf() noexcept
 		{
 			if (mBucketIterator == pvGetBucketBounds().GetEnd())
 				pvMove();
 		}
 
-		void pvMove() MOMO_NOEXCEPT
+		void pvMove() noexcept
 		{
 			size_t bucketCount = mBuckets->GetCount();
 			while (true)
@@ -336,7 +336,7 @@ namespace internal
 			*this = HashSetConstIterator();
 		}
 
-		BucketBounds pvGetBucketBounds() const MOMO_NOEXCEPT
+		BucketBounds pvGetBucketBounds() const noexcept
 		{
 			return (*mBuckets)[mBucketIndex].GetBounds(mBuckets->GetBucketParams());
 		}
@@ -364,7 +364,7 @@ namespace internal
 		static const size_t alignment = HashSetItemTraits::alignment;
 
 	public:
-		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			for (size_t i = 0; i < count; ++i)
 				HashSetItemTraits::Destroy(&memManager, items[i]);
@@ -510,7 +510,7 @@ public:
 		}
 	}
 
-	HashSet(HashSet&& hashSet) MOMO_NOEXCEPT
+	HashSet(HashSet&& hashSet) noexcept
 		: mCrew(std::move(hashSet.mCrew)),
 		mCount(hashSet.mCount),
 		mCapacity(hashSet.mCapacity),
@@ -557,12 +557,12 @@ public:
 		}
 	}
 
-	~HashSet() MOMO_NOEXCEPT
+	~HashSet() noexcept
 	{
 		pvDestroy();
 	}
 
-	HashSet& operator=(HashSet&& hashSet) MOMO_NOEXCEPT
+	HashSet& operator=(HashSet&& hashSet) noexcept
 	{
 		HashSet(std::move(hashSet)).Swap(*this);
 		return *this;
@@ -575,7 +575,7 @@ public:
 		return *this;
 	}
 
-	void Swap(HashSet& hashSet) MOMO_NOEXCEPT
+	void Swap(HashSet& hashSet) noexcept
 	{
 		mCrew.Swap(hashSet.mCrew);
 		std::swap(mCount, hashSet.mCount);
@@ -583,7 +583,7 @@ public:
 		std::swap(mBuckets, hashSet.mBuckets);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		if (mCount == 0)
 			return ConstIterator();
@@ -591,7 +591,7 @@ public:
 			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetBegin(), true);
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return ConstIterator();
 	}
@@ -599,32 +599,32 @@ public:
 	MOMO_FRIEND_SWAP(HashSet)
 	MOMO_FRIENDS_BEGIN_END(const HashSet&, ConstIterator)
 
-	const HashTraits& GetHashTraits() const MOMO_NOEXCEPT
+	const HashTraits& GetHashTraits() const noexcept
 	{
 		return mCrew.GetContainerTraits();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mCrew.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mCrew.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mCount;
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mCount == 0;
 	}
 
-	void Clear(bool shrink = true) MOMO_NOEXCEPT
+	void Clear(bool shrink = true) noexcept
 	{
 		if (mBuckets == nullptr)
 			return;
@@ -645,7 +645,7 @@ public:
 		mCrew.IncVersion();
 	}
 
-	size_t GetCapacity() const MOMO_NOEXCEPT
+	size_t GetCapacity() const noexcept
 	{
 		return mCapacity;
 	}
@@ -855,7 +855,7 @@ public:
 		pvMergeTo(dstHashSet);
 	}
 
-	size_t GetBucketCount() const MOMO_NOEXCEPT
+	size_t GetBucketCount() const noexcept
 	{
 		size_t bucketCount = 0;
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
@@ -899,7 +899,7 @@ public:
 		}
 	}
 
-	ConstIterator MakeIterator(size_t hashCode) const MOMO_NOEXCEPT
+	ConstIterator MakeIterator(size_t hashCode) const noexcept
 	{
 		return ConstIteratorProxy(mBuckets, hashCode, mCrew.GetVersion());
 	}
@@ -912,12 +912,12 @@ public:
 	}
 
 private:
-	void pvDestroy() MOMO_NOEXCEPT
+	void pvDestroy() noexcept
 	{
 		pvDestroy(mBuckets, true);
 	}
 
-	void pvDestroy(Buckets* buckets, bool destroyBucketParams) MOMO_NOEXCEPT
+	void pvDestroy(Buckets* buckets, bool destroyBucketParams) noexcept
 	{
 		if (buckets == nullptr)
 			return;
@@ -941,12 +941,12 @@ private:
 	}
 
 	ConstIterator pvMakeIterator(Buckets& buckets, size_t bucketIndex, BucketIterator bucketIter,
-		bool movable) const MOMO_NOEXCEPT
+		bool movable) const noexcept
 	{
 		return ConstIteratorProxy(buckets, bucketIndex, bucketIter, mCrew.GetVersion(), movable);
 	}
 
-	bool pvExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
+	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
 		try
 		{
@@ -1121,7 +1121,7 @@ private:
 		return pvRemove(iter, itemReplacer);
 	}
 
-	void pvRelocateItems() MOMO_NOEXCEPT
+	void pvRelocateItems() noexcept
 	{
 		Buckets* nextBuckets = mBuckets->GetNextBuckets();
 		MOMO_ASSERT(nextBuckets != nullptr);
@@ -1136,7 +1136,7 @@ private:
 		}
 	}
 
-	void pvRelocateItems(Buckets* buckets) MOMO_NOEXCEPT_IF(areItemsNothrowRelocatable)
+	void pvRelocateItems(Buckets* buckets) noexcept(areItemsNothrowRelocatable)
 	{
 		Buckets* nextBuckets = buckets->GetNextBuckets();
 		if (nextBuckets != nullptr)

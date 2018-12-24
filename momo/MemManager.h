@@ -60,7 +60,7 @@ namespace internal
 	template<size_t ptrUsefulBitCount>
 	struct MemManagerCheckPtr
 	{
-		explicit MemManagerCheckPtr(void* ptr) MOMO_NOEXCEPT
+		explicit MemManagerCheckPtr(void* ptr) noexcept
 		{
 			(void)ptr;
 			MOMO_STATIC_ASSERT(ptrUsefulBitCount < sizeof(void*) * 8);
@@ -71,7 +71,7 @@ namespace internal
 	template<>
 	struct MemManagerCheckPtr<sizeof(void*) * 8>
 	{
-		explicit MemManagerCheckPtr(void* /*ptr*/) MOMO_NOEXCEPT
+		explicit MemManagerCheckPtr(void* /*ptr*/) noexcept
 		{
 		}
 	};
@@ -86,19 +86,19 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	explicit MemManagerCpp() MOMO_NOEXCEPT
+	explicit MemManagerCpp() noexcept
 	{
 	}
 
-	MemManagerCpp(MemManagerCpp&& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerCpp(MemManagerCpp&& /*memManager*/) noexcept
 	{
 	}
 
-	MemManagerCpp(const MemManagerCpp& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerCpp(const MemManagerCpp& /*memManager*/) noexcept
 	{
 	}
 
-	~MemManagerCpp() MOMO_NOEXCEPT
+	~MemManagerCpp() noexcept
 	{
 	}
 
@@ -113,7 +113,7 @@ public:
 		return static_cast<Result*>(ptr);
 	}
 
-	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+	void Deallocate(void* ptr, size_t size) noexcept
 	{
 		(void)size;
 		MOMO_ASSERT(ptr != nullptr && size > 0);
@@ -130,19 +130,19 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	explicit MemManagerC() MOMO_NOEXCEPT
+	explicit MemManagerC() noexcept
 	{
 	}
 
-	MemManagerC(MemManagerC&& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerC(MemManagerC&& /*memManager*/) noexcept
 	{
 	}
 
-	MemManagerC(const MemManagerC& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerC(const MemManagerC& /*memManager*/) noexcept
 	{
 	}
 
-	~MemManagerC() MOMO_NOEXCEPT
+	~MemManagerC() noexcept
 	{
 	}
 
@@ -159,7 +159,7 @@ public:
 		return static_cast<Result*>(ptr);
 	}
 
-	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+	void Deallocate(void* ptr, size_t size) noexcept
 	{
 		(void)size;
 		MOMO_ASSERT(ptr != nullptr && size > 0);
@@ -190,19 +190,19 @@ public:
 	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 
 public:
-	explicit MemManagerWin() MOMO_NOEXCEPT
+	explicit MemManagerWin() noexcept
 	{
 	}
 
-	MemManagerWin(MemManagerWin&& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerWin(MemManagerWin&& /*memManager*/) noexcept
 	{
 	}
 
-	MemManagerWin(const MemManagerWin& /*memManager*/) MOMO_NOEXCEPT
+	MemManagerWin(const MemManagerWin& /*memManager*/) noexcept
 	{
 	}
 
-	~MemManagerWin() MOMO_NOEXCEPT
+	~MemManagerWin() noexcept
 	{
 	}
 
@@ -219,7 +219,7 @@ public:
 		return static_cast<Result*>(ptr);
 	}
 
-	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+	void Deallocate(void* ptr, size_t size) noexcept
 	{
 		(void)size;
 		MOMO_ASSERT(ptr != nullptr && size > 0);
@@ -239,7 +239,7 @@ public:
 	//	return static_cast<Result*>(newPtr);
 	//}
 
-	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
+	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 	{
 		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 		if (size == newSize)
@@ -267,16 +267,16 @@ public:
 	static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 public:
-	explicit MemManagerStd() MOMO_NOEXCEPT_IF(noexcept(CharAllocator()))
+	explicit MemManagerStd() noexcept(noexcept(CharAllocator()))
 	{
 	}
 
-	explicit MemManagerStd(const Allocator& alloc) MOMO_NOEXCEPT
+	explicit MemManagerStd(const Allocator& alloc) noexcept
 		: CharAllocator(alloc)
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
+	MemManagerStd(MemManagerStd&& memManager) noexcept
 		: CharAllocator(std::move(memManager.GetCharAllocator()))
 	{
 	}
@@ -287,7 +287,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() MOMO_NOEXCEPT
+	~MemManagerStd() noexcept
 	{
 	}
 
@@ -300,18 +300,18 @@ public:
 		return static_cast<Result*>(ptr);
 	}
 
-	void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+	void Deallocate(void* ptr, size_t size) noexcept
 	{
 		std::allocator_traits<CharAllocator>::deallocate(GetCharAllocator(),
 			static_cast<char*>(ptr), size);
 	}
 
-	const CharAllocator& GetCharAllocator() const MOMO_NOEXCEPT
+	const CharAllocator& GetCharAllocator() const noexcept
 	{
 		return *this;
 	}
 
-	CharAllocator& GetCharAllocator() MOMO_NOEXCEPT
+	CharAllocator& GetCharAllocator() noexcept
 	{
 		return *this;
 	}
@@ -329,11 +329,11 @@ public:
 
 public:
 	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())
-		MOMO_NOEXCEPT_IF(noexcept(MemManagerDefault()))
+		noexcept(noexcept(MemManagerDefault()))
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
+	MemManagerStd(MemManagerStd&& memManager) noexcept
 		: MemManagerDefault(std::move(memManager))
 	{
 	}
@@ -343,18 +343,18 @@ public:
 	{
 	}
 
-	~MemManagerStd() MOMO_NOEXCEPT
+	~MemManagerStd() noexcept
 	{
 	}
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	const CharAllocator& GetCharAllocator() const MOMO_NOEXCEPT
+	const CharAllocator& GetCharAllocator() const noexcept
 	{
 		return *this;
 	}
 
-	CharAllocator& GetCharAllocator() MOMO_NOEXCEPT
+	CharAllocator& GetCharAllocator() noexcept
 	{
 		return *this;
 	}
@@ -371,19 +371,19 @@ namespace internal
 		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 	public:
-		explicit MemManagerDummy() MOMO_NOEXCEPT
+		explicit MemManagerDummy() noexcept
 		{
 		}
 
-		MemManagerDummy(MemManagerDummy&& /*memManager*/) MOMO_NOEXCEPT
+		MemManagerDummy(MemManagerDummy&& /*memManager*/) noexcept
 		{
 		}
 
-		MemManagerDummy(const MemManagerDummy& /*memManager*/) MOMO_NOEXCEPT
+		MemManagerDummy(const MemManagerDummy& /*memManager*/) noexcept
 		{
 		}
 
-		~MemManagerDummy() MOMO_NOEXCEPT
+		~MemManagerDummy() noexcept
 		{
 		}
 
@@ -392,7 +392,7 @@ namespace internal
 		//template<typename Result = void>
 		//Result* Allocate(size_t size);
 
-		void Deallocate(void* /*ptr*/, size_t /*size*/) MOMO_NOEXCEPT
+		void Deallocate(void* /*ptr*/, size_t /*size*/) noexcept
 		{
 			MOMO_ASSERT(false);
 		}
@@ -411,23 +411,23 @@ namespace internal
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
 	public:
-		explicit MemManagerWrapper(MemManager&& memManager) MOMO_NOEXCEPT
+		explicit MemManagerWrapper(MemManager&& memManager) noexcept
 			: mMemManager(std::move(memManager))
 		{
 		}
 
-		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) MOMO_NOEXCEPT
+		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) noexcept
 			: mMemManager(std::move(memManagerWrapper.mMemManager))
 		{
 		}
 
 		MemManagerWrapper(const MemManagerWrapper&) = delete;
 
-		~MemManagerWrapper() MOMO_NOEXCEPT
+		~MemManagerWrapper() noexcept
 		{
 		}
 
-		MemManagerWrapper& operator=(MemManagerWrapper&& memManagerWrapper) MOMO_NOEXCEPT
+		MemManagerWrapper& operator=(MemManagerWrapper&& memManagerWrapper) noexcept
 		{
 			if (this != &memManagerWrapper)
 			{
@@ -439,12 +439,12 @@ namespace internal
 
 		MemManagerWrapper& operator=(const MemManagerWrapper&) = delete;
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			return mMemManager;
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return mMemManager;
 		}
@@ -462,35 +462,35 @@ namespace internal
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
 	public:
-		explicit MemManagerWrapper(MemManager&& memManager) MOMO_NOEXCEPT
+		explicit MemManagerWrapper(MemManager&& memManager) noexcept
 			: MemManager(std::move(memManager))
 		{
 		}
 
-		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) MOMO_NOEXCEPT
+		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) noexcept
 			: MemManager(std::move(memManagerWrapper.GetMemManager()))
 		{
 		}
 
 		MemManagerWrapper(const MemManagerWrapper&) = delete;
 
-		~MemManagerWrapper() MOMO_NOEXCEPT
+		~MemManagerWrapper() noexcept
 		{
 		}
 
-		MemManagerWrapper& operator=(MemManagerWrapper&& /*memManagerWrapper*/) MOMO_NOEXCEPT
+		MemManagerWrapper& operator=(MemManagerWrapper&& /*memManagerWrapper*/) noexcept
 		{
 			return *this;
 		}
 
 		MemManagerWrapper& operator=(const MemManagerWrapper&) = delete;
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			return *this;
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return *this;
 		}
@@ -513,29 +513,29 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
 
 	public:
-		explicit MemManagerPtr() MOMO_NOEXCEPT
+		explicit MemManagerPtr() noexcept
 		{
 		}
 
-		explicit MemManagerPtr(BaseMemManager& /*memManager*/) MOMO_NOEXCEPT
+		explicit MemManagerPtr(BaseMemManager& /*memManager*/) noexcept
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& /*memManagerPtr*/) MOMO_NOEXCEPT
+		MemManagerPtr(MemManagerPtr&& /*memManagerPtr*/) noexcept
 		{
 		}
 
-		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/) MOMO_NOEXCEPT
+		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/) noexcept
 		{
 		}
 
-		~MemManagerPtr() MOMO_NOEXCEPT
+		~MemManagerPtr() noexcept
 		{
 		}
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		BaseMemManager& GetBaseMemManager() MOMO_NOEXCEPT
+		BaseMemManager& GetBaseMemManager() noexcept
 		{
 			return *this;
 		}
@@ -546,7 +546,7 @@ namespace internal
 			return GetBaseMemManager().template Allocate<Result>(size);
 		}
 
-		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+		void Deallocate(void* ptr, size_t size) noexcept
 		{
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
@@ -557,7 +557,7 @@ namespace internal
 			return GetBaseMemManager().template Reallocate<Result>(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
@@ -575,28 +575,28 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
 
 	public:
-		explicit MemManagerPtr(BaseMemManager& memManager) MOMO_NOEXCEPT
+		explicit MemManagerPtr(BaseMemManager& memManager) noexcept
 			: mBaseMemManager(memManager)
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& memManagerPtr) MOMO_NOEXCEPT
+		MemManagerPtr(MemManagerPtr&& memManagerPtr) noexcept
 			: mBaseMemManager(memManagerPtr.mBaseMemManager)
 		{
 		}
 
-		MemManagerPtr(const MemManagerPtr& memManagerPtr) MOMO_NOEXCEPT
+		MemManagerPtr(const MemManagerPtr& memManagerPtr) noexcept
 			: mBaseMemManager(memManagerPtr.mBaseMemManager)
 		{
 		}
 
-		~MemManagerPtr() MOMO_NOEXCEPT
+		~MemManagerPtr() noexcept
 		{
 		}
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
-		BaseMemManager& GetBaseMemManager() MOMO_NOEXCEPT
+		BaseMemManager& GetBaseMemManager() noexcept
 		{
 			return mBaseMemManager;
 		}
@@ -607,7 +607,7 @@ namespace internal
 			return mBaseMemManager.template Allocate<Result>(size);
 		}
 
-		void Deallocate(void* ptr, size_t size) MOMO_NOEXCEPT
+		void Deallocate(void* ptr, size_t size) noexcept
 		{
 			mBaseMemManager.Deallocate(ptr, size);
 		}
@@ -618,7 +618,7 @@ namespace internal
 			return mBaseMemManager.template Reallocate<Result>(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) MOMO_NOEXCEPT
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
 		}

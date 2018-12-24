@@ -52,7 +52,7 @@ public:
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	explicit MemPoolParams(size_t blockSize) MOMO_NOEXCEPT
+	explicit MemPoolParams(size_t blockSize) noexcept
 		: blockSize(blockSize),
 		blockAlignment(MOMO_MAX_ALIGNMENT)
 	{
@@ -61,7 +61,7 @@ public:
 		pvCorrectBlockSize();
 	}
 
-	explicit MemPoolParams(size_t blockSize, size_t blockAlignment) MOMO_NOEXCEPT
+	explicit MemPoolParams(size_t blockSize, size_t blockAlignment) noexcept
 		: blockSize(blockSize),
 		blockAlignment(blockAlignment)
 	{
@@ -69,13 +69,13 @@ public:
 		pvCorrectBlockSize();
 	}
 
-	bool IsEqual(const MemPoolParams& params) const MOMO_NOEXCEPT
+	bool IsEqual(const MemPoolParams& params) const noexcept
 	{
 		return blockSize == params.blockSize && blockAlignment == params.blockAlignment;
 	}
 
 private:
-	void pvCorrectBlockSize() MOMO_NOEXCEPT
+	void pvCorrectBlockSize() noexcept
 	{
 		if (blockCount == 1)
 		{
@@ -116,7 +116,7 @@ public:
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	bool IsEqual(const MemPoolParamsStatic& /*params*/) const MOMO_NOEXCEPT
+	bool IsEqual(const MemPoolParamsStatic& /*params*/) const noexcept
 	{
 		return true;
 	}
@@ -183,7 +183,7 @@ public:
 	{
 	}
 
-	MemPool(MemPool&& memPool) MOMO_NOEXCEPT
+	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
 		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
@@ -196,7 +196,7 @@ public:
 
 	MemPool(const MemPool&) = delete;
 
-	~MemPool() MOMO_NOEXCEPT
+	~MemPool() noexcept
 	{
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
 		if (Params::cachedFreeBlockCount > 0)
@@ -204,7 +204,7 @@ public:
 		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
 	}
 
-	MemPool& operator=(MemPool&& memPool) MOMO_NOEXCEPT
+	MemPool& operator=(MemPool&& memPool) noexcept
 	{
 		MemPool(std::move(memPool)).Swap(*this);
 		return *this;
@@ -212,7 +212,7 @@ public:
 
 	MemPool& operator=(const MemPool&) = delete;
 
-	void Swap(MemPool& memPool) MOMO_NOEXCEPT
+	void Swap(MemPool& memPool) noexcept
 	{
 		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
 		std::swap(pvGetParams(), memPool.pvGetParams());
@@ -223,32 +223,32 @@ public:
 
 	MOMO_FRIEND_SWAP(MemPool)
 
-	size_t GetBlockSize() const MOMO_NOEXCEPT
+	size_t GetBlockSize() const noexcept
 	{
 		return Params::blockSize;
 	}
 
-	size_t GetBlockAlignment() const MOMO_NOEXCEPT
+	size_t GetBlockAlignment() const noexcept
 	{
 		return Params::blockAlignment;
 	}
 
-	size_t GetBlockCount() const MOMO_NOEXCEPT
+	size_t GetBlockCount() const noexcept
 	{
 		return Params::blockCount;
 	}
 
-	const Params& GetParams() const MOMO_NOEXCEPT
+	const Params& GetParams() const noexcept
 	{
 		return *this;
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return pvGetMemManagerWrapper().GetMemManager();
 	}
@@ -275,7 +275,7 @@ public:
 		return pblock;
 	}
 
-	void Deallocate(void* pblock) MOMO_NOEXCEPT
+	void Deallocate(void* pblock) noexcept
 	{
 		MOMO_ASSERT(pblock != nullptr);
 		MOMO_ASSERT(mAllocCount > 0);
@@ -292,7 +292,7 @@ public:
 		--mAllocCount;
 	}
 
-	size_t GetAllocateCount() const MOMO_NOEXCEPT
+	size_t GetAllocateCount() const noexcept
 	{
 		return mAllocCount;
 	}
@@ -329,17 +329,17 @@ public:
 	}
 
 private:
-	Params& pvGetParams() MOMO_NOEXCEPT
+	Params& pvGetParams() noexcept
 	{
 		return *this;
 	}
 
-	const MemManagerWrapper& pvGetMemManagerWrapper() const MOMO_NOEXCEPT
+	const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
 	{
 		return *this;
 	}
 
-	MemManagerWrapper& pvGetMemManagerWrapper() MOMO_NOEXCEPT
+	MemManagerWrapper& pvGetMemManagerWrapper() noexcept
 	{
 		return *this;
 	}
@@ -357,14 +357,14 @@ private:
 			throw std::length_error("momo::MemPool length error");
 	}
 
-	void pvFlushDeallocate() MOMO_NOEXCEPT
+	void pvFlushDeallocate() noexcept
 	{
 		for (void* pblock : mCachedFreeBlocks)
 			pvDeleteBlock(pblock);
 		mCachedFreeBlocks.Clear();
 	}
 
-	void pvDeleteBlock(void* pblock) MOMO_NOEXCEPT
+	void pvDeleteBlock(void* pblock) noexcept
 	{
 		if (Params::blockCount > 1)
 			pvDeleteBlock(reinterpret_cast<uintptr_t>(pblock));
@@ -374,7 +374,7 @@ private:
 			pvDeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
 	}
 
-	size_t pvGetBufferSize0() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize0() const noexcept
 	{
 		return std::minmax((size_t)Params::blockSize, (size_t)Params::blockAlignment).second;	// gcc & llvm
 	}
@@ -387,20 +387,20 @@ private:
 		return block;
 	}
 
-	void pvDeleteBlock1(uintptr_t block) MOMO_NOEXCEPT
+	void pvDeleteBlock1(uintptr_t block) noexcept
 	{
 		uintptr_t begin = pvGetBufferBegin1(block);
 		GetMemManager().Deallocate(reinterpret_cast<void*>(begin), pvGetBufferSize1());
 	}
 
-	size_t pvGetBufferSize1() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize1() const noexcept
 	{
 		size_t bufferUsefulSize = Params::blockSize + Params::blockAlignment
 			- SMath::GCD(maxAlignment, Params::blockAlignment);
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
 	}
 
-	uintptr_t& pvGetBufferBegin1(uintptr_t block) MOMO_NOEXCEPT
+	uintptr_t& pvGetBufferBegin1(uintptr_t block) noexcept
 	{
 		return *reinterpret_cast<uintptr_t*>(PMath::Ceil(block + Params::blockSize,
 			(uintptr_t)sizeof(void*)));
@@ -417,7 +417,7 @@ private:
 		return block;
 	}
 
-	void pvDeleteBlock(uintptr_t block) MOMO_NOEXCEPT
+	void pvDeleteBlock(uintptr_t block) noexcept
 	{
 		uintptr_t buffer;
 		size_t freeBlockCount = pvDeleteBlock(block, buffer);
@@ -434,7 +434,7 @@ private:
 			pvRemoveBuffer(buffer, true);
 	}
 
-	size_t pvNewBlock(uintptr_t buffer, uintptr_t& block) MOMO_NOEXCEPT
+	size_t pvNewBlock(uintptr_t buffer, uintptr_t& block) noexcept
 	{
 		BufferBytes& bytes = pvGetBufferBytes(buffer);
 		block = pvGetNextFreeBlockIndex(buffer, bytes.firstFreeBlockIndex);
@@ -443,7 +443,7 @@ private:
 		return (size_t)bytes.freeBlockCount;
 	}
 
-	size_t pvDeleteBlock(uintptr_t block, uintptr_t& buffer) MOMO_NOEXCEPT
+	size_t pvDeleteBlock(uintptr_t block, uintptr_t& buffer) noexcept
 	{
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
 		BufferBytes& bytes = pvGetBufferBytes(buffer);
@@ -453,18 +453,18 @@ private:
 		return (size_t)bytes.freeBlockCount;
 	}
 
-	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) MOMO_NOEXCEPT
+	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) noexcept
 	{
 		return *reinterpret_cast<int8_t*>(block);
 	}
 
-	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const MOMO_NOEXCEPT
+	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const noexcept
 	{
 		return buffer + (intptr_t)index * (intptr_t)Params::blockSize
 			+ ((intptr_t)Params::blockAlignment & -(intptr_t)(index >= 0));
 	}
 
-	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const MOMO_NOEXCEPT
+	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const noexcept
 	{
 		MOMO_ASSERT(block % Params::blockAlignment == 0);
 		size_t index = (block / Params::blockSize) % Params::blockCount;
@@ -509,7 +509,7 @@ private:
 		return buffer;
 	}
 
-	void pvRemoveBuffer(uintptr_t buffer, bool deallocate) MOMO_NOEXCEPT
+	void pvRemoveBuffer(uintptr_t buffer, bool deallocate) noexcept
 	{
 		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		if (pointers.prevBuffer != nullPtr)
@@ -522,7 +522,7 @@ private:
 			GetMemManager().Deallocate(reinterpret_cast<void*>(pointers.begin), pvGetBufferSize());
 	}
 
-	size_t pvGetBufferSize() const MOMO_NOEXCEPT
+	size_t pvGetBufferSize() const noexcept
 	{
 		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
 			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
@@ -534,12 +534,12 @@ private:
 			+ ((Params::blockAlignment <= 2) ? 2 : 0);
 	}
 
-	int8_t& pvGetFirstBlockIndex(uintptr_t buffer) MOMO_NOEXCEPT
+	int8_t& pvGetFirstBlockIndex(uintptr_t buffer) noexcept
 	{
 		return *reinterpret_cast<int8_t*>(buffer);
 	}
 
-	BufferBytes& pvGetBufferBytes(uintptr_t buffer) MOMO_NOEXCEPT
+	BufferBytes& pvGetBufferBytes(uintptr_t buffer) noexcept
 	{
 		if (Params::blockAlignment > 2)
 			return *reinterpret_cast<BufferBytes*>(buffer + 1);
@@ -547,7 +547,7 @@ private:
 			return *reinterpret_cast<BufferBytes*>(&pvGetBufferPointers(buffer) + 1);
 	}
 
-	BufferPointers& pvGetBufferPointers(uintptr_t buffer) MOMO_NOEXCEPT
+	BufferPointers& pvGetBufferPointers(uintptr_t buffer) noexcept
 	{
 		size_t offset = Params::blockCount - (size_t)(-pvGetFirstBlockIndex(buffer));
 		return *reinterpret_cast<BufferPointers*>(PMath::Ceil(buffer + Params::blockAlignment
@@ -599,7 +599,7 @@ namespace internal
 
 		MemPoolUInt32(const MemPoolUInt32&) = delete;
 
-		~MemPoolUInt32() MOMO_NOEXCEPT
+		~MemPoolUInt32() noexcept
 		{
 			MOMO_ASSERT(mAllocCount == 0);
 			pvClear();
@@ -607,18 +607,18 @@ namespace internal
 
 		MemPoolUInt32& operator=(const MemPoolUInt32&) = delete;
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			return mBuffers.GetMemManager();
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return mBuffers.GetMemManager();
 		}
 
 		template<typename Result = void>
-		Result* GetRealPointer(uint32_t ptr) MOMO_NOEXCEPT
+		Result* GetRealPointer(uint32_t ptr) noexcept
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = mBuffers[ptr / blockCount];
@@ -636,7 +636,7 @@ namespace internal
 			return ptr;
 		}
 
-		void Deallocate(uint32_t ptr) MOMO_NOEXCEPT
+		void Deallocate(uint32_t ptr) noexcept
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			MOMO_ASSERT(mAllocCount > 0);
@@ -648,7 +648,7 @@ namespace internal
 		}
 
 	private:
-		uint32_t& pvGetNextBlock(void* realPtr) MOMO_NOEXCEPT
+		uint32_t& pvGetNextBlock(void* realPtr) noexcept
 		{
 			return *static_cast<uint32_t*>(realPtr);
 		}
@@ -670,7 +670,7 @@ namespace internal
 			mBuffers.AddBackNogrow(buffer);
 		}
 
-		void pvShrink() MOMO_NOEXCEPT
+		void pvShrink() noexcept
 		{
 			if (mBuffers.GetCount() > 2)
 			{
@@ -680,7 +680,7 @@ namespace internal
 			}
 		}
 
-		void pvClear() MOMO_NOEXCEPT
+		void pvClear() noexcept
 		{
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = pvGetBufferSize();
@@ -688,7 +688,7 @@ namespace internal
 				memManager.Deallocate(buffer, bufferSize);
 		}
 
-		size_t pvGetBufferSize() const MOMO_NOEXCEPT
+		size_t pvGetBufferSize() const noexcept
 		{
 			return blockCount * mBlockSize;
 		}

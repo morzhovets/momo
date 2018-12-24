@@ -41,21 +41,21 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	public:
-		explicit BucketOneI() MOMO_NOEXCEPT
+		explicit BucketOneI() noexcept
 		{
 			pvSetState(HashBucketOneState::empty);
 		}
 
 		BucketOneI(const BucketOneI&) = delete;
 
-		~BucketOneI() MOMO_NOEXCEPT
+		~BucketOneI() noexcept
 		{
 			MOMO_ASSERT(!IsFull());
 		}
 
 		BucketOneI& operator=(const BucketOneI&) = delete;
 
-		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& /*params*/) noexcept
 		{
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
@@ -66,17 +66,17 @@ namespace internal
 			return (IsFull() && pred(*&mItemBuffer)) ? &mItemBuffer : nullptr;
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			return pvGetState() == HashBucketOneState::full;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			return pvGetState() != HashBucketOneState::empty;
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
@@ -86,7 +86,7 @@ namespace internal
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
-			MOMO_NOEXCEPT_IF(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
+			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			MOMO_ASSERT(!IsFull());
 			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
@@ -106,12 +106,12 @@ namespace internal
 		}
 
 	private:
-		HashBucketOneState pvGetState() const MOMO_NOEXCEPT
+		HashBucketOneState pvGetState() const noexcept
 		{
 			return Stater::GetState(&mItemBuffer);
 		}
 
-		void pvSetState(HashBucketOneState state) MOMO_NOEXCEPT
+		void pvSetState(HashBucketOneState state) noexcept
 		{
 			Stater::SetState(&mItemBuffer, state);
 		}

@@ -36,19 +36,19 @@ namespace internal
 		using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 	public:
-		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
+		static const Key& GetKey(const Item& item) noexcept
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Item, Key>::value));
 			return item;
 		}
 
-		static void Destroy(MemManager* memManager, Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Item& item) noexcept
 		{
 			ItemManager::Destroyer::Destroy(memManager, item);
 		}
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
-			MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+			noexcept(isNothrowRelocatable)
 		{
 			ItemManager::Relocator::Relocate(memManager, srcItem, dstItem);
 		}
@@ -113,7 +113,7 @@ namespace internal
 			new(&mData->memManager) MemManager(std::move(memManager));
 		}
 
-		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
+		SetCrew(SetCrew&& crew) noexcept
 			: mData(nullptr)
 		{
 			Swap(crew);
@@ -121,7 +121,7 @@ namespace internal
 
 		SetCrew(const SetCrew&) = delete;
 
-		~SetCrew() MOMO_NOEXCEPT
+		~SetCrew() noexcept
 		{
 			if (!pvIsNull())
 			{
@@ -134,43 +134,43 @@ namespace internal
 
 		SetCrew& operator=(const SetCrew&) = delete;
 
-		void Swap(SetCrew& crew) MOMO_NOEXCEPT
+		void Swap(SetCrew& crew) noexcept
 		{
 			std::swap(mData, crew.mData);
 		}
 
-		const size_t* GetVersion() const MOMO_NOEXCEPT
+		const size_t* GetVersion() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
 			return &mData->version;
 		}
 
-		void IncVersion() MOMO_NOEXCEPT
+		void IncVersion() noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
 			++mData->version;
 		}
 
-		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
+		const ContainerTraits& GetContainerTraits() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
 			return mData->containerTraits;
 		}
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
 			return mData->memManager;
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
 			return mData->memManager;
 		}
 
 	private:
-		bool pvIsNull() const MOMO_NOEXCEPT
+		bool pvIsNull() const noexcept
 		{
 			return mData == nullptr;
 		}
@@ -201,7 +201,7 @@ namespace internal
 		{
 		}
 
-		SetCrew(SetCrew&& crew) MOMO_NOEXCEPT
+		SetCrew(SetCrew&& crew) noexcept
 			: ContainerTraits(std::move(crew.pvGetContainerTraits())),
 			MemManager(std::move(crew.GetMemManager()))
 		{
@@ -209,43 +209,43 @@ namespace internal
 
 		SetCrew(const SetCrew&) = delete;
 
-		~SetCrew() MOMO_NOEXCEPT
+		~SetCrew() noexcept
 		{
 		}
 
 		SetCrew& operator=(const SetCrew&) = delete;
 
-		void Swap(SetCrew& crew) MOMO_NOEXCEPT
+		void Swap(SetCrew& crew) noexcept
 		{
 			std::swap(pvGetContainerTraits(), crew.pvGetContainerTraits());
 		}
 
-		const size_t* GetVersion() const MOMO_NOEXCEPT
+		const size_t* GetVersion() const noexcept
 		{
 			return nullptr;
 		}
 
-		void IncVersion() MOMO_NOEXCEPT
+		void IncVersion() noexcept
 		{
 		}
 
-		const ContainerTraits& GetContainerTraits() const MOMO_NOEXCEPT
-		{
-			return *this;
-		}
-
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const ContainerTraits& GetContainerTraits() const noexcept
 		{
 			return *this;
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
+		{
+			return *this;
+		}
+
+		MemManager& GetMemManager() noexcept
 		{
 			return *this;
 		}
 
 	private:
-		ContainerTraits& pvGetContainerTraits() MOMO_NOEXCEPT
+		ContainerTraits& pvGetContainerTraits() noexcept
 		{
 			return *this;
 		}
@@ -263,7 +263,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
-		explicit SetExtractedItem() MOMO_NOEXCEPT
+		explicit SetExtractedItem() noexcept
 			: mHasItem(false)
 		{
 		}
@@ -276,7 +276,7 @@ namespace internal
 		}
 
 		SetExtractedItem(SetExtractedItem&& extractedItem)
-			MOMO_NOEXCEPT_IF(ItemTraits::isNothrowRelocatable)
+			noexcept(ItemTraits::isNothrowRelocatable)
 			: mHasItem(extractedItem.mHasItem)
 		{
 			if (mHasItem)
@@ -286,19 +286,19 @@ namespace internal
 
 		SetExtractedItem(const SetExtractedItem&) = delete;
 
-		~SetExtractedItem() MOMO_NOEXCEPT
+		~SetExtractedItem() noexcept
 		{
 			Clear();
 		}
 
 		SetExtractedItem& operator=(const SetExtractedItem&) = delete;
 
-		bool IsEmpty() const MOMO_NOEXCEPT
+		bool IsEmpty() const noexcept
 		{
 			return !mHasItem;
 		}
 
-		void Clear() MOMO_NOEXCEPT
+		void Clear() noexcept
 		{
 			if (mHasItem)
 				ItemTraits::Destroy(nullptr, *&mItemBuffer);

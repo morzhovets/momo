@@ -79,21 +79,21 @@ namespace internal
 		static const size_t logBucketCountAddend = 6;
 
 	public:
-		explicit BucketOpen2N() MOMO_NOEXCEPT
+		explicit BucketOpen2N() noexcept
 		{
 			pvSetEmpty();
 		}
 
 		BucketOpen2N(const BucketOpen2N&) = delete;
 
-		~BucketOpen2N() MOMO_NOEXCEPT
+		~BucketOpen2N() noexcept
 		{
 			MOMO_ASSERT(pvGetCount() == 0);
 		}
 
 		BucketOpen2N& operator=(const BucketOpen2N&) = delete;
 
-		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& /*params*/) noexcept
 		{
 			return Bounds(Iterator(&mItems[0] + maxCount), pvGetCount());
 		}
@@ -110,19 +110,19 @@ namespace internal
 			return Iterator();
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			return mHashData.state < emptyShortHash;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			if (mHashData.state < emptyShortHash)
 				return true;
 			return (mHashData.state & (maskCount + 1)) != (ShortHash)0;
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			size_t count = pvGetCount();
 			ItemTraits::Destroy(params.GetMemManager(), &mItems[0] + maxCount - count, count);
@@ -132,7 +132,7 @@ namespace internal
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
-			MOMO_NOEXCEPT_IF(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
+			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
@@ -194,30 +194,30 @@ namespace internal
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+			size_t bucketCount, size_t /*probe*/) noexcept
 		{
 			return (bucketIndex + 1) & (bucketCount - 1);
 		}
 
 	private:
-		size_t pvGetCount() const MOMO_NOEXCEPT
+		size_t pvGetCount() const noexcept
 		{
 			if (mHashData.state < emptyShortHash)
 				return maxCount;
 			return (size_t)(mHashData.state & maskCount);
 		}
 
-		void pvSetEmpty() MOMO_NOEXCEPT
+		void pvSetEmpty() noexcept
 		{
 			std::fill_n(mHashData.shortHashes, maxCount, (ShortHash)emptyShortHash);
 		}
 
-		static ShortHash pvCalcShortHash(size_t hashCode) MOMO_NOEXCEPT
+		static ShortHash pvCalcShortHash(size_t hashCode) noexcept
 		{
 			return (ShortHash)(hashCode >> hashCodeShift);
 		}
 
-		static size_t pvGetProbeShift(size_t logBucketCount) MOMO_NOEXCEPT
+		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
 		{
 			return (logBucketCount + logBucketCountAddend + 1) % logBucketCountStep;
 		}
@@ -238,13 +238,13 @@ public:
 	using Bucket = internal::BucketOpen2N<ItemTraits, maxCount, useHashCodePartGetter>;
 
 public:
-	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
+	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
 		return (bucketCount * maxCount / 8) * 5;
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,
-		size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
+		size_t /*bucketMaxItemCount*/) noexcept
 	{
 		return 1;
 	}

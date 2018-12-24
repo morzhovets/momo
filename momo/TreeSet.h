@@ -49,13 +49,13 @@ namespace internal
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
-		explicit TreeSetConstIterator() MOMO_NOEXCEPT
+		explicit TreeSetConstIterator() noexcept
 			: mNode(nullptr),
 			mItemIndex(0)
 		{
 		}
 
-		//operator ConstIterator() const MOMO_NOEXCEPT
+		//operator ConstIterator() const noexcept
 
 		TreeSetConstIterator& operator++()
 		{
@@ -121,7 +121,7 @@ namespace internal
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mNode == iter.mNode && mItemIndex == iter.mItemIndex;
 		}
@@ -130,7 +130,7 @@ namespace internal
 
 	protected:
 		explicit TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
-			bool move) MOMO_NOEXCEPT
+			bool move) noexcept
 			: VersionKeeper(version),
 			mNode(&node),
 			mItemIndex(itemIndex)
@@ -139,12 +139,12 @@ namespace internal
 				pvMoveIf();
 		}
 
-		Node* ptGetNode() const MOMO_NOEXCEPT
+		Node* ptGetNode() const noexcept
 		{
 			return mNode;
 		}
 
-		size_t ptGetItemIndex() const MOMO_NOEXCEPT
+		size_t ptGetItemIndex() const noexcept
 		{
 			return mItemIndex;
 		}
@@ -156,13 +156,13 @@ namespace internal
 		}
 
 	private:
-		void pvMoveIf() MOMO_NOEXCEPT
+		void pvMoveIf() noexcept
 		{
 			if (mItemIndex == mNode->GetCount())
 				pvMove();
 		}
 
-		void pvMove() MOMO_NOEXCEPT
+		void pvMove() noexcept
 		{
 			MOMO_ASSERT(mNode->IsLeaf());
 			while (true)
@@ -199,13 +199,13 @@ namespace internal
 		typedef Item* Pointer;
 
 	public:
-		explicit TreeSetRelocatorIterator(Segment* segmentPtr) MOMO_NOEXCEPT
+		explicit TreeSetRelocatorIterator(Segment* segmentPtr) noexcept
 			: mSegmentPtr(segmentPtr),
 			mItemIndex(segmentPtr->beginIndex)
 		{
 		}
 
-		TreeSetRelocatorIterator& operator++() MOMO_NOEXCEPT
+		TreeSetRelocatorIterator& operator++() noexcept
 		{
 			++mItemIndex;
 			if (mItemIndex == mSegmentPtr->endIndex)
@@ -216,12 +216,12 @@ namespace internal
 			return *this;
 		}
 
-		Pointer operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const noexcept
 		{
 			return mSegmentPtr->node->GetItemPtr(mItemIndex);
 		}
 
-		Reference operator*() const MOMO_NOEXCEPT
+		Reference operator*() const noexcept
 		{
 			return *operator->();
 		}
@@ -246,13 +246,13 @@ namespace internal
 		static const size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
-		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item& item) noexcept
 		{
 			TreeSetItemTraits::Destroy(&memManager, item);
 		}
 
 		template<typename Iterator>
-		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
+		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			TreeSetItemTraits::ShiftNothrow(memManager, begin, shift);
 		}
@@ -285,7 +285,7 @@ public:
 	}
 
 	template<typename Iterator>
-	static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
+	static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 	{
 		ItemManager::ShiftNothrow(memManager, begin, shift);
 	}
@@ -375,7 +375,7 @@ private:
 		};
 
 	public:
-		explicit Relocator(NodeParams& nodeParams) MOMO_NOEXCEPT
+		explicit Relocator(NodeParams& nodeParams) noexcept
 			: mNodeParams(nodeParams),
 			mOldNodes(MemManagerPtr(nodeParams.GetMemManager())),
 			mNewNodes(MemManagerPtr(nodeParams.GetMemManager())),
@@ -387,7 +387,7 @@ private:
 
 		Relocator(const Relocator&) = delete;
 
-		~Relocator() MOMO_NOEXCEPT
+		~Relocator() noexcept
 		{
 			for (Node* node : mNewNodes)
 				node->Destroy(mNodeParams);
@@ -529,7 +529,7 @@ public:
 		}
 	}
 
-	TreeSet(TreeSet&& treeSet) MOMO_NOEXCEPT
+	TreeSet(TreeSet&& treeSet) noexcept
 		: mCrew(std::move(treeSet.mCrew)),
 		mCount(treeSet.mCount),
 		mRootNode(treeSet.mRootNode),
@@ -560,12 +560,12 @@ public:
 		}
 	}
 
-	~TreeSet() MOMO_NOEXCEPT
+	~TreeSet() noexcept
 	{
 		pvDestroy();
 	}
 
-	TreeSet& operator=(TreeSet&& treeSet) MOMO_NOEXCEPT
+	TreeSet& operator=(TreeSet&& treeSet) noexcept
 	{
 		TreeSet(std::move(treeSet)).Swap(*this);
 		return *this;
@@ -578,7 +578,7 @@ public:
 		return *this;
 	}
 
-	void Swap(TreeSet& treeSet) MOMO_NOEXCEPT
+	void Swap(TreeSet& treeSet) noexcept
 	{
 		mCrew.Swap(treeSet.mCrew);
 		std::swap(mCount, treeSet.mCount);
@@ -586,7 +586,7 @@ public:
 		std::swap(mNodeParams, treeSet.mNodeParams);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -596,7 +596,7 @@ public:
 		return pvMakeIterator(node, 0, true);
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -606,32 +606,32 @@ public:
 	MOMO_FRIEND_SWAP(TreeSet)
 	MOMO_FRIENDS_BEGIN_END(const TreeSet&, ConstIterator)
 
-	const TreeTraits& GetTreeTraits() const MOMO_NOEXCEPT
+	const TreeTraits& GetTreeTraits() const noexcept
 	{
 		return mCrew.GetContainerTraits();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mCrew.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mCrew.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mCount;
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mCount == 0;
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear() noexcept
 	{
 		pvDestroy();
 		mRootNode = nullptr;
@@ -944,7 +944,7 @@ public:
 	}
 
 private:
-	void pvDestroy() MOMO_NOEXCEPT
+	void pvDestroy() noexcept
 	{
 		if (mRootNode != nullptr)
 			pvDestroy(mRootNode);
@@ -955,7 +955,7 @@ private:
 		}
 	}
 
-	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const MOMO_NOEXCEPT
+	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
 	{
 		return ConstIteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
 	}
@@ -981,7 +981,7 @@ private:
 		return pvIsOrdered(std::prev(treeSet1.GetEnd()), treeSet2.GetBegin());
 	}
 
-	bool pvExtraCheck(ConstIterator iter) const MOMO_NOEXCEPT
+	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
 		try
 		{
@@ -1078,7 +1078,7 @@ private:
 		return count;
 	}
 
-	void pvDestroy(Node* node) MOMO_NOEXCEPT
+	void pvDestroy(Node* node) noexcept
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i < count; ++i)
@@ -1234,7 +1234,7 @@ private:
 		pvUpdateParents(node);	//?
 	}
 
-	void pvUpdateParents(Node* node) MOMO_NOEXCEPT
+	void pvUpdateParents(Node* node) noexcept
 	{
 		size_t count = node->GetCount();
 		for (size_t i = 0; i <= count; ++i)
@@ -1322,7 +1322,7 @@ private:
 		return resNode;
 	}
 
-	void pvRebalance(Node* node, Node* savedNode) MOMO_NOEXCEPT
+	void pvRebalance(Node* node, Node* savedNode) noexcept
 	{
 		try
 		{
@@ -1518,7 +1518,7 @@ private:
 		}
 	}
 
-	size_t pvGetHeight() const MOMO_NOEXCEPT
+	size_t pvGetHeight() const noexcept
 	{
 		MOMO_ASSERT(mRootNode != nullptr);
 		size_t height = 1;

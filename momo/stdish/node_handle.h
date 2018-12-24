@@ -31,12 +31,12 @@ namespace internal
 		//allocator_type;
 
 	public:
-		set_node_handle() MOMO_NOEXCEPT
+		set_node_handle() noexcept
 		{
 		}
 
 		set_node_handle(set_node_handle&& node)
-			MOMO_NOEXCEPT_IF(noexcept(SetExtractedItem(std::move(node.mSetExtractedItem))))
+			noexcept(noexcept(SetExtractedItem(std::move(node.mSetExtractedItem))))
 			: mSetExtractedItem(std::move(node.mSetExtractedItem))
 		{
 		}
@@ -49,7 +49,7 @@ namespace internal
 		{
 		}
 
-		~set_node_handle() MOMO_NOEXCEPT
+		~set_node_handle() noexcept
 		{
 		}
 
@@ -57,12 +57,12 @@ namespace internal
 
 		set_node_handle& operator=(const set_node_handle&) = delete;
 
-		bool empty() const MOMO_NOEXCEPT
+		bool empty() const noexcept
 		{
 			return mSetExtractedItem.IsEmpty();
 		}
 
-		explicit operator bool() const MOMO_NOEXCEPT
+		explicit operator bool() const noexcept
 		{
 			return !empty();
 		}
@@ -83,7 +83,7 @@ namespace internal
 		//friend void swap(set_node_handle&, set_node_handle&)
 
 	protected:
-		SetExtractedItem& ptGetExtractedItem() MOMO_NOEXCEPT
+		SetExtractedItem& ptGetExtractedItem() noexcept
 		{
 			return mSetExtractedItem;
 		}
@@ -113,12 +113,12 @@ namespace internal
 		};
 
 	public:
-		map_node_handle() MOMO_NOEXCEPT
+		map_node_handle() noexcept
 		{
 		}
 
 		map_node_handle(map_node_handle&& node)
-			MOMO_NOEXCEPT_IF(noexcept(MapExtractedPair(std::move(node.mMapExtractedPair))))
+			noexcept(noexcept(MapExtractedPair(std::move(node.mMapExtractedPair))))
 			: mMapExtractedPair(std::move(node.mMapExtractedPair))
 		{
 		}
@@ -132,7 +132,7 @@ namespace internal
 		{
 		}
 
-		~map_node_handle() MOMO_NOEXCEPT
+		~map_node_handle() noexcept
 		{
 		}
 
@@ -140,12 +140,12 @@ namespace internal
 
 		map_node_handle& operator=(const map_node_handle&) = delete;
 
-		bool empty() const MOMO_NOEXCEPT
+		bool empty() const noexcept
 		{
 			return mMapExtractedPair.IsEmpty();
 		}
 
-		explicit operator bool() const MOMO_NOEXCEPT
+		explicit operator bool() const noexcept
 		{
 			return !empty();
 		}
@@ -176,7 +176,7 @@ namespace internal
 		//friend void swap(map_node_handle&, map_node_handle&)
 
 	protected:
-		MapExtractedPair& ptGetExtractedPair() MOMO_NOEXCEPT
+		MapExtractedPair& ptGetExtractedPair() noexcept
 		{
 			return mMapExtractedPair;
 		}

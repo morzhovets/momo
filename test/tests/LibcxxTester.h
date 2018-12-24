@@ -51,7 +51,7 @@ struct LibcppIntHash
 {
 	typedef int argument_type;
 
-	size_t operator()(int key) const MOMO_NOEXCEPT
+	size_t operator()(int key) const noexcept
 	{
 		return (size_t)key;
 	}

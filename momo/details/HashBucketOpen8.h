@@ -30,7 +30,7 @@ public:
 		internal::BucketOpenN1<ItemTraits, true, 7, false>>::type;
 
 public:
-	static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) MOMO_NOEXCEPT
+	static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) noexcept
 	{
 		if (bucketMaxItemCount == 7)
 			return bucketCount * 6;
@@ -39,7 +39,7 @@ public:
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,
-		size_t /*bucketMaxItemCount*/) MOMO_NOEXCEPT
+		size_t /*bucketMaxItemCount*/) noexcept
 	{
 		return 1;
 	}

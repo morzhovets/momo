@@ -91,10 +91,10 @@ public:
 	typedef std::true_type propagate_on_container_swap;
 #endif
 
-    test_allocator() MOMO_NOEXCEPT : data_(0), id_(0) {++count;}
-    explicit test_allocator(int i, int id = 0) MOMO_NOEXCEPT : data_(i), id_(id)
+    test_allocator() noexcept : data_(0), id_(0) {++count;}
+    explicit test_allocator(int i, int id = 0) noexcept : data_(i), id_(id)
       {++count;}
-    test_allocator(const test_allocator& a) MOMO_NOEXCEPT : data_(a.data_),
+    test_allocator(const test_allocator& a) noexcept : data_(a.data_),
                                                             id_(a.id_) {
       ++count;
       ++copied;
@@ -102,7 +102,7 @@ public:
              "copying from destroyed allocator");
     }
 #if _LIBCPP_STD_VER >= 11
-    test_allocator(test_allocator&& a) MOMO_NOEXCEPT : data_(a.data_),
+    test_allocator(test_allocator&& a) noexcept : data_(a.data_),
                                                        id_(a.id_) {
       ++count;
       ++moved;
@@ -113,12 +113,12 @@ public:
     }
 #endif
     template <class U>
-    test_allocator(const test_allocator<U>& a) MOMO_NOEXCEPT : data_(a.data_),
+    test_allocator(const test_allocator<U>& a) noexcept : data_(a.data_),
                                                                id_(a.id_) {
       ++count;
       ++converted;
     }
-    ~test_allocator() MOMO_NOEXCEPT {
+    ~test_allocator() noexcept {
       assert(data_ >= 0); assert(id_ >= 0);
       --count;
       data_ = destructed_value;
@@ -142,7 +142,7 @@ public:
         }
     void deallocate(pointer p, size_type)
         {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p);}
-    size_type max_size() const MOMO_NOEXCEPT
+    size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
 #if _LIBCPP_STD_VER < 11
     void construct(pointer p, const T& val)
@@ -181,13 +181,13 @@ public:
 
     template <class U> struct rebind {typedef non_default_test_allocator<U> other;};
 
-//    non_default_test_allocator() MOMO_NOEXCEPT : data_(0) {++count;}
-    explicit non_default_test_allocator(int i) MOMO_NOEXCEPT : data_(i) {++count;}
-    non_default_test_allocator(const non_default_test_allocator& a) MOMO_NOEXCEPT
+//    non_default_test_allocator() noexcept : data_(0) {++count;}
+    explicit non_default_test_allocator(int i) noexcept : data_(i) {++count;}
+    non_default_test_allocator(const non_default_test_allocator& a) noexcept
         : data_(a.data_) {++count;}
-    template <class U> non_default_test_allocator(const non_default_test_allocator<U>& a) MOMO_NOEXCEPT
+    template <class U> non_default_test_allocator(const non_default_test_allocator<U>& a) noexcept
         : data_(a.data_) {++count;}
-    ~non_default_test_allocator() MOMO_NOEXCEPT {assert(data_ >= 0); --count; data_ = -1;}
+    ~non_default_test_allocator() noexcept {assert(data_ >= 0); --count; data_ = -1;}
     pointer address(reference x) const {return &x;}
     const_pointer address(const_reference x) const {return &x;}
     pointer allocate(size_type n, const void* = 0)
@@ -206,7 +206,7 @@ public:
         }
     void deallocate(pointer p, size_type)
         {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p); }
-    size_type max_size() const MOMO_NOEXCEPT
+    size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
 #if _LIBCPP_STD_VER < 11
     void construct(pointer p, const T& val)
@@ -241,13 +241,13 @@ public:
 
     template <class U> struct rebind {typedef test_allocator<U> other;};
 
-    test_allocator() MOMO_NOEXCEPT : data_(0), id_(0) {}
-    explicit test_allocator(int i, int id = 0) MOMO_NOEXCEPT : data_(i), id_(id) {}
-    test_allocator(const test_allocator& a) MOMO_NOEXCEPT
+    test_allocator() noexcept : data_(0), id_(0) {}
+    explicit test_allocator(int i, int id = 0) noexcept : data_(i), id_(id) {}
+    test_allocator(const test_allocator& a) noexcept
         : data_(a.data_), id_(a.id_) {}
-    template <class U> test_allocator(const test_allocator<U>& a) MOMO_NOEXCEPT
+    template <class U> test_allocator(const test_allocator<U>& a) noexcept
         : data_(a.data_), id_(a.id_) {}
-    ~test_allocator() MOMO_NOEXCEPT {data_ = -1; id_ = -1; }
+    ~test_allocator() noexcept {data_ = -1; id_ = -1; }
 
     int get_id() const { return id_; }
     int get_data() const { return data_; }

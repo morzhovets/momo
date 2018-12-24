@@ -32,7 +32,7 @@ namespace internal
 		static const size_t alignment = BucketUnlimPItemTraits::alignment;
 
 	public:
-		static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			if (count != 1)
 				BucketUnlimPItemTraits::Destroy(memManager, items, count);
@@ -79,19 +79,19 @@ namespace internal
 		typedef typename ArrayBucket::Params Params;
 
 	public:
-		explicit BucketUnlimP() MOMO_NOEXCEPT
+		explicit BucketUnlimP() noexcept
 		{
 		}
 
 		BucketUnlimP(const BucketUnlimP&) = delete;
 
-		~BucketUnlimP() MOMO_NOEXCEPT
+		~BucketUnlimP() noexcept
 		{
 		}
 
 		BucketUnlimP& operator=(const BucketUnlimP&) = delete;
 
-		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& /*params*/) noexcept
 		{
 			return mArrayBucket.GetBounds();
 		}
@@ -107,17 +107,17 @@ namespace internal
 			return nullptr;
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			return false;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			return false;
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			Bounds bounds = GetBounds(params);
 			if (bounds.GetCount() == 1)
@@ -146,7 +146,7 @@ namespace internal
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t /*bucketCount*/, size_t /*probe*/) MOMO_NOEXCEPT
+			size_t /*bucketCount*/, size_t /*probe*/) noexcept
 		{
 			MOMO_ASSERT(false);
 			return bucketIndex;

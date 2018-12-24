@@ -37,7 +37,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
 
 	public:
-		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
 			mPtrState = (uint32_t)reinterpret_cast<uintptr_t>(ptr);
@@ -45,13 +45,13 @@ namespace internal
 			mPtrState |= (uint32_t)state;
 		}
 
-		Item* GetPointer() const MOMO_NOEXCEPT
+		Item* GetPointer() const noexcept
 		{
 			uintptr_t intPtr = (uintptr_t)(mPtrState & ~(uint32_t)maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
-		uint8_t GetState() const MOMO_NOEXCEPT
+		uint8_t GetState() const noexcept
 		{
 			return (uint8_t)mPtrState & maskState;
 		}
@@ -73,7 +73,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
 
 	public:
-		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
@@ -83,14 +83,14 @@ namespace internal
 			mPtrState[2] = (uint16_t)(intPtr >> 32);
 		}
 
-		Item* GetPointer() const MOMO_NOEXCEPT
+		Item* GetPointer() const noexcept
 		{
 			uint64_t intPtr = ((uint64_t)mPtrState[2] << 32) | ((uint64_t)mPtrState[1] << 16)
 				| (uint64_t)(mPtrState[0] & ~(uint16_t)maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
-		uint8_t GetState() const MOMO_NOEXCEPT
+		uint8_t GetState() const noexcept
 		{
 			return (uint8_t)mPtrState[0] & maskState;
 		}
@@ -112,7 +112,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
 
 	public:
-		void Set(Item* ptr, uint8_t state) MOMO_NOEXCEPT
+		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
 			uint64_t intPtr = reinterpret_cast<uint64_t>(ptr);
@@ -121,14 +121,14 @@ namespace internal
 			mPtrState[1] = (uint32_t)(intPtr >> 32);
 		}
 
-		Item* GetPointer() const MOMO_NOEXCEPT
+		Item* GetPointer() const noexcept
 		{
 			uint64_t intPtr = ((uint64_t)mPtrState[1] << 32)
 				| (uint64_t)(mPtrState[0] & ~(uint32_t)maskState);
 			return reinterpret_cast<Item*>(intPtr);
 		}
 
-		uint8_t GetState() const MOMO_NOEXCEPT
+		uint8_t GetState() const noexcept
 		{
 			return (uint8_t)mPtrState[0] & maskState;
 		}
@@ -212,19 +212,19 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() MOMO_NOEXCEPT
+			~Params() noexcept
 			{
 			}
 
 			Params& operator=(const Params&) = delete;
 
-			MemManager& GetMemManager() MOMO_NOEXCEPT
+			MemManager& GetMemManager() noexcept
 			{
 				return std::get<0>(mMemPools).GetMemManager().GetBaseMemManager();
 			}
 
 			template<size_t memPoolIndex>
-			MemPool<memPoolIndex>& GetMemPool() MOMO_NOEXCEPT
+			MemPool<memPoolIndex>& GetMemPool() noexcept
 			{
 				return std::get<memPoolIndex - 1>(mMemPools);
 			}
@@ -234,21 +234,21 @@ namespace internal
 		};
 
 	public:
-		explicit BucketLimP4() MOMO_NOEXCEPT
+		explicit BucketLimP4() noexcept
 		{
 			pvSetEmpty(minMemPoolIndex);
 		}
 
 		BucketLimP4(const BucketLimP4&) = delete;
 
-		~BucketLimP4() MOMO_NOEXCEPT
+		~BucketLimP4() noexcept
 		{
 			MOMO_ASSERT(mPtrState.GetPointer() == nullptr);
 		}
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
-		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& /*params*/) noexcept
 		{
 			return Bounds(mPtrState.GetPointer(), pvGetCount());
 		}
@@ -269,17 +269,17 @@ namespace internal
 			return nullptr;
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			return mShortHashes[maxCount - 1] < maskEmpty;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			return pvGetMemPoolIndex() == maxCount;
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			Item* items = mPtrState.GetPointer();
 			if (items != nullptr)
@@ -397,19 +397,19 @@ namespace internal
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+			size_t bucketCount, size_t /*probe*/) noexcept
 		{
 			return (bucketIndex + 1) & (bucketCount - 1);
 		}
 
 	private:
-		void pvSetEmpty(size_t memPoolIndex) MOMO_NOEXCEPT
+		void pvSetEmpty(size_t memPoolIndex) noexcept
 		{
 			std::fill_n(mShortHashes, hashCount, (uint8_t)emptyHashProbe);
 			pvSetPtrState(nullptr, memPoolIndex);
 		}
 
-		void pvSetPtrState(Item* items, size_t memPoolIndex) MOMO_NOEXCEPT
+		void pvSetPtrState(Item* items, size_t memPoolIndex) noexcept
 		{
 			uint8_t memPoolIndex1 = (uint8_t)memPoolIndex - 1;
 			mPtrState.Set(items, useHashCodePartGetter ? memPoolIndex1 : 0);
@@ -417,7 +417,7 @@ namespace internal
 				mShortHashes[3] = maskEmpty + memPoolIndex1;
 		}
 
-		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const noexcept
 		{
 			if (useHashCodePartGetter)
 				return (size_t)mPtrState.GetState() + 1;
@@ -427,24 +427,24 @@ namespace internal
 				return (size_t)(mShortHashes[3] & 3) + 1;
 		}
 
-		size_t pvGetCount() const MOMO_NOEXCEPT
+		size_t pvGetCount() const noexcept
 		{
 			return (mShortHashes[1] >= maskEmpty) ? ((mShortHashes[0] < maskEmpty) ? 1 : 0)
 				: 2 + ((mShortHashes[2] < maskEmpty) ? 1 : 0) + ((mShortHashes[3] < maskEmpty) ? 1 : 0);
 		}
 
-		static uint8_t pvCalcShortHash(size_t hashCode) MOMO_NOEXCEPT
+		static uint8_t pvCalcShortHash(size_t hashCode) noexcept
 		{
 			return (uint8_t)(hashCode >> hashCodeShift);
 		}
 
-		static size_t pvGetProbeShift(size_t logBucketCount) MOMO_NOEXCEPT
+		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
 		{
 			return (logBucketCount + logBucketCountAddend) % logBucketCountStep;
 		}
 
 		void pvSetHashProbe(size_t index, size_t hashCode, size_t logBucketCount,
-			size_t probe) MOMO_NOEXCEPT
+			size_t probe) noexcept
 		{
 			if (!useHashCodePartGetter || hashCount - 1 - index <= index)
 				return;
@@ -480,7 +480,7 @@ namespace internal
 			return newItems + count;
 		}
 
-		void pvDeallocate(Params& params, size_t memPoolIndex, Item* items) MOMO_NOEXCEPT
+		void pvDeallocate(Params& params, size_t memPoolIndex, Item* items) noexcept
 		{
 			switch (memPoolIndex)
 			{

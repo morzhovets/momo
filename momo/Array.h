@@ -45,12 +45,12 @@ namespace internal
 		typedef ArrayPtrIterator<const Item, Settings> ConstIterator;
 
 	public:
-		explicit ArrayPtrIterator(Item* pitem = nullptr) MOMO_NOEXCEPT
+		explicit ArrayPtrIterator(Item* pitem = nullptr) noexcept
 			: mItemPtr(pitem)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIterator(mItemPtr);
 		}
@@ -73,7 +73,7 @@ namespace internal
 			return mItemPtr;
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mItemPtr == iter.GetItemPtr();
 		}
@@ -86,7 +86,7 @@ namespace internal
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayPtrIterator)
 
-		Item* GetItemPtr() const MOMO_NOEXCEPT
+		Item* GetItemPtr() const noexcept
 		{
 			return mItemPtr;
 		}
@@ -106,12 +106,12 @@ namespace internal
 		typedef typename Iterator::ConstIterator ConstIterator;
 
 	public:
-		static ConstIterator MakeIterator(const Array& array, size_t index) MOMO_NOEXCEPT
+		static ConstIterator MakeIterator(const Array& array, size_t index) noexcept
 		{
 			return ConstIterator(array.GetItems() + index);
 		}
 
-		static Iterator MakeIterator(Array& array, size_t index) MOMO_NOEXCEPT
+		static Iterator MakeIterator(Array& array, size_t index) noexcept
 		{
 			return Iterator(array.GetItems() + index);
 		}
@@ -136,12 +136,12 @@ namespace internal
 		};
 
 	public:
-		static ConstIterator MakeIterator(const Array& array, size_t index) MOMO_NOEXCEPT
+		static ConstIterator MakeIterator(const Array& array, size_t index) noexcept
 		{
 			return ConstIteratorProxy(&array, index);
 		}
 
-		static Iterator MakeIterator(Array& array, size_t index) MOMO_NOEXCEPT
+		static Iterator MakeIterator(Array& array, size_t index) noexcept
 		{
 			return IteratorProxy(&array, index);
 		}
@@ -169,7 +169,7 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, items, count);
 	}
@@ -181,7 +181,7 @@ public:
 	}
 
 	static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
-		MOMO_NOEXCEPT_IF(isNothrowRelocatable)
+		noexcept(isNothrowRelocatable)
 	{
 		ItemManager::Relocate(memManager, srcItems, dstItems, count);
 	}
@@ -262,7 +262,7 @@ private:
 		typedef internal::BoolConstant<(internalCapacity > 0)> HasInternalCapacity;
 
 	public:
-		explicit Data(MemManager&& memManager) MOMO_NOEXCEPT
+		explicit Data(MemManager&& memManager) noexcept
 			: MemManagerWrapper(std::move(memManager))
 		{
 			pvCreate(HasInternalCapacity());
@@ -284,7 +284,7 @@ private:
 			}
 		}
 
-		Data(Data&& data) MOMO_NOEXCEPT
+		Data(Data&& data) noexcept
 			: MemManagerWrapper(std::move(data.pvGetMemManagerWrapper()))
 		{
 			pvCreateMove(std::move(data), HasInternalCapacity());
@@ -292,12 +292,12 @@ private:
 
 		Data(const Data&) = delete;
 
-		~Data() MOMO_NOEXCEPT
+		~Data() noexcept
 		{
 			pvDestroy();
 		}
 
-		Data& operator=(Data&& data) MOMO_NOEXCEPT
+		Data& operator=(Data&& data) noexcept
 		{
 			if (this != &data)
 			{
@@ -310,27 +310,27 @@ private:
 
 		Data& operator=(const Data&) = delete;
 
-		const Item* GetItems() const MOMO_NOEXCEPT
+		const Item* GetItems() const noexcept
 		{
 			return mItems;
 		}
 
-		Item* GetItems() MOMO_NOEXCEPT
+		Item* GetItems() noexcept
 		{
 			return mItems;
 		}
 
-		const MemManager& GetMemManager() const MOMO_NOEXCEPT
+		const MemManager& GetMemManager() const noexcept
 		{
 			return pvGetMemManagerWrapper().GetMemManager();
 		}
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return pvGetMemManagerWrapper().GetMemManager();
 		}
 
-		size_t GetCapacity() const MOMO_NOEXCEPT
+		size_t GetCapacity() const noexcept
 		{
 			return pvIsInternal() ? internalCapacity : mCapacity;
 		}
@@ -345,18 +345,18 @@ private:
 				internal::BoolConstant<MemManager::canReallocateInplace>());
 		}
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mCount;
 		}
 
-		void SetCount(size_t count) MOMO_NOEXCEPT
+		void SetCount(size_t count) noexcept
 		{
 			MOMO_ASSERT(count <= GetCapacity());
 			mCount = count;
 		}
 
-		void Clear() MOMO_NOEXCEPT
+		void Clear() noexcept
 		{
 			pvDestroy();
 			pvCreate(HasInternalCapacity());
@@ -391,12 +391,12 @@ private:
 		}
 
 	private:
-		const MemManagerWrapper& pvGetMemManagerWrapper() const MOMO_NOEXCEPT
+		const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
 		{
 			return *this;
 		}
 
-		MemManagerWrapper& pvGetMemManagerWrapper() MOMO_NOEXCEPT
+		MemManagerWrapper& pvGetMemManagerWrapper() noexcept
 		{
 			return *this;
 		}
@@ -407,20 +407,20 @@ private:
 				throw std::length_error("momo::Array length error");
 		}
 
-		void pvCreate(std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvCreate(std::true_type /*hasInternalCapacity*/) noexcept
 		{
 			mItems = &mInternalItems;
 			mCount = 0;
 		}
 
-		void pvCreate(std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvCreate(std::false_type /*hasInternalCapacity*/) noexcept
 		{
 			mItems = nullptr;
 			mCount = 0;
 			mCapacity = 0;
 		}
 
-		void pvCreateMove(Data&& data, std::true_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvCreateMove(Data&& data, std::true_type /*hasInternalCapacity*/) noexcept
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
@@ -437,7 +437,7 @@ private:
 			data.pvCreate(std::true_type());
 		}
 
-		void pvCreateMove(Data&& data, std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+		void pvCreateMove(Data&& data, std::false_type /*hasInternalCapacity*/) noexcept
 		{
 			mItems = data.mItems;
 			mCount = data.mCount;
@@ -445,19 +445,19 @@ private:
 			data.pvCreate(std::false_type());
 		}
 
-		void pvDestroy() MOMO_NOEXCEPT
+		void pvDestroy() noexcept
 		{
 			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
 			pvDeallocate();
 		}
 
-		void pvDeallocate() MOMO_NOEXCEPT
+		void pvDeallocate() noexcept
 		{
 			if (GetCapacity() > internalCapacity)
 				GetMemManager().Deallocate(mItems, mCapacity * sizeof(Item));
 		}
 
-		bool pvIsInternal() const MOMO_NOEXCEPT
+		bool pvIsInternal() const noexcept
 		{
 			return mItems == &mInternalItems;
 		}
@@ -473,7 +473,7 @@ private:
 		}
 
 		bool pvSetCapacity(size_t capacity, std::false_type /*canReallocate*/,
-			std::true_type /*canReallocateInplace*/) MOMO_NOEXCEPT
+			std::true_type /*canReallocateInplace*/) noexcept
 		{
 			bool reallocDone = GetMemManager().ReallocateInplace(mItems,
 				mCapacity * sizeof(Item), capacity * sizeof(Item));
@@ -484,7 +484,7 @@ private:
 		}
 
 		bool pvSetCapacity(size_t /*capacity*/, std::false_type /*canReallocate*/,
-			std::false_type /*canReallocateInplace*/) MOMO_NOEXCEPT
+			std::false_type /*canReallocateInplace*/) noexcept
 		{
 			return false;
 		}
@@ -504,7 +504,7 @@ private:
 
 		template<typename RelocateFunc>
 		void pvReset(size_t count, RelocateFunc /*relocateFunc*/,
-			std::false_type /*hasInternalCapacity*/) MOMO_NOEXCEPT
+			std::false_type /*hasInternalCapacity*/) noexcept
 		{
 			(void)count;
 			MOMO_ASSERT(count == 0);
@@ -531,12 +531,12 @@ public:
 	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
-	Array() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
+	Array() noexcept(noexcept(MemManager()))
 		: Array(MemManager())
 	{
 	}
 
-	explicit Array(MemManager&& memManager) MOMO_NOEXCEPT
+	explicit Array(MemManager&& memManager) noexcept
 		: mData(std::move(memManager))
 	{
 	}
@@ -569,7 +569,7 @@ public:
 	{
 	}
 
-	Array(Array&& array) MOMO_NOEXCEPT
+	Array(Array&& array) noexcept
 		: mData(std::move(array.mData))
 	{
 	}
@@ -600,11 +600,11 @@ public:
 		return array;
 	}
 
-	~Array() MOMO_NOEXCEPT
+	~Array() noexcept
 	{
 	}
 
-	Array& operator=(Array&& array) MOMO_NOEXCEPT
+	Array& operator=(Array&& array) noexcept
 	{
 		mData = std::move(array.mData);
 		return *this;
@@ -617,27 +617,27 @@ public:
 		return *this;
 	}
 
-	void Swap(Array& array) MOMO_NOEXCEPT
+	void Swap(Array& array) noexcept
 	{
 		std::swap(mData, array.mData);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return IteratorSelector::MakeIterator(*this, 0);
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return IteratorSelector::MakeIterator(*this, 0);
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
@@ -646,27 +646,27 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const Array&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(Array&, Iterator)
 
-	const Item* GetItems() const MOMO_NOEXCEPT
+	const Item* GetItems() const noexcept
 	{
 		return mData.GetItems();
 	}
 
-	Item* GetItems() MOMO_NOEXCEPT
+	Item* GetItems() noexcept
 	{
 		return mData.GetItems();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mData.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mData.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mData.GetCount();
 	}
@@ -738,12 +738,12 @@ public:
 		SetCountCrt(count, multiItemCreator);
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return GetCount() == 0;
 	}
 
-	void Clear(bool shrink = false) MOMO_NOEXCEPT
+	void Clear(bool shrink = false) noexcept
 	{
 		if (shrink)
 			mData.Clear();
@@ -751,7 +751,7 @@ public:
 			pvRemoveBack(GetCount());
 	}
 
-	size_t GetCapacity() const MOMO_NOEXCEPT
+	size_t GetCapacity() const noexcept
 	{
 		return mData.GetCapacity();
 	}
@@ -954,7 +954,7 @@ public:
 	}
 
 private:
-	explicit Array(Data&& data) MOMO_NOEXCEPT
+	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
 	{
 	}
@@ -1084,14 +1084,14 @@ private:
 		pvAddBackGrow(typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
-	void pvRemoveBack(size_t count) MOMO_NOEXCEPT
+	void pvRemoveBack(size_t count) noexcept
 	{
 		size_t initCount = GetCount();
 		ItemTraits::Destroy(GetMemManager(), GetItems() + initCount - count, count);
 		mData.SetCount(initCount - count);
 	}
 
-	size_t pvIndexOf(const Item& item) const MOMO_NOEXCEPT
+	size_t pvIndexOf(const Item& item) const noexcept
 	{
 		const Item* pitem = std::addressof(item);
 		const Item* items = GetItems();
@@ -1100,7 +1100,7 @@ private:
 	}
 
 	template<typename ItemArg>
-	bool pvIsInside(const ItemArg& itemArg) const MOMO_NOEXCEPT
+	bool pvIsInside(const ItemArg& itemArg) const noexcept
 	{
 		const void* pitem = std::addressof(itemArg);
 		const Item* items = GetItems();

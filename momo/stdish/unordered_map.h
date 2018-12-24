@@ -214,13 +214,13 @@ public:
 	{
 	}
 
-	unordered_map(unordered_map&& right) MOMO_NOEXCEPT
+	unordered_map(unordered_map&& right) noexcept
 		: mHashMap(std::move(right.mHashMap))
 	{
 	}
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mHashMap(pvCreateMap(std::move(right), alloc))
 	{
 	}
@@ -235,12 +235,12 @@ public:
 	{
 	}
 
-	~unordered_map() MOMO_NOEXCEPT
+	~unordered_map() noexcept
 	{
 	}
 
 	unordered_map& operator=(unordered_map&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
@@ -273,59 +273,59 @@ public:
 		return *this;
 	}
 
-	void swap(unordered_map& right) MOMO_NOEXCEPT
+	void swap(unordered_map& right) noexcept
 	{
 		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
 			|| get_allocator() == right.get_allocator());
 		mHashMap.Swap(right.mHashMap);
 	}
 
-	friend void swap(unordered_map& left, unordered_map& right) MOMO_NOEXCEPT
+	friend void swap(unordered_map& left, unordered_map& right) noexcept
 	{
 		left.swap(right);
 	}
 
-	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	const nested_container_type& get_nested_container() const noexcept
 	{
 		return mHashMap;
 	}
 
-	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	nested_container_type& get_nested_container() noexcept
 	{
 		return mHashMap;
 	}
 
-	iterator begin() MOMO_NOEXCEPT
+	iterator begin() noexcept
 	{
 		return IteratorProxy(mHashMap.GetBegin());
 	}
 
-	const_iterator begin() const MOMO_NOEXCEPT
+	const_iterator begin() const noexcept
 	{
 		return ConstIteratorProxy(mHashMap.GetBegin());
 	}
 
-	iterator end() MOMO_NOEXCEPT
+	iterator end() noexcept
 	{
 		return IteratorProxy(mHashMap.GetEnd());
 	}
 
-	const_iterator end() const MOMO_NOEXCEPT
+	const_iterator end() const noexcept
 	{
 		return ConstIteratorProxy(mHashMap.GetEnd());
 	}
 
-	const_iterator cbegin() const MOMO_NOEXCEPT
+	const_iterator cbegin() const noexcept
 	{
 		return begin();
 	}
 
-	const_iterator cend() const MOMO_NOEXCEPT
+	const_iterator cend() const noexcept
 	{
 		return end();
 	}
 
-	float max_load_factor() const MOMO_NOEXCEPT
+	float max_load_factor() const noexcept
 	{
 		return mHashMap.GetHashTraits().GetMaxLoadFactor(HashMap::bucketMaxItemCount);
 	}
@@ -353,27 +353,27 @@ public:
 		return mHashMap.GetHashTraits().GetEqualFunc();
 	}
 
-	allocator_type get_allocator() const MOMO_NOEXCEPT
+	allocator_type get_allocator() const noexcept
 	{
 		return allocator_type(mHashMap.GetMemManager().GetCharAllocator());
 	}
 
-	size_type max_size() const MOMO_NOEXCEPT
+	size_type max_size() const noexcept
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 	}
 
-	size_type size() const MOMO_NOEXCEPT
+	size_type size() const noexcept
 	{
 		return mHashMap.GetCount();
 	}
 
-	bool empty() const MOMO_NOEXCEPT
+	bool empty() const noexcept
 	{
 		return mHashMap.IsEmpty();
 	}
 
-	void clear() MOMO_NOEXCEPT
+	void clear() noexcept
 	{
 		mHashMap.Clear();
 	}
@@ -739,13 +739,13 @@ public:
 		mHashMap.MergeFrom(map.get_nested_container());
 	}
 
-	size_type max_bucket_count() const MOMO_NOEXCEPT
+	size_type max_bucket_count() const noexcept
 	{
 		return SIZE_MAX;
 		//return momo::internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 
-	size_type bucket_count() const MOMO_NOEXCEPT
+	size_type bucket_count() const noexcept
 	{
 		return mHashMap.GetBucketCount();
 	}
@@ -790,7 +790,7 @@ public:
 		return mHashMap.GetBucketIndex(key);
 	}
 
-	float load_factor() const MOMO_NOEXCEPT
+	float load_factor() const noexcept
 	{
 		size_t count = size();
 		size_t bucketCount = bucket_count();
@@ -981,7 +981,7 @@ private:
 public:
 	using UnorderedMap::UnorderedMap;
 
-	friend void swap(unordered_map_open& left, unordered_map_open& right) MOMO_NOEXCEPT
+	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
 	{
 		left.swap(right);
 	}

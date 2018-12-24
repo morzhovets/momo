@@ -196,7 +196,7 @@ public:
 		Insert(pairs);
 	}
 
-	HashMap(HashMap&& hashMap) MOMO_NOEXCEPT
+	HashMap(HashMap&& hashMap) noexcept
 		: mHashSet(std::move(hashMap.mHashSet))
 	{
 	}
@@ -211,11 +211,11 @@ public:
 	{
 	}
 
-	~HashMap() MOMO_NOEXCEPT
+	~HashMap() noexcept
 	{
 	}
 
-	HashMap& operator=(HashMap&& hashMap) MOMO_NOEXCEPT
+	HashMap& operator=(HashMap&& hashMap) noexcept
 	{
 		HashMap(std::move(hashMap)).Swap(*this);
 		return *this;
@@ -228,27 +228,27 @@ public:
 		return *this;
 	}
 
-	void Swap(HashMap& hashMap) MOMO_NOEXCEPT
+	void Swap(HashMap& hashMap) noexcept
 	{
 		mHashSet.Swap(hashMap.mHashSet);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return ConstIteratorProxy(mHashSet.GetBegin());
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return IteratorProxy(mHashSet.GetBegin());
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return ConstIterator();
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return Iterator();
 	}
@@ -257,37 +257,37 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const HashMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(HashMap&, Iterator)
 
-	const HashTraits& GetHashTraits() const MOMO_NOEXCEPT
+	const HashTraits& GetHashTraits() const noexcept
 	{
 		return mHashSet.GetHashTraits();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mHashSet.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mHashSet.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mHashSet.GetCount();
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mHashSet.IsEmpty();
 	}
 
-	void Clear(bool shrink = true) MOMO_NOEXCEPT
+	void Clear(bool shrink = true) noexcept
 	{
 		mHashSet.Clear(shrink);
 	}
 
-	size_t GetCapacity() const MOMO_NOEXCEPT
+	size_t GetCapacity() const noexcept
 	{
 		return mHashSet.GetCapacity();
 	}
@@ -530,7 +530,7 @@ public:
 		dstMap.MergeFrom(mHashSet);
 	}
 
-	size_t GetBucketCount() const MOMO_NOEXCEPT
+	size_t GetBucketCount() const noexcept
 	{
 		return mHashSet.GetBucketCount();
 	}
@@ -550,7 +550,7 @@ public:
 		return mHashSet.GetBucketIndex(key);
 	}
 
-	ConstIterator MakeIterator(size_t hashCode) const MOMO_NOEXCEPT
+	ConstIterator MakeIterator(size_t hashCode) const noexcept
 	{
 		return ConstIteratorProxy(mHashSet.MakeIterator(hashCode));
 	}

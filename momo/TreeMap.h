@@ -68,7 +68,7 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
+		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			KeyValueTraits::ShiftKeyNothrow(memManager,
 				MapKeyIterator<Iterator, Key>(begin), shift);
@@ -112,14 +112,14 @@ public:
 public:
 	template<typename KeyIterator>
 	static void ShiftKeyNothrow(MemManager& memManager, KeyIterator keyBegin,
-		size_t shift) MOMO_NOEXCEPT
+		size_t shift) noexcept
 	{
 		KeyManager::ShiftNothrow(memManager, keyBegin, shift);
 	}
 
 	template<typename ValueIterator>
 	static void ShiftValueNothrow(MemManager& memManager, ValueIterator valueBegin,
-		size_t shift) MOMO_NOEXCEPT
+		size_t shift) noexcept
 	{
 		ValueManager::ShiftNothrow(memManager, valueBegin, shift);
 	}
@@ -214,7 +214,7 @@ public:
 		Insert(pairs);
 	}
 
-	TreeMap(TreeMap&& treeMap) MOMO_NOEXCEPT
+	TreeMap(TreeMap&& treeMap) noexcept
 		: mTreeSet(std::move(treeMap.mTreeSet))
 	{
 	}
@@ -229,11 +229,11 @@ public:
 	{
 	}
 
-	~TreeMap() MOMO_NOEXCEPT
+	~TreeMap() noexcept
 	{
 	}
 
-	TreeMap& operator=(TreeMap&& treeMap) MOMO_NOEXCEPT
+	TreeMap& operator=(TreeMap&& treeMap) noexcept
 	{
 		TreeMap(std::move(treeMap)).Swap(*this);
 		return *this;
@@ -246,27 +246,27 @@ public:
 		return *this;
 	}
 
-	void Swap(TreeMap& treeMap) MOMO_NOEXCEPT
+	void Swap(TreeMap& treeMap) noexcept
 	{
 		mTreeSet.Swap(treeMap.mTreeSet);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return ConstIteratorProxy(mTreeSet.GetBegin());
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return IteratorProxy(mTreeSet.GetBegin());
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return ConstIteratorProxy(mTreeSet.GetEnd());
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return IteratorProxy(mTreeSet.GetEnd());
 	}
@@ -275,32 +275,32 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const TreeMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(TreeMap&, Iterator)
 
-	const TreeTraits& GetTreeTraits() const MOMO_NOEXCEPT
+	const TreeTraits& GetTreeTraits() const noexcept
 	{
 		return mTreeSet.GetTreeTraits();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mTreeSet.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mTreeSet.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mTreeSet.GetCount();
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mTreeSet.IsEmpty();
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear() noexcept
 	{
 		mTreeSet.Clear();
 	}

@@ -41,13 +41,13 @@ namespace internal
 		};
 
 	public:
-		explicit ArrayIndexIterator() MOMO_NOEXCEPT
+		explicit ArrayIndexIterator() noexcept
 			: mArray(nullptr),
 			mIndex(0)
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIteratorProxy(mArray, mIndex);
 		}
@@ -72,7 +72,7 @@ namespace internal
 			return std::addressof((*mArray)[mIndex]);
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mArray == ConstIteratorProxy::GetArray(iter)
 				&& mIndex == ConstIteratorProxy::GetIndex(iter);
@@ -87,18 +87,18 @@ namespace internal
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
 	protected:
-		explicit ArrayIndexIterator(Array* array, size_t index) MOMO_NOEXCEPT
+		explicit ArrayIndexIterator(Array* array, size_t index) noexcept
 			: mArray(array),
 			mIndex(index)
 		{
 		}
 
-		Array* ptGetArray() const MOMO_NOEXCEPT
+		Array* ptGetArray() const noexcept
 		{
 			return mArray;
 		}
 
-		size_t ptGetIndex() const MOMO_NOEXCEPT
+		size_t ptGetIndex() const noexcept
 		{
 			return mIndex;
 		}
@@ -120,12 +120,12 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 	public:
-		const Item* operator&() const MOMO_NOEXCEPT
+		const Item* operator&() const noexcept
 		{
 			return &*mItems;
 		}
 
-		Item* operator&() MOMO_NOEXCEPT
+		Item* operator&() noexcept
 		{
 			return &*mItems;
 		}
@@ -146,12 +146,12 @@ namespace internal
 		//typedef typename ItemTraits::Item Item;
 
 	public:
-		const void* operator&() const MOMO_NOEXCEPT
+		const void* operator&() const noexcept
 		{
 			return this;
 		}
 
-		void* operator&() MOMO_NOEXCEPT
+		void* operator&() noexcept
 		{
 			return this;
 		}
@@ -177,14 +177,14 @@ namespace internal
 
 		ArrayItemHandler(const ArrayItemHandler&) = delete;
 
-		~ArrayItemHandler() MOMO_NOEXCEPT
+		~ArrayItemHandler() noexcept
 		{
 			ItemTraits::Destroy(mMemManager, &mItemBuffer, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
-		Item* operator&() MOMO_NOEXCEPT
+		Item* operator&() noexcept
 		{
 			return &mItemBuffer;
 		}

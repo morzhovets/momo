@@ -34,7 +34,7 @@ private:
 	class HashFuncIter
 	{
 	public:
-		explicit HashFuncIter(const HashFunc& hashFunc) MOMO_NOEXCEPT
+		explicit HashFuncIter(const HashFunc& hashFunc) noexcept
 			: mHashFunc(hashFunc)
 		{
 		}
@@ -53,7 +53,7 @@ private:
 	class HashFuncIterExt
 	{
 	public:
-		HashFuncIterExt(Iterator begin, HashIterator hashBegin) MOMO_NOEXCEPT
+		HashFuncIterExt(Iterator begin, HashIterator hashBegin) noexcept
 			: mBegin(begin),
 			mHashBegin(hashBegin)
 		{
@@ -505,17 +505,17 @@ private:
 		return { begin + leftIndex, false };
 	}
 
-	static size_t pvGetRadix(HashFuncResult value, size_t shift) MOMO_NOEXCEPT
+	static size_t pvGetRadix(HashFuncResult value, size_t shift) noexcept
 	{
 		return (size_t)(value >> shift) & (((size_t)1 << radixSize) - 1);
 	}
 
-	static int pvCompare(HashFuncResult value1, HashFuncResult value2) MOMO_NOEXCEPT
+	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
 	{
 		return (value1 < value2) ? -1 : (int)(value1 != value2);
 	}
 
-	static size_t pvMultShift(HashFuncResult value1, size_t value2) MOMO_NOEXCEPT
+	static size_t pvMultShift(HashFuncResult value1, size_t value2) noexcept
 	{
 		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
 		static const size_t halfSize = 4 * sizeof(HashFuncResult);

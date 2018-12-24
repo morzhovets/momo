@@ -45,21 +45,21 @@ namespace internal
 		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
 
 	public:
-		explicit BucketOneIA() MOMO_NOEXCEPT
+		explicit BucketOneIA() noexcept
 			: mHashState(0)
 		{
 		}
 
 		BucketOneIA(const BucketOneIA&) = delete;
 
-		~BucketOneIA() MOMO_NOEXCEPT
+		~BucketOneIA() noexcept
 		{
 			MOMO_ASSERT(!IsFull());
 		}
 
 		BucketOneIA& operator=(const BucketOneIA&) = delete;
 
-		Bounds GetBounds(Params& /*params*/) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& /*params*/) noexcept
 		{
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
@@ -72,17 +72,17 @@ namespace internal
 			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			return (mHashState & 1) == (HashState)1;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			return mHashState != (HashState)0;
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
@@ -92,7 +92,7 @@ namespace internal
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
-			MOMO_NOEXCEPT_IF(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
+			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			MOMO_ASSERT(!IsFull());
 			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
@@ -125,7 +125,7 @@ namespace internal
 	private:
 		template<size_t hashStateSize = sizeof(HashState),
 			typename std::enable_if<(hashStateSize < sizeof(size_t)), int>::type = 0>
-		static HashState pvGetHashState(size_t hashCode) MOMO_NOEXCEPT
+		static HashState pvGetHashState(size_t hashCode) noexcept
 		{
 			static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
 			return (HashState)(hashCode >> hashCodeShift) | 1;
@@ -133,7 +133,7 @@ namespace internal
 
 		template<size_t hashStateSize = sizeof(HashState),
 			typename std::enable_if<(hashStateSize >= sizeof(size_t)), int>::type = 0>
-		static HashState pvGetHashState(size_t hashCode) MOMO_NOEXCEPT
+		static HashState pvGetHashState(size_t hashCode) noexcept
 		{
 			return ((HashState)hashCode << 1) | 1;
 		}

@@ -139,7 +139,7 @@ private:
 
 	struct EmptyRowFilter
 	{
-		bool operator()(ConstRowReference /*rowRef*/) const MOMO_NOEXCEPT
+		bool operator()(ConstRowReference /*rowRef*/) const noexcept
 		{
 			return true;
 		}
@@ -168,7 +168,7 @@ private:
 			new(&mData->freeRaws) FreeRaws(nullptr);
 		}
 
-		Crew(Crew&& crew) MOMO_NOEXCEPT
+		Crew(Crew&& crew) noexcept
 			: mData(nullptr)
 		{
 			Swap(crew);
@@ -176,7 +176,7 @@ private:
 
 		Crew(const Crew&) = delete;
 
-		~Crew() MOMO_NOEXCEPT
+		~Crew() noexcept
 		{
 			if (!IsNull())
 			{
@@ -189,53 +189,53 @@ private:
 
 		Crew& operator=(const Crew&) = delete;
 
-		void Swap(Crew& crew) MOMO_NOEXCEPT
+		void Swap(Crew& crew) noexcept
 		{
 			std::swap(mData, crew.mData);
 		}
 
-		bool IsNull() const MOMO_NOEXCEPT
+		bool IsNull() const noexcept
 		{
 			return mData == nullptr;
 		}
 
-		const ColumnList& GetColumnList() const MOMO_NOEXCEPT
+		const ColumnList& GetColumnList() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->columnList;
 		}
 
-		ColumnList& GetColumnList() MOMO_NOEXCEPT
+		ColumnList& GetColumnList() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->columnList;
 		}
 
-		const size_t& GetChangeVersion() const MOMO_NOEXCEPT
+		const size_t& GetChangeVersion() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->changeVersion;
 		}
 
-		size_t& GetChangeVersion() MOMO_NOEXCEPT
+		size_t& GetChangeVersion() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->changeVersion;
 		}
 
-		const size_t& GetRemoveVersion() const MOMO_NOEXCEPT
+		const size_t& GetRemoveVersion() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->removeVersion;
 		}
 
-		size_t& GetRemoveVersion() MOMO_NOEXCEPT
+		size_t& GetRemoveVersion() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->removeVersion;
 		}
 
-		FreeRaws& GetFreeRaws() MOMO_NOEXCEPT
+		FreeRaws& GetFreeRaws() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->freeRaws;
@@ -311,7 +311,7 @@ public:
 	{
 	}
 
-	DataTable(DataTable&& table) MOMO_NOEXCEPT
+	DataTable(DataTable&& table) noexcept
 		: mCrew(std::move(table.mCrew)),
 		mRaws(std::move(table.mRaws)),
 		mRawMemPool(std::move(table.mRawMemPool)),
@@ -343,12 +343,12 @@ public:
 		pvFill(selection, EmptyRowFilter());
 	}
 
-	~DataTable() MOMO_NOEXCEPT
+	~DataTable() noexcept
 	{
 		pvFreeRaws();
 	}
 
-	DataTable& operator=(DataTable&& table) MOMO_NOEXCEPT
+	DataTable& operator=(DataTable&& table) noexcept
 	{
 		DataTable(std::move(table)).Swap(*this);
 		return *this;
@@ -361,7 +361,7 @@ public:
 		return *this;
 	}
 
-	void Swap(DataTable& table) MOMO_NOEXCEPT
+	void Swap(DataTable& table) noexcept
 	{
 		mCrew.Swap(table.mCrew);
 		mRaws.Swap(table.mRaws);
@@ -369,22 +369,22 @@ public:
 		mIndexes.Swap(table.mIndexes);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return pvMakeIterator(0);
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return pvMakeIterator(0);
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return pvMakeIterator(GetCount());
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return pvMakeIterator(GetCount());
 	}
@@ -393,32 +393,32 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const DataTable&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(DataTable&, Iterator)
 
-	const ColumnList& GetColumnList() const MOMO_NOEXCEPT
+	const ColumnList& GetColumnList() const noexcept
 	{
 		return mCrew.GetColumnList();
 	}
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mCrew.GetColumnList().GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mCrew.GetColumnList().GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mRaws.GetCount();
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mRaws.IsEmpty();
 	}
 
-	void Clear() MOMO_NOEXCEPT
+	void Clear() noexcept
 	{
 		mIndexes.ClearRaws();
 		pvFreeRaws();
@@ -861,18 +861,18 @@ private:
 		pvSetNumbers();
 	}
 
-	ConstRowReference pvMakeConstRowReference(Raw* raw) const MOMO_NOEXCEPT
+	ConstRowReference pvMakeConstRowReference(Raw* raw) const noexcept
 	{
 		return ConstRowReferenceProxy(&GetColumnList(), raw,
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	RowReference pvMakeRowReference(Raw* raw) const MOMO_NOEXCEPT
+	RowReference pvMakeRowReference(Raw* raw) const noexcept
 	{
 		return RowReferenceProxy(&GetColumnList(), raw, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	Iterator pvMakeIterator(size_t index) const MOMO_NOEXCEPT
+	Iterator pvMakeIterator(size_t index) const noexcept
 	{
 		return IteratorProxy(&GetColumnList(), RawIterator(mRaws, index),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
@@ -893,7 +893,7 @@ private:
 		return dstRaw;
 	}
 
-	void pvFreeRaws() MOMO_NOEXCEPT
+	void pvFreeRaws() noexcept
 	{
 		if (mCrew.IsNull())
 			return;
@@ -902,13 +902,13 @@ private:
 			pvFreeRaw(raw);
 	}
 
-	void pvFreeRaw(Raw* raw) MOMO_NOEXCEPT
+	void pvFreeRaw(Raw* raw) noexcept
 	{
 		mCrew.GetColumnList().DestroyRaw(raw);
 		mRawMemPool.Deallocate(raw);
 	}
 
-	void pvFreeNewRaws() MOMO_NOEXCEPT
+	void pvFreeNewRaws() noexcept
 	{
 		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
@@ -919,7 +919,7 @@ private:
 		}
 	}
 
-	Row pvMakeRow(Raw* raw) MOMO_NOEXCEPT
+	Row pvMakeRow(Raw* raw) noexcept
 	{
 		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
@@ -943,31 +943,31 @@ private:
 		pvFillRaw(raw, assigners...);
 	}
 
-	void pvFillRaw(Raw* /*raw*/) MOMO_NOEXCEPT
+	void pvFillRaw(Raw* /*raw*/) noexcept
 	{
 	}
 
-	void pvSetNumbers(size_t beginIndex = 0) MOMO_NOEXCEPT
+	void pvSetNumbers(size_t beginIndex = 0) noexcept
 	{
 		for (size_t i = beginIndex, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i);
 	}
 
-	void pvSetNumber(Raw* raw, size_t number) MOMO_NOEXCEPT
+	void pvSetNumber(Raw* raw, size_t number) noexcept
 	{
 		pvSetNumber(raw, number, KeepRowNumber());
 	}
 
-	void pvSetNumber(Raw* raw, size_t number, std::true_type /*keepRowNumber*/) MOMO_NOEXCEPT
+	void pvSetNumber(Raw* raw, size_t number, std::true_type /*keepRowNumber*/) noexcept
 	{
 		GetColumnList().SetNumber(raw, number);
 	}
 
-	void pvSetNumber(Raw* /*raw*/, size_t /*number*/, std::false_type /*keepRowNumber*/) MOMO_NOEXCEPT
+	void pvSetNumber(Raw* /*raw*/, size_t /*number*/, std::false_type /*keepRowNumber*/) noexcept
 	{
 	}
 
-	void pvRemoveInvalidRaws() MOMO_NOEXCEPT
+	void pvRemoveInvalidRaws() noexcept
 	{
 		auto rawFilter = [this] (Raw* raw)
 			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
@@ -1032,7 +1032,7 @@ private:
 			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
 	}
 
-	static bool pvIsSatisfied(ConstRowReference /*rowRef*/, const size_t* /*offsets*/) MOMO_NOEXCEPT
+	static bool pvIsSatisfied(ConstRowReference /*rowRef*/, const size_t* /*offsets*/) noexcept
 	{
 		return true;
 	}
@@ -1110,7 +1110,7 @@ private:
 
 	template<typename Raws>
 	size_t pvMakeSelection(const Raws& raws, const EmptyRowFilter& /*rowFilter*/,
-		size_t*) const MOMO_NOEXCEPT
+		size_t*) const noexcept
 	{
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}

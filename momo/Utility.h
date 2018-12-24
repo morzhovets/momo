@@ -40,17 +40,17 @@
 
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
-		MOMO_NOEXCEPT_IF(noexcept(object1.Swap(object2))) \
+		noexcept(noexcept(object1.Swap(object2))) \
 	{ \
 		object1.Swap(object2); \
 	}
 
 #define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
-	friend Iterator begin(Reference ref) MOMO_NOEXCEPT_IF(noexcept(ref.GetBegin())) \
+	friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \
 	{ \
 		return ref.GetBegin(); \
 	} \
-	friend Iterator end(Reference ref) MOMO_NOEXCEPT_IF(noexcept(ref.GetEnd())) \
+	friend Iterator end(Reference ref) noexcept(noexcept(ref.GetEnd())) \
 	{ \
 		return ref.GetEnd(); \
 	}
@@ -72,7 +72,7 @@
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
 	template<typename... Args> \
 	BaseClass##Proxy(Args&&... args) \
-		MOMO_NOEXCEPT_IF((std::is_nothrow_constructible<BaseClass, Args&&...>::value)) \
+		noexcept((std::is_nothrow_constructible<BaseClass, Args&&...>::value)) \
 		: BaseClass(std::forward<Args>(args)...) \
 	{ \
 	}
@@ -80,7 +80,7 @@
 #define MOMO_DECLARE_PROXY_FUNCTION(BaseClass, Func, Result) \
 	template<typename Object, typename... Args> \
 	static Result Func(Object&& object, Args&&... args) \
-		MOMO_NOEXCEPT_IF(noexcept((std::forward<Object>(object).*&BaseClass##Proxy::pt##Func) \
+		noexcept(noexcept((std::forward<Object>(object).*&BaseClass##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
 		return (std::forward<Object>(object).*&BaseClass##Proxy::pt##Func) \
@@ -206,13 +206,13 @@ namespace internal
 		};
 
 	public:
-		static UInt Ceil(UInt value, UInt mod) MOMO_NOEXCEPT
+		static UInt Ceil(UInt value, UInt mod) noexcept
 		{
 			MOMO_ASSERT(value != 0 && mod != 0);
 			return (((value - 1) / mod) + 1) * mod;
 		}
 
-		static UInt GCD(UInt value1, UInt value2) MOMO_NOEXCEPT
+		static UInt GCD(UInt value1, UInt value2) noexcept
 		{
 			while (value2 != 0)
 			{
@@ -224,7 +224,7 @@ namespace internal
 		}
 
 		template<UInt mod>
-		static DivResult DivByConst(UInt value) MOMO_NOEXCEPT
+		static DivResult DivByConst(UInt value) noexcept
 		{
 			DivResult result;
 			result.quotient = value / mod;
@@ -232,7 +232,7 @@ namespace internal
 			return result;
 		}
 
-		static DivResult DivBySmall(UInt value, UInt mod) MOMO_NOEXCEPT
+		static DivResult DivBySmall(UInt value, UInt mod) noexcept
 		{
 			switch (mod)
 			{
@@ -251,11 +251,11 @@ namespace internal
 			return result;
 		}
 
-		static UInt Log2(UInt value) MOMO_NOEXCEPT;
+		static UInt Log2(UInt value) noexcept;
 	};
 
 	template<>
-	inline uint32_t UIntMath<uint32_t>::Log2(uint32_t value) MOMO_NOEXCEPT
+	inline uint32_t UIntMath<uint32_t>::Log2(uint32_t value) noexcept
 	{
 		static const uint32_t tab32[32] =
 		{
@@ -273,7 +273,7 @@ namespace internal
 	}
 
 	template<>
-	inline uint64_t UIntMath<uint64_t>::Log2(uint64_t value) MOMO_NOEXCEPT
+	inline uint64_t UIntMath<uint64_t>::Log2(uint64_t value) noexcept
 	{
 		static const uint64_t tab64[64] =
 		{

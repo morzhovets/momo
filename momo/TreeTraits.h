@@ -73,7 +73,7 @@ public:
 	using IsValidKeyArg = internal::TreeTraitsIsValidKeyArg<Key, KeyArg>;
 
 public:
-	explicit TreeTraits() MOMO_NOEXCEPT
+	explicit TreeTraits() noexcept
 	{
 	}
 
@@ -86,7 +86,7 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	bool IsLess(KeyArg1* key1, KeyArg2* key2) const MOMO_NOEXCEPT
+	bool IsLess(KeyArg1* key1, KeyArg2* key2) const noexcept
 	{
 		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1*>::value) || IsValidKeyArg<KeyArg1*>::value);
 		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2*>::value) || IsValidKeyArg<KeyArg2*>::value);
@@ -127,7 +127,7 @@ public:
 		return LessFunc::operator()(key1, key2);
 	}
 
-	const LessFunc& GetLessFunc() const MOMO_NOEXCEPT
+	const LessFunc& GetLessFunc() const noexcept
 	{
 		return *this;
 	}

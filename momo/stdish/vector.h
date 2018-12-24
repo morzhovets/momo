@@ -65,11 +65,11 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 public:
-	vector() MOMO_NOEXCEPT_IF(noexcept(Array()))
+	vector() noexcept(noexcept(Array()))
 	{
 	}
 
-	explicit vector(const allocator_type& alloc) MOMO_NOEXCEPT
+	explicit vector(const allocator_type& alloc) noexcept
 		: mArray(MemManager(alloc))
 	{
 	}
@@ -96,13 +96,13 @@ public:
 	{
 	}
 
-	vector(vector&& right) MOMO_NOEXCEPT
+	vector(vector&& right) noexcept
 		: mArray(std::move(right.mArray))
 	{
 	}
 
 	vector(vector&& right, const allocator_type& alloc)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
 		: mArray(pvCreateArray(std::move(right), alloc))
 	{
 	}
@@ -117,12 +117,12 @@ public:
 	{
 	}
 
-	~vector() MOMO_NOEXCEPT
+	~vector() noexcept
 	{
 	}
 
 	vector& operator=(vector&& right)
-		MOMO_NOEXCEPT_IF(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
@@ -153,109 +153,109 @@ public:
 		return *this;
 	}
 
-	void swap(vector& right) MOMO_NOEXCEPT
+	void swap(vector& right) noexcept
 	{
 		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
 			|| get_allocator() == right.get_allocator());
 		mArray.Swap(right.mArray);
 	}
 
-	friend void swap(vector& left, vector& right) MOMO_NOEXCEPT
+	friend void swap(vector& left, vector& right) noexcept
 	{
 		left.swap(right);
 	}
 
-	const nested_container_type& get_nested_container() const MOMO_NOEXCEPT
+	const nested_container_type& get_nested_container() const noexcept
 	{
 		return mArray;
 	}
 
-	nested_container_type& get_nested_container() MOMO_NOEXCEPT
+	nested_container_type& get_nested_container() noexcept
 	{
 		return mArray;
 	}
 
-	iterator begin() MOMO_NOEXCEPT
+	iterator begin() noexcept
 	{
 		return mArray.GetBegin();
 	}
 
-	const_iterator begin() const MOMO_NOEXCEPT
+	const_iterator begin() const noexcept
 	{
 		return mArray.GetBegin();
 	}
 
-	iterator end() MOMO_NOEXCEPT
+	iterator end() noexcept
 	{
 		return mArray.GetEnd();
 	}
 
-	const_iterator end() const MOMO_NOEXCEPT
+	const_iterator end() const noexcept
 	{
 		return mArray.GetEnd();
 	}
 
-	reverse_iterator rbegin() MOMO_NOEXCEPT
+	reverse_iterator rbegin() noexcept
 	{
 		return reverse_iterator(end());
 	}
 
-	const_reverse_iterator rbegin() const MOMO_NOEXCEPT
+	const_reverse_iterator rbegin() const noexcept
 	{
 		return const_reverse_iterator(end());
 	}
 
-	reverse_iterator rend() MOMO_NOEXCEPT
+	reverse_iterator rend() noexcept
 	{
 		return reverse_iterator(begin());
 	}
 
-	const_reverse_iterator rend() const MOMO_NOEXCEPT
+	const_reverse_iterator rend() const noexcept
 	{
 		return const_reverse_iterator(begin());
 	}
 
-	const_iterator cbegin() const MOMO_NOEXCEPT
+	const_iterator cbegin() const noexcept
 	{
 		return begin();
 	}
 
-	const_iterator cend() const MOMO_NOEXCEPT
+	const_iterator cend() const noexcept
 	{
 		return end();
 	}
 
-	const_reverse_iterator crbegin() const MOMO_NOEXCEPT
+	const_reverse_iterator crbegin() const noexcept
 	{
 		return rbegin();
 	}
 
-	const_reverse_iterator crend() const MOMO_NOEXCEPT
+	const_reverse_iterator crend() const noexcept
 	{
 		return rend();
 	}
 
-	value_type* data() MOMO_NOEXCEPT
+	value_type* data() noexcept
 	{
 		return mArray.GetItems();
 	}
 
-	const value_type* data() const MOMO_NOEXCEPT
+	const value_type* data() const noexcept
 	{
 		return mArray.GetItems();
 	}
 
-	allocator_type get_allocator() const MOMO_NOEXCEPT
+	allocator_type get_allocator() const noexcept
 	{
 		return allocator_type(mArray.GetMemManager().GetCharAllocator());
 	}
 
-	size_type max_size() const MOMO_NOEXCEPT
+	size_type max_size() const noexcept
 	{
 		return std::allocator_traits<allocator_type>::max_size(get_allocator());
 	}
 
-	size_type size() const MOMO_NOEXCEPT
+	size_type size() const noexcept
 	{
 		return mArray.GetCount();
 	}
@@ -270,17 +270,17 @@ public:
 		mArray.SetCount(size, value);
 	}
 
-	bool empty() const MOMO_NOEXCEPT
+	bool empty() const noexcept
 	{
 		return mArray.IsEmpty();
 	}
 
-	void clear() MOMO_NOEXCEPT
+	void clear() noexcept
 	{
 		mArray.Clear();
 	}
 
-	size_type capacity() const MOMO_NOEXCEPT
+	size_type capacity() const noexcept
 	{
 		return mArray.GetCapacity();
 	}

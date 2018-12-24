@@ -46,7 +46,7 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	static void Destroy(MemManager& memManager, Item* items, size_t count) MOMO_NOEXCEPT
+	static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, items, count);
 	}
@@ -81,7 +81,7 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
+	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		size_t index1 = (index >> logInitialItemCount) + 1;
 		size_t index2 = index & (((size_t)1 << logInitialItemCount) - 1);
@@ -92,7 +92,7 @@ public:
 		itemIndex = (itemIndex1 << logInitialItemCount) + itemIndex2;
 	}
 
-	static size_t GetIndex(size_t segIndex, size_t itemIndex) MOMO_NOEXCEPT
+	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
 	{
 		size_t itemIndex1 = itemIndex >> logInitialItemCount;
 		size_t itemIndex2 = itemIndex & (((size_t)1 << logInitialItemCount) - 1);
@@ -103,19 +103,19 @@ public:
 		return index;
 	}
 
-	static size_t GetItemCount(size_t segIndex) MOMO_NOEXCEPT
+	static size_t GetItemCount(size_t segIndex) noexcept
 	{
 		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
 		return (size_t)1 << (logItemCount + logInitialItemCount);
 	}
 
 private:
-	static size_t pvIndexToLogItemCount(size_t index1) MOMO_NOEXCEPT
+	static size_t pvIndexToLogItemCount(size_t index1) noexcept
 	{
 		return (internal::UIntMath<size_t>::Log2(index1) + 1) / 2;
 	}
 
-	static size_t pvSegIndexToLogItemCount(size_t segIndex) MOMO_NOEXCEPT
+	static size_t pvSegIndexToLogItemCount(size_t segIndex) noexcept
 	{
 		return internal::UIntMath<size_t>::Log2((segIndex * 2 + 4) / 3);
 	}
@@ -133,18 +133,18 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) MOMO_NOEXCEPT
+	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		segIndex = index >> logInitialItemCount;
 		itemIndex = index & (((size_t)1 << logInitialItemCount) - 1);
 	}
 
-	static size_t GetIndex(size_t segIndex, size_t itemIndex) MOMO_NOEXCEPT
+	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
 	{
 		return (segIndex << logInitialItemCount) + itemIndex;
 	}
 
-	static size_t GetItemCount(size_t /*segIndex*/) MOMO_NOEXCEPT
+	static size_t GetItemCount(size_t /*segIndex*/) noexcept
 	{
 		return (size_t)1 << logInitialItemCount;
 	}
@@ -185,12 +185,12 @@ private:
 	};
 
 public:
-	SegmentedArray() MOMO_NOEXCEPT_IF(noexcept(MemManager()))
+	SegmentedArray() noexcept(noexcept(MemManager()))
 		: SegmentedArray(MemManager())
 	{
 	}
 
-	explicit SegmentedArray(MemManager&& memManager) MOMO_NOEXCEPT
+	explicit SegmentedArray(MemManager&& memManager) noexcept
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
@@ -233,7 +233,7 @@ public:
 	{
 	}
 
-	SegmentedArray(SegmentedArray&& array) MOMO_NOEXCEPT
+	SegmentedArray(SegmentedArray&& array) noexcept
 		: mSegments(std::move(array.mSegments)),
 		mCount(array.mCount)
 	{
@@ -278,13 +278,13 @@ public:
 		return array;
 	}
 
-	~SegmentedArray() MOMO_NOEXCEPT
+	~SegmentedArray() noexcept
 	{
 		pvDecCount(0);
 		pvDecCapacity(0);
 	}
 
-	SegmentedArray& operator=(SegmentedArray&& array) MOMO_NOEXCEPT
+	SegmentedArray& operator=(SegmentedArray&& array) noexcept
 	{
 		SegmentedArray(std::move(array)).Swap(*this);
 		return *this;
@@ -297,28 +297,28 @@ public:
 		return *this;
 	}
 
-	void Swap(SegmentedArray& array) MOMO_NOEXCEPT
+	void Swap(SegmentedArray& array) noexcept
 	{
 		mSegments.Swap(array.mSegments);
 		std::swap(mCount, array.mCount);
 	}
 
-	ConstIterator GetBegin() const MOMO_NOEXCEPT
+	ConstIterator GetBegin() const noexcept
 	{
 		return ConstIteratorProxy(this, 0);
 	}
 
-	Iterator GetBegin() MOMO_NOEXCEPT
+	Iterator GetBegin() noexcept
 	{
 		return IteratorProxy(this, 0);
 	}
 
-	ConstIterator GetEnd() const MOMO_NOEXCEPT
+	ConstIterator GetEnd() const noexcept
 	{
 		return ConstIteratorProxy(this, mCount);
 	}
 
-	Iterator GetEnd() MOMO_NOEXCEPT
+	Iterator GetEnd() noexcept
 	{
 		return IteratorProxy(this, mCount);
 	}
@@ -327,17 +327,17 @@ public:
 	MOMO_FRIENDS_BEGIN_END(const SegmentedArray&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(SegmentedArray&, Iterator)
 
-	const MemManager& GetMemManager() const MOMO_NOEXCEPT
+	const MemManager& GetMemManager() const noexcept
 	{
 		return mSegments.GetMemManager();
 	}
 
-	MemManager& GetMemManager() MOMO_NOEXCEPT
+	MemManager& GetMemManager() noexcept
 	{
 		return mSegments.GetMemManager();
 	}
 
-	size_t GetCount() const MOMO_NOEXCEPT
+	size_t GetCount() const noexcept
 	{
 		return mCount;
 	}
@@ -369,12 +369,12 @@ public:
 		SetCountCrt(count, multiItemCreator);
 	}
 
-	bool IsEmpty() const MOMO_NOEXCEPT
+	bool IsEmpty() const noexcept
 	{
 		return mCount == 0;
 	}
 
-	void Clear(bool shrink = false) MOMO_NOEXCEPT
+	void Clear(bool shrink = false) noexcept
 	{
 		pvDecCount(0);
 		if (shrink)
@@ -384,7 +384,7 @@ public:
 		}
 	}
 
-	size_t GetCapacity() const MOMO_NOEXCEPT
+	size_t GetCapacity() const noexcept
 	{
 		return Settings::GetIndex(mSegments.GetCount(), 0);	//?
 	}
@@ -395,7 +395,7 @@ public:
 			pvIncCapacity(capacity);
 	}
 
-	void Shrink() MOMO_NOEXCEPT
+	void Shrink() noexcept
 	{
 		pvDecCapacity(mCount);
 		try
@@ -561,7 +561,7 @@ private:
 		return GetMemManager().template Allocate<Item>(itemCount * sizeof(Item));
 	}
 
-	void pvFreeSegMemory(size_t segIndex, Item* segMemory) MOMO_NOEXCEPT
+	void pvFreeSegMemory(size_t segIndex, Item* segMemory) noexcept
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		GetMemManager().Deallocate(segMemory, itemCount * sizeof(Item));
@@ -616,7 +616,7 @@ private:
 		}
 	}
 
-	void pvDecCount(size_t count) MOMO_NOEXCEPT
+	void pvDecCount(size_t count) noexcept
 	{
 		MOMO_ASSERT(count <= mCount);
 		size_t segIndex, itemIndex;
@@ -660,7 +660,7 @@ private:
 		}
 	}
 
-	void pvDecCapacity(size_t capacity) MOMO_NOEXCEPT
+	void pvDecCapacity(size_t capacity) noexcept
 	{
 		MOMO_ASSERT(capacity <= GetCapacity());
 		size_t segIndex, itemIndex;

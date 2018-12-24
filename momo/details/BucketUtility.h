@@ -37,7 +37,7 @@ namespace internal
 
 		BucketMemory(const BucketMemory&) = delete;
 
-		~BucketMemory() MOMO_NOEXCEPT
+		~BucketMemory() noexcept
 		{
 			if (mPtr != nullPtr)
 				mMemPool.Deallocate(mPtr);
@@ -45,12 +45,12 @@ namespace internal
 
 		BucketMemory& operator=(const BucketMemory&) = delete;
 
-		Pointer GetPointer() const MOMO_NOEXCEPT
+		Pointer GetPointer() const noexcept
 		{
 			return mPtr;
 		}
 
-		Pointer Extract() MOMO_NOEXCEPT
+		Pointer Extract() noexcept
 		{
 			Pointer ptr = mPtr;
 			mPtr = nullPtr;
@@ -69,20 +69,20 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	public:
-		explicit BucketParamsOpen(MemManager& memManager) MOMO_NOEXCEPT
+		explicit BucketParamsOpen(MemManager& memManager) noexcept
 			: mMemManager(memManager)
 		{
 		}
 
 		BucketParamsOpen(const BucketParamsOpen&) = delete;
 
-		~BucketParamsOpen() MOMO_NOEXCEPT
+		~BucketParamsOpen() noexcept
 		{
 		}
 
 		BucketParamsOpen& operator=(const BucketParamsOpen&) = delete;
 
-		MemManager& GetMemManager() MOMO_NOEXCEPT
+		MemManager& GetMemManager() noexcept
 		{
 			return mMemManager;
 		}
@@ -94,7 +94,7 @@ namespace internal
 	class BucketBase
 	{
 	public:
-		size_t GetMaxProbe(size_t logBucketCount) const MOMO_NOEXCEPT
+		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
 			return ((size_t)1 << logBucketCount) - 1;
 		}
@@ -106,13 +106,13 @@ namespace internal
 			return hashCodeFullGetter();
 		}
 
-		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) MOMO_NOEXCEPT
+		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) noexcept
 		{
 			return hashCode & (bucketCount - 1);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) MOMO_NOEXCEPT
+			size_t bucketCount, size_t /*probe*/) noexcept
 		{
 			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 		}
@@ -124,7 +124,7 @@ namespace internal
 		static const size_t logStartBucketCount = 4;
 
 	public:
-		static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) MOMO_NOEXCEPT
+		static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) noexcept
 		{
 			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);
 			if (bucketMaxItemCount == 1)
@@ -136,7 +136,7 @@ namespace internal
 		}
 
 		static size_t GetBucketCountShift(size_t bucketCount,
-			size_t bucketMaxItemCount) MOMO_NOEXCEPT
+			size_t bucketMaxItemCount) noexcept
 		{
 			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);
 			if (bucketMaxItemCount == 1)

@@ -94,28 +94,28 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() MOMO_NOEXCEPT
+			~Params() noexcept
 			{
 			}
 
 			Params& operator=(const Params&) = delete;
 
-			MemManager& GetMemManager() MOMO_NOEXCEPT
+			MemManager& GetMemManager() noexcept
 			{
 				return mInternalMemPool.GetMemManager().GetBaseMemManager();
 			}
 
-			MemPool& GetInternalMemPool() MOMO_NOEXCEPT
+			MemPool& GetInternalMemPool() noexcept
 			{
 				return mInternalMemPool;
 			}
 
-			MemPool& GetLeafMemPool(size_t leafMemPoolIndex) MOMO_NOEXCEPT
+			MemPool& GetLeafMemPool(size_t leafMemPoolIndex) noexcept
 			{
 				return mLeafMemPools[leafMemPoolIndex];
 			}
 
-			void MergeFrom(Params& params) MOMO_NOEXCEPT
+			void MergeFrom(Params& params) noexcept
 			{
 				mInternalMemPool.MergeFrom(params.mInternalMemPool);
 				for (size_t i = 0; i < leafMemPoolCount; ++i)
@@ -160,7 +160,7 @@ namespace internal
 			return node;
 		}
 
-		void Destroy(Params& params) MOMO_NOEXCEPT
+		void Destroy(Params& params) noexcept
 		{
 			if (IsLeaf())
 				params.GetLeafMemPool((size_t)mMemPoolIndex).Deallocate(this);
@@ -168,12 +168,12 @@ namespace internal
 				params.GetInternalMemPool().Deallocate(reinterpret_cast<char*>(this) - internalOffset);
 		}
 
-		bool IsLeaf() const MOMO_NOEXCEPT
+		bool IsLeaf() const noexcept
 		{
 			return (size_t)mMemPoolIndex < leafMemPoolCount;
 		}
 
-		size_t GetCapacity() const MOMO_NOEXCEPT
+		size_t GetCapacity() const noexcept
 		{
 			size_t capacity = maxCapacity;
 			if (IsLeaf())
@@ -181,34 +181,34 @@ namespace internal
 			return capacity;
 		}
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return (size_t)mCounter.count;
 		}
 
-		Node* GetParent() MOMO_NOEXCEPT
+		Node* GetParent() noexcept
 		{
 			return mParent;
 		}
 
-		void SetParent(Node* parent) MOMO_NOEXCEPT
+		void SetParent(Node* parent) noexcept
 		{
 			mParent = parent;
 		}
 
-		Node* GetChild(size_t index) MOMO_NOEXCEPT
+		Node* GetChild(size_t index) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
 			return pvGetChildren()[index];
 		}
 
-		void SetChild(size_t index, Node* child) MOMO_NOEXCEPT
+		void SetChild(size_t index, Node* child) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
 			pvGetChildren()[index] = child;
 		}
 
-		size_t GetChildIndex(const Node* child) const MOMO_NOEXCEPT
+		size_t GetChildIndex(const Node* child) const noexcept
 		{
 			size_t count = GetCount();
 			Node* const* children = &mParent - maxCapacity - 1;	//?
@@ -217,12 +217,12 @@ namespace internal
 			return index;
 		}
 
-		Item* GetItemPtr(size_t index) MOMO_NOEXCEPT
+		Item* GetItemPtr(size_t index) noexcept
 		{
 			return pvGetItemPtr(index, IsContinuous());
 		}
 
-		void AcceptBackItem(Params& params, size_t index) MOMO_NOEXCEPT
+		void AcceptBackItem(Params& params, size_t index) noexcept
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
@@ -251,41 +251,41 @@ namespace internal
 		}
 
 	private:
-		Node** pvGetChildren() MOMO_NOEXCEPT
+		Node** pvGetChildren() noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
 			return &mParent - maxCapacity - 1;
 		}
 
-		void pvInitIndices(std::true_type /*isContinuous*/) MOMO_NOEXCEPT
+		void pvInitIndices(std::true_type /*isContinuous*/) noexcept
 		{
 		}
 
-		void pvInitIndices(std::false_type /*isContinuous*/) MOMO_NOEXCEPT
+		void pvInitIndices(std::false_type /*isContinuous*/) noexcept
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
 				mCounter.indices[i] = (uint8_t)i;
 		}
 
-		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) MOMO_NOEXCEPT
+		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) noexcept
 		{
 			return &mFirstItem + index;
 		}
 
-		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) MOMO_NOEXCEPT
+		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) noexcept
 		{
 			return &mFirstItem + mCounter.indices[index];
 		}
 
 		void pvAcceptBackItem(Params& params, size_t index, size_t count,
-			std::true_type /*isContinuous*/) MOMO_NOEXCEPT
+			std::true_type /*isContinuous*/) noexcept
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(),
 				std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
 		}
 
 		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
-			std::false_type /*isContinuous*/) MOMO_NOEXCEPT
+			std::false_type /*isContinuous*/) noexcept
 		{
 			uint8_t realIndex = mCounter.indices[count];
 			memmove(mCounter.indices + index + 1, mCounter.indices + index, count - index);

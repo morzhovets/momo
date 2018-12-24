@@ -54,13 +54,13 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 
 	public:
-		explicit DataRawUniqueHashIterator() MOMO_NOEXCEPT
+		explicit DataRawUniqueHashIterator() noexcept
 			: mRaw(nullptr),
 			mRawIndex(0)
 		{
 		}
 
-		explicit DataRawUniqueHashIterator(Raw* raw, size_t rawIndex) MOMO_NOEXCEPT
+		explicit DataRawUniqueHashIterator(Raw* raw, size_t rawIndex) noexcept
 			: mRaw(raw),
 			mRawIndex(rawIndex)
 		{
@@ -87,7 +87,7 @@ namespace internal
 			return &mRaw;
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mRaw == iter.mRaw && mRawIndex == iter.mRawIndex;
 		}
@@ -128,13 +128,13 @@ namespace internal
 		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
-		explicit DataRawMultiHashIterator() MOMO_NOEXCEPT
+		explicit DataRawMultiHashIterator() noexcept
 			: mRawIndex(0)
 		{
 		}
 
 		explicit DataRawMultiHashIterator(KeyIterator keyIter, size_t rawIndex,
-			VersionKeeper version) MOMO_NOEXCEPT
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mKeyIterator(keyIter),
 			mRawIndex(rawIndex)
@@ -170,7 +170,7 @@ namespace internal
 				return &mKeyIterator->key;
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mKeyIterator == iter.mKeyIterator
 				&& mRawIndex == iter.mRawIndex;
@@ -251,7 +251,7 @@ namespace internal
 			}
 
 			template<typename... Items>
-			size_t GetHashCode(const HashTupleKey<Items...>& key) const MOMO_NOEXCEPT
+			size_t GetHashCode(const HashTupleKey<Items...>& key) const noexcept
 			{
 				return key.hashCode;
 			}
@@ -281,7 +281,7 @@ namespace internal
 
 			template<size_t index, typename... Items,
 				typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
-			bool pvIsEqual(const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const MOMO_NOEXCEPT
+			bool pvIsEqual(const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
 			{
 				return true;
 			}
@@ -326,24 +326,24 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
-				explicit RawBounds(Raw* raw) MOMO_NOEXCEPT
+				explicit RawBounds(Raw* raw) noexcept
 					: mRaw(raw)
 				{
 				}
 
-				Iterator GetBegin() const MOMO_NOEXCEPT
+				Iterator GetBegin() const noexcept
 				{
 					return Iterator(mRaw, 0);
 				}
 
-				Iterator GetEnd() const MOMO_NOEXCEPT
+				Iterator GetEnd() const noexcept
 				{
 					return Iterator(mRaw, GetCount());
 				}
 
 				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
 
-				size_t GetCount() const MOMO_NOEXCEPT
+				size_t GetCount() const noexcept
 				{
 					return (mRaw != nullptr) ? 1 : 0;
 				}
@@ -360,7 +360,7 @@ namespace internal
 			{
 			}
 
-			UniqueHash(UniqueHash&& uniqueHash) MOMO_NOEXCEPT
+			UniqueHash(UniqueHash&& uniqueHash) noexcept
 				: mSortedOffsets(std::move(uniqueHash.mSortedOffsets)),
 				mHashSet(std::move(uniqueHash.mHashSet)),
 				mIterator(uniqueHash.mIterator)
@@ -369,11 +369,11 @@ namespace internal
 
 			UniqueHash(const UniqueHash&) = delete;
 
-			~UniqueHash() MOMO_NOEXCEPT
+			~UniqueHash() noexcept
 			{
 			}
 
-			UniqueHash& operator=(UniqueHash&& uniqueHash) MOMO_NOEXCEPT
+			UniqueHash& operator=(UniqueHash&& uniqueHash) noexcept
 			{
 				mSortedOffsets = std::move(uniqueHash.mSortedOffsets);
 				mHashSet = std::move(uniqueHash.mHashSet);
@@ -383,7 +383,7 @@ namespace internal
 
 			UniqueHash& operator=(const UniqueHash&) = delete;
 
-			const Offsets& GetSortedOffsets() const MOMO_NOEXCEPT
+			const Offsets& GetSortedOffsets() const noexcept
 			{
 				return mSortedOffsets;
 			}
@@ -393,7 +393,7 @@ namespace internal
 				mHashSet.Reserve(capacity);
 			}
 
-			void Clear() MOMO_NOEXCEPT
+			void Clear() noexcept
 			{
 				mHashSet.Clear();
 			}
@@ -409,7 +409,7 @@ namespace internal
 				return pvFind(hashTupleKey);
 			}
 
-			void FindExisting(Raw* raw) MOMO_NOEXCEPT
+			void FindExisting(Raw* raw) noexcept
 			{
 				MOMO_ASSERT(!mIterator);
 				try
@@ -440,34 +440,34 @@ namespace internal
 				mIterator = mHashSet.Insert(raw).iterator;
 			}
 
-			void Remove() MOMO_NOEXCEPT
+			void Remove() noexcept
 			{
 				MOMO_ASSERT(!!mIterator);
 				mHashSet.Remove(mIterator);
 				mIterator = Iterator();
 			}
 
-			void ResetRaw(Raw* raw) MOMO_NOEXCEPT
+			void ResetRaw(Raw* raw) noexcept
 			{
 				MOMO_ASSERT(!!mIterator);
 				mHashSet.ResetKey(mIterator, raw);
 				mIterator = Iterator();
 			}
 
-			void Accept() MOMO_NOEXCEPT
+			void Accept() noexcept
 			{
 				MOMO_ASSERT(!!mIterator);
 				mIterator = Iterator();
 			}
 
-			Raw* GetCurrentRaw() const MOMO_NOEXCEPT
+			Raw* GetCurrentRaw() const noexcept
 			{
 				MOMO_ASSERT(!!mIterator);
 				return *mIterator;
 			}
 
 			template<typename RawFilter>
-			void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+			void FilterRaws(RawFilter rawFilter) noexcept
 			{
 				Iterator iter = mHashSet.GetBegin();
 				while (!!iter)
@@ -511,26 +511,26 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
-				explicit RawBounds(KeyIterator keyIter, VersionKeeper version) MOMO_NOEXCEPT
+				explicit RawBounds(KeyIterator keyIter, VersionKeeper version) noexcept
 					: VersionKeeper(version),
 					mKeyIterator(keyIter),
 					mRawCount(!!keyIter ? keyIter->values.GetCount() + 1 : 0)
 				{
 				}
 
-				Iterator GetBegin() const MOMO_NOEXCEPT
+				Iterator GetBegin() const noexcept
 				{
 					return Iterator(mKeyIterator, 0, *this);
 				}
 
-				Iterator GetEnd() const MOMO_NOEXCEPT
+				Iterator GetEnd() const noexcept
 				{
 					return Iterator(mKeyIterator, mRawCount, *this);
 				}
 
 				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
 
-				size_t GetCount() const MOMO_NOEXCEPT
+				size_t GetCount() const noexcept
 				{
 					return mRawCount;
 				}
@@ -549,7 +549,7 @@ namespace internal
 			{
 			}
 
-			MultiHash(MultiHash&& multiHash) MOMO_NOEXCEPT
+			MultiHash(MultiHash&& multiHash) noexcept
 				: mSortedOffsets(std::move(multiHash.mSortedOffsets)),
 				mHashMultiMap(std::move(multiHash.mHashMultiMap)),
 				mKeyIterator(multiHash.mKeyIterator),
@@ -559,11 +559,11 @@ namespace internal
 
 			MultiHash(const MultiHash&) = delete;
 
-			~MultiHash() MOMO_NOEXCEPT
+			~MultiHash() noexcept
 			{
 			}
 
-			MultiHash& operator=(MultiHash&& multiHash) MOMO_NOEXCEPT
+			MultiHash& operator=(MultiHash&& multiHash) noexcept
 			{
 				mSortedOffsets = std::move(multiHash.mSortedOffsets);
 				mHashMultiMap = std::move(multiHash.mHashMultiMap);
@@ -574,17 +574,17 @@ namespace internal
 
 			MultiHash& operator=(const MultiHash&) = delete;
 
-			const Offsets& GetSortedOffsets() const MOMO_NOEXCEPT
+			const Offsets& GetSortedOffsets() const noexcept
 			{
 				return mSortedOffsets;
 			}
 
-			size_t GetKeyCount() const MOMO_NOEXCEPT
+			size_t GetKeyCount() const noexcept
 			{
 				return mHashMultiMap.GetKeyCount();
 			}
 
-			void Clear() MOMO_NOEXCEPT
+			void Clear() noexcept
 			{
 				mHashMultiMap.Clear();
 			}
@@ -595,7 +595,7 @@ namespace internal
 				return RawBounds(mHashMultiMap.Find(hashTupleKey), version);
 			}
 
-			void FindExisting(Raw* raw) MOMO_NOEXCEPT
+			void FindExisting(Raw* raw) noexcept
 			{
 				MOMO_ASSERT(!mKeyIterator);
 				try
@@ -621,7 +621,7 @@ namespace internal
 				mRawIndex = mKeyIterator->values.GetCount();
 			}
 
-			void Remove() MOMO_NOEXCEPT
+			void Remove() noexcept
 			{
 				MOMO_ASSERT(!!mKeyIterator);
 				if (mRawIndex > 0)
@@ -641,14 +641,14 @@ namespace internal
 				mKeyIterator = KeyIterator();
 			}
 
-			void Accept() MOMO_NOEXCEPT
+			void Accept() noexcept
 			{
 				MOMO_ASSERT(!!mKeyIterator);
 				mKeyIterator = KeyIterator();
 			}
 
 			template<typename RawFilter>
-			void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+			void FilterRaws(RawFilter rawFilter) noexcept
 			{
 				KeyIterator keyIter = mHashMultiMap.GetKeyBounds().GetBegin();
 				while (!!keyIter)
@@ -679,7 +679,7 @@ namespace internal
 			}
 
 		private:
-			bool pvFindExisting(Raw* raw) MOMO_NOEXCEPT
+			bool pvFindExisting(Raw* raw) noexcept
 			{
 				if (mKeyIterator->key == raw)
 				{
@@ -710,13 +710,13 @@ namespace internal
 		typedef Hashes<MultiHash> MultiHashes;
 
 	public:
-		explicit DataIndexes(MemManager& memManager) MOMO_NOEXCEPT
+		explicit DataIndexes(MemManager& memManager) noexcept
 			: mUniqueHashes(MemManagerPtr(memManager)),
 			mMultiHashes(MemManagerPtr(memManager))
 		{
 		}
 
-		DataIndexes(DataIndexes&& indexes) MOMO_NOEXCEPT
+		DataIndexes(DataIndexes&& indexes) noexcept
 			: mUniqueHashes(std::move(indexes.mUniqueHashes)),
 			mMultiHashes(std::move(indexes.mMultiHashes))
 		{
@@ -724,13 +724,13 @@ namespace internal
 
 		DataIndexes(const DataIndexes&) = delete;
 
-		~DataIndexes() MOMO_NOEXCEPT
+		~DataIndexes() noexcept
 		{
 		}
 
 		DataIndexes& operator=(const DataIndexes&) = delete;
 
-		void Swap(DataIndexes& indexes) MOMO_NOEXCEPT
+		void Swap(DataIndexes& indexes) noexcept
 		{
 			mUniqueHashes.Swap(indexes.mUniqueHashes);
 			mMultiHashes.Swap(indexes.mMultiHashes);
@@ -790,7 +790,7 @@ namespace internal
 			return hash.Find(hashTupleKey, version);
 		}
 
-		void ClearRaws() MOMO_NOEXCEPT
+		void ClearRaws() noexcept
 		{
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.Clear();
@@ -898,7 +898,7 @@ namespace internal
 		}
 
 		template<typename RawFilter>
-		void FilterRaws(RawFilter rawFilter) MOMO_NOEXCEPT
+		void FilterRaws(RawFilter rawFilter) noexcept
 		{
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.FilterRaws(rawFilter);
@@ -908,21 +908,21 @@ namespace internal
 
 		template<size_t columnCount>
 		const UniqueHash* GetHash(const std::array<size_t, columnCount>& sortedOffsets,
-			const UniqueHash*) const MOMO_NOEXCEPT
+			const UniqueHash*) const noexcept
 		{
 			return pvGetHash(mUniqueHashes, sortedOffsets);
 		}
 
 		template<size_t columnCount>
 		const MultiHash* GetHash(const std::array<size_t, columnCount>& sortedOffsets,
-			const MultiHash*) const MOMO_NOEXCEPT
+			const MultiHash*) const noexcept
 		{
 			return pvGetHash(mMultiHashes, sortedOffsets);
 		}
 
 		template<size_t columnCount>
 		const UniqueHash* GetFitUniqueHash(
-			const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+			const std::array<size_t, columnCount>& sortedOffsets) const noexcept
 		{
 			for (const UniqueHash& uniqueHash : mUniqueHashes)
 			{
@@ -937,7 +937,7 @@ namespace internal
 
 		template<size_t columnCount>
 		const MultiHash* GetFitMultiHash(
-			const std::array<size_t, columnCount>& sortedOffsets) const MOMO_NOEXCEPT
+			const std::array<size_t, columnCount>& sortedOffsets) const noexcept
 		{
 			const MultiHash* resMultiHash = nullptr;
 			size_t maxKeyCount = 0;
@@ -968,7 +968,7 @@ namespace internal
 		}
 
 		template<typename Hash>
-		static bool HasOffset(const Hash& hash, size_t offset) MOMO_NOEXCEPT
+		static bool HasOffset(const Hash& hash, size_t offset) noexcept
 		{
 			const Offsets& sortedOffsets = hash.GetSortedOffsets();
 			return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
@@ -1051,7 +1051,7 @@ namespace internal
 
 		template<typename Void>
 		static size_t pvGetHashCode(const ColumnList* /*columnList*/, Raw* /*raw*/,
-			const size_t* /*offsets*/) MOMO_NOEXCEPT
+			const size_t* /*offsets*/) noexcept
 		{
 			return 0;
 		}
@@ -1067,7 +1067,7 @@ namespace internal
 
 		template<size_t index, typename... Items,
 			typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
-		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& /*tuple*/) MOMO_NOEXCEPT
+		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& /*tuple*/) noexcept
 		{
 			return 0;
 		}
@@ -1097,7 +1097,7 @@ namespace internal
 
 		template<typename Void>
 		static bool pvIsEqual(const ColumnList* /*columnList*/, Raw* /*raw1*/, Raw* /*raw2*/,
-			const size_t* /*offsets*/) MOMO_NOEXCEPT
+			const size_t* /*offsets*/) noexcept
 		{
 			return true;
 		}

@@ -30,19 +30,19 @@ namespace internal
 		typedef MapReference<Key, const Value, SetReference> ConstReference;
 
 	public:
-		explicit MapReference(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit MapReference(const Key& key, Value& value) noexcept
 			: key(key),
 			value(value)
 		{
 		}
 
-		operator ConstReference() const MOMO_NOEXCEPT
+		operator ConstReference() const noexcept
 		{
 			return ConstReference(key, value);
 		}
 
 	protected:
-		explicit MapReference(SetReference setRef) MOMO_NOEXCEPT
+		explicit MapReference(SetReference setRef) noexcept
 			: key(*setRef.GetKeyPtr()),
 			value(*setRef.GetValuePtr())
 		{
@@ -71,12 +71,12 @@ namespace internal
 		typedef std::pair<const Key&, Value&> RefPair;
 
 	public:
-		explicit MapReferenceStd(const Key& key, Value& value) MOMO_NOEXCEPT
+		explicit MapReferenceStd(const Key& key, Value& value) noexcept
 			: RefPair(key, value)
 		{
 		}
 
-		operator ConstReference() MOMO_NOEXCEPT
+		operator ConstReference() noexcept
 		{
 			return ConstReference(RefPair::first, RefPair::second);
 		}
@@ -96,7 +96,7 @@ namespace internal
 		//? <, >, <=, >=
 
 	protected:
-		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
+		explicit MapReferenceStd(HashMapReference ref) noexcept
 			: RefPair(ref.key, ref.value)
 		{
 		}
@@ -113,23 +113,23 @@ namespace internal
 		typedef Key* Pointer;
 
 	public:
-		explicit MapKeyIterator(SetIterator setIterator) MOMO_NOEXCEPT
+		explicit MapKeyIterator(SetIterator setIterator) noexcept
 			: mSetIterator(setIterator)
 		{
 		}
 
-		MapKeyIterator& operator++() MOMO_NOEXCEPT
+		MapKeyIterator& operator++() noexcept
 		{
 			++mSetIterator;
 			return *this;
 		}
 
-		Pointer operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const noexcept
 		{
 			return mSetIterator->GetKeyPtr();
 		}
 
-		Reference operator*() const MOMO_NOEXCEPT
+		Reference operator*() const noexcept
 		{
 			return *operator->();
 		}
@@ -149,23 +149,23 @@ namespace internal
 		typedef Value* Pointer;
 
 	public:
-		explicit MapValueIterator(SetIterator setIterator) MOMO_NOEXCEPT
+		explicit MapValueIterator(SetIterator setIterator) noexcept
 			: mSetIterator(setIterator)
 		{
 		}
 
-		MapValueIterator& operator++() MOMO_NOEXCEPT
+		MapValueIterator& operator++() noexcept
 		{
 			++mSetIterator;
 			return *this;
 		}
 
-		Pointer operator->() const MOMO_NOEXCEPT
+		Pointer operator->() const noexcept
 		{
 			return mSetIterator->GetValuePtr();
 		}
 
-		Reference operator*() const MOMO_NOEXCEPT
+		Reference operator*() const noexcept
 		{
 			return *operator->();
 		}
@@ -215,7 +215,7 @@ namespace internal
 			KeyManager::CopyExec(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager* memManager, Key& key, Value& value) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
 		{
 			KeyManager::Destroyer::Destroy(memManager, key);
 			ValueManager::Destroyer::Destroy(memManager, value);
@@ -510,17 +510,17 @@ namespace internal
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
-		const Key* GetKeyPtr() const MOMO_NOEXCEPT
+		const Key* GetKeyPtr() const noexcept
 		{
 			return &mKeyBuffer;
 		}
 
-		Key* GetKeyPtr() MOMO_NOEXCEPT
+		Key* GetKeyPtr() noexcept
 		{
 			return &mKeyBuffer;
 		}
 
-		Value* GetValuePtr() const MOMO_NOEXCEPT
+		Value* GetValuePtr() const noexcept
 		{
 			return &mValueBuffer;
 		}
@@ -558,7 +558,7 @@ namespace internal
 			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
 
 		public:
-			explicit Creator(MemManager& memManager, const Item& item) MOMO_NOEXCEPT
+			explicit Creator(MemManager& memManager, const Item& item) noexcept
 				: mMemManager(memManager),
 				mItem(item)
 			{
@@ -578,12 +578,12 @@ namespace internal
 		};
 
 	public:
-		static const Key& GetKey(const Item& item) MOMO_NOEXCEPT
+		static const Key& GetKey(const Item& item) noexcept
 		{
 			return *item.GetKeyPtr();
 		}
 
-		static void Destroy(MemManager* memManager, Item& item) MOMO_NOEXCEPT
+		static void Destroy(MemManager* memManager, Item& item) noexcept
 		{
 			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
 		}
@@ -646,14 +646,14 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(const ValueReference& valueRef) MOMO_NOEXCEPT
+			ValueReference(const ValueReference& valueRef) noexcept
 				: mMap(valueRef.mMap),
 				mIter(valueRef.mIter),
 				mKeyPtr(valueRef.mKeyPtr)
 			{
 			}
 
-			~ValueReference() MOMO_NOEXCEPT
+			~ValueReference() noexcept
 			{
 			}
 
@@ -680,14 +680,14 @@ namespace internal
 			}
 
 		protected:
-			explicit ValueReference(Map& map, Iterator iter) MOMO_NOEXCEPT
+			explicit ValueReference(Map& map, Iterator iter) noexcept
 				: mMap(map),
 				mIter(iter),
 				mKeyPtr(nullptr)
 			{
 			}
 
-			explicit ValueReference(Map& map, Iterator iter, KeyReference keyRef) MOMO_NOEXCEPT
+			explicit ValueReference(Map& map, Iterator iter, KeyReference keyRef) noexcept
 				: mMap(map),
 				mIter(iter),
 				mKeyPtr(std::addressof(keyRef))
@@ -730,14 +730,14 @@ namespace internal
 
 	public:
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter) MOMO_NOEXCEPT
+		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter) noexcept
 		{
 			return ValueReferenceProxy<KeyReference>(map, iter);
 		}
 
 		template<typename KeyReference>
 		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
-			KeyReference keyRef) MOMO_NOEXCEPT
+			KeyReference keyRef) noexcept
 		{
 			return ValueReferenceProxy<KeyReference>(map, iter,
 				std::forward<KeyReference>(keyRef));
@@ -749,7 +749,7 @@ namespace internal
 
 	public:
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) MOMO_NOEXCEPT
+		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) noexcept
 		{
 			return iter->value;
 		}
@@ -778,7 +778,7 @@ namespace internal
 		typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
-		explicit MapExtractedPair() MOMO_NOEXCEPT
+		explicit MapExtractedPair() noexcept
 		{
 		}
 
@@ -789,25 +789,25 @@ namespace internal
 		}
 
 		MapExtractedPair(MapExtractedPair&& extractedPair)
-			MOMO_NOEXCEPT_IF(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
+			noexcept(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
 			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
 		{
 		}
 
 		MapExtractedPair(const MapExtractedPair&) = delete;
 
-		~MapExtractedPair() MOMO_NOEXCEPT
+		~MapExtractedPair() noexcept
 		{
 		}
 
 		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
 
-		bool IsEmpty() const MOMO_NOEXCEPT
+		bool IsEmpty() const noexcept
 		{
 			return mSetExtractedItem.IsEmpty();
 		}
 
-		void Clear() MOMO_NOEXCEPT
+		void Clear() noexcept
 		{
 			mSetExtractedItem.Clear();
 		}
@@ -854,7 +854,7 @@ namespace internal
 		}
 
 	protected:
-		SetExtractedItem& ptGetSetExtractedItem() MOMO_NOEXCEPT
+		SetExtractedItem& ptGetSetExtractedItem() noexcept
 		{
 			return mSetExtractedItem;
 		}
@@ -873,7 +873,7 @@ namespace internal
 		template<typename Pair,
 			typename KeyArg = decltype(std::declval<Pair>().key),
 			typename ValueArg = decltype(std::declval<Pair>().value)>
-		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) MOMO_NOEXCEPT
+		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) noexcept
 		{
 			MOMO_STATIC_ASSERT(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
 			return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
@@ -881,7 +881,7 @@ namespace internal
 
 		template<typename KeyArg, typename ValueArg>
 		static std::pair<KeyArg&&, ValueArg&&> Convert(
-			std::pair<KeyArg, ValueArg>&& pair) MOMO_NOEXCEPT
+			std::pair<KeyArg, ValueArg>&& pair) noexcept
 		{
 			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
 				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
@@ -891,7 +891,7 @@ namespace internal
 
 		template<typename KeyArg, typename ValueArg>
 		static std::pair<const KeyArg&, const ValueArg&> Convert(
-			const std::pair<KeyArg, ValueArg>& pair) MOMO_NOEXCEPT
+			const std::pair<KeyArg, ValueArg>& pair) noexcept
 		{
 			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
 				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);

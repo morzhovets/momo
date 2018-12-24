@@ -56,7 +56,7 @@
 	{ \
 		return *(*this + diff); \
 	} \
-	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	bool operator!=(ConstIterator iter) const noexcept \
 	{ \
 		return !(*this == iter); \
 	} \
@@ -84,15 +84,15 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	bool operator!=(ConstIterator iter) const noexcept \
 	{ \
 		return !(*this == iter); \
 	} \
-	bool operator!() const MOMO_NOEXCEPT \
+	bool operator!() const noexcept \
 	{ \
 		return *this == ConstIterator(); \
 	} \
-	explicit operator bool() const MOMO_NOEXCEPT \
+	explicit operator bool() const noexcept \
 	{ \
 		return !!*this; \
 	}
@@ -114,7 +114,7 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstIterator iter) const MOMO_NOEXCEPT \
+	bool operator!=(ConstIterator iter) const noexcept \
 	{ \
 		return !(*this == iter); \
 	}
@@ -131,7 +131,7 @@ namespace internal
 		typedef TIterator Iterator;
 
 	public:
-		InsertResult(Iterator iter, bool inserted) MOMO_NOEXCEPT
+		InsertResult(Iterator iter, bool inserted) noexcept
 			: iterator(iter),
 			inserted(inserted)
 		{
@@ -155,13 +155,13 @@ namespace internal
 		static const bool checkVersion = true;
 
 	public:
-		explicit VersionKeeper() MOMO_NOEXCEPT
+		explicit VersionKeeper() noexcept
 			: mContainerVersion(nullptr),
 			mVersion(0)
 		{
 		}
 
-		explicit VersionKeeper(const size_t* version) MOMO_NOEXCEPT
+		explicit VersionKeeper(const size_t* version) noexcept
 			: mContainerVersion(version),
 			mVersion(*version)
 		{
@@ -192,11 +192,11 @@ namespace internal
 		static const bool checkVersion = false;
 
 	public:
-		explicit VersionKeeper() MOMO_NOEXCEPT
+		explicit VersionKeeper() noexcept
 		{
 		}
 
-		explicit VersionKeeper(const size_t* /*version*/) MOMO_NOEXCEPT
+		explicit VersionKeeper(const size_t* /*version*/) noexcept
 		{
 		}
 
@@ -254,32 +254,32 @@ namespace internal
 	public:
 		IteratorPointer() = delete;
 
-		explicit IteratorPointer(Reference ref) MOMO_NOEXCEPT
+		explicit IteratorPointer(Reference ref) noexcept
 			: mReference(ref)
 		{
 		}
 
-		operator ConstPointer() const MOMO_NOEXCEPT
+		operator ConstPointer() const noexcept
 		{
 			return ConstPointer(mReference);
 		}
 
-		typename std::remove_reference<const Reference>::type* operator->() const MOMO_NOEXCEPT
+		typename std::remove_reference<const Reference>::type* operator->() const noexcept
 		{
 			return std::addressof(mReference);
 		}
 
-		Reference operator*() const MOMO_NOEXCEPT
+		Reference operator*() const noexcept
 		{
 			return mReference;
 		}
 
-		bool operator!() const MOMO_NOEXCEPT
+		bool operator!() const noexcept
 		{
 			return false;
 		}
 
-		explicit operator bool() const MOMO_NOEXCEPT
+		explicit operator bool() const noexcept
 		{
 			return true;
 		}
@@ -299,41 +299,41 @@ namespace internal
 		typedef typename std::iterator_traits<Iterator>::reference Reference;
 
 	public:
-		explicit ArrayBounds() MOMO_NOEXCEPT
+		explicit ArrayBounds() noexcept
 			: mBegin(),
 			mCount(0)
 		{
 		}
 
-		explicit ArrayBounds(Iterator begin, size_t count) MOMO_NOEXCEPT
+		explicit ArrayBounds(Iterator begin, size_t count) noexcept
 			: mBegin(begin),
 			mCount(count)
 		{
 		}
 
-		operator ConstBounds() const MOMO_NOEXCEPT
+		operator ConstBounds() const noexcept
 		{
 			return ConstBounds(mBegin, mCount);
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const noexcept
 		{
 			return mBegin;
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const noexcept
 		{
 			return mBegin + mCount;
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const ArrayBounds&, Iterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mCount;
 		}
 
-		Reference operator[](size_t index) const MOMO_NOEXCEPT
+		Reference operator[](size_t index) const noexcept
 		{
 			MOMO_ASSERT(index < mCount);	//?
 			return mBegin[index];
@@ -372,12 +372,12 @@ namespace internal
 		};
 
 	public:
-		explicit HashDerivedIterator() MOMO_NOEXCEPT
+		explicit HashDerivedIterator() noexcept
 			: mBaseIterator()
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIteratorProxy(mBaseIterator);
 		}
@@ -393,7 +393,7 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
 		}
@@ -401,12 +401,12 @@ namespace internal
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
 
 	protected:
-		explicit HashDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
+		explicit HashDerivedIterator(BaseIterator iter) noexcept
 			: mBaseIterator(iter)
 		{
 		}
 
-		BaseIterator ptGetBaseIterator() const MOMO_NOEXCEPT
+		BaseIterator ptGetBaseIterator() const noexcept
 		{
 			return mBaseIterator;
 		}
@@ -443,12 +443,12 @@ namespace internal
 		};
 
 	public:
-		explicit TreeDerivedIterator() MOMO_NOEXCEPT
+		explicit TreeDerivedIterator() noexcept
 			: mBaseIterator()
 		{
 		}
 
-		operator ConstIterator() const MOMO_NOEXCEPT
+		operator ConstIterator() const noexcept
 		{
 			return ConstIteratorProxy(mBaseIterator);
 		}
@@ -470,7 +470,7 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		bool operator==(ConstIterator iter) const MOMO_NOEXCEPT
+		bool operator==(ConstIterator iter) const noexcept
 		{
 			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
 		}
@@ -478,12 +478,12 @@ namespace internal
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
 
 	protected:
-		explicit TreeDerivedIterator(BaseIterator iter) MOMO_NOEXCEPT
+		explicit TreeDerivedIterator(BaseIterator iter) noexcept
 			: mBaseIterator(iter)
 		{
 		}
 
-		BaseIterator ptGetBaseIterator() const MOMO_NOEXCEPT
+		BaseIterator ptGetBaseIterator() const noexcept
 		{
 			return mBaseIterator;
 		}
@@ -517,34 +517,34 @@ namespace internal
 		};
 
 	public:
-		explicit HashDerivedBucketBounds() MOMO_NOEXCEPT
+		explicit HashDerivedBucketBounds() noexcept
 		{
 		}
 
-		operator ConstBounds() const MOMO_NOEXCEPT
+		operator ConstBounds() const noexcept
 		{
 			return ConstBoundsProxy(mBaseBucketBounds);
 		}
 
-		Iterator GetBegin() const MOMO_NOEXCEPT
+		Iterator GetBegin() const noexcept
 		{
 			return BucketIteratorProxy(mBaseBucketBounds.GetBegin());
 		}
 
-		Iterator GetEnd() const MOMO_NOEXCEPT
+		Iterator GetEnd() const noexcept
 		{
 			return BucketIteratorProxy(mBaseBucketBounds.GetEnd());
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const HashDerivedBucketBounds&, BucketIterator)
 
-		size_t GetCount() const MOMO_NOEXCEPT
+		size_t GetCount() const noexcept
 		{
 			return mBaseBucketBounds.GetCount();
 		}
 
 	protected:
-		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) MOMO_NOEXCEPT
+		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) noexcept
 			: mBaseBucketBounds(bounds)
 		{
 		}

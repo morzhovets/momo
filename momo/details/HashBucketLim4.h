@@ -83,18 +83,18 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() MOMO_NOEXCEPT
+			~Params() noexcept
 			{
 			}
 
 			Params& operator=(const Params&) = delete;
 
-			MemManager& GetMemManager() MOMO_NOEXCEPT
+			MemManager& GetMemManager() noexcept
 			{
 				return mMemPools[0].GetMemManager().GetBaseMemManager();
 			}
 
-			MemPool& GetMemPool(size_t memPoolIndex) MOMO_NOEXCEPT
+			MemPool& GetMemPool(size_t memPoolIndex) noexcept
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
 				return mMemPools[memPoolIndex - 1];
@@ -105,21 +105,21 @@ namespace internal
 		};
 
 	public:
-		explicit BucketLim4() MOMO_NOEXCEPT
+		explicit BucketLim4() noexcept
 			: mPtrState(stateNull)
 		{
 		}
 
 		BucketLim4(const BucketLim4&) = delete;
 
-		~BucketLim4() MOMO_NOEXCEPT
+		~BucketLim4() noexcept
 		{
 			MOMO_ASSERT(pvIsEmpty());
 		}
 
 		BucketLim4& operator=(const BucketLim4&) = delete;
 
-		Bounds GetBounds(Params& params) MOMO_NOEXCEPT
+		Bounds GetBounds(Params& params) noexcept
 		{
 			if (pvIsEmpty())
 				return Bounds();
@@ -140,14 +140,14 @@ namespace internal
 			return nullptr;
 		}
 
-		bool IsFull() const MOMO_NOEXCEPT
+		bool IsFull() const noexcept
 		{
 			if (pvIsEmpty())
 				return false;
 			return pvGetData().count == maxCount;
 		}
 
-		bool WasFull() const MOMO_NOEXCEPT
+		bool WasFull() const noexcept
 		{
 			if (mPtrState == stateNull)
 				return false;
@@ -156,7 +156,7 @@ namespace internal
 			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
-		void Clear(Params& params) MOMO_NOEXCEPT
+		void Clear(Params& params) noexcept
 		{
 			if (!pvIsEmpty())
 			{
@@ -247,7 +247,7 @@ namespace internal
 		}
 
 	private:
-		bool pvIsEmpty() const MOMO_NOEXCEPT
+		bool pvIsEmpty() const noexcept
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
 		}
@@ -258,19 +258,19 @@ namespace internal
 				+ (size_t)ptr * memPoolIndex + count - 1);
 		}
 
-		static size_t pvGetMemPoolIndex(size_t count) MOMO_NOEXCEPT
+		static size_t pvGetMemPoolIndex(size_t count) noexcept
 		{
 			MOMO_ASSERT(0 < count && count <= maxCount);
 			return count;
 		}
 
-		size_t pvGetMemPoolIndex() const MOMO_NOEXCEPT
+		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			return (size_t)(mPtrState >> (32 - logMaxCount)) + 1;
 		}
 
-		Data pvGetData() const MOMO_NOEXCEPT
+		Data pvGetData() const noexcept
 		{
 			UIntMath<uint32_t>::DivResult divRes = UIntMath<uint32_t>::DivBySmall(
 				mPtrState & stateNull, (uint32_t)pvGetMemPoolIndex());
