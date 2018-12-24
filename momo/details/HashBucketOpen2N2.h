@@ -101,7 +101,7 @@ namespace internal
 				if (mHashData.shortHashes[i] == shortHash && pred(*&mItems[i]))
 					return Iterator(&mItems[i] + 1);
 			}
-			return Iterator(nullptr);
+			return Iterator();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT

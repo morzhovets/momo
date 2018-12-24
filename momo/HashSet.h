@@ -211,7 +211,7 @@ namespace internal
 		explicit HashSetConstIterator() MOMO_NOEXCEPT
 			: mBuckets(nullptr),
 			mHashCode(0),
-			mBucketIterator(nullptr)
+			mBucketIterator()
 		{
 		}
 
@@ -220,7 +220,7 @@ namespace internal
 		HashSetConstIterator& operator++()
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
+			MOMO_CHECK(mBucketIterator != BucketIterator());
 			if (ptIsMovable())
 			{
 				++mBucketIterator;
@@ -236,7 +236,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mBucketIterator != BucketIterator(nullptr));
+			MOMO_CHECK(mBucketIterator != BucketIterator());
 			return std::addressof(*mBucketIterator);	//?
 		}
 
@@ -264,26 +264,26 @@ namespace internal
 			: VersionKeeper(version),
 			mBuckets(buckets),
 			mHashCode(hashCode),
-			mBucketIterator(nullptr)
+			mBucketIterator()
 		{
 		}
 
 		bool ptIsMovable() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator(nullptr) && mBuckets != nullptr);
+			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
 			return mBucketIndex < mBuckets->GetCount();
 		}
 
 		size_t ptGetBucketIndex() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator(nullptr) && mBuckets != nullptr);
+			MOMO_ASSERT(mBucketIterator != BucketIterator() && mBuckets != nullptr);
 			size_t bucketCount = mBuckets->GetCount();
 			return (mBucketIndex < bucketCount) ? mBucketIndex : mBucketIndex - bucketCount;
 		}
 
 		size_t ptGetHashCode() const MOMO_NOEXCEPT
 		{
-			MOMO_ASSERT(mBucketIterator == BucketIterator(nullptr));
+			MOMO_ASSERT(mBucketIterator == BucketIterator());
 			return mHashCode;
 		}
 
@@ -302,7 +302,7 @@ namespace internal
 			(void)empty;
 			VersionKeeper::Check(version);
 			MOMO_CHECK(empty || mBuckets != nullptr);
-			MOMO_CHECK(empty != (mBucketIterator != BucketIterator(nullptr)));
+			MOMO_CHECK(empty != (mBucketIterator != BucketIterator()));
 		}
 
 	private:
@@ -977,7 +977,7 @@ private:
 			while (true)
 			{
 				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
-				if (bucketIter != BucketIterator(nullptr))	// vs2013
+				if (bucketIter != BucketIterator())
 					return pvMakeIterator(*bkts, bucketIndex, bucketIter, false);
 				if (!bucket->WasFull() || probe >= maxProbe)
 					break;

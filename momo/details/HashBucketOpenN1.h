@@ -93,7 +93,7 @@ namespace internal
 						return pvMakeIterator(&mItems[index]);
 					mask &= mask - 1;
 				}
-				return Iterator(nullptr);
+				return Iterator();
 			}
 #endif
 			for (size_t i = 0; i < maxCount; ++i)
@@ -101,7 +101,7 @@ namespace internal
 				if (mData.shortHashes[i] == shortHash && pred(*&mItems[i]))
 					return pvMakeIterator(&mItems[i]);
 			}
-			return Iterator(nullptr);
+			return Iterator();
 		}
 
 		bool IsFull() const MOMO_NOEXCEPT
