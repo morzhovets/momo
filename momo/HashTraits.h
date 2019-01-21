@@ -52,7 +52,6 @@ namespace internal
 		static const bool isValidKeyArg = false;
 	};
 
-#ifdef MOMO_USE_UNORDERED_HETEROGENEOUS_LOOKUP
 	template<typename TKey, typename THashFunc, typename TEqualFunc>
 	class HashTraitsStdBase<TKey, THashFunc, TEqualFunc,
 		Void<typename THashFunc::transparent_key_equal>>
@@ -71,7 +70,6 @@ namespace internal
 		MOMO_STATIC_ASSERT((std::is_same<TEqualFunc, EqualFunc>::value
 			|| std::is_same<TEqualFunc, std::equal_to<Key>>::value));
 	};
-#endif
 }
 
 template<typename Key>
