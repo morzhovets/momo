@@ -1,7 +1,8 @@
 /**********************************************************\
 
   This file is distributed under the MIT License.
-  See accompanying file LICENSE for details.
+  See https://github.com/morzhovets/momo/blob/master/LICENSE
+  for details.
 
   tests/LibcxxHashMapTesterLimP1.cpp
 

@@ -1,7 +1,8 @@
 /**********************************************************\
 
   This file is distributed under the MIT License.
-  See accompanying file LICENSE for details.
+  See https://github.com/morzhovets/momo/blob/master/LICENSE
+  for details.
 
   tests/SpeedMapTester.cpp
 
@@ -440,7 +441,7 @@ void TestSpeedMap()
 	const size_t maxKeyCount = 1 << 12;
 	std::stringstream resStream;
 #endif
-	
+
 	SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
 	SpeedMapTester<SpeedMapKey>(maxKeyCount, 3, resStream).TestAll();
 }
