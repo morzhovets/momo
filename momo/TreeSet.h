@@ -1,7 +1,8 @@
 /**********************************************************\
 
   This file is distributed under the MIT License.
-  See accompanying file LICENSE for details.
+  See https://github.com/morzhovets/momo/blob/master/LICENSE
+  for details.
 
   momo/TreeSet.h
 
@@ -760,7 +761,7 @@ public:
 			}
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
-				res.iterator = pvAdd<false>(std::next(res.iterator), 
+				res.iterator = pvAdd<false>(std::next(res.iterator),
 					Creator<decltype(*iter)>(memManager, *iter));
 				res.inserted = true;
 			}
