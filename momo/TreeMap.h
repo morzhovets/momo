@@ -164,9 +164,6 @@ private:
 
 	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
 
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
 	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
 
 public:
@@ -181,6 +178,14 @@ public:
 	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
 
 private:
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
+
+	template<typename KeyArg>
+	struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -316,16 +321,16 @@ public:
 		return IteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetLowerBound(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	GetLowerBound(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type GetLowerBound(const KeyArg& key)
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, Iterator>::type
+	GetLowerBound(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.GetLowerBound(key));
 	}
@@ -340,16 +345,16 @@ public:
 		return IteratorProxy(mTreeSet.GetUpperBound(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetUpperBound(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	GetUpperBound(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type GetUpperBound(const KeyArg& key)
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, Iterator>::type
+	GetUpperBound(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.GetUpperBound(key));
 	}
@@ -364,16 +369,16 @@ public:
 		return IteratorProxy(mTreeSet.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type Find(const KeyArg& key)
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, Iterator>::type
+	Find(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.Find(key));
 	}
@@ -383,9 +388,9 @@ public:
 		return mTreeSet.ContainsKey(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
+	ContainsKey(const KeyArg& key) const
 	{
 		return mTreeSet.ContainsKey(key);
 	}
@@ -395,9 +400,9 @@ public:
 		return mTreeSet.GetKeyCount(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, size_t>::type GetKeyCount(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, size_t>::type
+	GetKeyCount(const KeyArg& key) const
 	{
 		return mTreeSet.GetKeyCount(key);
 	}

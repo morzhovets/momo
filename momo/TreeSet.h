@@ -328,9 +328,6 @@ private:
 	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
-
 public:
 	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
 	typedef ConstIterator Iterator;
@@ -340,6 +337,14 @@ public:
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+
+	template<typename KeyArg>
+	struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -646,9 +651,9 @@ public:
 		return pvGetLowerBound(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetLowerBound(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	GetLowerBound(const KeyArg& key) const
 	{
 		return pvGetLowerBound(key);
 	}
@@ -658,9 +663,9 @@ public:
 		return pvGetUpperBound(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type GetUpperBound(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	GetUpperBound(const KeyArg& key) const
 	{
 		return pvGetUpperBound(key);
 	}
@@ -670,9 +675,9 @@ public:
 		return pvFind(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -682,9 +687,9 @@ public:
 		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
+	ContainsKey(const KeyArg& key) const
 	{
 		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
@@ -694,9 +699,9 @@ public:
 		return TreeTraits::multiKey ? pvGetKeyCount(key) : ContainsKey(key) ? 1 : 0;
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, size_t>::type GetKeyCount(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, size_t>::type
+	GetKeyCount(const KeyArg& key) const
 	{
 		return pvGetKeyCount(key);
 	}

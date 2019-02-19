@@ -623,9 +623,6 @@ private:
 	typedef typename HashMap::Iterator HashMapIterator;
 	typedef typename HashMapIterator::Reference HashMapReference;
 
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
 public:
 	typedef typename ValueArray::ConstBounds ConstValueBounds;
 	typedef typename ValueArray::Bounds ValueBounds;
@@ -644,6 +641,14 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
+
+	template<typename KeyArg>
+	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -855,16 +860,16 @@ public:
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstKeyIterator>::type Find(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstKeyIterator>::type
+	Find(const KeyArg& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, KeyIterator>::type Find(const KeyArg& key)
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, KeyIterator>::type
+	Find(const KeyArg& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
@@ -874,9 +879,9 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
+	ContainsKey(const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}

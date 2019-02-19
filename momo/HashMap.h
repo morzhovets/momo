@@ -132,9 +132,6 @@ private:
 	typedef internal::HashDerivedIterator<typename HashSetConstBucketBounds::Iterator,
 		Reference> BucketIterator;
 
-	template<typename... ValueArgs>
-	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
-
 public:
 	typedef internal::HashDerivedIterator<HashSetConstIterator, Reference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -153,6 +150,14 @@ public:
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
 private:
+	template<typename... ValueArgs>
+	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
+
+	template<typename KeyArg>
+	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -313,16 +318,16 @@ public:
 		return IteratorProxy(mHashSet.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mHashSet.Find(key));
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, Iterator>::type Find(const KeyArg& key)
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, Iterator>::type
+	Find(const KeyArg& key)
 	{
 		return IteratorProxy(mHashSet.Find(key));
 	}
@@ -332,9 +337,9 @@ public:
 		return mHashSet.ContainsKey(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
+	ContainsKey(const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}

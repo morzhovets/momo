@@ -446,12 +446,6 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
-	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
-		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
-
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
-
 public:
 	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
 	typedef ConstIterator Iterator;	//?
@@ -465,6 +459,17 @@ public:
 	static const size_t bucketMaxItemCount = Bucket::maxCount;
 
 private:
+	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
+		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
+
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+
+	template<typename KeyArg>
+	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ItemPosition
 	{
 		size_t bucketIndex;
@@ -686,9 +691,9 @@ public:
 		return pvFind(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, ConstIterator>::type Find(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
+	Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -698,9 +703,9 @@ public:
 		return !!pvFind(key);
 	}
 
-	template<typename KeyArg,
-		bool isValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>::value>
-	typename std::enable_if<isValidKeyArg, bool>::type ContainsKey(const KeyArg& key) const
+	template<typename KeyArg>
+	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
+	ContainsKey(const KeyArg& key) const
 	{
 		return !!pvFind(key);
 	}
