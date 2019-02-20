@@ -149,6 +149,8 @@ private:
 	class Crew
 	{
 	private:
+		typedef momo::internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 		typedef std::atomic<Raw*> FreeRaws;
 
 		struct Data
@@ -162,7 +164,8 @@ private:
 	public:
 		explicit Crew(ColumnList&& columnList)
 		{
-			mData = columnList.GetMemManager().template Allocate<Data>(sizeof(Data));
+			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
+				sizeof(Data));
 			new(&mData->columnList) ColumnList(std::move(columnList));
 			mData->changeVersion = 0;
 			mData->removeVersion = 0;
@@ -184,7 +187,7 @@ private:
 				ColumnList columnList = std::move(mData->columnList);
 				mData->columnList.~ColumnList();
 				mData->freeRaws.~FreeRaws();
-				columnList.GetMemManager().Deallocate(mData, sizeof(Data));
+				MemManagerProxy::Deallocate(columnList.GetMemManager(), mData, sizeof(Data));
 			}
 		}
 

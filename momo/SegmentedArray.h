@@ -167,6 +167,8 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
+	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
 	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
@@ -559,13 +561,14 @@ private:
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > SIZE_MAX / sizeof(Item))
 			throw std::length_error("momo::SegmentedArray length error");
-		return GetMemManager().template Allocate<Item>(itemCount * sizeof(Item));
+		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
+			itemCount * sizeof(Item));
 	}
 
 	void pvFreeSegMemory(size_t segIndex, Item* segMemory) noexcept
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
-		GetMemManager().Deallocate(segMemory, itemCount * sizeof(Item));
+		MemManagerProxy::Deallocate(GetMemManager(), segMemory, itemCount * sizeof(Item));
 	}
 
 	Item& pvGetItem(size_t index) const

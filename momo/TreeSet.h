@@ -316,6 +316,8 @@ public:
 	typedef typename ItemTraits::Item Item;
 
 private:
+	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
 
 	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
@@ -957,7 +959,7 @@ private:
 		if (mNodeParams != nullptr)
 		{
 			mNodeParams->~NodeParams();
-			GetMemManager().Deallocate(mNodeParams, sizeof(NodeParams));
+			MemManagerProxy::Deallocate(GetMemManager(), mNodeParams, sizeof(NodeParams));
 		}
 	}
 
@@ -1154,14 +1156,16 @@ private:
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)
 		{
-			mNodeParams = GetMemManager().template Allocate<NodeParams>(sizeof(NodeParams));
+			MemManager& memManager = GetMemManager();
+			mNodeParams = MemManagerProxy::template Allocate<NodeParams>(memManager,
+				sizeof(NodeParams));
 			try
 			{
-				new(mNodeParams) NodeParams(GetMemManager());
+				new(mNodeParams) NodeParams(memManager);
 			}
 			catch (...)
 			{
-				GetMemManager().Deallocate(mNodeParams, sizeof(NodeParams));
+				MemManagerProxy::Deallocate(memManager, mNodeParams, sizeof(NodeParams));
 				mNodeParams = nullptr;
 				throw;
 			}

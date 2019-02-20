@@ -524,6 +524,8 @@ private:
 	class ValueCrew
 	{
 	private:
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 		struct Data
 		{
 			size_t valueVersion;
@@ -533,7 +535,7 @@ private:
 	public:
 		explicit ValueCrew(MemManager& memManager)
 		{
-			mData = memManager.template Allocate<Data>(sizeof(Data));
+			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
 			mData->valueVersion = 0;
 			try
 			{
@@ -541,7 +543,7 @@ private:
 			}
 			catch (...)
 			{
-				memManager.Deallocate(mData, sizeof(Data));
+				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 				throw;
 			}
 		}
@@ -576,7 +578,7 @@ private:
 		{
 			MOMO_ASSERT(!IsNull());
 			mData->~Data();
-			memManager.Deallocate(mData, sizeof(Data));
+			MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			mData = nullptr;
 		}
 

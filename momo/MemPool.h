@@ -145,6 +145,7 @@ public:
 
 private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
+	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArrayIntCap<Params::cachedFreeBlockCount, void*,
 		internal::MemManagerDummy> CachedFreeBlocks;
@@ -257,23 +258,23 @@ public:
 	template<typename Result = void>
 	Result* Allocate()
 	{
-		Result* pblock;
+		void* pblock;
 		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
 		{
-			pblock = static_cast<Result*>(mCachedFreeBlocks.GetBackItem());
+			pblock = mCachedFreeBlocks.GetBackItem();
 			mCachedFreeBlocks.RemoveBack();
 		}
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = reinterpret_cast<Result*>(pvNewBlock());
+				pblock = reinterpret_cast<void*>(pvNewBlock());
 			else if (maxAlignment % Params::blockAlignment == 0)
-				pblock = GetMemManager().template Allocate<Result>(pvGetBufferSize0());
+				pblock = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
 			else
-				pblock = reinterpret_cast<Result*>(pvNewBlock1());
+				pblock = reinterpret_cast<void*>(pvNewBlock1());
 		}
 		++mAllocCount;
-		return pblock;
+		return static_cast<Result*>(pblock);
 	}
 
 	void Deallocate(void* pblock) noexcept
@@ -370,7 +371,7 @@ private:
 		if (Params::blockCount > 1)
 			pvDeleteBlock(reinterpret_cast<uintptr_t>(pblock));
 		else if (maxAlignment % Params::blockAlignment == 0)
-			GetMemManager().Deallocate(pblock, pvGetBufferSize0());
+			MemManagerProxy::Deallocate(GetMemManager(), pblock, pvGetBufferSize0());
 		else
 			pvDeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
 	}
@@ -382,7 +383,8 @@ private:
 
 	uintptr_t pvNewBlock1()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(pvGetBufferSize1()));
+		uintptr_t begin = reinterpret_cast<uintptr_t>(MemManagerProxy::Allocate(GetMemManager(),
+			pvGetBufferSize1()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		pvGetBufferBegin1(block) = begin;
 		return block;
@@ -391,7 +393,7 @@ private:
 	void pvDeleteBlock1(uintptr_t block) noexcept
 	{
 		uintptr_t begin = pvGetBufferBegin1(block);
-		GetMemManager().Deallocate(reinterpret_cast<void*>(begin), pvGetBufferSize1());
+		MemManagerProxy::Deallocate(GetMemManager(), reinterpret_cast<void*>(begin), pvGetBufferSize1());
 	}
 
 	size_t pvGetBufferSize1() const noexcept
@@ -483,7 +485,8 @@ private:
 
 	uintptr_t pvNewBuffer()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(GetMemManager().Allocate(pvGetBufferSize()));
+		uintptr_t begin = reinterpret_cast<uintptr_t>(MemManagerProxy::Allocate(GetMemManager(),
+			pvGetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
 		if ((block + Params::blockAlignment) % Params::blockSize == 0)
@@ -520,7 +523,10 @@ private:
 		if (mBufferHead == buffer)
 			mBufferHead = pointers.nextBuffer;
 		if (deallocate)
-			GetMemManager().Deallocate(reinterpret_cast<void*>(pointers.begin), pvGetBufferSize());
+		{
+			MemManagerProxy::Deallocate(GetMemManager(),
+				reinterpret_cast<void*>(pointers.begin), pvGetBufferSize());
+		}
 	}
 
 	size_t pvGetBufferSize() const noexcept
@@ -582,6 +588,8 @@ namespace internal
 		static const uint32_t nullPtr = UINT32_MAX;
 
 	private:
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 		typedef Array<char*, MemManager, ArrayItemTraits<char*, MemManager>,
 			NestedArraySettings<>> Buffers;
 
@@ -660,7 +668,8 @@ namespace internal
 			if (bufferCount >= mMaxBufferCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 			mBuffers.Reserve(bufferCount + 1);
-			char* buffer = GetMemManager().template Allocate<char>(pvGetBufferSize());
+			char* buffer = MemManagerProxy::template Allocate<char>(GetMemManager(),
+				pvGetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				void* realPtr = buffer + mBlockSize * i;
@@ -686,7 +695,7 @@ namespace internal
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = pvGetBufferSize();
 			for (char* buffer : mBuffers)
-				memManager.Deallocate(buffer, bufferSize);
+				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
 		}
 
 		size_t pvGetBufferSize() const noexcept

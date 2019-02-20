@@ -24,25 +24,17 @@
   class UserMemManager
   {
   public:
-    static const bool canReallocate = true;
-    static const bool canReallocateInplace = true;
-
-    static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
-
-  public:
-    explicit UserMemManager();
+    explicit UserMemManager(...);
     UserMemManager(UserMemManager&& memManager) noexcept;
     UserMemManager(const UserMemManager& memManager);
     ~UserMemManager() noexcept;
     UserMemManager& operator=(const UserMemManager&) = delete;
 
-    template<typename Result = void>
-    Result* Allocate(size_t size);
+    void* Allocate(size_t size);
 
     void Deallocate(void* ptr, size_t size) noexcept;
 
-    template<typename Result = void>
-    Result* Reallocate(void* ptr, size_t size, size_t newSize);
+    void* Reallocate(void* ptr, size_t size, size_t newSize);
 
     bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept;
   };
@@ -58,21 +50,103 @@ namespace momo
 
 namespace internal
 {
-	template<size_t ptrUsefulBitCount>
-	struct MemManagerCheckPtr
+	template<typename MemManager,
+		typename = size_t>
+	struct MemManagerPtrUsefulBitCount
 	{
-		explicit MemManagerCheckPtr(void* ptr) noexcept
-		{
-			(void)ptr;
-			MOMO_STATIC_ASSERT(ptrUsefulBitCount < sizeof(void*) * 8);
-			MOMO_ASSERT(reinterpret_cast<uintptr_t>(ptr) >> ptrUsefulBitCount == (uintptr_t)0);
-		}
+		static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 	};
 
-	template<>
-	struct MemManagerCheckPtr<sizeof(void*) * 8>
+	template<typename MemManager>
+	struct MemManagerPtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
 	{
-		explicit MemManagerCheckPtr(void* /*ptr*/) noexcept
+		static const size_t value = MemManager::ptrUsefulBitCount;
+	};
+
+	template<typename MemManager,
+		typename = void*>
+	struct MemManagerCanReallocate : public std::false_type
+	{
+	};
+
+	template<typename MemManager>
+	struct MemManagerCanReallocate<MemManager,
+		decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
+		: public std::true_type
+	{
+	};
+
+	template<typename MemManager,
+		typename = bool>
+	struct MemManagerCanReallocateInplace : public std::false_type
+	{
+	};
+
+	template<typename MemManager>
+	struct MemManagerCanReallocateInplace<MemManager,
+		decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
+		: public std::true_type
+	{
+	};
+
+	template<typename TMemManager>
+	class MemManagerProxy
+	{
+	public:
+		typedef TMemManager MemManager;
+
+		static const bool canReallocate = MemManagerCanReallocate<MemManager>::value;
+		static const bool canReallocateInplace = MemManagerCanReallocateInplace<MemManager>::value;
+
+		static const size_t ptrUsefulBitCount = MemManagerPtrUsefulBitCount<MemManager>::value;
+
+	public:
+		template<typename Result = void>
+		static Result* Allocate(MemManager& memManager, size_t size)
+		{
+			MOMO_ASSERT(size > 0);
+			void* ptr = memManager.Allocate(size);
+			pvCheckPtr(ptr);
+			return static_cast<Result*>(ptr);
+		}
+
+		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0);
+			memManager.Deallocate(ptr, size);
+		}
+
+		template<typename Result = void>
+		static void* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
+			if (size == newSize)
+				return static_cast<Result*>(ptr);
+			void* newPtr = memManager.Reallocate(ptr, size, newSize);
+			pvCheckPtr(newPtr);
+			return static_cast<Result*>(newPtr);
+		}
+
+		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
+			size_t newSize) noexcept
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
+			if (size == newSize)
+				return true;
+			return memManager.ReallocateInplace(ptr, size, newSize);
+		}
+
+	private:
+		template<size_t shift = ptrUsefulBitCount,
+			typename std::enable_if<(shift < sizeof(void*) * 8), int>::type = 0>
+		static void pvCheckPtr(void* ptr) noexcept
+		{
+			MOMO_ASSERT(reinterpret_cast<uintptr_t>(ptr) >> shift == (uintptr_t)0);
+		}
+
+		template<size_t shift = ptrUsefulBitCount,
+			typename std::enable_if<(shift == sizeof(void*) * 8), int>::type = 0>
+		static void pvCheckPtr(void* /*ptr*/) noexcept
 		{
 		}
 	};
@@ -80,12 +154,6 @@ namespace internal
 
 class MemManagerCpp
 {
-public:
-	static const bool canReallocate = false;
-	static const bool canReallocateInplace = false;
-
-	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-
 public:
 	explicit MemManagerCpp() noexcept
 	{
@@ -105,31 +173,20 @@ public:
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
-	template<typename Result = void>
-	Result* Allocate(size_t size)
+	void* Allocate(size_t size)
 	{
-		MOMO_ASSERT(size > 0);
-		void* ptr = operator new(size);
-		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
-		return static_cast<Result*>(ptr);
+		return operator new(size);
 	}
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		(void)size;
-		MOMO_ASSERT(ptr != nullptr && size > 0);
+		(void)size;	// C++11
 		operator delete(ptr);
 	}
 };
 
 class MemManagerC
 {
-public:
-	static const bool canReallocate = true;
-	static const bool canReallocateInplace = false;
-
-	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-
 public:
 	explicit MemManagerC() noexcept
 	{
@@ -149,47 +206,31 @@ public:
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
-	template<typename Result = void>
-	Result* Allocate(size_t size)
+	void* Allocate(size_t size)
 	{
-		MOMO_ASSERT(size > 0);
 		void* ptr = malloc(size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
-		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
-		return static_cast<Result*>(ptr);
+		return ptr;
 	}
 
-	void Deallocate(void* ptr, size_t size) noexcept
+	void Deallocate(void* ptr, size_t /*size*/) noexcept
 	{
-		(void)size;
-		MOMO_ASSERT(ptr != nullptr && size > 0);
 		free(ptr);
 	}
 
-	template<typename Result = void>
-	Result* Reallocate(void* ptr, size_t size, size_t newSize)
+	void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
 	{
-		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
-		if (size == newSize)
-			return static_cast<Result*>(ptr);
 		void* newPtr = realloc(ptr, newSize);
 		if (newPtr == nullptr)
 			throw std::bad_alloc();
-		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(newPtr);
-		return static_cast<Result*>(newPtr);
+		return newPtr;
 	}
 };
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 class MemManagerWin
 {
-public:
-	static const bool canReallocate = false;
-	static const bool canReallocateInplace = true;
-
-	static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-
 public:
 	explicit MemManagerWin() noexcept
 	{
@@ -209,42 +250,29 @@ public:
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
-	template<typename Result = void>
-	Result* Allocate(size_t size)
+	void* Allocate(size_t size)
 	{
-		MOMO_ASSERT(size > 0);
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
-		(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(ptr);
-		return static_cast<Result*>(ptr);
+		return ptr;
 	}
 
-	void Deallocate(void* ptr, size_t size) noexcept
+	void Deallocate(void* ptr, size_t /*size*/) noexcept
 	{
-		(void)size;
-		MOMO_ASSERT(ptr != nullptr && size > 0);
 		HeapFree(GetProcessHeap(), 0, ptr);
 	}
 
-	//template<typename Result = void>
-	//void* Reallocate(void* ptr, size_t size, size_t newSize)
+	//void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
 	//{
-	//	MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
-	//	if (size == newSize)
-	//		return static_cast<Result*>(ptr);
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 	//	if (newPtr == nullptr)
 	//		throw std::bad_alloc();
-	//	(internal::MemManagerCheckPtr<ptrUsefulBitCount>)(newPtr);
-	//	return static_cast<Result*>(newPtr);
+	//	return newPtr;
 	//}
 
-	bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+	bool ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
 	{
-		MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
-		if (size == newSize)
-			return true;
 		void* newPtr = HeapReAlloc(GetProcessHeap(), HEAP_REALLOC_IN_PLACE_ONLY,
 			ptr, newSize);
 		MOMO_ASSERT(newPtr == ptr || newPtr == nullptr);
@@ -261,11 +289,6 @@ public:
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
 
 	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<CharAllocator>::value);
-
-	static const bool canReallocate = false;
-	static const bool canReallocateInplace = false;
-
-	static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
 public:
 	explicit MemManagerStd() noexcept(noexcept(CharAllocator()))
@@ -294,11 +317,9 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	template<typename Result = void>
-	Result* Allocate(size_t size)
+	void* Allocate(size_t size)
 	{
-		void* ptr = std::allocator_traits<CharAllocator>::allocate(GetCharAllocator(), size);
-		return static_cast<Result*>(ptr);
+		return std::allocator_traits<CharAllocator>::allocate(GetCharAllocator(), size);
 	}
 
 	void Deallocate(void* ptr, size_t size) noexcept
@@ -366,12 +387,6 @@ namespace internal
 	class MemManagerDummy
 	{
 	public:
-		static const bool canReallocate = false;
-		static const bool canReallocateInplace = false;
-
-		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
-
-	public:
 		explicit MemManagerDummy() noexcept
 		{
 		}
@@ -390,8 +405,7 @@ namespace internal
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
-		//template<typename Result = void>
-		//Result* Allocate(size_t size);
+		//void* Allocate(size_t size);
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) noexcept
 		{
@@ -508,10 +522,7 @@ namespace internal
 	public:
 		typedef TBaseMemManager BaseMemManager;
 
-		static const bool canReallocate = BaseMemManager::canReallocate;
-		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
-
-		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
+		static const size_t ptrUsefulBitCount = MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr() noexcept
@@ -541,10 +552,9 @@ namespace internal
 			return *this;
 		}
 
-		template<typename Result = void>
-		Result* Allocate(size_t size)
+		void* Allocate(size_t size)
 		{
-			return GetBaseMemManager().template Allocate<Result>(size);
+			return GetBaseMemManager().Allocate(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) noexcept
@@ -552,13 +562,14 @@ namespace internal
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
-		template<typename Result = void>
-		Result* Reallocate(void* ptr, size_t size, size_t newSize)
+		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate, void*, void>::type
+		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return GetBaseMemManager().template Reallocate<Result>(ptr, size, newSize);
+			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate, bool, void>::type
+		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
@@ -570,10 +581,7 @@ namespace internal
 	public:
 		typedef TBaseMemManager BaseMemManager;
 
-		static const bool canReallocate = BaseMemManager::canReallocate;
-		static const bool canReallocateInplace = BaseMemManager::canReallocateInplace;
-
-		static const size_t ptrUsefulBitCount = BaseMemManager::ptrUsefulBitCount;
+		static const size_t ptrUsefulBitCount = MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& memManager) noexcept
@@ -602,10 +610,9 @@ namespace internal
 			return mBaseMemManager;
 		}
 
-		template<typename Result = void>
-		Result* Allocate(size_t size)
+		void* Allocate(size_t size)
 		{
-			return mBaseMemManager.template Allocate<Result>(size);
+			return mBaseMemManager.Allocate(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) noexcept
@@ -613,13 +620,14 @@ namespace internal
 			mBaseMemManager.Deallocate(ptr, size);
 		}
 
-		template<typename Result = void>
-		Result* Reallocate(void* ptr, size_t size, size_t newSize)
+		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate, void*, void>::type
+		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return mBaseMemManager.template Reallocate<Result>(ptr, size, newSize);
+			return mBaseMemManager.Reallocate(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate, bool, void>::type
+		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
 		}

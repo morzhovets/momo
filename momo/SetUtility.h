@@ -90,6 +90,8 @@ namespace internal
 		static const bool keepVersion = tKeepVersion;
 
 	private:
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 		struct Data
 		{
 			size_t version;
@@ -100,7 +102,7 @@ namespace internal
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
-			mData = memManager.template Allocate<Data>(sizeof(Data));
+			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
 			mData->version = 0;
 			try
 			{
@@ -108,7 +110,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				memManager.Deallocate(mData, sizeof(Data));
+				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 				throw;
 			}
 			new(&mData->memManager) MemManager(std::move(memManager));
@@ -129,7 +131,7 @@ namespace internal
 				mData->containerTraits.~ContainerTraits();
 				MemManager memManager = std::move(GetMemManager());
 				GetMemManager().~MemManager();
-				memManager.Deallocate(mData, sizeof(Data));
+				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
 		}
 

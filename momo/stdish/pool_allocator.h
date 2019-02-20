@@ -51,8 +51,10 @@ public:
 	typedef std::true_type propagate_on_container_swap;
 
 private:
-	typedef mem_pool_params MemPoolParams;
 	typedef MemManagerStd<base_allocator_type> MemManager;
+	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
+	typedef mem_pool_params MemPoolParams;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
 	template<typename Value>
@@ -103,21 +105,27 @@ public:
 
 	pointer allocate(size_type count)
 	{
-		if (count > 1)
-			return mMemPool->GetMemManager().template Allocate<value_type>(count * sizeof(value_type));
-		MemPoolParams memPoolParams = pvGetMemPoolParams();
-		if (!mMemPool->GetParams().IsEqual(memPoolParams) && mMemPool->GetAllocateCount() == 0)
-			*mMemPool = MemPool(memPoolParams, MemManager(get_base_allocator()));
-		if (!mMemPool->GetParams().IsEqual(memPoolParams))
-			return mMemPool->GetMemManager().template Allocate<value_type>(sizeof(value_type));
-		return mMemPool->template Allocate<value_type>();
+		if (count == 1)
+		{
+			MemPoolParams memPoolParams = pvGetMemPoolParams();
+			bool equal = mMemPool->GetParams().IsEqual(memPoolParams);
+			if (!equal && mMemPool->GetAllocateCount() == 0)
+			{
+				*mMemPool = MemPool(memPoolParams, MemManager(get_base_allocator()));
+				equal = true;
+			}
+			if (equal)
+				return mMemPool->template Allocate<value_type>();
+		}
+		return MemManagerProxy::template Allocate<value_type>(mMemPool->GetMemManager(),
+			count * sizeof(value_type));
 	}
 
 	void deallocate(pointer ptr, size_type count) noexcept
 	{
-		if (count > 1 || !mMemPool->GetParams().IsEqual(pvGetMemPoolParams()))
-			return mMemPool->GetMemManager().Deallocate(ptr, count * sizeof(value_type));
-		mMemPool->Deallocate(ptr);
+		if (count == 1 && mMemPool->GetParams().IsEqual(pvGetMemPoolParams()))
+			return mMemPool->Deallocate(ptr);
+		MemManagerProxy::Deallocate(mMemPool->GetMemManager(), ptr, count * sizeof(value_type));
 	}
 
 	template<typename Value, typename... ValueArgs>

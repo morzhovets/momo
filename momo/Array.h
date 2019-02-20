@@ -96,7 +96,8 @@ namespace internal
 		Item* mItemPtr;
 	};
 
-	template<typename Array, bool usePtrIterator = Array::Settings::usePtrIterator>
+	template<typename Array,
+		bool usePtrIterator = Array::Settings::usePtrIterator>
 	class ArrayIteratorSelector;
 
 	template<typename Array>
@@ -259,6 +260,7 @@ private:
 	{
 	private:
 		typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 		typedef internal::BoolConstant<(internalCapacity > 0)> HasInternalCapacity;
 
@@ -275,7 +277,8 @@ private:
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				mItems = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
+				mItems = MemManagerProxy::template Allocate<Item>(GetMemManager(),
+					capacity * sizeof(Item));
 				mCount = 0;
 				mCapacity = capacity;
 			}
@@ -341,9 +344,10 @@ private:
 			pvCheckCapacity(capacity);
 			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
 				return false;
-			return pvSetCapacity(capacity,
-				internal::BoolConstant<ItemTraits::isTriviallyRelocatable && MemManager::canReallocate>(),
-				internal::BoolConstant<MemManager::canReallocateInplace>());
+			static const bool canReallocate = ItemTraits::isTriviallyRelocatable
+				&& MemManagerProxy::canReallocate;
+			return pvSetCapacity(capacity, internal::BoolConstant<canReallocate>(),
+				internal::BoolConstant<MemManagerProxy::canReallocateInplace>());
 		}
 
 		size_t GetCount() const noexcept
@@ -370,14 +374,15 @@ private:
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				Item* items = GetMemManager().template Allocate<Item>(capacity * sizeof(Item));
+				Item* items = MemManagerProxy::template Allocate<Item>(GetMemManager(),
+					capacity * sizeof(Item));
 				try
 				{
 					relocateFunc(items);
 				}
 				catch (...)
 				{
-					GetMemManager().Deallocate(items, capacity * sizeof(Item));
+					MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
 					throw;
 				}
 				pvDeallocate();
@@ -455,7 +460,7 @@ private:
 		void pvDeallocate() noexcept
 		{
 			if (GetCapacity() > internalCapacity)
-				GetMemManager().Deallocate(mItems, mCapacity * sizeof(Item));
+				MemManagerProxy::Deallocate(GetMemManager(), mItems, mCapacity * sizeof(Item));
 		}
 
 		bool pvIsInternal() const noexcept
@@ -467,8 +472,8 @@ private:
 		bool pvSetCapacity(size_t capacity, std::true_type /*canReallocate*/,
 			internal::BoolConstant<canReallocateInplace>)
 		{
-			mItems = GetMemManager().template Reallocate<Item>(mItems,
-				mCapacity * sizeof(Item), capacity * sizeof(Item));
+			mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
+				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
 			mCapacity = capacity;
 			return true;
 		}
@@ -476,8 +481,8 @@ private:
 		bool pvSetCapacity(size_t capacity, std::false_type /*canReallocate*/,
 			std::true_type /*canReallocateInplace*/) noexcept
 		{
-			bool reallocDone = GetMemManager().ReallocateInplace(mItems,
-				mCapacity * sizeof(Item), capacity * sizeof(Item));
+			bool reallocDone = MemManagerProxy::ReallocateInplace(GetMemManager(),
+				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
 			if (!reallocDone)
 				return false;
 			mCapacity = capacity;

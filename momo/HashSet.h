@@ -43,6 +43,9 @@ namespace internal
 		static const size_t maxBucketCount =
 			(SIZE_MAX - sizeof(size_t) - 2 * sizeof(void*)) / sizeof(Bucket);
 
+	private:
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
 	public:
 		HashSetBuckets() = delete;
 
@@ -59,7 +62,8 @@ namespace internal
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
-			HashSetBuckets* resBuckets = memManager.template Allocate<HashSetBuckets>(bufferSize);
+			HashSetBuckets* resBuckets = MemManagerProxy::template Allocate<HashSetBuckets>(
+				memManager, bufferSize);
 			resBuckets->mLogCount = logBucketCount;
 			resBuckets->mNextBuckets = nullptr;
 			Bucket* buckets = resBuckets->pvGetBuckets();
@@ -77,7 +81,7 @@ namespace internal
 			{
 				for (size_t i = 0; i < bucketIndex; ++i)
 					buckets[i].~Bucket();
-				memManager.Deallocate(resBuckets, bufferSize);
+				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
 				throw;
 			}
 			return resBuckets;
@@ -93,9 +97,9 @@ namespace internal
 			if (destroyBucketParams)
 			{
 				mBucketParams->~BucketParams();
-				memManager.Deallocate(mBucketParams, sizeof(BucketParams));
+				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
 			}
-			memManager.Deallocate(this, pvGetBufferSize(GetLogCount()));
+			MemManagerProxy::Deallocate(memManager, this, pvGetBufferSize(GetLogCount()));
 		}
 
 		Bucket* GetBegin() noexcept
@@ -162,15 +166,15 @@ namespace internal
 
 		static BucketParams* pvCreateBucketParams(MemManager& memManager)
 		{
-			BucketParams* bucketParams = memManager.template Allocate<BucketParams>(
-				sizeof(BucketParams));
+			BucketParams* bucketParams = MemManagerProxy::template Allocate<BucketParams>(
+				memManager, sizeof(BucketParams));
 			try
 			{
 				new(bucketParams) BucketParams(memManager);
 			}
 			catch (...)
 			{
-				memManager.Deallocate(bucketParams, sizeof(BucketParams));
+				MemManagerProxy::Deallocate(memManager, bucketParams, sizeof(BucketParams));
 				throw;
 			}
 			return bucketParams;
