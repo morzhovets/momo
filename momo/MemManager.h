@@ -29,7 +29,7 @@
     static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 
   public:
-    explicit UserMemManager();
+    explicit UserMemManager(...);
     UserMemManager(UserMemManager&& memManager) noexcept;
     UserMemManager(const UserMemManager& memManager);
     ~UserMemManager() noexcept;
@@ -227,7 +227,7 @@ public:
 	}
 
 	//template<typename Result = void>
-	//void* Reallocate(void* ptr, size_t size, size_t newSize)
+	//Result* Reallocate(void* ptr, size_t size, size_t newSize)
 	//{
 	//	MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 	//	if (size == newSize)
