@@ -98,6 +98,11 @@ public:
 	typedef typename local_iterator::ConstIterator const_local_iterator;
 
 private:
+	template<typename KeyArg>
+	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
+	{
+	};
+
 	struct ConstIteratorProxy : public const_iterator
 	{
 		typedef const_iterator ConstIterator;
@@ -402,14 +407,15 @@ public:
 		return IteratorProxy(mHashMap.Find(key));
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	const_iterator find(const KeyArg& key) const
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
+		const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mHashMap.Find(key));
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	iterator find(const KeyArg& key)
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
 	{
 		return IteratorProxy(mHashMap.Find(key));
 	}
@@ -419,8 +425,9 @@ public:
 		return mHashMap.ContainsKey(key) ? 1 : 0;
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	size_type count(const KeyArg& key) const
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
+		const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key) ? 1 : 0;
 	}
@@ -430,8 +437,8 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	bool contains(const KeyArg& key) const
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
@@ -449,16 +456,19 @@ public:
 		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+		std::pair<const_iterator, const_iterator>>
+	equal_range(const KeyArg& key) const
 	{
 		const_iterator iter = find(key);
 		return std::pair<const_iterator, const_iterator>(iter,
 			(iter != end()) ? std::next(iter) : iter);
 	}
 
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	std::pair<iterator, iterator> equal_range(const KeyArg& key)
+	template<typename KeyArg>
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
+	equal_range(const KeyArg& key)
 	{
 		iterator iter = find(key);
 		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);

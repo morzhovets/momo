@@ -112,6 +112,11 @@ namespace internal
 		typedef internal::insert_return_type<iterator, node_type> insert_return_type;
 
 	private:
+		template<typename KeyArg>
+		struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
+		{
+		};
+
 		struct ConstIteratorProxy : public const_iterator
 		{
 			typedef const_iterator ConstIterator;
@@ -364,14 +369,15 @@ namespace internal
 			return IteratorProxy(mTreeMap.Find(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		const_iterator find(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
+			const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.Find(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		iterator find(const KeyArg& key)
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.Find(key));
 		}
@@ -381,8 +387,9 @@ namespace internal
 			return mTreeMap.GetKeyCount(key);
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		size_type count(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
+			const KeyArg& key) const
 		{
 			return mTreeMap.GetKeyCount(key);
 		}
@@ -392,8 +399,9 @@ namespace internal
 			return mTreeMap.ContainsKey(key);
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		bool contains(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(
+			const KeyArg& key) const
 		{
 			return mTreeMap.ContainsKey(key);
 		}
@@ -408,14 +416,16 @@ namespace internal
 			return IteratorProxy(mTreeMap.GetLowerBound(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		const_iterator lower_bound(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> lower_bound(
+			const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		iterator lower_bound(const KeyArg& key)
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> lower_bound(
+			const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.GetLowerBound(key));
 		}
@@ -430,14 +440,16 @@ namespace internal
 			return IteratorProxy(mTreeMap.GetUpperBound(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		const_iterator upper_bound(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> upper_bound(
+			const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		iterator upper_bound(const KeyArg& key)
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> upper_bound(
+			const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.GetUpperBound(key));
 		}
@@ -462,14 +474,17 @@ namespace internal
 			return std::pair<iterator, iterator>(iter, std::next(iter));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+			std::pair<const_iterator, const_iterator>>
+		equal_range(const KeyArg& key) const
 		{
 			return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
 		}
 
-		template<typename KeyArg, typename KC = key_compare, typename = typename KC::is_transparent>
-		std::pair<iterator, iterator> equal_range(const KeyArg& key)
+		template<typename KeyArg>
+		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
+		equal_range(const KeyArg& key)
 		{
 			return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
 		}
