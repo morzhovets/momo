@@ -1005,9 +1005,9 @@ private:
 	{
 		ConstIterator iter = Find(key);
 		if (!!iter)
-			return InsertResult(iter, false);
+			return { iter, false };
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
-		return InsertResult(iter, true);
+		return { iter, true };
 	}
 
 	template<bool extraCheck, typename ItemCreator>

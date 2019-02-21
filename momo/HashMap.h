@@ -391,7 +391,7 @@ public:
 	{
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return InsertResult(IteratorProxy(res.iterator), res.inserted);
+		return { IteratorProxy(res.iterator), res.inserted };
 	}
 
 	template<typename ArgIterator>
@@ -575,10 +575,10 @@ private:
 	{
 		Iterator iter = Find(static_cast<const Key&>(key));
 		if (!!iter)
-			return InsertResult(iter, false);
+			return { iter, false };
 		iter = pvAdd<false>(iter, std::forward<RKey>(key),
 			std::forward<ValueCreator>(valueCreator));
-		return InsertResult(iter, true);
+		return { iter, true };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>

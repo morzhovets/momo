@@ -1104,10 +1104,10 @@ private:
 		{
 			ConstIterator prevIter = std::prev(iter);
 			if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
-				return InsertResult(prevIter, false);
+				return { prevIter, false };
 		}
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
-		return InsertResult(iter, true);
+		return { iter, true };
 	}
 
 	template<bool extraCheck, typename ItemCreator>

@@ -125,20 +125,9 @@ namespace momo
 
 namespace internal
 {
-	template<typename TIterator>
-	class InsertResult
+	template<typename Iterator>
+	struct InsertResult
 	{
-	public:
-		typedef TIterator Iterator;
-
-	public:
-		InsertResult(Iterator iter, bool inserted) noexcept
-			: iterator(iter),
-			inserted(inserted)
-		{
-		}
-
-	public:
 		Iterator iterator;
 		bool inserted;
 	};

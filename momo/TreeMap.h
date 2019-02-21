@@ -451,7 +451,7 @@ public:
 	{
 		typename TreeSet::InsertResult res =
 			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return InsertResult(IteratorProxy(res.iterator), res.inserted);
+		return { IteratorProxy(res.iterator), res.inserted };
 	}
 
 	template<typename ArgIterator>
@@ -654,7 +654,7 @@ private:
 		};
 		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
 			static_cast<const Key&>(key), itemCreator);
-		return InsertResult(IteratorProxy(res.iterator), res.inserted);
+		return { IteratorProxy(res.iterator), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
