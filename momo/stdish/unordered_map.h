@@ -465,11 +465,12 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_constructible<value_type, Value>::value, std::pair<iterator, bool>>::type
+	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value,
+	//	std::pair<iterator, bool>>
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
+	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(const_iterator hint, Value&& value)
 
 	//std::pair<iterator, bool> insert(const value_type& value)
@@ -489,9 +490,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value,
-		std::pair<iterator, bool>>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, std::pair<iterator, bool>>
 	insert(const std::pair<First, Second>& value)
 	{
 		return pvEmplace(nullptr, std::forward_as_tuple(value.first),
@@ -499,8 +499,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
 	insert(const_iterator hint, const std::pair<First, Second>& value)
 	{
 		return pvEmplace(hint, std::forward_as_tuple(value.first),
@@ -508,9 +508,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value,
-		std::pair<iterator, bool>>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, std::pair<iterator, bool>>
 	insert(std::pair<First, Second>&& value)
 	{
 		return pvEmplace(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
@@ -518,8 +517,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(const_iterator hint, std::pair<First, Second>&& value)
 	{
 		return pvEmplace(hint, std::forward_as_tuple(std::forward<First>(value.first)),
@@ -885,10 +884,9 @@ private:
 	}
 
 	template<typename Hint, typename RKey, typename MappedCreator,
-		typename Key = typename std::decay<RKey>::type,
-		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
-	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
-		MappedCreator&& mappedCreator)
+		typename Key = typename std::decay<RKey>::type>
+	momo::internal::EnableIf<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
+	pvInsert(Hint /*hint*/, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
@@ -923,10 +921,9 @@ private:
 	}
 
 	template<typename RKey, typename MappedCreator,
-		typename Key = typename std::decay<RKey>::type,
-		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
-	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
-		MappedCreator&& mappedCreator)
+		typename Key = typename std::decay<RKey>::type>
+	momo::internal::EnableIf<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
+	pvInsert(const_iterator hint, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
 		HashMapIterator resIter = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));

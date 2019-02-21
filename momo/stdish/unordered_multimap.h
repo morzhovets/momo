@@ -417,11 +417,11 @@ public:
 	}
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
+	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//typename std::enable_if<std::is_constructible<value_type, Value>::value, iterator>::type
+	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(const_iterator hint, Value&& value)
 
 	//iterator insert(const value_type& value)
@@ -440,24 +440,24 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
 	insert(const std::pair<First, Second>& value)
 	{
 		return pvEmplace(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
 	insert(const_iterator, const std::pair<First, Second>& value)
 	{
 		return insert(value);
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(std::pair<First, Second>&& value)
 	{
 		return pvEmplace(std::forward_as_tuple(std::forward<First>(value.first)),
@@ -465,8 +465,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	typename std::enable_if<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>::type
+	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(const_iterator, std::pair<First, Second>&& value)
 	{
 		return insert(std::move(value));
@@ -682,9 +682,9 @@ private:
 	}
 
 	template<typename RKey, typename MappedCreator,
-		typename Key = typename std::decay<RKey>::type,
-		typename = typename std::enable_if<std::is_same<key_type, Key>::value>::type>
-	iterator pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
+		typename Key = typename std::decay<RKey>::type>
+	momo::internal::EnableIf<std::is_same<key_type, Key>::value, iterator>
+	pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator)));
