@@ -446,14 +446,13 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = find(key);
-		return std::pair<const_iterator, const_iterator>(iter,
-			(iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		iterator iter = find(key);
-		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	template<typename KeyArg>
@@ -462,8 +461,7 @@ public:
 	equal_range(const KeyArg& key) const
 	{
 		const_iterator iter = find(key);
-		return std::pair<const_iterator, const_iterator>(iter,
-			(iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	template<typename KeyArg>
@@ -471,7 +469,7 @@ public:
 	equal_range(const KeyArg& key)
 	{
 		iterator iter = find(key);
-		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	//template<typename Value>
@@ -865,7 +863,7 @@ private:
 			{
 				KeyManager::Destroy(memManager, *&keyBuffer);
 				keyDestroyed = true;
-				return std::pair<iterator, bool>(IteratorProxy(iter), false);
+				return { IteratorProxy(iter), false };
 			}
 			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
 				(key_type* newKey, mapped_type* newMapped)
@@ -883,7 +881,7 @@ private:
 				}
 			};
 			HashMapIterator resIter = mHashMap.AddCrt(iter, valueCreator);
-			return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+			return { IteratorProxy(resIter), true };
 		}
 		catch (...)
 		{
@@ -900,7 +898,7 @@ private:
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-		return std::pair<iterator, bool>(IteratorProxy(res.iterator), res.inserted);
+		return { IteratorProxy(res.iterator), res.inserted };
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
@@ -927,7 +925,7 @@ private:
 		};
 		HashMapIterator resIter = mHashMap.AddCrt(
 			ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
-		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+		return { IteratorProxy(resIter), true };
 	}
 
 	template<typename RKey, typename MappedCreator,
@@ -937,7 +935,7 @@ private:
 	{
 		HashMapIterator resIter = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-		return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+		return { IteratorProxy(resIter), true };
 	}
 #endif
 

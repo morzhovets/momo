@@ -391,10 +391,10 @@ public:
 	{
 		const_iterator iter = lower_bound(key);
 		if (TreeTraits::multiKey)
-			return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
+			return { iter, upper_bound(key) };
 		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
-			return std::pair<const_iterator, const_iterator>(iter, iter);
-		return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
+			return { iter, iter };
+		return { iter, std::next(iter) };
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
@@ -404,7 +404,7 @@ public:
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{
-		return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
+		return { lower_bound(key), upper_bound(key) };
 	}
 
 	//template<typename KeyArg>
@@ -414,7 +414,7 @@ public:
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
 		typename TreeSet::InsertResult res = mTreeSet.Insert(std::move(value));
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, value_type&& value)
@@ -427,7 +427,7 @@ public:
 	std::pair<iterator, bool> insert(const value_type& value)
 	{
 		typename TreeSet::InsertResult res = mTreeSet.Insert(value);
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, const value_type& value)
@@ -475,7 +475,7 @@ public:
 		typedef typename TreeSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		typename TreeSet::InsertResult res = mTreeSet.Insert(std::move(extItem));
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	template<typename... ValueArgs>

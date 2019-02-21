@@ -404,8 +404,7 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = find(key);
-		return std::pair<const_iterator, const_iterator>(iter,
-			(iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
@@ -416,8 +415,7 @@ public:
 	equal_range(const KeyArg& key) const
 	{
 		const_iterator iter = find(key);
-		return std::pair<const_iterator, const_iterator>(iter,
-			(iter != end()) ? std::next(iter) : iter);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	//template<typename KeyArg>
@@ -427,7 +425,7 @@ public:
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(value));
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, value_type&& value)
@@ -443,7 +441,7 @@ public:
 	std::pair<iterator, bool> insert(const value_type& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(value);
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, const value_type& value)
@@ -497,7 +495,7 @@ public:
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(extItem));
-		return std::pair<iterator, bool>(res.iterator, res.inserted);
+		return { res.iterator, res.inserted };
 	}
 
 	template<typename... ValueArgs>

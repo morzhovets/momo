@@ -649,13 +649,13 @@ private:
 		Iterator end = IteratorProxy(hashMultiMap.GetEnd());
 		auto keyIter = hashMultiMap.Find(key);
 		if (!keyIter)
-			return std::pair<Iterator, Iterator>(end, end);
+			return { end, end };
 		size_t count = keyIter->values.GetCount();
 		if (count == 0)	//?
-			return std::pair<Iterator, Iterator>(end, end);
+			return { end, end };
 		Iterator first = IteratorProxy(hashMultiMap.MakeIterator(keyIter, 0));
 		Iterator last = IteratorProxy(std::next(hashMultiMap.MakeIterator(keyIter, count - 1)));
-		return std::pair<Iterator, Iterator>(first, last);
+		return { first, last };
 	}
 
 	template<typename... KeyArgs, typename... MappedArgs>

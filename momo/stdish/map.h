@@ -458,20 +458,20 @@ namespace internal
 		{
 			const_iterator iter = lower_bound(key);
 			if (TreeTraits::multiKey)
-				return std::pair<const_iterator, const_iterator>(iter, upper_bound(key));
+				return { iter, upper_bound(key) };
 			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-				return std::pair<const_iterator, const_iterator>(iter, iter);
-			return std::pair<const_iterator, const_iterator>(iter, std::next(iter));
+				return { iter, iter };
+			return { iter, std::next(iter) };
 		}
 
 		std::pair<iterator, iterator> equal_range(const key_type& key)
 		{
 			iterator iter = lower_bound(key);
 			if (TreeTraits::multiKey)
-				return std::pair<iterator, iterator>(iter, upper_bound(key));
+				return { iter, upper_bound(key) };
 			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-				return std::pair<iterator, iterator>(iter, iter);
-			return std::pair<iterator, iterator>(iter, std::next(iter));
+				return { iter, iter };
+			return { iter, std::next(iter) };
 		}
 
 		template<typename KeyArg>
@@ -479,14 +479,14 @@ namespace internal
 			std::pair<const_iterator, const_iterator>>
 		equal_range(const KeyArg& key) const
 		{
-			return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
+			return { lower_bound(key), upper_bound(key) };
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
 		equal_range(const KeyArg& key)
 		{
-			return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+			return { lower_bound(key), upper_bound(key) };
 		}
 
 		//template<typename Value>
@@ -736,9 +736,9 @@ namespace internal
 			{
 				iterator prevIter = std::prev(iter);
 				if (!mTreeMap.GetTreeTraits().IsLess(prevIter->first, key))
-					return std::pair<iterator, bool>(prevIter, false);
+					return { prevIter, false };
 			}
-			return std::pair<iterator, bool>(iter, true);
+			return { iter, true };
 		}
 
 		std::pair<iterator, bool> pvFind(const_iterator hint, const key_type& key)
@@ -747,8 +747,8 @@ namespace internal
 				return pvFind(nullptr, key);
 			if (hint != end() && !pvIsOrdered(key, hint->first))
 				return pvFind(nullptr, key);
-			return std::pair<iterator, bool>(IteratorProxy(mTreeMap.MakeMutableIterator(
-				ConstIteratorProxy::GetBaseIterator(hint))), true);
+			return { IteratorProxy(mTreeMap.MakeMutableIterator(
+				ConstIteratorProxy::GetBaseIterator(hint))), true };
 		}
 
 		template<typename Hint, typename... KeyArgs, typename MappedCreator>
@@ -789,7 +789,7 @@ namespace internal
 				};
 				TreeMapIterator resIter = mTreeMap.AddCrt(
 					IteratorProxy::GetBaseIterator(res.first), valueCreator);
-				return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+				return { IteratorProxy(resIter), true };
 			}
 			catch (...)
 			{
@@ -810,7 +810,7 @@ namespace internal
 				return res;
 			TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
 				std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-			return std::pair<iterator, bool>(IteratorProxy(resIter), true);
+			return { IteratorProxy(resIter), true };
 		}
 
 		template<typename Iterator>
