@@ -269,9 +269,9 @@ namespace internal
 			}
 
 		private:
-			template<size_t index, typename... Items,
-				typename std::enable_if<(index < sizeof...(Items)), int>::type = 0>
-			bool pvIsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
+			template<size_t index, typename... Items>
+			momo::internal::EnableIf<(index < sizeof...(Items)), bool> pvIsEqual(
+				const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
 				const auto& item1 = pair.second;
@@ -280,9 +280,9 @@ namespace internal
 				return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 			}
 
-			template<size_t index, typename... Items,
-				typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
-			bool pvIsEqual(const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
+			template<size_t index, typename... Items>
+			momo::internal::EnableIf<(index == sizeof...(Items)), bool> pvIsEqual(
+				const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
 			{
 				return true;
 			}
@@ -1057,18 +1057,18 @@ namespace internal
 			return 0;
 		}
 
-		template<size_t index, typename... Items,
-			typename std::enable_if<(index < sizeof...(Items)), int>::type = 0>
-		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& tuple)
+		template<size_t index, typename... Items>
+		static momo::internal::EnableIf<(index < sizeof...(Items)), size_t> pvGetHashCode(
+			const OffsetItemTuple<Items...>& tuple)
 		{
 			const auto& pair = std::get<index>(tuple);
 			const auto& item = pair.second;
 			return pvGetHashCode(item, pair.first) + pvGetHashCode<index + 1>(tuple);	//?
 		}
 
-		template<size_t index, typename... Items,
-			typename std::enable_if<(index == sizeof...(Items)), int>::type = 0>
-		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& /*tuple*/) noexcept
+		template<size_t index, typename... Items>
+		static momo::internal::EnableIf<(index == sizeof...(Items)), size_t> pvGetHashCode(
+			const OffsetItemTuple<Items...>& /*tuple*/) noexcept
 		{
 			return 0;
 		}

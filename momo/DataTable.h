@@ -997,9 +997,9 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	template<typename Result, typename RowFilter, typename... Items,
-		typename std::enable_if<(sizeof...(Items) > 0), int>::type = 0>
-	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
+	template<typename Result, typename RowFilter, typename... Items>
+	momo::internal::EnableIf<(sizeof...(Items) > 0), Result> pvSelect(const RowFilter& rowFilter,
+		const Equaler<Items>&... equalers) const
 	{
 		static const size_t columnCount = sizeof...(equalers);
 		const ColumnList& columnList = GetColumnList();

@@ -319,15 +319,13 @@ public:
 	}
 
 	template<typename KeyArg>
-	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
-	Find(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	typename std::enable_if<IsValidKeyArg<KeyArg>::value, Iterator>::type
-	Find(const KeyArg& key)
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key)
 	{
 		return IteratorProxy(mHashSet.Find(key));
 	}
@@ -338,8 +336,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
-	ContainsKey(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}

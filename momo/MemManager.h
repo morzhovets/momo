@@ -137,16 +137,14 @@ namespace internal
 		}
 
 	private:
-		template<size_t shift = ptrUsefulBitCount,
-			typename std::enable_if<(shift < sizeof(void*) * 8), int>::type = 0>
-		static void pvCheckPtr(void* ptr) noexcept
+		template<size_t shift = ptrUsefulBitCount>
+		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
 		{
 			MOMO_ASSERT(reinterpret_cast<uintptr_t>(ptr) >> shift == (uintptr_t)0);
 		}
 
-		template<size_t shift = ptrUsefulBitCount,
-			typename std::enable_if<(shift == sizeof(void*) * 8), int>::type = 0>
-		static void pvCheckPtr(void* /*ptr*/) noexcept
+		template<size_t shift = ptrUsefulBitCount>
+		static EnableIf<(shift == sizeof(void*) * 8), void> pvCheckPtr(void* /*ptr*/) noexcept
 		{
 		}
 	};

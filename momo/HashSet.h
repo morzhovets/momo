@@ -696,8 +696,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	typename std::enable_if<IsValidKeyArg<KeyArg>::value, ConstIterator>::type
-	Find(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -708,8 +707,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	typename std::enable_if<IsValidKeyArg<KeyArg>::value, bool>::type
-	ContainsKey(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
 	{
 		return !!pvFind(key);
 	}
