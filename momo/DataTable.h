@@ -710,15 +710,15 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	void AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	bool AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		mIndexes.AddUniqueHash(&GetColumnList(), mRaws, column, columns...);
+		return mIndexes.AddUniqueHash(&GetColumnList(), mRaws, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	void AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	bool AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		mIndexes.AddMultiHash(&GetColumnList(), mRaws, column, columns...);
+		return mIndexes.AddMultiHash(&GetColumnList(), mRaws, column, columns...);
 	}
 
 	template<typename Item, typename... Items>

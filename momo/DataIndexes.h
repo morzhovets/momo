@@ -752,17 +752,17 @@ namespace internal
 		}
 
 		template<typename Raws, typename... Items>
-		void AddUniqueHash(const ColumnList* columnList, const Raws& raws,
+		bool AddUniqueHash(const ColumnList* columnList, const Raws& raws,
 			const Column<Items>&... columns)
 		{
-			pvAddHash(columnList, mUniqueHashes, raws, columns...);
+			return pvAddHash(columnList, mUniqueHashes, raws, columns...);
 		}
 
 		template<typename Raws, typename... Items>
-		void AddMultiHash(const ColumnList* columnList, const Raws& raws,
+		bool AddMultiHash(const ColumnList* columnList, const Raws& raws,
 			const Column<Items>&... columns)
 		{
-			pvAddHash(columnList, mMultiHashes, raws, columns...);
+			return pvAddHash(columnList, mMultiHashes, raws, columns...);
 		}
 
 		template<typename... Items>
@@ -1002,7 +1002,7 @@ namespace internal
 		}
 
 		template<typename Hashes, typename Raws, typename... Items>
-		void pvAddHash(const ColumnList* columnList, Hashes& hashes, const Raws& raws,
+		bool pvAddHash(const ColumnList* columnList, Hashes& hashes, const Raws& raws,
 			const Column<Items>&... columns)
 		{
 			static const size_t columnCount = sizeof...(columns);
@@ -1015,7 +1015,7 @@ namespace internal
 			}
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			if (pvGetHash(hashes, sortedOffsets) != nullptr)
-				return;
+				return false;
 			auto hashFunc = [columnList, offsets] (Raw* raw)
 				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets.data()); };
 			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
@@ -1030,6 +1030,7 @@ namespace internal
 			}
 			hashes.Reserve(hashes.GetCount() + 1);
 			hashes.AddBackNogrow(std::move(newHash));
+			return true;
 		}
 
 		template<typename Hashes, typename... Items>
