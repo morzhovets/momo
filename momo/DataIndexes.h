@@ -213,8 +213,8 @@ namespace internal
 
 		typedef momo::internal::NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
-		typedef std::function<size_t(Raw*)> HashFunc;
-		typedef std::function<bool(Raw*, Raw*)> EqualFunc;
+		typedef std::function<size_t(Raw*, const size_t*)> HashFunc;
+		typedef std::function<bool(Raw*, Raw*, const size_t*)> EqualFunc;
 
 		template<typename... Items>
 		struct HashTupleKey
@@ -240,15 +240,16 @@ namespace internal
 			static const bool isFastNothrowHashable = false;
 
 		public:
-			explicit HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc)
-				: mHashFunc(std::move(hashFunc)),
+			explicit HashTraits(Offsets&& offsets, HashFunc&& hashFunc, EqualFunc&& equalFunc) noexcept
+				: mOffsets(std::move(offsets)),
+				mHashFunc(std::move(hashFunc)),
 				mEqualFunc(std::move(equalFunc))
 			{
 			}
 
 			size_t GetHashCode(Raw* key) const
 			{
-				return mHashFunc(key);
+				return mHashFunc(key, mOffsets.GetItems());
 			}
 
 			template<typename... Items>
@@ -259,7 +260,7 @@ namespace internal
 
 			bool IsEqual(Raw* key1, Raw* key2) const
 			{
-				return mEqualFunc(key1, key2);
+				return mEqualFunc(key1, key2, mOffsets.GetItems());
 			}
 
 			template<typename... Items>
@@ -288,6 +289,7 @@ namespace internal
 			}
 
 		private:
+			Offsets mOffsets;
 			HashFunc mHashFunc;
 			EqualFunc mEqualFunc;
 		};
@@ -354,9 +356,10 @@ namespace internal
 			};
 
 		public:
-			explicit UniqueHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit UniqueHash(Offsets&& offsets, Offsets&& sortedOffsets,
+				HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashSet(typename HashSet::HashTraits(std::move(hashFunc), std::move(equalFunc)),
+				mHashSet(HashTraits(std::move(offsets), std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
@@ -542,9 +545,10 @@ namespace internal
 			};
 
 		public:
-			explicit MultiHash(Offsets&& sortedOffsets, HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit MultiHash(Offsets&& offsets, Offsets&& sortedOffsets,
+				HashFunc&& hashFunc, EqualFunc&& equalFunc)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashMultiMap(typename HashMultiMap::HashTraits(std::move(hashFunc), std::move(equalFunc)),
+				mHashMultiMap(HashTraits(std::move(offsets), std::move(hashFunc), std::move(equalFunc)),
 					MemManagerPtr(mSortedOffsets.GetMemManager())),
 				mRawIndex(0)
 			{
@@ -703,12 +707,12 @@ namespace internal
 		};
 
 	private:
-		template<typename Hash>
-		using Hashes = Array<Hash, MemManagerPtr, ArrayItemTraits<Hash, MemManagerPtr>,
+		template<typename Index>
+		using Indexes = Array<Index, MemManagerPtr, ArrayItemTraits<Index, MemManagerPtr>,
 			momo::internal::NestedArraySettings<ArraySettings<0, false>>>;	//?
 
-		typedef Hashes<UniqueHash> UniqueHashes;
-		typedef Hashes<MultiHash> MultiHashes;
+		typedef Indexes<UniqueHash> UniqueHashes;
+		typedef Indexes<MultiHash> MultiHashes;
 
 	public:
 		explicit DataIndexes(MemManager& memManager) noexcept
@@ -777,6 +781,16 @@ namespace internal
 			return pvRemoveHash(columnList, mMultiHashes, columns...);
 		}
 
+		void RemoveUniqueHashes() noexcept
+		{
+			mUniqueHashes.Clear();
+		}
+
+		void RemoveMultiHashes() noexcept
+		{
+			mMultiHashes.Clear();
+		}
+
 		typename UniqueHash::RawBounds FindRaws(const ColumnList* /*columnList*/,
 			const UniqueHash& uniqueHash, Raw* raw, VersionKeeper version) const
 		{
@@ -832,7 +846,7 @@ namespace internal
 				multiHash.Accept();
 		}
 
-		void RemoveRaw(Raw* raw)
+		void RemoveRaw(Raw* raw) noexcept
 		{
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 			{
@@ -976,21 +990,21 @@ namespace internal
 		}
 
 	private:
-		template<typename Hashes, typename... Items>
-		const typename Hashes::Item* pvGetHash(const ColumnList* columnList, const Hashes& hashes,
+		template<typename Hash, typename... Items>
+		const Hash* pvGetHash(const ColumnList* columnList, const Indexes<Hash>& hashes,
 			const Column<Items>&... columns) const
 		{
 			static const size_t columnCount = sizeof...(columns);
-			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
+			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			return pvGetHash(hashes, sortedOffsets);
 		}
 
-		template<typename Hashes, size_t columnCount>
-		const typename Hashes::Item* pvGetHash(const Hashes& hashes,
+		template<typename Hash, size_t columnCount>
+		const Hash* pvGetHash(const Indexes<Hash>& hashes,
 			const std::array<size_t, columnCount>& sortedOffsets) const
 		{
-			for (const auto& hash : hashes)
+			for (const Hash& hash : hashes)
 			{
 				const Offsets& curSortedOffsets = hash.GetSortedOffsets();
 				bool equal = curSortedOffsets.GetCount() == columnCount
@@ -1001,28 +1015,29 @@ namespace internal
 			return nullptr;
 		}
 
-		template<typename Hashes, typename Raws, typename... Items>
-		bool pvAddHash(const ColumnList* columnList, Hashes& hashes, const Raws& raws,
+		template<typename Hash, typename Raws, typename... Items>
+		bool pvAddHash(const ColumnList* columnList, Indexes<Hash>& hashes, const Raws& raws,
 			const Column<Items>&... columns)
 		{
 			static const size_t columnCount = sizeof...(columns);
 			MOMO_STATIC_ASSERT(columnCount > 0);
-			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};	// C++11
+			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};
 			for (size_t offset : offsets)
 			{
 				if (columnList->IsMutable(offset))
-					throw std::runtime_error("Cannot add index on mutable column");
+					throw std::runtime_error("Cannot add index on mutable column");	//?
 			}
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			if (pvGetHash(hashes, sortedOffsets) != nullptr)
 				return false;
-			auto hashFunc = [columnList, offsets] (Raw* raw)
-				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets.data()); };
-			auto equalFunc = [columnList, offsets] (Raw* raw1, Raw* raw2)
-				{ return pvIsEqual<void, Items...>(columnList, raw1, raw2, offsets.data()); };
-			Offsets newHashOffsets(sortedOffsets.begin(), sortedOffsets.end(),
-				MemManagerPtr(hashes.GetMemManager()));
-			typename Hashes::Item newHash(std::move(newHashOffsets), hashFunc, equalFunc);
+			auto hashFunc = [columnList] (Raw* raw, const size_t* offsets)
+				{ return pvGetHashCode<void, Items...>(columnList, raw, offsets); };
+			auto equalFunc = [columnList] (Raw* raw1, Raw* raw2, const size_t* offsets)
+				{ return pvIsEqual<void, Items...>(columnList, raw1, raw2, offsets); };
+			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
+			Hash newHash(Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)),
+				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)),
+				hashFunc, equalFunc);
 			for (Raw* raw : raws)
 			{
 				newHash.Add(raw);
@@ -1033,11 +1048,11 @@ namespace internal
 			return true;
 		}
 
-		template<typename Hashes, typename... Items>
-		bool pvRemoveHash(const ColumnList* columnList, Hashes& hashes,
+		template<typename Hash, typename... Items>
+		bool pvRemoveHash(const ColumnList* columnList, Indexes<Hash>& hashes,
 			const Column<Items>&... columns)
 		{
-			const auto* hash = pvGetHash(columnList, hashes, columns...);
+			const Hash* hash = pvGetHash(columnList, hashes, columns...);
 			if (hash == nullptr)
 				return false;
 			hashes.Remove(hash - hashes.GetItems(), 1);

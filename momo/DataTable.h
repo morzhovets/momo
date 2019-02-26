@@ -733,6 +733,16 @@ public:
 		return mIndexes.RemoveMultiHash(&GetColumnList(), column, columns...);
 	}
 
+	void RemoveUniqueHashIndexes() noexcept
+	{
+		mIndexes.RemoveUniqueHashes();
+	}
+
+	void RemoveMultiHashIndexes() noexcept
+	{
+		mIndexes.RemoveMultiHashes();
+	}
+
 	ConstSelection SelectEmpty() const
 	{
 		return pvSelectEmpty();
