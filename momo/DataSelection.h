@@ -786,10 +786,10 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		int pvCompare(const size_t* offsets, Raw* raw1, Raw* raw2) const
+		static int pvCompare(const size_t* offsets, Raw* raw1, Raw* raw2)
 		{
-			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw1, *offsets);
-			const Item& item2 = mColumnList->template GetByOffset<const Item>(raw2, *offsets);
+			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, *offsets);
+			const Item& item2 = ColumnList::template GetByOffset<const Item>(raw2, *offsets);
 			int cmp = DataTraits::Compare(item1, item2);
 			if (cmp != 0)
 				return cmp;
@@ -797,7 +797,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		int pvCompare(const size_t* /*offsets*/, Raw* /*raw1*/, Raw* /*raw2*/) const noexcept
+		static int pvCompare(const size_t* /*offsets*/, Raw* /*raw1*/, Raw* /*raw2*/) noexcept
 		{
 			return 0;
 		}
@@ -821,10 +821,10 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		int pvCompare(const size_t* offsets, Raw* raw, const Equaler<Item>& equaler,
-			const Equaler<Items>&... equalers) const
+		static int pvCompare(const size_t* offsets, Raw* raw, const Equaler<Item>& equaler,
+			const Equaler<Items>&... equalers)
 		{
-			const Item& item1 = mColumnList->template GetByOffset<const Item>(raw, *offsets);
+			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw, *offsets);
 			const Item& item2 = equaler.GetItemArg();
 			int cmp = DataTraits::Compare(item1, item2);
 			if (cmp != 0)
@@ -833,7 +833,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		int pvCompare(const size_t* /*offsets*/, Raw* /*raw*/) const noexcept
+		static int pvCompare(const size_t* /*offsets*/, Raw* /*raw*/) noexcept
 		{
 			return 0;
 		}

@@ -283,7 +283,7 @@ private:
 		};
 
 	public:
-		Graph() noexcept
+		explicit Graph() noexcept
 		{
 			mEdgeNumber = 0;
 			std::fill(mEdges.begin(), mEdges.end(), nullptr);
@@ -471,9 +471,9 @@ public:
 	}
 
 	template<typename Item>
-	Item& GetByOffset(Raw* raw, size_t offset) const noexcept
+	static Item& GetByOffset(Raw* raw, size_t offset) noexcept
 	{
-		MOMO_ASSERT(offset < mTotalSize);
+		//MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
 		return *reinterpret_cast<Item*>(raw + offset);
 	}
@@ -754,7 +754,7 @@ public:
 	}
 
 	template<typename Item>
-	Item& GetByOffset(Raw* raw, size_t offset) const noexcept
+	static Item& GetByOffset(Raw* raw, size_t offset) noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
 		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);

@@ -1079,8 +1079,7 @@ private:
 	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const RowFilter& rowFilter,
 		const Tuple& tuple) const
 	{
-		return pvMakeSelection(
-			mIndexes.FindRaws(&GetColumnList(), index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
+		return pvMakeSelection(mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
 			rowFilter, static_cast<Result*>(nullptr));
 	}
 
@@ -1134,7 +1133,7 @@ private:
 		const ColumnList* columnList = &GetColumnList();
 		MOMO_CHECK(uniqueHashIndex != nullptr);
 		MOMO_CHECK(&row.GetColumnList() == columnList);
-		auto raws = mIndexes.FindRaws(columnList, *uniqueHashIndex, RowProxy::GetRaw(row),
+		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row),
 			VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
@@ -1167,9 +1166,8 @@ private:
 	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/,
 		const Tuple& tuple) const
 	{
-		const ColumnList* columnList = &GetColumnList();
-		return RowBoundsProxy(columnList,
-			mIndexes.FindRaws(columnList, index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
+		return RowBoundsProxy(&GetColumnList(),
+			mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 

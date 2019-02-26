@@ -88,13 +88,13 @@ namespace internal
 		template<typename Item>
 		const Item& GetByOffset(size_t offset) const
 		{
-			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
+			return ColumnList::template GetByOffset<const Item>(mRaw, offset);
 		}
 
 		template<typename Item>
 		Item& GetByOffset(size_t offset)
 		{
-			return mColumnList->template GetByOffset<Item>(mRaw, offset);
+			return ColumnList::template GetByOffset<Item>(mRaw, offset);
 		}
 
 		template<typename Item>
@@ -196,7 +196,7 @@ namespace internal
 		const Item& GetByOffset(size_t offset) const
 		{
 			VersionKeeper::Check();
-			return mColumnList->template GetByOffset<const Item>(mRaw, offset);
+			return ColumnList::template GetByOffset<const Item>(mRaw, offset);
 		}
 
 		template<typename Item>
@@ -266,9 +266,8 @@ namespace internal
 		Item& GetMutableByOffset(size_t offset) const
 		{
 			ConstReference::GetRaw();	// check
-			const ColumnList& columnList = ConstReference::GetColumnList();
-			MOMO_CHECK(columnList.IsMutable(offset));
-			return columnList.template GetByOffset<Item>(ConstReference::ptGetRaw(), offset);
+			MOMO_CHECK(ConstReference::GetColumnList().IsMutable(offset));
+			return ColumnList::template GetByOffset<Item>(ConstReference::ptGetRaw(), offset);
 		}
 
 		template<typename Item>
