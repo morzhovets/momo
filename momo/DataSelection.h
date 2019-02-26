@@ -56,6 +56,7 @@ namespace internal
 		{
 			const Raws* raws = pvGetRaws();
 			size_t newIndex = pvGetIndex() + diff;
+			(void)raws; (void)newIndex;
 			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
 			ArrayIndexIterator::operator+=(diff);
 			return *this;
@@ -71,6 +72,7 @@ namespace internal
 		{
 			const Raws* raws = pvGetRaws();
 			size_t index = pvGetIndex();
+			(void)raws; (void)index;
 			MOMO_CHECK(raws != nullptr && index < raws->GetCount());
 			return ArrayIndexIterator::operator->();
 			//return raws->GetItems() + index;

@@ -1022,7 +1022,10 @@ namespace internal
 			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> offsets = {{ columnList->GetOffset(columns)... }};
 			for (size_t offset : offsets)
+			{
+				(void)offset;
 				MOMO_CHECK(!columnList->IsMutable(offset));
+			}
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			if (pvGetHash(hashes, sortedOffsets) != nullptr)
 				return false;
