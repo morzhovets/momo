@@ -188,17 +188,18 @@ public:
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
+
+		assert(tableCopy.GetUniqueHashIndex(intCol, strCol));
+		assert(tableCopy.GetMultiHashIndex(intCol));
+		assert(tableCopy.GetMultiHashIndex(strCol));
+
+		tableCopy.RemoveUniqueHashIndexes();
+		tableCopy.RemoveMultiHashIndexes();
+
 		tableCopy = DataTable(table.Select());
 		assert(tableCopy.GetCount() == count);
 		tableCopy = DataTable(ctable.Select());
 		assert(tableCopy.GetCount() == count);
-
-		//assert(tableCopy.GetUniqueHashIndex(intCol, strCol));
-		//assert(tableCopy.GetMultiHashIndex(intCol));
-		//assert(tableCopy.GetMultiHashIndex(strCol));
-
-		tableCopy.RemoveUniqueHashIndexes();
-		tableCopy.RemoveMultiHashIndexes();
 
 		table.AssignRows(table.GetBegin(), table.GetEnd());
 		table.RemoveRows(table.GetBegin(), table.GetBegin());

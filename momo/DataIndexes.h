@@ -239,10 +239,17 @@ namespace internal
 			static const bool isFastNothrowHashable = false;
 
 		public:
-			explicit HashTraits(Offsets&& offsets, HashFunc&& hashFunc, EqualFunc&& equalFunc) noexcept
-				: mOffsets(std::move(offsets)),
-				mHashFunc(std::move(hashFunc)),
-				mEqualFunc(std::move(equalFunc))
+			explicit HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc, Offsets&& offsets) noexcept
+				: mHashFunc(std::move(hashFunc)),
+				mEqualFunc(std::move(equalFunc)),
+				mOffsets(std::move(offsets))
+			{
+			}
+
+			explicit HashTraits(const HashTraits& hashTraits, MemManagerPtr&& memManagerPtr)
+				: mHashFunc(hashTraits.mHashFunc),
+				mEqualFunc(hashTraits.mEqualFunc),
+				mOffsets(hashTraits.mOffsets, std::move(memManagerPtr))
 			{
 			}
 
@@ -288,9 +295,9 @@ namespace internal
 			}
 
 		private:
-			Offsets mOffsets;
 			HashFunc mHashFunc;
 			EqualFunc mEqualFunc;
+			Offsets mOffsets;
 		};
 
 	public:
@@ -355,11 +362,9 @@ namespace internal
 			};
 
 		public:
-			explicit UniqueHash(Offsets&& offsets, Offsets&& sortedOffsets,
-				HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit UniqueHash(HashTraits&& hashTraits, Offsets&& sortedOffsets)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashSet(HashTraits(std::move(offsets), std::move(hashFunc), std::move(equalFunc)),
-					MemManagerPtr(mSortedOffsets.GetMemManager()))
+				mHashSet(std::move(hashTraits), MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
 
@@ -389,6 +394,11 @@ namespace internal
 			const Offsets& GetSortedOffsets() const noexcept
 			{
 				return mSortedOffsets;
+			}
+
+			const HashTraits& GetHashTraits() const noexcept
+			{
+				return mHashSet.GetHashTraits();
 			}
 
 			void Reserve(size_t capacity)
@@ -544,11 +554,9 @@ namespace internal
 			};
 
 		public:
-			explicit MultiHash(Offsets&& offsets, Offsets&& sortedOffsets,
-				HashFunc&& hashFunc, EqualFunc&& equalFunc)
+			explicit MultiHash(HashTraits&& hashTraits, Offsets&& sortedOffsets)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashMultiMap(HashTraits(std::move(offsets), std::move(hashFunc), std::move(equalFunc)),
-					MemManagerPtr(mSortedOffsets.GetMemManager())),
+				mHashMultiMap(std::move(hashTraits), MemManagerPtr(mSortedOffsets.GetMemManager())),
 				mRawIndex(0)
 			{
 			}
@@ -583,6 +591,11 @@ namespace internal
 				return mSortedOffsets;
 			}
 
+			const HashTraits& GetHashTraits() const noexcept
+			{
+				return mHashMultiMap.GetHashTraits();
+			}
+
 			size_t GetKeyCount() const noexcept
 			{
 				return mHashMultiMap.GetKeyCount();
@@ -590,6 +603,7 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				MOMO_ASSERT(!mKeyIterator);
 				mHashMultiMap.Clear();
 			}
 
@@ -782,12 +796,42 @@ namespace internal
 
 		void RemoveUniqueHashes() noexcept
 		{
-			mUniqueHashes.Clear();
+			mUniqueHashes.Clear(true);
 		}
 
 		void RemoveMultiHashes() noexcept
 		{
-			mMultiHashes.Clear();
+			mMultiHashes.Clear(true);
+		}
+
+		void AddIndexes(const DataIndexes& indexes)
+		{
+			MOMO_ASSERT(mUniqueHashes.IsEmpty());
+			MOMO_ASSERT(mMultiHashes.IsEmpty());
+			const MemManagerPtr& memManagerPtr = mUniqueHashes.GetMemManager();
+			try
+			{
+				mUniqueHashes.Reserve(indexes.mUniqueHashes.GetCount());
+				mMultiHashes.Reserve(indexes.mMultiHashes.GetCount());
+				for (const UniqueHash& srcUniqueHash : indexes.mUniqueHashes)
+				{
+					mUniqueHashes.AddBackNogrowVar(
+						HashTraits(srcUniqueHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+						Offsets(srcUniqueHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
+				}
+				for (const MultiHash& srcMultiHash : indexes.mMultiHashes)
+				{
+					mMultiHashes.AddBackNogrowVar(
+						HashTraits(srcMultiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+						Offsets(srcMultiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
+				}
+			}
+			catch (...)
+			{
+				RemoveUniqueHashes();
+				RemoveMultiHashes();
+				throw;
+			}
 		}
 
 		typename UniqueHash::RawBounds FindRaws(const UniqueHash& uniqueHash, Raw* raw,
@@ -1034,16 +1078,17 @@ namespace internal
 			auto equalFunc = [] (Raw* raw1, Raw* raw2, const size_t* offsets)
 				{ return pvIsEqual<void, Items...>(raw1, raw2, offsets); };
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
-			Hash newHash(Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)),
-				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)),
-				hashFunc, equalFunc);
+			HashTraits hashTraits(hashFunc, equalFunc,
+				Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)));
+			Hash hash(std::move(hashTraits),
+				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)));
 			for (Raw* raw : raws)
 			{
-				newHash.Add(raw);
-				newHash.Accept();
+				hash.Add(raw);
+				hash.Accept();
 			}
 			hashes.Reserve(hashes.GetCount() + 1);
-			hashes.AddBackNogrow(std::move(newHash));
+			hashes.AddBackNogrow(std::move(hash));
 			return true;
 		}
 

@@ -332,6 +332,7 @@ public:
 	DataTable(const DataTable& table, const RowFilter& rowFilter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
+		mIndexes.AddIndexes(table.mIndexes);
 		pvFill(table, rowFilter);
 	}
 
