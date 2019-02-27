@@ -7,7 +7,7 @@
   momo/MemPool.h
 
   namespace momo:
-    struct MemPoolConst
+    class MemPoolConst
     class MemPoolParams
     class MemPoolParamsStatic
     class MemPoolSettings
@@ -23,23 +23,19 @@
 namespace momo
 {
 
-struct MemPoolConst
+class MemPoolConst
 {
+public:
 	static const size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
 	static const size_t defaultCachedFreeBlockCount = MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT;
 
-	template<size_t blockSize, size_t maxAlignment = MOMO_MAX_ALIGNMENT>
-	struct BlockAlignmenter
+public:
+	static constexpr size_t GetBlockAlignment(size_t blockSize,
+		size_t maxAlignment = MOMO_MAX_ALIGNMENT) noexcept
 	{
-		static const size_t blockAlignment = (blockSize >= maxAlignment)
-			? maxAlignment : BlockAlignmenter<blockSize, maxAlignment / 2>::blockAlignment;
-	};
-
-	template<size_t blockSize>
-	struct BlockAlignmenter<blockSize, 1>
-	{
-		static const size_t blockAlignment = 1;
-	};
+		return (maxAlignment > blockSize && maxAlignment > 1)
+			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
+	}
 };
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
@@ -96,7 +92,7 @@ protected:
 };
 
 template<size_t tBlockSize,
-	size_t tBlockAlignment = MemPoolConst::BlockAlignmenter<tBlockSize>::blockAlignment,
+	size_t tBlockAlignment = MemPoolConst::GetBlockAlignment(tBlockSize),
 	size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
 class MemPoolParamsStatic
@@ -117,6 +113,10 @@ public:
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
+	explicit MemPoolParamsStatic() noexcept
+	{
+	}
+
 	bool IsEqual(const MemPoolParamsStatic& /*params*/) const noexcept
 	{
 		return true;
