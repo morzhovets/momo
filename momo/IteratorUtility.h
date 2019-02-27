@@ -174,6 +174,7 @@ namespace internal
 
 		void Check(const size_t* version) const
 		{
+			(void)version;
 			MOMO_ASSERT(version != nullptr);
 			MOMO_CHECK(mContainerVersion == version && mVersion == *version);
 		}
