@@ -32,6 +32,8 @@ public:
 
 	typedef HashBucketOpenDefault HashBucket;
 
+	static const size_t selectEqualerMaxCount = 6;
+
 public:
 	template<typename Item>
 	static size_t GetHashCode(const Item& item)
@@ -1008,11 +1010,28 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	template<typename Result, typename RowFilter, typename... Items>
-	momo::internal::EnableIf<(sizeof...(Items) > 0), Result> pvSelect(const RowFilter& rowFilter,
+	template<typename Result, typename RowFilter, typename Item, typename... Items,
+		size_t columnCount = sizeof...(Items) + 1,
+		typename = momo::internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount)>>
+	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
-		static const size_t columnCount = sizeof...(equalers);
+		size_t offset = GetColumnList().GetOffset(equaler.GetColumn());
+		const Item& item = equaler.GetItemArg();
+		auto newRowFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
+		{
+			return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(offset), item)
+				&& rowFilter(rowRef);
+		};
+		return pvSelect<Result>(newRowFilter, equalers...);
+	}
+
+	template<typename Result, typename RowFilter, typename... Items,
+		size_t columnCount = sizeof...(Items),
+		typename = momo::internal::EnableIf<(0 < columnCount
+			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
+	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
+	{
 		const ColumnList& columnList = GetColumnList();
 		std::array<size_t, columnCount> offsets = {{ columnList.GetOffset(equalers.GetColumn())... }};
 		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
@@ -1028,9 +1047,9 @@ private:
 			return pvSelectRec<Result>(*multiHash, offsets.data(), rowFilter,
 				OffsetItemTuple<>(), equalers...);
 		}
-		auto newFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
+		auto newRowFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
 			{ return pvIsSatisfied(rowRef, offsets.data(), equalers...) && rowFilter(rowRef); };
-		return pvMakeSelection(mRaws, newFilter, static_cast<Result*>(nullptr));
+		return pvMakeSelection(mRaws, newRowFilter, static_cast<Result*>(nullptr));
 	}
 
 	template<typename Result, typename RowFilter>
@@ -1067,12 +1086,12 @@ private:
 		}
 		else
 		{
-			auto newFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
+			auto newRowFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
 			{
 				return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(offset), item)
 					&& rowFilter(rowRef);
 			};
-			return pvSelectRec<Result>(index, offsets + 1, newFilter, tuple, equalers...);
+			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, tuple, equalers...);
 		}
 	}
 

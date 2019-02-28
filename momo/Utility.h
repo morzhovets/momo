@@ -195,7 +195,7 @@ namespace internal
 	template<typename... Types>
 	using Void = typename VoidMaker<Types...>::Void;
 
-	template<bool value, typename Type>
+	template<bool value, typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 
 	template<typename TUInt>
