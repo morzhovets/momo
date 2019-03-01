@@ -186,8 +186,7 @@ namespace internal
 		union
 		{
 			BucketParams* mBucketParams;
-			typename std::aligned_storage<std::alignment_of<Bucket>::value,
-				std::alignment_of<Bucket>::value>::type mBucketPadding;
+			typename std::aligned_storage<alignof(Bucket), alignof(Bucket)>::type mBucketPadding;
 		};
 	};
 

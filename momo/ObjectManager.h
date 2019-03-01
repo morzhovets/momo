@@ -18,8 +18,8 @@
 
 #include "MemManager.h"
 
-#define MOMO_ALIGNMENT_OF(Object) ((MOMO_MAX_ALIGNMENT < std::alignment_of<Object>::value) \
-	? MOMO_MAX_ALIGNMENT : std::alignment_of<Object>::value)
+#define MOMO_ALIGNMENT_OF(Object) ((alignof(Object) < MOMO_MAX_ALIGNMENT) \
+	? alignof(Object) : MOMO_MAX_ALIGNMENT)
 
 namespace momo
 {

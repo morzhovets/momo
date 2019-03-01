@@ -168,7 +168,7 @@ private:
 
 	static const uintptr_t nullPtr = internal::UIntPtrConst::null;
 
-	static const size_t maxAlignment = std::alignment_of<std::max_align_t>::value;
+	static const size_t maxAlignment = alignof(std::max_align_t);
 	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
 
 public:
