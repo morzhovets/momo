@@ -130,8 +130,6 @@ public:
 private:
 	typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
 
-	typedef momo::internal::BoolConstant<Settings::keepRowNumber> KeepRowNumber;
-
 	static const size_t invalidRowNumber = SIZE_MAX;
 
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
@@ -261,6 +259,7 @@ private:
 	struct ConstRowReferenceProxy : public ConstRowReference
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowReference)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstRowReference, GetRaw, Raw*)
 	};
 
 	struct RowReferenceProxy : public RowReference
@@ -620,6 +619,7 @@ public:
 	template<typename RowIterator>
 	void AssignRows(RowIterator begin, RowIterator end)
 	{
+		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
 			pvSetNumber(raw, invalidRowNumber);
 		try
@@ -629,7 +629,7 @@ public:
 			{
 				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
 				Raw* raw = RowReferenceProxy::GetRaw(*iter);
-				if (GetColumnList().GetNumber(raw) != invalidRowNumber)
+				if (columnList.GetNumber(raw) != invalidRowNumber)
 					continue;
 				pvSetNumber(raw, number);
 				++number;
@@ -646,7 +646,7 @@ public:
 			Raw*& raw = mRaws[i];
 			while (true)
 			{
-				size_t number = GetColumnList().GetNumber(raw);
+				size_t number = columnList.GetNumber(raw);
 				if (number == i)
 					break;
 				std::swap(raw, mRaws[number]);
@@ -840,8 +840,9 @@ public:
 private:
 	RawMemPool pvCreateRawMemPool()
 	{
-		size_t size = std::minmax(GetColumnList().GetTotalSize(), sizeof(void*)).second;
-		size_t alignment = std::minmax(GetColumnList().GetAlignment(), MOMO_ALIGNMENT_OF(void*)).second;
+		const ColumnList& columnList = GetColumnList();
+		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
+		size_t alignment = std::minmax(columnList.GetAlignment(), MOMO_ALIGNMENT_OF(void*)).second;
 		return RawMemPool(typename RawMemPool::Params(size, alignment), MemManagerPtr(GetMemManager()));
 	}
 
@@ -970,17 +971,14 @@ private:
 			pvSetNumber(mRaws[i], i);
 	}
 
-	void pvSetNumber(Raw* raw, size_t number) noexcept
-	{
-		pvSetNumber(raw, number, KeepRowNumber());
-	}
-
-	void pvSetNumber(Raw* raw, size_t number, std::true_type /*keepRowNumber*/) noexcept
+	template<bool keepRowNumber = Settings::keepRowNumber>
+	momo::internal::EnableIf<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
 	{
 		GetColumnList().SetNumber(raw, number);
 	}
 
-	void pvSetNumber(Raw* /*raw*/, size_t /*number*/, std::false_type /*keepRowNumber*/) noexcept
+	template<bool keepRowNumber = Settings::keepRowNumber>
+	momo::internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
 	{
 	}
 
@@ -1016,12 +1014,12 @@ private:
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
-		size_t offset = GetColumnList().GetOffset(equaler.GetColumn());
-		const Item& item = equaler.GetItemArg();
-		auto newRowFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
+		auto newRowFilter = [&rowFilter, &equaler] (ConstRowReference rowRef)
 		{
-			return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(offset), item)
-				&& rowFilter(rowRef);
+			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+			size_t offset = rowRef.GetColumnList().GetOffset(equaler.GetColumn());
+			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
+			return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
 		};
 		return pvSelect<Result>(newRowFilter, equalers...);
 	}
@@ -1062,7 +1060,9 @@ private:
 	static bool pvIsSatisfied(ConstRowReference rowRef, const size_t* offsets,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
 	{
-		return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(*offsets), equaler.GetItemArg())
+		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+		const Item& item = ColumnList::template GetByOffset<const Item>(raw, *offsets);
+		return DataTraits::IsEqual(item, equaler.GetItemArg())
 			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
 	}
 
@@ -1077,19 +1077,19 @@ private:
 		const Tuple& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		size_t offset = *offsets;
-		const Item& item = equaler.GetItemArg();
 		if (Indexes::HasOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
-				std::make_tuple(std::pair<size_t, const Item&>(offset, item)));
+				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
 			return pvSelectRec<Result>(index, offsets + 1, rowFilter, newTuple, equalers...);
 		}
 		else
 		{
-			auto newRowFilter = [&rowFilter, offset, &item] (ConstRowReference rowRef)
+			auto newRowFilter = [&rowFilter, offset, &equaler] (ConstRowReference rowRef)
 			{
-				return DataTraits::IsEqual(rowRef.template GetByOffset<Item>(offset), item)
-					&& rowFilter(rowRef);
+				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
+				return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
 			};
 			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, tuple, equalers...);
 		}

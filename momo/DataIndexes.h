@@ -813,17 +813,17 @@ namespace internal
 			{
 				mUniqueHashes.Reserve(indexes.mUniqueHashes.GetCount());
 				mMultiHashes.Reserve(indexes.mMultiHashes.GetCount());
-				for (const UniqueHash& srcUniqueHash : indexes.mUniqueHashes)
+				for (const UniqueHash& uniqueHash : indexes.mUniqueHashes)
 				{
 					mUniqueHashes.AddBackNogrowVar(
-						HashTraits(srcUniqueHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
-						Offsets(srcUniqueHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
+						HashTraits(uniqueHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+						Offsets(uniqueHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
 				}
-				for (const MultiHash& srcMultiHash : indexes.mMultiHashes)
+				for (const MultiHash& multiHash : indexes.mMultiHashes)
 				{
 					mMultiHashes.AddBackNogrowVar(
-						HashTraits(srcMultiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
-						Offsets(srcMultiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
+						HashTraits(multiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+						Offsets(multiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
 				}
 			}
 			catch (...)
