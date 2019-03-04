@@ -34,9 +34,11 @@
 
     void Deallocate(void* ptr, size_t size) noexcept;
 
-    void* Reallocate(void* ptr, size_t size, size_t newSize);
+    void* Reallocate(void* ptr, size_t size, size_t newSize); // optional
 
-    bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept;
+    bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept; // optional
+
+    bool IsEqual(const UserMemManager& memManager) const noexcept; // optional
   };
 
 \**********************************************************/
@@ -50,55 +52,70 @@ namespace momo
 
 namespace internal
 {
-	template<typename MemManager,
-		typename = size_t>
-	struct MemManagerPtrUsefulBitCount
-	{
-		static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-	};
-
-	template<typename MemManager>
-	struct MemManagerPtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
-	{
-		static const size_t value = MemManager::ptrUsefulBitCount;
-	};
-
-	template<typename MemManager,
-		typename = void*>
-	struct MemManagerCanReallocate : public std::false_type
-	{
-	};
-
-	template<typename MemManager>
-	struct MemManagerCanReallocate<MemManager,
-		decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
-		: public std::true_type
-	{
-	};
-
-	template<typename MemManager,
-		typename = bool>
-	struct MemManagerCanReallocateInplace : public std::false_type
-	{
-	};
-
-	template<typename MemManager>
-	struct MemManagerCanReallocateInplace<MemManager,
-		decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
-		: public std::true_type
-	{
-	};
-
 	template<typename TMemManager>
 	class MemManagerProxy
 	{
 	public:
 		typedef TMemManager MemManager;
 
-		static const bool canReallocate = MemManagerCanReallocate<MemManager>::value;
-		static const bool canReallocateInplace = MemManagerCanReallocateInplace<MemManager>::value;
+	private:
+		template<typename MemManager,
+			typename = void*>
+		struct CanReallocate : public std::false_type
+		{
+		};
 
-		static const size_t ptrUsefulBitCount = MemManagerPtrUsefulBitCount<MemManager>::value;
+		template<typename MemManager>
+		struct CanReallocate<MemManager,
+			decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
+			: public std::true_type
+		{
+		};
+
+		template<typename MemManager,
+			typename = bool>
+		struct CanReallocateInplace : public std::false_type
+		{
+		};
+
+		template<typename MemManager>
+		struct CanReallocateInplace<MemManager,
+			decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
+			: public std::true_type
+		{
+		};
+
+		template<typename MemManager,
+			typename = size_t>
+		struct PtrUsefulBitCount
+		{
+			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+		};
+
+		template<typename MemManager>
+		struct PtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
+		{
+			static const size_t value = MemManager::ptrUsefulBitCount;
+		};
+
+		template<typename MemManager,
+			typename = bool>
+		struct HasIsEqual : public std::false_type
+		{
+		};
+
+		template<typename MemManager>
+		struct HasIsEqual<MemManager,
+			decltype(std::declval<const MemManager&>().IsEqual(std::declval<const MemManager&>()))>
+			: public std::true_type
+		{
+		};
+
+	public:
+		static const bool canReallocate = CanReallocate<MemManager>::value;
+		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
+
+		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
 
 	public:
 		template<typename Result = void>
@@ -136,6 +153,11 @@ namespace internal
 			return memManager.ReallocateInplace(ptr, size, newSize);
 		}
 
+		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
+		{
+			return pvIsEqual(memManager1, memManager2);
+		}
+
 	private:
 		template<size_t shift = ptrUsefulBitCount>
 		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
@@ -146,6 +168,20 @@ namespace internal
 		template<size_t shift = ptrUsefulBitCount>
 		static EnableIf<(shift == sizeof(void*) * 8), void> pvCheckPtr(void* /*ptr*/) noexcept
 		{
+		}
+
+		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
+		static EnableIf<hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
+			const MemManager& memManager2) noexcept
+		{
+			return memManager1.IsEqual(memManager2);
+		}
+
+		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
+		static EnableIf<!hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
+			const MemManager& memManager2) noexcept
+		{
+			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
 		}
 	};
 }
@@ -324,6 +360,11 @@ public:
 	{
 		std::allocator_traits<CharAllocator>::deallocate(GetCharAllocator(),
 			static_cast<char*>(ptr), size);
+	}
+
+	bool IsEqual(const MemManagerStd& memManager) const noexcept
+	{
+		return GetCharAllocator() == memManager.GetCharAllocator();
 	}
 
 	const CharAllocator& GetCharAllocator() const noexcept
@@ -520,7 +561,11 @@ namespace internal
 	public:
 		typedef TBaseMemManager BaseMemManager;
 
-		static const size_t ptrUsefulBitCount = MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
+	private:
+		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
+
+	public:
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr() noexcept
@@ -560,18 +605,21 @@ namespace internal
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
-		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate,
-			void*, void>::type
+		typename std::conditional<BaseMemManagerProxy::canReallocate, void*, void>::type
 		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocateInplace,
-			bool, void>::type
+		typename std::conditional<BaseMemManagerProxy::canReallocateInplace, bool, void>::type
 		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
+		}
+
+		bool IsEqual(const MemManagerPtr& /*memManager*/) const noexcept
+		{
+			return true;
 		}
 	};
 
@@ -581,7 +629,11 @@ namespace internal
 	public:
 		typedef TBaseMemManager BaseMemManager;
 
-		static const size_t ptrUsefulBitCount = MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
+	private:
+		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
+
+	public:
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& memManager) noexcept
@@ -620,18 +672,21 @@ namespace internal
 			mBaseMemManager.Deallocate(ptr, size);
 		}
 
-		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocate,
-			void*, void>::type
+		typename std::conditional<BaseMemManagerProxy::canReallocate, void*, void>::type
 		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return mBaseMemManager.Reallocate(ptr, size, newSize);
 		}
 
-		typename std::conditional<MemManagerProxy<BaseMemManager>::canReallocateInplace,
-			bool, void>::type
+		typename std::conditional<BaseMemManagerProxy::canReallocateInplace, bool, void>::type
 		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
+		}
+
+		bool IsEqual(const MemManagerPtr& memManager) const noexcept
+		{
+			return BaseMemManagerProxy::IsEqual(mBaseMemManager, memManager.mBaseMemManager);
 		}
 
 	private:

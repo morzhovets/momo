@@ -907,7 +907,7 @@ public:
 		if (count == 0)
 			return;
 		size_t dstCount = dstTreeSet.GetCount();
-		if (std::is_empty<MemManager>::value)
+		if (MemManagerProxy::IsEqual(GetMemManager(), dstTreeSet.GetMemManager()))
 		{
 			if (dstCount == 0)
 			{

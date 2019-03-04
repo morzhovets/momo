@@ -303,8 +303,7 @@ public:
 	{
 		if (this == &memPool)
 			return;
-		//MOMO_STATIC_ASSERT(std::is_empty<MemManager>::value);
-		MOMO_CHECK(std::is_empty<MemManager>::value);
+		MOMO_CHECK(MemManagerProxy::IsEqual(GetMemManager(), memPool.GetMemManager()));
 		MOMO_CHECK(static_cast<const Params&>(*this).IsEqual(memPool));
 		if (Params::cachedFreeBlockCount > 0)
 			memPool.pvFlushDeallocate();
