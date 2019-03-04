@@ -700,30 +700,34 @@ namespace internal
 		}
 
 		template<typename Item, typename... Items>
-		DataSelection&& SortBy(const Column<Item>& column, const Column<Items>&... columns) &&
+		DataSelection&& Sort(const Column<Item>& column, const Column<Items>&... columns) &&
 		{
-			pvSortBy(column, columns...);
+			pvSort(column, columns...);
 			return std::move(*this);
 		}
 
 		template<typename Item, typename... Items>
-		DataSelection& SortBy(const Column<Item>& column, const Column<Items>&... columns) &
+		DataSelection& Sort(const Column<Item>& column, const Column<Items>&... columns) &
 		{
-			pvSortBy(column, columns...);
+			pvSort(column, columns...);
 			return *this;
 		}
 
-		template<typename RowComparer>
-		DataSelection&& Sort(const RowComparer& rowComparer) &&
+		template<typename RowComparer,
+			typename = decltype(std::declval<const RowComparer&>()(
+				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
+		DataSelection&& Sort(const RowComparer& rowComp) &&
 		{
-			pvSort(rowComparer);
+			pvSort(rowComp);
 			return std::move(*this);
 		}
 
-		template<typename RowComparer>
-		DataSelection& Sort(const RowComparer& rowComparer) &
+		template<typename RowComparer,
+			typename = decltype(std::declval<const RowComparer&>()(
+				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
+		DataSelection& Sort(const RowComparer& rowComp) &
 		{
-			pvSort(rowComparer);
+			pvSort(rowComp);
 			return *this;
 		}
 
@@ -743,7 +747,7 @@ namespace internal
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
-				{ return rowPred(pvMakeRowReference(raw)); };	//?
+				{ return rowPred(pvMakeRowReference(raw)); };
 			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
@@ -778,13 +782,13 @@ namespace internal
 		}
 
 		template<typename... Items>
-		void pvSortBy(const Column<Items>&... columns)
+		void pvSort(const Column<Items>&... columns)
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto rawComparer = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvCompare<void, Items...>(raw1, raw2, offsets.data()) < 0; };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComp);
 		}
 
 		template<typename Void, typename Item, typename... Items>
@@ -804,12 +808,14 @@ namespace internal
 			return 0;
 		}
 
-		template<typename RowComparer>
-		void pvSort(const RowComparer& rowComparer)
+		template<typename RowComparer,
+			typename = decltype(std::declval<const RowComparer&>()(
+				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
+		void pvSort(const RowComparer& rowComp)
 		{
-			auto rawComparer = [this, &rowComparer] (Raw* raw1, Raw* raw2)
-				{ return rowComparer(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };	//?
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComparer);
+			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
+				{ return rowComp(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComp);
 		}
 
 		template<int bound, typename... Items>
@@ -817,9 +823,9 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(equalers);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(equalers.GetColumn())... }};
-			auto rawComparer = [&offsets, &equalers...] (Raw*, Raw* raw)
+			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 				{ return pvCompare<void>(raw, offsets.data(), equalers...) > bound; };
-			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawComparer) - mRaws.GetBegin();
+			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
 		template<typename Void, typename Item, typename... Items>
