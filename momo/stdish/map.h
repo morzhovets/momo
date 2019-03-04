@@ -349,7 +349,7 @@ namespace internal
 			return mTreeMap.GetCount();
 		}
 
-		bool empty() const noexcept
+		MOMO_NODISCARD bool empty() const noexcept
 		{
 			return mTreeMap.IsEmpty();
 		}

@@ -103,7 +103,7 @@ public:
 		return unsynchronized_pool_allocator(get_base_allocator());
 	}
 
-	pointer allocate(size_type count)
+	MOMO_NODISCARD pointer allocate(size_type count)
 	{
 		if (count == 1)
 		{

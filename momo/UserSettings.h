@@ -143,6 +143,15 @@
 #endif
 #endif
 
+#ifdef __has_cpp_attribute
+#if __has_cpp_attribute(nodiscard)
+#define MOMO_NODISCARD [[nodiscard]]
+#endif
+#endif
+#ifndef MOMO_NODISCARD
+#define MOMO_NODISCARD
+#endif
+
 //#if defined(_MSC_VER) && !defined(__clang__)
 //#pragma warning (disable: 4127)	// conditional expression is constant
 //#pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated

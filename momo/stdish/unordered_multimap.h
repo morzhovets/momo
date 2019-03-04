@@ -340,7 +340,7 @@ public:
 		return mHashMultiMap.GetValueCount();
 	}
 
-	bool empty() const noexcept
+	MOMO_NODISCARD bool empty() const noexcept
 	{
 		return size() == 0;
 	}

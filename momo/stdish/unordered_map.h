@@ -374,7 +374,7 @@ public:
 		return mHashMap.GetCount();
 	}
 
-	bool empty() const noexcept
+	MOMO_NODISCARD bool empty() const noexcept
 	{
 		return mHashMap.IsEmpty();
 	}
