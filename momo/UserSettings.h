@@ -12,12 +12,6 @@
 
 #pragma once
 
-#ifdef __has_include
-#if __has_include(<version>)
-#include <version>	// feature macros
-#endif
-#endif
-
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,
@@ -38,12 +32,6 @@
 #if defined(__GNUC__) && __GNUC__ < 5
 #undef MOMO_IS_TRIVIALLY_RELOCATABLE
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
-#endif
-
-#ifdef __cpp_lib_is_swappable
-#define MOMO_IS_NOTHROW_SWAPPABLE(Object) std::is_nothrow_swappable_v<Object>
-#else
-#define MOMO_IS_NOTHROW_SWAPPABLE(Object) false
 #endif
 
 #define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT (sizeof(void*) * 8)

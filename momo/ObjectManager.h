@@ -134,6 +134,14 @@ namespace internal
 		typedef TObject Object;
 		typedef TMemManager MemManager;
 
+	private:
+		static constexpr bool pvIsNothrowSwappable() noexcept
+		{
+			using std::swap;
+			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
+		}
+
+	public:
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 
@@ -144,7 +152,7 @@ namespace internal
 		static const bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = MOMO_IS_NOTHROW_SWAPPABLE(Object);
+		static const bool isNothrowSwappable = pvIsNothrowSwappable();
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
