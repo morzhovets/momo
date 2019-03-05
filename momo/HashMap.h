@@ -330,6 +330,30 @@ public:
 		return IteratorProxy(mHashSet.Find(key));
 	}
 
+	ConstIterator Find(const Key& key, size_t hashCode) const
+	{
+		return ConstIteratorProxy(mHashSet.Find(key, hashCode));
+	}
+
+	Iterator Find(const Key& key, size_t hashCode)
+	{
+		return IteratorProxy(mHashSet.Find(key, hashCode));
+	}
+
+	template<typename KeyArg>
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key,
+		size_t hashCode) const
+	{
+		return ConstIteratorProxy(mHashSet.Find(key, hashCode));
+	}
+
+	template<typename KeyArg>
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key,
+		size_t hashCode)
+	{
+		return IteratorProxy(mHashSet.Find(key, hashCode));
+	}
+
 	bool ContainsKey(const Key& key) const
 	{
 		return mHashSet.ContainsKey(key);

@@ -700,6 +700,18 @@ public:
 		return pvFind(key);
 	}
 
+	ConstIterator Find(const Key& key, size_t hashCode) const
+	{
+		return pvFind(key, hashCode);
+	}
+
+	template<typename KeyArg>
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key,
+		size_t hashCode) const
+	{
+		return pvFind(key, hashCode);
+	}
+
 	bool ContainsKey(const Key& key) const
 	{
 		return !!pvFind(key);
@@ -969,8 +981,14 @@ private:
 	template<typename KeyArg>
 	ConstIterator pvFind(const KeyArg& key) const
 	{
+		size_t hashCode = GetHashTraits().GetHashCode(key);
+		return pvFind(key, hashCode);
+	}
+
+	template<typename KeyArg>
+	ConstIterator pvFind(const KeyArg& key, size_t hashCode) const
+	{
 		const HashTraits& hashTraits = GetHashTraits();
-		size_t hashCode = hashTraits.GetHashCode(key);
 		auto pred = [&key, &hashTraits] (const Item& item)
 			{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
