@@ -568,19 +568,19 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
-		explicit MemManagerPtr() noexcept
+		//explicit MemManagerPtr() noexcept
+		//{
+		//}
+
+		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
 		{
 		}
 
-		explicit MemManagerPtr(BaseMemManager& /*memManager*/) noexcept
+		MemManagerPtr(MemManagerPtr&& /*memManager*/) noexcept
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& /*memManagerPtr*/) noexcept
-		{
-		}
-
-		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/) noexcept
+		MemManagerPtr(const MemManagerPtr& /*memManager*/) noexcept
 		{
 		}
 
@@ -636,18 +636,18 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
-		explicit MemManagerPtr(BaseMemManager& memManager) noexcept
-			: mBaseMemManager(memManager)
+		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
+			: mBaseMemManager(baseMemManager)
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& memManagerPtr) noexcept
-			: mBaseMemManager(memManagerPtr.mBaseMemManager)
+		MemManagerPtr(MemManagerPtr&& memManager) noexcept
+			: mBaseMemManager(memManager.mBaseMemManager)
 		{
 		}
 
-		MemManagerPtr(const MemManagerPtr& memManagerPtr) noexcept
-			: mBaseMemManager(memManagerPtr.mBaseMemManager)
+		MemManagerPtr(const MemManagerPtr& memManager) noexcept
+			: mBaseMemManager(memManager.mBaseMemManager)
 		{
 		}
 

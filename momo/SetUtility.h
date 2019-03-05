@@ -75,7 +75,7 @@ namespace internal
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion,
 		bool tUsePtr = !std::is_nothrow_move_constructible<TContainerTraits>::value
 			|| !std::is_nothrow_move_assignable<TContainerTraits>::value
-			|| !std::is_empty<TMemManager>::value || tKeepVersion>
+			|| !std::is_empty<MemManagerPtr<TMemManager>>::value || tKeepVersion>
 	class SetCrew;
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
