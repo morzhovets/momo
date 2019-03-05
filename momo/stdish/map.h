@@ -336,7 +336,7 @@ namespace internal
 
 		allocator_type get_allocator() const noexcept
 		{
-			return allocator_type(mTreeMap.GetMemManager().GetCharAllocator());
+			return allocator_type(mTreeMap.GetMemManager().GetByteAllocator());
 		}
 
 		size_type max_size() const noexcept

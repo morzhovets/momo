@@ -205,7 +205,7 @@ namespace internal
 				Sequence<sequence...>)
 			{
 				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
-					memManager.GetCharAllocator(), newObject,
+					memManager.GetByteAllocator(), newObject,
 					std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 

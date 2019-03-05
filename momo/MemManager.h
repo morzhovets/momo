@@ -320,28 +320,28 @@ class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind
 {
 public:
 	typedef TAllocator Allocator;
-	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> CharAllocator;
+	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> ByteAllocator;
 
-	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<CharAllocator>::value);
+	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ByteAllocator>::value);
 
 public:
-	explicit MemManagerStd() noexcept(noexcept(CharAllocator()))
+	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))
 	{
 	}
 
 	explicit MemManagerStd(const Allocator& alloc) noexcept
-		: CharAllocator(alloc)
+		: ByteAllocator(alloc)
 	{
 	}
 
 	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: CharAllocator(std::move(memManager.GetCharAllocator()))
+		: ByteAllocator(std::move(memManager.GetByteAllocator()))
 	{
 	}
 
 	MemManagerStd(const MemManagerStd& memManager)
-		: CharAllocator(std::allocator_traits<CharAllocator>
-			::select_on_container_copy_construction(memManager.GetCharAllocator()))
+		: ByteAllocator(std::allocator_traits<ByteAllocator>
+			::select_on_container_copy_construction(memManager.GetByteAllocator()))
 	{
 	}
 
@@ -353,26 +353,26 @@ public:
 
 	void* Allocate(size_t size)
 	{
-		return std::allocator_traits<CharAllocator>::allocate(GetCharAllocator(), size);
+		return std::allocator_traits<ByteAllocator>::allocate(GetByteAllocator(), size);
 	}
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		std::allocator_traits<CharAllocator>::deallocate(GetCharAllocator(),
+		std::allocator_traits<ByteAllocator>::deallocate(GetByteAllocator(),
 			static_cast<char*>(ptr), size);
 	}
 
 	bool IsEqual(const MemManagerStd& memManager) const noexcept
 	{
-		return GetCharAllocator() == memManager.GetCharAllocator();
+		return GetByteAllocator() == memManager.GetByteAllocator();
 	}
 
-	const CharAllocator& GetCharAllocator() const noexcept
+	const ByteAllocator& GetByteAllocator() const noexcept
 	{
 		return *this;
 	}
 
-	CharAllocator& GetCharAllocator() noexcept
+	ByteAllocator& GetByteAllocator() noexcept
 	{
 		return *this;
 	}
@@ -386,7 +386,7 @@ class MemManagerStd<std::allocator<Item>>
 {
 public:
 	typedef std::allocator<Item> Allocator;
-	typedef std::allocator<char> CharAllocator;
+	typedef std::allocator<char> ByteAllocator;
 
 public:
 	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())
@@ -410,12 +410,12 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	const CharAllocator& GetCharAllocator() const noexcept
+	const ByteAllocator& GetByteAllocator() const noexcept
 	{
 		return *this;
 	}
 
-	CharAllocator& GetCharAllocator() noexcept
+	ByteAllocator& GetByteAllocator() noexcept
 	{
 		return *this;
 	}

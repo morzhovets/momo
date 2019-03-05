@@ -361,7 +361,7 @@ public:
 
 	allocator_type get_allocator() const noexcept
 	{
-		return allocator_type(mHashMap.GetMemManager().GetCharAllocator());
+		return allocator_type(mHashMap.GetMemManager().GetByteAllocator());
 	}
 
 	size_type max_size() const noexcept

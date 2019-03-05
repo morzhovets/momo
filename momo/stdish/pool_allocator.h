@@ -95,7 +95,7 @@ public:
 
 	base_allocator_type get_base_allocator() const noexcept
 	{
-		return base_allocator_type(mMemPool->GetMemManager().GetCharAllocator());
+		return base_allocator_type(mMemPool->GetMemManager().GetByteAllocator());
 	}
 
 	unsynchronized_pool_allocator select_on_container_copy_construction() const noexcept

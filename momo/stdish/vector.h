@@ -248,7 +248,7 @@ public:
 
 	allocator_type get_allocator() const noexcept
 	{
-		return allocator_type(mArray.GetMemManager().GetCharAllocator());
+		return allocator_type(mArray.GetMemManager().GetByteAllocator());
 	}
 
 	size_type max_size() const noexcept
