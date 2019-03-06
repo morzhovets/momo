@@ -70,22 +70,22 @@
 
 #define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseClass) \
+#define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseObject) \
 	template<typename... Args> \
-	explicit BaseClass##Proxy(Args&&... args) \
-		noexcept((std::is_nothrow_constructible<BaseClass, Args&&...>::value)) \
-		: BaseClass(std::forward<Args>(args)...) \
+	explicit BaseObject##Proxy(Args&&... args) \
+		noexcept((std::is_nothrow_constructible<BaseObject, Args&&...>::value)) \
+		: BaseObject(std::forward<Args>(args)...) \
 	{ \
 	}
 
-// Result = decltype((std::declval<Object&&>().*&BaseClass##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
-#define MOMO_DECLARE_PROXY_FUNCTION(BaseClass, Func, Result) \
+// Result = decltype((std::declval<Object&&>().*&BaseObject##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
+#define MOMO_DECLARE_PROXY_FUNCTION(BaseObject, Func, Result) \
 	template<typename Object, typename... Args> \
 	static Result Func(Object&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<Object>(object).*&BaseClass##Proxy::pt##Func) \
+		noexcept(noexcept((std::forward<Object>(object).*&BaseObject##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		return (std::forward<Object>(object).*&BaseClass##Proxy::pt##Func) \
+		return (std::forward<Object>(object).*&BaseObject##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
