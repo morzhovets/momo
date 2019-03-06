@@ -931,7 +931,7 @@ private:
 		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
 		{
-			Raw* nextRaw = *reinterpret_cast<Raw**>(headRaw);
+			Raw* nextRaw = *momo::internal::BitCaster::PtrToPtr<Raw*>(headRaw);
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}

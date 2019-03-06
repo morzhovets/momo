@@ -267,11 +267,11 @@ public:
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = reinterpret_cast<void*>(pvNewBlock());
+				pblock = internal::BitCaster::IntToPtr(pvNewBlock());
 			else if (maxAlignment % Params::blockAlignment == 0)
 				pblock = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
 			else
-				pblock = reinterpret_cast<void*>(pvNewBlock1());
+				pblock = internal::BitCaster::IntToPtr(pvNewBlock1());
 		}
 		++mAllocCount;
 		return static_cast<Result*>(pblock);
@@ -368,11 +368,11 @@ private:
 	void pvDeleteBlock(void* pblock) noexcept
 	{
 		if (Params::blockCount > 1)
-			pvDeleteBlock(reinterpret_cast<uintptr_t>(pblock));
+			pvDeleteBlock(internal::BitCaster::PtrToInt(pblock));
 		else if (maxAlignment % Params::blockAlignment == 0)
 			MemManagerProxy::Deallocate(GetMemManager(), pblock, pvGetBufferSize0());
 		else
-			pvDeleteBlock1(reinterpret_cast<uintptr_t>(pblock));
+			pvDeleteBlock1(internal::BitCaster::PtrToInt(pblock));
 	}
 
 	size_t pvGetBufferSize0() const noexcept
@@ -382,7 +382,7 @@ private:
 
 	uintptr_t pvNewBlock1()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(MemManagerProxy::Allocate(GetMemManager(),
+		uintptr_t begin = internal::BitCaster::PtrToInt(MemManagerProxy::Allocate(GetMemManager(),
 			pvGetBufferSize1()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		pvGetBufferBegin1(block) = begin;
@@ -392,7 +392,8 @@ private:
 	void pvDeleteBlock1(uintptr_t block) noexcept
 	{
 		uintptr_t begin = pvGetBufferBegin1(block);
-		MemManagerProxy::Deallocate(GetMemManager(), reinterpret_cast<void*>(begin), pvGetBufferSize1());
+		MemManagerProxy::Deallocate(GetMemManager(), internal::BitCaster::IntToPtr(begin),
+			pvGetBufferSize1());
 	}
 
 	size_t pvGetBufferSize1() const noexcept
@@ -404,7 +405,7 @@ private:
 
 	uintptr_t& pvGetBufferBegin1(uintptr_t block) noexcept
 	{
-		return *reinterpret_cast<uintptr_t*>(PMath::Ceil(block + Params::blockSize,
+		return *internal::BitCaster::IntToPtr<uintptr_t>(PMath::Ceil(block + Params::blockSize,
 			(uintptr_t)sizeof(void*)));
 	}
 
@@ -457,7 +458,7 @@ private:
 
 	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) noexcept
 	{
-		return *reinterpret_cast<int8_t*>(block);
+		return *internal::BitCaster::IntToPtr<int8_t>(block);
 	}
 
 	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const noexcept
@@ -484,7 +485,7 @@ private:
 
 	uintptr_t pvNewBuffer()
 	{
-		uintptr_t begin = reinterpret_cast<uintptr_t>(MemManagerProxy::Allocate(GetMemManager(),
+		uintptr_t begin = internal::BitCaster::PtrToInt(MemManagerProxy::Allocate(GetMemManager(),
 			pvGetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, (uintptr_t)Params::blockAlignment);
 		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
@@ -524,7 +525,7 @@ private:
 		if (deallocate)
 		{
 			MemManagerProxy::Deallocate(GetMemManager(),
-				reinterpret_cast<void*>(pointers.begin), pvGetBufferSize());
+				internal::BitCaster::IntToPtr(pointers.begin), pvGetBufferSize());
 		}
 	}
 
@@ -542,22 +543,22 @@ private:
 
 	int8_t& pvGetFirstBlockIndex(uintptr_t buffer) noexcept
 	{
-		return *reinterpret_cast<int8_t*>(buffer);
+		return *internal::BitCaster::IntToPtr<int8_t>(buffer);
 	}
 
 	BufferBytes& pvGetBufferBytes(uintptr_t buffer) noexcept
 	{
 		if (Params::blockAlignment > 2)
-			return *reinterpret_cast<BufferBytes*>(buffer + 1);
+			return *internal::BitCaster::IntToPtr<BufferBytes>(buffer + 1);
 		else
-			return *reinterpret_cast<BufferBytes*>(&pvGetBufferPointers(buffer) + 1);
+			return *internal::BitCaster::PtrToPtr<BufferBytes>(&pvGetBufferPointers(buffer) + 1);
 	}
 
 	BufferPointers& pvGetBufferPointers(uintptr_t buffer) noexcept
 	{
 		size_t offset = Params::blockCount - (size_t)(-pvGetFirstBlockIndex(buffer));
-		return *reinterpret_cast<BufferPointers*>(PMath::Ceil(buffer + Params::blockAlignment
-			+ Params::blockSize * offset, (uintptr_t)sizeof(void*)));
+		return *internal::BitCaster::IntToPtr<BufferPointers>(PMath::Ceil(buffer +
+			Params::blockAlignment + Params::blockSize * offset, (uintptr_t)sizeof(void*)));
 	}
 
 private:

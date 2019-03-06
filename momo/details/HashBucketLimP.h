@@ -233,13 +233,13 @@ namespace internal
 		uint8_t* pvGetPtr() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return reinterpret_cast<uint8_t*>(mPtr);
+			return BitCaster::IntToPtr<uint8_t>(mPtr);
 		}
 
 		void pvSet(uint8_t* ptr, size_t memPoolIndex, size_t count) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr);
-			mPtr = reinterpret_cast<uintptr_t>(ptr);
+			mPtr = BitCaster::PtrToInt(ptr);
 			*ptr = (uint8_t)((memPoolIndex << 4) | count);
 		}
 
@@ -266,7 +266,7 @@ namespace internal
 
 		static Item* pvGetItems(uint8_t* ptr) noexcept
 		{
-			return reinterpret_cast<Item*>(ptr + ItemTraits::alignment);
+			return BitCaster::PtrToPtr<Item>(ptr + ItemTraits::alignment);
 		}
 
 	private:
@@ -497,7 +497,7 @@ namespace internal
 
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept
 		{
-			mPtrState = reinterpret_cast<uintptr_t>(items) + (uintptr_t)(count - 1) * modMemPoolIndex
+			mPtrState = BitCaster::PtrToInt(items) + (uintptr_t)(count - 1) * modMemPoolIndex
 				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
@@ -521,7 +521,7 @@ namespace internal
 				(uintptr_t)itemAlignment / modMemPoolIndex);
 			uintptr_t count1 = UIntMath<uintptr_t>::DivBySmall(ptrCount, mod).remainder;
 			MOMO_ASSERT(count1 < memPoolIndex);
-			Item* items = reinterpret_cast<Item*>((ptrCount - count1) * modMemPoolIndex);
+			Item* items = BitCaster::IntToPtr<Item>((ptrCount - count1) * modMemPoolIndex);
 			return Bounds(items, (size_t)count1 + 1);
 		}
 

@@ -198,6 +198,28 @@ namespace internal
 	template<bool value, typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 
+	class BitCaster
+	{
+	public:
+		template<typename Object>
+		static uintptr_t PtrToInt(Object* ptr) noexcept
+		{
+			return reinterpret_cast<uintptr_t>(ptr);
+		}
+
+		template<typename ResObject = void>
+		static ResObject* IntToPtr(uintptr_t intPtr) noexcept
+		{
+			return reinterpret_cast<ResObject*>(intPtr);
+		}
+
+		template<typename ResObject, typename Object>
+		static ResObject* PtrToPtr(Object* ptr) noexcept
+		{
+			return reinterpret_cast<ResObject*>(ptr);
+		}
+	};
+
 	template<typename TUInt>
 	class UIntMath
 	{
