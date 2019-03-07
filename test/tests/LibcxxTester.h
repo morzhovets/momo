@@ -19,6 +19,10 @@
 
 #define _LIBCPP_STD_VER 14
 
+#if _MSC_VER == 1900 && !defined(_DEBUG)
+#define LIBCPP_VS2015_RELEASE	//?
+#endif
+
 #else
 
 #if __cplusplus >= 201402L
