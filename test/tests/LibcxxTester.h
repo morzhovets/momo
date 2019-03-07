@@ -23,6 +23,11 @@
 #define _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 #endif
 
+
+#if _MSC_VER == 1900 && !defined(_DEBUG)
+#define LIBCPP_VS2015_RELEASE	//?
+#endif
+
 #else
 
 #if __cplusplus >= 201402L

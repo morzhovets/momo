@@ -147,17 +147,21 @@ LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
 #include "libcxx/map/map.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCPP_VS2015_RELEASE
 LIBCXX_TEST_BEGIN(modifiers_erase_iter)
 #include "libcxx/map/map.modifiers/erase_iter.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter)
 #include "libcxx/map/map.modifiers/erase_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCPP_VS2015_RELEASE
 LIBCXX_TEST_BEGIN(modifiers_erase_key)
 #include "libcxx/map/map.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 //LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
 //#include "libcxx/map/map.modifiers/extract_iterator.pass.cpp"
