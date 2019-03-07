@@ -133,7 +133,7 @@ public:
 template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
+class MemPool : private TParams
 {
 public:
 	typedef TParams Params;
@@ -144,11 +144,10 @@ public:
 	MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
 
 private:
-	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArrayIntCap<Params::cachedFreeBlockCount, void*,
-		internal::MemManagerDummy> CachedFreeBlocks;
+		MemManager> CachedFreeBlocks;
 
 	typedef internal::UIntMath<size_t> SMath;
 	typedef internal::UIntMath<uintptr_t> PMath;
@@ -179,15 +178,14 @@ public:
 
 	explicit MemPool(const Params& params, MemManager&& memManager = MemManager())
 		: Params(params),
-		MemManagerWrapper((pvCheckParams(), std::move(memManager))),
-		mBufferHead(nullPtr),
-		mAllocCount(0)
+		mBufferHead((pvCheckParams(), nullPtr)),	// check params before move memManager
+		mAllocCount(0),
+		mCachedFreeBlocks(std::move(memManager))
 	{
 	}
 
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
-		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
 		mAllocCount(memPool.mAllocCount),
 		mCachedFreeBlocks(std::move(memPool.mCachedFreeBlocks))
@@ -216,7 +214,6 @@ public:
 
 	void Swap(MemPool& memPool) noexcept
 	{
-		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
 		std::swap(pvGetParams(), memPool.pvGetParams());
 		std::swap(mBufferHead, memPool.mBufferHead);
 		std::swap(mAllocCount, memPool.mAllocCount);
@@ -247,12 +244,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return pvGetMemManagerWrapper().GetMemManager();
+		return mCachedFreeBlocks.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return pvGetMemManagerWrapper().GetMemManager();
+		return mCachedFreeBlocks.GetMemManager();
 	}
 
 	template<typename Result = void>
@@ -331,16 +328,6 @@ public:
 
 private:
 	Params& pvGetParams() noexcept
-	{
-		return *this;
-	}
-
-	const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
-	{
-		return *this;
-	}
-
-	MemManagerWrapper& pvGetMemManagerWrapper() noexcept
 	{
 		return *this;
 	}
