@@ -41,7 +41,7 @@ namespace internal
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			mPtrState = (uint32_t)BitCaster::PtrToInt(ptr);
+			mPtrState = (uint32_t)BitCaster::ToUInt(ptr);
 			MOMO_ASSERT(((uint8_t)mPtrState & maskState) == (uint8_t)0);
 			mPtrState |= (uint32_t)state;
 		}
@@ -49,7 +49,7 @@ namespace internal
 		Item* GetPointer() const noexcept
 		{
 			uintptr_t intPtr = (uintptr_t)(mPtrState & ~(uint32_t)maskState);
-			return BitCaster::IntToPtr<Item>(intPtr);
+			return BitCaster::ToPtr<Item>(intPtr);
 		}
 
 		uint8_t GetState() const noexcept
@@ -77,7 +77,7 @@ namespace internal
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			uint64_t intPtr = (uint64_t)BitCaster::PtrToInt(ptr);
+			uint64_t intPtr = (uint64_t)BitCaster::ToUInt(ptr);
 			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
 			mPtrState[0] = (uint16_t)intPtr | (uint16_t)state;
 			mPtrState[1] = (uint16_t)(intPtr >> 16);
@@ -88,7 +88,7 @@ namespace internal
 		{
 			uint64_t intPtr = ((uint64_t)mPtrState[2] << 32) | ((uint64_t)mPtrState[1] << 16)
 				| (uint64_t)(mPtrState[0] & ~(uint16_t)maskState);
-			return BitCaster::IntToPtr<Item>((uintptr_t)intPtr);
+			return BitCaster::ToPtr<Item>((uintptr_t)intPtr);
 		}
 
 		uint8_t GetState() const noexcept
@@ -116,7 +116,7 @@ namespace internal
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			uint64_t intPtr = (uint64_t)BitCaster::PtrToInt(ptr);
+			uint64_t intPtr = (uint64_t)BitCaster::ToUInt(ptr);
 			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
 			mPtrState[0] = (uint32_t)intPtr | (uint32_t)state;
 			mPtrState[1] = (uint32_t)(intPtr >> 32);
@@ -126,7 +126,7 @@ namespace internal
 		{
 			uint64_t intPtr = ((uint64_t)mPtrState[1] << 32)
 				| (uint64_t)(mPtrState[0] & ~(uint32_t)maskState);
-			return BitCaster::IntToPtr<Item>((uintptr_t)intPtr);
+			return BitCaster::ToPtr<Item>((uintptr_t)intPtr);
 		}
 
 		uint8_t GetState() const noexcept

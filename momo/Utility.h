@@ -202,13 +202,13 @@ namespace internal
 	{
 	public:
 		template<typename Object>
-		static uintptr_t PtrToInt(Object* ptr) noexcept
+		static uintptr_t ToUInt(Object* ptr) noexcept	// PtrToUInt
 		{
 			return reinterpret_cast<uintptr_t>(ptr);
 		}
 
 		template<typename ResObject = void>
-		static ResObject* IntToPtr(uintptr_t intPtr) noexcept
+		static ResObject* ToPtr(uintptr_t intPtr) noexcept	// UIntToPtr
 		{
 			return reinterpret_cast<ResObject*>(intPtr);
 		}

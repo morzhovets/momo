@@ -162,7 +162,7 @@ namespace internal
 		template<size_t shift = ptrUsefulBitCount>
 		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
 		{
-			MOMO_ASSERT(BitCaster::PtrToInt(ptr) >> shift == (uintptr_t)0);
+			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == (uintptr_t)0);
 		}
 
 		template<size_t shift = ptrUsefulBitCount>
