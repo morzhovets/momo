@@ -262,7 +262,7 @@ public:
 	template<typename Item>
 	using Column = typename ColumnTraits::template Column<Item>;
 
-	typedef char Raw;
+	typedef void Raw;
 
 private:
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
@@ -475,7 +475,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
-		return *momo::internal::BitCaster::PtrToPtr<Item>(raw + offset);
+		return *momo::internal::BitCaster::PtrToPtr<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -487,13 +487,13 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return *momo::internal::BitCaster::PtrToPtr<const size_t>(raw + mTotalSize - sizeof(size_t));
+		return *momo::internal::BitCaster::PtrToPtr<const size_t>(raw, mTotalSize - sizeof(size_t));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		*momo::internal::BitCaster::PtrToPtr<size_t>(raw + mTotalSize - sizeof(size_t)) = number;
+		*momo::internal::BitCaster::PtrToPtr<size_t>(raw, mTotalSize - sizeof(size_t)) = number;
 	}
 
 private:
@@ -560,7 +560,7 @@ private:
 	static void pvCreate(MemManager& memManager, Raw* raw, size_t offset)
 	{
 		pvCorrectOffset<Item>(offset);
-		ColumnTraits::Create(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw + offset));
+		ColumnTraits::Create(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
 		try
 		{
 			pvCreate<void, Items...>(memManager, raw,
@@ -569,7 +569,7 @@ private:
 		catch (...)
 		{
 			ColumnTraits::Destroy(&memManager,
-				momo::internal::BitCaster::PtrToPtr<Item>(raw + offset));
+				momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
 			throw;
 		}
 	}
@@ -583,7 +583,7 @@ private:
 	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) noexcept
 	{
 		pvCorrectOffset<Item>(offset);
-		ColumnTraits::Destroy(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw + offset));
+		ColumnTraits::Destroy(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
 		pvDestroy<void, Items...>(memManager, raw, offset + ColumnTraits::template GetSize<Item>());
 	}
 
@@ -597,8 +597,8 @@ private:
 	{
 		pvCorrectOffset<Item>(offset);
 		ColumnTraits::Copy(memManager,
-			momo::internal::BitCaster::PtrToPtr<const Item>(srcRaw + offset),
-			momo::internal::BitCaster::PtrToPtr<Item>(dstRaw + offset));
+			momo::internal::BitCaster::PtrToPtr<const Item>(srcRaw, offset),
+			momo::internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
 		try
 		{
 			pvCopy<void, Items...>(memManager, srcRaw, dstRaw,
@@ -607,7 +607,7 @@ private:
 		catch (...)
 		{
 			ColumnTraits::Destroy(&memManager,
-				momo::internal::BitCaster::PtrToPtr<Item>(dstRaw + offset));
+				momo::internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
 			throw;
 		}
 	}
@@ -762,8 +762,7 @@ public:
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
 		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
-		return *momo::internal::BitCaster::PtrToPtr<Item>(
-			momo::internal::BitCaster::PtrToPtr<char>(raw) + offset);
+		return *momo::internal::BitCaster::PtrToPtr<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>

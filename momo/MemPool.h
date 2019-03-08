@@ -536,9 +536,14 @@ private:
 	BufferBytes& pvGetBufferBytes(uintptr_t buffer) noexcept
 	{
 		if (Params::blockAlignment > 2)
+		{
 			return *internal::BitCaster::ToPtr<BufferBytes>(buffer + 1);
+		}
 		else
-			return *internal::BitCaster::PtrToPtr<BufferBytes>(&pvGetBufferPointers(buffer) + 1);
+		{
+			return *internal::BitCaster::PtrToPtr<BufferBytes>(
+				&pvGetBufferPointers(buffer), sizeof(BufferPointers));
+		}
 	}
 
 	BufferPointers& pvGetBufferPointers(uintptr_t buffer) noexcept

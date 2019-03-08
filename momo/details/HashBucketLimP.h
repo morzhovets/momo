@@ -266,7 +266,7 @@ namespace internal
 
 		static Item* pvGetItems(uint8_t* ptr) noexcept
 		{
-			return BitCaster::PtrToPtr<Item>(ptr + ItemTraits::alignment);
+			return BitCaster::PtrToPtr<Item>(ptr, ItemTraits::alignment);
 		}
 
 	private:

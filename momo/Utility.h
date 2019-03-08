@@ -213,10 +213,18 @@ namespace internal
 			return reinterpret_cast<ResObject*>(intPtr);
 		}
 
+		//template<typename ResObject, typename Object>
+		//static ResObject* PtrToPtr(Object* ptr) noexcept
+		//{
+		//	return reinterpret_cast<ResObject*>(ptr);
+		//}
+
 		template<typename ResObject, typename Object>
-		static ResObject* PtrToPtr(Object* ptr) noexcept
+		static ResObject* PtrToPtr(Object* ptr, ptrdiff_t byteOffset) noexcept
 		{
-			return reinterpret_cast<ResObject*>(ptr);
+			typedef typename std::conditional<std::is_const<Object>::value,
+				const char, char>::type Char;
+			return reinterpret_cast<ResObject*>(reinterpret_cast<Char*>(ptr) + byteOffset);
 		}
 	};
 

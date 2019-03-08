@@ -115,12 +115,12 @@ namespace internal
 	public:
 		const Object* operator&() const noexcept
 		{
-			return BitCaster::PtrToPtr<const Object>(&mBuffer);
+			return reinterpret_cast<const Object*>(&mBuffer);
 		}
 
 		Object* operator&() noexcept
 		{
-			return BitCaster::PtrToPtr<Object>(&mBuffer);
+			return reinterpret_cast<Object*>(&mBuffer);
 		}
 
 	private:

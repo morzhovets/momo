@@ -57,7 +57,7 @@ namespace internal
 			while (true)
 			{
 				Raw* headRaw = *mFreeRaws;
-				*momo::internal::BitCaster::PtrToPtr<Raw*>(mRaw) = headRaw;
+				*momo::internal::BitCaster::PtrToPtr<Raw*>(mRaw, 0) = headRaw;	//?
 				if (mFreeRaws->compare_exchange_weak(headRaw, mRaw))
 					break;
 			}

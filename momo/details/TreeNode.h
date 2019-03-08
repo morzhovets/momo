@@ -151,8 +151,8 @@ namespace internal
 			}
 			else
 			{
-				char* ptr = params.GetInternalMemPool().template Allocate<char>();
-				node = BitCaster::PtrToPtr<Node>(ptr + internalOffset);
+				void* ptr = params.GetInternalMemPool().Allocate();
+				node = BitCaster::PtrToPtr<Node>(ptr, internalOffset);
 				node->mMemPoolIndex = (uint8_t)leafMemPoolCount;
 			}
 			node->mParent = nullptr;
@@ -164,9 +164,14 @@ namespace internal
 		void Destroy(Params& params) noexcept
 		{
 			if (IsLeaf())
+			{
 				params.GetLeafMemPool((size_t)mMemPoolIndex).Deallocate(this);
+			}
 			else
-				params.GetInternalMemPool().Deallocate(BitCaster::PtrToPtr<char>(this) - internalOffset);
+			{
+				params.GetInternalMemPool().Deallocate(
+					BitCaster::PtrToPtr<void>(this, -(ptrdiff_t)internalOffset));
+			}
 		}
 
 		bool IsLeaf() const noexcept
