@@ -17,9 +17,6 @@
 namespace momo
 {
 
-namespace experimental
-{
-
 namespace internal
 {
 	template<typename TColumnList>
@@ -57,7 +54,7 @@ namespace internal
 			while (true)
 			{
 				Raw* headRaw = *mFreeRaws;
-				*momo::internal::BitCaster::PtrToPtr<Raw*>(mRaw, 0) = headRaw;	//?
+				*BitCaster::PtrToPtr<Raw*>(mRaw, 0) = headRaw;	//?
 				if (mFreeRaws->compare_exchange_weak(headRaw, mRaw))
 					break;
 			}
@@ -168,8 +165,7 @@ namespace internal
 	};
 
 	template<typename TColumnList>
-	class DataConstRowReference
-		: private momo::internal::VersionKeeper<typename TColumnList::Settings>
+	class DataConstRowReference : private VersionKeeper<typename TColumnList::Settings>
 	{
 	public:
 		typedef TColumnList ColumnList;
@@ -182,7 +178,7 @@ namespace internal
 		typedef DataConstRowReference ConstReference;
 
 	protected:
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		DataConstRowReference() = delete;
@@ -344,7 +340,5 @@ namespace internal
 		}
 	};
 }
-
-} // namespace experimental
 
 } // namespace momo

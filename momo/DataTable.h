@@ -6,7 +6,7 @@
 
   momo/DataTable.h
 
-  namespace momo::experimental:
+  namespace momo:
     class DataTraits
     class DataTable
 
@@ -20,9 +20,6 @@
 #include "DataIndexes.h"
 
 namespace momo
-{
-
-namespace experimental
 {
 
 class DataTraits
@@ -88,10 +85,10 @@ public:
 	typedef typename Selection::ConstSelection ConstSelection;
 
 private:
-	typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
+	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*, MemManagerPtr>,
-		momo::internal::NestedArraySettings<typename Settings::TableRawsSettings>> Raws;
+		internal::NestedArraySettings<typename Settings::TableRawsSettings>> Raws;
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
@@ -101,7 +98,7 @@ private:
 
 	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
-	typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
+	typedef internal::ArrayBounds<RawIterator> RawBounds;
 	typedef internal::DataRowBounds<ConstRowReference, RawBounds> ConstRowBounds;
 
 public:
@@ -128,12 +125,12 @@ public:
 	};
 
 private:
-	typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+	typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	static const size_t invalidRowNumber = SIZE_MAX;
 
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
-		momo::internal::NestedMemPoolSettings> RawMemPool;
+		internal::NestedMemPoolSettings> RawMemPool;
 
 	template<typename... Items>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Items...>;
@@ -149,7 +146,7 @@ private:
 	class Crew
 	{
 	private:
-		typedef momo::internal::MemManagerProxy<MemManager> MemManagerProxy;
+		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 		typedef std::atomic<Raw*> FreeRaws;
 
@@ -931,7 +928,7 @@ private:
 		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
 		{
-			Raw* nextRaw = *momo::internal::BitCaster::PtrToPtr<Raw*>(headRaw, 0);	//?
+			Raw* nextRaw = *internal::BitCaster::PtrToPtr<Raw*>(headRaw, 0);	//?
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}
@@ -972,13 +969,13 @@ private:
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	momo::internal::EnableIf<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
+	internal::EnableIf<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
 	{
 		GetColumnList().SetNumber(raw, number);
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	momo::internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
+	internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
 	{
 	}
 
@@ -1010,7 +1007,7 @@ private:
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
 		size_t columnCount = sizeof...(Items) + 1,
-		typename = momo::internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount)>>
+		typename = internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount)>>
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
@@ -1026,7 +1023,7 @@ private:
 
 	template<typename Result, typename RowFilter, typename... Items,
 		size_t columnCount = sizeof...(Items),
-		typename = momo::internal::EnableIf<(0 < columnCount
+		typename = internal::EnableIf<(0 < columnCount
 			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
@@ -1197,7 +1194,5 @@ private:
 	RawMemPool mRawMemPool;
 	Indexes mIndexes;
 };
-
-} // namespace experimental
 
 } // namespace momo

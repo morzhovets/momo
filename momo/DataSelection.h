@@ -16,14 +16,10 @@
 namespace momo
 {
 
-namespace experimental
-{
-
 namespace internal
 {
 	template<typename TRaws, typename TSettings>
-	class DataRawIterator
-		: private momo::internal::ArrayIndexIterator<const TRaws, const typename TRaws::Item>
+	class DataRawIterator : private ArrayIndexIterator<const TRaws, const typename TRaws::Item>
 	{
 	protected:
 		typedef TRaws Raws;
@@ -32,7 +28,7 @@ namespace internal
 	private:
 		typedef typename Raws::Item RawPtr;
 
-		typedef momo::internal::ArrayIndexIterator<const Raws, const RawPtr> ArrayIndexIterator;
+		typedef internal::ArrayIndexIterator<const Raws, const RawPtr> ArrayIndexIterator;
 
 	public:
 		typedef const RawPtr& Reference;
@@ -104,7 +100,7 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TRawIterator>
-	class DataRowIterator : private momo::internal::VersionKeeper<typename TRowReference::Settings>
+	class DataRowIterator : private VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
 		typedef TRowReference RowReference;
@@ -112,11 +108,11 @@ namespace internal
 		typedef typename RowReference::ColumnList ColumnList;
 		typedef typename ColumnList::Settings Settings;
 
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef const RowReference Reference;
-		typedef momo::internal::IteratorPointer<Reference> Pointer;
+		typedef IteratorPointer<Reference> Pointer;
 
 		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
 
@@ -201,7 +197,7 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TRawBounds>
-	class DataRowBounds : private momo::internal::VersionKeeper<typename TRowReference::Settings>
+	class DataRowBounds : private VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
 		typedef TRowReference RowReference;
@@ -209,7 +205,7 @@ namespace internal
 		typedef typename RowReference::ColumnList ColumnList;
 		typedef typename ColumnList::Settings Settings;
 
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
@@ -418,8 +414,7 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TDataTraits>
-	class DataSelection
-		: private momo::internal::VersionKeeper<typename TRowReference::ColumnList::Settings>
+	class DataSelection : private VersionKeeper<typename TRowReference::ColumnList::Settings>
 	{
 	public:
 		typedef TRowReference RowReference;
@@ -436,17 +431,17 @@ namespace internal
 		using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;	//?
 
 	protected:
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
-			momo::internal::NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
+			NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
 		typedef typename RowReference::ConstReference ConstRowReference;
 
 		typedef DataRawIterator<Raws, Settings> RawIterator;
 
-		typedef momo::internal::ArrayBounds<RawIterator> RawBounds;
+		typedef ArrayBounds<RawIterator> RawBounds;
 		typedef DataRowBounds<ConstRowReference, RawBounds> ConstRowBounds;
 
 	public:
@@ -769,7 +764,7 @@ namespace internal
 		template<typename RowIterator>
 		size_t pvGetCount(RowIterator begin, RowIterator end)
 		{
-			MOMO_STATIC_ASSERT(momo::internal::IsForwardIterator<RowIterator>::value);
+			MOMO_STATIC_ASSERT(IsForwardIterator<RowIterator>::value);
 			size_t count = 0;
 			for (RowIterator iter = begin; iter != end; ++iter, ++count)
 				MOMO_CHECK(&iter->GetColumnList() == mColumnList);
@@ -852,35 +847,33 @@ namespace internal
 	};
 }
 
-} // namespace experimental
-
 } // namespace momo
 
 namespace std
 {
 	template<typename R, typename S>
-	struct iterator_traits<momo::experimental::internal::DataRawIterator<R, S>>
+	struct iterator_traits<momo::internal::DataRawIterator<R, S>>
 		: public iterator_traits<const typename R::Item*>
 	{
 	};
 
 	template<typename RR, typename RI>
-	struct iterator_traits<momo::experimental::internal::DataRowIterator<RR, RI>>
+	struct iterator_traits<momo::internal::DataRowIterator<RR, RI>>
 	{
 		typedef random_access_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Pointer pointer;
-		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::Reference reference;
-		typedef typename momo::experimental::internal::DataRowIterator<RR, RI>::RowReference value_type;
+		typedef typename momo::internal::DataRowIterator<RR, RI>::Pointer pointer;
+		typedef typename momo::internal::DataRowIterator<RR, RI>::Reference reference;
+		typedef typename momo::internal::DataRowIterator<RR, RI>::RowReference value_type;
 	};
 
 	template<typename I, typename RI, typename S>
-	struct iterator_traits<momo::experimental::internal::DataConstItemIterator<I, RI, S>>
+	struct iterator_traits<momo::internal::DataConstItemIterator<I, RI, S>>
 	{
 		typedef random_access_iterator_tag iterator_category;
 		typedef ptrdiff_t difference_type;
-		typedef typename momo::experimental::internal::DataConstItemIterator<I, RI, S>::Pointer pointer;
-		typedef typename momo::experimental::internal::DataConstItemIterator<I, RI, S>::Reference reference;
-		typedef typename momo::experimental::internal::DataConstItemIterator<I, RI, S>::Item value_type;
+		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Pointer pointer;
+		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Reference reference;
+		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Item value_type;
 	};
 } // namespace std

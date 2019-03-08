@@ -52,18 +52,18 @@ class SimpleDataTester
 public:
 	static void TestAll()
 	{
-		std::cout << "momo::experimental::DataColumnListStatic: " << std::flush;
-		TestData(momo::experimental::DataColumnListStatic<Struct>(),
+		std::cout << "momo::DataColumnListStatic: " << std::flush;
+		TestData(momo::DataColumnListStatic<Struct>(),
 			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::experimental::DataColumnList (struct): " << std::flush;
-		TestData(momo::experimental::DataColumnList<momo::experimental::DataColumnTraits<Struct>>(
-			intStruct, dblStruct, strStruct), intStruct, dblStruct, strStruct);
+		std::cout << "momo::DataColumnList (struct): " << std::flush;
+		TestData(momo::DataColumnList<momo::DataColumnTraits<Struct>>(intStruct, dblStruct, strStruct),
+			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::experimental::DataColumnList (string): " << std::flush;
-		TestData(momo::experimental::DataColumnList<>(intString, dblString, strString),
+		std::cout << "momo::DataColumnList (string): " << std::flush;
+		TestData(momo::DataColumnList<>(intString, dblString, strString),
 			intString, dblString, strString);
 		std::cout << "ok" << std::endl;
 	}
@@ -72,7 +72,7 @@ public:
 	static void TestData(DataColumnList&& columns,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
-		typedef momo::experimental::DataTable<DataColumnList> DataTable;
+		typedef momo::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;
 
 		static const size_t count = 1024;

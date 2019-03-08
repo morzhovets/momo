@@ -15,9 +15,6 @@
 namespace momo
 {
 
-namespace experimental
-{
-
 namespace internal
 {
 	class DataHashSetSettings : public momo::HashSetSettings
@@ -107,8 +104,7 @@ namespace internal
 	};
 
 	template<typename TColumnList, typename TKeyIterator>
-	class DataRawMultiHashIterator
-		: private momo::internal::VersionKeeper<typename TColumnList::Settings>
+	class DataRawMultiHashIterator : private VersionKeeper<typename TColumnList::Settings>
 	{
 	protected:
 		typedef TColumnList ColumnList;
@@ -126,7 +122,7 @@ namespace internal
 
 		typedef DataRawMultiHashIterator ConstIterator;
 
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		explicit DataRawMultiHashIterator() noexcept
@@ -207,11 +203,11 @@ namespace internal
 		using OffsetItemTuple = std::tuple<std::pair<size_t, const Items&>...>;
 
 	private:
-		typedef momo::internal::VersionKeeper<Settings> VersionKeeper;
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-		typedef momo::internal::MemManagerPtr<MemManager> MemManagerPtr;
+		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::internal::NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
+		typedef NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
 		typedef std::function<size_t(Raw*, const size_t*)> HashFunc;
 		typedef std::function<bool(Raw*, Raw*, const size_t*)> EqualFunc;
@@ -277,7 +273,7 @@ namespace internal
 
 		private:
 			template<size_t index, typename... Items>
-			momo::internal::EnableIf<(index < sizeof...(Items)), bool> pvIsEqual(
+			EnableIf<(index < sizeof...(Items)), bool> pvIsEqual(
 				const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
@@ -288,7 +284,7 @@ namespace internal
 			}
 
 			template<size_t index, typename... Items>
-			momo::internal::EnableIf<(index == sizeof...(Items)), bool> pvIsEqual(
+			EnableIf<(index == sizeof...(Items)), bool> pvIsEqual(
 				const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
 			{
 				return true;
@@ -722,7 +718,7 @@ namespace internal
 	private:
 		template<typename Index>
 		using Indexes = Array<Index, MemManagerPtr, ArrayItemTraits<Index, MemManagerPtr>,
-			momo::internal::NestedArraySettings<ArraySettings<0, false>>>;	//?
+			NestedArraySettings<ArraySettings<0, false>>>;	//?
 
 		typedef Indexes<UniqueHash> UniqueHashes;
 		typedef Indexes<MultiHash> MultiHashes;
@@ -1117,7 +1113,7 @@ namespace internal
 		}
 
 		template<size_t index, typename... Items>
-		static momo::internal::EnableIf<(index < sizeof...(Items)), size_t> pvGetHashCode(
+		static EnableIf<(index < sizeof...(Items)), size_t> pvGetHashCode(
 			const OffsetItemTuple<Items...>& tuple)
 		{
 			const auto& pair = std::get<index>(tuple);
@@ -1126,7 +1122,7 @@ namespace internal
 		}
 
 		template<size_t index, typename... Items>
-		static momo::internal::EnableIf<(index == sizeof...(Items)), size_t> pvGetHashCode(
+		static EnableIf<(index == sizeof...(Items)), size_t> pvGetHashCode(
 			const OffsetItemTuple<Items...>& /*tuple*/) noexcept
 		{
 			return 0;
@@ -1166,20 +1162,18 @@ namespace internal
 	};
 }
 
-} // namespace experimental
-
 } // namespace momo
 
 namespace std
 {
 	template<typename CL>
-	struct iterator_traits<momo::experimental::internal::DataRawUniqueHashIterator<CL>>
+	struct iterator_traits<momo::internal::DataRawUniqueHashIterator<CL>>
 		: public iterator_traits<typename CL::Raw* const*>
 	{
 	};
 
 	template<typename CL, typename KI>
-	struct iterator_traits<momo::experimental::internal::DataRawMultiHashIterator<CL, KI>>
+	struct iterator_traits<momo::internal::DataRawMultiHashIterator<CL, KI>>
 		: public iterator_traits<typename CL::Raw* const*>
 	{
 	};

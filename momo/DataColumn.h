@@ -11,7 +11,7 @@
     MOMO_DATA_COLUMN_STRING_TAG
     MOMO_DATA_COLUMN_STRING
 
-  namespace momo::experimental:
+  namespace momo:
     enum class DataOperatorType
     class DataOperator
     class DataColumn
@@ -30,21 +30,17 @@
 #include <bitset>
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
-	constexpr momo::experimental::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
+	constexpr momo::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
 	name((uint64_t)offsetof(Struct, name))
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
 	MOMO_STATIC_ASSERT(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
-	constexpr momo::experimental::DataColumn<Type, Tag> \
-	name(momo::experimental::internal::StrHasher::GetHashCode64(#name))
+	constexpr momo::DataColumn<Type, Tag> name(momo::internal::StrHasher::GetHashCode64(#name))
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
-	MOMO_DATA_COLUMN_STRING_TAG(momo::experimental::DataStructDefault, Type, name)
+	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault, Type, name)
 
 namespace momo
-{
-
-namespace experimental
 {
 
 namespace internal
@@ -194,7 +190,7 @@ public:
 
 private:
 	template<typename Item>
-	using ItemManager = momo::internal::ObjectManager<Item, MemManager>;
+	using ItemManager = internal::ObjectManager<Item, MemManager>;
 
 public:
 	template<typename Item>
@@ -343,7 +339,7 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
-	typedef momo::internal::NestedArrayIntCap<ColumnTraits::mutOffsetsInternalCapacity,
+	typedef internal::NestedArrayIntCap<ColumnTraits::mutOffsetsInternalCapacity,
 		uint8_t, MemManager> MutOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
@@ -475,7 +471,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		MOMO_ASSERT(offset % ColumnTraits::template GetAlignment<Item>() == 0);
-		return *momo::internal::BitCaster::PtrToPtr<Item>(raw, offset);
+		return *internal::BitCaster::PtrToPtr<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -487,13 +483,13 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return *momo::internal::BitCaster::PtrToPtr<const size_t>(raw, mTotalSize - sizeof(size_t));
+		return *internal::BitCaster::PtrToPtr<const size_t>(raw, mTotalSize - sizeof(size_t));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		*momo::internal::BitCaster::PtrToPtr<size_t>(raw, mTotalSize - sizeof(size_t)) = number;
+		*internal::BitCaster::PtrToPtr<size_t>(raw, mTotalSize - sizeof(size_t)) = number;
 	}
 
 private:
@@ -540,7 +536,7 @@ private:
 			offset += sizeof(size_t);
 			maxAlignment = std::minmax(maxAlignment, MOMO_ALIGNMENT_OF(size_t)).second;
 		}
-		mTotalSize = momo::internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
+		mTotalSize = internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
 		mAlignment = maxAlignment;
 	}
 
@@ -560,7 +556,7 @@ private:
 	static void pvCreate(MemManager& memManager, Raw* raw, size_t offset)
 	{
 		pvCorrectOffset<Item>(offset);
-		ColumnTraits::Create(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
+		ColumnTraits::Create(memManager, internal::BitCaster::PtrToPtr<Item>(raw, offset));
 		try
 		{
 			pvCreate<void, Items...>(memManager, raw,
@@ -568,8 +564,7 @@ private:
 		}
 		catch (...)
 		{
-			ColumnTraits::Destroy(&memManager,
-				momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
+			ColumnTraits::Destroy(&memManager, internal::BitCaster::PtrToPtr<Item>(raw, offset));
 			throw;
 		}
 	}
@@ -583,7 +578,7 @@ private:
 	static void pvDestroy(MemManager* memManager, Raw* raw, size_t offset) noexcept
 	{
 		pvCorrectOffset<Item>(offset);
-		ColumnTraits::Destroy(memManager, momo::internal::BitCaster::PtrToPtr<Item>(raw, offset));
+		ColumnTraits::Destroy(memManager, internal::BitCaster::PtrToPtr<Item>(raw, offset));
 		pvDestroy<void, Items...>(memManager, raw, offset + ColumnTraits::template GetSize<Item>());
 	}
 
@@ -596,9 +591,8 @@ private:
 	static void pvCopy(MemManager& memManager, const Raw* srcRaw, Raw* dstRaw, size_t offset)
 	{
 		pvCorrectOffset<Item>(offset);
-		ColumnTraits::Copy(memManager,
-			momo::internal::BitCaster::PtrToPtr<const Item>(srcRaw, offset),
-			momo::internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
+		ColumnTraits::Copy(memManager, internal::BitCaster::PtrToPtr<const Item>(srcRaw, offset),
+			internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
 		try
 		{
 			pvCopy<void, Items...>(memManager, srcRaw, dstRaw,
@@ -607,7 +601,7 @@ private:
 		catch (...)
 		{
 			ColumnTraits::Destroy(&memManager,
-				momo::internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
+				internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
 			throw;
 		}
 	}
@@ -654,7 +648,7 @@ public:
 	MOMO_STATIC_ASSERT(std::is_class<Struct>::value);
 
 private:
-	typedef momo::internal::ObjectManager<Raw, MemManager> RawManager;
+	typedef internal::ObjectManager<Raw, MemManager> RawManager;
 
 	typedef std::bitset<sizeof(Struct)> MutOffsets;
 
@@ -762,7 +756,7 @@ public:
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
 		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
-		return *momo::internal::BitCaster::PtrToPtr<Item>(raw, offset);
+		return *internal::BitCaster::PtrToPtr<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -799,7 +793,5 @@ private:
 	MemManager mMemManager;
 	MutOffsets mMutOffsets;
 };
-
-} // namespace experimental
 
 } // namespace momo
