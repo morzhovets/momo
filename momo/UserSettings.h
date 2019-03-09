@@ -145,6 +145,5 @@
 //#pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
 //#pragma warning (disable: 4510)	// default constructor could not be generated
 //#pragma warning (disable: 4512)	// assignment operator could not be generated
-//#pragma warning (disable: 4610)	// struct can never be instantiated - user defined constructor required
 //#define _SCL_SECURE_NO_WARNINGS
 //#endif
