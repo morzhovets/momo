@@ -50,142 +50,6 @@
 namespace momo
 {
 
-namespace internal
-{
-	template<typename TMemManager>
-	class MemManagerProxy
-	{
-	public:
-		typedef TMemManager MemManager;
-
-	private:
-		template<typename MemManager,
-			typename = void*>
-		struct CanReallocate : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct CanReallocate<MemManager,
-			decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
-			: public std::true_type
-		{
-		};
-
-		template<typename MemManager,
-			typename = bool>
-		struct CanReallocateInplace : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct CanReallocateInplace<MemManager,
-			decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
-			: public std::true_type
-		{
-		};
-
-		template<typename MemManager,
-			typename = size_t>
-		struct PtrUsefulBitCount
-		{
-			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-		};
-
-		template<typename MemManager>
-		struct PtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
-		{
-			static const size_t value = MemManager::ptrUsefulBitCount;
-		};
-
-		template<typename MemManager,
-			typename = bool>
-		struct HasIsEqual : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct HasIsEqual<MemManager,
-			decltype(std::declval<const MemManager&>().IsEqual(std::declval<const MemManager&>()))>
-			: public std::true_type
-		{
-		};
-
-	public:
-		static const bool canReallocate = CanReallocate<MemManager>::value;
-		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
-
-		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
-
-	public:
-		template<typename Result = void>
-		static Result* Allocate(MemManager& memManager, size_t size)
-		{
-			MOMO_ASSERT(size > 0);
-			void* ptr = memManager.Allocate(size);
-			pvCheckPtr(ptr);
-			return static_cast<Result*>(ptr);
-		}
-
-		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
-		{
-			MOMO_ASSERT(ptr != nullptr && size > 0);
-			memManager.Deallocate(ptr, size);
-		}
-
-		template<typename Result = void>
-		static Result* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
-		{
-			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
-			if (size == newSize)
-				return static_cast<Result*>(ptr);
-			void* newPtr = memManager.Reallocate(ptr, size, newSize);
-			pvCheckPtr(newPtr);
-			return static_cast<Result*>(newPtr);
-		}
-
-		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
-			size_t newSize) noexcept
-		{
-			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
-			if (size == newSize)
-				return true;
-			return memManager.ReallocateInplace(ptr, size, newSize);
-		}
-
-		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
-		{
-			return pvIsEqual(memManager1, memManager2);
-		}
-
-	private:
-		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
-		{
-			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == (uintptr_t)0);
-		}
-
-		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift == sizeof(void*) * 8), void> pvCheckPtr(void* /*ptr*/) noexcept
-		{
-		}
-
-		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
-		static EnableIf<hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
-			const MemManager& memManager2) noexcept
-		{
-			return memManager1.IsEqual(memManager2);
-		}
-
-		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
-		static EnableIf<!hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
-			const MemManager& memManager2) noexcept
-		{
-			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
-		}
-	};
-}
-
 class MemManagerCpp
 {
 public:
@@ -423,6 +287,139 @@ public:
 
 namespace internal
 {
+	template<typename TMemManager>
+	class MemManagerProxy
+	{
+	public:
+		typedef TMemManager MemManager;
+
+	private:
+		template<typename MemManager,
+			typename = void*>
+		struct CanReallocate : public std::false_type
+		{
+		};
+
+		template<typename MemManager>
+		struct CanReallocate<MemManager,
+			decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
+			: public std::true_type
+		{
+		};
+
+		template<typename MemManager,
+			typename = bool>
+		struct CanReallocateInplace : public std::false_type
+		{
+		};
+
+		template<typename MemManager>
+		struct CanReallocateInplace<MemManager,
+			decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
+			: public std::true_type
+		{
+		};
+
+		template<typename MemManager,
+			typename = size_t>
+		struct PtrUsefulBitCount
+		{
+			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+		};
+
+		template<typename MemManager>
+		struct PtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
+		{
+			static const size_t value = MemManager::ptrUsefulBitCount;
+		};
+
+		template<typename MemManager,
+			typename = bool>
+		struct HasIsEqual : public std::false_type
+		{
+		};
+
+		template<typename MemManager>
+		struct HasIsEqual<MemManager,
+			decltype(std::declval<const MemManager&>().IsEqual(std::declval<const MemManager&>()))>
+			: public std::true_type
+		{
+		};
+
+	public:
+		static const bool canReallocate = CanReallocate<MemManager>::value;
+		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
+
+		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
+
+	public:
+		template<typename Result = void>
+		static Result* Allocate(MemManager& memManager, size_t size)
+		{
+			MOMO_ASSERT(size > 0);
+			void* ptr = memManager.Allocate(size);
+			pvCheckPtr(ptr);
+			return static_cast<Result*>(ptr);
+		}
+
+		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0);
+			memManager.Deallocate(ptr, size);
+		}
+
+		template<typename Result = void>
+		static Result* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
+			if (size == newSize)
+				return static_cast<Result*>(ptr);
+			void* newPtr = memManager.Reallocate(ptr, size, newSize);
+			pvCheckPtr(newPtr);
+			return static_cast<Result*>(newPtr);
+		}
+
+		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
+			size_t newSize) noexcept
+		{
+			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
+			if (size == newSize)
+				return true;
+			return memManager.ReallocateInplace(ptr, size, newSize);
+		}
+
+		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
+		{
+			return pvIsEqual(memManager1, memManager2);
+		}
+
+	private:
+		template<size_t shift = ptrUsefulBitCount>
+		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
+		{
+			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == (uintptr_t)0);
+		}
+
+		template<size_t shift = ptrUsefulBitCount>
+		static EnableIf<(shift == sizeof(void*) * 8), void> pvCheckPtr(void* /*ptr*/) noexcept
+		{
+		}
+
+		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
+		static EnableIf<hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
+			const MemManager& memManager2) noexcept
+		{
+			return memManager1.IsEqual(memManager2);
+		}
+
+		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
+		static EnableIf<!hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
+			const MemManager& memManager2) noexcept
+		{
+			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
+		}
+	};
+
 	class MemManagerDummy
 	{
 	public:
