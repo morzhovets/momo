@@ -390,31 +390,29 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			return pvIsEqual(memManager1, memManager2);
+			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
 		}
 
 	private:
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift < sizeof(void*) * 8), void> pvCheckPtr(void* ptr) noexcept
+		static EnableIf<(shift < sizeof(void*) * 8)> pvCheckPtr(void* ptr) noexcept
 		{
 			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == (uintptr_t)0);
 		}
 
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift == sizeof(void*) * 8), void> pvCheckPtr(void* /*ptr*/) noexcept
+		static EnableIf<(shift == sizeof(void*) * 8)> pvCheckPtr(void* /*ptr*/) noexcept
 		{
 		}
 
-		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
-		static EnableIf<hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
-			const MemManager& memManager2) noexcept
+		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
+			std::true_type /*hasIsEqual*/) noexcept
 		{
 			return memManager1.IsEqual(memManager2);
 		}
 
-		template<bool hasIsEqual = HasIsEqual<MemManager>::value>
-		static EnableIf<!hasIsEqual, bool> pvIsEqual(const MemManager& memManager1,
-			const MemManager& memManager2) noexcept
+		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
+			std::false_type /*hasIsEqual*/) noexcept
 		{
 			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
 		}

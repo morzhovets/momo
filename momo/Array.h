@@ -261,13 +261,11 @@ private:
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		typedef internal::BoolConstant<(internalCapacity > 0)> HasInternalCapacity;
-
 	public:
 		explicit Data(MemManager&& memManager) noexcept
 			: MemManager(std::move(memManager))
 		{
-			pvCreate(HasInternalCapacity());
+			pvCreate();
 		}
 
 		explicit Data(size_t capacity, MemManager&& memManager)
@@ -283,14 +281,14 @@ private:
 			}
 			else
 			{
-				pvCreate(HasInternalCapacity());
+				pvCreate();
 			}
 		}
 
 		Data(Data&& data) noexcept
 			: MemManager(std::move(data.GetMemManager()))
 		{
-			pvCreateMove(std::move(data), HasInternalCapacity());
+			pvCreateMove(std::move(data));
 		}
 
 		Data(const Data&) = delete;
@@ -352,7 +350,7 @@ private:
 		void Clear() noexcept
 		{
 			pvDestroy();
-			pvCreate(HasInternalCapacity());
+			pvCreate();
 		}
 
 		template<typename RelocateFunc>
@@ -380,7 +378,7 @@ private:
 			}
 			else
 			{
-				pvReset(count, relocateFunc, HasInternalCapacity());
+				pvReset(count, relocateFunc);
 			}
 		}
 
@@ -391,20 +389,23 @@ private:
 				throw std::length_error("momo::Array length error");
 		}
 
-		void pvCreate(std::true_type /*hasInternalCapacity*/) noexcept
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<hasInternalCapacity> pvCreate() noexcept
 		{
 			mItems = &mInternalItems;
 			mCount = 0;
 		}
 
-		void pvCreate(std::false_type /*hasInternalCapacity*/) noexcept
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<!hasInternalCapacity> pvCreate() noexcept
 		{
 			mItems = nullptr;
 			mCount = 0;
 			mCapacity = 0;
 		}
 
-		void pvCreateMove(Data&& data, std::true_type /*hasInternalCapacity*/) noexcept
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<hasInternalCapacity> pvCreateMove(Data&& data) noexcept
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
@@ -418,15 +419,16 @@ private:
 				mCapacity = data.mCapacity;
 			}
 			mCount = data.mCount;
-			data.pvCreate(std::true_type());
+			data.pvCreate();
 		}
 
-		void pvCreateMove(Data&& data, std::false_type /*hasInternalCapacity*/) noexcept
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<!hasInternalCapacity> pvCreateMove(Data&& data) noexcept
 		{
 			mItems = data.mItems;
 			mCount = data.mCount;
 			mCapacity = data.mCapacity;
-			data.pvCreate(std::false_type());
+			data.pvCreate();
 		}
 
 		void pvDestroy() noexcept
@@ -473,9 +475,9 @@ private:
 			return false;
 		}
 
-		template<typename RelocateFunc>
-		void pvReset(size_t count, RelocateFunc relocateFunc,
-			std::true_type /*hasInternalCapacity*/)
+		template<typename RelocateFunc,
+			bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<hasInternalCapacity> pvReset(size_t count, RelocateFunc relocateFunc)
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
@@ -486,14 +488,15 @@ private:
 			mCount = count;
 		}
 
-		template<typename RelocateFunc>
-		void pvReset(size_t count, RelocateFunc /*relocateFunc*/,
-			std::false_type /*hasInternalCapacity*/) noexcept
+		template<typename RelocateFunc,
+			bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<!hasInternalCapacity> pvReset(size_t count,
+			RelocateFunc /*relocateFunc*/) noexcept
 		{
 			(void)count;
 			MOMO_ASSERT(count == 0);
 			pvDeallocate();
-			pvCreate(std::false_type());
+			pvCreate();
 		}
 
 	private:
@@ -545,7 +548,7 @@ public:
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? std::distance(begin, end) : 0,
 			std::move(memManager))
 	{
-		pvFill(begin, end, internal::IsForwardIterator<ArgIterator>());
+		pvFill(begin, end);
 	}
 
 	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
@@ -561,7 +564,7 @@ public:
 	Array(const Array& array, bool shrink = true)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		pvFill(array.GetBegin(), array.GetEnd(), std::true_type());
+		pvFill(array.GetBegin(), array.GetEnd());
 	}
 
 	Array(const Array& array, MemManager&& memManager)
@@ -957,7 +960,8 @@ private:
 	}
 
 	template<typename ArgIterator>
-	void pvFill(ArgIterator begin, ArgIterator end, std::true_type /*isForwardIterator*/)
+	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value> pvFill(
+		ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
@@ -967,7 +971,8 @@ private:
 	}
 
 	template<typename ArgIterator>
-	void pvFill(ArgIterator begin, ArgIterator end, std::false_type /*isForwardIterator*/)
+	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value> pvFill(
+		ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<
 			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
