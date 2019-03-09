@@ -256,23 +256,22 @@ public:
 	static const size_t internalCapacity = Settings::internalCapacity;
 
 private:
-	class Data : private internal::MemManagerWrapper<MemManager>
+	class Data : private MemManager
 	{
 	private:
-		typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 		typedef internal::BoolConstant<(internalCapacity > 0)> HasInternalCapacity;
 
 	public:
 		explicit Data(MemManager&& memManager) noexcept
-			: MemManagerWrapper(std::move(memManager))
+			: MemManager(std::move(memManager))
 		{
 			pvCreate(HasInternalCapacity());
 		}
 
 		explicit Data(size_t capacity, MemManager&& memManager)
-			: MemManagerWrapper(std::move(memManager))
+			: MemManager(std::move(memManager))
 		{
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
@@ -289,7 +288,7 @@ private:
 		}
 
 		Data(Data&& data) noexcept
-			: MemManagerWrapper(std::move(data.pvGetMemManagerWrapper()))
+			: MemManager(std::move(data.GetMemManager()))
 		{
 			pvCreateMove(std::move(data), HasInternalCapacity());
 		}
@@ -299,17 +298,6 @@ private:
 		~Data() noexcept
 		{
 			pvDestroy();
-		}
-
-		Data& operator=(Data&& data) noexcept
-		{
-			if (this != &data)
-			{
-				pvDestroy();
-				pvGetMemManagerWrapper() = std::move(data.pvGetMemManagerWrapper());
-				pvCreateMove(std::move(data), HasInternalCapacity());
-			}
-			return *this;
 		}
 
 		Data& operator=(const Data&) = delete;
@@ -326,12 +314,12 @@ private:
 
 		const MemManager& GetMemManager() const noexcept
 		{
-			return pvGetMemManagerWrapper().GetMemManager();
+			return *this;
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
-			return pvGetMemManagerWrapper().GetMemManager();
+			return *this;
 		}
 
 		size_t GetCapacity() const noexcept
@@ -397,16 +385,6 @@ private:
 		}
 
 	private:
-		const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
-		{
-			return *this;
-		}
-
-		MemManagerWrapper& pvGetMemManagerWrapper() noexcept
-		{
-			return *this;
-		}
-
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > SIZE_MAX / sizeof(Item))
@@ -612,20 +590,26 @@ public:
 
 	Array& operator=(Array&& array) noexcept
 	{
-		mData = std::move(array.mData);
+		if (this != &array)
+			pvAssign(std::move(array));
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			Array(array).Swap(*this);
+			pvAssign(Array(array));
 		return *this;
 	}
 
 	void Swap(Array& array) noexcept
 	{
-		std::swap(mData, array.mData);
+		if (this != &array)
+		{
+			Array tempArray(std::move(array));
+			array.pvAssign(std::move(*this));
+			pvAssign(std::move(tempArray));
+		}
 	}
 
 	ConstIterator GetBegin() const noexcept
@@ -963,6 +947,13 @@ private:
 	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
 	{
+	}
+
+	void pvAssign(Array&& array) noexcept
+	{
+		MOMO_ASSERT(this != &array);
+		mData.~Data();	//?
+		new(&mData) Data(std::move(array.mData));
 	}
 
 	template<typename ArgIterator>
