@@ -449,6 +449,12 @@ public:
 	}
 
 	template<typename Item>
+	bool ContainsColumn(const Column<Item>& column) const
+	{
+		return GetColumnList().Contains(column);
+	}
+
+	template<typename Item>
 	ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 	{
 		const ColumnList& columnList = GetColumnList();

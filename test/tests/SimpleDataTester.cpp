@@ -188,6 +188,9 @@ public:
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
+		assert(tableCopy.ContainsColumn(intCol));
+		assert(tableCopy.ContainsColumn(dblCol));
+		assert(tableCopy.ContainsColumn(strCol));
 
 		assert(tableCopy.GetUniqueHashIndex(intCol, strCol));
 		assert(tableCopy.GetMultiHashIndex(intCol));
