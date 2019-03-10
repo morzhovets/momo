@@ -18,6 +18,7 @@
     class DataSettings
     struct DataStructDefault
     class DataColumnTraits
+    class DataItemTraits
     class DataColumnList
     class DataColumnListStatic
 
@@ -26,6 +27,7 @@
 #pragma once
 
 #include "Array.h"
+#include "HashSet.h"
 
 #include <bitset>
 
@@ -180,13 +182,15 @@ public:
 	template<typename Item>
 	using Column = DataColumn<Item, Struct>;
 
-	typedef uint64_t ColumnCode;
-
 	static const size_t logVertexCount = 8;
 	static const size_t maxColumnCount = 200;
 	static const size_t maxCodeParam = 255;
 
 	static const size_t mutableOffsetsInternalCapacity = 0;
+
+	typedef uint64_t ColumnCode;
+
+	typedef HashSetOpen<ColumnCode> ColumnCodeSet;	//?
 
 public:
 	template<typename Item>
@@ -274,8 +278,6 @@ public:
 	typedef void Raw;
 
 private:
-	typedef typename ColumnTraits::ColumnCode ColumnCode;
-
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
 	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
 	static const size_t maxCodeParam = ColumnTraits::maxCodeParam;
@@ -354,15 +356,17 @@ private:
 
 	typedef std::array<size_t, vertexCount> Addends;
 
+	typedef typename ColumnTraits::ColumnCode ColumnCode;
+	typedef typename ColumnTraits::ColumnCodeSet ColumnCodeSet;
+
+	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
 	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
-		uint8_t, MemManager> MutableOffsets;
+		uint8_t, MemManagerPtr> MutableOffsets;
 
 	typedef std::function<void(MemManager&, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, Raw*)> DestroyFunc;
 	typedef std::function<void(MemManager&, const Raw*, Raw*)> CopyFunc;
-
-	typedef internal::NestedArrayIntCap<maxColumnCount, ColumnCode,
-		internal::MemManagerDummy> ColumnCodes;
 
 public:
 	template<typename Item, typename... Items>
@@ -375,13 +379,18 @@ public:
 	explicit DataColumnList(MemManager&& memManager, const Column<Item>& column,
 		const Column<Items>&... columns)
 		: mCodeParam(0),
-		mMutableOffsets(std::move(memManager)),
-		mColumnCodes({ ColumnTraits::GetColumnCode(column), ColumnTraits::GetColumnCode(columns)... })
+		mColumnCodeSet(typename ColumnCodeSet::HashTraits(), std::move(memManager)),
+		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
-		while (mCodeParam <= maxCodeParam && !pvFillAddends<Item, Items...>())
+		static const size_t columnCount = 1 + sizeof...(columns);
+		MOMO_STATIC_ASSERT(columnCount <= maxColumnCount);
+		std::array<ColumnCode, columnCount> columnCodes = { ColumnTraits::GetColumnCode(column),
+			ColumnTraits::GetColumnCode(columns)... };
+		while (mCodeParam <= maxCodeParam && !pvFillAddends<Item, Items...>(columnCodes))
 			++mCodeParam;
 		if (mCodeParam > maxCodeParam)
 			throw std::runtime_error("Cannot create momo::DataColumnList");
+		mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
 		mMutableOffsets.SetCount((mTotalSize + 7) / 8, (uint8_t)0);
 		mCreateFunc = [] (MemManager& memManager, Raw* raw)
 			{ pvCreate<void, Item, Items...>(memManager, raw, 0); };
@@ -396,11 +405,11 @@ public:
 		mAddends(columnList.mAddends),
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
+		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
 		mMutableOffsets(std::move(columnList.mMutableOffsets)),
 		mCreateFunc(std::move(columnList.mCreateFunc)),	//?
 		mDestroyFunc(std::move(columnList.mDestroyFunc)),
-		mCopyFunc(std::move(columnList.mCopyFunc)),
-		mColumnCodes(std::move(columnList.mColumnCodes))
+		mCopyFunc(std::move(columnList.mCopyFunc))
 	{
 	}
 
@@ -409,11 +418,11 @@ public:
 		mAddends(columnList.mAddends),
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
+		mColumnCodeSet(columnList.mColumnCodeSet),
 		mMutableOffsets(columnList.mMutableOffsets),
 		mCreateFunc(columnList.mCreateFunc),
 		mDestroyFunc(columnList.mDestroyFunc),
-		mCopyFunc(columnList.mCopyFunc),
-		mColumnCodes(columnList.mColumnCodes)
+		mCopyFunc(columnList.mCopyFunc)
 	{
 	}
 
@@ -425,12 +434,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mMutableOffsets.GetMemManager();
+		return mColumnCodeSet.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mMutableOffsets.GetMemManager();
+		return mColumnCodeSet.GetMemManager();
 	}
 
 	template<typename... Items>
@@ -519,22 +528,20 @@ public:
 	bool Contains(const Column<Item>& column) const noexcept
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(column);
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
-		if (mAddends[vertices.first] == 0 || mAddends[vertices.second] == 0)
-			return false;
-		return std::find(mColumnCodes.GetBegin(), mColumnCodes.GetEnd(), code)
-			!= mColumnCodes.GetEnd();
+		//std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		//if (mAddends[vertices.first] == 0 || mAddends[vertices.second] == 0)
+		//	return false;
+		return mColumnCodeSet.ContainsKey(code);
 	}
 
 private:
-	template<typename... Items>
-	bool pvFillAddends()
+	template<typename... Items,
+		size_t columnCount = sizeof...(Items)>
+	bool pvFillAddends(const std::array<ColumnCode, columnCount>& columnCodes)
 	{
-		static const size_t columnCount = sizeof...(Items);
-		MOMO_STATIC_ASSERT(columnCount <= maxColumnCount);
 		static const size_t edgeCount = 2 * columnCount;
 		Graph<edgeCount> graph;
-		pvMakeGraph<edgeCount, Items...>(graph, 0, 1, mColumnCodes.GetItems());
+		pvMakeGraph<edgeCount, Items...>(graph, 0, 1, columnCodes.data());
 		std::fill(mAddends.begin(), mAddends.end(), 0);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
@@ -659,11 +666,11 @@ private:
 	Addends mAddends;
 	size_t mTotalSize;
 	size_t mAlignment;
+	ColumnCodeSet mColumnCodeSet;
 	MutableOffsets mMutableOffsets;
 	CreateFunc mCreateFunc;
 	DestroyFunc mDestroyFunc;
 	CopyFunc mCopyFunc;
-	ColumnCodes mColumnCodes;
 };
 
 template<typename TStruct,
