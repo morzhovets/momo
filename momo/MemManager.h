@@ -358,7 +358,8 @@ namespace internal
 		{
 			MOMO_ASSERT(size > 0);
 			void* ptr = memManager.Allocate(size);
-			pvCheckPtr(ptr);
+			MOMO_ASSERT(ptr != nullptr);
+			pvCheckBits(ptr);
 			return static_cast<Result*>(ptr);
 		}
 
@@ -375,7 +376,8 @@ namespace internal
 			if (size == newSize)
 				return static_cast<Result*>(ptr);
 			void* newPtr = memManager.Reallocate(ptr, size, newSize);
-			pvCheckPtr(newPtr);
+			MOMO_ASSERT(newPtr != nullptr);
+			pvCheckBits(newPtr);
 			return static_cast<Result*>(newPtr);
 		}
 
@@ -395,13 +397,13 @@ namespace internal
 
 	private:
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift < sizeof(void*) * 8)> pvCheckPtr(void* ptr) noexcept
+		static EnableIf<(shift < sizeof(void*) * 8)> pvCheckBits(void* ptr) noexcept
 		{
 			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == (uintptr_t)0);
 		}
 
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift == sizeof(void*) * 8)> pvCheckPtr(void* /*ptr*/) noexcept
+		static EnableIf<(shift == sizeof(void*) * 8)> pvCheckBits(void* /*ptr*/) noexcept
 		{
 		}
 
@@ -439,7 +441,11 @@ namespace internal
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
-		//void* Allocate(size_t size);
+		void* Allocate(size_t /*size*/)
+		{
+			MOMO_ASSERT(false);
+			throw std::bad_alloc();
+		}
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) noexcept
 		{
