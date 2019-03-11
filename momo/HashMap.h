@@ -625,4 +625,15 @@ private:
 template<typename TKey, typename TValue>
 using HashMapOpen = HashMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
+namespace internal
+{
+	class NestedHashMapSettings : public HashMapSettings
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = false;
+	};
+}
+
 } // namespace momo

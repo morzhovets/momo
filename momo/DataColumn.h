@@ -190,8 +190,6 @@ public:
 
 	typedef uint64_t ColumnCode;
 
-	typedef HashSetOpen<ColumnCode> ColumnCodeSet;	//?
-
 public:
 	template<typename Item>
 	static ColumnCode GetColumnCode(const Column<Item>& column) noexcept
@@ -357,7 +355,10 @@ private:
 	typedef std::array<size_t, vertexCount> Addends;
 
 	typedef typename ColumnTraits::ColumnCode ColumnCode;
-	typedef typename ColumnTraits::ColumnCodeSet ColumnCodeSet;
+
+	typedef HashSet<ColumnCode, HashTraitsOpen<ColumnCode>, MemManager,
+		HashSetItemTraits<ColumnCode, ColumnCode, MemManager>,
+		internal::NestedHashSetSettings> ColumnCodeSet;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 

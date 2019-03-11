@@ -1222,6 +1222,17 @@ private:
 template<typename TKey>
 using HashSetOpen = HashSet<TKey, HashTraitsOpen<TKey>>;
 
+namespace internal
+{
+	class NestedHashSetSettings : public HashSetSettings
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = false;
+	};
+}
+
 } // namespace momo
 
 namespace std

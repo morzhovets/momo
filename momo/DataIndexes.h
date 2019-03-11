@@ -17,23 +17,6 @@ namespace momo
 
 namespace internal
 {
-	class DataHashSetSettings : public momo::HashSetSettings
-	{
-	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-	};
-
-	class DataHashMultiMapSettings : public momo::HashMultiMapSettings
-	{
-	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkKeyVersion = false;
-		static const bool checkValueVersion = false;
-	};
-
 	template<typename TColumnList>
 	class DataRawUniqueHashIterator
 	{
@@ -318,7 +301,7 @@ namespace internal
 		{
 		private:
 			typedef momo::HashSet<Raw*, HashTraits, MemManagerPtr,
-				HashSetItemTraits<Raw*, Raw*, MemManagerPtr>, DataHashSetSettings> HashSet;
+				HashSetItemTraits<Raw*, Raw*, MemManagerPtr>, NestedHashSetSettings> HashSet;
 
 			typedef typename HashSet::ConstIterator Iterator;
 
@@ -507,7 +490,7 @@ namespace internal
 		private:
 			typedef momo::HashMultiMap<Raw*, Raw*, HashTraits, MemManagerPtr,
 				HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
-				DataHashMultiMapSettings> HashMultiMap;
+				NestedHashMultiMapSettings> HashMultiMap;
 
 			typedef typename HashMultiMap::ConstKeyIterator KeyIterator;
 

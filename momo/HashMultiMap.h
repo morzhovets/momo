@@ -1199,6 +1199,18 @@ private:
 template<typename TKey, typename TValue>
 using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
+namespace internal
+{
+	class NestedHashMultiMapSettings : public HashMultiMapSettings
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkKeyVersion = false;
+		static const bool checkValueVersion = false;
+	};
+}
+
 } // namespace momo
 
 namespace std
