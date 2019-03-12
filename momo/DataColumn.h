@@ -182,13 +182,15 @@ public:
 	template<typename Item>
 	using Column = DataColumn<Item, Struct>;
 
+	typedef uint64_t ColumnCode;
+
 	static const size_t logVertexCount = 8;
 	static const size_t maxColumnCount = 200;
 	static const size_t maxCodeParam = 255;
 
 	static const size_t mutableOffsetsInternalCapacity = 0;
 
-	typedef uint64_t ColumnCode;
+	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
 	template<typename Item>
@@ -295,8 +297,8 @@ private:
 
 	public:
 		explicit Graph() noexcept
+			: mEdgeNumber(0)
 		{
-			mEdgeNumber = 0;
 			std::fill(mEdges.begin(), mEdges.end(), nullptr);
 		}
 
@@ -356,7 +358,9 @@ private:
 
 	typedef typename ColumnTraits::ColumnCode ColumnCode;
 
-	typedef HashSet<ColumnCode, HashTraitsOpen<ColumnCode>, MemManager,
+	typedef typename ColumnTraits::ColumnCodeHashTraits ColumnCodeHashTraits;
+
+	typedef HashSet<ColumnCode, ColumnCodeHashTraits, MemManager,
 		HashSetItemTraits<ColumnCode, ColumnCode, MemManager>,
 		internal::NestedHashSetSettings> ColumnCodeSet;
 
@@ -380,7 +384,7 @@ public:
 	explicit DataColumnList(MemManager&& memManager, const Column<Item>& column,
 		const Column<Items>&... columns)
 		: mCodeParam(0),
-		mColumnCodeSet(typename ColumnCodeSet::HashTraits(), std::move(memManager)),
+		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
@@ -449,6 +453,11 @@ public:
 		pvSetMutable(columns...);
 	}
 
+	void ResetMutable() noexcept
+	{
+		std::fill(mMutableOffsets.GetBegin(), mMutableOffsets.GetEnd(), (uint8_t)0);
+	}
+
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
@@ -485,10 +494,11 @@ public:
 		mCopyFunc(GetMemManager(), srcRaw, dstRaw);
 	}
 
-	template<typename Item>
+	template<typename Item, bool extraCheck = true>
 	size_t GetOffset(const Column<Item>& column) const
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(column);
+		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
@@ -529,9 +539,9 @@ public:
 	bool Contains(const Column<Item>& column) const noexcept
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(column);
-		//std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
-		//if (mAddends[vertices.first] == 0 || mAddends[vertices.second] == 0)
-		//	return false;
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		if (mAddends[vertices.first] == 0 || mAddends[vertices.second] == 0)
+			return false;
 		return mColumnCodeSet.ContainsKey(code);
 	}
 
@@ -754,6 +764,11 @@ public:
 		pvSetMutable(columns...);
 	}
 
+	void ResetMutable() noexcept
+	{
+		mMutableOffsets.reset();
+	}
+
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
@@ -790,7 +805,7 @@ public:
 		RawManager::Copy(mMemManager, *srcRaw, dstRaw);
 	}
 
-	template<typename Item>
+	template<typename Item, bool extraCheck = true>
 	size_t GetOffset(const Column<Item>& column) const noexcept
 	{
 		size_t offset = (size_t)column.GetCode();	//?

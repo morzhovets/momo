@@ -78,6 +78,8 @@ public:
 		static const size_t count = 1024;
 		static const size_t count2 = 10;
 
+		columns.SetMutable(intCol);
+		columns.ResetMutable();
 		columns.SetMutable(dblCol);
 
 		DataTable table(std::move(columns));
