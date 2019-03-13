@@ -590,7 +590,7 @@ private:
 			offset += sizeof(size_t);
 			maxAlignment = std::minmax(maxAlignment, MOMO_ALIGNMENT_OF(size_t)).second;
 		}
-		mTotalSize = internal::UIntMath<size_t>::Ceil(offset, maxAlignment);
+		mTotalSize = internal::UIntMath<>::Ceil(offset, maxAlignment);
 		mAlignment = maxAlignment;
 	}
 
@@ -669,7 +669,7 @@ private:
 	static void pvCorrectOffset(size_t& offset) noexcept
 	{
 		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
-		offset = ((offset + alignment - 1) / alignment) * alignment;
+		offset = internal::UIntMath<>::Ceil(offset, alignment);
 	}
 
 private:

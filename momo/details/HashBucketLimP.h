@@ -326,7 +326,7 @@ namespace internal
 				{
 					if (skipOddMemPools && i % 2 == 1)
 						continue;
-					size_t blockAlignment = UIntMath<size_t>::Ceil(i * (size_t)modMemPoolIndex,
+					size_t blockAlignment = UIntMath<>::Ceil(i * (size_t)modMemPoolIndex,
 						itemAlignment);
 					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * sizeof(Item), blockAlignment),
 						MemManagerPtr(memManager)));

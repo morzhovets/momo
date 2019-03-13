@@ -82,7 +82,7 @@ private:
 		else
 		{
 			blockSize = (blockSize <= blockAlignment) ? 2 * blockAlignment
-				: internal::UIntMath<size_t>::Ceil(blockSize, blockAlignment);
+				: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
 		}
 	}
 
@@ -106,9 +106,8 @@ public:
 
 	static const size_t blockSize = (blockCount == 1)
 		? ((tBlockSize > 0) ? tBlockSize : 1)
-		: ((tBlockSize <= blockAlignment)
-			? 2 * blockAlignment
-			: ((tBlockSize - 1) / blockAlignment + 1) * blockAlignment);
+		: ((tBlockSize <= blockAlignment) ? 2 * blockAlignment
+			: internal::UIntMath<>::Ceil(tBlockSize, blockAlignment));
 
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
@@ -590,7 +589,7 @@ namespace internal
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),
-			mBlockSize(internal::UIntMath<size_t>::Ceil(blockSize, sizeof(uint32_t))),
+			mBlockSize(internal::UIntMath<>::Ceil(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
 			MOMO_ASSERT(maxTotalBlockCount < (size_t)UINT32_MAX);

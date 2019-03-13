@@ -113,12 +113,12 @@ public:
 private:
 	static size_t pvIndexToLogItemCount(size_t index1) noexcept
 	{
-		return (internal::UIntMath<size_t>::Log2(index1) + 1) / 2;
+		return (internal::UIntMath<>::Log2(index1) + 1) / 2;
 	}
 
 	static size_t pvSegIndexToLogItemCount(size_t segIndex) noexcept
 	{
-		return internal::UIntMath<size_t>::Log2((segIndex * 2 + 4) / 3);
+		return internal::UIntMath<>::Log2((segIndex * 2 + 4) / 3);
 	}
 };
 

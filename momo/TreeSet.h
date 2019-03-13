@@ -935,7 +935,7 @@ public:
 				return;
 			}
 		}
-		if (count * internal::UIntMath<size_t>::Log2(count + dstCount) < count + dstCount)	//?
+		if (count * internal::UIntMath<>::Log2(count + dstCount) < count + dstCount)	//?
 			pvMergeTo(dstTreeSet);
 		else
 			pvMergeToLinear(dstTreeSet);

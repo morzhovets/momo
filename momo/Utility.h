@@ -228,7 +228,7 @@ namespace internal
 		}
 	};
 
-	template<typename TUInt>
+	template<typename TUInt = size_t>
 	class UIntMath
 	{
 	public:
@@ -241,10 +241,9 @@ namespace internal
 		};
 
 	public:
-		static UInt Ceil(UInt value, UInt mod) noexcept
+		static constexpr UInt Ceil(UInt value, UInt mod) noexcept
 		{
-			MOMO_ASSERT(value != 0 && mod != 0);
-			return (((value - 1) / mod) + 1) * mod;
+			return ((value + mod - 1) / mod) * mod;
 		}
 
 		static UInt GCD(UInt value1, UInt value2) noexcept
