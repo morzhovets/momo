@@ -232,7 +232,7 @@ public:
 	template<typename Item>
 	static size_t GetAlignment() noexcept
 	{
-		return MOMO_ALIGNMENT_OF(Item);
+		return ItemManager<Item>::alignment;
 	}
 
 	template<typename Item>
@@ -588,7 +588,8 @@ private:
 		{
 			pvCorrectOffset<size_t>(offset);
 			offset += sizeof(size_t);
-			maxAlignment = std::minmax(maxAlignment, MOMO_ALIGNMENT_OF(size_t)).second;
+			maxAlignment = std::minmax(maxAlignment,
+				(size_t)internal::AlignmentOf<size_t>::value).second;
 		}
 		mTotalSize = internal::UIntMath<>::Ceil(offset, maxAlignment);
 		mAlignment = maxAlignment;
@@ -762,7 +763,8 @@ public:
 		size_t totalSize = sizeof(Struct);
 		if (Settings::keepRowNumber)
 		{
-			totalSize = internal::UIntMath<>::Ceil(totalSize, MOMO_ALIGNMENT_OF(size_t));
+			totalSize = internal::UIntMath<>::Ceil(totalSize,
+				internal::AlignmentOf<size_t>::value);
 			totalSize += sizeof(size_t);
 		}
 		return totalSize;
@@ -770,9 +772,9 @@ public:
 
 	size_t GetAlignment() const noexcept
 	{
-		size_t alignment = MOMO_ALIGNMENT_OF(Struct);
+		size_t alignment = RawManager::alignment;
 		if (Settings::keepRowNumber)
-			alignment = std::minmax(alignment, MOMO_ALIGNMENT_OF(size_t)).second;
+			alignment = std::minmax(alignment, (size_t)internal::AlignmentOf<size_t>::value).second;
 		return alignment;
 	}
 
@@ -801,7 +803,7 @@ public:
 	{
 		size_t offset = (size_t)column.GetCode();	//?
 		MOMO_ASSERT(offset < sizeof(Struct));
-		MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
+		MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
 		return offset;
 	}
 
@@ -809,7 +811,7 @@ public:
 	static Item& GetByOffset(Raw* raw, size_t offset) noexcept
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
-		//MOMO_ASSERT(offset % MOMO_ALIGNMENT_OF(Item) == 0);
+		//MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
 		return *internal::BitCaster::PtrToPtr<Item>(raw, offset);
 	}
 
@@ -850,7 +852,7 @@ private:
 	static size_t pvGetNumberOffset() noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return internal::UIntMath<>::Ceil(sizeof(Struct), MOMO_ALIGNMENT_OF(size_t));
+		return internal::UIntMath<>::Ceil(sizeof(Struct), internal::AlignmentOf<size_t>::value);
 	}
 
 private:

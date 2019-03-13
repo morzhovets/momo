@@ -18,9 +18,6 @@
 
 #include "MemManager.h"
 
-#define MOMO_ALIGNMENT_OF(Object) ((alignof(Object) < MOMO_MAX_ALIGNMENT) \
-	? alignof(Object) : MOMO_MAX_ALIGNMENT)
-
 namespace momo
 {
 
@@ -101,6 +98,13 @@ private:
 
 namespace internal
 {
+	template<typename Object>
+	struct AlignmentOf
+	{
+		static const size_t value = (alignof(Object) < MOMO_MAX_ALIGNMENT)
+			? alignof(Object) : MOMO_MAX_ALIGNMENT;
+	};
+
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
@@ -160,7 +164,7 @@ namespace internal
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
-		static const size_t alignment = MOMO_ALIGNMENT_OF(Object);
+		static const size_t alignment = AlignmentOf<Object>::value;
 
 		template<typename... Args>
 		class Creator

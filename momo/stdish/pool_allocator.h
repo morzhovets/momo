@@ -161,7 +161,7 @@ protected:
 private:
 	static MemPoolParams pvGetMemPoolParams() noexcept
 	{
-		return MemPoolParams(sizeof(value_type), MOMO_ALIGNMENT_OF(value_type));
+		return MemPoolParams(sizeof(value_type), internal::AlignmentOf<value_type>::value);
 	}
 
 private:

@@ -845,8 +845,10 @@ private:
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
-		size_t alignment = std::minmax(columnList.GetAlignment(), MOMO_ALIGNMENT_OF(void*)).second;
-		return RawMemPool(typename RawMemPool::Params(size, alignment), MemManagerPtr(GetMemManager()));
+		size_t alignment = std::minmax(columnList.GetAlignment(),
+			(size_t)internal::AlignmentOf<void*>::value).second;
+		return RawMemPool(typename RawMemPool::Params(size, alignment),
+			MemManagerPtr(GetMemManager()));
 	}
 
 	template<typename Rows, typename RowFilter>

@@ -255,7 +255,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>,
-	size_t tAlignment = MOMO_ALIGNMENT_OF(void*)>
+	size_t tAlignment = internal::AlignmentOf<void*>::value>
 class HashBucketLimP1 : public internal::HashBucketBase
 {
 public:
