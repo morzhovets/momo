@@ -706,24 +706,6 @@ private:
 
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
 
-	template<typename Void, bool keepRowNumber>
-	struct Number;
-
-	template<typename Void>
-	struct Number<Void, true>
-	{
-		size_t rowNumber;
-	};
-
-	template<typename Void>
-	struct Number<Void, false>
-	{
-	};
-
-	struct StructNumber : public Struct, public Number<void, Settings::keepRowNumber>
-	{
-	};
-
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
 		: mMemManager(std::move(memManager))
@@ -777,12 +759,21 @@ public:
 
 	size_t GetTotalSize() const noexcept
 	{
-		return sizeof(StructNumber);
+		size_t totalSize = sizeof(Struct);
+		if (Settings::keepRowNumber)
+		{
+			totalSize = internal::UIntMath<>::Ceil(totalSize, MOMO_ALIGNMENT_OF(size_t));
+			totalSize += sizeof(size_t);
+		}
+		return totalSize;
 	}
 
 	size_t GetAlignment() const noexcept
 	{
-		return MOMO_ALIGNMENT_OF(StructNumber);
+		size_t alignment = MOMO_ALIGNMENT_OF(Struct);
+		if (Settings::keepRowNumber)
+			alignment = std::minmax(alignment, MOMO_ALIGNMENT_OF(size_t)).second;
+		return alignment;
 	}
 
 	void CreateRaw(Raw* raw)
@@ -830,14 +821,12 @@ public:
 
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
-		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return static_cast<const StructNumber*>(raw)->rowNumber;
+		return *internal::BitCaster::PtrToPtr<const size_t>(raw, pvGetNumberOffset());
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
-		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		static_cast<StructNumber*>(raw)->rowNumber = number;
+		*internal::BitCaster::PtrToPtr<size_t>(raw, pvGetNumberOffset()) = number;
 	}
 
 	template<typename Item>
@@ -856,6 +845,12 @@ private:
 
 	void pvSetMutable() noexcept
 	{
+	}
+
+	static size_t pvGetNumberOffset() noexcept
+	{
+		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
+		return internal::UIntMath<>::Ceil(sizeof(Struct), MOMO_ALIGNMENT_OF(size_t));
 	}
 
 private:
