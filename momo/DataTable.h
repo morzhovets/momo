@@ -148,7 +148,7 @@ private:
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		typedef std::atomic<Raw*> FreeRaws;
+		typedef std::atomic<void*> FreeRaws;
 
 		struct Data
 		{
@@ -573,7 +573,11 @@ public:
 	Row ExtractRow(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return ExtractRow(rowRef.GetNumber());
+		const Raw* raw = rowRef.GetRaw();
+		size_t rowNumber = mRaws.GetCount() - 1;
+		while (mRaws[rowNumber] != raw)
+			--rowNumber;
+		return ExtractRow(rowNumber);
 	}
 
 	Row ExtractRow(size_t rowNumber)
@@ -581,17 +585,11 @@ public:
 		MOMO_CHECK(rowNumber < GetCount());
 		Raw* raw = mRaws[rowNumber];
 		mIndexes.RemoveRaw(raw);
-		mRaws.Remove(rowNumber, 1);
+		mRaws.Remove(rowNumber);
 		pvSetNumbers(rowNumber);
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
 		return pvMakeRow(raw);
-	}
-
-	RowReference UpdateRow(ConstRowReference rowRef, Row&& row)
-	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return UpdateRow(rowRef.GetNumber(), std::move(row));
 	}
 
 	RowReference UpdateRow(size_t rowNumber, Row&& row)
@@ -933,10 +931,10 @@ private:
 
 	void pvFreeNewRaws() noexcept
 	{
-		Raw* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
+		void* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
 		{
-			Raw* nextRaw = *internal::BitCaster::PtrToPtr<Raw*>(headRaw, 0);	//?
+			void* nextRaw = *static_cast<void**>(headRaw);	//?
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}

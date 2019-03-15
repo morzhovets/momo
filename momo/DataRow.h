@@ -30,7 +30,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 	protected:
-		typedef std::atomic<Raw*> FreeRaws;
+		typedef std::atomic<void*> FreeRaws;
 
 	public:
 		DataRow() = delete;
@@ -51,11 +51,12 @@ namespace internal
 			if (mRaw == nullptr)
 				return;
 			mColumnList->DestroyRaw(mRaw);
+			void* raw = mRaw;
 			while (true)
 			{
-				Raw* headRaw = *mFreeRaws;
-				*BitCaster::PtrToPtr<Raw*>(mRaw, 0) = headRaw;	//?
-				if (mFreeRaws->compare_exchange_weak(headRaw, mRaw))
+				void* headRaw = *mFreeRaws;
+				*static_cast<void**>(raw) = headRaw;	//?
+				if (mFreeRaws->compare_exchange_weak(headRaw, raw))
 					break;
 			}
 		}
