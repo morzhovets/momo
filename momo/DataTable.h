@@ -33,7 +33,7 @@ public:
 
 public:
 	template<typename Item>
-	static size_t GetHashCode(const Item& item)
+	static size_t GetHashCode(const Item& item, size_t /*offset*/)
 	{
 		return HashCoder<Item>()(item);
 	}
@@ -50,10 +50,11 @@ public:
 		return (item1 < item2) ? -1 : (item1 == item2) ? 0 : 1;
 	}
 
-	template<typename Iterator, typename Comparer>
-	static void Sort(Iterator begin, Iterator end, const Comparer& comparer)
+	template<typename Iterator, typename Comparer, typename MemManager>
+	static void Sort(Iterator begin, size_t count, const Comparer& comparer,
+		MemManager& /*memManager*/)
 	{
-		std::stable_sort(begin, end, comparer);
+		std::stable_sort(begin, begin + count, comparer);
 	}
 };
 

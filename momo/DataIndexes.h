@@ -1198,7 +1198,7 @@ namespace internal
 		{
 			size_t offset = *offsets;
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			return pvGetHashCode(offset, item)
+			return DataTraits::GetHashCode(item, offset)
 				+ pvGetHashCode<void, Items...>(raw, offsets + 1);
 		}
 
@@ -1216,7 +1216,7 @@ namespace internal
 			const Item& item = (offset != offsetItem.first)
 				? ColumnList::template GetByOffset<const Item>(raw, offset)
 				: *static_cast<const Item*>(offsetItem.second);
-			return pvGetHashCode(offset, item)
+			return DataTraits::GetHashCode(item, offset)
 				+ pvGetHashCode<void, Items...>(offsetItem, raw, offsets + 1);
 		}
 
@@ -1233,7 +1233,7 @@ namespace internal
 		{
 			const auto& pair = std::get<index>(tuple);
 			const auto& item = pair.second;
-			return pvGetHashCode(pair.first, item) + pvGetHashCode<index + 1>(tuple);	//?
+			return DataTraits::GetHashCode(item, pair.first) + pvGetHashCode<index + 1>(tuple);
 		}
 
 		template<size_t index, typename... Items>

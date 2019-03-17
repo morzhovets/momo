@@ -783,7 +783,7 @@ namespace internal
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvCompare<void, Items...>(raw1, raw2, offsets.data()) < 0; };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComp);
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
 		}
 
 		template<typename Void, typename Item, typename... Items>
@@ -810,7 +810,7 @@ namespace internal
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
 				{ return rowComp(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetEnd(), rawComp);
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
 		}
 
 		template<int bound, typename... Items>
