@@ -1012,6 +1012,18 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).iterator);
 	}
 
+	KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)
+	{
+		return KeyIteratorProxy(mHashMap.Add(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
+			std::move(key), ValueArray()));
+	}
+
+	KeyIterator AddKey(ConstKeyIterator keyIter, const Key& key)
+	{
+		return KeyIteratorProxy(mHashMap.Add(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
+			key, ValueArray()));
+	}
+
 	Iterator Remove(ConstKeyIterator keyIter, size_t valueIndex)
 	{
 		ConstValueBounds valueBounds = keyIter->values;
