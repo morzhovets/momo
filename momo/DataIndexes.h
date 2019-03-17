@@ -462,14 +462,13 @@ namespace internal
 
 			void AcceptAdd() noexcept
 			{
-				MOMO_ASSERT(!!mIterator);
 				mIterator = Iterator();
 			}
 
 			void AcceptAdd(Raw* raw) noexcept
 			{
-				MOMO_ASSERT(!!mIterator);
-				mHashSet.ResetKey(mIterator, raw);
+				if (!!mIterator)
+					mHashSet.ResetKey(mIterator, raw);
 				mIterator = Iterator();
 			}
 
@@ -487,8 +486,8 @@ namespace internal
 
 			void AcceptRemove() noexcept
 			{
-				MOMO_ASSERT(!!mIterator2);
-				mHashSet.Remove(mIterator2);
+				if (!!mIterator2)
+					mHashSet.Remove(mIterator2);
 				mIterator2 = Iterator();
 			}
 
@@ -678,7 +677,6 @@ namespace internal
 
 			void AcceptAdd() noexcept
 			{
-				MOMO_ASSERT(!!mKeyIterator);
 				mKeyIterator = KeyIterator();
 			}
 
@@ -696,7 +694,8 @@ namespace internal
 
 			void AcceptRemove(Raw* raw) noexcept
 			{
-				MOMO_ASSERT(!!mKeyIterator2);
+				if (!mKeyIterator2)
+					return;
 				if (mKeyIterator2->values.GetCount() == 0)
 				{
 					MOMO_ASSERT(mKeyIterator2->key == raw);
@@ -983,6 +982,56 @@ namespace internal
 			{
 				multiHash.AcceptAdd();
 				multiHash.AcceptRemove(oldRaw);
+			}
+		}
+
+		template<typename Item, typename Assigner>
+		void UpdateRaw(Raw* raw, size_t offset, const Item& item, Assigner assigner)
+		{
+			if (DataTraits::IsEqual(item, ColumnList::template GetByOffset<const Item>(raw, offset)))
+				return assigner();
+			HashUpdateKey hashUpdateKey{ raw, offset, std::addressof(item) };
+			try
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+				{
+					if (!HasOffset(uniqueHash, offset))
+						continue;
+					uniqueHash.Add(hashUpdateKey);
+					uniqueHash.PrepareRemove(raw);
+				}
+				for (MultiHash& multiHash : mMultiHashes)
+				{
+					if (!HasOffset(multiHash, offset))
+						continue;
+					multiHash.Add(hashUpdateKey);
+					multiHash.PrepareRemove(raw);
+				}
+				assigner();
+			}
+			catch (...)
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+				{
+					uniqueHash.RejectAdd();
+					uniqueHash.RejectRemove();
+				}
+				for (MultiHash& multiHash : mMultiHashes)
+				{
+					multiHash.RejectAdd();
+					multiHash.RejectRemove();
+				}
+				throw;
+			}
+			for (UniqueHash& uniqueHash : mUniqueHashes)
+			{
+				uniqueHash.AcceptAdd();
+				uniqueHash.AcceptRemove();
+			}
+			for (MultiHash& multiHash : mMultiHashes)
+			{
+				multiHash.AcceptAdd();
+				multiHash.AcceptRemove(raw);
 			}
 		}
 

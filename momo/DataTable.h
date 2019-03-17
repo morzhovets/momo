@@ -605,11 +605,39 @@ public:
 		return pvMakeRowReference(raw);
 	}
 
+	template<typename Item>
+	RowReference UpdateRow(RowReference rowRef, const Column<Item>& column, Item&& newItem)
+	{
+		const ColumnList& columnList = GetColumnList();
+		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+		rowRef.GetRaw();	// check
+		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+		size_t offset = GetColumnList().GetOffset(column);
+		auto assigner = [&columnList, raw, offset, &newItem] ()
+			{ columnList.template Assign<Item>(raw, offset, std::move(newItem)); };
+		mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
+		++mCrew.GetChangeVersion();
+		return rowRef;
+	}
+
 	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
 	{
 		try
 		{
 			return { UpdateRow(rowNumber, std::move(row)), nullptr };
+		}
+		catch (const UniqueIndexViolation& exception)
+		{
+			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
+		}
+	}
+
+	template<typename Item>
+	TryResult TryUpdateRow(RowReference rowRef, const Column<Item>& column, Item&& newItem)
+	{
+		try
+		{
+			return { UpdateRow(rowRef, column, std::move(newItem)), nullptr };
 		}
 		catch (const UniqueIndexViolation& exception)
 		{
