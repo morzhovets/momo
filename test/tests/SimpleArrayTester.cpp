@@ -56,6 +56,8 @@ public:
 		ar.AddBackCrt([] (void* ptr) { new(ptr) std::string("s3"); });
 		ar.Reserve(10);
 		assert(ar.GetCapacity() >= 10);
+		assert(ar.Contains("s3"));
+		assert(!ar.Contains("s"));
 		ar.AddBackNogrow(s1);
 		ar.AddBackNogrow("s2");
 		ar.AddBackNogrowCrt([] (void* ptr) { new(ptr) std::string("s3"); });

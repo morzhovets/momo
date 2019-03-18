@@ -1102,6 +1102,8 @@ namespace internal
 		static bool HasOffset(const Hash& hash, size_t offset) noexcept
 		{
 			const Offsets& sortedOffsets = hash.GetSortedOffsets();
+			if (sortedOffsets.GetCount() < 16)
+				return sortedOffsets.Contains(offset);
 			return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
 		}
 

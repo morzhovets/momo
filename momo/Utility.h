@@ -198,6 +198,19 @@ namespace internal
 	template<bool value, typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 
+	class TransparentEqualer
+	{
+	public:
+		typedef void is_transparent;
+
+	public:
+		template<typename Object1, typename Object2>
+		bool operator()(const Object1& object1, const Object2& object2) const
+		{
+			return object1 == object2;
+		}
+	};
+
 	class BitCaster
 	{
 	public:

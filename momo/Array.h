@@ -946,6 +946,16 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
+	template<typename ItemArg,
+		typename Predicate = internal::TransparentEqualer>
+	bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
+	{
+		const Item* begin = GetItems();
+		const Item* end = begin + GetCount();
+		return std::find_if(begin, end,
+			[&itemArg, &pred] (const Item& item) { return pred(itemArg, item); }) != end;
+	}
+
 private:
 	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
