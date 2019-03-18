@@ -107,7 +107,8 @@ public:
 			DataRow row = table.NewRow(intCol = (int)i / 2);
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
 			assert(table.TryUpdateRow(i, std::move(row)).uniqueHashIndex == nullptr);
-			assert(table.TryUpdateRow(table[i], strCol, std::to_string(i % 2)).uniqueHashIndex == nullptr);
+			assert(table.TryUpdateRow(table[i], strCol,
+				std::string((i % 2 == 0) ? "0" : "1")).uniqueHashIndex == nullptr);
 		}
 
 		for (size_t i = 0; i < count; ++i)

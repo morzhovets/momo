@@ -204,11 +204,12 @@ namespace internal
 			size_t hashCode;
 		};
 
-		struct HashUpdateKey
+		template<typename Item>
+		struct HashMixedKey
 		{
 			Raw* raw;
 			size_t offset;
-			const void* item;
+			const Item& item;
 		};
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
@@ -224,8 +225,8 @@ namespace internal
 			{
 			};
 
-			template<>
-			struct IsValidKeyArg<HashUpdateKey> : public std::true_type
+			template<typename Item>
+			struct IsValidKeyArg<HashMixedKey<Item>> : public std::true_type
 			{
 			};
 
@@ -257,9 +258,11 @@ namespace internal
 				return key.hashCode;
 			}
 
-			size_t GetHashCode(const HashUpdateKey& key) const
+			template<typename Item>
+			size_t GetHashCode(const HashMixedKey<Item>& key) const
 			{
-				return mHashFunc({ key.offset, key.item }, key.raw, mOffsets.GetItems());
+				return mHashFunc({ key.offset, std::addressof(key.item) }, key.raw,
+					mOffsets.GetItems());
 			}
 
 			bool IsEqual(Raw* key1, Raw* key2) const
@@ -275,9 +278,11 @@ namespace internal
 				return pvIsEqual<0>(key1, key2);
 			}
 
-			bool IsEqual(const HashUpdateKey& key1, Raw* key2) const
+			template<typename Item>
+			bool IsEqual(const HashMixedKey<Item>& key1, Raw* key2) const
 			{
-				return mEqualFunc({ key1.offset, key1.item }, key1.raw, key2, mOffsets.GetItems());
+				return mEqualFunc({ key1.offset, std::addressof(key1.item) }, key1.raw, key2,
+					mOffsets.GetItems());
 			}
 
 		private:
@@ -408,14 +413,14 @@ namespace internal
 				return mHashSet.GetHashTraits();
 			}
 
-			void Reserve(size_t capacity)
-			{
-				mHashSet.Reserve(capacity);
-			}
-
 			void Clear() noexcept
 			{
 				mHashSet.Clear();
+			}
+
+			void Reserve(size_t capacity)
+			{
+				mHashSet.Reserve(capacity);
 			}
 
 			RawBounds Find(Raw* raw, VersionKeeper /*version*/) const
@@ -439,13 +444,14 @@ namespace internal
 				return *mIterator == raw;
 			}
 
-			void Add(HashUpdateKey hashUpdateKey)
+			template<typename Item>
+			void Add(HashMixedKey<Item> hashMixedKey)
 			{
 				MOMO_ASSERT(!mIterator);
-				Iterator iter = mHashSet.Find(hashUpdateKey);
+				Iterator iter = mHashSet.Find(hashMixedKey);
 				if (!!iter)
 					throw UniqueIndexViolation(*iter, *this);
-				mIterator = mHashSet.Add(iter, hashUpdateKey.raw);
+				mIterator = mHashSet.Add(iter, hashMixedKey.raw);
 			}
 
 			void RejectAdd() noexcept
@@ -571,8 +577,7 @@ namespace internal
 		public:
 			explicit MultiHash(HashTraits&& hashTraits, Offsets&& sortedOffsets)
 				: mSortedOffsets(std::move(sortedOffsets)),
-				mHashMultiMap(std::move(hashTraits), MemManagerPtr(mSortedOffsets.GetMemManager())),
-				mRawIndex(0)
+				mHashMultiMap(std::move(hashTraits), MemManagerPtr(mSortedOffsets.GetMemManager()))
 			{
 			}
 
@@ -580,7 +585,6 @@ namespace internal
 				: mSortedOffsets(std::move(multiHash.mSortedOffsets)),
 				mHashMultiMap(std::move(multiHash.mHashMultiMap)),
 				mKeyIterator(multiHash.mKeyIterator),
-				mRawIndex(multiHash.mRawIndex),
 				mKeyIterator2(multiHash.mKeyIterator2)
 			{
 			}
@@ -596,7 +600,6 @@ namespace internal
 				mSortedOffsets = std::move(multiHash.mSortedOffsets);
 				mHashMultiMap = std::move(multiHash.mHashMultiMap);
 				mKeyIterator = multiHash.mKeyIterator;
-				mRawIndex = multiHash.mRawIndex;
 				mKeyIterator2 = multiHash.mKeyIterator2;
 				return *this;
 			}
@@ -636,23 +639,21 @@ namespace internal
 				if (keyIter->key != raw)
 					mHashMultiMap.Add(keyIter, raw);
 				mKeyIterator = keyIter;
-				mRawIndex = keyIter->values.GetCount();
 			}
 
-			void Add(HashUpdateKey hashUpdateKey)
+			template<typename Item>
+			void Add(HashMixedKey<Item> hashMixedKey)
 			{
 				MOMO_ASSERT(!mKeyIterator);
-				KeyIterator keyIter = mHashMultiMap.Find(hashUpdateKey);
+				KeyIterator keyIter = mHashMultiMap.Find(hashMixedKey);
 				if (!!keyIter)
 				{
-					mHashMultiMap.Add(keyIter, hashUpdateKey.raw);
+					mHashMultiMap.Add(keyIter, hashMixedKey.raw);
 					mKeyIterator = keyIter;
-					mRawIndex = keyIter->values.GetCount();
 				}
 				else
 				{
-					mKeyIterator = mHashMultiMap.AddKey(keyIter, hashUpdateKey.raw);
-					mRawIndex = 0;
+					mKeyIterator = mHashMultiMap.AddKey(keyIter, hashMixedKey.raw);
 				}
 			}
 
@@ -660,20 +661,11 @@ namespace internal
 			{
 				if (!mKeyIterator)
 					return;
-				if (mRawIndex > 0)
-				{
-					mHashMultiMap.Remove(mKeyIterator, mRawIndex - 1);
-				}
-				else if (mKeyIterator->values.GetCount() > 0)
-				{
-					size_t valueCount = mKeyIterator->values.GetCount();
-					mHashMultiMap.ResetKey(mKeyIterator, mKeyIterator->values[valueCount - 1]);
+				size_t valueCount = mKeyIterator->values.GetCount();
+				if (valueCount > 0)
 					mHashMultiMap.Remove(mKeyIterator, valueCount - 1);
-				}
 				else
-				{
 					mHashMultiMap.RemoveKey(mKeyIterator);
-				}
 				mKeyIterator = KeyIterator();
 			}
 
@@ -698,20 +690,20 @@ namespace internal
 			{
 				if (!mKeyIterator2)
 					return;
-				if (mKeyIterator2->values.GetCount() == 0)
+				auto raws = mKeyIterator2->values;
+				if (raws.GetCount() == 0)
 				{
 					MOMO_ASSERT(mKeyIterator2->key == raw);
 					mHashMultiMap.RemoveKey(mKeyIterator2);
 				}
 				else if (mKeyIterator2->key == raw)
 				{
-					size_t valueCount = mKeyIterator2->values.GetCount();
-					mHashMultiMap.ResetKey(mKeyIterator2, mKeyIterator2->values[valueCount - 1]);
+					size_t valueCount = raws.GetCount();
+					mHashMultiMap.ResetKey(mKeyIterator2, raws[valueCount - 1]);
 					mHashMultiMap.Remove(mKeyIterator2, valueCount - 1);
 				}
 				else
 				{
-					auto raws = mKeyIterator2->values;
 					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);	//?
 					mHashMultiMap.Remove(mKeyIterator2, rawPtr - raws.GetBegin());
 				}
@@ -753,7 +745,6 @@ namespace internal
 			Offsets mSortedOffsets;
 			HashMultiMap mHashMultiMap;
 			KeyIterator mKeyIterator;
-			size_t mRawIndex;
 			KeyIterator mKeyIterator2;
 		};
 
@@ -992,21 +983,21 @@ namespace internal
 		{
 			if (DataTraits::IsEqual(item, ColumnList::template GetByOffset<const Item>(raw, offset)))
 				return assigner();
-			HashUpdateKey hashUpdateKey{ raw, offset, std::addressof(item) };
+			HashMixedKey<Item> hashMixedKey{ raw, offset, item };
 			try
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					if (!HasOffset(uniqueHash, offset))
 						continue;
-					uniqueHash.Add(hashUpdateKey);
+					uniqueHash.Add(hashMixedKey);
 					uniqueHash.PrepareRemove(raw);
 				}
 				for (MultiHash& multiHash : mMultiHashes)
 				{
 					if (!HasOffset(multiHash, offset))
 						continue;
-					multiHash.Add(hashUpdateKey);
+					multiHash.Add(hashMixedKey);
 					multiHash.PrepareRemove(raw);
 				}
 				assigner();
