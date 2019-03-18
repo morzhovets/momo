@@ -264,6 +264,8 @@ namespace internal
 
 			bool IsEqual(Raw* key1, Raw* key2) const
 			{
+				//if (key1 == key2)
+				//	return true;
 				return mEqualFunc({ 0, nullptr }, key1, key2, mOffsets.GetItems());
 			}
 
@@ -710,7 +712,7 @@ namespace internal
 				else
 				{
 					auto raws = mKeyIterator2->values;
-					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);
+					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);	//?
 					mHashMultiMap.Remove(mKeyIterator2, rawPtr - raws.GetBegin());
 				}
 				mKeyIterator2 = KeyIterator();
@@ -1241,12 +1243,6 @@ namespace internal
 			const OffsetItemTuple<Items...>& /*tuple*/) noexcept
 		{
 			return 0;
-		}
-
-		template<typename Item>
-		static size_t pvGetHashCode(size_t /*offset*/, const Item& item)
-		{
-			return DataTraits::GetHashCode(item);	//?
 		}
 
 		template<typename Void, typename Item, typename... Items>
