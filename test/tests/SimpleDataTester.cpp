@@ -76,7 +76,7 @@ public:
 		typedef typename DataTable::Row DataRow;
 
 		static const size_t count = 1024;
-		static const size_t count2 = 10;
+		static const size_t count2 = 12;
 
 		columns.SetMutable(intCol);
 		columns.ResetMutable();
@@ -132,8 +132,16 @@ public:
 			assert(table.TryInsertRow(count, table.NewRow(intCol = (int)(count + i))).uniqueHashIndex == nullptr);
 		assert(table.GetCount() == count + count2);
 
-		for (size_t i = 0; i < count2; ++i)
+		MOMO_STATIC_ASSERT(count2 % 6 == 0);
+		for (size_t i = 0; i < count2 / 6; ++i)
+		{
+			table.RemoveRow(count, false);
+			table.RemoveRow(count, true);
+			table.RemoveRow(table[count]);
+			table.ExtractRow(count, false);
+			table.ExtractRow(count, true);
 			table.ExtractRow(table[count]);
+		}
 		assert(table.GetCount() == count);
 
 		assert(table.SelectEmpty().IsEmpty());

@@ -571,26 +571,28 @@ public:
 		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
 
+	void RemoveRow(ConstRowReference rowRef)
+	{
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		pvFreeRaw(pvExtractRaw(rowRef));
+	}
+
+	void RemoveRow(size_t rowNumber, bool keepRowOrder = true)
+	{
+		MOMO_CHECK(rowNumber < GetCount());
+		pvFreeRaw(pvExtractRaw(rowNumber, keepRowOrder));
+	}
+
 	Row ExtractRow(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		const Raw* raw = rowRef.GetRaw();
-		size_t rowNumber = mRaws.GetCount() - 1;
-		while (mRaws[rowNumber] != raw)
-			--rowNumber;
-		return ExtractRow(rowNumber);
+		return pvMakeRow(pvExtractRaw(rowRef));
 	}
 
-	Row ExtractRow(size_t rowNumber)
+	Row ExtractRow(size_t rowNumber, bool keepRowOrder = true)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
-		Raw* raw = mRaws[rowNumber];
-		mIndexes.RemoveRaw(raw);
-		mRaws.Remove(rowNumber);
-		pvSetNumbers(rowNumber);
-		++mCrew.GetChangeVersion();
-		++mCrew.GetRemoveVersion();
-		return pvMakeRow(raw);
+		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
 	RowReference UpdateRow(size_t rowNumber, Row&& row)
@@ -997,9 +999,9 @@ private:
 	{
 	}
 
-	void pvSetNumbers(size_t beginIndex = 0) noexcept
+	void pvSetNumbers(size_t beginNumber = 0) noexcept
 	{
-		for (size_t i = beginIndex, count = mRaws.GetCount(); i < count; ++i)
+		for (size_t i = beginNumber, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i);
 	}
 
@@ -1012,6 +1014,43 @@ private:
 	template<bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
 	{
+	}
+
+	template<bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	{
+		return pvExtractRaw(rowRef.GetNumber());
+	}
+
+	template<bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<!keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	{
+		const Raw* raw = rowRef.GetRaw();
+		size_t number = mRaws.GetCount() - 1;
+		while (mRaws[number] != raw)
+			--number;
+		return pvExtractRaw(number);
+	}
+
+	Raw* pvExtractRaw(size_t number, bool keepOrder = true)
+	{
+		Raw* raw = mRaws[number];
+		mIndexes.RemoveRaw(raw);
+		if (keepOrder)
+		{
+			mRaws.Remove(number);
+			pvSetNumbers(number);
+		}
+		else
+		{
+			mRaws[number] = mRaws.GetBackItem();
+			mRaws.RemoveBack();
+			if (number < mRaws.GetCount())
+				pvSetNumber(mRaws[number], number);
+		}
+		++mCrew.GetChangeVersion();
+		++mCrew.GetRemoveVersion();
+		return raw;
 	}
 
 	void pvRemoveInvalidRaws() noexcept
