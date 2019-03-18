@@ -32,6 +32,8 @@ namespace internal
 
 		static const size_t alignment = BucketUnlimPItemTraits::alignment;
 
+		static const bool isTriviallyRelocatable = false;
+
 	public:
 		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{

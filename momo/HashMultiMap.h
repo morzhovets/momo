@@ -278,6 +278,9 @@ namespace internal
 
 		static const size_t alignment = HashMultiMapKeyValueTraits::valueAlignment;
 
+		static const bool isTriviallyRelocatable =
+			HashMultiMapKeyValueTraits::isValueTriviallyRelocatable;
+
 	public:
 		static void Copy(MemManager& memManager, const Item& srcItem, Item* dstItem)
 		{
@@ -423,6 +426,8 @@ public:
 	static const size_t valueAlignment = ValueManager::alignment;
 
 	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+
+	static const bool isValueTriviallyRelocatable = ValueManager::isTriviallyRelocatable;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;

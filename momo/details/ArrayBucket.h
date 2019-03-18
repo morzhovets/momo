@@ -30,7 +30,7 @@ namespace internal
 
 		typedef MemManagerPtr<ArrayBucketMemManager> MemManager;
 
-		static const bool isTriviallyRelocatable = false;	//?
+		static const bool isTriviallyRelocatable = ArrayBucketItemTraits::isTriviallyRelocatable;
 
 		template<typename ItemArg>
 		class Creator
