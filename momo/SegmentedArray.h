@@ -556,7 +556,7 @@ public:
 	}
 
 	template<typename ItemArg,
-		typename Predicate = internal::TransparentEqualer>
+		typename Predicate = internal::Equaler<ItemArg, Item>>
 	bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
 	{
 		ConstIterator end = GetEnd();
