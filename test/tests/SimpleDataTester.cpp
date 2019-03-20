@@ -170,6 +170,9 @@ public:
 			assert(s == "1");
 
 		cselection = table.Select().Sort(strCol);
+		cselection.Reverse();
+		cselection.Reverse();
+
 		for (size_t i = 0; i < count; ++i)
 			assert(cselection[i][strCol] == ((i < count / 2) ? "0" : "1"));
 
@@ -181,6 +184,10 @@ public:
 		assert(cselection.GetUpperBound(strCol == "1") == count);
 		assert(cselection.GetLowerBound(strCol == "2") == count);
 		assert(cselection.GetUpperBound(strCol == "2") == count);
+
+		cselection.Filter(emptyFilter);
+		cselection.Remove(emptyFilter);
+		assert(cselection.IsEmpty());
 
 		assert(table.SelectCount(dblCol == 0.0) == 1);
 		assert(table.Select(dblCol == 1.0).GetCount() == 1);

@@ -501,7 +501,7 @@ namespace internal
 		{
 			for (Raw* raw : selection.mRaws)
 			{
-				if (rowFilter(pvMakeRowReference(raw)))
+				if (rowFilter(pvMakeConstRowReference(raw)))
 					mRaws.AddBack(raw);
 			}
 		}
@@ -656,28 +656,31 @@ namespace internal
 				mRaws[index] = RowReferenceProxy::GetRaw(*iter);
 		}
 
-		void Remove(size_t index, size_t count)
+		void Remove(size_t index, size_t count = 1)
 		{
 			MOMO_CHECK(index + count <= GetCount());
 			mRaws.Remove(index, count);
 		}
 
-		template<typename RowFilter>
+		template<typename RowFilter,
+			typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
 		void Remove(const RowFilter& rowFilter)
 		{
-			auto newRowFilter = [&rowFilter] (RowReference rowRef)
+			auto newRowFilter = [&rowFilter] (ConstRowReference rowRef)
 				{ return !rowFilter(rowRef); };
 			Filter(newRowFilter);
 		}
 
 		template<typename RowFilter>
-		void Filter(const RowFilter& rowFilter)	//?
+		void Filter(const RowFilter& rowFilter)
 		{
 			size_t index = 0;
-			for (Raw* raw : mRaws)
+			for (Raw*& raw : mRaws)
 			{
-				if (rowFilter(pvMakeRowReference(raw)))
-					mRaws[index++] = raw;
+				if (!rowFilter(pvMakeConstRowReference(raw)))
+					continue;
+				std::swap(mRaws[index], raw);
+				++index;
 			}
 			mRaws.RemoveBack(mRaws.GetCount() - index);
 		}
@@ -742,7 +745,7 @@ namespace internal
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
-				{ return rowPred(pvMakeRowReference(raw)); };
+				{ return rowPred(pvMakeConstRowReference(raw)); };
 			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
 		}
 
@@ -756,6 +759,11 @@ namespace internal
 		}
 
 	private:
+		ConstRowReference pvMakeConstRowReference(Raw* raw) const noexcept
+		{
+			return pvMakeRowReference(raw);
+		}
+
 		RowReference pvMakeRowReference(Raw* raw) const noexcept
 		{
 			return RowReferenceProxy(mColumnList, raw, *this);
@@ -809,7 +817,7 @@ namespace internal
 		void pvSort(const RowComparer& rowComp)
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
-				{ return rowComp(pvMakeRowReference(raw1), pvMakeRowReference(raw2)); };
+				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
 		}
 

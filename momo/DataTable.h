@@ -1061,10 +1061,13 @@ private:
 		size_t number = 0;
 		for (Raw* raw : mRaws)
 		{
-			if (rawFilter(raw))
-				mRaws[number++] = raw;
-			else
+			if (!rawFilter(raw))
+			{
 				pvFreeRaw(raw);
+				continue;
+			}
+			mRaws[number] = raw;
+			++number;
 		}
 		mRaws.RemoveBack(mRaws.GetCount() - number);
 		pvSetNumbers();
