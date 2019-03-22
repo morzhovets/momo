@@ -298,7 +298,7 @@ namespace internal
 			if (memManager != nullptr)
 				KeyManager::Copy(*memManager, srcKey, dstKey);
 			else
-				new(dstKey) Key(std::move(srcKey));	//? basic exception safety
+				::new(static_cast<void*>(dstKey)) Key(std::move(srcKey));	//? basic exception safety
 			try
 			{
 				ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);

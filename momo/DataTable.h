@@ -164,10 +164,10 @@ private:
 		{
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
-			new(&mData->columnList) ColumnList(std::move(columnList));
+			::new(static_cast<void*>(&mData->columnList)) ColumnList(std::move(columnList));
 			mData->changeVersion = 0;
 			mData->removeVersion = 0;
-			new(&mData->freeRaws) FreeRaws(nullptr);
+			::new(static_cast<void*>(&mData->freeRaws)) FreeRaws(nullptr);
 		}
 
 		Crew(Crew&& crew) noexcept

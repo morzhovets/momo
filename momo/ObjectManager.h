@@ -91,7 +91,7 @@ private:
 	static void pvRelocate(MemManager* memManager, Object& srcObject, Object* dstObject,
 		std::false_type /*isTriviallyRelocatable*/) noexcept(isNothrowRelocatable)
 	{
-		new(dstObject) Object(std::move(srcObject));
+		::new(static_cast<void*>(dstObject)) Object(std::move(srcObject));
 		ObjectDestroyer<Object, MemManager>::Destroy(memManager, srcObject);
 	}
 };
@@ -201,7 +201,8 @@ namespace internal
 			void pvCreate(MemManager& /*memManager*/, Object* newObject,
 				Sequence<sequence...>)
 			{
-				new(newObject) Object(std::forward<Args>(std::get<sequence>(mArgs))...);
+				::new(static_cast<void*>(newObject))
+					Object(std::forward<Args>(std::get<sequence>(mArgs))...);
 			}
 
 			template<typename Allocator, size_t... sequence>

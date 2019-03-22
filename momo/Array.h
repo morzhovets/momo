@@ -966,7 +966,7 @@ private:
 	{
 		MOMO_ASSERT(this != &array);
 		mData.~Data();	//?
-		new(&mData) Data(std::move(array.mData));
+		::new(static_cast<void*>(&mData)) Data(std::move(array.mData));
 	}
 
 	template<typename ArgIterator>

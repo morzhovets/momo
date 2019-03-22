@@ -106,14 +106,15 @@ namespace internal
 			mData->version = 0;
 			try
 			{
-				new(&mData->containerTraits) ContainerTraits(containerTraits);
+				::new(static_cast<void*>(&mData->containerTraits))
+					ContainerTraits(containerTraits);
 			}
 			catch (...)
 			{
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 				throw;
 			}
-			new(&mData->memManager) MemManager(std::move(memManager));
+			::new(static_cast<void*>(&mData->memManager)) MemManager(std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) noexcept

@@ -544,7 +544,7 @@ private:
 			mData->valueVersion = 0;
 			try
 			{
-				new(&mData->valueArrayParams) ValueArrayParams(memManager);
+				::new(static_cast<void*>(&mData->valueArrayParams)) ValueArrayParams(memManager);
 			}
 			catch (...)
 			{
@@ -1183,7 +1183,7 @@ private:
 		{
 			ValueArray valueArray;
 			this->pvAddValue(valueArray, std::forward<ValueCreator>(valueCreator));
-			new(newValueArray) ValueArray(std::move(valueArray));
+			::new(static_cast<void*>(newValueArray)) ValueArray(std::move(valueArray));
 		};
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key),

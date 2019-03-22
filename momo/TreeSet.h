@@ -1158,7 +1158,7 @@ private:
 				sizeof(NodeParams));
 			try
 			{
-				new(mNodeParams) NodeParams(memManager);
+				::new(static_cast<void*>(mNodeParams)) NodeParams(memManager);
 			}
 			catch (...)
 			{

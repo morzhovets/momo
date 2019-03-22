@@ -71,7 +71,7 @@ namespace internal
 			try
 			{
 				for (; bucketIndex < bucketCount; ++bucketIndex)
-					new(buckets + bucketIndex) Bucket();
+					::new(static_cast<void*>(buckets + bucketIndex)) Bucket();
 				if (bucketParams == nullptr)
 					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
 				else
@@ -170,7 +170,7 @@ namespace internal
 				memManager, sizeof(BucketParams));
 			try
 			{
-				new(bucketParams) BucketParams(memManager);
+				::new(static_cast<void*>(bucketParams)) BucketParams(memManager);
 			}
 			catch (...)
 			{
