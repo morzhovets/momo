@@ -105,6 +105,27 @@ namespace internal
 			? alignof(Object) : MOMO_MAX_ALIGNMENT;
 	};
 
+	template<typename Object,
+		typename = void>
+	struct IsNothrowSwappable
+	{
+		static constexpr bool GetValue() noexcept
+		{
+			return false;
+		}
+	};
+
+	template<typename Object>
+	struct IsNothrowSwappable<Object,
+		decltype(std::swap(std::declval<Object&>(), std::declval<Object&>()))>
+	{
+		static constexpr bool GetValue() noexcept
+		{
+			using std::swap;
+			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
+		}
+	};
+
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
@@ -138,14 +159,6 @@ namespace internal
 		typedef TObject Object;
 		typedef TMemManager MemManager;
 
-	private:
-		static constexpr bool pvIsNothrowSwappable() noexcept
-		{
-			using std::swap;
-			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
-		}
-
-	public:
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 
@@ -156,7 +169,7 @@ namespace internal
 		static const bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = pvIsNothrowSwappable();
+		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
