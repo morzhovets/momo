@@ -694,7 +694,7 @@ public:
 			{
 				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
 				ConstRowReference rowRef = *iter;
-				pvSetNumber(ConstRowReferenceProxy::GetRaw(*iter), invalidNumber);
+				pvSetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
 			}
 		}
 		catch (...)
