@@ -265,7 +265,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			size_t GetHashCode(const HashMixedKey<Item>& key) const
+			size_t GetHashCode(HashMixedKey<Item> key) const
 			{
 				return mHashMixedFunc({ key.raw, key.offset, key.item }, mOffsets.GetItems());
 			}
@@ -284,7 +284,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			bool IsEqual(const HashMixedKey<Item>& key1, Raw* key2) const
+			bool IsEqual(HashMixedKey<Item> key1, Raw* key2) const
 			{
 				return mEqualMixedFunc({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
@@ -840,7 +840,7 @@ namespace internal
 			mMultiHashes.Clear(true);
 		}
 
-		void AddIndexes(const DataIndexes& indexes)
+		void Assign(const DataIndexes& indexes)
 		{
 			MOMO_ASSERT(mUniqueHashes.IsEmpty());
 			MOMO_ASSERT(mMultiHashes.IsEmpty());

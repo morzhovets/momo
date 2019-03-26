@@ -264,7 +264,7 @@ namespace internal
 		{
 			ConstReference::GetRaw();	// check
 			MOMO_CHECK(ConstReference::GetColumnList().IsMutable(offset));
-			return ColumnList::template GetByOffset<Item>(ConstReference::ptGetRaw(), offset);
+			return ColumnList::template GetByOffset<Item>(ptGetRaw(), offset);
 		}
 
 		template<typename Item>
@@ -279,8 +279,7 @@ namespace internal
 			ConstReference::GetRaw();	// check
 			const ColumnList& columnList = ConstReference::GetColumnList();
 			MOMO_CHECK(columnList.IsMutable(offset));
-			columnList.template Assign<Item>(ConstReference::ptGetRaw(), offset,
-				std::forward<ItemArg>(itemArg));
+			columnList.template Assign<Item>(ptGetRaw(), offset, std::forward<ItemArg>(itemArg));
 		}
 
 		template<typename Item, typename ItemArg>
@@ -288,6 +287,12 @@ namespace internal
 		{
 			SetByOffset<Item>(ConstReference::GetColumnList().GetOffset(column),
 				std::forward<ItemArg>(itemArg));
+		}
+
+	protected:
+		Raw* ptGetRaw() const noexcept
+		{
+			return ConstReference::ptGetRaw();
 		}
 	};
 

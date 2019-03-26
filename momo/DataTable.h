@@ -128,7 +128,7 @@ public:
 private:
 	typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	static const size_t invalidRowNumber = SIZE_MAX;
+	static const size_t invalidNumber = SIZE_MAX;
 
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
 		internal::NestedMemPoolSettings> RawMemPool;
@@ -263,7 +263,7 @@ private:
 	struct RowReferenceProxy : public RowReference
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-		MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+		//MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -331,7 +331,7 @@ public:
 	DataTable(const DataTable& table, const RowFilter& rowFilter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
-		mIndexes.AddIndexes(table.mIndexes);
+		mIndexes.Assign(table.mIndexes);
 		pvFill(table, rowFilter);
 	}
 
@@ -538,9 +538,7 @@ public:
 	{
 		MOMO_CHECK(rowNumber <= GetCount());
 		RowReference rowRef = AddRow(std::move(row));
-		for (size_t i = mRaws.GetCount() - 1; i > rowNumber; --i)
-			mRaws[i] = mRaws[i - 1];
-		mRaws[rowNumber] = RowReferenceProxy::GetRaw(rowRef);
+		std::rotate(mRaws.GetBegin() + rowNumber, std::prev(mRaws.GetEnd()), mRaws.GetEnd());
 		pvSetNumbers(rowNumber);
 		return rowRef;
 	}
@@ -609,7 +607,7 @@ public:
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(RowReference rowRef, const Column<Item>& column, Item&& newItem)
+	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
 	{
 		const ColumnList& columnList = GetColumnList();
 		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -620,7 +618,7 @@ public:
 			{ columnList.template Assign<Item>(raw, offset, std::move(newItem)); };
 		mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
 		++mCrew.GetChangeVersion();
-		return rowRef;
+		return pvMakeRowReference(raw);
 	}
 
 	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
@@ -653,15 +651,16 @@ public:
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
-			pvSetNumber(raw, invalidRowNumber);
+			pvSetNumber(raw, invalidNumber);
 		try
 		{
 			size_t number = 0;
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
 				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
-				Raw* raw = RowReferenceProxy::GetRaw(*iter);
-				if (columnList.GetNumber(raw) != invalidRowNumber)
+				ConstRowReference rowRef = *iter;
+				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+				if (columnList.GetNumber(raw) != invalidNumber)
 					continue;
 				pvSetNumber(raw, number);
 				++number;
@@ -694,7 +693,8 @@ public:
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
 				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
-				pvSetNumber(RowReferenceProxy::GetRaw(*iter), invalidRowNumber);
+				ConstRowReference rowRef = *iter;
+				pvSetNumber(ConstRowReferenceProxy::GetRaw(*iter), invalidNumber);
 			}
 		}
 		catch (...)
@@ -721,7 +721,7 @@ public:
 			for (Raw* raw : mRaws)
 			{
 				if (!rowFilter(pvMakeConstRowReference(raw)))
-					pvSetNumber(raw, invalidRowNumber);
+					pvSetNumber(raw, invalidNumber);
 			}
 		}
 		catch (...)
@@ -1056,7 +1056,7 @@ private:
 	void pvRemoveInvalidRaws() noexcept
 	{
 		auto rawFilter = [this] (Raw* raw)
-			{ return GetColumnList().GetNumber(raw) != invalidRowNumber; };
+			{ return GetColumnList().GetNumber(raw) != invalidNumber; };
 		mIndexes.FilterRaws(rawFilter);
 		size_t number = 0;
 		for (Raw* raw : mRaws)
