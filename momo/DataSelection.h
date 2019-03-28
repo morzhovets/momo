@@ -618,7 +618,10 @@ namespace internal
 			mRaws.Reserve(count);
 			mRaws.Clear(false);
 			for (RowIterator iter = begin; iter != end; ++iter)
-				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(*iter));
+			{
+				RowReference rowRef = *iter;
+				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
+			}
 		}
 
 		void Add(RowReference rowRef)
@@ -634,7 +637,10 @@ namespace internal
 			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(mRaws.GetCount() + count);
 			for (RowIterator iter = begin; iter != end; ++iter)
-				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(*iter));
+			{
+				RowReference rowRef = *iter;
+				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
+			}
 		}
 
 		void Insert(size_t index, RowReference rowRef)
@@ -653,7 +659,10 @@ namespace internal
 			mRaws.Reserve(mRaws.GetCount() + count);
 			mRaws.Insert(index, count, nullptr);
 			for (RowIterator iter = begin; iter != end; ++iter, ++index)
-				mRaws[index] = RowReferenceProxy::GetRaw(*iter);
+			{
+				RowReference rowRef = *iter;
+				mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
+			}
 		}
 
 		void Remove(size_t index, size_t count = 1)
