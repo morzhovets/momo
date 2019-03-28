@@ -63,22 +63,23 @@
 
 #define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_DECLARE_PROXY_CONSTRUCTOR(BaseObject) \
+#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
 	template<typename... Args> \
-	explicit BaseObject##Proxy(Args&&... args) \
-		noexcept((std::is_nothrow_constructible<BaseObject, Args&&...>::value)) \
-		: BaseObject(std::forward<Args>(args)...) \
+	explicit Object##Proxy(Args&&... args) \
+		noexcept((std::is_nothrow_constructible<Object, Args&&...>::value)) \
+		: Object(std::forward<Args>(args)...) \
 	{ \
 	}
 
-// Result = decltype((std::declval<Object&&>().*&BaseObject##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
-#define MOMO_DECLARE_PROXY_FUNCTION(BaseObject, Func, Result) \
-	template<typename Object, typename... Args> \
-	static Result Func(Object&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<Object>(object).*&BaseObject##Proxy::pt##Func) \
+// Result = decltype((std::declval<ObjectArg&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
+#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \
+	template<typename ObjectArg, typename... Args> \
+	static Result Func(ObjectArg&& object, Args&&... args) \
+		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		return (std::forward<Object>(object).*&BaseObject##Proxy::pt##Func) \
+		MOMO_STATIC_ASSERT((std::is_same<Object, typename std::decay<ObjectArg>::type>::value)); \
+		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
