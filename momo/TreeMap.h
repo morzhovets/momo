@@ -140,6 +140,8 @@ template<typename TKey, typename TValue,
 	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
 class TreeMap
+	: private internal::Swappable<TreeMap<TKey, TValue, TTreeTraits, TMemManager,
+		TKeyValueTraits, TSettings>>
 {
 public:
 	typedef TKey Key;
@@ -277,7 +279,6 @@ public:
 		return IteratorProxy(mTreeSet.GetEnd());
 	}
 
-	MOMO_FRIEND_SWAP(TreeMap)
 	MOMO_FRIENDS_BEGIN_END(const TreeMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(TreeMap&, Iterator)
 

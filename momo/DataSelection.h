@@ -414,7 +414,9 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TDataTraits>
-	class DataSelection : private VersionKeeper<typename TRowReference::ColumnList::Settings>
+	class DataSelection
+		: private VersionKeeper<typename TRowReference::ColumnList::Settings>,
+		private internal::Swappable<DataSelection<TRowReference, TDataTraits>>
 	{
 	public:
 		typedef TRowReference RowReference;
@@ -550,7 +552,6 @@ namespace internal
 			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, GetCount()), *this);
 		}
 
-		MOMO_FRIEND_SWAP(DataSelection)
 		MOMO_FRIENDS_BEGIN_END(const DataSelection&, ConstIterator)
 
 		const ColumnList& GetColumnList() const noexcept

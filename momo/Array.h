@@ -246,6 +246,7 @@ template<typename TItem,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
 class Array
+	: private internal::Swappable<Array<TItem, TMemManager, TItemTraits, TSettings>>
 {
 public:
 	typedef TItem Item;
@@ -635,7 +636,6 @@ public:
 		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
 
-	MOMO_FRIEND_SWAP(Array)
 	MOMO_FRIENDS_BEGIN_END(const Array&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(Array&, Iterator)
 

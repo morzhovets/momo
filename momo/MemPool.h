@@ -132,7 +132,9 @@ public:
 template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private TParams
+class MemPool
+	: private TParams,
+	private internal::Swappable<MemPool<TParams, TMemManager, TSettings>>
 {
 public:
 	typedef TParams Params;
@@ -218,8 +220,6 @@ public:
 		std::swap(mAllocCount, memPool.mAllocCount);
 		mCachedFreeBlocks.Swap(memPool.mCachedFreeBlocks);
 	}
-
-	MOMO_FRIEND_SWAP(MemPool)
 
 	size_t GetBlockSize() const noexcept
 	{

@@ -61,6 +61,7 @@ public:
 template<typename TColumnList = DataColumnList<>,
 	typename TDataTraits = DataTraits>
 class DataTable
+	: private internal::Swappable<DataTable<TColumnList, TDataTraits>>
 {
 public:
 	typedef TColumnList ColumnList;
@@ -393,7 +394,6 @@ public:
 		return pvMakeIterator(GetCount());
 	}
 
-	MOMO_FRIEND_SWAP(DataTable)
 	MOMO_FRIENDS_BEGIN_END(const DataTable&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(DataTable&, Iterator)
 
