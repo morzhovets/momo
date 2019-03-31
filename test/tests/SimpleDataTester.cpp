@@ -85,9 +85,9 @@ public:
 		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
-		assert(table.AddUniqueHashIndex(intCol, strCol));
-		assert(table.AddMultiHashIndex(intCol));
-		assert(table.AddMultiHashIndex(strCol));
+		table.AddUniqueHashIndex(intCol, strCol);
+		table.AddMultiHashIndex(intCol);
+		table.AddMultiHashIndex(strCol);
 
 		table.Reserve(count);
 
@@ -121,12 +121,8 @@ public:
 		for (auto row : table.Select()) { (void)row; }
 		for (auto row : ctable.Select()) { (void)row; }
 
-		assert(table.GetUniqueHashIndex(intCol, strCol));
-		assert(table.GetMultiHashIndex(intCol));
-		assert(table.RemoveUniqueHashIndex(intCol, strCol));
-		assert(table.RemoveMultiHashIndex(intCol));
-		assert(table.AddUniqueHashIndex(intCol, strCol));
-		assert(table.AddMultiHashIndex(intCol));
+		assert(table.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
+		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
 
 		for (size_t i = 0; i < count2; ++i)
 			assert(table.TryInsertRow(count, table.NewRow(intCol = (int)(count + i))).uniqueHashIndex == nullptr);
@@ -198,12 +194,17 @@ public:
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
-		assert((bool)table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0));
-		assert((*table.FindByUniqueHash(nullptr, strCol == "1", intCol == 0))[strCol] == "1");
-		assert((*ctable.FindByUniqueHash(nullptr, strCol == "1", intCol == 0))[strCol] == "1");
+		assert((bool)table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
+			strCol == "1", intCol == 0));
+		assert((*table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
+			strCol == "1", intCol == 0))[strCol] == "1");
+		assert((*ctable.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
+			strCol == "1", intCol == 0))[strCol] == "1");
 
-		assert(table.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
-		assert(ctable.FindByMultiHash(nullptr, strCol == "1").GetCount() == count / 2);
+		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
+			strCol == "1").GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
+			strCol == "1").GetCount() == count / 2);
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
@@ -211,9 +212,9 @@ public:
 		assert(tableCopy.ContainsColumn(dblCol));
 		assert(tableCopy.ContainsColumn(strCol));
 
-		assert(tableCopy.GetUniqueHashIndex(intCol, strCol));
-		assert(tableCopy.GetMultiHashIndex(intCol));
-		assert(tableCopy.GetMultiHashIndex(strCol));
+		assert(tableCopy.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
+		assert(tableCopy.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
+		assert(tableCopy.GetMultiHashIndex(strCol) != momo::DataMultiHashIndex::empty);
 
 		tableCopy.RemoveUniqueHashIndexes();
 		tableCopy.RemoveMultiHashIndexes();

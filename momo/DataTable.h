@@ -95,8 +95,6 @@ private:
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
 	typedef typename Indexes::UniqueIndexViolation UniqueIndexViolation;
-	typedef typename Indexes::UniqueHash UniqueHashIndex;
-	typedef typename Indexes::MultiHash MultiHashIndex;
 
 	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
@@ -108,22 +106,24 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::DataRowPointer<internal::DataRowBounds<RowReference,
-		typename UniqueHashIndex::RawBounds>> RowHashPointer;
+		typename Indexes::UniqueHashRawBounds>> RowHashPointer;
 	typedef typename RowHashPointer::ConstPointer ConstRowHashPointer;
 
 	typedef internal::DataRowBounds<RowReference,
-		typename MultiHashIndex::RawBounds> RowHashBounds;
+		typename Indexes::MultiHashRawBounds> RowHashBounds;
 	typedef typename RowHashBounds::ConstBounds ConstRowHashBounds;
 
 	template<typename Item>
 	using ConstItemBounds = internal::DataConstItemBounds<Item, ConstRowBounds, Settings>;
 
-	typedef const void* IndexHandle;
+	typedef typename Indexes::UniqueHashIndex UniqueHashIndex;
+	typedef typename Indexes::MultiHashIndex MultiHashIndex;
 
 	struct TryResult
 	{
 		RowReference rowReference;
-		IndexHandle uniqueHashIndex;
+		//UniqueHashIndex uniqueHashIndex;
+		const void* uniqueHashIndex;
 	};
 
 private:
@@ -733,49 +733,41 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	IndexHandle GetUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
+	UniqueHashIndex GetUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return mIndexes.GetUniqueHash(&GetColumnList(), column, columns...);
+		return mIndexes.GetUniqueHashIndex(pvGetOffsets(column, columns...));
 	}
 
 	template<typename Item, typename... Items>
-	IndexHandle GetMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
+	MultiHashIndex GetMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return mIndexes.GetMultiHash(&GetColumnList(), column, columns...);
+		return mIndexes.GetMultiHashIndex(pvGetOffsets(column, columns...));
 	}
 
 	template<typename Item, typename... Items>
-	bool AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	UniqueHashIndex AddUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.AddUniqueHash(&GetColumnList(), mRaws, column, columns...);
+		auto offsets = pvGetOffsets(column, columns...);
+		pvCheckImmutable(offsets);
+		return mIndexes.AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
 	}
 
 	template<typename Item, typename... Items>
-	bool AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
+	MultiHashIndex AddMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		return mIndexes.AddMultiHash(&GetColumnList(), mRaws, column, columns...);
-	}
-
-	template<typename Item, typename... Items>
-	bool RemoveUniqueHashIndex(const Column<Item>& column, const Column<Items>&... columns)
-	{
-		return mIndexes.RemoveUniqueHash(&GetColumnList(), column, columns...);
-	}
-
-	template<typename Item, typename... Items>
-	bool RemoveMultiHashIndex(const Column<Item>& column, const Column<Items>&... columns)
-	{
-		return mIndexes.RemoveMultiHash(&GetColumnList(), column, columns...);
+		auto offsets = pvGetOffsets(column, columns...);
+		pvCheckImmutable(offsets);
+		return mIndexes.AddMultiHashIndex<Item, Items...>(mRaws, offsets);
 	}
 
 	void RemoveUniqueHashIndexes() noexcept
 	{
-		mIndexes.RemoveUniqueHashes();
+		mIndexes.RemoveUniqueHashIndexes();
 	}
 
 	void RemoveMultiHashIndexes() noexcept
 	{
-		mIndexes.RemoveMultiHashes();
+		mIndexes.RemoveMultiHashIndexes();
 	}
 
 	ConstSelection SelectEmpty() const
@@ -827,46 +819,42 @@ public:
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
 
-	ConstRowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, const Row& row) const
+	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
 	{
-		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
+		return pvFindByUniqueHash(uniqueHashIndex, row);
 	}
 
-	RowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, const Row& row)
+	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row)
 	{
-		return pvFindByUniqueHash(static_cast<const UniqueHashIndex*>(uniqueHashIndex), row);
+		return pvFindByUniqueHash(uniqueHashIndex, row);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, Equaler<Item> equaler,
+	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers) const
 	{
-		return pvFindByHash<RowHashPointerProxy>(
-			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
+		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashPointer FindByUniqueHash(IndexHandle uniqueHashIndex, Equaler<Item> equaler,
+	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers)
 	{
-		return pvFindByHash<RowHashPointerProxy>(
-			static_cast<const UniqueHashIndex*>(uniqueHashIndex), equaler, equalers...);
+		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashBounds FindByMultiHash(IndexHandle multiHashIndex, Equaler<Item> equaler,
+	ConstRowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers) const
 	{
-		return pvFindByHash<RowHashBoundsProxy>(
-			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
+		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equaler, equalers...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashBounds FindByMultiHash(IndexHandle multiHashIndex, Equaler<Item> equaler,
+	RowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equaler<Item> equaler,
 		Equaler<Items>... equalers)
 	{
-		return pvFindByHash<RowHashBoundsProxy>(
-			static_cast<const MultiHashIndex*>(multiHashIndex), equaler, equalers...);
+		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equaler, equalers...);
 	}
 
 private:
@@ -1075,6 +1063,32 @@ private:
 		++mCrew.GetRemoveVersion();
 	}
 
+	template<typename... Items,
+		size_t columnCount = sizeof...(Items)>
+	std::array<size_t, columnCount> pvGetOffsets(const Column<Items>&... columns) const
+	{
+		const ColumnList& columnList = GetColumnList();
+		return {{ columnList.GetOffset(columns)... }};
+	}
+
+	template<typename... Items,
+		size_t columnCount = sizeof...(Items)>
+	std::array<size_t, columnCount> pvGetOffsets(const Equaler<Items>&... equalers) const
+	{
+		return pvGetOffsets(equalers.GetColumn()...);
+	}
+	
+	template<size_t columnCount>
+	void pvCheckImmutable(const std::array<size_t, columnCount>& offsets) const
+	{
+		const ColumnList& columnList = GetColumnList();
+		for (size_t offset : offsets)
+		{
+			(void)offset;
+			MOMO_CHECK(!columnList.IsMutable(offset));
+		}
+	}
+
 	Selection pvSelectEmpty() const
 	{
 		MemManager memManager = GetMemManager();
@@ -1104,19 +1118,18 @@ private:
 			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
-		const ColumnList& columnList = GetColumnList();
-		std::array<size_t, columnCount> offsets = {{ columnList.GetOffset(equalers.GetColumn())... }};
-		std::array<size_t, columnCount> sortedOffsets = Indexes::GetSortedOffsets(offsets);
-		const UniqueHashIndex* uniqueHash = mIndexes.GetFitUniqueHash(sortedOffsets);
-		if (uniqueHash != nullptr)
+		auto offsets = pvGetOffsets(equalers...);
+		auto sortedOffsets = Indexes::GetSortedOffsets(offsets);
+		UniqueHashIndex uniqueHashIndex = mIndexes.GetFitUniqueHashIndex(sortedOffsets);
+		if (uniqueHashIndex != UniqueHashIndex::empty)
 		{
-			return pvSelectRec<Result>(*uniqueHash, offsets.data(), rowFilter,
+			return pvSelectRec<Result>(uniqueHashIndex, offsets.data(), rowFilter,
 				OffsetItemTuple<>(), equalers...);
 		}
-		const MultiHashIndex* multiHash = mIndexes.GetFitMultiHash(sortedOffsets);
-		if (multiHash != nullptr)
+		MultiHashIndex multiHashIndex = mIndexes.GetFitMultiHashIndex(sortedOffsets);
+		if (multiHashIndex != MultiHashIndex::empty)
 		{
-			return pvSelectRec<Result>(*multiHash, offsets.data(), rowFilter,
+			return pvSelectRec<Result>(multiHashIndex, offsets.data(), rowFilter,
 				OffsetItemTuple<>(), equalers...);
 		}
 		auto newRowFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
@@ -1147,11 +1160,11 @@ private:
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Item,
 		typename... Items>
-	Result pvSelectRec(const Index& index, const size_t* offsets, const RowFilter& rowFilter,
+	Result pvSelectRec(Index index, const size_t* offsets, const RowFilter& rowFilter,
 		const Tuple& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		size_t offset = *offsets;
-		if (Indexes::HasOffset(index, offset))
+		if (mIndexes.ContainsOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(tuple,
 				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
@@ -1170,7 +1183,7 @@ private:
 	}
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple>
-	Result pvSelectRec(const Index& index, const size_t* /*offsets*/, const RowFilter& rowFilter,
+	Result pvSelectRec(Index index, const size_t* /*offsets*/, const RowFilter& rowFilter,
 		const Tuple& tuple) const
 	{
 		return pvMakeSelection(mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
@@ -1179,7 +1192,7 @@ private:
 
 #ifdef _MSC_VER	//?
 	template<typename Result, typename Index, typename RowFilter>
-	Result pvSelectRec(const Index&, const size_t*, const RowFilter&, const OffsetItemTuple<>&) const
+	Result pvSelectRec(Index, const size_t*, const RowFilter&, const OffsetItemTuple<>&) const
 	{
 		throw std::exception();
 	}
@@ -1222,33 +1235,28 @@ private:
 		return std::distance(raws.GetBegin(), raws.GetEnd());
 	}
 
-	RowHashPointer pvFindByUniqueHash(const UniqueHashIndex* uniqueHashIndex, const Row& row) const
+	RowHashPointer pvFindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
 	{
 		const ColumnList* columnList = &GetColumnList();
-		MOMO_CHECK(uniqueHashIndex != nullptr);
+		MOMO_CHECK(uniqueHashIndex != UniqueHashIndex::empty);
 		MOMO_CHECK(&row.GetColumnList() == columnList);
-		auto raws = mIndexes.FindRaws(*uniqueHashIndex, RowProxy::GetRaw(row),
+		auto raws = mIndexes.FindRaws(uniqueHashIndex, RowProxy::GetRaw(row),
 			VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>
-	RowBoundsProxy pvFindByHash(const Index* index, const Equaler<Items>&... equalers) const
+	RowBoundsProxy pvFindByHash(Index index, const Equaler<Items>&... equalers) const
 	{
-		static const size_t columnCount = sizeof...(equalers);
-		const ColumnList& columnList = GetColumnList();
-		std::array<size_t, columnCount> offsets = {{ columnList.GetOffset(equalers.GetColumn())... }};
-		if (index == nullptr)
-			index = mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index);
-		else
-			MOMO_EXTRA_CHECK(index == mIndexes.GetHash(Indexes::GetSortedOffsets(offsets), index));	//?
-		if (index == nullptr)
+		auto offsets = pvGetOffsets(equalers...);
+		index = mIndexes.GetTrueIndex(index, offsets);
+		if (static_cast<ptrdiff_t>(index) < 0)	//?
 			throw std::runtime_error("Index not found");
-		return pvFindByHashRec<RowBoundsProxy>(*index, offsets.data(), OffsetItemTuple<>(), equalers...);
+		return pvFindByHashRec<RowBoundsProxy>(index, offsets.data(), OffsetItemTuple<>(), equalers...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Item, typename... Items>
-	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* offsets, const Tuple& tuple,
+	RowBoundsProxy pvFindByHashRec(Index index, const size_t* offsets, const Tuple& tuple,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		auto newTuple = std::tuple_cat(tuple,
@@ -1257,7 +1265,7 @@ private:
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple>
-	RowBoundsProxy pvFindByHashRec(const Index& index, const size_t* /*offsets*/,
+	RowBoundsProxy pvFindByHashRec(Index index, const size_t* /*offsets*/,
 		const Tuple& tuple) const
 	{
 		return RowBoundsProxy(&GetColumnList(),
