@@ -94,7 +94,7 @@ public:
 		for (size_t i = 0; i < count; ++i)
 		{
 			DataRow row = table.NewRow(intCol = (int)i);
-			assert(table.TryAddRow(std::move(row)).uniqueHashIndex == nullptr);
+			table.AddRow(std::move(row));
 		}
 
 		for (const std::string& s : table.GetColumnItems(strCol))
@@ -106,9 +106,8 @@ public:
 		{
 			DataRow row = table.NewRow(intCol = (int)i / 2);
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
-			assert(table.TryUpdateRow(i, std::move(row)).uniqueHashIndex == nullptr);
-			assert(table.TryUpdateRow(table[i], strCol,
-				std::string((i % 2 == 0) ? "0" : "1")).uniqueHashIndex == nullptr);
+			table.UpdateRow(i, std::move(row));
+			table.UpdateRow(table[i], strCol, std::string((i % 2 == 0) ? "0" : "1"));
 		}
 
 		for (size_t i = 0; i < count; ++i)
@@ -125,7 +124,7 @@ public:
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
 
 		for (size_t i = 0; i < count2; ++i)
-			assert(table.TryInsertRow(count, table.NewRow(intCol = (int)(count + i))).uniqueHashIndex == nullptr);
+			table.InsertRow(count, table.NewRow(intCol = (int)(count + i)));
 		assert(table.GetCount() == count + count2);
 
 		MOMO_STATIC_ASSERT(count2 % 6 == 0);

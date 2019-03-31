@@ -94,8 +94,6 @@ private:
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;
 
-	typedef typename Indexes::UniqueIndexViolation UniqueIndexViolation;
-
 	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
 	typedef internal::ArrayBounds<RawIterator> RawBounds;
@@ -122,8 +120,17 @@ public:
 	struct TryResult
 	{
 		RowReference rowReference;
-		//UniqueHashIndex uniqueHashIndex;
-		const void* uniqueHashIndex;
+		UniqueHashIndex uniqueHashIndex;
+	};
+
+	class UniqueIndexViolation : public std::runtime_error, public TryResult
+	{
+	public:
+		explicit UniqueIndexViolation(TryResult tryResult)
+			: std::runtime_error("Unique index violation"),
+			TryResult(tryResult)
+		{
+		}
 	};
 
 private:
@@ -500,14 +507,10 @@ public:
 
 	RowReference AddRow(Row&& row)
 	{
-		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
-		mRaws.Reserve(mRaws.GetCount() + 1);
-		mIndexes.AddRaw(row.GetRaw());
-		Raw* raw = RowProxy::ExtractRaw(row);
-		pvSetNumber(raw, mRaws.GetCount());
-		mRaws.AddBackNogrow(raw);
-		++mCrew.GetChangeVersion();
-		return pvMakeRowReference(raw);
+		TryResult res = TryAddRow(std::move(row));
+		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+			throw UniqueIndexViolation(res);
+		return res.rowReference;
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -518,14 +521,16 @@ public:
 
 	TryResult TryAddRow(Row&& row)
 	{
-		try
-		{
-			return { AddRow(std::move(row)), nullptr };
-		}
-		catch (const UniqueIndexViolation& exception)
-		{
-			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
-		}
+		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
+		mRaws.Reserve(mRaws.GetCount() + 1);
+		auto res = mIndexes.AddRaw(row.GetRaw());
+		if (res.raw != nullptr)
+			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
+		Raw* raw = RowProxy::ExtractRaw(row);
+		pvSetNumber(raw, mRaws.GetCount());
+		mRaws.AddBackNogrow(raw);
+		++mCrew.GetChangeVersion();
+		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -536,11 +541,10 @@ public:
 
 	RowReference InsertRow(size_t rowNumber, Row&& row)
 	{
-		MOMO_CHECK(rowNumber <= GetCount());
-		RowReference rowRef = AddRow(std::move(row));
-		std::rotate(mRaws.GetBegin() + rowNumber, std::prev(mRaws.GetEnd()), mRaws.GetEnd());
-		pvSetNumbers(rowNumber);
-		return rowRef;
+		TryResult res = TryInsertRow(rowNumber, std::move(row));
+		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+			throw UniqueIndexViolation(res);
+		return res.rowReference;
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -552,14 +556,14 @@ public:
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
 	{
-		try
+		MOMO_CHECK(rowNumber <= GetCount());
+		TryResult res = TryAddRow(std::move(row));
+		if (res.uniqueHashIndex == UniqueHashIndex::empty)
 		{
-			return { InsertRow(rowNumber, std::move(row)), nullptr };
+			std::rotate(mRaws.GetBegin() + rowNumber, std::prev(mRaws.GetEnd()), mRaws.GetEnd());
+			pvSetNumbers(rowNumber);
 		}
-		catch (const UniqueIndexViolation& exception)
-		{
-			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
-		}
+		return res;
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -595,19 +599,38 @@ public:
 
 	RowReference UpdateRow(size_t rowNumber, Row&& row)
 	{
+		TryResult res = TryUpdateRow(rowNumber, std::move(row));
+		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+			throw UniqueIndexViolation(res);
+		return res.rowReference;
+	}
+
+	template<typename Item>
+	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
+	{
+		TryResult res = TryUpdateRow(rowRef, column, std::move(newItem));
+		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+			throw UniqueIndexViolation(res);
+		return res.rowReference;
+	}
+
+	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
+	{
 		MOMO_CHECK(rowNumber < GetCount());
 		Raw*& raw = mRaws[rowNumber];
-		mIndexes.UpdateRaw(raw, row.GetRaw());
+		auto res = mIndexes.UpdateRaw(raw, row.GetRaw());
+		if (res.raw != nullptr)
+			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
 		pvFreeRaw(raw);
 		raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, rowNumber);
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
-		return pvMakeRowReference(raw);
+		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
+	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
 	{
 		const ColumnList& columnList = GetColumnList();
 		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -616,34 +639,11 @@ public:
 		size_t offset = GetColumnList().GetOffset(column);
 		auto assigner = [&columnList, raw, offset, &newItem] ()
 			{ columnList.template Assign<Item>(raw, offset, std::move(newItem)); };
-		mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
+		auto res = mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
+		if (res.raw != nullptr)
+			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
 		++mCrew.GetChangeVersion();
-		return pvMakeRowReference(raw);
-	}
-
-	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
-	{
-		try
-		{
-			return { UpdateRow(rowNumber, std::move(row)), nullptr };
-		}
-		catch (const UniqueIndexViolation& exception)
-		{
-			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
-		}
-	}
-
-	template<typename Item>
-	TryResult TryUpdateRow(RowReference rowRef, const Column<Item>& column, Item&& newItem)
-	{
-		try
-		{
-			return { UpdateRow(rowRef, column, std::move(newItem)), nullptr };
-		}
-		catch (const UniqueIndexViolation& exception)
-		{
-			return { pvMakeRowReference(exception.raw), &exception.uniqueHash };
-		}
+		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
 	template<typename RowIterator>

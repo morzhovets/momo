@@ -334,25 +334,6 @@ namespace internal
 			Offsets mOffsets;
 		};
 
-		class UniqueHash;
-
-	public:
-		class UniqueIndexViolation : public std::runtime_error
-		{
-		public:
-			explicit UniqueIndexViolation(Raw* raw, const UniqueHash& uniqueHash)
-				: std::runtime_error("Unique index violation"),
-				raw(raw),
-				uniqueHash(uniqueHash)
-			{
-			}
-
-		public:
-			Raw* raw;	//?
-			const UniqueHash& uniqueHash;
-		};
-
-	private:
 		class UniqueHash
 		{
 		private:
@@ -452,24 +433,24 @@ namespace internal
 				return pvFind(hashTupleKey);
 			}
 
-			bool Add(Raw* raw, Raw* oldRaw = nullptr)
+			Raw* Add(Raw* raw, Raw* oldRaw = nullptr)
 			{
 				MOMO_ASSERT(!mIteratorAdd);
 				auto insRes = mHashSet.Insert(raw);
-				if (!insRes.inserted && *insRes.iterator != oldRaw)
-					throw UniqueIndexViolation(*insRes.iterator, *this);
-				mIteratorAdd = insRes.iterator;
-				return *mIteratorAdd == raw;
+				if (insRes.inserted || *insRes.iterator == oldRaw)
+					mIteratorAdd = insRes.iterator;
+				return *insRes.iterator;
 			}
 
 			template<typename Item>
-			void Add(HashMixedKey<Item> hashMixedKey)
+			Raw* Add(HashMixedKey<Item> hashMixedKey)
 			{
 				MOMO_ASSERT(!mIteratorAdd);
 				Iterator iter = mHashSet.Find(hashMixedKey);
 				if (!!iter)
-					throw UniqueIndexViolation(*iter, *this);
+					return *iter;
 				mIteratorAdd = mHashSet.Add(iter, hashMixedKey.raw);
+				return hashMixedKey.raw;
 			}
 
 			void RejectAdd() noexcept
@@ -770,6 +751,12 @@ namespace internal
 		typedef typename UniqueHash::RawBounds UniqueHashRawBounds;
 		typedef typename MultiHash::RawBounds MultiHashRawBounds;
 
+		struct Result
+		{
+			Raw* raw;
+			UniqueHashIndex uniqueHashIndex;
+		};
+
 	public:
 		explicit DataIndexes(MemManager& memManager) noexcept
 			: mUniqueHashes(MemManagerPtr(memManager)),
@@ -904,27 +891,40 @@ namespace internal
 				uniqueHash.Reserve(capacity);
 		}
 
-		void AddRaw(Raw* raw)
+		Result AddRaw(Raw* raw)
 		{
-			try
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-					uniqueHash.Add(raw);
-				for (MultiHash& multiHash : mMultiHashes)
-					multiHash.Add(raw);
-			}
-			catch (...)
+			auto reject = [this] ()
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.RejectAdd();
 				for (MultiHash& multiHash : mMultiHashes)
 					multiHash.RejectAdd();
+			};
+			try
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+				{
+					Raw* resRaw = uniqueHash.Add(raw);
+					if (resRaw != raw)
+					{
+						reject();
+						return { resRaw,
+							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+					}
+				}
+				for (MultiHash& multiHash : mMultiHashes)
+					multiHash.Add(raw);
+			}
+			catch (...)
+			{
+				reject();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.AcceptAdd();
 			for (MultiHash& multiHash : mMultiHashes)
 				multiHash.AcceptAdd();
+			return { nullptr, UniqueHashIndex::empty };
 		}
 
 		void RemoveRaw(Raw* raw)
@@ -950,22 +950,9 @@ namespace internal
 				multiHash.AcceptRemove(raw);
 		}
 
-		void UpdateRaw(Raw* oldRaw, Raw* newRaw)
+		Result UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
-			try
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-				{
-					if (uniqueHash.Add(newRaw, oldRaw))
-						uniqueHash.PrepareRemove(oldRaw);
-				}
-				for (MultiHash& multiHash : mMultiHashes)
-				{
-					multiHash.Add(newRaw);
-					multiHash.PrepareRemove(oldRaw);
-				}
-			}
-			catch (...)
+			auto reject = [this, newRaw] ()
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -977,6 +964,30 @@ namespace internal
 					multiHash.RejectAdd();
 					multiHash.RejectRemove();
 				}
+			};
+			try
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+				{
+					Raw* resRaw = uniqueHash.Add(newRaw, oldRaw);
+					if (resRaw != newRaw && resRaw != oldRaw)
+					{
+						reject();
+						return { resRaw,
+							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+					}
+					if (resRaw == newRaw)
+						uniqueHash.PrepareRemove(oldRaw);
+				}
+				for (MultiHash& multiHash : mMultiHashes)
+				{
+					multiHash.Add(newRaw);
+					multiHash.PrepareRemove(oldRaw);
+				}
+			}
+			catch (...)
+			{
+				reject();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
@@ -989,13 +1000,30 @@ namespace internal
 				multiHash.AcceptAdd();
 				multiHash.AcceptRemove(oldRaw);
 			}
+			return { nullptr, UniqueHashIndex::empty };
 		}
 
 		template<typename Item, typename Assigner>
-		void UpdateRaw(Raw* raw, size_t offset, const Item& item, Assigner assigner)
+		Result UpdateRaw(Raw* raw, size_t offset, const Item& item, Assigner assigner)
 		{
 			if (DataTraits::IsEqual(item, ColumnList::template GetByOffset<const Item>(raw, offset)))
-				return assigner();
+			{
+				assigner();
+				return { nullptr, UniqueHashIndex::empty };
+			}
+			auto reject = [this] ()
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+				{
+					uniqueHash.RejectAdd();
+					uniqueHash.RejectRemove();
+				}
+				for (MultiHash& multiHash : mMultiHashes)
+				{
+					multiHash.RejectAdd();
+					multiHash.RejectRemove();
+				}
+			};
 			HashMixedKey<Item> hashMixedKey{ raw, offset, std::addressof(item) };
 			try
 			{
@@ -1003,7 +1031,13 @@ namespace internal
 				{
 					if (!pvContainsOffset(uniqueHash, offset))
 						continue;
-					uniqueHash.Add(hashMixedKey);
+					Raw* resRaw = uniqueHash.Add(hashMixedKey);
+					if (resRaw != raw)
+					{
+						reject();
+						return { resRaw,
+							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+					}
 					uniqueHash.PrepareRemove(raw);
 				}
 				for (MultiHash& multiHash : mMultiHashes)
@@ -1017,16 +1051,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-				{
-					uniqueHash.RejectAdd();
-					uniqueHash.RejectRemove();
-				}
-				for (MultiHash& multiHash : mMultiHashes)
-				{
-					multiHash.RejectAdd();
-					multiHash.RejectRemove();
-				}
+				reject();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
@@ -1039,6 +1064,7 @@ namespace internal
 				multiHash.AcceptAdd();
 				multiHash.AcceptRemove(raw);
 			}
+			return { nullptr, UniqueHashIndex::empty };
 		}
 
 		template<typename RawFilter>
