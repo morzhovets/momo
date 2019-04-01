@@ -908,8 +908,7 @@ namespace internal
 					if (resRaw != raw)
 					{
 						reject();
-						return { resRaw,
-							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 				}
 				for (MultiHash& multiHash : mMultiHashes)
@@ -973,8 +972,7 @@ namespace internal
 					if (resRaw != newRaw && resRaw != oldRaw)
 					{
 						reject();
-						return { resRaw,
-							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 					if (resRaw == newRaw)
 						uniqueHash.PrepareRemove(oldRaw);
@@ -1035,8 +1033,7 @@ namespace internal
 					if (resRaw != raw)
 					{
 						reject();
-						return { resRaw,
-							static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems()) };
+						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 					uniqueHash.PrepareRemove(raw);
 				}
@@ -1097,7 +1094,7 @@ namespace internal
 				bool includes = std::includes(sortedOffsets.begin(), sortedOffsets.end(),
 					hashSortedOffsets.GetBegin(), hashSortedOffsets.GetEnd());
 				if (includes)
-					return static_cast<UniqueHashIndex>(&uniqueHash - mUniqueHashes.GetItems());
+					return pvGetHashIndex(mUniqueHashes, uniqueHash);
 			}
 			return UniqueHashIndex::empty;
 		}
@@ -1106,7 +1103,7 @@ namespace internal
 		MultiHashIndex GetFitMultiHashIndex(
 			const std::array<size_t, columnCount>& sortedOffsets) const noexcept
 		{
-			ptrdiff_t resMultiHashIndex = static_cast<ptrdiff_t>(MultiHashIndex::empty);
+			MultiHashIndex multiHashIndex = MultiHashIndex::empty;
 			size_t maxKeyCount = 0;
 			for (const MultiHash& multiHash : mMultiHashes)
 			{
@@ -1117,30 +1114,24 @@ namespace internal
 				if (includes && keyCount > maxKeyCount)
 				{
 					maxKeyCount = keyCount;
-					resMultiHashIndex = &multiHash - mMultiHashes.GetItems();
+					multiHashIndex = pvGetHashIndex(mMultiHashes, multiHash);
 				}
 			}
-			return static_cast<MultiHashIndex>(resMultiHashIndex);
+			return multiHashIndex;
 		}
 
 		template<size_t columnCount>
 		UniqueHashIndex GetTrueIndex(UniqueHashIndex uniqueHashIndex,
 			const std::array<size_t, columnCount>& offsets) const
 		{
-			if (uniqueHashIndex == UniqueHashIndex::empty)
-				return GetUniqueHashIndex(GetSortedOffsets(offsets));
-			MOMO_EXTRA_CHECK(uniqueHashIndex == GetUniqueHashIndex(GetSortedOffsets(offsets)));
-			return uniqueHashIndex;
+			return pvGetTrueIndex(mUniqueHashes, uniqueHashIndex, offsets);
 		}
 
 		template<size_t columnCount>
 		MultiHashIndex GetTrueIndex(MultiHashIndex multiHashIndex,
 			const std::array<size_t, columnCount>& offsets) const
 		{
-			if (multiHashIndex == MultiHashIndex::empty)
-				return GetMultiHashIndex(GetSortedOffsets(offsets));
-			MOMO_EXTRA_CHECK(multiHashIndex == GetMultiHashIndex(GetSortedOffsets(offsets)));
-			return multiHashIndex;
+			return pvGetTrueIndex(mMultiHashes, multiHashIndex, offsets);
 		}
 
 		bool ContainsOffset(UniqueHashIndex uniqueHashIndex, size_t offset) const noexcept
@@ -1162,10 +1153,11 @@ namespace internal
 			return hashes[static_cast<size_t>(index)];
 		}
 
-		template<typename Hash>
-		static bool pvContainsOffset(const Hash& hash, size_t offset) noexcept
+		template<typename Hash,
+			typename Index = typename Hash::Index>
+		static Index pvGetHashIndex(const Hashes<Hash>& hashes, const Hash& hash) noexcept
 		{
-			return hash.GetSortedOffsets().Contains(offset);
+			return static_cast<Index>(&hash - hashes.GetItems());
 		}
 
 		template<typename Hash, size_t columnCount,
@@ -1180,7 +1172,7 @@ namespace internal
 					&& std::equal(sortedOffsets.begin(), sortedOffsets.end(),
 					hashSortedOffsets.GetBegin());
 				if (equal)
-					return static_cast<Index>(&hash - hashes.GetItems());
+					return pvGetHashIndex(hashes, hash);
 			}
 			return Index::empty;
 		}
@@ -1215,7 +1207,28 @@ namespace internal
 			}
 			hashes.Reserve(hashes.GetCount() + 1);
 			hashes.AddBackNogrow(std::move(hash));
-			return static_cast<Index>(hashes.GetCount() - 1);
+			return pvGetHashIndex(hashes, hashes.GetBackItem());
+		}
+
+		template<typename Hash, typename Index, size_t columnCount>
+		static Index pvGetTrueIndex(const Hashes<Hash>& hashes, Index index,
+			const std::array<size_t, columnCount>& offsets)
+		{
+			if (index != Index::empty)
+			{
+				MOMO_EXTRA_CHECK(index == pvGetHashIndex(hashes, GetSortedOffsets(offsets)));
+				return index;
+			}
+			Index trueIndex = pvGetHashIndex(hashes, GetSortedOffsets(offsets));
+			if (trueIndex == Index::empty)
+				throw std::runtime_error("Index not found");
+			return trueIndex;
+		}
+
+		template<typename Hash>
+		static bool pvContainsOffset(const Hash& hash, size_t offset) noexcept
+		{
+			return hash.GetSortedOffsets().Contains(offset);
 		}
 
 		template<typename Void, typename Item, typename... Items>

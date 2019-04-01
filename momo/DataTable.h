@@ -1249,10 +1249,9 @@ private:
 	RowBoundsProxy pvFindByHash(Index index, const Equaler<Items>&... equalers) const
 	{
 		auto offsets = pvGetOffsets(equalers...);
-		index = mIndexes.GetTrueIndex(index, offsets);
-		if (static_cast<ptrdiff_t>(index) < 0)	//?
-			throw std::runtime_error("Index not found");
-		return pvFindByHashRec<RowBoundsProxy>(index, offsets.data(), OffsetItemTuple<>(), equalers...);
+		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
+		return pvFindByHashRec<RowBoundsProxy>(trueIndex, offsets.data(),
+			OffsetItemTuple<>(), equalers...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Item, typename... Items>
