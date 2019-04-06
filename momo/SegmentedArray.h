@@ -11,6 +11,7 @@
     enum class SegmentedArrayItemCountFunc
     class SegmentedArraySettings
     class SegmentedArray
+    class SegmentedArraySqrt
 
   All `SegmentedArray` functions and constructors have strong exception safety,
   but not the following cases:
@@ -65,9 +66,9 @@ enum class SegmentedArrayItemCountFunc
 	cnst = 1,
 };
 
-template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::sqrt,
+template<SegmentedArrayItemCountFunc tItemCountFunc = SegmentedArrayItemCountFunc::cnst,
 	size_t tLogInitialItemCount =
-		(tItemCountFunc == SegmentedArrayItemCountFunc::sqrt) ? 3 : 5>
+		(tItemCountFunc == SegmentedArrayItemCountFunc::cnst) ? 5 : 3>
 class SegmentedArraySettings;
 
 template<size_t tLogInitialItemCount>
@@ -690,6 +691,12 @@ private:
 	Segments mSegments;
 	size_t mCount;
 };
+
+template<typename TItem,
+	typename TMemManager = MemManagerDefault,
+	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
+using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
+	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename ArgIterator,

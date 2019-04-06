@@ -42,6 +42,11 @@ public:
 		typedef momo::SegmentedArray<std::string> SegmentedArray;
 		TestStrArray<SegmentedArray>();
 		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::SegmentedArraySqrt: " << std::flush;
+		typedef momo::SegmentedArraySqrt<std::string> SegmentedArraySqrt;
+		TestStrArray<SegmentedArraySqrt>();
+		std::cout << "ok" << std::endl;
 	}
 
 	template<typename Array>
