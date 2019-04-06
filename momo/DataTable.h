@@ -749,7 +749,7 @@ public:
 	{
 		auto offsets = pvGetOffsets(column, columns...);
 		pvCheckImmutable(offsets);
-		return mIndexes.AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
+		return mIndexes.template AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
 	}
 
 	template<typename Item, typename... Items>
@@ -757,7 +757,7 @@ public:
 	{
 		auto offsets = pvGetOffsets(column, columns...);
 		pvCheckImmutable(offsets);
-		return mIndexes.AddMultiHashIndex<Item, Items...>(mRaws, offsets);
+		return mIndexes.template AddMultiHashIndex<Item, Items...>(mRaws, offsets);
 	}
 
 	void RemoveUniqueHashIndexes() noexcept
