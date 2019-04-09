@@ -248,7 +248,7 @@ public:
 	SegmentedArray(const SegmentedArray& array, bool shrink = true)
 		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
-		pvIncCapacity(shrink ? array.GetCount() : array.GetCapacity());
+		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
 		try
 		{
 			for (const Item& item : array)
@@ -270,7 +270,7 @@ public:
 	static SegmentedArray CreateCap(size_t capacity, MemManager&& memManager = MemManager())
 	{
 		SegmentedArray array(std::move(memManager));
-		array.pvIncCapacity(capacity);
+		array.pvIncCapacity(0, capacity);
 		return array;
 	}
 
@@ -395,8 +395,9 @@ public:
 
 	void Reserve(size_t capacity)
 	{
-		if (capacity > GetCapacity())
-			pvIncCapacity(capacity);
+		size_t initCapacity = GetCapacity();
+		if (capacity > initCapacity)
+			pvIncCapacity(initCapacity, capacity);
 	}
 
 	void Shrink() noexcept
@@ -435,8 +436,11 @@ public:
 	template<typename ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
-		MOMO_CHECK(mCount < GetCapacity());
-		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
+		size_t segIndex, itemIndex;
+		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		MOMO_CHECK(segIndex < mSegments.GetCount());
+		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
+		++mCount;
 	}
 
 	template<typename... ItemArgs>
@@ -459,25 +463,30 @@ public:
 	template<typename ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
-		size_t initCapacity = GetCapacity();
-		if (mCount < initCapacity)
+		size_t segIndex, itemIndex;
+		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		size_t segCount = mSegments.GetCount();
+		if (segIndex < segCount)
 		{
-			pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
+			std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
 		}
 		else
 		{
-			pvIncCapacity(initCapacity + 1);
+			MOMO_ASSERT(itemIndex == 0);
+			mSegments.Reserve(segCount + 1);
+			Item* segMemory = pvGetSegMemory(segCount);
 			try
 			{
-				std::forward<ItemCreator>(itemCreator)(mSegments.GetBackItem());
-				++mCount;
+				std::forward<ItemCreator>(itemCreator)(segMemory);
 			}
 			catch (...)
 			{
-				pvDecCapacity(initCapacity);
+				pvFreeSegMemory(segCount, segMemory);
 				throw;
 			}
+			mSegments.AddBackNogrow(segMemory);
 		}
+		++mCount;
 	}
 
 	template<typename... ItemArgs>
@@ -589,22 +598,14 @@ private:
 		return mSegments[segIndex][itemIndex];
 	}
 
-	template<typename ItemCreator>
-	void pvAddBackNogrow(ItemCreator&& itemCreator)
-	{
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
-		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
-		++mCount;
-	}
-
 	template<typename MultiItemCreator>
 	void pvIncCount(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();
 		size_t initCount = mCount;
-		Reserve(count);
+		if (count > initCapacity)
+			pvIncCapacity(initCapacity, count);
 		try
 		{
 			size_t segIndex, itemIndex;
@@ -650,9 +651,8 @@ private:
 		}
 	}
 
-	void pvIncCapacity(size_t capacity)
+	void pvIncCapacity(size_t initCapacity, size_t capacity)
 	{
-		size_t initCapacity = GetCapacity();
 		MOMO_ASSERT(capacity >= initCapacity);
 		size_t segIndex, itemIndex;
 		Settings::GetSegItemIndices(capacity, segIndex, itemIndex);
@@ -692,17 +692,17 @@ private:
 	size_t mCount;
 };
 
-template<typename TItem,
-	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
-using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
-	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
-
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename ArgIterator,
 	typename MemManager = MemManagerDefault>
 SegmentedArray(ArgIterator, ArgIterator, MemManager = MemManager())
 	-> SegmentedArray<typename std::iterator_traits<ArgIterator>::value_type, MemManager>;
 #endif
+
+template<typename TItem,
+	typename TMemManager = MemManagerDefault,
+	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
+using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
+	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
 
 } // namespace momo
