@@ -19,6 +19,7 @@
 #pragma warning (disable: 4510)	// default constructor could not be generated
 #pragma warning (disable: 4512)	// assignment operator could not be generated
 #define _SCL_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <cstdint>

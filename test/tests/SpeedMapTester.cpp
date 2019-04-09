@@ -13,10 +13,6 @@
 
 #ifdef TEST_SPEED_MAP
 
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "../../momo/stdish/unordered_map.h"
 #include "../../momo/stdish/map.h"
 
