@@ -53,8 +53,6 @@ namespace internal
 		static const uint8_t emptyShortHash = 248;
 		static const uint8_t infProbe = 255;
 
-		typedef typename std::conditional<useSSE2, int64_t, int8_t>::type Data8;
-
 	public:
 		explicit BucketOpenN1() noexcept
 		{
@@ -84,7 +82,8 @@ namespace internal
 			{
 				MOMO_PREFETCH_RANGE(this, sizeof(*this));
 				__m128i shortHashes = _mm_set1_epi8(shortHash);
-				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0, (int64_t)mData8);
+				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0,
+					*BitCaster::PtrToPtr<int64_t>(mData, 0));
 				int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 				mask &= (1 << maxCount) - 1;
 				while (mask != 0)
@@ -97,9 +96,10 @@ namespace internal
 				return Iterator();
 			}
 #endif
+			const uint8_t* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mData.shortHashes[i] == shortHash && pred(*&mItems[i]))
+				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
 					return pvMakeIterator(&mItems[i]);
 			}
 			return Iterator();
@@ -117,9 +117,10 @@ namespace internal
 
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
-			if (mData.maxProbe == infProbe)
+			uint8_t maxProbe = pvGetMaxProbe();
+			if (maxProbe == infProbe)
 				return ((size_t)1 << logBucketCount) - 1;
-			return (size_t)(mData.maxProbe & 7) << (mData.maxProbe >> 3);
+			return (size_t)(maxProbe & 7) << (maxProbe >> 3);
 		}
 
 		void Clear(Params& params) noexcept
@@ -173,17 +174,42 @@ namespace internal
 	private:
 		uint8_t pvGetState() const noexcept
 		{
-			return mData.shortHashes[reverse ? 0 : maxCount - 1];
+			return *pvGetBytePtr(reverse ? 0 : maxCount - 1);
 		}
 
 		uint8_t& pvGetState() noexcept
 		{
-			return pvGetShortHash(maxCount - 1);
+			return *pvGetBytePtr(reverse ? 0 : maxCount - 1);
+		}
+
+		uint8_t pvGetMaxProbe() const noexcept
+		{
+			return *pvGetBytePtr(maxCount);
+		}
+
+		uint8_t& pvGetMaxProbe() noexcept
+		{
+			return *pvGetBytePtr(maxCount);
+		}
+
+		uint8_t* pvGetShortHashes() noexcept
+		{
+			return pvGetBytePtr(0);
 		}
 
 		uint8_t& pvGetShortHash(size_t index) noexcept
 		{
-			return mData.shortHashes[reverse ? maxCount - 1 - index : index];
+			return *pvGetBytePtr(reverse ? maxCount - 1 - index : index);
+		}
+
+		const uint8_t* pvGetBytePtr(size_t index) const noexcept
+		{
+			return BitCaster::PtrToPtr<const uint8_t>(mData, index);
+		}
+
+		uint8_t* pvGetBytePtr(size_t index) noexcept
+		{
+			return BitCaster::PtrToPtr<uint8_t>(mData, index);
 		}
 
 		Item* pvGetItemPtr(size_t index) noexcept
@@ -210,9 +236,8 @@ namespace internal
 
 		void pvSetEmpty() noexcept
 		{
-			mData8 = (Data8)(-1);
-			mData.maxProbe = (uint8_t)0;
-			std::fill_n(mData.shortHashes, maxCount, (uint8_t)emptyShortHash);
+			std::fill(std::begin(mData), std::end(mData), (char)0);
+			std::fill_n(pvGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
 		}
 
 		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) noexcept
@@ -231,7 +256,7 @@ namespace internal
 				maxProbe0 >>= 1;
 				++maxProbe1;
 			}
-			startBucket->mData.maxProbe = (maxProbe1 <= (size_t)31)
+			startBucket->pvGetMaxProbe() = (maxProbe1 <= (size_t)31)
 				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbe;
 		}
 
@@ -253,15 +278,7 @@ namespace internal
 		}
 
 	private:
-		union
-		{
-			struct
-			{
-				uint8_t shortHashes[maxCount];
-				uint8_t maxProbe;
-			} mData;
-			Data8 mData8;
-		};
+		alignas(useSSE2 ? 8 : 1) char mData[useSSE2 ? 8 : maxCount + 1];
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
