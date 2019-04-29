@@ -39,6 +39,13 @@
 #include <xmmintrin.h>
 #endif
 
+#define MOMO_FRIEND_SWAP(Object) \
+	friend void swap(Object& object1, Object& object2) \
+		noexcept(noexcept(object1.Swap(object2))) \
+	{ \
+		object1.Swap(object2); \
+	}
+
 #define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
 	friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \
 	{ \
@@ -104,17 +111,6 @@ enum class ExtraCheckMode
 
 namespace internal
 {
-	template<typename Object>
-	class Swappable
-	{
-	public:
-		friend void swap(Object& object1, Object& object2)
-			noexcept(noexcept(object1.Swap(object2)))
-		{
-			object1.Swap(object2);
-		}
-	};
-
 	template<size_t size,
 		typename Default = void>
 	struct UIntSelector

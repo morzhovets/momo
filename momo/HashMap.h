@@ -102,8 +102,6 @@ template<typename TKey, typename TValue,
 	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
 class HashMap
-	: private internal::Swappable<HashMap<TKey, TValue, THashTraits, TMemManager,
-		TKeyValueTraits, TSettings>>
 {
 public:
 	typedef TKey Key;
@@ -261,6 +259,7 @@ public:
 		return Iterator();
 	}
 
+	MOMO_FRIEND_SWAP(HashMap)
 	MOMO_FRIENDS_BEGIN_END(const HashMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(HashMap&, Iterator)
 

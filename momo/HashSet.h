@@ -423,7 +423,6 @@ template<typename TKey,
 	typename TItemTraits = HashSetItemTraits<TKey, TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
 class HashSet
-	: private internal::Swappable<HashSet<TKey, THashTraits, TMemManager, TItemTraits, TSettings>>
 {
 public:
 	typedef TKey Key;
@@ -606,6 +605,7 @@ public:
 		return ConstIterator();
 	}
 
+	MOMO_FRIEND_SWAP(HashSet)
 	MOMO_FRIENDS_BEGIN_END(const HashSet&, ConstIterator)
 
 	const HashTraits& GetHashTraits() const noexcept

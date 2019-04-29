@@ -508,8 +508,6 @@ template<typename TKey, typename TValue,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
 class HashMultiMap
-	: private internal::Swappable<HashMultiMap<TKey, TValue, THashTraits, TMemManager,
-		TKeyValueTraits, TSettings>>
 {
 public:
 	typedef TKey Key;
@@ -804,6 +802,7 @@ public:
 		return Iterator();
 	}
 
+	MOMO_FRIEND_SWAP(HashMultiMap)
 	MOMO_FRIENDS_BEGIN_END(const HashMultiMap&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(HashMultiMap&, Iterator)
 

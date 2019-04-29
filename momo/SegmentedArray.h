@@ -157,7 +157,6 @@ template<typename TItem,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
 class SegmentedArray
-	: private internal::Swappable<SegmentedArray<TItem, TMemManager, TItemTraits, TSettings>>
 {
 public:
 	typedef TItem Item;
@@ -328,6 +327,7 @@ public:
 		return IteratorProxy(this, mCount);
 	}
 
+	MOMO_FRIEND_SWAP(SegmentedArray)
 	MOMO_FRIENDS_BEGIN_END(const SegmentedArray&, ConstIterator)
 	MOMO_FRIENDS_BEGIN_END(SegmentedArray&, Iterator)
 

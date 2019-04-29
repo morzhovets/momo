@@ -306,7 +306,6 @@ template<typename TKey,
 	typename TItemTraits = TreeSetItemTraits<TKey, TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
 class TreeSet
-	: private internal::Swappable<TreeSet<TKey, TTreeTraits, TMemManager, TItemTraits, TSettings>>
 {
 public:
 	typedef TKey Key;
@@ -612,6 +611,7 @@ public:
 		return pvMakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
 
+	MOMO_FRIEND_SWAP(TreeSet)
 	MOMO_FRIENDS_BEGIN_END(const TreeSet&, ConstIterator)
 
 	const TreeTraits& GetTreeTraits() const noexcept
