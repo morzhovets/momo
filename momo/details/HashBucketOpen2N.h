@@ -51,7 +51,6 @@ namespace internal
 		{
 			union
 			{
-				uint16_t state;
 				uint16_t shortHashes[count];
 				uint8_t hashProbes[count];
 			};
@@ -60,11 +59,7 @@ namespace internal
 		template<size_t count>
 		struct HashData<count, true>
 		{
-			union
-			{
-				uint8_t state;
-				uint8_t shortHashes[count];
-			};
+			uint8_t shortHashes[count];
 			uint8_t hashProbes[count];
 		};
 
@@ -112,14 +107,15 @@ namespace internal
 
 		bool IsFull() const MOMO_NOEXCEPT
 		{
-			return mHashData.state < emptyShortHash;
+			return pvGetState() < emptyShortHash;
 		}
 
 		bool WasFull() const MOMO_NOEXCEPT
 		{
-			if (mHashData.state < emptyShortHash)
+			ShortHash state = pvGetState();
+			if (state < emptyShortHash)
 				return true;
-			return (mHashData.state & (maskCount + 1)) != (ShortHash)0;
+			return (state & (maskCount + 1)) != (ShortHash)0;
 		}
 
 		void Clear(Params& params) MOMO_NOEXCEPT
@@ -149,7 +145,7 @@ namespace internal
 					hashProbe = emptyHashProbe;
 			}
 			if (count + 1 < maxCount)
-				++mHashData.state;
+				++pvGetState();
 			return Iterator(pitem + 1);
 		}
 
@@ -165,9 +161,9 @@ namespace internal
 			if (useHashCodePartGetter)
 				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
 			if (count < maxCount)
-				--mHashData.state;
+				--pvGetState();
 			else
-				mHashData.state = emptyShortHash + maskCount + (ShortHash)maxCount;
+				pvGetState() = emptyShortHash + maskCount + (ShortHash)maxCount;
 			return iter;
 		}
 
@@ -200,11 +196,22 @@ namespace internal
 		}
 
 	private:
+		ShortHash pvGetState() const MOMO_NOEXCEPT
+		{
+			return mHashData.shortHashes[0];
+		}
+
+		ShortHash& pvGetState() MOMO_NOEXCEPT
+		{
+			return mHashData.shortHashes[0];
+		}
+
 		size_t pvGetCount() const MOMO_NOEXCEPT
 		{
-			if (mHashData.state < emptyShortHash)
+			ShortHash state = pvGetState();
+			if (state < emptyShortHash)
 				return maxCount;
-			return (size_t)(mHashData.state & maskCount);
+			return (size_t)(state & maskCount);
 		}
 
 		void pvSetEmpty() MOMO_NOEXCEPT
