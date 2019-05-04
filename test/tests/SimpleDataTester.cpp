@@ -62,8 +62,11 @@ public:
 			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
+		momo::DataColumnList<> columnList;
+		columnList.Add(dblString);
+		columnList.Add(strString, intString);
 		std::cout << "momo::DataColumnList (string): " << std::flush;
-		TestData(momo::DataColumnList<>(intString, dblString, strString),
+		TestData(std::move(columnList),
 			intString, dblString, strString);
 		std::cout << "ok" << std::endl;
 	}
