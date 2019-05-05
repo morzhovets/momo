@@ -213,7 +213,7 @@ namespace internal
 		struct HashTupleKey
 		{
 			OffsetItemTuple<Items...> tuple;
-			size_t hashCode;
+			size_t hashCode;	// vs2015
 		};
 
 		template<typename Item = void>

@@ -314,13 +314,6 @@ public:
 	{
 	}
 
-	template<typename Item, typename... Items>
-	explicit DataTable(MemManager&& memManager, const Column<Item>& column,
-		const Column<Items>&... columns)
-		: DataTable(ColumnList(std::move(memManager), column, columns...))
-	{
-	}
-
 	DataTable(DataTable&& table) noexcept
 		: mCrew(std::move(table.mCrew)),
 		mRaws(std::move(table.mRaws)),
