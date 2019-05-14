@@ -294,12 +294,9 @@ namespace internal
 			return mBucketIterator;
 		}
 
-		void ptCheck(const size_t* version, bool empty) const
+		void ptCheck(const size_t* version, bool allowEmpty) const
 		{
-			(void)empty;
-			VersionKeeper::Check(version);
-			MOMO_CHECK(empty == (mBucketIterator == BucketIterator()));
-			MOMO_CHECK(!empty || mBuckets == nullptr);
+			VersionKeeper::Check(version, allowEmpty);
 		}
 
 	private:
@@ -836,8 +833,9 @@ public:
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		Item& item = *ConstIteratorProxy::GetBucketIterator(iter);
-		ItemTraits::AssignKey(GetMemManager(), std::forward<KeyArg>(keyArg), item);
+		BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
+		MOMO_CHECK(bucketIter != BucketIterator());
+		ItemTraits::AssignKey(GetMemManager(), std::forward<KeyArg>(keyArg), *bucketIter);
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter));
 	}
 
@@ -913,7 +911,7 @@ public:
 
 	void CheckIterator(ConstIterator iter) const
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), !iter);
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), true);
 	}
 
 private:
@@ -1022,7 +1020,8 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	ConstIterator pvAdd(ConstIterator iter, ItemCreator&& itemCreator)
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), true);
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
+		MOMO_CHECK(ConstIteratorProxy::GetBucketIterator(iter) == BucketIterator());
 		size_t hashCode = ConstIteratorProxy::GetHashCode(iter);
 		ItemPosition itemPos;
 		if (mCount < mCapacity)
@@ -1111,8 +1110,9 @@ private:
 	{
 		MOMO_CHECK(mBuckets != nullptr);
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
 		BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
+		MOMO_CHECK(bucketIter != BucketIterator());
+		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
 		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
 		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, itemReplacer);

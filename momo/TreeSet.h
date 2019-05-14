@@ -150,10 +150,10 @@ namespace internal
 			return mItemIndex;
 		}
 
-		void ptCheck(const size_t* version) const
+		void ptCheck(const size_t* version, bool allowEmpty) const
 		{
-			VersionKeeper::Check(version);
-			MOMO_CHECK(mNode != nullptr);
+			VersionKeeper::Check(version, allowEmpty);
+			MOMO_CHECK(allowEmpty || mNode != nullptr);
 		}
 
 	private:
@@ -875,7 +875,7 @@ public:
 	template<typename KeyArg, bool extraCheck = true>
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		MOMO_CHECK(iter != GetEnd());
 		Node* node = ConstIteratorProxy::GetNode(iter);
 		Item& item = *node->GetItemPtr(ConstIteratorProxy::GetItemIndex(iter));
@@ -943,9 +943,7 @@ public:
 
 	void CheckIterator(ConstIterator iter) const
 	{
-		if (iter == ConstIterator())
-			return;
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), true);
 	}
 
 private:
@@ -1115,7 +1113,7 @@ private:
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, std::forward<ItemCreator>(itemCreator));
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		Node* node = ConstIteratorProxy::GetNode(iter);
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (!node->IsLeaf())
@@ -1257,7 +1255,7 @@ private:
 	ConstIterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
 		ItemReplacer2 itemReplacer2)
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion());
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		MOMO_CHECK(iter != GetEnd());
 		Node* node = ConstIteratorProxy::GetNode(iter);
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
