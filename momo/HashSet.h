@@ -214,7 +214,7 @@ namespace internal
 	public:
 		explicit HashSetConstIterator() noexcept
 			: mBucketIterator(),
-			mIndexCode(0),	//?
+			mIndexCode(0),
 			mBuckets(nullptr)
 		{
 		}
@@ -226,14 +226,9 @@ namespace internal
 			VersionKeeper::Check();
 			MOMO_CHECK(mBucketIterator != BucketIterator());
 			if (ptIsMovable())
-			{
-				++mBucketIterator;
-				pvMoveIf();
-			}
+				pvInc();
 			else
-			{
 				*this = HashSetConstIterator();
-			}
 			return *this;
 		}
 
@@ -241,7 +236,7 @@ namespace internal
 		{
 			VersionKeeper::Check();
 			MOMO_CHECK(mBucketIterator != BucketIterator());
-			return std::addressof(*mBucketIterator);	//?
+			return std::addressof(*mBucketIterator);
 		}
 
 		bool operator==(ConstIterator iter) const noexcept
@@ -259,7 +254,7 @@ namespace internal
 			mIndexCode(bucketIndex),
 			mBuckets(&buckets)
 		{
-			pvMoveIf();
+			pvInc();
 		}
 
 		explicit HashSetConstIterator(size_t indexCode, BucketIterator bucketIter,
@@ -300,39 +295,45 @@ namespace internal
 		}
 
 	private:
-		void pvMoveIf() noexcept
+		void pvInc() noexcept
 		{
-			if (mBucketIterator == pvGetBucketBounds().GetEnd())
+			if (mBucketIterator != pvGetBucketBounds(mIndexCode).GetBegin())
+				--mBucketIterator;
+			else
 				pvMove();
 		}
 
 		void pvMove() noexcept
 		{
 			size_t bucketCount = mBuckets->GetCount();
+			size_t bucketIndex = mIndexCode;
 			while (true)
 			{
-				++mIndexCode;
-				if (mIndexCode >= bucketCount)
+				++bucketIndex;
+				if (bucketIndex >= bucketCount)
 					break;
-				BucketBounds bounds = pvGetBucketBounds();
-				mBucketIterator = bounds.GetBegin();
-				if (mBucketIterator != bounds.GetEnd())
+				BucketBounds bounds = pvGetBucketBounds(bucketIndex);
+				if (bounds.GetCount() > 0)
+				{
+					mIndexCode = bucketIndex;
+					mBucketIterator = std::prev(bounds.GetEnd());
 					return;
+				}
 			}
 			Buckets* nextBuckets = mBuckets->GetNextBuckets();
 			if (nextBuckets != nullptr)
 			{
 				mBuckets = nextBuckets;
 				mIndexCode = 0;
-				mBucketIterator = pvGetBucketBounds().GetBegin();
-				return pvMoveIf();	//?
+				mBucketIterator = pvGetBucketBounds(0).GetEnd();
+				return pvInc();	//?
 			}
 			*this = HashSetConstIterator();
 		}
 
-		BucketBounds pvGetBucketBounds() const noexcept
+		BucketBounds pvGetBucketBounds(size_t bucketIndex) const noexcept
 		{
-			return (*mBuckets)[mIndexCode].GetBounds(mBuckets->GetBucketParams());
+			return (*mBuckets)[bucketIndex].GetBounds(mBuckets->GetBucketParams());
 		}
 
 	private:
@@ -582,7 +583,7 @@ public:
 		if (mCount == 0)
 			return ConstIterator();
 		return ConstIteratorProxy(*mBuckets, 0,
-			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetBegin(),
+			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetEnd(),
 			mCrew.GetVersion());
 	}
 
