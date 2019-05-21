@@ -80,7 +80,7 @@ namespace internal
 #ifdef MOMO_USE_SSE2
 			if (useSSE2)
 			{
-				MOMO_PREFETCH_RANGE(this, sizeof(*this));
+				//MOMO_PREFETCH_RANGE(this, sizeof(*this));
 				__m128i shortHashes = _mm_set1_epi8(shortHash);
 				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0,
 					*BitCaster::PtrToPtr<int64_t>(mData, 0));
