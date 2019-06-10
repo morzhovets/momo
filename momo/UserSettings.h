@@ -110,14 +110,6 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
-#ifdef MOMO_USE_SSE2
-#define MOMO_PREFETCH_RANGE(ptr, size) \
-	for (size_t offset = 0; offset < (size_t)size; offset += 64) \
-		_mm_prefetch(reinterpret_cast<const char*>(ptr) + offset, _MM_HINT_T0);
-#else
-#define MOMO_PREFETCH_RANGE(ptr, size)
-#endif
-
 #define MOMO_ASSERT(expr) assert(expr)
 
 #ifdef __cpp_deduction_guides
