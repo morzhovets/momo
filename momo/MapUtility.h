@@ -471,25 +471,25 @@ namespace internal
 			{
 				KeyIterator srcKeyIter = srcKeyBegin;
 				KeyIterator dstKeyIter = dstKeyBegin;
-				for (; keyIndex < count; ++keyIndex, ++srcKeyIter, ++dstKeyIter)
+				for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
 					KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
 				ValueIterator srcValueIter = srcValueBegin;
 				ValueIterator dstValueIter = dstValueBegin;
-				for (; valueIndex < count; ++valueIndex, ++srcValueIter, ++dstValueIter)
+				for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
 					ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
 				std::forward<Func>(func)();
 			}
 			catch (...)
 			{
-				for (KeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, ++itd)
+				for (KeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, (void)++itd)
 					KeyManager::Destroy(memManager, *itd);
-				for (ValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, ++itd)
+				for (ValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, (void)++itd)
 					ValueManager::Destroy(memManager, *itd);
 				throw;
 			}
-			for (KeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, ++its)
+			for (KeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, (void)++its)
 				KeyManager::Destroy(memManager, *its);
-			for (ValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, ++its)
+			for (ValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, (void)++its)
 				ValueManager::Destroy(memManager, *its);
 		}
 	};

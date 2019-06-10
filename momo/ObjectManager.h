@@ -295,7 +295,7 @@ namespace internal
 		{
 			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
 			Iterator iter = begin;
-			for (size_t i = 0; i < count; ++i, ++iter)
+			for (size_t i = 0; i < count; ++i, (void)++iter)
 				Destroy(memManager, *iter);
 		}
 
@@ -450,7 +450,7 @@ namespace internal
 		{
 			Iterator srcIter = srcBegin;
 			Iterator dstIter = dstBegin;
-			for (size_t i = 0; i < count; ++i, ++srcIter, ++dstIter)
+			for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
 				Relocate(memManager, *srcIter, std::addressof(*dstIter));
 		}
 
@@ -483,7 +483,7 @@ namespace internal
 			{
 				Iterator srcIter = srcBegin;
 				Iterator dstIter = dstBegin;
-				for (; index < count; ++index, ++srcIter, ++dstIter)
+				for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
 					Copy(memManager, *srcIter, std::addressof(*dstIter));
 				std::forward<Func>(func)();
 			}
@@ -502,7 +502,7 @@ namespace internal
 			ObjectBuffer<Object, alignment> objectBuffer;
 			Relocate(memManager, *begin, &objectBuffer);
 			Iterator iter = begin;
-			for (size_t i = 0; i < shift; ++i, ++iter)
+			for (size_t i = 0; i < shift; ++i, (void)++iter)
 				Relocate(memManager, *std::next(iter), std::addressof(*iter));
 			Relocate(memManager, *&objectBuffer, std::addressof(*iter));
 		}
@@ -514,7 +514,7 @@ namespace internal
 		{
 			using std::swap;
 			Iterator iter = begin;
-			for (size_t i = 0; i < shift; ++i, ++iter)
+			for (size_t i = 0; i < shift; ++i, (void)++iter)
 				swap(*iter, *std::next(iter));
 		}
 	};

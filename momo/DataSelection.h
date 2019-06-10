@@ -658,7 +658,7 @@ namespace internal
 			size_t count = pvGetCount(begin, end);
 			mRaws.Reserve(mRaws.GetCount() + count);
 			mRaws.Insert(index, count, nullptr);
-			for (RowIterator iter = begin; iter != end; ++iter, ++index)
+			for (RowIterator iter = begin; iter != end; (void)++iter, ++index)
 			{
 				RowReference rowRef = *iter;
 				mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
@@ -783,7 +783,7 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(IsForwardIterator<RowIterator>::value);
 			size_t count = 0;
-			for (RowIterator iter = begin; iter != end; ++iter, ++count)
+			for (RowIterator iter = begin; iter != end; (void)++iter, ++count)
 				MOMO_CHECK(&iter->GetColumnList() == mColumnList);
 			return count;
 		}

@@ -252,7 +252,7 @@ namespace internal
 				for (size_t i = initCount - count; i > index; --i)
 					ItemTraits::Assign(memManager, std::move(array[i - 1]), array[i + count - 1]);
 				ArgIterator iter = begin;
-				for (size_t i = index; i < index + count; ++i, ++iter)
+				for (size_t i = index; i < index + count; ++i, (void)++iter)
 					ItemTraits::Assign(memManager, *iter, array[i]);
 			}
 			else
@@ -260,10 +260,10 @@ namespace internal
 				typedef typename ItemTraits::template Creator<
 					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
 				ArgIterator iter = std::next(begin, initCount - index);
-				for (size_t i = initCount; i < index + count; ++i, ++iter)
+				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;
-				for (size_t i = index; i < initCount; ++i, ++iter)
+				for (size_t i = index; i < initCount; ++i, (void)++iter)
 				{
 					Item& arrayItem = array[i];
 					array.AddBackNogrow(std::move(arrayItem));
@@ -280,7 +280,7 @@ namespace internal
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
 			MemManager& memManager = array.GetMemManager();
 			size_t count = 0;
-			for (ArgIterator iter = begin; iter != end; ++iter, ++count)
+			for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
