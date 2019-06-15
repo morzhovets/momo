@@ -251,8 +251,8 @@ public:
 		return mCachedFreeBlocks.GetMemManager();
 	}
 
-	template<typename Result = void>
-	Result* Allocate()
+	template<typename ResObject = void>
+	ResObject* Allocate()
 	{
 		void* pblock;
 		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
@@ -270,7 +270,7 @@ public:
 				pblock = internal::BitCaster::ToPtr(pvNewBlock1());
 		}
 		++mAllocCount;
-		return static_cast<Result*>(pblock);
+		return static_cast<ResObject*>(pblock);
 	}
 
 	void Deallocate(void* pblock) noexcept
@@ -617,13 +617,13 @@ namespace internal
 			return mBuffers.GetMemManager();
 		}
 
-		template<typename Result = void>
-		Result* GetRealPointer(uint32_t ptr) noexcept
+		template<typename ResObject = void>
+		ResObject* GetRealPointer(uint32_t ptr) noexcept
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = mBuffers[ptr / blockCount];
 			void* realPtr = buffer + (size_t)(ptr % blockCount) * mBlockSize;
-			return static_cast<Result*>(realPtr);
+			return static_cast<ResObject*>(realPtr);
 		}
 
 		uint32_t Allocate()

@@ -353,14 +353,14 @@ namespace internal
 		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
 
 	public:
-		template<typename Result = void>
-		static Result* Allocate(MemManager& memManager, size_t size)
+		template<typename ResObject = void>
+		static ResObject* Allocate(MemManager& memManager, size_t size)
 		{
 			MOMO_ASSERT(size > 0);
 			void* ptr = memManager.Allocate(size);
 			MOMO_ASSERT(ptr != nullptr);
 			pvCheckBits(ptr);
-			return static_cast<Result*>(ptr);
+			return static_cast<ResObject*>(ptr);
 		}
 
 		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
@@ -369,16 +369,16 @@ namespace internal
 			memManager.Deallocate(ptr, size);
 		}
 
-		template<typename Result = void>
-		static Result* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
+		template<typename ResObject = void>
+		static ResObject* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
-				return static_cast<Result*>(ptr);
+				return static_cast<ResObject*>(ptr);
 			void* newPtr = memManager.Reallocate(ptr, size, newSize);
 			MOMO_ASSERT(newPtr != nullptr);
 			pvCheckBits(newPtr);
-			return static_cast<Result*>(newPtr);
+			return static_cast<ResObject*>(newPtr);
 		}
 
 		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
