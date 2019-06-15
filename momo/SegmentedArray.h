@@ -83,7 +83,7 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
+	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		size_t index1 = (index >> logInitialItemCount) + 1;
 		size_t index2 = index & (((size_t)1 << logInitialItemCount) - 1);
@@ -135,7 +135,7 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndices(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
+	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		segIndex = index >> logInitialItemCount;
 		itemIndex = index & (((size_t)1 << logInitialItemCount) - 1);
@@ -437,7 +437,7 @@ public:
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
 		MOMO_CHECK(segIndex < mSegments.GetCount());
 		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
 		++mCount;
@@ -464,7 +464,7 @@ public:
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
 		size_t segCount = mSegments.GetCount();
 		if (segIndex < segCount)
 		{
@@ -594,7 +594,7 @@ private:
 	{
 		MOMO_CHECK(index < mCount);
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(index, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(index, segIndex, itemIndex);
 		return mSegments[segIndex][itemIndex];
 	}
 
@@ -609,7 +609,7 @@ private:
 		try
 		{
 			size_t segIndex, itemIndex;
-			Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+			Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
 			while (mCount < count)
 			{
 				Item* segment = mSegments[segIndex];
@@ -635,7 +635,7 @@ private:
 	{
 		MOMO_ASSERT(count <= mCount);
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(mCount, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
 		MemManager& memManager = GetMemManager();
 		while (mCount > count)
 		{
@@ -655,7 +655,7 @@ private:
 	{
 		MOMO_ASSERT(capacity >= initCapacity);
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(capacity, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(capacity, segIndex, itemIndex);
 		if (itemIndex > 0)
 			++segIndex;
 		try
@@ -678,7 +678,7 @@ private:
 	{
 		MOMO_ASSERT(capacity <= GetCapacity());
 		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndices(capacity, segIndex, itemIndex);
+		Settings::GetSegItemIndexes(capacity, segIndex, itemIndex);
 		if (itemIndex > 0)
 			++segIndex;
 		size_t segCount = mSegments.GetCount();

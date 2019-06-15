@@ -44,7 +44,7 @@ namespace internal
 	private:
 		typedef BoolConstant<isContinuous> IsContinuous;
 
-		template<size_t capacity, bool hasIndices>
+		template<size_t capacity, bool hasIndexes>
 		struct Counter;
 
 		template<size_t capacity>
@@ -57,7 +57,7 @@ namespace internal
 		struct Counter<capacity, true>
 		{
 			uint8_t count;
-			uint8_t indices[capacity];
+			uint8_t indexes[capacity];
 		};
 
 		typedef ObjectBuffer<Item, ItemTraits::alignment> ItemBuffer;
@@ -157,7 +157,7 @@ namespace internal
 			}
 			node->mParent = nullptr;
 			node->mCounter.count = (uint8_t)count;
-			node->pvInitIndices(IsContinuous());
+			node->pvInitIndexes(IsContinuous());
 			return node;
 		}
 
@@ -263,14 +263,14 @@ namespace internal
 			return &mParent - maxCapacity - 1;
 		}
 
-		void pvInitIndices(std::true_type /*isContinuous*/) noexcept
+		void pvInitIndexes(std::true_type /*isContinuous*/) noexcept
 		{
 		}
 
-		void pvInitIndices(std::false_type /*isContinuous*/) noexcept
+		void pvInitIndexes(std::false_type /*isContinuous*/) noexcept
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
-				mCounter.indices[i] = (uint8_t)i;
+				mCounter.indexes[i] = (uint8_t)i;
 		}
 
 		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) noexcept
@@ -280,7 +280,7 @@ namespace internal
 
 		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) noexcept
 		{
-			return &mFirstItem + mCounter.indices[index];
+			return &mFirstItem + mCounter.indexes[index];
 		}
 
 		void pvAcceptBackItem(Params& params, size_t index, size_t count,
@@ -293,9 +293,9 @@ namespace internal
 		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
 			std::false_type /*isContinuous*/) noexcept
 		{
-			uint8_t realIndex = mCounter.indices[count];
-			memmove(mCounter.indices + index + 1, mCounter.indices + index, count - index);
-			mCounter.indices[index] = realIndex;
+			uint8_t realIndex = mCounter.indexes[count];
+			memmove(mCounter.indexes + index + 1, mCounter.indexes + index, count - index);
+			mCounter.indexes[index] = realIndex;
 		}
 
 		template<typename ItemRemover>
@@ -320,9 +320,9 @@ namespace internal
 			std::false_type /*isContinuous*/)
 		{
 			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
-			uint8_t realIndex = mCounter.indices[index];
-			memmove(mCounter.indices + index, mCounter.indices + index + 1, count - index - 1);
-			mCounter.indices[count - 1] = realIndex;
+			uint8_t realIndex = mCounter.indexes[index];
+			memmove(mCounter.indexes + index, mCounter.indexes + index + 1, count - index - 1);
+			mCounter.indexes[count - 1] = realIndex;
 		}
 
 	private:
