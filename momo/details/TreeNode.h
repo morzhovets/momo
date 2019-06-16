@@ -237,7 +237,8 @@ namespace internal
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
-				memmove(children + index + 2, children + index + 1, (count - index) * sizeof(void*));
+				std::copy_backward(children + index + 1, children + count + 1,
+					children + count + 2);
 			}
 			++mCounter.count;
 		}
@@ -251,7 +252,7 @@ namespace internal
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
-				memmove(children + index, children + index + 1, (count - index) * sizeof(void*));
+				std::copy(children + index + 1, children + count + 1, children + index);
 			}
 			--mCounter.count;
 		}
@@ -294,7 +295,8 @@ namespace internal
 			std::false_type /*isContinuous*/) noexcept
 		{
 			uint8_t realIndex = mCounter.indexes[count];
-			memmove(mCounter.indexes + index + 1, mCounter.indexes + index, count - index);
+			std::copy_backward(mCounter.indexes + index, mCounter.indexes + count,
+				mCounter.indexes + count + 1);
 			mCounter.indexes[index] = realIndex;
 		}
 
@@ -321,7 +323,8 @@ namespace internal
 		{
 			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
 			uint8_t realIndex = mCounter.indexes[index];
-			memmove(mCounter.indexes + index, mCounter.indexes + index + 1, count - index - 1);
+			std::copy(mCounter.indexes + index + 1, mCounter.indexes + count,
+				mCounter.indexes + index);
 			mCounter.indexes[count - 1] = realIndex;
 		}
 
@@ -334,7 +337,7 @@ namespace internal
 }
 
 template<size_t tMaxCapacity, size_t tCapacityStep,
-	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,
+	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,	//?
 	bool tIsContinuous = true>
 class TreeNode
 {
