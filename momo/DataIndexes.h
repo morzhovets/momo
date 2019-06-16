@@ -15,6 +15,7 @@
 #pragma once
 
 #include "HashMultiMap.h"
+#include "SegmentedArray.h"
 
 namespace momo
 {
@@ -533,18 +534,24 @@ namespace internal
 				HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
 				NestedHashMultiMapSettings> HashMultiMap;
 
-			typedef typename HashMultiMap::ConstKeyIterator KeyIterator;
+			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
+			typedef typename HashMultiMap::KeyIterator KeyIterator;
+
+			static const size_t logInitialSegmentSize = 6;
+
+			typedef momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt,
+				logInitialSegmentSize> SegmentedArraySettings;
 
 		public:
 			class RawBounds : private VersionKeeper
 			{
 			public:
-				typedef DataRawMultiHashIterator<ColumnList, KeyIterator> Iterator;
+				typedef DataRawMultiHashIterator<ColumnList, ConstKeyIterator> Iterator;
 
 				typedef RawBounds ConstBounds;
 
 			public:
-				explicit RawBounds(KeyIterator keyIter, VersionKeeper version) noexcept
+				explicit RawBounds(ConstKeyIterator keyIter, VersionKeeper version) noexcept
 					: VersionKeeper(version),
 					mKeyIterator(keyIter),
 					mRawCount(!!keyIter ? keyIter->values.GetCount() + 1 : 0)
@@ -569,7 +576,7 @@ namespace internal
 				}
 
 			private:
-				KeyIterator mKeyIterator;
+				ConstKeyIterator mKeyIterator;
 				size_t mRawCount;
 			};
 
@@ -629,7 +636,7 @@ namespace internal
 				MOMO_ASSERT(!mKeyIteratorAdd);
 				KeyIterator keyIter = mHashMultiMap.InsertKey(raw);
 				if (keyIter->key != raw)
-					mHashMultiMap.Add(keyIter, raw);
+					pvAdd(keyIter, raw);
 				mKeyIteratorAdd = keyIter;
 			}
 
@@ -640,7 +647,7 @@ namespace internal
 				KeyIterator keyIter = mHashMultiMap.Find(hashMixedKey);
 				if (!!keyIter)
 				{
-					mHashMultiMap.Add(keyIter, hashMixedKey.raw);
+					pvAdd(keyIter, hashMixedKey.raw);
 					mKeyIteratorAdd = keyIter;
 				}
 				else
@@ -653,17 +660,17 @@ namespace internal
 			{
 				if (!mKeyIteratorAdd)
 					return;
-				size_t valueCount = mKeyIteratorAdd->values.GetCount();
-				if (valueCount > 0)
-					mHashMultiMap.Remove(mKeyIteratorAdd, valueCount - 1);
+				size_t rawCount = mKeyIteratorAdd->values.GetCount();
+				if (rawCount > 0)
+					mHashMultiMap.Remove(mKeyIteratorAdd, rawCount - 1);
 				else
 					mHashMultiMap.RemoveKey(mKeyIteratorAdd);
-				mKeyIteratorAdd = KeyIterator();
+				mKeyIteratorAdd = ConstKeyIterator();
 			}
 
 			void AcceptAdd() noexcept
 			{
-				mKeyIteratorAdd = KeyIterator();
+				mKeyIteratorAdd = ConstKeyIterator();
 			}
 
 			void PrepareRemove(Raw* raw)
@@ -683,21 +690,47 @@ namespace internal
 				if (!mKeyIteratorRemove)
 					return;
 				auto raws = mKeyIteratorRemove->values;
-				size_t valueCount = raws.GetCount();
-				if (valueCount == 0)
+				size_t rawCount = raws.GetCount();
+				if (rawCount == 0)
 				{
 					MOMO_ASSERT(mKeyIteratorRemove->key == raw);
 					mHashMultiMap.RemoveKey(mKeyIteratorRemove);
 				}
 				else if (mKeyIteratorRemove->key == raw)
 				{
-					mHashMultiMap.ResetKey(mKeyIteratorRemove, raws[valueCount - 1]);
-					mHashMultiMap.Remove(mKeyIteratorRemove, valueCount - 1);
+					mHashMultiMap.ResetKey(mKeyIteratorRemove, raws[rawCount - 1]);
+					mHashMultiMap.Remove(mKeyIteratorRemove, rawCount - 1);
 				}
 				else
 				{
-					Raw* const* rawPtr = std::find(raws.GetBegin(), raws.GetEnd(), raw);	//?
-					mHashMultiMap.Remove(mKeyIteratorRemove, rawPtr - raws.GetBegin());
+					auto rawBegin = raws.GetBegin();
+					size_t rawIndex1 = 0;
+					size_t rawIndex2 = 1 << logInitialSegmentSize;
+					for (size_t segIndex = 0; rawIndex2 < rawCount; ++segIndex)
+					{
+						size_t rawIndex = std::lower_bound(rawBegin + rawIndex1,
+							rawBegin + rawIndex2 - 1, raw) - rawBegin;
+						if (raws[rawIndex] == raw)
+						{
+							std::copy(rawBegin + rawIndex + 1, rawBegin + rawIndex2, rawBegin + rawIndex);
+							rawIndex = std::lower_bound(rawBegin + rawIndex1,
+								rawBegin + rawIndex2 - 1, raws[rawCount - 1]) - rawBegin;
+							std::copy_backward(rawBegin + rawIndex, rawBegin + rawIndex2 - 1,
+								rawBegin + rawIndex2);
+							raws[rawIndex] = raws[rawCount - 1];
+							mHashMultiMap.Remove(mKeyIteratorRemove, rawCount - 1);
+							break;
+						}
+						rawIndex1 = rawIndex2;
+						rawIndex2 += SegmentedArraySettings::GetItemCount(segIndex + 1);
+					}
+					if (rawIndex2 >= rawCount)
+					{
+						auto rawIndex = std::find(rawBegin + rawIndex1,
+							rawBegin + rawCount, raw) - rawBegin;
+						MOMO_ASSERT(raws[rawIndex] == raw);
+						mHashMultiMap.Remove(mKeyIteratorRemove, rawIndex);
+					}
 				}
 				mKeyIteratorRemove = KeyIterator();
 			}
@@ -708,35 +741,68 @@ namespace internal
 				KeyIterator keyIter = mHashMultiMap.GetKeyBounds().GetBegin();
 				while (!!keyIter)
 				{
-					size_t valueIndex = 0;
-					while (valueIndex < keyIter->values.GetCount())
+					size_t rawIndex = 0;
+					while (rawIndex < keyIter->values.GetCount())
 					{
-						if (rawFilter(keyIter->values[valueIndex]))
-							++valueIndex;
+						if (rawFilter(keyIter->values[rawIndex]))
+							++rawIndex;
 						else
-							mHashMultiMap.Remove(keyIter, valueIndex);
+							mHashMultiMap.Remove(keyIter, rawIndex);
+					}
+					auto raws = keyIter->values;
+					size_t rawCount = raws.GetCount();
+					size_t rawIndex1 = 0;
+					size_t rawIndex2 = 1 << logInitialSegmentSize;
+					for (size_t segIndex = 0; rawIndex2 < rawCount; ++segIndex)
+					{
+						pvSortRaws(keyIter, rawIndex1, rawIndex2);
+						rawIndex1 = rawIndex2;
+						rawIndex2 += SegmentedArraySettings::GetItemCount(segIndex + 1);
 					}
 					if (rawFilter(keyIter->key))
 					{
 						++keyIter;
 						continue;
 					}
-					size_t valueCount = keyIter->values.GetCount();
-					if (valueCount == 0)
+					if (rawCount == 0)
 					{
 						keyIter = mHashMultiMap.RemoveKey(keyIter).GetKeyIterator();
 						continue;
 					}
-					mHashMultiMap.ResetKey(keyIter, keyIter->values[valueCount - 1]);
-					mHashMultiMap.Remove(keyIter, valueCount - 1);
+					mHashMultiMap.ResetKey(keyIter, raws[rawCount - 1]);
+					mHashMultiMap.Remove(keyIter, rawCount - 1);
 					++keyIter;
 				}
 			}
 
 		private:
+			void pvAdd(KeyIterator keyIter, Raw* raw)
+			{
+				size_t rawCount = keyIter->values.GetCount();
+				if (rawCount > 0 && (rawCount & ((1 << logInitialSegmentSize) - 1)) == 0)
+				{
+					size_t segIndex, rawIndex;
+					SegmentedArraySettings::GetSegItemIndexes(rawCount, segIndex, rawIndex);
+					if (rawIndex == 0)
+					{
+						size_t segSize = SegmentedArraySettings::GetItemCount(segIndex - 1);
+						pvSortRaws(keyIter, rawCount - segSize, rawCount);
+					}
+				}
+				mHashMultiMap.Add(keyIter, raw);
+			}
+
+			static void pvSortRaws(KeyIterator keyIter, size_t rawIndex1, size_t rawIndex2) noexcept
+			{
+				auto rawBegin = keyIter->values.GetBegin();
+				if (!std::is_sorted(rawBegin + rawIndex1, rawBegin + rawIndex2))
+					std::sort(rawBegin + rawIndex1, rawBegin + rawIndex2);
+			}
+
+		private:
 			Offsets mSortedOffsets;
 			HashMultiMap mHashMultiMap;
-			KeyIterator mKeyIteratorAdd;
+			ConstKeyIterator mKeyIteratorAdd;
 			KeyIterator mKeyIteratorRemove;
 		};
 
