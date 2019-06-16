@@ -53,12 +53,12 @@ public:
 	static void TestAll()
 	{
 		std::cout << "momo::DataColumnListStatic: " << std::flush;
-		TestData(momo::DataColumnListStatic<Struct>(),
+		TestData<false>(momo::DataColumnListStatic<Struct>(),
 			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::DataColumnList (struct): " << std::flush;
-		TestData(momo::DataColumnList<momo::DataColumnTraits<Struct>>(intStruct, dblStruct, strStruct),
+		TestData<true>(momo::DataColumnList<momo::DataColumnTraits<Struct>>(intStruct, dblStruct, strStruct),
 			intStruct, dblStruct, strStruct);
 		std::cout << "ok" << std::endl;
 
@@ -66,17 +66,18 @@ public:
 		columnList.Add(dblString);
 		columnList.Add(strString, intString);
 		std::cout << "momo::DataColumnList (string): " << std::flush;
-		TestData(std::move(columnList),
+		TestData<true>(std::move(columnList),
 			intString, dblString, strString);
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename DataColumnList, typename IntCol, typename DblCol, typename StrCol>
+	template<bool dynamic, typename DataColumnList, typename IntCol, typename DblCol, typename StrCol>
 	static void TestData(DataColumnList&& columns,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef momo::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;
+		typedef typename DataTable::ConstRowReference ConstRowReference;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
@@ -145,7 +146,7 @@ public:
 		assert(table.SelectEmpty().IsEmpty());
 		assert(ctable.SelectEmpty().IsEmpty());
 
-		auto emptyFilter = [] (typename DataTable::ConstRowReference) { return true; };
+		auto emptyFilter = [] (ConstRowReference) { return true; };
 
 		assert(table.SelectCount() == count);
 		assert(table.Select().GetCount() == count);
@@ -208,6 +209,10 @@ public:
 		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
 			strCol == "1").GetCount() == count / 2);
 
+		assert(table.MakeMutableReference(ctable[0]).GetNumber() == 0);
+
+		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
+
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
 		assert(tableCopy.ContainsColumn(intCol));
@@ -232,6 +237,30 @@ public:
 
 		assert(table.IsEmpty());
 		table.Clear();
+	}
+
+private:
+	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
+	static void pvTestDataDynamic(const DataTable& ctable,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol,
+		typename std::enable_if<dynamic, int>::type = 0)
+	{
+		typedef typename DataTable::ConstRowReference ConstRowReference;
+
+		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
+
+		size_t count = ctable.GetCount();
+		assert(ctable.Project(dblCol, intCol).GetCount() == count);
+		assert(ctable.Project(strFilter, dblCol, intCol).GetCount() == count / 2);
+		assert(ctable.ProjectDistinct(strCol).GetCount() == 2);
+		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
+	}
+
+	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
+	static void pvTestDataDynamic(const DataTable& /*ctable*/,
+		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/,
+		typename std::enable_if<!dynamic, int>::type = 0)
+	{
 	}
 };
 

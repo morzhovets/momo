@@ -467,23 +467,23 @@ public:
 
 	Row NewRow()
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
-		try
-		{
-			mCrew.GetColumnList().CreateRaw(raw);
-		}
-		catch (...)
-		{
-			mRawMemPool.Deallocate(raw);
-			throw;
-		}
-		return pvMakeRow(raw);
+		return pvMakeRow(pvCreateRaw());
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
 	Row NewRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return pvNewRow(assigner, assigners...);
+		Raw* raw = pvCreateRaw();
+		try
+		{
+			pvFillRaw(raw, assigner, assigners...);
+		}
+		catch (...)
+		{
+			pvFreeRaw(raw);
+			throw;
+		}
+		return pvMakeRow(raw);
 	}
 
 	Row NewRow(const Row& row)
@@ -509,7 +509,7 @@ public:
 	template<typename Item, typename ItemArg, typename... Assigners>
 	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return AddRow(pvNewRow(assigner, assigners...));
+		return AddRow(NewRow(assigner, assigners...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -529,7 +529,7 @@ public:
 	template<typename Item, typename ItemArg, typename... Assigners>
 	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return TryAddRow(pvNewRow(assigner, assigners...));
+		return TryAddRow(NewRow(assigner, assigners...));
 	}
 
 	RowReference InsertRow(size_t rowNumber, Row&& row)
@@ -544,7 +544,7 @@ public:
 	RowReference InsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
 		Assigners... assigners)
 	{
-		return InsertRow(rowNumber, pvNewRow(assigner, assigners...));
+		return InsertRow(rowNumber, NewRow(assigner, assigners...));
 	}
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
@@ -563,7 +563,7 @@ public:
 	TryResult TryInsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
 		Assigners... assigners)
 	{
-		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
+		return TryInsertRow(rowNumber, NewRow(assigner, assigners...));
 	}
 
 	void RemoveRow(ConstRowReference rowRef)
@@ -850,6 +850,42 @@ public:
 		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equaler, equalers...);
 	}
 
+	template<typename Item, typename... Items>
+	DataTable Project(const Column<Item>& column, const Column<Items>&... columns) const
+	{
+		return pvProject<false>(EmptyRowFilter(), column, columns...);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items,
+		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
+	DataTable Project(const RowFilter& rowFilter, const Column<Item>& column,
+		const Column<Items>&... columns) const
+	{
+		return pvProject<false>(rowFilter, column, columns...);
+	}
+
+	template<typename Item, typename... Items>
+	DataTable ProjectDistinct(const Column<Item>& column, const Column<Items>&... columns) const
+	{
+		return pvProject<true>(EmptyRowFilter(), column, columns...);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items,
+		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
+	DataTable ProjectDistinct(const RowFilter& rowFilter, const Column<Item>& column,
+		const Column<Items>&... columns) const
+	{
+		return pvProject<true>(rowFilter, column, columns...);
+	}
+
+	RowReference MakeMutableReference(ConstRowReference rowRef)
+	{
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		rowRef.GetRaw();	// check
+		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+		return pvMakeRowReference(raw);
+	}
+
 private:
 	RawMemPool pvCreateRawMemPool()
 	{
@@ -911,19 +947,34 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	Raw* pvCopyRaw(const Raw* srcRaw)
+	Raw* pvCreateRaw()
 	{
-		Raw* dstRaw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			mCrew.GetColumnList().CopyRaw(srcRaw, dstRaw);
+			mCrew.GetColumnList().CreateRaw(raw);
 		}
 		catch (...)
 		{
-			mRawMemPool.Deallocate(dstRaw);
+			mRawMemPool.Deallocate(raw);
 			throw;
 		}
-		return dstRaw;
+		return raw;
+	}
+
+	Raw* pvCopyRaw(const Raw* raw)
+	{
+		Raw* resRaw = mRawMemPool.template Allocate<Raw>();
+		try
+		{
+			mCrew.GetColumnList().CopyRaw(raw, resRaw);
+		}
+		catch (...)
+		{
+			mRawMemPool.Deallocate(resRaw);
+			throw;
+		}
+		return resRaw;
 	}
 
 	void pvFreeRaws() noexcept
@@ -956,14 +1007,6 @@ private:
 	{
 		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
-	}
-
-	template<typename Item, typename ItemArg, typename... Assigners>
-	Row pvNewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
-	{
-		Row row = NewRow();
-		pvFillRaw(row.GetRaw(), assigner, assigners...);
-		return row;
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
@@ -1263,6 +1306,51 @@ private:
 		return RowBoundsProxy(&GetColumnList(),
 			mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
+	}
+
+	template<bool distinct, typename RowFilter, typename... Items>
+	DataTable pvProject(const RowFilter& rowFilter, const Column<Items>&... columns) const
+	{
+		MemManager memManager = GetMemManager();
+		ColumnList resColumnList(std::move(memManager));
+		resColumnList.Add(columns...);
+		DataTable resTable(std::move(resColumnList));
+		auto offsets = pvGetOffsets(columns...);
+		auto resOffsets = resTable.pvGetOffsets(columns...);
+		if (distinct)
+			resTable.mIndexes.template AddUniqueHashIndex<Items...>(resTable.mRaws, resOffsets);
+		for (Raw* raw : mRaws)
+		{
+			if (!rowFilter(pvMakeConstRowReference(raw)))
+				continue;
+			resTable.mRaws.Reserve(resTable.mRaws.GetCount() + 1);
+			Raw* resRaw = resTable.pvCreateRaw();
+			resTable.mRaws.AddBackNogrow(resRaw);
+			resTable.template pvAssign<void, Items...>(raw, offsets.data(),
+				resRaw, resOffsets.data());
+			if (distinct && resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
+			{
+				resTable.mRaws.RemoveBack();
+				resTable.pvFreeRaw(resRaw);
+			}
+		}
+		resTable.RemoveUniqueHashIndexes();
+		resTable.pvSetNumbers();
+		return resTable;
+	}
+
+	template<typename Void, typename Item, typename... Items>
+	void pvAssign(Raw* srcRaw, const size_t* srcOffsets, Raw* dstRaw, const size_t* dstOffsets)
+	{
+		GetColumnList().template Assign<Item>(dstRaw, *dstOffsets,
+			ColumnList::template GetByOffset<const Item>(srcRaw, *srcOffsets));
+		pvAssign<void, Items...>(srcRaw, srcOffsets + 1, dstRaw, dstOffsets + 1);
+	}
+
+	template<typename Void>
+	void pvAssign(Raw* /*srcRaw*/, const size_t* /*srcOffsets*/, Raw* /*dstRaw*/,
+		const size_t* /*dstOffsets*/) noexcept
+	{
 	}
 
 private:
