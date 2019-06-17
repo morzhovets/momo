@@ -614,14 +614,9 @@ namespace internal
 		template<typename RowIterator>
 		void Assign(RowIterator begin, RowIterator end)
 		{
-			size_t count = pvGetCount(begin, end);
-			mRaws.Reserve(count);
-			mRaws.Clear(false);
-			for (RowIterator iter = begin; iter != end; ++iter)
-			{
-				RowReference rowRef = *iter;
-				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
-			}
+			size_t initCount = GetCount();
+			Add(begin, end);	//?
+			mRaws.Remove(0, initCount);
 		}
 
 		void Add(RowReference rowRef)
@@ -634,12 +629,21 @@ namespace internal
 		template<typename RowIterator>
 		void Add(RowIterator begin, RowIterator end)
 		{
+			size_t initCount = GetCount();
 			size_t count = pvGetCount(begin, end);
-			mRaws.Reserve(mRaws.GetCount() + count);
-			for (RowIterator iter = begin; iter != end; ++iter)
+			mRaws.Reserve(initCount + count);
+			try
 			{
-				RowReference rowRef = *iter;
-				mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
+				for (RowIterator iter = begin; iter != end; ++iter)
+				{
+					RowReference rowRef = *iter;
+					mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
+				}
+			}
+			catch (...)
+			{
+				mRaws.SetCount(initCount);
+				throw;
 			}
 		}
 
@@ -654,15 +658,10 @@ namespace internal
 		template<typename RowIterator>
 		void Insert(size_t index, RowIterator begin, RowIterator end)
 		{
-			MOMO_CHECK(index <= GetCount());
-			size_t count = pvGetCount(begin, end);
-			mRaws.Reserve(mRaws.GetCount() + count);
-			mRaws.Insert(index, count, nullptr);
-			for (RowIterator iter = begin; iter != end; (void)++iter, ++index)
-			{
-				RowReference rowRef = *iter;
-				mRaws[index] = RowReferenceProxy::GetRaw(rowRef);
-			}
+			size_t initCount = GetCount();
+			MOMO_CHECK(index <= initCount);
+			Add(begin, end);
+			std::rotate(mRaws.GetBegin() + index, mRaws.GetBegin() + initCount, mRaws.GetEnd());
 		}
 
 		void Remove(size_t index, size_t count = 1)
@@ -881,7 +880,7 @@ namespace std
 		typedef ptrdiff_t difference_type;
 		typedef typename momo::internal::DataRowIterator<RR, RI>::Pointer pointer;
 		typedef typename momo::internal::DataRowIterator<RR, RI>::Reference reference;
-		typedef typename momo::internal::DataRowIterator<RR, RI>::RowReference value_type;
+		typedef typename momo::internal::DataRowIterator<RR, RI>::Reference value_type;	//?
 	};
 
 	template<typename I, typename RI, typename S>

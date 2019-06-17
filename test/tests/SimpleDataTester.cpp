@@ -147,6 +147,7 @@ public:
 		assert(ctable.SelectEmpty().IsEmpty());
 
 		auto emptyFilter = [] (ConstRowReference) { return true; };
+		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 
 		assert(table.SelectCount() == count);
 		assert(table.Select().GetCount() == count);
@@ -161,19 +162,28 @@ public:
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 
 		auto selection = table.Select(strCol == "0");
+		selection.Set(0, selection[1]);
 		for (const std::string& s : selection.GetColumnItems(strCol))
 			assert(s == "0");
 
 		auto cselection = ctable.Select(strCol == "1");
+		cselection.Set(0, cselection[1]);
 		for (const std::string& s : cselection.GetColumnItems(strCol))
 			assert(s == "1");
 
 		cselection = table.Select().Sort(strCol);
-		cselection.Reverse();
-		cselection.Reverse();
 
-		for (size_t i = 0; i < count; ++i)
-			assert(cselection[i][strCol] == ((i < count / 2) ? "0" : "1"));
+		cselection.Assign(cselection.GetBegin(), cselection.GetEnd());
+		cselection.Add(cselection[count - 1]);
+		cselection.Add(cselection.GetBegin() + count / 2, cselection.GetEnd());
+		cselection.Insert(count, cselection[count]);
+		cselection.Insert(count / 2, cselection.GetBegin(), cselection.GetBegin() + count / 2);
+
+		for (size_t i = 0; i < cselection.GetCount(); ++i)
+			assert(cselection[i][strCol] == ((i < count) ? "0" : "1"));
+
+		cselection.Remove(0, count / 2);
+		cselection.Remove(count, cselection.GetCount() - count);
 
 		assert(cselection.GetLowerBound(strCol == "") == 0);
 		assert(cselection.GetUpperBound(strCol == "") == 0);
@@ -184,8 +194,11 @@ public:
 		assert(cselection.GetLowerBound(strCol == "2") == count);
 		assert(cselection.GetUpperBound(strCol == "2") == count);
 
-		cselection.Filter(emptyFilter);
-		cselection.Remove(emptyFilter);
+		cselection.Reverse();
+
+		cselection.Filter(strFilter);
+		assert(cselection.GetCount() == count / 2);
+		cselection.Remove(strFilter);
 		assert(cselection.IsEmpty());
 
 		assert(table.SelectCount(dblCol == 0.0) == 1);
@@ -232,10 +245,15 @@ public:
 		assert(tableCopy.GetCount() == count);
 
 		table.AssignRows(table.GetBegin(), table.GetEnd());
-		table.RemoveRows(table.GetBegin(), table.GetBegin());
-		table.RemoveRows(emptyFilter);
+		assert(table.GetCount() == count);
+		table.FilterRows(emptyFilter);
+		assert(table.GetCount() == count);
 
+		table.RemoveRows(table.GetBegin(), table.GetBegin());
+		assert(table.GetCount() == count);
+		table.RemoveRows(emptyFilter);
 		assert(table.IsEmpty());
+
 		table.Clear();
 	}
 
@@ -248,9 +266,9 @@ private:
 		typedef typename DataTable::ConstRowReference ConstRowReference;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
-
 		size_t count = ctable.GetCount();
-		assert(ctable.Project(dblCol, intCol).GetCount() == count);
+
+		assert(!ctable.Project(dblCol, intCol).ContainsColumn(strCol));
 		assert(ctable.Project(strFilter, dblCol, intCol).GetCount() == count / 2);
 		assert(ctable.ProjectDistinct(strCol).GetCount() == 2);
 		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
