@@ -143,6 +143,7 @@
 		<Unit filename="../../../momo/MemManager.h" />
 		<Unit filename="../../../momo/MemPool.h" />
 		<Unit filename="../../../momo/ObjectManager.h" />
+		<Unit filename="../../../momo/RadixSorter.h" />
 		<Unit filename="../../../momo/SegmentedArray.h" />
 		<Unit filename="../../../momo/SetUtility.h" />
 		<Unit filename="../../../momo/TreeMap.h" />
