@@ -41,11 +41,16 @@ namespace internal
 		}
 	};
 
+	template<size_t tRadixSize = 8>
 	class RadixSorter
 	{
+	public:
+		static const size_t radixSize = tRadixSize;
+		MOMO_STATIC_ASSERT(0 < radixSize && radixSize <= 16);
+
 	private:
-		static const size_t radixSize = 8;
 		static const size_t radixCount = (size_t)1 << radixSize;
+		static const size_t selectionSortMaxCount = (size_t)1 << (radixSize / 2 + 1);
 
 	public:
 		template<typename Iterator,
@@ -68,7 +73,7 @@ namespace internal
 					std::iter_swap(begin, begin + 1);
 				return;
 			}
-			if (count <= (size_t)1 << (radixSize / 2 + 1))
+			if (count <= selectionSortMaxCount)
 				pvSelectionSort<Code>(begin, count, codeGetter);
 			else
 				pvRadixSort<Code>(begin, count, codeGetter, shift);
@@ -78,7 +83,7 @@ namespace internal
 		static void pvSelectionSort(Iterator begin, size_t count, const CodeGetter& codeGetter)
 		{
 			MOMO_ASSERT(count > 0);
-			std::array<Code, (size_t)1 << (radixSize / 2 + 1)> codes;	//?
+			std::array<Code, selectionSortMaxCount> codes;	//?
 			for (size_t i = 0; i < count; ++i)
 				codes[i] = codeGetter(begin[i]);
 			for (size_t i = 0; i < count - 1; ++i)
