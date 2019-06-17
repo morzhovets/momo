@@ -16,6 +16,7 @@
 
 #include "HashMultiMap.h"
 #include "SegmentedArray.h"
+#include "RadixSorter.h"
 
 namespace momo
 {
@@ -796,7 +797,7 @@ namespace internal
 			{
 				auto rawBegin = keyIter->values.GetBegin();
 				if (!std::is_sorted(rawBegin + rawIndex1, rawBegin + rawIndex2))
-					std::sort(rawBegin + rawIndex1, rawBegin + rawIndex2);
+					RadixSorter::Sort(rawBegin + rawIndex1, rawIndex2 - rawIndex1);
 			}
 
 		private:
@@ -1145,7 +1146,7 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(columnCount > 0);
 			std::array<size_t, columnCount> sortedOffsets = offsets;
-			std::sort(sortedOffsets.begin(), sortedOffsets.end());
+			RadixSorter::Sort(sortedOffsets.data(), columnCount);
 			MOMO_CHECK(std::unique(sortedOffsets.begin(), sortedOffsets.end()) == sortedOffsets.end());
 			return sortedOffsets;
 		}
