@@ -32,70 +32,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItem, typename TSettings>
-	class ArrayPtrIterator
-	{
-	protected:
-		typedef TItem Item;
-		typedef TSettings Settings;
-
-	public:
-		typedef Item& Reference;
-		typedef Item* Pointer;
-
-		typedef ArrayPtrIterator<const Item, Settings> ConstIterator;
-
-	public:
-		explicit ArrayPtrIterator(Item* pitem = nullptr) noexcept
-			: mItemPtr(pitem)
-		{
-		}
-
-		operator ConstIterator() const noexcept
-		{
-			return ConstIterator(mItemPtr);
-		}
-
-		ArrayPtrIterator& operator+=(ptrdiff_t diff)
-		{
-			MOMO_CHECK(mItemPtr != nullptr || diff == 0);
-			mItemPtr += diff;
-			return *this;
-		}
-
-		ptrdiff_t operator-(ConstIterator iter) const
-		{
-			return mItemPtr - iter.GetItemPtr();
-		}
-
-		Pointer operator->() const
-		{
-			MOMO_CHECK(mItemPtr != nullptr);
-			return mItemPtr;
-		}
-
-		bool operator==(ConstIterator iter) const noexcept
-		{
-			return mItemPtr == iter.GetItemPtr();
-		}
-
-		bool operator<(ConstIterator iter) const
-		{
-			return std::less<const Item*>()(mItemPtr, iter.GetItemPtr());
-			//return mItemPtr < iter.GetItemPtr();
-		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayPtrIterator)
-
-		Item* GetItemPtr() const noexcept
-		{
-			return mItemPtr;
-		}
-
-	private:
-		Item* mItemPtr;
-	};
-
 	template<typename Array,
 		bool usePtrIterator = Array::Settings::usePtrIterator>
 	class ArrayIteratorSelector;
@@ -104,18 +40,18 @@ namespace internal
 	class ArrayIteratorSelector<Array, true>
 	{
 	public:
-		typedef ArrayPtrIterator<typename Array::Item, typename Array::Settings> Iterator;
-		typedef typename Iterator::ConstIterator ConstIterator;
+		typedef const typename Array::Item* ConstIterator;
+		typedef typename Array::Item* Iterator;
 
 	public:
 		static ConstIterator MakeIterator(const Array& array, size_t index) noexcept
 		{
-			return ConstIterator(array.GetItems() + index);
+			return array.GetItems() + index;
 		}
 
 		static Iterator MakeIterator(Array& array, size_t index) noexcept
 		{
-			return Iterator(array.GetItems() + index);
+			return array.GetItems() + index;
 		}
 	};
 
@@ -1154,12 +1090,3 @@ namespace internal
 }
 
 } // namespace momo
-
-namespace std
-{
-	template<typename I, typename S>
-	struct iterator_traits<momo::internal::ArrayPtrIterator<I, S>>
-		: public iterator_traits<I*>
-	{
-	};
-} // namespace std

@@ -76,6 +76,7 @@ void main()
         typedef vector<T> C;
         C::iterator i;
         C::const_iterator j;
+		(void)i; (void)j;
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

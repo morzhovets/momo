@@ -54,11 +54,11 @@ public:
 	typedef typename Array::Iterator iterator;
 	typedef typename Array::ConstIterator const_iterator;
 
-	typedef typename iterator::Reference reference;
-	typedef typename const_iterator::Reference const_reference;
+	typedef value_type& reference;
+	typedef const value_type& const_reference;
 
-	typedef typename iterator::Pointer pointer;
-	typedef typename const_iterator::Pointer const_pointer;
+	typedef value_type* pointer;
+	typedef const value_type* const_pointer;
 	//typedef typename std::allocator_traits<allocator_type>::pointer pointer;
 	//typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
