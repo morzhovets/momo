@@ -99,6 +99,10 @@
 #endif
 #endif
 
+#if defined(__GNUC__) && defined(__clang__)
+#define MOMO_CTZ32(value) __builtin_ctz(value)
+#endif
+
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR ((uintptr_t)(void*)nullptr)
 

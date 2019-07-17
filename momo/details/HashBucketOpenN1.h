@@ -88,7 +88,7 @@ namespace internal
 				mask &= (1 << maxCount) - 1;
 				while (mask != 0)
 				{
-					size_t index = (size_t)pvCountTrailingZeros((uint8_t)mask);
+					size_t index = pvCountTrailingZeros(mask);
 					if (pred(*&mItems[index]))
 						return pvMakeIterator(&mItems[index]);
 					mask &= mask - 1;
@@ -260,9 +260,12 @@ namespace internal
 				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbe;
 		}
 
-		static uint8_t pvCountTrailingZeros(uint8_t mask) noexcept
+		static size_t pvCountTrailingZeros(int mask) noexcept
 		{
-			MOMO_ASSERT((uint8_t)0 < mask && mask < (uint8_t)128);
+			MOMO_ASSERT(0 < mask && mask < 128);
+#ifdef MOMO_CTZ32
+			return MOMO_CTZ32(mask);
+#else
 			static const uint8_t tab[127] =
 			{
 				   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
@@ -274,7 +277,8 @@ namespace internal
 				5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
 				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
 			};
-			return tab[mask - 1];
+			return (size_t)tab[mask - 1];
+#endif
 		}
 
 	private:
