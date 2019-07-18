@@ -117,7 +117,28 @@ namespace internal
 
 		size_t GetMaxProbe(size_t /*logBucketCount*/) const noexcept
 		{
-			return (size_t)mState[0] << (mState[1] >> 2);
+			return pvGetMaxProbe();
+		}
+
+		void UpdateMaxProbe(size_t probe) noexcept
+		{
+			if (probe <= pvGetMaxProbe())
+				return;
+			if (probe <= (size_t)255)
+			{
+				mState[0] = (uint8_t)probe;
+				return;
+			}
+			size_t maxProbe0 = probe - 1;
+			size_t maxProbe1 = 0;
+			while (maxProbe0 >= (size_t)255)
+			{
+				maxProbe0 >>= 1;
+				++maxProbe1;
+			}
+			mState[0] = (uint8_t)maxProbe0 + 1;
+			mState[1] &= (uint8_t)3;
+			mState[1] |= (uint8_t)(maxProbe1 << 2);
 		}
 
 		void Clear(Params& params) noexcept
@@ -146,8 +167,6 @@ namespace internal
 				else
 					hashProbe = emptyHashProbe;
 			}
-			if (probe > 0)
-				pvSetMaxProbe(hashCode, logBucketCount, probe);
 			++mState[1];
 			return Iterator(pitem + 1);
 		}
@@ -218,30 +237,9 @@ namespace internal
 			return (logBucketCount + logBucketCountAddend + 1) % logBucketCountStep;
 		}
 
-		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) noexcept
+		size_t pvGetMaxProbe() const noexcept
 		{
-			size_t bucketCount = (size_t)1 << logBucketCount;
-			size_t startBucketIndex = BucketBase::GetStartBucketIndex(hashCode, bucketCount);
-			size_t thisBucketIndex = (startBucketIndex + probe) & (bucketCount - 1);
-			BucketOpen2N2* startBucket = this - (ptrdiff_t)thisBucketIndex
-				+ (ptrdiff_t)startBucketIndex;
-			if (probe <= startBucket->GetMaxProbe(logBucketCount))
-				return;
-			if (probe <= (size_t)255)
-			{
-				startBucket->mState[0] = (uint8_t)probe;
-				return;
-			}
-			size_t maxProbe0 = probe - 1;
-			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)255)
-			{
-				maxProbe0 >>= 1;
-				++maxProbe1;
-			}
-			startBucket->mState[0] = (uint8_t)maxProbe0 + 1;
-			startBucket->mState[1] &= (uint8_t)3;
-			startBucket->mState[1] |= (uint8_t)(maxProbe1 << 2);
+			return (size_t)mState[0] << (mState[1] >> 2);
 		}
 
 	private:

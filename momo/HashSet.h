@@ -1052,7 +1052,8 @@ private:
 	{
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
-		Bucket* bucket = &buckets[bucketIndex];
+		Bucket& startBucket = buckets[bucketIndex];
+		Bucket* bucket = &startBucket;
 		size_t probe = 0;
 		while (bucket->IsFull())
 		{
@@ -1066,6 +1067,7 @@ private:
 		itemPos.bucketIndex = bucketIndex;
 		itemPos.bucketIterator = bucket->AddCrt(buckets.GetBucketParams(),
 			std::forward<ItemCreator>(itemCreator), hashCode, buckets.GetLogCount(), probe);
+		startBucket.UpdateMaxProbe(probe);
 		return itemPos;
 	}
 

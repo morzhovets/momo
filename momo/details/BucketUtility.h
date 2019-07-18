@@ -100,6 +100,10 @@ namespace internal
 			return ((size_t)1 << logBucketCount) - 1;
 		}
 
+		void UpdateMaxProbe(size_t /*probe*/) noexcept
+		{
+		}
+
 		template<typename HashCodeFullGetter, typename Iterator>	//?
 		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
 			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)

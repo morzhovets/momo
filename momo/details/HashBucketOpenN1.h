@@ -51,7 +51,7 @@ namespace internal
 
 	private:
 		static const uint8_t emptyShortHash = 248;
-		static const uint8_t infProbe = 255;
+		static const uint8_t infProbeExp = 255;
 
 	public:
 		explicit BucketOpenN1() noexcept
@@ -117,10 +117,26 @@ namespace internal
 
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
-			uint8_t maxProbe = pvGetMaxProbe();
-			if (maxProbe == infProbe)
+			uint8_t maxProbeExp = pvGetMaxProbeExp();
+			if (maxProbeExp == infProbeExp)
 				return ((size_t)1 << logBucketCount) - 1;
-			return (size_t)(maxProbe & 7) << (maxProbe >> 3);
+			return pvGetMaxProbe(maxProbeExp);
+		}
+
+		void UpdateMaxProbe(size_t probe) noexcept
+		{
+			uint8_t& maxProbeExp = pvGetMaxProbeExp();
+			if (maxProbeExp == infProbeExp || probe <= pvGetMaxProbe(maxProbeExp))
+				return;
+			size_t maxProbe0 = probe - 1;
+			size_t maxProbe1 = 0;
+			while (maxProbe0 >= (size_t)7)
+			{
+				maxProbe0 >>= 1;
+				++maxProbe1;
+			}
+			maxProbeExp = (maxProbe1 <= (size_t)31)
+				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbeExp;
 		}
 
 		void Clear(Params& params) noexcept
@@ -133,7 +149,7 @@ namespace internal
 
 		template<typename ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
-			size_t logBucketCount, size_t probe)
+			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			size_t count = pvGetCount();
@@ -141,8 +157,6 @@ namespace internal
 			Item* pitem = pvGetItemPtr(count);
 			std::forward<ItemCreator>(itemCreator)(pitem);
 			pvGetShortHash(count) = pvCalcShortHash(hashCode);
-			if (probe > 0)
-				pvSetMaxProbe(hashCode, logBucketCount, probe);
 			if (count + 1 < maxCount)
 				++pvGetState();
 			return pvMakeIterator(pitem);
@@ -182,12 +196,12 @@ namespace internal
 			return *pvGetBytePtr(reverse ? 0 : maxCount - 1);
 		}
 
-		uint8_t pvGetMaxProbe() const noexcept
+		uint8_t pvGetMaxProbeExp() const noexcept
 		{
 			return *pvGetBytePtr(maxCount);
 		}
 
-		uint8_t& pvGetMaxProbe() noexcept
+		uint8_t& pvGetMaxProbeExp() noexcept
 		{
 			return *pvGetBytePtr(maxCount);
 		}
@@ -234,30 +248,15 @@ namespace internal
 			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
 		}
 
+		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept
+		{
+			return (size_t)(maxProbeExp & 7) << (maxProbeExp >> 3);
+		}
+
 		void pvSetEmpty() noexcept
 		{
 			std::fill(std::begin(mData), std::end(mData), (char)0);
 			std::fill_n(pvGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
-		}
-
-		void pvSetMaxProbe(size_t hashCode, size_t logBucketCount, size_t probe) noexcept
-		{
-			size_t bucketCount = (size_t)1 << logBucketCount;
-			size_t startBucketIndex = BucketBase::GetStartBucketIndex(hashCode, bucketCount);
-			size_t thisBucketIndex = (startBucketIndex + probe) & (bucketCount - 1);
-			BucketOpenN1* startBucket = this - (ptrdiff_t)thisBucketIndex
-				+ (ptrdiff_t)startBucketIndex;
-			if (probe <= startBucket->GetMaxProbe(logBucketCount))
-				return;
-			size_t maxProbe0 = probe - 1;
-			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)7)
-			{
-				maxProbe0 >>= 1;
-				++maxProbe1;
-			}
-			startBucket->pvGetMaxProbe() = (maxProbe1 <= (size_t)31)
-				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbe;
 		}
 
 		static size_t pvCountTrailingZeros(int mask) noexcept
