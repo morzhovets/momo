@@ -23,22 +23,15 @@ static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
 
-#ifdef MOMO_USE_SSE2
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<true, 1>, 4, 2>("momo::HashBucketOpenN1<true, 1>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<true, 3>, 1, 1>("momo::HashBucketOpenN1<true, 3>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<true, 3>, 8, 4>("momo::HashBucketOpenN1<true, 3>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<true, 7>, 4, 4>("momo::HashBucketOpenN1<true, 7>");
-#endif
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<1, true>, 4, 2>("momo::HashBucketOpenN1<1, true>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<3, true>, 1, 1>("momo::HashBucketOpenN1<3, true>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<3, true>, 8, 4>("momo::HashBucketOpenN1<3, true>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<7, true>, 4, 4>("momo::HashBucketOpenN1<7, true>");
 
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 1, true>, 4, 2>("momo::HashBucketOpenN1<false, 1, true>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 3, true>, 1, 1>("momo::HashBucketOpenN1<false, 3, true>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 3, true>, 8, 4>("momo::HashBucketOpenN1<false, 3, true>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 7, true>, 4, 4>("momo::HashBucketOpenN1<false, 7, true>");
-
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 1, false>, 4, 2>("momo::HashBucketOpenN1<false, 1, false>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 3, false>, 1, 1>("momo::HashBucketOpenN1<false, 3, false>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 3, false>, 8, 4>("momo::HashBucketOpenN1<false, 3, false>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<false, 7, false>, 4, 4>("momo::HashBucketOpenN1<false, 7, false>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<1, false>, 4, 2>("momo::HashBucketOpenN1<1, false>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<3, false>, 1, 1>("momo::HashBucketOpenN1<3, false>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<3, false>, 8, 4>("momo::HashBucketOpenN1<3, false>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<7, false>, 4, 4>("momo::HashBucketOpenN1<7, false>");
 
 	return 0;
 }();

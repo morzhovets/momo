@@ -21,18 +21,15 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, bool tUseSSE2, size_t tMaxCount, bool tReverse>
+	template<typename TItemTraits, size_t tMaxCount, bool tReverse,
+		size_t tDataAlignment = 1>
 	class BucketOpenN1 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const bool useSSE2 = tUseSSE2;
 		static const bool reverse = tReverse;
-
-//#ifndef MOMO_USE_SSE2
-//		MOMO_STATIC_ASSERT(!useSSE2);
-//#endif
+		static const size_t dataAlignment = tDataAlignment;
 
 	public:
 		static const size_t maxCount = tMaxCount;
@@ -76,27 +73,8 @@ namespace internal
 		template<typename Predicate>
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t shortHash = pvCalcShortHash(hashCode);
-#ifdef MOMO_USE_SSE2
-			if (useSSE2)
-			{
-				//MOMO_PREFETCH_RANGE(this, sizeof(*this));
-				__m128i shortHashes = _mm_set1_epi8(shortHash);
-				__m128i thisShortHashes = _mm_set_epi64x((int64_t)0,
-					*BitCaster::PtrToPtr<int64_t>(mData, 0));
-				int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
-				mask &= (1 << maxCount) - 1;
-				while (mask != 0)
-				{
-					size_t index = pvCountTrailingZeros(mask);
-					if (pred(*&mItems[index]))
-						return pvMakeIterator(&mItems[index]);
-					mask &= mask - 1;
-				}
-				return Iterator();
-			}
-#endif
-			const uint8_t* thisShortHashes = pvGetShortHashes();
+			uint8_t shortHash = ptCalcShortHash(hashCode);
+			const uint8_t* thisShortHashes = ptGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
@@ -156,7 +134,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* pitem = pvGetItemPtr(count);
 			std::forward<ItemCreator>(itemCreator)(pitem);
-			pvGetShortHash(count) = pvCalcShortHash(hashCode);
+			pvGetShortHash(count) = ptCalcShortHash(hashCode);
 			if (count + 1 < maxCount)
 				++pvGetState();
 			return pvMakeIterator(pitem);
@@ -179,10 +157,21 @@ namespace internal
 			return iter;
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) noexcept
+	protected:
+		Item* ptGetItems() noexcept
 		{
-			return (bucketIndex + 1) & (bucketCount - 1);
+			return &mItems[0];
+		}
+
+		uint8_t* ptGetShortHashes() noexcept
+		{
+			return pvGetBytePtr(0);
+		}
+
+		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
+		{
+			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
+			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
 		}
 
 	private:
@@ -204,11 +193,6 @@ namespace internal
 		uint8_t& pvGetMaxProbeExp() noexcept
 		{
 			return *pvGetBytePtr(maxCount);
-		}
-
-		uint8_t* pvGetShortHashes() noexcept
-		{
-			return pvGetBytePtr(0);
 		}
 
 		uint8_t& pvGetShortHash(size_t index) noexcept
@@ -242,12 +226,6 @@ namespace internal
 			return (state >= emptyShortHash) ? (size_t)(state - emptyShortHash) : maxCount;
 		}
 
-		static uint8_t pvCalcShortHash(size_t hashCode) noexcept
-		{
-			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
-			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
-		}
-
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept
 		{
 			return (size_t)(maxProbeExp & 7) << (maxProbeExp >> 3);
@@ -256,59 +234,30 @@ namespace internal
 		void pvSetEmpty() noexcept
 		{
 			std::fill(std::begin(mData), std::end(mData), (char)0);
-			std::fill_n(pvGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
-		}
-
-		static size_t pvCountTrailingZeros(int mask) noexcept
-		{
-			MOMO_ASSERT(0 < mask && mask < 128);
-#ifdef MOMO_CTZ32
-			return MOMO_CTZ32(mask);
-#else
-			static const uint8_t tab[127] =
-			{
-				   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-			};
-			return (size_t)tab[mask - 1];
-#endif
+			std::fill_n(ptGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
 		}
 
 	private:
-		alignas(useSSE2 ? 8 : 1) char mData[useSSE2 ? 8 : maxCount + 1];
+		alignas(dataAlignment) char mData[maxCount + 1];
 		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
 
-#ifdef MOMO_USE_SSE2
-template<bool tUseSSE2 = true,
-	size_t tMaxCount = tUseSSE2 ? 7 : 3,
-	bool tReverse = !tUseSSE2>
-#else
-template<bool tUseSSE2 = false,
-	size_t tMaxCount = 3,
+template<size_t tMaxCount = 3,
 	bool tReverse = true>
-#endif
 class HashBucketOpenN1 : public internal::HashBucketBase
 {
 public:
-	static const bool useSSE2 = tUseSSE2;
 	static const size_t maxCount = tMaxCount;
 	static const bool reverse = tReverse;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOpenN1<ItemTraits, useSSE2, maxCount, reverse>;
+	using Bucket = internal::BucketOpenN1<ItemTraits, maxCount, reverse>;
 
 public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
-		return (bucketCount * maxCount / 7) * 6;
+		return (bucketCount * maxCount / 6) * 5;
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,
