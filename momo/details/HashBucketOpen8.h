@@ -71,6 +71,12 @@ namespace internal
 			return nullptr;
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t probe) noexcept
+		{
+			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
+		}
+
 	private:
 		static size_t pvCountTrailingZeros(int mask) noexcept
 		{
@@ -108,7 +114,7 @@ public:
 	static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) noexcept
 	{
 		if (bucketMaxItemCount == 7)
-			return (bucketCount * bucketMaxItemCount / 7) * 6;	// BucketOpen8
+			return (bucketCount * bucketMaxItemCount / 14) * 13;	// BucketOpen8
 		else
 			return (bucketCount * bucketMaxItemCount / 6) * 5;	// BucketOpen2N2
 	}
