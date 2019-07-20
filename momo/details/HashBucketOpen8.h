@@ -60,12 +60,12 @@ namespace internal
 				*BitCaster::PtrToPtr<int64_t>(BucketOpenN1::ptGetShortHashes(), 0));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
-			Item* items = BucketOpenN1::ptGetItems();
 			while (mask != 0)
 			{
 				size_t index = pvCountTrailingZeros(mask);
-				if (pred(items[index]))
-					return items + index;
+				Item* pitem = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(*pitem))
+					return pitem;
 				mask &= mask - 1;
 			}
 			return nullptr;

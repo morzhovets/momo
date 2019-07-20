@@ -67,7 +67,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return Bounds(pvMakeIterator(pvGetItemPtr(0)), pvGetCount());
+			return Bounds(pvMakeIterator(ptGetItemPtr(0)), pvGetCount());
 		}
 
 		template<typename Predicate>
@@ -132,7 +132,7 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* pitem = pvGetItemPtr(count);
+			Item* pitem = ptGetItemPtr(count);
 			std::forward<ItemCreator>(itemCreator)(pitem);
 			pvGetShortHash(count) = ptCalcShortHash(hashCode);
 			if (count + 1 < maxCount)
@@ -144,10 +144,10 @@ namespace internal
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = iter - pvMakeIterator(pvGetItemPtr(0));
+			size_t index = iter - pvMakeIterator(ptGetItemPtr(0));
 			MOMO_ASSERT(index < count);
-			std::forward<ItemReplacer>(itemReplacer)(*pvGetItemPtr(count - 1),
-				*pvGetItemPtr(index));
+			std::forward<ItemReplacer>(itemReplacer)(*ptGetItemPtr(count - 1),
+				*ptGetItemPtr(index));
 			pvGetShortHash(index) = pvGetShortHash(count - 1);
 			pvGetShortHash(count - 1) = emptyShortHash;
 			if (count < maxCount)
@@ -158,14 +158,14 @@ namespace internal
 		}
 
 	protected:
-		Item* ptGetItems() noexcept
-		{
-			return &mItems[0];
-		}
-
 		uint8_t* ptGetShortHashes() noexcept
 		{
 			return pvGetBytePtr(0);
+		}
+
+		Item* ptGetItemPtr(size_t index) noexcept
+		{
+			return &mItems[reverse ? maxCount - 1 - index : index];
 		}
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
@@ -208,11 +208,6 @@ namespace internal
 		uint8_t* pvGetBytePtr(size_t index) noexcept
 		{
 			return BitCaster::PtrToPtr<uint8_t>(mData, index);
-		}
-
-		Item* pvGetItemPtr(size_t index) noexcept
-		{
-			return &mItems[reverse ? maxCount - 1 - index : index];
 		}
 
 		static Iterator pvMakeIterator(Item* pitem) noexcept
