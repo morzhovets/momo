@@ -103,18 +103,12 @@ namespace internal
 
 		void UpdateMaxProbe(size_t probe) noexcept
 		{
-			uint8_t& maxProbeExp = pvGetMaxProbeExp();
+			if (probe == 0)
+				return;
+			uint8_t maxProbeExp = pvGetMaxProbeExp();
 			if (maxProbeExp == infProbeExp || probe <= pvGetMaxProbe(maxProbeExp))
 				return;
-			size_t maxProbe0 = probe - 1;
-			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)7)
-			{
-				maxProbe0 >>= 1;
-				++maxProbe1;
-			}
-			maxProbeExp = (maxProbe1 <= (size_t)31)
-				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbeExp;
+			pvUpdateMaxProbe(probe);
 		}
 
 		void Clear(Params& params) noexcept
@@ -221,15 +215,28 @@ namespace internal
 			return (state >= emptyShortHash) ? (size_t)(state - emptyShortHash) : maxCount;
 		}
 
+		void pvSetEmpty() noexcept
+		{
+			std::fill(std::begin(mData), std::end(mData), (char)0);
+			std::fill_n(ptGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
+		}
+
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept
 		{
 			return (size_t)(maxProbeExp & 7) << (maxProbeExp >> 3);
 		}
 
-		void pvSetEmpty() noexcept
+		void pvUpdateMaxProbe(size_t probe) noexcept
 		{
-			std::fill(std::begin(mData), std::end(mData), (char)0);
-			std::fill_n(ptGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
+			size_t maxProbe0 = probe - 1;
+			size_t maxProbe1 = 0;
+			while (maxProbe0 >= (size_t)7)
+			{
+				maxProbe0 >>= 1;
+				++maxProbe1;
+			}
+			pvGetMaxProbeExp() = (maxProbe1 <= (size_t)31)
+				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbeExp;
 		}
 
 	private:

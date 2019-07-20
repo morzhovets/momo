@@ -122,23 +122,11 @@ namespace internal
 
 		void UpdateMaxProbe(size_t probe) noexcept
 		{
+			if (probe == 0)
+				return;
 			if (probe <= pvGetMaxProbe())
 				return;
-			if (probe <= (size_t)255)
-			{
-				mState[0] = (uint8_t)probe;
-				return;
-			}
-			size_t maxProbe0 = probe - 1;
-			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)255)
-			{
-				maxProbe0 >>= 1;
-				++maxProbe1;
-			}
-			mState[0] = (uint8_t)maxProbe0 + 1;
-			mState[1] &= (uint8_t)3;
-			mState[1] |= (uint8_t)(maxProbe1 << 2);
+			pvUpdateMaxProbe(probe);
 		}
 
 		void Clear(Params& params) noexcept
@@ -240,6 +228,25 @@ namespace internal
 		size_t pvGetMaxProbe() const noexcept
 		{
 			return (size_t)mState[0] << (mState[1] >> 2);
+		}
+
+		void pvUpdateMaxProbe(size_t probe) noexcept
+		{
+			if (probe <= (size_t)255)
+			{
+				mState[0] = (uint8_t)probe;
+				return;
+			}
+			size_t maxProbe0 = probe - 1;
+			size_t maxProbe1 = 0;
+			while (maxProbe0 >= (size_t)255)
+			{
+				maxProbe0 >>= 1;
+				++maxProbe1;
+			}
+			mState[0] = (uint8_t)maxProbe0 + 1;
+			mState[1] &= (uint8_t)3;
+			mState[1] |= (uint8_t)(maxProbe1 << 2);
 		}
 
 	private:
