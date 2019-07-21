@@ -116,7 +116,7 @@ public:
 		if (bucketMaxItemCount == 7)
 			return (bucketCount * bucketMaxItemCount / 14) * 13;	// BucketOpen8
 		else
-			return (bucketCount * bucketMaxItemCount / 6) * 5;	// BucketOpen2N2
+			return (bucketCount * bucketMaxItemCount / 12) * 11;	// BucketOpen2N2
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,

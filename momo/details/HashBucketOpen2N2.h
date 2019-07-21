@@ -190,16 +190,17 @@ namespace internal
 			size_t probeShift = pvGetProbeShift(logBucketCount);
 			MOMO_ASSERT(probeShift > 0);
 			size_t probe = (size_t)hashProbe & (((size_t)1 << probeShift) - 1);
+			size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
 			size_t bucketCount = (size_t)1 << logBucketCount;
-			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
+			return ((bucketIndex - probe2) & (bucketCount - 1))
 				| (((size_t)hashProbe >> probeShift) << logBucketCount)
 				| ((size_t)mHashData.shortHashes[index] << hashCodeShift);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) noexcept
+			size_t bucketCount, size_t probe) noexcept
 		{
-			return (bucketIndex + 1) & (bucketCount - 1);
+			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
 		}
 
 	private:
@@ -268,7 +269,7 @@ public:
 public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
-		return (bucketCount * maxCount / 6) * 5;
+		return (bucketCount * maxCount / 12) * 11;
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,
