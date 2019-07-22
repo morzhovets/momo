@@ -818,7 +818,7 @@ public:
 
 	bool Remove(const Key& key)
 	{
-		ConstIterator iter = Find(key);
+		ConstIterator iter = pvFind(key);
 		if (!iter)
 			return false;
 		Remove(iter);
@@ -888,7 +888,7 @@ public:
 	size_t GetBucketIndex(const Key& key) const
 	{
 		MOMO_CHECK(mBuckets != nullptr);
-		ConstIterator iter = Find(key);
+		ConstIterator iter = pvFind(key);
 		if (!!iter)
 		{
 			size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
@@ -948,7 +948,7 @@ private:
 	{
 		try
 		{
-			return iter == Find(ItemTraits::GetKey(*iter));
+			return iter == pvFind(ItemTraits::GetKey(*iter));
 		}
 		catch (...)
 		{
@@ -1011,7 +1011,7 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
-		ConstIterator iter = Find(key);
+		ConstIterator iter = pvFind(key);
 		if (!!iter)
 			return { iter, false };
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
