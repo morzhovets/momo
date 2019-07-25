@@ -213,8 +213,9 @@ public:
 	{
 	}
 
-	TreeMap(std::initializer_list<std::pair<Key, Value>> pairs,
-		const TreeTraits& treeTraits = TreeTraits(), MemManager&& memManager = MemManager())
+	template<typename Pair = std::pair<Key, Value>>
+	TreeMap(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits = TreeTraits(),
+		MemManager&& memManager = MemManager())
 		: TreeMap(treeTraits, std::move(memManager))
 	{
 		Insert(pairs);
@@ -494,7 +495,8 @@ public:
 		return count;
 	}
 
-	size_t Insert(std::initializer_list<std::pair<Key, Value>> pairs)	//?
+	template<typename Pair = std::pair<Key, Value>>
+	size_t Insert(std::initializer_list<Pair> pairs)
 	{
 		return Insert(pairs.begin(), pairs.end());
 	}

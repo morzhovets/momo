@@ -195,8 +195,9 @@ public:
 	{
 	}
 
-	HashMap(std::initializer_list<std::pair<Key, Value>> pairs,
-		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+	template<typename Pair = std::pair<Key, Value>>
+	HashMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits = HashTraits(),
+		MemManager&& memManager = MemManager())
 		: HashMap(hashTraits, std::move(memManager))
 	{
 		Insert(pairs);
@@ -435,7 +436,8 @@ public:
 		return count;
 	}
 
-	size_t Insert(std::initializer_list<std::pair<Key, Value>> pairs)	//?
+	template<typename Pair = std::pair<Key, Value>>
+	size_t Insert(std::initializer_list<Pair> pairs)
 	{
 		return Insert(pairs.begin(), pairs.end());
 	}

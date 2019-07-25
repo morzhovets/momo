@@ -704,8 +704,9 @@ public:
 	{
 	}
 
-	HashMultiMap(std::initializer_list<std::pair<Key, Value>> pairs,
-		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+	template<typename Pair = std::pair<Key, Value>>
+	HashMultiMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits = HashTraits(),
+		MemManager&& memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
 		try
@@ -1002,7 +1003,8 @@ public:
 		}
 	}
 
-	void Add(std::initializer_list<std::pair<Key, Value>> pairs)	//?
+	template<typename Pair = std::pair<Key, Value>>
+	void Add(std::initializer_list<Pair> pairs)
 	{
 		Add(pairs.begin(), pairs.end());
 	}
