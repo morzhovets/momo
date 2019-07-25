@@ -48,6 +48,32 @@ namespace stdish
 
 namespace internal
 {
+	template<typename TKey, typename TLessFunc>
+	class map_value_compare
+	{
+	protected:
+		typedef TKey Key;
+		typedef TLessFunc LessFunc;
+
+	public:
+		template<typename Value>
+		bool operator()(const Value& value1, const Value& value2) const
+		{
+			MOMO_STATIC_ASSERT((std::is_same<Key,
+				typename std::decay<decltype(value1.first)>::type>::value));
+			return comp(value1.first, value2.first);
+		}
+
+	protected:
+		map_value_compare(const LessFunc& lessFunc)
+			: comp(lessFunc)
+		{
+		}
+
+	protected:
+		LessFunc comp;
+	};
+
 	template<typename TKey, typename TMapped,
 		typename TLessFunc = std::less<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
@@ -75,23 +101,7 @@ namespace internal
 
 		typedef std::pair<const key_type, mapped_type> value_type;
 
-		class value_compare
-		{
-		public:
-			bool operator()(const value_type& value1, const value_type& value2) const
-			{
-				return comp(value1.first, value2.first);
-			}
-
-		protected:
-			value_compare(const key_compare& keyComp)
-				: comp(keyComp)
-			{
-			}
-
-		protected:
-			key_compare comp;
-		};
+		typedef map_value_compare<key_type, key_compare> value_compare;
 
 		typedef momo::internal::MapReferenceStd<key_type, mapped_type,
 			typename TreeMapIterator::Reference> reference;
