@@ -1126,17 +1126,16 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter)));
 	}
 
-	void CheckIterator(ConstIterator iter) const
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		if (!iter)
-			return;
-		CheckKeyIterator(iter.GetKeyIterator());
-		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
+		CheckKeyIterator(iter.GetKeyIterator(), allowEmpty);
+		if (!!iter)
+			ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 	}
 
-	void CheckKeyIterator(ConstKeyIterator keyIter) const
+	void CheckKeyIterator(ConstKeyIterator keyIter, bool allowEmpty = true) const
 	{
-		mHashMap.CheckIterator(ConstKeyIteratorProxy::GetBaseIterator(keyIter));
+		mHashMap.CheckIterator(ConstKeyIteratorProxy::GetBaseIterator(keyIter), allowEmpty);
 	}
 
 private:

@@ -634,9 +634,9 @@ public:
 		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
 	}
 
-	void CheckIterator(ConstIterator iter) const
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		mTreeSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter));
+		mTreeSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter), allowEmpty);
 	}
 
 private:

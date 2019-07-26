@@ -590,9 +590,9 @@ public:
 		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
 	}
 
-	void CheckIterator(ConstIterator iter) const
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		mHashSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter));
+		mHashSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter), allowEmpty);
 	}
 
 private:

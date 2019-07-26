@@ -941,9 +941,9 @@ public:
 			pvMergeToLinear(dstTreeSet);
 	}
 
-	void CheckIterator(ConstIterator iter) const
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), true);
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), allowEmpty);
 	}
 
 private:
