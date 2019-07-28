@@ -195,7 +195,8 @@ public:
 		map.Shrink();
 		std::pair<std::string, std::string> pair("s4", s4);
 		map.Insert(&pair, &pair + 1);
-		map.Insert(map.Find(s2), std::next(map.Find(s2)));	//?
+		typename HashMap::Iterator iter3 = map.Find(s2);
+		map.Insert(iter3, std::next(iter3));	//?
 		assert(map.GetCount() == 3);
 		map.Remove(s4);
 		for (auto ref : map)

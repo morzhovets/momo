@@ -120,6 +120,7 @@ private:
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
+	typedef typename HashSet::ConstPosition HashSetConstPosition;
 	typedef typename HashSetConstIterator::Reference HashSetConstReference;
 
 	typedef internal::MapReference<Key, Value, HashSetConstReference> Reference;
@@ -136,7 +137,10 @@ public:
 	typedef internal::HashDerivedIterator<HashSetConstIterator, Reference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::InsertResult<Iterator> InsertResult;
+	typedef internal::HashDerivedPosition<HashSetConstPosition, Iterator> Position;
+	typedef typename Position::ConstPosition ConstPosition;
+
+	typedef internal::InsertResult<Position> InsertResult;
 
 	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
 	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
@@ -167,6 +171,17 @@ private:
 	struct IteratorProxy : public Iterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+	};
+
+	struct ConstPositionProxy : public ConstPosition
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBasePosition, HashSetConstPosition)
+	};
+
+	struct PositionProxy : public Position
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
 	struct ExtractedPairProxy : private ExtractedPair
@@ -309,50 +324,50 @@ public:
 		mHashSet.Shrink();
 	}
 
-	ConstIterator Find(const Key& key) const
+	ConstPosition Find(const Key& key) const
 	{
-		return ConstIteratorProxy(mHashSet.Find(key));
+		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
-	Iterator Find(const Key& key)
+	Position Find(const Key& key)
 	{
-		return IteratorProxy(mHashSet.Find(key));
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
-	{
-		return ConstIteratorProxy(mHashSet.Find(key));
+		return PositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key)
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key) const
 	{
-		return IteratorProxy(mHashSet.Find(key));
-	}
-
-	ConstIterator Find(const Key& key, size_t hashCode) const
-	{
-		return ConstIteratorProxy(mHashSet.Find(key, hashCode));
-	}
-
-	Iterator Find(const Key& key, size_t hashCode)
-	{
-		return IteratorProxy(mHashSet.Find(key, hashCode));
+		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key,
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(const KeyArg& key)
+	{
+		return PositionProxy(mHashSet.Find(key));
+	}
+
+	ConstPosition Find(const Key& key, size_t hashCode) const
+	{
+		return ConstPositionProxy(mHashSet.Find(key, hashCode));
+	}
+
+	Position Find(const Key& key, size_t hashCode)
+	{
+		return PositionProxy(mHashSet.Find(key, hashCode));
+	}
+
+	template<typename KeyArg>
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key,
 		size_t hashCode) const
 	{
-		return ConstIteratorProxy(mHashSet.Find(key, hashCode));
+		return ConstPositionProxy(mHashSet.Find(key, hashCode));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key,
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(const KeyArg& key,
 		size_t hashCode)
 	{
-		return IteratorProxy(mHashSet.Find(key, hashCode));
+		return PositionProxy(mHashSet.Find(key, hashCode));
 	}
 
 	bool ContainsKey(const Key& key) const
@@ -416,7 +431,7 @@ public:
 	{
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { IteratorProxy(res.iterator), res.inserted };
+		return { PositionProxy(res.iterator), res.inserted };
 	}
 
 	template<typename ArgIterator>
@@ -443,80 +458,80 @@ public:
 	}
 
 	template<typename PairCreator, bool extraCheck = true>
-	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
+	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 		{
 			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
-		return IteratorProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetBaseIterator(iter), std::move(itemCreator)));
+		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+			ConstPositionProxy::GetBasePosition(pos), std::move(itemCreator)));
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
-	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator&& valueCreator)
+	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator&& valueCreator)
 	{
-		return pvAdd<extraCheck>(iter, std::move(key), std::forward<ValueCreator>(valueCreator));
+		return pvAdd<extraCheck>(pos, std::move(key), std::forward<ValueCreator>(valueCreator));
 	}
 
 	template<typename... ValueArgs>
-	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
+	Position AddVar(ConstPosition pos, Key&& key, ValueArgs&&... valueArgs)
 	{
-		return AddCrt(iter, std::move(key),
+		return AddCrt(pos, std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
-	Iterator Add(ConstIterator iter, Key&& key, Value&& value)
+	Position Add(ConstPosition pos, Key&& key, Value&& value)
 	{
-		return AddVar(iter, std::move(key), std::move(value));
+		return AddVar(pos, std::move(key), std::move(value));
 	}
 
-	Iterator Add(ConstIterator iter, Key&& key, const Value& value)
+	Position Add(ConstPosition pos, Key&& key, const Value& value)
 	{
-		return AddVar(iter, std::move(key), value);
+		return AddVar(pos, std::move(key), value);
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
-	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator&& valueCreator)
+	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator&& valueCreator)
 	{
-		return pvAdd<extraCheck>(iter, key, std::forward<ValueCreator>(valueCreator));
+		return pvAdd<extraCheck>(pos, key, std::forward<ValueCreator>(valueCreator));
 	}
 
 	template<typename... ValueArgs>
-	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
+	Position AddVar(ConstPosition pos, const Key& key, ValueArgs&&... valueArgs)
 	{
-		return AddCrt(iter, key,
+		return AddCrt(pos, key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
-	Iterator Add(ConstIterator iter, const Key& key, Value&& value)
+	Position Add(ConstPosition pos, const Key& key, Value&& value)
 	{
-		return AddVar(iter, key, std::move(value));
+		return AddVar(pos, key, std::move(value));
 	}
 
-	Iterator Add(ConstIterator iter, const Key& key, const Value& value)
+	Position Add(ConstPosition pos, const Key& key, const Value& value)
 	{
-		return AddVar(iter, key, value);
+		return AddVar(pos, key, value);
 	}
 
-	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
+	Position Add(ConstPosition pos, ExtractedPair&& extPair)
 	{
-		return IteratorProxy(mHashSet.Add(ConstIteratorProxy::GetBaseIterator(iter),
+		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetBasePosition(pos),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		Iterator iter = Find(static_cast<const Key&>(key));
-		return !!iter ? ValueReferencer::template GetReference<Key&&>(*this, iter)
-			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
+		Position pos = Find(static_cast<const Key&>(key));
+		return !!pos ? ValueReferencer::template GetReference<Key&&>(*this, pos)
+			: ValueReferencer::template GetReference<Key&&>(*this, pos, std::move(key));
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		Iterator iter = Find(key);
-		return !!iter ? ValueReferencer::template GetReference<const Key&>(*this, iter)
-			: ValueReferencer::template GetReference<const Key&>(*this, iter, key);
+		Position pos = Find(key);
+		return !!pos ? ValueReferencer::template GetReference<const Key&>(*this, pos)
+			: ValueReferencer::template GetReference<const Key&>(*this, pos, key);
 	}
 
 	Iterator Remove(ConstIterator iter)
@@ -535,15 +550,15 @@ public:
 		return mHashSet.Remove(key);
 	}
 
-	ExtractedPair Extract(ConstIterator iter)
+	ExtractedPair Extract(ConstPosition pos)
 	{
-		return ExtractedPair(*this, iter);	// need RVO for exception safety
+		return ExtractedPair(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety
 	}
 
 	template<typename KeyArg, bool extraCheck = true>
-	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
+	void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 	{
-		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetBaseIterator(iter),
+		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstPositionProxy::GetBasePosition(pos),
 			std::forward<KeyArg>(keyArg));
 	}
 
@@ -579,9 +594,9 @@ public:
 		return mHashSet.GetBucketIndex(key);
 	}
 
-	ConstIterator MakeIterator(size_t hashCode) const noexcept
+	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return ConstIteratorProxy(mHashSet.MakeIterator(hashCode));
+		return ConstPositionProxy(mHashSet.MakePosition(hashCode));
 	}
 
 	Iterator MakeMutableIterator(ConstIterator iter)
@@ -599,16 +614,16 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Iterator iter = Find(static_cast<const Key&>(key));
-		if (!!iter)
-			return { iter, false };
-		iter = pvAdd<false>(iter, std::forward<RKey>(key),
+		Position pos = Find(static_cast<const Key&>(key));
+		if (!!pos)
+			return { pos, false };
+		pos = pvAdd<false>(pos, std::forward<RKey>(key),
 			std::forward<ValueCreator>(valueCreator));
-		return { iter, true };
+		return { pos, true };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
-	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator&& valueCreator)
+	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
@@ -616,8 +631,8 @@ private:
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
 		};
-		return IteratorProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetBaseIterator(iter), std::move(itemCreator)));
+		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+			ConstPositionProxy::GetBasePosition(pos), std::move(itemCreator)));
 	}
 
 private:

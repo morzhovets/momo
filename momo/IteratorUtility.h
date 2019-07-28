@@ -98,6 +98,24 @@
 		return !!*this; \
 	}
 
+#define MOMO_MORE_HASH_POSITION_OPERATORS(Position) \
+	Reference operator*() const \
+	{ \
+		return *operator->(); \
+	} \
+	bool operator!=(ConstPosition pos) const noexcept \
+	{ \
+		return !(*this == pos); \
+	} \
+	bool operator!() const noexcept \
+	{ \
+		return *this == ConstPosition(); \
+	} \
+	explicit operator bool() const noexcept \
+	{ \
+		return !!*this; \
+	}
+
 #define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
@@ -406,6 +424,93 @@ namespace internal
 
 	private:
 		BaseIterator mBaseIterator;
+	};
+
+	template<typename TBasePosition, typename TIterator>
+	class HashDerivedPosition
+	{
+	protected:
+		typedef TBasePosition BasePosition;
+
+	public:
+		typedef TIterator Iterator;
+
+		typedef typename Iterator::Reference Reference;
+		typedef IteratorPointer<Reference> Pointer;
+
+		typedef HashDerivedPosition<typename BasePosition::ConstPosition,
+			typename ConstIteratorSelector<Iterator>::ConstIterator> ConstPosition;
+
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
+		struct ConstPositionProxy : public ConstPosition
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBasePosition,
+				typename ConstPosition::BasePosition)
+		};
+
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, typename Iterator::BaseIterator)
+		};
+
+	public:
+		explicit HashDerivedPosition() noexcept
+			: mBasePosition()
+		{
+		}
+
+		template<typename ArgIterator,
+			typename = EnableIf<std::is_convertible<ArgIterator, Iterator>::value>>
+		HashDerivedPosition(ArgIterator iter) noexcept
+			: mBasePosition(IteratorProxy::GetBaseIterator(static_cast<Iterator>(iter)))
+		{
+		}
+
+		operator ConstPosition() const noexcept
+		{
+			return ConstPositionProxy(mBasePosition);
+		}
+
+		template<typename ResIterator,
+			typename = EnableIf<std::is_convertible<Iterator, ResIterator>::value>>
+		operator ResIterator() const noexcept
+		{
+			Iterator iter = IteratorProxy(mBasePosition);
+			return static_cast<ResIterator>(iter);
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(ReferenceProxy(*mBasePosition));
+		}
+
+		bool operator==(ConstPosition iter) const noexcept
+		{
+			return mBasePosition == ConstPositionProxy::GetBasePosition(iter);
+		}
+
+		MOMO_MORE_HASH_POSITION_OPERATORS(HashDerivedPosition)
+
+	protected:
+		explicit HashDerivedPosition(BasePosition pos) noexcept
+			: mBasePosition(pos)
+		{
+		}
+
+		BasePosition ptGetBasePosition() const noexcept
+		{
+			return mBasePosition;
+		}
+
+	private:
+		BasePosition mBasePosition;
 	};
 
 	template<typename TBaseIterator, typename TReference>

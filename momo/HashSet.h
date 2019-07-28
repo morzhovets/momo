@@ -190,47 +190,39 @@ namespace internal
 		};
 	};
 
-	template<typename TBuckets, typename TSettings>
-	class HashSetConstIterator : private VersionKeeper<TSettings>
+	template<typename TBucket, typename TSettings>
+	class HashSetConstIterator;
+
+	template<typename TBucket, typename TSettings>
+	class HashSetConstPosition : private VersionKeeper<TSettings>
 	{
 	protected:
-		typedef TBuckets Buckets;
+		typedef TBucket Bucket;
 		typedef TSettings Settings;
-		typedef typename Buckets::Bucket Bucket;
+
+		typedef typename Bucket::Iterator BucketIterator;
+
+	private:
 		typedef typename Bucket::Item Item;
+
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
-		typedef HashSetConstIterator ConstIterator;
+		typedef HashSetConstPosition ConstPosition;
 
-	private:
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
-
-		typedef typename Bucket::Iterator BucketIterator;
-		typedef typename Bucket::Bounds BucketBounds;
+		typedef HashSetConstIterator<Bucket, Settings> Iterator;
 
 	public:
-		explicit HashSetConstIterator() noexcept
+		explicit HashSetConstPosition() noexcept
 			: mBucketIterator(),
-			mIndexCode(0),
-			mBuckets(nullptr)
+			mIndexCode(0)
 		{
 		}
 
-		//operator ConstIterator() const noexcept
-
-		HashSetConstIterator& operator++()
-		{
-			VersionKeeper::Check();
-			MOMO_CHECK(mBucketIterator != BucketIterator());
-			if (ptIsMovable())
-				pvInc();
-			else
-				*this = HashSetConstIterator();
-			return *this;
-		}
+		//operator ConstPosition() const noexcept
 
 		Pointer operator->() const
 		{
@@ -239,42 +231,25 @@ namespace internal
 			return std::addressof(*mBucketIterator);
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		bool operator==(ConstPosition pos) const noexcept
 		{
-			return mBucketIterator == iter.mBucketIterator;
+			return mBucketIterator == pos.mBucketIterator;
 		}
 
-		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
+		MOMO_MORE_HASH_POSITION_OPERATORS(HashSetConstPosition)
 
 	protected:
-		explicit HashSetConstIterator(Buckets& buckets, size_t bucketIndex,
-			BucketIterator bucketIter, const size_t* version) noexcept
-			: VersionKeeper(version),
-			mBucketIterator(bucketIter),
-			mIndexCode(bucketIndex),
-			mBuckets(&buckets)
-		{
-			pvInc();
-		}
-
-		explicit HashSetConstIterator(size_t indexCode, BucketIterator bucketIter,
+		explicit HashSetConstPosition(size_t indexCode, BucketIterator bucketIter,
 			const size_t* version) noexcept
 			: VersionKeeper(version),
 			mBucketIterator(bucketIter),
-			mIndexCode(indexCode),
-			mBuckets(nullptr)
+			mIndexCode(indexCode)
 		{
-		}
-
-		bool ptIsMovable() const noexcept
-		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator());
-			return mBuckets != nullptr;
 		}
 
 		size_t ptGetBucketIndex() const noexcept
 		{
-			MOMO_ASSERT(mBucketIterator != BucketIterator());
+			//MOMO_ASSERT(mBucketIterator != BucketIterator());	//?
 			return mIndexCode;
 		}
 
@@ -294,11 +269,97 @@ namespace internal
 			VersionKeeper::Check(version, allowEmpty);
 		}
 
+		void ptReset(size_t bucketIndex, BucketIterator bucketIter) noexcept
+		{
+			mIndexCode = bucketIndex;
+			mBucketIterator = bucketIter;
+		}
+
+	private:
+		BucketIterator mBucketIterator;
+		size_t mIndexCode;
+	};
+
+	template<typename TBucket, typename TSettings>
+	class HashSetConstIterator : public HashSetConstPosition<TBucket, TSettings>
+	{
+	public:
+		typedef HashSetConstPosition<TBucket, TSettings> Position;
+
+	protected:
+		using typename Position::Bucket;
+		using typename Position::Settings;
+
+		using typename Position::BucketIterator;
+
+		typedef HashSetBuckets<Bucket> Buckets;
+
+	public:
+		using typename Position::Reference;
+		using typename Position::Pointer;
+
+		typedef HashSetConstIterator ConstIterator;
+
+	private:
+		//using typename Position::ConstPosition;
+		using typename Position::Iterator;	//?
+
+		typedef typename Bucket::Bounds BucketBounds;
+
+	public:
+		explicit HashSetConstIterator() noexcept
+			: mBuckets(nullptr)
+		{
+		}
+
+		HashSetConstIterator(Position pos) noexcept
+			: Position(pos),
+			mBuckets(nullptr)
+		{
+		}
+
+		//operator ConstIterator() const noexcept
+
+		HashSetConstIterator& operator++()
+		{
+			Position::operator->();	// check
+			if (ptIsMovable())
+				pvInc();
+			else
+				*this = HashSetConstIterator();
+			return *this;
+		}
+
+		//MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
+		HashSetConstIterator operator++(int)
+		{
+			HashSetConstIterator tempIter = *this;
+			++*this;
+			return tempIter;
+		}
+
+	protected:
+		explicit HashSetConstIterator(Buckets& buckets, size_t bucketIndex,
+			BucketIterator bucketIter, const size_t* version) noexcept
+			: Position(bucketIndex, bucketIter, version),
+			mBuckets(&buckets)
+		{
+			pvInc();
+		}
+
+		bool ptIsMovable() const noexcept
+		{
+			MOMO_ASSERT(Position::ptGetBucketIterator() != BucketIterator());
+			return mBuckets != nullptr;
+		}
+
 	private:
 		void pvInc() noexcept
 		{
-			if (mBucketIterator != pvGetBucketBounds(mIndexCode).GetBegin())
-				--mBucketIterator;
+			BucketIterator bucketIter = Position::ptGetBucketIterator();
+			size_t bucketIndex = Position::ptGetBucketIndex();
+			if (bucketIter != pvGetBucketBounds(bucketIndex).GetBegin())
+				Position::ptReset(bucketIndex, std::prev(bucketIter));
 			else
 				pvMove();
 		}
@@ -306,7 +367,7 @@ namespace internal
 		void pvMove() noexcept
 		{
 			size_t bucketCount = mBuckets->GetCount();
-			size_t bucketIndex = mIndexCode;
+			size_t bucketIndex = Position::ptGetBucketIndex();
 			while (true)
 			{
 				++bucketIndex;
@@ -315,8 +376,7 @@ namespace internal
 				BucketBounds bounds = pvGetBucketBounds(bucketIndex);
 				if (bounds.GetCount() > 0)
 				{
-					mIndexCode = bucketIndex;
-					mBucketIterator = std::prev(bounds.GetEnd());
+					Position::ptReset(bucketIndex, std::prev(bounds.GetEnd()));
 					return;
 				}
 			}
@@ -324,8 +384,7 @@ namespace internal
 			if (nextBuckets != nullptr)
 			{
 				mBuckets = nextBuckets;
-				mIndexCode = 0;
-				mBucketIterator = pvGetBucketBounds(0).GetEnd();
+				Position::ptReset(0, pvGetBucketBounds(0).GetEnd());
 				return pvInc();	//?
 			}
 			*this = HashSetConstIterator();
@@ -337,8 +396,6 @@ namespace internal
 		}
 
 	private:
-		BucketIterator mBucketIterator;
-		size_t mIndexCode;
 		Buckets* mBuckets;
 	};
 
@@ -437,10 +494,13 @@ private:
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
 public:
-	typedef internal::HashSetConstIterator<Buckets, Settings> ConstIterator;
+	typedef internal::HashSetConstIterator<Bucket, Settings> ConstIterator;
 	typedef ConstIterator Iterator;	//?
 
-	typedef internal::InsertResult<ConstIterator> InsertResult;
+	typedef typename ConstIterator::Position ConstPosition;
+	typedef ConstPosition Position;
+
+	typedef internal::InsertResult<ConstPosition> InsertResult;
 
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
@@ -470,10 +530,15 @@ private:
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable, bool)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBucketIndex, size_t)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetHashCode, size_t)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBucketIterator, BucketIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
+	};
+
+	struct ConstPositionProxy : public ConstPosition
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex, size_t)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode, size_t)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator, BucketIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check, void)
 	};
 
 public:
@@ -676,24 +741,24 @@ public:
 		HashSet(*this).Swap(*this);
 	}
 
-	ConstIterator Find(const Key& key) const
+	ConstPosition Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
 
-	ConstIterator Find(const Key& key, size_t hashCode) const
+	ConstPosition Find(const Key& key, size_t hashCode) const
 	{
 		return pvFind(key, hashCode);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key,
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key,
 		size_t hashCode) const
 	{
 		return pvFind(key, hashCode);
@@ -764,29 +829,29 @@ public:
 	}
 
 	template<typename ItemCreator, bool extraCheck = true>
-	ConstIterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
+	ConstPosition AddCrt(ConstPosition pos, ItemCreator&& itemCreator)
 	{
-		return pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
+		return pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
-	ConstIterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
+	ConstPosition AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(iter,
+		return AddCrt(pos,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
-	ConstIterator Add(ConstIterator iter, Item&& item)
+	ConstPosition Add(ConstPosition pos, Item&& item)
 	{
-		return AddVar(iter, std::move(item));
+		return AddVar(pos, std::move(item));
 	}
 
-	ConstIterator Add(ConstIterator iter, const Item& item)
+	ConstPosition Add(ConstPosition pos, const Item& item)
 	{
-		return AddVar(iter, item);
+		return AddVar(pos, item);
 	}
 
-	ConstIterator Add(ConstIterator iter, ExtractedItem&& extItem)
+	ConstPosition Add(ConstPosition pos, ExtractedItem&& extItem)
 	{
 		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
@@ -796,7 +861,7 @@ public:
 				{ ItemTraits::Relocate(&memManager, item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return AddCrt(iter, itemCreator);
+		return AddCrt(pos, itemCreator);
 	}
 
 	ConstIterator Remove(ConstIterator iter)
@@ -818,26 +883,26 @@ public:
 
 	bool Remove(const Key& key)
 	{
-		ConstIterator iter = pvFind(key);
-		if (!iter)
+		ConstPosition pos = pvFind(key);
+		if (!pos)
 			return false;
-		Remove(iter);
+		Remove(static_cast<ConstIterator>(pos));
 		return true;
 	}
 
-	ExtractedItem Extract(ConstIterator iter)
+	ExtractedItem Extract(ConstPosition pos)
 	{
-		return ExtractedItem(*this, iter);	// need RVO for exception safety
+		return ExtractedItem(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety
 	}
 
 	template<typename KeyArg, bool extraCheck = true>
-	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
+	void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
+		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
+		BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
 		MOMO_CHECK(bucketIter != BucketIterator());
 		ItemTraits::AssignKey(GetMemManager(), std::forward<KeyArg>(keyArg), *bucketIter);
-		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(iter));
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(pos));
 	}
 
 	template<typename RSet>
@@ -888,11 +953,11 @@ public:
 	size_t GetBucketIndex(const Key& key) const
 	{
 		MOMO_CHECK(mBuckets != nullptr);
-		ConstIterator iter = pvFind(key);
-		if (!!iter)
+		ConstPosition pos = pvFind(key);
+		if (!!pos)
 		{
-			size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
-			BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
+			size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
+			BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
 			Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
 			for (Buckets* bkts = mBuckets; bkts != buckets; bkts = bkts->GetNextBuckets())
 				bucketIndex += bkts->GetCount();
@@ -900,19 +965,20 @@ public:
 		}
 		else
 		{
-			size_t hashCode = ConstIteratorProxy::GetHashCode(iter);
+			size_t hashCode = ConstPositionProxy::GetHashCode(pos);
 			return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());	//?
 		}
 	}
 
-	ConstIterator MakeIterator(size_t hashCode) const noexcept
+	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return ConstIteratorProxy(hashCode, BucketIterator(), mCrew.GetVersion());
+		return ConstPositionProxy(hashCode, BucketIterator(), mCrew.GetVersion());
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), allowEmpty);
+		ConstPosition pos = iter;
+		ConstPositionProxy::Check(pos, mCrew.GetVersion(), allowEmpty);
 	}
 
 private:
@@ -944,11 +1010,11 @@ private:
 		return logBucketCount + shift;
 	}
 
-	bool pvExtraCheck(ConstIterator iter) const noexcept
+	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
 		try
 		{
-			return iter == pvFind(ItemTraits::GetKey(*iter));
+			return pos == pvFind(ItemTraits::GetKey(*pos));
 		}
 		catch (...)
 		{
@@ -958,18 +1024,18 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvFind(const KeyArg& key) const
+	ConstPosition pvFind(const KeyArg& key) const
 	{
 		size_t hashCode = GetHashTraits().GetHashCode(key);
 		return pvFind(key, hashCode);
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvFind(const KeyArg& key, size_t hashCode) const
+	ConstPosition pvFind(const KeyArg& key, size_t hashCode) const
 	{
 		size_t indexCode = hashCode;
 		BucketIterator bucketIter = pvFind(key, &indexCode);
-		return ConstIteratorProxy(indexCode, bucketIter, mCrew.GetVersion());
+		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
 	template<typename KeyArg>
@@ -1011,19 +1077,19 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
-		ConstIterator iter = pvFind(key);
-		if (!!iter)
-			return { iter, false };
-		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
-		return { iter, true };
+		ConstPosition pos = pvFind(key);
+		if (!!pos)
+			return { pos, false };
+		pos = pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
+		return { pos, true };
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	ConstIterator pvAdd(ConstIterator iter, ItemCreator&& itemCreator)
+	ConstPosition pvAdd(ConstPosition pos, ItemCreator&& itemCreator)
 	{
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		MOMO_CHECK(ConstIteratorProxy::GetBucketIterator(iter) == BucketIterator());
-		size_t hashCode = ConstIteratorProxy::GetHashCode(iter);
+		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
+		MOMO_CHECK(ConstPositionProxy::GetBucketIterator(pos) == BucketIterator());
+		size_t hashCode = ConstPositionProxy::GetHashCode(pos);
 		ItemPosition itemPos;
 		if (mCount < mCapacity)
 			itemPos = pvAddNogrow(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
@@ -1041,10 +1107,10 @@ private:
 		}
 		++mCount;
 		mCrew.IncVersion();
-		ConstIterator resIter = ConstIteratorProxy(itemPos.bucketIndex, itemPos.bucketIterator,
+		ConstPosition resPos = ConstPositionProxy(itemPos.bucketIndex, itemPos.bucketIterator,
 			mCrew.GetVersion());
-		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resIter));
-		return resIter;
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
+		return resPos;
 	}
 
 	template<typename ItemCreator>
@@ -1112,10 +1178,11 @@ private:
 	ConstIterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
 	{
 		MOMO_CHECK(mBuckets != nullptr);
-		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
-		BucketIterator bucketIter = ConstIteratorProxy::GetBucketIterator(iter);
+		ConstPosition pos = iter;
+		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
+		BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
 		MOMO_CHECK(bucketIter != BucketIterator());
-		size_t bucketIndex = ConstIteratorProxy::GetBucketIndex(iter);
+		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
 		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
 		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, itemReplacer);
