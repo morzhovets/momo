@@ -125,8 +125,6 @@ private:
 
 	typedef internal::MapReference<Key, Value, HashSetConstReference> Reference;
 
-	typedef internal::MapValueReferencer<HashMap> ValueReferencer;
-
 	typedef typename HashSet::ExtractedItem HashSetExtractedItem;
 
 	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
@@ -142,9 +140,6 @@ public:
 
 	typedef internal::InsertResult<Position> InsertResult;
 
-	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
-	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
-
 	typedef internal::MapExtractedPair<HashSetExtractedItem> ExtractedPair;
 
 	typedef internal::HashDerivedBucketBounds<BucketIterator,
@@ -152,6 +147,13 @@ public:
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
+
+private:
+	typedef internal::MapValueReferencer<HashMap, Position> ValueReferencer;
+
+public:
+	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
+	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
 
 private:
 	template<typename... ValueArgs>

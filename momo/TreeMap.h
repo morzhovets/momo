@@ -162,8 +162,6 @@ private:
 
 	typedef internal::MapReference<Key, Value, TreeSetConstReference> Reference;
 
-	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
-
 	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
 
 public:
@@ -172,10 +170,14 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
+	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
+
+private:
+	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
+
+public:
 	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
 	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
-
-	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
 
 private:
 	template<typename... ValueArgs>

@@ -616,13 +616,13 @@ namespace internal
 		}
 	};
 
-	template<typename TMap>
+	template<typename TMap,
+		typename TIterator = typename TMap::Iterator>
 	class MapValueReferencer
 	{
 	public:
 		typedef TMap Map;
-
-		typedef typename Map::Iterator Iterator;
+		typedef TIterator Iterator;
 
 	private:
 		typedef typename Map::Value Value;
@@ -649,7 +649,7 @@ namespace internal
 
 			ValueReference(const ValueReference& valueRef) noexcept
 				: mMap(valueRef.mMap),
-				mIter(valueRef.mIter),
+				mIterator(valueRef.mIterator),
 				mKeyPtr(valueRef.mKeyPtr)
 			{
 			}
@@ -677,20 +677,20 @@ namespace internal
 			Value& Get()
 			{
 				MOMO_CHECK(mKeyPtr == nullptr);
-				return mIter->value;
+				return mIterator->value;
 			}
 
 		protected:
 			explicit ValueReference(Map& map, Iterator iter) noexcept
 				: mMap(map),
-				mIter(iter),
+				mIterator(iter),
 				mKeyPtr(nullptr)
 			{
 			}
 
 			explicit ValueReference(Map& map, Iterator iter, KeyReference keyRef) noexcept
 				: mMap(map),
-				mIter(iter),
+				mIterator(iter),
 				mKeyPtr(std::addressof(keyRef))
 			{
 			}
@@ -702,13 +702,13 @@ namespace internal
 				if (mKeyPtr == nullptr)
 				{
 					KeyValueTraits::AssignValue(mMap.GetMemManager(),
-						std::forward<ValueArg>(valueArg), mIter->value);
+						std::forward<ValueArg>(valueArg), mIterator->value);
 				}
 				else
 				{
 					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
 						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
-					mIter = mMap.AddCrt(mIter, std::forward<KeyReference>(*mKeyPtr),
+					mIterator = mMap.AddCrt(mIterator, std::forward<KeyReference>(*mKeyPtr),
 						std::move(valueCreator));
 				}
 				mKeyPtr = nullptr;
@@ -717,7 +717,7 @@ namespace internal
 
 		private:
 			Map& mMap;
-			Iterator mIter;
+			Iterator mIterator;
 			KeyPointer mKeyPtr;
 		};
 
