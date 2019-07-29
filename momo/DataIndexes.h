@@ -767,7 +767,7 @@ namespace internal
 					}
 					if (rawCount == 0)
 					{
-						keyIter = mHashMultiMap.RemoveKey(keyIter).GetKeyIterator();
+						keyIter = mHashMultiMap.RemoveKey(keyIter);
 						continue;
 					}
 					mHashMultiMap.ResetKey(keyIter, raws[rawCount - 1]);

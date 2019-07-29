@@ -1063,7 +1063,7 @@ public:
 		return pvMakeIterator<Iterator, KeyIterator>(KeyIteratorProxy(std::next(hashMapIter)));
 	}
 
-	Iterator RemoveKey(ConstKeyIterator keyIter)
+	KeyIterator RemoveKey(ConstKeyIterator keyIter)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
@@ -1079,7 +1079,7 @@ public:
 			throw;
 		}
 		pvRemoveValues(tempValueArray);
-		return pvMakeIterator<Iterator, KeyIterator>(KeyIteratorProxy(hashMapIter));
+		return KeyIteratorProxy(hashMapIter);
 	}
 
 	size_t RemoveKey(const Key& key)
@@ -1099,12 +1099,12 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::forward<KeyArg>(keyArg));
 	}
 
-	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex) const
+	ConstIterator MakeIterator(ConstKeyIterator keyIter, size_t valueIndex = 0) const
 	{
 		return pvMakeIterator<ConstIterator>(keyIter, valueIndex);
 	}
 
-	Iterator MakeIterator(KeyIterator keyIter, size_t valueIndex)
+	Iterator MakeIterator(KeyIterator keyIter, size_t valueIndex = 0)
 	{
 		return pvMakeIterator<Iterator>(keyIter, valueIndex);
 	}
@@ -1168,10 +1168,12 @@ private:
 	template<typename Iterator, typename KeyIterator>
 	Iterator pvMakeIterator(KeyIterator keyIter, size_t valueIndex) const
 	{
+		if (!keyIter && valueIndex == 0)
+			return Iterator();
 		CheckKeyIterator(keyIter);
 		auto valueBounds = keyIter->values;
-		MOMO_CHECK(valueIndex < valueBounds.GetCount());
-		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, false);
+		MOMO_CHECK(valueIndex <= valueBounds.GetCount());
+		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, true);
 	}
 
 	template<typename RKey, typename ValueCreator>

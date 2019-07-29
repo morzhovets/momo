@@ -630,7 +630,7 @@ public:
 		typename HashMultiMap::ConstIterator iter = ConstIteratorProxy::GetBaseIterator(where);
 		typename HashMultiMap::ConstKeyIterator keyIter = iter.GetKeyIterator();
 		if (keyIter->values.GetCount() == 1)
-			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
+			return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 		else
 			return IteratorProxy(mHashMultiMap.Remove(iter));
 	}
@@ -658,8 +658,8 @@ public:
 			ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
 		size_t count = keyIter->values.GetCount();
 		MOMO_ASSERT(count > 0);
-		if (ConstIteratorProxy(std::next(mHashMultiMap.MakeIterator(keyIter, count - 1))) == last)
-			return IteratorProxy(mHashMultiMap.RemoveKey(keyIter));
+		if (last == ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, count)))
+			return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 		throw std::invalid_argument("invalid unordered_multimap erase arguments");
 	}
 
@@ -735,7 +735,7 @@ private:
 		if (count == 0)	//?
 			return { end, end };
 		Iterator first = IteratorProxy(hashMultiMap.MakeIterator(keyIter, 0));
-		Iterator last = IteratorProxy(std::next(hashMultiMap.MakeIterator(keyIter, count - 1)));
+		Iterator last = IteratorProxy(hashMultiMap.MakeIterator(keyIter, count));
 		return { first, last };
 	}
 
