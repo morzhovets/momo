@@ -936,12 +936,12 @@ private:
 		bool keyDestroyed = false;
 		try
 		{
-			HashMapIterator iter = mHashMap.Find(*&keyBuffer);
-			if (!!iter)
+			typename HashMap::Position pos = mHashMap.Find(*&keyBuffer);
+			if (!!pos)
 			{
 				KeyManager::Destroy(memManager, *&keyBuffer);
 				keyDestroyed = true;
-				return { IteratorProxy(iter), false };
+				return { IteratorProxy(pos), false };
 			}
 			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
 				(key_type* newKey, mapped_type* newMapped)
@@ -958,8 +958,8 @@ private:
 					throw;
 				}
 			};
-			HashMapIterator resIter = mHashMap.AddCrt(iter, valueCreator);
-			return { IteratorProxy(resIter), true };
+			typename HashMap::Position resPos = mHashMap.AddCrt(pos, valueCreator);
+			return { IteratorProxy(resPos), true };
 		}
 		catch (...)
 		{
@@ -1001,9 +1001,9 @@ private:
 				throw;
 			}
 		};
-		HashMapIterator resIter = mHashMap.AddCrt(
+		typename HashMap::Position resPos = mHashMap.AddCrt(
 			ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
-		return { IteratorProxy(resIter), true };
+		return { IteratorProxy(resPos), true };
 	}
 
 	template<typename RKey, typename MappedCreator,
@@ -1011,9 +1011,9 @@ private:
 	momo::internal::EnableIf<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
 	pvInsert(const_iterator hint, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
-		HashMapIterator resIter = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
+		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-		return { IteratorProxy(resIter), true };
+		return { IteratorProxy(resPos), true };
 	}
 #endif
 

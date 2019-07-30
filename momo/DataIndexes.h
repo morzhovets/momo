@@ -342,7 +342,7 @@ namespace internal
 			typedef momo::HashSet<Raw*, HashTraits, MemManagerPtr,
 				HashSetItemTraits<Raw*, Raw*, MemManagerPtr>, NestedHashSetSettings> HashSet;
 
-			typedef typename HashSet::ConstIterator Iterator;
+			typedef typename HashSet::ConstPosition Position;
 
 		public:
 			class RawBounds
@@ -391,8 +391,8 @@ namespace internal
 			UniqueHash(UniqueHash&& uniqueHash) noexcept
 				: mSortedOffsets(std::move(uniqueHash.mSortedOffsets)),
 				mHashSet(std::move(uniqueHash.mHashSet)),
-				mIteratorAdd(uniqueHash.mIteratorAdd),
-				mIteratorRemove(uniqueHash.mIteratorRemove)
+				mPositionAdd(uniqueHash.mPositionAdd),
+				mPositionRemove(uniqueHash.mPositionRemove)
 			{
 			}
 
@@ -437,73 +437,73 @@ namespace internal
 
 			Raw* Add(Raw* raw, Raw* oldRaw = nullptr)
 			{
-				MOMO_ASSERT(!mIteratorAdd);
+				MOMO_ASSERT(!mPositionAdd);
 				auto insRes = mHashSet.Insert(raw);
 				if (insRes.inserted || *insRes.iterator == oldRaw)
-					mIteratorAdd = insRes.iterator;
+					mPositionAdd = insRes.iterator;
 				return *insRes.iterator;
 			}
 
 			template<typename Item>
 			Raw* Add(HashMixedKey<Item> hashMixedKey)
 			{
-				MOMO_ASSERT(!mIteratorAdd);
-				Iterator iter = mHashSet.Find(hashMixedKey);
-				if (!!iter)
-					return *iter;
-				mIteratorAdd = mHashSet.Add(iter, hashMixedKey.raw);
+				MOMO_ASSERT(!mPositionAdd);
+				Position pos = mHashSet.Find(hashMixedKey);
+				if (!!pos)
+					return *pos;
+				mPositionAdd = mHashSet.Add(pos, hashMixedKey.raw);
 				return hashMixedKey.raw;
 			}
 
 			void RejectAdd() noexcept
 			{
-				if (!!mIteratorAdd)
-					mHashSet.Remove(mIteratorAdd);
-				mIteratorAdd = Iterator();
+				if (!!mPositionAdd)
+					mHashSet.Remove(mPositionAdd);
+				mPositionAdd = Position();
 			}
 
 			void RejectAdd(Raw* raw) noexcept
 			{
-				if (!!mIteratorAdd && *mIteratorAdd == raw)
-					mHashSet.Remove(mIteratorAdd);
-				mIteratorAdd = Iterator();
+				if (!!mPositionAdd && *mPositionAdd == raw)
+					mHashSet.Remove(mPositionAdd);
+				mPositionAdd = Position();
 			}
 
 			void AcceptAdd() noexcept
 			{
-				mIteratorAdd = Iterator();
+				mPositionAdd = Position();
 			}
 
 			void AcceptAdd(Raw* raw) noexcept
 			{
-				if (!!mIteratorAdd)
-					mHashSet.ResetKey(mIteratorAdd, raw);
-				mIteratorAdd = Iterator();
+				if (!!mPositionAdd)
+					mHashSet.ResetKey(mPositionAdd, raw);
+				mPositionAdd = Position();
 			}
 
 			void PrepareRemove(Raw* raw)
 			{
-				MOMO_ASSERT(!mIteratorRemove);
-				mIteratorRemove = mHashSet.Find(raw);
-				MOMO_ASSERT(!!mIteratorRemove);
+				MOMO_ASSERT(!mPositionRemove);
+				mPositionRemove = mHashSet.Find(raw);
+				MOMO_ASSERT(!!mPositionRemove);
 			}
 
 			void RejectRemove() noexcept
 			{
-				mIteratorRemove = Iterator();
+				mPositionRemove = Position();
 			}
 
 			void AcceptRemove() noexcept
 			{
-				if (!!mIteratorRemove)
-					mHashSet.Remove(mIteratorRemove);
-				mIteratorRemove = Iterator();
+				if (!!mPositionRemove)
+					mHashSet.Remove(mPositionRemove);
+				mPositionRemove = Position();
 			}
 
 			template<typename RawFilter>
 			void FilterRaws(RawFilter rawFilter) noexcept
 			{
-				Iterator iter = mHashSet.GetBegin();
+				auto iter = mHashSet.GetBegin();
 				while (!!iter)
 				{
 					if (rawFilter(*iter))
@@ -517,15 +517,15 @@ namespace internal
 			template<typename Key>
 			RawBounds pvFind(const Key& key) const
 			{
-				Iterator iter = mHashSet.Find(key);
-				return RawBounds(!!iter ? *iter : nullptr);
+				Position pos = mHashSet.Find(key);
+				return RawBounds(!!pos ? *pos : nullptr);
 			}
 
 		private:
 			Offsets mSortedOffsets;
 			HashSet mHashSet;
-			Iterator mIteratorAdd;
-			Iterator mIteratorRemove;
+			Position mPositionAdd;
+			Position mPositionRemove;
 		};
 
 		class MultiHash
