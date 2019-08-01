@@ -1045,8 +1045,6 @@ private:
 	HashMap mHashMap;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -1057,17 +1055,14 @@ class unordered_map_open : public unordered_map<TKey, TMapped, THashFunc, TEqual
 {
 private:
 	typedef unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-		HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+		momo::HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedMap;
 
 public:
 	using UnorderedMap::UnorderedMap;
-
-	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map) \
 template<typename Iterator, \
@@ -1129,16 +1124,6 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#else
-
-template<typename TKey, typename TMapped,
-	typename THashFunc = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_map_open = unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>;
 
 #endif
 

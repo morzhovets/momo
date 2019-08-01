@@ -720,8 +720,6 @@ private:
 	HashSet mHashSet;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -732,17 +730,14 @@ class unordered_set_open : public unordered_set<TKey, THashFunc, TEqualFunc, TAl
 {
 private:
 	typedef unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-		HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+		momo::HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedSet;
 
 public:
 	using UnorderedSet::UnorderedSet;
-
-	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
@@ -788,16 +783,6 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#else
-
-template<typename TKey,
-	typename THashFunc = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<TKey>>
-using unordered_set_open = unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>;
 
 #endif
 

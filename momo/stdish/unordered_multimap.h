@@ -798,8 +798,6 @@ private:
 	HashMultiMap mHashMultiMap;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -810,17 +808,14 @@ class unordered_multimap_open : public unordered_multimap<TKey, TMapped, THashFu
 {
 private:
 	typedef unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-		HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+		momo::HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedMultiMap;
 
 public:
 	using UnorderedMultiMap::UnorderedMultiMap;
-
-	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap) \
 template<typename Iterator, \
@@ -882,16 +877,6 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#else
-
-template<typename TKey, typename TMapped,
-	typename THashFunc = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_multimap_open = unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>;
 
 #endif
 
