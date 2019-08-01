@@ -493,14 +493,12 @@ public:
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		const_iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
-		iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	template<typename KeyArg>
@@ -508,29 +506,25 @@ public:
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{
-		const_iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	template<typename KeyArg>
 	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
 	equal_range(const KeyArg& key)
 	{
-		iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key,
 		size_t hashCode) const
 	{
-		const_iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	std::pair<iterator, iterator> equal_range(const key_type& key, size_t hashCode)
 	{
-		iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	template<typename KeyArg>
@@ -538,16 +532,14 @@ public:
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key, size_t hashCode) const
 	{
-		const_iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	template<typename KeyArg>
 	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
 	equal_range(const KeyArg& key, size_t hashCode)
 	{
-		iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	//template<typename Value>

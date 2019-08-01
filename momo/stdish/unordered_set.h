@@ -445,8 +445,7 @@ public:
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		const_iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
@@ -456,8 +455,7 @@ public:
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{
-		const_iterator iter = find(key);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key), end() };
 	}
 
 	//template<typename KeyArg>
@@ -467,8 +465,7 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key,
 		size_t hashCode) const
 	{
-		const_iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key, size_t hashCode)
@@ -478,8 +475,7 @@ public:
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key, size_t hashCode) const
 	{
-		const_iterator iter = find(key, hashCode);
-		return { iter, (iter != end()) ? std::next(iter) : iter };
+		return { find(key, hashCode), end() };
 	}
 
 	//template<typename KeyArg>
