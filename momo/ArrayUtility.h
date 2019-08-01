@@ -302,7 +302,8 @@ namespace std
 {
 	template<typename A, typename I>
 	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
-		: public iterator_traits<I*>
+		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
+			random_access_iterator_tag>
 	{
 	};
 } // namespace std

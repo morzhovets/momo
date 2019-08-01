@@ -11,6 +11,7 @@
 #pragma once
 
 #include "ObjectManager.h"
+#include "IteratorUtility.h"
 
 namespace momo
 {
@@ -101,6 +102,12 @@ namespace internal
 			: RefPair(ref.key, ref.value)
 		{
 		}
+	};
+
+	template<typename Key, typename Value, typename HashMapReference>
+	struct Dereferencer<MapReferenceStd<Key, Value, HashMapReference>>
+	{
+		typedef std::pair<const Key, Value> Object;
 	};
 
 	template<typename TSetIterator, typename TKey>
@@ -906,14 +913,16 @@ namespace internal
 namespace std
 {
 	template<typename SI, typename K>
-	struct iterator_traits<momo::internal::MapKeyIterator<SI, K>> : public iterator_traits<K*>
+	struct iterator_traits<momo::internal::MapKeyIterator<SI, K>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapKeyIterator<SI, K>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
 	};
 
 	template<typename SI, typename V>
-	struct iterator_traits<momo::internal::MapValueIterator<SI, V>> : public iterator_traits<V*>
+	struct iterator_traits<momo::internal::MapValueIterator<SI, V>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapValueIterator<SI, V>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
 	};
 } // namespace std

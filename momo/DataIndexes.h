@@ -1393,13 +1393,15 @@ namespace std
 {
 	template<typename CL>
 	struct iterator_traits<momo::internal::DataRawUniqueHashIterator<CL>>
-		: public iterator_traits<typename CL::Raw* const*>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawUniqueHashIterator<CL>,
+			random_access_iterator_tag>
 	{
 	};
 
 	template<typename CL, typename KI>
 	struct iterator_traits<momo::internal::DataRawMultiHashIterator<CL, KI>>
-		: public iterator_traits<typename CL::Raw* const*>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawMultiHashIterator<CL, KI>,
+			random_access_iterator_tag>
 	{
 	};
 } // namespace std

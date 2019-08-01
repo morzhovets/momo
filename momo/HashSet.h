@@ -1318,11 +1318,8 @@ namespace std
 {
 	template<typename B, typename S>
 	struct iterator_traits<momo::internal::HashSetConstIterator<B, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashSetConstIterator<B, S>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashSetConstIterator<B, S>::Pointer pointer;
-		typedef typename momo::internal::HashSetConstIterator<B, S>::Reference reference;
-		typedef typename std::decay<reference>::type value_type;
 	};
 } // namespace std

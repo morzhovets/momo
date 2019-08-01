@@ -250,6 +250,12 @@ namespace internal
 		typedef std::reverse_iterator<const Object*> ConstIterator;
 	};
 
+	template<typename Reference>
+	struct Dereferencer
+	{
+		typedef typename std::decay<Reference>::type Object;
+	};
+
 	template<typename TReference>
 	class IteratorPointer
 	{
@@ -650,6 +656,16 @@ namespace internal
 	private:
 		BaseBucketBounds mBaseBucketBounds;
 	};
+
+	template<typename Iterator, typename IteratorCategory>
+	struct IteratorTraitsStd
+	{
+		typedef IteratorCategory iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef typename Iterator::Pointer pointer;
+		typedef typename Iterator::Reference reference;
+		typedef typename Dereferencer<reference>::Object value_type;
+	};
 }
 
 } // namespace momo
@@ -658,21 +674,15 @@ namespace std
 {
 	template<typename BI, typename R>
 	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashDerivedIterator<BI, R>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashDerivedIterator<BI, R>::Pointer pointer;
-		typedef typename momo::internal::HashDerivedIterator<BI, R>::Reference reference;
-		typedef reference value_type;	//?
 	};
 
 	template<typename BI, typename R>
 	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeDerivedIterator<BI, R>,
+			bidirectional_iterator_tag>
 	{
-		typedef bidirectional_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::TreeDerivedIterator<BI, R>::Pointer pointer;
-		typedef typename momo::internal::TreeDerivedIterator<BI, R>::Reference reference;
-		typedef reference value_type;	//?
 	};
 } // namespace std

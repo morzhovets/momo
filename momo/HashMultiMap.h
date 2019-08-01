@@ -1237,11 +1237,8 @@ namespace std
 {
 	template<typename KI, typename V, typename S>
 	struct iterator_traits<momo::internal::HashMultiMapIterator<KI, V, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashMultiMapIterator<KI, V, S>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::HashMultiMapIterator<KI, V, S>::Pointer pointer;
-		typedef typename momo::internal::HashMultiMapIterator<KI, V, S>::Reference reference;
-		typedef reference value_type;	//?
 	};
 } // namespace std

@@ -869,27 +869,22 @@ namespace std
 {
 	template<typename R, typename S>
 	struct iterator_traits<momo::internal::DataRawIterator<R, S>>
-		: public iterator_traits<const typename R::Item*>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawIterator<R, S>,
+			random_access_iterator_tag>
 	{
 	};
 
 	template<typename RR, typename RI>
 	struct iterator_traits<momo::internal::DataRowIterator<RR, RI>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRowIterator<RR, RI>,
+			random_access_iterator_tag>
 	{
-		typedef random_access_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::DataRowIterator<RR, RI>::Pointer pointer;
-		typedef typename momo::internal::DataRowIterator<RR, RI>::Reference reference;
-		typedef typename momo::internal::DataRowIterator<RR, RI>::Reference value_type;	//?
 	};
 
 	template<typename I, typename RI, typename S>
 	struct iterator_traits<momo::internal::DataConstItemIterator<I, RI, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataConstItemIterator<I, RI, S>,
+			random_access_iterator_tag>
 	{
-		typedef random_access_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Pointer pointer;
-		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Reference reference;
-		typedef typename momo::internal::DataConstItemIterator<I, RI, S>::Item value_type;
 	};
 } // namespace std

@@ -1545,18 +1545,15 @@ namespace std
 {
 	template<typename N, typename S>
 	struct iterator_traits<momo::internal::TreeSetConstIterator<N, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetConstIterator<N, S>,
+			bidirectional_iterator_tag>
 	{
-		typedef bidirectional_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef typename momo::internal::TreeSetConstIterator<N, S>::Pointer pointer;
-		typedef typename momo::internal::TreeSetConstIterator<N, S>::Reference reference;
-		typedef typename std::decay<reference>::type value_type;
 	};
 
 	template<typename S, typename I>
 	struct iterator_traits<momo::internal::TreeSetRelocatorIterator<S, I>>
-		: public iterator_traits<I*>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetRelocatorIterator<S, I>,
+			forward_iterator_tag>
 	{
-		typedef forward_iterator_tag iterator_category;
 	};
 } // namespace std
