@@ -1060,13 +1060,6 @@ private:
 	Data mData;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-template<typename ArgIterator,
-	typename MemManager = MemManagerDefault>
-Array(ArgIterator, ArgIterator, MemManager = MemManager())
-	-> Array<typename std::iterator_traits<ArgIterator>::value_type, MemManager>;
-#endif
-
 template<size_t tInternalCapacity, typename TItem,
 	typename TMemManager = MemManagerDefault,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>>
