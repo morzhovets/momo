@@ -91,7 +91,7 @@
 #if defined(_M_AMD64) || defined(_M_X64)
 #define MOMO_USE_SSE2
 #elif _M_IX86_FP == 2
-//#define MOMO_USE_SSE2
+#define MOMO_USE_SSE2
 #endif
 #else
 #ifdef __SSE2__
