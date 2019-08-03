@@ -174,9 +174,13 @@ LIBCXX_TEST_BEGIN(cons_copy_alloc)
 #include "libcxx/vector/vector.cons/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_deduct)
-//#include "libcxx/vector/vector.cons/deduct.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCXX_TEST_ARRAY
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+LIBCXX_TEST_BEGIN(cons_deduct)
+#include "libcxx/vector/vector.cons/deduct.pass.cpp"
+LIBCXX_TEST_END
+#endif
+#endif
 
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(cons_default_recursive)
