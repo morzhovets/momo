@@ -136,6 +136,18 @@ LIBCXX_TEST_BEGIN(cnstr_copy_alloc)
 #include "libcxx/unord.multimap/unord.multimap.cnstr/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
+
+LIBCXX_TEST_BEGIN(cnstr_deduct)
+#include "libcxx/unord.multimap/unord.multimap.cnstr/deduct.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_deduct_const)
+#include "libcxx/unord.multimap/unord.multimap.cnstr/deduct_const.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 LIBCXX_TEST_BEGIN(cnstr_default)
 #include "libcxx/unord.multimap/unord.multimap.cnstr/default.pass.cpp"
 LIBCXX_TEST_END

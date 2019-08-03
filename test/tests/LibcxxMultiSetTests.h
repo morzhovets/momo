@@ -156,6 +156,12 @@ LIBCXX_TEST_BEGIN(cons_copy_assign)
 #include "libcxx/multiset/multiset.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
+LIBCXX_TEST_BEGIN(cons_deduct)
+#include "libcxx/multiset/multiset.cons/deduct.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/multiset/multiset.cons/default.pass.cpp"
 LIBCXX_TEST_END
