@@ -29,25 +29,25 @@
 // multiset(initializer_list<Key>, Allocator)
 //   -> multiset<Key, less<Key>, Allocator>;
 
-#include <algorithm> // std::equal
-#include <cassert>
-#include <climits> // INT_MAX
-#include <functional>
-#include <set>
-#include <type_traits>
-
-#include "test_allocator.h"
+//#include <algorithm> // std::equal
+//#include <cassert>
+//#include <climits> // INT_MAX
+//#include <functional>
+//#include <set>
+//#include <type_traits>
+//
+//#include "test_allocator.h"
 
 struct NotAnAllocator {
   friend bool operator<(NotAnAllocator, NotAnAllocator) { return false; }
 };
 
-int main(int, char **) {
+void main() {
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    std::multiset s(std::begin(arr), std::end(arr));
+    momo::stdish::multiset s(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int>);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int>);
     const int expected_s[] = { 1, 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -55,9 +55,9 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    std::multiset s(std::begin(arr), std::end(arr), std::greater<int>());
+    momo::stdish::multiset s(std::begin(arr), std::end(arr), std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -65,12 +65,12 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    std::multiset s(std::begin(arr), std::end(arr), std::greater<int>(),
+    momo::stdish::multiset s(std::begin(arr), std::end(arr), std::greater<int>(),
                     test_allocator<int>(0, 42));
 
     ASSERT_SAME_TYPE(
         decltype(s),
-        std::multiset<int, std::greater<int>, test_allocator<int> >);
+        momo::stdish::multiset<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -78,51 +78,51 @@ int main(int, char **) {
   }
 
   {
-    std::multiset<long> source;
-    std::multiset s(source);
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<long>);
+    momo::stdish::multiset<long> source;
+    momo::stdish::multiset s(source);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<long>);
     assert(s.size() == 0);
   }
 
   {
-    std::multiset<long> source;
-    std::multiset s{ source };  // braces instead of parens
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<long>);
+    momo::stdish::multiset<long> source;
+    momo::stdish::multiset s{ source };  // braces instead of parens
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<long>);
     assert(s.size() == 0);
   }
 
   {
-    std::multiset<long> source;
-    std::multiset s(source, std::multiset<long>::allocator_type());
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<long>);
+    momo::stdish::multiset<long> source;
+    momo::stdish::multiset s(source, momo::stdish::multiset<long>::allocator_type());
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<long>);
     assert(s.size() == 0);
   }
 
   {
-    std::multiset s{ 1, 2, 1, INT_MAX, 3 };
+    momo::stdish::multiset s{ 1, 2, 1, INT_MAX, 3 };
 
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int>);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int>);
     const int expected_s[] = { 1, 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
   }
 
   {
-    std::multiset s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
+    momo::stdish::multiset s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
   }
 
   {
-    std::multiset s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
+    momo::stdish::multiset s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
                     test_allocator<int>(0, 43));
 
     ASSERT_SAME_TYPE(
         decltype(s),
-        std::multiset<int, std::greater<int>, test_allocator<int> >);
+        momo::stdish::multiset<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -131,10 +131,10 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    std::multiset s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
+    momo::stdish::multiset s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     std::multiset<int, std::less<int>, test_allocator<int> >);
+                     momo::stdish::multiset<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -142,10 +142,10 @@ int main(int, char **) {
   }
 
   {
-    std::multiset s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
+    momo::stdish::multiset s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     std::multiset<int, std::less<int>, test_allocator<int> >);
+                     momo::stdish::multiset<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -154,38 +154,36 @@ int main(int, char **) {
 
   {
     NotAnAllocator a;
-    std::multiset s{ a }; // multiset(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<NotAnAllocator>);
+    momo::stdish::multiset s{ a }; // multiset(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<NotAnAllocator>);
     assert(s.size() == 1);
   }
 
   {
-    std::multiset<long> source;
-    std::multiset s{ source, source }; // multiset(initializer_list<multiset<long>>)
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<std::multiset<long> >);
+    momo::stdish::multiset<long> source;
+    momo::stdish::multiset s{ source, source }; // multiset(initializer_list<multiset<long>>)
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<momo::stdish::multiset<long> >);
     assert(s.size() == 2);
   }
 
   {
     NotAnAllocator a;
-    std::multiset s{ a, a }; // multiset(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<NotAnAllocator>);
+    momo::stdish::multiset s{ a, a }; // multiset(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<NotAnAllocator>);
     assert(s.size() == 2);
   }
 
   {
     int source[3] = { 3, 4, 5 };
-    std::multiset s(source, source + 3); // multiset(InputIterator, InputIterator)
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int>);
+    momo::stdish::multiset s(source, source + 3); // multiset(InputIterator, InputIterator)
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int>);
     assert(s.size() == 3);
   }
 
   {
     int source[3] = { 3, 4, 5 };
-    std::multiset s{ source, source + 3 }; // multiset(initializer_list<int*>)
-    ASSERT_SAME_TYPE(decltype(s), std::multiset<int *>);
+    momo::stdish::multiset s{ source, source + 3 }; // multiset(initializer_list<int*>)
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int *>);
     assert(s.size() == 2);
   }
-
-  return 0;
 }
