@@ -50,6 +50,7 @@
 #include "libcxx/support/test_hash.h"
 #include "libcxx/support/private_constructor.h"
 #include "libcxx/support/is_transparent.h"
+#include "libcxx/support/test_macros.h"
 //#include "libcxx/support/min_allocator.h"
 
 struct LibcppIntHash
