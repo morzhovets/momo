@@ -101,8 +101,8 @@
 #if defined(_MSC_VER) && !defined(__clang__)
 #if defined(_M_AMD64) || defined(_M_X64)
 #define MOMO_USE_SSE2
-#elif _M_IX86_FP == 2
-//#define MOMO_USE_SSE2
+#elif (_M_IX86_FP == 2) && (_MSC_VER >= 1900)
+#define MOMO_USE_SSE2
 #endif
 #else
 #ifdef __SSE2__
@@ -121,14 +121,6 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
-#ifdef MOMO_USE_SSE2
-#define MOMO_PREFETCH_RANGE(ptr, size) \
-	for (size_t offset = 0; offset < (size_t)size; offset += 64) \
-		_mm_prefetch(reinterpret_cast<const char*>(ptr) + offset, _MM_HINT_T0);
-#else
-#define MOMO_PREFETCH_RANGE(ptr, size)
-#endif
-
 #define MOMO_ASSERT(expr) assert(expr)
 
 #define MOMO_NOEXCEPT noexcept
@@ -139,13 +131,6 @@
 #undef MOMO_NOEXCEPT_IF
 #define MOMO_NOEXCEPT throw()
 #define MOMO_NOEXCEPT_IF(expr)
-#endif
-
-#ifdef __cpp_guaranteed_copy_elision
-#define MOMO_HAS_GUARANTEED_COPY_ELISION
-#if defined(_MSC_VER) && !defined(__clang__)	// vs2017
-#undef MOMO_HAS_GUARANTEED_COPY_ELISION
-#endif
 #endif
 
 #if defined(_MSC_VER) && !defined(__clang__)
