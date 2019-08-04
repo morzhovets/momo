@@ -737,41 +737,51 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(Iterator, Iterator, Allocator = Allocator()) \
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, \
-		HashCoder<typename std::iterator_traits<Iterator>::value_type>, \
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, \
-		HashCoder<typename std::iterator_traits<Iterator>::value_type>, \
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc, \
-		std::equal_to<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_set<typename std::iterator_traits<Iterator>::value_type, HashFunc, \
-		EqualFunc, Allocator>; \
+	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
 template<typename Key, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, typename EqualFunc, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 

@@ -650,20 +650,25 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 set(Iterator, Iterator, Allocator = Allocator()) \
-	-> set<typename std::iterator_traits<Iterator>::value_type, \
-		std::less<typename std::iterator_traits<Iterator>::value_type>, Allocator>; \
+	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>> \
+	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
-	-> set<typename std::iterator_traits<Iterator>::value_type, LessFunc, Allocator>; \
+	-> set<Key, LessFunc, Allocator>; \
 template<typename Key, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessFunc, \
-	typename Allocator = std::allocator<Key>> \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
