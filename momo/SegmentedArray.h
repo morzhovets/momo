@@ -678,11 +678,4 @@ private:
 	size_t mCount;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-template<typename ArgIterator,
-	typename MemManager = MemManagerDefault>
-SegmentedArray(ArgIterator, ArgIterator, MemManager = MemManager())
-	-> SegmentedArray<typename std::iterator_traits<ArgIterator>::value_type, MemManager>;
-#endif
-
 } // namespace momo

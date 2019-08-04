@@ -963,93 +963,6 @@ private:
 	HashMap mHashMap;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
-template<typename TKey, typename TMapped,
-	typename THashFunc = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_map_open : public unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>
-{
-private:
-	typedef unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-		HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>> UnorderedMap;
-
-public:
-	using UnorderedMap::UnorderedMap;
-
-	friend void swap(unordered_map_open& left, unordered_map_open& right) MOMO_NOEXCEPT
-	{
-		left.swap(right);
-	}
-};
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map) \
-template<typename Iterator, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-unordered_map(Iterator, Iterator, Allocator = Allocator()) \
-	-> unordered_map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, \
-		HashCoder<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		std::equal_to<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		Allocator>; \
-template<typename Iterator, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-unordered_map(Iterator, Iterator, size_t, Allocator = Allocator()) \
-	-> unordered_map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, \
-		HashCoder<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		std::equal_to<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		Allocator>; \
-template<typename Iterator, typename HashFunc, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-unordered_map(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, HashFunc, \
-		std::equal_to<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		Allocator>; \
-template<typename Iterator, typename HashFunc, typename EqualFunc, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-unordered_map(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, HashFunc, EqualFunc, Allocator>; \
-template<typename Key, typename Mapped, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Mapped, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename HashFunc, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, \
-	Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename HashFunc, typename EqualFunc, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, EqualFunc, \
-	Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>;
-
-MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map)
-MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)
-
-#undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#else
-
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -1057,8 +970,6 @@ template<typename TKey, typename TMapped,
 using unordered_map_open = unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
 	HashMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>;
-
-#endif
 
 } // namespace stdish
 

@@ -141,10 +141,6 @@
 #define MOMO_NOEXCEPT_IF(expr)
 #endif
 
-#ifdef __cpp_deduction_guides
-#define MOMO_HAS_DEDUCTION_GUIDES
-#endif
-
 #ifdef __cpp_guaranteed_copy_elision
 #define MOMO_HAS_GUARANTEED_COPY_ELISION
 #if defined(_MSC_VER) && !defined(__clang__)	// vs2017

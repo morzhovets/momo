@@ -901,40 +901,6 @@ private:
 	TreeMap mTreeMap;
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
-template<typename Iterator, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-map(Iterator, Iterator, Allocator = Allocator()) \
-	-> map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, \
-		std::less<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>>, \
-		Allocator>; \
-template<typename Iterator, typename LessFunc, \
-	typename Allocator = std::allocator<std::pair< \
-		std::add_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type>>> \
-map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
-	-> map<std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-		typename std::iterator_traits<Iterator>::value_type::second_type, LessFunc, Allocator>; \
-template<typename Key, typename Mapped, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-map(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
-	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename LessFunc, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-map(std::initializer_list<std::pair<Key, Mapped>>, LessFunc, Allocator = Allocator()) \
-	-> map<Key, Mapped, LessFunc, Allocator>;
-
-MOMO_DECLARE_DEDUCTION_GUIDES(map)
-
-#undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif
-
 } // namespace stdish
 
 } // namespace momo
