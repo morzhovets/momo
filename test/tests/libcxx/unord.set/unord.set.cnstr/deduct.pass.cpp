@@ -70,9 +70,9 @@ void main()
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    std::unordered_set s(std::begin(arr), std::end(arr), 42);
+    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42);
 
-    ASSERT_SAME_TYPE(decltype(s), std::unordered_set<int>);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
