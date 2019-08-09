@@ -1,5 +1,5 @@
 TESTS = $(wildcard tests/*.cpp)
-CFLAGS = -Wall -Wno-unused-local-typedefs -msse2
+CFLAGS = -Wall -Wextra -pedantic -Wno-unused-local-typedefs -msse2
 
 all: clean build/momo_gcc11 build/momo_clang11
 

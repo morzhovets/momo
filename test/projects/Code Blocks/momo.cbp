@@ -12,7 +12,12 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-pedantic" />
+					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-std=c++11" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-Wno-unused-local-typedefs" />
@@ -26,7 +31,12 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-pedantic" />
+					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-std=c++11" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-march=native" />
@@ -42,6 +52,7 @@
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
+					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-g" />
@@ -56,6 +67,7 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-Wno-unused-local-typedefs" />
@@ -72,6 +84,11 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-pedantic" />
+					<Add option="-Wzero-as-null-pointer-constant" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
@@ -86,6 +103,11 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-pedantic" />
+					<Add option="-Wzero-as-null-pointer-constant" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
@@ -102,6 +124,7 @@
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
+					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
@@ -116,6 +139,7 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
 					<Add option="-Wno-unused-local-typedefs" />
