@@ -21,7 +21,7 @@ void main()
 {
     {
         vector<int> v;
-        assert(v.data() == 0);
+        assert(v.data() == nullptr);
         //assert(is_contiguous_container_asan_correct(v));
     }
     {
