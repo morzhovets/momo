@@ -259,12 +259,14 @@ public:
 	}
 
 	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: MemManagerDefault(std::move(memManager))
+		: ByteAllocator(),
+		MemManagerDefault(std::move(memManager))
 	{
 	}
 
 	MemManagerStd(const MemManagerStd& memManager)
-		: MemManagerDefault(memManager)
+		: ByteAllocator(),
+		MemManagerDefault(memManager)
 	{
 	}
 
@@ -480,10 +482,12 @@ namespace internal
 		}
 
 		MemManagerPtr(MemManagerPtr&& /*memManager*/) noexcept
+			: BaseMemManager()
 		{
 		}
 
 		MemManagerPtr(const MemManagerPtr& /*memManager*/) noexcept
+			: BaseMemManager()
 		{
 		}
 
