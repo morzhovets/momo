@@ -269,7 +269,7 @@ public:
 public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
-		return (bucketCount * maxCount / 12) * 11;
+		return static_cast<size_t>(static_cast<double>(bucketCount * maxCount) / 12.0 * 11.0);
 	}
 
 	static size_t GetBucketCountShift(size_t /*bucketCount*/,

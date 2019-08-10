@@ -133,7 +133,7 @@ namespace internal
 		{
 			MOMO_ASSERT(bucketCount > 0 && bucketMaxItemCount > 0);
 			if (bucketMaxItemCount == 1)
-				return (bucketCount / 8) * 5;
+				return static_cast<size_t>(static_cast<double>(bucketCount) / 8.0 * 5.0);
 			else if (bucketMaxItemCount == 2)
 				return bucketCount + bucketCount / 2;
 			else
