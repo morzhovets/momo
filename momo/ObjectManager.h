@@ -109,21 +109,22 @@ namespace internal
 		typename = void>
 	struct IsNothrowSwappable
 	{
-		static constexpr bool GetValue() noexcept
-		{
-			return false;
-		}
+		static const bool value = false;
 	};
 
 	template<typename Object>
 	struct IsNothrowSwappable<Object,
 		decltype(std::swap(std::declval<Object&>(), std::declval<Object&>()))>
 	{
-		static constexpr bool GetValue() noexcept
+	private:
+		static constexpr bool pvGetValue() noexcept
 		{
 			using std::swap;
 			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
 		}
+
+	public:
+		static const bool value = pvGetValue();
 	};
 
 	template<typename TObject, size_t tAlignment>
@@ -169,7 +170,7 @@ namespace internal
 		static const bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
+		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::value;
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
