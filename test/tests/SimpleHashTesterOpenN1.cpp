@@ -22,6 +22,7 @@
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
+	SimpleHashTester::TestStrHash<momo::HashBucketOpenN1<1>>("momo::HashBucketOpenN1<1>");
 
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<1, true>, 4, 2>("momo::HashBucketOpenN1<1, true>");
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOpenN1<3, true>, 1, 1>("momo::HashBucketOpenN1<3, true>");

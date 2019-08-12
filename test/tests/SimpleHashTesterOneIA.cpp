@@ -22,6 +22,7 @@
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
+	SimpleHashTester::TestStrHash<momo::HashBucketOneIA<1>>("momo::HashBucketOneIA<1>");
 
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<0>, 1, 1>("momo::HashBucketOneIA<0>");
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOneIA<4>, 6, 2>("momo::HashBucketOneIA<4>");

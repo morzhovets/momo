@@ -26,6 +26,8 @@ static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketLimP<sizeof(void*), momo::MemPoolParams<>, false>>("momo::HashBucketLimP<..., false>");
 	SimpleHashTester::TestStrHash<momo::HashBucketLimP<sizeof(void*), momo::MemPoolParams<>,  true>>("momo::HashBucketLimP<...,  true>");
+	SimpleHashTester::TestStrHash<momo::HashBucketLimP<1, momo::MemPoolParams<>, false>>("momo::HashBucketLimP<1, ..., false>");
+	SimpleHashTester::TestStrHash<momo::HashBucketLimP<1, momo::MemPoolParams<>,  true>>("momo::HashBucketLimP<1, ...,  true>");
 
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1, 16, false), 11, 1>("momo::HashBucketLimP< 1, 16, false>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1, 64, false),  1, 1>("momo::HashBucketLimP< 1, 64, false>");

@@ -25,6 +25,7 @@
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+	SimpleHashTester::TestStrHash<momo::HashBucketUnlimP<1>>("momo::HashBucketUnlimP<1>");
 
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1, 32),  1, 1>("momo::HashBucketUnlimP< 1, 32>");
 	SimpleHashTester::TestTemplHashSet<BUCKET( 1,  1),  2, 1>("momo::HashBucketUnlimP< 1,  1>");
