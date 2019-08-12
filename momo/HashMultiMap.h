@@ -1019,17 +1019,20 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).iterator);
 	}
 
-	KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)
+	template<typename KeyCreator>
+	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator&& keyCreator)
 	{
-		return KeyIteratorProxy(mHashMap.Add(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
-			std::move(key), ValueArray()));
+		auto pairCreator = [&keyCreator] (Key* newKey, ValueArray* newValueArray)
+		{
+			std::forward<KeyCreator>(keyCreator)(newKey);
+			::new(static_cast<void*>(newValueArray)) ValueArray();
+		};
+		return KeyIteratorProxy(mHashMap.AddCrt(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
+			pairCreator));
 	}
 
-	KeyIterator AddKey(ConstKeyIterator keyIter, const Key& key)
-	{
-		return KeyIteratorProxy(mHashMap.Add(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
-			key, ValueArray()));
-	}
+	//KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)
+	//KeyIterator AddKey(ConstKeyIterator keyIter, const Key& key)
 
 	Iterator Remove(ConstKeyIterator keyIter, size_t valueIndex)
 	{

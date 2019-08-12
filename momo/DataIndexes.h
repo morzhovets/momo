@@ -653,7 +653,9 @@ namespace internal
 				}
 				else
 				{
-					mKeyIteratorAdd = mHashMultiMap.AddKey(keyIter, hashMixedKey.raw);
+					auto keyCreator = [hashMixedKey] (Raw** newRaw)
+						{ *newRaw = hashMixedKey.raw; };
+					mKeyIteratorAdd = mHashMultiMap.AddKeyCrt(keyIter, keyCreator);
 				}
 			}
 
