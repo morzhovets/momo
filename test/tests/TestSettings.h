@@ -10,9 +10,9 @@
 
 #pragma once
 
-#ifdef NDEBUG
-#define TEST_SPEED_MAP
-#else
+//#define TEST_SPEED_MAP
+
+#ifndef TEST_SPEED_MAP
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_DATA
 #define TEST_SIMPLE_HASH
