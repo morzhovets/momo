@@ -4,23 +4,23 @@
   See https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashMapTesterLim4.cpp
+  tests/LibcxxHashMultiMapTesterOpen8.cpp
 
 \**********************************************************/
 
 #include "pch.h"
 #include "TestSettings.h"
 
-#ifdef TEST_LIBCXX_HASH_MAP
+#ifdef TEST_LIBCXX_HASH_MULTI_MAP
 
 #undef NDEBUG
 
 #include "../../momo/Utility.h"
-#include "../../momo/details/HashBucketLim4.h"
+#include "../../momo/details/HashBucketOpen8.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLim4<>
-#define LIBCXX_TEST_BUCKET_NAME "lim4"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpen8
+#define LIBCXX_TEST_BUCKET_NAME "open8"
 
-#include "LibcxxHashMapTester.h"
+#include "LibcxxHashMultiMapTester.h"
 
-#endif // TEST_LIBCXX_HASH_MAP
+#endif // TEST_LIBCXX_HASH_MULTI_MAP

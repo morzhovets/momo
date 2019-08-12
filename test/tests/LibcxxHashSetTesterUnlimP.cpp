@@ -18,7 +18,7 @@
 #include "../../momo/Utility.h"
 #include "../../momo/details/HashBucketUnlimP.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketUnlimP<1, momo::MemPoolParams<1>>
+#define LIBCXX_TEST_BUCKET momo::HashBucketUnlimP<>
 #define LIBCXX_TEST_BUCKET_NAME "unlimp"
 
 #include "LibcxxHashSetTester.h"
