@@ -12,6 +12,7 @@
 #include "TestSettings.h"
 
 #ifdef TEST_LIBCXX_HASH_SET
+#ifdef TEST_OLD_HASH_BUCKETS
 
 #undef NDEBUG
 
@@ -23,4 +24,5 @@
 
 #include "LibcxxHashSetTester.h"
 
+#endif // TEST_OLD_HASH_BUCKETS
 #endif // TEST_LIBCXX_HASH_SET

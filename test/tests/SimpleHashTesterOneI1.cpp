@@ -12,6 +12,7 @@
 #include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_HASH
+#ifdef TEST_OLD_HASH_BUCKETS
 
 #undef NDEBUG
 
@@ -29,4 +30,5 @@ static int testSimpleHash = []
 	return 0;
 }();
 
+#endif // TEST_OLD_HASH_BUCKETS
 #endif // TEST_SIMPLE_HASH

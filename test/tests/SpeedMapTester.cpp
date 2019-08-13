@@ -16,17 +16,20 @@
 #include "../../momo/stdish/unordered_map.h"
 #include "../../momo/stdish/map.h"
 
+#include "../../momo/details/HashBucketLimP4.h"
+#include "../../momo/details/HashBucketOpen2N2.h"
+#include "../../momo/details/HashBucketOpen8.h"
+
+#ifdef TEST_OLD_HASH_BUCKETS
 #include "../../momo/details/HashBucketLim4.h"
 #include "../../momo/details/HashBucketLimP.h"
 #include "../../momo/details/HashBucketLimP1.h"
-#include "../../momo/details/HashBucketLimP4.h"
 #include "../../momo/details/HashBucketUnlimP.h"
 #include "../../momo/details/HashBucketOneIA.h"
 #include "../../momo/details/HashBucketOneI1.h"
-#include "../../momo/details/HashBucketOneI.h"
-#include "../../momo/details/HashBucketOpen2N2.h"
-#include "../../momo/details/HashBucketOpen8.h"
+//#include "../../momo/details/HashBucketOneI.h"
 #include "../../momo/details/HashBucketOpenN1.h"
+#endif
 
 #include <string>
 #include <iostream>
@@ -271,16 +274,18 @@ public:
 	void TestAll()
 	{
 		TestHashMap<std::unordered_map<Key, Value>>("std::unordered_map");
-		//TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
-		//TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
-		//TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
 		TestHashBucket<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
-		//TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
-		//TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
-		//TestHashBucket<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
 		TestHashBucket<momo::HashBucketOpen2N2<>>("momo::HashBucketOpen2N2<>");
 		TestHashBucket<momo::HashBucketOpen8>("momo::HashBucketOpen8");
-		//TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
+#ifdef TEST_OLD_HASH_BUCKETS
+		TestHashBucket<momo::HashBucketLim4<>>("momo::HashBucketLim4<>");
+		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
+		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
+		TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
+		TestHashBucket<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
+		TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
+#endif
 
 		TestTreeMap<std::map<Key, Value>>("std::map");
 		TestTreeNode<momo::TreeNode<32, 4, momo::MemPoolParams<>, true>>("momo::TreeNode<32, 4, <>, true>");

@@ -24,3 +24,5 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 #endif
+
+#define TEST_OLD_HASH_BUCKETS
