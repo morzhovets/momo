@@ -34,7 +34,6 @@
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
 
-#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT (sizeof(void*) * 8)
 //#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
 
 // If your platform does not require data alignment, define it as `1`

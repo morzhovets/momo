@@ -326,7 +326,11 @@ namespace internal
 			typename = size_t>
 		struct PtrUsefulBitCount
 		{
+#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
 			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+#else
+			static const size_t value = sizeof(void*) * 8;
+#endif
 		};
 
 		template<typename MemManager>
