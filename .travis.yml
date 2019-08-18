@@ -1,0 +1,12 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+
+script:
+  - cd test
+  - mkdir build
+  - make build/momo_gcc11
+  - build/momo_gcc11
