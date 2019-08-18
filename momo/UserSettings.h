@@ -37,7 +37,7 @@
 //#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
 
 // If your platform does not require data alignment, define it as `1`
-#define MOMO_MAX_ALIGNMENT (2 * sizeof(void*)) //alignof(std::max_align_t)
+#define MOMO_MAX_ALIGNMENT alignof(std::max_align_t)
 
 // Memory pool settings
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
