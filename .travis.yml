@@ -1,7 +1,5 @@
 language: cpp
 
-dist: trusty
-
 matrix:
   include:
 
@@ -10,6 +8,7 @@ matrix:
 #      env: COMPILER='clang++ -std=c++17 -O2'
 
     - os: linux
+      dist: trusty
       compiler: gcc
       addons:
         apt:
@@ -20,38 +19,63 @@ matrix:
       env: COMPILER='g++-4.8 -std=c++11 -O2'
 
     - os: linux
+      dist: trusty
       compiler: gcc
       addons:
         apt:
           sources: 
             - ubuntu-toolchain-r-test
           packages: 
-            - g++-9.0
-      env: COMPILER='g++-9.0 -std=c++17 -O3'
+            - g++-9.1
+      env: COMPILER='g++-9.1 -std=c++17 -O2'
 
     - os: linux
       compiler: gcc
       env: COMPILER='g++ -std=c++17 -O2'
 
     - os: linux
+      dist: trusty
       compiler: clang
       addons:
         apt:
           sources: 
-            - llvm-toolchain-trusty-3.3
+            - llvm-toolchain-trusty-3.5
           packages:
-            - clang-3.3
-      env: COMPILER='clang++-3.3 -std=c++11 -O2'
+            - clang-3.5
+      env: COMPILER='clang++-3.5 -std=c++11 -O2'
 
     - os: linux
+      dist: trusty
       compiler: clang
       addons:
         apt:
           sources: 
-            - llvm-toolchain-trusty-3.4
+            - llvm-toolchain-trusty-3.6
           packages:
-            - clang-3.4
-      env: COMPILER='clang++-3.4 -std=c++11 -O2'
+            - clang-3.6
+      env: COMPILER='clang++-3.6 -std=c++11 -O2'
+
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources: 
+            - llvm-toolchain-trusty-3.7
+          packages:
+            - clang-3.7
+      env: COMPILER='clang++-3.7 -std=c++11 -O2'
+
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources: 
+            - llvm-toolchain-trusty-3.8
+          packages:
+            - clang-3.8
+      env: COMPILER='clang++-3.8 -std=c++11 -O2'
 
     - os: linux
       compiler: clang
