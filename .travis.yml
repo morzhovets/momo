@@ -2,11 +2,17 @@ language: cpp
 
 matrix:
   include:
+
     - os: linux
       compiler: gcc
+      env: COMPILER='g++ -std=c++11 -O2'
+
+    - os: linux
+      compiler: clang
+      env: COMPILER='clang++ -std=c++11 -O2'
 
 script:
   - cd test
   - mkdir build
-  - make build/momo_gcc11
-  - build/momo_gcc11
+  - make build/momo
+  - build/momo

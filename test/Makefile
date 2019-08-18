@@ -1,21 +1,14 @@
-TESTS = $(wildcard tests/*.cpp)
+COMPILER ?= g++ -std=c++11 -O2
 CFLAGS = -Wall -Wextra -pedantic -Wno-unused-local-typedefs -msse2
+TESTS = $(wildcard tests/*.cpp)
 
-all: clean build/momo_gcc11 build/momo_clang11
+all: build/momo
 
-clean:
-	rm -rf build
-	mkdir build
+build/momo:
+	$(COMPILER) $(CFLAGS) -o build/momo $(TESTS)
 
 build/momo_gcc11:
-	g++ -std=c++11 $(CFLAGS) -o build/momo_gcc11 $(TESTS)
-
-build/momo_gcc17:
-	g++ -std=c++17 $(CFLAGS) -o build/momo_gcc17 $(TESTS)
+	g++ -std=c++11 -O2 $(CFLAGS) -o build/momo_gcc11 $(TESTS)
 
 build/momo_clang11:
-	clang++ -std=c++11 $(CFLAGS) -o build/momo_clang11 $(TESTS)
-
-build/momo_clang17:
-	clang++ -std=c++17 $(CFLAGS) -o build/momo_clang17 $(TESTS)
-
+	clang++ -std=c++11 -O2 $(CFLAGS) -o build/momo_clang11 $(TESTS)

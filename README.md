@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/morzhovets/momo.svg?branch=master)
+
 #### momo (Memory Optimization is the Main Objective)
 
 This project contains an implementation of the C++ containers, similar to the standard `set/map`
