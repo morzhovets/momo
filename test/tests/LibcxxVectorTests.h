@@ -175,7 +175,7 @@ LIBCXX_TEST_BEGIN(cons_copy_alloc)
 LIBCXX_TEST_END
 
 #ifdef LIBCXX_TEST_ARRAY
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
+#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/vector/vector.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
