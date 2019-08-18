@@ -26,12 +26,12 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-8.3
-      env: COMPILER='g++-8.3 -std=c++17 -O2'
+            - g++-8
+      env: COMPILER='g++-8 -std=c++17 -O2'
 
     - os: linux
       compiler: gcc
-      env: COMPILER='g++ -std=c++14 -O2'
+      env: COMPILER='g++ -std=c++11 -O2'
 
     - os: linux
       dist: trusty
@@ -39,21 +39,10 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-3.9
+            - llvm-toolchain-trusty-5.0
           packages:
-            - clang-3.9
-      env: COMPILER='clang++-3.9 -std=c++11 -O2'
-
-    - os: linux
-      dist: trusty
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - clang-4.0
-      env: COMPILER='clang++-4.0 -std=c++11 -O2'
+            - clang-5.0
+      env: COMPILER='clang++-5.0 -std=c++11 -O2'
 
     - os: linux
       compiler: clang
