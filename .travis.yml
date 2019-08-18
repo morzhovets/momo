@@ -5,49 +5,57 @@ dist: trusty
 matrix:
   include:
 
-    - os: osx
+#    - os: osx
+#      compiler: clang
+#      env: COMPILER='clang++ -std=c++17 -O2'
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: 
+            - ubuntu-toolchain-r-test
+          packages: 
+            - g++-4.8
+      env: COMPILER='g++-4.8 -std=c++11 -O2'
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: 
+            - ubuntu-toolchain-r-test
+          packages: 
+            - g++-9.0
+      env: COMPILER='g++-9.0 -std=c++17 -O3'
+
+    - os: linux
+      compiler: gcc
+      env: COMPILER='g++ -std=c++17 -O2'
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: 
+            - llvm-toolchain-trusty-3.3
+          packages:
+            - clang-3.3
+      env: COMPILER='clang++-3.3 -std=c++11 -O2'
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: 
+            - llvm-toolchain-trusty-3.4
+          packages:
+            - clang-3.4
+      env: COMPILER='clang++-3.4 -std=c++11 -O2'
+
+    - os: linux
       compiler: clang
       env: COMPILER='clang++ -std=c++17 -O2'
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: 
-            - ubuntu-toolchain-r-test
-          packages: 
-            - g++-4.9
-      env: COMPILER='g++-4.9 -std=c++11 -O2'
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: 
-            - ubuntu-toolchain-r-test
-          packages: 
-            - g++-8
-      env: COMPILER='g++-8 -std=c++17 -O3'
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: 
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - clang-4.0
-      env: COMPILER='clang++-4.0 -std=c++11 -O2'
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: 
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - clang-5.0
-      env: COMPILER='clang++-5.0 -std=c++17 -O2'
 
 script:
   - cd test
