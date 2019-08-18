@@ -5,11 +5,15 @@ matrix:
 
     - os: linux
       compiler: gcc
-      env: COMPILER='g++ -std=c++11 -O2'
+      env: COMPILER='g++ -std=c++11 -O2 -Wno-unused-variable'
 
     - os: linux
       compiler: clang
-      env: COMPILER='clang++ -std=c++11 -O2'
+      env: COMPILER='clang++ -std=c++11 -O2 -Wno-c++17-extensions'
+
+    - os: linux
+      compiler: clang
+      env: COMPILER='clang++ -std=c++17 -O2'
 
 script:
   - cd test
