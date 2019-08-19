@@ -40,16 +40,16 @@ matrix:
       compiler: gcc
       env: COMPILER='g++ -std=c++11'
 
-#    - os: linux
-#      dist: trusty
-#      compiler: clang
-#      addons:
-#        apt:
-#          sources:
-#            - llvm-toolchain-trusty-5.0
-#          packages:
-#            - clang-5.0
-#      env: COMPILER='clang++-5.0 -std=c++11 -O2'
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env: COMPILER='clang++-5.0 -std=c++11 -O2 -Wno-c++17-extensions'
 
     - os: linux
       compiler: clang

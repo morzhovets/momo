@@ -50,6 +50,12 @@ public:
 	typedef std::true_type propagate_on_container_move_assignment;
 	typedef std::true_type propagate_on_container_swap;
 
+	template<typename Value>
+	struct rebind
+	{
+		typedef unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params> other;
+	};
+
 private:
 	typedef MemManagerStd<base_allocator_type> MemManager;
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
