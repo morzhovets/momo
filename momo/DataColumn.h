@@ -455,8 +455,8 @@ public:
 		static const size_t columnCount = 1 + sizeof...(columns);
 		if (columnCount + mColumnCodeSet.GetCount() > maxColumnCount)
 			throw std::runtime_error("Too many columns");
-		std::array<ColumnCode, columnCount> columnCodes = { ColumnTraits::GetColumnCode(column),
-			ColumnTraits::GetColumnCode(columns)... };
+		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnTraits::GetColumnCode(column),
+			ColumnTraits::GetColumnCode(columns)... }};
 		Addends addends;
 		size_t offset;
 		size_t alignment;
