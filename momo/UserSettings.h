@@ -39,6 +39,11 @@
 // If your platform does not require data alignment, define it as `1`
 #define MOMO_MAX_ALIGNMENT alignof(std::max_align_t)
 
+#ifdef __clang__
+#undef MOMO_MAX_ALIGNMENT
+#define MOMO_MAX_ALIGNMENT (2 * sizeof(void*))
+#endif
+
 // Memory pool settings
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32
 #define MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT 16

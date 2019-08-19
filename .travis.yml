@@ -3,42 +3,64 @@ language: cpp
 matrix:
   include:
 
-    - os: linux
-      dist: trusty
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env: COMPILER='g++-4.9 -std=c++11 -O2'
+#    - os: linux
+#      dist: trusty
+#      compiler: gcc
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#          packages:
+#            - g++-4.9
+#      env: COMPILER='g++-4.9 -std=c++11 -O2'
+#
+#    - os: linux
+#      dist: trusty
+#      compiler: gcc
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#          packages:
+#            - g++-7
+#      env: COMPILER='g++-7 -std=c++17 -O2 -DMOMO_USE_SAFE_MAP_BRACKETS'
+#
+#    - os: linux
+#      dist: trusty
+#      compiler: gcc
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#          packages:
+#            - g++-9
+#      env: COMPILER='g++-9 -std=c++17 -O3'
+#
+#    - os: linux
+#      compiler: gcc
+#      env: COMPILER='g++ -std=c++11'
 
     - os: linux
       dist: trusty
-      compiler: gcc
+      compiler: clang
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-3.9
           packages:
-            - g++-7
-      env: COMPILER='g++-7 -std=c++17 -O2 -DMOMO_USE_SAFE_MAP_BRACKETS'
+            - clang-3.9
+      env: COMPILER='clang++-3.9 -std=c++11 -Wno-c++17-extensions'
 
     - os: linux
       dist: trusty
-      compiler: gcc
+      compiler: clang
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
           packages:
-            - g++-9
-      env: COMPILER='g++-9 -std=c++17 -O3'
-
-    - os: linux
-      compiler: gcc
-      env: COMPILER='g++ -std=c++11'
+            - clang-4.0
+      env: COMPILER='clang++-4.0 -std=c++11 -Wno-c++17-extensions'
 
     - os: linux
       dist: trusty
@@ -49,7 +71,7 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-      env: COMPILER='clang++-5.0 -std=c++11 -O2 -Wno-c++17-extensions'
+      env: COMPILER='clang++-5.0 -std=c++11 -Wno-c++17-extensions'
 
     - os: linux
       compiler: clang
