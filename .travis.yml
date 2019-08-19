@@ -38,7 +38,7 @@ matrix:
 
     - os: linux
       compiler: gcc
-      env: COMPILER='g++ -std=c++11'
+      env: COMPILER='g++ -std=c++14'
 
 #    - os: linux
 #      dist: trusty
@@ -53,15 +53,15 @@ matrix:
 
     - os: linux
       compiler: clang
-      env: COMPILER='clang++ -std=c++11 -Wno-c++17-extensions'
+      env: COMPILER='clang++ -std=c++11 -O2 -Wno-c++17-extensions'
 
     - os: linux
       compiler: clang
-      env: COMPILER='clang++ -std=c++17'
+      env: COMPILER='clang++ -std=c++17 -O2'
 
-    - os: osx
-      compiler: clang
-      env: COMPILER='clang++ -std=c++17'
+#    - os: osx
+#      compiler: clang
+#      env: COMPILER='clang++ -std=c++17 -O2'
 
 script:
   - cd test
