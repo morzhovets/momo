@@ -15,6 +15,12 @@ matrix:
       env: COMPILER='g++-4.9 -std=c++11 -O2'
 
     - os: linux
+      dist: xenial
+      compiler: gcc
+      # gcc 5.4.0
+      env: COMPILER='g++ -std=c++11'
+
+    - os: linux
       dist: trusty
       compiler: gcc
       addons:
@@ -23,7 +29,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-      env: COMPILER='g++-7 -std=c++17 -O2 -DMOMO_USE_SAFE_MAP_BRACKETS'
+      env: COMPILER='g++-7 -std=c++17 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS'
 
     - os: linux
       dist: trusty
@@ -34,29 +40,42 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
-      env: COMPILER='g++-9 -std=c++17 -O3'
+      env: COMPILER='g++-9 -std=c++17 -O2'
 
     - os: linux
-      compiler: gcc
-      env: COMPILER='g++ -std=c++11'
-
-#    - os: linux
-#      dist: trusty
-#      compiler: clang
-#      addons:
-#        apt:
-#          sources:
-#            - llvm-toolchain-trusty-5.0
-#          packages:
-#            - clang-5.0
-#      env: COMPILER='clang++-5.0 -std=c++11 -O2'
-
-    - os: linux
+      dist: precise
       compiler: clang
-      env: COMPILER='clang++ -std=c++11 -O2 -Wno-c++17-extensions'
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env: COMPILER='clang++-3.6 -std=c++11 -O2'
 
     - os: linux
+      dist: precise
       compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
+          packages:
+            - clang-3.9
+      env: COMPILER='clang++-3.9 -std=c++14 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -Wno-c++1z-extensions'
+
+    - os: linux
+      dist: xenial
+      compiler: clang
+      # clang 7.0.0
+      env: COMPILER='clang++ -std=c++11 -Wno-c++17-extensions'
+
+    - os: linux
+      dist: xenial
+      compiler: clang
+      # clang 7.0.0
       env: COMPILER='clang++ -std=c++17 -O2'
 
 #    - os: osx
