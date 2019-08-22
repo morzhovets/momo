@@ -70,7 +70,7 @@ matrix:
       dist: xenial
       compiler: clang
       # clang 7.0.0
-      env: COMPILER='clang++ -std=c++11 -Wno-c++17-extensions'
+      env: COMPILER='clang++ -std=c++17 -g -fsanitize=address,undefined'
 
     - os: linux
       dist: xenial
