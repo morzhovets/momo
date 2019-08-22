@@ -220,7 +220,8 @@ namespace internal
 	private:
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept
 		{
-			*&mItemPtrBuffer = items;
+			//*&mItemPtrBuffer = items;
+			memcpy(&mItemPtrBuffer, &items, sizeof(Item*));
 			mState = (uint8_t)((memPoolIndex << 4) | count);
 		}
 
@@ -244,7 +245,10 @@ namespace internal
 
 		Item* pvGetItems() const noexcept
 		{
-			return *&mItemPtrBuffer;
+			//return *&mItemPtrBuffer;
+			Item* result;
+			memcpy(&result, &mItemPtrBuffer, sizeof(Item*));
+			return result;
 		}
 
 	private:
