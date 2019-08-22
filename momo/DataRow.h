@@ -303,7 +303,7 @@ namespace internal
 		typedef TRowBounds RowBounds;
 
 	public:
-		typedef typename RowBounds::Reference Reference;
+		typedef typename RowBounds::Iterator::Reference Reference;
 
 		typedef DataRowPointer<typename RowBounds::ConstBounds> ConstPointer;
 

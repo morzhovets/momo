@@ -313,8 +313,6 @@ namespace internal
 
 		typedef ArrayBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
 
-		typedef typename std::iterator_traits<Iterator>::reference Reference;
-
 	public:
 		explicit ArrayBounds() noexcept
 			: mBegin(),
@@ -350,9 +348,9 @@ namespace internal
 			return mCount;
 		}
 
-		Reference operator[](size_t index) const noexcept
+		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const noexcept
 		{
-			MOMO_ASSERT(index < mCount);	//?
+			MOMO_ASSERT(index < mCount);
 			return mBegin[index];
 		}
 

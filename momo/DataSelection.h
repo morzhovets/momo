@@ -212,8 +212,6 @@ namespace internal
 
 		typedef DataRowBounds<typename RowReference::ConstReference, RawBounds> ConstBounds;
 
-		typedef RowReference Reference;
-
 	private:
 		struct IteratorProxy : public Iterator
 		{
@@ -253,7 +251,7 @@ namespace internal
 			return mRawBounds.GetCount();
 		}
 
-		Reference operator[](size_t index) const
+		RowReference operator[](size_t index) const
 		{
 			MOMO_CHECK(index < GetCount());
 			return GetBegin()[index];
@@ -366,8 +364,6 @@ namespace internal
 
 		typedef DataConstItemBounds ConstBounds;
 
-		typedef typename Iterator::Reference Reference;
-
 	public:
 		explicit DataConstItemBounds() noexcept
 			: mOffset(0)
@@ -402,7 +398,7 @@ namespace internal
 			return mRowBounds.GetCount();
 		}
 
-		Reference operator[](size_t index) const
+		typename Iterator::Reference operator[](size_t index) const
 		{
 			MOMO_CHECK(index < GetCount());
 			return GetBegin()[index];
