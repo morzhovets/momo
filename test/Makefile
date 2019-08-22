@@ -1,5 +1,5 @@
 COMPILER ?= g++ -std=c++11 -O2
-CFLAGS = -Wall -Wextra -pedantic -Wno-unused-local-typedefs -msse2
+CFLAGS = -v -Wall -Wextra -pedantic -Wno-unused-local-typedefs -msse2
 TESTS = $(wildcard tests/*.cpp)
 
 all: build/momo
