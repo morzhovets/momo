@@ -334,12 +334,14 @@ public:
 	}
 
 	MemManagerStd(MemManagerStd&& memManager) MOMO_NOEXCEPT
-		: MemManagerDefault(std::move(memManager))
+		: CharAllocator(),
+		MemManagerDefault(std::move(memManager))
 	{
 	}
 
 	MemManagerStd(const MemManagerStd& memManager)
-		: MemManagerDefault(memManager)
+		: CharAllocator(),
+		MemManagerDefault(memManager)
 	{
 	}
 
@@ -522,10 +524,12 @@ namespace internal
 		}
 
 		MemManagerPtr(MemManagerPtr&& /*memManagerPtr*/) MOMO_NOEXCEPT
+			: BaseMemManager()
 		{
 		}
 
 		MemManagerPtr(const MemManagerPtr& /*memManagerPtr*/) MOMO_NOEXCEPT
+			: BaseMemManager()
 		{
 		}
 
