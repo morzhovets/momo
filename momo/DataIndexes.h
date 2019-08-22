@@ -135,7 +135,7 @@ namespace internal
 			mKeyIterator(keyIter),
 			mRawIndex(rawIndex)
 		{
-			//MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->values.GetCount() + 1 : 0));
+			//MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->GetCount() + 1 : 0));
 		}
 
 		DataRawMultiHashIterator& operator+=(ptrdiff_t diff)
@@ -144,7 +144,7 @@ namespace internal
 			{
 				VersionKeeper::Check();
 				size_t newRawIndex = mRawIndex + diff;
-				MOMO_CHECK(!!mKeyIterator && newRawIndex <= mKeyIterator->values.GetCount() + 1);
+				MOMO_CHECK(!!mKeyIterator && newRawIndex <= mKeyIterator->GetCount() + 1);
 				mRawIndex = newRawIndex;
 			}
 			return *this;
@@ -159,9 +159,9 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(!!mKeyIterator && mRawIndex <= mKeyIterator->values.GetCount());
+			MOMO_CHECK(!!mKeyIterator && mRawIndex <= mKeyIterator->GetCount());
 			if (mRawIndex > 0)
-				return &mKeyIterator->values[mRawIndex - 1];
+				return &(*mKeyIterator)[mRawIndex - 1];
 			else
 				return &mKeyIterator->key;
 		}
@@ -555,7 +555,7 @@ namespace internal
 				explicit RawBounds(ConstKeyIterator keyIter, VersionKeeper version) noexcept
 					: VersionKeeper(version),
 					mKeyIterator(keyIter),
-					mRawCount(!!keyIter ? keyIter->values.GetCount() + 1 : 0)
+					mRawCount(!!keyIter ? keyIter->GetCount() + 1 : 0)
 				{
 				}
 
@@ -663,7 +663,7 @@ namespace internal
 			{
 				if (!mKeyIteratorAdd)
 					return;
-				size_t rawCount = mKeyIteratorAdd->values.GetCount();
+				size_t rawCount = mKeyIteratorAdd->GetCount();
 				if (rawCount > 0)
 					mHashMultiMap.Remove(mKeyIteratorAdd, rawCount - 1);
 				else
@@ -692,7 +692,7 @@ namespace internal
 			{
 				if (!mKeyIteratorRemove)
 					return;
-				auto raws = mKeyIteratorRemove->values;
+				auto raws = *mKeyIteratorRemove;
 				size_t rawCount = raws.GetCount();
 				if (rawCount == 0)
 				{
@@ -745,15 +745,14 @@ namespace internal
 				while (!!keyIter)
 				{
 					size_t rawIndex = 0;
-					while (rawIndex < keyIter->values.GetCount())
+					while (rawIndex < keyIter->GetCount())
 					{
-						if (rawFilter(keyIter->values[rawIndex]))
+						if (rawFilter((*keyIter)[rawIndex]))
 							++rawIndex;
 						else
 							mHashMultiMap.Remove(keyIter, rawIndex);
 					}
-					auto raws = keyIter->values;
-					size_t rawCount = raws.GetCount();
+					size_t rawCount = keyIter->GetCount();
 					size_t rawIndex1 = 0;
 					size_t rawIndex2 = 1 << logInitialSegmentSize;
 					for (size_t segIndex = 0; rawIndex2 < rawCount; ++segIndex)
@@ -772,7 +771,7 @@ namespace internal
 						keyIter = mHashMultiMap.RemoveKey(keyIter);
 						continue;
 					}
-					mHashMultiMap.ResetKey(keyIter, raws[rawCount - 1]);
+					mHashMultiMap.ResetKey(keyIter, (*keyIter)[rawCount - 1]);
 					mHashMultiMap.Remove(keyIter, rawCount - 1);
 					++keyIter;
 				}
@@ -781,7 +780,7 @@ namespace internal
 		private:
 			void pvAdd(KeyIterator keyIter, Raw* raw)
 			{
-				size_t rawCount = keyIter->values.GetCount();
+				size_t rawCount = keyIter->GetCount();
 				if (rawCount > 0 && (rawCount & ((1 << logInitialSegmentSize) - 1)) == 0)
 				{
 					size_t segIndex, rawIndex;
@@ -797,7 +796,7 @@ namespace internal
 
 			static void pvSortRaws(KeyIterator keyIter, size_t rawIndex1, size_t rawIndex2) noexcept
 			{
-				auto rawBegin = keyIter->values.GetBegin();
+				auto rawBegin = keyIter->GetBegin();
 				if (!std::is_sorted(rawBegin + rawIndex1, rawBegin + rawIndex2))
 					RadixSorter<>::Sort(rawBegin + rawIndex1, rawIndex2 - rawIndex1);
 			}

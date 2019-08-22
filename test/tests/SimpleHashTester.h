@@ -233,8 +233,8 @@ public:
 		mmap.RemoveKey(k1);
 		auto keyIter = mmap.Find(k2);
 		mmap.Remove(keyIter, 0);
-		assert(keyIter->values.GetCount() == 1);
-		for (const std::string& v : keyIter->values)
+		assert(keyIter->GetCount() == 1);
+		for (const std::string& v : *keyIter)
 			assert(v == v2);
 		for (auto ref : mmap.GetKeyBounds())
 			assert(ref.key == k2 || ref.key == k3);

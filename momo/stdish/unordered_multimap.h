@@ -403,7 +403,7 @@ public:
 	size_type count(const key_type& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
-		return !!keyIter ? keyIter->values.GetCount() : 0;
+		return !!keyIter ? keyIter->GetCount() : 0;
 	}
 
 	template<typename KeyArg>
@@ -411,13 +411,13 @@ public:
 		const KeyArg& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
-		return !!keyIter ? keyIter->values.GetCount() : 0;
+		return !!keyIter ? keyIter->GetCount() : 0;
 	}
 
 	size_type count(const key_type& key, size_t hashCode) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key, hashCode);
-		return !!keyIter ? keyIter->values.GetCount() : 0;
+		return !!keyIter ? keyIter->GetCount() : 0;
 	}
 
 	template<typename KeyArg>
@@ -425,7 +425,7 @@ public:
 		const KeyArg& key, size_t hashCode) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key, hashCode);
-		return !!keyIter ? keyIter->values.GetCount() : 0;
+		return !!keyIter ? keyIter->GetCount() : 0;
 	}
 
 	bool contains(const key_type& key) const
@@ -629,7 +629,7 @@ public:
 	{
 		typename HashMultiMap::ConstIterator iter = ConstIteratorProxy::GetBaseIterator(where);
 		typename HashMultiMap::ConstKeyIterator keyIter = iter.GetKeyIterator();
-		if (keyIter->values.GetCount() == 1)
+		if (keyIter->GetCount() == 1)
 			return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 		else
 			return IteratorProxy(mHashMultiMap.Remove(iter));
@@ -656,7 +656,7 @@ public:
 			return erase(first);
 		typename HashMultiMap::ConstKeyIterator keyIter =
 			ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
-		size_t count = keyIter->values.GetCount();
+		size_t count = keyIter->GetCount();
 		MOMO_ASSERT(count > 0);
 		if (last == ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, count)))
 			return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
@@ -697,11 +697,9 @@ public:
 			typename HashMultiMap::ConstKeyIterator keyIterRight = right.mHashMultiMap.Find(ref.key);
 			if (!keyIterRight)
 				return false;
-			typename HashMultiMap::ConstValueBounds values = ref.values;
-			typename HashMultiMap::ConstValueBounds valuesRight = keyIterRight->values;
-			if (values.GetCount() != valuesRight.GetCount())
+			if (ref.GetCount() != keyIterRight->GetCount())
 				return false;
-			if (!std::is_permutation(values.GetBegin(), values.GetEnd(), valuesRight.GetBegin()))
+			if (!std::is_permutation(ref.GetBegin(), ref.GetEnd(), keyIterRight->GetBegin()))
 				return false;
 		}
 		return true;
@@ -731,7 +729,7 @@ private:
 		Iterator end = IteratorProxy(hashMultiMap.GetEnd());
 		if (!keyIter)
 			return { end, end };
-		size_t count = keyIter->values.GetCount();
+		size_t count = keyIter->GetCount();
 		if (count == 0)	//?
 			return { end, end };
 		Iterator first = IteratorProxy(hashMultiMap.MakeIterator(keyIter, 0));

@@ -33,42 +33,76 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename TValues, typename THashMapReference>
+	template<typename TKey, typename TValues, typename THashMapReference, typename TSettings>
 	class HashMultiMapKeyReference
 	{
 	public:
 		typedef TKey Key;
-		typedef TValues Values;
 
 	protected:
+		typedef TValues Values;
 		typedef THashMapReference HashMapReference;
+		typedef TSettings Settings;
 
 	public:
 		typedef HashMultiMapKeyReference<Key, typename Values::ConstBounds,
-			typename HashMapReference::ConstReference> ConstReference;
+			typename HashMapReference::ConstReference, Settings> ConstReference;
+
+		typedef typename Values::Iterator Iterator;
+
+	private:
+		struct ConstReferenceProxy : public ConstReference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstReference)
+		};
 
 	public:
-		explicit HashMultiMapKeyReference(const Key& key, const Values& values) noexcept
-			: key(key),
-			values(values)
-		{
-		}
-
 		operator ConstReference() const noexcept
 		{
-			return ConstReference(key, values);
+			return ConstReferenceProxy(key, mValues);
+		}
+
+		Iterator GetBegin() const noexcept
+		{
+			return mValues.GetBegin();
+		}
+
+		Iterator GetEnd() const noexcept
+		{
+			return mValues.GetEnd();
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const HashMultiMapKeyReference&, Iterator)
+
+		size_t GetCount() const noexcept
+		{
+			return mValues.GetCount();
+		}
+
+		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const
+		{
+			MOMO_CHECK(index < GetCount());
+			return mValues[index];
 		}
 
 	protected:
+		explicit HashMultiMapKeyReference(const Key& key, Values values) noexcept
+			: key(key),
+			mValues(values)
+		{
+		}
+
 		explicit HashMultiMapKeyReference(HashMapReference hashMapRef) noexcept
 			: key(hashMapRef.key),
-			values(hashMapRef.value.GetBounds())
+			mValues(hashMapRef.value.GetBounds())
 		{
 		}
 
 	public:
 		const Key& key;
-		const Values values;
+
+	private:
+		const Values mValues;
 	};
 
 	template<typename TKeyIterator>
@@ -248,14 +282,13 @@ namespace internal
 	private:
 		void pvMove() noexcept
 		{
-			if (mValuePtr != mKeyIterator->values.GetEnd())
+			if (mValuePtr != mKeyIterator->GetEnd())
 				return;
 			++mKeyIterator;
 			for (; !!mKeyIterator; ++mKeyIterator)
 			{
-				auto values = mKeyIterator->values;
-				mValuePtr = values.GetBegin();
-				if (mValuePtr != values.GetEnd())
+				mValuePtr = mKeyIterator->GetBegin();
+				if (mValuePtr != mKeyIterator->GetEnd())
 					return;
 			}
 			mValuePtr = nullptr;
@@ -630,12 +663,8 @@ private:
 	typedef typename HashMap::Iterator HashMapIterator;
 	typedef typename HashMapIterator::Reference HashMapReference;
 
-public:
-	typedef typename ValueArray::ConstBounds ConstValueBounds;
-	typedef typename ValueArray::Bounds ValueBounds;
-
-private:
-	typedef internal::HashMultiMapKeyReference<Key, ValueBounds, HashMapReference> KeyReference;
+	typedef internal::HashMultiMapKeyReference<Key, typename ValueArray::Bounds,
+		HashMapReference, Settings> KeyReference;
 
 public:
 	typedef internal::HashDerivedIterator<HashMapIterator, KeyReference> KeyIterator;
@@ -1036,9 +1065,8 @@ public:
 
 	Iterator Remove(ConstKeyIterator keyIter, size_t valueIndex)
 	{
-		ConstValueBounds valueBounds = keyIter->values;
-		MOMO_CHECK(valueIndex < valueBounds.GetCount());
-		return Remove(pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, false));
+		MOMO_CHECK(valueIndex < keyIter->GetCount());
+		return Remove(pvMakeIterator(keyIter, keyIter->GetBegin() + valueIndex, false));
 	}
 
 	Iterator Remove(ConstIterator iter)
@@ -1090,7 +1118,7 @@ public:
 		KeyIterator keyIter = Find(key);
 		if (!keyIter)
 			return 0;
-		size_t valueCount = keyIter->values.GetCount();
+		size_t valueCount = keyIter->GetCount();
 		RemoveKey(keyIter);
 		return valueCount;
 	}
@@ -1118,7 +1146,7 @@ public:
 			return Iterator();
 		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
-		Value* valueBegin = keyIter->values.GetBegin();
+		Value* valueBegin = keyIter->GetBegin();
 		return pvMakeIterator(keyIter,
 			valueBegin + (ConstIteratorProxy::GetValuePtr(iter) - valueBegin), false);
 	}
@@ -1154,7 +1182,7 @@ private:
 	{
 		if (!keyIter)
 			return Iterator();
-		return pvMakeIterator(keyIter, keyIter->values.GetBegin(), true);
+		return pvMakeIterator(keyIter, keyIter->GetBegin(), true);
 	}
 
 	ConstIterator pvMakeIterator(ConstKeyIterator keyIter, const Value* pvalue,
@@ -1174,9 +1202,8 @@ private:
 		if (!keyIter && valueIndex == 0)
 			return Iterator();
 		CheckKeyIterator(keyIter);
-		auto valueBounds = keyIter->values;
-		MOMO_CHECK(valueIndex <= valueBounds.GetCount());
-		return pvMakeIterator(keyIter, valueBounds.GetBegin() + valueIndex, true);
+		MOMO_CHECK(valueIndex <= keyIter->GetCount());
+		return pvMakeIterator(keyIter, keyIter->GetBegin() + valueIndex, true);
 	}
 
 	template<typename RKey, typename ValueCreator>
@@ -1194,7 +1221,7 @@ private:
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key),
 			std::move(valuesCreator)));
-		return pvMakeIterator(keyIter, keyIter->values.GetBegin(), false);
+		return pvMakeIterator(keyIter, keyIter->GetBegin(), false);
 	}
 
 	template<typename ValueCreator>
