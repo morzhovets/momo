@@ -61,6 +61,6 @@ public:
 template <class T, std::size_t N>
 inline
 void
-swap(stack_allocator<T, N>& x, stack_allocator<T, N>& y) {}
+swap(stack_allocator<T, N>&, stack_allocator<T, N>&) {}
 
 #endif  // STACK_ALLOCATOR_H
