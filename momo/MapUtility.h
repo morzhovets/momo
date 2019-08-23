@@ -104,12 +104,6 @@ namespace internal
 		}
 	};
 
-	template<typename Key, typename Value, typename HashMapReference>
-	struct Dereferencer<MapReferenceStd<Key, Value, HashMapReference>>
-	{
-		typedef std::pair<const Key, Value> Object;
-	};
-
 	template<typename TSetIterator, typename TKey>
 	class MapKeyIterator
 	{

@@ -250,12 +250,6 @@ namespace internal
 		typedef std::reverse_iterator<const Object*> ConstIterator;
 	};
 
-	template<typename Reference>
-	struct Dereferencer
-	{
-		typedef typename std::decay<Reference>::type Object;
-	};
-
 	template<typename TReference>
 	class IteratorPointer
 	{
@@ -662,7 +656,7 @@ namespace internal
 		typedef ptrdiff_t difference_type;
 		typedef typename Iterator::Pointer pointer;
 		typedef typename Iterator::Reference reference;
-		typedef typename Dereferencer<reference>::Object value_type;
+		typedef typename std::decay<reference>::type value_type;
 	};
 }
 
