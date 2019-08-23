@@ -21,14 +21,12 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, size_t tAlignment>
+	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
 	class BucketLimP1 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
-
-		static const size_t alignment = tAlignment;
 
 	public:
 		static const size_t maxCount = tMaxCount;
@@ -252,24 +250,22 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Item*, alignment> mItemPtrBuffer;
+		char mItemPtrBuffer[sizeof(Item*)];
 		uint8_t mState;
 	};
 }
 
 template<size_t tMaxCount = 4,
-	typename TMemPoolParams = MemPoolParams<>,
-	size_t tAlignment = internal::AlignmentOf<void*>::value>
+	typename TMemPoolParams = MemPoolParams<>>
 class HashBucketLimP1 : public internal::HashBucketBase
 {
 public:
 	static const size_t maxCount = tMaxCount;
-	static const size_t alignment = tAlignment;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketLimP1<ItemTraits, maxCount, MemPoolParams, alignment>;
+	using Bucket = internal::BucketLimP1<ItemTraits, maxCount, MemPoolParams>;
 };
 
 } // namespace momo
