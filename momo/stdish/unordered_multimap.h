@@ -516,17 +516,21 @@ public:
 	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(const_iterator hint, Value&& value)
 
+	//iterator insert(value_type&& value)
+
+	//iterator insert(const_iterator hint, value_type&& value)
+
 	//iterator insert(const value_type& value)
 
 	//iterator insert(const_iterator hint, const value_type& value)
 
-	iterator insert(value_type&& value)
+	iterator insert(std::pair<key_type, mapped_type>&& value)
 	{
-		return pvEmplace(std::forward_as_tuple(value.first),
+		return pvEmplace(std::forward_as_tuple(std::move(value.first)),
 			std::forward_as_tuple(std::move(value.second)));
 	}
 
-	iterator insert(const_iterator, value_type&& value)
+	iterator insert(const_iterator, std::pair<key_type, mapped_type>&& value)
 	{
 		return insert(std::move(value));
 	}

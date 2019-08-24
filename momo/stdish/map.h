@@ -508,19 +508,23 @@ namespace internal
 		//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
 		//insert(const_iterator hint, Value&& value)
 
+		//std::pair<iterator, bool> insert(value_type&& value)
+
+		//iterator insert(const_iterator hint, value_type&& value)
+
 		//std::pair<iterator, bool> insert(const value_type& value)
 
 		//iterator insert(const_iterator hint, const value_type& value)
 
-		std::pair<iterator, bool> insert(value_type&& value)
+		std::pair<iterator, bool> insert(std::pair<key_type, mapped_type>&& value)
 		{
-			return ptEmplace(nullptr, std::forward_as_tuple(value.first),
+			return ptEmplace(nullptr, std::forward_as_tuple(std::move(value.first)),
 				std::forward_as_tuple(std::move(value.second)));
 		}
 
-		iterator insert(const_iterator hint, value_type&& value)
+		iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
 		{
-			return ptEmplace(hint, std::forward_as_tuple(value.first),
+			return ptEmplace(hint, std::forward_as_tuple(std::move(value.first)),
 				std::forward_as_tuple(std::move(value.second))).first;
 		}
 
@@ -987,12 +991,12 @@ public:
 
 	//using BaseMap::insert;	// gcc 5 & 6
 
-	iterator insert(value_type&& value)
+	iterator insert(std::pair<key_type, mapped_type>&& value)
 	{
 		return BaseMap::insert(std::move(value)).first;
 	}
 
-	iterator insert(const_iterator hint, value_type&& value)
+	iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
 	{
 		return BaseMap::insert(hint, std::move(value));
 	}
