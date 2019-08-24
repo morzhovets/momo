@@ -18,7 +18,7 @@ matrix:
       dist: xenial
       compiler: gcc
       # gcc 5.4.0
-      env: COMPILER='g++ -std=c++11'
+      env: COMPILER='g++ -std=c++14'
 
     - os: linux
       dist: trusty
