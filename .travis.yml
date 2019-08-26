@@ -3,6 +3,51 @@ language: cpp
 matrix:
   include:
 
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER='clang++ -std=c++11 -O2'
+
+    - os: osx
+      compiler: clang
+      env: COMPILER='clang++ -std=c++17 -O2'
+
+    - os: linux
+      dist: precise
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env: COMPILER='clang++-3.6 -std=c++11 -O2'
+
+    - os: linux
+      dist: precise
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
+          packages:
+            - clang-3.9
+      env: COMPILER='clang++-3.9 -std=c++14 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -Wno-c++1z-extensions'
+
+    - os: linux
+      dist: xenial
+      compiler: clang
+      # clang 7.0.0
+      env: COMPILER='clang++ -std=c++11 -Wno-c++17-extensions'
+
+    - os: linux
+      dist: xenial
+      compiler: clang
+      # clang 7.0.0
+      env: COMPILER='clang++ -std=c++17 -O2'
+
     - os: linux
       dist: trusty
       compiler: gcc
@@ -41,46 +86,6 @@ matrix:
           packages:
             - g++-9
       env: COMPILER='g++-9 -std=c++17 -O2'
-
-    - os: linux
-      dist: precise
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - clang-3.6
-      env: COMPILER='clang++-3.6 -std=c++11 -O2'
-
-    - os: linux
-      dist: precise
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.9
-          packages:
-            - clang-3.9
-      env: COMPILER='clang++-3.9 -std=c++14 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -Wno-c++1z-extensions'
-
-    - os: linux
-      dist: xenial
-      compiler: clang
-      # clang 7.0.0
-      env: COMPILER='clang++ -std=c++11 -Wno-c++17-extensions'
-
-    - os: linux
-      dist: xenial
-      compiler: clang
-      # clang 7.0.0
-      env: COMPILER='clang++ -std=c++17 -O2'
-
-    - os: osx
-      compiler: clang
-      env: COMPILER='clang++ -std=c++17 -O2'
 
 script:
   - cd test
