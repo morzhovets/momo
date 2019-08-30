@@ -33,19 +33,21 @@ void main()
         typedef double P;
         C c;
         C::const_iterator e = c.end();
-        R r = c.insert(e, P(3.5));
+        R r = c.insert(/*e*/c.find(3.5), P(3.5));
         assert(c.size() == 1);
         assert(*r == 3.5);
 
-        r = c.insert(r, P(3.5));
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+        r = c.insert(/*r*/c.find(3.5), P(3.5));
         assert(c.size() == 1);
         assert(*r == 3.5);
+#endif
 
-        r = c.insert(e, P(4.5));
+        r = c.insert(/*e*/c.find(4.5), P(4.5));
         assert(c.size() == 2);
         assert(*r == 4.5);
 
-        r = c.insert(e, P(5.5));
+        r = c.insert(/*e*/c.find(5.5), P(5.5));
         assert(c.size() == 3);
         assert(*r == 5.5);
     }
@@ -56,19 +58,21 @@ void main()
         typedef MoveOnly P;
         C c;
         C::const_iterator e = c.end();
-        R r = c.insert(e, P(3));
+        R r = c.insert(/*e*/c.find(3), P(3));
         assert(c.size() == 1);
         assert(*r == 3);
 
-        r = c.insert(r, P(3));
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+        r = c.insert(/*r*/c.find(3), P(3));
         assert(c.size() == 1);
         assert(*r == 3);
+#endif
 
-        r = c.insert(e, P(4));
+        r = c.insert(/*e*/c.find(4), P(4));
         assert(c.size() == 2);
         assert(*r == 4);
 
-        r = c.insert(e, P(5));
+        r = c.insert(/*e*/c.find(5), P(5));
         assert(c.size() == 3);
         assert(*r == 5);
     }

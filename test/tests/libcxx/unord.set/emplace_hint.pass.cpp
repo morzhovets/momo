@@ -35,17 +35,19 @@ void main()
         typedef C::iterator R;
         C c;
         C::const_iterator e = c.end();
-        R r = c.emplace_hint(e);
+        R r = c.emplace_hint(/*e*/c.find(Emplaceable()));
         assert(c.size() == 1);
         assert(*r == Emplaceable());
 
-        r = c.emplace_hint(e, Emplaceable(5, 6));
+        r = c.emplace_hint(/*e*/c.find(Emplaceable(5, 6)), Emplaceable(5, 6));
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         r = c.emplace_hint(r, 5, 6);
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
+#endif
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
