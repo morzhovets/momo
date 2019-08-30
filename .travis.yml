@@ -18,7 +18,7 @@ matrix:
       dist: xenial
       compiler: gcc
       # gcc 5.4.0
-      env: COMPILER='g++ -std=c++14'
+      env: COMPILER='g++ -std=c++17'
 
     - os: linux
       dist: trusty
@@ -29,7 +29,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-      env: COMPILER='g++-7 -std=c++17 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS'
+      env: COMPILER='g++-7 -std=c++17 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
 
     - os: linux
       dist: trusty
@@ -64,19 +64,19 @@ matrix:
             - llvm-toolchain-precise-3.9
           packages:
             - clang-3.9
-      env: COMPILER='clang++-3.9 -std=c++14 -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -Wno-c++1z-extensions'
-
-    - os: linux
-      dist: xenial
-      compiler: clang
-      # clang 7.0.0
-      env: COMPILER='clang++ -std=c++17 -g -fsanitize=address,undefined'
+      env: COMPILER='clang++-3.9 -std=c++1z -O3 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
 
     - os: linux
       dist: xenial
       compiler: clang
       # clang 7.0.0
       env: COMPILER='clang++ -std=c++17 -O2'
+
+    - os: linux
+      dist: xenial
+      compiler: clang
+      # clang 7.0.0
+      env: COMPILER='clang++ -std=c++17 -g -fsanitize=address,undefined'
 
 #    - os: osx
 #      compiler: clang

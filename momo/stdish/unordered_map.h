@@ -758,9 +758,9 @@ public:
 	}
 
 	template<typename... MappedArgs>
-	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
+	iterator try_emplace(const_iterator /*hint*/, key_type&& key, MappedArgs&&... mappedArgs)
 	{
-		return pvEmplace(hint, std::forward_as_tuple(std::move(key)),
+		return pvEmplace(nullptr, std::forward_as_tuple(std::move(key)),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
@@ -772,34 +772,34 @@ public:
 	}
 
 	template<typename... MappedArgs>
-	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
+	iterator try_emplace(const_iterator /*hint*/, const key_type& key, MappedArgs&&... mappedArgs)
 	{
-		return pvEmplace(hint, std::forward_as_tuple(key),
+		return pvEmplace(nullptr, std::forward_as_tuple(key),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
 	template<typename MappedArg>
 	std::pair<iterator, bool> insert_or_assign(key_type&& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(nullptr, std::move(key), std::forward<MappedArg>(mappedArg));
+		return pvInsertOrAssign(std::move(key), std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename MappedArg>
-	iterator insert_or_assign(const_iterator hint, key_type&& key, MappedArg&& mappedArg)
+	iterator insert_or_assign(const_iterator /*hint*/, key_type&& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(hint, std::move(key), std::forward<MappedArg>(mappedArg)).first;
+		return pvInsertOrAssign(std::move(key), std::forward<MappedArg>(mappedArg)).first;
 	}
 
 	template<typename MappedArg>
 	std::pair<iterator, bool> insert_or_assign(const key_type& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(nullptr, key, std::forward<MappedArg>(mappedArg));
+		return pvInsertOrAssign(key, std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename MappedArg>
-	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
+	iterator insert_or_assign(const_iterator /*hint*/, const key_type& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
+		return pvInsertOrAssign(key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
 	node_type extract(const_iterator where)
@@ -1026,10 +1026,10 @@ private:
 			insert(*iter);
 	}
 
-	template<typename Hint, typename RKey, typename MappedArg>
-	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
+	template<typename RKey, typename MappedArg>
+	std::pair<iterator, bool> pvInsertOrAssign(RKey&& key, MappedArg&& mappedArg)
 	{
-		std::pair<iterator, bool> res = pvEmplace(hint,
+		std::pair<iterator, bool> res = pvEmplace(nullptr,
 			std::forward_as_tuple(std::forward<RKey>(key)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 		if (!res.second)
