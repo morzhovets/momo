@@ -57,7 +57,7 @@ void main()
         typedef C::iterator R;
         typedef MoveOnly P;
         C c;
-        C::const_iterator e = c.end();
+        //C::const_iterator e = c.end();
         R r = c.insert(/*e*/c.find(3), P(3));
         assert(c.size() == 1);
         assert(*r == 3);
