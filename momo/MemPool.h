@@ -363,7 +363,7 @@ private:
 
 	size_t pvGetBufferSize0() const noexcept
 	{
-		return std::minmax((size_t)Params::blockSize, (size_t)Params::blockAlignment).second;	// gcc & llvm
+		return std::minmax((size_t)Params::blockSize, (size_t)Params::blockAlignment).second;
 	}
 
 	uintptr_t pvNewBlock1()
@@ -520,7 +520,7 @@ private:
 		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
 			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
 		if ((Params::blockAlignment & (Params::blockAlignment - 1)) == 0)
-			bufferUsefulSize -= std::minmax((size_t)maxAlignment, (size_t)Params::blockAlignment).first;	// gcc & llvm
+			bufferUsefulSize -= std::minmax((size_t)maxAlignment, (size_t)Params::blockAlignment).first;
 		else
 			bufferUsefulSize -= SMath::GCD(maxAlignment, Params::blockAlignment);
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
