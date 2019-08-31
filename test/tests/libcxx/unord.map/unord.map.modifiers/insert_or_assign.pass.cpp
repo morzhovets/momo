@@ -109,6 +109,7 @@ void main()
         for (int i = 0; i < 20; i += 2)
             m.emplace ( i, Moveable(i, (double) i));
         assert(m.size() == 10);
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         M::const_iterator it = m.find(2);
 
         Moveable mv1(3, 3.0);
@@ -117,9 +118,10 @@ void main()
         assert(mv1.moved());           // was moved from
         assert(r->first        == 2);  // key
         assert(r->second.get() == 3);  // value
+#endif
 
         Moveable mv2(5, 5.0);
-        r = m.insert_or_assign(it, 3, std::move(mv2));
+        r = m.insert_or_assign(/*it*/m.find(3), 3, std::move(mv2));
         assert(m.size() == 11);
         assert(mv2.moved());           // was moved from
         assert(r->first        == 3);  // key
@@ -132,6 +134,7 @@ void main()
         for (int i = 0; i < 20; i += 2)
             m.emplace ( Moveable(i, (double) i), Moveable(i+1, (double) i+1));
         assert(m.size() == 10);
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         M::const_iterator it = std::next(m.cbegin());
 
         Moveable mvkey1(2, 2.0);
@@ -142,10 +145,11 @@ void main()
         assert(!mvkey1.moved());      // was not moved from
         assert(r->first == mvkey1);   // key
         assert(r->second.get() == 4); // value
+#endif
 
         Moveable mvkey2(3, 3.0);
         Moveable mv2(5, 5.0);
-        r = m.insert_or_assign(it, std::move(mvkey2), std::move(mv2));
+        r = m.insert_or_assign(/*it*/m.find(mvkey2), std::move(mvkey2), std::move(mv2));
         assert(m.size() == 11);
         assert(mv2.moved());           // was moved from
         assert(mvkey2.moved());        // was moved from

@@ -34,7 +34,7 @@ void main()
         typedef unordered_set<Emplaceable> C;
         typedef C::iterator R;
         C c;
-        C::const_iterator e = c.end();
+        //C::const_iterator e = c.end();
         R r = c.emplace_hint(/*e*/c.find(Emplaceable()));
         assert(c.size() == 1);
         assert(*r == Emplaceable());

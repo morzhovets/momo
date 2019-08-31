@@ -31,7 +31,7 @@ void main()
         typedef C::iterator R;
         typedef C::value_type P;
         C c;
-        C::const_iterator e = c.end();
+        //C::const_iterator e = c.end();
         R r = c.insert(/*e*/c.find(3.5), P(3.5));
         assert(c.size() == 1);
         assert(*r == 3.5);
