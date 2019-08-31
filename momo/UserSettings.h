@@ -23,7 +23,7 @@
 // so expressions such as `map[key1] + map[key2]` are potentially dangerous.
 //#define MOMO_USE_SAFE_MAP_BRACKETS
 
-// Using hint iterators in classes `stdish::unordered_set/map/multimap`.
+// Using hint iterators in classes `stdish::unordered_set/map`.
 // As a hint pass an iterator, returned after an unsuccessful search.
 //#define MOMO_USE_UNORDERED_HINT_ITERATORS
 

@@ -15,8 +15,8 @@
   doesn't need dynamic memory while its size is not greater than
   user-defined constant.
 
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
+  It is allowed to pass to functions `push_back`, `insert`, `emplace_back`
+  and `emplace` references to items within the container.
   But in case of the function `insert`, receiving pair of iterators, it's
   not allowed to pass iterators pointing to the items within the container.
 
