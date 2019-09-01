@@ -10,8 +10,9 @@
 #ifndef TRANSPARENT_H
 #define TRANSPARENT_H
 
-// testing transparent 
-#if _LIBCPP_STD_VER > 11
+// testing transparent
+//#if _LIBCPP_STD_VER > 11
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 
 struct transparent_less
 {
@@ -63,7 +64,7 @@ struct C2Int { // comparable to int
 private:
     int i_;
     };
-    
+
 inline bool operator <(int          rhs,   const C2Int& lhs) { return rhs       < lhs.get(); }
 inline bool operator <(const C2Int& rhs,   const C2Int& lhs) { return rhs.get() < lhs.get(); }
 inline bool operator <(const C2Int& rhs,            int lhs) { return rhs.get() < lhs; }

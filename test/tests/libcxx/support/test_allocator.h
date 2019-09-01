@@ -101,7 +101,7 @@ public:
       assert(a.data_ != destructed_value && a.id_ != destructed_value &&
              "copying from destroyed allocator");
     }
-#if _LIBCPP_STD_VER >= 11
+//#if _LIBCPP_STD_VER >= 11
     test_allocator(test_allocator&& a) noexcept : data_(a.data_),
                                                        id_(a.id_) {
       ++count;
@@ -111,7 +111,7 @@ public:
       a.data_ = moved_value;
       a.id_ = moved_value;
     }
-#endif
+//#endif
     template <class U>
     test_allocator(const test_allocator<U>& a) noexcept : data_(a.data_),
                                                                id_(a.id_) {
@@ -144,7 +144,7 @@ public:
         {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p);}
     size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
-#if _LIBCPP_STD_VER < 11
+#if 0 //_LIBCPP_STD_VER < 11
     void construct(pointer p, const T& val)
         {::new(static_cast<void*>(p)) T(val);}
 #else
@@ -208,7 +208,7 @@ public:
         {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p); }
     size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
-#if _LIBCPP_STD_VER < 11
+#if 0 //_LIBCPP_STD_VER < 11
     void construct(pointer p, const T& val)
         {::new(static_cast<void*>(p)) T(val);}
 #else
@@ -289,14 +289,14 @@ public:
     typedef std::true_type propagate_on_container_move_assignment;
     typedef std::true_type propagate_on_container_swap;
 
-#if _LIBCPP_STD_VER < 11
+#if 0 //_LIBCPP_STD_VER < 11
     std::size_t max_size() const
         {return UINT_MAX / sizeof(T);}
 #endif
 
 };
 
-#if _LIBCPP_STD_VER >= 11
+//#if _LIBCPP_STD_VER >= 11
 
 struct Ctor_Tag {};
 
@@ -371,7 +371,7 @@ template<typename T, typename U>
 bool
 operator!=(const TaggingAllocator<T>&, const TaggingAllocator<U>&)
 { return false; }
-#endif
+//#endif
 
 template <std::size_t MaxAllocs>
 struct limited_alloc_handle {

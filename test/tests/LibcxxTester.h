@@ -17,18 +17,14 @@
 
 #ifdef _MSC_VER
 
-#define _LIBCPP_STD_VER 14
-
 #if _MSC_VER == 1900 && !defined(_DEBUG)
 #define LIBCPP_VS2015_RELEASE	//?
 #endif
 
 #else
 
-#if __cplusplus >= 201402L
-#define _LIBCPP_STD_VER 14
-#else
-#define _LIBCPP_STD_VER 11
+#if __cplusplus < 201402L
+#define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif
 
 #endif

@@ -229,7 +229,8 @@ void main()
     assert(r.second == next(m.begin(), 8));
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
     {
     typedef int V;
     typedef set<V, std::less<>> M;

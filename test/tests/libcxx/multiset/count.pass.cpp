@@ -93,7 +93,8 @@ void main()
     }
     }
 #endif
-#if _LIBCPP_STD_VER > 11
+//#if _LIBCPP_STD_VER > 11
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
     {
     typedef int V;
     typedef multiset<int, std::less<>> M;
