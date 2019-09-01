@@ -12,7 +12,7 @@
 // void pop_back();
 
 #if _LIBCPP_DEBUG >= 1
-#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
+//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
 #endif
 
 //#include <vector>

@@ -16,7 +16,7 @@
 // size_type bucket_size(size_type n) const
 
 #ifdef _LIBCPP_DEBUG
-#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
+//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
 #endif
 
 //#include <unordered_set>

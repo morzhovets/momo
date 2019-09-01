@@ -16,7 +16,7 @@
 // void swap(unordered_set& x, unordered_set& y);
 
 #if _LIBCPP_DEBUG >= 1
-#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
+//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
 #endif
 
 //#include <unordered_set>
