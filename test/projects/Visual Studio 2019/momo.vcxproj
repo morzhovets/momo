@@ -254,6 +254,9 @@
     <ClInclude Include="..\..\tests\SimpleHashTester.h" />
     <ClInclude Include="..\..\tests\TestSettings.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\..\debug\momo.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

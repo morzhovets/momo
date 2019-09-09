@@ -318,4 +318,7 @@
       <Filter>Header Files\momo</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\..\debug\momo.natvis" />
+  </ItemGroup>
 </Project>
