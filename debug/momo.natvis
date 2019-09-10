@@ -50,6 +50,20 @@
     </Expand>
 </Type>
 
+<Type Name="momo::internal::BucketLimP4&lt;*&gt;">
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState &lt; 4">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; useHashCodePartGetter">{{ Count={(4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7))} FirstItem={*(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)} }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; !useHashCodePartGetter">{{ Count={(4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7))} FirstItem={**(Item**)&amp;mPtrState} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7)</Item>
+        <ArrayItems>
+            <Size>4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7)</Size>
+            <ValuePointer Condition="useHashCodePartGetter">(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)</ValuePointer>
+            <ValuePointer Condition="!useHashCodePartGetter">*(Item**)&amp;mPtrState</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
 <Type Name="momo::internal::BucketLimP1&lt;*&gt;">
     <DisplayString Condition="(size_t)(mState &amp; 15) == 0">{{ Count=0 }}</DisplayString>
     <DisplayString Condition="(size_t)(mState &amp; 15) != 0">{{ Count={(size_t)(mState &amp; 15)} FirstItem={**(Item**)&amp;mItemPtrBuffer} }}</DisplayString>
@@ -62,16 +76,26 @@
     </Expand>
 </Type>
 
-<Type Name="momo::internal::BucketLimP4&lt;*&gt;">
-    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState &lt; 4">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; useHashCodePartGetter">{{ Count={(4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7))} FirstItem={*(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)} }}</DisplayString>
-    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; !useHashCodePartGetter">{{ Count={(4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7))} FirstItem={**(Item**)&amp;mPtrState} }}</DisplayString>
+<Type Name="momo::internal::BucketOpen2N2&lt;*&gt;">
+    <DisplayString Condition="(mState[1] &amp; 3) == 0">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="(mState[1] &amp; 3) != 0">{{ Count={(size_t)(mState[1] &amp; 3)} FirstItem={*(Item*)&amp;mItems[maxCount - 1]} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7)</Item>
+        <Item Name="[Count]">(mState[1] &amp; 3)</Item>
         <ArrayItems>
-            <Size>4 - (mHashes[0] >> 7) - (mHashes[1] >> 7) - (mHashes[2] >> 7) - (mHashes[3] >> 7)</Size>
-            <ValuePointer Condition="useHashCodePartGetter">(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)</ValuePointer>
-            <ValuePointer Condition="!useHashCodePartGetter">*(Item**)&amp;mPtrState</ValuePointer>
+            <Size>(mState[1] &amp; 3)</Size>
+            <ValuePointer>(Item*)&amp;mItems[maxCount - (mState[1] &amp; 3)]</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::BucketOpen8&lt;*&gt;">
+    <DisplayString Condition="(uint8_t)mData[maxCount - 1] == emptyShortHash">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="(uint8_t)mData[maxCount - 1] != emptyShortHash">{{ Count={((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems[0]} }}</DisplayString>
+    <Expand>
+        <Item Name="[Count]">((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Item>
+        <ArrayItems>
+            <Size>((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
+            <ValuePointer>(Item*)&amp;mItems[0]</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
