@@ -436,7 +436,8 @@ public:
 		return { PositionProxy(res.iterator), res.inserted };
 	}
 
-	template<typename ArgIterator>
+	template<typename ArgIterator,
+		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*ArgIterator()))>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		size_t count = 0;
