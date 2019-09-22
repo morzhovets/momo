@@ -428,11 +428,11 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TItem, typename TMemManager>
-class HashSetItemTraits : public internal::SetItemTraits<TKey, TItem, TMemManager>
+template<typename TKey, typename TMemManager>
+class HashSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:
-	typedef internal::SetItemTraits<TKey, TItem, TMemManager> SetItemTraits;
+	typedef internal::SetItemTraits<TKey, TMemManager> SetItemTraits;
 
 public:
 	using typename SetItemTraits::Item;
@@ -464,7 +464,7 @@ public:
 template<typename TKey,
 	typename THashTraits = HashTraits<TKey>,
 	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = HashSetItemTraits<TKey, TKey, TMemManager>,
+	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
 class HashSet
 {

@@ -538,11 +538,11 @@ namespace internal
 	protected:
 		typedef TKeyValuePair KeyValuePair;	//?
 		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
-		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::Value Value;
 
 	public:
 		typedef KeyValuePair Item;
+		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::MemManager MemManager;
 
 	private:

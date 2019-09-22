@@ -32,7 +32,7 @@ using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
 	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, false,
 		momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
 		momo::MemManagerStd<TAllocator>,
-		momo::TreeSetItemTraits<TKey, TKey, momo::MemManagerStd<TAllocator>>,
+		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
 #include "LibcxxSetTests.h"
 #undef LIBCXX_TEST_PREFIX

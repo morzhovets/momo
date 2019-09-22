@@ -32,7 +32,7 @@ using multiset = momo::stdish::multiset<TKey, TLessFunc, TAllocator,
 	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, true,
 		momo::TreeNode<4, 2, momo::MemPoolParams<>, true>>,
 		momo::MemManagerStd<TAllocator>,
-		momo::TreeSetItemTraits<TKey, TKey, momo::MemManagerStd<TAllocator>>,
+		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
 #include "LibcxxMultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX

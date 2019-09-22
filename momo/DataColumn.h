@@ -370,8 +370,7 @@ private:
 	typedef typename ColumnTraits::ColumnCodeHashTraits ColumnCodeHashTraits;
 
 	typedef HashSet<ColumnCode, ColumnCodeHashTraits, MemManager,
-		HashSetItemTraits<ColumnCode, ColumnCode, MemManager>,
-		internal::NestedHashSetSettings> ColumnCodeSet;
+		HashSetItemTraits<ColumnCode, MemManager>, internal::NestedHashSetSettings> ColumnCodeSet;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 

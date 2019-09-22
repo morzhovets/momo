@@ -340,7 +340,7 @@ namespace internal
 		{
 		private:
 			typedef momo::HashSet<Raw*, HashTraits, MemManagerPtr,
-				HashSetItemTraits<Raw*, Raw*, MemManagerPtr>, NestedHashSetSettings> HashSet;
+				HashSetItemTraits<Raw*, MemManagerPtr>, NestedHashSetSettings> HashSet;
 
 			typedef typename HashSet::ConstPosition Position;
 

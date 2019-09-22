@@ -33,7 +33,7 @@ template<typename TKey,
 using unordered_set = momo::stdish::unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
 	momo::HashSet<TKey, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc, LIBCXX_TEST_BUCKET>,
 		momo::MemManagerStd<TAllocator>,
-		momo::HashSetItemTraits<TKey, TKey, momo::MemManagerStd<TAllocator>>,
+		momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashSetSettings>>;
 #include "LibcxxUnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
