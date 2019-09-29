@@ -310,7 +310,7 @@ private:
 
 		TestResult<> res = pvTestMap<HashMap>(trueMapTitle, keyCount, afterCreate);
 
-		double norm = (double)keyCount / 1e3;
+		double norm = static_cast<double>(keyCount) / 1e3;
 		TestResult<double> normRes = pvMakeNormResult(res, norm);
 
 		pvOutputResult(trueMapTitle, keyCount, res, normRes);
@@ -325,7 +325,7 @@ private:
 
 		TestResult<> res = pvTestMap<TreeMap>(mapTitle, keyCount, afterCreate);
 
-		double norm = (double)keyCount * log2((double)keyCount) / 1e3;
+		double norm = static_cast<double>(keyCount) * log2(static_cast<double>(keyCount)) / 1e3;
 		TestResult<double> normRes = pvMakeNormResult(res, norm);
 
 		pvOutputResult(mapTitle, keyCount, res, normRes);
