@@ -316,7 +316,7 @@ namespace internal
 			value |= value >> 4;
 			value |= value >> 8;
 			value |= value >> 16;
-			return tab32[(value * (UInt)0x07C4ACDD) >> 27];
+			return tab32[(value * UInt{0x07C4ACDD}) >> 27];
 		}
 
 		template<size_t size = sizeof(UInt)>
@@ -340,7 +340,7 @@ namespace internal
 			value |= value >> 16;
 			value |= value >> 32;
 			value -= value >> 1;
-			return tab64[(value * (UInt)0x07EDD5E59A4E28C2) >> 58];
+			return tab64[(value * UInt{0x07EDD5E59A4E28C2}) >> 58];
 		}
 	};
 }

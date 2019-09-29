@@ -827,7 +827,7 @@ public:
 
 	void Insert(size_t index, const Item& item)
 	{
-		return Insert(index, (size_t)1, item);	//?
+		return Insert(index, size_t{1}, item);	//?
 	}
 
 	void Insert(size_t index, size_t count, const Item& item)

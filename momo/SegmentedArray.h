@@ -86,20 +86,20 @@ public:
 	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		size_t index1 = (index >> logInitialItemCount) + 1;
-		size_t index2 = index & (((size_t)1 << logInitialItemCount) - 1);
+		size_t index2 = index & ((size_t{1} << logInitialItemCount) - 1);
 		size_t logItemCount = pvIndexToLogItemCount(index1);
-		size_t itemIndex1 = index1 & (((size_t)1 << logItemCount) - 1);
+		size_t itemIndex1 = index1 & ((size_t{1} << logItemCount) - 1);
 		size_t itemIndex2 = index2;
-		segIndex = (index1 >> logItemCount) + ((size_t)1 << logItemCount) - 2;
+		segIndex = (index1 >> logItemCount) + (size_t{1} << logItemCount) - 2;
 		itemIndex = (itemIndex1 << logInitialItemCount) + itemIndex2;
 	}
 
 	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
 	{
 		size_t itemIndex1 = itemIndex >> logInitialItemCount;
-		size_t itemIndex2 = itemIndex & (((size_t)1 << logInitialItemCount) - 1);
+		size_t itemIndex2 = itemIndex & ((size_t{1} << logInitialItemCount) - 1);
 		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
-		size_t index1 = ((segIndex + 2 - ((size_t)1 << logItemCount)) << logItemCount) + itemIndex1;
+		size_t index1 = ((segIndex + 2 - (size_t{1} << logItemCount)) << logItemCount) + itemIndex1;
 		size_t index2 = itemIndex2;
 		size_t index = ((index1 - 1) << logInitialItemCount) + index2;
 		return index;
@@ -108,7 +108,7 @@ public:
 	static size_t GetItemCount(size_t segIndex) noexcept
 	{
 		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
-		return (size_t)1 << (logItemCount + logInitialItemCount);
+		return size_t{1} << (logItemCount + logInitialItemCount);
 	}
 
 private:
@@ -138,7 +138,7 @@ public:
 	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
 	{
 		segIndex = index >> logInitialItemCount;
-		itemIndex = index & (((size_t)1 << logInitialItemCount) - 1);
+		itemIndex = index & ((size_t{1} << logInitialItemCount) - 1);
 	}
 
 	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
@@ -148,7 +148,7 @@ public:
 
 	static size_t GetItemCount(size_t /*segIndex*/) noexcept
 	{
-		return (size_t)1 << logInitialItemCount;
+		return size_t{1} << logInitialItemCount;
 	}
 };
 
