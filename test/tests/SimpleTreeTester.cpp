@@ -88,7 +88,7 @@ public:
 		static const size_t count = 256;
 		static unsigned char array[count];
 		for (size_t i = 0; i < count; ++i)
-			array[i] = (unsigned char)i;
+			array[i] = static_cast<unsigned char>(i);
 
 		if (maxCapacity > 1)
 		{
@@ -197,7 +197,7 @@ public:
 		map.Insert(s3, "s3");
 		map.Insert(s4, s4);
 		map[s5] = "s5";
-		assert((std::string)map["s5"] == s5);
+		assert(static_cast<std::string>(map["s5"]) == s5);
 		map["s6"] = "s6";
 		map.ResetKey(map.GetLowerBound("s1"), s1);
 		map.ResetKey(map.GetUpperBound(s1), "s2");
@@ -226,7 +226,7 @@ public:
 		map.Remove(s4);
 		for (auto ref : map)
 			assert(ref.value == "s2" || ref.value == "s6");
-		for (auto ref : (const TreeMap&)map)
+		for (auto ref : static_cast<const TreeMap&>(map))
 			assert(ref.value == "s2" || ref.value == "s6");
 		assert(map.GetCount() == 2);
 		map.Clear();

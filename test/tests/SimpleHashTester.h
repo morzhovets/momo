@@ -77,7 +77,7 @@ public:
 		static const size_t count = 256;
 		static unsigned char array[count];
 		for (size_t i = 0; i < count; ++i)
-			array[i] = (unsigned char)i;
+			array[i] = static_cast<unsigned char>(i);
 
 		std::mt19937 mt;
 
@@ -168,7 +168,7 @@ public:
 		map.Insert(s3, "s3");
 		map.Insert(s4, s4);
 		map[s5] = "s5";
-		assert((std::string)map["s5"] == s5);
+		assert(static_cast<std::string>(map["s5"]) == s5);
 		map["s6"] = "s6";
 		map.ResetKey(map.Find("s1"), s1);
 		map.ResetKey(map.Find(s2), "s2");
@@ -201,7 +201,7 @@ public:
 		map.Remove(s4);
 		for (auto ref : map)
 			assert(ref.value == "s2" || ref.value == "s6");
-		for (auto ref : (const HashMap&)map)
+		for (auto ref : static_cast<const HashMap&>(map))
 			assert(ref.value == "s2" || ref.value == "s6");
 		assert(map.GetCount() == 2);
 		map.Clear();
@@ -238,7 +238,7 @@ public:
 			assert(v == v2);
 		for (auto ref : mmap.GetKeyBounds())
 			assert(ref.key == k2 || ref.key == k3);
-		for (auto ref : ((const HashMultiMap&)mmap).GetKeyBounds())
+		for (auto ref : (static_cast<const HashMultiMap&>(mmap)).GetKeyBounds())
 			assert(ref.key == k2 || ref.key == k3);
 		mmap.RemoveValues(keyIter);
 		mmap.RemoveKey(keyIter);
@@ -248,7 +248,7 @@ public:
 		mmap.Add(mmap.GetBegin(), mmap.GetBegin());	//?
 		for (auto ref : mmap)
 			assert(ref.key == "k3");
-		for (auto ref : (const HashMultiMap&)mmap)
+		for (auto ref : static_cast<const HashMultiMap&>(mmap))
 			assert(ref.value == "v3");
 		assert(mmap.GetKeyCount() == 1);
 		assert(mmap.GetValueCount() == 3);

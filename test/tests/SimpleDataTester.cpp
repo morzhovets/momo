@@ -97,7 +97,7 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(intCol = (int)i);
+			DataRow row = table.NewRow(intCol = static_cast<int>(i));
 			table.AddRow(std::move(row));
 		}
 
@@ -108,16 +108,16 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(intCol = (int)i / 2);
+			DataRow row = table.NewRow(intCol = static_cast<int>(i) / 2);
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
 			table.UpdateRow(i, std::move(row));
 			table.UpdateRow(table[i], strCol, std::string((i % 2 == 0) ? "0" : "1"));
 		}
 
 		for (size_t i = 0; i < count; ++i)
-			table[i].GetMutable(dblCol) = (double)i / 3;
+			table[i].GetMutable(dblCol) = static_cast<double>(i) / 3.0;
 		for (size_t i = 0; i < count; ++i)
-			table[i].Set(dblCol, (double)i / 2);
+			table[i].Set(dblCol, static_cast<double>(i) / 2.0);
 
 		for (auto row : table) { (void)row; }
 		for (auto row : ctable) { (void)row; }
@@ -128,7 +128,7 @@ public:
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
 
 		for (size_t i = 0; i < count2; ++i)
-			table.InsertRow(count, table.NewRow(intCol = (int)(count + i)));
+			table.InsertRow(count, table.NewRow(intCol = static_cast<int>(count + i)));
 		assert(table.GetCount() == count + count2);
 
 		MOMO_STATIC_ASSERT(count2 % 6 == 0);
@@ -210,8 +210,8 @@ public:
 		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
 			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
 
-		assert((bool)table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
-			strCol == "1", intCol == 0));
+		assert(static_cast<bool>(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
+			strCol == "1", intCol == 0)));
 		assert((*table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
 			strCol == "1", intCol == 0))[strCol] == "1");
 		assert((*ctable.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
