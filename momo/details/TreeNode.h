@@ -147,16 +147,16 @@ namespace internal
 				if (leafMemPoolIndex >= leafMemPoolCount)
 					leafMemPoolIndex = leafMemPoolCount - 1;
 				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
-				node->mMemPoolIndex = (uint8_t)leafMemPoolIndex;
+				node->mMemPoolIndex = static_cast<uint8_t>(leafMemPoolIndex);
 			}
 			else
 			{
 				void* ptr = params.GetInternalMemPool().Allocate();
 				node = BitCaster::PtrToPtr<Node>(ptr, internalOffset);
-				node->mMemPoolIndex = (uint8_t)leafMemPoolCount;
+				node->mMemPoolIndex = static_cast<uint8_t>(leafMemPoolCount);
 			}
 			node->mParent = nullptr;
-			node->mCounter.count = (uint8_t)count;
+			node->mCounter.count = static_cast<uint8_t>(count);
 			node->pvInitIndexes(IsContinuous());
 			return node;
 		}
@@ -165,31 +165,31 @@ namespace internal
 		{
 			if (IsLeaf())
 			{
-				params.GetLeafMemPool((size_t)mMemPoolIndex).Deallocate(this);
+				params.GetLeafMemPool(size_t{mMemPoolIndex}).Deallocate(this);
 			}
 			else
 			{
 				params.GetInternalMemPool().Deallocate(
-					BitCaster::PtrToPtr<void>(this, -(ptrdiff_t)internalOffset));
+					BitCaster::PtrToPtr<void>(this, -static_cast<ptrdiff_t>(internalOffset)));
 			}
 		}
 
 		bool IsLeaf() const noexcept
 		{
-			return (size_t)mMemPoolIndex < leafMemPoolCount;
+			return size_t{mMemPoolIndex} < leafMemPoolCount;
 		}
 
 		size_t GetCapacity() const noexcept
 		{
 			size_t capacity = maxCapacity;
 			if (IsLeaf())
-				capacity -= capacityStep * (size_t)mMemPoolIndex;
+				capacity -= capacityStep * size_t{mMemPoolIndex};
 			return capacity;
 		}
 
 		size_t GetCount() const noexcept
 		{
-			return (size_t)mCounter.count;
+			return size_t{mCounter.count};
 		}
 
 		Node* GetParent() noexcept
@@ -271,7 +271,7 @@ namespace internal
 		void pvInitIndexes(std::false_type /*isContinuous*/) noexcept
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
-				mCounter.indexes[i] = (uint8_t)i;
+				mCounter.indexes[i] = static_cast<uint8_t>(i);
 		}
 
 		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) noexcept

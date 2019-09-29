@@ -56,7 +56,7 @@ namespace internal
 		{
 			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(shortHash);
-			__m128i thisShortHashes = _mm_set_epi64x((int64_t)0,
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
 				*BitCaster::PtrToPtr<int64_t>(BucketOpenN1::ptGetShortHashes(), 0));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;

@@ -203,7 +203,7 @@ namespace internal
 				Memory memory(params.GetArrayMemPool());
 				::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
 					Array(bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
-				pvSet(memory.Extract(), (uint8_t)0);
+				pvSet(memory.Extract(), uint8_t{0});
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace internal
 							::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
 								Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
-							pvSet(memory.Extract(), (uint8_t)0);
+							pvSet(memory.Extract(), uint8_t{0});
 						}
 					}
 					else
@@ -353,7 +353,7 @@ namespace internal
 
 		static uint8_t pvMakeState(size_t memPoolIndex, size_t count) noexcept
 		{
-			return (uint8_t)((memPoolIndex << 4) | count);
+			return static_cast<uint8_t>((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetFastMemPoolIndex(size_t count) noexcept
@@ -365,13 +365,13 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(mPtr != nullptr);
-			return (size_t)(*mPtr >> 4);
+			return static_cast<size_t>(*mPtr >> 4);
 		}
 
 		size_t pvGetFastCount() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
-			return (size_t)(*mPtr & 15);
+			return static_cast<size_t>(*mPtr & 15);
 		}
 
 		Item* pvGetFastItems() const noexcept

@@ -58,7 +58,7 @@ namespace internal
 		static HashSetBuckets* Create(MemManager& memManager, size_t logBucketCount,
 			BucketParams* bucketParams)
 		{
-			size_t bucketCount = (size_t)1 << logBucketCount;
+			size_t bucketCount = size_t{1} << logBucketCount;
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("momo::internal::HashSetBuckets length error");
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
@@ -134,7 +134,7 @@ namespace internal
 
 		size_t GetCount() const noexcept
 		{
-			return (size_t)1 << mLogCount;
+			return size_t{1} << mLogCount;
 		}
 
 		size_t GetLogCount() const noexcept
@@ -591,7 +591,7 @@ public:
 		size_t logBucketCount = hashTraits.GetLogStartBucketCount();
 		while (true)
 		{
-			mCapacity = hashTraits.CalcCapacity((size_t)1 << logBucketCount, bucketMaxItemCount);
+			mCapacity = hashTraits.CalcCapacity(size_t{1} << logBucketCount, bucketMaxItemCount);
 			if (mCapacity >= mCount)
 				break;
 			++logBucketCount;
@@ -716,7 +716,7 @@ public:
 		size_t newCapacity;
 		while (true)
 		{
-			newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount,
+			newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
 				bucketMaxItemCount);
 			if (newCapacity >= capacity)
 				break;
@@ -1000,7 +1000,7 @@ private:
 		if (mBuckets == nullptr)
 			return hashTraits.GetLogStartBucketCount();
 		size_t logBucketCount = mBuckets->GetLogCount();
-		size_t shift = hashTraits.GetBucketCountShift((size_t)1 << logBucketCount,
+		size_t shift = hashTraits.GetBucketCountShift(size_t{1} << logBucketCount,
 			bucketMaxItemCount);
 		MOMO_CHECK(shift > 0);
 		return logBucketCount + shift;
@@ -1138,7 +1138,7 @@ private:
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
-		size_t newCapacity = hashTraits.CalcCapacity((size_t)1 << newLogBucketCount,
+		size_t newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
 			bucketMaxItemCount);
 		MOMO_CHECK(newCapacity > mCount);
 		bool hasBuckets = (mBuckets != nullptr);

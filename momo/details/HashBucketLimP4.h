@@ -35,26 +35,26 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 32;
 
-		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			mPtrState = (uint32_t)BitCaster::ToUInt(ptr);
-			MOMO_ASSERT(((uint8_t)mPtrState & maskState) == (uint8_t)0);
-			mPtrState |= (uint32_t)state;
+			mPtrState = static_cast<uint32_t>(BitCaster::ToUInt(ptr));
+			MOMO_ASSERT((static_cast<uint8_t>(mPtrState) & maskState) == uint8_t{0});
+			mPtrState |= uint32_t{state};
 		}
 
 		Item* GetPointer() const noexcept
 		{
-			uintptr_t intPtr = (uintptr_t)(mPtrState & ~(uint32_t)maskState);
+			uintptr_t intPtr = uintptr_t{mPtrState & ~uint32_t{maskState}};
 			return BitCaster::ToPtr<Item>(intPtr);
 		}
 
 		uint8_t GetState() const noexcept
 		{
-			return (uint8_t)mPtrState & maskState;
+			return static_cast<uint8_t>(mPtrState) & maskState;
 		}
 
 	private:
@@ -71,29 +71,29 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 48;
 
-		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			uint64_t intPtr = (uint64_t)BitCaster::ToUInt(ptr);
-			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
-			mPtrState[0] = (uint16_t)intPtr | (uint16_t)state;
-			mPtrState[1] = (uint16_t)(intPtr >> 16);
-			mPtrState[2] = (uint16_t)(intPtr >> 32);
+			uint64_t intPtr = static_cast<uint64_t>(BitCaster::ToUInt(ptr));
+			MOMO_ASSERT((static_cast<uint8_t>(intPtr) & maskState) == uint8_t{0});
+			mPtrState[0] = static_cast<uint16_t>(intPtr) | static_cast<uint16_t>(state);
+			mPtrState[1] = static_cast<uint16_t>(intPtr >> 16);
+			mPtrState[2] = static_cast<uint16_t>(intPtr >> 32);
 		}
 
 		Item* GetPointer() const noexcept
 		{
-			uint64_t intPtr = ((uint64_t)mPtrState[2] << 32) | ((uint64_t)mPtrState[1] << 16)
-				| (uint64_t)(mPtrState[0] & ~(uint16_t)maskState);
-			return BitCaster::ToPtr<Item>((uintptr_t)intPtr);
+			uint64_t intPtr = (uint64_t{mPtrState[2]} << 32) | (uint64_t{mPtrState[1]} << 16)
+				| uint64_t{mPtrState[0] & ~uint16_t{maskState}};
+			return BitCaster::ToPtr<Item>(uintptr_t{intPtr});
 		}
 
 		uint8_t GetState() const noexcept
 		{
-			return (uint8_t)mPtrState[0] & maskState;
+			return static_cast<uint8_t>(mPtrState[0]) & maskState;
 		}
 
 	private:
@@ -110,28 +110,28 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 64;
 
-		MOMO_STATIC_ASSERT(((uint8_t)UIntPtrConst::null & maskState) == (uint8_t)0);
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(state <= maskState);
-			uint64_t intPtr = (uint64_t)BitCaster::ToUInt(ptr);
-			MOMO_ASSERT(((uint8_t)intPtr & maskState) == (uint8_t)0);
-			mPtrState[0] = (uint32_t)intPtr | (uint32_t)state;
-			mPtrState[1] = (uint32_t)(intPtr >> 32);
+			uint64_t intPtr = static_cast<uint64_t>(BitCaster::ToUInt(ptr));
+			MOMO_ASSERT((static_cast<uint8_t>(intPtr) & maskState) == uint8_t{0});
+			mPtrState[0] = static_cast<uint32_t>(intPtr) | uint32_t{state};
+			mPtrState[1] = static_cast<uint32_t>(intPtr >> 32);
 		}
 
 		Item* GetPointer() const noexcept
 		{
-			uint64_t intPtr = ((uint64_t)mPtrState[1] << 32)
-				| (uint64_t)(mPtrState[0] & ~(uint32_t)maskState);
-			return BitCaster::ToPtr<Item>((uintptr_t)intPtr);
+			uint64_t intPtr = (uint64_t{mPtrState[1]} << 32)
+				| uint64_t{mPtrState[0] & ~uint32_t{maskState}};
+			return BitCaster::ToPtr<Item>(uintptr_t{intPtr});
 		}
 
 		uint8_t GetState() const noexcept
 		{
-			return (uint8_t)mPtrState[0] & maskState;
+			return static_cast<uint8_t>(mPtrState[0]) & maskState;
 		}
 
 	private:
@@ -383,18 +383,18 @@ namespace internal
 				return hashCodeFullGetter();
 			Item* items = mPtrState.GetPointer();
 			size_t index = iter - items;
-			size_t hashProbe = (size_t)mShortHashes[hashCount - 1 - index];
-			bool useFullGetter = ((uint8_t)(hashProbe + 1) <= maskEmpty ||
+			size_t hashProbe = size_t{mShortHashes[hashCount - 1 - index]};
+			bool useFullGetter = (static_cast<uint8_t>(hashProbe + 1) <= maskEmpty ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
 			if (useFullGetter)
 				return hashCodeFullGetter();
 			size_t probeShift = pvGetProbeShift(logBucketCount);
-			size_t probe = hashProbe & (((size_t)1 << probeShift) - 1);
-			size_t bucketCount = (size_t)1 << logBucketCount;
+			size_t probe = hashProbe & ((size_t{1} << probeShift) - 1);
+			size_t bucketCount = size_t{1} << logBucketCount;
 			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
-				| (((hashProbe - (size_t)maskEmpty) >> probeShift) << logBucketCount)
-				| ((size_t)mShortHashes[index] << hashCodeShift);
+				| (((hashProbe - size_t{maskEmpty}) >> probeShift) << logBucketCount)
+				| (size_t{mShortHashes[index]} << hashCodeShift);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -406,13 +406,13 @@ namespace internal
 	private:
 		void pvSetEmpty(size_t memPoolIndex) noexcept
 		{
-			std::fill_n(mShortHashes, hashCount, (uint8_t)emptyHashProbe);
+			std::fill_n(mShortHashes, hashCount, uint8_t{emptyHashProbe});
 			pvSetPtrState(nullptr, memPoolIndex);
 		}
 
 		void pvSetPtrState(Item* items, size_t memPoolIndex) noexcept
 		{
-			uint8_t memPoolIndex1 = (uint8_t)memPoolIndex - 1;
+			uint8_t memPoolIndex1 = static_cast<uint8_t>(memPoolIndex) - 1;
 			mPtrState.Set(items, useHashCodePartGetter ? memPoolIndex1 : 0);
 			if (!useHashCodePartGetter && (maxCount < 4 || !IsFull()))
 				mShortHashes[3] = maskEmpty + memPoolIndex1;
@@ -421,11 +421,11 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			if (useHashCodePartGetter)
-				return (size_t)mPtrState.GetState() + 1;
+				return size_t{mPtrState.GetState()} + 1;
 			else if (maxCount == 4 && IsFull())
 				return 4;
 			else
-				return (size_t)(mShortHashes[3] & 3) + 1;
+				return static_cast<size_t>(mShortHashes[3] & 3) + 1;
 		}
 
 		size_t pvGetCount() const noexcept
@@ -436,7 +436,7 @@ namespace internal
 
 		static uint8_t pvCalcShortHash(size_t hashCode) noexcept
 		{
-			return (uint8_t)(hashCode >> hashCodeShift);
+			return static_cast<uint8_t>(hashCode >> hashCodeShift);
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
@@ -450,9 +450,9 @@ namespace internal
 			if (!useHashCodePartGetter || hashCount - 1 - index <= index)
 				return;
 			size_t probeShift = pvGetProbeShift(logBucketCount);
-			mShortHashes[hashCount - 1 - index] = (probe < (size_t)1 << probeShift)
-				? maskEmpty | (uint8_t)((hashCode >> logBucketCount) << probeShift) | (uint8_t)probe
-				: emptyHashProbe;
+			mShortHashes[hashCount - 1 - index] = (probe < size_t{1} << probeShift)
+				? maskEmpty | static_cast<uint8_t>((hashCode >> logBucketCount) << probeShift)
+				| static_cast<uint8_t>(probe) : emptyHashProbe;
 		}
 
 		template<size_t memPoolIndex, typename ItemCreator>

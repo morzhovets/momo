@@ -97,7 +97,7 @@ namespace internal
 	public:
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
-			return ((size_t)1 << logBucketCount) - 1;
+			return (size_t{1} << logBucketCount) - 1;
 		}
 
 		void UpdateMaxProbe(size_t /*probe*/) noexcept

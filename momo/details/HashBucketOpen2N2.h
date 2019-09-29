@@ -67,7 +67,7 @@ namespace internal
 		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortHash;
 
 		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortHash) * 8 + 1;
-		static const ShortHash emptyShortHash = (ShortHash)1 << (sizeof(ShortHash) * 8 - 1);
+		static const ShortHash emptyShortHash = ShortHash{1} << (sizeof(ShortHash) * 8 - 1);
 		static const uint8_t emptyHashProbe = 255;
 
 		static const size_t logBucketCountStep = 8;
@@ -150,8 +150,8 @@ namespace internal
 			{
 				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);
-				if (probe < ((size_t)1 << probeShift))
-					hashProbe = (uint8_t)(((hashCode >> logBucketCount) << probeShift) | probe);
+				if (probe < (size_t{1} << probeShift))
+					hashProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
 				else
 					hashProbe = emptyHashProbe;
 			}
@@ -189,12 +189,12 @@ namespace internal
 				return hashCodeFullGetter();
 			size_t probeShift = pvGetProbeShift(logBucketCount);
 			MOMO_ASSERT(probeShift > 0);
-			size_t probe = (size_t)hashProbe & (((size_t)1 << probeShift) - 1);
+			size_t probe = size_t{hashProbe} & ((size_t{1} << probeShift) - 1);
 			size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
-			size_t bucketCount = (size_t)1 << logBucketCount;
+			size_t bucketCount = size_t{1} << logBucketCount;
 			return ((bucketIndex - probe2) & (bucketCount - 1))
-				| (((size_t)hashProbe >> probeShift) << logBucketCount)
-				| ((size_t)mHashData.shortHashes[index] << hashCodeShift);
+				| ((size_t{hashProbe} >> probeShift) << logBucketCount)
+				| (size_t{mHashData.shortHashes[index]} << hashCodeShift);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -206,19 +206,19 @@ namespace internal
 	private:
 		size_t pvGetCount() const noexcept
 		{
-			return (size_t)(mState[1] & 3);
+			return static_cast<size_t>(mState[1] & 3);
 		}
 
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(mHashData.shortHashes, maxCount, (ShortHash)emptyShortHash);
-			mState[0] = (uint8_t)0;
-			mState[1] = (uint8_t)0;
+			std::fill_n(mHashData.shortHashes, maxCount, ShortHash{emptyShortHash});
+			mState[0] = uint8_t{0};
+			mState[1] = uint8_t{0};
 		}
 
 		static ShortHash pvCalcShortHash(size_t hashCode) noexcept
 		{
-			return (ShortHash)(hashCode >> hashCodeShift);
+			return static_cast<ShortHash>(hashCode >> hashCodeShift);
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
@@ -228,26 +228,26 @@ namespace internal
 
 		size_t pvGetMaxProbe() const noexcept
 		{
-			return (size_t)mState[0] << (mState[1] >> 2);
+			return size_t{mState[0]} << (mState[1] >> 2);
 		}
 
 		void pvUpdateMaxProbe(size_t probe) noexcept
 		{
-			if (probe <= (size_t)255)
+			if (probe <= size_t{255})
 			{
-				mState[0] = (uint8_t)probe;
+				mState[0] = static_cast<uint8_t>(probe);
 				return;
 			}
 			size_t maxProbe0 = probe - 1;
 			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)255)
+			while (maxProbe0 >= size_t{255})
 			{
 				maxProbe0 >>= 1;
 				++maxProbe1;
 			}
-			mState[0] = (uint8_t)maxProbe0 + 1;
-			mState[1] &= (uint8_t)3;
-			mState[1] |= (uint8_t)(maxProbe1 << 2);
+			mState[0] = static_cast<uint8_t>(maxProbe0) + 1;
+			mState[1] &= uint8_t{3};
+			mState[1] |= static_cast<uint8_t>(maxProbe1 << 2);
 		}
 
 	private:

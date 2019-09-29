@@ -892,7 +892,7 @@ private:
 		const ColumnList& columnList = GetColumnList();
 		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
 		size_t alignment = std::minmax(columnList.GetAlignment(),
-			(size_t)internal::AlignmentOf<void*>::value).second;
+			size_t{internal::AlignmentOf<void*>::value}).second;
 		return RawMemPool(typename RawMemPool::Params(size, alignment),
 			MemManagerPtr(GetMemManager()));
 	}
@@ -1113,7 +1113,7 @@ private:
 	{
 		return pvGetOffsets(equalers.GetColumn()...);
 	}
-	
+
 	template<size_t columnCount>
 	void pvCheckImmutable(const std::array<size_t, columnCount>& offsets) const
 	{

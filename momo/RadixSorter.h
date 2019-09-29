@@ -49,8 +49,8 @@ namespace internal
 		MOMO_STATIC_ASSERT(0 < radixSize && radixSize <= 16);
 
 	private:
-		static const size_t radixCount = (size_t)1 << radixSize;
-		static const size_t selectionSortMaxCount = (size_t)1 << (radixSize / 2 + 1);
+		static const size_t radixCount = size_t{1} << radixSize;
+		static const size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
 
 	public:
 		template<typename Iterator,
@@ -166,7 +166,7 @@ namespace internal
 		template<typename Code>
 		static size_t pvGetRadix(Code code, size_t shift) noexcept
 		{
-			return (size_t)(code >> shift) & (((size_t)1 << radixSize) - 1);
+			return static_cast<size_t>(code >> shift) & ((size_t{1} << radixSize) - 1);
 		}
 	};
 }

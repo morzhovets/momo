@@ -97,7 +97,7 @@ namespace internal
 		{
 			uint8_t maxProbeExp = pvGetMaxProbeExp();
 			if (maxProbeExp == infProbeExp)
-				return ((size_t)1 << logBucketCount) - 1;
+				return (size_t{1} << logBucketCount) - 1;
 			return pvGetMaxProbe(maxProbeExp);
 		}
 
@@ -147,7 +147,7 @@ namespace internal
 			if (count < maxCount)
 				--pvGetState();
 			else
-				pvGetState() = emptyShortHash + (uint8_t)maxCount - 1;
+				pvGetState() = emptyShortHash + static_cast<uint8_t>(maxCount) - 1;
 			return iter;
 		}
 
@@ -164,8 +164,8 @@ namespace internal
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
 		{
-			uint32_t hashCode24 = (uint32_t)(hashCode >> (sizeof(size_t) * 8 - 24));
-			return (uint8_t)((hashCode24 * (uint32_t)emptyShortHash) >> 24);
+			uint32_t hashCode24 = static_cast<uint32_t>(hashCode >> (sizeof(size_t) * 8 - 24));
+			return static_cast<uint8_t>((hashCode24 * uint32_t{emptyShortHash}) >> 24);
 		}
 
 	private:
@@ -212,31 +212,32 @@ namespace internal
 		size_t pvGetCount() const noexcept
 		{
 			uint8_t state = pvGetState();
-			return (state >= emptyShortHash) ? (size_t)(state - emptyShortHash) : maxCount;
+			return (state >= emptyShortHash) ? static_cast<size_t>(state - emptyShortHash) : maxCount;
 		}
 
 		void pvSetEmpty() noexcept
 		{
-			std::fill(std::begin(mData), std::end(mData), (char)0);
-			std::fill_n(ptGetShortHashes(), maxCount, (uint8_t)emptyShortHash);
+			std::fill(std::begin(mData), std::end(mData), char{0});
+			std::fill_n(ptGetShortHashes(), maxCount, uint8_t{emptyShortHash});
 		}
 
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept
 		{
-			return (size_t)(maxProbeExp & 7) << (maxProbeExp >> 3);
+			return static_cast<size_t>(maxProbeExp & 7) << (maxProbeExp >> 3);
 		}
 
 		void pvUpdateMaxProbe(size_t probe) noexcept
 		{
 			size_t maxProbe0 = probe - 1;
 			size_t maxProbe1 = 0;
-			while (maxProbe0 >= (size_t)7)
+			while (maxProbe0 >= size_t{7})
 			{
 				maxProbe0 >>= 1;
 				++maxProbe1;
 			}
-			pvGetMaxProbeExp() = (maxProbe1 <= (size_t)31)
-				? (uint8_t)(maxProbe0 + 1) | (uint8_t)(maxProbe1 << 3) : infProbeExp;
+			pvGetMaxProbeExp() = (maxProbe1 <= size_t{31})
+				? static_cast<uint8_t>(maxProbe0 + 1) | static_cast<uint8_t>(maxProbe1 << 3)
+				: infProbeExp;
 		}
 
 	private:

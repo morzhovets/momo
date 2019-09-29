@@ -175,15 +175,15 @@ public:
 		|| std::is_same<HashFunc, std::hash<Key>>::value);
 
 public:
-	explicit HashTraitsStd(size_t startBucketCount = (size_t)1 << HashBucket::logStartBucketCount,
+	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
 		const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 		: mHashFunc(hashFunc),
 		mEqualFunc(equalFunc),
 		mMaxLoadFactor(0.0)
 	{
-		startBucketCount = std::minmax(startBucketCount, (size_t)8).second;
-		mLogStartBucketCount = (uint8_t)internal::UIntMath<>::Log2(startBucketCount - 1) + 1;
+		startBucketCount = std::minmax(startBucketCount, size_t{8}).second;
+		mLogStartBucketCount = static_cast<uint8_t>(internal::UIntMath<>::Log2(startBucketCount - 1)) + 1;
 	}
 
 	HashTraitsStd(const HashTraitsStd& hashTraits, float maxLoadFactor)
@@ -210,7 +210,7 @@ public:
 
 	size_t GetLogStartBucketCount() const noexcept
 	{
-		return (size_t)mLogStartBucketCount;
+		return size_t{mLogStartBucketCount};
 	}
 
 	template<typename KeyArg>

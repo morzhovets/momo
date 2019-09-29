@@ -58,7 +58,7 @@ namespace internal
 		constexpr static uint64_t GetHashCode64(const char* str) noexcept
 		{
 			return (*str == '\0') ? fnvBasis64
-				: (GetHashCode64(str + 1) ^ (uint64_t)(unsigned char)*str) * fnvPrime64;
+				: (GetHashCode64(str + 1) ^ uint64_t{static_cast<unsigned char>(*str)}) * fnvPrime64;
 		}
 	};
 }
@@ -201,8 +201,8 @@ public:
 
 	static std::pair<size_t, size_t> GetVertices(ColumnCode code, size_t codeParam) noexcept
 	{
-		static const size_t vertexCount1 = ((size_t)1 << logVertexCount) - 1;
-		size_t shortCode = (size_t)(code + (code >> 32));
+		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
+		size_t shortCode = static_cast<size_t>(code + (code >> 32));
 		shortCode ^= (codeParam >> 4) ^ ((codeParam & 15) << 28);
 		shortCode += shortCode >> 16;
 		size_t vertex1 = shortCode & vertexCount1;
@@ -482,7 +482,7 @@ public:
 			{ pvDestroy<void, Item, Items...>(memManager, offset, raw); };
 		funcRec.copyFunc = [] (MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
 			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
-		mMutableOffsets.SetCount((offset + 7) / 8, (uint8_t)0);
+		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
 		mFuncRecs.Reserve(mFuncRecs.GetCount() + 1);
 		try
 		{
@@ -510,13 +510,13 @@ public:
 
 	void ResetMutable() noexcept
 	{
-		std::fill(mMutableOffsets.GetBegin(), mMutableOffsets.GetEnd(), (uint8_t)0);
+		std::fill(mMutableOffsets.GetBegin(), mMutableOffsets.GetEnd(), uint8_t{0});
 	}
 
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		return (mMutableOffsets[offset / 8] & (uint8_t)(1 << (offset % 8))) != 0;
+		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -660,7 +660,7 @@ private:
 		{
 			if (!graph.HasEdge(v) || addends[v] != 0)
 				continue;
-			addends[v] = (size_t)1 << (8 * sizeof(size_t) - 1);
+			addends[v] = size_t{1} << (8 * sizeof(size_t) - 1);
 			if (!graph.FillAddends(addends.data(), v))
 				return false;
 		}
@@ -690,7 +690,7 @@ private:
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		size_t offset = GetOffset(column);
-		mMutableOffsets[offset / 8] |= (uint8_t)(1 << (offset % 8));
+		mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
 		pvSetMutable(columns...);
 	}
 
@@ -872,7 +872,7 @@ public:
 	{
 		size_t alignment = RawManager::alignment;
 		if (Settings::keepRowNumber)
-			alignment = std::minmax(alignment, (size_t)internal::AlignmentOf<size_t>::value).second;
+			alignment = std::minmax(alignment, size_t{internal::AlignmentOf<size_t>::value}).second;
 		return alignment;
 	}
 
@@ -899,7 +899,7 @@ public:
 	template<typename Item, bool extraCheck = true>
 	size_t GetOffset(const Column<Item>& column) const noexcept
 	{
-		size_t offset = (size_t)column.GetCode();	//?
+		size_t offset = static_cast<size_t>(column.GetCode());	//?
 		MOMO_ASSERT(offset < sizeof(Struct));
 		MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
 		return offset;
