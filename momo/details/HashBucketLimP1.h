@@ -220,7 +220,7 @@ namespace internal
 		{
 			//*&mItemPtrBuffer = items;
 			memcpy(&mItemPtrBuffer, &items, sizeof(Item*));
-			mState = (uint8_t)((memPoolIndex << 4) | count);
+			mState = static_cast<uint8_t>((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) noexcept
@@ -233,12 +233,12 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			return (size_t)(mState >> 4);
+			return static_cast<size_t>(mState >> 4);
 		}
 
 		size_t pvGetCount() const noexcept
 		{
-			return (size_t)(mState & 15);
+			return static_cast<size_t>(mState & 15);
 		}
 
 		Item* pvGetItems() const noexcept

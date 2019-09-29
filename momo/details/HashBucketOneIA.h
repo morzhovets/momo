@@ -75,19 +75,19 @@ namespace internal
 
 		bool IsFull() const noexcept
 		{
-			return (mHashState & 1) == (HashState)1;
+			return (mHashState & 1) == HashState{1};
 		}
 
 		bool WasFull() const noexcept
 		{
-			return mHashState != (HashState)0;
+			return mHashState != HashState{0};
 		}
 
 		void Clear(Params& params) noexcept
 		{
 			if (IsFull())
 				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
-			mHashState = (HashState)0;
+			mHashState = HashState{0};
 		}
 
 		template<typename ItemCreator>
@@ -108,7 +108,7 @@ namespace internal
 			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
 			std::forward<ItemReplacer>(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
-			mHashState = (HashState)2;
+			mHashState = HashState{2};
 			return nullptr;
 		}
 
@@ -120,7 +120,7 @@ namespace internal
 			MOMO_ASSERT(iter == &mItemBuffer);
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
-			return (size_t)(mHashState >> 1);
+			return static_cast<size_t>(mHashState >> 1);
 		}
 
 	private:
@@ -129,14 +129,14 @@ namespace internal
 			size_t hashCode) noexcept
 		{
 			static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
-			return (HashState)(hashCode >> hashCodeShift) | 1;
+			return static_cast<HashState>(hashCode >> hashCodeShift) | 1;
 		}
 
 		template<size_t hashStateSize = sizeof(HashState)>
 		static EnableIf<(hashStateSize >= sizeof(size_t)), HashState> pvGetHashState(
 			size_t hashCode) noexcept
 		{
-			return ((HashState)hashCode << 1) | 1;
+			return (static_cast<HashState>(hashCode) << 1) | 1;
 		}
 
 	private:

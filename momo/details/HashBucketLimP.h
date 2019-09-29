@@ -240,7 +240,7 @@ namespace internal
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = BitCaster::ToUInt(ptr);
-			*ptr = (uint8_t)((memPoolIndex << 4) | count);
+			*ptr = static_cast<uint8_t>((memPoolIndex << 4) | count);
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) noexcept
@@ -251,12 +251,12 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			return (size_t)(*pvGetPtr() >> 4);
+			return static_cast<size_t>(*pvGetPtr() >> 4);
 		}
 
 		size_t pvGetCount() const noexcept
 		{
-			return (size_t)(*pvGetPtr() & 15);
+			return static_cast<size_t>(*pvGetPtr() & 15);
 		}
 
 		Item* pvGetItems() const noexcept
@@ -308,7 +308,7 @@ namespace internal
 
 		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
 		static const uintptr_t modMemPoolIndex =
-			(uintptr_t)minItemAlignment / (skipOddMemPools ? 2 : 1);
+			uintptr_t{minItemAlignment} / (skipOddMemPools ? 2 : 1);
 
 		static const uintptr_t stateNull = UIntPtrConst::null;
 		static const uintptr_t stateNullWasFull = UIntPtrConst::invalid;
@@ -326,7 +326,7 @@ namespace internal
 				{
 					if (skipOddMemPools && i % 2 == 1)
 						continue;
-					size_t blockAlignment = UIntMath<>::Ceil(i * (size_t)modMemPoolIndex,
+					size_t blockAlignment = UIntMath<>::Ceil(i * size_t{modMemPoolIndex},
 						itemAlignment);
 					mMemPools.AddBackNogrow(MemPool(MemPoolParams(i * sizeof(Item), blockAlignment),
 						MemManagerPtr(memManager)));
@@ -497,8 +497,8 @@ namespace internal
 
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept
 		{
-			mPtrState = BitCaster::ToUInt(items) + (uintptr_t)(count - 1) * modMemPoolIndex
-				+ (uintptr_t)memPoolIndex / (skipOddMemPools ? 2 : 1) - 1;
+			mPtrState = BitCaster::ToUInt(items) + static_cast<uintptr_t>(count - 1) * modMemPoolIndex
+				+ uintptr_t{memPoolIndex} / (skipOddMemPools ? 2 : 1) - 1;
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) noexcept
@@ -510,19 +510,19 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return (size_t)((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
+			return size_t{(mPtrState % modMemPoolIndex) + 1} * (skipOddMemPools ? 2 : 1);
 		}
 
 		Bounds pvGetBounds() const noexcept
 		{
-			uintptr_t memPoolIndex = (uintptr_t)pvGetMemPoolIndex();
+			uintptr_t memPoolIndex = uintptr_t{pvGetMemPoolIndex()};
 			uintptr_t ptrCount = mPtrState / modMemPoolIndex;
 			uintptr_t mod = UIntMath<uintptr_t>::Ceil(memPoolIndex,
-				(uintptr_t)itemAlignment / modMemPoolIndex);
+				uintptr_t{itemAlignment} / modMemPoolIndex);
 			uintptr_t count1 = UIntMath<uintptr_t>::DivBySmall(ptrCount, mod).remainder;
 			MOMO_ASSERT(count1 < memPoolIndex);
 			Item* items = BitCaster::ToPtr<Item>((ptrCount - count1) * modMemPoolIndex);
-			return Bounds(items, (size_t)count1 + 1);
+			return Bounds(items, size_t{count1} + 1);
 		}
 
 	private:

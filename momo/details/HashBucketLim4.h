@@ -33,7 +33,7 @@ namespace internal
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	public:
-		static const size_t maxCount = (size_t)1 << logMaxCount;
+		static const size_t maxCount = size_t{1} << logMaxCount;
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -50,7 +50,7 @@ namespace internal
 
 		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
 
-		static const uint32_t stateNull = ((uint32_t)1 << (32 - logMaxCount)) - 1;
+		static const uint32_t stateNull = (uint32_t{1} << (32 - logMaxCount)) - 1;
 		static const uint32_t stateNullWasFull = stateNull - 1;
 
 		struct Data
@@ -73,8 +73,8 @@ namespace internal
 					auto memPoolCreator = [i, &memManager] (MemPool* newMemPool)
 					{
 						size_t maxTotalBlockCount = (i == 1)
-							? ((size_t)1 << (32 - logMaxCount)) - 2
-							: ((size_t)1 << (32 - logMaxCount)) / i;
+							? (size_t{1} << (32 - logMaxCount)) - 2
+							: (size_t{1} << (32 - logMaxCount)) / i;
 						::new(static_cast<void*>(newMemPool)) MemPool(i * sizeof(Item),
 							MemManagerPtr(memManager), maxTotalBlockCount);
 					};
@@ -255,8 +255,8 @@ namespace internal
 
 		void pvSet(uint32_t ptr, size_t memPoolIndex, size_t count)
 		{
-			mPtrState = (uint32_t)(((memPoolIndex - 1) << (32 - logMaxCount))
-				+ (size_t)ptr * memPoolIndex + count - 1);
+			mPtrState = static_cast<uint32_t>(((memPoolIndex - 1) << (32 - logMaxCount))
+				+ size_t{ptr} * memPoolIndex + count - 1);
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) noexcept
@@ -268,16 +268,16 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return (size_t)(mPtrState >> (32 - logMaxCount)) + 1;
+			return static_cast<size_t>(mPtrState >> (32 - logMaxCount)) + 1;
 		}
 
 		Data pvGetData() const noexcept
 		{
 			UIntMath<uint32_t>::DivResult divRes = UIntMath<uint32_t>::DivBySmall(
-				mPtrState & stateNull, (uint32_t)pvGetMemPoolIndex());
+				mPtrState & stateNull, static_cast<uint32_t>(pvGetMemPoolIndex()));
 			Data data;
 			data.pointer = divRes.quotient;
-			data.count = (size_t)divRes.remainder + 1;
+			data.count = size_t{divRes.remainder} + 1;
 			return data;
 		}
 
