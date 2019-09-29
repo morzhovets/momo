@@ -45,14 +45,14 @@ public:
             std::terminate();
 #endif
         }
-        pointer r = (T*)ptr_;
+        pointer r = reinterpret_cast<T*>(ptr_);
         ptr_ += n * sizeof(T);
         return r;
     }
     void deallocate(pointer p, size_type n)
     {
-        if ((char*)(p + n) == ptr_)
-            ptr_ = (char*)p;
+        if (reinterpret_cast<char*>(p + n) == ptr_)
+            ptr_ = reinterpret_cast<char*>(p);
     }
 
     size_type max_size() const {return N;}

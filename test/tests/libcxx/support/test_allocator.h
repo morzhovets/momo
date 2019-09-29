@@ -138,10 +138,10 @@ public:
             }
             ++time_to_throw;
             ++alloc_count;
-            return (pointer)::operator new(n * sizeof(T));
+            return static_cast<pointer>(::operator new(n * sizeof(T)));
         }
     void deallocate(pointer p, size_type)
-        {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p);}
+        {assert(data_ >= 0); --alloc_count; ::operator delete(static_cast<void*>(p));}
     size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
 #if 0 //_LIBCPP_STD_VER < 11
@@ -202,10 +202,10 @@ public:
             }
             ++time_to_throw;
             ++alloc_count;
-            return (pointer)::operator new (n * sizeof(T));
+            return static_cast<pointer>(::operator new (n * sizeof(T)));
         }
     void deallocate(pointer p, size_type)
-        {assert(data_ >= 0); --alloc_count; ::operator delete((void*)p); }
+        {assert(data_ >= 0); --alloc_count; ::operator delete(static_cast<void*>(p)); }
     size_type max_size() const noexcept
         {return UINT_MAX / sizeof(T);}
 #if 0 //_LIBCPP_STD_VER < 11
@@ -273,9 +273,9 @@ public:
     template <class U> other_allocator(const other_allocator<U>& a)
         : data_(a.data_) {}
     T* allocate(std::size_t n)
-        {return (T*)::operator new(n * sizeof(T));}
+        {return static_cast<T*>(::operator new(n * sizeof(T)));}
     void deallocate(T* p, std::size_t)
-        {::operator delete((void*)p);}
+        {::operator delete(static_cast<void*>(p));}
 
     other_allocator select_on_container_copy_construction() const
         {return other_allocator(-2);}
@@ -351,11 +351,11 @@ public:
 
     template<typename... Args>
     void construct(Tag_X* p, Args&&... args)
-    { ::new((void*)p) Tag_X(Ctor_Tag{}, std::forward<Args>(args)...); }
+    { ::new(static_cast<void*>(p)) Tag_X(Ctor_Tag{}, std::forward<Args>(args)...); }
 
     template<typename U, typename... Args>
     void construct(U* p, Args&&... args)
-    { ::new((void*)p) U(std::forward<Args>(args)...); }
+    { ::new(static_cast<void*>(p)) U(std::forward<Args>(args)...); }
 
     template<typename U, typename... Args>
     void destroy(U* p)

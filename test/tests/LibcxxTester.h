@@ -57,7 +57,7 @@ struct LibcppIntHash
 
 	size_t operator()(int key) const noexcept
 	{
-		return (size_t)key;
+		return static_cast<size_t>(key);
 	}
 };
 
