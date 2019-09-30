@@ -67,7 +67,7 @@ namespace internal
 		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
 		{
 			size_t newRawIndex = mRawIndex + diff;
-			MOMO_CHECK(mRawIndex <= (mRaw != nullptr) ? size_t{1} : size_t{0});
+			MOMO_CHECK(mRawIndex <= ((mRaw != nullptr) ? size_t{1} : size_t{0}));
 			mRawIndex = newRawIndex;
 			return *this;
 		}

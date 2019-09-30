@@ -592,7 +592,7 @@ namespace internal
 			mBlockSize(internal::UIntMath<>::Ceil(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
-			MOMO_ASSERT(maxTotalBlockCount < (size_t)UINT32_MAX);
+			MOMO_ASSERT(maxTotalBlockCount < size_t{UINT32_MAX});
 			if (mBlockSize > SIZE_MAX / blockCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 		}
