@@ -37,13 +37,13 @@ void main()
         test(vector<int>(a, an), std::allocator<int>());
     }
     {
-        vector<int, test_allocator<int> > l((size_t)3, 2, test_allocator<int>(5));
+        vector<int, test_allocator<int> > l(3, 2, test_allocator<int>(5));
         vector<int, test_allocator<int> > l2(l, test_allocator<int>(3));
         assert(l2 == l);
         assert(l2.get_allocator() == test_allocator<int>(3));
     }
     {
-        vector<int, other_allocator<int> > l((size_t)3, 2, other_allocator<int>(5));
+        vector<int, other_allocator<int> > l(3, 2, other_allocator<int>(5));
         vector<int, other_allocator<int> > l2(l, other_allocator<int>(3));
         assert(l2 == l);
         assert(l2.get_allocator() == other_allocator<int>(3));

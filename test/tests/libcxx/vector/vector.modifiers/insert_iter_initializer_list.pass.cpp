@@ -21,7 +21,7 @@ void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
-    vector<int> d((size_t)10, 1);
+    vector<int> d(10, 1);
     vector<int>::iterator i = d.insert(d.cbegin() + 2, {3, 4, 5, 6});
     assert(d.size() == 14);
     //assert(is_contiguous_container_asan_correct(d));

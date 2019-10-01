@@ -37,7 +37,7 @@ void main()
         test(vector<int>(a, an));
     }
     {
-        vector<int, test_allocator<int> > v((size_t)3, 2, test_allocator<int>(5));
+        vector<int, test_allocator<int> > v(3, 2, test_allocator<int>(5));
         vector<int, test_allocator<int> > v2 = v;
         //assert(is_contiguous_container_asan_correct(v));
         //assert(is_contiguous_container_asan_correct(v2));
@@ -48,7 +48,7 @@ void main()
     }
 #ifndef _LIBCPP_HAS_NO_ADVANCED_SFINAE
     {
-        vector<int, other_allocator<int> > v((size_t)3, 2, other_allocator<int>(5));
+        vector<int, other_allocator<int> > v(3, 2, other_allocator<int>(5));
         vector<int, other_allocator<int> > v2 = v;
         //assert(is_contiguous_container_asan_correct(v));
         //assert(is_contiguous_container_asan_correct(v2));

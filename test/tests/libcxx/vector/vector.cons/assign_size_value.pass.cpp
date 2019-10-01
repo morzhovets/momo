@@ -25,7 +25,7 @@ template <typename Vec>
 void test ( Vec &v )
 {
     //std::cout << "Size, cap: " << v.size() << " " << v.capacity() << std::endl;
-    v.assign((size_t)5, 6);
+    v.assign(5, 6);
     //std::cout << "Size, cap: " << v.size() << " " << v.capacity() << std::endl;
     assert(v.size() == 5);
     //assert(is_contiguous_container_asan_correct(v));
