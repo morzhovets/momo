@@ -268,7 +268,7 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return static_cast<size_t>(mPtrState >> (32 - logMaxCount)) + 1;
+			return size_t{mPtrState >> (32 - logMaxCount)} + 1;
 		}
 
 		Data pvGetData() const noexcept

@@ -206,7 +206,7 @@ namespace internal
 	private:
 		size_t pvGetCount() const noexcept
 		{
-			return static_cast<size_t>(mState[1] & 3);
+			return size_t{mState[1]} & 3;
 		}
 
 		void pvSetEmpty() noexcept

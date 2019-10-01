@@ -233,12 +233,12 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			return static_cast<size_t>(mState >> 4);
+			return size_t{mState} >> 4;
 		}
 
 		size_t pvGetCount() const noexcept
 		{
-			return static_cast<size_t>(mState & 15);
+			return size_t{mState} & 15;
 		}
 
 		Item* pvGetItems() const noexcept

@@ -365,13 +365,13 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(mPtr != nullptr);
-			return static_cast<size_t>(*mPtr >> 4);
+			return size_t{*mPtr} >> 4;
 		}
 
 		size_t pvGetFastCount() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
-			return static_cast<size_t>(*mPtr & 15);
+			return size_t{*mPtr} & 15;
 		}
 
 		Item* pvGetFastItems() const noexcept

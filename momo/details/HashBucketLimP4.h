@@ -425,7 +425,7 @@ namespace internal
 			else if (maxCount == 4 && IsFull())
 				return 4;
 			else
-				return static_cast<size_t>(mShortHashes[3] & 3) + 1;
+				return (size_t{mShortHashes[3]} & 3) + 1;
 		}
 
 		size_t pvGetCount() const noexcept

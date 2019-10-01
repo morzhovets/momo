@@ -212,7 +212,7 @@ namespace internal
 		size_t pvGetCount() const noexcept
 		{
 			uint8_t state = pvGetState();
-			return (state >= emptyShortHash) ? static_cast<size_t>(state - emptyShortHash) : maxCount;
+			return (state >= emptyShortHash) ? size_t{state} - size_t{emptyShortHash} : maxCount;
 		}
 
 		void pvSetEmpty() noexcept
@@ -223,7 +223,7 @@ namespace internal
 
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept
 		{
-			return static_cast<size_t>(maxProbeExp & 7) << (maxProbeExp >> 3);
+			return (size_t{maxProbeExp} & 7) << (maxProbeExp >> 3);
 		}
 
 		void pvUpdateMaxProbe(size_t probe) noexcept
