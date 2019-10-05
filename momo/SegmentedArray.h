@@ -309,12 +309,12 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(this, 0);
+		return ConstIteratorProxy(this, size_t{0});
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(this, 0);
+		return IteratorProxy(this, size_t{0});
 	}
 
 	ConstIterator GetEnd() const noexcept
@@ -545,7 +545,7 @@ public:
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		if (internal::IsForwardIterator<ArgIterator>::value)
-			Reserve(mCount + std::distance(begin, end));
+			Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
 		ArrayShifter::Insert(*this, index, begin, end);
 	}
 

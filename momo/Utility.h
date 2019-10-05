@@ -256,6 +256,13 @@ namespace internal
 			return ((value + mod - 1) / mod) * mod;
 		}
 
+		template<typename Iterator,
+			typename = typename std::iterator_traits<Iterator>::iterator_category>
+		static UInt Dist(Iterator begin, Iterator end) noexcept
+		{
+			return static_cast<UInt>(std::distance(begin, end));
+		}
+
 		static UInt GCD(UInt value1, UInt value2) noexcept
 		{
 			while (value2 != 0)

@@ -449,6 +449,8 @@ private:
 	typedef internal::ArrayShifter<Array> ArrayShifter;
 	typedef typename internal::ArrayIteratorSelector<Array> IteratorSelector;
 
+	typedef internal::UIntMath<> SMath;
+
 public:
 	typedef typename IteratorSelector::ConstIterator ConstIterator;
 	typedef typename IteratorSelector::Iterator Iterator;
@@ -481,7 +483,7 @@ public:
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
-		: mData(internal::IsForwardIterator<ArgIterator>::value ? std::distance(begin, end) : 0,
+		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
 			std::move(memManager))
 	{
 		pvFill(begin, end);
@@ -858,7 +860,7 @@ public:
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
 		if (internal::IsForwardIterator<ArgIterator>::value)
 		{
-			size_t count = std::distance(begin, end);
+			size_t count = SMath::Dist(begin, end);
 			size_t newCount = GetCount() + count;
 			if (newCount > GetCapacity())
 				pvGrow(newCount, ArrayGrowCause::add);
@@ -1044,7 +1046,8 @@ private:
 		const Item* pitem = std::addressof(item);
 		const Item* items = GetItems();
 		std::less<const Item*> less;
-		return (!less(pitem, items) && less(pitem, items + GetCount())) ? pitem - items : SIZE_MAX;
+		return (!less(pitem, items) && less(pitem, items + GetCount()))
+			? SMath::Dist(items, pitem) : size_t{SIZE_MAX};
 	}
 
 	template<typename ItemArg>

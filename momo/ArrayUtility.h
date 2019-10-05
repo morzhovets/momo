@@ -55,7 +55,7 @@ namespace internal
 
 		ArrayIndexIterator& operator+=(ptrdiff_t diff)
 		{
-			size_t newIndex = mIndex + diff;
+			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mIndex) + diff);
 			MOMO_CHECK((mArray != nullptr) ? newIndex <= mArray->GetCount() : diff == 0);
 			mIndex = newIndex;
 			return *this;
@@ -64,7 +64,7 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mArray == ConstIteratorProxy::GetArray(iter));
-			return mIndex - ConstIteratorProxy::GetIndex(iter);
+			return static_cast<ptrdiff_t>(mIndex - ConstIteratorProxy::GetIndex(iter));
 		}
 
 		Pointer operator->() const
@@ -242,7 +242,7 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			size_t count = std::distance(begin, end);
+			size_t count = UIntMath<>::Dist(begin, end);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
@@ -259,7 +259,7 @@ namespace internal
 			{
 				typedef typename ItemTraits::template Creator<
 					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-				ArgIterator iter = std::next(begin, initCount - index);
+				ArgIterator iter = std::next(begin, static_cast<ptrdiff_t>(initCount - index));
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;
