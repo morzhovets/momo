@@ -449,8 +449,9 @@ private:
 
 	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const noexcept
 	{
-		return buffer + intptr_t{index} * static_cast<intptr_t>(Params::blockSize)
-			+ (static_cast<intptr_t>(Params::blockAlignment) & -intptr_t{index >= 0});
+		return static_cast<uintptr_t>(static_cast<intptr_t>(buffer)
+			+ intptr_t{index} * static_cast<intptr_t>(Params::blockSize)
+			+ (static_cast<intptr_t>(Params::blockAlignment) & -intptr_t{index >= 0}));
 	}
 
 	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const noexcept

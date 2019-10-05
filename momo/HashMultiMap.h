@@ -1077,7 +1077,7 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(iter.GetKeyIterator()));
 		ValueArray& valueArray = hashMapIter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
-		size_t valueIndex = ConstIteratorProxy::GetValuePtr(iter) - valueBounds.GetBegin();
+		ptrdiff_t valueIndex = ConstIteratorProxy::GetValuePtr(iter) - valueBounds.GetBegin();
 		KeyValueTraits::AssignAnywayValue(GetMemManager(), *(valueBounds.GetEnd() - 1),
 			valueBounds.GetBegin()[valueIndex]);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());

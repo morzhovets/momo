@@ -88,8 +88,8 @@ namespace internal
 				codes[i] = codeGetter(begin[i]);
 			for (size_t i = 0; i < count - 1; ++i)
 			{
-				size_t minIndex = std::min_element(codes.data() + i + 1,
-					codes.data() + count) - codes.data();
+				size_t minIndex = UIntMath<>::Dist(codes.data(),
+					std::min_element(codes.data() + i + 1, codes.data() + count));
 				if (codes[minIndex] < codes[i])
 				{
 					std::iter_swap(begin + i, begin + minIndex);

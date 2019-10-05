@@ -138,7 +138,7 @@ namespace internal
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = iter - pvMakeIterator(ptGetItemPtr(0));
+			size_t index = internal::UIntMath<>::Dist(pvMakeIterator(ptGetItemPtr(0)), iter);
 			MOMO_ASSERT(index < count);
 			std::forward<ItemReplacer>(itemReplacer)(*ptGetItemPtr(count - 1),
 				*ptGetItemPtr(index));

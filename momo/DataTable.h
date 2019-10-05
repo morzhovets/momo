@@ -1260,15 +1260,15 @@ private:
 	template<typename Raws, typename RowFilter>
 	size_t pvMakeSelection(const Raws& raws, const RowFilter& rowFilter, size_t*) const
 	{
-		return std::count_if(raws.GetBegin(), raws.GetEnd(),
-			[this, &rowFilter] (Raw* raw) { return rowFilter(pvMakeConstRowReference(raw)); });
+		return static_cast<size_t>(std::count_if(raws.GetBegin(), raws.GetEnd(),
+			[this, &rowFilter] (Raw* raw) { return rowFilter(pvMakeConstRowReference(raw)); }));
 	}
 
 	template<typename Raws>
 	size_t pvMakeSelection(const Raws& raws, const EmptyRowFilter& /*rowFilter*/,
 		size_t*) const noexcept
 	{
-		return std::distance(raws.GetBegin(), raws.GetEnd());
+		return internal::UIntMath<>::Dist(raws.GetBegin(), raws.GetEnd());
 	}
 
 	RowHashPointer pvFindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const

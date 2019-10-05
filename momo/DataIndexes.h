@@ -66,7 +66,7 @@ namespace internal
 
 		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
 		{
-			size_t newRawIndex = mRawIndex + diff;
+			size_t newRawIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mRawIndex) + diff);
 			MOMO_CHECK(mRawIndex <= ((mRaw != nullptr) ? size_t{1} : size_t{0}));
 			mRawIndex = newRawIndex;
 			return *this;
@@ -75,7 +75,7 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mRaw == iter.mRaw);
-			return mRawIndex - iter.mRawIndex;
+			return static_cast<ptrdiff_t>(mRawIndex) - static_cast<ptrdiff_t>(iter.mRawIndex);
 		}
 
 		Pointer operator->() const
@@ -143,7 +143,7 @@ namespace internal
 			if (diff != 0)
 			{
 				VersionKeeper::Check();
-				size_t newRawIndex = mRawIndex + diff;
+				size_t newRawIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mRawIndex) + diff);
 				MOMO_CHECK(!!mKeyIterator && newRawIndex <= mKeyIterator->GetCount() + 1);
 				mRawIndex = newRawIndex;
 			}
@@ -153,7 +153,7 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
-			return mRawIndex - iter.mRawIndex;
+			return static_cast<ptrdiff_t>(mRawIndex) - static_cast<ptrdiff_t>(iter.mRawIndex);
 		}
 
 		Pointer operator->() const
@@ -711,13 +711,13 @@ namespace internal
 					size_t rawIndex2 = 1 << logInitialSegmentSize;
 					for (size_t segIndex = 0; rawIndex2 < rawCount; ++segIndex)
 					{
-						size_t rawIndex = std::lower_bound(rawBegin + rawIndex1,
-							rawBegin + rawIndex2 - 1, raw) - rawBegin;
+						size_t rawIndex = UIntMath<>::Dist(rawBegin,
+							std::lower_bound(rawBegin + rawIndex1, rawBegin + rawIndex2 - 1, raw));
 						if (raws[rawIndex] == raw)
 						{
 							std::copy(rawBegin + rawIndex + 1, rawBegin + rawIndex2, rawBegin + rawIndex);
-							rawIndex = std::lower_bound(rawBegin + rawIndex1,
-								rawBegin + rawIndex2 - 1, raws[rawCount - 1]) - rawBegin;
+							rawIndex = UIntMath<>::Dist(rawBegin, std::lower_bound(rawBegin + rawIndex1,
+								rawBegin + rawIndex2 - 1, raws[rawCount - 1]));
 							std::copy_backward(rawBegin + rawIndex, rawBegin + rawIndex2 - 1,
 								rawBegin + rawIndex2);
 							raws[rawIndex] = raws[rawCount - 1];
@@ -729,8 +729,8 @@ namespace internal
 					}
 					if (rawIndex2 >= rawCount)
 					{
-						auto rawIndex = std::find(rawBegin + rawIndex1,
-							rawBegin + rawCount, raw) - rawBegin;
+						size_t rawIndex = UIntMath<>::Dist(rawBegin,
+							std::find(rawBegin + rawIndex1, rawBegin + rawCount, raw));
 						MOMO_ASSERT(raws[rawIndex] == raw);
 						mHashMultiMap.Remove(mKeyIteratorRemove, rawIndex);
 					}

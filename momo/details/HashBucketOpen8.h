@@ -55,14 +55,14 @@ namespace internal
 		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
-			__m128i shortHashes = _mm_set1_epi8(shortHash);
+			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
 			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
 				*BitCaster::PtrToPtr<int64_t>(BucketOpenN1::ptGetShortHashes(), 0));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
 			while (mask != 0)
 			{
-				size_t index = pvCountTrailingZeros(mask);
+				size_t index = pvCountTrailingZeros(static_cast<uint32_t>(mask));
 				Item* pitem = BucketOpenN1::ptGetItemPtr(index);
 				if (pred(*pitem))
 					return pitem;
@@ -78,11 +78,11 @@ namespace internal
 		}
 
 	private:
-		static size_t pvCountTrailingZeros(int mask) noexcept
+		static size_t pvCountTrailingZeros(uint32_t mask) noexcept
 		{
 			MOMO_ASSERT(0 < mask && mask < 128);
 #ifdef MOMO_CTZ32
-			return MOMO_CTZ32(mask);
+			return static_cast<size_t>(MOMO_CTZ32(mask));
 #else
 			static const uint8_t tab[127] =
 			{

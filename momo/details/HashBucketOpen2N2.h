@@ -163,7 +163,7 @@ namespace internal
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = std::addressof(*iter) - &mItems[0];
+			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
 			MOMO_ASSERT(index >= maxCount - count);
 			std::forward<ItemReplacer>(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
 			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
@@ -180,7 +180,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			size_t index = std::addressof(*iter) - &mItems[0];
+			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
 			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep

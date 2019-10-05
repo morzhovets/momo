@@ -643,7 +643,7 @@ public:
 	{
 		if (mCount == 0)
 			return ConstIterator();
-		return ConstIteratorProxy(*mBuckets, 0,
+		return ConstIteratorProxy(*mBuckets, size_t{0},
 			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetEnd(),
 			mCrew.GetVersion());
 	}
@@ -815,7 +815,7 @@ public:
 		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += Insert(*iter).inserted ? 1 : 0;
+			count += Insert(*iter).inserted ? size_t{1} : size_t{0};
 		return count;
 	}
 
@@ -1096,7 +1096,7 @@ private:
 			BucketParams& bucketParams = mBuckets->GetBucketParams();
 			size_t bucketIndex = ConstPositionProxy::GetBucketIndex(resPos);
 			Bucket& bucket = (*mBuckets)[bucketIndex];
-			size_t itemIndex = std::distance(bucket.GetBounds(bucketParams).GetBegin(),
+			ptrdiff_t itemIndex = std::distance(bucket.GetBounds(bucketParams).GetBegin(),
 				ConstPositionProxy::GetBucketIterator(resPos));
 			pvRelocateItems();
 			ConstPositionProxy::Reset(resPos, bucketIndex,

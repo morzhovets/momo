@@ -236,6 +236,12 @@ namespace internal
 				const char, char>::type Char;
 			return reinterpret_cast<ResObject*>(reinterpret_cast<Char*>(ptr) + byteOffset);
 		}
+
+		template<typename ResObject, typename Object>
+		static ResObject* PtrToPtr(Object* ptr, size_t byteOffset) noexcept
+		{
+			return PtrToPtr<ResObject>(ptr, static_cast<ptrdiff_t>(byteOffset));
+		}
 	};
 
 	template<typename TUInt = size_t>

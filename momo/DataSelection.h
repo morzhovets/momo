@@ -51,7 +51,7 @@ namespace internal
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
 			const Raws* raws = pvGetRaws();
-			size_t newIndex = pvGetIndex() + diff;
+			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(pvGetIndex()) + diff);
 			(void)raws; (void)newIndex;
 			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
 			ArrayIndexIterator::operator+=(diff);
@@ -832,7 +832,8 @@ namespace internal
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(equalers.GetColumn())... }};
 			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 				{ return pvCompare<void>(raw, offsets.data(), equalers...) > bound; };
-			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
+			return UIntMath<>::Dist(mRaws.GetBegin(),
+				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
 		}
 
 		template<typename Void, typename Item, typename... Items>
