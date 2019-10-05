@@ -40,7 +40,7 @@ template <>
 struct hash<MoveOnly>
     //: public std::unary_function<MoveOnly, std::size_t>
 {
-    std::size_t operator()(const MoveOnly& x) const {return x.get();}
+    std::size_t operator()(const MoveOnly& x) const {return static_cast<size_t>(x.get());}
 };
 
 }
