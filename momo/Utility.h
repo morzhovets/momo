@@ -229,18 +229,13 @@ namespace internal
 		//	return reinterpret_cast<ResObject*>(ptr);
 		//}
 
-		template<typename ResObject, typename Object>
-		static ResObject* PtrToPtr(Object* ptr, ptrdiff_t byteOffset) noexcept
+		template<typename ResObject, typename Object, typename Offset>
+		static ResObject* PtrToPtr(Object* ptr, Offset byteOffset) noexcept
 		{
 			typedef typename std::conditional<std::is_const<Object>::value,
-				const char, char>::type Char;
-			return reinterpret_cast<ResObject*>(reinterpret_cast<Char*>(ptr) + byteOffset);
-		}
-
-		template<typename ResObject, typename Object>
-		static ResObject* PtrToPtr(Object* ptr, size_t byteOffset) noexcept
-		{
-			return PtrToPtr<ResObject>(ptr, static_cast<ptrdiff_t>(byteOffset));
+				const char, char>::type Byte;
+			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
+				+ static_cast<ptrdiff_t>(byteOffset));
 		}
 	};
 
