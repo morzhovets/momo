@@ -360,7 +360,7 @@ namespace internal
 			}
 			else
 			{
-				size_t index = iter - items;
+				size_t index = UIntMath<>::Dist(items, iter);
 				MOMO_ASSERT(index < count);
 				std::forward<ItemReplacer>(itemReplacer)(items[count - 1], *iter);
 				mShortHashes[index] = mShortHashes[count - 1];
@@ -382,7 +382,7 @@ namespace internal
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
 			Item* items = mPtrState.GetPointer();
-			size_t index = iter - items;
+			size_t index = UIntMath<>::Dist(items, iter);
 			size_t hashProbe = size_t{mShortHashes[hashCount - 1 - index]};
 			bool useFullGetter = (static_cast<uint8_t>(hashProbe + 1) <= maskEmpty ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
@@ -430,8 +430,8 @@ namespace internal
 
 		size_t pvGetCount() const noexcept
 		{
-			return (mShortHashes[1] >= maskEmpty) ? ((mShortHashes[0] < maskEmpty) ? 1 : 0)
-				: 2 + ((mShortHashes[2] < maskEmpty) ? 1 : 0) + ((mShortHashes[3] < maskEmpty) ? 1 : 0);
+			return (mShortHashes[1] >= maskEmpty) ? ((mShortHashes[0] < maskEmpty) ? size_t{1} : size_t{0})
+				: size_t{2} + ((mShortHashes[2] < maskEmpty) ? 1 : 0) + ((mShortHashes[3] < maskEmpty) ? 1 : 0);
 		}
 
 		static uint8_t pvCalcShortHash(size_t hashCode) noexcept

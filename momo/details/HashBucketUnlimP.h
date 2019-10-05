@@ -141,7 +141,7 @@ namespace internal
 		{
 			Bounds bounds = GetBounds(params);
 			size_t count = bounds.GetCount();
-			size_t index = iter - bounds.GetBegin();
+			size_t index = UIntMath<>::Dist(bounds.GetBegin(), iter);
 			MOMO_ASSERT(index < count);
 			std::forward<ItemReplacer>(itemReplacer)(bounds[count - 1], bounds[index]);
 			mArrayBucket.RemoveBack(params);

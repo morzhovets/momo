@@ -218,7 +218,8 @@ namespace internal
 		{
 			size_t count = GetCount();
 			Node* const* children = &mParent - maxCapacity - 1;	//?
-			size_t index = std::find(children, children + count + 1, child) - children;
+			size_t index = UIntMath<>::Dist(children,
+				std::find(children, children + count + 1, child));
 			MOMO_ASSERT(index <= count);
 			return index;
 		}

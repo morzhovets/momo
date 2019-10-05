@@ -845,7 +845,7 @@ public:
 			Clear();
 			return GetEnd();
 		}
-		size_t count = std::distance(begin, end);
+		size_t count = internal::UIntMath<>::Dist(begin, end);
 		ConstIterator iter = begin;
 		for (size_t i = 0; i < count; ++i)
 			iter = Remove(iter);
