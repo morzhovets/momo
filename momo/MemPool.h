@@ -548,7 +548,8 @@ private:
 
 	BufferPointers& pvGetBufferPointers(uintptr_t buffer) noexcept
 	{
-		size_t offset = Params::blockCount - static_cast<size_t>(-pvGetFirstBlockIndex(buffer));
+		size_t offset = size_t{Params::blockCount}	// gcc
+			- static_cast<size_t>(-pvGetFirstBlockIndex(buffer));
 		return *internal::BitCaster::ToPtr<BufferPointers>(PMath::Ceil(buffer +
 			Params::blockAlignment + Params::blockSize * offset, uintptr_t{sizeof(void*)}));
 	}
