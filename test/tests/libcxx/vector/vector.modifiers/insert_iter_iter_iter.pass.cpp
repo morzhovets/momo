@@ -28,16 +28,16 @@ void main()
     {
         vector<int> v(100);
         int a[] = {1, 2, 3, 4, 5};
-        const int N = sizeof(a)/sizeof(a[0]);
+        const size_t N = sizeof(a)/sizeof(a[0]);
         vector<int>::iterator i = v.insert(v.cbegin() + 10, input_iterator<const int*>(a),
                                         input_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
-        int j;
+        size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == 0);
-        for (int k = 0; k < N; ++j, ++k)
+        for (size_t k = 0; k < N; ++j, ++k)
             assert(v[j] == a[k]);
         for (; j < 105; ++j)
             assert(v[j] == 0);
@@ -45,16 +45,16 @@ void main()
     {
         vector<int> v(100);
         int a[] = {1, 2, 3, 4, 5};
-        const int N = sizeof(a)/sizeof(a[0]);
+        const size_t N = sizeof(a)/sizeof(a[0]);
         vector<int>::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                         forward_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
-        int j;
+        size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == 0);
-        for (int k = 0; k < N; ++j, ++k)
+        for (size_t k = 0; k < N; ++j, ++k)
             assert(v[j] == a[k]);
         for (; j < 105; ++j)
             assert(v[j] == 0);
@@ -64,7 +64,7 @@ void main()
         while(v.size() < v.capacity()) v.push_back(0); // force reallocation
         size_t sz = v.size();
         int a[] = {1, 2, 3, 4, 5};
-        const unsigned N = sizeof(a)/sizeof(a[0]);
+        const size_t N = sizeof(a)/sizeof(a[0]);
         vector<int>::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                         forward_iterator<const int*>(a+N));
         assert(v.size() == sz + N);
@@ -72,7 +72,7 @@ void main()
         size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == 0);
-        for (unsigned k = 0; k < N; ++j, ++k)
+        for (size_t k = 0; k < N; ++j, ++k)
             assert(v[j] == a[k]);
         for (; j < v.size(); ++j)
             assert(v[j] == 0);
@@ -82,7 +82,7 @@ void main()
         v.reserve(128); // force no reallocation
         size_t sz = v.size();
         int a[] = {1, 2, 3, 4, 5};
-        const unsigned N = sizeof(a)/sizeof(a[0]);
+        const size_t N = sizeof(a)/sizeof(a[0]);
         vector<int>::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                         forward_iterator<const int*>(a+N));
         assert(v.size() == sz + N);
@@ -90,7 +90,7 @@ void main()
         size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == 0);
-        for (unsigned k = 0; k < N; ++j, ++k)
+        for (size_t k = 0; k < N; ++j, ++k)
             assert(v[j] == a[k]);
         for (; j < v.size(); ++j)
             assert(v[j] == 0);

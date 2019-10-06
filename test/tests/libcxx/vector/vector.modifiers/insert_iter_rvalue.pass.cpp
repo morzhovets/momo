@@ -31,7 +31,7 @@ void main()
         assert(v.size() == 101);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
-        int j;
+        size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == MoveOnly());
         assert(v[j] == MoveOnly(3));

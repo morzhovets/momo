@@ -29,7 +29,7 @@ void main()
         assert(v.size() == 105);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
-        int j;
+        size_t j;
         for (j = 0; j < 10; ++j)
             assert(v[j] == 0);
         for (; j < 15; ++j)
