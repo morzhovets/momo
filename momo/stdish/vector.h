@@ -42,6 +42,8 @@ private:
 	typedef TArray Array;
 	typedef typename Array::MemManager MemManager;
 
+	typedef momo::internal::UIntMath<> SMath;
+
 public:
 	typedef TValue value_type;
 	typedef TAllocator allocator_type;
@@ -352,39 +354,39 @@ public:
 
 	iterator insert(const_iterator where, value_type&& value)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, std::move(value));
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	iterator insert(const_iterator where, const value_type& value)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, value);
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	iterator insert(const_iterator where, size_type count, const value_type& value)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, count, value);
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	template<typename Iterator,
 		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	iterator insert(const_iterator where, Iterator first, Iterator last)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, first, last);
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	iterator insert(const_iterator where, std::initializer_list<value_type> values)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, values);
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	template<typename... ValueArgs>
@@ -397,9 +399,9 @@ public:
 	template<typename... ValueArgs>
 	iterator emplace(const_iterator where, ValueArgs&&... valueArgs)
 	{
-		size_t index = where - begin();
+		size_t index = SMath::Dist(cbegin(), where);
 		mArray.InsertVar(index, std::forward<ValueArgs>(valueArgs)...);
-		return begin() + index;
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	void pop_back()
@@ -414,9 +416,9 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		size_t index = first - begin();
-		mArray.Remove(index, last - first);
-		return begin() + index;
+		size_t index = SMath::Dist(cbegin(), first);
+		mArray.Remove(index, SMath::Dist(first, last));
+		return begin() + static_cast<ptrdiff_t>(index);
 	}
 
 	void assign(size_type count, const value_type& value)
