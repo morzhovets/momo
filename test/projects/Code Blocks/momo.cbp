@@ -20,6 +20,7 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-msse2" />
 				</Compiler>
@@ -38,6 +39,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
@@ -56,6 +58,7 @@
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-msse2" />
 				</Compiler>
@@ -70,6 +73,7 @@
 					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
@@ -92,6 +96,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-msse2" />
 				</Compiler>
@@ -110,6 +115,7 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
@@ -128,6 +134,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-msse2" />
 				</Compiler>
@@ -142,6 +149,7 @@
 					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
+					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />
 					<Add option="-march=native" />
 					<Add option="-DNDEBUG" />
