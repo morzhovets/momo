@@ -168,7 +168,7 @@ void main()
                 V(3, 2),
                 V(3, 3)
             };
-            const size_t num = sizeof(a1)/sizeof(a1[0]);
+            const int num = sizeof(a1)/sizeof(a1[0]);
             assert(Counter_base::gConstructed == num);
 
             M m1(I(a1), I(a1+num), C(), A());
