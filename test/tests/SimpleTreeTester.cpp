@@ -44,15 +44,6 @@ public:
 		TestCharTreeNode3<  5, 2,  66>(mt);
 		TestCharTreeNode3<  6, 2,  32>(mt);
 		TestCharTreeNode3<  7, 2,  15>(mt);
-		TestCharTreeNode3< 12, 2,   1>(mt);
-		TestCharTreeNode3< 55, 2,   3>(mt);
-		TestCharTreeNode3<111, 2,   2>(mt);
-		TestCharTreeNode3<255, 2,   1>(mt);
-
-		TestCharTreeNode3<  6, 3, 127>(mt);
-		TestCharTreeNode3<  7, 3,  66>(mt);
-		TestCharTreeNode3<  8, 3,  32>(mt);
-		TestCharTreeNode3<  9, 3,  15>(mt);
 		TestCharTreeNode3< 14, 3,   1>(mt);
 		TestCharTreeNode3< 77, 3,   3>(mt);
 		TestCharTreeNode3<121, 3,   2>(mt);
