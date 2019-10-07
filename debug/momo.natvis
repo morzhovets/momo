@@ -105,7 +105,7 @@
 </Type>
 
 <Type Name="momo::internal::ObjectBuffer&lt;*&gt;">
-    <DisplayString>{{ {*(Object*)this} }}</DisplayString>
+    <DisplayString>{{ {*(Object*)&amp;mBuffer} }}</DisplayString>
     <Expand>
         <ExpandedItem>*(Object*)&amp;mBuffer</ExpandedItem>
     </Expand>
@@ -127,27 +127,6 @@
         <ArrayItems>
             <Size>(size_t)1 &lt;&lt; mLogCount</Size>
             <ValuePointer>(Bucket*)(this + 1)</ValuePointer>
-        </ArrayItems>
-    </Expand>
-</Type>
-
-<Type Name="momo::internal::Node&lt;*&gt;">
-    <DisplayString>{{ ItemCount={(size_t)mCounter.count} IsLeaf={(size_t)mMemPoolIndex &lt; leafMemPoolCount} }}</DisplayString>
-    <Expand>
-        <Item Name="[ItemCount]">(size_t)mCounter.count</Item>
-        <Item Name="[IsLeaf]">(size_t)mMemPoolIndex &lt; leafMemPoolCount</Item>
-        <Synthetic Name="[Children]" Condition="!((size_t)mMemPoolIndex &lt; leafMemPoolCount)">
-            <DisplayString>{{ ChildrenCount={(size_t)mCounter.count + 1} }}</DisplayString>
-            <Expand>
-                <ArrayItems>
-                    <Size>(size_t)mCounter.count + 1</Size>
-                    <ValuePointer>&amp;mParent - maxCapacity - 1</ValuePointer>
-                </ArrayItems>
-            </Expand>
-        </Synthetic>
-        <ArrayItems>
-            <Size>(size_t)mCounter.count</Size>
-            <ValuePointer>(Item*)&amp;mFirstItem</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
@@ -239,6 +218,27 @@
         <ArrayItems>
             <Size>(mHashState &amp; 1) != 0 ? 1 : 0</Size>
             <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<Type Name="momo::internal::Node&lt;*&gt;">
+    <DisplayString>{{ ItemCount={(size_t)mCounter.count} IsLeaf={(size_t)mMemPoolIndex &lt; leafMemPoolCount} }}</DisplayString>
+    <Expand>
+        <Item Name="[ItemCount]">(size_t)mCounter.count</Item>
+        <Item Name="[IsLeaf]">(size_t)mMemPoolIndex &lt; leafMemPoolCount</Item>
+        <Synthetic Name="[Children]" Condition="!((size_t)mMemPoolIndex &lt; leafMemPoolCount)">
+            <DisplayString>{{ ChildrenCount={(size_t)mCounter.count + 1} }}</DisplayString>
+            <Expand>
+                <ArrayItems>
+                    <Size>(size_t)mCounter.count + 1</Size>
+                    <ValuePointer>&amp;mParent - maxCapacity - 1</ValuePointer>
+                </ArrayItems>
+            </Expand>
+        </Synthetic>
+        <ArrayItems>
+            <Size>(size_t)mCounter.count</Size>
+            <ValuePointer>(Item*)&amp;mFirstItem</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
