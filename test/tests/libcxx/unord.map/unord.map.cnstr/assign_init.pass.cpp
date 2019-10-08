@@ -54,8 +54,8 @@ void main()
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
@@ -90,8 +90,8 @@ void main()
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
         assert(c.max_load_factor() == 1);
     }

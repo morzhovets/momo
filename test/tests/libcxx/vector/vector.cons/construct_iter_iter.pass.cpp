@@ -25,7 +25,7 @@ test(Iterator first, Iterator last)
 {
     C c(first, last);
     //assert(c.__invariants());
-    assert(c.size() == (size_t)std::distance(first, last));
+    assert(c.size() == momo::internal::UIntMath<>::Dist(first, last));
     //assert(is_contiguous_container_asan_correct(c));
     for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e; ++i, ++first)
         assert(*i == *first);

@@ -43,8 +43,8 @@ void main()
         C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         C::iterator i;
     }
     {
@@ -62,8 +62,8 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         C::const_iterator i;
     }
 //#if __cplusplus >= 201103L
@@ -84,8 +84,8 @@ void main()
         C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         C::iterator i;
     }
     {
@@ -104,8 +104,8 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
         C::const_iterator i;
     }
 #endif

@@ -68,8 +68,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         k = c.erase(i, j);
         assert(c.size() == 4);
@@ -91,8 +91,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         k = c.erase(c.cbegin(), c.cend());
         assert(c.size() == 0);
@@ -146,8 +146,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         k = c.erase(i, j);
         assert(c.size() == 4);
@@ -169,8 +169,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         k = c.erase(c.cbegin(), c.cend());
         assert(c.size() == 0);

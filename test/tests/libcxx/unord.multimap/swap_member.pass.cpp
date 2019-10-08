@@ -47,8 +47,8 @@ void main()
 #else
         assert(c1.get_allocator() == Alloc(2));
 #endif
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() == 0);
@@ -60,8 +60,8 @@ void main()
 #else
         assert(c2.get_allocator() == Alloc(1));
 #endif
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -103,8 +103,8 @@ void main()
 #else
         assert(c1.get_allocator() == Alloc(2));
 #endif
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() == 0);
@@ -116,8 +116,8 @@ void main()
 #else
         assert(c2.get_allocator() == Alloc(1));
 #endif
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -149,8 +149,8 @@ void main()
 #else
         assert(c1.get_allocator() == Alloc(2));
 #endif
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() >= 7);
@@ -168,8 +168,8 @@ void main()
 #else
         assert(c2.get_allocator() == Alloc(1));
 #endif
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -220,8 +220,8 @@ void main()
 #else
         assert(c1.get_allocator() == Alloc(2));
 #endif
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() >= 7);
@@ -239,8 +239,8 @@ void main()
 #else
         assert(c2.get_allocator() == Alloc(1));
 #endif
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
 
@@ -260,8 +260,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc(2));
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() == 0);
@@ -269,8 +269,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc(1));
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -308,8 +308,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc(2));
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() == 0);
@@ -317,8 +317,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc(1));
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -346,8 +346,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc(2));
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() >= 7);
@@ -361,8 +361,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc(1));
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
     {
@@ -409,8 +409,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc(2));
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         ///assert(c1.max_load_factor() == 2);
 
         ///assert(c2.bucket_count() >= 7);
@@ -424,8 +424,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc(1));
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         ///assert(c2.max_load_factor() == 1);
     }
 //#if __cplusplus >= 201103L
@@ -446,8 +446,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc());
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         assert(c1.max_load_factor() == 2);
 
         assert(c2.bucket_count() == 0);
@@ -455,8 +455,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc());
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         assert(c2.max_load_factor() == 1);
     }
     {
@@ -494,8 +494,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc());
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         assert(c1.max_load_factor() == 2);
 
         assert(c2.bucket_count() == 0);
@@ -503,8 +503,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc());
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         assert(c2.max_load_factor() == 1);
     }
     {
@@ -532,8 +532,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc());
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         assert(c1.max_load_factor() == 2);
 
         assert(c2.bucket_count() >= 7);
@@ -547,8 +547,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc());
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         assert(c2.max_load_factor() == 1);
     }
     {
@@ -595,8 +595,8 @@ void main()
         assert(c1.hash_function() == Hash(2));
         assert(c1.key_eq() == Compare(2));
         assert(c1.get_allocator() == Alloc());
-        assert((size_t)std::distance(c1.begin(), c1.end()) == c1.size());
-        assert((size_t)std::distance(c1.cbegin(), c1.cend()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.begin(), c1.end()) == c1.size());
+        assert(momo::internal::UIntMath<>::Dist(c1.cbegin(), c1.cend()) == c1.size());
         assert(c1.max_load_factor() == 2);
 
         assert(c2.bucket_count() >= 7);
@@ -610,8 +610,8 @@ void main()
         assert(c2.hash_function() == Hash(1));
         assert(c2.key_eq() == Compare(1));
         assert(c2.get_allocator() == Alloc());
-        assert((size_t)std::distance(c2.begin(), c2.end()) == c2.size());
-        assert((size_t)std::distance(c2.cbegin(), c2.cend()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.begin(), c2.end()) == c2.size());
+        assert(momo::internal::UIntMath<>::Dist(c2.cbegin(), c2.cend()) == c2.size());
         assert(c2.max_load_factor() == 1);
     }
 #endif

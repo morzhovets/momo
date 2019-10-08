@@ -82,8 +82,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(2) == 2);
         assert(c.size() == 4);
@@ -105,8 +105,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(2) == 0);
         assert(c.size() == 4);
@@ -128,8 +128,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(4) == 1);
         assert(c.size() == 3);
@@ -146,8 +146,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(4) == 0);
         assert(c.size() == 3);
@@ -164,8 +164,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(1) == 2);
         assert(c.size() == 1);
@@ -174,8 +174,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(1) == 0);
         assert(c.size() == 1);
@@ -184,22 +184,22 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(3) == 1);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(3) == 0);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
@@ -246,8 +246,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(2) == 2);
         assert(c.size() == 4);
@@ -269,8 +269,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(2) == 0);
         assert(c.size() == 4);
@@ -292,8 +292,8 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(4) == 1);
         assert(c.size() == 3);
@@ -310,8 +310,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(4) == 0);
         assert(c.size() == 3);
@@ -328,8 +328,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(1) == 2);
         assert(c.size() == 1);
@@ -338,8 +338,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(1) == 0);
         assert(c.size() == 1);
@@ -348,22 +348,22 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(3) == 1);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
 
         assert(c.erase(3) == 0);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert((size_t)std::distance(c.begin(), c.end()) == c.size());
-        assert((size_t)std::distance(c.cbegin(), c.cend()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
+        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
     }
     {
     typedef unordered_multimap<int, int> C;

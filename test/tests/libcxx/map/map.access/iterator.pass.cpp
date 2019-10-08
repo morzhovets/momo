@@ -63,8 +63,8 @@ void main()
             V(8, 2)
         };
         map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert((size_t)std::distance(m.begin(), m.end()) == m.size());
-        assert((size_t)std::distance(m.rbegin(), m.rend()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.begin(), m.end()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.rbegin(), m.rend()) == m.size());
         map<int, double>::iterator i;
         i = m.begin();
         map<int, double>::const_iterator k = i;
@@ -107,10 +107,10 @@ void main()
             V(8, 2)
         };
         const map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert((size_t)std::distance(m.begin(), m.end()) == m.size());
-        assert((size_t)std::distance(m.cbegin(), m.cend()) == m.size());
-        assert((size_t)std::distance(m.rbegin(), m.rend()) == m.size());
-        assert((size_t)std::distance(m.crbegin(), m.crend()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.begin(), m.end()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.cbegin(), m.cend()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.rbegin(), m.rend()) == m.size());
+        assert(momo::internal::UIntMath<>::Dist(m.crbegin(), m.crend()) == m.size());
         map<int, double>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= (int)m.size(); ++j, ++i)
