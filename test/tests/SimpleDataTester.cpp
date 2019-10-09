@@ -96,10 +96,7 @@ public:
 		table.Reserve(count);
 
 		for (size_t i = 0; i < count; ++i)
-		{
-			DataRow row = table.NewRow(intCol = static_cast<int>(i));
-			table.AddRow(std::move(row));
-		}
+			table.AddRow(intCol = static_cast<int>(i));
 
 		for (const std::string& s : table.GetColumnItems(strCol))
 			assert(s.empty());

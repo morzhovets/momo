@@ -473,17 +473,7 @@ public:
 	template<typename Item, typename ItemArg, typename... Assigners>
 	Row NewRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		Raw* raw = pvCreateRaw();
-		try
-		{
-			pvFillRaw(raw, assigner, assigners...);
-		}
-		catch (...)
-		{
-			pvFreeRaw(raw);
-			throw;
-		}
-		return pvMakeRow(raw);
+		return pvNewRow(assigner, assigners...);
 	}
 
 	Row NewRow(const Row& row)
@@ -509,7 +499,7 @@ public:
 	template<typename Item, typename ItemArg, typename... Assigners>
 	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return AddRow(NewRow(assigner, assigners...));
+		return AddRow(pvNewRow(assigner, assigners...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -529,7 +519,7 @@ public:
 	template<typename Item, typename ItemArg, typename... Assigners>
 	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
 	{
-		return TryAddRow(NewRow(assigner, assigners...));
+		return TryAddRow(pvNewRow(assigner, assigners...));
 	}
 
 	RowReference InsertRow(size_t rowNumber, Row&& row)
@@ -544,7 +534,7 @@ public:
 	RowReference InsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
 		Assigners... assigners)
 	{
-		return InsertRow(rowNumber, NewRow(assigner, assigners...));
+		return InsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
@@ -563,7 +553,7 @@ public:
 	TryResult TryInsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
 		Assigners... assigners)
 	{
-		return TryInsertRow(rowNumber, NewRow(assigner, assigners...));
+		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
 
 	void RemoveRow(ConstRowReference rowRef)
@@ -1007,6 +997,22 @@ private:
 	{
 		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
+	}
+
+	template<typename Item, typename ItemArg, typename... Assigners>
+	Row pvNewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	{
+		Raw* raw = pvCreateRaw();
+		try
+		{
+			pvFillRaw(raw, assigner, assigners...);
+		}
+		catch (...)
+		{
+			pvFreeRaw(raw);
+			throw;
+		}
+		return pvMakeRow(raw);
 	}
 
 	template<typename Item, typename ItemArg, typename... Assigners>
