@@ -86,7 +86,7 @@ void main()
         assert(i->second == "four");
         assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
         assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        ///assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        ///assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
         ///assert(c.max_load_factor() == 1);
         assert(c.hash_function() == test_hash<std::hash<int> >(8));
         assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
@@ -150,7 +150,7 @@ void main()
         assert(i->second == "four");
         assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
         assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        ///assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        ///assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
         ///assert(c.max_load_factor() == 1);
         assert(c.hash_function() == test_hash<std::hash<int> >(8));
         assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
@@ -216,7 +216,7 @@ void main()
         assert(i->second == "four");
         assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
         assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
         assert(c.max_load_factor() == 1);
         assert(c.hash_function() == test_hash<std::hash<int> >(8));
         assert(c.key_eq() == test_compare<std::equal_to<int> >(9));

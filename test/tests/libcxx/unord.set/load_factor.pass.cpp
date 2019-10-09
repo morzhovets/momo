@@ -38,7 +38,7 @@ void main()
             P(80)
         };
         const C c(std::begin(a), std::end(a));
-        assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
     }
     {
         typedef unordered_set<int> C;
@@ -64,7 +64,7 @@ void main()
             P(80)
         };
         const C c(std::begin(a), std::end(a));
-        assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
     }
     {
         typedef unordered_set<int, std::hash<int>,

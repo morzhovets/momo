@@ -39,7 +39,7 @@ void main()
             P(80, "eighty"),
         };
         const C c(std::begin(a), std::end(a));
-        assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
     }
     {
         typedef unordered_map<int, std::string> C;
@@ -65,7 +65,7 @@ void main()
             P(80, "eighty"),
         };
         const C c(std::begin(a), std::end(a));
-        assert(fabs(c.load_factor() - (float)c.size()/c.bucket_count()) < FLT_EPSILON);
+        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
     }
     {
         typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
