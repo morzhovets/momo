@@ -40,7 +40,7 @@ void main()
         M m;
         R r;
         for ( int i = 0; i < 20; i += 2 )
-            m.emplace ( i, Moveable(i, (double) i));
+            m.emplace ( i, Moveable(i, static_cast<double>(i)));
         assert(m.size() == 10);
 
         for (int i=0; i < 20; i += 2)
@@ -84,7 +84,7 @@ void main()
         M m;
         R r;
         for ( int i = 0; i < 20; i += 2 )
-            m.emplace ( Moveable(i, (double) i), Moveable(i+1, (double) i+1));
+            m.emplace ( Moveable(i, static_cast<double>(i)), Moveable(i+1, static_cast<double>(i+1)));
         assert(m.size() == 10);
 
         Moveable mvkey1(2, 2.0);
@@ -112,7 +112,7 @@ void main()
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
-            m.emplace ( i, Moveable(i, (double) i));
+            m.emplace ( i, Moveable(i, static_cast<double>(i)));
         assert(m.size() == 10);
         M::const_iterator it = m.find(2);
 
@@ -135,7 +135,7 @@ void main()
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
-            m.emplace ( Moveable(i, (double) i), Moveable(i+1, (double) i+1));
+            m.emplace ( Moveable(i, static_cast<double>(i)), Moveable(i+1, static_cast<double>(i+1)));
         assert(m.size() == 10);
         M::const_iterator it = std::next(m.cbegin());
 

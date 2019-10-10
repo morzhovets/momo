@@ -69,9 +69,9 @@ void main()
         i = m.begin();
         map<int, double>::const_iterator k = i;
         assert(i == k);
-        for (int j = 1; j <= (int)m.size(); ++j, ++i)
+        for (size_t j = 1; j <= m.size(); ++j, ++i)
         {
-            assert(i->first == j);
+            assert(i->first == static_cast<int>(j));
             assert(i->second == 1);
             i->second = 2.5;
             assert(i->second == 2.5);
@@ -113,9 +113,9 @@ void main()
         assert(momo::internal::UIntMath<>::Dist(m.crbegin(), m.crend()) == m.size());
         map<int, double>::const_iterator i;
         i = m.begin();
-        for (int j = 1; j <= (int)m.size(); ++j, ++i)
+        for (size_t j = 1; j <= m.size(); ++j, ++i)
         {
-            assert(i->first == j);
+            assert(i->first == static_cast<int>(j));
             assert(i->second == 1);
         }
     }

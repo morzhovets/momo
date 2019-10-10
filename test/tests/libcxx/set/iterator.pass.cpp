@@ -69,8 +69,8 @@ void main()
         i = m.begin();
         set<int>::const_iterator k = i;
         assert(i == k);
-        for (int j = 1; j <= (int)m.size(); ++j, ++i)
-            assert(*i == j);
+        for (size_t j = 1; j <= m.size(); ++j, ++i)
+            assert(*i == static_cast<int>(j));
     }
     {
         typedef int V;
@@ -108,8 +108,8 @@ void main()
         assert(momo::internal::UIntMath<>::Dist(m.crbegin(), m.crend()) == m.size());
         set<int>::const_iterator i;
         i = m.begin();
-        for (int j = 1; j <= (int)m.size(); ++j, ++i)
-            assert(*i == j);
+        for (size_t j = 1; j <= m.size(); ++j, ++i)
+            assert(*i == static_cast<int>(j));
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
