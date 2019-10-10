@@ -75,7 +75,7 @@ void test_emplace_back() {
   v.push_back(X(2));
   assert(v.size() == 1);
   try {
-    v.emplace_back((char)42);
+    v.emplace_back(static_cast<char>(42));
     assert(0);
   } catch (int) {
     assert(v.size() == 1);
