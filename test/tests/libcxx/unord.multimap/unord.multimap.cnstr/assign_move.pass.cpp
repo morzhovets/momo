@@ -298,11 +298,7 @@ void main()
         std::pair<const int, int> k = *i;
         unordered_multimap<int, int> s2;
         s2 = std::move(s1);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(*i == k);
-#else
-        assert((std::pair<const int, int>)*i == k);
-#endif
         s2.erase(i);
         assert(s2.size() == 2);
     }

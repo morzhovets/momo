@@ -43,7 +43,7 @@ void main()
         size_t bc = c.bucket_count();
         assert(bc >= 5);
         for (size_t i = 0; i < 13; ++i)
-            assert(c.bucket((int)i) == i % bc);
+            assert(c.bucket(static_cast<int>(i)) == i % bc);
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

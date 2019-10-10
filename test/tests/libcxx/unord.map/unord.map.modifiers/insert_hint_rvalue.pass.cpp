@@ -35,24 +35,24 @@ void main()
         typedef std::pair<double, short> P;
         C c;
         C::const_iterator e = /*c.end()*/c.find(3.5);
-        R r = c.insert(e, P(3.5, (short)3));
+        R r = c.insert(e, P(3.5, short{3}));
         assert(c.size() == 1);
         assert(r->first == 3.5);
         assert(r->second == 3);
 
 #ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
-        r = c.insert(/*c.end()*/c.find(3.5), P(3.5, (short)4));
+        r = c.insert(/*c.end()*/c.find(3.5), P(3.5, short{4}));
         assert(c.size() == 1);
         assert(r->first == 3.5);
         assert(r->second == 3);
 #endif
 
-        r = c.insert(/*c.end()*/c.find(4.5), P(4.5, (short)4));
+        r = c.insert(/*c.end()*/c.find(4.5), P(4.5, short{4}));
         assert(c.size() == 2);
         assert(r->first == 4.5);
         assert(r->second == 4);
 
-        r = c.insert(/*c.end()*/c.find(5.5), P(5.5, (short)4));
+        r = c.insert(/*c.end()*/c.find(5.5), P(5.5, short{4}));
         assert(c.size() == 3);
         assert(r->first == 5.5);
         assert(r->second == 4);
