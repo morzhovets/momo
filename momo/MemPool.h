@@ -368,8 +368,8 @@ private:
 
 	uintptr_t pvNewBlock1()
 	{
-		uintptr_t begin = internal::BitCaster::ToUInt(MemManagerProxy::Allocate(GetMemManager(),
-			pvGetBufferSize1()));
+		uintptr_t begin = internal::BitCaster::ToUInt(
+			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize1()));
 		uintptr_t block = PMath::Ceil(begin, uintptr_t{Params::blockAlignment});
 		pvGetBufferBegin1(block) = begin;
 		return block;
@@ -391,8 +391,8 @@ private:
 
 	uintptr_t& pvGetBufferBegin1(uintptr_t block) noexcept
 	{
-		return *internal::BitCaster::ToPtr<uintptr_t>(PMath::Ceil(block + Params::blockSize,
-			uintptr_t{sizeof(void*)}));
+		return *internal::BitCaster::ToPtr<uintptr_t>(
+			PMath::Ceil(block + uintptr_t{Params::blockSize}, uintptr_t{sizeof(void*)}));
 	}
 
 	uintptr_t pvNewBlock()
@@ -456,30 +456,32 @@ private:
 
 	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const noexcept
 	{
-		MOMO_ASSERT(block % Params::blockAlignment == 0);
-		size_t index = (block / Params::blockSize) % Params::blockCount;
-		if (((block % Params::blockSize) / Params::blockAlignment) % 2 == 1)
+		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
+		MOMO_ASSERT(block % uipBlockAlignment == 0);
+		uintptr_t index = (block / uintptr_t{Params::blockSize}) % uintptr_t{Params::blockCount};
+		if (((block % uintptr_t{Params::blockSize}) / uipBlockAlignment) % 2 == 1)
 		{
-			buffer = block - index * Params::blockSize - Params::blockAlignment;
+			buffer = block - index * uintptr_t{Params::blockSize} - uipBlockAlignment;
 			return static_cast<int8_t>(index);
 		}
 		else
 		{
-			buffer = block + (Params::blockCount - index) * Params::blockSize;
+			buffer = block + (uintptr_t{Params::blockCount} - index) * uintptr_t{Params::blockSize};
 			return static_cast<int8_t>(index) - static_cast<int8_t>(Params::blockCount);
 		}
 	}
 
 	uintptr_t pvNewBuffer()
 	{
-		uintptr_t begin = internal::BitCaster::ToUInt(MemManagerProxy::Allocate(GetMemManager(),
-			pvGetBufferSize()));
-		uintptr_t block = PMath::Ceil(begin, uintptr_t{Params::blockAlignment});
-		block += (block % Params::blockSize) % (2 * Params::blockAlignment);
-		if ((block + Params::blockAlignment) % Params::blockSize == 0)
-			block += Params::blockAlignment;
-		if (((block / Params::blockSize) % Params::blockCount) == 0)
-			block += Params::blockAlignment;
+		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
+		uintptr_t begin = internal::BitCaster::ToUInt(
+			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize()));
+		uintptr_t block = PMath::Ceil(begin, uipBlockAlignment);
+		block += (block % uintptr_t{Params::blockSize}) % (2 * uipBlockAlignment);
+		if ((block + uipBlockAlignment) % uintptr_t{Params::blockSize} == 0)
+			block += uipBlockAlignment;
+		if ((block / uintptr_t{Params::blockSize}) % uintptr_t{Params::blockCount} == 0)
+			block += uipBlockAlignment;
 		uintptr_t buffer;
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
 		pvGetFirstBlockIndex(buffer) = blockIndex;
@@ -550,8 +552,9 @@ private:
 	{
 		size_t offset = Params::blockCount;
 		offset -= static_cast<size_t>(-pvGetFirstBlockIndex(buffer));	// gcc warning
-		return *internal::BitCaster::ToPtr<BufferPointers>(PMath::Ceil(buffer +
-			Params::blockAlignment + Params::blockSize * offset, uintptr_t{sizeof(void*)}));
+		return *internal::BitCaster::ToPtr<BufferPointers>(
+			PMath::Ceil(buffer + uintptr_t{Params::blockAlignment + Params::blockSize * offset},
+			uintptr_t{sizeof(void*)}));
 	}
 
 private:
@@ -624,7 +627,7 @@ namespace internal
 		{
 			MOMO_ASSERT(ptr != nullPtr);
 			char* buffer = mBuffers[ptr / blockCount];
-			void* realPtr = buffer + size_t{ptr % blockCount} * mBlockSize;
+			void* realPtr = buffer + (size_t{ptr} % blockCount) * mBlockSize;
 			return static_cast<ResObject*>(realPtr);
 		}
 
