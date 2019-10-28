@@ -225,6 +225,7 @@ namespace internal
 
 		void pvSetEmpty() noexcept
 		{
+			mData = Data();
 			std::fill_n(pvGetShortHashes(), maxCount, Byte{emptyShortHash});
 			pvGetMaxProbeExp() = Byte{0};
 		}
