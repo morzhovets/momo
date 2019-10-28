@@ -24,10 +24,10 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits>
-	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, 8>
+	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, int64_t>
 	{
 	private:
-		typedef internal::BucketOpenN1<TItemTraits, 7, false, 8> BucketOpenN1;
+		typedef internal::BucketOpenN1<TItemTraits, 7, false, int64_t> BucketOpenN1;
 
 	public:
 		static const size_t maxCount = 7;
@@ -56,8 +56,7 @@ namespace internal
 		{
 			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
-				*BitCaster::PtrToPtr<int64_t>(BucketOpenN1::ptGetShortHashes(), 0));
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, BucketOpenN1::ptGetData());
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
 			while (mask != 0)
