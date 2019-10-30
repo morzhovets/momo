@@ -6,30 +6,25 @@
 
   momo/HashSorter.h
 
-  namespace momo::experimental:
+  namespace momo:
     class HashSorter
 
 \**********************************************************/
 
 #pragma once
 
-#include "Array.h"
+#include "Utility.h"
 
 namespace momo
-{
-
-namespace experimental
 {
 
 class HashSorter
 {
 public:
-	typedef Array<size_t> HashArray;
+	typedef size_t HashFuncResult;
 
 private:
 	static const size_t radixSize = 8;
-
-	typedef size_t HashFuncResult;
 
 	template<typename HashFunc>
 	class HashFuncIter
@@ -51,10 +46,10 @@ private:
 	};
 
 	template<typename Iterator, typename HashIterator>
-	class HashFuncIterExt
+	class HashFuncIterPrehashed
 	{
 	public:
-		HashFuncIterExt(Iterator begin, HashIterator hashBegin) noexcept
+		explicit HashFuncIterPrehashed(Iterator begin, HashIterator hashBegin) noexcept
 			: mBegin(begin),
 			mHashBegin(hashBegin)
 		{
@@ -77,20 +72,9 @@ private:
 
 public:
 	template<typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static HashArray SortRet(Iterator begin, size_t count,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc(),
-		typename HashArray::MemManager&& memManager = typename HashArray::MemManager())
-	{
-		HashArray hashArray(count, std::move(memManager));
-		SortExt(hashArray.GetBegin(), begin, count, hashFunc, equalFunc);
-		return hashArray;
-	}
-
-	template<typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename Item = typename std::iterator_traits<Iterator>::value_type,
+		typename HashFunc = std::hash<Item>,
+		typename EqualFunc = std::equal_to<Item>>
 	static void Sort(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -99,40 +83,39 @@ public:
 			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
 	}
 
-	template<typename HashIterator, typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static void SortExt(HashIterator hashBegin, Iterator begin, size_t count,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	template<typename Iterator, typename HashIterator,
+		typename Item = typename std::iterator_traits<Iterator>::value_type,
+		typename EqualFunc = std::equal_to<Item>>
+	static void SortPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
+		const EqualFunc& equalFunc = EqualFunc())
 	{
-		for (size_t i = 0; i < count; ++i)
-			hashBegin[i] = hashFunc(begin[i]);
 		auto swapFunc = [begin, hashBegin] (Iterator iter1, Iterator iter2)
 		{
 			std::iter_swap(iter1, iter2);
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
-		pvSort(begin, count, HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc,
+		pvSort(begin, count, HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc,
 			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
 	}
 
 	template<typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename Item = typename std::iterator_traits<Iterator>::value_type,
+		typename HashFunc = std::hash<Item>,
+		typename EqualFunc = std::equal_to<Item>>
 	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvIsSorted(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<typename HashIterator, typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static bool IsSortedExt(HashIterator hashBegin, Iterator begin, size_t count,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	template<typename Iterator, typename HashIterator,
+		typename Item = typename std::iterator_traits<Iterator>::value_type,
+		typename EqualFunc = std::equal_to<Item>>
+	static bool IsSortedPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
+		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvIsSorted(begin, count,
-			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
@@ -146,37 +129,35 @@ public:
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<typename HashIterator, typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+	template<typename Iterator, typename HashIterator,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, bool> FindExt(HashIterator hashBegin, Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	static std::pair<Iterator, bool> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvFind(begin, count, item, hashFunc(item),
-			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+		return pvFind(begin, count, item, itemHash,
+			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
 		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, Iterator> EqualRange(Iterator begin, size_t count,
+	static std::pair<Iterator, Iterator> GetEqualRange(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvEqualRange(begin, count, item, hashFunc(item),
+		return pvGetEqualRange(begin, count, item, hashFunc(item),
 			HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<typename HashIterator, typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+	template<typename Iterator, typename HashIterator,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, Iterator> EqualRangeExt(HashIterator hashBegin, Iterator begin,
-		size_t count, const typename std::iterator_traits<Iterator>::value_type& item,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+	static std::pair<Iterator, Iterator> GetEqualRangePrehashed(Iterator begin, size_t count,
+		HashIterator hashBegin, const typename std::iterator_traits<Iterator>::value_type& item,
+		HashFuncResult itemHash, const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvEqualRange(begin, count, item, hashFunc(item),
-			HashFuncIterExt<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+		return pvGetEqualRange(begin, count, item, itemHash,
+			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 private:
@@ -369,7 +350,7 @@ private:
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, Iterator> pvEqualRange(Iterator begin, size_t count,
+	static std::pair<Iterator, Iterator> pvGetEqualRange(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
@@ -527,7 +508,5 @@ private:
 		return (size_t)res;
 	}
 };
-
-} // namespace experimental
 
 } // namespace momo
