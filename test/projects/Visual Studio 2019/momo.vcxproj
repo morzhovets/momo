@@ -179,6 +179,7 @@
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleDataTester.cpp" />
+    <ClCompile Include="..\..\tests\SimpleHashSortTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP1.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketOpen2N2.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOpen8.h" />
     <ClInclude Include="..\..\..\momo\details\TreeNode.h" />
+    <ClInclude Include="..\..\..\momo\HashSorter.h" />
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
     <ClInclude Include="..\..\..\momo\RadixSorter.h" />
