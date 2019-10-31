@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Utility.h"
+#include "RadixSorter.h"
 
 namespace momo
 {
@@ -24,8 +24,6 @@ public:
 	typedef size_t HashFuncResult;
 
 private:
-	static const size_t radixSize = 8;
-
 	template<typename HashFunc>
 	class HashFuncIter
 	{
@@ -79,8 +77,7 @@ public:
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
-		pvSort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc,
-			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
+		pvSort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc, swapFunc);
 	}
 
 	template<typename Iterator, typename HashIterator,
@@ -94,8 +91,8 @@ public:
 			std::iter_swap(iter1, iter2);
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
-		pvSort(begin, count, HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc,
-			swapFunc, 8 * sizeof(HashFuncResult) - radixSize);
+		pvSort(begin, count, HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin),
+			equalFunc, swapFunc);
 	}
 
 	template<typename Iterator,
@@ -163,117 +160,14 @@ public:
 private:
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
 	static void pvSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
-		const EqualFunc& equalFunc, SwapFunc swapFunc, size_t shift)
-	{
-		switch (count)
-		{
-		case 0:
-		case 1:
-			break;
-		case 2:
-			if (hashFuncIter(begin) > hashFuncIter(begin + 1))
-				swapFunc(begin, begin + 1);
-			break;
-		default:
-			{
-				if (count <= (size_t)1 << (radixSize / 2 + 1))
-					pvSelectionSort(begin, count, hashFuncIter, equalFunc, swapFunc);
-				else
-					pvRadixSort(begin, count, hashFuncIter, equalFunc, swapFunc, shift);
-			}
-		}
-	}
-
-	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
-	static void pvSelectionSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
 		const EqualFunc& equalFunc, SwapFunc swapFunc)
 	{
-		MOMO_ASSERT(count > 0);
-		HashFuncResult hashes[1 << (radixSize / 2 + 1)];	//?
-		for (size_t i = 0; i < count; ++i)
-			hashes[i] = hashFuncIter(begin + i);
-		for (size_t i = 0; i < count - 1; ++i)
+		auto groupFunc = [&equalFunc, swapFunc] (Iterator begin, size_t count)
 		{
-			size_t minIndex = std::min_element(hashes + i + 1, hashes + count) - hashes;
-			if (hashes[minIndex] < hashes[i])
-			{
-				swapFunc(begin + i, begin + minIndex);
-				std::swap(hashes[i], hashes[minIndex]);
-			}
-		}
-		size_t prevIndex = 0;
-		for (size_t i = 1; i < count; ++i)
-		{
-			if (hashes[i] != hashes[prevIndex])
-			{
-				pvGroupIf(begin + prevIndex, i - prevIndex, equalFunc, swapFunc);
-				prevIndex = i;
-			}
-		}
-		pvGroupIf(begin + prevIndex, count - prevIndex, equalFunc, swapFunc);
-	}
-
-	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
-	static void pvRadixSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
-		const EqualFunc& equalFunc, SwapFunc swapFunc, size_t shift)
-	{
-		static const size_t radixCount = 1 << radixSize;
-		size_t endIndices[radixCount] = {};
-		HashFuncResult hash0 = hashFuncIter(begin);
-		++endIndices[pvGetRadix(hash0, shift)];
-		bool singleHash = true;
-		for (size_t i = 1; i < count; ++i)
-		{
-			HashFuncResult hash = hashFuncIter(begin + i);
-			++endIndices[pvGetRadix(hash, shift)];
-			singleHash &= (hash == hash0);
-		}
-		if (singleHash)
-			return pvGroup(begin, count, equalFunc, swapFunc);
-		for (size_t r = 1; r < radixCount; ++r)
-			endIndices[r] += endIndices[r - 1];
-		pvRadixSort(begin, hashFuncIter, swapFunc, shift, endIndices);
-		size_t nextShift = (shift > radixSize) ? shift - radixSize : 0;
-		size_t beginIndex = 0;
-		for (size_t e : endIndices)
-		{
-			if (shift > 0)
-				pvSort(begin + beginIndex, e - beginIndex, hashFuncIter, equalFunc, swapFunc, nextShift);
-			else
-				pvGroupIf(begin + beginIndex, e - beginIndex, equalFunc, swapFunc);
-			beginIndex = e;
-		}
-	}
-
-	template<typename Iterator, typename HashFuncIter, typename SwapFunc>
-	static void pvRadixSort(Iterator begin, const HashFuncIter& hashFuncIter, SwapFunc swapFunc,
-		size_t shift, const size_t* endIndices)
-	{
-		static const size_t radixCount = 1 << radixSize;
-		size_t beginIndices[radixCount];
-		beginIndices[0] = 0;
-		for (size_t r = 1; r < radixCount; ++r)
-			beginIndices[r] = endIndices[r - 1];
-		for (size_t r = 0; r < radixCount; ++r)
-		{
-			size_t& beginIndex = beginIndices[r];
-			size_t endIndex = endIndices[r];
-			while (beginIndex < endIndex)
-			{
-				size_t radix = pvGetRadix(hashFuncIter(begin + beginIndex), shift);
-				if (radix != r)
-					swapFunc(begin + beginIndex, begin + beginIndices[radix]);
-				++beginIndices[radix];
-			}
-		}
-	}
-
-	template<typename Iterator, typename EqualFunc, typename SwapFunc>
-	static void pvGroupIf(Iterator begin, size_t count, const EqualFunc& equalFunc,
-		SwapFunc swapFunc)
-	{
-		if (count > 2)
-			pvGroup(begin, count, equalFunc, swapFunc);
+			if (count > 2)
+				pvGroup(begin, count, equalFunc, swapFunc);
+		};
+		internal::RadixSorter<>::Sort(begin, count, hashFuncIter, swapFunc, groupFunc);
 	}
 
 	template<typename Iterator, typename EqualFunc, typename SwapFunc>
@@ -485,11 +379,6 @@ private:
 				return { begin + middleIndex, true };
 		}
 		return { begin + leftIndex, false };
-	}
-
-	static size_t pvGetRadix(HashFuncResult value, size_t shift) noexcept
-	{
-		return (size_t)(value >> shift) & (((size_t)1 << radixSize) - 1);
 	}
 
 	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
