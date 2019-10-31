@@ -29,17 +29,23 @@ public:
 	static void TestAll()
 	{
 		std::mt19937 mt;
+		std::hash<std::string> hasher;
 
 		std::cout << "momo::HashSorter: " << std::flush;
-		TestHashSort(mt, false);
+		TestHashSort(mt, false, hasher);
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::HashSorter (prehashed): " << std::flush;
-		TestHashSort(mt, true);
+		TestHashSort(mt, true, hasher);
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::HashSorter (const): " << std::flush;
+		TestHashSort(mt, false, [] (const std::string&) { return size_t{0}; });
 		std::cout << "ok" << std::endl;
 	}
 
-	static void TestHashSort(std::mt19937& mt, bool prehashed)
+	template<typename Hasher>
+	static void TestHashSort(std::mt19937& mt, bool prehashed, const Hasher& hasher)
 	{
 		static const size_t count = 128;
 		momo::Array<std::pair<std::string, size_t>> data;
@@ -63,38 +69,40 @@ public:
 		if (prehashed)
 		{
 			for (const std::string& s : array)
-				hashArray.AddBack(std::hash<std::string>()(s));
+				hashArray.AddBack(hasher(s));
 
 			momo::HashSorter::SortPrehashed(array.GetBegin(), array.GetCount(),
 				hashArray.GetBegin());
 		}
 		else
 		{
-			momo::HashSorter::Sort(array.GetBegin(), array.GetCount());
+			momo::HashSorter::Sort(array.GetBegin(), array.GetCount(), hasher);
 		}
 
-		assert(momo::HashSorter::IsSorted(array.GetBegin(), array.GetCount()));
+		assert(momo::HashSorter::IsSorted(array.GetBegin(), array.GetCount(), hasher));
 
 		if (prehashed)
 		{
 			assert(momo::HashSorter::IsSortedPrehashed(array.GetBegin(), array.GetCount(),
 				hashArray.GetBegin()));
+			assert(std::is_sorted(hashArray.GetBegin(), hashArray.GetEnd()));
 		}
 
 		{
-			assert(!momo::HashSorter::Find(array.GetBegin(), array.GetCount(), "a").second);
+			assert(!momo::HashSorter::Find(array.GetBegin(), array.GetCount(), "a", hasher).second);
 
-			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(), "b");
+			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(), "b", hasher);
 			assert(per.first == per.second);
 		}
 
 		for (const auto& pair : data)
 		{
-			auto pf = momo::HashSorter::Find(array.GetBegin(), array.GetCount(), pair.first);
+			auto pf = momo::HashSorter::Find(array.GetBegin(), array.GetCount(), pair.first, hasher);
 			assert(pf.second);
 			assert(*pf.first == pair.first);
 
-			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(), pair.first);
+			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(),
+				pair.first, hasher);
 			assert(momo::internal::UIntMath<>::Dist(per.first, per.second) == pair.second);
 			assert(static_cast<size_t>(std::count(per.first, per.second, pair.first)) == pair.second);
 		}
@@ -103,22 +111,22 @@ public:
 		{
 			{
 				assert(!momo::HashSorter::FindPrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), "a", std::hash<std::string>()("a")).second);
+					hashArray.GetBegin(), "a", hasher("a")).second);
 
 				auto per = momo::HashSorter::GetEqualRangePrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), "b", std::hash<std::string>()("b"));
+					hashArray.GetBegin(), "b", hasher("b"));
 				assert(per.first == per.second);
 			}
 
 			for (const auto& pair : data)
 			{
 				auto pf = momo::HashSorter::FindPrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), pair.first, std::hash<std::string>()(pair.first));
+					hashArray.GetBegin(), pair.first, hasher(pair.first));
 				assert(pf.second);
 				assert(*pf.first == pair.first);
 
 				auto per = momo::HashSorter::GetEqualRangePrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), pair.first, std::hash<std::string>()(pair.first));
+					hashArray.GetBegin(), pair.first, hasher(pair.first));
 				assert(momo::internal::UIntMath<>::Dist(per.first, per.second) == pair.second);
 				assert(static_cast<size_t>(std::count(per.first, per.second, pair.first)) == pair.second);
 			}
