@@ -1203,14 +1203,15 @@ private:
 	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Item,
 		typename... Items>
 	Result pvSelectRec(Index index, const size_t* offsets, const RowFilter& rowFilter,
-		const Tuple& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
+		Tuple&& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
 		size_t offset = *offsets;
 		if (mIndexes.ContainsOffset(index, offset))
 		{
-			auto newTuple = std::tuple_cat(tuple,
+			auto newTuple = std::tuple_cat(std::move(tuple),
 				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
-			return pvSelectRec<Result>(index, offsets + 1, rowFilter, newTuple, equalers...);
+			return pvSelectRec<Result>(index, offsets + 1, rowFilter, std::move(newTuple),
+				equalers...);
 		}
 		else
 		{
@@ -1220,13 +1221,14 @@ private:
 				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
 				return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
 			};
-			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, tuple, equalers...);
+			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, std::move(tuple),
+				equalers...);
 		}
 	}
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple>
 	Result pvSelectRec(Index index, const size_t* /*offsets*/, const RowFilter& rowFilter,
-		const Tuple& tuple) const
+		Tuple&& tuple) const
 	{
 		return pvMakeSelection(mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
 			rowFilter, static_cast<Result*>(nullptr));
@@ -1234,7 +1236,7 @@ private:
 
 #ifdef _MSC_VER	//?
 	template<typename Result, typename Index, typename RowFilter>
-	Result pvSelectRec(Index, const size_t*, const RowFilter&, const OffsetItemTuple<>&) const
+	Result pvSelectRec(Index, const size_t*, const RowFilter&, OffsetItemTuple<>&&) const
 	{
 		throw std::exception();
 	}
@@ -1297,17 +1299,16 @@ private:
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Item, typename... Items>
-	RowBoundsProxy pvFindByHashRec(Index index, const size_t* offsets, const Tuple& tuple,
+	RowBoundsProxy pvFindByHashRec(Index index, const size_t* offsets, Tuple&& tuple,
 		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
-		auto newTuple = std::tuple_cat(tuple,
+		auto newTuple = std::tuple_cat(std::move(tuple),
 			std::make_tuple(std::pair<size_t, const Item&>(*offsets, equaler.GetItemArg())));
-		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, newTuple, equalers...);
+		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, std::move(newTuple), equalers...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename Tuple>
-	RowBoundsProxy pvFindByHashRec(Index index, const size_t* /*offsets*/,
-		const Tuple& tuple) const
+	RowBoundsProxy pvFindByHashRec(Index index, const size_t* /*offsets*/, Tuple&& tuple) const
 	{
 		return RowBoundsProxy(&GetColumnList(),
 			mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
