@@ -263,6 +263,12 @@ namespace internal
 			return static_cast<UInt>(std::distance(begin, end));
 		}
 
+		template<typename Iterator>
+		static Iterator Next(Iterator iter, UInt dist)
+		{
+			return std::next(iter, static_cast<ptrdiff_t>(dist));
+		}
+
 		static UInt GCD(UInt value1, UInt value2) noexcept
 		{
 			while (value2 != 0)

@@ -259,7 +259,7 @@ namespace internal
 			{
 				typedef typename ItemTraits::template Creator<
 					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-				ArgIterator iter = std::next(begin, static_cast<ptrdiff_t>(initCount - index));
+				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;

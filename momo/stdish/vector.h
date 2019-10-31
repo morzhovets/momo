@@ -356,21 +356,21 @@ public:
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, std::move(value));
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	iterator insert(const_iterator where, const value_type& value)
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, value);
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	iterator insert(const_iterator where, size_type count, const value_type& value)
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, count, value);
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	template<typename Iterator,
@@ -379,14 +379,14 @@ public:
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, first, last);
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	iterator insert(const_iterator where, std::initializer_list<value_type> values)
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.Insert(index, values);
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	template<typename... ValueArgs>
@@ -401,7 +401,7 @@ public:
 	{
 		size_t index = SMath::Dist(cbegin(), where);
 		mArray.InsertVar(index, std::forward<ValueArgs>(valueArgs)...);
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	void pop_back()
@@ -418,7 +418,7 @@ public:
 	{
 		size_t index = SMath::Dist(cbegin(), first);
 		mArray.Remove(index, SMath::Dist(first, last));
-		return begin() + static_cast<ptrdiff_t>(index);
+		return SMath::Next(begin(), index);
 	}
 
 	void assign(size_type count, const value_type& value)

@@ -332,7 +332,7 @@ namespace internal
 
 		Iterator GetEnd() const noexcept
 		{
-			return mBegin + static_cast<ptrdiff_t>(mCount);
+			return UIntMath<>::Next(mBegin, mCount);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const ArrayBounds&, Iterator)
