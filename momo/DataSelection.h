@@ -254,7 +254,7 @@ namespace internal
 		RowReference operator[](size_t index) const
 		{
 			MOMO_CHECK(index < GetCount());
-			return GetBegin()[index];
+			return *UIntMath<>::Next(GetBegin(), index);
 		}
 
 	protected:
@@ -401,7 +401,7 @@ namespace internal
 		typename Iterator::Reference operator[](size_t index) const
 		{
 			MOMO_CHECK(index < GetCount());
-			return GetBegin()[index];
+			return *UIntMath<>::Next(GetBegin(), index);
 		}
 
 	private:

@@ -345,7 +345,7 @@ namespace internal
 		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const noexcept
 		{
 			MOMO_ASSERT(index < mCount);
-			return mBegin[index];
+			return *UIntMath<>::Next(mBegin, index);
 		}
 
 	private:

@@ -101,14 +101,14 @@ namespace internal
 			MOMO_ASSERT(count > 0);
 			std::array<Code, selectionSortMaxCount> codes;	//?
 			for (size_t i = 0; i < count; ++i)
-				codes[i] = codeGetter(begin + i);
+				codes[i] = codeGetter(UIntMath<>::Next(begin, i));
 			for (size_t i = 0; i < count - 1; ++i)
 			{
 				size_t minIndex = UIntMath<>::Dist(codes.data(),
 					std::min_element(codes.data() + i + 1, codes.data() + count));
 				if (codes[minIndex] < codes[i])
 				{
-					swapFunc(begin + i, begin + minIndex);
+					swapFunc(UIntMath<>::Next(begin, i), UIntMath<>::Next(begin, minIndex));
 					std::swap(codes[i], codes[minIndex]);
 				}
 			}
@@ -117,11 +117,11 @@ namespace internal
 			{
 				if (codes[i] != codes[prevIndex])
 				{
-					groupFunc(begin + prevIndex, i - prevIndex);
+					groupFunc(UIntMath<>::Next(begin, prevIndex), i - prevIndex);
 					prevIndex = i;
 				}
 			}
-			groupFunc(begin + prevIndex, count - prevIndex);
+			groupFunc(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
 		}
 
 		template<typename Code, typename Iterator, typename CodeGetter,
@@ -139,7 +139,7 @@ namespace internal
 			bool singleRadix = true;
 			for (size_t i = 1; i < count; ++i)
 			{
-				Code code = codeGetter(begin + i);
+				Code code = codeGetter(UIntMath<>::Next(begin, i));
 				size_t radix = pvGetRadix<Code>(code, shift);
 				++endIndexes[radix];
 				singleCode &= (code == code0);
@@ -157,13 +157,22 @@ namespace internal
 				endIndexes[r] += endIndexes[r - 1];
 			pvRadixSort<Code>(begin, codeGetter, swapFunc, shift, endIndexes);
 			size_t beginIndex = 0;
-			for (size_t e : endIndexes)
+			if (shift > 0)
 			{
-				if (shift > 0)
-					pvSort<Code>(begin + beginIndex, e - beginIndex, codeGetter, swapFunc, groupFunc, nextShift);
-				else
-					groupFunc(begin + beginIndex, e - beginIndex);
-				beginIndex = e;
+				for (size_t e : endIndexes)
+				{
+					pvSort<Code>(UIntMath<>::Next(begin, beginIndex), e - beginIndex, codeGetter,
+						swapFunc, groupFunc, nextShift);
+					beginIndex = e;
+				}
+			}
+			else
+			{
+				for (size_t e : endIndexes)
+				{
+					groupFunc(UIntMath<>::Next(begin, beginIndex), e - beginIndex);
+					beginIndex = e;
+				}
 			}
 		}
 
@@ -181,9 +190,12 @@ namespace internal
 				size_t endIndex = endIndexes[r];
 				while (beginIndex < endIndex)
 				{
-					size_t radix = pvGetRadix<Code>(codeGetter(begin + beginIndex), shift);
+					size_t radix = pvGetRadix<Code>(codeGetter(UIntMath<>::Next(begin, beginIndex)), shift);
 					if (radix != r)
-						swapFunc(begin + beginIndex, begin + beginIndexes[radix]);
+					{
+						swapFunc(UIntMath<>::Next(begin, beginIndex),
+							UIntMath<>::Next(begin, beginIndexes[radix]));
+					}
 					++beginIndexes[radix];
 				}
 			}
