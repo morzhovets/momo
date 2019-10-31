@@ -68,6 +68,8 @@ private:
 		HashIterator mHashBegin;
 	};
 
+	typedef internal::UIntMath<> SMath;
+
 public:
 	template<typename Iterator,
 		typename Item = typename std::iterator_traits<Iterator>::value_type,
@@ -175,13 +177,13 @@ private:
 	{
 		for (size_t i = 1; i < count; ++i)
 		{
-			if (equalFunc(begin[i - 1], begin[i]))
+			if (equalFunc(*SMath::Next(begin, i - 1), *SMath::Next(begin, i)))
 				continue;
 			for (size_t j = i + 1; j < count; ++j)
 			{
-				if (equalFunc(begin[i - 1], begin[j]))
+				if (equalFunc(*SMath::Next(begin, i - 1), *SMath::Next(begin, j)))
 				{
-					swapFunc(begin + i, begin + j);
+					swapFunc(SMath::Next(begin, i), SMath::Next(begin, j));
 					++i;
 				}
 			}
@@ -196,17 +198,17 @@ private:
 		HashFuncResult prevHash = hashFuncIter(begin);
 		for (size_t i = 1; i < count; ++i)
 		{
-			HashFuncResult hash = hashFuncIter(begin + i);
+			HashFuncResult hash = hashFuncIter(SMath::Next(begin, i));
 			if (hash < prevHash)
 				return false;
 			if (hash != prevHash)
 			{
-				if (!pvIsGrouped(begin + prevIndex, i - prevIndex, equalFunc))
+				if (!pvIsGrouped(SMath::Next(begin, prevIndex), i - prevIndex, equalFunc))
 					return false;
 				prevIndex = i;
 			}
 		}
-		return pvIsGrouped(begin + prevIndex, count - prevIndex, equalFunc);
+		return pvIsGrouped(SMath::Next(begin, prevIndex), count - prevIndex, equalFunc);
 	}
 
 	template<typename Iterator, typename EqualFunc>
@@ -214,11 +216,11 @@ private:
 	{
 		for (size_t i = 1; i < count; ++i)
 		{
-			if (equalFunc(begin[i - 1], begin[i]))
+			if (equalFunc(*SMath::Next(begin, i - 1), *SMath::Next(begin, i)))
 				continue;
 			for (size_t j = i + 1; j < count; ++j)
 			{
-				if (equalFunc(begin[i - 1], begin[j]))
+				if (equalFunc(*SMath::Next(begin, i - 1), *SMath::Next(begin, j)))
 					return false;
 			}
 		}
@@ -236,10 +238,10 @@ private:
 		if (equalFunc(*res.first, item))
 			return res;
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
-			res.first + 1 - begin, item, itemHash, hashFuncIter, equalFunc);
+			SMath::Dist(begin, res.first + 1), item, itemHash, hashFuncIter, equalFunc);
 		if (revRes.second)
 			return { revRes.first.base() - 1, true };
-		return pvFindNext(res.first, begin + count - res.first,
+		return pvFindNext(res.first, count - SMath::Dist(begin, res.first),
 			item, itemHash, hashFuncIter, equalFunc);
 	}
 
@@ -254,22 +256,22 @@ private:
 		if (equalFunc(*res.first, item))
 		{
 			Iterator resBegin = pvFindOther(std::reverse_iterator<Iterator>(res.first + 1),
-				res.first + 1 - begin, equalFunc).base();
-			return { resBegin, pvFindOther(res.first, begin + count - res.first, equalFunc) };
+				SMath::Dist(begin, res.first + 1), equalFunc).base();
+			return { resBegin, pvFindOther(res.first, count - SMath::Dist(begin, res.first), equalFunc) };
 		}
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
-			res.first + 1 - begin, item, itemHash, hashFuncIter, equalFunc);
+			SMath::Dist(begin, res.first + 1), item, itemHash, hashFuncIter, equalFunc);
 		if (revRes.second)
 		{
 			Iterator resBegin = pvFindOther(revRes.first,
-				revRes.first.base() - begin, equalFunc).base();
+				SMath::Dist(begin, revRes.first.base()), equalFunc).base();
 			return { resBegin, revRes.first.base() };
 		}
-		res = pvFindNext(res.first, begin + count - res.first, item, itemHash,
+		res = pvFindNext(res.first, count - SMath::Dist(begin, res.first), item, itemHash,
 			hashFuncIter, equalFunc);
 		if (!res.second)
 			return { res.first, res.first };
-		return { res.first, pvFindOther(res.first, begin + count - res.first, equalFunc) };
+		return { res.first, pvFindOther(res.first, count - SMath::Dist(begin, res.first), equalFunc) };
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
@@ -280,8 +282,8 @@ private:
 		Iterator iter = begin;
 		while (true)
 		{
-			iter = pvFindOther(iter, begin + count - iter, equalFunc);
-			if (iter == begin + count || hashFuncIter(iter) != itemHash)
+			iter = pvFindOther(iter, count - SMath::Dist(begin, iter), equalFunc);
+			if (iter == SMath::Next(begin, count) || hashFuncIter(iter) != itemHash)
 				break;
 			if (equalFunc(*iter, item))
 				return { iter, true };
@@ -310,12 +312,12 @@ private:
 		size_t step = (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 		while (true)
 		{
-			HashFuncResult middleHash = hashFuncIter(begin + middleIndex);
+			HashFuncResult middleHash = hashFuncIter(SMath::Next(begin, middleIndex));
 			if (middleHash < itemHash)
 			{
 				leftIndex = middleIndex + 1;
 				if (step == 0)
-					return pvExponentialSearch(begin + leftIndex, rightIndex - leftIndex, pred);
+					return pvExponentialSearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, pred);
 				middleIndex += pvMultShift(itemHash - middleHash, count);
 				if (middleIndex >= rightIndex)
 					break;
@@ -328,7 +330,7 @@ private:
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
 					auto revPred = [itemHash, &hashFuncIter] (ReverseIterator iter)
 						{ return -pvCompare(hashFuncIter(iter), itemHash); };
-					auto res = pvExponentialSearch(ReverseIterator(begin + rightIndex),
+					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
 						rightIndex - leftIndex, revPred);
 					return { res.first.base() - (res.second ? 1 : 0), res.second };
 				}
@@ -339,11 +341,11 @@ private:
 			}
 			else
 			{
-				return { begin + middleIndex, true };
+				return { SMath::Next(begin, middleIndex), true };
 			}
 			--step;
 		}
-		return pvBinarySearch(begin + leftIndex, rightIndex - leftIndex, pred);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, pred);
 	}
 
 	template<typename Iterator, typename Predicate>
@@ -352,14 +354,14 @@ private:
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
 		{
-			int cmp = pred(begin + i);
+			int cmp = pred(SMath::Next(begin, i));
 			if (cmp == 1)
-				return pvBinarySearch(begin + leftIndex, i - leftIndex, pred);
+				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, pred);
 			else if (cmp == 0)
-				return { begin + i, true };
+				return { SMath::Next(begin, i), true };
 			leftIndex = i + 1;
 		}
-		return pvBinarySearch(begin + leftIndex, count - leftIndex, pred);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, pred);
 	}
 
 	template<typename Iterator, typename Predicate>
@@ -370,31 +372,31 @@ private:
 		while (leftIndex < rightIndex)
 		{
 			size_t middleIndex = (leftIndex + rightIndex) / 2;
-			int cmp = pred(begin + middleIndex);
+			int cmp = pred(SMath::Next(begin, middleIndex));
 			if (cmp == -1)
 				leftIndex = middleIndex + 1;
 			else if (cmp == 1)
 				rightIndex = middleIndex;
 			else
-				return { begin + middleIndex, true };
+				return { SMath::Next(begin, middleIndex), true };
 		}
-		return { begin + leftIndex, false };
+		return { SMath::Next(begin, leftIndex), false };
 	}
 
 	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
 	{
-		return (value1 < value2) ? -1 : (int)(value1 != value2);
+		return (value1 < value2) ? -1 : int{value1 != value2};
 	}
 
 	static size_t pvMultShift(HashFuncResult value1, size_t value2) noexcept
 	{
 		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
 		static const size_t halfSize = 4 * sizeof(HashFuncResult);
-		static const HashFuncResult halfMask = ((HashFuncResult)1 << halfSize) - 1;
+		static const HashFuncResult halfMask = (HashFuncResult{1} << halfSize) - 1;
 		HashFuncResult res = (value1 >> halfSize) * (value2 >> halfSize)
 			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)
 			+ (((value2 >> halfSize) * (value1 & halfMask)) >> halfSize);
-		return (size_t)res;
+		return static_cast<size_t>(res);
 	}
 };
 
