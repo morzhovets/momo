@@ -3,6 +3,16 @@ language: cpp
 matrix:
   include:
 
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER='clang++ -std=c++11 -O2'
+
+    - os: osx
+      osx_image: xcode11
+      compiler: clang
+      env: COMPILER='clang++ -std=c++17 -O2'
+
     - os: linux
       dist: trusty
       compiler: gcc
@@ -77,10 +87,6 @@ matrix:
       compiler: clang
       # clang 7.0.0
       env: COMPILER='clang++ -std=c++17 -g -fsanitize=address,undefined'
-
-#    - os: osx
-#      compiler: clang
-#      env: COMPILER='clang++ -std=c++17 -O2'
 
 script:
   - cd test
