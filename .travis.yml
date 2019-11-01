@@ -6,7 +6,7 @@ matrix:
     - os: osx
       osx_image: xcode8.3
       compiler: clang
-      env: COMPILER='clang++ -std=c++11 -O2'
+      env: COMPILER='clang++ -std=c++11 -O2 -Wno-c++1z-extensions'
 
     - os: osx
       osx_image: xcode11
