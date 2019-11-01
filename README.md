@@ -7,7 +7,7 @@ and `unordered_set/map`, but much more efficient in memory usage.
 As for the operation speed, these containers are also better than the standard ones in most cases 
 ([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the standard C++17 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++20 **including exception safety guarantees**.
 
 #### Deviations from the standard
 
@@ -53,3 +53,5 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 - GCC (4.9+) with -std=c++11
 
 - Clang (3.6+) with -std=c++11
+
+- Apple Clang (8.1+, Xcode 8.3+) with -std=c++11
