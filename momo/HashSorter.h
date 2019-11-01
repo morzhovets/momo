@@ -14,6 +14,7 @@
 #pragma once
 
 #include "RadixSorter.h"
+#include "HashTraits.h"
 
 namespace momo
 {
@@ -22,6 +23,15 @@ class HashSorter
 {
 public:
 	typedef size_t HashFuncResult;
+
+	template<typename Iterator>
+	struct Swapper
+	{
+		void operator()(Iterator iter1, Iterator iter2) const
+		{
+			std::iter_swap(iter1, iter2);
+		}
+	};
 
 private:
 	template<typename HashFunc>
@@ -72,35 +82,33 @@ private:
 
 public:
 	template<typename Iterator,
-		typename Item = typename std::iterator_traits<Iterator>::value_type,
-		typename HashFunc = std::hash<Item>,
-		typename EqualFunc = std::equal_to<Item>>
+		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>,
+		typename SwapFunc = Swapper<Iterator>>
 	static void Sort(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
-		const EqualFunc& equalFunc = EqualFunc())
+		const EqualFunc& equalFunc = EqualFunc(), const SwapFunc& swapFunc = SwapFunc())
 	{
-		auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
 		pvSort(begin, count, HashFuncIter<HashFunc>(hashFunc), equalFunc, swapFunc);
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename Item = typename std::iterator_traits<Iterator>::value_type,
-		typename EqualFunc = std::equal_to<Item>>
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>,
+		typename SwapFunc = Swapper<Iterator>>
 	static void SortPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
-		const EqualFunc& equalFunc = EqualFunc())
+		const EqualFunc& equalFunc = EqualFunc(), const SwapFunc& swapFunc = SwapFunc())
 	{
-		auto swapFunc = [begin, hashBegin] (Iterator iter1, Iterator iter2)
+		auto newSwapFunc = [begin, hashBegin, &swapFunc] (Iterator iter1, Iterator iter2)
 		{
-			std::iter_swap(iter1, iter2);
+			swapFunc(iter1, iter2);
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
 		pvSort(begin, count, HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin),
-			equalFunc, swapFunc);
+			equalFunc, newSwapFunc);
 	}
 
 	template<typename Iterator,
-		typename Item = typename std::iterator_traits<Iterator>::value_type,
-		typename HashFunc = std::hash<Item>,
-		typename EqualFunc = std::equal_to<Item>>
+		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -108,8 +116,7 @@ public:
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename Item = typename std::iterator_traits<Iterator>::value_type,
-		typename EqualFunc = std::equal_to<Item>>
+		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static bool IsSortedPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -118,7 +125,7 @@ public:
 	}
 
 	template<typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static std::pair<Iterator, bool> Find(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
@@ -139,7 +146,7 @@ public:
 	}
 
 	template<typename Iterator,
-		typename HashFunc = std::hash<typename std::iterator_traits<Iterator>::value_type>,
+		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static std::pair<Iterator, Iterator> GetEqualRange(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
