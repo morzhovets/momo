@@ -33,9 +33,9 @@ public:
 
 public:
 	template<typename Item>
-	static size_t GetHashCode(const Item& item, size_t /*offset*/)
+	static void AccumulateHashCode(size_t& hashCode, const Item& item, size_t /*offset*/)
 	{
-		return HashCoder<Item>()(item);
+		hashCode += HashCoder<Item>()(item);
 	}
 
 	template<typename Item>

@@ -871,8 +871,9 @@ namespace internal
 		{
 			size_t offset = *offsets;
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			return DataTraits::GetHashCode(item, offset)
-				+ pvGetHashCode<void, Items...>(raw, offsets + 1);
+			size_t hashCode = pvGetHashCode<void, Items...>(raw, offsets + 1);
+			DataTraits::AccumulateHashCode(hashCode, item, offset);
+			return hashCode;
 		}
 
 		template<typename Void>
