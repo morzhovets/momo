@@ -170,6 +170,15 @@ public:
 
 		cselection = table.Select().Sort(strCol);
 
+		assert(cselection.GetLowerBound(strCol == "") == 0);
+		assert(cselection.GetUpperBound(strCol == "") == 0);
+		assert(cselection.GetLowerBound(strCol == "0") == 0);
+		assert(cselection.GetUpperBound(strCol == "0") == count / 2);
+		assert(cselection.GetLowerBound(strCol == "1") == count / 2);
+		assert(cselection.GetUpperBound(strCol == "1") == count);
+		assert(cselection.GetLowerBound(strCol == "2") == count);
+		assert(cselection.GetUpperBound(strCol == "2") == count);
+
 		cselection.Assign(cselection.GetBegin(), cselection.GetEnd());
 		cselection.Add(cselection[count - 1]);
 		cselection.Add(cselection.GetBegin() + count / 2, cselection.GetEnd());
@@ -182,16 +191,11 @@ public:
 		cselection.Remove(0, count / 2);
 		cselection.Remove(count, cselection.GetCount() - count);
 
-		assert(cselection.GetLowerBound(strCol == "") == 0);
-		assert(cselection.GetUpperBound(strCol == "") == 0);
-		assert(cselection.GetLowerBound(strCol == "0") == 0);
-		assert(cselection.GetUpperBound(strCol == "0") == count / 2);
-		assert(cselection.GetLowerBound(strCol == "1") == count / 2);
-		assert(cselection.GetUpperBound(strCol == "1") == count);
-		assert(cselection.GetLowerBound(strCol == "2") == count);
-		assert(cselection.GetUpperBound(strCol == "2") == count);
-
 		cselection.Reverse();
+
+		cselection.Group(intCol);
+		for (size_t i = 0; i < count; i += 2)
+			assert(cselection[i][intCol] == cselection[i + 1][intCol]);
 
 		cselection.Filter(strFilter);
 		assert(cselection.GetCount() == count / 2);

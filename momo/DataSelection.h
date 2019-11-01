@@ -12,6 +12,7 @@
 
 #include "IteratorUtility.h"
 #include "Array.h"
+#include "HashSorter.h"
 
 namespace momo
 {
@@ -734,6 +735,20 @@ namespace internal
 		}
 
 		template<typename Item, typename... Items>
+		DataSelection&& Group(const Column<Item>& column, const Column<Items>&... columns) &&
+		{
+			pvGroup(column, columns...);
+			return std::move(*this);
+		}
+
+		template<typename Item, typename... Items>
+		DataSelection& Group(const Column<Item>& column, const Column<Items>&... columns) &
+		{
+			pvGroup(column, columns...);
+			return *this;
+		}
+
+		template<typename Item, typename... Items>
 		size_t GetLowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
 			return pvBinarySearch<-1>(equaler, equalers...);
@@ -823,6 +838,63 @@ namespace internal
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
 				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
+		}
+
+		template<typename... Items>
+		void pvGroup(const Column<Items>&... columns)
+		{
+			static const size_t columnCount = sizeof...(columns);
+			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
+			auto hashFunc = [&offsets] (Raw* raw)
+				{ return pvGetHashCode<void, Items...>(raw, offsets.data()); };
+			auto equalFunc = [&offsets] (Raw* raw1, Raw* raw2)
+				{ return pvIsEqual<void, Items...>(raw1, raw2, offsets.data()); };
+			Array<size_t, MemManagerPtr<MemManager>> hashes(
+				(MemManagerPtr<MemManager>(GetMemManager())));
+			try
+			{
+				hashes.Reserve(mRaws.GetCount());
+			}
+			catch (const std::bad_alloc&)
+			{
+				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), hashFunc, equalFunc);
+				return;
+			}
+			for (Raw* raw : mRaws)
+				hashes.AddBackNogrow(hashFunc(raw));
+			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
+				hashes.GetBegin(), equalFunc);
+		}
+
+		template<typename Void, typename Item, typename... Items>
+		static size_t pvGetHashCode(Raw* raw, const size_t* offsets)
+		{
+			size_t offset = *offsets;
+			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
+			return DataTraits::GetHashCode(item, offset)
+				+ pvGetHashCode<void, Items...>(raw, offsets + 1);
+		}
+
+		template<typename Void>
+		static size_t pvGetHashCode(Raw* /*raw*/, const size_t* /*offsets*/) noexcept
+		{
+			return 0;
+		}
+
+		template<typename Void, typename Item, typename... Items>
+		static bool pvIsEqual(Raw* raw1, Raw* raw2, const size_t* offsets)
+		{
+			size_t offset = *offsets;
+			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
+			const Item& item2 = ColumnList::template GetByOffset<const Item>(raw2, offset);
+			return DataTraits::IsEqual(item1, item2)
+				&& pvIsEqual<void, Items...>(raw1, raw2, offsets + 1);
+		}
+
+		template<typename Void>
+		static bool pvIsEqual(Raw* /*raw1*/, Raw* /*raw2*/, const size_t* /*offsets*/) noexcept
+		{
+			return true;
 		}
 
 		template<int bound, typename... Items>
