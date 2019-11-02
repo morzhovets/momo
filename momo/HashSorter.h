@@ -33,6 +33,13 @@ public:
 		}
 	};
 
+	template<typename Iterator>
+	struct FindResult
+	{
+		Iterator iterator;
+		bool found;
+	};
+
 private:
 	template<typename HashFunc>
 	class HashFuncIter
@@ -127,7 +134,7 @@ public:
 	template<typename Iterator,
 		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, bool> Find(Iterator begin, size_t count,
+	static FindResult<Iterator> Find(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -137,7 +144,7 @@ public:
 
 	template<typename Iterator, typename HashIterator,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static std::pair<Iterator, bool> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
+	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -235,20 +242,20 @@ private:
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, bool> pvFind(Iterator begin, size_t count,
+	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
-		if (!res.second)
+		if (!res.found)
 			return res;
-		if (equalFunc(*res.first, item))
+		if (equalFunc(*res.iterator, item))
 			return res;
-		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
-			SMath::Dist(begin, res.first + 1), item, itemHash, hashFuncIter, equalFunc);
-		if (revRes.second)
-			return { revRes.first.base() - 1, true };
-		return pvFindNext(res.first, count - SMath::Dist(begin, res.first),
+		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
+			SMath::Dist(begin, res.iterator + 1), item, itemHash, hashFuncIter, equalFunc);
+		if (revRes.found)
+			return { revRes.iterator.base() - 1, true };
+		return pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator),
 			item, itemHash, hashFuncIter, equalFunc);
 	}
 
@@ -258,31 +265,33 @@ private:
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
-		if (!res.second)
-			return { res.first, res.first };
-		if (equalFunc(*res.first, item))
+		if (!res.found)
+			return { res.iterator, res.iterator };
+		if (equalFunc(*res.iterator, item))
 		{
-			Iterator resBegin = pvFindOther(std::reverse_iterator<Iterator>(res.first + 1),
-				SMath::Dist(begin, res.first + 1), equalFunc).base();
-			return { resBegin, pvFindOther(res.first, count - SMath::Dist(begin, res.first), equalFunc) };
+			Iterator resBegin = pvFindOther(std::reverse_iterator<Iterator>(res.iterator + 1),
+				SMath::Dist(begin, res.iterator + 1), equalFunc).base();
+			return { resBegin,
+				pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc) };
 		}
-		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.first + 1),
-			SMath::Dist(begin, res.first + 1), item, itemHash, hashFuncIter, equalFunc);
-		if (revRes.second)
+		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
+			SMath::Dist(begin, res.iterator + 1), item, itemHash, hashFuncIter, equalFunc);
+		if (revRes.found)
 		{
-			Iterator resBegin = pvFindOther(revRes.first,
-				SMath::Dist(begin, revRes.first.base()), equalFunc).base();
-			return { resBegin, revRes.first.base() };
+			Iterator resBegin = pvFindOther(revRes.iterator,
+				SMath::Dist(begin, revRes.iterator.base()), equalFunc).base();
+			return { resBegin, revRes.iterator.base() };
 		}
-		res = pvFindNext(res.first, count - SMath::Dist(begin, res.first), item, itemHash,
+		res = pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator), item, itemHash,
 			hashFuncIter, equalFunc);
-		if (!res.second)
-			return { res.first, res.first };
-		return { res.first, pvFindOther(res.first, count - SMath::Dist(begin, res.first), equalFunc) };
+		if (!res.found)
+			return { res.iterator, res.iterator };
+		return { res.iterator,
+			pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc) };
 	}
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static std::pair<Iterator, bool> pvFindNext(Iterator begin, size_t count,
+	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
@@ -304,11 +313,11 @@ private:
 		MOMO_ASSERT(count > 0);
 		auto pred = [begin, &equalFunc] (Iterator iter)
 			{ return equalFunc(*begin, *iter) ? -1 : 1; };
-		return pvExponentialSearch(begin + 1, count - 1, pred).first;
+		return pvExponentialSearch(begin + 1, count - 1, pred).iterator;
 	}
 
 	template<typename Iterator, typename HashFuncIter>
-	static std::pair<Iterator, bool> pvFindHash(Iterator begin, size_t count,
+	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
 		HashFuncResult itemHash, const HashFuncIter& hashFuncIter)
 	{
 		auto pred = [itemHash, &hashFuncIter] (Iterator iter)
@@ -339,7 +348,7 @@ private:
 						{ return -pvCompare(hashFuncIter(iter), itemHash); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
 						rightIndex - leftIndex, revPred);
-					return { res.first.base() - (res.second ? 1 : 0), res.second };
+					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
 				size_t diff = pvMultShift(middleHash - itemHash, count);
 				if (leftIndex + diff > middleIndex)
@@ -356,7 +365,7 @@ private:
 	}
 
 	template<typename Iterator, typename Predicate>
-	static std::pair<Iterator, bool> pvExponentialSearch(Iterator begin, size_t count, Predicate pred)
+	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count, Predicate pred)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
@@ -372,7 +381,7 @@ private:
 	}
 
 	template<typename Iterator, typename Predicate>
-	static std::pair<Iterator, bool> pvBinarySearch(Iterator begin, size_t count, Predicate pred)
+	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count, Predicate pred)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
