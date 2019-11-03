@@ -91,20 +91,23 @@ public:
 		{
 			assert(!momo::HashSorter::Find(array.GetBegin(), array.GetCount(), "a", hasher).found);
 
-			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(), "b", hasher);
-			assert(per.first == per.second);
+			auto bounds = momo::HashSorter::GetBounds(array.GetBegin(), array.GetCount(),
+				"b", hasher);
+			assert(bounds.GetCount() == 0);
 		}
 
 		for (const auto& pair : data)
 		{
-			auto pf = momo::HashSorter::Find(array.GetBegin(), array.GetCount(), pair.first, hasher);
-			assert(pf.found);
-			assert(*pf.iterator == pair.first);
-
-			auto per = momo::HashSorter::GetEqualRange(array.GetBegin(), array.GetCount(),
+			auto findRes = momo::HashSorter::Find(array.GetBegin(), array.GetCount(),
 				pair.first, hasher);
-			assert(momo::internal::UIntMath<>::Dist(per.first, per.second) == pair.second);
-			assert(static_cast<size_t>(std::count(per.first, per.second, pair.first)) == pair.second);
+			assert(findRes.found);
+			assert(*findRes.iterator == pair.first);
+
+			auto bounds = momo::HashSorter::GetBounds(array.GetBegin(), array.GetCount(),
+				pair.first, hasher);
+			assert(bounds.GetCount() == pair.second);
+			assert(static_cast<size_t>(std::count(bounds.GetBegin(), bounds.GetEnd(), pair.first))
+				== pair.second);
 		}
 
 		if (prehashed)
@@ -113,22 +116,23 @@ public:
 				assert(!momo::HashSorter::FindPrehashed(array.GetBegin(), array.GetCount(),
 					hashArray.GetBegin(), "a", hasher("a")).found);
 
-				auto per = momo::HashSorter::GetEqualRangePrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), "b", hasher("b"));
-				assert(per.first == per.second);
+				auto bounds = momo::HashSorter::GetBoundsPrehashed(array.GetBegin(),
+					array.GetCount(), hashArray.GetBegin(), "b", hasher("b"));
+				assert(bounds.GetCount() == 0);
 			}
 
 			for (const auto& pair : data)
 			{
-				auto pf = momo::HashSorter::FindPrehashed(array.GetBegin(), array.GetCount(),
+				auto findRes = momo::HashSorter::FindPrehashed(array.GetBegin(), array.GetCount(),
 					hashArray.GetBegin(), pair.first, hasher(pair.first));
-				assert(pf.found);
-				assert(*pf.iterator == pair.first);
+				assert(findRes.found);
+				assert(*findRes.iterator == pair.first);
 
-				auto per = momo::HashSorter::GetEqualRangePrehashed(array.GetBegin(), array.GetCount(),
-					hashArray.GetBegin(), pair.first, hasher(pair.first));
-				assert(momo::internal::UIntMath<>::Dist(per.first, per.second) == pair.second);
-				assert(static_cast<size_t>(std::count(per.first, per.second, pair.first)) == pair.second);
+				auto bounds = momo::HashSorter::GetBoundsPrehashed(array.GetBegin(),
+					array.GetCount(), hashArray.GetBegin(), pair.first, hasher(pair.first));
+				assert(bounds.GetCount() == pair.second);
+				assert(static_cast<size_t>(std::count(bounds.GetBegin(), bounds.GetEnd(), pair.first))
+					== pair.second);
 			}
 		}
 	}
