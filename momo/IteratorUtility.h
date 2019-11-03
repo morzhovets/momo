@@ -300,29 +300,22 @@ namespace internal
 	};
 
 	template<typename TIterator>
-	class ArrayBounds
+	class ArrayBoundsBase
 	{
 	public:
 		typedef TIterator Iterator;
 
-		typedef ArrayBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
-
 	public:
-		explicit ArrayBounds() noexcept
+		explicit ArrayBoundsBase() noexcept
 			: mBegin(),
 			mCount(0)
 		{
 		}
 
-		explicit ArrayBounds(Iterator begin, size_t count) noexcept
+		explicit ArrayBoundsBase(Iterator begin, size_t count) noexcept
 			: mBegin(begin),
 			mCount(count)
 		{
-		}
-
-		operator ConstBounds() const noexcept
-		{
-			return ConstBounds(mBegin, mCount);
 		}
 
 		Iterator GetBegin() const noexcept
@@ -335,7 +328,7 @@ namespace internal
 			return UIntMath<>::Next(mBegin, mCount);
 		}
 
-		MOMO_FRIENDS_BEGIN_END(const ArrayBounds&, Iterator)
+		MOMO_FRIENDS_BEGIN_END(const ArrayBoundsBase&, Iterator)
 
 		size_t GetCount() const noexcept
 		{
@@ -351,6 +344,26 @@ namespace internal
 	private:
 		Iterator mBegin;
 		size_t mCount;
+	};
+
+	template<typename TIterator>
+	class ArrayBounds : public ArrayBoundsBase<TIterator>
+	{
+	private:
+		typedef ArrayBoundsBase<TIterator> BoundsBase;
+
+	public:
+		using typename BoundsBase::Iterator;
+
+		typedef ArrayBounds<typename ConstIteratorSelector<Iterator>::ConstIterator> ConstBounds;
+
+	public:
+		using BoundsBase::BoundsBase;
+
+		operator ConstBounds() const noexcept
+		{
+			return ConstBounds(BoundsBase::GetBegin(), BoundsBase::GetCount());
+		}
 	};
 
 	template<typename TBaseIterator, typename TReference>
