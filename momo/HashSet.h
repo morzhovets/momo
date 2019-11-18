@@ -748,18 +748,6 @@ public:
 		return pvFind(key);
 	}
 
-	ConstPosition Find(const Key& key, size_t hashCode) const
-	{
-		return pvFind(key, hashCode);
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key,
-		size_t hashCode) const
-	{
-		return pvFind(key, hashCode);
-	}
-
 	bool ContainsKey(const Key& key) const
 	{
 		return !!pvFind(key);
@@ -1022,22 +1010,15 @@ private:
 	template<typename KeyArg>
 	ConstPosition pvFind(const KeyArg& key) const
 	{
-		size_t hashCode = GetHashTraits().GetHashCode(key);
-		return pvFind(key, hashCode);
-	}
-
-	template<typename KeyArg>
-	ConstPosition pvFind(const KeyArg& key, size_t hashCode) const
-	{
-		size_t indexCode = hashCode;
-		BucketIterator bucketIter = pvFind(key, &indexCode);
+		size_t indexCode = GetHashTraits().GetHashCode(key);
+		BucketIterator bucketIter = pvFind(key, indexCode);
 		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
 	template<typename KeyArg>
-	BucketIterator pvFind(const KeyArg& key, size_t* indexCode) const
+	BucketIterator pvFind(const KeyArg& key, size_t& indexCode) const
 	{
-		size_t hashCode = *indexCode;
+		size_t hashCode = indexCode;
 		const HashTraits& hashTraits = GetHashTraits();
 		auto pred = [&key, &hashTraits] (const Item& item)
 			{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
@@ -1054,7 +1035,7 @@ private:
 				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
 				if (bucketIter != BucketIterator())
 				{
-					*indexCode = bucketIndex;
+					indexCode = bucketIndex;
 					return bucketIter;
 				}
 				if (!bucket->WasFull() || probe >= maxProbe)

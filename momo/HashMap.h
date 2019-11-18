@@ -348,30 +348,6 @@ public:
 		return PositionProxy(mHashSet.Find(key));
 	}
 
-	ConstPosition Find(const Key& key, size_t hashCode) const
-	{
-		return ConstPositionProxy(mHashSet.Find(key, hashCode));
-	}
-
-	Position Find(const Key& key, size_t hashCode)
-	{
-		return PositionProxy(mHashSet.Find(key, hashCode));
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key,
-		size_t hashCode) const
-	{
-		return ConstPositionProxy(mHashSet.Find(key, hashCode));
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(const KeyArg& key,
-		size_t hashCode)
-	{
-		return PositionProxy(mHashSet.Find(key, hashCode));
-	}
-
 	bool ContainsKey(const Key& key) const
 	{
 		return mHashSet.ContainsKey(key);

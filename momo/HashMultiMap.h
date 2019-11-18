@@ -910,30 +910,6 @@ public:
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	ConstKeyIterator Find(const Key& key, size_t hashCode) const
-	{
-		return ConstKeyIteratorProxy(mHashMap.Find(key, hashCode));
-	}
-
-	KeyIterator Find(const Key& key, size_t hashCode)
-	{
-		return KeyIteratorProxy(mHashMap.Find(key, hashCode));
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
-		const KeyArg& key, size_t hashCode) const
-	{
-		return ConstKeyIteratorProxy(mHashMap.Find(key, hashCode));
-	}
-
-	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(const KeyArg& key,
-		size_t hashCode)
-	{
-		return KeyIteratorProxy(mHashMap.Find(key, hashCode));
-	}
-
 	bool ContainsKey(const Key& key) const
 	{
 		return mHashMap.ContainsKey(key);
