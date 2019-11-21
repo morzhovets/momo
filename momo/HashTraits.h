@@ -78,8 +78,12 @@ struct IsFastNothrowHashable : public internal::BoolConstant<MOMO_IS_FAST_NOTHRO
 
 template<typename Key,
 	typename Result = size_t>
-struct HashCoder : public std::hash<Key>
+struct HashCoder : private std::hash<Key>
 {
+	Result operator()(const Key& key) const noexcept(noexcept(std::hash<Key>::operator()(key)))
+	{
+		return static_cast<Result>(std::hash<Key>::operator()(key));
+	}
 };
 
 #ifdef MOMO_HASH_CODER
@@ -87,7 +91,7 @@ template<typename Key>
 struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
 	decltype(MOMO_HASH_CODER(std::declval<const Key&>())) operator()(const Key& key) const
-		noexcept(IsFastNothrowHashable<Key>::value)
+		noexcept(noexcept(MOMO_HASH_CODER(key)))
 	{
 		return MOMO_HASH_CODER(key);
 	}

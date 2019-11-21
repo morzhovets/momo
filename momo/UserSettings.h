@@ -65,7 +65,7 @@
 // Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
 
-//#define MOMO_HASH_CODER(key) hash_value(key)
+//#define MOMO_HASH_CODER(key) key.GetHashCode() //hash_value(key)
 
 // If hash function is slow, hash bucket can store part of hash code
 // to avoid its recalculation during table grow
