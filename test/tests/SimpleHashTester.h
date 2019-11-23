@@ -102,7 +102,7 @@ public:
 	static void TestStrHash(const char* bucketName)
 	{
 #ifdef __cpp_lib_string_view
-		typedef momo::HashTraits<std::string_view, HashBucket> HashTraits;
+		typedef momo::HashTraits<std::string, HashBucket, std::string_view> HashTraits;
 #else
 		typedef momo::HashTraits<std::string, HashBucket> HashTraits;
 #endif

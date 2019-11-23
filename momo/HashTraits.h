@@ -104,17 +104,20 @@ typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
 template<typename TKey,
-	typename THashBucket = HashBucketDefault>
+	typename THashBucket = HashBucketDefault,
+	typename TKeyArgBase = TKey>
 class HashTraits
 {
 public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
+	typedef TKeyArgBase KeyArgBase;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::is_convertible<const KeyArg&, const Key&>;
+	using IsValidKeyArg = typename std::conditional<std::is_same<KeyArgBase, Key>::value,
+		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>::type;	//?
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value;
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
 
 public:
 	explicit HashTraits() noexcept
@@ -139,17 +142,17 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
-		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<Key>>::value);
-		return HashCoder<Key>()(key);
+		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg&, const KeyArgBase&>::value));
+		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<KeyArgBase>>::value);
+		return HashCoder<KeyArgBase>()(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
-		return std::equal_to<Key>()(key1, key2);
+		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg1&, const KeyArgBase&>::value));
+		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg2&, const KeyArgBase&>::value));
+		return std::equal_to<KeyArgBase>()(key1, key2);
 	}
 };
 
