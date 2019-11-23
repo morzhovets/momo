@@ -12,6 +12,12 @@
 
 #pragma once
 
+#ifdef __has_include
+#if __has_include(<version>)
+#include <version>	// feature macros
+#endif
+#endif
+
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,
@@ -67,7 +73,7 @@
 
 //#define MOMO_HASH_CODER(key) key.GetHashCode() //hash_value(key)
 
-#if __cplusplus >= 201703L	//__cpp_lib_string_view
+#ifdef __cpp_lib_string_view
 #define MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
 #endif
 
