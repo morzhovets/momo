@@ -33,6 +33,11 @@
 #include "details/HashBucketOpenN1.h"
 #endif
 
+#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+#include <string>
+#include <string_view>
+#endif
+
 namespace momo
 {
 
@@ -155,6 +160,20 @@ public:
 		return std::equal_to<KeyArgBase>()(key1, key2);
 	}
 };
+
+#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+template<typename Char, typename CharTraits, typename Allocator, typename HashBucket>
+class HashTraits<std::basic_string<Char, CharTraits, Allocator>, HashBucket,
+	std::basic_string<Char, CharTraits, Allocator>>
+	: public HashTraits<std::basic_string<Char, CharTraits, Allocator>, HashBucket,
+		std::basic_string_view<Char, CharTraits>>
+{
+public:
+	explicit HashTraits() noexcept
+	{
+	}
+};
+#endif
 
 template<typename TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;

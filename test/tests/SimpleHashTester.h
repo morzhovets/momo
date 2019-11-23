@@ -16,10 +16,6 @@
 #include <iostream>
 #include <random>
 
-#ifdef __cpp_lib_string_view
-#include <string_view>
-#endif
-
 class SimpleHashTester
 {
 private:
@@ -101,11 +97,7 @@ public:
 	template<typename HashBucket>
 	static void TestStrHash(const char* bucketName)
 	{
-#ifdef __cpp_lib_string_view
-		typedef momo::HashTraits<std::string, HashBucket, std::string_view> HashTraits;
-#else
 		typedef momo::HashTraits<std::string, HashBucket> HashTraits;
-#endif
 
 		std::cout << bucketName << ": HashSet: " << std::flush;
 		TestStrHashSet<HashTraits>();
