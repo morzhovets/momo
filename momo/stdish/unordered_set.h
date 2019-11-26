@@ -131,8 +131,7 @@ public:
 	}
 
 	template<typename Iterator>
-	unordered_set(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
-		: unordered_set(alloc)
+	unordered_set(Iterator first, Iterator last)
 	{
 		insert(first, last);
 	}
@@ -161,9 +160,8 @@ public:
 		insert(first, last);
 	}
 
-	unordered_set(std::initializer_list<value_type> values,
-		const allocator_type& alloc = allocator_type())
-		: mHashSet(values, HashTraits(), MemManager(alloc))
+	unordered_set(std::initializer_list<value_type> values)
+		: mHashSet(values)
 	{
 	}
 
@@ -675,11 +673,9 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
-	typename Key = typename std::iterator_traits<Iterator>::value_type, \
-	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
-unordered_set(Iterator, Iterator, Allocator = Allocator()) \
-	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+	typename Key = typename std::iterator_traits<Iterator>::value_type> \
+unordered_set(Iterator, Iterator) \
+	-> unordered_set<Key>; \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
@@ -700,11 +696,9 @@ template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
-template<typename Key, \
-	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
-unordered_set(std::initializer_list<Key>, Allocator = Allocator()) \
-	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+template<typename Key> \
+unordered_set(std::initializer_list<Key>) \
+	-> unordered_set<Key>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>, \
 	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
