@@ -510,7 +510,7 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return size_t{(mPtrState % modMemPoolIndex) + 1} * (skipOddMemPools ? 2 : 1);
+			return static_cast<size_t>((mPtrState % modMemPoolIndex) + 1) * (skipOddMemPools ? 2 : 1);
 		}
 
 		Bounds pvGetBounds() const noexcept
@@ -522,7 +522,7 @@ namespace internal
 			uintptr_t count1 = UIntMath<uintptr_t>::DivBySmall(ptrCount, mod).remainder;
 			MOMO_ASSERT(count1 < memPoolIndex);
 			Item* items = BitCaster::ToPtr<Item>((ptrCount - count1) * modMemPoolIndex);
-			return Bounds(items, size_t{count1} + 1);
+			return Bounds(items, static_cast<size_t>(count1) + 1);
 		}
 
 	private:
