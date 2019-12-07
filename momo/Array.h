@@ -456,7 +456,7 @@ public:
 	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
-	Array() //noexcept(noexcept(MemManager()))	// vs2019
+	Array() noexcept(noexcept(MemManager()))
 		: Array(MemManager())
 	{
 	}
