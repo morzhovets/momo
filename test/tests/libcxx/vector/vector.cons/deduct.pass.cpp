@@ -38,14 +38,14 @@ void main()
     const int arr[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     momo::stdish::vector vec(std::begin(arr), std::end(arr));
 
-    static_assert(std::is_same_v<decltype(vec), momo::stdish::vector<int>>, "");
+    static_assert(std::is_same<decltype(vec), momo::stdish::vector<int>>::value, "");
     assert(std::equal(vec.begin(), vec.end(), std::begin(arr), std::end(arr)));
     }
 
     {
     const long arr[] = {INT_MAX, 1L, 2L, 3L };
     momo::stdish::vector vec(std::begin(arr), std::end(arr), std::allocator<long>());
-    static_assert(std::is_same_v<decltype(vec)::value_type, long>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, long>::value, "");
     assert(vec.size() == 4);
     assert(vec[0] == INT_MAX);
     assert(vec[1] == 1L);
@@ -61,29 +61,29 @@ void main()
 
     {
     momo::stdish::vector vec(1, A{}); // vector (size_type, T)
-    static_assert(std::is_same_v<decltype(vec)::value_type, A>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<A>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, A>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, std::allocator<A>>::value, "");
     assert(vec.size() == 1);
     }
 
     {
     momo::stdish::vector vec(1, A{}, test_allocator<A>()); // vector (size_type, T, allocator)
-    static_assert(std::is_same_v<decltype(vec)::value_type, A>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, test_allocator<A>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, A>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, test_allocator<A>>::value, "");
     assert(vec.size() == 1);
     }
 
     {
     momo::stdish::vector vec{1U, 2U, 3U, 4U, 5U}; // vector(initializer-list)
-    static_assert(std::is_same_v<decltype(vec)::value_type, unsigned>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, unsigned>::value, "");
     assert(vec.size() == 5);
     assert(vec[2] == 3U);
     }
 
     {
     momo::stdish::vector vec({1.0, 2.0, 3.0, 4.0}, test_allocator<double>()); // vector(initializer-list, allocator)
-    static_assert(std::is_same_v<decltype(vec)::value_type, double>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, test_allocator<double>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, double>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, test_allocator<double>>::value, "");
     assert(vec.size() == 4);
     assert(vec[3] == 4.0);
     }
@@ -91,8 +91,8 @@ void main()
     {
     momo::stdish::vector<long double> source;
     momo::stdish::vector vec(source); // vector(vector &)
-    static_assert(std::is_same_v<decltype(vec)::value_type, long double>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<long double>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, long double>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, std::allocator<long double>>::value, "");
     assert(vec.size() == 0);
     }
 
@@ -100,8 +100,8 @@ void main()
 //  A couple of vector<bool> tests, too!
     {
     momo::stdish::vector vec(3, true); // vector(initializer-list)
-    static_assert(std::is_same_v<decltype(vec)::value_type, bool>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<bool>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, bool>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, std::allocator<bool>>::value, "");
     assert(vec.size() == 3);
     assert(vec[0] && vec[1] && vec[2]);
     }
@@ -109,8 +109,8 @@ void main()
     {
     momo::stdish::vector<bool> source;
     momo::stdish::vector vec(source); // vector(vector &)
-    static_assert(std::is_same_v<decltype(vec)::value_type, bool>, "");
-    static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<bool>>, "");
+    static_assert(std::is_same<decltype(vec)::value_type, bool>::value, "");
+    static_assert(std::is_same<decltype(vec)::allocator_type, std::allocator<bool>>::value, "");
     assert(vec.size() == 0);
     }
 }
