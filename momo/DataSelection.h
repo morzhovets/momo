@@ -300,10 +300,7 @@ namespace internal
 		{
 		}
 
-		operator ConstIterator() const noexcept
-		{
-			return ConstIterator(mOffset, mRowIterator);
-		}
+		//operator ConstIterator() const noexcept
 
 		DataConstItemIterator& operator+=(ptrdiff_t diff)
 		{
@@ -377,10 +374,7 @@ namespace internal
 		{
 		}
 
-		operator ConstBounds() const noexcept
-		{
-			return ConstBounds(mOffset, mRowBounds);
-		}
+		//operator ConstBounds() const noexcept
 
 		Iterator GetBegin() const noexcept
 		{
