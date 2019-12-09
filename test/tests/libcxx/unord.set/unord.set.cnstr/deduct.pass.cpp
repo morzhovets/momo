@@ -144,12 +144,14 @@ void main()
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
     momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<short>(), std::equal_to<>());
 
     ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<short>, std::equal_to<>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
+#endif
 
     {
     momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<short>(), std::equal_to<>(), test_allocator<int>(0, 43));
@@ -163,7 +165,7 @@ void main()
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
     momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42, test_allocator<int>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 44);
     }
@@ -180,7 +182,7 @@ void main()
     {
     momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, test_allocator<int>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 43);
     }
