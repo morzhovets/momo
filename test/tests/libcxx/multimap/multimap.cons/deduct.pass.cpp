@@ -82,13 +82,16 @@ void main()
     assert(m.size() == 0);
     }
 
+#if !defined(__GNUC__) && !defined(__clang__)
     {
     momo::stdish::multimap<int, long> source;
     momo::stdish::multimap m(source, momo::stdish::multimap<int, long>::allocator_type());
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
+#endif
 
+#if !defined(__GNUC__)
     {
     momo::stdish::multimap m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
@@ -96,6 +99,7 @@ void main()
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     momo::stdish::multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>());
