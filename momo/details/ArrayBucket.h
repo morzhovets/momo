@@ -218,7 +218,7 @@ namespace internal
 			return *this;
 		}
 
-		ArrayBucket& operator=(const ArrayBucket& bucket) = delete;
+		ArrayBucket& operator=(const ArrayBucket&) = delete;
 
 		void Swap(ArrayBucket& bucket) noexcept
 		{
