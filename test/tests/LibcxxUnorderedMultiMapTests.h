@@ -142,9 +142,9 @@ LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "libcxx/unord.multimap/unord.multimap.cnstr/deduct.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(cnstr_deduct_const)
-#include "libcxx/unord.multimap/unord.multimap.cnstr/deduct_const.pass.cpp"
-LIBCXX_TEST_END
+//LIBCXX_TEST_BEGIN(cnstr_deduct_const)
+//#include "libcxx/unord.multimap/unord.multimap.cnstr/deduct_const.pass.cpp"
+//LIBCXX_TEST_END
 
 #endif
 
