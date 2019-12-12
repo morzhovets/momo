@@ -29,7 +29,18 @@
 
 #endif
 
-//#define LIBCPP_TEST_DEDUCTION_GUIDES
+#ifdef __cpp_deduction_guides
+#define LIBCPP_TEST_DEDUCTION_GUIDES
+#if defined(_MSC_VER) && _MSC_VER < 1924
+#undef LIBCPP_TEST_DEDUCTION_GUIDES
+#endif
+#if defined(__GNUC__) && __GNUC__ < 9	// 8
+#undef LIBCPP_TEST_DEDUCTION_GUIDES
+#endif
+#if defined(__clang__) && __clang_major__ < 7	// 6
+#undef LIBCPP_TEST_DEDUCTION_GUIDES
+#endif
+#endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 //#define LIBCPP_TEST_MIN_ALLOCATOR
