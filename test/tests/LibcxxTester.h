@@ -15,18 +15,12 @@
 #include <string>
 #include <cmath>
 
-#ifdef _MSC_VER
-
-#if _MSC_VER == 1900 && !defined(_DEBUG)
+#if defined(_MSC_VER) && _MSC_VER == 1900 && !defined(_DEBUG)
 #define LIBCPP_VS2015_RELEASE	//?
 #endif
 
-#else
-
-#if __cplusplus < 201402L
+#if !defined(_MSC_VER) && !defined(__cpp_lib_transparent_operators)
 #define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
-#endif
-
 #endif
 
 #ifdef __cpp_deduction_guides
