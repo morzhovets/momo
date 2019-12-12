@@ -513,13 +513,17 @@ namespace internal
 		}
 	};
 
-	template<typename TKeyValueTraits>
+	template<typename TKey, typename TValue,
+		size_t tKeyAlignment, size_t tValueAlignment>
 	class MapKeyValuePair
 	{
 	public:
-		typedef TKeyValueTraits KeyValueTraits;
-		typedef typename KeyValueTraits::Key Key;
-		typedef typename KeyValueTraits::Value Value;
+		typedef TKey Key;
+		typedef TValue Value;
+
+	protected:
+		static const size_t keyAlignment = tKeyAlignment;
+		static const size_t valueAlignment = tValueAlignment;
 
 	public:
 		MapKeyValuePair() = delete;
@@ -546,22 +550,23 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Key, KeyValueTraits::keyAlignment> mKeyBuffer;
-		mutable ObjectBuffer<Value, KeyValueTraits::valueAlignment> mValueBuffer;
+		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
+		mutable ObjectBuffer<Value, valueAlignment> mValueBuffer;
 	};
 
-	template<typename TKeyValuePair>
+	template<typename TKeyValueTraits>
 	class MapNestedSetItemTraits
 	{
 	protected:
-		typedef TKeyValuePair KeyValuePair;	//?
-		typedef typename KeyValuePair::KeyValueTraits KeyValueTraits;
+		typedef TKeyValueTraits KeyValueTraits;
 		typedef typename KeyValueTraits::Value Value;
 
 	public:
-		typedef KeyValuePair Item;
 		typedef typename KeyValueTraits::Key Key;
 		typedef typename KeyValueTraits::MemManager MemManager;
+
+		typedef MapKeyValuePair<Key, Value,
+			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 
 	private:
 		typedef ObjectManager<Item, MemManager> ItemManager;

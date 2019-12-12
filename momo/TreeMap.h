@@ -37,11 +37,11 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKeyValuePair>
-	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
+	template<typename TKeyValueTraits>
+	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
 	private:
-		typedef internal::MapNestedSetItemTraits<TKeyValuePair> MapNestedSetItemTraits;
+		typedef internal::MapNestedSetItemTraits<TKeyValueTraits> MapNestedSetItemTraits;
 
 	protected:
 		using typename MapNestedSetItemTraits::KeyValueTraits;
@@ -150,9 +150,9 @@ public:
 	typedef TSettings Settings;
 
 private:
-	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
+	typedef internal::TreeMapNestedSetItemTraits<KeyValueTraits> TreeSetItemTraits;
+	typedef typename TreeSetItemTraits::Item KeyValuePair;
 
-	typedef internal::TreeMapNestedSetItemTraits<KeyValuePair> TreeSetItemTraits;
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
 	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;

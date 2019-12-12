@@ -37,11 +37,11 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKeyValuePair>
-	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValuePair>
+	template<typename TKeyValueTraits>
+	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
 	private:
-		typedef internal::MapNestedSetItemTraits<TKeyValuePair> MapNestedSetItemTraits;
+		typedef internal::MapNestedSetItemTraits<TKeyValueTraits> MapNestedSetItemTraits;
 
 	protected:
 		using typename MapNestedSetItemTraits::KeyValueTraits;
@@ -112,9 +112,9 @@ public:
 	typedef TSettings Settings;
 
 private:
-	typedef internal::MapKeyValuePair<KeyValueTraits> KeyValuePair;
+	typedef internal::HashMapNestedSetItemTraits<KeyValueTraits> HashSetItemTraits;
+	typedef typename HashSetItemTraits::Item KeyValuePair;
 
-	typedef internal::HashMapNestedSetItemTraits<KeyValuePair> HashSetItemTraits;
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 
 	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
