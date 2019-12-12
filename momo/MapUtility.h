@@ -83,23 +83,41 @@ namespace internal
 			return ConstReference(RefPair::first, RefPair::second);
 		}
 
-		template<typename First, typename Second>
-		bool operator==(const std::pair<First, Second>& pair) const
+		bool operator==(const MapReferenceStd& ref) const
+		{
+			return RefPair::first == ref.first && RefPair::second == ref.second;
+		}
+
+		bool operator!=(const MapReferenceStd& ref) const
+		{
+			return !(*this == ref);
+		}
+
+		bool operator==(const std::pair<const Key, Value>& pair) const
 		{
 			return RefPair::first == pair.first && RefPair::second == pair.second;
 		}
 
-		template<typename First, typename Second>
-		bool operator!=(const std::pair<First, Second>& pair) const
+		bool operator!=(const std::pair<const Key, Value>& pair) const
 		{
 			return !(*this == pair);
+		}
+
+		friend bool operator==(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
+		{
+			return ref == pair;
+		}
+
+		friend bool operator!=(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
+		{
+			return !(ref == pair);
 		}
 
 		//? <, >, <=, >=
 
 	protected:
-		explicit MapReferenceStd(MapReference ref) noexcept
-			: RefPair(ref.key, ref.value)
+		explicit MapReferenceStd(MapReference mapRef) noexcept
+			: RefPair(mapRef.key, mapRef.value)
 		{
 		}
 	};
