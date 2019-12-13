@@ -23,17 +23,11 @@
 #define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif
 
-#ifdef __cpp_deduction_guides
+#if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(_MSC_VER) && _MSC_VER >= 1924
 #define LIBCPP_TEST_DEDUCTION_GUIDES
-#if defined(_MSC_VER) && _MSC_VER < 1924
-#undef LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
-#if defined(__GNUC__) && __GNUC__ < 9	// 8
-#undef LIBCPP_TEST_DEDUCTION_GUIDES
-#endif
-#if defined(__clang__) && __clang_major__ < 7	// 6
-#undef LIBCPP_TEST_DEDUCTION_GUIDES
-#endif
+#if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(__GNUC__) && __GNUC__ >= 9	// 8
+#define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
