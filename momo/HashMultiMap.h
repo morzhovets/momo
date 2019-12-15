@@ -599,12 +599,6 @@ private:
 			MOMO_ASSERT(IsNull());
 		}
 
-		ValueCrew& operator=(ValueCrew&& crew) noexcept
-		{
-			ValueCrew(std::move(crew)).Swap(*this);
-			return *this;
-		}
-
 		ValueCrew& operator=(const ValueCrew&) = delete;
 
 		void Swap(ValueCrew& crew) noexcept
@@ -635,12 +629,6 @@ private:
 		{
 			MOMO_ASSERT(!IsNull());
 			return mData->valueVersion;
-		}
-
-		const ValueArrayParams& GetValueArrayParams() const noexcept
-		{
-			MOMO_ASSERT(!IsNull());
-			return mData->valueArrayParams;
 		}
 
 		ValueArrayParams& GetValueArrayParams() noexcept
