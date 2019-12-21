@@ -21,11 +21,11 @@
 // const_reference back() const;
 // libc++ marks these as 'noexcept' (except 'at')
 
-#include <vector>
-#include <cassert>
+//#include <vector>
+//#include <cassert>
 
-#include "min_allocator.h"
-#include "test_macros.h"
+//#include "min_allocator.h"
+//#include "test_macros.h"
 
 template <class C>
 C
@@ -37,14 +37,14 @@ make(int size, int start = 0)
     return c;
 }
 
-int main(int, char**)
+void main()
 {
     {
-        typedef std::vector<int> C;
+        typedef vector<int> C;
         C c = make<C>(10);
-        LIBCPP_ASSERT_NOEXCEPT(c[0]);
-        LIBCPP_ASSERT_NOEXCEPT(c.front());
-        LIBCPP_ASSERT_NOEXCEPT(c.back());
+        //LIBCPP_ASSERT_NOEXCEPT(c[0]);
+        //LIBCPP_ASSERT_NOEXCEPT(c.front());
+        //LIBCPP_ASSERT_NOEXCEPT(c.back());
         // at() is NOT noexcept
         ASSERT_SAME_TYPE(C::reference, decltype(c[0]));
         ASSERT_SAME_TYPE(C::reference, decltype(c.at(0)));
@@ -58,12 +58,12 @@ int main(int, char**)
         assert(c.back() == 9);
     }
     {
-        typedef std::vector<int> C;
+        typedef vector<int> C;
         const int N = 5;
         const C c = make<C>(10, N);
-        LIBCPP_ASSERT_NOEXCEPT(c[0]);
-        LIBCPP_ASSERT_NOEXCEPT(c.front());
-        LIBCPP_ASSERT_NOEXCEPT(c.back());
+        //LIBCPP_ASSERT_NOEXCEPT(c[0]);
+        //LIBCPP_ASSERT_NOEXCEPT(c.front());
+        //LIBCPP_ASSERT_NOEXCEPT(c.back());
         // at() is NOT noexcept
         ASSERT_SAME_TYPE(C::const_reference, decltype(c[0]));
         ASSERT_SAME_TYPE(C::const_reference, decltype(c.at(0)));
@@ -76,14 +76,15 @@ int main(int, char**)
         assert(c.front() == N);
         assert(c.back() == N + 9);
     }
-#if TEST_STD_VER >= 11
+//#if TEST_STD_VER >= 11
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef std::vector<int, min_allocator<int>> C;
+        typedef vector<int, min_allocator<int>> C;
         const int N = 34;
         C c = make<C>(10, N);
-        LIBCPP_ASSERT_NOEXCEPT(c[0]);
-        LIBCPP_ASSERT_NOEXCEPT(c.front());
-        LIBCPP_ASSERT_NOEXCEPT(c.back());
+        //LIBCPP_ASSERT_NOEXCEPT(c[0]);
+        //LIBCPP_ASSERT_NOEXCEPT(c.front());
+        //LIBCPP_ASSERT_NOEXCEPT(c.back());
         // at() is NOT noexcept
         ASSERT_SAME_TYPE(C::reference, decltype(c[0]));
         ASSERT_SAME_TYPE(C::reference, decltype(c.at(0)));
@@ -97,12 +98,12 @@ int main(int, char**)
         assert(c.back() == N + 9);
     }
     {
-        typedef std::vector<int, min_allocator<int>> C;
+        typedef vector<int, min_allocator<int>> C;
         const int N = 23;
         const C c = make<C>(10, N);
-        LIBCPP_ASSERT_NOEXCEPT(c[0]);
-        LIBCPP_ASSERT_NOEXCEPT(c.front());
-        LIBCPP_ASSERT_NOEXCEPT(c.back());
+        //LIBCPP_ASSERT_NOEXCEPT(c[0]);
+        //LIBCPP_ASSERT_NOEXCEPT(c.front());
+        //LIBCPP_ASSERT_NOEXCEPT(c.back());
         // at() is NOT noexcept
         ASSERT_SAME_TYPE(C::const_reference, decltype(c[0]));
         ASSERT_SAME_TYPE(C::const_reference, decltype(c.at(0)));
@@ -116,6 +117,4 @@ int main(int, char**)
         assert(c.back() == N + 9);
     }
 #endif
-
-  return 0;
 }
