@@ -14,10 +14,6 @@ LIBCXX_TEST_BEGIN(asan_throw)
 LIBCXX_TEST_END
 #endif
 
-//LIBCXX_TEST_BEGIN(const_value_type)
-//#include "libcxx/vector/const_value_type.pass.cpp"
-//LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(db_back)
 #include "libcxx/vector/db_back.pass.cpp"
 LIBCXX_TEST_END
