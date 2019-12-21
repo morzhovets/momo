@@ -8,9 +8,21 @@
 
 \**********************************************************/
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(access)
+#include "libcxx/vector/access.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(asan_throw)
 #include "libcxx/vector/asan_throw.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(contiguous)
+#include "libcxx/vector/contiguous.pass.cpp"
 LIBCXX_TEST_END
 #endif
 
