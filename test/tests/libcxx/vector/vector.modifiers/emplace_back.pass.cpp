@@ -26,26 +26,27 @@ class A
 
     A(const A&);
     A& operator=(const A&);
+
 public:
     A(int i, double d)
         : i_(i), d_(d) {}
 
-    A(A&& a)
-        : i_(a.i_),
-          d_(a.d_)
-    {
-        a.i_ = 0;
-        a.d_ = 0;
-    }
+    A(A&& a) = default;
+    //    : i_(a.i_),
+    //      d_(a.d_)
+    //{
+    //    a.i_ = 0;
+    //    a.d_ = 0;
+    //}
 
-    A& operator=(A&& a)
-    {
-        i_ = a.i_;
-        d_ = a.d_;
-        a.i_ = 0;
-        a.d_ = 0;
-        return *this;
-    }
+    A& operator=(A&& a) = default;
+    //{
+    //    i_ = a.i_;
+    //    d_ = a.d_;
+    //    a.i_ = 0;
+    //    a.d_ = 0;
+    //    return *this;
+    //}
 
     int geti() const {return i_;}
     double getd() const {return d_;}
