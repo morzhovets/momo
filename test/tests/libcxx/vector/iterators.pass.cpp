@@ -61,6 +61,34 @@ void main()
     {
         typedef int T;
         typedef vector<T> C;
+        C c;
+        C::reverse_iterator i = c.rbegin();
+        C::reverse_iterator j = c.rend();
+        assert(std::distance(i, j) == 0);
+        assert(i == j);
+    }
+    {
+        typedef int T;
+        typedef vector<T> C;
+        const C c;
+        C::const_reverse_iterator i = c.rbegin();
+        C::const_reverse_iterator j = c.rend();
+        assert(std::distance(i, j) == 0);
+        assert(i == j);
+    }
+    {
+        typedef int T;
+        typedef vector<T> C;
+        C c;
+        C::const_reverse_iterator i = c.crbegin();
+        C::const_reverse_iterator j = c.crend();
+        assert(std::distance(i, j) == 0);
+        assert(i == j);
+        assert(i == c.rend());
+    }
+    {
+        typedef int T;
+        typedef vector<T> C;
         const T t[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         C c(std::begin(t), std::end(t));
         C::iterator i = c.begin();

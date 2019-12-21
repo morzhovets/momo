@@ -26,6 +26,11 @@ test(const C& x)
     //assert(c.__invariants());
     assert(c.size() == s);
     assert(c == x);
+    assert(!(c != x));
+    assert(c <= x);
+    assert(c >= x);
+    assert(!(c < x));
+    assert(!(c > x));
     //assert(is_contiguous_container_asan_correct(c));
 }
 
