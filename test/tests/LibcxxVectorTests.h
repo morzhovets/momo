@@ -124,9 +124,9 @@ LIBCXX_TEST_BEGIN(empty)
 #include "libcxx/vector/vector.capacity/empty.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(max_size)
-//#include "libcxx/vector/vector.capacity/max_size.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(max_size)
+#include "libcxx/vector/vector.capacity/max_size.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
 #include "libcxx/vector/vector.capacity/size.pass.cpp"

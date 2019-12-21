@@ -22,6 +22,11 @@
 
 void main() {
   {
+    vector<int> v;
+    assert(v.max_size() > 0);
+  }
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+  {
     typedef limited_allocator<int, 10> A;
     typedef vector<int, A> C;
     C c;
@@ -45,4 +50,5 @@ void main() {
     assert(c.max_size() <= max_dist);
     assert(c.max_size() <= alloc_max_size(c.get_allocator()));
   }
+#endif
 }
