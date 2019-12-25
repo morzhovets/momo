@@ -24,22 +24,26 @@ void main()
         typedef multiset<int> M;
         typedef M::iterator R;
         M m;
-        R r = m.insert(m.cend(), M::value_type(2));
+
+        int v2 = 2;
+        R r = m.insert(m.cend(), v2);
         assert(r == m.begin());
         assert(m.size() == 1);
         assert(*r == 2);
 
-        r = m.insert(m.cend(), M::value_type(1));
+        int v1 = 1;
+        r = m.insert(m.cend(), v1);
         assert(r == m.begin());
         assert(m.size() == 2);
         assert(*r == 1);
 
-        r = m.insert(m.cend(), M::value_type(3));
+        int v3 = 3;
+        r = m.insert(m.cend(), v3);
         assert(r == prev(m.end()));
         assert(m.size() == 3);
         assert(*r == 3);
 
-        r = m.insert(m.cend(), M::value_type(3));
+        r = m.insert(m.cend(), v3);
         assert(r == prev(m.end()));
         assert(m.size() == 4);
         assert(*r == 3);
