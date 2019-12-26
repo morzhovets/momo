@@ -31,22 +31,26 @@ void main()
         typedef C::iterator R;
         typedef C::value_type P;
         C c;
+
         //C::const_iterator e = c.end();
-        R r = c.insert(/*e*/c.find(3.5), P(3.5));
+        P p3 = 3.5;
+        R r = c.insert(/*e*/c.find(3.5), p3);
         assert(c.size() == 1);
         assert(*r == 3.5);
 
 #ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
-        r = c.insert(/*e*/c.find(3.5), P(3.5));
+        r = c.insert(/*e*/c.find(3.5), p3);
         assert(c.size() == 1);
         assert(*r == 3.5);
 #endif
 
-        r = c.insert(/*e*/c.find(4.5), P(4.5));
+        P p4 = 4.5;
+        r = c.insert(/*e*/c.find(4.5), p4);
         assert(c.size() == 2);
         assert(*r == 4.5);
 
-        r = c.insert(/*e*/c.find(5.5), P(5.5));
+        P p5 = 5.5;
+        r = c.insert(/*e*/c.find(5.5), p5);
         assert(c.size() == 3);
         assert(*r == 5.5);
     }
