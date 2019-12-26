@@ -385,7 +385,7 @@ public:
 	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
 	const_iterator find(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mHashSet.Find(key));
+		return mHashSet.Find(key);
 	}
 
 	//template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
