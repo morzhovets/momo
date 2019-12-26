@@ -246,11 +246,6 @@ namespace internal
 		static const size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
-		static void Destroy(MemManager& memManager, Item& item) MOMO_NOEXCEPT
-		{
-			TreeSetItemTraits::Destroy(&memManager, item);
-		}
-
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) MOMO_NOEXCEPT
 		{
