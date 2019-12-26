@@ -53,7 +53,7 @@ namespace internal
 		Value& value;
 	};
 
-	template<typename TKey, typename TValue, typename THashMapReference>
+	template<typename TKey, typename TValue, typename TMapReference>
 	class MapReferenceStd : public std::pair<const TKey&, TValue&>
 	{
 	public:
@@ -61,11 +61,11 @@ namespace internal
 		typedef TValue Value;
 
 	protected:
-		typedef THashMapReference HashMapReference;
+		typedef TMapReference MapReference;
 
 	public:
 		typedef MapReferenceStd<Key, const Value,
-			typename HashMapReference::ConstReference> ConstReference;
+			typename MapReference::ConstReference> ConstReference;
 
 	private:
 		typedef std::pair<const Key&, Value&> RefPair;
@@ -96,7 +96,7 @@ namespace internal
 		//? <, >, <=, >=
 
 	protected:
-		explicit MapReferenceStd(HashMapReference ref) MOMO_NOEXCEPT
+		explicit MapReferenceStd(MapReference ref) MOMO_NOEXCEPT
 			: RefPair(ref.key, ref.value)
 		{
 		}
