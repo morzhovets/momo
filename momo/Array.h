@@ -289,8 +289,8 @@ private:
 			pvCreate();
 		}
 
-		template<typename RelocateFunc>
-		void Reset(size_t capacity, size_t count, RelocateFunc relocateFunc)
+		template<typename ItemsRelocator>
+		void Reset(size_t capacity, size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_ASSERT(count <= capacity);
 			pvCheckCapacity(capacity);
@@ -300,7 +300,7 @@ private:
 					capacity * sizeof(Item));
 				try
 				{
-					relocateFunc(items);
+					itemsRelocator(items);
 				}
 				catch (...)
 				{
@@ -314,7 +314,7 @@ private:
 			}
 			else
 			{
-				pvReset(count, relocateFunc);
+				pvReset(count, itemsRelocator);
 			}
 		}
 
@@ -411,23 +411,23 @@ private:
 			return false;
 		}
 
-		template<typename RelocateFunc,
+		template<typename ItemsRelocator,
 			bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<hasInternalCapacity> pvReset(size_t count, RelocateFunc relocateFunc)
+		internal::EnableIf<hasInternalCapacity> pvReset(size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
-			relocateFunc(&internalData);
+			itemsRelocator(&internalData);
 			pvDeallocate();
 			mItems = &mInternalItems;
 			ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
 			mCount = count;
 		}
 
-		template<typename RelocateFunc,
+		template<typename ItemsRelocator,
 			bool hasInternalCapacity = (internalCapacity > 0)>
 		internal::EnableIf<!hasInternalCapacity> pvReset(size_t count,
-			RelocateFunc /*relocateFunc*/) noexcept
+			ItemsRelocator /*itemsRelocator*/) noexcept
 		{
 			(void)count;
 			MOMO_ASSERT(count == 0);
@@ -632,7 +632,7 @@ public:
 		{
 			size_t newCapacity = pvGrowCapacity(initCapacity, newCount,
 				ArrayGrowCause::reserve, false);
-			auto relocateFunc = [this, initCount, newCount, &multiItemCreator] (Item* newItems)
+			auto itemsRelocator = [this, initCount, newCount, &multiItemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
 				try
@@ -647,7 +647,7 @@ public:
 					throw;
 				}
 			};
-			mData.Reset(newCapacity, newCount, relocateFunc);
+			mData.Reset(newCapacity, newCount, itemsRelocator);
 		}
 	}
 
@@ -702,9 +702,9 @@ public:
 			size_t newCapacity = count;
 			if (!mData.SetCapacity(newCapacity))
 			{
-				auto relocateFunc = [this, count] (Item* newItems)
+				auto itemsRelocator = [this, count] (Item* newItems)
 					{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-				mData.Reset(newCapacity, count, relocateFunc);
+				mData.Reset(newCapacity, count, itemsRelocator);
 			}
 		}
 	}
@@ -943,10 +943,10 @@ private:
 		if (!mData.SetCapacity(pvGrowCapacity(initCapacity, minNewCapacity, growCause, true)))
 		{
 			size_t count = GetCount();
-			auto relocateFunc = [this, count] (Item* newItems)
+			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.Reset(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
-				count, relocateFunc);
+				count, itemsRelocator);
 		}
 	}
 
@@ -971,12 +971,12 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		size_t newCapacity = pvGrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
-		auto relocateFunc = [this, initCount, &itemCreator] (Item* newItems)
+		auto itemsRelocator = [this, initCount, &itemCreator] (Item* newItems)
 		{
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				std::forward<ItemCreator>(itemCreator), newItems + initCount);
 		};
-		mData.Reset(newCapacity, newCount, relocateFunc);
+		mData.Reset(newCapacity, newCount, itemsRelocator);
 	}
 
 	void pvAddBackGrow(Item&& item)
