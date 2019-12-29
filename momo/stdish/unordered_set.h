@@ -671,6 +671,8 @@ public:
 public:
 	using UnorderedSet::UnorderedSet;
 
+	unordered_set_open() {}	// clang 3.6
+
 	unordered_set_open& operator=(std::initializer_list<value_type> values)
 	{
 		UnorderedSet::operator=(values);
