@@ -858,6 +858,7 @@ private:
 public:
 	using typename BaseMap::key_type;
 	using typename BaseMap::mapped_type;
+	using typename BaseMap::value_type;
 	using typename BaseMap::const_iterator;
 	using typename BaseMap::iterator;
 
