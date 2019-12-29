@@ -731,7 +731,21 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMultiMap;
 
 public:
+	using typename UnorderedMultiMap::value_type;
+
+public:
 	using UnorderedMultiMap::UnorderedMultiMap;
+
+	unordered_multimap_open& operator=(std::initializer_list<value_type> values)
+	{
+		UnorderedMultiMap::operator=(values);
+		return *this;
+	}
+
+	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
+	{
+		left.swap(right);
+	}
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES

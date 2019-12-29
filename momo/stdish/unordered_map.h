@@ -979,7 +979,21 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMap;
 
 public:
+	using typename UnorderedMap::value_type;
+
+public:
 	using UnorderedMap::UnorderedMap;
+
+	unordered_map_open& operator=(std::initializer_list<value_type> values)
+	{
+		UnorderedMap::operator=(values);
+		return *this;
+	}
+
+	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
+	{
+		left.swap(right);
+	}
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES

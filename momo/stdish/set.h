@@ -617,6 +617,12 @@ public:
 public:
 	using Set::Set;
 
+	multiset& operator=(std::initializer_list<value_type> values)
+	{
+		Set::operator=(values);
+		return *this;
+	}
+
 	friend void swap(multiset& left, multiset& right) noexcept
 	{
 		left.swap(right);

@@ -666,7 +666,21 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedSet;
 
 public:
+	using typename UnorderedSet::value_type;
+
+public:
 	using UnorderedSet::UnorderedSet;
+
+	unordered_set_open& operator=(std::initializer_list<value_type> values)
+	{
+		UnorderedSet::operator=(values);
+		return *this;
+	}
+
+	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
+	{
+		left.swap(right);
+	}
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES

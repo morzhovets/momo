@@ -242,14 +242,6 @@ namespace internal
 			return *this;
 		}
 
-		map_base& operator=(std::initializer_list<value_type> values)
-		{
-			TreeMap treeMap(mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
-			treeMap.Insert(values.begin(), values.end());
-			mTreeMap = std::move(treeMap);
-			return *this;
-		}
-
 		void swap(map_base& right) noexcept
 		{
 			MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
@@ -716,6 +708,13 @@ namespace internal
 		}
 
 	protected:	//?
+		void ptAssign(std::initializer_list<value_type> values)
+		{
+			TreeMap treeMap(mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
+			treeMap.Insert(values.begin(), values.end());
+			mTreeMap = std::move(treeMap);
+		}
+
 		template<typename Hint, typename... KeyArgs, typename... MappedArgs>
 		std::pair<iterator, bool> ptEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 			std::tuple<MappedArgs...>&& mappedArgs)
@@ -865,6 +864,12 @@ public:
 public:
 	using BaseMap::BaseMap;
 
+	map& operator=(std::initializer_list<value_type> values)
+	{
+		BaseMap::ptAssign(values);
+		return *this;
+	}
+
 	friend void swap(map& left, map& right) noexcept
 	{
 		left.swap(right);
@@ -983,6 +988,12 @@ public:
 
 public:
 	using BaseMap::BaseMap;
+
+	multimap& operator=(std::initializer_list<value_type> values)
+	{
+		BaseMap::ptAssign(values);
+		return *this;
+	}
 
 	friend void swap(multimap& left, multimap& right) noexcept
 	{
