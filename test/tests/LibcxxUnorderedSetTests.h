@@ -228,10 +228,12 @@ LIBCXX_TEST_BEGIN(cnstr_copy_alloc)
 #include "libcxx/unord.set/unord.set.cnstr/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCXX_TEST_DEFAULT_BUCKET
 #ifdef LIBCPP_TEST_DEDUCTION_GUIDES
 LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "libcxx/unord.set/unord.set.cnstr/deduct.pass.cpp"
 LIBCXX_TEST_END
+#endif
 #endif
 
 LIBCXX_TEST_BEGIN(cnstr_default)
