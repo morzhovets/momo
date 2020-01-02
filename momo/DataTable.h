@@ -54,7 +54,7 @@ public:
 	static void Sort(Iterator begin, size_t count, const Comparer& comparer,
 		MemManager& /*memManager*/)
 	{
-		std::stable_sort(begin, internal::UIntMath<>::Next(begin, count), comparer);
+		std::sort(begin, internal::UIntMath<>::Next(begin, count), comparer);	//?
 	}
 };
 
