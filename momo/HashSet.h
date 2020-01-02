@@ -550,8 +550,13 @@ public:
 	{
 	}
 
-	HashSet(std::initializer_list<Item> items,
-		const HashTraits& hashTraits = HashTraits(), MemManager&& memManager = MemManager())
+	HashSet(std::initializer_list<Item> items)
+		: HashSet(items, HashTraits())
+	{
+	}
+
+	explicit HashSet(std::initializer_list<Item> items, const HashTraits& hashTraits,
+		MemManager&& memManager = MemManager())
 		: HashSet(hashTraits, std::move(memManager))
 	{
 		try
@@ -581,7 +586,7 @@ public:
 	{
 	}
 
-	HashSet(const HashSet& hashSet, MemManager&& memManager)
+	explicit HashSet(const HashSet& hashSet, MemManager&& memManager)
 		: HashSet(hashSet.GetHashTraits(), std::move(memManager))
 	{
 		mCount = hashSet.mCount;

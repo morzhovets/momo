@@ -517,8 +517,13 @@ public:
 	{
 	}
 
-	TreeSet(std::initializer_list<Item> items,
-		const TreeTraits& treeTraits = TreeTraits(), MemManager&& memManager = MemManager())
+	TreeSet(std::initializer_list<Item> items)
+		: TreeSet(items, TreeTraits())
+	{
+	}
+
+	explicit TreeSet(std::initializer_list<Item> items, const TreeTraits& treeTraits,
+		MemManager&& memManager = MemManager())
 		: TreeSet(treeTraits, std::move(memManager))
 	{
 		try
@@ -548,7 +553,7 @@ public:
 	{
 	}
 
-	TreeSet(const TreeSet& treeSet, MemManager&& memManager)
+	explicit TreeSet(const TreeSet& treeSet, MemManager&& memManager)
 		: TreeSet(treeSet.GetTreeTraits(), std::move(memManager))
 	{
 		try

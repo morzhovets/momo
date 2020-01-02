@@ -489,7 +489,12 @@ public:
 		pvFill(begin, end);
 	}
 
-	Array(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
+	Array(std::initializer_list<Item> items)
+		: Array(items.begin(), items.end())
+	{
+	}
+
+	explicit Array(std::initializer_list<Item> items, MemManager&& memManager)
 		: Array(items.begin(), items.end(), std::move(memManager))
 	{
 	}
@@ -499,13 +504,18 @@ public:
 	{
 	}
 
-	Array(const Array& array, bool shrink = true)
+	Array(const Array& array)
+		: Array(array, true)
+	{
+	}
+
+	explicit Array(const Array& array, bool shrink)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
 		pvFill(array.GetBegin(), array.GetEnd());
 	}
 
-	Array(const Array& array, MemManager&& memManager)
+	explicit Array(const Array& array, MemManager&& memManager)
 		: Array(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}

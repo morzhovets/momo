@@ -232,7 +232,12 @@ public:
 		}
 	}
 
-	SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager = MemManager())
+	SegmentedArray(std::initializer_list<Item> items)
+		: SegmentedArray(items.begin(), items.end())
+	{
+	}
+
+	explicit SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager)
 		: SegmentedArray(items.begin(), items.end(), std::move(memManager))
 	{
 	}
@@ -244,7 +249,12 @@ public:
 		array.mCount = 0;
 	}
 
-	SegmentedArray(const SegmentedArray& array, bool shrink = true)
+	SegmentedArray(const SegmentedArray& array)
+		: SegmentedArray(array, true)
+	{
+	}
+
+	explicit SegmentedArray(const SegmentedArray& array, bool shrink)
 		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
@@ -261,7 +271,7 @@ public:
 		}
 	}
 
-	SegmentedArray(const SegmentedArray& array, MemManager&& memManager)
+	explicit SegmentedArray(const SegmentedArray& array, MemManager&& memManager)
 		: SegmentedArray(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}

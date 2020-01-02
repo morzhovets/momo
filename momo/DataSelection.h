@@ -485,7 +485,7 @@ namespace internal
 		}
 
 		template<typename RowFilter>
-		DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
+		explicit DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
 			: VersionKeeper(selection),
 			mColumnList(selection.mColumnList),
 			mRaws(MemManager(selection.GetMemManager()))

@@ -216,7 +216,13 @@ public:
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	TreeMap(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits = TreeTraits(),
+	TreeMap(std::initializer_list<Pair> pairs)
+		: TreeMap(pairs, TreeTraits())
+	{
+	}
+
+	template<typename Pair = std::pair<Key, Value>>
+	explicit TreeMap(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits,
 		MemManager&& memManager = MemManager())
 		: TreeMap(treeTraits, std::move(memManager))
 	{
@@ -233,7 +239,7 @@ public:
 	{
 	}
 
-	TreeMap(const TreeMap& treeMap, MemManager&& memManager)
+	explicit TreeMap(const TreeMap& treeMap, MemManager&& memManager)
 		: mTreeSet(treeMap.mTreeSet, std::move(memManager))
 	{
 	}

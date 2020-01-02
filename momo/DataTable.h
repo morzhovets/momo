@@ -328,7 +328,7 @@ public:
 	}
 
 	template<typename RowFilter>
-	DataTable(const DataTable& table, const RowFilter& rowFilter)
+	explicit DataTable(const DataTable& table, const RowFilter& rowFilter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
 		mIndexes.Assign(table.mIndexes);

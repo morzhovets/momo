@@ -171,7 +171,7 @@ namespace internal
 
 		ArrayBucket(const ArrayBucket& bucket) = delete;
 
-		ArrayBucket(Params& params, const ArrayBucket& bucket)
+		explicit ArrayBucket(Params& params, const ArrayBucket& bucket)
 		{
 			MemManager& memManager = params.GetMemManager();
 			ConstBounds bounds = bucket.GetBounds();
