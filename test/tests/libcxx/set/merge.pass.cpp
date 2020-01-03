@@ -31,7 +31,16 @@ using momo::stdish::multiset;
 template <class Set>
 bool set_equal(const Set& set, Set other)
 {
-    return set == other;
+    if (set == other)
+    {
+        assert(!(set != other));
+        assert(!(set < other));
+        assert(!(set > other));
+        assert(set <= other);
+        assert(set >= other);
+        return true;
+    }
+    return false;
 }
 
 #ifndef TEST_HAS_NO_EXCEPTIONS

@@ -31,7 +31,16 @@ using momo::stdish::multimap;
 template <class Map>
 bool map_equal(const Map& map, Map other)
 {
-    return map == other;
+    if (map == other)
+    {
+        assert(!(map != other));
+        assert(!(map < other));
+        assert(!(map > other));
+        assert(map <= other);
+        assert(map >= other);
+        return true;
+    }
+    return false;
 }
 
 #ifndef TEST_HAS_NO_EXCEPTIONS
