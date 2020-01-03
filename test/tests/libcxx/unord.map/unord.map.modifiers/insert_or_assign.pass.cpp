@@ -110,21 +110,23 @@ void main()
             m.emplace ( i, Moveable(i, static_cast<double>(i)));
         assert(m.size() == 10);
 #ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
-        M::const_iterator it = m.find(2);
+        int k2 = 2;
+        M::const_iterator it = m.find(k2);
 
         Moveable mv1(3, 3.0);
-        r = m.insert_or_assign(it, 2, std::move(mv1));
+        r = m.insert_or_assign(it, k2, std::move(mv1));
         assert(m.size() == 10);
         assert(mv1.moved());           // was moved from
-        assert(r->first        == 2);  // key
+        assert(r->first        == k2); // key
         assert(r->second.get() == 3);  // value
 #endif
 
         Moveable mv2(5, 5.0);
-        r = m.insert_or_assign(/*it*/m.find(3), 3, std::move(mv2));
+        int k3 = 3;
+        r = m.insert_or_assign(/*it*/m.find(k3), k3, std::move(mv2));
         assert(m.size() == 11);
         assert(mv2.moved());           // was moved from
-        assert(r->first        == 3);  // key
+        assert(r->first        == k3); // key
         assert(r->second.get() == 5);  // value
     }
     { // iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
