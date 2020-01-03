@@ -47,8 +47,7 @@ void main()
         assert(r->second == Emplaceable(5, 6));
         assert(r == next(c.begin()));
 
-        r = c.emplace_hint(r, std::piecewise_construct, std::forward_as_tuple(3),
-                                                        std::forward_as_tuple(6, 7));
+        r = c.emplace_hint(r, 3, Emplaceable(6, 7));
         assert(c.size() == 3);
         assert(r->first == 3);
         assert(r->second == Emplaceable(6, 7));
@@ -63,6 +62,11 @@ void main()
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(r->second == Emplaceable(5, 6));
 #endif
+
+        r = c.emplace_hint(c.end());
+        assert(c.size() == 4);
+        assert(r->first == 0);
+        assert(r->second == Emplaceable());
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

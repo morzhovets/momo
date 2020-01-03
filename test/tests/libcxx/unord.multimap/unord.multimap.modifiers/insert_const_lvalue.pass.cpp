@@ -27,22 +27,26 @@ void main()
         typedef C::iterator R;
         typedef C::value_type P;
         C c;
-        R r = c.insert(P(3.5, 3));
+        P p33(3.5, 3);
+        R r = c.insert(p33);
         assert(c.size() == 1);
         assert(r->first == 3.5);
         assert(r->second == 3);
 
-        r = c.insert(P(3.5, 4));
+        P p34(3.5, 4);
+        r = c.insert(p34);
         assert(c.size() == 2);
         assert(r->first == 3.5);
         assert(r->second == 4);
 
-        r = c.insert(P(4.5, 4));
+        P p44(4.5, 4);
+        r = c.insert(p44);
         assert(c.size() == 3);
         assert(r->first == 4.5);
         assert(r->second == 4);
 
-        r = c.insert(P(5.5, 4));
+        P p54(5.5, 4);
+        r = c.insert(p54);
         assert(c.size() == 4);
         assert(r->first == 5.5);
         assert(r->second == 4);
