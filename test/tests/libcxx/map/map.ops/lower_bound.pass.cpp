@@ -321,6 +321,60 @@ void main()
     }
 
     {
+    typedef std::pair<const int, double> V;
+    typedef map<int, double, std::less <>> M;
+    typedef M::const_iterator R;
+
+    V ar[] =
+    {
+        V(5, 5),
+        V(7, 6),
+        V(9, 7),
+        V(11, 8),
+        V(13, 9),
+        V(15, 10),
+        V(17, 11),
+        V(19, 12)
+    };
+    const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+
+    R r = m.lower_bound(C2Int(5));
+    assert(r == m.begin());
+    r = m.lower_bound(C2Int(7));
+    assert(r == next(m.begin()));
+    r = m.lower_bound(C2Int(9));
+    assert(r == next(m.begin(), 2));
+    r = m.lower_bound(C2Int(11));
+    assert(r == next(m.begin(), 3));
+    r = m.lower_bound(C2Int(13));
+    assert(r == next(m.begin(), 4));
+    r = m.lower_bound(C2Int(15));
+    assert(r == next(m.begin(), 5));
+    r = m.lower_bound(C2Int(17));
+    assert(r == next(m.begin(), 6));
+    r = m.lower_bound(C2Int(19));
+    assert(r == next(m.begin(), 7));
+    r = m.lower_bound(C2Int(4));
+    assert(r == next(m.begin(), 0));
+    r = m.lower_bound(C2Int(6));
+    assert(r == next(m.begin(), 1));
+    r = m.lower_bound(C2Int(8));
+    assert(r == next(m.begin(), 2));
+    r = m.lower_bound(C2Int(10));
+    assert(r == next(m.begin(), 3));
+    r = m.lower_bound(C2Int(12));
+    assert(r == next(m.begin(), 4));
+    r = m.lower_bound(C2Int(14));
+    assert(r == next(m.begin(), 5));
+    r = m.lower_bound(C2Int(16));
+    assert(r == next(m.begin(), 6));
+    r = m.lower_bound(C2Int(18));
+    assert(r == next(m.begin(), 7));
+    r = m.lower_bound(C2Int(20));
+    assert(r == next(m.begin(), 8));
+    }
+
+    {
     typedef PrivateConstructor PC;
     typedef map<PC, double, std::less<>> M;
     typedef M::iterator R;

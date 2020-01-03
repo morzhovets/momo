@@ -225,6 +225,44 @@ void main()
     }
 
     {
+    typedef std::pair<const int, double> V;
+    typedef map<int, double, std::less<>> M;
+    typedef M::const_iterator R;
+
+    V ar[] =
+    {
+        V(5, 5),
+        V(6, 6),
+        V(7, 7),
+        V(8, 8),
+        V(9, 9),
+        V(10, 10),
+        V(11, 11),
+        V(12, 12)
+    };
+    const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+
+    R r = m.find(C2Int(5));
+    assert(r == m.begin());
+    r = m.find(C2Int(6));
+    assert(r == next(m.begin()));
+    r = m.find(C2Int(7));
+    assert(r == next(m.begin(), 2));
+    r = m.find(C2Int(8));
+    assert(r == next(m.begin(), 3));
+    r = m.find(C2Int(9));
+    assert(r == next(m.begin(), 4));
+    r = m.find(C2Int(10));
+    assert(r == next(m.begin(), 5));
+    r = m.find(C2Int(11));
+    assert(r == next(m.begin(), 6));
+    r = m.find(C2Int(12));
+    assert(r == next(m.begin(), 7));
+    r = m.find(C2Int(4));
+    assert(r == next(m.begin(), 8));
+    }
+
+    {
     typedef PrivateConstructor PC;
     typedef map<PC, double, std::less<>> M;
     typedef M::iterator R;
