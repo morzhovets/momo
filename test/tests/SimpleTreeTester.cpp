@@ -27,6 +27,94 @@
 class SimpleTreeTester
 {
 public:
+	static void TestStrAll()
+	{
+		std::cout << "momo::TreeSet: " << std::flush;
+		TestStrTreeSet();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::TreeMap: " << std::flush;
+		TestStrTreeMap();
+		std::cout << "ok" << std::endl;
+	}
+
+	static void TestStrTreeSet()
+	{
+		typedef momo::TreeSet<std::string> TreeSet;
+
+		std::string s1 = "s1";
+		std::string s2 = "s2";
+
+		TreeSet set = { s2, "s3" };
+		set.InsertVar(s1, "s1");
+
+		assert(set.GetCount() == 3);
+		assert(set.ContainsKey(s1));
+		assert(set.ContainsKey("s2"));
+
+		set.ResetKey(set.GetLowerBound("s1"), s1);
+		set.ResetKey(set.GetUpperBound(s1), "s2");
+
+		const auto es = set.Extract(set.Find("s1"));
+		assert(es.GetItem() == s1);
+
+		assert(set.GetCount() == 2);
+		assert(*set.GetBegin() == s2);
+		assert(*std::prev(set.GetEnd()) == "s3");
+
+		TreeSet set2;
+		set2 = set;
+		assert(std::equal(set.GetBegin(), set.GetEnd(), set2.GetBegin()));
+	}
+
+	static void TestStrTreeMap()
+	{
+		typedef momo::TreeMap<std::string, std::string> TreeMap;
+		typedef TreeMap::ConstIterator::Reference Reference;
+		auto pred = [] (Reference ref1, Reference ref2)
+			{ return ref1.key == ref2.key && ref1.value == ref2.value; };
+
+		std::string s1 = "s1";
+		std::string s2 = "s2";
+		std::string s3 = "s3";
+		std::string s4 = "s4";
+
+		TreeMap map = { { "s1", "s1" }, { "s2", s2 } };
+		map.InsertCrt("s3", [] (void* ptr) { ::new(ptr) std::string("s3"); });
+		map.InsertCrt(s4, [] (void* ptr) { ::new(ptr) std::string("s4"); });
+
+		map.Insert("s1", "s2");
+		map.Insert("s2", s3);
+		map.Insert(s3, "s4");
+		map.Insert(s4, s1);
+
+		map.ResetKey(map.GetLowerBound("s1"), s1);
+		map.ResetKey(map.GetUpperBound(s1), "s2");
+
+		assert(map.GetCount() == 4);
+		for (auto ref : map)
+			assert(ref.key == ref.value);
+
+		TreeMap map2;
+		map2 = map;
+
+		const auto ep = map.Extract(map.Find("s1"));
+		assert(ep.GetKey() == s1 && ep.GetValue() == s1);
+		assert(map.GetCount() == 3);
+
+		map.Insert(map2.GetBegin(), std::next(map2.GetBegin()));
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), pred));
+
+		map.Clear();
+		assert(map.IsEmpty());
+
+		map.Add(map.GetLowerBound("s1"), s1, s1);
+		map.Add(map.GetUpperBound("s2"), s2, "s2");
+		map.Add(map.GetLowerBound(s3), "s3", s3);
+		map.Add(map.GetUpperBound(s4), "s4", "s4");
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), pred));
+	}
+
 	static void TestCharAll()
 	{
 		std::mt19937 mt;
@@ -121,7 +209,12 @@ public:
 			for (unsigned char c : array)
 			{
 				sset.erase(c);
-				assert(mset.Remove(c));
+				auto iter = mset.Find(c);
+				assert(iter != mset.GetEnd());
+				if (c % 2 == 0)
+					mset.Remove(iter);
+				else
+					mset.Extract(iter);
 				assert(mset.GetCount() == sset.size());
 				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
 			}
@@ -132,96 +225,6 @@ public:
 		}
 
 		std::cout << "ok" << std::endl;
-	}
-
-	static void TestStrAll()
-	{
-		std::cout << "momo::TreeSet: " << std::flush;
-		TestStrTreeSet();
-		std::cout << "ok" << std::endl;
-
-		std::cout << "momo::TreeMap: " << std::flush;
-		TestStrTreeMap();
-		std::cout << "ok" << std::endl;
-	}
-
-	static void TestStrTreeSet()
-	{
-		typedef momo::TreeSet<std::string> TreeSet;
-		std::string s1 = "s1";
-		TreeSet set = { s1, "s2" };
-		set.Insert("s3");
-		set = set;
-		set = std::move(set);
-		assert(set.GetCount() == 3);
-		assert(set.ContainsKey("s2"));
-		TreeSet::ConstIterator iter = set.Find("s1");
-		assert(*iter == "s1");
-		auto es = set.Extract(iter);
-		assert(es.GetItem() == "s1");
-		set.Remove(set.Add(set.GetLowerBound(s1), std::move(es)), es);
-		assert(es.GetItem() == s1);
-		set.Insert(std::move(es));
-		assert(es.IsEmpty());
-		set.Remove(set.Find("s1"));
-		iter = set.Find("s1");
-		assert(iter == set.GetEnd());
-		set.Insert(&s1, &s1 + 1);
-		set.ResetKey(set.GetLowerBound("s1"), s1);
-		set.ResetKey(set.GetUpperBound(s1), "s2");
-		set.Remove("s2");
-		for (const std::string& s : set)
-			assert(s == "s1" || s == "s3");
-		set.Clear();
-		assert(set.IsEmpty());
-	}
-
-	static void TestStrTreeMap()
-	{
-		typedef momo::TreeMap<std::string, std::string> TreeMap;
-		std::string s1 = "s1";
-		std::string s2 = "s2";
-		std::string s3 = "s3";
-		std::string s4 = "s4";
-		std::string s5 = "s5";
-		TreeMap map = { {"s1", "s1"}, {"s2", s2} };
-		map.Insert(s3, "s3");
-		map.Insert(s4, s4);
-		map[s5] = "s5";
-		assert(static_cast<std::string>(map["s5"]) == s5);
-		map["s6"] = "s6";
-		map.ResetKey(map.GetLowerBound("s1"), s1);
-		map.ResetKey(map.GetUpperBound(s1), "s2");
-		map = map;
-		map = std::move(map);
-		assert(map.GetCount() == 6);
-		assert(map.ContainsKey(s2));
-		TreeMap::ConstIterator iter1 = map.Find(s1);
-		assert(iter1->key == s1 && iter1->value == s1);
-		map.Remove(s1);
-		TreeMap::Iterator iter2 = map.Find("s5");
-		assert(iter2->key == s5 && iter2->value == s5);
-		auto ep = map.Extract(iter2);
-		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
-		map.Remove(map.Add(map.GetLowerBound(s5), std::move(ep)), ep);
-		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
-		map.Insert(std::move(ep));
-		assert(ep.IsEmpty());
-		map.Remove(map.Find("s5"));
-		map.Remove(s3);
-		map.Remove("s4");
-		std::pair<std::string, std::string> pair("s4", s4);
-		map.Insert(&pair, &pair + 1);
-		map.Insert(map.Find(s2), std::next(map.Find(s2)));	//?
-		assert(map.GetCount() == 3);
-		map.Remove(s4);
-		for (auto ref : map)
-			assert(ref.value == "s2" || ref.value == "s6");
-		for (auto ref : static_cast<const TreeMap&>(map))
-			assert(ref.value == "s2" || ref.value == "s6");
-		assert(map.GetCount() == 2);
-		map.Clear();
-		assert(map.IsEmpty());
 	}
 };
 
