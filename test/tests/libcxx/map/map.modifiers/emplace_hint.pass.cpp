@@ -90,6 +90,18 @@ void main()
         assert(m.size() == 1);
         assert(m.begin()->first == 2);
         assert(m.begin()->second == 3.5);
+
+        r = m.emplace_hint(m.end(), 1, 3.5);
+        assert(r == m.begin());
+        assert(m.size() == 2);
+        assert(m.begin()->first == 1);
+        assert(m.begin()->second == 3.5);
+
+        r = m.emplace_hint(m.end());
+        assert(r == m.begin());
+        assert(m.size() == 3);
+        assert(m.begin()->first == 0);
+        assert(m.begin()->second == 0.0);
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

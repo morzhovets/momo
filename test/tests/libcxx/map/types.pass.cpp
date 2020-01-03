@@ -51,6 +51,9 @@ void main()
 #endif
     static_assert((std::is_same<C::size_type, std::size_t>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
+
+    C::value_compare value_comp = C().value_comp();
+    assert(value_comp(std::make_pair(0, 0.0), std::make_pair(1, 0.0)));
     }
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

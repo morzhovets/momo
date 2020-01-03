@@ -117,17 +117,19 @@ void main()
         M::const_iterator it = m.find(2);
 
         Moveable mv1(3, 3.0);
-        r = m.insert_or_assign(it, 2, std::move(mv1));
+        int k2 = 2;
+        r = m.insert_or_assign(it, k2, std::move(mv1));
         assert(m.size() == 10);
         assert(mv1.moved());           // was moved from
-        assert(r->first        == 2);  // key
+        assert(r->first        == k2); // key
         assert(r->second.get() == 3);  // value
 
         Moveable mv2(5, 5.0);
-        r = m.insert_or_assign(it, 3, std::move(mv2));
+        int k3 = 3;
+        r = m.insert_or_assign(it, k3, std::move(mv2));
         assert(m.size() == 11);
         assert(mv2.moved());           // was moved from
-        assert(r->first        == 3);  // key
+        assert(r->first        == k3); // key
         assert(r->second.get() == 5);  // value
     }
     { // iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
