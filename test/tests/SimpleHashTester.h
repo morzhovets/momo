@@ -27,9 +27,12 @@ private:
 		class HashTraits : public momo::HashTraits<TemplItem, HashBucket>
 		{
 		public:
-			size_t GetHashCode(const TemplItem& key) const
+			static const bool isFastNothrowHashable = std::is_same<HashBucket, momo::HashBucketOpen8>::value;	//?
+
+		public:
+			size_t GetHashCode(const TemplItem& /*key*/) const
 			{
-				return std::hash<unsigned char>()(key.GetValue());
+				return 42; //std::hash<unsigned char>()(key.GetValue());
 			}
 
 			bool IsEqual(const TemplItem& key1, const TemplItem& key2) const
@@ -65,35 +68,6 @@ private:
 	};
 
 public:
-	template<typename HashBucket, size_t size, size_t alignment>
-	static void TestTemplHashSet(const char* bucketName)
-	{
-		std::cout << bucketName << ": TemplItem<" << size << ", " << alignment << ">: " << std::flush;
-
-		static const size_t count = 256;
-		static unsigned char array[count];
-		for (size_t i = 0; i < count; ++i)
-			array[i] = static_cast<unsigned char>(i);
-
-		std::mt19937 mt;
-
-		typedef TemplItem<size, alignment> Item;
-		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>> HashSet;
-		HashSet set;
-
-		std::shuffle(array, array + count, mt);
-		for (unsigned char c : array)
-			assert(set.Insert(Item(c)).inserted);
-		assert(set.GetCount() == count);
-
-		std::shuffle(array, array + count, mt);
-		for (unsigned char c : array)
-			assert(set.Remove(Item(c)));
-		assert(set.IsEmpty());
-
-		std::cout << "ok" << std::endl;
-	}
-
 	template<typename HashBucket>
 	static void TestStrHash(const char* bucketName)
 	{
@@ -116,88 +90,84 @@ public:
 	static void TestStrHashSet()
 	{
 		typedef momo::HashSet<std::string, HashTraits> HashSet;
+
 		std::string s1 = "s1";
-		HashSet set = { s1, "s2" };
-		set.Insert("s3");
-		set = set;
-		set = std::move(set);
+		std::string s2 = "s2";
+		std::string s3 = "s3";
+
+		HashSet set;
+		set.InsertVar(s1, "s1");
+		set.Add(set.Find("s2"), s2);
+		set.Add(set.Find(s3), "s3");
+
+		set.ResetKey(set.Find(s2), "s2");
+		set.ResetKey(set.Find("s3"), s3);
+
 		assert(set.GetCount() == 3);
-		assert(set.ContainsKey("s2"));
-		typename HashSet::ConstIterator iter = set.Find("s1");
-		assert(*iter == "s1");
-		auto es = set.Extract(iter);
-		assert(es.GetItem() == "s1");
-		set.Remove(set.Add(set.Find(s1), std::move(es)), es);
+		assert(set.ContainsKey(s2));
+		assert(set.ContainsKey("s3"));
+
+		auto es = set.Extract(set.Find("s1"));
 		assert(es.GetItem() == s1);
-		set.Insert(std::move(es));
-		assert(es.IsEmpty());
-		set.Remove(set.Find("s1"));
-		iter = set.Find("s1");
-		assert(iter == set.GetEnd());
-		set.Insert(&s1, &s1 + 1);
-		set.ResetKey(set.Find("s1"), s1);
-		set.ResetKey(set.Find("s2"), "s2");
-		set.Remove("s2");
-		set.Reserve(100);
-		assert(set.GetCapacity() >= 100);
-		set.Shrink();
-		for (const std::string& s : set)
-			assert(s == "s1" || s == "s3");
-		set.Clear();
+
+		assert(set.GetCount() == 2);
+		set.Add(set.Find(s1), std::move(es));
+		assert(set.GetCount() == 3);
+
+		HashSet set2;
+		set2 = set;
+		assert(set.GetCount() == set2.GetCount());
+
+		set.Clear(false);
 		assert(set.IsEmpty());
+		assert(set.GetCapacity() >= 3);
+		set.Shrink();
+		assert(set.GetCapacity() == 0);
 	}
 
 	template<typename HashTraits>
 	static void TestStrHashMap()
 	{
 		typedef momo::HashMap<std::string, std::string, HashTraits> HashMap;
+
 		std::string s1 = "s1";
 		std::string s2 = "s2";
 		std::string s3 = "s3";
 		std::string s4 = "s4";
 		std::string s5 = "s5";
-		HashMap map = { {"s1", "s1"}, {"s2", s2} };
-		map.Insert(s3, "s3");
-		map.Insert(s4, s4);
-		map[s5] = "s5";
-		assert(static_cast<std::string>(map["s5"]) == s5);
-		map["s6"] = "s6";
-		map.ResetKey(map.Find("s1"), s1);
-		map.ResetKey(map.Find(s2), "s2");
-		map = map;
-		map = std::move(map);
-		assert(map.GetCount() == 6);
-		assert(map.ContainsKey(s2));
-		typename HashMap::ConstIterator iter1 = map.Find(s1);
-		assert(iter1->key == s1 && iter1->value == s1);
-		map.Remove(s1);
-		typename HashMap::Iterator iter2 = map.Find("s5");
-		assert(iter2->key == s5 && iter2->value == s5);
-		auto ep = map.Extract(iter2);
-		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
-		map.Remove(map.Add(map.Find(s5), std::move(ep)), ep);
-		assert(ep.GetKey() == s5 && ep.GetValue() == s5);
-		map.Insert(std::move(ep));
-		assert(ep.IsEmpty());
-		map.Remove(map.Find("s5"));
-		map.Remove(s3);
-		map.Remove("s4");
-		map.Reserve(100);
-		assert(map.GetCapacity() >= 100);
-		map.Shrink();
-		std::pair<std::string, std::string> pair("s4", s4);
-		map.Insert(&pair, &pair + 1);
-		typename HashMap::Iterator iter3 = map.Find(s2);
-		map.Insert(iter3, std::next(iter3));	//?
-		assert(map.GetCount() == 3);
-		map.Remove(s4);
+
+		HashMap map = { { "s1", s1 } };
+		map.Add(map.Find(s2), "s2", "s2");
+		map.Add(map.Find(s3), "s3", s3);
+		map.Add(map.Find("s4"), s4, "s4");
+		map.Add(map.Find("s5"), s5, s5);
+
+		map.Insert("s1", "s2");
+		map.Insert("s2", s3);
+		map.Insert(s3, "s4");
+		map.Insert(s4, s1);
+
+		map.ResetKey(map.Find(s5), "s5");
+
+		auto ep = map.Extract(map.Find(s1));
+		assert(ep.GetKey() == s1 && ep.GetValue() == s1);
+		assert(map.GetCount() == 4);
+
+		map.Add(map.Find("s1"), std::move(ep));
+		assert(map.GetCount() == 5);
+
 		for (auto ref : map)
-			assert(ref.value == "s2" || ref.value == "s6");
-		for (auto ref : static_cast<const HashMap&>(map))
-			assert(ref.value == "s2" || ref.value == "s6");
-		assert(map.GetCount() == 2);
-		map.Clear();
+			assert(ref.key == ref.value);
+
+		HashMap map2;
+		map2 = map;
+		assert(map.GetCount() == map2.GetCount());
+
+		map.Clear(false);
 		assert(map.IsEmpty());
+		assert(map.GetCapacity() >= 3);
+		map.Shrink();
+		assert(map.GetCapacity() == 0);
 	}
 
 	template<typename HashTraits>
@@ -247,5 +217,38 @@ public:
 		mmap.Clear();
 		assert(mmap.GetKeyCount() == 0);
 		assert(mmap.GetValueCount() == 0);
+	}
+
+	template<typename HashBucket, size_t size, size_t alignment>
+	static void TestTemplHashSet(const char* bucketName)
+	{
+		std::cout << bucketName << ": TemplItem<" << size << ", " << alignment << ">: " << std::flush;
+
+		static const size_t count = 256;
+		static unsigned char array[count];
+		for (size_t i = 0; i < count; ++i)
+			array[i] = static_cast<unsigned char>(i);
+
+		std::mt19937 mt;
+
+		typedef TemplItem<size, alignment> Item;
+		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>> HashSet;
+		HashSet set;
+
+		std::shuffle(array, array + count, mt);
+		for (unsigned char c : array)
+			assert(set.Insert(Item(c)).inserted);
+		assert(set.GetCount() == count);
+
+		std::shuffle(array, array + count, mt);
+		for (unsigned char c : array)
+		{
+			auto pos = set.Find(Item(c));
+			assert(!!pos);
+			set.Remove(set.Insert(set.Extract(pos)).iterator);
+		}
+		assert(set.IsEmpty());
+
+		std::cout << "ok" << std::endl;
 	}
 };
