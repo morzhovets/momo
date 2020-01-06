@@ -19,6 +19,13 @@
 class SimpleHashTester
 {
 private:
+	template<size_t tValueArrayMaxFastCount>
+	class HashMultiMapSettings : public momo::HashMultiMapSettings
+	{
+	public:
+		static const size_t valueArrayMaxFastCount = tValueArrayMaxFastCount;
+	};
+
 	template<size_t size, size_t alignment>
 	class TemplItem
 	{
@@ -82,7 +89,11 @@ public:
 		std::cout << "ok" << std::endl;
 
 		std::cout << bucketName << ": HashMultiMap: " << std::flush;
-		TestStrHashMultiMap<HashTraits>();
+		TestStrHashMultiMap<HashTraits, momo::HashMultiMapSettings>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << bucketName << ": HashMultiMap (1): " << std::flush;
+		TestStrHashMultiMap<HashTraits, HashMultiMapSettings<1>>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -165,58 +176,54 @@ public:
 
 		map.Clear(false);
 		assert(map.IsEmpty());
-		assert(map.GetCapacity() >= 3);
+		assert(map.GetCapacity() >= 5);
 		map.Shrink();
 		assert(map.GetCapacity() == 0);
 	}
 
-	template<typename HashTraits>
+	template<typename HashTraits, typename Settings>
 	static void TestStrHashMultiMap()
 	{
-		typedef momo::HashMultiMap<std::string, std::string, HashTraits> HashMultiMap;
+		typedef momo::HashMultiMap<std::string, std::string, HashTraits, momo::MemManagerDefault,
+			momo::HashMultiMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault>,
+			Settings> HashMultiMap;
+
 		std::string k1 = "k1";
-		std::string v1 = "v1";
 		std::string k2 = "k2";
-		std::string v2 = "v2";
 		std::string k3 = "k3";
+		std::string v1 = "v1";
+		std::string v2 = "v2";
 		std::string v3 = "v3";
-		HashMultiMap mmap = { {"k1", "v1"}, {k1, "v2"} };
-		mmap.Add("k2", v1);
-		mmap.Add(k2, v2);
-		mmap.Add(mmap.InsertKey(k3), "v3");
-		mmap.Add(mmap.InsertKey("k3"), v3);
-		mmap.ResetKey(mmap.Find("k1"), k1);
-		mmap.ResetKey(mmap.Find(k2), "k2");
-		mmap = mmap;
-		mmap = std::move(mmap);
+
+		HashMultiMap mmap = { { "k1", "v1" }, { k1, "v2" } };
+		mmap.Add("k2", "v1");
+		mmap.Add("k2", v2);
+		mmap.Add(k1, v3);
+		mmap.Add(mmap.Find(k1), "v3");
+		mmap.Add(mmap.Find("k2"), v3);
+
+		mmap.InsertKey("k3");
 		assert(mmap.GetKeyCount() == 3);
-		assert(mmap.GetValueCount() == 6);
-		assert(mmap.ContainsKey(k2));
-		mmap.RemoveKey(k1);
-		auto keyIter = mmap.Find(k2);
-		mmap.Remove(keyIter, 0);
-		assert(keyIter->GetCount() == 1);
-		for (const std::string& v : *keyIter)
-			assert(v == v2);
-		for (auto ref : mmap.GetKeyBounds())
-			assert(ref.key == k2 || ref.key == k3);
-		for (auto ref : (static_cast<const HashMultiMap&>(mmap)).GetKeyBounds())
-			assert(ref.key == k2 || ref.key == k3);
-		mmap.RemoveValues(keyIter);
-		mmap.RemoveKey(keyIter);
-		mmap.Shrink();
-		std::pair<std::string, std::string> pair("k3", v3);
-		mmap.Add(&pair, &pair + 1);
-		mmap.Add(mmap.GetBegin(), mmap.GetBegin());	//?
-		for (auto ref : mmap)
-			assert(ref.key == "k3");
-		for (auto ref : static_cast<const HashMultiMap&>(mmap))
-			assert(ref.value == "v3");
-		assert(mmap.GetKeyCount() == 1);
-		assert(mmap.GetValueCount() == 3);
-		mmap.Clear();
-		assert(mmap.GetKeyCount() == 0);
-		assert(mmap.GetValueCount() == 0);
+		assert(mmap.InsertKey(k3) == mmap.Find(k3));
+
+		mmap.ResetKey(mmap.Find(k3), "k3");
+
+		assert(mmap.Remove(mmap.Find(k1), 2)->value == v3);
+		
+		auto f1 = mmap.Find(k1);
+		auto f2 = mmap.Find(k2);
+		auto f3 = mmap.Find(k3);
+		assert(std::equal(f1->GetBegin(), f1->GetEnd(), f2->GetBegin()));
+		assert(f1->GetCount() == 3);
+		assert(f3->GetCount() == 0);
+
+		mmap.RemoveValues(mmap.Find(k1));
+		assert(mmap.Find(k1)->GetCount() == 0);
+
+		HashMultiMap mmap2;
+		mmap2 = mmap;
+		mmap2.Shrink();
+		assert(mmap.GetKeyCount() == mmap2.GetKeyCount() && mmap.GetValueCount() == mmap2.GetValueCount());
 	}
 
 	template<typename HashBucket, size_t size, size_t alignment>
