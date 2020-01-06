@@ -51,9 +51,9 @@ void main()
         ASSERT_SAME_TYPE(C::reference, decltype(c.front()));
         ASSERT_SAME_TYPE(C::reference, decltype(c.back()));
         for (int i = 0; i < 10; ++i)
-            assert(c[i] == i);
+            assert(c[static_cast<size_t>(i)] == i);
         for (int i = 0; i < 10; ++i)
-            assert(c.at(i) == i);
+            assert(c.at(static_cast<size_t>(i)) == i);
         assert(c.front() == 0);
         assert(c.back() == 9);
     }
@@ -70,9 +70,9 @@ void main()
         ASSERT_SAME_TYPE(C::const_reference, decltype(c.front()));
         ASSERT_SAME_TYPE(C::const_reference, decltype(c.back()));
         for (int i = 0; i < 10; ++i)
-            assert(c[i] == N + i);
+            assert(c[static_cast<size_t>(i)] == N + i);
         for (int i = 0; i < 10; ++i)
-            assert(c.at(i) == N + i);
+            assert(c.at(static_cast<size_t>(i)) == N + i);
         assert(c.front() == N);
         assert(c.back() == N + 9);
     }
