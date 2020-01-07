@@ -33,11 +33,11 @@
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
-	name(uint64_t{offsetof(Struct, name)})
+	name(uint64_t{offsetof(Struct, name)}, #name)
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
 	MOMO_STATIC_ASSERT(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
-	constexpr momo::DataColumn<Type, Tag> name(momo::internal::StrHasher::GetHashCode64(#name))
+	constexpr momo::DataColumn<Type, Tag> name(momo::internal::StrHasher::GetHashCode64(#name), #name)
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault, Type, name)
@@ -130,14 +130,20 @@ public:
 	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
 
 public:
-	constexpr explicit DataColumn(uint64_t code) noexcept
-		: mCode(code)
+	constexpr explicit DataColumn(uint64_t code, const char* name = "") noexcept
+		: mCode(code),
+		mName(name)
 	{
 	}
 
 	constexpr uint64_t GetCode() const noexcept
 	{
 		return mCode;
+	}
+
+	constexpr const char* GetName() const noexcept
+	{
+		return mName;
 	}
 
 	Equaler operator==(const Item& item) const noexcept
@@ -153,6 +159,7 @@ public:
 
 private:
 	uint64_t mCode;
+	const char* mName;
 };
 
 template<bool tKeepRowNumber = true>
