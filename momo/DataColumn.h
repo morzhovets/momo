@@ -15,6 +15,7 @@
     enum class DataOperatorType
     class DataOperator
     class DataColumn
+    struct DataColumnRecord
     class DataSettings
     struct DataStructDefault
     class DataColumnTraits
@@ -30,6 +31,7 @@
 #include "HashSet.h"
 
 #include <bitset>
+#include <typeinfo>
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
@@ -40,7 +42,7 @@
 	constexpr momo::DataColumn<Type, Tag> name(momo::internal::StrHasher::GetHashCode64(#name), #name)
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
-	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault, Type, name)
+	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault<>, Type, name)
 
 namespace momo
 {
@@ -60,6 +62,19 @@ namespace internal
 			return (*str == '\0') ? fnvBasis64
 				: (GetHashCode64(str + 1) ^ uint64_t{static_cast<unsigned char>(*str)}) * fnvPrime64;
 		}
+	};
+
+	template<typename Struct,
+		typename = void>
+	struct DataVisitedItemsGetter
+	{
+		typedef std::tuple<> VisitedItemsTuple;
+	};
+
+	template<typename Struct>
+	struct DataVisitedItemsGetter<Struct, Void<typename Struct::VisitedItemsTuple>>
+	{
+		typedef typename Struct::VisitedItemsTuple VisitedItemsTuple;
 	};
 }
 
@@ -162,6 +177,13 @@ private:
 	const char* mName;
 };
 
+struct DataColumnRecord
+{
+	const std::type_info& type;
+	const char* name;
+	size_t offset;
+};
+
 template<bool tKeepRowNumber = true>
 class DataSettings
 {
@@ -176,11 +198,13 @@ public:
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
 };
 
+template<typename... TVisitedItems>
 struct DataStructDefault
 {
+	typedef std::tuple<TVisitedItems...> VisitedItemsTuple;
 };
 
-template<typename TStruct = DataStructDefault>
+template<typename TStruct = DataStructDefault<>>
 class DataColumnTraits
 {
 public:
@@ -199,11 +223,19 @@ public:
 
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
+	typedef typename internal::DataVisitedItemsGetter<Struct>::VisitedItemsTuple VisitedItemsTuple;
+
 public:
 	template<typename Item>
 	static ColumnCode GetColumnCode(const Column<Item>& column) noexcept
 	{
 		return column.GetCode();
+	}
+
+	template<typename Item>
+	static const char* GetColumnName(const Column<Item>& column) noexcept
+	{
+		return column.GetName();
 	}
 
 	static std::pair<size_t, size_t> GetVertices(ColumnCode code, size_t codeParam) noexcept
@@ -381,8 +413,9 @@ private:
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
-		uint8_t, MemManagerPtr> MutableOffsets;
+	typedef DataColumnRecord ColumnRec;
+
+	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManagerPtr> ColumnRecs;
 
 	typedef std::function<void(MemManager&, size_t, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, size_t, Raw*)> DestroyFunc;
@@ -398,14 +431,44 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, FuncRec, MemManagerPtr> FuncRecs;	//?
 
+	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
+		uint8_t, MemManagerPtr> MutableOffsets;
+
+	typedef typename ColumnTraits::VisitedItemsTuple VisitedItemsTuple;
+
+	template<typename RefVisitor>
+	class PtrVisitor
+	{
+	public:
+		explicit PtrVisitor(const RefVisitor& refVisitor) noexcept
+			: mRefVisitor(refVisitor)
+		{
+		}
+
+		void operator()(const void* /*item*/, const char* /*columnName*/) const
+		{
+			throw std::runtime_error("Visit unknown type");
+		}
+
+		template<typename Item>
+		void operator()(const Item* item, const char* columnName) const
+		{
+			mRefVisitor(*item, columnName);
+		}
+
+	private:
+		const RefVisitor& mRefVisitor;
+	};
+
 public:
 	explicit DataColumnList(MemManager&& memManager = MemManager())
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
-		mMutableOffsets(MemManagerPtr(GetMemManager())),
-		mFuncRecs(MemManagerPtr(GetMemManager()))
+		mFuncRecs(MemManagerPtr(GetMemManager())),
+		mColumnRecs(MemManagerPtr(GetMemManager())),
+		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
 		std::fill(mAddends.begin(), mAddends.end(), 0);
 	}
@@ -423,8 +486,9 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
-		mMutableOffsets(std::move(columnList.mMutableOffsets)),
-		mFuncRecs(std::move(columnList.mFuncRecs))
+		mFuncRecs(std::move(columnList.mFuncRecs)),
+		mColumnRecs(std::move(columnList.mColumnRecs)),
+		mMutableOffsets(std::move(columnList.mMutableOffsets))
 	{
 	}
 
@@ -434,8 +498,9 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(columnList.mColumnCodeSet),
-		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager())),
-		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager()))
+		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager())),
+		mColumnRecs(columnList.mColumnRecs, MemManagerPtr(GetMemManager())),
+		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager()))
 	{
 	}
 
@@ -490,6 +555,7 @@ public:
 		funcRec.copyFunc = [] (MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
 			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
+		mColumnRecs.Reserve(mColumnRecs.GetCount() + columnCount);
 		mFuncRecs.Reserve(mFuncRecs.GetCount() + 1);
 		try
 		{
@@ -506,6 +572,7 @@ public:
 		mAddends = addends;
 		mTotalSize = offset;
 		mAlignment = alignment;
+		pvAddColumnRecs(column, columns...);
 		mFuncRecs.AddBackNogrow(std::move(funcRec));
 	}
 
@@ -644,6 +711,22 @@ public:
 		return mColumnCodeSet.ContainsKey(code);
 	}
 
+	template<typename PtrVisitor>
+	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	{
+		for (const auto& columnRec : mColumnRecs)
+		{
+			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
+			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
+		}
+	}
+
+	template<typename RefVisitor>
+	void VisitItemReferences(const Raw* raw, const RefVisitor& refVisitor) const
+	{
+		VisitItemPointers(raw, PtrVisitor(refVisitor));
+	}
+
 private:
 	template<typename... Items>
 	bool pvFillAddends(Addends& addends, size_t& offset, size_t& alignment, size_t codeParam,
@@ -694,6 +777,19 @@ private:
 	}
 
 	template<typename Item, typename... Items>
+	void pvAddColumnRecs(const Column<Item>& column, const Column<Items>&... columns) noexcept
+	{
+		size_t offset = pvGetOffset(ColumnTraits::GetColumnCode(column));
+		const char* columnName = ColumnTraits::GetColumnName(column);
+		mColumnRecs.AddBackNogrow(ColumnRec{ typeid(Item), columnName, offset });
+		pvAddColumnRecs(columns...);
+	}
+
+	void pvAddColumnRecs() noexcept
+	{
+	}
+
+	template<typename Item, typename... Items>
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		size_t offset = GetOffset(column);
@@ -705,7 +801,7 @@ private:
 	{
 	}
 
-	size_t pvGetOffset(ColumnCode code) const
+	size_t pvGetOffset(ColumnCode code) const noexcept
 	{
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
@@ -780,14 +876,35 @@ private:
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
 	}
 
+	template<size_t index, typename PtrVisitor>
+	internal::EnableIf<(index < std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
+		const char* columnName) const
+	{
+		typedef typename std::tuple_element<index, VisitedItemsTuple>::type Item;
+		if (typeid(Item) == type)
+			ptrVisitor(static_cast<const Item*>(item), columnName);
+		else
+			pvVisitItem<index + 1>(item, ptrVisitor, type, columnName);
+	}
+
+	template<size_t index, typename PtrVisitor>
+	internal::EnableIf<(index == std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
+		const char* columnName) const
+	{
+		ptrVisitor(item, columnName);
+	}
+
 private:
 	size_t mCodeParam;
 	Addends mAddends;
 	size_t mTotalSize;
 	size_t mAlignment;
 	ColumnCodeSet mColumnCodeSet;
-	MutableOffsets mMutableOffsets;
+	ColumnRecs mColumnRecs;
 	FuncRecs mFuncRecs;
+	MutableOffsets mMutableOffsets;
 };
 
 template<typename TStruct,
