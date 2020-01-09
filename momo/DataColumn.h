@@ -442,8 +442,8 @@ public:
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
-		mFuncRecs(MemManagerPtr(GetMemManager())),
 		mColumnRecs(MemManagerPtr(GetMemManager())),
+		mFuncRecs(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
 		std::fill(mAddends.begin(), mAddends.end(), 0);
@@ -462,8 +462,8 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
-		mFuncRecs(std::move(columnList.mFuncRecs)),
 		mColumnRecs(std::move(columnList.mColumnRecs)),
+		mFuncRecs(std::move(columnList.mFuncRecs)),
 		mMutableOffsets(std::move(columnList.mMutableOffsets))
 	{
 	}
@@ -474,8 +474,8 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(columnList.mColumnCodeSet),
-		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager())),
 		mColumnRecs(columnList.mColumnRecs, MemManagerPtr(GetMemManager())),
+		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager())),
 		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager()))
 	{
 	}

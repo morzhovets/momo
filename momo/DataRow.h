@@ -152,7 +152,7 @@ namespace internal
 		template<typename RefVisitor>
 		void VisitItemReferences(const RefVisitor& refVisitor) const
 		{
-			VisitItemPointers(DataPtrVisitor(refVisitor));
+			VisitItemPointers(DataPtrVisitor<RefVisitor>(refVisitor));
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -258,7 +258,7 @@ namespace internal
 		template<typename RefVisitor>
 		void VisitItemReferences(const RefVisitor& refVisitor) const
 		{
-			VisitItemPointers(DataPtrVisitor(refVisitor));
+			VisitItemPointers(DataPtrVisitor<RefVisitor>(refVisitor));
 		}
 
 		const Raw* GetRaw() const
