@@ -19,6 +19,30 @@ namespace momo
 
 namespace internal
 {
+	template<typename RefVisitor>
+	class DataPtrVisitor
+	{
+	public:
+		explicit DataPtrVisitor(const RefVisitor& refVisitor) noexcept
+			: mRefVisitor(refVisitor)
+		{
+		}
+
+		void operator()(const void* /*item*/, const char* /*columnName*/) const
+		{
+			throw std::runtime_error("Visit unknown type");
+		}
+
+		template<typename Item>
+		void operator()(const Item* item, const char* columnName) const
+		{
+			mRefVisitor(*item, columnName);
+		}
+
+	private:
+		const RefVisitor& mRefVisitor;
+	};
+
 	template<typename TColumnList>
 	class DataRow
 	{
@@ -119,6 +143,18 @@ namespace internal
 			return Get(column);
 		}
 
+		template<typename PtrVisitor>
+		void VisitItemPointers(const PtrVisitor& ptrVisitor) const
+		{
+			mColumnList->VisitItemPointers(mRaw, ptrVisitor);
+		}
+
+		template<typename RefVisitor>
+		void VisitItemReferences(const RefVisitor& refVisitor) const
+		{
+			VisitItemPointers(DataPtrVisitor(refVisitor));
+		}
+
 		const Raw* GetRaw() const noexcept
 		{
 			return mRaw;
@@ -211,6 +247,18 @@ namespace internal
 		size_t GetNumber() const
 		{
 			return mColumnList->GetNumber(GetRaw());
+		}
+
+		template<typename PtrVisitor>
+		void VisitItemPointers(const PtrVisitor& ptrVisitor) const
+		{
+			mColumnList->VisitItemPointers(GetRaw(), ptrVisitor);
+		}
+
+		template<typename RefVisitor>
+		void VisitItemReferences(const RefVisitor& refVisitor) const
+		{
+			VisitItemPointers(DataPtrVisitor(refVisitor));
 		}
 
 		const Raw* GetRaw() const

@@ -436,30 +436,6 @@ private:
 
 	typedef typename ColumnTraits::VisitedItemsTuple VisitedItemsTuple;
 
-	template<typename RefVisitor>
-	class PtrVisitor
-	{
-	public:
-		explicit PtrVisitor(const RefVisitor& refVisitor) noexcept
-			: mRefVisitor(refVisitor)
-		{
-		}
-
-		void operator()(const void* /*item*/, const char* /*columnName*/) const
-		{
-			throw std::runtime_error("Visit unknown type");
-		}
-
-		template<typename Item>
-		void operator()(const Item* item, const char* columnName) const
-		{
-			mRefVisitor(*item, columnName);
-		}
-
-	private:
-		const RefVisitor& mRefVisitor;
-	};
-
 public:
 	explicit DataColumnList(MemManager&& memManager = MemManager())
 		: mCodeParam(0),
@@ -721,12 +697,6 @@ public:
 		}
 	}
 
-	template<typename RefVisitor>
-	void VisitItemReferences(const Raw* raw, const RefVisitor& refVisitor) const
-	{
-		VisitItemPointers(raw, PtrVisitor(refVisitor));
-	}
-
 private:
 	template<typename... Items>
 	bool pvFillAddends(Addends& addends, size_t& offset, size_t& alignment, size_t codeParam,
@@ -927,22 +897,27 @@ public:
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
 
+	typedef DataColumnRecord ColumnRec;
+	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManager> ColumnRecs;
+
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
+
+	typedef typename internal::DataVisitedItemsGetter<Struct>::VisitedItemsTuple VisitedItemsTuple;
 
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
-		: mMemManager(std::move(memManager))
+		: mColumnRecs(std::move(memManager))
 	{
 	}
 
 	DataColumnListStatic(DataColumnListStatic&& columnList) noexcept
-		: mMemManager(std::move(columnList.mMemManager)),
+		: mColumnRecs(std::move(columnList.mColumnRecs)),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
 
 	DataColumnListStatic(const DataColumnListStatic& columnList)
-		: mMemManager(columnList.mMemManager),
+		: mColumnRecs(columnList.mColumnRecs),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
@@ -955,12 +930,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mMemManager;
+		return mColumnRecs.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mMemManager;
+		return mColumnRecs.GetMemManager();
 	}
 
 	template<typename... Items>
@@ -1002,7 +977,7 @@ public:
 
 	void CreateRaw(Raw* raw)
 	{
-		(typename RawManager::template Creator<>(mMemManager))(raw);
+		(typename RawManager::template Creator<>(GetMemManager()))(raw);
 	}
 
 	void DestroyRaw(Raw* raw) const noexcept
@@ -1012,12 +987,12 @@ public:
 
 	void DestroyRaw(Raw* raw) noexcept
 	{
-		RawManager::Destroy(mMemManager, *raw);
+		RawManager::Destroy(GetMemManager(), *raw);
 	}
 
 	void CopyRaw(const Raw* srcRaw, Raw* dstRaw)
 	{
-		RawManager::Copy(mMemManager, *srcRaw, dstRaw);
+		RawManager::Copy(GetMemManager(), *srcRaw, dstRaw);
 	}
 
 	template<typename Item, bool extraCheck = true>
@@ -1059,6 +1034,27 @@ public:
 		return true;
 	}
 
+	template<typename Item, typename... Items>
+	void PrepareForVisitors(const Column<Item>& column, const Column<Items>&... columns)
+	{
+		static const size_t columnCount = 1 + sizeof...(columns);
+		mColumnRecs.Reserve(columnCount);
+		mColumnRecs.Clear(false);
+		pvAddColumnRecs(column, columns...);
+	}
+
+	template<typename PtrVisitor>
+	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	{
+		if (mColumnRecs.IsEmpty())
+			throw std::runtime_error("Not prepared for visitors");
+		for (const auto& columnRec : mColumnRecs)
+		{
+			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
+			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
+		}
+	}
+
 private:
 	template<typename Item, typename... Items>
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
@@ -1077,8 +1073,39 @@ private:
 		return internal::UIntMath<>::Ceil(sizeof(Struct), internal::AlignmentOf<size_t>::value);
 	}
 
+	template<typename Item, typename... Items>
+	void pvAddColumnRecs(const Column<Item>& column, const Column<Items>&... columns) noexcept
+	{
+		mColumnRecs.AddBackNogrow(ColumnRec{ typeid(Item), column.GetName(), GetOffset(column) });
+		pvAddColumnRecs(columns...);
+	}
+
+	void pvAddColumnRecs() noexcept
+	{
+	}
+
+	template<size_t index, typename PtrVisitor>
+	internal::EnableIf<(index < std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
+		const char* columnName) const
+	{
+		typedef typename std::tuple_element<index, VisitedItemsTuple>::type Item;
+		if (typeid(Item) == type)
+			ptrVisitor(static_cast<const Item*>(item), columnName);
+		else
+			pvVisitItem<index + 1>(item, ptrVisitor, type, columnName);
+	}
+
+	template<size_t index, typename PtrVisitor>
+	internal::EnableIf<(index == std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
+		const char* columnName) const
+	{
+		ptrVisitor(item, columnName);
+	}
+
 private:
-	MemManager mMemManager;
+	ColumnRecs mColumnRecs;
 	MutableOffsets mMutableOffsets;
 };
 
