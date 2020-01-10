@@ -420,7 +420,7 @@ private:
 	typedef std::function<void(MemManager*, size_t, Raw*)> DestroyFunc;
 	typedef std::function<void(MemManager&, size_t, const Raw*, Raw*)> CopyFunc;
 
-	struct FuncRec
+	struct FuncRecord
 	{
 		size_t offset;
 		CreateFunc createFunc;
@@ -428,7 +428,7 @@ private:
 		CopyFunc copyFunc;
 	};
 
-	typedef internal::NestedArrayIntCap<0, FuncRec, MemManagerPtr> FuncRecs;	//?
+	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
 	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
 		uint8_t, MemManagerPtr> MutableOffsets;
@@ -446,7 +446,7 @@ public:
 		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
 		mColumnRecords(MemManagerPtr(GetMemManager())),
-		mFuncRecs(MemManagerPtr(GetMemManager())),
+		mFuncRecords(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
 		std::fill(mAddends.begin(), mAddends.end(), 0);
@@ -466,7 +466,7 @@ public:
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
 		mColumnRecords(std::move(columnList.mColumnRecords)),
-		mFuncRecs(std::move(columnList.mFuncRecs)),
+		mFuncRecords(std::move(columnList.mFuncRecords)),
 		mMutableOffsets(std::move(columnList.mMutableOffsets))
 	{
 	}
@@ -478,7 +478,7 @@ public:
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(columnList.mColumnCodeSet),
 		mColumnRecords(columnList.mColumnRecords, MemManagerPtr(GetMemManager())),
-		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager())),
+		mFuncRecords(columnList.mFuncRecords, MemManagerPtr(GetMemManager())),
 		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager()))
 	{
 	}
@@ -542,7 +542,7 @@ public:
 			if (codeParam > maxCodeParam)
 				throw std::runtime_error("Cannot add columns");
 		}
-		FuncRec funcRec;
+		FuncRecord funcRec;
 		funcRec.offset = mTotalSize;
 		funcRec.createFunc = [] (MemManager& memManager, size_t offset, Raw* raw)
 			{ pvCreate<void, Item, Items...>(memManager, offset, raw); };
@@ -552,7 +552,7 @@ public:
 			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
 		mColumnRecords.Reserve(mColumnRecords.GetCount() + columnCount);
-		mFuncRecs.Reserve(mFuncRecs.GetCount() + 1);
+		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		try
 		{
 			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
@@ -569,7 +569,7 @@ public:
 		mTotalSize = offset;
 		mAlignment = alignment;
 		pvAddColumnRecords(column, columns...);
-		mFuncRecs.AddBackNogrow(std::move(funcRec));
+		mFuncRecords.AddBackNogrow(std::move(funcRec));
 	}
 
 	template<typename... Items>
@@ -605,10 +605,10 @@ public:
 		size_t funcIndex = 0;
 		try
 		{
-			size_t funcCount = mFuncRecs.GetCount();
+			size_t funcCount = mFuncRecords.GetCount();
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
-				const FuncRec& funcRec = mFuncRecs[funcIndex];
+				const FuncRecord& funcRec = mFuncRecords[funcIndex];
 				funcRec.createFunc(memManager, funcRec.offset, raw);
 			}
 		}
@@ -616,7 +616,7 @@ public:
 		{
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
-				const FuncRec& funcRec = mFuncRecs[i];
+				const FuncRecord& funcRec = mFuncRecords[i];
 				funcRec.destroyFunc(&memManager, funcRec.offset, raw);
 			}
 			throw;
@@ -625,14 +625,14 @@ public:
 
 	void DestroyRaw(Raw* raw) const noexcept
 	{
-		for (const auto& funcRec : mFuncRecs)
+		for (const auto& funcRec : mFuncRecords)
 			funcRec.destroyFunc(nullptr, funcRec.offset, raw);
 	}
 
 	void DestroyRaw(Raw* raw) noexcept
 	{
 		MemManager& memManager = GetMemManager();
-		for (const auto& funcRec : mFuncRecs)
+		for (const auto& funcRec : mFuncRecords)
 			funcRec.destroyFunc(&memManager, funcRec.offset, raw);
 	}
 
@@ -642,10 +642,10 @@ public:
 		size_t funcIndex = 0;
 		try
 		{
-			size_t funcCount = mFuncRecs.GetCount();
+			size_t funcCount = mFuncRecords.GetCount();
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
-				const FuncRec& funcRec = mFuncRecs[funcIndex];
+				const FuncRecord& funcRec = mFuncRecords[funcIndex];
 				funcRec.copyFunc(memManager, funcRec.offset, srcRaw, dstRaw);
 			}
 		}
@@ -653,7 +653,7 @@ public:
 		{
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
-				const FuncRec& funcRec = mFuncRecs[i];
+				const FuncRecord& funcRec = mFuncRecords[i];
 				funcRec.destroyFunc(&memManager, funcRec.offset, dstRaw);
 			}
 			throw;
@@ -893,7 +893,7 @@ private:
 	size_t mAlignment;
 	ColumnCodeSet mColumnCodeSet;
 	ColumnRecords mColumnRecords;
-	FuncRecs mFuncRecs;
+	FuncRecords mFuncRecords;
 	MutableOffsets mMutableOffsets;
 };
 
