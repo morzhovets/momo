@@ -313,9 +313,9 @@ public:
 	template<typename Item>
 	using Column = typename ColumnTraits::template Column<Item>;
 
-	typedef void Raw;
+	typedef internal::DataColumnRecord ColumnRecord;
 
-	typedef internal::DataColumnRecord ColumnRec;
+	typedef void Raw;
 
 private:
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
@@ -414,7 +414,7 @@ private:
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManagerPtr> ColumnRecs;
+	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> ColumnRecords;
 
 	typedef std::function<void(MemManager&, size_t, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, size_t, Raw*)> DestroyFunc;
@@ -436,7 +436,7 @@ private:
 	typedef typename ColumnTraits::VisitedItemsTuple VisitedItemsTuple;
 
 public:
-	typedef typename ColumnRecs::ConstIterator ConstIterator;
+	typedef typename ColumnRecords::ConstIterator ConstIterator;
 	typedef ConstIterator Iterator;
 
 public:
@@ -445,7 +445,7 @@ public:
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
-		mColumnRecs(MemManagerPtr(GetMemManager())),
+		mColumnRecords(MemManagerPtr(GetMemManager())),
 		mFuncRecs(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
@@ -465,7 +465,7 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
-		mColumnRecs(std::move(columnList.mColumnRecs)),
+		mColumnRecords(std::move(columnList.mColumnRecords)),
 		mFuncRecs(std::move(columnList.mFuncRecs)),
 		mMutableOffsets(std::move(columnList.mMutableOffsets))
 	{
@@ -477,7 +477,7 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(columnList.mColumnCodeSet),
-		mColumnRecs(columnList.mColumnRecs, MemManagerPtr(GetMemManager())),
+		mColumnRecords(columnList.mColumnRecords, MemManagerPtr(GetMemManager())),
 		mFuncRecs(columnList.mFuncRecs, MemManagerPtr(GetMemManager())),
 		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager()))
 	{
@@ -491,12 +491,12 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return mColumnRecs.GetBegin();
+		return mColumnRecords.GetBegin();
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return mColumnRecs.GetEnd();
+		return mColumnRecords.GetEnd();
 	}
 
 	MOMO_FRIENDS_BEGIN_END(const DataColumnList&, ConstIterator)
@@ -513,7 +513,7 @@ public:
 
 	size_t GetCount() const noexcept
 	{
-		return mColumnRecs.GetCount();
+		return mColumnRecords.GetCount();
 	}
 
 	template<typename Item, typename... Items>
@@ -551,7 +551,7 @@ public:
 		funcRec.copyFunc = [] (MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
 			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
-		mColumnRecs.Reserve(mColumnRecs.GetCount() + columnCount);
+		mColumnRecords.Reserve(mColumnRecords.GetCount() + columnCount);
 		mFuncRecs.Reserve(mFuncRecs.GetCount() + 1);
 		try
 		{
@@ -568,7 +568,7 @@ public:
 		mAddends = addends;
 		mTotalSize = offset;
 		mAlignment = alignment;
-		pvAddColumnRecs(column, columns...);
+		pvAddColumnRecords(column, columns...);
 		mFuncRecs.AddBackNogrow(std::move(funcRec));
 	}
 
@@ -710,7 +710,7 @@ public:
 	template<typename PtrVisitor>
 	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		for (const auto& columnRec : mColumnRecs)
+		for (const auto& columnRec : mColumnRecords)
 		{
 			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
 			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
@@ -767,15 +767,15 @@ private:
 	}
 
 	template<typename Item, typename... Items>
-	void pvAddColumnRecs(const Column<Item>& column, const Column<Items>&... columns) noexcept
+	void pvAddColumnRecords(const Column<Item>& column, const Column<Items>&... columns) noexcept
 	{
 		size_t offset = pvGetOffset(ColumnTraits::GetColumnCode(column));
 		const char* columnName = ColumnTraits::GetColumnName(column);
-		mColumnRecs.AddBackNogrow(ColumnRec{ typeid(Item), columnName, offset });
-		pvAddColumnRecs(columns...);
+		mColumnRecords.AddBackNogrow(ColumnRecord{ typeid(Item), columnName, offset });
+		pvAddColumnRecords(columns...);
 	}
 
-	void pvAddColumnRecs() noexcept
+	void pvAddColumnRecords() noexcept
 	{
 	}
 
@@ -892,7 +892,7 @@ private:
 	size_t mTotalSize;
 	size_t mAlignment;
 	ColumnCodeSet mColumnCodeSet;
-	ColumnRecs mColumnRecs;
+	ColumnRecords mColumnRecords;
 	FuncRecs mFuncRecs;
 	MutableOffsets mMutableOffsets;
 };
@@ -917,8 +917,8 @@ public:
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
 
-	typedef internal::DataColumnRecord ColumnRec;
-	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManager> ColumnRecs;
+	typedef internal::DataColumnRecord ColumnRecord;
+	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManager> ColumnRecords;
 
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
 
@@ -926,18 +926,18 @@ private:
 
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
-		: mColumnRecs(std::move(memManager))
+		: mColumnRecords(std::move(memManager))
 	{
 	}
 
 	DataColumnListStatic(DataColumnListStatic&& columnList) noexcept
-		: mColumnRecs(std::move(columnList.mColumnRecs)),
+		: mColumnRecords(std::move(columnList.mColumnRecords)),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
 
 	DataColumnListStatic(const DataColumnListStatic& columnList)
-		: mColumnRecs(columnList.mColumnRecs),
+		: mColumnRecords(columnList.mColumnRecords),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
@@ -950,12 +950,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mColumnRecs.GetMemManager();
+		return mColumnRecords.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mColumnRecs.GetMemManager();
+		return mColumnRecords.GetMemManager();
 	}
 
 	template<typename... Items>
@@ -1058,17 +1058,17 @@ public:
 	void PrepareForVisitors(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
-		mColumnRecs.Reserve(columnCount);
-		mColumnRecs.Clear(false);
-		pvAddColumnRecs(column, columns...);
+		mColumnRecords.Reserve(columnCount);
+		mColumnRecords.Clear(false);
+		pvAddColumnRecords(column, columns...);
 	}
 
 	template<typename PtrVisitor>
 	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		if (mColumnRecs.IsEmpty())
+		if (mColumnRecords.IsEmpty())
 			throw std::runtime_error("Not prepared for visitors");
-		for (const auto& columnRec : mColumnRecs)
+		for (const auto& columnRec : mColumnRecords)
 		{
 			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
 			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
@@ -1094,13 +1094,13 @@ private:
 	}
 
 	template<typename Item, typename... Items>
-	void pvAddColumnRecs(const Column<Item>& column, const Column<Items>&... columns) noexcept
+	void pvAddColumnRecords(const Column<Item>& column, const Column<Items>&... columns) noexcept
 	{
-		mColumnRecs.AddBackNogrow(ColumnRec{ typeid(Item), column.GetName(), GetOffset(column) });
-		pvAddColumnRecs(columns...);
+		mColumnRecords.AddBackNogrow(ColumnRecord{ typeid(Item), column.GetName(), GetOffset(column) });
+		pvAddColumnRecords(columns...);
 	}
 
-	void pvAddColumnRecs() noexcept
+	void pvAddColumnRecords() noexcept
 	{
 	}
 
@@ -1125,7 +1125,7 @@ private:
 	}
 
 private:
-	ColumnRecs mColumnRecs;
+	ColumnRecords mColumnRecords;
 	MutableOffsets mMutableOffsets;
 };
 
