@@ -15,7 +15,6 @@
     enum class DataOperatorType
     class DataOperator
     class DataColumn
-    struct DataColumnRecord
     class DataSettings
     struct DataStructDefault
     class DataColumnTraits
@@ -75,6 +74,13 @@ namespace internal
 	struct DataVisitedItemsGetter<Struct, Void<typename Struct::VisitedItemsTuple>>
 	{
 		typedef typename Struct::VisitedItemsTuple VisitedItemsTuple;
+	};
+
+	struct DataColumnRecord
+	{
+		const std::type_info& type;
+		const char* name;
+		size_t offset;
 	};
 }
 
@@ -175,13 +181,6 @@ public:
 private:
 	uint64_t mCode;
 	const char* mName;
-};
-
-struct DataColumnRecord
-{
-	const std::type_info& type;
-	const char* name;
-	size_t offset;
 };
 
 template<bool tKeepRowNumber = true>
@@ -316,6 +315,8 @@ public:
 
 	typedef void Raw;
 
+	typedef internal::DataColumnRecord ColumnRec;
+
 private:
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
 	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
@@ -413,8 +414,6 @@ private:
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef DataColumnRecord ColumnRec;
-
 	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManagerPtr> ColumnRecs;
 
 	typedef std::function<void(MemManager&, size_t, Raw*)> CreateFunc;
@@ -435,6 +434,10 @@ private:
 		uint8_t, MemManagerPtr> MutableOffsets;
 
 	typedef typename ColumnTraits::VisitedItemsTuple VisitedItemsTuple;
+
+public:
+	typedef typename ColumnRecs::ConstIterator ConstIterator;
+	typedef ConstIterator Iterator;
 
 public:
 	explicit DataColumnList(MemManager&& memManager = MemManager())
@@ -486,6 +489,18 @@ public:
 
 	DataColumnList& operator=(const DataColumnList&) = delete;
 
+	ConstIterator GetBegin() const noexcept
+	{
+		return mColumnRecs.GetBegin();
+	}
+
+	ConstIterator GetEnd() const noexcept
+	{
+		return mColumnRecs.GetEnd();
+	}
+
+	MOMO_FRIENDS_BEGIN_END(const DataColumnList&, ConstIterator)
+
 	const MemManager& GetMemManager() const noexcept
 	{
 		return mColumnCodeSet.GetMemManager();
@@ -496,11 +511,16 @@ public:
 		return mColumnCodeSet.GetMemManager();
 	}
 
+	size_t GetCount() const noexcept
+	{
+		return mColumnRecs.GetCount();
+	}
+
 	template<typename Item, typename... Items>
 	void Add(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
-		if (columnCount + mColumnCodeSet.GetCount() > maxColumnCount)
+		if (columnCount + GetCount() > maxColumnCount)
 			throw std::runtime_error("Too many columns");
 		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnTraits::GetColumnCode(column),
 			ColumnTraits::GetColumnCode(columns)... }};
@@ -897,7 +917,7 @@ public:
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
 
-	typedef DataColumnRecord ColumnRec;
+	typedef internal::DataColumnRecord ColumnRec;
 	typedef internal::NestedArrayIntCap<0, ColumnRec, MemManager> ColumnRecs;
 
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;

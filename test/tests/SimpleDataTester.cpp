@@ -269,7 +269,10 @@ private:
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		size_t count = ctable.GetCount();
 
-		assert(!ctable.Project(dblCol, intCol).ContainsColumn(strCol));
+		DataTable tablePrj = ctable.Project(dblCol, intCol);
+		for (const auto& col : tablePrj.GetColumnList())
+			assert(strcmp(col.name, dblCol.GetName()) == 0 || strcmp(col.name, intCol.GetName()) == 0);
+
 		assert(ctable.Project(strFilter, dblCol, intCol).GetCount() == count / 2);
 		assert(ctable.ProjectDistinct(strCol).GetCount() == 2);
 		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
