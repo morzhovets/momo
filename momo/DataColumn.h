@@ -65,15 +65,15 @@ namespace internal
 
 	template<typename Struct,
 		typename = void>
-	struct DataVisitedItemsGetter
+	struct DataVisitableItemsGetter
 	{
-		typedef std::tuple<> VisitedItemsTuple;
+		typedef std::tuple<> VisitableItems;
 	};
 
 	template<typename Struct>
-	struct DataVisitedItemsGetter<Struct, Void<typename Struct::VisitedItemsTuple>>
+	struct DataVisitableItemsGetter<Struct, Void<typename Struct::VisitableItems>>
 	{
-		typedef typename Struct::VisitedItemsTuple VisitedItemsTuple;
+		typedef typename Struct::VisitableItems VisitableItems;
 	};
 
 	struct DataColumnRecord
@@ -197,10 +197,10 @@ public:
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
 };
 
-template<typename... TVisitedItems>
+template<typename... TVisitableItems>
 struct DataStructDefault
 {
-	typedef std::tuple<TVisitedItems...> VisitedItemsTuple;
+	typedef std::tuple<TVisitableItems...> VisitableItems;
 };
 
 template<typename TStruct = DataStructDefault<>>
@@ -222,7 +222,7 @@ public:
 
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
-	typedef typename internal::DataVisitedItemsGetter<Struct>::VisitedItemsTuple VisitedItemsTuple;
+	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
 
 public:
 	template<typename Item>
@@ -433,7 +433,7 @@ private:
 	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
 		uint8_t, MemManagerPtr> MutableOffsets;
 
-	typedef typename ColumnTraits::VisitedItemsTuple VisitedItemsTuple;
+	typedef typename ColumnTraits::VisitableItems VisitableItems;
 
 public:
 	typedef typename ColumnRecords::ConstIterator ConstIterator;
@@ -708,12 +708,12 @@ public:
 	}
 
 	template<typename PtrVisitor>
-	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		for (const auto& columnRec : mColumnRecords)
 		{
 			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
-			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
+			pvVisit<0>(item, ptrVisitor, columnRec.type, columnRec.name);
 		}
 	}
 
@@ -867,19 +867,19 @@ private:
 	}
 
 	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index < std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+	internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(
 		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
 		const char* columnName) const
 	{
-		typedef typename std::tuple_element<index, VisitedItemsTuple>::type Item;
+		typedef typename std::tuple_element<index, VisitableItems>::type Item;
 		if (typeid(Item) == type)
 			ptrVisitor(static_cast<const Item*>(item), columnName);
 		else
-			pvVisitItem<index + 1>(item, ptrVisitor, type, columnName);
+			pvVisit<index + 1>(item, ptrVisitor, type, columnName);
 	}
 
 	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index == std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+	internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(
 		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
 		const char* columnName) const
 	{
@@ -922,7 +922,7 @@ private:
 
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
 
-	typedef typename internal::DataVisitedItemsGetter<Struct>::VisitedItemsTuple VisitedItemsTuple;
+	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
 
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
@@ -1064,14 +1064,14 @@ public:
 	}
 
 	template<typename PtrVisitor>
-	void VisitItemPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		if (mColumnRecords.IsEmpty())
 			throw std::runtime_error("Not prepared for visitors");
 		for (const auto& columnRec : mColumnRecords)
 		{
 			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
-			pvVisitItem<0>(item, ptrVisitor, columnRec.type, columnRec.name);
+			pvVisit<0>(item, ptrVisitor, columnRec.type, columnRec.name);
 		}
 	}
 
@@ -1105,19 +1105,19 @@ private:
 	}
 
 	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index < std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+	internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(
 		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
 		const char* columnName) const
 	{
-		typedef typename std::tuple_element<index, VisitedItemsTuple>::type Item;
+		typedef typename std::tuple_element<index, VisitableItems>::type Item;
 		if (typeid(Item) == type)
 			ptrVisitor(static_cast<const Item*>(item), columnName);
 		else
-			pvVisitItem<index + 1>(item, ptrVisitor, type, columnName);
+			pvVisit<index + 1>(item, ptrVisitor, type, columnName);
 	}
 
 	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index == std::tuple_size<VisitedItemsTuple>::value)> pvVisitItem(
+	internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(
 		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
 		const char* columnName) const
 	{
