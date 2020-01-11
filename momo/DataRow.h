@@ -19,22 +19,26 @@ namespace momo
 
 namespace internal
 {
-	template<typename RefVisitor>
+	template<typename TRefVisitor, typename TVoid>
 	class DataPtrVisitor
 	{
+	public:
+		typedef TRefVisitor RefVisitor;
+		typedef TVoid Void;
+
 	public:
 		explicit DataPtrVisitor(const RefVisitor& refVisitor) noexcept
 			: mRefVisitor(refVisitor)
 		{
 		}
 
-		void operator()(const void* /*item*/, const char* /*columnName*/) const
+		void operator()(Void* /*item*/, const char* /*columnName*/) const
 		{
 			throw std::runtime_error("Visit unknown type");
 		}
 
 		template<typename Item>
-		void operator()(const Item* item, const char* columnName) const
+		void operator()(Item* item, const char* columnName) const
 		{
 			mRefVisitor(*item, columnName);
 		}
@@ -149,10 +153,22 @@ namespace internal
 			mColumnList->VisitPointers(mRaw, ptrVisitor);
 		}
 
+		template<typename PtrVisitor>	// ptrVisitor(auto* item, const char* columnName)
+		void VisitPointers(const PtrVisitor& ptrVisitor)
+		{
+			mColumnList->VisitPointers(mRaw, ptrVisitor);
+		}
+
 		template<typename RefVisitor>	// refVisitor(const auto& item, const char* columnName)
 		void VisitReferences(const RefVisitor& refVisitor) const
 		{
-			VisitPointers(DataPtrVisitor<RefVisitor>(refVisitor));
+			VisitPointers(DataPtrVisitor<RefVisitor, const void>(refVisitor));
+		}
+
+		template<typename RefVisitor>	// refVisitor(auto& item, const char* columnName)
+		void VisitReferences(const RefVisitor& refVisitor)
+		{
+			VisitPointers(DataPtrVisitor<RefVisitor, void>(refVisitor));
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -258,7 +274,7 @@ namespace internal
 		template<typename RefVisitor>	// refVisitor(const auto& item, const char* columnName)
 		void VisitReferences(const RefVisitor& refVisitor) const
 		{
-			VisitPointers(DataPtrVisitor<RefVisitor>(refVisitor));
+			VisitPointers(DataPtrVisitor<RefVisitor, const void>(refVisitor));
 		}
 
 		const Raw* GetRaw() const

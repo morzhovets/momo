@@ -76,8 +76,43 @@ namespace internal
 		typedef typename Struct::VisitableItems VisitableItems;
 	};
 
-	struct DataColumnRecord
+	class DataColumnRecord
 	{
+	public:
+		template<typename VisitableItems, typename PtrVisitor>
+		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+		{
+			pvVisit<0, VisitableItems>(item, ptrVisitor);
+		}
+
+		template<typename VisitableItems, typename PtrVisitor>
+		void Visit(void* item, const PtrVisitor& ptrVisitor) const
+		{
+			pvVisit<0, VisitableItems>(item, ptrVisitor);
+		}
+
+	private:
+		template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
+		internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(Void* item,
+			const PtrVisitor& ptrVisitor) const
+		{
+			typedef typename std::tuple_element<index, VisitableItems>::type Item;
+			typedef typename std::conditional<std::is_const<Void>::value,
+				const Item*, Item*>::type ItemPtr;
+			if (typeid(Item) == type)
+				ptrVisitor(static_cast<ItemPtr>(item), name);
+			else
+				pvVisit<index + 1, VisitableItems>(item, ptrVisitor);
+		}
+
+		template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
+		internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(Void* item,
+			const PtrVisitor& ptrVisitor) const
+		{
+			ptrVisitor(item, name);
+		}
+
+	public:
 		const std::type_info& type;
 		const char* name;
 		size_t offset;
@@ -710,11 +745,13 @@ public:
 	template<typename PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		for (const auto& columnRec : mColumnRecords)
-		{
-			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
-			pvVisit<0>(item, ptrVisitor, columnRec.type, columnRec.name);
-		}
+		pvVisitPointers<const void>(raw, ptrVisitor);
+	}
+
+	template<typename PtrVisitor>
+	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	{
+		pvVisitPointers<void>(raw, ptrVisitor);
 	}
 
 private:
@@ -866,24 +903,14 @@ private:
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
 	}
 
-	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(
-		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
-		const char* columnName) const
+	template<typename Void, typename PtrVisitor>
+	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		typedef typename std::tuple_element<index, VisitableItems>::type Item;
-		if (typeid(Item) == type)
-			ptrVisitor(static_cast<const Item*>(item), columnName);
-		else
-			pvVisit<index + 1>(item, ptrVisitor, type, columnName);
-	}
-
-	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(
-		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
-		const char* columnName) const
-	{
-		ptrVisitor(item, columnName);
+		for (const auto& columnRec : mColumnRecords)
+		{
+			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.offset);
+			columnRec.Visit<VisitableItems>(item, ptrVisitor);
+		}
 	}
 
 private:
@@ -1066,13 +1093,13 @@ public:
 	template<typename PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		if (mColumnRecords.IsEmpty())
-			throw std::runtime_error("Not prepared for visitors");
-		for (const auto& columnRec : mColumnRecords)
-		{
-			const void* item = internal::BitCaster::PtrToPtr<const void>(raw, columnRec.offset);
-			pvVisit<0>(item, ptrVisitor, columnRec.type, columnRec.name);
-		}
+		pvVisitPointers<const void>(raw, ptrVisitor);
+	}
+
+	template<typename PtrVisitor>
+	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	{
+		pvVisitPointers<void>(raw, ptrVisitor);
 	}
 
 private:
@@ -1104,24 +1131,16 @@ private:
 	{
 	}
 
-	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(
-		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& type,
-		const char* columnName) const
+	template<typename Void, typename PtrVisitor>
+	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		typedef typename std::tuple_element<index, VisitableItems>::type Item;
-		if (typeid(Item) == type)
-			ptrVisitor(static_cast<const Item*>(item), columnName);
-		else
-			pvVisit<index + 1>(item, ptrVisitor, type, columnName);
-	}
-
-	template<size_t index, typename PtrVisitor>
-	internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(
-		const void* item, const PtrVisitor& ptrVisitor, const std::type_info& /*type*/,
-		const char* columnName) const
-	{
-		ptrVisitor(item, columnName);
+		if (mColumnRecords.IsEmpty())
+			throw std::runtime_error("Not prepared for visitors");
+		for (const auto& columnRec : mColumnRecords)
+		{
+			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.offset);
+			columnRec.Visit<VisitableItems>(item, ptrVisitor);
+		}
 	}
 
 private:
