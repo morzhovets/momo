@@ -909,7 +909,7 @@ private:
 		for (const auto& columnRec : mColumnRecords)
 		{
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.offset);
-			columnRec.Visit<VisitableItems>(item, ptrVisitor);
+			columnRec.template Visit<VisitableItems>(item, ptrVisitor);
 		}
 	}
 
@@ -1139,7 +1139,7 @@ private:
 		for (const auto& columnRec : mColumnRecords)
 		{
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.offset);
-			columnRec.Visit<VisitableItems>(item, ptrVisitor);
+			columnRec.template Visit<VisitableItems>(item, ptrVisitor);
 		}
 	}
 
