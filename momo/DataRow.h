@@ -38,9 +38,17 @@ namespace internal
 		}
 
 		template<typename Item>
-		void operator()(Item* item, const char* columnName) const
+		EnableIf<IsInvocable2<RefVisitor, Item&, const char*>::value> operator()(Item* item,
+			const char* columnName) const
 		{
 			mRefVisitor(*item, columnName);
+		}
+
+		template<typename Item>
+		EnableIf<!IsInvocable2<RefVisitor, Item&, const char*>::value> operator()(Item* item,
+			const char* /*columnName*/) const
+		{
+			mRefVisitor(*item);
 		}
 
 	private:
@@ -147,25 +155,25 @@ namespace internal
 			return Get(column);
 		}
 
-		template<typename PtrVisitor>	// ptrVisitor(const auto* item, const char* columnName)
+		template<typename PtrVisitor>	// ptrVisitor(const auto* item[, const char* columnName])
 		void VisitPointers(const PtrVisitor& ptrVisitor) const
 		{
 			mColumnList->VisitPointers(mRaw, ptrVisitor);
 		}
 
-		template<typename PtrVisitor>	// ptrVisitor(auto* item, const char* columnName)
+		template<typename PtrVisitor>	// ptrVisitor(auto* item[, const char* columnName])
 		void VisitPointers(const PtrVisitor& ptrVisitor)
 		{
 			mColumnList->VisitPointers(mRaw, ptrVisitor);
 		}
 
-		template<typename RefVisitor>	// refVisitor(const auto& item, const char* columnName)
+		template<typename RefVisitor>	// refVisitor(const auto& item[, const char* columnName])
 		void VisitReferences(const RefVisitor& refVisitor) const
 		{
 			VisitPointers(DataPtrVisitor<RefVisitor, const void>(refVisitor));
 		}
 
-		template<typename RefVisitor>	// refVisitor(auto& item, const char* columnName)
+		template<typename RefVisitor>	// refVisitor(auto& item[, const char* columnName])
 		void VisitReferences(const RefVisitor& refVisitor)
 		{
 			VisitPointers(DataPtrVisitor<RefVisitor, void>(refVisitor));
@@ -265,13 +273,13 @@ namespace internal
 			return mColumnList->GetNumber(GetRaw());
 		}
 
-		template<typename PtrVisitor>	// ptrVisitor(const auto* item, const char* columnName)
+		template<typename PtrVisitor>	// ptrVisitor(const auto* item[, const char* columnName])
 		void VisitPointers(const PtrVisitor& ptrVisitor) const
 		{
 			mColumnList->VisitPointers(GetRaw(), ptrVisitor);
 		}
 
-		template<typename RefVisitor>	// refVisitor(const auto& item, const char* columnName)
+		template<typename RefVisitor>	// refVisitor(const auto& item[, const char* columnName])
 		void VisitReferences(const RefVisitor& refVisitor) const
 		{
 			VisitPointers(DataPtrVisitor<RefVisitor, const void>(refVisitor));

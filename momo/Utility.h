@@ -196,6 +196,19 @@ namespace internal
 	template<typename... Types>
 	using Void = typename VoidMaker<Types...>::Void;
 
+	template<typename Func, typename Arg1, typename Arg2,
+		typename = void>
+	struct IsInvocable2 : public std::false_type
+	{
+	};
+
+	template<typename Func, typename Arg1, typename Arg2>
+	struct IsInvocable2<Func, Arg1, Arg2,
+		Void<decltype(std::declval<Func>()(std::declval<Arg1>(), std::declval<Arg2>()))>>
+		: public std::true_type
+	{
+	};
+
 	template<bool value, typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 

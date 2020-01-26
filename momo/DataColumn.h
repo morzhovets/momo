@@ -82,34 +82,48 @@ namespace internal
 		template<typename VisitableItems, typename PtrVisitor>
 		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
 		{
-			pvVisit<0, VisitableItems>(item, ptrVisitor);
+			pvVisitRec<0, VisitableItems>(item, ptrVisitor);
 		}
 
 		template<typename VisitableItems, typename PtrVisitor>
 		void Visit(void* item, const PtrVisitor& ptrVisitor) const
 		{
-			pvVisit<0, VisitableItems>(item, ptrVisitor);
+			pvVisitRec<0, VisitableItems>(item, ptrVisitor);
 		}
 
 	private:
 		template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
-		internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisit(Void* item,
+		internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
 			const PtrVisitor& ptrVisitor) const
 		{
 			typedef typename std::tuple_element<index, VisitableItems>::type Item;
 			typedef typename std::conditional<std::is_const<Void>::value,
 				const Item*, Item*>::type ItemPtr;
 			if (typeid(Item) == type)
-				ptrVisitor(static_cast<ItemPtr>(item), name);
+				pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
 			else
-				pvVisit<index + 1, VisitableItems>(item, ptrVisitor);
+				pvVisitRec<index + 1, VisitableItems>(item, ptrVisitor);
 		}
 
 		template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
-		internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisit(Void* item,
+		internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
+			const PtrVisitor& ptrVisitor) const
+		{
+			pvVisit(item, ptrVisitor);
+		}
+
+		template<typename Item, typename PtrVisitor>
+		EnableIf<IsInvocable2<PtrVisitor, Item*, const char*>::value> pvVisit(Item* item,
 			const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, name);
+		}
+
+		template<typename Item, typename PtrVisitor>
+		EnableIf<!IsInvocable2<PtrVisitor, Item*, const char*>::value> pvVisit(Item* item,
+			const PtrVisitor& ptrVisitor) const
+		{
+			ptrVisitor(item);
 		}
 
 	public:
