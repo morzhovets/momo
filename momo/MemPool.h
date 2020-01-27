@@ -170,7 +170,12 @@ private:
 	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
 
 public:
-	explicit MemPool(MemManager&& memManager = MemManager())
+	explicit MemPool()	// vs clang
+		: MemPool(MemManager())
+	{
+	}
+
+	explicit MemPool(MemManager&& memManager)
 		: MemPool(Params(), std::move(memManager))
 	{
 	}
