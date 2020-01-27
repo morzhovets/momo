@@ -1,5 +1,7 @@
 /Debug
 /Release
+/Debug Clang
+/Release Clang
 /x64
 /*.user
 /.vs
