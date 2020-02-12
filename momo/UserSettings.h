@@ -34,7 +34,6 @@
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
-
 #if defined(__GNUC__) && __GNUC__ < 5
 #undef MOMO_IS_TRIVIALLY_RELOCATABLE
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
@@ -97,9 +96,7 @@
 
 // Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
-#if defined(_M_AMD64) || defined(_M_X64)
-#define MOMO_USE_SSE2
-#elif _M_IX86_FP == 2
+#if defined(_M_AMD64) || defined(_M_X64) || _M_IX86_FP == 2
 #define MOMO_USE_SSE2
 #endif
 #else
@@ -114,7 +111,6 @@
 
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR reinterpret_cast<uintptr_t>(static_cast<void*>(nullptr))
-
 #if defined(__clang__)
 #undef MOMO_NULL_UINTPTR
 #define MOMO_NULL_UINTPTR uintptr_t{0}
