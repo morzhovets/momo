@@ -16,8 +16,6 @@
 #pragma warning (disable: 4127)	// conditional expression is constant
 #pragma warning (disable: 4458)	// declaration of '...' hides class member
 #pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
-#pragma warning (disable: 4510)	// default constructor could not be generated
-#pragma warning (disable: 4512)	// assignment operator could not be generated
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
