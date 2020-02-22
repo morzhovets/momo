@@ -71,7 +71,7 @@ public:
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
-	void* Allocate(size_t size)
+	MOMO_NODISCARD void* Allocate(size_t size)
 	{
 		return operator new(size);
 	}
@@ -104,7 +104,7 @@ public:
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
-	void* Allocate(size_t size)
+	MOMO_NODISCARD void* Allocate(size_t size)
 	{
 		void* ptr = malloc(size);
 		if (ptr == nullptr)
@@ -117,7 +117,7 @@ public:
 		free(ptr);
 	}
 
-	void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
+	MOMO_NODISCARD void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
 	{
 		void* newPtr = realloc(ptr, newSize);
 		if (newPtr == nullptr)
@@ -148,7 +148,7 @@ public:
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
-	void* Allocate(size_t size)
+	MOMO_NODISCARD void* Allocate(size_t size)
 	{
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
@@ -161,7 +161,7 @@ public:
 		HeapFree(GetProcessHeap(), 0, ptr);
 	}
 
-	//void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
+	//MOMO_NODISCARD void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
 	//{
 	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 	//	if (newPtr == nullptr)
@@ -215,7 +215,7 @@ public:
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
-	void* Allocate(size_t size)
+	MOMO_NODISCARD void* Allocate(size_t size)
 	{
 		return std::allocator_traits<ByteAllocator>::allocate(GetByteAllocator(), size);
 	}

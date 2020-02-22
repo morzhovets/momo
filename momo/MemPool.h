@@ -257,7 +257,7 @@ public:
 	}
 
 	template<typename ResObject = void>
-	ResObject* Allocate()
+	MOMO_NODISCARD ResObject* Allocate()
 	{
 		void* pblock;
 		if (Params::cachedFreeBlockCount > 0 && mCachedFreeBlocks.GetCount() > 0)
