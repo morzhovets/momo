@@ -91,8 +91,17 @@ namespace internal
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		struct Data
+		class Data
 		{
+		public:
+			explicit Data(const ContainerTraits& containerTraits, MemManager&& memManager)
+				: version(0),
+				containerTraits(containerTraits),
+				memManager(std::move(memManager))
+			{
+			}
+
+		public:
 			size_t version;
 			ContainerTraits containerTraits;
 			MemManager memManager;
@@ -102,18 +111,15 @@ namespace internal
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
 			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
-			mData->version = 0;
 			try
 			{
-				::new(static_cast<void*>(&mData->containerTraits))
-					ContainerTraits(containerTraits);
+				::new(static_cast<void*>(mData)) Data(containerTraits, std::move(memManager));
 			}
 			catch (...)
 			{
-				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
+				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));	// memManager not moved
 				throw;
 			}
-			::new(static_cast<void*>(&mData->memManager)) MemManager(std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
@@ -128,9 +134,8 @@ namespace internal
 		{
 			if (!pvIsNull())
 			{
-				mData->containerTraits.~ContainerTraits();
 				MemManager memManager = std::move(GetMemManager());
-				GetMemManager().~MemManager();
+				mData->~Data();
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
 		}

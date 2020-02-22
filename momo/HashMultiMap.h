@@ -564,8 +564,16 @@ private:
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		struct Data
+		class Data
 		{
+		public:
+			explicit Data(MemManager& memManager)
+				: valueVersion(0),
+				valueArrayParams(memManager)
+			{
+			}
+
+		public:
 			size_t valueVersion;
 			ValueArrayParams valueArrayParams;
 		};
@@ -574,10 +582,9 @@ private:
 		explicit ValueCrew(MemManager& memManager)
 		{
 			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
-			mData->valueVersion = 0;
 			try
 			{
-				::new(static_cast<void*>(&mData->valueArrayParams)) ValueArrayParams(memManager);
+				::new(static_cast<void*>(mData)) Data(memManager);
 			}
 			catch (...)
 			{

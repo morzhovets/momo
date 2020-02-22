@@ -129,11 +129,7 @@ namespace internal
 		};
 
 	public:
-		Node() = delete;
-
 		Node(const Node&) = delete;
-
-		~Node() = delete;
 
 		Node& operator=(const Node&) = delete;
 
@@ -147,17 +143,14 @@ namespace internal
 				if (leafMemPoolIndex >= leafMemPoolCount)
 					leafMemPoolIndex = leafMemPoolCount - 1;
 				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
-				node->mMemPoolIndex = static_cast<uint8_t>(leafMemPoolIndex);
+				::new(static_cast<void*>(node)) Node(leafMemPoolIndex, count);
 			}
 			else
 			{
 				void* ptr = params.GetInternalMemPool().Allocate();
 				node = BitCaster::PtrToPtr<Node>(ptr, internalOffset);
-				node->mMemPoolIndex = static_cast<uint8_t>(leafMemPoolCount);
+				::new(static_cast<void*>(node)) Node(leafMemPoolCount, count);
 			}
-			node->mParent = nullptr;
-			node->mCounter.count = static_cast<uint8_t>(count);
-			node->pvInitIndexes(IsContinuous());
 			return node;
 		}
 
@@ -165,10 +158,13 @@ namespace internal
 		{
 			if (IsLeaf())
 			{
-				params.GetLeafMemPool(size_t{mMemPoolIndex}).Deallocate(this);
+				size_t memPoolIndex = size_t{mMemPoolIndex};
+				this->~Node();
+				params.GetLeafMemPool(memPoolIndex).Deallocate(this);
 			}
 			else
 			{
+				this->~Node();
 				params.GetInternalMemPool().Deallocate(
 					BitCaster::PtrToPtr<void>(this, -static_cast<ptrdiff_t>(internalOffset)));
 			}
@@ -259,6 +255,18 @@ namespace internal
 		}
 
 	private:
+		explicit Node(size_t memPoolIndex, size_t count) noexcept
+			: mParent(nullptr),
+			mMemPoolIndex(static_cast<uint8_t>(memPoolIndex))
+		{
+			mCounter.count = static_cast<uint8_t>(count);
+			pvInitIndexes(IsContinuous());
+		}
+
+		~Node() noexcept
+		{
+		}
+
 		Node** pvGetChildren() noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());

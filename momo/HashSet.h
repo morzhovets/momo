@@ -47,11 +47,7 @@ namespace internal
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	public:
-		HashSetBuckets() = delete;
-
 		HashSetBuckets(const HashSetBuckets&) = delete;
-
-		~HashSetBuckets() = delete;
 
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;
 
@@ -64,8 +60,7 @@ namespace internal
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			HashSetBuckets* resBuckets = MemManagerProxy::template Allocate<HashSetBuckets>(
 				memManager, bufferSize);
-			resBuckets->mLogCount = logBucketCount;
-			resBuckets->mNextBuckets = nullptr;
+			::new(static_cast<void*>(resBuckets)) HashSetBuckets(logBucketCount);
 			Bucket* buckets = resBuckets->pvGetBuckets();
 			size_t bucketIndex = 0;
 			try
@@ -81,6 +76,7 @@ namespace internal
 			{
 				for (size_t i = 0; i < bucketIndex; ++i)
 					buckets[i].~Bucket();
+				resBuckets->~HashSetBuckets();
 				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
 				throw;
 			}
@@ -99,7 +95,9 @@ namespace internal
 				mBucketParams->~BucketParams();
 				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
 			}
-			MemManagerProxy::Deallocate(memManager, this, pvGetBufferSize(GetLogCount()));
+			size_t bufferSize = pvGetBufferSize(GetLogCount());
+			this->~HashSetBuckets();
+			MemManagerProxy::Deallocate(memManager, this, bufferSize);
 		}
 
 		Bucket* GetBegin() noexcept
@@ -154,6 +152,17 @@ namespace internal
 		}
 
 	private:
+		explicit HashSetBuckets(size_t logBucketCount) noexcept
+			: mLogCount(logBucketCount),
+			mNextBuckets(nullptr),
+			mBucketParams(nullptr)
+		{
+		}
+
+		~HashSetBuckets() noexcept
+		{
+		}
+
 		Bucket* pvGetBuckets() noexcept
 		{
 			return BitCaster::PtrToPtr<Bucket>(this, sizeof(HashSetBuckets));

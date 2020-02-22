@@ -158,8 +158,18 @@ private:
 
 		typedef std::atomic<void*> FreeRaws;
 
-		struct Data
+		class Data
 		{
+		public:
+			explicit Data(ColumnList&& columnList) noexcept
+				: columnList(std::move(columnList)),
+				changeVersion(0),
+				removeVersion(0),
+				freeRaws(nullptr)
+			{
+			}
+
+		public:
 			ColumnList columnList;
 			size_t changeVersion;
 			size_t removeVersion;
@@ -171,10 +181,7 @@ private:
 		{
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
-			::new(static_cast<void*>(&mData->columnList)) ColumnList(std::move(columnList));
-			mData->changeVersion = 0;
-			mData->removeVersion = 0;
-			::new(static_cast<void*>(&mData->freeRaws)) FreeRaws(nullptr);
+			::new(static_cast<void*>(mData)) Data(std::move(columnList));
 		}
 
 		Crew(Crew&& crew) noexcept
@@ -190,8 +197,7 @@ private:
 			if (!IsNull())
 			{
 				ColumnList columnList = std::move(mData->columnList);
-				mData->columnList.~ColumnList();
-				mData->freeRaws.~FreeRaws();
+				mData->~Data();
 				MemManagerProxy::Deallocate(columnList.GetMemManager(), mData, sizeof(Data));
 			}
 		}
