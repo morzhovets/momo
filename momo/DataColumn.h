@@ -299,8 +299,6 @@ public:
 	static const size_t maxColumnCount = 200;
 	static const size_t maxCodeParam = 255;
 
-	static const size_t mutableOffsetsInternalCapacity = 0;
-
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
@@ -503,8 +501,7 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
-	typedef internal::NestedArrayIntCap<ColumnTraits::mutableOffsetsInternalCapacity,
-		uint8_t, MemManagerPtr> MutableOffsets;
+	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
 
 	typedef typename ColumnTraits::VisitableItems VisitableItems;
 
@@ -623,7 +620,6 @@ public:
 			{ pvDestroy<void, Item, Items...>(memManager, offset, raw); };
 		funcRec.copyFunc = [] (MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
 			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
-		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
 		mColumns.Reserve(mColumns.GetCount() + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		try
@@ -634,7 +630,6 @@ public:
 		{
 			for (ColumnCode code : columnCodes)
 				mColumnCodeSet.Remove(code);	// no throw
-			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
 			throw;
 		}
 		mCodeParam = codeParam;
@@ -648,17 +643,20 @@ public:
 	template<typename... Items>
 	void SetMutable(const Column<Items>&... columns)
 	{
+		mMutableOffsets.SetCount((mTotalSize + 7) / 8, uint8_t{0});
 		pvSetMutable(columns...);
 	}
 
 	void ResetMutable() noexcept
 	{
-		std::fill(mMutableOffsets.GetBegin(), mMutableOffsets.GetEnd(), uint8_t{0});
+		mMutableOffsets.Clear(true);
 	}
 
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
+		if (offset / 8 >= mMutableOffsets.GetCount())
+			return false;
 		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
 	}
 
