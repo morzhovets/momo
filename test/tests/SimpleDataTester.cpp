@@ -271,7 +271,7 @@ private:
 
 		DataTable tablePrj = ctable.Project(dblCol, intCol);
 		for (const auto& col : tablePrj.GetColumnList())
-			assert(strcmp(col.name, dblCol.GetName()) == 0 || strcmp(col.name, intCol.GetName()) == 0);
+			assert(strcmp(col.GetName(), dblCol.GetName()) == 0 || strcmp(col.GetName(), intCol.GetName()) == 0);
 
 		assert(ctable.Project(strFilter, dblCol, intCol).GetCount() == count / 2);
 		assert(ctable.ProjectDistinct(strCol).GetCount() == 2);
