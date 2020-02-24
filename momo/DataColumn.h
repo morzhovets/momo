@@ -770,13 +770,19 @@ public:
 		*internal::BitCaster::PtrToPtr<size_t>(raw, 0) = number;
 	}
 
-	bool Contains(const ColumnInfo& columnInfo) const noexcept
+	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
-		if (mAddends[vertices.first] == 0 || mAddends[vertices.second] == 0)
+		size_t addend1 = mAddends[vertices.first];
+		size_t addend2 = mAddends[vertices.second];
+		if (addend1 == 0 || addend2 == 0)
 			return false;
-		return mColumnCodeSet.ContainsKey(code);
+		if (!mColumnCodeSet.ContainsKey(code))
+			return false;
+		if (resOffset != nullptr)
+			*resOffset = addend1 + addend2;
+		return true;
 	}
 
 	template<typename PtrVisitor>
@@ -1081,7 +1087,7 @@ public:
 	template<bool extraCheck = true>
 	size_t GetOffset(const ColumnInfo& columnInfo) const noexcept
 	{
-		size_t offset = static_cast<size_t>(columnInfo.GetCode());	//?
+		size_t offset = pvGetOffset(columnInfo);
 		MOMO_ASSERT(offset < sizeof(Struct));
 		//MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
 		return offset;
@@ -1111,8 +1117,10 @@ public:
 		*internal::BitCaster::PtrToPtr<size_t>(raw, pvGetNumberOffset()) = number;
 	}
 
-	bool Contains(const ColumnInfo& /*columnInfo*/) const noexcept
+	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
+		if (resOffset != nullptr)
+			*resOffset = pvGetOffset(columnInfo);
 		return true;
 	}
 
@@ -1149,6 +1157,11 @@ private:
 	{
 	}
 
+	size_t pvGetOffset(const ColumnInfo& columnInfo) const noexcept
+	{
+		return static_cast<size_t>(columnInfo.GetCode());	//?
+	}
+
 	static size_t pvGetNumberOffset() noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
@@ -1173,7 +1186,7 @@ private:
 			throw std::runtime_error("Not prepared for visitors");
 		for (const auto& columnInfo : mColumns)
 		{
-			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, GetOffset(columnInfo));
+			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(columnInfo));
 			columnInfo.template Visit<VisitableItems>(item, ptrVisitor);
 		}
 	}
