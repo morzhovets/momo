@@ -186,6 +186,8 @@ public:
 	template<typename Item>
 	using Column = DataColumn<Item, Struct>;
 
+	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
+
 public:
 	template<typename Item>
 	DataColumnInfo(const Column<Item>& column) noexcept
@@ -210,20 +212,20 @@ public:
 		return mTypeInfo;
 	}
 
-	template<typename VisitableItems, typename PtrVisitor>
+	template<typename PtrVisitor>
 	void Visit(const void* item, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitRec<0, VisitableItems>(item, ptrVisitor);
+		pvVisitRec<0>(item, ptrVisitor);
 	}
 
-	template<typename VisitableItems, typename PtrVisitor>
+	template<typename PtrVisitor>
 	void Visit(void* item, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitRec<0, VisitableItems>(item, ptrVisitor);
+		pvVisitRec<0>(item, ptrVisitor);
 	}
 
 private:
-	template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
+	template<size_t index, typename Void, typename PtrVisitor>
 	internal::EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
 		const PtrVisitor& ptrVisitor) const
 	{
@@ -233,10 +235,10 @@ private:
 		if (typeid(Item) == mTypeInfo)
 			pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
 		else
-			pvVisitRec<index + 1, VisitableItems>(item, ptrVisitor);
+			pvVisitRec<index + 1>(item, ptrVisitor);
 	}
 
-	template<size_t index, typename VisitableItems, typename Void, typename PtrVisitor>
+	template<size_t index, typename Void, typename PtrVisitor>
 	internal::EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
 		const PtrVisitor& ptrVisitor) const
 	{
@@ -244,14 +246,14 @@ private:
 	}
 
 	template<typename Item, typename PtrVisitor>
-	internal::EnableIf<internal::IsInvocable2<PtrVisitor, Item*, const DataColumnInfo&>::value>
+	internal::EnableIf<internal::IsInvocable2<PtrVisitor, Item*, DataColumnInfo>::value>
 	pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 	{
 		ptrVisitor(item, *this);
 	}
 
 	template<typename Item, typename PtrVisitor>
-	internal::EnableIf<!internal::IsInvocable2<PtrVisitor, Item*, const DataColumnInfo&>::value>
+	internal::EnableIf<!internal::IsInvocable2<PtrVisitor, Item*, DataColumnInfo>::value>
 	pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 	{
 		ptrVisitor(item);
@@ -301,10 +303,8 @@ public:
 
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
-	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
-
 public:
-	static ColumnCode GetColumnCode(const ColumnInfo& columnInfo) noexcept
+	static ColumnCode GetColumnCode(ColumnInfo columnInfo) noexcept
 	{
 		return columnInfo.GetCode();
 	}
@@ -502,8 +502,6 @@ private:
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
 	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
-
-	typedef typename ColumnTraits::VisitableItems VisitableItems;
 
 public:
 	typedef typename Columns::ConstIterator ConstIterator;
@@ -732,7 +730,7 @@ public:
 	}
 
 	template<bool extraCheck = true>
-	size_t GetOffset(const ColumnInfo& columnInfo) const
+	size_t GetOffset(ColumnInfo columnInfo) const
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
 		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
@@ -768,7 +766,7 @@ public:
 		*internal::BitCaster::PtrToPtr<size_t>(raw, 0) = number;
 	}
 
-	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
+	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
 		ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
@@ -949,7 +947,7 @@ private:
 		{
 			ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(code));
-			columnInfo.template Visit<VisitableItems>(item, ptrVisitor);	//?
+			columnInfo.Visit(item, ptrVisitor);	//?
 		}
 	}
 
@@ -988,8 +986,6 @@ private:
 	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> Columns;
 
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
-
-	typedef typename internal::DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
 
 public:
 	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
@@ -1083,7 +1079,7 @@ public:
 	}
 
 	template<bool extraCheck = true>
-	size_t GetOffset(const ColumnInfo& columnInfo) const noexcept
+	size_t GetOffset(ColumnInfo columnInfo) const noexcept
 	{
 		size_t offset = pvGetOffset(columnInfo);
 		MOMO_ASSERT(offset < sizeof(Struct));
@@ -1115,7 +1111,7 @@ public:
 		*internal::BitCaster::PtrToPtr<size_t>(raw, pvGetNumberOffset()) = number;
 	}
 
-	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
+	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
 		if (resOffset != nullptr)
 			*resOffset = pvGetOffset(columnInfo);
@@ -1155,7 +1151,7 @@ private:
 	{
 	}
 
-	size_t pvGetOffset(const ColumnInfo& columnInfo) const noexcept
+	size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
 	{
 		return static_cast<size_t>(columnInfo.GetCode());	//?
 	}
@@ -1185,7 +1181,7 @@ private:
 		for (const auto& columnInfo : mColumns)
 		{
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(columnInfo));
-			columnInfo.template Visit<VisitableItems>(item, ptrVisitor);
+			columnInfo.Visit(item, ptrVisitor);
 		}
 	}
 
