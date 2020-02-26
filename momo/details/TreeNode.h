@@ -129,6 +129,8 @@ namespace internal
 		};
 
 	public:
+		Node() = delete;
+
 		Node(const Node&) = delete;
 
 		Node& operator=(const Node&) = delete;

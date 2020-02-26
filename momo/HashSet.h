@@ -47,6 +47,8 @@ namespace internal
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	public:
+		HashSetBuckets() = delete;
+
 		HashSetBuckets(const HashSetBuckets&) = delete;
 
 		HashSetBuckets& operator=(const HashSetBuckets&) = delete;

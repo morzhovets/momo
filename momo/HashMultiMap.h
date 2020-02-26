@@ -57,6 +57,8 @@ namespace internal
 		};
 
 	public:
+		HashMultiMapKeyReference() = delete;
+
 		operator ConstReference() const noexcept
 		{
 			return ConstReferenceProxy(key, mValues);
