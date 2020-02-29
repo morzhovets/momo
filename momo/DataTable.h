@@ -73,10 +73,10 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;
+	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
 
 	template<typename Item, typename ItemArg>
-	using Assigner = DataOperator<DataOperatorType::assign, Column<Item>, ItemArg>;
+	using Assigner = internal::DataAssigner<Column<Item>, ItemArg>;
 
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;

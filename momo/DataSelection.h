@@ -419,7 +419,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 		template<typename Item>
-		using Equaler = DataOperator<DataOperatorType::equal, Column<Item>, const Item&>;	//?
+		using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
 
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;

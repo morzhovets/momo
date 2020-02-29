@@ -12,8 +12,6 @@
     MOMO_DATA_COLUMN_STRING
 
   namespace momo:
-    enum class DataOperatorType
-    class DataOperator
     class DataColumn
     class DataColumnInfo
     class DataSettings
@@ -76,61 +74,73 @@ namespace internal
 	{
 		typedef typename Struct::VisitableItems VisitableItems;
 	};
-}
 
-enum class DataOperatorType
-{
-	equal,
-	assign,
-};
-
-template<DataOperatorType tType, typename TColumn, typename TItemArg>
-class DataOperator
-{
-public:
-	typedef TColumn Column;
-	typedef TItemArg ItemArg;
-
-	static const DataOperatorType type = tType;
-
-public:
-	explicit DataOperator(const Column& column, ItemArg&& itemArg) noexcept
-		: mColumn(column),
-		mItemArg(std::forward<ItemArg>(itemArg))
+	template<typename TColumn, typename TItemArg>
+	class DataOperator
 	{
-	}
+	public:
+		typedef TColumn Column;
+		typedef TItemArg ItemArg;
+
+	public:
+		explicit DataOperator(const Column& column, ItemArg&& itemArg) noexcept
+			: mColumn(column),
+			mItemArg(std::forward<ItemArg>(itemArg))
+		{
+		}
 
 #ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-	DataOperator(DataOperator&& oper) noexcept
-		: mColumn(oper.mColumn),
-		mItemArg(std::forward<ItemArg>(oper.mItemArg))
-	{
-		//MOMO_ASSERT(false);
-	}
+		DataOperator(DataOperator&& oper) noexcept
+			: mColumn(oper.mColumn),
+			mItemArg(std::forward<ItemArg>(oper.mItemArg))
+		{
+			//MOMO_ASSERT(false);
+		}
 #endif
 
-	DataOperator(const DataOperator&) = delete;
+		DataOperator(const DataOperator&) = delete;
 
-	~DataOperator() noexcept
+		~DataOperator() noexcept
+		{
+		}
+
+		DataOperator& operator=(const DataOperator&) = delete;
+
+		const Column& GetColumn() const noexcept
+		{
+			return mColumn;
+		}
+
+		ItemArg&& GetItemArg() const noexcept
+		{
+			return std::forward<ItemArg>(mItemArg);
+		}
+
+	private:
+		const Column& mColumn;
+		ItemArg&& mItemArg;
+	};
+
+	template<typename TColumn, typename TItemArg>
+	class DataEqualer : public DataOperator<TColumn, TItemArg>
 	{
-	}
+	private:
+		typedef DataOperator<TColumn, TItemArg> Operator;
 
-	DataOperator& operator=(const DataOperator&) = delete;
+	public:
+		using Operator::Operator;
+	};
 
-	const Column& GetColumn() const noexcept
+	template<typename TColumn, typename TItemArg>
+	class DataAssigner : public DataOperator<TColumn, TItemArg>
 	{
-		return mColumn;
-	}
+	private:
+		typedef DataOperator<TColumn, TItemArg> Operator;
 
-	ItemArg&& GetItemArg() const noexcept
-	{
-		return std::forward<ItemArg>(mItemArg);
-	}
-
-private:
-	const Column& mColumn;
-	ItemArg&& mItemArg;
-};
+	public:
+		using Operator::Operator;
+	};
+}
 
 template<typename TItem, typename TStruct>
 class DataColumn
@@ -139,10 +149,10 @@ public:
 	typedef TItem Item;
 	typedef TStruct Struct;
 
-	typedef DataOperator<DataOperatorType::equal, DataColumn, const Item&> Equaler;
+	typedef internal::DataEqualer<DataColumn, const Item&> Equaler;
 
 	template<typename ItemArg>
-	using Assigner = DataOperator<DataOperatorType::assign, DataColumn, ItemArg>;
+	using Assigner = internal::DataAssigner<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(uint64_t code, const char* name = "") noexcept
@@ -393,7 +403,7 @@ private:
 	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
 	static const size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
-	static const size_t vertexCount = 1 << logVertexCount;
+	static const size_t vertexCount = size_t{1} << logVertexCount;
 
 	class Graph
 	{

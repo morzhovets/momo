@@ -61,7 +61,7 @@ namespace internal
 			: mRaw(raw),
 			mRawIndex(rawIndex)
 		{
-			//MOMO_ASSERT(rawIndex <= (size_t)((raw != nullptr) ? 1 : 0));
+			//MOMO_ASSERT(rawIndex <= ((mRaw != nullptr) ? size_t{1} : size_t{0}));
 		}
 
 		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
