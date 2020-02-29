@@ -1296,7 +1296,10 @@ namespace internal
 		template<typename Hash>
 		static bool pvContainsOffset(const Hash& hash, size_t offset) noexcept
 		{
-			return hash.GetSortedOffsets().Contains(offset);
+			const Offsets& sortedOffsets = hash.GetSortedOffsets();
+			return std::find(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset)
+				!= sortedOffsets.GetEnd();
+			//return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
 		}
 
 		template<typename Void, typename Item, typename... Items>

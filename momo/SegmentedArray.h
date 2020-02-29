@@ -575,14 +575,14 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<typename ItemArg,
-		typename Predicate = internal::Equaler<ItemArg, Item>>
-	bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
-	{
-		ConstIterator end = GetEnd();
-		return std::find_if(GetBegin(), end,
-			[&itemArg, &pred] (const Item& item) { return pred(itemArg, item); }) != end;
-	}
+	//template<typename ItemArg,
+	//	typename Predicate = std::equal_to<>>
+	//bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
+	//{
+	//	ConstIterator end = GetEnd();
+	//	return std::find_if(GetBegin(), end,
+	//		[&itemArg, &pred] (const Item& item) { return pred(itemArg, item); }) != end;
+	//}
 
 private:
 	Item* pvGetSegMemory(size_t segIndex)
