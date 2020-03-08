@@ -47,7 +47,9 @@ public:
 	template<typename Item>
 	static int Compare(const Item& item1, const Item& item2)
 	{
-		return (item1 < item2) ? -1 : (item1 == item2) ? 0 : 1;
+		if (std::less<Item>()(item1, item2))
+			return -1;
+		return (item1 == item2) ? 0 : 1;
 	}
 
 	template<typename Iterator, typename Comparer, typename MemManager>
