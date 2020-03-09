@@ -704,14 +704,14 @@ public:
 
 	void DestroyRaw(Raw* raw) const noexcept
 	{
-		for (const auto& funcRec : mFuncRecords)
+		for (const FuncRecord& funcRec : mFuncRecords)
 			funcRec.destroyFunc(nullptr, funcRec.offset, raw);
 	}
 
 	void DestroyRaw(Raw* raw) noexcept
 	{
 		MemManager& memManager = GetMemManager();
-		for (const auto& funcRec : mFuncRecords)
+		for (const FuncRecord& funcRec : mFuncRecords)
 			funcRec.destroyFunc(&memManager, funcRec.offset, raw);
 	}
 
@@ -953,7 +953,7 @@ private:
 	template<typename Void, typename PtrVisitor>
 	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		for (const auto& columnInfo : mColumns)
+		for (const ColumnInfo& columnInfo : mColumns)
 		{
 			ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(code));
@@ -1188,7 +1188,7 @@ private:
 	{
 		if (mColumns.IsEmpty())
 			throw std::runtime_error("Not prepared for visitors");
-		for (const auto& columnInfo : mColumns)
+		for (const ColumnInfo& columnInfo : mColumns)
 		{
 			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(columnInfo));
 			columnInfo.Visit(item, ptrVisitor);
