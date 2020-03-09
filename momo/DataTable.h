@@ -486,14 +486,12 @@ public:
 
 	Row NewRow(const Row& row)
 	{
-		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
-		return pvMakeRow(pvCopyRaw(row.GetRaw()));
+		return pvMakeRow(pvImportRaw(row.GetColumnList(), row.GetRaw()));
 	}
 
 	Row NewRow(ConstRowReference rowRef)
 	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return pvMakeRow(pvCopyRaw(rowRef.GetRaw()));
+		return pvMakeRow(pvImportRaw(rowRef.GetColumnList(), rowRef.GetRaw()));
 	}
 
 	RowReference AddRow(Row&& row)
@@ -898,6 +896,7 @@ private:
 	template<typename Rows, typename RowFilter>
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
+		const ColumnList& columnList = GetColumnList();
 		if (std::is_same<RowFilter, EmptyRowFilter>::value)
 			Reserve(rows.GetCount());
 		try
@@ -907,7 +906,7 @@ private:
 				if (!rowFilter(rowRef))
 					continue;
 				mRaws.Reserve(mRaws.GetCount() + 1);
-				Raw* raw = pvCopyRaw(rowRef.GetRaw());
+				Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
 				try
 				{
 					mIndexes.AddRaw(raw);
@@ -960,19 +959,19 @@ private:
 		return raw;
 	}
 
-	Raw* pvCopyRaw(const Raw* raw)
+	Raw* pvImportRaw(const ColumnList& srcColumnList, const Raw* srcRaw)
 	{
-		Raw* resRaw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			mCrew.GetColumnList().CopyRaw(raw, resRaw);
+			mCrew.GetColumnList().ImportRaw(srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
-			mRawMemPool.Deallocate(resRaw);
+			mRawMemPool.Deallocate(raw);
 			throw;
 		}
-		return resRaw;
+		return raw;
 	}
 
 	void pvFreeRaws() noexcept
