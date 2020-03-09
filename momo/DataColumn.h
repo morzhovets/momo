@@ -398,6 +398,24 @@ public:
 
 	typedef void Raw;
 
+	class ColumnRecord : public ColumnInfo
+	{
+	public:
+		explicit ColumnRecord(ColumnInfo columnInfo, size_t offset) noexcept	//?
+			: ColumnInfo(columnInfo),
+			mOffset(offset)
+		{
+		}
+
+		size_t GetOffset() const noexcept
+		{
+			return mOffset;
+		}
+
+	private:
+		size_t mOffset;
+	};
+
 private:
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
 	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
@@ -495,7 +513,7 @@ private:
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManagerPtr> Columns;
+	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> Columns;
 
 	typedef std::function<void(MemManager&, size_t, Raw*)> CreateFunc;
 	typedef std::function<void(MemManager*, size_t, Raw*)> DestroyFunc;
@@ -644,7 +662,7 @@ public:
 		mAddends = addends;
 		mTotalSize = offset;
 		mAlignment = alignment;
-		pvAddColumns(column, columns...);
+		pvAddColumns(columnCodes.data(), column, columns...);
 		mFuncRecords.AddBackNogrow(std::move(funcRec));
 	}
 
@@ -809,10 +827,11 @@ private:
 		const ColumnCode* columnCodes) const
 	{
 		Graph graph;
-		for (ColumnCode code : mColumnCodeSet)
+		for (const ColumnRecord& columnRec : mColumns)
 		{
-			std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, codeParam);
-			graph.AddEdges(vertices.first, vertices.second, pvGetOffset(code));
+			std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnRec.GetCode(),
+				codeParam);
+			graph.AddEdges(vertices.first, vertices.second, columnRec.GetOffset());
 		}
 		return pvFillAddends<Items...>(addends, graph, offset, alignment, codeParam, columnCodes);
 	}
@@ -853,13 +872,15 @@ private:
 	}
 
 	template<typename Item, typename... Items>
-	void pvAddColumns(const Column<Item>& column, const Column<Items>&... columns) noexcept
+	void pvAddColumns(const ColumnCode* columnCodes, const Column<Item>& column,
+		const Column<Items>&... columns) noexcept
 	{
-		mColumns.AddBackNogrow(ColumnInfo(column));
-		pvAddColumns(columns...);
+		size_t offset = pvGetOffset(*columnCodes);
+		mColumns.AddBackNogrow(ColumnRecord(column, offset));
+		pvAddColumns(columnCodes + 1, columns...);
 	}
 
-	void pvAddColumns() noexcept
+	void pvAddColumns(const ColumnCode* /*columnCodes*/) noexcept
 	{
 	}
 
@@ -953,11 +974,10 @@ private:
 	template<typename Void, typename PtrVisitor>
 	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		for (const ColumnInfo& columnInfo : mColumns)
+		for (const ColumnRecord& columnRec : mColumns)
 		{
-			ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
-			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(code));
-			columnInfo.Visit(item, ptrVisitor);	//?
+			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.GetOffset());
+			columnRec.Visit(item, ptrVisitor);	//?
 		}
 	}
 
