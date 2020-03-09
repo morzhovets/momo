@@ -515,13 +515,13 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> Columns;
 
-	typedef std::function<void(MemManager&, size_t, Raw*)> CreateFunc;
-	typedef std::function<void(MemManager*, size_t, Raw*)> DestroyFunc;
-	typedef std::function<void(MemManager&, size_t, const Raw*, Raw*)> CopyFunc;
+	typedef std::function<void(MemManager&, const ColumnRecord*, Raw*)> CreateFunc;
+	typedef std::function<void(MemManager*, const ColumnRecord*, Raw*)> DestroyFunc;
+	typedef std::function<void(MemManager&, const ColumnRecord*, const Raw*, Raw*)> CopyFunc;
 
 	struct FuncRecord
 	{
-		size_t offset;
+		size_t columnIndex;
 		CreateFunc createFunc;
 		DestroyFunc destroyFunc;
 		CopyFunc copyFunc;
@@ -616,7 +616,8 @@ public:
 	void Add(const Column<Item>& column, const Column<Items>&... columns)
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
-		if (columnCount + GetCount() > maxColumnCount)
+		size_t initColumnCount = GetCount();
+		if (columnCount + initColumnCount > maxColumnCount)
 			throw std::runtime_error("Too many columns");
 		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnTraits::GetColumnCode(column),
 			ColumnTraits::GetColumnCode(columns)... }};
@@ -639,14 +640,15 @@ public:
 				throw std::runtime_error("Cannot add columns");
 		}
 		FuncRecord funcRec;
-		funcRec.offset = mTotalSize;
-		funcRec.createFunc = [] (MemManager& memManager, size_t offset, Raw* raw)
-			{ pvCreate<void, Item, Items...>(memManager, offset, raw); };
-		funcRec.destroyFunc = [] (MemManager* memManager, size_t offset, Raw* raw)
-			{ pvDestroy<void, Item, Items...>(memManager, offset, raw); };
-		funcRec.copyFunc = [] (MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
-			{ pvCopy<void, Item, Items...>(memManager, offset, srcRaw, dstRaw); };
-		mColumns.Reserve(mColumns.GetCount() + columnCount);
+		funcRec.columnIndex = initColumnCount;
+		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns, Raw* raw)
+			{ pvCreate<void, Item, Items...>(memManager, columns, raw); };
+		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
+			{ pvDestroy<void, Item, Items...>(memManager, columns, raw); };
+		funcRec.copyFunc = [] (MemManager& memManager, const ColumnRecord* columns,
+			const Raw* srcRaw, Raw* dstRaw)
+			{ pvCopy<void, Item, Items...>(memManager, columns, srcRaw, dstRaw); };
+		mColumns.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		try
 		{
@@ -706,7 +708,7 @@ public:
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
 				const FuncRecord& funcRec = mFuncRecords[funcIndex];
-				funcRec.createFunc(memManager, funcRec.offset, raw);
+				funcRec.createFunc(memManager, &mColumns[funcRec.columnIndex], raw);
 			}
 		}
 		catch (...)
@@ -714,7 +716,7 @@ public:
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
 				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.destroyFunc(&memManager, funcRec.offset, raw);
+				funcRec.destroyFunc(&memManager, &mColumns[funcRec.columnIndex], raw);
 			}
 			throw;
 		}
@@ -723,14 +725,14 @@ public:
 	void DestroyRaw(Raw* raw) const noexcept
 	{
 		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(nullptr, funcRec.offset, raw);
+			funcRec.destroyFunc(nullptr, &mColumns[funcRec.columnIndex], raw);
 	}
 
 	void DestroyRaw(Raw* raw) noexcept
 	{
 		MemManager& memManager = GetMemManager();
 		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(&memManager, funcRec.offset, raw);
+			funcRec.destroyFunc(&memManager, &mColumns[funcRec.columnIndex], raw);
 	}
 
 	void CopyRaw(const Raw* srcRaw, Raw* dstRaw)
@@ -743,7 +745,7 @@ public:
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
 				const FuncRecord& funcRec = mFuncRecords[funcIndex];
-				funcRec.copyFunc(memManager, funcRec.offset, srcRaw, dstRaw);
+				funcRec.copyFunc(memManager, &mColumns[funcRec.columnIndex], srcRaw, dstRaw);
 			}
 		}
 		catch (...)
@@ -751,7 +753,7 @@ public:
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
 				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.destroyFunc(&memManager, funcRec.offset, dstRaw);
+				funcRec.destroyFunc(&memManager, &mColumns[funcRec.columnIndex], dstRaw);
 			}
 			throw;
 		}
@@ -856,7 +858,7 @@ private:
 	static void pvAddEdges(Graph& graph, size_t& offset, size_t& alignment, size_t codeParam,
 		const ColumnCode* columnCodes)
 	{
-		pvCorrectOffset<Item>(offset);
+		offset = internal::UIntMath<>::Ceil(offset, ItemTraits::template GetAlignment<Item>());
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += ItemTraits::template GetSize<Item>();
@@ -906,14 +908,13 @@ private:
 	}
 
 	template<typename Void, typename Item, typename... Items>
-	static void pvCreate(MemManager& memManager, size_t offset, Raw* raw)
+	static void pvCreate(MemManager& memManager, const ColumnRecord* columns, Raw* raw)
 	{
-		pvCorrectOffset<Item>(offset);
+		size_t offset = columns->GetOffset();
 		ItemTraits::Create(memManager, internal::BitCaster::PtrToPtr<Item>(raw, offset));
 		try
 		{
-			pvCreate<void, Items...>(memManager,
-				offset + ItemTraits::template GetSize<Item>(), raw);
+			pvCreate<void, Items...>(memManager, columns + 1, raw);
 		}
 		catch (...)
 		{
@@ -923,33 +924,35 @@ private:
 	}
 
 	template<typename Void>
-	static void pvCreate(MemManager& /*memManager*/, size_t /*offset*/, Raw* /*raw*/) noexcept
+	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columns*/,
+		Raw* /*raw*/) noexcept
 	{
 	}
 
 	template<typename Void, typename Item, typename... Items>
-	static void pvDestroy(MemManager* memManager, size_t offset, Raw* raw) noexcept
+	static void pvDestroy(MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 	{
-		pvCorrectOffset<Item>(offset);
+		size_t offset = columns->GetOffset();
 		ItemTraits::Destroy(memManager, internal::BitCaster::PtrToPtr<Item>(raw, offset));
-		pvDestroy<void, Items...>(memManager, offset + ItemTraits::template GetSize<Item>(), raw);
+		pvDestroy<void, Items...>(memManager, columns + 1, raw);
 	}
 
 	template<typename Void>
-	static void pvDestroy(MemManager* /*memManager*/, size_t /*offset*/, Raw* /*raw*/) noexcept
+	static void pvDestroy(MemManager* /*memManager*/, const ColumnRecord* /*columns*/,
+		Raw* /*raw*/) noexcept
 	{
 	}
 
 	template<typename Void, typename Item, typename... Items>
-	static void pvCopy(MemManager& memManager, size_t offset, const Raw* srcRaw, Raw* dstRaw)
+	static void pvCopy(MemManager& memManager, const ColumnRecord* columns,
+		const Raw* srcRaw, Raw* dstRaw)
 	{
-		pvCorrectOffset<Item>(offset);
+		size_t offset = columns->GetOffset();
 		ItemTraits::Copy(memManager, internal::BitCaster::PtrToPtr<const Item>(srcRaw, offset),
 			internal::BitCaster::PtrToPtr<Item>(dstRaw, offset));
 		try
 		{
-			pvCopy<void, Items...>(memManager, offset + ItemTraits::template GetSize<Item>(),
-				srcRaw, dstRaw);
+			pvCopy<void, Items...>(memManager, columns + 1, srcRaw, dstRaw);
 		}
 		catch (...)
 		{
@@ -959,16 +962,9 @@ private:
 	}
 
 	template<typename Void>
-	static void pvCopy(MemManager& /*memManager*/, size_t /*offset*/, const Raw* /*srcRaw*/,
-		Raw* /*dstRaw*/) noexcept
+	static void pvCopy(MemManager& /*memManager*/, const ColumnRecord* /*columns*/,
+		const Raw* /*srcRaw*/, Raw* /*dstRaw*/) noexcept
 	{
-	}
-
-	template<typename Item>
-	static void pvCorrectOffset(size_t& offset) noexcept
-	{
-		size_t alignment = ItemTraits::template GetAlignment<Item>();
-		offset = internal::UIntMath<>::Ceil(offset, alignment);
 	}
 
 	template<typename Void, typename PtrVisitor>
