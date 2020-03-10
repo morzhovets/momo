@@ -112,9 +112,7 @@ public:
 		}
 
 		for (size_t i = 0; i < count; ++i)
-			table[i].GetMutable(dblCol) = static_cast<double>(i) / 3.0;
-		for (size_t i = 0; i < count; ++i)
-			table[i].Set(dblCol, static_cast<double>(i) / 2.0);
+			table[i].GetMutable(dblCol) = static_cast<double>(i) / 2.0;
 
 		for (auto row : table) { (void)row; }
 		for (auto row : ctable) { (void)row; }

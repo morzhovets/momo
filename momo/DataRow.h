@@ -346,22 +346,6 @@ namespace internal
 			return GetMutableByOffset<Item>(ConstReference::GetColumnList().GetOffset(column));
 		}
 
-		template<typename Item, typename ItemArg>
-		void SetByOffset(size_t offset, ItemArg&& itemArg) const
-		{
-			ConstReference::GetRaw();	// check
-			const ColumnList& columnList = ConstReference::GetColumnList();
-			MOMO_CHECK(columnList.IsMutable(offset));
-			columnList.template Assign<Item>(ptGetRaw(), offset, std::forward<ItemArg>(itemArg));
-		}
-
-		template<typename Item, typename ItemArg>
-		void Set(const Column<Item>& column, ItemArg&& itemArg) const
-		{
-			SetByOffset<Item>(ConstReference::GetColumnList().GetOffset(column),
-				std::forward<ItemArg>(itemArg));
-		}
-
 	protected:
 		Raw* ptGetRaw() const noexcept
 		{
