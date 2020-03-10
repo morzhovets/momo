@@ -642,7 +642,23 @@ public:
 		funcRec.columnIndex = initColumnCount;
 		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns,
 			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
-			{ pvCreate<void, Item, Items...>(memManager, columns, srcColumnList, srcRaw, raw); };
+		{
+			if (srcRaw == nullptr)
+			{
+				pvCreate<std::nullptr_t, std::nullptr_t, Item, Items...>(memManager, columns,
+					nullptr, nullptr, raw);
+			}
+			else if (srcColumnList == nullptr)
+			{
+				pvCreate<std::nullptr_t, const Raw*, Item, Items...>(memManager, columns,
+					nullptr, srcRaw, raw);
+			}
+			else
+			{
+				pvCreate<const DataColumnList*, const Raw*, Item, Items...>(memManager, columns,
+					srcColumnList, srcRaw, raw);
+			}
+		};
 		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
 			{ pvDestroy<void, Item, Items...>(memManager, columns, raw); };
 		mColumns.Reserve(initColumnCount + columnCount);
@@ -863,18 +879,22 @@ private:
 		return addend1 + addend2;
 	}
 
-	template<typename Void, typename Item, typename... Items>
+	template<typename DataColumnListPtr, typename RawPtr, typename Item, typename... Items>
 	static void pvCreate(MemManager& memManager, const ColumnRecord* columns,
-		const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
+		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
 		size_t offset = columns->GetOffset();
 		Item* item = internal::BitCaster::PtrToPtr<Item>(raw, offset);
 		const Item* srcItem = nullptr;
-		if (srcRaw != nullptr)
+		if (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
 			size_t srcOffset = offset;
-			if (srcColumnList == nullptr || srcColumnList->Contains(*columns, &srcOffset))
-				srcItem = internal::BitCaster::PtrToPtr<const Item>(srcRaw, srcOffset);
+			if (std::is_same<DataColumnListPtr, std::nullptr_t>::value ||
+				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
+			{
+				srcItem = internal::BitCaster::PtrToPtr<const Item>(
+					static_cast<const Raw*>(srcRaw), srcOffset);
+			}
 		}
 		if (srcItem == nullptr)
 			ItemTraits::Create(memManager, item);
@@ -882,7 +902,8 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		try
 		{
-			pvCreate<void, Items...>(memManager, columns + 1, srcColumnList, srcRaw, raw);
+			pvCreate<DataColumnListPtr, RawPtr, Items...>(memManager, columns + 1,
+				srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
@@ -891,9 +912,9 @@ private:
 		}
 	}
 
-	template<typename Void>
+	template<typename DataColumnListPtr, typename RawPtr>
 	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columns*/,
-		const DataColumnList* /*srcColumnList*/, const Raw* /*srcRaw*/, Raw* /*raw*/) noexcept
+		DataColumnListPtr /*srcColumnList*/, RawPtr /*srcRaw*/, Raw* /*raw*/) noexcept
 	{
 	}
 
