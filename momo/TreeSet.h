@@ -10,6 +10,7 @@
     class TreeSetItemTraits
     class TreeSetSettings
     class TreeSet
+    class TreeMultiSet
 
   All `TreeSet` functions and constructors have strong exception safety,
   but not the following cases:
@@ -1538,6 +1539,9 @@ private:
 	Node* mRootNode;
 	NodeParams* mNodeParams;
 };
+
+template<typename TKey>
+using TreeMultiSet = TreeSet<TKey, TreeTraits<TKey, true>>;
 
 } // namespace momo
 

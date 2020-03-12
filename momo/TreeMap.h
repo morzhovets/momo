@@ -10,6 +10,7 @@
     class TreeMapKeyValueTraits
     class TreeMapSettings
     class TreeMap
+    class TreeMultiMap
 
   All `TreeMap` functions and constructors have strong exception safety,
   but not the following cases:
@@ -684,5 +685,8 @@ private:
 private:
 	TreeSet mTreeSet;
 };
+
+template<typename TKey, typename TValue>
+using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
 
 } // namespace momo
