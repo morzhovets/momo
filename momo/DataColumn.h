@@ -370,11 +370,6 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	static ColumnCode GetColumnCode(ColumnInfo columnInfo) noexcept
-	{
-		return columnInfo.GetCode();
-	}
-
 	static std::pair<size_t, size_t> GetVertices(ColumnCode code, size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
@@ -721,7 +716,7 @@ public:
 	template<bool extraCheck = true>
 	size_t GetOffset(ColumnInfo columnInfo) const
 	{
-		ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
+		ColumnCode code = columnInfo.GetCode();
 		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
 		size_t offset = pvGetOffset(code);
 		MOMO_ASSERT(offset < mTotalSize);
@@ -757,7 +752,7 @@ public:
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
-		ColumnCode code = ColumnTraits::GetColumnCode(columnInfo);
+		ColumnCode code = columnInfo.GetCode();
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
@@ -790,8 +785,7 @@ private:
 		size_t initColumnCount = GetCount();
 		if (columnCount + initColumnCount > maxColumnCount)
 			throw std::runtime_error("Too many columns");
-		std::array<ColumnCode, columnCount> columnCodes = {{
-			ColumnTraits::GetColumnCode(columns)... }};
+		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo(columns).GetCode()... }};
 		Addends addends;
 		size_t offset;
 		size_t alignment;
