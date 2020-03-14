@@ -52,23 +52,32 @@ class SimpleDataTester
 public:
 	static void TestAll()
 	{
-		std::cout << "momo::DataColumnListStatic: " << std::flush;
-		TestData<false>(momo::DataColumnListStatic<Struct>(),
-			intStruct, dblStruct, strStruct);
-		std::cout << "ok" << std::endl;
+		{
+			std::cout << "momo::DataColumnListStatic: " << std::flush;
+			momo::DataColumnListStatic<Struct> columnList;
+			columnList.SetMutable(intStruct);
+			columnList.ResetMutable();
+			columnList.SetMutable(dblStruct);
+			TestData<false>(std::move(columnList), intStruct, dblStruct, strStruct);
+			std::cout << "ok" << std::endl;
+		}
 
-		std::cout << "momo::DataColumnList (struct): " << std::flush;
-		TestData<true>(momo::DataColumnList<momo::DataColumnTraits<Struct>>(intStruct, dblStruct, strStruct),
-			intStruct, dblStruct, strStruct);
-		std::cout << "ok" << std::endl;
+		{
+			std::cout << "momo::DataColumnList (struct): " << std::flush;
+			momo::DataColumnList<momo::DataColumnTraits<Struct>> columnList(intStruct,
+				dblStruct.Mutable(), strStruct);
+			TestData<true>(std::move(columnList), intStruct, dblStruct, strStruct);
+			std::cout << "ok" << std::endl;
+		}
 
-		momo::DataColumnList<> columnList;
-		columnList.Add(dblString);
-		columnList.Add(strString, intString);
-		std::cout << "momo::DataColumnList (string): " << std::flush;
-		TestData<true>(std::move(columnList),
-			intString, dblString, strString);
-		std::cout << "ok" << std::endl;
+		{
+			std::cout << "momo::DataColumnList (string): " << std::flush;
+			momo::DataColumnList<> columnList;
+			columnList.Add(dblString.Mutable());
+			columnList.Add(strString, intString);
+			TestData<true>(std::move(columnList), intString, dblString, strString);
+			std::cout << "ok" << std::endl;
+		}
 	}
 
 	template<bool dynamic, typename DataColumnList, typename IntCol, typename DblCol, typename StrCol>
@@ -81,10 +90,6 @@ public:
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
-
-		columns.SetMutable(intCol);
-		columns.ResetMutable();
-		columns.SetMutable(dblCol);
 
 		DataTable table(std::move(columns));
 		const DataTable& ctable = table;

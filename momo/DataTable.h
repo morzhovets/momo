@@ -75,6 +75,9 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
+	using QualifiedColumn = Column<Item>;
+
+	template<typename Item>
 	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
 
 	template<typename Item, typename ItemArg>
@@ -317,7 +320,8 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	explicit DataTable(const Column<Item>& column, const Column<Items>&... columns)
+	explicit DataTable(const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns)
 		: DataTable(ColumnList(column, columns...))
 	{
 	}

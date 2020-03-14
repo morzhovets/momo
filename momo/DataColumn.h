@@ -140,14 +140,23 @@ namespace internal
 	public:
 		using Operator::Operator;
 	};
+
+	template<typename Item>
+	struct DataMutable
+	{
+	};
 }
 
 template<typename TItem, typename TStruct>
-class DataColumn
+class DataColumn : public DataColumn<internal::DataMutable<TItem>, TStruct>
 {
 public:
 	typedef TItem Item;
 	typedef TStruct Struct;
+
+	typedef DataColumn BaseColumn;
+
+	typedef DataColumn<internal::DataMutable<Item>, Struct> MutableColumn;
 
 	typedef internal::DataEqualer<DataColumn, const Item&> Equaler;
 
@@ -161,6 +170,11 @@ public:
 	{
 	}
 
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return *this;
+	}
+
 	constexpr uint64_t GetCode() const noexcept
 	{
 		return mCode;
@@ -169,6 +183,16 @@ public:
 	constexpr const char* GetName() const noexcept
 	{
 		return mName;
+	}
+
+	constexpr const MutableColumn& Mutable() const noexcept
+	{
+		return *this;
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return false;
 	}
 
 	Equaler operator==(const Item& item) const noexcept
@@ -185,6 +209,38 @@ public:
 private:
 	uint64_t mCode;
 	const char* mName;
+};
+
+template<typename TItem, typename TStruct>
+class DataColumn<internal::DataMutable<TItem>, TStruct>
+{
+public:
+	typedef TItem Item;
+	typedef TStruct Struct;
+
+	typedef DataColumn<Item, Struct> BaseColumn;
+
+public:
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return static_cast<const BaseColumn&>(*this);
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return true;
+	}
+
+protected:
+	constexpr explicit DataColumn() noexcept
+	{
+	}
+
+	DataColumn(const DataColumn&) = default;
+
+	~DataColumn() = default;
+
+	DataColumn& operator=(const DataColumn&) = default;
 };
 
 template<typename TStruct>
@@ -396,6 +452,9 @@ public:
 	template<typename Item>
 	using Column = typename ColumnTraits::template Column<Item>;
 
+	template<typename Item>
+	using QualifiedColumn = Column<Item>;
+
 	typedef void Raw;
 
 	class ColumnRecord : public ColumnInfo
@@ -548,7 +607,8 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	explicit DataColumnList(const Column<Item>& column, const Column<Items>&... columns)
+	explicit DataColumnList(const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns)
 		: DataColumnList()
 	{
 		Add(column, columns...);
@@ -612,85 +672,12 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	void Add(const Column<Item>& column, const Column<Items>&... columns)
+	void Add(const QualifiedColumn<Item>& column, const QualifiedColumn<Items>&... columns)
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
-		size_t initColumnCount = GetCount();
-		if (columnCount + initColumnCount > maxColumnCount)
-			throw std::runtime_error("Too many columns");
-		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnTraits::GetColumnCode(column),
-			ColumnTraits::GetColumnCode(columns)... }};
-		Addends addends;
-		size_t offset;
-		size_t alignment;
-		size_t codeParam = mCodeParam;
-		while (true)
-		{
-			std::fill(addends.begin(), addends.end(), 0);
-			offset = mTotalSize;
-			alignment = mAlignment;
-			if (pvFillAddends<Item, Items...>(addends, offset, alignment, codeParam,
-				columnCodes.data()))
-			{
-				break;
-			}
-			++codeParam;
-			if (codeParam > maxCodeParam)
-				throw std::runtime_error("Cannot add columns");
-		}
-		FuncRecord funcRec;
-		funcRec.columnIndex = initColumnCount;
-		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns,
-			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
-		{
-			if (srcRaw == nullptr)
-			{
-				pvCreate<std::nullptr_t, std::nullptr_t, Item, Items...>(memManager, columns,
-					nullptr, nullptr, raw);
-			}
-			else if (srcColumnList == nullptr)
-			{
-				pvCreate<std::nullptr_t, const Raw*, Item, Items...>(memManager, columns,
-					nullptr, srcRaw, raw);
-			}
-			else
-			{
-				pvCreate<const DataColumnList*, const Raw*, Item, Items...>(memManager, columns,
-					srcColumnList, srcRaw, raw);
-			}
-		};
-		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
-			{ pvDestroy<void, Item, Items...>(memManager, columns, raw); };
-		mColumns.Reserve(initColumnCount + columnCount);
-		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
-		try
-		{
-			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
-		}
-		catch (...)
-		{
-			for (ColumnCode code : columnCodes)
-				mColumnCodeSet.Remove(code);	// no throw
-			throw;
-		}
-		mCodeParam = codeParam;
-		mAddends = addends;
-		mTotalSize = offset;
-		mAlignment = alignment;
-		pvAddColumns(columnCodes.data(), column, columns...);
-		mFuncRecords.AddBackNogrow(std::move(funcRec));
-	}
-
-	template<typename... Items>
-	void SetMutable(const Column<Items>&... columns)
-	{
-		mMutableOffsets.SetCount((mTotalSize + 7) / 8, uint8_t{0});
-		pvSetMutable(columns...);
-	}
-
-	void ResetMutable() noexcept
-	{
-		mMutableOffsets.Clear(true);
+		std::array<bool, columnCount> columnMutables = {{ column.IsMutable(),
+			columns.IsMutable()... }};
+		pvAdd(columnMutables.data(), column.GetBaseColumn(), columns.GetBaseColumn()...);
 	}
 
 	bool IsMutable(size_t offset) const noexcept
@@ -797,6 +784,75 @@ public:
 
 private:
 	template<typename... Items>
+	void pvAdd(const bool* columnMutables, const Column<Items>&... columns)
+	{
+		static const size_t columnCount = sizeof...(columns);
+		size_t initColumnCount = GetCount();
+		if (columnCount + initColumnCount > maxColumnCount)
+			throw std::runtime_error("Too many columns");
+		std::array<ColumnCode, columnCount> columnCodes = {{
+			ColumnTraits::GetColumnCode(columns)... }};
+		Addends addends;
+		size_t offset;
+		size_t alignment;
+		size_t codeParam = mCodeParam;
+		while (true)
+		{
+			std::fill(addends.begin(), addends.end(), 0);
+			offset = mTotalSize;
+			alignment = mAlignment;
+			if (pvFillAddends<Items...>(addends, offset, alignment, codeParam, columnCodes.data()))
+				break;
+			++codeParam;
+			if (codeParam > maxCodeParam)
+				throw std::runtime_error("Cannot add columns");
+		}
+		FuncRecord funcRec;
+		funcRec.columnIndex = initColumnCount;
+		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns,
+			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
+		{
+			if (srcRaw == nullptr)
+			{
+				pvCreate<std::nullptr_t, std::nullptr_t, Items...>(memManager, columns,
+					nullptr, nullptr, raw);
+			}
+			else if (srcColumnList == nullptr)
+			{
+				pvCreate<std::nullptr_t, const Raw*, Items...>(memManager, columns,
+					nullptr, srcRaw, raw);
+			}
+			else
+			{
+				pvCreate<const DataColumnList*, const Raw*, Items...>(memManager, columns,
+					srcColumnList, srcRaw, raw);
+			}
+		};
+		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
+			{ pvDestroy<void, Items...>(memManager, columns, raw); };
+		mColumns.Reserve(initColumnCount + columnCount);
+		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
+		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
+		try
+		{
+			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
+		}
+		catch (...)
+		{
+			for (ColumnCode code : columnCodes)
+				mColumnCodeSet.Remove(code);	// no throw
+			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
+			throw;
+		}
+		mCodeParam = codeParam;
+		mAddends = addends;
+		mTotalSize = offset;
+		mAlignment = alignment;
+		pvAddColumns(columnCodes.data(), columnMutables, columns...);
+		mFuncRecords.AddBackNogrow(std::move(funcRec));
+	}
+
+	template<typename... Items>
 	bool pvFillAddends(Addends& addends, size_t& offset, size_t& alignment, size_t codeParam,
 		const ColumnCode* columnCodes) const
 	{
@@ -846,27 +902,17 @@ private:
 	}
 
 	template<typename Item, typename... Items>
-	void pvAddColumns(const ColumnCode* columnCodes, const Column<Item>& column,
-		const Column<Items>&... columns) noexcept
+	void pvAddColumns(const ColumnCode* columnCodes, const bool* columnMutables,
+		const Column<Item>& column, const Column<Items>&... columns) noexcept
 	{
 		size_t offset = pvGetOffset(*columnCodes);
 		mColumns.AddBackNogrow(ColumnRecord(column, offset));
-		pvAddColumns(columnCodes + 1, columns...);
+		if (*columnMutables)
+			mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
+		pvAddColumns(columnCodes + 1, columnMutables + 1, columns...);
 	}
 
-	void pvAddColumns(const ColumnCode* /*columnCodes*/) noexcept
-	{
-	}
-
-	template<typename Item, typename... Items>
-	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
-	{
-		size_t offset = GetOffset(column);
-		mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
-		pvSetMutable(columns...);
-	}
-
-	void pvSetMutable() noexcept
+	void pvAddColumns(const ColumnCode* /*columnCodes*/, const bool* /*columnMutables*/) noexcept
 	{
 	}
 
