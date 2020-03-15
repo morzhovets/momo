@@ -276,8 +276,8 @@ private:
 		for (const auto& col : tablePrj.GetColumnList())
 			assert(strcmp(col.GetName(), dblCol.GetName()) == 0 || strcmp(col.GetName(), intCol.GetName()) == 0);
 
-		assert(ctable.Project(strFilter, dblCol, intCol).GetCount() == count / 2);
-		assert(ctable.ProjectDistinct(strCol).GetCount() == 2);
+		assert(ctable.Project(strFilter, dblCol.Mutable(), intCol).GetCount() == count / 2);
+		assert(ctable.ProjectDistinct(strCol.Mutable()).GetCount() == 2);
 		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
 	}
 

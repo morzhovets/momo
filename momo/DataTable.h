@@ -851,29 +851,31 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	DataTable Project(const Column<Item>& column, const Column<Items>&... columns) const
+	DataTable Project(const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items,
 		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	DataTable Project(const RowFilter& rowFilter, const Column<Item>& column,
-		const Column<Items>&... columns) const
+	DataTable Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(rowFilter, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	DataTable ProjectDistinct(const Column<Item>& column, const Column<Items>&... columns) const
+	DataTable ProjectDistinct(const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items,
 		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	DataTable ProjectDistinct(const RowFilter& rowFilter, const Column<Item>& column,
-		const Column<Items>&... columns) const
+	DataTable ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(rowFilter, column, columns...);
 	}
@@ -1327,11 +1329,19 @@ private:
 	}
 
 	template<bool distinct, typename RowFilter, typename... Items>
-	DataTable pvProject(const RowFilter& rowFilter, const Column<Items>&... columns) const
+	DataTable pvProject(const RowFilter& rowFilter, const QualifiedColumn<Items>&... columns) const
 	{
 		MemManager memManager = GetMemManager();
 		ColumnList resColumnList(std::move(memManager));
 		resColumnList.Add(columns...);
+		return pvProject<distinct>(std::move(resColumnList), rowFilter,
+			ColumnList::GetBaseColumn(columns)...);
+	}
+
+	template<bool distinct, typename RowFilter, typename... Items>
+	DataTable pvProject(ColumnList&& resColumnList, const RowFilter& rowFilter,
+		const Column<Items>&... columns) const
+	{
 		DataTable resTable(std::move(resColumnList));
 		auto offsets = pvGetOffsets(columns...);
 		auto resOffsets = resTable.pvGetOffsets(columns...);

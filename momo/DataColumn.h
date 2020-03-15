@@ -672,7 +672,14 @@ public:
 		static const size_t columnCount = 1 + sizeof...(columns);
 		std::array<bool, columnCount> columnMutables = {{ column.IsMutable(),
 			columns.IsMutable()... }};
-		pvAdd(columnMutables.data(), column.GetBaseColumn(), columns.GetBaseColumn()...);
+		pvAdd(columnMutables.data(), GetBaseColumn(column), GetBaseColumn(columns)...);
+	}
+
+	template<typename Item>
+	static const typename QualifiedColumn<Item>::BaseColumn& GetBaseColumn(
+		const QualifiedColumn<Item>& column) noexcept
+	{
+		return column.GetBaseColumn();
 	}
 
 	bool IsMutable(size_t offset) const noexcept
