@@ -198,9 +198,7 @@ namespace internal
 
 			Creator(const Creator&) = delete;
 
-			~Creator() noexcept
-			{
-			}
+			~Creator() = default;
 
 			Creator& operator=(const Creator&) = delete;
 

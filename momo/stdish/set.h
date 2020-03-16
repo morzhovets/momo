@@ -160,9 +160,7 @@ public:
 	{
 	}
 
-	~set() noexcept
-	{
-	}
+	~set() = default;
 
 	set& operator=(set&& right)
 		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

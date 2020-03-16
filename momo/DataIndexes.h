@@ -398,9 +398,7 @@ namespace internal
 
 			UniqueHash(const UniqueHash&) = delete;
 
-			~UniqueHash() noexcept
-			{
-			}
+			~UniqueHash() = default;
 
 			UniqueHash& operator=(const UniqueHash&) = delete;
 
@@ -600,9 +598,7 @@ namespace internal
 
 			MultiHash(const MultiHash&) = delete;
 
-			~MultiHash() noexcept
-			{
-			}
+			~MultiHash() = default;
 
 			MultiHash& operator=(const MultiHash&) = delete;
 
@@ -840,9 +836,7 @@ namespace internal
 
 		DataIndexes(const DataIndexes&) = delete;
 
-		~DataIndexes() noexcept
-		{
-		}
+		~DataIndexes() = default;
 
 		DataIndexes& operator=(const DataIndexes&) = delete;
 

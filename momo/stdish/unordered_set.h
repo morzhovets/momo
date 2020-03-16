@@ -205,9 +205,7 @@ public:
 	{
 	}
 
-	~unordered_set() noexcept
-	{
-	}
+	~unordered_set() = default;
 
 	unordered_set& operator=(unordered_set&& right)
 		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

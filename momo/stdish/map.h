@@ -212,9 +212,7 @@ namespace internal
 		{
 		}
 
-		~map_base() noexcept
-		{
-		}
+		~map_base() = default;
 
 		map_base& operator=(map_base&& right)
 			noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

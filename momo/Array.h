@@ -535,9 +535,7 @@ public:
 		return array;
 	}
 
-	~Array() noexcept
-	{
-	}
+	~Array() = default;
 
 	Array& operator=(Array&& array) noexcept
 	{

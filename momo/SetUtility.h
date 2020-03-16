@@ -217,9 +217,7 @@ namespace internal
 
 		SetCrew(const SetCrew&) = delete;
 
-		~SetCrew() noexcept
-		{
-		}
+		~SetCrew() = default;
 
 		SetCrew& operator=(const SetCrew&) = delete;
 

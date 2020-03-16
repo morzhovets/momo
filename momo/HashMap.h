@@ -241,9 +241,7 @@ public:
 	{
 	}
 
-	~HashMap() noexcept
-	{
-	}
+	~HashMap() = default;
 
 	HashMap& operator=(HashMap&& hashMap) noexcept
 	{

@@ -120,9 +120,7 @@ public:
 	{
 	}
 
-	~vector() noexcept
-	{
-	}
+	~vector() = default;
 
 	vector& operator=(vector&& right)
 		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

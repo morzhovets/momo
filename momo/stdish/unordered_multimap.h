@@ -219,9 +219,7 @@ public:
 	{
 	}
 
-	~unordered_multimap() noexcept
-	{
-	}
+	~unordered_multimap() = default;
 
 	unordered_multimap& operator=(unordered_multimap&& right)
 		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

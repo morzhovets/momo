@@ -239,9 +239,7 @@ public:
 	{
 	}
 
-	~unordered_map() noexcept
-	{
-	}
+	~unordered_map() = default;
 
 	unordered_map& operator=(unordered_map&& right)
 		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||

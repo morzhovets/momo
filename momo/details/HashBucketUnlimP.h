@@ -88,9 +88,7 @@ namespace internal
 
 		BucketUnlimP(const BucketUnlimP&) = delete;
 
-		~BucketUnlimP() noexcept
-		{
-		}
+		~BucketUnlimP() = default;
 
 		BucketUnlimP& operator=(const BucketUnlimP&) = delete;
 

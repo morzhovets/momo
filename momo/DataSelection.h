@@ -497,9 +497,7 @@ namespace internal
 			}
 		}
 
-		~DataSelection() noexcept
-		{
-		}
+		~DataSelection() = default;
 
 		DataSelection& operator=(DataSelection&& selection) noexcept
 		{

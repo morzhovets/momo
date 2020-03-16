@@ -65,9 +65,7 @@ public:
 	{
 	}
 
-	~MemManagerCpp() noexcept
-	{
-	}
+	~MemManagerCpp() = default;
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
@@ -98,9 +96,7 @@ public:
 	{
 	}
 
-	~MemManagerC() noexcept
-	{
-	}
+	~MemManagerC() = default;
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
@@ -142,9 +138,7 @@ public:
 	{
 	}
 
-	~MemManagerWin() noexcept
-	{
-	}
+	~MemManagerWin() = default;
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
@@ -209,9 +203,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() noexcept
-	{
-	}
+	~MemManagerStd() = default;
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
@@ -270,9 +262,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() noexcept
-	{
-	}
+	~MemManagerStd() = default;
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
@@ -442,9 +432,7 @@ namespace internal
 		{
 		}
 
-		~MemManagerDummy() noexcept
-		{
-		}
+		~MemManagerDummy() = default;
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
@@ -496,9 +484,7 @@ namespace internal
 		{
 		}
 
-		~MemManagerPtr() noexcept
-		{
-		}
+		~MemManagerPtr() = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
@@ -563,9 +549,7 @@ namespace internal
 		{
 		}
 
-		~MemManagerPtr() noexcept
-		{
-		}
+		~MemManagerPtr() = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 

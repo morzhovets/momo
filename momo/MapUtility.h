@@ -678,9 +678,7 @@ namespace internal
 			{
 			}
 
-			~ValueReference() noexcept
-			{
-			}
+			~ValueReference() = default;
 
 			ValueReference& operator=(const ValueReference& valueRef)
 			{
@@ -821,9 +819,7 @@ namespace internal
 
 		MapExtractedPair(const MapExtractedPair&) = delete;
 
-		~MapExtractedPair() noexcept
-		{
-		}
+		~MapExtractedPair() = default;
 
 		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
 

@@ -100,9 +100,7 @@ namespace internal
 
 		DataOperator(const DataOperator&) = delete;
 
-		~DataOperator() noexcept
-		{
-		}
+		~DataOperator() = default;
 
 		DataOperator& operator=(const DataOperator&) = delete;
 
@@ -498,9 +496,7 @@ private:
 
 		Graph(const Graph&) = delete;
 
-		~Graph() noexcept
-		{
-		}
+		~Graph() = default;
 
 		Graph& operator=(const Graph&) = delete;
 
@@ -633,9 +629,7 @@ public:
 	{
 	}
 
-	~DataColumnList() noexcept
-	{
-	}
+	~DataColumnList() = default;
 
 	DataColumnList& operator=(const DataColumnList&) = delete;
 
@@ -1074,9 +1068,7 @@ public:
 	{
 	}
 
-	~DataColumnListStatic() noexcept
-	{
-	}
+	~DataColumnListStatic() = default;
 
 	DataColumnListStatic& operator=(const DataColumnListStatic&) = delete;
 
