@@ -57,13 +57,9 @@ public:
 	{
 	}
 
-	MemManagerCpp(MemManagerCpp&& /*memManager*/) noexcept
-	{
-	}
+	MemManagerCpp(MemManagerCpp&&) = default;
 
-	MemManagerCpp(const MemManagerCpp& /*memManager*/) noexcept
-	{
-	}
+	MemManagerCpp(const MemManagerCpp&) = default;
 
 	~MemManagerCpp() = default;
 
@@ -88,13 +84,9 @@ public:
 	{
 	}
 
-	MemManagerC(MemManagerC&& /*memManager*/) noexcept
-	{
-	}
+	MemManagerC(MemManagerC&&) = default;
 
-	MemManagerC(const MemManagerC& /*memManager*/) noexcept
-	{
-	}
+	MemManagerC(const MemManagerC&) = default;
 
 	~MemManagerC() = default;
 
@@ -130,13 +122,9 @@ public:
 	{
 	}
 
-	MemManagerWin(MemManagerWin&& /*memManager*/) noexcept
-	{
-	}
+	MemManagerWin(MemManagerWin&&) = default;
 
-	MemManagerWin(const MemManagerWin& /*memManager*/) noexcept
-	{
-	}
+	MemManagerWin(const MemManagerWin&) = default;
 
 	~MemManagerWin() = default;
 
@@ -424,13 +412,9 @@ namespace internal
 		{
 		}
 
-		MemManagerDummy(MemManagerDummy&& /*memManager*/) noexcept
-		{
-		}
+		MemManagerDummy(MemManagerDummy&&) = default;
 
-		MemManagerDummy(const MemManagerDummy& /*memManager*/) noexcept
-		{
-		}
+		MemManagerDummy(const MemManagerDummy&) = default;
 
 		~MemManagerDummy() = default;
 
