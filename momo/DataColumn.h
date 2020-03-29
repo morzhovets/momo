@@ -679,8 +679,6 @@ public:
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		if (offset / 8 >= mMutableOffsets.GetCount())
-			return false;
 		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
 	}
 
