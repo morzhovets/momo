@@ -424,47 +424,6 @@ public:
 		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);
 	}
 
-#ifdef MOMO_USE_UNORDERED_HETEROGENEOUS_LOOKUP
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	const_iterator find(const KeyArg& key) const
-	{
-		return ConstIteratorProxy(mHashMap.Find(key));
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	iterator find(const KeyArg& key)
-	{
-		return IteratorProxy(mHashMap.Find(key));
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	size_type count(const KeyArg& key) const
-	{
-		return mHashMap.ContainsKey(key) ? 1 : 0;
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	bool contains(const KeyArg& key) const
-	{
-		return mHashMap.ContainsKey(key);
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
-	{
-		const_iterator iter = find(key);
-		return std::pair<const_iterator, const_iterator>(iter,
-			(iter != end()) ? std::next(iter) : iter);
-	}
-
-	template<typename KeyArg, typename H = hasher, typename = typename H::transparent_key_equal>
-	std::pair<iterator, iterator> equal_range(const KeyArg& key)
-	{
-		iterator iter = find(key);
-		return std::pair<iterator, iterator>(iter, (iter != end()) ? std::next(iter) : iter);
-	}
-#endif
-
 	//template<typename Value>
 	//typename std::enable_if<std::is_constructible<value_type, Value>::value, std::pair<iterator, bool>>::type
 	//insert(Value&& value)
