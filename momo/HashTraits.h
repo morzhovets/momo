@@ -43,36 +43,17 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename THashFunc, typename TEqualFunc,
+	template<typename HashFunc, typename EqualFunc,
 		typename = void>
-	class HashTraitsStdBase
+	struct HashTraitsStdIsValidKeyArg : public std::false_type
 	{
-	public:
-		typedef TKey Key;
-		typedef THashFunc HashFunc;
-		typedef TEqualFunc EqualFunc;
-
-	protected:
-		static const bool isValidKeyArg = false;
 	};
 
-	template<typename TKey, typename THashFunc, typename TEqualFunc>
-	class HashTraitsStdBase<TKey, THashFunc, TEqualFunc,
-		Void<typename THashFunc::transparent_key_equal>>
+	template<typename HashFunc, typename EqualFunc>
+	struct HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc,
+		Void<typename HashFunc::is_transparent, typename EqualFunc::is_transparent>>
+		: public std::true_type
 	{
-	public:
-		typedef TKey Key;
-		typedef THashFunc HashFunc;
-		typedef typename THashFunc::transparent_key_equal EqualFunc;
-
-	protected:
-		static const bool isValidKeyArg = true;
-
-	private:
-		typedef typename EqualFunc::is_transparent IsTransparent;
-
-		MOMO_STATIC_ASSERT((std::is_same<TEqualFunc, EqualFunc>::value
-			|| std::is_same<TEqualFunc, std::equal_to<Key>>::value));
 	};
 }
 
@@ -182,20 +163,16 @@ template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
-class HashTraitsStd : public internal::HashTraitsStdBase<TKey, THashFunc, TEqualFunc>
+class HashTraitsStd
 {
-private:
-	typedef internal::HashTraitsStdBase<TKey, THashFunc, TEqualFunc> HashTraitsStdBase;
-
 public:
-	using typename HashTraitsStdBase::Key;
-	using typename HashTraitsStdBase::HashFunc;
-	using typename HashTraitsStdBase::EqualFunc;
-
+	typedef TKey Key;
+	typedef THashFunc HashFunc;
+	typedef TEqualFunc EqualFunc;
 	typedef THashBucket HashBucket;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::BoolConstant<HashTraitsStdBase::isValidKeyArg>;
+	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc>;
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
 		&& (std::is_same<HashFunc, HashCoder<Key>>::value

@@ -66,10 +66,9 @@ private:
 public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
+	typedef THashFunc hasher;
+	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
-
-	typedef typename HashTraits::HashFunc hasher;
-	typedef typename HashTraits::EqualFunc key_equal;
 
 	typedef HashMultiMap nested_container_type;
 
