@@ -75,7 +75,7 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using QualifiedColumn = Column<Item>;
+	using QualifiedColumn = typename ColumnList::template QualifiedColumn<Item>;
 
 	template<typename Item>
 	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
