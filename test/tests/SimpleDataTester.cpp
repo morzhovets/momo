@@ -19,10 +19,13 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 namespace
 {
-	struct Struct
+	typedef momo::DataStructDefault<int, double, std::string> BaseStruct;
+
+	struct Struct : public BaseStruct
 	{
 		int intStruct;
 		double dblStruct;
@@ -38,9 +41,9 @@ namespace
 #pragma warning (disable: 4307)	// integral constant overflow
 #endif
 
-	MOMO_DATA_COLUMN_STRING(int, intString);
-	MOMO_DATA_COLUMN_STRING(double, dblString);
-	MOMO_DATA_COLUMN_STRING(std::string, strString);
+	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, int, intString);
+	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, double, dblString);
+	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, std::string, strString);
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning (pop)
@@ -59,6 +62,7 @@ public:
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
 			columnList.SetMutable(dblStruct);
+			columnList.PrepareForVisitors(intStruct, dblStruct, strStruct);
 			momo::DataTable<DataColumnList> table(std::move(columnList));
 			TestData<false>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
@@ -77,7 +81,8 @@ public:
 
 		{
 			std::cout << "momo::DataColumnList (string): " << std::flush;
-			momo::DataTable<> table(intString, strString, dblString.Mutable());
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>> DataColumnList;
+			momo::DataTable<DataColumnList> table(intString, strString, dblString.Mutable());
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
@@ -111,7 +116,16 @@ public:
 		for (size_t i = count / 2; i < count; ++i)
 		{
 			DataRow row = table.NewRow();
+#if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
+			auto visitor = [i] (auto& item)
+			{
+				if constexpr (std::is_same<decltype(item), int&>::value)
+					item = static_cast<int>(i);
+			};
+			row.VisitReferences(visitor);
+#else
 			row[intCol] = static_cast<int>(i);
+#endif
 			table.AddRow(std::move(row));
 		}
 
@@ -181,10 +195,18 @@ public:
 		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 
-		auto selection = table.Select(strCol == "0");
-		selection.Set(0, selection[1]);
-		for (const std::string& s : selection.GetColumnItems(strCol))
-			assert(s == "0");
+#if defined(__cpp_generic_lambdas)
+		{
+			std::stringstream sstream;
+			auto visitor = [&sstream] (const auto& item, auto columnInfo)
+			{
+				if (columnInfo.GetTypeInfo() != typeid(double))
+					sstream << item;
+			};
+			ctable[0].VisitReferences(visitor);
+			assert(sstream.str() == "00");
+		}
+#endif
 
 		auto cselection = ctable.Select(strCol == "1");
 		cselection.Set(0, cselection[1]);
