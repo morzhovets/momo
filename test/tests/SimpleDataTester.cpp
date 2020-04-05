@@ -54,67 +54,82 @@ public:
 	{
 		{
 			std::cout << "momo::DataColumnListStatic: " << std::flush;
-			momo::DataColumnListStatic<Struct> columnList;
+			typedef momo::DataColumnListStatic<Struct> DataColumnList;
+			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
 			columnList.SetMutable(dblStruct);
-			TestData<false>(std::move(columnList), intStruct, dblStruct, strStruct);
+			momo::DataTable<DataColumnList> table(std::move(columnList));
+			TestData<false>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
 		}
 
 		{
 			std::cout << "momo::DataColumnList (struct): " << std::flush;
-			momo::DataColumnList<momo::DataColumnTraits<Struct>> columnList(intStruct,
-				dblStruct.Mutable(), strStruct);
-			TestData<true>(std::move(columnList), intStruct, dblStruct, strStruct);
+			typedef momo::DataColumnList<momo::DataColumnTraits<Struct>> DataColumnList;
+			DataColumnList columnList;
+			columnList.Add(strStruct);
+			columnList.Add(dblStruct.Mutable(), intStruct);
+			momo::DataTable<DataColumnList> table(std::move(columnList));
+			TestData<true>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
 		}
 
 		{
 			std::cout << "momo::DataColumnList (string): " << std::flush;
-			momo::DataColumnList<> columnList;
-			columnList.Add(dblString.Mutable());
-			columnList.Add(strString, intString);
-			TestData<true>(std::move(columnList), intString, dblString, strString);
+			momo::DataTable<> table(intString, strString, dblString.Mutable());
+			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
 	}
 
-	template<bool dynamic, typename DataColumnList, typename IntCol, typename DblCol, typename StrCol>
-	static void TestData(DataColumnList&& columns,
+	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
+	static void TestData(DataTable& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
-		typedef momo::DataTable<DataColumnList> DataTable;
 		typedef typename DataTable::Row DataRow;
 		typedef typename DataTable::ConstRowReference ConstRowReference;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
 
-		DataTable table(std::move(columns));
 		const DataTable& ctable = table;
 
 		table.AddUniqueHashIndex(intCol, strCol);
-		table.AddMultiHashIndex(intCol);
 		table.AddMultiHashIndex(strCol);
 
 		table.Reserve(count);
 
-		for (size_t i = 0; i < count; ++i)
-			table.AddRow(intCol = static_cast<int>(i));
+		for (size_t i = 0; i < count / 2; ++i)
+		{
+			if (i % 2 == 0)
+				table.AddRow(intCol = static_cast<int>(i));
+			else
+				table.TryAddRow(intCol = static_cast<int>(i));
+		}
 
-		for (const std::string& s : table.GetColumnItems(strCol))
-			assert(s.empty());
+		for (size_t i = count / 2; i < count; ++i)
+		{
+			DataRow row = table.NewRow();
+			row[intCol] = static_cast<int>(i);
+			table.AddRow(std::move(row));
+		}
+
+		table.AddMultiHashIndex(intCol);
+
 		for (const std::string& s : ctable.GetColumnItems(strCol))
 			assert(s.empty());
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(intCol = static_cast<int>(i) / 2);
+			DataRow row = table.NewRow(table[i]);
+			row[intCol] = static_cast<int>(i) / 2;
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
-			table.UpdateRow(i, std::move(row));
-			table.UpdateRow(table[i], strCol, std::string((i % 2 == 0) ? "0" : "1"));
+			table.UpdateRow(i, table.NewRow(row));
 		}
+
+		for (size_t i = 0; i < count; ++i)
+			table.UpdateRow(table[i], strCol, std::string((i % 2 == 0) ? "0" : "1"));
 
 		for (size_t i = 0; i < count; ++i)
 			table[i].GetMutable(dblCol) = static_cast<double>(i) / 2.0;
@@ -128,7 +143,12 @@ public:
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
 
 		for (size_t i = 0; i < count2; ++i)
-			table.InsertRow(count, table.NewRow(intCol = static_cast<int>(count + i)));
+		{
+			if (i % 2 == 0)
+				table.InsertRow(count, intCol = static_cast<int>(count + i));
+			else
+				table.TryInsertRow(count, intCol = static_cast<int>(count + i));
+		}
 		assert(table.GetCount() == count + count2);
 
 		MOMO_STATIC_ASSERT(count2 % 6 == 0);
@@ -243,6 +263,8 @@ public:
 		tableCopy.RemoveUniqueHashIndexes();
 		tableCopy.RemoveMultiHashIndexes();
 
+		tableCopy = ctable;
+		assert(tableCopy.GetCount() == count);
 		tableCopy = DataTable(table.Select());
 		assert(tableCopy.GetCount() == count);
 		tableCopy = DataTable(ctable.Select());
@@ -253,8 +275,8 @@ public:
 		table.FilterRows(emptyFilter);
 		assert(table.GetCount() == count);
 
-		table.RemoveRows(table.GetBegin(), table.GetBegin());
-		assert(table.GetCount() == count);
+		table.RemoveRows(table.GetBegin() + count / 2, table.GetEnd());
+		assert(table.GetCount() == count / 2);
 		table.RemoveRows(emptyFilter);
 		assert(table.IsEmpty());
 
