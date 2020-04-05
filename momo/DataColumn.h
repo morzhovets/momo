@@ -400,6 +400,12 @@ public:
 	{
 		return column.GetBaseColumn();
 	}
+
+	template<typename Item>
+	static bool IsMutable(const QualifiedColumn<Item>& column) noexcept
+	{
+		return column.IsMutable();
+	}
 };
 
 template<typename TMemManager>
@@ -686,8 +692,8 @@ public:
 	void Add(const QualifiedColumn<Item>& column, const QualifiedColumn<Items>&... columns)
 	{
 		static const size_t columnCount = 1 + sizeof...(columns);
-		std::array<bool, columnCount> columnMutables = {{ column.IsMutable(),
-			columns.IsMutable()... }};
+		std::array<bool, columnCount> columnMutables = {{ ColumnTraits::IsMutable(column),
+			ColumnTraits::IsMutable(columns)... }};
 		pvAdd(columnMutables.data(), GetBaseColumn(column), GetBaseColumn(columns)...);
 	}
 
