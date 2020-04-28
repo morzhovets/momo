@@ -85,7 +85,7 @@ private:
 	static void pvRelocate(MemManager* /*memManager*/, Object& srcObject, Object* dstObject,
 		std::true_type /*isTriviallyRelocatable*/) noexcept
 	{
-		memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+		std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
 	}
 
 	static void pvRelocate(MemManager* memManager, Object& srcObject, Object* dstObject,
