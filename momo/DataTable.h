@@ -644,18 +644,18 @@ public:
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
-			pvSetNumber(raw, invalidNumber);
+			columnList.SetNumber(raw, invalidNumber);
 		try
 		{
 			size_t number = 0;
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
-				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
+				MOMO_CHECK(&iter->GetColumnList() == &columnList);
 				ConstRowReference rowRef = *iter;
 				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 				if (columnList.GetNumber(raw) != invalidNumber)
 					continue;
-				pvSetNumber(raw, number);
+				columnList.SetNumber(raw, number);
 				++number;
 			}
 		}
@@ -681,13 +681,14 @@ public:
 	template<typename RowIterator>
 	void RemoveRows(RowIterator begin, RowIterator end)
 	{
+		const ColumnList& columnList = GetColumnList();
 		try
 		{
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
-				MOMO_CHECK(&iter->GetColumnList() == &GetColumnList());
+				MOMO_CHECK(&iter->GetColumnList() == &columnList);
 				ConstRowReference rowRef = *iter;
-				pvSetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
+				columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
 			}
 		}
 		catch (...)
@@ -696,6 +697,7 @@ public:
 			throw;
 		}
 		pvRemoveInvalidRaws();
+		pvSetNumbers();
 	}
 
 	template<typename RowFilter>
@@ -709,12 +711,13 @@ public:
 	template<typename RowFilter>
 	void FilterRows(const RowFilter& rowFilter)
 	{
+		const ColumnList& columnList = GetColumnList();
 		try
 		{
 			for (Raw* raw : mRaws)
 			{
 				if (!rowFilter(pvMakeConstRowReference(raw)))
-					pvSetNumber(raw, invalidNumber);
+					columnList.SetNumber(raw, invalidNumber);
 			}
 		}
 		catch (...)
@@ -723,6 +726,7 @@ public:
 			throw;
 		}
 		pvRemoveInvalidRaws();
+		pvSetNumbers();
 	}
 
 	template<typename Item, typename... Items>
@@ -1113,7 +1117,6 @@ private:
 			++number;
 		}
 		mRaws.RemoveBack(mRaws.GetCount() - number);
-		pvSetNumbers();
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
 	}
