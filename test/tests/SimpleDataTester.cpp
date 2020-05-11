@@ -346,21 +346,20 @@ private:
 		DataTable table = ctable;
 		size_t count = table.GetCount();
 
-		table.AssignRows(std::make_reverse_iterator(table.GetBegin() + count / 2),
-			std::make_reverse_iterator(table.GetBegin()));
+		table.AssignRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2), table.GetEnd());
 		assert(table.GetCount() == count / 2);
 
 		table.FilterRows(strFilter);
 		assert(table.GetCount() == count / 4);
 
-		table.RemoveRows(table.GetBegin() + count / 8, table.GetEnd());
+		table.RemoveRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
 		assert(table.GetCount() == count / 8);
 
 		for (size_t i = 0; i < count / 8; ++i)
 		{
 			auto rowRef = table[i];
-			assert(rowRef[intCol] == 255 - static_cast<int>(i));
-			assert(rowRef[dblCol] == 255.0 - static_cast<double>(i));
+			assert(rowRef[intCol] == 256 + static_cast<int>(i));
+			assert(rowRef[dblCol] == 256.0 + static_cast<double>(i));
 			assert(rowRef[strCol] == "0");
 		}
 
