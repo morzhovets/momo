@@ -52,6 +52,13 @@ namespace
 
 class SimpleDataTester
 {
+private:
+	class DataTraits1 : public momo::DataTraits
+	{
+	public:
+		static const size_t selectEqualerMaxCount = 1;
+	};
+
 public:
 	static void TestAll()
 	{
@@ -70,11 +77,12 @@ public:
 
 		{
 			std::cout << "momo::DataColumnList (struct): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<Struct>> DataColumnList;
+			typedef momo::DataColumnList<momo::DataColumnTraits<Struct>, momo::MemManagerDefault,
+				momo::DataItemTraits<momo::MemManagerDefault>, momo::DataSettings<false>> DataColumnList;
 			DataColumnList columnList;
 			columnList.Add(strStruct);
 			columnList.Add(dblStruct.Mutable(), intStruct);
-			momo::DataTable<DataColumnList> table(std::move(columnList));
+			momo::DataTable<DataColumnList, DataTraits1> table(std::move(columnList));
 			TestData<true>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
 		}
@@ -100,7 +108,7 @@ public:
 
 		const DataTable& ctable = table;
 
-		table.AddUniqueHashIndex(intCol, strCol);
+		auto keyIndex = table.AddUniqueHashIndex(intCol, strCol);
 		table.AddMultiHashIndex(strCol);
 
 		table.Reserve(count);
@@ -188,12 +196,36 @@ public:
 		assert(ctable.Select().GetCount() == count);
 
 		assert(table.SelectCount(strCol == "0", intCol == 1) == 1);
-		assert(table.Select(strCol == "1", intCol == 0).GetCount() == 1);
+		assert(table.Select(intCol == 0, strCol == "1").GetCount() == 1);
 		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
 
 		assert(table.SelectCount(emptyFilter, strCol == "0") == count / 2);
 		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
+
+		assert(table.SelectCount(dblCol == 0.0) == 1);
+		assert(table.Select(dblCol == 1.0).GetCount() == 1);
+		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
+
+		assert(table.SelectCount(dblCol == 0.0, strCol == "0") == 1);
+		assert(table.Select(strCol == "0", dblCol == 1.0).GetCount() == 1);
+		assert(ctable.Select(dblCol == 1.0, strCol == "1").GetCount() == 0);
+
+		assert((*table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
+			table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
+		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
+			table.NewRow(intCol = 0, strCol = "1")).GetCount() == 1);
+
+		assert(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty, strCol == "1", intCol == 0));
+		assert((*table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1"))[strCol] == "1");
+		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
+
+		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
+			strCol == "1").GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
+			strCol == "1").GetCount() == count / 2);
+
+		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
 #if defined(__cpp_generic_lambdas)
 		{
@@ -247,30 +279,9 @@ public:
 		cselection.Remove(strFilter);
 		assert(cselection.IsEmpty());
 
-		assert(table.SelectCount(dblCol == 0.0) == 1);
-		assert(table.Select(dblCol == 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
-
-		assert((*table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
-		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0)).GetCount() == 1);
-
-		assert(static_cast<bool>(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
-			strCol == "1", intCol == 0)));
-		assert((*table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
-			strCol == "1", intCol == 0))[strCol] == "1");
-		assert((*ctable.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
-			strCol == "1", intCol == 0))[strCol] == "1");
-
-		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
-		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
-
-		assert(table.MakeMutableReference(ctable[0]).GetNumber() == 0);
-
 		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
+
+		pvTestDataRows(ctable, intCol, dblCol, strCol);
 
 		DataTable tableCopy(table);
 		assert(tableCopy.GetCount() == count);
@@ -292,24 +303,14 @@ public:
 		tableCopy = DataTable(ctable.Select());
 		assert(tableCopy.GetCount() == count);
 
-		table.AssignRows(table.GetBegin(), table.GetEnd());
-		assert(table.GetCount() == count);
-		table.FilterRows(emptyFilter);
-		assert(table.GetCount() == count);
-
-		table.RemoveRows(table.GetBegin() + count / 2, table.GetEnd());
-		assert(table.GetCount() == count / 2);
-		table.RemoveRows(emptyFilter);
-		assert(table.IsEmpty());
-
 		table.Clear();
+		assert(table.IsEmpty());
 	}
 
 private:
 	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
-	static void pvTestDataDynamic(const DataTable& ctable,
-		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol,
-		typename std::enable_if<dynamic, int>::type = 0)
+	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(const DataTable& ctable,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename DataTable::ConstRowReference ConstRowReference;
 
@@ -317,6 +318,7 @@ private:
 		size_t count = ctable.GetCount();
 
 		DataTable tablePrj = ctable.Project(dblCol, intCol);
+		assert(tablePrj.GetCount() == count);
 		for (const auto& col : tablePrj.GetColumnList())
 			assert(strcmp(col.GetName(), dblCol.GetName()) == 0 || strcmp(col.GetName(), intCol.GetName()) == 0);
 
@@ -326,9 +328,50 @@ private:
 	}
 
 	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
-	static void pvTestDataDynamic(const DataTable& /*ctable*/,
-		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/,
-		typename std::enable_if<!dynamic, int>::type = 0)
+	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const DataTable& /*ctable*/,
+		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
+	{
+	}
+
+	template<typename DataTable, typename IntCol, typename DblCol, typename StrCol,
+		bool keepRowNumber = DataTable::Settings::keepRowNumber>
+	static typename std::enable_if<keepRowNumber, void>::type pvTestDataRows(const DataTable& ctable,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
+	{
+		typedef typename DataTable::ConstRowReference ConstRowReference;
+
+		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
+		auto emptyFilter = [] (ConstRowReference) { return true; };
+
+		DataTable table = ctable;
+		size_t count = table.GetCount();
+
+		table.AssignRows(std::make_reverse_iterator(table.GetBegin() + count / 2),
+			std::make_reverse_iterator(table.GetBegin()));
+		assert(table.GetCount() == count / 2);
+
+		table.FilterRows(strFilter);
+		assert(table.GetCount() == count / 4);
+
+		table.RemoveRows(table.GetBegin() + count / 8, table.GetEnd());
+		assert(table.GetCount() == count / 8);
+
+		for (size_t i = 0; i < count / 8; ++i)
+		{
+			auto rowRef = table[i];
+			assert(rowRef[intCol] == 255 - static_cast<int>(i));
+			assert(rowRef[dblCol] == 255.0 - static_cast<double>(i));
+			assert(rowRef[strCol] == "0");
+		}
+
+		table.RemoveRows(emptyFilter);
+		assert(table.IsEmpty());
+	}
+
+	template<typename DataTable, typename IntCol, typename DblCol, typename StrCol,
+		bool keepRowNumber = DataTable::Settings::keepRowNumber>
+	static typename std::enable_if<!keepRowNumber, void>::type pvTestDataRows(const DataTable& /*ctable*/,
+		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
 	{
 	}
 };
