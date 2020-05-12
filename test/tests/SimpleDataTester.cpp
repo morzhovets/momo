@@ -339,6 +339,7 @@ private:
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename DataTable::ConstRowReference ConstRowReference;
+		typedef typename DataTable::ConstIterator ConstIterator;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		auto emptyFilter = [] (ConstRowReference) { return true; };
@@ -346,7 +347,8 @@ private:
 		DataTable table = ctable;
 		size_t count = table.GetCount();
 
-		table.AssignRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2), table.GetEnd());
+		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
+			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
 		assert(table.GetCount() == count / 2);
 
 		table.FilterRows(strFilter);
@@ -358,8 +360,8 @@ private:
 		for (size_t i = 0; i < count / 8; ++i)
 		{
 			auto rowRef = table[i];
-			assert(rowRef[intCol] == 256 + static_cast<int>(i));
-			assert(rowRef[dblCol] == 256.0 + static_cast<double>(i));
+			assert(rowRef[intCol] == 511 - static_cast<int>(i));
+			assert(rowRef[dblCol] == 511.0 - static_cast<double>(i));
 			assert(rowRef[strCol] == "0");
 		}
 

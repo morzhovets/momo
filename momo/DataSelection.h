@@ -650,7 +650,8 @@ namespace internal
 			size_t initCount = GetCount();
 			MOMO_CHECK(index <= initCount);
 			Add(begin, end);
-			std::rotate(mRaws.GetBegin() + index, mRaws.GetBegin() + initCount, mRaws.GetEnd());
+			std::rotate(UIntMath<>::Next(mRaws.GetBegin(), index),
+				UIntMath<>::Next(mRaws.GetBegin(), initCount), mRaws.GetEnd());
 		}
 
 		void Remove(size_t index, size_t count = 1)
@@ -786,7 +787,7 @@ namespace internal
 			MOMO_STATIC_ASSERT(IsForwardIterator<RowIterator>::value);
 			size_t count = 0;
 			for (RowIterator iter = begin; iter != end; (void)++iter, ++count)
-				MOMO_CHECK(&iter->GetColumnList() == mColumnList);
+				MOMO_CHECK(&(*iter).GetColumnList() == mColumnList);
 			return count;
 		}
 

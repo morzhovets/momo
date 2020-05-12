@@ -650,8 +650,8 @@ public:
 			size_t number = 0;
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
-				MOMO_CHECK(&iter->GetColumnList() == &columnList);
 				ConstRowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
 				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 				if (columnList.GetNumber(raw) != invalidNumber)
 					continue;
@@ -686,8 +686,8 @@ public:
 		{
 			for (RowIterator iter = begin; iter != end; ++iter)
 			{
-				MOMO_CHECK(&iter->GetColumnList() == &columnList);
 				ConstRowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
 				columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
 			}
 		}
