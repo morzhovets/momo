@@ -619,14 +619,13 @@ namespace internal
 		void Add(RowIterator begin, RowIterator end)
 		{
 			size_t initCount = GetCount();
-			size_t count = pvGetCount(begin, end);
-			mRaws.Reserve(initCount + count);
 			try
 			{
 				for (RowIterator iter = begin; iter != end; ++iter)
 				{
 					RowReference rowRef = *iter;
-					mRaws.AddBackNogrow(RowReferenceProxy::GetRaw(rowRef));
+					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
+					mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 				}
 			}
 			catch (...)
@@ -779,16 +778,6 @@ namespace internal
 		RowReference pvMakeRowReference(Raw* raw) const noexcept
 		{
 			return RowReferenceProxy(mColumnList, raw, *this);
-		}
-
-		template<typename RowIterator>
-		size_t pvGetCount(RowIterator begin, RowIterator end)
-		{
-			MOMO_STATIC_ASSERT(IsForwardIterator<RowIterator>::value);
-			size_t count = 0;
-			for (RowIterator iter = begin; iter != end; (void)++iter, ++count)
-				MOMO_CHECK(&(*iter).GetColumnList() == mColumnList);
-			return count;
 		}
 
 		void pvReverse() noexcept
