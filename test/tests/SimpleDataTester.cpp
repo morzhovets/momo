@@ -102,6 +102,7 @@ public:
 	{
 		typedef typename DataTable::Row DataRow;
 		typedef typename DataTable::ConstRowReference ConstRowReference;
+		typedef typename DataTable::ConstIterator ConstIterator;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
@@ -281,30 +282,50 @@ public:
 
 		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
 
-		pvTestDataRows(ctable, intCol, dblCol, strCol);
+		{
+			DataTable tableCopy(table);
+			assert(tableCopy.GetCount() == count);
+			assert(tableCopy.ContainsColumn(intCol));
+			assert(tableCopy.ContainsColumn(dblCol));
+			assert(tableCopy.ContainsColumn(strCol));
 
-		DataTable tableCopy(table);
-		assert(tableCopy.GetCount() == count);
-		assert(tableCopy.ContainsColumn(intCol));
-		assert(tableCopy.ContainsColumn(dblCol));
-		assert(tableCopy.ContainsColumn(strCol));
+			assert(tableCopy.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
+			assert(tableCopy.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
+			assert(tableCopy.GetMultiHashIndex(strCol) != momo::DataMultiHashIndex::empty);
 
-		assert(tableCopy.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
-		assert(tableCopy.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
-		assert(tableCopy.GetMultiHashIndex(strCol) != momo::DataMultiHashIndex::empty);
+			tableCopy.RemoveUniqueHashIndexes();
+			tableCopy.RemoveMultiHashIndexes();
 
-		tableCopy.RemoveUniqueHashIndexes();
-		tableCopy.RemoveMultiHashIndexes();
+			tableCopy = ctable;
+			assert(tableCopy.GetCount() == count);
+			tableCopy = DataTable(table.Select());
+			assert(tableCopy.GetCount() == count);
+			tableCopy = DataTable(ctable.Select());
+			assert(tableCopy.GetCount() == count);
+		}
 
-		tableCopy = ctable;
-		assert(tableCopy.GetCount() == count);
-		tableCopy = DataTable(table.Select());
-		assert(tableCopy.GetCount() == count);
-		tableCopy = DataTable(ctable.Select());
-		assert(tableCopy.GetCount() == count);
+		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
+			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
+		assert(table.GetCount() == count / 2);
+
+		table.FilterRows(strFilter);
+		assert(table.GetCount() == count / 4);
+
+		table.RemoveRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
+		assert(table.GetCount() == count / 8);
+
+		for (size_t i = 0; i < count / 8; ++i)
+		{
+			auto rowRef = table[i];
+			assert(rowRef[intCol] == 511 - static_cast<int>(i));
+			assert(rowRef[dblCol] == 511.0 - static_cast<double>(i));
+			assert(rowRef[strCol] == "0");
+		}
+
+		table.RemoveRows(strFilter);
+		assert(table.IsEmpty());
 
 		table.Clear();
-		assert(table.IsEmpty());
 	}
 
 private:
@@ -329,49 +350,6 @@ private:
 
 	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
 	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const DataTable& /*ctable*/,
-		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
-	{
-	}
-
-	template<typename DataTable, typename IntCol, typename DblCol, typename StrCol,
-		bool keepRowNumber = DataTable::Settings::keepRowNumber>
-	static typename std::enable_if<keepRowNumber, void>::type pvTestDataRows(const DataTable& ctable,
-		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
-	{
-		typedef typename DataTable::ConstRowReference ConstRowReference;
-		typedef typename DataTable::ConstIterator ConstIterator;
-
-		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
-		auto emptyFilter = [] (ConstRowReference) { return true; };
-
-		DataTable table = ctable;
-		size_t count = table.GetCount();
-
-		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
-			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
-		assert(table.GetCount() == count / 2);
-
-		table.FilterRows(strFilter);
-		assert(table.GetCount() == count / 4);
-
-		table.RemoveRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
-		assert(table.GetCount() == count / 8);
-
-		for (size_t i = 0; i < count / 8; ++i)
-		{
-			auto rowRef = table[i];
-			assert(rowRef[intCol] == 511 - static_cast<int>(i));
-			assert(rowRef[dblCol] == 511.0 - static_cast<double>(i));
-			assert(rowRef[strCol] == "0");
-		}
-
-		table.RemoveRows(emptyFilter);
-		assert(table.IsEmpty());
-	}
-
-	template<typename DataTable, typename IntCol, typename DblCol, typename StrCol,
-		bool keepRowNumber = DataTable::Settings::keepRowNumber>
-	static typename std::enable_if<!keepRowNumber, void>::type pvTestDataRows(const DataTable& /*ctable*/,
 		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
 	{
 	}

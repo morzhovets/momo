@@ -553,7 +553,8 @@ public:
 		TryResult res = TryAddRow(std::move(row));
 		if (res.uniqueHashIndex == UniqueHashIndex::empty)
 		{
-			std::rotate(mRaws.GetBegin() + rowNumber, std::prev(mRaws.GetEnd()), mRaws.GetEnd());
+			std::rotate(internal::UIntMath<>::Next(mRaws.GetBegin(), rowNumber),
+				std::prev(mRaws.GetEnd()), mRaws.GetEnd());
 			pvSetNumbers(rowNumber);
 		}
 		return res;
@@ -642,62 +643,13 @@ public:
 	template<typename RowIterator>
 	void AssignRows(RowIterator begin, RowIterator end)
 	{
-		const ColumnList& columnList = GetColumnList();
-		for (Raw* raw : mRaws)
-			columnList.SetNumber(raw, invalidNumber);
-		try
-		{
-			size_t number = 0;
-			for (RowIterator iter = begin; iter != end; ++iter)
-			{
-				ConstRowReference rowRef = *iter;
-				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
-				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-				if (columnList.GetNumber(raw) != invalidNumber)
-					continue;
-				columnList.SetNumber(raw, number);
-				++number;
-			}
-		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
-		pvRemoveInvalidRaws();
-		for (size_t i = 0, count = mRaws.GetCount(); i < count; ++i)
-		{
-			Raw*& raw = mRaws[i];
-			while (true)
-			{
-				size_t number = columnList.GetNumber(raw);
-				if (number == i)
-					break;
-				std::swap(raw, mRaws[number]);
-			}
-		}
+		pvAssignRows(begin, end);
 	}
 
 	template<typename RowIterator>
 	void RemoveRows(RowIterator begin, RowIterator end)
 	{
-		const ColumnList& columnList = GetColumnList();
-		try
-		{
-			for (RowIterator iter = begin; iter != end; ++iter)
-			{
-				ConstRowReference rowRef = *iter;
-				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
-				columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
-			}
-		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
-		pvRemoveInvalidRaws();
-		pvSetNumbers();
+		pvRemoveRows(begin, end);
 	}
 
 	template<typename RowFilter>
@@ -705,28 +657,13 @@ public:
 	{
 		auto newRowFilter = [&rowFilter] (ConstRowReference rowRef)
 			{ return !rowFilter(rowRef); };
-		FilterRows(newRowFilter);
+		pvFilterRows(newRowFilter);
 	}
 
 	template<typename RowFilter>
 	void FilterRows(const RowFilter& rowFilter)
 	{
-		const ColumnList& columnList = GetColumnList();
-		try
-		{
-			for (Raw* raw : mRaws)
-			{
-				if (!rowFilter(pvMakeConstRowReference(raw)))
-					columnList.SetNumber(raw, invalidNumber);
-			}
-		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
-		pvRemoveInvalidRaws();
-		pvSetNumbers();
+		pvFilterRows(rowFilter);
 	}
 
 	template<typename Item, typename... Items>
@@ -1100,12 +1037,167 @@ private:
 		return raw;
 	}
 
+	template<typename RowIterator,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	{
+		const ColumnList& columnList = GetColumnList();
+		for (Raw* raw : mRaws)
+			columnList.SetNumber(raw, invalidNumber);
+		size_t count = 0;
+		try
+		{
+			for (RowIterator iter = begin; iter != end; ++iter)
+			{
+				ConstRowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+				if (columnList.GetNumber(raw) != invalidNumber)
+					continue;
+				columnList.SetNumber(raw, count);
+				++count;
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		pvRemoveInvalidRaws();
+		for (size_t i = 0; i < count; ++i)
+		{
+			Raw*& raw = mRaws[i];
+			while (true)
+			{
+				size_t number = columnList.GetNumber(raw);
+				if (number == i)
+					break;
+				std::swap(raw, mRaws[number]);
+			}
+		}
+	}
+
+	template<typename RowIterator,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	{
+		const ColumnList& columnList = GetColumnList();
+		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
+			MemManagerPtr(GetMemManager()));
+		size_t count = 0;
+		for (RowIterator iter = begin; iter != end; ++iter)
+		{
+			ConstRowReference rowRef = *iter;
+			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+			if (rawMap.Insert(raw, count).inserted)
+				++count;
+		}
+		auto rawFilter = [&rawMap] (Raw* raw) { return rawMap.ContainsKey(raw); };
+		pvFilterRaws(rawFilter);
+		for (size_t i = 0; i < count; ++i)
+		{
+			Raw*& raw = mRaws[i];
+			while (true)
+			{
+				size_t number = rawMap[raw];
+				if (number == i)
+					break;
+				std::swap(raw, mRaws[number]);
+			}
+		}
+	}
+
+	template<typename RowIterator,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	{
+		const ColumnList& columnList = GetColumnList();
+		try
+		{
+			for (RowIterator iter = begin; iter != end; ++iter)
+			{
+				ConstRowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+				columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		pvRemoveInvalidRaws();
+		pvSetNumbers();
+	}
+
+	template<typename RowIterator,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	{
+		const ColumnList& columnList = GetColumnList();
+		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
+			MemManagerPtr(GetMemManager()));
+		for (RowIterator iter = begin; iter != end; ++iter)
+		{
+			ConstRowReference rowRef = *iter;
+			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			rawSet.Insert(ConstRowReferenceProxy::GetRaw(rowRef));
+		}
+		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		pvFilterRaws(rawFilter);
+	}
+
+	template<typename RowFilter,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<keepRowNumber> pvFilterRows(const RowFilter& rowFilter)
+	{
+		const ColumnList& columnList = GetColumnList();
+		try
+		{
+			for (Raw* raw : mRaws)
+			{
+				if (!rowFilter(pvMakeConstRowReference(raw)))
+					columnList.SetNumber(raw, invalidNumber);
+			}
+		}
+		catch (...)
+		{
+			pvSetNumbers();
+			throw;
+		}
+		pvRemoveInvalidRaws();
+		pvSetNumbers();
+	}
+
+	template<typename RowFilter,
+		bool keepRowNumber = Settings::keepRowNumber>
+	internal::EnableIf<!keepRowNumber> pvFilterRows(const RowFilter& rowFilter)
+	{
+		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
+			MemManagerPtr(GetMemManager()));
+		for (Raw* raw : mRaws)
+		{
+			if (!rowFilter(pvMakeConstRowReference(raw)))
+				rawSet.Insert(raw);
+		}
+		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		pvFilterRaws(rawFilter);
+	}
+
 	void pvRemoveInvalidRaws() noexcept
 	{
-		auto rawFilter = [this] (Raw* raw)
-			{ return GetColumnList().GetNumber(raw) != invalidNumber; };
+		const ColumnList& columnList = GetColumnList();
+		auto rawFilter = [&columnList] (Raw* raw)
+			{ return columnList.GetNumber(raw) != invalidNumber; };
+		pvFilterRaws(rawFilter);
+	}
+
+	template<typename RawFilter>
+	void pvFilterRaws(RawFilter rawFilter) noexcept
+	{
 		mIndexes.FilterRaws(rawFilter);
-		size_t number = 0;
+		size_t count = 0;
 		for (Raw* raw : mRaws)
 		{
 			if (!rawFilter(raw))
@@ -1113,10 +1205,10 @@ private:
 				pvFreeRaw(raw);
 				continue;
 			}
-			mRaws[number] = raw;
-			++number;
+			mRaws[count] = raw;
+			++count;
 		}
-		mRaws.RemoveBack(mRaws.GetCount() - number);
+		mRaws.RemoveBack(mRaws.GetCount() - count);
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
 	}
