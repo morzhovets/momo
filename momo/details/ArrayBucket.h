@@ -327,11 +327,11 @@ namespace internal
 			{
 				Array& array = pvGetArray();
 				array.RemoveBack();
-				if (4 < count && count < array.GetCapacity() / 2)
+				if (2 < count && count < array.GetCapacity() / 4)
 				{
 					try
 					{
-						array.Shrink();
+						array.Shrink(count * 2);
 					}
 					catch (...)
 					{
