@@ -746,10 +746,10 @@ public:
 			pvRelocateItems();
 	}
 
-	void Shrink()
-	{
-		HashSet(*this).Swap(*this);
-	}
+	//void Shrink()
+	//{
+	//	HashSet(*this).Swap(*this);
+	//}
 
 	ConstPosition Find(const Key& key) const
 	{

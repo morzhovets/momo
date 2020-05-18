@@ -132,7 +132,7 @@ public:
 		set.Clear(false);
 		assert(set.IsEmpty());
 		assert(set.GetCapacity() >= 3);
-		set.Shrink();
+		HashSet(set).Swap(set); //set.Shrink();
 		assert(set.GetCapacity() == 0);
 	}
 
@@ -177,7 +177,7 @@ public:
 		map.Clear(false);
 		assert(map.IsEmpty());
 		assert(map.GetCapacity() >= 5);
-		map.Shrink();
+		HashMap(map).Swap(map); //map.Shrink();
 		assert(map.GetCapacity() == 0);
 	}
 
@@ -222,7 +222,7 @@ public:
 
 		HashMultiMap mmap2;
 		mmap2 = mmap;
-		mmap2.Shrink();
+		//mmap2.Shrink();
 		assert(mmap.GetKeyCount() == mmap2.GetKeyCount() && mmap.GetValueCount() == mmap2.GetValueCount());
 	}
 

@@ -325,10 +325,10 @@ public:
 		mHashSet.Reserve(capacity);
 	}
 
-	void Shrink()
-	{
-		mHashSet.Shrink();
-	}
+	//void Shrink()
+	//{
+	//	mHashSet.Shrink();
+	//}
 
 	ConstPosition Find(const Key& key) const
 	{

@@ -885,10 +885,10 @@ public:
 		return mHashMap.GetCount();
 	}
 
-	void Shrink()
-	{
-		HashMultiMap(*this).Swap(*this);
-	}
+	//void Shrink()
+	//{
+	//	HashMultiMap(*this).Swap(*this);
+	//}
 
 	ConstKeyIterator Find(const Key& key) const
 	{
