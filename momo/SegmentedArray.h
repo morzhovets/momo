@@ -412,7 +412,16 @@ public:
 
 	void Shrink() noexcept
 	{
-		pvDecCapacity(mCount);
+		return Shrink(mCount);
+	}
+
+	void Shrink(size_t capacity) noexcept
+	{
+		if (GetCapacity() <= capacity)
+			return;
+		if (capacity < mCount)
+			capacity = mCount;
+		pvDecCapacity(capacity);
 		try
 		{
 			mSegments.Shrink();

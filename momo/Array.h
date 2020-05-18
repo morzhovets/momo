@@ -703,17 +703,22 @@ public:
 
 	void Shrink()
 	{
-		size_t count = GetCount();
+		return Shrink(GetCount());
+	}
+
+	void Shrink(size_t capacity)
+	{
 		size_t initCapacity = GetCapacity();
-		if (initCapacity > count && initCapacity > internalCapacity)
+		if (initCapacity <= capacity || initCapacity == internalCapacity)
+			return;
+		size_t count = GetCount();
+		if (capacity < count)
+			capacity = count;
+		if (!mData.SetCapacity(capacity))
 		{
-			size_t newCapacity = count;
-			if (!mData.SetCapacity(newCapacity))
-			{
-				auto itemsRelocator = [this, count] (Item* newItems)
-					{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-				mData.Reset(newCapacity, count, itemsRelocator);
-			}
+			auto itemsRelocator = [this, count] (Item* newItems)
+				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
+			mData.Reset(capacity, count, itemsRelocator);
 		}
 	}
 
