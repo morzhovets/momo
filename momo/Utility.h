@@ -196,15 +196,13 @@ namespace internal
 	template<typename... Types>
 	using Void = typename VoidMaker<Types...>::Void;
 
-	template<typename Func, typename Arg1, typename Arg2,
-		typename = void>
-	struct IsInvocable2 : public std::false_type
+	template<typename Func, typename Result, typename... Args>
+	struct IsInvocable : public std::false_type
 	{
 	};
 
-	template<typename Func, typename Arg1, typename Arg2>
-	struct IsInvocable2<Func, Arg1, Arg2,
-		Void<decltype(std::declval<Func>()(std::declval<Arg1>(), std::declval<Arg2>()))>>
+	template<typename Func, typename... Args>
+	struct IsInvocable<Func, decltype(std::declval<Func>()(std::declval<Args>()...)), Args...>
 		: public std::true_type
 	{
 	};

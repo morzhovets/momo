@@ -319,15 +319,16 @@ namespace internal
 		}
 
 		template<typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable2<PtrVisitor, Item*, DataColumnInfo>::value> pvVisit(Item* item,
+		EnableIf<IsInvocable<PtrVisitor, void, Item*, DataColumnInfo>::value> pvVisit(Item* item,
 			const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, *this);
 		}
 
 		template<typename Item, typename PtrVisitor>
-		EnableIf<!IsInvocable2<PtrVisitor, Item*, DataColumnInfo>::value> pvVisit(Item* item,
-			const PtrVisitor& ptrVisitor) const
+		EnableIf<IsInvocable<PtrVisitor, void, Item*>::value &&
+			!IsInvocable<PtrVisitor, void, Item*, DataColumnInfo>::value>
+		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item);
 		}
