@@ -156,10 +156,23 @@ public:
 					item = static_cast<int>(i);
 			};
 			row.VisitReferences(visitor);
+			auto visitor2 = [i] (const auto& item)
+			{
+				typedef std::decay_t<decltype(item)> Item;
+				if constexpr (std::is_same<Item, int>::value)
+					assert(item == static_cast<int>(i));
+				if constexpr (std::is_same<Item, const int*>::value)
+					assert(*item == static_cast<int>(i));
+			};
+			static_cast<const DataRow&>(row).VisitReferences(visitor2);
+			static_cast<const DataRow&>(row).VisitPointers(visitor2);
 #else
 			row[intCol] = static_cast<int>(i);
 #endif
-			table.AddRow(std::move(row));
+			DataRow row2 = table.NewRow();
+			row2 = std::move(row);
+			assert(static_cast<const DataRow&>(row2)[intCol] == static_cast<int>(i));
+			table.AddRow(std::move(row2));
 		}
 
 		table.AddMultiHashIndex(intCol);
@@ -236,12 +249,11 @@ public:
 		assert(table.Select(strCol == "0", dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0, strCol == "1").GetCount() == 0);
 
-		assert((*table.FindByUniqueHash(table.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
-		assert(ctable.FindByUniqueHash(ctable.GetUniqueHashIndex(intCol, strCol),
-			table.NewRow(intCol = 0, strCol = "1")).GetCount() == 1);
+		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
+		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
 
-		assert(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty, strCol == "1", intCol == 0));
+		assert(static_cast<bool>(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
+			strCol == "1", intCol == 0)));
 		assert((*table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1"))[strCol] == "1");
 		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
 
