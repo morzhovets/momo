@@ -340,7 +340,7 @@ namespace internal
 	};
 }
 
-template<bool tKeepRowNumber = true>
+template<bool tKeepRowNumber = false>
 class DataSettings
 {
 public:
