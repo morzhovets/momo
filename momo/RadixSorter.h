@@ -39,7 +39,7 @@ namespace internal
 	{
 		uintptr_t operator()(Iterator iter) const noexcept
 		{
-			return BitCaster::ToUInt(*iter);
+			return PtrCaster::ToUInt(*iter);
 		}
 	};
 

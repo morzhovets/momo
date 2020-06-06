@@ -204,12 +204,12 @@ namespace internal
 
 		const Byte* pvGetBytePtr(size_t index) const noexcept
 		{
-			return BitCaster::PtrToPtr<const Byte>(&mData, index);
+			return PtrCaster::Shift<const Byte>(&mData, index);
 		}
 
 		Byte* pvGetBytePtr(size_t index) noexcept
 		{
-			return BitCaster::PtrToPtr<Byte>(&mData, index);
+			return PtrCaster::Shift<Byte>(&mData, index);
 		}
 
 		static Iterator pvMakeIterator(Item* pitem) noexcept

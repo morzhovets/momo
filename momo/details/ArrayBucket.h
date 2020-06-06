@@ -380,7 +380,7 @@ namespace internal
 
 		static Item* pvGetFastItems(uint8_t* ptr) noexcept
 		{
-			return BitCaster::PtrToPtr<Item>(ptr, ItemTraits::alignment);
+			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
 		}
 
 		Array& pvGetArray() const noexcept
@@ -391,7 +391,7 @@ namespace internal
 
 		static Array& pvGetArray(uint8_t* ptr) noexcept
 		{
-			return *BitCaster::PtrToPtr<Array>(ptr, arrayAlignment);
+			return *PtrCaster::Shift<Array>(ptr, arrayAlignment);
 		}
 
 		Bounds pvGetBounds() const noexcept

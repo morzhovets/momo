@@ -148,7 +148,7 @@ namespace internal
 			else
 			{
 				void* ptr = params.GetInternalMemPool().Allocate();
-				node = BitCaster::PtrToPtr<Node>(ptr, internalOffset);
+				node = PtrCaster::Shift<Node>(ptr, internalOffset);
 				::new(static_cast<void*>(node)) Node(leafMemPoolCount, count);
 			}
 			return node;
@@ -166,7 +166,7 @@ namespace internal
 			{
 				this->~Node();
 				params.GetInternalMemPool().Deallocate(
-					BitCaster::PtrToPtr<void>(this, -static_cast<ptrdiff_t>(internalOffset)));
+					PtrCaster::Shift<void>(this, -static_cast<ptrdiff_t>(internalOffset)));
 			}
 		}
 

@@ -757,7 +757,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		//MOMO_ASSERT(offset % ItemTraits::template GetAlignment<Item>() == 0);
-		return *internal::BitCaster::PtrToPtr<Item>(raw, offset);
+		return *internal::PtrCaster::Shift<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -769,13 +769,13 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return *internal::BitCaster::PtrToPtr<const size_t>(raw, 0);
+		return *internal::PtrCaster::Shift<const size_t>(raw, 0);
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		*internal::BitCaster::PtrToPtr<size_t>(raw, 0) = number;
+		*internal::PtrCaster::Shift<size_t>(raw, 0) = number;
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -952,7 +952,7 @@ private:
 		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
 		size_t offset = columns->GetOffset();
-		Item* item = internal::BitCaster::PtrToPtr<Item>(raw, offset);
+		Item* item = internal::PtrCaster::Shift<Item>(raw, offset);
 		const Item* srcItem = nullptr;
 		if (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
@@ -960,7 +960,7 @@ private:
 			if (std::is_same<DataColumnListPtr, std::nullptr_t>::value ||
 				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
 			{
-				srcItem = internal::BitCaster::PtrToPtr<const Item>(
+				srcItem = internal::PtrCaster::Shift<const Item>(
 					static_cast<const Raw*>(srcRaw), srcOffset);
 			}
 		}
@@ -990,7 +990,7 @@ private:
 	static void pvDestroy(MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 	{
 		size_t offset = columns->GetOffset();
-		ItemTraits::Destroy(memManager, *internal::BitCaster::PtrToPtr<Item>(raw, offset));
+		ItemTraits::Destroy(memManager, *internal::PtrCaster::Shift<Item>(raw, offset));
 		pvDestroy<void, Items...>(memManager, columns + 1, raw);
 	}
 
@@ -1036,7 +1036,7 @@ private:
 	{
 		for (const ColumnRecord& columnRec : mColumns)
 		{
-			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, columnRec.GetOffset());
+			Void* item = internal::PtrCaster::Shift<Void>(raw, columnRec.GetOffset());
 			columnRec.Visit(item, ptrVisitor);	//?
 		}
 	}
@@ -1184,7 +1184,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
 		//MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
-		return *internal::BitCaster::PtrToPtr<Item>(raw, offset);
+		return *internal::PtrCaster::Shift<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1195,12 +1195,12 @@ public:
 
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
-		return *internal::BitCaster::PtrToPtr<const size_t>(raw, pvGetNumberOffset());
+		return *internal::PtrCaster::Shift<const size_t>(raw, pvGetNumberOffset());
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
-		*internal::BitCaster::PtrToPtr<size_t>(raw, pvGetNumberOffset()) = number;
+		*internal::PtrCaster::Shift<size_t>(raw, pvGetNumberOffset()) = number;
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1272,7 +1272,7 @@ private:
 			throw std::runtime_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mColumns)
 		{
-			Void* item = internal::BitCaster::PtrToPtr<Void>(raw, pvGetOffset(columnInfo));
+			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo));
 			columnInfo.Visit(item, ptrVisitor);
 		}
 	}

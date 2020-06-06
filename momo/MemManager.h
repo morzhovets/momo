@@ -384,7 +384,7 @@ namespace internal
 		static EnableIf<(shift < sizeof(void*) * 8)> pvCheckBits(void* ptr) noexcept
 		{
 			(void)ptr;
-			MOMO_ASSERT(BitCaster::ToUInt(ptr) >> shift == uintptr_t{0});
+			MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> shift == uintptr_t{0});
 		}
 
 		template<size_t shift = ptrUsefulBitCount>

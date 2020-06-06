@@ -210,29 +210,23 @@ namespace internal
 	template<bool value, typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 
-	class BitCaster
+	class PtrCaster
 	{
 	public:
 		template<typename Object>
-		static uintptr_t ToUInt(Object* ptr) noexcept	// PtrToUInt
+		static uintptr_t ToUInt(Object* ptr) noexcept
 		{
 			return reinterpret_cast<uintptr_t>(ptr);
 		}
 
 		template<typename ResObject = void>
-		static ResObject* ToPtr(uintptr_t intPtr) noexcept	// UIntToPtr
+		static ResObject* FromUInt(uintptr_t intPtr) noexcept
 		{
 			return reinterpret_cast<ResObject*>(intPtr);
 		}
 
-		//template<typename ResObject, typename Object>
-		//static ResObject* PtrToPtr(Object* ptr) noexcept
-		//{
-		//	return reinterpret_cast<ResObject*>(ptr);
-		//}
-
 		template<typename ResObject, typename Object, typename Offset>
-		static ResObject* PtrToPtr(Object* ptr, Offset byteOffset) noexcept
+		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{
 			typedef typename std::conditional<std::is_const<Object>::value,
 				const char, char>::type Byte;
