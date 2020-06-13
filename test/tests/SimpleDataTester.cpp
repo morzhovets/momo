@@ -120,18 +120,20 @@ public:
 		}
 	}
 
-	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
-	static void TestData(DataTable& table,
+	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	static void TestData(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
-		typedef typename DataTable::Row DataRow;
-		typedef typename DataTable::ConstRowReference ConstRowReference;
-		typedef typename DataTable::ConstIterator ConstIterator;
+		typedef typename Table::Row Row;
+		typedef typename Table::ConstRowReference ConstRowReference;
+		typedef typename Table::ConstSelection ConstSelection;
+		typedef typename Table::Selection Selection;
+		typedef typename Table::ConstIterator ConstIterator;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
 
-		const DataTable& ctable = table;
+		const Table& ctable = table;
 
 		auto keyIndex = table.AddUniqueHashIndex(intCol, strCol);
 		table.AddMultiHashIndex(strCol);
@@ -148,7 +150,7 @@ public:
 
 		for (size_t i = count / 2; i < count; ++i)
 		{
-			DataRow row = table.NewRow();
+			Row row = table.NewRow();
 #if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
 			auto visitor = [i] (auto& item)
 			{
@@ -164,14 +166,14 @@ public:
 				if constexpr (std::is_same<Item, const int*>::value)
 					assert(*item == static_cast<int>(i));
 			};
-			static_cast<const DataRow&>(row).VisitReferences(visitor2);
-			static_cast<const DataRow&>(row).VisitPointers(visitor2);
+			static_cast<const Row&>(row).VisitReferences(visitor2);
+			static_cast<const Row&>(row).VisitPointers(visitor2);
 #else
 			row[intCol] = static_cast<int>(i);
 #endif
-			DataRow row2 = table.NewRow();
+			Row row2 = table.NewRow();
 			row2 = std::move(row);
-			assert(static_cast<const DataRow&>(row2)[intCol] == static_cast<int>(i));
+			assert(static_cast<const Row&>(row2)[intCol] == static_cast<int>(i));
 			table.AddRow(std::move(row2));
 		}
 
@@ -182,7 +184,7 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			DataRow row = table.NewRow(table[i]);
+			Row row = table.NewRow(table[i]);
 			row[intCol] = static_cast<int>(i) / 2;
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
 			table.UpdateRow(i, table.NewRow(row));
@@ -196,8 +198,6 @@ public:
 
 		for (auto row : table) { (void)row; }
 		for (auto row : ctable) { (void)row; }
-		for (auto row : table.Select()) { (void)row; }
-		for (auto row : ctable.Select()) { (void)row; }
 
 		assert(table.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
@@ -277,68 +277,99 @@ public:
 		}
 #endif
 
-		auto cselection = ctable.Select(strCol == "1");
-		cselection.Set(0, cselection[1]);
-		for (const std::string& s : cselection.GetColumnItems(strCol))
-			assert(s == "1");
+		{
+			Table table2(table);
+			assert(table2.GetCount() == count);
+			assert(table2.ContainsColumn(intCol));
+			assert(table2.ContainsColumn(dblCol));
+			assert(table2.ContainsColumn(strCol));
 
-		cselection = table.Select().Sort(strCol);
+			assert(table2.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
+			assert(table2.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
+			assert(table2.GetMultiHashIndex(strCol) != momo::DataMultiHashIndex::empty);
 
-		assert(cselection.GetLowerBound(strCol == "") == 0);
-		assert(cselection.GetUpperBound(strCol == "") == 0);
-		assert(cselection.GetLowerBound(strCol == "0") == 0);
-		assert(cselection.GetUpperBound(strCol == "0") == count / 2);
-		assert(cselection.GetLowerBound(strCol == "1") == count / 2);
-		assert(cselection.GetUpperBound(strCol == "1") == count);
-		assert(cselection.GetLowerBound(strCol == "2") == count);
-		assert(cselection.GetUpperBound(strCol == "2") == count);
+			table2.Clear();
+			assert(table2.IsEmpty());
 
-		cselection.Assign(cselection.GetBegin(), cselection.GetEnd());
-		cselection.Add(cselection[count - 1]);
-		cselection.Add(cselection.GetBegin() + count / 2, cselection.GetEnd());
-		cselection.Insert(count, cselection[count]);
-		cselection.Insert(count / 2, cselection.GetBegin(), cselection.GetBegin() + count / 2);
+			table2.RemoveUniqueHashIndexes();
+			table2.RemoveMultiHashIndexes();
 
-		for (size_t i = 0; i < cselection.GetCount(); ++i)
-			assert(cselection[i][strCol] == ((i < count) ? "0" : "1"));
-
-		cselection.Remove(0, count / 2);
-		cselection.Remove(count, cselection.GetCount() - count);
-
-		cselection.Reverse();
-
-		cselection.Group(intCol);
-		for (size_t i = 0; i < count; i += 2)
-			assert(cselection[i][intCol] == cselection[i + 1][intCol]);
-
-		cselection.Filter(strFilter);
-		assert(cselection.GetCount() == count / 2);
-		cselection.Remove(strFilter);
-		assert(cselection.IsEmpty());
-
-		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
+			table2 = ctable;
+			assert(table2.GetCount() == count);
+			table2 = Table(table.Select());
+			assert(table2.GetCount() == count);
+			table2 = Table(ctable.Select());
+			assert(table2.GetCount() == count);
+		}
 
 		{
-			DataTable tableCopy(table);
-			assert(tableCopy.GetCount() == count);
-			assert(tableCopy.ContainsColumn(intCol));
-			assert(tableCopy.ContainsColumn(dblCol));
-			assert(tableCopy.ContainsColumn(strCol));
+			Selection selection = table.Select(strCol == "1");
+			assert(selection.GetCount() == count / 2);
+			for (auto row : selection)
+				assert(row[strCol] == "1");
 
-			assert(tableCopy.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
-			assert(tableCopy.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
-			assert(tableCopy.GetMultiHashIndex(strCol) != momo::DataMultiHashIndex::empty);
+			ConstSelection cselection = selection;
+			assert(cselection.GetCount() == count / 2);
+			cselection = selection;
+			assert(cselection.GetCount() == count / 2);
 
-			tableCopy.RemoveUniqueHashIndexes();
-			tableCopy.RemoveMultiHashIndexes();
+			Selection selection2(table.Select(), strFilter);
+			selection = selection2;
+			assert(selection.GetCount() == count / 2);
+			for (const std::string& s : selection.GetColumnItems(strCol))
+				assert(s == "0");
 
-			tableCopy = ctable;
-			assert(tableCopy.GetCount() == count);
-			tableCopy = DataTable(table.Select());
-			assert(tableCopy.GetCount() == count);
-			tableCopy = DataTable(ctable.Select());
-			assert(tableCopy.GetCount() == count);
+			selection.Clear();
+			assert(selection.IsEmpty());
 		}
+		{
+			Selection selection = table.Select().Sort(strCol);
+
+			assert(selection.GetLowerBound(strCol == "") == 0);
+			assert(selection.GetUpperBound(strCol == "") == 0);
+			assert(selection.GetLowerBound(strCol == "0") == 0);
+			assert(selection.GetUpperBound(strCol == "0") == count / 2);
+			assert(selection.GetLowerBound(strCol == "1") == count / 2);
+			assert(selection.GetUpperBound(strCol == "1") == count);
+			assert(selection.GetLowerBound(strCol == "2") == count);
+			assert(selection.GetUpperBound(strCol == "2") == count);
+
+			selection.Reserve(selection.GetCount() * 2);
+			selection.Assign(selection.GetBegin(), selection.GetEnd());
+			selection.Add(selection[count - 1]);
+			selection.Add(selection.GetBegin() + count / 2, selection.GetEnd());
+			selection.Insert(count, selection[count]);
+			selection.Insert(count / 2, selection.GetBegin(), selection.GetBegin() + count / 2);
+			selection.Set(0, selection[1]);
+
+			for (size_t i = 0; i < selection.GetCount(); ++i)
+				assert(selection[i][strCol] == ((i < count) ? "0" : "1"));
+
+			selection.Remove(0, count / 2);
+			selection.Remove(count, selection.GetCount() - count);
+
+			selection.Reverse();
+			for (size_t i = 0; i < selection.GetCount(); ++i)
+				assert(selection[i][strCol] == ((i < count / 2) ? "1" : "0"));
+
+			auto rowComp = [&intCol] (ConstRowReference rowRef1, ConstRowReference rowRef2)
+				{ return rowRef1[intCol] > rowRef2[intCol]; };
+			selection.Sort(rowComp);
+
+			auto rowPred = [&intCol] (ConstRowReference rowRef) { return rowRef[intCol] < 1; };
+			assert(selection.BinarySearch(rowPred) == count - 2);
+
+			selection.Group(strCol);
+			for (size_t i = 1; i < count; ++i)
+				assert(i == count / 2 || selection[i][strCol] == selection[i - 1][strCol]);
+
+			selection.Filter(strFilter);
+			assert(selection.GetCount() == count / 2);
+			selection.Remove(strFilter);
+			assert(selection.IsEmpty());
+		}
+
+		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
 
 		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
 			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
@@ -360,21 +391,19 @@ public:
 
 		table.RemoveRows(strFilter);
 		assert(table.IsEmpty());
-
-		table.Clear();
 	}
 
 private:
-	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(const DataTable& ctable,
+	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(const Table& ctable,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
-		typedef typename DataTable::ConstRowReference ConstRowReference;
+		typedef typename Table::ConstRowReference ConstRowReference;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		size_t count = ctable.GetCount();
 
-		DataTable tablePrj = ctable.Project(dblCol, intCol);
+		Table tablePrj = ctable.Project(dblCol, intCol);
 		assert(tablePrj.GetCount() == count);
 		for (const auto& col : tablePrj.GetColumnList())
 			assert(strcmp(col.GetName(), dblCol.GetName()) == 0 || strcmp(col.GetName(), intCol.GetName()) == 0);
@@ -384,8 +413,8 @@ private:
 		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
 	}
 
-	template<bool dynamic, typename DataTable, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const DataTable& /*ctable*/,
+	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const Table& /*ctable*/,
 		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
 	{
 	}
