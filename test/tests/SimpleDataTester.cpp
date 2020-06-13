@@ -252,15 +252,30 @@ public:
 		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
 		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
 
-		assert(static_cast<bool>(table.FindByUniqueHash(momo::DataUniqueHashIndex::empty,
-			strCol == "1", intCol == 0)));
-		assert((*table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1"))[strCol] == "1");
+		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
 		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
 
 		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
 			strCol == "1").GetCount() == count / 2);
 		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
 			strCol == "1").GetCount() == count / 2);
+
+		{
+			typename Table::RowHashPointer hashPointer;
+			typename Table::RowHashPointer::Iterator begin;
+			hashPointer = table.FindByUniqueHash(keyIndex, strCol == "0", intCol == 0);
+			assert(static_cast<bool>(hashPointer));
+			begin = hashPointer.GetBegin();
+			assert(begin < hashPointer.GetEnd());
+		}
+
+		{
+			typename Table::RowHashBounds hashBounds;
+			typename Table::RowHashBounds::Iterator begin;
+			hashBounds = table.FindByMultiHash(momo::DataMultiHashIndex::empty, strCol == "0");
+			begin = hashBounds.GetBegin();
+			assert(begin < hashBounds.GetEnd());
+		}
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
