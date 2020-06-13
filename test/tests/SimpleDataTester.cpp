@@ -179,8 +179,22 @@ public:
 
 		table.AddMultiHashIndex(intCol);
 
-		for (const std::string& s : ctable.GetColumnItems(strCol))
-			assert(s.empty());
+		{
+			typedef typename Table::template ConstItemBounds<std::string> StringBounds;
+			StringBounds strings;
+			typename StringBounds::Iterator begin;
+			strings = ctable.GetColumnItems(strCol);
+			begin = strings.GetBegin();
+			assert(strings.GetCount() == count);
+			assert(begin < strings.GetEnd());
+			assert(strings.GetEnd() - begin == static_cast<ptrdiff_t>(count));
+			assert(strings[0].empty());
+		}
+
+		for (auto row : table)
+			assert(row[strCol].empty());
+		for (auto row : ctable)
+			assert(row[strCol].empty());
 
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -195,9 +209,6 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 			table[i].GetMutable(dblCol) = static_cast<double>(i) / 2.0;
-
-		for (auto row : table) { (void)row; }
-		for (auto row : ctable) { (void)row; }
 
 		assert(table.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
@@ -275,6 +286,7 @@ public:
 			hashBounds = table.FindByMultiHash(momo::DataMultiHashIndex::empty, strCol == "0");
 			begin = hashBounds.GetBegin();
 			assert(begin < hashBounds.GetEnd());
+			assert(hashBounds[0][strCol] == "0");
 		}
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
