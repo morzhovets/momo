@@ -353,7 +353,7 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
-				explicit RawBounds(Raw* raw) noexcept
+				explicit RawBounds(Raw* raw = nullptr) noexcept
 					: mRaw(raw)
 				{
 				}
@@ -550,6 +550,11 @@ namespace internal
 				typedef RawBounds ConstBounds;
 
 			public:
+				explicit RawBounds() noexcept
+					: mRawCount(0)
+				{
+				}
+
 				explicit RawBounds(ConstKeyIterator keyIter, VersionKeeper version) noexcept
 					: VersionKeeper(version),
 					mKeyIterator(keyIter),
