@@ -371,6 +371,10 @@ namespace internal
 	public:
 		using RowBounds::RowBounds;
 
+		explicit DataRowPointer() noexcept	// gcc 5.4, clang 3.6
+		{
+		}
+
 		explicit DataRowPointer(RowBounds rowBounds) noexcept
 			: RowBounds(rowBounds)
 		{

@@ -757,7 +757,8 @@ namespace internal
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
 				{ return rowPred(pvMakeConstRowReference(raw)); };
-			return std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred) - mRaws.GetBegin();
+			return UIntMath<>::Dist(mRaws.GetBegin(),
+				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
 		}
 
 	protected:
