@@ -210,8 +210,18 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			table[i].GetMutable(dblCol) = static_cast<double>(i) / 2.0;
 
-		assert(table.GetUniqueHashIndex(intCol, strCol) != momo::DataUniqueHashIndex::empty);
+		assert(table.GetUniqueHashIndex(intCol, strCol) == keyIndex);
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
+		
+		assert(table.TryAddRow(table.NewRow(table[0])).uniqueHashIndex == keyIndex);
+
+		assert(table.TryUpdateRow(0, table.NewRow(table[1])).uniqueHashIndex == keyIndex);
+		assert(table.TryUpdateRow(0, table.NewRow(table[0])).uniqueHashIndex
+			== momo::DataUniqueHashIndex::empty);
+
+		assert(table.TryUpdateRow(table[0], strCol, std::string("1")).uniqueHashIndex == keyIndex);
+		assert(table.TryUpdateRow(table[0], strCol, std::string("0")).uniqueHashIndex
+			== momo::DataUniqueHashIndex::empty);
 
 		for (size_t i = 0; i < count2; ++i)
 		{
