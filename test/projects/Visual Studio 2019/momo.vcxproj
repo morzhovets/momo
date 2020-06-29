@@ -323,6 +323,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Clang|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleArrayTester.cpp" />
+    <ClCompile Include="..\..\tests\SimpleDataSampler.cpp" />
     <ClCompile Include="..\..\tests\SimpleDataTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashSortTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLim4.cpp" />
