@@ -977,7 +977,7 @@ namespace internal
 
 		Result AddRaw(Raw* raw)
 		{
-			auto reject = [this] ()
+			auto rejector = [this] ()
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.RejectAdd();
@@ -991,7 +991,7 @@ namespace internal
 					Raw* resRaw = uniqueHash.Add(raw);
 					if (resRaw != raw)
 					{
-						reject();
+						rejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 				}
@@ -1000,7 +1000,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				reject();
+				rejector();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
@@ -1035,7 +1035,7 @@ namespace internal
 
 		Result UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
-			auto reject = [this, newRaw] ()
+			auto rejector = [this, newRaw] ()
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -1055,7 +1055,7 @@ namespace internal
 					Raw* resRaw = uniqueHash.Add(newRaw, oldRaw);
 					if (resRaw != newRaw && resRaw != oldRaw)
 					{
-						reject();
+						rejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 					if (resRaw == newRaw)
@@ -1069,7 +1069,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				reject();
+				rejector();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
@@ -1093,7 +1093,7 @@ namespace internal
 				assigner();
 				return { nullptr, UniqueHashIndex::empty };
 			}
-			auto reject = [this] ()
+			auto rejector = [this] ()
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -1116,7 +1116,7 @@ namespace internal
 					Raw* resRaw = uniqueHash.Add(hashMixedKey);
 					if (resRaw != raw)
 					{
-						reject();
+						rejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					}
 					uniqueHash.PrepareRemove(raw);
@@ -1132,7 +1132,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				reject();
+				rejector();
 				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
