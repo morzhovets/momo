@@ -865,10 +865,22 @@ namespace internal
 
 		template<typename... Items, typename Raws,
 			size_t columnCount = sizeof...(Items)>
-		UniqueHashIndex AddUniqueHashIndex(const Raws& raws,
-			const std::array<size_t, columnCount>& offsets)
+		Result AddUniqueHashIndex(const Raws& raws, const std::array<size_t, columnCount>& offsets)
 		{
-			return pvAddHashIndex<Items...>(mUniqueHashes, raws, offsets);
+			Raw* resRaw = nullptr;
+			auto rawAdder = [&resRaw] (UniqueHash& uniqueHash, Raw* raw)
+			{
+				if (uniqueHash.Add(raw) != raw)
+				{
+					resRaw = raw;
+					return false;
+				}
+				return true;
+			};
+			UniqueHashIndex uniqueHashIndex = pvAddHashIndex<Items...>(mUniqueHashes,
+				raws, offsets, rawAdder);
+			MOMO_ASSERT((uniqueHashIndex == UniqueHashIndex::empty) == (resRaw != nullptr));
+			return { resRaw, uniqueHashIndex };
 		}
 
 		template<typename... Items, typename Raws,
@@ -876,7 +888,12 @@ namespace internal
 		MultiHashIndex AddMultiHashIndex(const Raws& raws,
 			const std::array<size_t, columnCount>& offsets)
 		{
-			return pvAddHashIndex<Items...>(mMultiHashes, raws, offsets);
+			auto rawAdder = [] (MultiHash& multiHash, Raw* raw)
+			{
+				multiHash.Add(raw);
+				return true;
+			};
+			return pvAddHashIndex<Items...>(mMultiHashes, raws, offsets, rawAdder);
 		}
 
 		void RemoveUniqueHashIndexes() noexcept
@@ -1244,11 +1261,11 @@ namespace internal
 			return Index::empty;
 		}
 
-		template<typename... Items, typename Hash, typename Raws,
+		template<typename... Items, typename Hash, typename Raws, typename RawAdder,
 			size_t columnCount = sizeof...(Items),
 			typename Index = typename Hash::Index>
 		static Index pvAddHashIndex(Hashes<Hash>& hashes, const Raws& raws,
-			const std::array<size_t, columnCount>& offsets)
+			const std::array<size_t, columnCount>& offsets, RawAdder rawAdder)
 		{
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			Index index = pvGetHashIndex(hashes, sortedOffsets);
@@ -1269,7 +1286,8 @@ namespace internal
 				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)));
 			for (Raw* raw : raws)
 			{
-				hash.Add(raw);
+				if (!rawAdder(hash, raw))
+					return Index::empty;
 				hash.AcceptAdd();
 			}
 			hashes.Reserve(hashes.GetCount() + 1);

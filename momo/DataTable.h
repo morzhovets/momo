@@ -683,7 +683,10 @@ public:
 	{
 		auto offsets = pvGetOffsets(column, columns...);
 		pvCheckImmutable(offsets);
-		return mIndexes.template AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
+		auto res = mIndexes.template AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
+		if (res.raw != nullptr)
+			throw UniqueIndexViolation({ pvMakeRowReference(res.raw), UniqueHashIndex::empty });
+		return res.uniqueHashIndex;
 	}
 
 	template<typename Item, typename... Items>
