@@ -50,22 +50,15 @@ namespace sample1
 		table.UpdateRow(table[1], strCol, std::string("a"));
 
 		for (auto row : table)
-			std::cout << row[intCol] << "," << row[dblCol] << "," << row[strCol] << std::endl;
-		// 1,1.5,b
-		// 2,0.5,a
+			std::cout << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
+		// 1 1.5 b
+		// 2 0.5 a
 
 		{
 			// select by condition
 			auto selection = table.Select(intCol == 1);
 			std::cout << selection.GetCount() << std::endl; // 1
-
-			auto row = selection[0];
-			for (auto column : row.GetColumnList())
-			{
-				if (column.GetTypeInfo() == typeid(double))
-					std::cout << row.GetByOffset<double>(column.GetOffset()) << std::endl;
-			}
-			// 1.5
+			std::cout << selection[0][dblCol] << std::endl;	// 1.5
 		}
 
 		{
@@ -82,13 +75,12 @@ namespace sample1
 
 namespace sample2
 {
-	using Struct = momo::DataStructDefault<int, double, std::string>;
-	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
-	using Table = momo::DataTable<ColumnList>;
+	using Table = momo::DataTable<>;
+	using ConstRowReference = Table::ConstRowReference;
 
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, int, intCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, double, dblCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, std::string, strCol);
+	MOMO_DATA_COLUMN_STRING(int, intCol);
+	MOMO_DATA_COLUMN_STRING(double, dblCol);
+	MOMO_DATA_COLUMN_STRING(std::string, strCol);
 
 	void Test()
 	{
@@ -111,6 +103,65 @@ namespace sample2
 			table.AddRow(std::move(row));
 		}
 
+		for (auto row : table)
+		{
+			for (auto column : table.GetColumnList())
+			{
+				const std::type_info& typeInfo = column.GetTypeInfo();
+				size_t offset = column.GetOffset();
+				if (typeInfo == typeid(int))
+					std::cout << row.GetByOffset<int>(offset) << " ";
+				else if (typeInfo == typeid(double))
+					std::cout << row.GetByOffset<double>(offset) << " ";
+				else if (typeInfo == typeid(std::string))
+					std::cout << row.GetByOffset<std::string>(offset) << " ";
+			}
+			std::cout << std::endl;
+		}
+		// 1 1.5 b 
+		// 2 0.5 a 
+
+		{
+			auto selection = table.Select(strCol == "a");	// fast select by index
+			std::cout << selection.GetCount() << std::endl;	// 1
+
+			table.RemoveRows(selection.GetBegin(), selection.GetEnd());
+			std::cout << table.GetCount() << std::endl;	// 1
+		}
+
+		{
+			size_t count = table.SelectCount(intCol == 2, dblCol == 0.5);	// slow select (takes linear time)
+			std::cout << count << std::endl;	// 0
+		}
+
+		{
+			auto selection = table.Select([] (ConstRowReference row) { return row[dblCol] > 0.0; });	// slow select
+			std::cout << selection.GetCount() << std::endl;	// 1
+		}
+
+		table.RemoveRows([] (ConstRowReference row) { return row[dblCol] > 1.0; });
+		std::cout << table.GetCount() << std::endl;	// 0
+	}
+}
+
+namespace sample3
+{
+	using Struct = momo::DataStructDefault<int, double, std::string>;
+	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
+	using Table = momo::DataTable<ColumnList>;
+
+	MOMO_DATA_COLUMN_STRING_TAG(Struct, int, intCol);
+	MOMO_DATA_COLUMN_STRING_TAG(Struct, double, dblCol);
+	MOMO_DATA_COLUMN_STRING_TAG(Struct, std::string, strCol);
+
+	void Test()
+	{
+		// construct empty table with 3 columns
+		Table table(intCol, dblCol, strCol);
+
+		table.AddRow(intCol = 2, dblCol = 0.5, strCol = "a");
+		table.InsertRow(0, intCol = 1, dblCol = 1.5, strCol = "b");	// at position 0
+
 #if defined(__cpp_generic_lambdas)
 		for (auto row : table)
 		{
@@ -131,33 +182,12 @@ namespace sample2
 		// intCol=2 dblCol=0.5 strCol=a 
 #endif
 
-		{
-			auto selection = table.Select(strCol == "a");	// fast select by index
-			std::cout << selection.GetCount() << std::endl;	// 1
-
-			table.RemoveRows(selection.GetBegin(), selection.GetEnd());
-			std::cout << table.GetCount() << std::endl;	// 1
-		}
-
-		{
-			size_t selCount = table.SelectCount(intCol == 2, dblCol == 0.5);	// slow select (takes linear time)
-			std::cout << selCount << std::endl;	// 0
-		}
-
-#if defined(__cpp_generic_lambdas)
-		{
-			// C++11: (Table::ConstRowReference row)
-			auto selection = table.Select([] (auto row) { return row[dblCol] > 0.0; });	// slow select
-			std::cout << selection.GetCount() << std::endl;	// 1
-		}
-
-		table.RemoveRows([] (auto row) { return row[dblCol] > 1.0; });
-		std::cout << table.GetCount() << std::endl;	// 0
-#endif
+		table.RemoveRow(table[0]);
+		std::cout << table[0][dblCol] << std::endl;	// 0.5
 	}
 }
 
-namespace sample3
+namespace sample4
 {
 	struct Struct
 	{
@@ -180,41 +210,34 @@ namespace sample3
 
 		{
 			auto row = table.NewRow();
-			row->intCol = 2;
-			row->dblCol = 0.5;
+			row->intCol = 1;
+			row->dblCol = 1.5;
 			row->strCol = "a";
 			table.AddRow(std::move(row));
 		}
 		{
-			auto row = table.NewRow(intCol = 1, strCol = "a");
-			row[dblCol] = 1.5;
-			table.InsertRow(0, std::move(row));	// at position 0
+			auto row = table.NewRow(intCol = 2, strCol = "a");
+			row[dblCol] = 0.5;
+			table.AddRow(std::move(row));
 		}
 
 		for (auto row : table)
-			std::cout << row->intCol << "," << row->dblCol << "," << row->strCol << std::endl;
-		// 1,1.5,a
-		// 2,0.5,a
+			std::cout << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
+		// 1 1.5 a
+		// 2 0.5 a
 
 		auto uniqueIndex = table.AddUniqueHashIndex(strCol, intCol);
 		auto multiIndex = table.AddMultiHashIndex(strCol);
 
 		{
-			auto rows = table.FindByMultiHash(multiIndex, strCol == "a");	// fastest search
-			std::cout << rows.GetCount() << std::endl;
-			// 2
+			auto prow = table.FindByUniqueHash(uniqueIndex, intCol == 1, strCol == "a");	// fastest search
+			std::cout << (*prow)[dblCol] << std::endl;	// 1.5
 		}
 
 		{
-			auto prow = table.FindByUniqueHash(uniqueIndex, intCol == 1, strCol == "a");	// fastest search
-			if (prow)
-				std::cout << (*prow)[dblCol] << std::endl;
-			// 1.5
+			auto rows = table.FindByMultiHash(multiIndex, strCol == "a");	// fastest search
+			std::cout << rows.GetCount() << std::endl;	// 2
 		}
-
-		table.RemoveRow(table[0]);
-		std::cout << table[0][dblCol] << std::endl;
-		// 0.5
 	}
 }
 
