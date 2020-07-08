@@ -27,22 +27,23 @@
 class SimpleTreeTester
 {
 private:
-	template<bool isNothrowMoveConstructible, bool isNothrowSwappable, bool isNothrowCopyAssignable>
+	template<bool isNothrowMoveConstructible, bool isNothrowSwappable,
+		bool isNothrowCopyAssignable = false>
 	class TemplItem
 	{
 	public:
-		explicit TemplItem(unsigned char c = unsigned char{0}) noexcept
-			: mChar(c)
+		explicit TemplItem(uint8_t c = uint8_t{0}) noexcept
+			: mItem(c)
 		{
 		}
 
 		TemplItem(TemplItem&& item) noexcept(isNothrowMoveConstructible)
-			: mChar(item.mChar)
+			: mItem(item.mItem)
 		{
 		}
 
 		TemplItem(const TemplItem& item) noexcept(false)
-			: mChar(item.mChar)
+			: mItem(item.mItem)
 		{
 		}
 
@@ -52,27 +53,27 @@ private:
 
 		TemplItem& operator=(const TemplItem& item) noexcept(isNothrowCopyAssignable)
 		{
-			mChar = item.mChar;
+			mItem = item.mItem;
 			return *this;
 		}
 
 		friend void swap(TemplItem& item1, TemplItem& item2) noexcept(isNothrowSwappable)
 		{
-			std::swap(item1.mChar, item2.mChar);
+			std::swap(item1.mItem, item2.mItem);
 		}
 
 		bool operator==(const TemplItem& item) const noexcept
 		{
-			return mChar == item.mChar;
+			return mItem == item.mItem;
 		}
 
 		bool operator<(const TemplItem& item) const noexcept
 		{
-			return mChar < item.mChar;
+			return mItem < item.mItem;
 		}
 
 	private:
-		unsigned char mChar;
+		uint8_t mItem;
 	};
 
 public:
@@ -207,14 +208,13 @@ public:
 			momo::MemPoolParams<memPoolBlockCount>> TreeNode;
 
 		static const size_t count = 256;
-		static unsigned char array[count];
+		static uint8_t array[count];
 		for (size_t i = 0; i < count; ++i)
-			array[i] = static_cast<unsigned char>(i);
+			array[i] = static_cast<uint8_t>(i);
 
 		if (maxCapacity > 1)
 		{
-			typedef momo::TreeSet<unsigned char,
-				momo::TreeTraits<unsigned char, false, TreeNode>> TreeSet;
+			typedef momo::TreeSet<uint8_t, momo::TreeTraits<uint8_t, false, TreeNode>> TreeSet;
 
 			for (size_t i = 0; i <= count; ++i)
 			{
@@ -237,8 +237,8 @@ public:
 		}
 
 		{
-			typedef TemplItem<(keyTraits < 2), (keyTraits % 2 == 0), false> Key;
-			typedef TemplItem<(valueTraits < 2), (valueTraits % 2 == 0), false> Value;
+			typedef TemplItem<(keyTraits < 2), (keyTraits % 2 == 0)> Key;
+			typedef TemplItem<(valueTraits < 2), (valueTraits % 2 == 0)> Value;
 
 			typedef momo::TreeTraits<Key, false, TreeNode, true> TreeTraits;
 			typedef momo::TreeMap<Key, Value, TreeTraits> TreeMap;
@@ -251,10 +251,10 @@ public:
 			auto isEqual = [] (ConstReference ref, const std::pair<const Key, Value>& sref)
 				{ return ref.key == sref.first && ref.value == sref.second; };
 
-			for (int t = 0; t < 2; ++t)
+			for (bool e : { false, true })
 			{
 				std::shuffle(array, array + count, mt);
-				for (unsigned char c : array)
+				for (uint8_t c : array)
 				{
 					smap.insert({ Key(c), Value(c) });
 					assert(map.Insert(Key(c), Value(c)).inserted);
@@ -263,15 +263,15 @@ public:
 				}
 
 				std::shuffle(array, array + count, mt);
-				for (unsigned char c : array)
+				for (uint8_t c : array)
 				{
 					smap.erase(Key(c));
 					auto iter = map.Find(Key(c));
 					assert(iter != map.GetEnd());
-					if (t == 0)
-						map.Remove(iter);
-					else
+					if (e)
 						map.Extract(iter);
+					else
+						map.Remove(iter);
 					assert(map.GetCount() == smap.size());
 					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
 				}
