@@ -22,10 +22,59 @@
 #include <string>
 #include <iostream>
 #include <random>
-#include <set>
+#include <map>
 
 class SimpleTreeTester
 {
+private:
+	template<bool isNothrowMoveConstructible, bool isNothrowSwappable, bool isNothrowCopyAssignable>
+	class TemplItem
+	{
+	public:
+		explicit TemplItem(unsigned char c = unsigned char{0}) noexcept
+			: mChar(c)
+		{
+		}
+
+		TemplItem(TemplItem&& item) noexcept(isNothrowMoveConstructible)
+			: mChar(item.mChar)
+		{
+		}
+
+		TemplItem(const TemplItem& item) noexcept(false)
+			: mChar(item.mChar)
+		{
+		}
+
+		~TemplItem() = default;
+
+		//TemplItem& operator=(TemplItem&& item) = delete;
+
+		TemplItem& operator=(const TemplItem& item) noexcept(isNothrowCopyAssignable)
+		{
+			mChar = item.mChar;
+			return *this;
+		}
+
+		friend void swap(TemplItem& item1, TemplItem& item2) noexcept(isNothrowSwappable)
+		{
+			std::swap(item1.mChar, item2.mChar);
+		}
+
+		bool operator==(const TemplItem& item) const noexcept
+		{
+			return mChar == item.mChar;
+		}
+
+		bool operator<(const TemplItem& item) const noexcept
+		{
+			return mChar < item.mChar;
+		}
+
+	private:
+		unsigned char mChar;
+	};
+
 public:
 	static void TestStrAll()
 	{
@@ -115,54 +164,47 @@ public:
 		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), pred));
 	}
 
-	static void TestCharAll()
+	static void TestTemplAll()
 	{
 		std::mt19937 mt;
 
-		TestCharTreeNode3<  1, 1, 127>(mt);
-		TestCharTreeNode3<  2, 1,  66>(mt);
-		TestCharTreeNode3<  3, 1,  32>(mt);
-		TestCharTreeNode3<  4, 1,  15>(mt);
-		TestCharTreeNode3<  5, 1,   1>(mt);
-		TestCharTreeNode3< 10, 1,   3>(mt);
-		TestCharTreeNode3<101, 1,   2>(mt);
-		TestCharTreeNode3<255, 1,   1>(mt);
+		TestTemplTreeNode<  1, 1, 127, 0, 0>(mt);
+		TestTemplTreeNode<  2, 1,  66, 0, 1>(mt);
+		TestTemplTreeNode<  3, 1,  32, 0, 2>(mt);
+		TestTemplTreeNode<  4, 1,  15, 0, 3>(mt);
+		TestTemplTreeNode<  5, 1,   1, 1, 0>(mt);
+		TestTemplTreeNode< 10, 1,   3, 1, 1>(mt);
+		TestTemplTreeNode<101, 1,   2, 1, 2>(mt);
+		TestTemplTreeNode<255, 1,   1, 1, 3>(mt);
 
-		TestCharTreeNode3<  4, 2, 127>(mt);
-		TestCharTreeNode3<  5, 2,  66>(mt);
-		TestCharTreeNode3<  6, 2,  32>(mt);
-		TestCharTreeNode3<  7, 2,  15>(mt);
-		TestCharTreeNode3< 14, 3,   1>(mt);
-		TestCharTreeNode3< 77, 3,   3>(mt);
-		TestCharTreeNode3<121, 3,   2>(mt);
-		TestCharTreeNode3<255, 3,   1>(mt);
+		TestTemplTreeNode<  4, 2, 127, 2, 0>(mt);
+		TestTemplTreeNode<  5, 2,  66, 2, 1>(mt);
+		TestTemplTreeNode<  6, 2,  32, 2, 2>(mt);
+		TestTemplTreeNode<  7, 2,  15, 2, 3>(mt);
+		TestTemplTreeNode< 14, 3,   1, 3, 0>(mt);
+		TestTemplTreeNode< 77, 3,   3, 3, 1>(mt);
+		TestTemplTreeNode<121, 3,   2, 3, 2>(mt);
+		TestTemplTreeNode<255, 3,   1, 3, 3>(mt);
 
-		TestCharTreeNode3< 37,   7, 127>(mt);
-		TestCharTreeNode3< 42,  15,  66>(mt);
-		TestCharTreeNode3< 65,  23,  32>(mt);
-		TestCharTreeNode3< 77,  30,  15>(mt);
-		TestCharTreeNode3< 88,  31,   1>(mt);
-		TestCharTreeNode3<104,  33,   3>(mt);
-		TestCharTreeNode3<204, 100,   2>(mt);
-		TestCharTreeNode3<255, 127,   1>(mt);
+		TestTemplTreeNode< 37,   7, 127, 3, 3>(mt);
+		TestTemplTreeNode< 42,  15,  66, 3, 3>(mt);
+		TestTemplTreeNode< 65,  23,  32, 3, 3>(mt);
+		TestTemplTreeNode< 77,  30,  15, 3, 3>(mt);
+		TestTemplTreeNode< 88,  31,   1, 3, 3>(mt);
+		TestTemplTreeNode<104,  33,   3, 3, 3>(mt);
+		TestTemplTreeNode<204, 100,   2, 3, 3>(mt);
+		TestTemplTreeNode<255, 127,   1, 3, 3>(mt);
 	}
 
-	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount>
-	static void TestCharTreeNode3(std::mt19937& mt)
-	{
-		static const bool useSwap = (maxCapacity + capacityStep) % 2 == 0;
-		TestCharTreeNode4<maxCapacity, capacityStep, memPoolBlockCount, useSwap>(mt);
-	}
-
-	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount, bool useSwap>
-	static void TestCharTreeNode4(std::mt19937& mt)
+	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount,
+		size_t keyTraits, size_t valueTraits>
+	static void TestTemplTreeNode(std::mt19937& mt)
 	{
 		std::cout << "momo::TreeNode<" << maxCapacity << ", " << capacityStep << ", "
-			<< memPoolBlockCount << ", " << (useSwap ? "true" : "false") << ">: " << std::flush;
+			<< memPoolBlockCount << ">: " << std::flush;
 
 		typedef momo::TreeNode<maxCapacity, capacityStep,
-			momo::MemPoolParams<memPoolBlockCount>, useSwap> TreeNode;
-		typedef momo::TreeSet<unsigned char, momo::TreeTraits<unsigned char, false, TreeNode>> TreeSet;
+			momo::MemPoolParams<memPoolBlockCount>> TreeNode;
 
 		static const size_t count = 256;
 		static unsigned char array[count];
@@ -171,6 +213,9 @@ public:
 
 		if (maxCapacity > 1)
 		{
+			typedef momo::TreeSet<unsigned char,
+				momo::TreeTraits<unsigned char, false, TreeNode>> TreeSet;
+
 			for (size_t i = 0; i <= count; ++i)
 			{
 				TreeSet set1, set2;
@@ -192,42 +237,51 @@ public:
 		}
 
 		{
-			std::set<unsigned char, std::less<unsigned char>,
-				momo::stdish::unsynchronized_pool_allocator<unsigned char>> sset;
-			TreeSet mset;
+			typedef TemplItem<(keyTraits < 2), (keyTraits % 2 == 0), false> Key;
+			typedef TemplItem<(valueTraits < 2), (valueTraits % 2 == 0), false> Value;
 
-			std::shuffle(array, array + count, mt);
-			for (unsigned char c : array)
+			typedef momo::TreeTraits<Key, false, TreeNode, true> TreeTraits;
+			typedef momo::TreeMap<Key, Value, TreeTraits> TreeMap;
+			typedef typename TreeMap::ConstIterator::Reference ConstReference;
+
+			std::map<Key, Value, std::less<Key>,
+				momo::stdish::unsynchronized_pool_allocator<std::pair<const Key, Value>>> smap;
+			TreeMap map;
+
+			auto isEqual = [] (ConstReference ref, const std::pair<const Key, Value>& sref)
+				{ return ref.key == sref.first && ref.value == sref.second; };
+
+			for (int t = 0; t < 2; ++t)
 			{
-				sset.insert(c);
-				assert(mset.Insert(c).inserted);
-				assert(mset.GetCount() == sset.size());
-				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
-			}
+				std::shuffle(array, array + count, mt);
+				for (unsigned char c : array)
+				{
+					smap.insert({ Key(c), Value(c) });
+					assert(map.Insert(Key(c), Value(c)).inserted);
+					assert(map.GetCount() == smap.size());
+					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+				}
 
-			std::shuffle(array, array + count, mt);
-			for (unsigned char c : array)
-			{
-				sset.erase(c);
-				auto iter = mset.Find(c);
-				assert(iter != mset.GetEnd());
-				if (c % 2 == 0)
-					mset.Remove(iter);
-				else
-					mset.Extract(iter);
-				assert(mset.GetCount() == sset.size());
-				assert(std::equal(mset.GetBegin(), mset.GetEnd(), sset.begin()));
+				std::shuffle(array, array + count, mt);
+				for (unsigned char c : array)
+				{
+					smap.erase(Key(c));
+					auto iter = map.Find(Key(c));
+					assert(iter != map.GetEnd());
+					if (t == 0)
+						map.Remove(iter);
+					else
+						map.Extract(iter);
+					assert(map.GetCount() == smap.size());
+					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+				}
 			}
-
-			assert(mset.IsEmpty());
-			mset.Insert(128);
-			assert(mset.GetCount() == 1);
 		}
 
 		std::cout << "ok" << std::endl;
 	}
 };
 
-static int testSimpleTree = (SimpleTreeTester::TestStrAll(), SimpleTreeTester::TestCharAll(), 0);
+static int testSimpleTree = (SimpleTreeTester::TestStrAll(), SimpleTreeTester::TestTemplAll(), 0);
 
 #endif // TEST_SIMPLE_TREE
