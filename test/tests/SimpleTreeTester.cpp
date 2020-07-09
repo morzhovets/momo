@@ -148,9 +148,30 @@ public:
 		TreeMap map2;
 		map2 = map;
 
-		const auto ep = map.Extract(map.Find("s1"));
-		assert(ep.GetKey() == s1 && ep.GetValue() == s1);
+		auto ep = map.Extract(map.Find("s1"));
+		const auto& cep = ep;
+		assert(cep.GetKey() == s1 && cep.GetValue() == s1);
 		assert(map.GetCount() == 3);
+
+		auto pairRemover = [] (std::string& key, std::string& value)
+		{
+			assert(key == "s1" && value == "s1");
+			typedef std::string String;
+			key.~String();
+			value.~String();
+		};
+		ep.Remove(pairRemover);
+		assert(ep.IsEmpty());
+
+		auto pairCrerator = [] (void* pkey, void* pvalue)
+		{
+			::new(pkey) std::string("1");
+			::new(pvalue) std::string("2");
+		};
+		ep.Create(pairCrerator);
+		assert(ep.GetKey() == "1" && ep.GetValue() == "2");
+		ep.Clear();
+		assert(ep.IsEmpty());
 
 		map.Insert(map2.GetBegin(), std::next(map2.GetBegin()));
 		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), pred));
