@@ -23,6 +23,41 @@
 
 class SimpleArrayTester
 {
+private:
+	template<bool isNothrowMoveConstructible>
+	class TemplItem
+	{
+	public:
+		explicit TemplItem(size_t value) noexcept
+			: mValue(value)
+		{
+		}
+
+		TemplItem(TemplItem&& item) noexcept(isNothrowMoveConstructible)
+			: mValue(item.mValue)
+		{
+		}
+
+		TemplItem(const TemplItem& item) noexcept(false)
+			: mValue(item.mValue)
+		{
+		}
+
+		~TemplItem() = default;
+
+		TemplItem& operator=(TemplItem&& item) = default;
+
+		TemplItem& operator=(const TemplItem& item) = default;
+
+		bool operator==(const TemplItem& item) const noexcept
+		{
+			return mValue == item.mValue;
+		}
+
+	private:
+		size_t mValue;
+	};
+
 public:
 	static void TestStrAll()
 	{
@@ -111,49 +146,61 @@ public:
 		assert(ar2.IsEmpty());
 	}
 
-	static void TestIntAll()
+	static void TestTemplAll()
 	{
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
-		TestIntArray<momo::Array<size_t, momo::MemManagerCpp>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerC>: " << std::flush;
-		TestIntArray<momo::Array<size_t, momo::MemManagerC>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerC>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<TemplItem<false>, momo::MemManagerCpp>: " << std::flush;
+		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerC>: " << std::flush;
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerC>>();
 		std::cout << "ok" << std::endl;
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 		std::cout << "momo::Array<size_t, momo::MemManagerWin>: " << std::flush;
-		TestIntArray<momo::Array<size_t, momo::MemManagerWin>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>>();
 		std::cout << "ok" << std::endl;
 #endif
 
 		std::cout << "momo::ArrayIntCap<4, size_t>: " << std::flush;
-		TestIntArray<momo::ArrayIntCap<4, size_t>>();
+		TestTemplArray<momo::ArrayIntCap<4, size_t>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArray<size_t>: " << std::flush;
-		TestIntArray<momo::SegmentedArray<size_t>>();
+		TestTemplArray<momo::SegmentedArray<size_t>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArraySqrt<size_t>: " << std::flush;
-		TestIntArray<momo::SegmentedArraySqrt<size_t>>();
+		TestTemplArray<momo::SegmentedArraySqrt<size_t>>();
 		std::cout << "ok" << std::endl;
 	}
 
 	template<typename Array>
-	static void TestIntArray()
+	static void TestTemplArray()
 	{
+		typedef typename Array::Item Item;
+
 		Array ar;
 		static const size_t count = 20000;
 
 		for (size_t i = 0; i < count; ++i)
-			ar.AddBack(i);
+			ar.AddBack(Item(i));
+
+		ar.Shrink();
 
 		for (size_t i = 0; i < count; ++i)
-			assert(ar[i] == i);
+			assert(ar[i] == Item(i));
 	}
 };
 
-static int testSimpleArray = (SimpleArrayTester::TestStrAll(), SimpleArrayTester::TestIntAll(), 0);
+static int testSimpleArray = (SimpleArrayTester::TestStrAll(), SimpleArrayTester::TestTemplAll(), 0);
 
 #endif // TEST_SIMPLE_ARRAY
