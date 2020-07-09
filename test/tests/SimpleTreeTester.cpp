@@ -32,18 +32,18 @@ private:
 	class TemplItem
 	{
 	public:
-		explicit TemplItem(uint8_t c = uint8_t{0}) noexcept
-			: mItem(c)
+		explicit TemplItem(uint8_t value = uint8_t{0}) noexcept
+			: mValue(value)
 		{
 		}
 
 		TemplItem(TemplItem&& item) noexcept(isNothrowMoveConstructible)
-			: mItem(item.mItem)
+			: mValue(item.mValue)
 		{
 		}
 
 		TemplItem(const TemplItem& item) noexcept(false)
-			: mItem(item.mItem)
+			: mValue(item.mValue)
 		{
 		}
 
@@ -53,27 +53,27 @@ private:
 
 		TemplItem& operator=(const TemplItem& item) noexcept(isNothrowCopyAssignable)
 		{
-			mItem = item.mItem;
+			mValue = item.mValue;
 			return *this;
 		}
 
 		friend void swap(TemplItem& item1, TemplItem& item2) noexcept(isNothrowSwappable)
 		{
-			std::swap(item1.mItem, item2.mItem);
+			std::swap(item1.mValue, item2.mValue);
 		}
 
 		bool operator==(const TemplItem& item) const noexcept
 		{
-			return mItem == item.mItem;
+			return mValue == item.mValue;
 		}
 
 		bool operator<(const TemplItem& item) const noexcept
 		{
-			return mItem < item.mItem;
+			return mValue < item.mValue;
 		}
 
 	private:
-		uint8_t mItem;
+		uint8_t mValue;
 	};
 
 public:
