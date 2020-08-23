@@ -7,7 +7,7 @@ and `unordered_set/map`, but much more efficient in memory usage.
 As for the operation speed, these containers are also better than the standard ones in most cases 
 ([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the standard C++20 **including exception safety guarantees**.
+Classes are designed in close conformity with the [standard](https://en.cppreference.com/w/cpp/container) C++20 **including exception safety guarantees**.
 
 #### Deviations from the standard
 
@@ -31,6 +31,8 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 Just copy the folder `momo` in your source code. This folder contains only header files.
 
 Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, namespace `momo::stdish`.
+
+Documentation is [here](https://morzhovets.github.io/momo).
 
 #### Other classes
 
