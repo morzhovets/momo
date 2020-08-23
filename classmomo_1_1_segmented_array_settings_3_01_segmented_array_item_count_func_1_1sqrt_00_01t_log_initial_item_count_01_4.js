@@ -1,0 +1,4 @@
+var classmomo_1_1_segmented_array_settings_3_01_segmented_array_item_count_func_1_1sqrt_00_01t_log_initial_item_count_01_4 =
+[
+    [ "SegmentsSettings", "classmomo_1_1_segmented_array_settings_3_01_segmented_array_item_count_func_1_1sqrt_00_01t_log_initial_item_count_01_4.html#a7ac23ce88e166f9e1160c7c0ff62d069", null ]
+];
