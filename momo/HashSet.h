@@ -12,13 +12,6 @@
     class HashSet
     class HashSetOpen
 
-  All `HashSet` functions and constructors have strong exception safety,
-  but not the following cases:
-  1. Functions `Insert` receiving many items have basic exception safety.
-  2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
-  3. If constructor receiving many items throws exception, input argument
-    `memManager` may be changed.
-
 \**********************************************************/
 
 #pragma once
@@ -469,6 +462,15 @@ public:
 
 	static const bool overloadIfCannotGrow = true;
 };
+
+/*!
+	All `HashSet` functions and constructors have strong exception safety,
+	but not the following cases:
+	1. Functions `Insert` receiving many items have basic exception safety.
+	2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+	3. If constructor receiving many items throws exception, input argument
+	`memManager` may be changed.
+*/
 
 template<typename TKey,
 	typename THashTraits = HashTraits<TKey>,

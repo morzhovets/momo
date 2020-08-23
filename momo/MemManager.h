@@ -13,35 +13,33 @@
     class MemManagerStd
     class MemManagerDefault
 
-  MemManagerCpp uses `new` and `delete`.
-  MemManagerC uses `malloc`, `free` and `realloc`.
-  MemManagerWin uses `HeapAlloc`, `HeapFree` and `HeapReAlloc`.
-  MemManagerStd uses `allocator<char>::allocate` and `deallocate`.
-  MemManagerDefault is defined in UserSettings.h.
-  MemManagerStd<std::allocator<...>> is same as MemManagerDefault.
-
-  // template for user MemManager:
-  class UserMemManager
-  {
-  public:
-    explicit UserMemManager(...);
-    UserMemManager(UserMemManager&& memManager) noexcept;
-    UserMemManager(const UserMemManager& memManager);
-    ~UserMemManager() noexcept;
-    UserMemManager& operator=(const UserMemManager&) = delete;
-
-    void* Allocate(size_t size);
-
-    void Deallocate(void* ptr, size_t size) noexcept;
-
-    void* Reallocate(void* ptr, size_t size, size_t newSize); // optional
-
-    bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept; // optional
-
-    bool IsEqual(const UserMemManager& memManager) const noexcept; // optional
-  };
-
 \**********************************************************/
+
+/*!
+	\file
+	\code{.cpp}
+	// template for user MemManager:
+	class UserMemManager
+	{
+	public:
+		explicit UserMemManager(...);
+		UserMemManager(UserMemManager&& memManager) noexcept;
+		UserMemManager(const UserMemManager& memManager);
+		~UserMemManager() noexcept;
+		UserMemManager& operator=(const UserMemManager&) = delete;
+
+		void* Allocate(size_t size);
+
+		void Deallocate(void* ptr, size_t size) noexcept;
+
+		void* Reallocate(void* ptr, size_t size, size_t newSize); // optional
+
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept; // optional
+
+		bool IsEqual(const UserMemManager& memManager) const noexcept; // optional
+	};
+	\endcode
+*/
 
 #pragma once
 
@@ -50,6 +48,7 @@
 namespace momo
 {
 
+//! `MemManagerCpp` uses `new` and `delete`
 class MemManagerCpp
 {
 public:
@@ -77,6 +76,7 @@ public:
 	}
 };
 
+//! `MemManagerC` uses `malloc`, `free` and `realloc`
 class MemManagerC
 {
 public:
@@ -115,6 +115,7 @@ public:
 };
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
+//! `MemManagerWin` uses `HeapAlloc`, `HeapFree` and `HeapReAlloc`
 class MemManagerWin
 {
 public:
@@ -161,6 +162,7 @@ public:
 };
 #endif
 
+//! `MemManagerStd` uses `allocator<char>::allocate` and `deallocate`
 template<typename TAllocator>
 class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<char>
 {
@@ -222,8 +224,10 @@ public:
 	}
 };
 
+//! `MemManagerDefault` is defined in UserSettings.h
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
+//! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
 template<typename Item>
 class MemManagerStd<std::allocator<Item>>
 	: private std::allocator<char>, public MemManagerDefault

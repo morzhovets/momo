@@ -13,13 +13,6 @@
     class Array
     class ArrayIntCap
 
-  All `Array` functions and constructors have strong exception safety,
-  but not the following cases:
-  1. Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
-    basic exception safety.
-  2. If any constructor throws exception, input argument `memManager`
-    may be changed.
-
 \**********************************************************/
 
 #pragma once
@@ -176,6 +169,15 @@ public:
 		return newCapacity;
 	}
 };
+
+/*!
+	All `Array` functions and constructors have strong exception safety,
+	but not the following cases:
+	1. Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
+	basic exception safety.
+	2. If any constructor throws exception, input argument `memManager`
+	may be changed.
+*/
 
 template<typename TItem,
 	typename TMemManager = MemManagerDefault,

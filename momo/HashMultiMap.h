@@ -12,15 +12,6 @@
     class HashMultiMap
     class HashMultiMapOpen
 
-  All `HashMultiMap` functions and constructors have strong exception
-  safety, but not the following cases:
-  1. Functions `Add` receiving many items have basic exception safety.
-  2. If any constructor throws exception, input argument `memManager`
-    may be changed.
-  3. In case default `KeyValueTraits`: If function `Add`, `AddVar` or
-    `AddCrt` receiving argument `Key&& key` throws exception,
-    this argument may be changed.
-
 \**********************************************************/
 
 #pragma once
@@ -536,6 +527,17 @@ public:
 	typedef MemPoolParams<> ValueArrayMemPoolParams;
 	typedef ArraySettings<> ValueArraySettings;
 };
+
+/*!
+	All `HashMultiMap` functions and constructors have strong exception
+	safety, but not the following cases:
+	1. Functions `Add` receiving many items have basic exception safety.
+	2. If any constructor throws exception, input argument `memManager`
+	may be changed.
+	3. In case default `KeyValueTraits`: If function `Add`, `AddVar` or
+	`AddCrt` receiving argument `Key&& key` throws exception,
+	this argument may be changed.
+*/
 
 template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
