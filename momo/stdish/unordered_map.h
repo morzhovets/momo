@@ -10,31 +10,6 @@
     class unordered_map
     class unordered_map_open
 
-  This classes are similar to `std::unordered_map`.
-
-  `unordered_map` is much more efficient than standard one in
-  memory usage. Its implementation is based on hash table with
-  buckets in the form of small arrays.
-  `unordered_map_open` is based on open addressing hash table.
-
-  Deviations from the `std::unordered_map`:
-  1. Container items must be movable (preferably without exceptions)
-    or copyable, similar to items of `std::vector`.
-  2. After each addition or removal of the item all iterators and
-    references to items become invalid and should not be used.
-  3. Type `reference` is not the same as `value_type&`, so
-    `for (auto& p : map)` is illegal, but `for (auto p : map)` or
-    `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4. Functions `clear`, `begin`, `cbegin` and iterator increment take
-    O(bucket_count) time in worst case.
-  5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
-    or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
-    functions `erase` can throw exceptions.
-  6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
-
 \**********************************************************/
 
 #pragma once
@@ -47,6 +22,32 @@ namespace momo
 
 namespace stdish
 {
+
+/*!
+	\brief
+	`momo::stdish::unordered_map` is similar to `std::unordered_map`, but
+	much more efficient in memory usage. The implementation is based on
+	hash table with buckets in the form of small arrays.
+
+	\details
+	Deviations from the `std::unordered_map`:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Type `reference` is not the same as `value_type&`, so
+	`for (auto& p : map)` is illegal, but `for (auto p : map)` or
+	`for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+	4. Functions `clear`, `begin`, `cbegin` and iterator increment take
+	O(bucket_count) time in worst case.
+	5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
+	or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+*/
 
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,
@@ -961,6 +962,15 @@ private:
 private:
 	HashMap mHashMap;
 };
+
+/*!
+	\brief
+	`momo::stdish::unordered_map_open` is similar to `std::unordered_map`,
+	but much more efficient in operation speed. The implementation is based
+	on open addressing hash table.
+
+	\copydetails momo::stdish::unordered_map
+*/
 
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,

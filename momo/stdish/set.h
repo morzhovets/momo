@@ -10,25 +10,6 @@
     class set
     class multiset
 
-  This classes are similar to `std::set` and `std::multiset`, but much
-  more efficient in memory usage. The implementation is based on a B-tree.
-
-  Deviations from `std::set` and `std::multiset`:
-  1. Container items must be movable (preferably without exceptions)
-    or copyable, similar to items of `std::vector`.
-  2. After each addition or removal of the item all iterators and
-    references to items become invalid and should not be used.
-  3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
-    complexity.
-  4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
-    functions `erase` can throw exceptions.
-  5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
-  Function `merge` can work fast, if container types are same and each
-  key from one container is less than each key from other container.
-
 \**********************************************************/
 
 #pragma once
@@ -41,6 +22,30 @@ namespace momo
 
 namespace stdish
 {
+
+/*!
+	\brief
+	`momo::stdish::set` is similar to `std::set`, but much more
+	efficient in memory usage. The implementation is based on a B-tree.
+
+	\details
+	Deviations from standard class:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
+	complexity.
+	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+
+	Function `merge` can work fast, if container types are same and each
+	key from one container is less than each key from other container.
+*/
 
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
@@ -594,6 +599,14 @@ private:
 private:
 	TreeSet mTreeSet;
 };
+
+/*!
+	\brief
+	`momo::stdish::multiset` is similar to `std::multiset`, but much more
+	efficient in memory usage. The implementation is based on a B-tree.
+
+	\copydetails momo::stdish::set
+*/
 
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,

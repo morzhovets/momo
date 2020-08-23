@@ -10,17 +10,6 @@
     class vector
     class vector_intcap
 
-  This classes are similar to `std::vector`.
-
-  `stdish::vector_intcap` is vector with internal capacity. This vector
-  doesn't need dynamic memory while its size is not greater than
-  user-defined constant.
-
-  It is allowed to pass to functions `push_back`, `insert`, `emplace_back`
-  and `emplace` references to items within the container.
-  But in case of the function `insert`, receiving pair of iterators, it's
-  not allowed to pass iterators pointing to the items within the container.
-
 \**********************************************************/
 
 #pragma once
@@ -32,6 +21,17 @@ namespace momo
 
 namespace stdish
 {
+
+/*!
+	\brief
+	`momo::stdish::vector` is similar to `std::vector`.
+
+	\details
+	It is allowed to pass to functions `push_back`, `insert`, `emplace_back`
+	and `emplace` references to items within the container.
+	But in case of the function `insert`, receiving pair of iterators, it's
+	not allowed to pass iterators pointing to the items within the container.
+*/
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>,
@@ -487,6 +487,15 @@ template<typename Iterator,
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
 #endif
+
+/*!
+	\brief
+	`momo::stdish::vector_intcap` is vector with internal capacity. This vector
+	doesn't need dynamic memory while its size is not greater than
+	user-defined constant.
+
+	\copydetails momo::stdish::vector
+*/
 
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>

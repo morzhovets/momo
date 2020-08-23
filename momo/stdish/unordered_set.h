@@ -10,27 +10,6 @@
     class unordered_set
     class unordered_set_open
 
-  This classes are similar to `std::unordered_set`.
-
-  `unordered_set` is much more efficient than standard one in
-  memory usage. Its implementation is based on hash table with
-  buckets in the form of small arrays.
-  `unordered_set_open` is based on open addressing hash table.
-
-  Deviations from the `std::unordered_set`:
-  1. Container items must be movable (preferably without exceptions)
-    or copyable, similar to items of `std::vector`.
-  2. After each addition or removal of the item all iterators and
-    references to items become invalid and should not be used.
-  3. Functions `clear`, `begin`, `cbegin` and iterator increment take
-    O(bucket_count) time in worst case.
-  4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
-    functions `erase` can throw exceptions.
-  5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
-
 \**********************************************************/
 
 #pragma once
@@ -43,6 +22,28 @@ namespace momo
 
 namespace stdish
 {
+
+/*!
+	\brief
+	`momo::stdish::unordered_set` is similar to `std::unordered_set`, but
+	much more efficient in memory usage. The implementation is based on
+	hash table with buckets in the form of small arrays.
+
+	\details
+	Deviations from the `std::unordered_set`:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Functions `clear`, `begin`, `cbegin` and iterator increment take
+	O(bucket_count) time in worst case.
+	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+*/
 
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,
@@ -648,6 +649,15 @@ private:
 private:
 	HashSet mHashSet;
 };
+
+/*!
+	\brief
+	`momo::stdish::unordered_set_open` is similar to `std::unordered_set`,
+	but much more efficient in operation speed. The implementation is based
+	on open addressing hash table.
+
+	\copydetails momo::stdish::unordered_set
+*/
 
 template<typename TKey,
 	typename THashFunc = HashCoder<TKey>,

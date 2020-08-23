@@ -10,34 +10,6 @@
     class unordered_multimap
     class unordered_multimap_open
 
-  This classes are similar to `std::unordered_multimap`.
-
-  `unordered_multimap` is much more efficient than standard one in
-  memory usage. Its implementation is based on hash table with
-  buckets in the form of small arrays.
-  `unordered_multimap_open` is based on open addressing hash table.
-
-  Deviations from the `std::unordered_multimap`:
-  1. Each of duplicate keys stored only once.
-  2. `max_load_factor`, `rehash`, `reserve`, `load_factor` and all
-    the functions, associated with buckets or nodes, are not implemented.
-  3. Container items must be movable (preferably without exceptions)
-    or copyable, similar to items of `std::vector`.
-  4. After each addition or removal of the item all iterators and
-    references to items become invalid and should not be used.
-  5. Type `reference` is not the same as `value_type&`, so
-    `for (auto& p : map)` is illegal, but `for (auto p : map)` or
-    `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  6. Functions `clear`, `begin`, `cbegin` and iterator increment take
-    O(bucket_count) time in worst case.
-  7. Functions `erase` can throw exceptions thrown by `key_type` and
-    `mapped_type` move assignment operators.
-
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
-  But in case of the function `insert`, receiving pair of iterators, it's
-  not allowed to pass iterators pointing to the items within the container.
-
 \**********************************************************/
 
 #pragma once
@@ -49,6 +21,35 @@ namespace momo
 
 namespace stdish
 {
+
+/*!
+	\brief
+	`momo::stdish::unordered_multimap` is similar to `std::unordered_multimap`,
+	but much more efficient in memory usage. The implementation is based on
+	hash table with buckets in the form of small arrays.
+
+	\details
+	Deviations from the `std::unordered_multimap`:
+	1. Each of duplicate keys stored only once.
+	2. `max_load_factor`, `rehash`, `reserve`, `load_factor` and all
+	the functions, associated with buckets or nodes, are not implemented.
+	3. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	4. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	5. Type `reference` is not the same as `value_type&`, so
+	`for (auto& p : map)` is illegal, but `for (auto p : map)` or
+	`for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+	6. Functions `clear`, `begin`, `cbegin` and iterator increment take
+	O(bucket_count) time in worst case.
+	7. Functions `erase` can throw exceptions thrown by `key_type` and
+	`mapped_type` move assignment operators.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+	But in case of the function `insert`, receiving pair of iterators, it's
+	not allowed to pass iterators pointing to the items within the container.
+*/
 
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,
@@ -713,6 +714,15 @@ private:
 private:
 	HashMultiMap mHashMultiMap;
 };
+
+/*!
+	\brief
+	`momo::stdish::unordered_multimap_open` is similar to `std::unordered_multimap`,
+	but much more efficient in operation speed. The implementation is based
+	on open addressing hash table.
+
+	\copydetails momo::stdish::unordered_multimap
+*/
 
 template<typename TKey, typename TMapped,
 	typename THashFunc = HashCoder<TKey>,

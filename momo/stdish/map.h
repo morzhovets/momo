@@ -10,29 +10,6 @@
     class map
     class multimap
 
-  This classes are similar to `std::map` and `std::multimap`, but much
-  more efficient in memory usage. The implementation is based on a B-tree.
-
-  Deviations from `std::map` and `std::multimap`:
-  1. Container items must be movable (preferably without exceptions)
-    or copyable, similar to items of `std::vector`.
-  2. After each addition or removal of the item all iterators and
-    references to items become invalid and should not be used.
-  3. Type `reference` is not the same as `value_type&`, so
-    `for (auto& p : map)` is illegal, but `for (auto p : map)` or
-    `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-  4. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
-    complexity.
-  5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
-    or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
-    functions `erase` can throw exceptions.
-  6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-  It is allowed to pass to functions `insert` and `emplace` references
-  to items within the container.
-  Function `merge` can work fast, if container types are same and each
-  key from one container is less than each key from other container.
-
 \**********************************************************/
 
 #pragma once
@@ -842,6 +819,34 @@ namespace internal
 	};
 }
 
+/*!
+	\brief
+	`momo::stdish::map` is similar to `std::map`, but much more
+	efficient in memory usage. The implementation is based on a B-tree.
+
+	\details
+	Deviations from standard class:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Type `reference` is not the same as `value_type&`, so
+	`for (auto& p : map)` is illegal, but `for (auto p : map)` or
+	`for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+	4. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
+	complexity.
+	5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
+	or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+
+	Function `merge` can work fast, if container types are same and each
+	key from one container is less than each key from other container.
+*/
+
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
@@ -964,6 +969,14 @@ private:
 		return res;
 	}
 };
+
+/*!
+	\brief
+	`momo::stdish::multimap` is similar to `std::multimap`, but much more
+	efficient in memory usage. The implementation is based on a B-tree.
+
+	\copydetails momo::stdish::map
+*/
 
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
