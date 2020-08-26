@@ -78,9 +78,14 @@ namespace sample2
 	using Table = momo::DataTable<>;
 	using ConstRowReference = Table::ConstRowReference;
 
-	MOMO_DATA_COLUMN_STRING(int, intCol);
-	MOMO_DATA_COLUMN_STRING(double, dblCol);
-	MOMO_DATA_COLUMN_STRING(std::string, strCol);
+	template<typename Item>
+	using Column = Table::Column<Item>;
+
+	// unique column codes: 0, 1, 2
+	// column names are optional
+	constexpr Column<int> intCol(uint64_t{0}, "intCol");
+	constexpr Column<double> dblCol(uint64_t{1}, "dblCol");
+	constexpr Column<std::string> strCol(uint64_t{2}, "strCol");
 
 	void Test()
 	{
