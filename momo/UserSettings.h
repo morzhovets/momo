@@ -18,6 +18,8 @@
 #endif
 #endif
 
+#include <cassert>
+
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,

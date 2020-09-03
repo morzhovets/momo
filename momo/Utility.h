@@ -21,7 +21,6 @@
 #include <type_traits>
 #include <cstring>
 #include <memory>
-#include <cassert>
 #include <exception>
 #include <algorithm>
 #include <functional>

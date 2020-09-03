@@ -1084,14 +1084,13 @@ private:
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
 	{
-		const ColumnList& columnList = GetColumnList();
 		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
 		size_t count = 0;
 		for (RowIterator iter = begin; iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
-			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 			if (rawMap.Insert(raw, count).inserted)
 				++count;
@@ -1138,13 +1137,12 @@ private:
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
 	{
-		const ColumnList& columnList = GetColumnList();
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
 		for (RowIterator iter = begin; iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
-			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 			rawSet.Insert(ConstRowReferenceProxy::GetRaw(rowRef));
 		}
 		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
@@ -1234,11 +1232,10 @@ private:
 	template<size_t columnCount>
 	void pvCheckImmutable(const std::array<size_t, columnCount>& offsets) const
 	{
-		const ColumnList& columnList = GetColumnList();
 		for (size_t offset : offsets)
 		{
 			(void)offset;
-			MOMO_CHECK(!columnList.IsMutable(offset));
+			MOMO_CHECK(!GetColumnList().IsMutable(offset));
 		}
 	}
 
