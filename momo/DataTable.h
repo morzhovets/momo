@@ -60,6 +60,11 @@ public:
 	}
 };
 
+/*!
+	\brief
+	`momo::DataTable` is similar to `Boost.MultiIndex`, but its API looks like `ADO.NET DataTable`.
+*/
+
 template<typename TColumnList = DataColumnList<>,
 	typename TDataTraits = DataTraits>
 class DataTable
