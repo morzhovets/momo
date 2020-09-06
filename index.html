@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.1</span>
    </div>
   </td>
  </tr>
@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="textblock"><p><a class="anchor" id="md_README"></a><a href="https://travis-ci.org/morzhovets/momo"><img src="https://travis-ci.org/morzhovets/momo.svg?branch=master" alt="Build Status" style="pointer-events: none;" class="inline"/></a></p>
 <h4><a class="anchor" id="autotoc_md0"></a>
 momo (Memory Optimization is the Main Objective)</h4>
-<p>This project contains an implementation of the C++ containers, similar to the standard <code>set/map</code> and <code>unordered_set/map</code>, but much more efficient in memory usage. As for the operation speed, these containers are also better than the standard ones in most cases (<a href="https://morzhovets.github.io/hash_gcc_ubuntu16">benchmark of unordered containers</a>, <a href="https://morzhovets.github.io/tree_gcc_ubuntu16">benchmark of ordered containers</a>, <a href="https://github.com/morzhovets/hash-table-shootout">benchmark sources</a>).</p>
+<p>This project contains an implementation of the C++ containers, similar to the <a href="https://en.cppreference.com/w/cpp/container">standard</a> <code>set/map</code> and <code>unordered_set/map</code>, but much more efficient in memory usage. As for the operation speed, these containers are also better than the standard ones in most cases (<a href="https://morzhovets.github.io/hash_gcc_ubuntu16">benchmark of unordered containers</a>, <a href="https://morzhovets.github.io/tree_gcc_ubuntu16">benchmark of ordered containers</a>, <a href="https://github.com/morzhovets/hash-table-shootout">benchmark sources</a>).</p>
 <p>Classes are designed in close conformity with the standard C++20 <b>including exception safety guarantees</b>.</p>
 <h4><a class="anchor" id="autotoc_md1"></a>
 Deviations from the standard</h4>
@@ -109,6 +109,7 @@ The main ideas</h4>
 Usage</h4>
 <p>Just copy the folder <code>momo</code> in your source code. This folder contains only header files.</p>
 <p>Classes <code>set/map</code> and <code>unordered_set/map</code> are located in subfolder <code>stdish</code>, namespace <code><a class="el" href="namespacemomo_1_1stdish.html">momo::stdish</a></code>.</p>
+<p>Some documentation is <a href="https://morzhovets.github.io/momo">here</a>.</p>
 <h4><a class="anchor" id="autotoc_md4"></a>
 Other classes</h4>
 <ul>
@@ -120,6 +121,9 @@ Other classes</h4>
 <li>Folder <code>momo</code> also contains many of the analogous classes with non-standard interface, but more flexible, namely <code>HashSet</code>, <code>HashMap</code>, <code>HashMultiMap</code>, <code>TreeSet</code>, <code>TreeMap</code>, <code>Array</code>, <code>SegmentedArray</code>, <code>MemPool</code>.</li>
 </ul>
 <h4><a class="anchor" id="autotoc_md5"></a>
+DataTable</h4>
+<p><code><a class="el" href="classmomo_1_1_data_table.html" title="momo::DataTable is similar to Boost.MultiIndex, but its API looks like ADO.NET DataTable.">momo::DataTable</a></code> is similar to <a href="https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html"><code>Boost.MultiIndex</code></a>, but its API looks like <a href="https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable"><code>ADO.NET DataTable</code></a>. Some examples are <a href="https://github.com/morzhovets/momo/blob/master/test/tests/SimpleDataSampler.cpp">here</a>.</p>
+<h4><a class="anchor" id="autotoc_md6"></a>
 Supported compilers</h4>
 <ul>
 <li>MS Visual C++ (19.0+, Visual Studio 2015+)</li>
