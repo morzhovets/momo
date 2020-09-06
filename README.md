@@ -2,12 +2,10 @@
 
 #### momo (Memory Optimization is the Main Objective)
 
-This project contains an implementation of the C++ containers, similar to the standard `set/map`
-and `unordered_set/map`, but much more efficient in memory usage.
-As for the operation speed, these containers are also better than the standard ones in most cases 
-([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
+This project contains an implementation of the C++ containers, similar to the [standard](https://en.cppreference.com/w/cpp/container) `set/map` and `unordered_set/map`, but much more efficient in memory usage.
+As for the operation speed, these containers are also better than the standard ones in most cases ([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the [standard](https://en.cppreference.com/w/cpp/container) C++20 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++20 **including exception safety guarantees**.
 
 #### Deviations from the standard
 
@@ -32,7 +30,7 @@ Just copy the folder `momo` in your source code. This folder contains only heade
 
 Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, namespace `momo::stdish`.
 
-Documentation is [here](https://morzhovets.github.io/momo).
+Some documentation is [here](https://morzhovets.github.io/momo).
 
 #### Other classes
 
@@ -47,6 +45,10 @@ Documentation is [here](https://morzhovets.github.io/momo).
 - `stdish::unsynchronized_pool_allocator` is allocator with a pool of memory for containers like `std::list` or `std::map`. Each copy of the container keeps its own memory pool. Memory is released not only after destruction of the object, but also in case of removal sufficient number of items.
 
 - Folder `momo` also contains many of the analogous classes with non-standard interface, but more flexible, namely `HashSet`, `HashMap`, `HashMultiMap`, `TreeSet`, `TreeMap`, `Array`, `SegmentedArray`, `MemPool`.
+
+#### DataTable
+
+`momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html), but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable). Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/tests/SimpleDataSampler.cpp).
 
 #### Supported compilers
 
