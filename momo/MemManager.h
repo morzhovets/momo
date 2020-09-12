@@ -163,7 +163,8 @@ public:
 #endif
 
 //! `MemManagerStd` uses `allocator<char>::allocate` and `deallocate`
-template<typename TAllocator>
+template<typename TAllocator,
+	bool tUseMemManagerDefault = true>
 class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<char>
 {
 public:
@@ -229,7 +230,7 @@ typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
 //! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
 template<typename Item>
-class MemManagerStd<std::allocator<Item>>
+class MemManagerStd<std::allocator<Item>, true>
 	: private std::allocator<char>, public MemManagerDefault
 {
 public:
