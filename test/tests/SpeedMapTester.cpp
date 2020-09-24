@@ -42,10 +42,10 @@
 #include <unordered_map>
 #include <map>
 
-class SpeedMapKey
+class IntPtr
 {
 public:
-	explicit SpeedMapKey(uint64_t* ptr) noexcept
+	explicit IntPtr(uint64_t* ptr) noexcept
 		: mPtr(ptr)
 	{
 	}
@@ -55,12 +55,12 @@ public:
 		return *mPtr;
 	}
 
-	bool operator==(const SpeedMapKey& key) const noexcept
+	bool operator==(const IntPtr& key) const noexcept
 	{
 		return GetInt() == key.GetInt();
 	}
 
-	bool operator<(const SpeedMapKey& key) const noexcept
+	bool operator<(const IntPtr& key) const noexcept
 	{
 		return GetInt() < key.GetInt();
 	}
@@ -72,9 +72,9 @@ private:
 namespace std
 {
 	template<>
-	struct hash<SpeedMapKey>
+	struct hash<IntPtr>
 	{
-		size_t operator()(const SpeedMapKey& key) const noexcept
+		size_t operator()(const IntPtr& key) const noexcept
 		{
 			return std::hash<uint64_t>()(key.GetInt());
 		}
@@ -98,7 +98,7 @@ public:
 			for (size_t i = GetCount(); i < count; ++i)
 				AddBackNogrow(random());
 			std::sort(begin, end);
-			size_t newCount = std::unique(begin, end) - begin;
+			size_t newCount = momo::internal::UIntMath<>::Dist(begin, std::unique(begin, end));
 			if (newCount == count)
 				break;
 			SetCount(newCount);
@@ -113,7 +113,7 @@ public:
 };
 
 template<>
-class SpeedMapKeys<SpeedMapKey> : public momo::Array<SpeedMapKey>
+class SpeedMapKeys<IntPtr> : public momo::Array<IntPtr>
 {
 public:
 	SpeedMapKeys(size_t count, std::mt19937_64& random)
@@ -121,13 +121,13 @@ public:
 	{
 		Reserve(count);
 		for (size_t i = 0; i < count; ++i)
-			AddBackNogrow(SpeedMapKey(mData.GetItems() + i));
+			AddBackNogrow(IntPtr(mData.GetItems() + i));
 		std::shuffle(GetBegin(), GetEnd(), random);
 	}
 
 	static const char* GetKeyTitle() noexcept
 	{
-		return "SpeedMapKey";
+		return "IntPtr";
 	}
 
 private:
@@ -152,7 +152,7 @@ public:
 				AddBackNogrow(sstream.str());
 			}
 			std::sort(begin, end);
-			size_t newCount = std::unique(begin, end) - begin;
+			size_t newCount = momo::internal::UIntMath<>::Dist(begin, std::unique(begin, end));
 			if (newCount == count)
 				break;
 			SetCount(newCount);
@@ -441,7 +441,7 @@ void TestSpeedMap()
 #endif
 
 	SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
-	SpeedMapTester<SpeedMapKey>(maxKeyCount, 3, resStream).TestAll();
+	SpeedMapTester<IntPtr>(maxKeyCount, 3, resStream).TestAll();
 }
 
 static int testSpeedMap = (TestSpeedMap(), 0);
