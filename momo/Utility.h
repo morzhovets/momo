@@ -29,10 +29,6 @@
 #include <array>
 #include <initializer_list>
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-#include <Windows.h>
-#endif
-
 #ifdef MOMO_USE_SSE2
 #include <emmintrin.h>
 #include <xmmintrin.h>
