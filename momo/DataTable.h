@@ -607,7 +607,16 @@ public:
 	template<typename Item>
 	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
 	{
-		TryResult res = TryUpdateRow(rowRef, column, std::move(newItem));
+		TryResult res = pvTryUpdateRow(rowRef, column, std::move(newItem));
+		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+			throw UniqueIndexViolation(res);
+		return res.rowReference;
+	}
+
+	template<typename Item>
+	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, const Item& newItem)
+	{
+		TryResult res = pvTryUpdateRow(rowRef, column, newItem);
 		if (res.uniqueHashIndex != UniqueHashIndex::empty)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
@@ -631,18 +640,13 @@ public:
 	template<typename Item>
 	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
 	{
-		const ColumnList& columnList = GetColumnList();
-		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
-		rowRef.GetRaw();	// check
-		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-		size_t offset = GetColumnList().GetOffset(column);
-		auto assigner = [&columnList, raw, offset, &newItem] ()
-			{ columnList.template Assign<Item>(raw, offset, std::move(newItem)); };
-		auto res = mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
-		if (res.raw != nullptr)
-			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
-		++mCrew.GetChangeVersion();
-		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
+		return pvTryUpdateRow(rowRef, column, std::move(newItem));
+	}
+
+	template<typename Item>
+	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, const Item& newItem)
+	{
+		return pvTryUpdateRow(rowRef, column, newItem);
 	}
 
 	template<typename RowIterator>
@@ -1043,6 +1047,23 @@ private:
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
 		return raw;
+	}
+
+	template<typename Item, typename RItem>
+	TryResult pvTryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, RItem&& newItem)
+	{
+		const ColumnList& columnList = GetColumnList();
+		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+		rowRef.GetRaw();	// check
+		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+		size_t offset = GetColumnList().GetOffset(column);
+		auto assigner = [&columnList, raw, offset, &newItem] ()
+			{ columnList.template Assign<Item>(raw, offset, std::forward<RItem>(newItem)); };
+		auto res = mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
+		if (res.raw != nullptr)
+			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
+		++mCrew.GetChangeVersion();
+		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
 	template<typename RowIterator,
