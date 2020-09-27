@@ -99,7 +99,9 @@
 // Force inlining
 #ifdef _MSC_VER
 #define MOMO_FORCEINLINE __forceinline
-#elif defined(__GNUC__) || (defined(__clang__) && __has_attribute(__always_inline__))
+#elif defined(__GNUC__)
+#define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
+#elif (defined(__clang__) && __has_attribute(__always_inline__)
 #define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
 #else
 #define MOMO_FORCEINLINE inline
