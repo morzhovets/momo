@@ -357,7 +357,7 @@ public:
 		mHashSet.Reserve(count);
 	}
 
-	const_iterator find(const key_type& key) const
+	MOMO_FORCEINLINE const_iterator find(const key_type& key) const
 	{
 		return mHashSet.Find(key);
 	}
@@ -365,7 +365,7 @@ public:
 	//iterator find(const key_type& key)
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
 		const KeyArg& key) const
 	{
 		return mHashSet.Find(key);
@@ -374,30 +374,32 @@ public:
 	//template<typename KeyArg>
 	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
 
-	size_type count(const key_type& key) const
+	MOMO_FORCEINLINE size_type count(const key_type& key) const
 	{
 		return contains(key) ? 1 : 0;
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
 		const KeyArg& key) const
 	{
 		return contains(key) ? 1 : 0;
 	}
 
-	bool contains(const key_type& key) const
+	MOMO_FORCEINLINE bool contains(const key_type& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(const KeyArg& key) const
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(
+		const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}
 
-	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
+	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(
+		const key_type& key) const
 	{
 		return { find(key), end() };
 	}
@@ -405,7 +407,7 @@ public:
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{

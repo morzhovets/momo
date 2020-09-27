@@ -74,7 +74,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			Byte shortHash = ptCalcShortHash(hashCode);
 			const Byte* thisShortHashes = pvGetShortHashes();

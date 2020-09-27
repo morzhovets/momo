@@ -753,24 +753,26 @@ public:
 	//	HashSet(*this).Swap(*this);
 	//}
 
-	ConstPosition Find(const Key& key) const
+	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
+		const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
 
-	bool ContainsKey(const Key& key) const
+	MOMO_FORCEINLINE bool ContainsKey(const Key& key) const
 	{
 		return !!pvFind(key);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+		const KeyArg& key) const
 	{
 		return !!pvFind(key);
 	}
@@ -1024,7 +1026,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstPosition pvFind(const KeyArg& key) const
+	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
 	{
 		size_t indexCode = GetHashTraits().GetHashCode(key);
 		BucketIterator bucketIter = pvFind(key, indexCode);
@@ -1032,7 +1034,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	BucketIterator pvFind(const KeyArg& key, size_t& indexCode) const
+	MOMO_FORCEINLINE BucketIterator pvFind(const KeyArg& key, size_t& indexCode) const
 	{
 		size_t hashCode = indexCode;
 		const HashTraits& hashTraits = GetHashTraits();

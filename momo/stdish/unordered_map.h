@@ -393,64 +393,66 @@ public:
 		mHashMap.Reserve(count);
 	}
 
-	const_iterator find(const key_type& key) const
+	MOMO_FORCEINLINE const_iterator find(const key_type& key) const
 	{
 		return ConstIteratorProxy(mHashMap.Find(key));
 	}
 
-	iterator find(const key_type& key)
+	MOMO_FORCEINLINE iterator find(const key_type& key)
 	{
 		return IteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
 		const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(
+		const KeyArg& key)
 	{
 		return IteratorProxy(mHashMap.Find(key));
 	}
 
-	size_type count(const key_type& key) const
+	MOMO_FORCEINLINE size_type count(const key_type& key) const
 	{
 		return contains(key) ? 1 : 0;
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
 		const KeyArg& key) const
 	{
 		return contains(key) ? 1 : 0;
 	}
 
-	bool contains(const key_type& key) const
+	MOMO_FORCEINLINE bool contains(const key_type& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(const KeyArg& key) const
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(
+		const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
 
-	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
+	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		return { find(key), end() };
 	}
 
-	std::pair<iterator, iterator> equal_range(const key_type& key)
+	MOMO_FORCEINLINE std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
 		return { find(key), end() };
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{
@@ -458,7 +460,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+		std::pair<iterator, iterator>>
 	equal_range(const KeyArg& key)
 	{
 		return { find(key), end() };
@@ -646,17 +649,17 @@ public:
 		return mHashMap.Remove(key) ? 1 : 0;
 	}
 
-	typename HashMap::ValueReferenceRKey operator[](key_type&& key)
+	MOMO_FORCEINLINE typename HashMap::ValueReferenceRKey operator[](key_type&& key)
 	{
 		return mHashMap[std::move(key)];
 	}
 
-	typename HashMap::ValueReferenceCKey operator[](const key_type& key)
+	MOMO_FORCEINLINE typename HashMap::ValueReferenceCKey operator[](const key_type& key)
 	{
 		return mHashMap[key];
 	}
 
-	const mapped_type& at(const key_type& key) const
+	MOMO_FORCEINLINE const mapped_type& at(const key_type& key) const
 	{
 		const_iterator iter = find(key);
 		if (iter == end())
@@ -664,7 +667,7 @@ public:
 		return iter->second;
 	}
 
-	mapped_type& at(const key_type& key)
+	MOMO_FORCEINLINE mapped_type& at(const key_type& key)
 	{
 		iterator iter = find(key);
 		if (iter == end())

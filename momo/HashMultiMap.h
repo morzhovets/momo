@@ -892,36 +892,38 @@ public:
 	//	HashMultiMap(*this).Swap(*this);
 	//}
 
-	ConstKeyIterator Find(const Key& key) const
+	MOMO_FORCEINLINE ConstKeyIterator Find(const Key& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	KeyIterator Find(const Key& key)
+	MOMO_FORCEINLINE KeyIterator Find(const Key& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
 		const KeyArg& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(const KeyArg& key)
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(
+		const KeyArg& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
 
-	bool ContainsKey(const Key& key) const
+	MOMO_FORCEINLINE bool ContainsKey(const Key& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+		const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}

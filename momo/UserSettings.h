@@ -96,6 +96,15 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
 #endif
 
+// Force inlining
+#ifdef _MSC_VER
+#define MOMO_FORCEINLINE __forceinline
+#elif defined(__GNUC__) || (defined(__clang__) && __has_attribute(__always_inline__))
+#define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
+#else
+#define MOMO_FORCEINLINE inline
+#endif
+
 // Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
 #if defined(_M_AMD64) || defined(_M_X64) || _M_IX86_FP == 2

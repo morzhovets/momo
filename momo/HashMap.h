@@ -332,35 +332,38 @@ public:
 	//	mHashSet.Shrink();
 	//}
 
-	ConstPosition Find(const Key& key) const
+	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
 		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
-	Position Find(const Key& key)
+	MOMO_FORCEINLINE Position Find(const Key& key)
 	{
 		return PositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
+		const KeyArg& key) const
 	{
 		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(const KeyArg& key)
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(
+		const KeyArg& key)
 	{
 		return PositionProxy(mHashSet.Find(key));
 	}
 
-	bool ContainsKey(const Key& key) const
+	MOMO_FORCEINLINE bool ContainsKey(const Key& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+		const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}
@@ -505,14 +508,14 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
-	ValueReferenceRKey operator[](Key&& key)
+	MOMO_FORCEINLINE ValueReferenceRKey operator[](Key&& key)
 	{
 		Position pos = Find(static_cast<const Key&>(key));
 		return !!pos ? ValueReferencer::template GetReference<Key&&>(*this, pos)
 			: ValueReferencer::template GetReference<Key&&>(*this, pos, std::move(key));
 	}
 
-	ValueReferenceCKey operator[](const Key& key)
+	MOMO_FORCEINLINE ValueReferenceCKey operator[](const Key& key)
 	{
 		Position pos = Find(key);
 		return !!pos ? ValueReferencer::template GetReference<const Key&>(*this, pos)
