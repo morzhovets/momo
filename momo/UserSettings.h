@@ -101,9 +101,12 @@
 #define MOMO_FORCEINLINE __forceinline
 #elif defined(__GNUC__)
 #define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
-#elif defined(__clang__) && __has_attribute(__always_inline__)
+#elif defined(__clang__)
+#if __has_attribute(__always_inline__)
 #define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
-#else
+#endif
+#endif
+#ifndef MOMO_FORCEINLINE
 #define MOMO_FORCEINLINE inline
 #endif
 
