@@ -14,7 +14,14 @@
 #pragma once
 
 #include "HashBucketOpen2N2.h"
+
+#ifdef MOMO_USE_SSE2
+
 #include "HashBucketOpenN1.h"
+
+#include <emmintrin.h>
+
+#endif
 
 namespace momo
 {

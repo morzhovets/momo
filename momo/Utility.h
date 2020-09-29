@@ -29,11 +29,6 @@
 #include <array>
 #include <initializer_list>
 
-#ifdef MOMO_USE_SSE2
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#endif
-
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
 		noexcept(noexcept(object1.Swap(object2))) \
