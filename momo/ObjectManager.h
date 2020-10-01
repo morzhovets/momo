@@ -247,25 +247,8 @@ namespace internal
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
 			Func&& func)
 		{
-			if (isNothrowMoveConstructible)
-			{
-				std::forward<Func>(func)();
-				Move(memManager, std::move(srcObject), dstObject);
-			}
-			else
-			{
-				Move(memManager, std::move(srcObject), dstObject);
-				try
-				{
-					std::forward<Func>(func)();
-				}
-				catch (...)
-				{
-					// srcObject has been changed!
-					Destroy(memManager, *dstObject);
-					throw;
-				}
-			}
+			pvMoveExec(memManager, std::move(srcObject), dstObject, std::forward<Func>(func),
+				BoolConstant<isNothrowMoveConstructible>());
 		}
 
 		template<typename Func>
@@ -363,6 +346,31 @@ namespace internal
 		}
 
 	private:
+		template<typename Func>
+		static void pvMoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
+			Func&& func, std::true_type /*isNothrowMoveConstructible*/)
+		{
+			std::forward<Func>(func)();
+			Move(memManager, std::move(srcObject), dstObject);
+		}
+
+		template<typename Func>
+		static void pvMoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
+			Func&& func, std::false_type /*isNothrowMoveConstructible*/)
+		{
+			Move(memManager, std::move(srcObject), dstObject);
+			try
+			{
+				std::forward<Func>(func)();
+			}
+			catch (...)
+			{
+				// srcObject has been changed!
+				Destroy(memManager, *dstObject);
+				throw;
+			}
+		}
+
 		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
 		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,

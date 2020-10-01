@@ -1091,16 +1091,7 @@ private:
 		else
 			resPos = pvAddGrow(hashCode, std::forward<ItemCreator>(itemCreator));
 		if (mBuckets->GetNextBuckets() != nullptr)
-		{
-			BucketParams& bucketParams = mBuckets->GetBucketParams();
-			size_t bucketIndex = ConstPositionProxy::GetBucketIndex(resPos);
-			Bucket& bucket = (*mBuckets)[bucketIndex];
-			ptrdiff_t itemIndex = std::distance(bucket.GetBounds(bucketParams).GetBegin(),
-				ConstPositionProxy::GetBucketIterator(resPos));
-			pvRelocateItems();
-			ConstPositionProxy::Reset(resPos, bucketIndex,
-				std::next(bucket.GetBounds(bucketParams).GetBegin(), itemIndex));
-		}
+			pvRelocateItems(resPos);
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
 		return resPos;
 	}
@@ -1133,7 +1124,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	ConstPosition pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
+	MOMO_NOINLINE ConstPosition pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
@@ -1222,6 +1213,18 @@ private:
 		}
 		MOMO_ASSERT(false);
 		return nullptr;
+	}
+
+	MOMO_NOINLINE void pvRelocateItems(ConstPosition& pos) noexcept
+	{
+		BucketParams& bucketParams = mBuckets->GetBucketParams();
+		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
+		Bucket& bucket = (*mBuckets)[bucketIndex];
+		ptrdiff_t itemIndex = std::distance(bucket.GetBounds(bucketParams).GetBegin(),
+			ConstPositionProxy::GetBucketIterator(pos));
+		pvRelocateItems();
+		ConstPositionProxy::Reset(pos, bucketIndex,
+			std::next(bucket.GetBounds(bucketParams).GetBegin(), itemIndex));
 	}
 
 	void pvRelocateItems() noexcept
