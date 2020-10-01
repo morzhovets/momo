@@ -34,7 +34,7 @@
 #include <initializer_list>
 
 #ifdef _MSC_VER //_WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 #include <string>

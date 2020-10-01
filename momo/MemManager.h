@@ -45,10 +45,6 @@
 
 #include "Utility.h"
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-#include <heapapi.h>
-#endif
-
 namespace momo
 {
 
