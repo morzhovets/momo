@@ -204,7 +204,10 @@ public:
 	{
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
 		if (Params::cachedFreeBlockCount > 0)
-			pvFlushDeallocate();
+		{
+			for (void* pblock : mCachedFreeBlocks)
+				pvDeleteBlock(pblock);
+		}
 		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
 	}
 
@@ -349,7 +352,7 @@ private:
 			throw std::length_error("momo::MemPool length error");
 	}
 
-	void pvFlushDeallocate() noexcept
+	MOMO_NOINLINE void pvFlushDeallocate() noexcept
 	{
 		for (void* pblock : mCachedFreeBlocks)
 			pvDeleteBlock(pblock);
@@ -404,47 +407,28 @@ private:
 	{
 		if (mBufferHead == nullPtr)
 			mBufferHead = pvNewBuffer();
-		uintptr_t block;
-		size_t freeBlockCount = pvNewBlock(mBufferHead, block);
-		if (freeBlockCount == 0)
-			pvRemoveBuffer(mBufferHead, false);
+		BufferBytes& bytes = pvGetBufferBytes(mBufferHead);
+		uintptr_t block = pvGetNextFreeBlockIndex(mBufferHead, bytes.firstFreeBlockIndex);
+		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
+		--bytes.freeBlockCount;
+		if (bytes.freeBlockCount == int8_t{0})
+			pvRemoveBuffer(mBufferHead);
 		return block;
 	}
 
 	void pvDeleteBlock(uintptr_t block) noexcept
 	{
 		uintptr_t buffer;
-		size_t freeBlockCount = pvDeleteBlock(block, buffer);
-		if (freeBlockCount == 1)
-		{
-			BufferPointers& pointers = pvGetBufferPointers(buffer);
-			pointers.prevBuffer = nullPtr;
-			pointers.nextBuffer = mBufferHead;
-			if (mBufferHead != nullPtr)
-				pvGetBufferPointers(mBufferHead).prevBuffer = buffer;
-			mBufferHead = buffer;
-		}
-		if (freeBlockCount == Params::blockCount)
-			pvRemoveBuffer(buffer, true);
-	}
-
-	size_t pvNewBlock(uintptr_t buffer, uintptr_t& block) noexcept
-	{
-		BufferBytes& bytes = pvGetBufferBytes(buffer);
-		block = pvGetNextFreeBlockIndex(buffer, bytes.firstFreeBlockIndex);
-		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
-		--bytes.freeBlockCount;
-		return static_cast<size_t>(bytes.freeBlockCount);
-	}
-
-	size_t pvDeleteBlock(uintptr_t block, uintptr_t& buffer) noexcept
-	{
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
 		BufferBytes& bytes = pvGetBufferBytes(buffer);
 		pvGetNextFreeBlockIndex(block) = bytes.firstFreeBlockIndex;
 		bytes.firstFreeBlockIndex = blockIndex;
 		++bytes.freeBlockCount;
-		return static_cast<size_t>(bytes.freeBlockCount);
+		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
+		if (freeBlockCount == 1)
+			pvAddBuffer(buffer);
+		if (freeBlockCount == Params::blockCount)
+			pvDeleteBuffer(buffer);
 	}
 
 	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) noexcept
@@ -476,7 +460,7 @@ private:
 		}
 	}
 
-	uintptr_t pvNewBuffer()
+	MOMO_NOINLINE uintptr_t pvNewBuffer()
 	{
 		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
 		uintptr_t begin = internal::PtrCaster::ToUInt(
@@ -507,7 +491,25 @@ private:
 		return buffer;
 	}
 
-	void pvRemoveBuffer(uintptr_t buffer, bool deallocate) noexcept
+	void pvAddBuffer(uintptr_t buffer) noexcept
+	{
+		BufferPointers& pointers = pvGetBufferPointers(buffer);
+		pointers.prevBuffer = nullPtr;
+		pointers.nextBuffer = mBufferHead;
+		if (mBufferHead != nullPtr)
+			pvGetBufferPointers(mBufferHead).prevBuffer = buffer;
+		mBufferHead = buffer;
+	}
+
+	MOMO_NOINLINE void pvDeleteBuffer(uintptr_t buffer) noexcept
+	{
+		pvRemoveBuffer(buffer);
+		uintptr_t begin = pvGetBufferPointers(buffer).begin;
+		MemManagerProxy::Deallocate(GetMemManager(),
+			internal::PtrCaster::FromUInt(begin), pvGetBufferSize());
+	}
+
+	void pvRemoveBuffer(uintptr_t buffer) noexcept
 	{
 		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		if (pointers.prevBuffer != nullPtr)
@@ -516,11 +518,6 @@ private:
 			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
 		if (mBufferHead == buffer)
 			mBufferHead = pointers.nextBuffer;
-		if (deallocate)
-		{
-			MemManagerProxy::Deallocate(GetMemManager(),
-				internal::PtrCaster::FromUInt(pointers.begin), pvGetBufferSize());
-		}
 	}
 
 	size_t pvGetBufferSize() const noexcept
