@@ -9,11 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_ARRAY
-
-#undef NDEBUG
 
 #include "../../momo/Array.h"
 #include "../../momo/SegmentedArray.h"

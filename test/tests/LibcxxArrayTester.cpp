@@ -9,13 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_LIBCXX_ARRAY
-
-#undef NDEBUG
-
-#include "../../momo/Utility.h"
 
 #include "LibcxxTester.h"
 

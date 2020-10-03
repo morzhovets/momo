@@ -9,13 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_LIBCXX_TREE_MAP
-
-#undef NDEBUG
-
-#include "../../momo/Utility.h"
 
 #include "LibcxxTester.h"
 

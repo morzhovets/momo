@@ -9,11 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_DATA
-
-#undef NDEBUG
 
 #include "../../momo/DataTable.h"
 

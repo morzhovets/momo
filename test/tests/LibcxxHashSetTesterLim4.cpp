@@ -9,14 +9,10 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_LIBCXX_HASH_SET
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#undef NDEBUG
-
-#include "../../momo/Utility.h"
 #include "../../momo/details/HashBucketLim4.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLim4<>

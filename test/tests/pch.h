@@ -8,39 +8,25 @@
 
 \**********************************************************/
 
-//#pragma once
-#ifndef PCH_INCLUDED
-#define PCH_INCLUDED
+#pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning (disable: 4127)	// conditional expression is constant
-#pragma warning (disable: 4458)	// declaration of '...' hides class member
-#pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#pragma warning (disable: 4127)	// conditional expression is constant
+#pragma warning (disable: 4458)	// declaration of '...' hides class member
+#if _MSC_VER == 1900
+#pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
+#pragma warning (disable: 4702)	// unreachable code
+#endif
 #endif
 
-#include <cstdint>
-#include <cstddef>
-#include <type_traits>
-#include <cstring>
-#include <memory>
-#include <exception>
-#include <algorithm>
-#include <functional>
-#include <stdexcept>
-#include <utility>
-#include <array>
-#include <initializer_list>
+#include "TestSettings.h"
 
-#ifdef _MSC_VER //_WIN32
-#include <windows.h>
-#endif
+#include "../../momo/Utility.h"
 
 #include <string>
 #include <iostream>
 #include <random>
 
 #include "LibcxxTester.h"
-
-#endif // PCH_INCLUDED

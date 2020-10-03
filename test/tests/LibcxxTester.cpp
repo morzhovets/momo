@@ -10,8 +10,6 @@
 
 #include "pch.h"
 
-#include "../../momo/Utility.h"
-
 #include "LibcxxTester.h"
 
 int DefaultOnly::count = 0;

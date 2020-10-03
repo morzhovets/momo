@@ -9,12 +9,9 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_HASH
 #ifdef TEST_OLD_HASH_BUCKETS
-
-#undef NDEBUG
 
 #include "SimpleHashTester.h"
 

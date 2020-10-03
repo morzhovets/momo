@@ -9,13 +9,9 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_LIBCXX_HASH_MAP
 
-#undef NDEBUG
-
-#include "../../momo/Utility.h"
 #include "../../momo/details/HashBucketOpen2N2.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketOpen2N2<>

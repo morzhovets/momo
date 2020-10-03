@@ -9,11 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_HASH_SORT
-
-#undef NDEBUG
 
 #include "../../momo/HashSorter.h"
 #include "../../momo/Array.h"

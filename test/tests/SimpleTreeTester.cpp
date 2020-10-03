@@ -9,11 +9,8 @@
 \**********************************************************/
 
 #include "pch.h"
-#include "TestSettings.h"
 
 #ifdef TEST_SIMPLE_TREE
-
-#undef NDEBUG
 
 #include "../../momo/TreeSet.h"
 #include "../../momo/TreeMap.h"
