@@ -122,10 +122,13 @@ namespace internal
 
 		void UpdateMaxProbe(size_t probe) noexcept
 		{
-			if (probe == 0)
+			if (probe == 0 || probe <= pvGetMaxProbe())
 				return;
-			if (probe <= pvGetMaxProbe())
+			if (probe <= size_t{255})
+			{
+				mState[0] = static_cast<uint8_t>(probe);
 				return;
+			}
 			pvUpdateMaxProbe(probe);
 		}
 
@@ -231,13 +234,8 @@ namespace internal
 			return size_t{mState[0]} << (mState[1] >> 2);
 		}
 
-		void pvUpdateMaxProbe(size_t probe) noexcept
+		MOMO_NOINLINE void pvUpdateMaxProbe(size_t probe) noexcept
 		{
-			if (probe <= size_t{255})
-			{
-				mState[0] = static_cast<uint8_t>(probe);
-				return;
-			}
 			size_t maxProbe0 = probe - 1;
 			size_t maxProbe1 = 0;
 			while (maxProbe0 >= size_t{255})
