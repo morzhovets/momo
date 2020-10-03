@@ -383,7 +383,8 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	static std::pair<size_t, size_t> GetVertices(ColumnCode code, size_t codeParam) noexcept
+	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode code,
+		size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
 		size_t shortCode = static_cast<size_t>(code + (code >> 32));
@@ -742,7 +743,7 @@ public:
 	}
 
 	template<bool extraCheck = true>
-	size_t GetOffset(ColumnInfo columnInfo) const
+	MOMO_FORCEINLINE size_t GetOffset(ColumnInfo columnInfo) const
 	{
 		ColumnCode code = columnInfo.GetCode();
 		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
@@ -938,7 +939,7 @@ private:
 	{
 	}
 
-	size_t pvGetOffset(ColumnCode code) const noexcept
+	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode code) const noexcept
 	{
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
@@ -1171,7 +1172,7 @@ public:
 	}
 
 	template<bool extraCheck = true>
-	size_t GetOffset(ColumnInfo columnInfo) const noexcept
+	MOMO_FORCEINLINE size_t GetOffset(ColumnInfo columnInfo) const noexcept
 	{
 		size_t offset = pvGetOffset(columnInfo);
 		MOMO_ASSERT(offset < sizeof(Struct));
@@ -1243,7 +1244,7 @@ private:
 	{
 	}
 
-	size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
+	MOMO_FORCEINLINE size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
 	{
 		return static_cast<size_t>(columnInfo.GetCode());	//?
 	}

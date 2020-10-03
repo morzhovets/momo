@@ -134,25 +134,25 @@ namespace internal
 		}
 
 		template<typename Item>
-		const Item& Get(const Column<Item>& column) const
+		MOMO_FORCEINLINE const Item& Get(const Column<Item>& column) const
 		{
 			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Item>
-		Item& Get(const Column<Item>& column)
+		MOMO_FORCEINLINE Item& Get(const Column<Item>& column)
 		{
 			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Item>
-		const Item& operator[](const Column<Item>& column) const
+		MOMO_FORCEINLINE const Item& operator[](const Column<Item>& column) const
 		{
 			return Get(column);
 		}
 
 		template<typename Item>
-		Item& operator[](const Column<Item>& column)
+		MOMO_FORCEINLINE Item& operator[](const Column<Item>& column)
 		{
 			return Get(column);
 		}
@@ -259,13 +259,13 @@ namespace internal
 		}
 
 		template<typename Item>
-		const Item& Get(const Column<Item>& column) const
+		MOMO_FORCEINLINE const Item& Get(const Column<Item>& column) const
 		{
 			return GetByOffset<Item>(mColumnList->GetOffset(column));
 		}
 
 		template<typename Item>
-		const Item& operator[](const Column<Item>& column) const
+		MOMO_FORCEINLINE const Item& operator[](const Column<Item>& column) const
 		{
 			return Get(column);
 		}
