@@ -15,10 +15,6 @@
 #include <string>
 #include <cmath>
 
-#if defined(_MSC_VER) && _MSC_VER == 1900 && !defined(_DEBUG)
-#define LIBCPP_VS2015_RELEASE	//?
-#endif
-
 #if !defined(_MSC_VER) && !defined(__cpp_lib_transparent_operators)
 #define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif

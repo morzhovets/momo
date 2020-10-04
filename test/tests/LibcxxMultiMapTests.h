@@ -144,11 +144,9 @@ LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
 #include "libcxx/multimap/multimap.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_VS2015_RELEASE
 LIBCXX_TEST_BEGIN(modifiers_erase_iter)
 #include "libcxx/multimap/multimap.modifiers/erase_iter.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter)
 #include "libcxx/multimap/multimap.modifiers/erase_iter_iter.pass.cpp"
