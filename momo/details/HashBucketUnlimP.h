@@ -118,6 +118,11 @@ namespace internal
 			return false;
 		}
 
+		size_t GetMaxProbe(size_t /*logBucketCount*/) const noexcept
+		{
+			return 0;
+		}
+
 		void Clear(Params& params) noexcept
 		{
 			Bounds bounds = GetBounds(params);

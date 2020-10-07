@@ -1028,42 +1028,64 @@ private:
 	template<typename KeyArg>
 	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
 	{
-		size_t indexCode = GetHashTraits().GetHashCode(key);
-		BucketIterator bucketIter = pvFind(key, indexCode);
+		const HashTraits& hashTraits = GetHashTraits();
+		size_t indexCode = hashTraits.GetHashCode(key);
+		BucketIterator bucketIter = BucketIterator();
+		if (mCount != 0)
+		{
+			auto pred = [&key, &hashTraits](const Item& item)
+				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
+			bucketIter = pvFind(indexCode, *mBuckets, pred);
+			if (!areItemsNothrowRelocatable && bucketIter == BucketIterator()
+				&& mBuckets->GetNextBuckets() != nullptr)
+			{
+				bucketIter = pvFindNext(indexCode, pred);
+			}
+		}
 		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<typename KeyArg>
-	MOMO_FORCEINLINE BucketIterator pvFind(const KeyArg& key, size_t& indexCode) const
+	template<typename Predicate>
+	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
+		const Predicate& pred) const
 	{
 		size_t hashCode = indexCode;
-		const HashTraits& hashTraits = GetHashTraits();
-		auto pred = [&key, &hashTraits] (const Item& item)
-			{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
-		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
+		BucketParams& bucketParams = buckets.GetBucketParams();
+		size_t bucketCount = buckets.GetCount();
+		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
+		Bucket* bucket = &buckets[bucketIndex];
+		BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
+		if (bucketIter != BucketIterator())
 		{
-			BucketParams& bucketParams = bkts->GetBucketParams();
-			size_t bucketCount = bkts->GetCount();
-			size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
-			Bucket* bucket = &(*bkts)[bucketIndex];
-			size_t maxProbe = bucket->GetMaxProbe(bkts->GetLogCount());
-			size_t probe = 0;
-			while (true)
+			indexCode = bucketIndex;
+			return bucketIter;
+		}
+		size_t maxProbe = bucket->GetMaxProbe(buckets.GetLogCount());
+		for (size_t probe = 1; bucket->WasFull() && probe <= maxProbe; ++probe)
+		{
+			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
+			bucket = &buckets[bucketIndex];
+			bucketIter = bucket->Find(bucketParams, pred, hashCode);
+			if (bucketIter != BucketIterator())
 			{
-				BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
-				if (bucketIter != BucketIterator())
-				{
-					indexCode = bucketIndex;
-					return bucketIter;
-				}
-				if (!bucket->WasFull() || probe >= maxProbe)
-					break;
-				++probe;
-				bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode,
-					bucketCount, probe);
-				bucket = &(*bkts)[bucketIndex];
+				indexCode = bucketIndex;
+				return bucketIter;
 			}
-			if (areItemsNothrowRelocatable)
+		}
+		return BucketIterator();
+	}
+
+	template<typename Predicate>
+	MOMO_NOINLINE BucketIterator pvFindNext(size_t& indexCode, const Predicate& pred) const
+	{
+		Buckets* buckets = mBuckets->GetNextBuckets();
+		while (true)
+		{
+			BucketIterator bucketIter = pvFind(indexCode, *buckets, pred);
+			if (bucketIter != BucketIterator())
+				return bucketIter;
+			buckets = buckets->GetNextBuckets();
+			if (buckets == nullptr)
 				break;
 		}
 		return BucketIterator();
