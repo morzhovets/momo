@@ -1033,7 +1033,7 @@ private:
 		BucketIterator bucketIter = BucketIterator();
 		if (mCount != 0)
 		{
-			auto pred = [&key, &hashTraits](const Item& item)
+			auto pred = [&key, &hashTraits] (const Item& item)
 				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
 			bucketIter = pvFind(indexCode, *mBuckets, pred);
 			if (!areItemsNothrowRelocatable && bucketIter == BucketIterator()
@@ -1054,7 +1054,7 @@ private:
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
 		Bucket* bucket = &buckets[bucketIndex];
-		BucketIterator bucketIter = bucket->Find(bucketParams, pred, hashCode);
+		BucketIterator bucketIter = bucket->Find<true>(bucketParams, pred, hashCode);
 		if (bucketIter != BucketIterator())
 		{
 			indexCode = bucketIndex;
@@ -1065,7 +1065,7 @@ private:
 		{
 			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
 			bucket = &buckets[bucketIndex];
-			bucketIter = bucket->Find(bucketParams, pred, hashCode);
+			bucketIter = bucket->Find<false>(bucketParams, pred, hashCode);
 			if (bucketIter != BucketIterator())
 			{
 				indexCode = bucketIndex;

@@ -65,7 +65,7 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		template<typename Predicate>
+		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			if (mHashState != pvGetHashState(hashCode))

@@ -56,7 +56,7 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
-		template<typename Predicate>
+		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
 			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
