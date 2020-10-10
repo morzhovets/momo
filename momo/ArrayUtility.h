@@ -293,6 +293,32 @@ namespace internal
 				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
 			array.RemoveBack(count);
 		}
+
+		template<typename Predicate>
+		static void Remove(Array& array, const Predicate& pred)
+		{
+			auto newPred = [&pred] (const Item& item)
+				{ return !pred(item); };
+			Filter(array, newPred);
+		}
+
+		template<typename Predicate>
+		static void Filter(Array& array, const Predicate& pred)
+		{
+			size_t initCount = array.GetCount();
+			size_t count = 0;
+			while (count < initCount && pred(static_cast<const Item&>(array[count])))
+				++count;
+			MemManager& memManager = array.GetMemManager();
+			for (size_t i = count + 1; i < initCount; ++i)
+			{
+				if (!pred(static_cast<const Item&>(array[i])))
+					continue;
+				ItemTraits::Assign(memManager, std::move(array[i]), array[count]);
+				++count;
+			}
+			array.RemoveBack(initCount - count);
+		}
 	};
 }
 

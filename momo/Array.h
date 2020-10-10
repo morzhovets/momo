@@ -902,6 +902,19 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
+	template<typename Predicate,
+		typename = decltype(std::declval<const Predicate&>()(std::declval<const Item&>()))>
+	void Remove(const Predicate& pred)
+	{
+		ArrayShifter::Remove(*this, pred);
+	}
+
+	template<typename Predicate>
+	void Filter(const Predicate& pred)
+	{
+		ArrayShifter::Filter(*this, pred);
+	}
+
 	template<typename EqualFunc = std::equal_to<Item>>
 	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
 	{
