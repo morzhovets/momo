@@ -89,8 +89,8 @@ public:
 		ar.Reserve(10);
 		assert(ar.GetCapacity() >= 10);
 
-		//assert(ar.Contains("s3"));
-		//assert(!ar.Contains("s"));
+		assert(ar.Contains("s3"));
+		assert(!ar.Contains("s"));
 
 		ar.AddBackNogrow(s1);
 		ar.AddBackNogrow("s2");

@@ -1314,8 +1314,7 @@ namespace internal
 		static bool pvContainsOffset(const Hash& hash, size_t offset) noexcept
 		{
 			const Offsets& sortedOffsets = hash.GetSortedOffsets();
-			return std::find(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset)
-				!= sortedOffsets.GetEnd();
+			return sortedOffsets.Contains(offset);
 			//return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
 		}
 

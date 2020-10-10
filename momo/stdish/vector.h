@@ -438,7 +438,7 @@ public:
 
 	bool operator==(const vector& right) const
 	{
-		return size() == right.size() && std::equal(begin(), end(), right.begin());
+		return mArray.IsEqual(right.mArray);
 	}
 
 	bool operator!=(const vector& right) const

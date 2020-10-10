@@ -902,15 +902,21 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	//template<typename ItemArg,
-	//	typename Predicate = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
-	//{
-	//	const Item* begin = GetItems();
-	//	const Item* end = begin + GetCount();
-	//	return std::find_if(begin, end,
-	//		[&itemArg, &pred] (const Item& item) { return pred(itemArg, item); }) != end;
-	//}
+	template<typename EqualFunc = std::equal_to<Item>>
+	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
+	{
+		const Item* begin = GetItems();
+		const Item* end = begin + GetCount();
+		return std::find_if(begin, end,
+			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(item, thisItem); }) != end;
+	}
+
+	template<typename EqualFunc = std::equal_to<Item>>
+	bool IsEqual(const Array& array, const EqualFunc& equalFunc = EqualFunc()) const
+	{
+		return GetCount() == array.GetCount() &&
+			std::equal(GetBegin(), GetEnd(), array.GetBegin(), equalFunc);
+	}
 
 private:
 	explicit Array(Data&& data) noexcept

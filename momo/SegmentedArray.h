@@ -586,14 +586,20 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	//template<typename ItemArg,
-	//	typename Predicate = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, const Predicate& pred = Predicate()) const
-	//{
-	//	ConstIterator end = GetEnd();
-	//	return std::find_if(GetBegin(), end,
-	//		[&itemArg, &pred] (const Item& item) { return pred(itemArg, item); }) != end;
-	//}
+	template<typename EqualFunc = std::equal_to<Item>>
+	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
+	{
+		ConstIterator end = GetEnd();
+		return std::find_if(GetBegin(), end,
+			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(item, thisItem); }) != end;
+	}
+
+	template<typename EqualFunc = std::equal_to<Item>>
+	bool IsEqual(const SegmentedArray& array, const EqualFunc& equalFunc = EqualFunc()) const
+	{
+		return GetCount() == array.GetCount() &&
+			std::equal(GetBegin(), GetEnd(), array.GetBegin(), equalFunc);
+	}
 
 private:
 	Item* pvGetSegMemory(size_t segIndex)
