@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/morzhovets/momo.svg?branch=master)](https://travis-ci.org/morzhovets/momo)
+[![Build Status](https://travis-ci.org/morzhovets/momo.svg?branch=master)](https://travis-ci.org/morzhovets/momo) [![Build Status](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=master&svg=true))](https://ci.appveyor.com/project/morzhovets/momo/branch/master)
 
 #### momo (Memory Optimization is the Main Objective)
 
