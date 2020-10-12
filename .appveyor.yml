@@ -45,7 +45,7 @@ build_script:
   - cd test
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=%CONFIGURATION% -G"%CMAKE_GENERATOR%" ..
+  - cmake -G"%CMAKE_GENERATOR%" ..
   - cmake --build . --config %CONFIGURATION%
 
 test_script: 
