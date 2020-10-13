@@ -22,7 +22,7 @@
 #if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(_MSC_VER) && _MSC_VER >= 1924
 #define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
-#if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(__GNUC__) && __GNUC__ >= 9	// 8
+#if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(__GNUC__) && __GNUC__ >= 8
 #define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
 
