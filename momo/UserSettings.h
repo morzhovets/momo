@@ -36,7 +36,7 @@
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
-#if defined(__GNUC__) && __GNUC__ < 5
+#if defined(__GNUC__)	// gcc 4.9 & 8+
 #undef MOMO_IS_TRIVIALLY_RELOCATABLE
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
 #endif
