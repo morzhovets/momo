@@ -2,15 +2,22 @@ language: cpp
 os: linux
 dist: xenial
 
+before_script:
+  - cd test
+  - mkdir build
+  - cd build
+
+script:
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+  - make
+  - ./momo_test
+
 matrix:
   include:
 
     - os: windows
       # VS 2017 Debug
       script:
-        - cd test
-        - mkdir build
-        - cd build
         - cmake ..
         - cmake --build . --config Debug
         - ./Debug/momo_test.exe
@@ -18,9 +25,6 @@ matrix:
     - os: windows
       # VS 2017 Release
       script:
-        - cd test
-        - mkdir build
-        - cd build
         - cmake ..
         - travis_wait 30 cmake --build . --config Release
         - ./Release/momo_test.exe
@@ -30,9 +34,6 @@ matrix:
       env:
         - CXXFLAGS="-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
       script:
-        - cd test
-        - mkdir build
-        - cd build
         - cmake .. -G"MinGW Makefiles"
         - cmake --build .
         - ./momo_test.exe
@@ -47,13 +48,6 @@ matrix:
         - CXXFLAGS="-std=c++11 -msse2"
 
     - compiler: gcc
-      # gcc 5.4.0
-      env:
-        - COMPILER="g++"
-        - BUILD_TYPE="Debug"
-        - CXXFLAGS="-std=c++17 -msse2"
-
-    - compiler: gcc
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
@@ -64,23 +58,13 @@ matrix:
         - CXXFLAGS="-std=c++17 -msse2 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS"
 
     - compiler: gcc
+      arch: ppc64le
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-8
       env:
         - COMPILER="g++-8"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-    - compiler: gcc
-      arch: ppc64le
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-9
-      env:
-        - COMPILER="g++-9"
         - BUILD_TYPE="Release"
         - CXXFLAGS="-std=c++17 -DLIBCPP_TEST_DEDUCTION_GUIDES"
 
@@ -161,11 +145,3 @@ matrix:
         - COMPILER="clang++"
         - BUILD_TYPE="Debug"
         - CXXFLAGS="-std=c++17 -msse2 -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-script:
-  - cd test
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
-  - make
-  - ./momo_test
