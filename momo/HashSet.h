@@ -1035,11 +1035,15 @@ private:
 		{
 			auto pred = [&key, &hashTraits] (const Item& item)
 				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
-			bucketIter = pvFind(indexCode, *mBuckets, pred);
-			if (!areItemsNothrowRelocatable && bucketIter == BucketIterator()
-				&& mBuckets->GetNextBuckets() != nullptr)
+			Buckets* buckets = mBuckets;
+			while (true)
 			{
-				bucketIter = pvFindNext(indexCode, pred);
+				bucketIter = pvFind(indexCode, *buckets, pred);
+				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
+					break;
+				buckets = buckets->GetNextBuckets();
+				if (buckets == nullptr)
+					break;
 			}
 		}
 		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
@@ -1071,22 +1075,6 @@ private:
 				indexCode = bucketIndex;
 				return bucketIter;
 			}
-		}
-		return BucketIterator();
-	}
-
-	template<typename Predicate>
-	MOMO_NOINLINE BucketIterator pvFindNext(size_t& indexCode, const Predicate& pred) const
-	{
-		Buckets* buckets = mBuckets->GetNextBuckets();
-		while (true)
-		{
-			BucketIterator bucketIter = pvFind(indexCode, *buckets, pred);
-			if (bucketIter != BucketIterator())
-				return bucketIter;
-			buckets = buckets->GetNextBuckets();
-			if (buckets == nullptr)
-				break;
 		}
 		return BucketIterator();
 	}
