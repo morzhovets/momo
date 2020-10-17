@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.1</span>
+   &#160;<span id="projectnumber">3.2</span>
    </div>
   </td>
  </tr>
@@ -118,379 +118,374 @@ $(document).ready(function(){initNavTree('_utility_8h_source.html',''); initResi
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;initializer_list&gt;</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#ifdef MOMO_USE_MEM_MANAGER_WIN</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;Windows.h&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;windows.h&gt;</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#ifdef MOMO_USE_SSE2</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;emmintrin.h&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;xmmintrin.h&gt;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="_utility_8h.html#a65ae06427a3698333cc5565d13c2c257">   41</a></span>&#160;<span class="preprocessor">#define MOMO_FRIEND_SWAP(Object) \</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">    friend void swap(Object&amp; object1, Object&amp; object2) \</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">        noexcept(noexcept(object1.Swap(object2))) \</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">    { \</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">        object1.Swap(object2); \</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">    }</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="_utility_8h.html#a1f6957b63a9f55ea151407e0f908ed68">   48</a></span>&#160;<span class="preprocessor">#define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">    friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">    { \</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">        return ref.GetBegin(); \</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">    } \</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">    friend Iterator end(Reference ref) noexcept(noexcept(ref.GetEnd())) \</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">    { \</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">        return ref.GetEnd(); \</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">    }</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">   58</a></span>&#160;<span class="preprocessor">#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="_utility_8h.html#a564a7cb6613a663174827706efd03269">   60</a></span>&#160;<span class="preprocessor">#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) MOMO_STATIC_ASSERT((std::is_same&lt;Type, \</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">    typename std::decay&lt;typename std::iterator_traits&lt;Iterator&gt;::reference&gt;::type&gt;::value) \</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">    &amp;&amp; std::is_reference&lt;typename std::iterator_traits&lt;Iterator&gt;::reference&gt;::value)</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">   64</a></span>&#160;<span class="preprocessor">#define MOMO_CHECK(expr) \</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">    do { \</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">        MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">        if (Settings::checkMode == CheckMode::exception &amp;&amp; !(expr)) throw std::invalid_argument(#expr); \</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">    } while (false)</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">   70</a></span>&#160;<span class="preprocessor">#define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="_utility_8h.html#adb0350eacdbc910de329afae60a2f31e">   72</a></span>&#160;<span class="preprocessor">#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">    template&lt;typename... Args&gt; \</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor">    explicit Object##Proxy(Args&amp;&amp;... args) \</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">        noexcept((std::is_nothrow_constructible&lt;Object, Args&amp;&amp;...&gt;::value)) \</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">        : Object(std::forward&lt;Args&gt;(args)...) \</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">    { \</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">    }</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">// Result = decltype((std::declval&lt;ObjectArg&amp;&amp;&gt;().*&amp;Object##Proxy::pt##Func)(std::declval&lt;Args&amp;&amp;&gt;()...))    // gcc</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="_utility_8h.html#a90c13da60b48e80a7261dd1597e33517">   81</a></span>&#160;<span class="preprocessor">#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">    template&lt;typename ObjectArg, typename... Args&gt; \</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">    static Result Func(ObjectArg&amp;&amp; object, Args&amp;&amp;... args) \</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">        noexcept(noexcept((std::forward&lt;ObjectArg&gt;(object).*&amp;Object##Proxy::pt##Func) \</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">            (std::forward&lt;Args&gt;(args)...))) \</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">    { \</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="preprocessor">        MOMO_STATIC_ASSERT((std::is_same&lt;Object, typename std::decay&lt;ObjectArg&gt;::type&gt;::value)); \</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">        return (std::forward&lt;ObjectArg&gt;(object).*&amp;Object##Proxy::pt##Func) \</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">            (std::forward&lt;Args&gt;(args)...); \</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">    }</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="_utility_8h.html#a65ae06427a3698333cc5565d13c2c257">   36</a></span>&#160;<span class="preprocessor">#define MOMO_FRIEND_SWAP(Object) \</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">    friend void swap(Object&amp; object1, Object&amp; object2) \</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">        noexcept(noexcept(object1.Swap(object2))) \</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">    { \</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">        object1.Swap(object2); \</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">    }</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="_utility_8h.html#a1f6957b63a9f55ea151407e0f908ed68">   43</a></span>&#160;<span class="preprocessor">#define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">    friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">    { \</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">        return ref.GetBegin(); \</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">    } \</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">    friend Iterator end(Reference ref) noexcept(noexcept(ref.GetEnd())) \</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">    { \</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">        return ref.GetEnd(); \</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">    }</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">   53</a></span>&#160;<span class="preprocessor">#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="_utility_8h.html#a564a7cb6613a663174827706efd03269">   55</a></span>&#160;<span class="preprocessor">#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) MOMO_STATIC_ASSERT((std::is_same&lt;Type, \</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">    typename std::decay&lt;typename std::iterator_traits&lt;Iterator&gt;::reference&gt;::type&gt;::value) \</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">    &amp;&amp; std::is_reference&lt;typename std::iterator_traits&lt;Iterator&gt;::reference&gt;::value)</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">   59</a></span>&#160;<span class="preprocessor">#define MOMO_CHECK(expr) \</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">    do { \</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">        MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">        if (Settings::checkMode == CheckMode::exception &amp;&amp; !(expr)) throw std::invalid_argument(#expr); \</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">    } while (false)</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">   65</a></span>&#160;<span class="preprocessor">#define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="_utility_8h.html#adb0350eacdbc910de329afae60a2f31e">   67</a></span>&#160;<span class="preprocessor">#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">    template&lt;typename... Args&gt; \</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">    explicit Object##Proxy(Args&amp;&amp;... args) \</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">        noexcept((std::is_nothrow_constructible&lt;Object, Args&amp;&amp;...&gt;::value)) \</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">        : Object(std::forward&lt;Args&gt;(args)...) \</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">    { \</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">    }</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">// Result = decltype((std::declval&lt;ObjectArg&amp;&amp;&gt;().*&amp;Object##Proxy::pt##Func)(std::declval&lt;Args&amp;&amp;&gt;()...))    // gcc</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="_utility_8h.html#a90c13da60b48e80a7261dd1597e33517">   76</a></span>&#160;<span class="preprocessor">#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">    template&lt;typename ObjectArg, typename... Args&gt; \</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">    static Result Func(ObjectArg&amp;&amp; object, Args&amp;&amp;... args) \</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">        noexcept(noexcept((std::forward&lt;ObjectArg&gt;(object).*&amp;Object##Proxy::pt##Func) \</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">            (std::forward&lt;Args&gt;(args)...))) \</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">    { \</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">        MOMO_STATIC_ASSERT((std::is_same&lt;Object, typename std::decay&lt;ObjectArg&gt;::type&gt;::value)); \</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">        return (std::forward&lt;ObjectArg&gt;(object).*&amp;Object##Proxy::pt##Func) \</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">            (std::forward&lt;Args&gt;(args)...); \</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">    }</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="_utility_8h.html#abc56e5a0c148f99224a315447eaba04e">   87</a></span>&#160;<a class="code" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a>(<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &gt; 0 &amp;&amp; (<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &amp; (<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> - 1)) == 0);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemomo.html">momo</a></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;{</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="_utility_8h.html#abc56e5a0c148f99224a315447eaba04e">   92</a></span>&#160;<a class="code" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a>(<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &gt; 0 &amp;&amp; (<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &amp; (<a class="code" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> - 1)) == 0);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemomo.html">momo</a></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;{</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">   97</a></span>&#160;<span class="keyword">enum class</span> <a class="code" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">CheckMode</a></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;{</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    assertion = 1,</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    exception = 2,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46a2a7639f0b1870ad2e6b2d8c7b810ba11">bydefault</a> = <a class="code" href="_user_settings_8h.html#a61ea4e5dbf67f107ce2a9701a8bcf53a">MOMO_DEFAULT_CHECK_MODE</a>,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">  104</a></span>&#160;<span class="keyword">enum class</span> <a class="code" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">ExtraCheckMode</a></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    nothing = 0,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    assertion = 1,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <a class="code" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d">bydefault</a> = <a class="code" href="_user_settings_8h.html#ad3bb700413d84463c44bde2b01f8eb3c">MOMO_DEFAULT_EXTRA_CHECK_MODE</a>,</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;};</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="keyword">namespace </span>internal</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;{</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keyword">typename</span> Default = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector.html">  115</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    {</div>
-<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">  117</a></span>&#160;        <span class="keyword">typedef</span> Default <a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">UInt</a>;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    };</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html">  121</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;1, Default&gt;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    {</div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">  123</a></span>&#160;        <span class="keyword">typedef</span> uint8_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">UInt</a>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    };</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html">  127</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;2, Default&gt;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    {</div>
-<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">  129</a></span>&#160;        <span class="keyword">typedef</span> uint16_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">UInt</a>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    };</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
-<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html">  133</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;4, Default&gt;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    {</div>
-<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">  135</a></span>&#160;        <span class="keyword">typedef</span> uint32_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">UInt</a>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    };</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
-<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html">  139</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;8, Default&gt;</div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">   92</a></span>&#160;<span class="keyword">enum class</span> <a class="code" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">CheckMode</a></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    assertion = 1,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    exception = 2,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46a2a7639f0b1870ad2e6b2d8c7b810ba11">bydefault</a> = <a class="code" href="_user_settings_8h.html#a61ea4e5dbf67f107ce2a9701a8bcf53a">MOMO_DEFAULT_CHECK_MODE</a>,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;};</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">   99</a></span>&#160;<span class="keyword">enum class</span> <a class="code" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">ExtraCheckMode</a></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;{</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    nothing = 0,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    assertion = 1,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <a class="code" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d">bydefault</a> = <a class="code" href="_user_settings_8h.html#ad3bb700413d84463c44bde2b01f8eb3c">MOMO_DEFAULT_EXTRA_CHECK_MODE</a>,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;};</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keyword">namespace </span>internal</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size,</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keyword">typename</span> Default = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector.html">  110</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    {</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">  112</a></span>&#160;        <span class="keyword">typedef</span> Default <a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">UInt</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    };</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html">  116</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;1, Default&gt;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    {</div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">  118</a></span>&#160;        <span class="keyword">typedef</span> uint8_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">UInt</a>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    };</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html">  122</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;2, Default&gt;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    {</div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">  124</a></span>&#160;        <span class="keyword">typedef</span> uint16_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">UInt</a>;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    };</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html">  128</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;4, Default&gt;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    {</div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">  130</a></span>&#160;        <span class="keyword">typedef</span> uint32_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">UInt</a>;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    };</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Default&gt;</div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html">  134</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_selector.html">UIntSelector</a>&lt;8, Default&gt;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    {</div>
+<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">  136</a></span>&#160;        <span class="keyword">typedef</span> uint64_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">UInt</a>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    };</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html">  139</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html">UIntPtrConst</a></div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    {</div>
-<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">  141</a></span>&#160;        <span class="keyword">typedef</span> uint64_t <a class="code" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">UInt</a>;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    };</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html">  144</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html">UIntPtrConst</a></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    {</div>
-<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#abadf627bc901fd071240375079be9c20">  146</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uintptr_t <span class="keyword">null</span> = <a class="code" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a>;</div>
-<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">  147</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uintptr_t <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">invalid</a> = <a class="code" href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a>;</div>
-<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">  148</a></span>&#160;        <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">MOMO_STATIC_ASSERT</a>(<span class="keyword">null</span> != <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">invalid</a>);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    };</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
-<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">  152</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">IsForwardIterator</a> = std::is_base_of&lt;std::forward_iterator_tag,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="keyword">typename</span> std::iterator_traits&lt;Iterator&gt;::iterator_category&gt;;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> value&gt;</div>
-<div class="line"><a name="l00156"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">  156</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">BoolConstant</a> = std::integral_constant&lt;bool, value&gt;;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Allocator,</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keyword">typename</span> = <span class="keywordtype">bool</span>&gt;</div>
-<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">  160</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">IsAllocatorAlwaysEqual</a> : <span class="keyword">public</span> std::is_empty&lt;Allocator&gt;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    };</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Allocator&gt;</div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_allocator_always_equal_3_01_allocator_00_01decltype_07_allocator_1acd3889fe0125d2c6e87098cc70c5bf3.html">  165</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">IsAllocatorAlwaysEqual</a>&lt;Allocator, decltype(Allocator::is_always_equal::value)&gt;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        : <span class="keyword">public</span> Allocator::is_always_equal</div>
+<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#abadf627bc901fd071240375079be9c20">  141</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uintptr_t <span class="keyword">null</span> = <a class="code" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">  142</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uintptr_t <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">invalid</a> = <a class="code" href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">  143</a></span>&#160;        <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">MOMO_STATIC_ASSERT</a>(<span class="keyword">null</span> != <a class="code" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">invalid</a>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    };</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">  147</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">IsForwardIterator</a> = std::is_base_of&lt;std::forward_iterator_tag,</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="keyword">typename</span> std::iterator_traits&lt;Iterator&gt;::iterator_category&gt;;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> value&gt;</div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">  151</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">BoolConstant</a> = std::integral_constant&lt;bool, value&gt;;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Allocator,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keyword">typename</span> = <span class="keywordtype">bool</span>&gt;</div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">  155</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">IsAllocatorAlwaysEqual</a> : <span class="keyword">public</span> std::is_empty&lt;Allocator&gt;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    };</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Allocator&gt;</div>
+<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_allocator_always_equal_3_01_allocator_00_01decltype_07_allocator_1acd3889fe0125d2c6e87098cc70c5bf3.html">  160</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">IsAllocatorAlwaysEqual</a>&lt;Allocator, decltype(Allocator::is_always_equal::value)&gt;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        : <span class="keyword">public</span> Allocator::is_always_equal</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    {</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    };</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span>... sequence&gt;</div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence.html">  166</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence.html">Sequence</a></div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    {</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    };</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span>... sequence&gt;</div>
-<div class="line"><a name="l00171"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence.html">  171</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence.html">Sequence</a></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> count, <span class="keywordtype">size_t</span>... sequence&gt;</div>
+<div class="line"><a name="l00171"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker.html">  171</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a> : <span class="keyword">public</span> <a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a>&lt;count - 1, count - 1, sequence...&gt;</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    {</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    };</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> count, <span class="keywordtype">size_t</span>... sequence&gt;</div>
-<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker.html">  176</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a> : <span class="keyword">public</span> <a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a>&lt;count - 1, count - 1, sequence...&gt;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span>... sequence&gt;</div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html">  176</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a>&lt;0, sequence...&gt;</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    };</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span>... sequence&gt;</div>
-<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html">  181</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_sequence_maker.html">SequenceMaker</a>&lt;0, sequence...&gt;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    {</div>
-<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">  183</a></span>&#160;        <span class="keyword">typedef</span> <a class="code" href="structmomo_1_1internal_1_1_sequence.html">internal::Sequence</a>&lt;sequence...&gt; <a class="code" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">Sequence</a>;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    };</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="comment">//template&lt;typename...&gt;</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">//using Void = void;</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types&gt;</div>
-<div class="line"><a name="l00190"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_void_maker.html">  190</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_void_maker.html">VoidMaker</a></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    {</div>
-<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">  192</a></span>&#160;        <span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">Void</a>;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    };</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types&gt;</div>
-<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">  196</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">Void</a> = <span class="keyword">typename</span> <a class="code" href="structmomo_1_1internal_1_1_void_maker.html">VoidMaker</a>&lt;Types...&gt;<a class="code" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">::Void</a>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">  178</a></span>&#160;        <span class="keyword">typedef</span> <a class="code" href="structmomo_1_1internal_1_1_sequence.html">internal::Sequence</a>&lt;sequence...&gt; <a class="code" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">Sequence</a>;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    };</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="comment">//template&lt;typename...&gt;</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="comment">//using Void = void;</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types&gt;</div>
+<div class="line"><a name="l00185"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_void_maker.html">  185</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_void_maker.html">VoidMaker</a></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    {</div>
+<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">  187</a></span>&#160;        <span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">Void</a>;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    };</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types&gt;</div>
+<div class="line"><a name="l00191"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">  191</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">Void</a> = <span class="keyword">typename</span> <a class="code" href="structmomo_1_1internal_1_1_void_maker.html">VoidMaker</a>&lt;Types...&gt;<a class="code" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">::Void</a>;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Result, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00194"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_invocable.html">  194</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a> : <span class="keyword">public</span> std::false_type</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    };</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Result, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_invocable.html">  199</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a> : <span class="keyword">public</span> std::false_type</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    {</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    };</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_invocable_3_01_func_00_01decltype_07std_1_1declval_3_01_func_01_4_4dee7d4d3f501e4396ea6107729c7324.html">  204</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;Func, decltype(<a class="code" href="namespacestd.html">std</a>::declval&lt;Func&gt;()(std::declval&lt;Args&gt;()...)), Args...&gt;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        : <span class="keyword">public</span> std::true_type</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    };</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> value, <span class="keyword">typename</span> Type = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">  210</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a> = <span class="keyword">typename</span> std::enable_if&lt;value, Type&gt;::type;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html">  212</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html">PtrCaster</a></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    {</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Object&gt;</div>
-<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">  216</a></span>&#160;        <span class="keyword">static</span> uintptr_t <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">ToUInt</a>(Object* ptr) noexcept</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>uintptr_t<span class="keyword">&gt;</span>(ptr);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ResObject = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">  222</a></span>&#160;        <span class="keyword">static</span> ResObject* <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">FromUInt</a>(uintptr_t intPtr) noexcept</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(intPtr);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        }</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ResObject, <span class="keyword">typename</span> Object, <span class="keyword">typename</span> Offset&gt;</div>
-<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">  228</a></span>&#160;        <span class="keyword">static</span> ResObject* <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">Shift</a>(Object* ptr, Offset byteOffset) noexcept</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::is_const&lt;Object&gt;::value,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                <span class="keyword">const</span> char, <span class="keywordtype">char</span>&gt;::type Byte;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(<span class="keyword">reinterpret_cast&lt;</span>Byte*<span class="keyword">&gt;</span>(ptr)</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                + <span class="keyword">static_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(byteOffset));</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        }</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    };</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> TUInt = <span class="keywordtype">size_t</span>&gt;</div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html">  238</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classmomo_1_1internal_1_1_u_int_math.html">UIntMath</a></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    {</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00241"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">  241</a></span>&#160;        <span class="keyword">typedef</span> TUInt <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">  243</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        {</div>
-<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">  245</a></span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a>;</div>
-<div class="line"><a name="l00246"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">  246</a></span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a>;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        };</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">  250</a></span>&#160;        <span class="keyword">static</span> constexpr <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">Ceil</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> mod) noexcept</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        {</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="keywordflow">return</span> ((value + mod - 1) / mod) * mod;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
-<div class="line"><a name="l00256"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">  256</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">Dist</a>(Iterator begin, Iterator end)</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        {</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a><span class="keyword">&gt;</span>(std::distance(begin, end));</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        }</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
-<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">  262</a></span>&#160;        <span class="keyword">static</span> Iterator <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">Next</a>(Iterator iter, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> dist)</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_is_invocable_3_01_func_00_01decltype_07std_1_1declval_3_01_func_01_4_4dee7d4d3f501e4396ea6107729c7324.html">  199</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;Func, decltype(<a class="code" href="namespacestd.html">std</a>::declval&lt;Func&gt;()(std::declval&lt;Args&gt;()...)), Args...&gt;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        : <span class="keyword">public</span> std::true_type</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    {</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    };</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> value, <span class="keyword">typename</span> Type = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">  205</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a> = <span class="keyword">typename</span> std::enable_if&lt;value, Type&gt;::type;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html">  207</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html">PtrCaster</a></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Object&gt;</div>
+<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">  211</a></span>&#160;        <span class="keyword">static</span> uintptr_t <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">ToUInt</a>(Object* ptr) noexcept</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        {</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>uintptr_t<span class="keyword">&gt;</span>(ptr);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ResObject = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">  217</a></span>&#160;        <span class="keyword">static</span> ResObject* <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">FromUInt</a>(uintptr_t intPtr) noexcept</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(intPtr);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        }</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ResObject, <span class="keyword">typename</span> Object, <span class="keyword">typename</span> Offset&gt;</div>
+<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">  223</a></span>&#160;        <span class="keyword">static</span> ResObject* <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">Shift</a>(Object* ptr, Offset byteOffset) noexcept</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::is_const&lt;Object&gt;::value,</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                <span class="keyword">const</span> char, <span class="keywordtype">char</span>&gt;::type Byte;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(<span class="keyword">reinterpret_cast&lt;</span>Byte*<span class="keyword">&gt;</span>(ptr)</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                + <span class="keyword">static_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(byteOffset));</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    };</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> TUInt = <span class="keywordtype">size_t</span>&gt;</div>
+<div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html">  233</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classmomo_1_1internal_1_1_u_int_math.html">UIntMath</a></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    {</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00236"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">  236</a></span>&#160;        <span class="keyword">typedef</span> TUInt <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">  238</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        {</div>
+<div class="line"><a name="l00240"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">  240</a></span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a>;</div>
+<div class="line"><a name="l00241"></a><span class="lineno"><a class="line" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">  241</a></span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a>;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        };</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">  245</a></span>&#160;        <span class="keyword">static</span> constexpr <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">Ceil</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> mod) noexcept</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            <span class="keywordflow">return</span> ((value + mod - 1) / mod) * mod;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        }</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
+<div class="line"><a name="l00251"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">  251</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">Dist</a>(Iterator begin, Iterator end)</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a><span class="keyword">&gt;</span>(std::distance(begin, end));</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator&gt;</div>
+<div class="line"><a name="l00257"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">  257</a></span>&#160;        <span class="keyword">static</span> Iterator <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">Next</a>(Iterator iter, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> dist)</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            <span class="keywordflow">return</span> std::next(iter, <span class="keyword">static_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(dist));</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        }</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">  262</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">GCD</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value1, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value2) noexcept</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            <span class="keywordflow">return</span> std::next(iter, <span class="keyword">static_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(dist));</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        }</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
-<div class="line"><a name="l00267"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">  267</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">GCD</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value1, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value2) noexcept</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            <span class="keywordflow">while</span> (value2 != 0)</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            {</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                <span class="keywordtype">size_t</span> value3 = value1 % value2;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                value1 = value2;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                value2 = value3;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            }</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="keywordflow">return</span> value1;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        }</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        <span class="keyword">template</span>&lt;UInt mod&gt;</div>
-<div class="line"><a name="l00279"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">  279</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">DivByConst</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        {</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> result;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> = value / mod;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a> = value - result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> * mod;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
-<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">  287</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">DivBySmall</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> mod) noexcept</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        {</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">switch</span> (mod)</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;1&gt;(value);</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keywordflow">case</span> 2:</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;2&gt;(value);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            <span class="keywordflow">case</span> 3:</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;3&gt;(value);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="keywordflow">case</span> 4:</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;4&gt;(value);</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            }</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> result;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> = value / mod;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a> = value % mod;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            <span class="keywordflow">while</span> (value2 != 0)</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            {</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                <span class="keywordtype">size_t</span> value3 = value1 % value2;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                value1 = value2;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                value2 = value3;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            <span class="keywordflow">return</span> value1;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="keyword">template</span>&lt;UInt mod&gt;</div>
+<div class="line"><a name="l00274"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">  274</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">DivByConst</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> result;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> = value / mod;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a> = value - result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> * mod;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00282"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">  282</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">DivBySmall</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value, <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> mod) noexcept</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        {</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordflow">switch</span> (mod)</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;1&gt;(value);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="keywordflow">case</span> 2:</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;2&gt;(value);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keywordflow">case</span> 3:</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;3&gt;(value);</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            <span class="keywordflow">case</span> 4:</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                <span class="keywordflow">return</span> DivByConst&lt;4&gt;(value);</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            <a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">DivResult</a> result;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">quotient</a> = value / mod;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            result.<a class="code" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">remainder</a> = value % mod;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">  301</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">Log2</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">return</span> pvLog2(value);</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        }</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">  306</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">Log2</a>(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            <span class="keywordflow">return</span> pvLog2(value);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        }</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size = sizeof(UInt)&gt;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf&lt;size == 4, UInt&gt;</a> pvLog2(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        {</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> tab32[32] =</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;            {</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                 0,  9,  1, 10, 13, 21,  2, 29,</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                11, 14, 16, 18, 22, 25,  3, 30,</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                 8, 12, 20, 28, 15, 17, 24,  7,</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                19, 27, 23,  6, 26,  5,  4, 31,</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            };</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            value |= value &gt;&gt; 1;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            value |= value &gt;&gt; 2;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            value |= value &gt;&gt; 4;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            value |= value &gt;&gt; 8;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            value |= value &gt;&gt; 16;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;            <span class="keywordflow">return</span> tab32[(value * <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>{0x07C4ACDD}) &gt;&gt; 27];</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        }</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size = sizeof(UInt)&gt;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="keyword">static</span> EnableIf&lt;size == 8, UInt&gt; pvLog2(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> tab64[64] =</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            {</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                63,  0, 58,  1, 59, 47, 53,  2,</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                60, 39, 48, 27, 54, 33, 42,  3,</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                61, 51, 37, 40, 49, 18, 28, 20,</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                55, 30, 34, 11, 43, 14, 22,  4,</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                62, 57, 46, 52, 38, 26, 32, 41,</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                50, 36, 17, 19, 29, 10, 13, 21,</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                56, 45, 25, 31, 35, 16,  9, 12,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                44, 24, 15,  8, 23,  7,  6,  5,</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            };</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            value |= value &gt;&gt; 1;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;            value |= value &gt;&gt; 2;</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;            value |= value &gt;&gt; 4;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;            value |= value &gt;&gt; 8;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;            value |= value &gt;&gt; 16;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            value |= value &gt;&gt; 32;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            value -= value &gt;&gt; 1;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            <span class="keywordflow">return</span> tab64[(value * <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>{0x07EDD5E59A4E28C2}) &gt;&gt; 58];</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        }</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    };</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;}</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;} <span class="comment">// namespace momo</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size = sizeof(UInt)&gt;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf&lt;size == 4, UInt&gt;</a> pvLog2(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        {</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> tab32[32] =</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                 0,  9,  1, 10, 13, 21,  2, 29,</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                11, 14, 16, 18, 22, 25,  3, 30,</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                 8, 12, 20, 28, 15, 17, 24,  7,</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                19, 27, 23,  6, 26,  5,  4, 31,</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;            };</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            value |= value &gt;&gt; 1;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            value |= value &gt;&gt; 2;</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            value |= value &gt;&gt; 4;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            value |= value &gt;&gt; 8;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            value |= value &gt;&gt; 16;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            <span class="keywordflow">return</span> tab32[(value * <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>{0x07C4ACDD}) &gt;&gt; 27];</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        }</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> size = sizeof(UInt)&gt;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keyword">static</span> EnableIf&lt;size == 8, UInt&gt; pvLog2(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> value) noexcept</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        {</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a> tab64[64] =</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            {</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                63,  0, 58,  1, 59, 47, 53,  2,</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                60, 39, 48, 27, 54, 33, 42,  3,</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                61, 51, 37, 40, 49, 18, 28, 20,</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                55, 30, 34, 11, 43, 14, 22,  4,</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                62, 57, 46, 52, 38, 26, 32, 41,</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                50, 36, 17, 19, 29, 10, 13, 21,</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                56, 45, 25, 31, 35, 16,  9, 12,</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                44, 24, 15,  8, 23,  7,  6,  5,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            };</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;            value |= value &gt;&gt; 1;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;            value |= value &gt;&gt; 2;</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;            value |= value &gt;&gt; 4;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;            value |= value &gt;&gt; 8;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            value |= value &gt;&gt; 16;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            value |= value &gt;&gt; 32;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;            value -= value &gt;&gt; 1;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;            <span class="keywordflow">return</span> tab64[(value * <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">UInt</a>{0x07EDD5E59A4E28C2}) &gt;&gt; 58];</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        }</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    };</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;} <span class="comment">// namespace momo</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4_html_a1e7d79dd62c3ac6f03c95c34f23326fb"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">momo::internal::SequenceMaker&lt; 0, sequence... &gt;::Sequence</a></div><div class="ttdeci">internal::Sequence&lt; sequence... &gt; Sequence</div><div class="ttdef"><b>Definition:</b> Utility.h:183</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html">momo::internal::UIntSelector</a></div><div class="ttdef"><b>Definition:</b> Utility.h:116</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_is_allocator_always_equal_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">momo::internal::IsAllocatorAlwaysEqual</a></div><div class="ttdef"><b>Definition:</b> Utility.h:161</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4_html_ac4d87936cc8dcd49cc1a67f0d4ba707d"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">momo::internal::UIntSelector&lt; 8, Default &gt;::UInt</a></div><div class="ttdeci">uint64_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:141</div></div>
-<div class="ttc" id="a_utility_8h_html_a04478e8c251bfd597e779369ff8fd295"><div class="ttname"><a href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a></div><div class="ttdeci">#define MOMO_STATIC_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:58</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_aead6e7bc342364da657e7fba9ebf8888"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">momo::internal::PtrCaster::FromUInt</a></div><div class="ttdeci">static ResObject * FromUInt(uintptr_t intPtr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:222</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4_html_a572c3fb2cd8713c717e98b598c9c3e06"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">momo::internal::UIntSelector&lt; 4, Default &gt;::UInt</a></div><div class="ttdeci">uint32_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:135</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_void_maker_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_void_maker.html">momo::internal::VoidMaker</a></div><div class="ttdef"><b>Definition:</b> Utility.h:191</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4_html_a1e7d79dd62c3ac6f03c95c34f23326fb"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html#a1e7d79dd62c3ac6f03c95c34f23326fb">momo::internal::SequenceMaker&lt; 0, sequence... &gt;::Sequence</a></div><div class="ttdeci">internal::Sequence&lt; sequence... &gt; Sequence</div><div class="ttdef"><b>Definition:</b> Utility.h:178</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html">momo::internal::UIntSelector</a></div><div class="ttdef"><b>Definition:</b> Utility.h:111</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_is_allocator_always_equal_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">momo::internal::IsAllocatorAlwaysEqual</a></div><div class="ttdef"><b>Definition:</b> Utility.h:156</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4_html_ac4d87936cc8dcd49cc1a67f0d4ba707d"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html#ac4d87936cc8dcd49cc1a67f0d4ba707d">momo::internal::UIntSelector&lt; 8, Default &gt;::UInt</a></div><div class="ttdeci">uint64_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:136</div></div>
+<div class="ttc" id="a_utility_8h_html_a04478e8c251bfd597e779369ff8fd295"><div class="ttname"><a href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a></div><div class="ttdeci">#define MOMO_STATIC_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:53</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_aead6e7bc342364da657e7fba9ebf8888"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">momo::internal::PtrCaster::FromUInt</a></div><div class="ttdeci">static ResObject * FromUInt(uintptr_t intPtr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:217</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4_html_a572c3fb2cd8713c717e98b598c9c3e06"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html#a572c3fb2cd8713c717e98b598c9c3e06">momo::internal::UIntSelector&lt; 4, Default &gt;::UInt</a></div><div class="ttdeci">uint32_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:130</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_void_maker_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_void_maker.html">momo::internal::VoidMaker</a></div><div class="ttdef"><b>Definition:</b> Utility.h:186</div></div>
 <div class="ttc" id="anamespacemomo_html_a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d"><div class="ttname"><a href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d">momo::ExtraCheckMode::nothing</a></div><div class="ttdeci">@ nothing</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a5fb3f91029e39a38ef6adc1d255fc20c"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">momo::internal::UIntMath::Log2</a></div><div class="ttdeci">static UInt Log2(UInt value) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:306</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ad6de9d89802d2d68dc09fe1c7e966ab5"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">momo::internal::PtrCaster::ToUInt</a></div><div class="ttdeci">static uintptr_t ToUInt(Object *ptr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:216</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_void_maker_html_a8377ca4d0341e5324afffe95a6bcfece"><div class="ttname"><a href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">momo::internal::VoidMaker::Void</a></div><div class="ttdeci">void Void</div><div class="ttdef"><b>Definition:</b> Utility.h:192</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4_html_a0ab3f0dd9863e7e5ff2f688b286e3114"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">momo::internal::UIntSelector&lt; 1, Default &gt;::UInt</a></div><div class="ttdeci">uint8_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:123</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_ae6734ae8eb46074b9b61f0bfd2a626d3"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">momo::internal::UIntMath::Ceil</a></div><div class="ttdeci">static constexpr UInt Ceil(UInt value, UInt mod) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:250</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a5fb3f91029e39a38ef6adc1d255fc20c"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a5fb3f91029e39a38ef6adc1d255fc20c">momo::internal::UIntMath::Log2</a></div><div class="ttdeci">static UInt Log2(UInt value) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:301</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ad6de9d89802d2d68dc09fe1c7e966ab5"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">momo::internal::PtrCaster::ToUInt</a></div><div class="ttdeci">static uintptr_t ToUInt(Object *ptr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:211</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_void_maker_html_a8377ca4d0341e5324afffe95a6bcfece"><div class="ttname"><a href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">momo::internal::VoidMaker::Void</a></div><div class="ttdeci">void Void</div><div class="ttdef"><b>Definition:</b> Utility.h:187</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4_html_a0ab3f0dd9863e7e5ff2f688b286e3114"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_011_00_01_default_01_4.html#a0ab3f0dd9863e7e5ff2f688b286e3114">momo::internal::UIntSelector&lt; 1, Default &gt;::UInt</a></div><div class="ttdeci">uint8_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:118</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_ae6734ae8eb46074b9b61f0bfd2a626d3"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">momo::internal::UIntMath::Ceil</a></div><div class="ttdeci">static constexpr UInt Ceil(UInt value, UInt mod) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:245</div></div>
 <div class="ttc" id="a_user_settings_8h_html_a61ea4e5dbf67f107ce2a9701a8bcf53a"><div class="ttname"><a href="_user_settings_8h.html#a61ea4e5dbf67f107ce2a9701a8bcf53a">MOMO_DEFAULT_CHECK_MODE</a></div><div class="ttdeci">#define MOMO_DEFAULT_CHECK_MODE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:54</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html_a386b46298d0f2bb47b81970d526b7544"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">momo::internal::UIntMath::DivResult::quotient</a></div><div class="ttdeci">UInt quotient</div><div class="ttdef"><b>Definition:</b> Utility.h:245</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_abb8c39b71f349f1c5159bb9ad1ee3502"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">momo::internal::UIntMath::Dist</a></div><div class="ttdeci">static UInt Dist(Iterator begin, Iterator end)</div><div class="ttdef"><b>Definition:</b> Utility.h:256</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html_a386b46298d0f2bb47b81970d526b7544"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a386b46298d0f2bb47b81970d526b7544">momo::internal::UIntMath::DivResult::quotient</a></div><div class="ttdeci">UInt quotient</div><div class="ttdef"><b>Definition:</b> Utility.h:240</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_abb8c39b71f349f1c5159bb9ad1ee3502"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">momo::internal::UIntMath::Dist</a></div><div class="ttdeci">static UInt Dist(Iterator begin, Iterator end)</div><div class="ttdef"><b>Definition:</b> Utility.h:251</div></div>
 <div class="ttc" id="a_user_settings_8h_html"><div class="ttname"><a href="_user_settings_8h.html">UserSettings.h</a></div></div>
-<div class="ttc" id="anamespacemomo_1_1internal_html_a12df18edcafda2c66c5af5276c2661af"><div class="ttname"><a href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">momo::internal::BoolConstant</a></div><div class="ttdeci">std::integral_constant&lt; bool, value &gt; BoolConstant</div><div class="ttdef"><b>Definition:</b> Utility.h:156</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html_a378ee319f87871256f7c26b406297c77"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">momo::internal::UIntMath::DivResult::remainder</a></div><div class="ttdeci">UInt remainder</div><div class="ttdef"><b>Definition:</b> Utility.h:246</div></div>
-<div class="ttc" id="a_user_settings_8h_html_a8a5ffa282c329ed013e070d7552ca845"><div class="ttname"><a href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a></div><div class="ttdeci">#define MOMO_NULL_UINTPTR</div><div class="ttdef"><b>Definition:</b> UserSettings.h:115</div></div>
-<div class="ttc" id="anamespacemomo_1_1internal_html_a3240c94f5aacdf8b48d58980f85348f0"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a></div><div class="ttdeci">typename std::enable_if&lt; value, Type &gt;::type EnableIf</div><div class="ttdef"><b>Definition:</b> Utility.h:210</div></div>
+<div class="ttc" id="anamespacemomo_1_1internal_html_a12df18edcafda2c66c5af5276c2661af"><div class="ttname"><a href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">momo::internal::BoolConstant</a></div><div class="ttdeci">std::integral_constant&lt; bool, value &gt; BoolConstant</div><div class="ttdef"><b>Definition:</b> Utility.h:151</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html_a378ee319f87871256f7c26b406297c77"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html#a378ee319f87871256f7c26b406297c77">momo::internal::UIntMath::DivResult::remainder</a></div><div class="ttdeci">UInt remainder</div><div class="ttdef"><b>Definition:</b> Utility.h:241</div></div>
+<div class="ttc" id="a_user_settings_8h_html_a8a5ffa282c329ed013e070d7552ca845"><div class="ttname"><a href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a></div><div class="ttdeci">#define MOMO_NULL_UINTPTR</div><div class="ttdef"><b>Definition:</b> UserSettings.h:137</div></div>
+<div class="ttc" id="anamespacemomo_1_1internal_html_a3240c94f5aacdf8b48d58980f85348f0"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a></div><div class="ttdeci">typename std::enable_if&lt; value, Type &gt;::type EnableIf</div><div class="ttdef"><b>Definition:</b> Utility.h:205</div></div>
 <div class="ttc" id="anamespacemomo_html"><div class="ttname"><a href="namespacemomo.html">momo</a></div><div class="ttdef"><b>Definition:</b> Array.h:24</div></div>
 <div class="ttc" id="a_user_settings_8h_html_ad3bb700413d84463c44bde2b01f8eb3c"><div class="ttname"><a href="_user_settings_8h.html#ad3bb700413d84463c44bde2b01f8eb3c">MOMO_DEFAULT_EXTRA_CHECK_MODE</a></div><div class="ttdeci">#define MOMO_DEFAULT_EXTRA_CHECK_MODE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:57</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a214e9c47b4f46708a4f986785af45598"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">momo::internal::UIntMath::GCD</a></div><div class="ttdeci">static UInt GCD(UInt value1, UInt value2) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:267</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_ptr_const_html_a5aa6e4cb93799ff1d01d0ed2a0f14f08"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">momo::internal::UIntPtrConst::invalid</a></div><div class="ttdeci">static const uintptr_t invalid</div><div class="ttdef"><b>Definition:</b> Utility.h:147</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ab3805bcb0af35f5420dffbb477e120a0"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">momo::internal::PtrCaster::Shift</a></div><div class="ttdeci">static ResObject * Shift(Object *ptr, Offset byteOffset) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:228</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_ptr_const_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_ptr_const.html">momo::internal::UIntPtrConst</a></div><div class="ttdef"><b>Definition:</b> Utility.h:145</div></div>
-<div class="ttc" id="anamespacemomo_html_a24e32b81078826b60e080dc5f8b77c46"><div class="ttname"><a href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">momo::CheckMode</a></div><div class="ttdeci">CheckMode</div><div class="ttdef"><b>Definition:</b> Utility.h:98</div></div>
-<div class="ttc" id="anamespacemomo_html_a3b987a8f889f3fbb48604439e10c2c27"><div class="ttname"><a href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">momo::ExtraCheckMode</a></div><div class="ttdeci">ExtraCheckMode</div><div class="ttdef"><b>Definition:</b> Utility.h:105</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_maker_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence_maker.html">momo::internal::SequenceMaker</a></div><div class="ttdef"><b>Definition:</b> Utility.h:177</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html">momo::internal::PtrCaster</a></div><div class="ttdef"><b>Definition:</b> Utility.h:213</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4_html_a8b73c15bab47065d78aba778a843f6fe"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">momo::internal::UIntSelector&lt; 2, Default &gt;::UInt</a></div><div class="ttdeci">uint16_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:129</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">momo::internal::UIntMath::DivResult</a></div><div class="ttdef"><b>Definition:</b> Utility.h:244</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence.html">momo::internal::Sequence</a></div><div class="ttdef"><b>Definition:</b> Utility.h:172</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a341f5ae84f09e87206f2ecd60e243f5b"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">momo::internal::UIntMath::DivByConst</a></div><div class="ttdeci">static DivResult DivByConst(UInt value) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:279</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> ArrayUtility.h:302</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a214e9c47b4f46708a4f986785af45598"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a214e9c47b4f46708a4f986785af45598">momo::internal::UIntMath::GCD</a></div><div class="ttdeci">static UInt GCD(UInt value1, UInt value2) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:262</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_ptr_const_html_a5aa6e4cb93799ff1d01d0ed2a0f14f08"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">momo::internal::UIntPtrConst::invalid</a></div><div class="ttdeci">static const uintptr_t invalid</div><div class="ttdef"><b>Definition:</b> Utility.h:142</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ab3805bcb0af35f5420dffbb477e120a0"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">momo::internal::PtrCaster::Shift</a></div><div class="ttdeci">static ResObject * Shift(Object *ptr, Offset byteOffset) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:223</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_ptr_const_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_ptr_const.html">momo::internal::UIntPtrConst</a></div><div class="ttdef"><b>Definition:</b> Utility.h:140</div></div>
+<div class="ttc" id="anamespacemomo_html_a24e32b81078826b60e080dc5f8b77c46"><div class="ttname"><a href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46">momo::CheckMode</a></div><div class="ttdeci">CheckMode</div><div class="ttdef"><b>Definition:</b> Utility.h:93</div></div>
+<div class="ttc" id="anamespacemomo_html_a3b987a8f889f3fbb48604439e10c2c27"><div class="ttname"><a href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27">momo::ExtraCheckMode</a></div><div class="ttdeci">ExtraCheckMode</div><div class="ttdef"><b>Definition:</b> Utility.h:100</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_maker_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence_maker.html">momo::internal::SequenceMaker</a></div><div class="ttdef"><b>Definition:</b> Utility.h:172</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html">momo::internal::PtrCaster</a></div><div class="ttdef"><b>Definition:</b> Utility.h:208</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4_html_a8b73c15bab47065d78aba778a843f6fe"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html#a8b73c15bab47065d78aba778a843f6fe">momo::internal::UIntSelector&lt; 2, Default &gt;::UInt</a></div><div class="ttdeci">uint16_t UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:124</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_math_1_1_div_result_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">momo::internal::UIntMath::DivResult</a></div><div class="ttdef"><b>Definition:</b> Utility.h:239</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_sequence_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_sequence.html">momo::internal::Sequence</a></div><div class="ttdef"><b>Definition:</b> Utility.h:167</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a341f5ae84f09e87206f2ecd60e243f5b"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a341f5ae84f09e87206f2ecd60e243f5b">momo::internal::UIntMath::DivByConst</a></div><div class="ttdeci">static DivResult DivByConst(UInt value) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:274</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> ArrayUtility.h:328</div></div>
 <div class="ttc" id="a_user_settings_8h_html_a757e42f30737b8af90bdf0e1b35159de"><div class="ttname"><a href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a></div><div class="ttdeci">#define MOMO_MAX_ALIGNMENT</div><div class="ttdef"><b>Definition:</b> UserSettings.h:47</div></div>
-<div class="ttc" id="a_user_settings_8h_html_adc3d49e50add6f931606ec489db2e7b9"><div class="ttname"><a href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a></div><div class="ttdeci">#define MOMO_INVALID_UINTPTR</div><div class="ttdef"><b>Definition:</b> UserSettings.h:122</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a441313bfbaffcb9aab257943125b3db5"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">momo::internal::UIntMath::Next</a></div><div class="ttdeci">static Iterator Next(Iterator iter, UInt dist)</div><div class="ttdef"><b>Definition:</b> Utility.h:262</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html_aade7eb1576d2fca8e9ac468821bad648"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">momo::internal::UIntSelector::UInt</a></div><div class="ttdeci">Default UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:117</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a1c79b3a56c124c64e493169e2ba687ae"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">momo::internal::UIntMath::DivBySmall</a></div><div class="ttdeci">static DivResult DivBySmall(UInt value, UInt mod) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:287</div></div>
-<div class="ttc" id="anamespacemomo_1_1internal_html_a7d76c09010f189220f878e088275214c"><div class="ttname"><a href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">momo::internal::Void</a></div><div class="ttdeci">typename VoidMaker&lt; Types... &gt;::Void Void</div><div class="ttdef"><b>Definition:</b> Utility.h:196</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_ae9ee0f0850b4b6c180259c46f2d9ff51"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">momo::internal::UIntMath::UInt</a></div><div class="ttdeci">TUInt UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:241</div></div>
-<div class="ttc" id="astructmomo_1_1internal_1_1_is_invocable_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_is_invocable.html">momo::internal::IsInvocable</a></div><div class="ttdef"><b>Definition:</b> Utility.h:200</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html">momo::internal::UIntMath</a></div><div class="ttdef"><b>Definition:</b> Utility.h:239</div></div>
-<div class="ttc" id="anamespacemomo_1_1internal_html_a3af1c05e0a098d112e970dadb0a13a79"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">momo::internal::IsForwardIterator</a></div><div class="ttdeci">std::is_base_of&lt; std::forward_iterator_tag, typename std::iterator_traits&lt; Iterator &gt;::iterator_category &gt; IsForwardIterator</div><div class="ttdef"><b>Definition:</b> Utility.h:153</div></div>
+<div class="ttc" id="a_user_settings_8h_html_adc3d49e50add6f931606ec489db2e7b9"><div class="ttname"><a href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a></div><div class="ttdeci">#define MOMO_INVALID_UINTPTR</div><div class="ttdef"><b>Definition:</b> UserSettings.h:144</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a441313bfbaffcb9aab257943125b3db5"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">momo::internal::UIntMath::Next</a></div><div class="ttdeci">static Iterator Next(Iterator iter, UInt dist)</div><div class="ttdef"><b>Definition:</b> Utility.h:257</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html_aade7eb1576d2fca8e9ac468821bad648"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html#aade7eb1576d2fca8e9ac468821bad648">momo::internal::UIntSelector::UInt</a></div><div class="ttdeci">Default UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:112</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a1c79b3a56c124c64e493169e2ba687ae"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a1c79b3a56c124c64e493169e2ba687ae">momo::internal::UIntMath::DivBySmall</a></div><div class="ttdeci">static DivResult DivBySmall(UInt value, UInt mod) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:282</div></div>
+<div class="ttc" id="anamespacemomo_1_1internal_html_a7d76c09010f189220f878e088275214c"><div class="ttname"><a href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">momo::internal::Void</a></div><div class="ttdeci">typename VoidMaker&lt; Types... &gt;::Void Void</div><div class="ttdef"><b>Definition:</b> Utility.h:191</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_ae9ee0f0850b4b6c180259c46f2d9ff51"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#ae9ee0f0850b4b6c180259c46f2d9ff51">momo::internal::UIntMath::UInt</a></div><div class="ttdeci">TUInt UInt</div><div class="ttdef"><b>Definition:</b> Utility.h:236</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_is_invocable_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_is_invocable.html">momo::internal::IsInvocable</a></div><div class="ttdef"><b>Definition:</b> Utility.h:195</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html">momo::internal::UIntMath</a></div><div class="ttdef"><b>Definition:</b> Utility.h:234</div></div>
+<div class="ttc" id="anamespacemomo_1_1internal_html_a3af1c05e0a098d112e970dadb0a13a79"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">momo::internal::IsForwardIterator</a></div><div class="ttdeci">std::is_base_of&lt; std::forward_iterator_tag, typename std::iterator_traits&lt; Iterator &gt;::iterator_category &gt; IsForwardIterator</div><div class="ttdef"><b>Definition:</b> Utility.h:148</div></div>
 <div class="ttc" id="astructmomo_1_1internal_1_1_u_int_ptr_const_html_a247add153b44e82cd98122d7324f70f2"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">momo::internal::UIntPtrConst::MOMO_STATIC_ASSERT</a></div><div class="ttdeci">MOMO_STATIC_ASSERT(null !=invalid)</div></div>
 <div class="ttc" id="anamespacemomo_html_a24e32b81078826b60e080dc5f8b77c46a2a7639f0b1870ad2e6b2d8c7b810ba11"><div class="ttname"><a href="namespacemomo.html#a24e32b81078826b60e080dc5f8b77c46a2a7639f0b1870ad2e6b2d8c7b810ba11">momo::CheckMode::assertion</a></div><div class="ttdeci">@ assertion</div></div>
 <!-- start footer part -->

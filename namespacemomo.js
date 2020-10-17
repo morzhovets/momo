@@ -44,7 +44,7 @@ var namespacemomo =
     [ "MemManagerC", "classmomo_1_1_mem_manager_c.html", "classmomo_1_1_mem_manager_c" ],
     [ "MemManagerCpp", "classmomo_1_1_mem_manager_cpp.html", "classmomo_1_1_mem_manager_cpp" ],
     [ "MemManagerStd", "classmomo_1_1_mem_manager_std.html", "classmomo_1_1_mem_manager_std" ],
-    [ "MemManagerStd< std::allocator< Item > >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_01_4.html", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_01_4" ],
+    [ "MemManagerStd< std::allocator< Item >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4" ],
     [ "MemPool", "classmomo_1_1_mem_pool.html", "classmomo_1_1_mem_pool" ],
     [ "MemPoolConst", "classmomo_1_1_mem_pool_const.html", null ],
     [ "MemPoolParams", "classmomo_1_1_mem_pool_params.html", "classmomo_1_1_mem_pool_params" ],

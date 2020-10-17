@@ -2,7 +2,7 @@ var hierarchy =
 [
     [ "momo::internal::AlignmentOf< Object >", "structmomo_1_1internal_1_1_alignment_of.html", null ],
     [ "allocator", null, [
-      [ "momo::MemManagerStd< std::allocator< Item > >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_01_4.html", null ]
+      [ "momo::MemManagerStd< std::allocator< Item >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html", null ]
     ] ],
     [ "momo::Array< TItem, TMemManager, TItemTraits, TSettings >", "classmomo_1_1_array.html", null ],
     [ "momo::Array< 0, ColumnInfo, MemManager >", "classmomo_1_1_array.html", null ],
@@ -257,7 +257,7 @@ var hierarchy =
     [ "momo::MemManagerC", "classmomo_1_1_mem_manager_c.html", null ],
     [ "momo::MemManagerCpp", "classmomo_1_1_mem_manager_cpp.html", null ],
     [ "MemManagerDefault", null, [
-      [ "momo::MemManagerStd< std::allocator< Item > >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_01_4.html", null ]
+      [ "momo::MemManagerStd< std::allocator< Item >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html", null ]
     ] ],
     [ "momo::internal::MemManagerDummy", "classmomo_1_1internal_1_1_mem_manager_dummy.html", null ],
     [ "momo::internal::MemManagerProxy< TMemManager >", "classmomo_1_1internal_1_1_mem_manager_proxy.html", null ],
@@ -340,7 +340,7 @@ var hierarchy =
       [ "momo::internal::HashMultiMapNestedMapKeyValueTraits< THashMultiMapKeyValueTraits, THashMultiMapValueArray >::ValueCreator< ValueArg >", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html", null ]
     ] ],
     [ "template rebind_alloc< char >", null, [
-      [ "momo::MemManagerStd< TAllocator >", "classmomo_1_1_mem_manager_std.html", null ]
+      [ "momo::MemManagerStd< TAllocator, tUseMemManagerDefault >", "classmomo_1_1_mem_manager_std.html", null ]
     ] ],
     [ "TMemManager", null, [
       [ "momo::internal::SetCrew< TContainerTraits, TMemManager, tKeepVersion, false >", "classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01false_01_4.html", null ]

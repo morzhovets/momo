@@ -96,8 +96,10 @@ var classmomo_1_1_data_table =
     [ "TryAddRow", "classmomo_1_1_data_table.html#a9f643a993c4847e38ee6ec221c0f1602", null ],
     [ "TryInsertRow", "classmomo_1_1_data_table.html#a6d0cda2e68e267b3cb05d30b3e7480cc", null ],
     [ "TryInsertRow", "classmomo_1_1_data_table.html#ab9179c67ae6135014bd6fefa74fd8975", null ],
+    [ "TryUpdateRow", "classmomo_1_1_data_table.html#a6423b21293fb86ee9397cb7f4537b087", null ],
     [ "TryUpdateRow", "classmomo_1_1_data_table.html#a4915269b1508b88d4da1015c022a5bca", null ],
     [ "TryUpdateRow", "classmomo_1_1_data_table.html#a1d4e26426f03117faf697034dc16aea3", null ],
+    [ "UpdateRow", "classmomo_1_1_data_table.html#a5210b4cec3f9d1ef2344a7b081052116", null ],
     [ "UpdateRow", "classmomo_1_1_data_table.html#a60b7dd96bea75323f11749a98440dbfc", null ],
     [ "UpdateRow", "classmomo_1_1_data_table.html#a24be8e3d6b61e437d04815acbab1520f", null ]
 ];

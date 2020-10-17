@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.1</span>
+   &#160;<span id="projectnumber">3.2</span>
    </div>
   </td>
  </tr>
@@ -230,6 +230,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ada0a752db1f9c6a928a251f7979cf432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08a9c07ccaa567b8be3669bc73d2f2d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a08a9c07ccaa567b8be3669bc73d2f2d9">Remove</a> (size_t index, size_t count=1)</td></tr>
 <tr class="separator:a08a9c07ccaa567b8be3669bc73d2f2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b2d594750b3a76c53cb6f172036b0f7"><td class="memTemplParams" colspan="2">template&lt;typename Predicate , typename  = decltype(std::declval&lt;const Predicate&amp;&gt;()(std::declval&lt;const Item&amp;&gt;()))&gt; </td></tr>
+<tr class="memitem:a0b2d594750b3a76c53cb6f172036b0f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a0b2d594750b3a76c53cb6f172036b0f7">Remove</a> (const Predicate &amp;pred)</td></tr>
+<tr class="separator:a0b2d594750b3a76c53cb6f172036b0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2abd8dc02ff3607a8d96cb7783e62c3"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:ae2abd8dc02ff3607a8d96cb7783e62c3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ae2abd8dc02ff3607a8d96cb7783e62c3">Filter</a> (const Predicate &amp;pred)</td></tr>
+<tr class="separator:ae2abd8dc02ff3607a8d96cb7783e62c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memTemplParams" colspan="2">template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </td></tr>
+<tr class="memitem:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ade3c47b4ab00b5946b538b2a01d8cc37">Contains</a> (const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item, const EqualFunc &amp;equalFunc=EqualFunc()) const</td></tr>
+<tr class="separator:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac6302447a505ac66b35e6b6a670c7b1"><td class="memTemplParams" colspan="2">template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </td></tr>
+<tr class="memitem:aac6302447a505ac66b35e6b6a670c7b1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#aac6302447a505ac66b35e6b6a670c7b1">IsEqual</a> (const <a class="el" href="classmomo_1_1_array.html">Array</a> &amp;array, const EqualFunc &amp;equalFunc=EqualFunc()) const</td></tr>
+<tr class="separator:aac6302447a505ac66b35e6b6a670c7b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -1019,6 +1031,46 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
+<a id="ade3c47b4ab00b5946b538b2a01d8cc37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade3c47b4ab00b5946b538b2a01d8cc37">&#9670;&nbsp;</a></span>Contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_array.html">momo::Array</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::Contains </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;&#160;</td>
+          <td class="paramname"><em>item</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const EqualFunc &amp;&#160;</td>
+          <td class="paramname"><em>equalFunc</em> = <code>EqualFunc()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a430adc3db3b907c8a01dbae3f3519aec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a430adc3db3b907c8a01dbae3f3519aec">&#9670;&nbsp;</a></span>CreateCap()</h2>
 
@@ -1097,6 +1149,36 @@ template&lt;typename MultiItemCreator &gt; </div>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae2abd8dc02ff3607a8d96cb7783e62c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2abd8dc02ff3607a8d96cb7783e62c3">&#9670;&nbsp;</a></span>Filter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmomo_1_1_array.html">momo::Array</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::Filter </td>
+          <td>(</td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1738,6 +1820,46 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
+<a id="aac6302447a505ac66b35e6b6a670c7b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac6302447a505ac66b35e6b6a670c7b1">&#9670;&nbsp;</a></span>IsEqual()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_array.html">momo::Array</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::IsEqual </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_array.html">Array</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt; &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const EqualFunc &amp;&#160;</td>
+          <td class="paramname"><em>equalFunc</em> = <code>EqualFunc()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a955e145053f46a65709325c1caa0f77a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a955e145053f46a65709325c1caa0f77a">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
 
@@ -1850,8 +1972,38 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
+<a id="a0b2d594750b3a76c53cb6f172036b0f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b2d594750b3a76c53cb6f172036b0f7">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate , typename  = decltype(std::declval&lt;const Predicate&amp;&gt;()(std::declval&lt;const Item&amp;&gt;()))&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmomo_1_1_array.html">momo::Array</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::Remove </td>
+          <td>(</td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a08a9c07ccaa567b8be3669bc73d2f2d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08a9c07ccaa567b8be3669bc73d2f2d9">&#9670;&nbsp;</a></span>Remove()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a08a9c07ccaa567b8be3669bc73d2f2d9">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.1</span>
+   &#160;<span id="projectnumber">3.2</span>
    </div>
   </td>
  </tr>
@@ -112,6 +112,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a7b379a6e9752c441e1cf3b1a646da5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2916647364bee3652d8efd08fc3ec127"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a2916647364bee3652d8efd08fc3ec127">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, size_t index, size_t count)</td></tr>
 <tr class="separator:a2916647364bee3652d8efd08fc3ec127"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa202d62e8cc88b43626811a84bc09823"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:aa202d62e8cc88b43626811a84bc09823"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#aa202d62e8cc88b43626811a84bc09823">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
+<tr class="separator:aa202d62e8cc88b43626811a84bc09823"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a860a5b09a347bc282cbebf989c90cfe4"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:a860a5b09a347bc282cbebf989c90cfe4"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a860a5b09a347bc282cbebf989c90cfe4">Filter</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
+<tr class="separator:a860a5b09a347bc282cbebf989c90cfe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a1d2a79b2c5210b0453f163883be24011"></a>
@@ -147,6 +153,46 @@ template&lt;typename TArray &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a860a5b09a347bc282cbebf989c90cfe4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a860a5b09a347bc282cbebf989c90cfe4">&#9670;&nbsp;</a></span>Filter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArray &gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::Filter </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a00d4cf9e66cd1c43b3f154bbddbd4d90"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a00d4cf9e66cd1c43b3f154bbddbd4d90">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/3]</span></h2>
 
@@ -301,8 +347,48 @@ template&lt;typename TArray &gt; </div>
 
 </div>
 </div>
+<a id="aa202d62e8cc88b43626811a84bc09823"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa202d62e8cc88b43626811a84bc09823">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArray &gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::Remove </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2916647364bee3652d8efd08fc3ec127"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2916647364bee3652d8efd08fc3ec127">&#9670;&nbsp;</a></span>Remove()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2916647364bee3652d8efd08fc3ec127">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

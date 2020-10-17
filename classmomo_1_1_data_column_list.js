@@ -29,7 +29,7 @@ var classmomo_1_1_data_column_list =
     [ "GetMemManager", "classmomo_1_1_data_column_list.html#afa3d0ab79694e3a1a42681d14ecaa3eb", null ],
     [ "GetMemManager", "classmomo_1_1_data_column_list.html#ae647b023ffa31b93f238b8f9fecc2661", null ],
     [ "GetNumber", "classmomo_1_1_data_column_list.html#aa2470986b7f0b6d420a982dd94af1a36", null ],
-    [ "GetOffset", "classmomo_1_1_data_column_list.html#a71b93078518f80f6e9354fd9a65f5fbc", null ],
+    [ "GetOffset", "classmomo_1_1_data_column_list.html#abaa1ba70b822b9a5f61cc3c7e631f22f", null ],
     [ "GetTotalSize", "classmomo_1_1_data_column_list.html#a1b43ff2344a7f468e064af62be7cebba", null ],
     [ "ImportRaw", "classmomo_1_1_data_column_list.html#a269e7af3e403b5f6693a86482d30c67c", null ],
     [ "IsMutable", "classmomo_1_1_data_column_list.html#a8fa48f5929961431343e3fef30350686", null ],
