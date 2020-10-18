@@ -725,7 +725,7 @@ public:
 	{
 	}
 
-	explicit HashMultiMap(const HashTraits& hashTraits, MemManager&& memManager = MemManager())
+	explicit HashMultiMap(const HashTraits& hashTraits, MemManager memManager = MemManager())
 		: mHashMap(hashTraits, std::move(memManager)),
 		mValueCount(0),
 		mValueCrew(GetMemManager())
@@ -740,7 +740,7 @@ public:
 
 	template<typename Pair = std::pair<Key, Value>>
 	explicit HashMultiMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
-		MemManager&& memManager = MemManager())
+		MemManager memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
 		try
@@ -768,7 +768,7 @@ public:
 	{
 	}
 
-	explicit HashMultiMap(const HashMultiMap& hashMultiMap, MemManager&& memManager)
+	explicit HashMultiMap(const HashMultiMap& hashMultiMap, MemManager memManager)
 		: mHashMap(hashMultiMap.GetHashTraits(), std::move(memManager)),
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())

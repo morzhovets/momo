@@ -175,17 +175,18 @@ public:
 	{
 	}
 
-	explicit MemPool(MemManager&& memManager)
+	explicit MemPool(MemManager memManager)
 		: MemPool(Params(), std::move(memManager))
 	{
 	}
 
-	explicit MemPool(const Params& params, MemManager&& memManager = MemManager())
+	explicit MemPool(const Params& params, MemManager memManager = MemManager())
 		: Params(params),
-		mBufferHead((pvCheckParams(), nullPtr)),	// check params before move memManager
+		mBufferHead(nullPtr),
 		mAllocCount(0),
 		mCachedFreeBlocks(std::move(memManager))
 	{
+		pvCheckParams();
 	}
 
 	MemPool(MemPool&& memPool) noexcept

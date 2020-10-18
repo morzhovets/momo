@@ -196,19 +196,19 @@ public:
 	{
 	}
 
-	explicit SegmentedArray(MemManager&& memManager) noexcept
+	explicit SegmentedArray(MemManager memManager) noexcept
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
 	}
 
-	explicit SegmentedArray(size_t count, MemManager&& memManager = MemManager())
+	explicit SegmentedArray(size_t count, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		SetCount(count);
 	}
 
-	explicit SegmentedArray(size_t count, const Item& item, MemManager&& memManager = MemManager())
+	explicit SegmentedArray(size_t count, const Item& item, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		SetCount(count, item);
@@ -216,7 +216,7 @@ public:
 
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
+	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		try
@@ -239,7 +239,7 @@ public:
 	{
 	}
 
-	explicit SegmentedArray(std::initializer_list<Item> items, MemManager&& memManager)
+	explicit SegmentedArray(std::initializer_list<Item> items, MemManager memManager)
 		: SegmentedArray(items.begin(), items.end(), std::move(memManager))
 	{
 	}
@@ -273,12 +273,12 @@ public:
 		}
 	}
 
-	explicit SegmentedArray(const SegmentedArray& array, MemManager&& memManager)
+	explicit SegmentedArray(const SegmentedArray& array, MemManager memManager)
 		: SegmentedArray(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}
 
-	static SegmentedArray CreateCap(size_t capacity, MemManager&& memManager = MemManager())
+	static SegmentedArray CreateCap(size_t capacity, MemManager memManager = MemManager())
 	{
 		SegmentedArray array(std::move(memManager));
 		array.pvIncCapacity(0, capacity);
@@ -287,7 +287,7 @@ public:
 
 	template<typename MultiItemCreator>
 	static SegmentedArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
-		MemManager&& memManager = MemManager())
+		MemManager memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
 		array.pvIncCount(count, multiItemCreator);

@@ -278,6 +278,8 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
+		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+
 	private:
 		template<typename MemManager,
 			typename = void*>

@@ -553,7 +553,7 @@ public:
 	{
 	}
 
-	explicit HashSet(const HashTraits& hashTraits, MemManager&& memManager = MemManager())
+	explicit HashSet(const HashTraits& hashTraits, MemManager memManager = MemManager())
 		: mCrew(hashTraits, std::move(memManager)),
 		mCount(0),
 		mCapacity(0),
@@ -567,7 +567,7 @@ public:
 	}
 
 	explicit HashSet(std::initializer_list<Item> items, const HashTraits& hashTraits,
-		MemManager&& memManager = MemManager())
+		MemManager memManager = MemManager())
 		: HashSet(hashTraits, std::move(memManager))
 	{
 		try
@@ -597,7 +597,7 @@ public:
 	{
 	}
 
-	explicit HashSet(const HashSet& hashSet, MemManager&& memManager)
+	explicit HashSet(const HashSet& hashSet, MemManager memManager)
 		: HashSet(hashSet.GetHashTraits(), std::move(memManager))
 	{
 		mCount = hashSet.mCount;

@@ -466,19 +466,19 @@ public:
 	{
 	}
 
-	explicit Array(MemManager&& memManager) noexcept
+	explicit Array(MemManager memManager) noexcept
 		: mData(std::move(memManager))
 	{
 	}
 
-	explicit Array(size_t count, MemManager&& memManager = MemManager())
+	explicit Array(size_t count, MemManager memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
 		for (size_t i = 0; i < count; ++i)
 			AddBackNogrowVar();
 	}
 
-	explicit Array(size_t count, const Item& item, MemManager&& memManager = MemManager())
+	explicit Array(size_t count, const Item& item, MemManager memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
 		for (size_t i = 0; i < count; ++i)
@@ -487,7 +487,7 @@ public:
 
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager = MemManager())
+	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
 			std::move(memManager))
 	{
@@ -499,7 +499,7 @@ public:
 	{
 	}
 
-	explicit Array(std::initializer_list<Item> items, MemManager&& memManager)
+	explicit Array(std::initializer_list<Item> items, MemManager memManager)
 		: Array(items.begin(), items.end(), std::move(memManager))
 	{
 	}
@@ -520,19 +520,19 @@ public:
 		pvFill(array.GetBegin(), array.GetEnd());
 	}
 
-	explicit Array(const Array& array, MemManager&& memManager)
+	explicit Array(const Array& array, MemManager memManager)
 		: Array(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}
 
-	static Array CreateCap(size_t capacity, MemManager&& memManager = MemManager())
+	static Array CreateCap(size_t capacity, MemManager memManager = MemManager())
 	{
 		return Array(Data(capacity, std::move(memManager)));
 	}
 
 	template<typename MultiItemCreator>
 	static Array CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
-		MemManager&& memManager = MemManager())
+		MemManager memManager = MemManager())
 	{
 		Array array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)

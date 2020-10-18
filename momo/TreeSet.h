@@ -512,7 +512,7 @@ public:
 	{
 	}
 
-	explicit TreeSet(const TreeTraits& treeTraits, MemManager&& memManager = MemManager())
+	explicit TreeSet(const TreeTraits& treeTraits, MemManager memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
 		mRootNode(nullptr),
@@ -526,7 +526,7 @@ public:
 	}
 
 	explicit TreeSet(std::initializer_list<Item> items, const TreeTraits& treeTraits,
-		MemManager&& memManager = MemManager())
+		MemManager memManager = MemManager())
 		: TreeSet(treeTraits, std::move(memManager))
 	{
 		try
@@ -556,7 +556,7 @@ public:
 	{
 	}
 
-	explicit TreeSet(const TreeSet& treeSet, MemManager&& memManager)
+	explicit TreeSet(const TreeSet& treeSet, MemManager memManager)
 		: TreeSet(treeSet.GetTreeTraits(), std::move(memManager))
 	{
 		try

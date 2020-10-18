@@ -84,8 +84,6 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
-
 		static const bool keepVersion = tKeepVersion;
 
 	private:

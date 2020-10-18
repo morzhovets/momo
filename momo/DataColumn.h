@@ -615,7 +615,7 @@ public:
 	typedef ConstIterator Iterator;
 
 public:
-	explicit DataColumnList(MemManager&& memManager = MemManager())
+	explicit DataColumnList(MemManager memManager = MemManager())
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
@@ -1083,7 +1083,7 @@ private:
 	typedef std::bitset<sizeof(Struct)> MutableOffsets;
 
 public:
-	explicit DataColumnListStatic(MemManager&& memManager = MemManager())
+	explicit DataColumnListStatic(MemManager memManager = MemManager())
 		: mColumns(std::move(memManager))
 	{
 	}
