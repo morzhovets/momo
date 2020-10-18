@@ -146,10 +146,8 @@ public:
 /*!
 	All `SegmentedArray` functions and constructors have strong exception safety,
 	but not the following cases:
-	1. Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
+	 - Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove`, `Filter` have
 	basic exception safety.
-	2. If any constructor throws exception, input argument `memManager`
-	may be changed.
 
 	Swap and move operations invalidate all container iterators.
 */
