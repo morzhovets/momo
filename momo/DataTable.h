@@ -163,6 +163,8 @@ private:
 
 	class Crew
 	{
+		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ColumnList>::value);
+
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
