@@ -35,10 +35,8 @@ namespace internal
 		static const bool isTriviallyRelocatable = false;
 
 	public:
-		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
+		static void Destroy(MemManager& /*memManager*/, Item* /*items*/, size_t /*count*/) noexcept
 		{
-			if (count != 1)
-				BucketUnlimPItemTraits::Destroy(memManager, items, count);
 		}
 
 		template<typename ItemCreator>
@@ -126,8 +124,7 @@ namespace internal
 		void Clear(Params& params) noexcept
 		{
 			Bounds bounds = GetBounds(params);
-			if (bounds.GetCount() == 1)
-				ItemTraits::Destroy(params.GetMemManager(), bounds.GetBegin(), 1);
+			ItemTraits::Destroy(params.GetMemManager(), bounds.GetBegin(), bounds.GetCount());
 			mArrayBucket.Clear(params);
 		}
 
