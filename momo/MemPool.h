@@ -409,7 +409,7 @@ private:
 		if (mBufferHead == nullPtr)
 			mBufferHead = pvNewBuffer();
 		BufferBytes& bytes = pvGetBufferBytes(mBufferHead);
-		uintptr_t block = pvGetNextFreeBlockIndex(mBufferHead, bytes.firstFreeBlockIndex);
+		uintptr_t block = pvGetBlock(mBufferHead, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
 		--bytes.freeBlockCount;
 		if (bytes.freeBlockCount == int8_t{0})
@@ -437,7 +437,7 @@ private:
 		return *internal::PtrCaster::FromUInt<int8_t>(block);
 	}
 
-	uintptr_t pvGetNextFreeBlockIndex(uintptr_t buffer, int8_t index) const noexcept
+	uintptr_t pvGetBlock(uintptr_t buffer, int8_t index) const noexcept
 	{
 		return static_cast<uintptr_t>(static_cast<intptr_t>(buffer)
 			+ intptr_t{index} * static_cast<intptr_t>(Params::blockSize)
@@ -446,31 +446,29 @@ private:
 
 	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const noexcept
 	{
+		const uintptr_t uipBlockSize = uintptr_t{Params::blockSize};
 		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
 		MOMO_ASSERT(block % uipBlockAlignment == 0);
-		uintptr_t index = (block / uintptr_t{Params::blockSize}) % uintptr_t{Params::blockCount};
-		if (((block % uintptr_t{Params::blockSize}) / uipBlockAlignment) % 2 == 1)
-		{
-			buffer = block - index * uintptr_t{Params::blockSize} - uipBlockAlignment;
-			return static_cast<int8_t>(index);
-		}
-		else
-		{
-			buffer = block + (uintptr_t{Params::blockCount} - index) * uintptr_t{Params::blockSize};
-			return static_cast<int8_t>(index) - static_cast<int8_t>(Params::blockCount);
-		}
+		intptr_t dir = static_cast<intptr_t>(((block % uipBlockSize) / uipBlockAlignment) % 2);
+		intptr_t index = static_cast<intptr_t>((block / uipBlockSize) % uintptr_t{Params::blockCount})
+			- (static_cast<intptr_t>(Params::blockCount) & (dir - 1));
+		buffer = static_cast<uintptr_t>(static_cast<intptr_t>(block)
+			- index * static_cast<intptr_t>(uipBlockSize)
+			- (static_cast<intptr_t>(uipBlockAlignment) & -dir));
+		return static_cast<int8_t>(index);
 	}
 
 	MOMO_NOINLINE uintptr_t pvNewBuffer()
 	{
+		const uintptr_t uipBlockSize = uintptr_t{Params::blockSize};
 		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
 		uintptr_t begin = internal::PtrCaster::ToUInt(
 			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, uipBlockAlignment);
-		block += (block % uintptr_t{Params::blockSize}) % (2 * uipBlockAlignment);
-		if ((block + uipBlockAlignment) % uintptr_t{Params::blockSize} == 0)
+		block += (block % uipBlockSize) % (2 * uipBlockAlignment);
+		if ((block + uipBlockAlignment) % uipBlockSize == 0)
 			block += uipBlockAlignment;
-		if ((block / uintptr_t{Params::blockSize}) % uintptr_t{Params::blockCount} == 0)
+		if ((block / uipBlockSize) % uintptr_t{Params::blockCount} == 0)
 			block += uipBlockAlignment;
 		uintptr_t buffer;
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
@@ -486,7 +484,7 @@ private:
 		{
 			++blockIndex;
 			pvGetNextFreeBlockIndex(block) = blockIndex;
-			block = pvGetNextFreeBlockIndex(buffer, blockIndex);
+			block = pvGetBlock(buffer, blockIndex);
 		}
 		pvGetNextFreeBlockIndex(block) = int8_t{-128};
 		return buffer;
