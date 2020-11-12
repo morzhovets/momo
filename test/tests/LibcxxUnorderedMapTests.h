@@ -20,9 +20,21 @@ LIBCXX_TEST_BEGIN(bucket_size)
 #include "libcxx/unord.map/bucket_size.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(contains_transparent)
+#include "libcxx/unord.map/contains.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(count)
 #include "libcxx/unord.map/count.pass.cpp"
 LIBCXX_TEST_END
+
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(count_transparent)
+#include "libcxx/unord.map/count.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(db_iterators_7)
 #include "libcxx/unord.map/db_iterators_7.pass.cpp"
@@ -52,17 +64,41 @@ LIBCXX_TEST_BEGIN(equal_range_const)
 #include "libcxx/unord.map/equal_range_const.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(equal_range_const_transparent)
+#include "libcxx/unord.map/equal_range_const.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(equal_range_non_const)
 #include "libcxx/unord.map/equal_range_non_const.pass.cpp"
 LIBCXX_TEST_END
+
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(equal_range_non_const_transparent)
+#include "libcxx/unord.map/equal_range_non_const.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(find_const)
 #include "libcxx/unord.map/find_const.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(find_const_transparent)
+#include "libcxx/unord.map/find_const.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "libcxx/unord.map/find_non_const.pass.cpp"
 LIBCXX_TEST_END
+
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+LIBCXX_TEST_BEGIN(find_non_const_transparent)
+#include "libcxx/unord.map/find_non_const.transparent.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 //LIBCXX_TEST_BEGIN(incomplete_type)
 //#include "libcxx/unord.map/incomplete_type.pass.cpp"
