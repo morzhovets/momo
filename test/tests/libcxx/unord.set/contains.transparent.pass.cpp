@@ -17,45 +17,43 @@
 
 // UNSUPPORTED: c++03, c++11, c++14, c++17
 
-#include <unordered_set>
-#include "test_transparent_unordered.h"
+//#include <unordered_set>
+//#include "test_transparent_unordered.h"
 
-int main(int, char**)
+void main()
 {
     using key_type = StoredType<int>;
 
     {
       // Make sure conversions don't happen for transparent non-final hasher and key_equal
-      using set_type = const unord_set_type<std::unordered_set, transparent_hash, std::equal_to<> >;
+      using set_type = const unord_set_type<unordered_set, transparent_hash, std::equal_to<> >;
       test_transparent_contains<set_type>(key_type(1), key_type(2));
     }
 
     {
       // Make sure conversions don't happen for transparent final hasher and key_equal
-      using set_type = const unord_set_type<std::unordered_set, transparent_hash_final, transparent_equal_final>;
+      using set_type = const unord_set_type<unordered_set, transparent_hash_final, transparent_equal_final>;
       test_transparent_contains<set_type>(key_type(1), key_type(2));
     }
 
     {
       // Make sure conversions do happen for non-transparent hasher
-      using set_type = const unord_set_type<std::unordered_set, non_transparent_hash,
+      using set_type = const unord_set_type<unordered_set, non_transparent_hash,
                                        std::equal_to<> >;
       test_non_transparent_contains<set_type>(key_type(1), key_type(2));
     }
 
     {
       // Make sure conversions do happen for non-transparent key_equal
-      using set_type = const unord_set_type<std::unordered_set, transparent_hash,
+      using set_type = const unord_set_type<unordered_set, transparent_hash,
                                        std::equal_to<key_type> >;
       test_non_transparent_contains<set_type>(key_type(1), key_type(2));
     }
 
     {
       // Make sure conversions do happen for both non-transparent hasher and key_equal
-      using set_type = const unord_set_type<std::unordered_set, non_transparent_hash,
+      using set_type = const unord_set_type<unordered_set, non_transparent_hash,
                                        std::equal_to<key_type> >;
       test_non_transparent_contains<set_type>(key_type(1), key_type(2));
     }
-
-    return 0;
 }
