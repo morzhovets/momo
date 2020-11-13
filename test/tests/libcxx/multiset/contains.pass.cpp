@@ -31,7 +31,9 @@ struct E { int a = 1; double b = 1; char c = 1; };
 void main()
 {
     {
-        test<multiset<int>, int>(14, 10, 11, 12, 13);
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+        test<multiset<int, std::less<>>, int>(int8_t{14}, 10, 11, 12, 13);
+#endif
         test<multiset<char>, char>('e', 'a', 'b', 'c', 'd');
     }
 }

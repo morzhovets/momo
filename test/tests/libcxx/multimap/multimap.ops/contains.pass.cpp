@@ -39,8 +39,10 @@ void main()
             'e', std::make_pair('a', 'a'), std::make_pair('b', 'a'),
             std::make_pair('c', 'a'), std::make_pair('d', 'b'));
 
-        test<multimap<int, E>, std::pair<int, E> >(
-            -1, std::make_pair(1, E{}), std::make_pair(2, E{}),
+#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+        test<multimap<int, E, std::less<>>, std::pair<int, E> >(
+            int8_t{-1}, std::make_pair(1, E{}), std::make_pair(2, E{}),
             std::make_pair(3, E{}), std::make_pair(4, E{}));
+#endif
     }
 }
