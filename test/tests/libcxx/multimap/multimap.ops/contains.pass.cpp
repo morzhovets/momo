@@ -9,9 +9,9 @@
 // UNSUPPORTED: c++03, c++11, c++14, c++17
 
 //#include <cassert>
-//#include <unordered_map>
+//#include <map>
 
-// <unordered_map>
+// <map>
 
 // bool contains(const key_type& x) const;
 
@@ -31,15 +31,15 @@ struct E { int a = 1; double b = 1; char c = 1; };
 void main()
 {
     {
-        test<unordered_map<char, int>, std::pair<char, int> >(
+        test<multimap<char, int>, std::pair<char, int> >(
             'e', std::make_pair('a', 10), std::make_pair('b', 11),
             std::make_pair('c', 12), std::make_pair('d', 13));
 
-        test<unordered_map<char, char>, std::pair<char, char> >(
+        test<multimap<char, char>, std::pair<char, char> >(
             'e', std::make_pair('a', 'a'), std::make_pair('b', 'a'),
             std::make_pair('c', 'a'), std::make_pair('d', 'b'));
 
-        test<unordered_map<int, E>, std::pair<int, E> >(
+        test<multimap<int, E>, std::pair<int, E> >(
             -1, std::make_pair(1, E{}), std::make_pair(2, E{}),
             std::make_pair(3, E{}), std::make_pair(4, E{}));
     }

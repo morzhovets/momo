@@ -9,9 +9,9 @@
 // UNSUPPORTED: c++03, c++11, c++14, c++17
 
 //#include <cassert>
-//#include <unordered_set>
+//#include <set>
 
-// <unordered_set>
+// <set>
 
 // bool contains(const key_type& x) const;
 
@@ -31,7 +31,7 @@ struct E { int a = 1; double b = 1; char c = 1; };
 void main()
 {
     {
-        test<unordered_set<int>, int>(14, 10, 11, 12, 13);
-        test<unordered_set<char>, char>('e', 'a', 'b', 'c', 'd');
+        test<multiset<int>, int>(14, 10, 11, 12, 13);
+        test<multiset<char>, char>('e', 'a', 'b', 'c', 'd');
     }
 }
