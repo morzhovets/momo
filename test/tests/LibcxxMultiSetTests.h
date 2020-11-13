@@ -12,6 +12,10 @@ LIBCXX_TEST_BEGIN(clear)
 #include "libcxx/multiset/clear.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains)
+#include "libcxx/multiset/contains.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(count)
 #include "libcxx/multiset/count.pass.cpp"
 LIBCXX_TEST_END

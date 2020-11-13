@@ -220,6 +220,10 @@ LIBCXX_TEST_BEGIN(modifiers_try_emplace)
 #include "libcxx/map/map.modifiers/try.emplace.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_contains)
+#include "libcxx/map/map.ops/contains.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/map/map.ops/count.pass.cpp"
 LIBCXX_TEST_END

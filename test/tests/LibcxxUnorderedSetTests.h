@@ -24,6 +24,10 @@ LIBCXX_TEST_BEGIN(clear)
 #include "libcxx/unord.set/clear.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains)
+#include "libcxx/unord.set/contains.pass.cpp"
+LIBCXX_TEST_END
+
 #ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "libcxx/unord.set/contains.transparent.pass.cpp"

@@ -20,6 +20,10 @@
 //#include "libcxx/unord.multimap/bucket_size.pass.cpp"
 //LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains)
+#include "libcxx/unord.multimap/contains.pass.cpp"
+LIBCXX_TEST_END
+
 #ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "libcxx/unord.multimap/contains.transparent.pass.cpp"

@@ -20,6 +20,10 @@ LIBCXX_TEST_BEGIN(bucket_size)
 #include "libcxx/unord.map/bucket_size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains)
+#include "libcxx/unord.map/contains.pass.cpp"
+LIBCXX_TEST_END
+
 #ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "libcxx/unord.map/contains.transparent.pass.cpp"

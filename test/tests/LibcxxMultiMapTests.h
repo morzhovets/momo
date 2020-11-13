@@ -200,6 +200,10 @@ LIBCXX_TEST_BEGIN(modifiers_merge)
 #include "libcxx/multimap/multimap.modifiers/merge.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_contains)
+#include "libcxx/multimap/multimap.ops/contains.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/multimap/multimap.ops/count.pass.cpp"
 LIBCXX_TEST_END
