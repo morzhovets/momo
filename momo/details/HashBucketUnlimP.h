@@ -123,8 +123,6 @@ namespace internal
 
 		void Clear(Params& params) noexcept
 		{
-			Bounds bounds = GetBounds(params);
-			ItemTraits::Destroy(params.GetMemManager(), bounds.GetBegin(), bounds.GetCount());
 			mArrayBucket.Clear(params);
 		}
 

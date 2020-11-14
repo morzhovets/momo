@@ -132,10 +132,8 @@ namespace internal
 			pvUpdateMaxProbe(probe);
 		}
 
-		void Clear(Params& params) noexcept
+		void Clear(Params& /*params*/) noexcept
 		{
-			size_t count = pvGetCount();
-			ItemTraits::Destroy(params.GetMemManager(), &mItems[0] + maxCount - count, count);
 			pvSetEmpty();
 		}
 

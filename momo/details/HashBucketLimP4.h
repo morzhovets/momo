@@ -282,10 +282,7 @@ namespace internal
 		{
 			Item* items = mPtrState.GetPointer();
 			if (items != nullptr)
-			{
-				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				pvDeallocate(params, pvGetMemPoolIndex(), items);
-			}
 			pvSetEmpty(minMemPoolIndex);
 		}
 

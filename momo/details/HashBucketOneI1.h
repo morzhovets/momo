@@ -76,10 +76,8 @@ namespace internal
 			return mState != HashBucketOneState::empty;
 		}
 
-		void Clear(Params& params) noexcept
+		void Clear(Params& /*params*/) noexcept
 		{
-			if (IsFull())
-				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
 			mState = HashBucketOneState::empty;
 		}
 

@@ -414,12 +414,6 @@ namespace internal
 		static const size_t alignment = HashSetItemTraits::alignment;
 
 	public:
-		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
-		{
-			for (size_t i = 0; i < count; ++i)
-				HashSetItemTraits::Destroy(&memManager, items[i]);
-		}
-
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
@@ -707,10 +701,8 @@ public:
 		}
 		else
 		{
+			pvClear(*mBuckets);
 			pvDestroy(mBuckets->ExtractNextBuckets(), false);
-			BucketParams& bucketParams = mBuckets->GetBucketParams();
-			for (Bucket& bucket : *mBuckets)
-				bucket.Clear(bucketParams);
 		}
 		mCount = 0;
 		mCrew.IncVersion();
@@ -991,11 +983,21 @@ private:
 	{
 		if (buckets == nullptr)
 			return;
-		BucketParams& bucketParams = buckets->GetBucketParams();
-		for (Bucket& bucket : *buckets)
-			bucket.Clear(bucketParams);
+		pvClear(*buckets);
 		pvDestroy(buckets->ExtractNextBuckets(), false);
 		buckets->Destroy(GetMemManager(), destroyBucketParams);
+	}
+
+	void pvClear(Buckets& buckets) noexcept
+	{
+		MemManager& memManager = GetMemManager();
+		BucketParams& bucketParams = buckets.GetBucketParams();
+		for (Bucket& bucket : buckets)
+		{
+			for (Item& item : bucket.GetBounds(bucketParams))
+				ItemTraits::Destroy(&memManager, item);
+			bucket.Clear(bucketParams);
+		}
 	}
 
 	size_t pvGetNewLogBucketCount() const

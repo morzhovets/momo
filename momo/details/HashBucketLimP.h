@@ -149,10 +149,7 @@ namespace internal
 		void Clear(Params& params) noexcept
 		{
 			if (!pvIsEmpty())
-			{
-				ItemTraits::Destroy(params.GetMemManager(), pvGetItems(), pvGetCount());
 				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(pvGetPtr());
-			}
 			mPtr = ptrNull;
 		}
 
@@ -406,12 +403,7 @@ namespace internal
 		void Clear(Params& params) noexcept
 		{
 			if (!pvIsEmpty())
-			{
-				Bounds bounds = pvGetBounds();
-				Item* items = bounds.GetBegin();
-				ItemTraits::Destroy(params.GetMemManager(), items, bounds.GetCount());
-				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
-			}
+				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(pvGetBounds().GetBegin());
 			mPtrState = stateNull;
 		}
 

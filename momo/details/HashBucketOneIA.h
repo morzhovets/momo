@@ -83,10 +83,8 @@ namespace internal
 			return mHashState != HashState{0};
 		}
 
-		void Clear(Params& params) noexcept
+		void Clear(Params& /*params*/) noexcept
 		{
-			if (IsFull())
-				ItemTraits::Destroy(params.GetMemManager(), &mItemBuffer, 1);
 			mHashState = HashState{0};
 		}
 

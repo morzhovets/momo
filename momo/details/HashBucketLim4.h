@@ -159,11 +159,8 @@ namespace internal
 		{
 			if (!pvIsEmpty())
 			{
-				Data data = pvGetData();
-				uint32_t ptr = data.pointer;
+				uint32_t ptr = pvGetData().pointer;
 				MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
-				Item* items = memPool.template GetRealPointer<Item>(ptr);
-				ItemTraits::Destroy(params.GetMemManager(), items, data.count);
 				memPool.Deallocate(ptr);
 			}
 			mPtrState = stateNull;

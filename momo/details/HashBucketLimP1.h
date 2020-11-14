@@ -138,10 +138,7 @@ namespace internal
 		{
 			Item* items = pvGetItems();
 			if (items != nullptr)
-			{
-				ItemTraits::Destroy(params.GetMemManager(), items, pvGetCount());
 				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
-			}
 			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
 		}
 
