@@ -103,27 +103,31 @@ namespace internal
 			NestedArraySettings<ArraySettings>> Array;
 
 		static const size_t arrayAlignment = alignof(Array);
+		typedef MemPoolParamsStatic<sizeof(Array) + arrayAlignment, arrayAlignment,
+			MemPoolParams::blockCount, 0> ArrayMemPoolParams;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
+		typedef MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> FastMemPool;
+		typedef MemPool<ArrayMemPoolParams, MemManagerPtr,
+			NestedMemPoolSettings> ArrayMemPool;
 
-		typedef BucketMemory<MemPool, uint8_t*> Memory;
+		typedef BucketMemory<FastMemPool, uint8_t*> FastMemory;
+		typedef BucketMemory<ArrayMemPool, uint8_t*> ArrayMemory;
 
 	public:
 		class Params
 		{
 		private:
-			typedef NestedArrayIntCap<maxFastCount, MemPool, MemManagerDummy> MemPools;
+			typedef NestedArrayIntCap<maxFastCount, FastMemPool, MemManagerDummy> FastMemPools;
 
 		public:
 			explicit Params(MemManager& memManager)
-				: mArrayMemPool(MemPoolParams(sizeof(Array) + arrayAlignment, arrayAlignment),
-					MemManagerPtr(memManager))
+				: mArrayMemPool(MemManagerPtr(memManager))
 			{
 				for (size_t i = 1; i <= maxFastCount; ++i)
 				{
 					size_t blockSize = i * sizeof(Item) + ItemTraits::alignment;
 					mFastMemPools.AddBackNogrow(
-						MemPool(MemPoolParams(blockSize, ItemTraits::alignment),
+						FastMemPool(MemPoolParams(blockSize, ItemTraits::alignment),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -139,20 +143,20 @@ namespace internal
 				return mArrayMemPool.GetMemManager().GetBaseMemManager();
 			}
 
-			MemPool& GetFastMemPool(size_t memPoolIndex) noexcept
+			FastMemPool& GetFastMemPool(size_t memPoolIndex) noexcept
 			{
 				MOMO_ASSERT(memPoolIndex > 0);
 				return mFastMemPools[memPoolIndex - 1];
 			}
 
-			MemPool& GetArrayMemPool() noexcept
+			ArrayMemPool& GetArrayMemPool() noexcept
 			{
 				return mArrayMemPool;
 			}
 
 		private:
-			MemPools mFastMemPools;
-			MemPool mArrayMemPool;
+			FastMemPools mFastMemPools;
+			ArrayMemPool mArrayMemPool;
 		};
 
 	public:
@@ -181,7 +185,7 @@ namespace internal
 			else if (count <= maxFastCount)
 			{
 				size_t memPoolIndex = pvGetFastMemPoolIndex(count);
-				Memory memory(params.GetFastMemPool(memPoolIndex));
+				FastMemory memory(params.GetFastMemPool(memPoolIndex));
 				Item* items = pvGetFastItems(memory.GetPointer());
 				size_t index = 0;
 				try
@@ -198,7 +202,7 @@ namespace internal
 			}
 			else
 			{
-				Memory memory(params.GetArrayMemPool());
+				ArrayMemory memory(params.GetArrayMemPool());
 				::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
 					Array(bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
 				pvSet(memory.Extract(), uint8_t{0});
@@ -258,7 +262,7 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
-				Memory memory(params.GetFastMemPool(newMemPoolIndex));
+				FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
 				std::forward<ItemCreator>(itemCreator)(pvGetFastItems(memory.GetPointer()));
 				pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 			}
@@ -276,7 +280,7 @@ namespace internal
 						if (newCount <= maxFastCount)
 						{
 							size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
-							Memory memory(params.GetFastMemPool(newMemPoolIndex));
+							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
 							Item* newItems = pvGetFastItems(memory.GetPointer());
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::forward<ItemCreator>(itemCreator), newItems + count);
@@ -285,8 +289,8 @@ namespace internal
 						}
 						else
 						{
-							MemPool& arrayMemPool = params.GetArrayMemPool();
-							Memory memory(arrayMemPool);
+							ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
+							ArrayMemory memory(arrayMemPool);
 							Array array = Array::CreateCap(maxFastCount * 2,
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							Item* newItems = array.GetItems();
@@ -327,7 +331,7 @@ namespace internal
 			{
 				Array& array = pvGetArray();
 				array.RemoveBack();
-				if (2 < count && count < array.GetCapacity() / 4)
+				if (2 < count && count <= array.GetCapacity() / 4)
 				{
 					try
 					{
