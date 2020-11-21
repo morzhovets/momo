@@ -64,31 +64,34 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
+		static const size_t internalOffset = UIntMath<>::Ceil(sizeof(Node*) * (maxCapacity + 1),
+			UIntConst::maxAlignment);
+
+		static const size_t internalNodeSize = sizeof(Node*) + 2 + (isContinuous ? 0 : maxCapacity)
+			+ sizeof(Item) * maxCapacity + internalOffset;
+		typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
+			MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
+
+		typedef MemPool<InternalMemPoolParams, MemManagerPtr, NestedMemPoolSettings> InternalMemPool;
+		typedef MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> LeafMemPool;
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
-
-		static const size_t internalOffset = UIntConst::maxAlignment
-			* ((sizeof(void*) * (maxCapacity + 1) - 1) / UIntConst::maxAlignment + 1);
 
 	public:
 		class Params
 		{
 		private:
-			typedef NestedArrayIntCap<leafMemPoolCount, MemPool, MemManagerDummy> LeafMemPools;
-
-			static const size_t internalNodeSize =
-				sizeof(Node) + sizeof(Item) * (maxCapacity - 1) + internalOffset;
+			typedef NestedArrayIntCap<leafMemPoolCount, LeafMemPool, MemManagerDummy> LeafMemPools;
 
 		public:
 			explicit Params(MemManager& memManager)
-				: mInternalMemPool(MemPoolParams(internalNodeSize), MemManagerPtr(memManager))
+				: mInternalMemPool(MemManagerPtr(memManager))
 			{
 				for (size_t i = 0; i < leafMemPoolCount; ++i)
 				{
 					size_t capacity = maxCapacity - i * capacityStep;
 					size_t leafNodeSize = sizeof(Node) + sizeof(Item) * (capacity - 1);
-					mLeafMemPools.AddBackNogrow(MemPool(MemPoolParams(leafNodeSize),
+					mLeafMemPools.AddBackNogrow(LeafMemPool(MemPoolParams(leafNodeSize),
 						MemManagerPtr(memManager)));
 				}
 			}
@@ -104,12 +107,12 @@ namespace internal
 				return mInternalMemPool.GetMemManager().GetBaseMemManager();
 			}
 
-			MemPool& GetInternalMemPool() noexcept
+			InternalMemPool& GetInternalMemPool() noexcept
 			{
 				return mInternalMemPool;
 			}
 
-			MemPool& GetLeafMemPool(size_t leafMemPoolIndex) noexcept
+			LeafMemPool& GetLeafMemPool(size_t leafMemPoolIndex) noexcept
 			{
 				return mLeafMemPools[leafMemPoolIndex];
 			}
@@ -122,7 +125,7 @@ namespace internal
 			}
 
 		private:
-			MemPool mInternalMemPool;
+			InternalMemPool mInternalMemPool;
 			LeafMemPools mLeafMemPools;
 		};
 
