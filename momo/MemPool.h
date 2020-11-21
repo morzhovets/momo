@@ -36,6 +36,14 @@ public:
 		return (maxAlignment > blockSize && maxAlignment > 1)
 			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
 	}
+
+	static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment,
+		size_t blockCount) noexcept
+	{
+		return (blockCount == 1) ? std::minmax(blockSize, size_t{1}).second
+			: ((blockSize <= blockAlignment) ? 2 * blockAlignment
+				: internal::UIntMath<>::Ceil(blockSize, blockAlignment));
+	}
 };
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
@@ -50,40 +58,20 @@ public:
 
 public:
 	explicit MemPoolParams(size_t blockSize) noexcept
-		: blockSize(blockSize),
-		blockAlignment(internal::UIntConst::maxAlignment)
+		: MemPoolParams(blockSize, MemPoolConst::GetBlockAlignment(blockSize))
 	{
-		while (blockAlignment > blockSize && blockAlignment > 1)
-			blockAlignment /= 2;
-		pvCorrectBlockSize();
 	}
 
 	explicit MemPoolParams(size_t blockSize, size_t blockAlignment) noexcept
-		: blockSize(blockSize),
-		blockAlignment(blockAlignment)
 	{
 		MOMO_ASSERT(blockAlignment > 0);
-		pvCorrectBlockSize();
+		this->blockSize = MemPoolConst::CorrectBlockSize(blockSize, blockAlignment, blockCount);
+		this->blockAlignment = blockAlignment;
 	}
 
 	bool IsEqual(const MemPoolParams& params) const noexcept
 	{
 		return blockSize == params.blockSize && blockAlignment == params.blockAlignment;
-	}
-
-private:
-	void pvCorrectBlockSize() noexcept
-	{
-		if (blockCount == 1)
-		{
-			if (blockSize == 0)
-				blockSize = 1;
-		}
-		else
-		{
-			blockSize = (blockSize <= blockAlignment) ? 2 * blockAlignment
-				: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
-		}
 	}
 
 protected:
@@ -104,10 +92,8 @@ public:
 	static const size_t blockAlignment = tBlockAlignment;
 	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
 
-	static const size_t blockSize = (blockCount == 1)
-		? ((tBlockSize > 0) ? tBlockSize : 1)
-		: ((tBlockSize <= blockAlignment) ? 2 * blockAlignment
-			: internal::UIntMath<>::Ceil(tBlockSize, blockAlignment));
+	static const size_t blockSize = MemPoolConst::CorrectBlockSize(tBlockSize,
+		blockAlignment, blockCount);
 
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
