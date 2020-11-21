@@ -84,8 +84,6 @@
 			(std::forward<Args>(args)...); \
 	}
 
-MOMO_STATIC_ASSERT(MOMO_MAX_ALIGNMENT > 0 && (MOMO_MAX_ALIGNMENT & (MOMO_MAX_ALIGNMENT - 1)) == 0);
-
 namespace momo
 {
 
@@ -256,6 +254,11 @@ namespace internal
 		};
 
 	public:
+		static constexpr bool HasSingleBit(UInt value) noexcept
+		{
+			return value != 0 && (value & (value - 1)) == 0;
+		}
+
 		static constexpr UInt Ceil(UInt value, UInt mod) noexcept
 		{
 			return ((value + mod - 1) / mod) * mod;
@@ -360,6 +363,8 @@ namespace internal
 			return tab64[(value * UInt{0x07EDD5E59A4E28C2}) >> 58];
 		}
 	};
+
+	MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(size_t{MOMO_MAX_ALIGNMENT}));
 }
 
 } // namespace momo

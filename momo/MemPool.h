@@ -166,9 +166,6 @@ private:
 
 	static const uintptr_t nullPtr = internal::UIntPtrConst::null;
 
-	static const size_t maxAlignment = alignof(std::max_align_t);
-	MOMO_STATIC_ASSERT((maxAlignment & (maxAlignment - 1)) == 0);
-
 public:
 	explicit MemPool()	// vs clang
 		: MemPool(MemManager())
@@ -273,7 +270,7 @@ public:
 		{
 			if (Params::blockCount > 1)
 				pblock = internal::PtrCaster::FromUInt(pvNewBlock());
-			else if (maxAlignment % Params::blockAlignment == 0)
+			else if (pvGetAlignmentAddend() == 0)
 				pblock = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
 			else
 				pblock = internal::PtrCaster::FromUInt(pvNewBlock1());
@@ -364,10 +361,22 @@ private:
 	{
 		if (Params::blockCount > 1)
 			pvDeleteBlock(internal::PtrCaster::ToUInt(pblock));
-		else if (maxAlignment % Params::blockAlignment == 0)
+		else if (pvGetAlignmentAddend() == 0)
 			MemManagerProxy::Deallocate(GetMemManager(), pblock, pvGetBufferSize0());
 		else
 			pvDeleteBlock1(internal::PtrCaster::ToUInt(pblock));
+	}
+
+	size_t pvGetAlignmentAddend() const noexcept
+	{
+		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		MOMO_STATIC_ASSERT(SMath::HasSingleBit(maxAllocAlignment));
+		size_t addend = Params::blockAlignment;
+		if (SMath::HasSingleBit(Params::blockAlignment))
+			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{Params::blockAlignment}).first;
+		else
+			addend -= SMath::GCD(maxAllocAlignment, Params::blockAlignment);
+		return addend;
 	}
 
 	size_t pvGetBufferSize0() const noexcept
@@ -393,8 +402,7 @@ private:
 
 	size_t pvGetBufferSize1() const noexcept
 	{
-		size_t bufferUsefulSize = Params::blockSize + Params::blockAlignment
-			- SMath::GCD(maxAlignment, Params::blockAlignment);
+		size_t bufferUsefulSize = Params::blockSize + pvGetAlignmentAddend();
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
 	}
 
@@ -521,12 +529,8 @@ private:
 
 	size_t pvGetBufferSize() const noexcept
 	{
-		size_t bufferUsefulSize = Params::blockCount * Params::blockSize
-			+ (3 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
-		if ((Params::blockAlignment & (Params::blockAlignment - 1)) == 0)
-			bufferUsefulSize -= std::minmax(size_t{maxAlignment}, size_t{Params::blockAlignment}).first;
-		else
-			bufferUsefulSize -= SMath::GCD(maxAlignment, Params::blockAlignment);
+		size_t bufferUsefulSize = Params::blockCount * Params::blockSize + pvGetAlignmentAddend()
+			+ (2 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
 			+ ((Params::blockAlignment <= 2) ? 2 : 0);
 	}

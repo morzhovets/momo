@@ -135,8 +135,7 @@ namespace internal
 
 		static const size_t alignment = tAlignment;
 
-		MOMO_STATIC_ASSERT(alignment > 0 && ((alignment - 1) & alignment) == 0
-			&& sizeof(Object) % alignment == 0);
+		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(alignment) && sizeof(Object) % alignment == 0);
 
 	public:
 		const Object* operator&() const noexcept
