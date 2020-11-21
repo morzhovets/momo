@@ -101,8 +101,8 @@ namespace internal
 	template<typename Object>
 	struct AlignmentOf
 	{
-		static const size_t value = (alignof(Object) < MOMO_MAX_ALIGNMENT)
-			? alignof(Object) : MOMO_MAX_ALIGNMENT;
+		static const size_t value = (alignof(Object) < UIntConst::maxAlignment)
+			? alignof(Object) : UIntConst::maxAlignment;
 	};
 
 	template<typename Object,

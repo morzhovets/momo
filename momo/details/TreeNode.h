@@ -68,8 +68,8 @@ namespace internal
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
-		static const size_t internalOffset = MOMO_MAX_ALIGNMENT
-			* ((sizeof(void*) * (maxCapacity + 1) - 1) / MOMO_MAX_ALIGNMENT + 1);
+		static const size_t internalOffset = UIntConst::maxAlignment
+			* ((sizeof(void*) * (maxCapacity + 1) - 1) / UIntConst::maxAlignment + 1);
 
 	public:
 		class Params

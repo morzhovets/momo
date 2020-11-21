@@ -35,7 +35,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 32;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -71,7 +71,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 48;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -110,7 +110,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 64;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntPtrConst::null) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept

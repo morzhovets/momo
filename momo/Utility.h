@@ -134,13 +134,6 @@ namespace internal
 		typedef uint64_t UInt;
 	};
 
-	struct UIntPtrConst
-	{
-		static const uintptr_t null = MOMO_NULL_UINTPTR;
-		static const uintptr_t invalid = MOMO_INVALID_UINTPTR;
-		MOMO_STATIC_ASSERT(null != invalid);
-	};
-
 	template<typename Iterator>
 	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
 		typename std::iterator_traits<Iterator>::iterator_category>;
@@ -364,7 +357,15 @@ namespace internal
 		}
 	};
 
-	MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(size_t{MOMO_MAX_ALIGNMENT}));
+	struct UIntConst
+	{
+		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
+		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
+		MOMO_STATIC_ASSERT(nullPtr != invalidPtr);
+
+		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
+		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(maxAlignment));
+	};
 }
 
 } // namespace momo

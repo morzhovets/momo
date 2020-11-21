@@ -31,7 +31,7 @@ public:
 
 public:
 	static constexpr size_t GetBlockAlignment(size_t blockSize,
-		size_t maxAlignment = MOMO_MAX_ALIGNMENT) noexcept
+		size_t maxAlignment = internal::UIntConst::maxAlignment) noexcept
 	{
 		return (maxAlignment > blockSize && maxAlignment > 1)
 			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
@@ -51,7 +51,7 @@ public:
 public:
 	explicit MemPoolParams(size_t blockSize) noexcept
 		: blockSize(blockSize),
-		blockAlignment(MOMO_MAX_ALIGNMENT)
+		blockAlignment(internal::UIntConst::maxAlignment)
 	{
 		while (blockAlignment > blockSize && blockAlignment > 1)
 			blockAlignment /= 2;
@@ -164,7 +164,7 @@ private:
 		uintptr_t begin;
 	};
 
-	static const uintptr_t nullPtr = internal::UIntPtrConst::null;
+	static const uintptr_t nullPtr = internal::UIntConst::nullPtr;
 
 public:
 	explicit MemPool()	// vs clang
