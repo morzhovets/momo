@@ -213,8 +213,7 @@ namespace internal
 	private:
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept
 		{
-			//*&mItemPtrBuffer = items;
-			std::memcpy(&mItemPtrBuffer, &items, sizeof(Item*));
+			PtrCaster::ToBuffer(items, mItemPtrBuffer);
 			mState = static_cast<uint8_t>((memPoolIndex << 4) | count);
 		}
 
@@ -238,10 +237,7 @@ namespace internal
 
 		Item* pvGetItems() const noexcept
 		{
-			//return *&mItemPtrBuffer;
-			Item* result = nullptr;
-			std::memcpy(&result, &mItemPtrBuffer, sizeof(Item*));
-			return result;
+			return PtrCaster::template FromBuffer<Item>(mItemPtrBuffer);
 		}
 
 	private:

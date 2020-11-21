@@ -93,7 +93,7 @@ namespace internal
 			while (true)
 			{
 				void* headRaw = *mFreeRaws;
-				*static_cast<void**>(raw) = headRaw;	//?
+				PtrCaster::ToBuffer(headRaw, raw);
 				if (mFreeRaws->compare_exchange_weak(headRaw, raw))
 					break;
 			}

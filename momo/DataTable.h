@@ -848,9 +848,7 @@ private:
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
-		size_t alignment = std::minmax(columnList.GetAlignment(),
-			size_t{internal::AlignmentOf<void*>::value}).second;
-		return RawMemPool(typename RawMemPool::Params(size, alignment),
+		return RawMemPool(typename RawMemPool::Params(size, columnList.GetAlignment()),
 			MemManagerPtr(GetMemManager()));
 	}
 
@@ -955,7 +953,7 @@ private:
 		void* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
 		{
-			void* nextRaw = *static_cast<void**>(headRaw);	//?
+			void* nextRaw = internal::PtrCaster::FromBuffer(headRaw);
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}
