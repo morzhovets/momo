@@ -40,7 +40,7 @@ public:
 	static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment,
 		size_t blockCount) noexcept
 	{
-		return (blockCount == 1) ? std::minmax(blockSize, size_t{1}).second
+		return (blockCount == 1) ? ((blockSize > 0) ? blockSize : 1)
 			: ((blockSize <= blockAlignment) ? 2 * blockAlignment
 				: internal::UIntMath<>::Ceil(blockSize, blockAlignment));
 	}
