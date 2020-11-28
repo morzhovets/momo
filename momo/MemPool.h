@@ -118,7 +118,7 @@ public:
 template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private TParams
+class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
 	typedef TParams Params;
@@ -130,8 +130,7 @@ public:
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
-	typedef internal::NestedArrayIntCap<1, void*, MemManager> CachedFreeBlocks;
+	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
 	typedef internal::UIntMath<size_t> SMath;
 	typedef internal::UIntMath<uintptr_t> PMath;
@@ -164,24 +163,27 @@ public:
 
 	explicit MemPool(const Params& params, MemManager memManager = MemManager())
 		: Params(params),
+		MemManagerWrapper(std::move(memManager)),
 		mBufferHead(nullPtr),
 		mAllocCount(0),
-		mCachedFreeBlockCount(0),
-		mCachedFreeBlocks(1, nullptr, std::move(memManager))
+		mCachedCount(0),
+		mCacheHead(nullptr)
 	{
 		pvCheckParams();
 	}
 
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
+		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
 		mBufferHead(memPool.mBufferHead),
 		mAllocCount(memPool.mAllocCount),
-		mCachedFreeBlockCount(memPool.mCachedFreeBlockCount),
-		mCachedFreeBlocks(std::move(memPool.mCachedFreeBlocks))
+		mCachedCount(memPool.mCachedCount),
+		mCacheHead(memPool.mCacheHead)
 	{
 		memPool.mBufferHead = nullPtr;
 		memPool.mAllocCount = 0;
-		memPool.mCachedFreeBlockCount = 0;
+		memPool.mCachedCount = 0;
+		memPool.mCacheHead = nullptr;
 	}
 
 	MemPool(const MemPool&) = delete;
@@ -205,10 +207,11 @@ public:
 	void Swap(MemPool& memPool) noexcept
 	{
 		std::swap(pvGetParams(), memPool.pvGetParams());
+		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
 		std::swap(mBufferHead, memPool.mBufferHead);
 		std::swap(mAllocCount, memPool.mAllocCount);
-		std::swap(mCachedFreeBlockCount, memPool.mCachedFreeBlockCount);
-		mCachedFreeBlocks.Swap(memPool.mCachedFreeBlocks);
+		std::swap(mCachedCount, memPool.mCachedCount);
+		std::swap(mCacheHead, memPool.mCacheHead);
 	}
 
 	MOMO_FRIEND_SWAP(MemPool)
@@ -235,23 +238,23 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mCachedFreeBlocks.GetMemManager();
+		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mCachedFreeBlocks.GetMemManager();
+		return pvGetMemManagerWrapper().GetMemManager();
 	}
 
 	template<typename ResObject = void>
 	MOMO_NODISCARD ResObject* Allocate()
 	{
 		void* pblock;
-		if (pvUseCache() && mCachedFreeBlockCount > 0)
+		if (pvUseCache() && mCachedCount > 0)
 		{
-			pblock = mCachedFreeBlocks[0];
-			mCachedFreeBlocks[0] = internal::PtrCaster::FromBuffer(pblock);
-			--mCachedFreeBlockCount;
+			pblock = mCacheHead;
+			mCacheHead = internal::PtrCaster::FromBuffer(pblock);
+			--mCachedCount;
 		}
 		else
 		{
@@ -272,11 +275,11 @@ public:
 		MOMO_ASSERT(mAllocCount > 0);
 		if (pvUseCache())
 		{
-			internal::PtrCaster::ToBuffer(mCachedFreeBlocks[0], pblock);
-			mCachedFreeBlocks[0] = pblock;
-			++mCachedFreeBlockCount;
-			if (mCachedFreeBlockCount > Params::cachedFreeBlockCount)
+			if (mCachedCount >= Params::cachedFreeBlockCount)
 				pvFlushDeallocate();
+			internal::PtrCaster::ToBuffer(mCacheHead, pblock);
+			mCacheHead = pblock;
+			++mCachedCount;
 		}
 		else
 		{
@@ -296,7 +299,7 @@ public:
 			return;
 		MOMO_CHECK(MemManagerProxy::IsEqual(GetMemManager(), memPool.GetMemManager()));
 		MOMO_CHECK(static_cast<const Params&>(*this).IsEqual(memPool));
-		if (pvUseCache())
+		if (memPool.pvUseCache())
 			memPool.pvFlushDeallocate();
 		mAllocCount += memPool.mAllocCount;
 		memPool.mAllocCount = 0;
@@ -326,6 +329,16 @@ private:
 		return *this;
 	}
 
+	const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
+	{
+		return *this;
+	}
+
+	MemManagerWrapper& pvGetMemManagerWrapper() noexcept
+	{
+		return *this;
+	}
+
 	void pvCheckParams() const
 	{
 		MOMO_CHECK(0 < Params::blockCount && Params::blockCount < 128);
@@ -346,12 +359,12 @@ private:
 
 	MOMO_NOINLINE void pvFlushDeallocate() noexcept
 	{
-		while (mCachedFreeBlockCount > 0)
+		while (mCachedCount > 0)
 		{
-			void* pblock = mCachedFreeBlocks[0];
-			mCachedFreeBlocks[0] = internal::PtrCaster::FromBuffer(pblock);
+			void* pblock = mCacheHead;
+			mCacheHead = internal::PtrCaster::FromBuffer(pblock);
 			pvDeleteBlock(pblock);
-			--mCachedFreeBlockCount;
+			--mCachedCount;
 		}
 	}
 
@@ -563,8 +576,8 @@ private:
 private:
 	uintptr_t mBufferHead;
 	size_t mAllocCount;
-	size_t mCachedFreeBlockCount;
-	CachedFreeBlocks mCachedFreeBlocks;
+	size_t mCachedCount;
+	void* mCacheHead;
 };
 
 namespace internal
