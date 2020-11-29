@@ -293,6 +293,33 @@ public:
 		return mAllocCount;
 	}
 
+	bool CanDeallocateAll() const noexcept
+	{
+		return Params::blockCount > 1;
+	}
+
+	void DeallocateAll() noexcept
+	{
+		MOMO_EXTRA_CHECK(CanDeallocateAll());
+		if (mFreeBufferHead == nullPtr)
+			return;
+		while (true)
+		{
+			BufferPointers& pointers = pvGetBufferPointers(mFreeBufferHead);
+			if (pointers.prevBuffer != nullPtr)
+				pvDeleteBuffer(pointers.prevBuffer);
+			else if (pointers.nextBuffer != nullPtr)
+				pvDeleteBuffer(pointers.nextBuffer);
+			else
+				break;
+		}
+		pvDeleteBuffer(mFreeBufferHead);
+		mFreeBufferHead = nullPtr;
+		mAllocCount = 0;
+		mCachedCount = 0;
+		mCacheHead = nullptr;
+	}
+
 	void MergeFrom(MemPool& memPool)
 	{
 		if (this == &memPool)
