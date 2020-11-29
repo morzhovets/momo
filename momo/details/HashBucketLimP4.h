@@ -217,6 +217,10 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			void Clear() noexcept
+			{
+			}
+
 			MemManager& GetMemManager() noexcept
 			{
 				return std::get<0>(mMemPools).GetMemManager().GetBaseMemManager();

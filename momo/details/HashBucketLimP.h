@@ -78,6 +78,10 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			void Clear() noexcept
+			{
+			}
+
 			MemManager& GetMemManager() noexcept
 			{
 				return mMemPools[0].GetMemManager().GetBaseMemManager();
@@ -333,6 +337,10 @@ namespace internal
 			~Params() = default;
 
 			Params& operator=(const Params&) = delete;
+
+			void Clear() noexcept
+			{
+			}
 
 			MemManager& GetMemManager() noexcept
 			{

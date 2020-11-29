@@ -87,6 +87,7 @@ namespace internal
 				buckets[i].~Bucket();
 			if (destroyBucketParams)
 			{
+				mBucketParams->Clear();
 				mBucketParams->~BucketParams();
 				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
 			}
@@ -703,6 +704,7 @@ public:
 		{
 			pvClear(*mBuckets);
 			pvDestroy(mBuckets->ExtractNextBuckets(), false);
+			mBuckets->GetBucketParams().Clear();
 		}
 		mCount = 0;
 		mCrew.IncVersion();

@@ -81,6 +81,10 @@ namespace internal
 
 		BucketParamsOpen& operator=(const BucketParamsOpen&) = delete;
 
+		void Clear() noexcept
+		{
+		}
+
 		MemManager& GetMemManager() noexcept
 		{
 			return mMemManager;
