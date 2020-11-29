@@ -164,7 +164,7 @@ public:
 	explicit MemPool(const Params& params, MemManager memManager = MemManager())
 		: Params(params),
 		MemManagerWrapper(std::move(memManager)),
-		mBufferHead(nullPtr),
+		mFreeBufferHead(nullPtr),
 		mAllocCount(0),
 		mCachedCount(0),
 		mCacheHead(nullptr)
@@ -175,12 +175,12 @@ public:
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
 		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
-		mBufferHead(memPool.mBufferHead),
+		mFreeBufferHead(memPool.mFreeBufferHead),
 		mAllocCount(memPool.mAllocCount),
 		mCachedCount(memPool.mCachedCount),
 		mCacheHead(memPool.mCacheHead)
 	{
-		memPool.mBufferHead = nullPtr;
+		memPool.mFreeBufferHead = nullPtr;
 		memPool.mAllocCount = 0;
 		memPool.mCachedCount = 0;
 		memPool.mCacheHead = nullptr;
@@ -193,7 +193,7 @@ public:
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
 		if (pvUseCache())
 			pvFlushDeallocate();
-		MOMO_EXTRA_CHECK(mBufferHead == nullPtr);
+		MOMO_EXTRA_CHECK(mFreeBufferHead == nullPtr);
 	}
 
 	MemPool& operator=(MemPool&& memPool) noexcept
@@ -208,7 +208,7 @@ public:
 	{
 		std::swap(pvGetParams(), memPool.pvGetParams());
 		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
-		std::swap(mBufferHead, memPool.mBufferHead);
+		std::swap(mFreeBufferHead, memPool.mFreeBufferHead);
 		std::swap(mAllocCount, memPool.mAllocCount);
 		std::swap(mCachedCount, memPool.mCachedCount);
 		std::swap(mCacheHead, memPool.mCacheHead);
@@ -238,7 +238,7 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return pvGetMemManagerWrapper().GetMemManager();
+		return static_cast<const MemManagerWrapper&>(*this).GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
@@ -303,14 +303,30 @@ public:
 			memPool.pvFlushDeallocate();
 		mAllocCount += memPool.mAllocCount;
 		memPool.mAllocCount = 0;
-		if (memPool.mBufferHead == nullPtr)
+		if (memPool.mFreeBufferHead == nullPtr)
 			return;
-		if (mBufferHead == nullPtr)
+		if (mFreeBufferHead == nullPtr)
 		{
-			std::swap(mBufferHead, memPool.mBufferHead);
+			mFreeBufferHead = memPool.mFreeBufferHead;
+			memPool.mFreeBufferHead = nullPtr;
 			return;
 		}
-		uintptr_t buffer = mBufferHead;
+		while (true)
+		{
+			uintptr_t buffer = pvGetBufferPointers(memPool.mFreeBufferHead).prevBuffer;
+			if (buffer == nullPtr)
+				break;
+			BufferPointers& pointers = pvGetBufferPointers(buffer);
+			if (pointers.prevBuffer != nullPtr)
+				pvGetBufferPointers(pointers.prevBuffer).nextBuffer = pointers.nextBuffer;
+			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
+			pointers.prevBuffer = pvGetBufferPointers(mFreeBufferHead).prevBuffer;
+			pointers.nextBuffer = mFreeBufferHead;
+			if (pointers.prevBuffer != nullPtr)
+				pvGetBufferPointers(pointers.prevBuffer).nextBuffer = buffer;
+			pvGetBufferPointers(mFreeBufferHead).prevBuffer = buffer;
+		}
+		uintptr_t buffer = mFreeBufferHead;
 		while (true)
 		{
 			BufferPointers& pointers = pvGetBufferPointers(buffer);
@@ -318,18 +334,13 @@ public:
 				break;
 			buffer = pointers.nextBuffer;
 		}
-		pvGetBufferPointers(buffer).nextBuffer = memPool.mBufferHead;
-		pvGetBufferPointers(memPool.mBufferHead).prevBuffer = buffer;
-		memPool.mBufferHead = nullPtr;
+		pvGetBufferPointers(buffer).nextBuffer = memPool.mFreeBufferHead;
+		pvGetBufferPointers(memPool.mFreeBufferHead).prevBuffer = buffer;
+		memPool.mFreeBufferHead = nullPtr;
 	}
 
 private:
 	Params& pvGetParams() noexcept
-	{
-		return *this;
-	}
-
-	const MemManagerWrapper& pvGetMemManagerWrapper() const noexcept
 	{
 		return *this;
 	}
@@ -425,14 +436,20 @@ private:
 
 	uintptr_t pvNewBlock()
 	{
-		if (mBufferHead == nullPtr)
-			mBufferHead = pvNewBuffer();
-		BufferBytes& bytes = pvGetBufferBytes(mBufferHead);
-		uintptr_t block = pvGetBlock(mBufferHead, bytes.firstFreeBlockIndex);
+		if (mFreeBufferHead == nullPtr)
+			mFreeBufferHead = pvNewBuffer();
+		BufferBytes& bytes = pvGetBufferBytes(mFreeBufferHead);
+		BufferPointers& pointers = pvGetBufferPointers(mFreeBufferHead);
+		if (bytes.freeBlockCount == int8_t{1} && pointers.nextBuffer == nullPtr)
+		{
+			pointers.nextBuffer = pvNewBuffer();
+			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = mFreeBufferHead;
+		}
+		uintptr_t block = pvGetBlock(mFreeBufferHead, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
 		--bytes.freeBlockCount;
 		if (bytes.freeBlockCount == int8_t{0})
-			pvRemoveBuffer(mBufferHead);
+			mFreeBufferHead = pointers.nextBuffer;
 		return block;
 	}
 
@@ -446,9 +463,20 @@ private:
 		++bytes.freeBlockCount;
 		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
 		if (freeBlockCount == 1)
-			pvAddBuffer(buffer);
+			pvMoveBuffer(buffer);
 		if (freeBlockCount == Params::blockCount)
-			pvDeleteBuffer(buffer);
+		{
+			bool del = true;
+			if (buffer == mFreeBufferHead)
+			{
+				BufferPointers& pointers = pvGetBufferPointers(buffer);
+				del = !(pointers.nextBuffer == nullPtr && pointers.prevBuffer != nullPtr);
+				if (del)
+					mFreeBufferHead = pointers.nextBuffer;
+			}
+			if (del)
+				pvDeleteBuffer(buffer);
+		}
 	}
 
 	int8_t& pvGetNextFreeBlockIndex(uintptr_t block) noexcept
@@ -509,33 +537,34 @@ private:
 		return buffer;
 	}
 
-	void pvAddBuffer(uintptr_t buffer) noexcept
-	{
-		BufferPointers& pointers = pvGetBufferPointers(buffer);
-		pointers.prevBuffer = nullPtr;
-		pointers.nextBuffer = mBufferHead;
-		if (mBufferHead != nullPtr)
-			pvGetBufferPointers(mBufferHead).prevBuffer = buffer;
-		mBufferHead = buffer;
-	}
-
 	MOMO_NOINLINE void pvDeleteBuffer(uintptr_t buffer) noexcept
-	{
-		pvRemoveBuffer(buffer);
-		uintptr_t begin = pvGetBufferPointers(buffer).begin;
-		MemManagerProxy::Deallocate(GetMemManager(),
-			internal::PtrCaster::FromUInt(begin), pvGetBufferSize());
-	}
-
-	void pvRemoveBuffer(uintptr_t buffer) noexcept
 	{
 		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		if (pointers.prevBuffer != nullPtr)
 			pvGetBufferPointers(pointers.prevBuffer).nextBuffer = pointers.nextBuffer;
 		if (pointers.nextBuffer != nullPtr)
 			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
-		if (mBufferHead == buffer)
-			mBufferHead = pointers.nextBuffer;
+		MemManagerProxy::Deallocate(GetMemManager(),
+			internal::PtrCaster::FromUInt(pointers.begin), pvGetBufferSize());
+	}
+
+	void pvMoveBuffer(uintptr_t buffer) noexcept	//?
+	{
+		BufferPointers& headPointers = pvGetBufferPointers(mFreeBufferHead);
+		MOMO_ASSERT(headPointers.prevBuffer != nullPtr);
+		if (buffer != headPointers.prevBuffer)
+		{
+			BufferPointers& pointers = pvGetBufferPointers(buffer);
+			MOMO_ASSERT(pointers.nextBuffer != nullPtr);
+			if (pointers.prevBuffer != nullPtr)
+				pvGetBufferPointers(pointers.prevBuffer).nextBuffer = pointers.nextBuffer;
+			pvGetBufferPointers(pointers.nextBuffer).prevBuffer = pointers.prevBuffer;
+			pointers.prevBuffer = headPointers.prevBuffer;
+			pointers.nextBuffer = mFreeBufferHead;
+			headPointers.prevBuffer = buffer;
+			pvGetBufferPointers(pointers.prevBuffer).nextBuffer = buffer;
+		}
+		mFreeBufferHead = buffer;
 	}
 
 	size_t pvGetBufferSize() const noexcept
@@ -574,7 +603,7 @@ private:
 	}
 
 private:
-	uintptr_t mBufferHead;
+	uintptr_t mFreeBufferHead;
 	size_t mAllocCount;
 	size_t mCachedCount;
 	void* mCacheHead;
