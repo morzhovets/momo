@@ -171,9 +171,7 @@ namespace internal
 
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
-			itemAlignment, MemPoolParams::blockCount,
-			(minMemPoolIndex <= memPoolIndex && memPoolIndex <= maxCount)
-				? MemPoolParams::cachedFreeBlockCount : 0>;
+			itemAlignment, MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount>;
 
 		template<size_t memPoolIndex>
 		using MemPool = momo::MemPool<MemPoolParamsStatic<memPoolIndex>, MemManagerPtr,
@@ -219,6 +217,10 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				pvClear<1>();
+				pvClear<2>();
+				pvClear<3>();
+				pvClear<4>();
 			}
 
 			MemManager& GetMemManager() noexcept
@@ -230,6 +232,15 @@ namespace internal
 			MemPool<memPoolIndex>& GetMemPool() noexcept
 			{
 				return std::get<memPoolIndex - 1>(mMemPools);
+			}
+
+		private:
+			template<size_t memPoolIndex>
+			void pvClear() noexcept
+			{
+				MemPool<memPoolIndex>& memPool = GetMemPool<memPoolIndex>();
+				if (memPool.CanDeallocateAll())
+					memPool.DeallocateAll();
 			}
 
 		private:
@@ -286,7 +297,7 @@ namespace internal
 		{
 			Item* items = mPtrState.GetPointer();
 			if (items != nullptr)
-				pvDeallocate(params, pvGetMemPoolIndex(), items);
+				pvDeallocate<true>(params, pvGetMemPoolIndex(), items);
 			pvSetEmpty(minMemPoolIndex);
 		}
 
@@ -351,7 +362,7 @@ namespace internal
 			{
 				MOMO_ASSERT(iter == items);
 				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
-				pvDeallocate(params, memPoolIndex, items);
+				pvDeallocate<false>(params, memPoolIndex, items);
 				if (memPoolIndex != maxCount)
 					memPoolIndex = minMemPoolIndex;
 				pvSetEmpty(memPoolIndex);
@@ -480,25 +491,34 @@ namespace internal
 			return newItems + count;
 		}
 
+		template<bool onClear>
 		void pvDeallocate(Params& params, size_t memPoolIndex, Item* items) noexcept
 		{
 			switch (memPoolIndex)
 			{
 			case 1:
-				params.template GetMemPool<1>().Deallocate(items);
+				pvDeallocate<onClear, 1>(params, items);
 				break;
 			case 2:
-				params.template GetMemPool<2>().Deallocate(items);
+				pvDeallocate<onClear, 2>(params, items);
 				break;
 			case 3:
-				params.template GetMemPool<3>().Deallocate(items);
+				pvDeallocate<onClear, 3>(params, items);
 				break;
 			case 4:
-				params.template GetMemPool<4>().Deallocate(items);
+				pvDeallocate<onClear, 4>(params, items);
 				break;
 			default:
 				MOMO_ASSERT(false);
 			}
+		}
+
+		template<bool onClear, size_t memPoolIndex>
+		void pvDeallocate(Params& params, Item* items) noexcept
+		{
+			MemPool<memPoolIndex>& memPool = params.template GetMemPool<memPoolIndex>();
+			if (!onClear || !memPool.CanDeallocateAll())
+				memPool.Deallocate(items);
 		}
 
 	private:
