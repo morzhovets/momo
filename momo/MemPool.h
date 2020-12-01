@@ -191,9 +191,10 @@ public:
 	~MemPool() noexcept
 	{
 		MOMO_EXTRA_CHECK(mAllocCount == 0);
-		if (pvUseCache())
+		if (CanDeallocateAll())
+			DeallocateAll();
+		else if (pvUseCache())
 			pvFlushDeallocate();
-		MOMO_EXTRA_CHECK(mFreeBufferHead == nullPtr);
 	}
 
 	MemPool& operator=(MemPool&& memPool) noexcept
@@ -496,10 +497,10 @@ private:
 			bool del = true;
 			if (buffer == mFreeBufferHead)
 			{
-				BufferPointers& pointers = pvGetBufferPointers(buffer);
-				del = !(pointers.nextBuffer == nullPtr && pointers.prevBuffer != nullPtr);
+				uintptr_t nextBuffer = pvGetBufferPointers(buffer).nextBuffer;
+				del = (nextBuffer != nullPtr);
 				if (del)
-					mFreeBufferHead = pointers.nextBuffer;
+					mFreeBufferHead = nextBuffer;
 			}
 			if (del)
 				pvDeleteBuffer(buffer);
