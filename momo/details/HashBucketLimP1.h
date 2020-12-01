@@ -78,6 +78,11 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				for (MemPool& memPool : mMemPools)
+				{
+					if (memPool.CanDeallocateAll())
+						memPool.DeallocateAll();
+				}
 			}
 
 			MemManager& GetMemManager() noexcept
@@ -142,7 +147,11 @@ namespace internal
 		{
 			Item* items = pvGetItems();
 			if (items != nullptr)
-				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(items);
+			{
+				MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
+				if (!memPool.CanDeallocateAll())
+					memPool.Deallocate(items);
+			}
 			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
 		}
 

@@ -77,18 +77,7 @@ namespace internal
 		typedef typename ArrayBucket::Bounds Bounds;
 		typedef typename Bounds::Iterator Iterator;
 
-		class Params : public ArrayBucket::Params
-		{
-		private:
-			typedef typename ArrayBucket::Params ArrayBucketParams;
-
-		public:
-			using ArrayBucketParams::ArrayBucketParams;
-
-			void Clear() noexcept
-			{
-			}
-		};
+		typedef typename ArrayBucket::Params Params;
 
 	public:
 		explicit BucketUnlimP() noexcept

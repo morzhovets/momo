@@ -80,6 +80,11 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				for (MemPool& memPool : mMemPools)
+				{
+					if (memPool.CanDeallocateAll())
+						memPool.DeallocateAll();
+				}
 			}
 
 			MemManager& GetMemManager() noexcept
@@ -153,7 +158,11 @@ namespace internal
 		void Clear(Params& params) noexcept
 		{
 			if (!pvIsEmpty())
-				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(pvGetPtr());
+			{
+				MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
+				if (!memPool.CanDeallocateAll())
+					memPool.Deallocate(pvGetPtr());
+			}
 			mPtr = ptrNull;
 		}
 
@@ -340,6 +349,11 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				for (MemPool& memPool : mMemPools)
+				{
+					if (memPool.CanDeallocateAll())
+						memPool.DeallocateAll();
+				}
 			}
 
 			MemManager& GetMemManager() noexcept
@@ -411,7 +425,11 @@ namespace internal
 		void Clear(Params& params) noexcept
 		{
 			if (!pvIsEmpty())
-				params.GetMemPool(pvGetMemPoolIndex()).Deallocate(pvGetBounds().GetBegin());
+			{
+				MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
+				if (!memPool.CanDeallocateAll())
+					memPool.Deallocate(pvGetBounds().GetBegin());
+			}
 			mPtrState = stateNull;
 		}
 

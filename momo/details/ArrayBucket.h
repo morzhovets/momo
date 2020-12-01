@@ -138,6 +138,17 @@ namespace internal
 
 			Params& operator=(const Params&) = delete;
 
+			void Clear() noexcept
+			{
+				if (mArrayMemPool.CanDeallocateAll())
+					mArrayMemPool.DeallocateAll();
+				for (FastMemPool& memPool : mFastMemPools)
+				{
+					if (memPool.CanDeallocateAll())
+						memPool.DeallocateAll();
+				}
+			}
+
 			MemManager& GetMemManager() noexcept
 			{
 				return mArrayMemPool.GetMemManager().GetBaseMemManager();
@@ -239,20 +250,7 @@ namespace internal
 
 		void Clear(Params& params) noexcept
 		{
-			if (mPtr == nullptr)
-				return;
-			size_t memPoolIndex = pvGetMemPoolIndex();
-			if (memPoolIndex > 0)
-			{
-				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems(), pvGetFastCount());
-				params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
-			}
-			else
-			{
-				pvGetArray().~Array();
-				params.GetArrayMemPool().Deallocate(mPtr);
-			}
-			mPtr = nullptr;
+			pvRemoveAll<true>(params);
 		}
 
 		template<typename ItemCreator>
@@ -321,7 +319,7 @@ namespace internal
 			size_t count = GetBounds().GetCount();
 			MOMO_ASSERT(count > 0);
 			if (count == 1)
-				return Clear(params);
+				return pvRemoveAll<false>(params);
 			if (pvGetMemPoolIndex() > 0)
 			{
 				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems() + count - 1, 1);
@@ -343,6 +341,11 @@ namespace internal
 					}
 				}
 			}
+		}
+
+		void RemoveAll(Params& params) noexcept
+		{
+			pvRemoveAll<false>(params);
 		}
 
 	private:
@@ -413,6 +416,29 @@ namespace internal
 				Array& array = pvGetArray();
 				return Bounds(array.GetItems(), array.GetCount());
 			}
+		}
+
+		template<bool onClear>
+		void pvRemoveAll(Params& params) noexcept
+		{
+			if (mPtr == nullptr)
+				return;
+			size_t memPoolIndex = pvGetMemPoolIndex();
+			if (memPoolIndex > 0)
+			{
+				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems(), pvGetFastCount());
+				FastMemPool& memPool = params.GetFastMemPool(memPoolIndex);
+				if (!onClear || !memPool.CanDeallocateAll())
+					memPool.Deallocate(mPtr);
+			}
+			else
+			{
+				pvGetArray().~Array();
+				ArrayMemPool& memPool = params.GetArrayMemPool();
+				if (!onClear || !memPool.CanDeallocateAll())
+					memPool.Deallocate(mPtr);
+			}
+			mPtr = nullptr;
 		}
 
 	private:

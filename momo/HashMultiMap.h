@@ -1157,6 +1157,7 @@ private:
 		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
 		for (typename HashMap::Iterator::Reference ref : mHashMap)
 			ref.value.Clear(valueArrayParams);
+		valueArrayParams.Clear();
 	}
 
 	template<typename Iterator, typename KeyIterator>
@@ -1217,9 +1218,10 @@ private:
 
 	void pvRemoveValues(ValueArray& valueArray) noexcept
 	{
-		mValueCount -= valueArray.GetBounds().GetCount();
+		size_t count = valueArray.GetBounds().GetCount();
+		valueArray.RemoveAll(mValueCrew.GetValueArrayParams());
+		mValueCount -= count;
 		++mValueCrew.GetValueVersion();
-		valueArray.Clear(mValueCrew.GetValueArrayParams());
 	}
 
 private:
