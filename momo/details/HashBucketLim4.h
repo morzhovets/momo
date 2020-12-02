@@ -90,6 +90,8 @@ namespace internal
 
 			void Clear() noexcept
 			{
+				for (auto& memPool : mMemPools)
+					memPool.DeallocateAll();
 			}
 
 			MemManager& GetMemManager() noexcept
@@ -159,14 +161,8 @@ namespace internal
 			return pvGetMemPoolIndex() == pvGetMemPoolIndex(maxCount);
 		}
 
-		void Clear(Params& params) noexcept
+		void Clear(Params& /*params*/) noexcept
 		{
-			if (!pvIsEmpty())
-			{
-				uint32_t ptr = pvGetData().pointer;
-				MemPool& memPool = params.GetMemPool(pvGetMemPoolIndex());
-				memPool.Deallocate(ptr);
-			}
 			mPtrState = stateNull;
 		}
 

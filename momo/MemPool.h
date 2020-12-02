@@ -722,8 +722,14 @@ namespace internal
 			pvGetNextBlock(GetRealPointer(ptr)) = mBlockHead;
 			mBlockHead = ptr;
 			--mAllocCount;
-			if (mAllocCount == 0)
-				pvShrink();
+			if (mAllocCount == 0 && mBuffers.GetCount() > 2)
+				pvClear();
+		}
+
+		void DeallocateAll() noexcept
+		{
+			pvClear();
+			mAllocCount = 0;
 		}
 
 	private:
@@ -750,22 +756,14 @@ namespace internal
 			mBuffers.AddBackNogrow(buffer);
 		}
 
-		void pvShrink() noexcept
-		{
-			if (mBuffers.GetCount() > 2)
-			{
-				pvClear();
-				mBlockHead = nullPtr;
-				mBuffers.Clear(true);
-			}
-		}
-
 		void pvClear() noexcept
 		{
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = pvGetBufferSize();
 			for (char* buffer : mBuffers)
 				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
+			mBlockHead = nullPtr;
+			mBuffers.Clear(true);
 		}
 
 		size_t pvGetBufferSize() const noexcept
