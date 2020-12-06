@@ -55,19 +55,18 @@ namespace internal
 		Value& value;
 	};
 
-	template<typename TKey, typename TValue, typename TMapReference>
-	class MapReferenceStd : public std::pair<const TKey&, TValue&>
+	template<typename TMapReference>
+	class MapReferenceStd
+		: public std::pair<const typename TMapReference::Key&, typename TMapReference::Value&>
 	{
-	public:
-		typedef TKey Key;
-		typedef TValue Value;
-
 	protected:
 		typedef TMapReference MapReference;
 
 	public:
-		typedef MapReferenceStd<Key, const Value,
-			typename MapReference::ConstReference> ConstReference;
+		typedef typename MapReference::Key Key;
+		typedef typename MapReference::Value Value;
+
+		typedef MapReferenceStd<typename MapReference::ConstReference> ConstReference;
 
 	private:
 		typedef std::pair<const Key&, Value&> RefPair;
