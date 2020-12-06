@@ -69,9 +69,14 @@ public:
 		this->blockAlignment = blockAlignment;
 	}
 
-	bool IsEqual(const MemPoolParams& params) const noexcept
+	size_t GetBlockSize() const noexcept
 	{
-		return blockSize == params.blockSize && blockAlignment == params.blockAlignment;
+		return blockSize;
+	}
+
+	size_t GetBlockAlignment() const noexcept
+	{
+		return blockAlignment;
 	}
 
 protected:
@@ -100,11 +105,6 @@ public:
 public:
 	explicit MemPoolParamsStatic() noexcept
 	{
-	}
-
-	bool IsEqual(const MemPoolParamsStatic& /*params*/) const noexcept
-	{
-		return true;
 	}
 };
 
@@ -325,8 +325,10 @@ public:
 	{
 		if (this == &memPool)
 			return;
+		MOMO_CHECK(Params::blockSize == memPool.GetBlockSize());
+		MOMO_CHECK(Params::blockAlignment == memPool.GetBlockAlignment());
+		MOMO_CHECK(Params::blockCount == memPool.GetBlockCount());
 		MOMO_CHECK(MemManagerProxy::IsEqual(GetMemManager(), memPool.GetMemManager()));
-		MOMO_CHECK(static_cast<const Params&>(*this).IsEqual(memPool));
 		if (memPool.pvUseCache())
 			memPool.pvFlushDeallocate();
 		mAllocCount += memPool.mAllocCount;

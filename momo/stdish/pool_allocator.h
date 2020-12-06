@@ -110,7 +110,7 @@ public:
 		if (count == 1)
 		{
 			MemPoolParams memPoolParams = pvGetMemPoolParams();
-			bool equal = mMemPool->GetParams().IsEqual(memPoolParams);
+			bool equal = pvIsEqual(memPoolParams, mMemPool->GetParams());
 			if (!equal && mMemPool->GetAllocateCount() == 0)
 			{
 				*mMemPool = MemPool(memPoolParams, MemManager(get_base_allocator()));
@@ -125,7 +125,7 @@ public:
 
 	void deallocate(pointer ptr, size_type count) noexcept
 	{
-		if (count == 1 && mMemPool->GetParams().IsEqual(pvGetMemPoolParams()))
+		if (count == 1 && pvIsEqual(pvGetMemPoolParams(), mMemPool->GetParams()))
 			return mMemPool->Deallocate(ptr);
 		MemManagerProxy::Deallocate(mMemPool->GetMemManager(), ptr, count * sizeof(value_type));
 	}
@@ -164,6 +164,13 @@ private:
 	static MemPoolParams pvGetMemPoolParams() noexcept
 	{
 		return MemPoolParams(sizeof(value_type), internal::AlignmentOf<value_type>::value);
+	}
+
+	static bool pvIsEqual(const MemPoolParams& memPoolParams1,
+		const MemPoolParams& memPoolParams2) noexcept
+	{
+		return memPoolParams1.GetBlockSize() == memPoolParams2.GetBlockSize()
+			&& memPoolParams1.GetBlockAlignment() == memPoolParams2.GetBlockAlignment();
 	}
 
 private:
