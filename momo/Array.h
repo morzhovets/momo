@@ -158,9 +158,9 @@ public:
 			newCapacity = capacity * 2;
 		else if (capacity < 8192)
 			newCapacity = capacity + capacity / 2;
-		else if (realloc && capacity <= SIZE_MAX - 4096)
+		else if (realloc && capacity <= internal::UIntConst::maxSize - 4096)
 			newCapacity = capacity + 4096;
-		else if (!realloc && capacity <= (SIZE_MAX / 146) * 100 + 99)
+		else if (!realloc && capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
 			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
 		else
 			throw std::length_error("momo::ArraySettings length error");
@@ -321,7 +321,7 @@ private:
 	private:
 		static void pvCheckCapacity(size_t capacity)
 		{
-			if (capacity > SIZE_MAX / sizeof(Item))
+			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
 				throw std::length_error("momo::Array length error");
 		}
 
@@ -1028,7 +1028,8 @@ private:
 		pvGrow(newCount, ArrayGrowCause::add);
 		Item* items = GetItems();
 		typename ItemTraits::template Creator<Item&&>(GetMemManager(),
-			std::move(itemIndex == SIZE_MAX ? item : items[itemIndex]))(items + initCount);
+			std::move((itemIndex == internal::UIntConst::maxSize)
+				? item : items[itemIndex]))(items + initCount);
 		mData.SetCount(newCount);
 	}
 
@@ -1082,7 +1083,7 @@ private:
 		const Item* items = GetItems();
 		std::less<const Item*> less;
 		return (!less(pitem, items) && less(pitem, items + GetCount()))
-			? SMath::Dist(items, pitem) : size_t{SIZE_MAX};
+			? SMath::Dist(items, pitem) : internal::UIntConst::maxSize;
 	}
 
 	template<typename ItemArg>

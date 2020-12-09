@@ -616,7 +616,7 @@ private:
 	Item* pvGetSegMemory(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
-		if (itemCount > SIZE_MAX / sizeof(Item))
+		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
 			throw std::length_error("momo::SegmentedArray length error");
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			itemCount * sizeof(Item));

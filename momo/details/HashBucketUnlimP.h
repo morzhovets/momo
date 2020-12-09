@@ -66,7 +66,7 @@ namespace internal
 			ArraySettings> ArrayBucket;
 
 	public:
-		static const size_t maxCount = SIZE_MAX;
+		static const size_t maxCount = UIntConst::maxSize;
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 

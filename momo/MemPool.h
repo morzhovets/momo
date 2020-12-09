@@ -387,8 +387,8 @@ private:
 		MOMO_CHECK(Params::blockSize > 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
-		size_t maxBlockSize =
-			(SIZE_MAX - 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment) / Params::blockCount;
+		size_t maxBlockSize = (internal::UIntConst::maxSize
+			- 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment) / Params::blockCount;
 		if (Params::blockSize > maxBlockSize)
 			throw std::length_error("momo::MemPool length error");
 	}
@@ -670,11 +670,11 @@ namespace internal
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),
-			mBlockSize(internal::UIntMath<>::Ceil(blockSize, sizeof(uint32_t))),
+			mBlockSize(UIntMath<>::Ceil(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
 			MOMO_ASSERT(maxTotalBlockCount < size_t{UINT32_MAX});
-			if (mBlockSize > SIZE_MAX / blockCount)
+			if (mBlockSize > UIntConst::maxSize / blockCount)
 				throw std::length_error("momo::internal::MemPoolUInt32 length error");
 		}
 
