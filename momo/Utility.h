@@ -16,17 +16,21 @@
 
 #include "UserSettings.h"
 
-#include <cstdint>
 #include <cstddef>
-#include <type_traits>
 #include <cstring>
+#include <cstdlib>
+#include <cstdint>
 #include <memory>
 #include <exception>
+#include <stdexcept>
 #include <algorithm>
 #include <functional>
-#include <stdexcept>
 #include <utility>
+#include <new>
+#include <iterator>
+#include <type_traits>
 #include <array>
+#include <tuple>
 #include <initializer_list>
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
