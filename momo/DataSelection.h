@@ -661,25 +661,19 @@ namespace internal
 
 		template<typename RowFilter,
 			typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-		void Remove(const RowFilter& rowFilter)
+		size_t Remove(const RowFilter& rowFilter)
 		{
-			auto newRowFilter = [&rowFilter] (ConstRowReference rowRef)
-				{ return !rowFilter(rowRef); };
-			Filter(newRowFilter);
-		}
-
-		template<typename RowFilter>
-		void Filter(const RowFilter& rowFilter)
-		{
-			size_t index = 0;
+			size_t newCount = 0;
 			for (Raw*& raw : mRaws)
 			{
-				if (!rowFilter(pvMakeConstRowReference(raw)))
+				if (rowFilter(pvMakeConstRowReference(raw)))
 					continue;
-				std::swap(mRaws[index], raw);
-				++index;
+				std::swap(mRaws[newCount], raw);
+				++newCount;
 			}
-			mRaws.RemoveBack(mRaws.GetCount() - index);
+			size_t remCount = mRaws.GetCount() - newCount;
+			mRaws.RemoveBack(remCount);
+			return remCount;
 		}
 
 		DataSelection&& Reverse() && noexcept

@@ -664,17 +664,11 @@ public:
 	}
 
 	template<typename RowFilter>
-	void RemoveRows(const RowFilter& rowFilter)
+	size_t RemoveRows(const RowFilter& rowFilter)
 	{
-		auto newRowFilter = [&rowFilter] (ConstRowReference rowRef)
-			{ return !rowFilter(rowRef); };
-		pvFilterRows(newRowFilter);
-	}
-
-	template<typename RowFilter>
-	void FilterRows(const RowFilter& rowFilter)
-	{
-		pvFilterRows(rowFilter);
+		size_t initCount = GetCount();
+		pvRemoveRows(rowFilter);
+		return initCount - GetCount();
 	}
 
 	template<typename Item, typename... Items>
@@ -1177,14 +1171,14 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvFilterRows(const RowFilter& rowFilter)
+	internal::EnableIf<keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
 		{
 			for (Raw* raw : mRaws)
 			{
-				if (!rowFilter(pvMakeConstRowReference(raw)))
+				if (rowFilter(pvMakeConstRowReference(raw)))
 					columnList.SetNumber(raw, invalidNumber);
 			}
 		}
@@ -1199,13 +1193,13 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvFilterRows(const RowFilter& rowFilter)
+	internal::EnableIf<!keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
 		for (Raw* raw : mRaws)
 		{
-			if (!rowFilter(pvMakeConstRowReference(raw)))
+			if (rowFilter(pvMakeConstRowReference(raw)))
 				rawSet.Insert(raw);
 		}
 		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };

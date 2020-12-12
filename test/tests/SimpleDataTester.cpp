@@ -403,10 +403,8 @@ public:
 			for (size_t i = 1; i < count; ++i)
 				assert(i == count / 2 || selection[i][strCol] == selection[i - 1][strCol]);
 
-			selection.Filter(strFilter);
+			assert(selection.Remove(strFilter) == count / 2);
 			assert(selection.GetCount() == count / 2);
-			selection.Remove(strFilter);
-			assert(selection.IsEmpty());
 		}
 
 		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
@@ -415,7 +413,7 @@ public:
 			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
 		assert(table.GetCount() == count / 2);
 
-		table.FilterRows(strFilter);
+		assert(table.RemoveRows(strFilter) == count / 4);
 		assert(table.GetCount() == count / 4);
 
 		table.RemoveRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
@@ -425,12 +423,9 @@ public:
 		{
 			auto rowRef = table[i];
 			assert(rowRef[intCol] == 511 - static_cast<int>(i));
-			assert(rowRef[dblCol] == 511.0 - static_cast<double>(i));
-			assert(rowRef[strCol] == "0");
+			assert(rowRef[dblCol] == 511.5 - static_cast<double>(i));
+			assert(rowRef[strCol] == "1");
 		}
-
-		table.RemoveRows(strFilter);
-		assert(table.IsEmpty());
 	}
 
 private:
