@@ -26,7 +26,6 @@
 #include "Array.h"
 #include "HashSet.h"
 
-#include <bitset>
 #include <typeinfo>
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
@@ -1080,12 +1079,13 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> Columns;
 
-	typedef std::bitset<sizeof(Struct)> MutableOffsets;
+	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
 
 public:
 	explicit DataColumnListStatic(MemManager memManager = MemManager())
 		: mColumns(std::move(memManager))
 	{
+		ResetMutable();
 	}
 
 	DataColumnListStatic(DataColumnListStatic&& columnList) noexcept
@@ -1122,13 +1122,13 @@ public:
 
 	void ResetMutable() noexcept
 	{
-		mMutableOffsets.reset();
+		std::fill(mMutableOffsets.begin(), mMutableOffsets.end(), uint8_t{0});
 	}
 
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		return mMutableOffsets.test(offset);
+		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1236,7 +1236,8 @@ private:
 	template<typename Item, typename... Items>
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		mMutableOffsets.set(GetOffset(column));
+		size_t offset = GetOffset(column);
+		mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
 		pvSetMutable(columns...);
 	}
 
