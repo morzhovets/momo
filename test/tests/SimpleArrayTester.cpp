@@ -126,10 +126,8 @@ public:
 		assert(ar[4] == "s3");
 		assert(ar.GetBackItem() == "");
 
-		ar.Remove([] (const std::string& s) { return s > "s1"; });
-		assert(ar.GetCount() == 4);
-		ar.Filter([] (const std::string& s) { return !s.empty(); });
-		assert(ar.GetCount() == 1);
+		assert(ar.Remove([] (const std::string& s) { return s.empty(); }) == 3);
+		assert(ar.GetCount() == 3);
 
 		ar.Clear();
 		assert(ar.IsEmpty());

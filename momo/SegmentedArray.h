@@ -586,15 +586,9 @@ public:
 
 	template<typename Predicate,
 		typename = decltype(std::declval<const Predicate&>()(std::declval<const Item&>()))>
-	void Remove(const Predicate& pred)
+	size_t Remove(const Predicate& pred)
 	{
-		ArrayShifter::Remove(*this, pred);
-	}
-
-	template<typename Predicate>
-	void Filter(const Predicate& pred)
-	{
-		ArrayShifter::Filter(*this, pred);
+		return ArrayShifter::Remove(*this, pred);
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>

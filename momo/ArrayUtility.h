@@ -295,29 +295,23 @@ namespace internal
 		}
 
 		template<typename Predicate>
-		static void Remove(Array& array, const Predicate& pred)
-		{
-			auto newPred = [&pred] (const Item& item)
-				{ return !pred(item); };
-			Filter(array, newPred);
-		}
-
-		template<typename Predicate>
-		static void Filter(Array& array, const Predicate& pred)
+		static size_t Remove(Array& array, const Predicate& pred)
 		{
 			size_t initCount = array.GetCount();
-			size_t count = 0;
-			while (count < initCount && pred(static_cast<const Item&>(array[count])))
-				++count;
+			size_t newCount = 0;
+			while (newCount < initCount && !pred(static_cast<const Item&>(array[newCount])))
+				++newCount;
 			MemManager& memManager = array.GetMemManager();
-			for (size_t i = count + 1; i < initCount; ++i)
+			for (size_t i = newCount + 1; i < initCount; ++i)
 			{
-				if (!pred(static_cast<const Item&>(array[i])))
+				if (pred(static_cast<const Item&>(array[i])))
 					continue;
-				ItemTraits::Assign(memManager, std::move(array[i]), array[count]);
-				++count;
+				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
+				++newCount;
 			}
-			array.RemoveBack(initCount - count);
+			size_t remCount = initCount - newCount;
+			array.RemoveBack(remCount);
+			return remCount;
 		}
 	};
 }
