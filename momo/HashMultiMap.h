@@ -328,17 +328,21 @@ namespace internal
 		}
 	};
 
-	template<typename THashMultiMapKeyValueTraits, typename THashMultiMapValueArray>
+	template<typename THashMultiMapKeyValueTraits, typename THashMultiMapSettings>
 	class HashMultiMapNestedMapKeyValueTraits
 	{
 	protected:
 		typedef THashMultiMapKeyValueTraits HashMultiMapKeyValueTraits;
-		typedef THashMultiMapValueArray HashMultiMapValueArray;
+		typedef THashMultiMapSettings HashMultiMapSettings;
 
 	public:
 		typedef typename HashMultiMapKeyValueTraits::Key Key;
 		typedef typename HashMultiMapKeyValueTraits::MemManager MemManager;
-		typedef HashMultiMapValueArray Value;
+
+		typedef ArrayBucket<HashMultiMapArrayBucketItemTraits<HashMultiMapKeyValueTraits>,
+			HashMultiMapSettings::valueArrayMaxFastCount,
+			typename HashMultiMapSettings::ValueArrayMemPoolParams,
+			typename HashMultiMapSettings::ValueArraySettings> Value;
 
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;
@@ -553,13 +557,16 @@ public:
 	typedef TSettings Settings;
 
 private:
-	typedef internal::HashMultiMapArrayBucketItemTraits<KeyValueTraits> ArrayBucketItemTraits;
+	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,
+		Settings> HashMapKeyValueTraits;
 
-	typedef internal::ArrayBucket<ArrayBucketItemTraits, Settings::valueArrayMaxFastCount,
-		typename Settings::ValueArrayMemPoolParams,
-		typename Settings::ValueArraySettings> ValueArray;
-
+	typedef typename HashMapKeyValueTraits::Value ValueArray;
 	typedef typename ValueArray::Params ValueArrayParams;
+
+	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
+
+	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager,
+		HashMapKeyValueTraits, HashMapSettings> HashMap;
 
 	class ValueCrew
 	{
@@ -650,18 +657,10 @@ private:
 		Data* mData;
 	};
 
-	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,
-		ValueArray> HashMapKeyValueTraits;
-	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
-
-	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager,
-		HashMapKeyValueTraits, HashMapSettings> HashMap;
-
 	typedef typename HashMap::Iterator HashMapIterator;
-	typedef typename HashMapIterator::Reference HashMapReference;
 
 	typedef internal::HashMultiMapKeyReference<Key, typename ValueArray::Bounds,
-		HashMapReference, Settings> KeyReference;
+		typename HashMapIterator::Reference, Settings> KeyReference;
 
 public:
 	typedef internal::HashDerivedIterator<HashMapIterator, KeyReference> KeyIterator;
