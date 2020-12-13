@@ -94,7 +94,7 @@ public:
 
 	MOMO_NODISCARD void* Allocate(size_t size)
 	{
-		void* ptr = malloc(size);
+		void* ptr = std::malloc(size);
 		if (ptr == nullptr)
 			throw std::bad_alloc();
 		return ptr;
@@ -102,12 +102,12 @@ public:
 
 	void Deallocate(void* ptr, size_t /*size*/) noexcept
 	{
-		free(ptr);
+		std::free(ptr);
 	}
 
 	MOMO_NODISCARD void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
 	{
-		void* newPtr = realloc(ptr, newSize);
+		void* newPtr = std::realloc(ptr, newSize);
 		if (newPtr == nullptr)
 			throw std::bad_alloc();
 		return newPtr;
