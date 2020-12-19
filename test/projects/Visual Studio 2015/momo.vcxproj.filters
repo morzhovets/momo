@@ -69,16 +69,13 @@
     <ClCompile Include="..\..\tests\SimpleDataTester.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp">
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOne.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP4.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP4.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP4.cpp">
@@ -93,10 +90,7 @@
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP1.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\tests\SimpleHashTesterOneI1.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tests\SimpleHashTesterOneIA.cpp">
+    <ClCompile Include="..\..\tests\SimpleHashTesterOne.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="..\..\tests\SimpleHashTesterOpenN1.cpp">
@@ -195,9 +189,6 @@
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP1.h">
-      <Filter>Header Files\momo\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\momo\details\HashBucketOneI1.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketUnlimP.h">
@@ -299,7 +290,7 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP4.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\momo\details\HashBucketOneIA.h">
+    <ClInclude Include="..\..\..\momo\details\HashBucketOne.h">
       <Filter>Header Files\momo\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\momo\details\HashBucketOpenN1.h">

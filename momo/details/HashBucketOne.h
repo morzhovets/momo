@@ -4,10 +4,10 @@
   See https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  momo/details/HashBucketOneIA.h
+  momo/details/HashBucketOne.h
 
   namespace momo:
-    class HashBucketOneIA
+    class HashBucketOne
 
 \**********************************************************/
 
@@ -22,7 +22,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tStateSize>
-	class BucketOneIA : public BucketBase
+	class BucketOne : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
@@ -46,19 +46,19 @@ namespace internal
 		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
 
 	public:
-		explicit BucketOneIA() noexcept
+		explicit BucketOne() noexcept
 			: mHashState(0)
 		{
 		}
 
-		BucketOneIA(const BucketOneIA&) = delete;
+		BucketOne(const BucketOne&) = delete;
 
-		~BucketOneIA() noexcept
+		~BucketOne() noexcept
 		{
 			MOMO_ASSERT(!IsFull());
 		}
 
-		BucketOneIA& operator=(const BucketOneIA&) = delete;
+		BucketOne& operator=(const BucketOne&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
@@ -144,13 +144,13 @@ namespace internal
 }
 
 template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
-class HashBucketOneIA : public internal::HashBucketBase
+class HashBucketOne : public internal::HashBucketBase
 {
 public:
 	static const size_t stateSize = tStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOneIA<ItemTraits,
+	using Bucket = internal::BucketOne<ItemTraits,
 		(stateSize == 0) ? ItemTraits::alignment : stateSize>;
 };
 

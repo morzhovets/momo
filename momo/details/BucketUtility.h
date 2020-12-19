@@ -156,11 +156,4 @@ namespace internal
 	};
 }
 
-enum class HashBucketOneState : uint8_t
-{
-	empty = 0,
-	full = 1,
-	removed = 2,
-};
-
 } // namespace momo

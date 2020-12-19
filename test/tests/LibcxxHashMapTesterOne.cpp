@@ -4,21 +4,21 @@
   See https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashSetTesterOneI1.cpp
+  tests/LibcxxHashMapTesterOne.cpp
 
 \**********************************************************/
 
 #include "pch.h"
 
-#ifdef TEST_LIBCXX_HASH_SET
+#ifdef TEST_LIBCXX_HASH_MAP
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../momo/details/HashBucketOneI1.h"
+#include "../../momo/details/HashBucketOne.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOneI1
-#define LIBCXX_TEST_BUCKET_NAME "onei1"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOne<>
+#define LIBCXX_TEST_BUCKET_NAME "one"
 
-#include "LibcxxHashSetTester.h"
+#include "LibcxxHashMapTester.h"
 
 #endif // TEST_OLD_HASH_BUCKETS
-#endif // TEST_LIBCXX_HASH_SET
+#endif // TEST_LIBCXX_HASH_MAP

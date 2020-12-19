@@ -153,7 +153,7 @@
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterLimP4.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOneIA.cpp" />
+    <ClCompile Include="..\..\tests\LibcxxHashMapTesterOne.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpen2N2.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMapTesterOpen8.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashMultiMapTesterLimP4.cpp" />
@@ -161,7 +161,6 @@
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLim4.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterLimP4.cpp" />
-    <ClCompile Include="..\..\tests\LibcxxHashSetTesterOneI1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpen8.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterOpenN1.cpp" />
     <ClCompile Include="..\..\tests\LibcxxHashSetTesterUnlimP.cpp" />
@@ -184,8 +183,7 @@
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP1.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterLimP4.cpp" />
-    <ClCompile Include="..\..\tests\SimpleHashTesterOneI1.cpp" />
-    <ClCompile Include="..\..\tests\SimpleHashTesterOneIA.cpp" />
+    <ClCompile Include="..\..\tests\SimpleHashTesterOne.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen2N2.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen8.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpenN1.cpp" />
@@ -221,8 +219,7 @@
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP1.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketLimP4.h" />
-    <ClInclude Include="..\..\..\momo\details\HashBucketOneI1.h" />
-    <ClInclude Include="..\..\..\momo\details\HashBucketOneIA.h" />
+    <ClInclude Include="..\..\..\momo\details\HashBucketOne.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketOpenN1.h" />
     <ClInclude Include="..\..\..\momo\details\HashBucketUnlimP.h" />
     <ClInclude Include="..\..\..\momo\MemManager.h" />

@@ -28,8 +28,7 @@
 #include "details/HashBucketLimP.h"
 #include "details/HashBucketLimP1.h"
 #include "details/HashBucketUnlimP.h"
-#include "details/HashBucketOneIA.h"
-#include "details/HashBucketOneI1.h"
+#include "details/HashBucketOne.h"
 #include "details/HashBucketOpenN1.h"
 #endif
 

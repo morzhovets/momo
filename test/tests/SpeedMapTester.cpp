@@ -24,8 +24,7 @@
 #include "../../momo/details/HashBucketLimP.h"
 #include "../../momo/details/HashBucketLimP1.h"
 #include "../../momo/details/HashBucketUnlimP.h"
-#include "../../momo/details/HashBucketOneIA.h"
-#include "../../momo/details/HashBucketOneI1.h"
+#include "../../momo/details/HashBucketOne.h"
 #include "../../momo/details/HashBucketOpenN1.h"
 #endif
 
@@ -280,8 +279,7 @@ public:
 		TestHashBucket<momo::HashBucketLimP<>>("momo::HashBucketLimP<>");
 		TestHashBucket<momo::HashBucketLimP1<>>("momo::HashBucketLimP1<>");
 		TestHashBucket<momo::HashBucketUnlimP<>>("momo::HashBucketUnlimP<>");
-		TestHashBucket<momo::HashBucketOneIA<>>("momo::HashBucketOneIA<>");
-		TestHashBucket<momo::HashBucketOneI1>("momo::HashBucketOneI1");
+		TestHashBucket<momo::HashBucketOne<>>("momo::HashBucketOne<>");
 		TestHashBucket<momo::HashBucketOpenN1<>>("momo::HashBucketOpenN1<>");
 #endif
 
