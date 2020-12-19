@@ -221,19 +221,7 @@
     </Expand>
 </Type>
 
-<Type Name="momo::internal::BucketOneI1&lt;*&gt;">
-    <DisplayString Condition="mState != HashBucketOneState::full">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="mState == HashBucketOneState::full">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
-    <Expand>
-        <Item Name="[Count]">mState == HashBucketOneState::full ? 1 : 0</Item>
-        <ArrayItems>
-            <Size>mState == HashBucketOneState::full ? 1 : 0</Size>
-            <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
-        </ArrayItems>
-    </Expand>
-</Type>
-
-<Type Name="momo::internal::BucketOneIA&lt;*&gt;">
+<Type Name="momo::internal::BucketOne&lt;*&gt;">
     <DisplayString Condition="(mHashState &amp; 1) == 0">{{ Count=0 }}</DisplayString>
     <DisplayString Condition="(mHashState &amp; 1) != 0">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
     <Expand>
