@@ -43,7 +43,9 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef typename UIntSelector<stateSize, uint8_t>::UInt HashState;
+		typedef typename UIntSelector<
+			(stateSize < ItemTraits::alignment) ? ItemTraits::alignment : stateSize,
+			uint8_t>::UInt HashState;
 
 	public:
 		explicit BucketOne() noexcept
@@ -143,15 +145,14 @@ namespace internal
 	};
 }
 
-template<size_t tStateSize = 0>	// 0 for stateSize = ItemTraits::alignment
+template<size_t tStateSize = 1>
 class HashBucketOne : public internal::HashBucketBase
 {
 public:
 	static const size_t stateSize = tStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOne<ItemTraits,
-		(stateSize == 0) ? ItemTraits::alignment : stateSize>;
+	using Bucket = internal::BucketOne<ItemTraits, stateSize>;
 };
 
 } // namespace momo
