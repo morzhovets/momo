@@ -246,6 +246,14 @@ LIBCXX_TEST_END
 #endif
 #endif
 
+LIBCXX_TEST_BEGIN(erasure_erase)
+#include "libcxx/vector/vector.erasure/erase.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(erasure_erase_if)
+#include "libcxx/vector/vector.erasure/erase_if.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "libcxx/vector/vector.modifiers/clear.pass.cpp"
 LIBCXX_TEST_END

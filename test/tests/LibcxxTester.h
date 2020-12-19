@@ -15,6 +15,10 @@
 #include <string>
 #include <cmath>
 
+#ifdef __cpp_lib_optional
+#include <optional>
+#endif
+
 #if !defined(_MSC_VER) && !defined(__cpp_lib_transparent_operators)
 #define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif

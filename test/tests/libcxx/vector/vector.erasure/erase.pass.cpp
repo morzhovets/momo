@@ -13,17 +13,17 @@
 //   typename vector<T, Allocator>::size_type
 //   erase(vector<T, Allocator>& c, const U& value);
 
-#include <vector>
-#include <optional>
+//#include <vector>
+//#include <optional>
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
 template <class S, class U>
 void test0(S s, U val, S expected, size_t expected_erased_count) {
-  ASSERT_SAME_TYPE(typename S::size_type, decltype(std::erase(s, val)));
-  assert(expected_erased_count == std::erase(s, val));
+  ASSERT_SAME_TYPE(typename S::size_type, decltype(erase(s, val)));
+  assert(expected_erased_count == erase(s, val));
   assert(s == expected);
 }
 
@@ -56,22 +56,24 @@ void test()
   test0(S({1, 2, 2}), 2, S({1}), 2);
   test0(S({1, 2, 2}), 3, S({1, 2, 2}), 0);
 
+#ifdef __cpp_lib_optional
   //  Test cross-type erasure
   using opt = std::optional<typename S::value_type>;
   test0(S({1, 2, 1}), opt(), S({1, 2, 1}), 0);
   test0(S({1, 2, 1}), opt(1), S({2}), 2);
   test0(S({1, 2, 1}), opt(2), S({1, 1}), 1);
   test0(S({1, 2, 1}), opt(3), S({1, 2, 1}), 0);
+#endif
 }
 
-int main(int, char**)
+void main()
 {
-    test<std::vector<int>>();
-    test<std::vector<int, min_allocator<int>>> ();
-    test<std::vector<int, test_allocator<int>>> ();
+    test<vector<int>>();
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+    test<vector<int, min_allocator<int>>> ();
+#endif
+    test<vector<int, test_allocator<int>>> ();
 
-    test<std::vector<long>>();
-    test<std::vector<double>>();
-
-  return 0;
+    test<vector<long>>();
+    test<vector<double>>();
 }
