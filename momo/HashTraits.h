@@ -33,7 +33,6 @@
 #endif
 
 #ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-#include <string>
 #include <string_view>
 #endif
 
@@ -42,6 +41,20 @@ namespace momo
 
 namespace internal
 {
+#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+	template<typename TString,
+		typename TChar = typename TString::value_type,
+		typename TCharTraits = typename TString::traits_type,
+		typename TStringView = std::basic_string_view<TChar, TCharTraits>,
+		typename = EnableIf<std::is_convertible_v<const TString&, TStringView>
+			&& !std::is_same_v<TString, TStringView>>>
+	struct HashTraitsStringViewSelector
+	{
+		typedef TString String;
+		typedef TStringView StringView;
+	};
+#endif
+
 	template<typename HashFunc, typename EqualFunc,
 		typename = void>
 	struct HashTraitsStdIsValidKeyArg : public std::false_type
@@ -142,11 +155,11 @@ public:
 };
 
 #ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-template<typename Char, typename CharTraits, typename Allocator, typename HashBucket>
-class HashTraits<std::basic_string<Char, CharTraits, Allocator>, HashBucket,
-	std::basic_string<Char, CharTraits, Allocator>>
-	: public HashTraits<std::basic_string<Char, CharTraits, Allocator>, HashBucket,
-		std::basic_string_view<Char, CharTraits>>
+template<typename StringKey, typename HashBucket>
+class HashTraits<StringKey, HashBucket,
+	typename internal::HashTraitsStringViewSelector<StringKey>::String>
+	: public HashTraits<StringKey, HashBucket,
+		typename internal::HashTraitsStringViewSelector<StringKey>::StringView>
 {
 public:
 	explicit HashTraits() noexcept
