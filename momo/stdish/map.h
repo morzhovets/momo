@@ -858,10 +858,11 @@ private:
 	typedef TTreeMap TreeMap;
 
 public:
-	using typename BaseMap::size_type;
 	using typename BaseMap::key_type;
 	using typename BaseMap::mapped_type;
+	using typename BaseMap::size_type;
 	using typename BaseMap::value_type;
+	using typename BaseMap::const_reference;
 	using typename BaseMap::const_iterator;
 	using typename BaseMap::iterator;
 
@@ -961,7 +962,7 @@ public:
 	friend size_type erase_if(map& cont, const Predicate& pred)
 	{
 		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(typename BaseMap::const_reference(key, mapped)); };
+			{ return pred(const_reference(key, mapped)); };
 		return cont.get_nested_container().Remove(pairPred);
 	}
 
@@ -997,11 +998,12 @@ private:
 	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> BaseMap;
 
 public:
-	using typename BaseMap::size_type;
 	using typename BaseMap::key_type;
 	using typename BaseMap::mapped_type;
+	using typename BaseMap::size_type;
 	using typename BaseMap::value_type;
 	using typename BaseMap::iterator;
+	using typename BaseMap::const_reference;
 	using typename BaseMap::const_iterator;
 	using typename BaseMap::node_type;
 
@@ -1096,7 +1098,7 @@ public:
 	friend size_type erase_if(multimap& cont, const Predicate& pred)
 	{
 		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(typename BaseMap::const_reference(key, mapped)); };
+			{ return pred(const_reference(key, mapped)); };
 		return cont.get_nested_container().Remove(pairPred);
 	}
 };
