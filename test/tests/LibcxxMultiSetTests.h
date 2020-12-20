@@ -222,6 +222,10 @@ LIBCXX_TEST_END
 //#include "libcxx/multiset/multiset.cons/move_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(erasure_erase_if)
+#include "libcxx/multiset/multiset.erasure/erase_if.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(special_member_swap)
 #include "libcxx/multiset/multiset.special/member_swap.pass.cpp"
 LIBCXX_TEST_END

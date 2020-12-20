@@ -13,28 +13,29 @@
 //   typename set<T, Compare, Allocator>::size_type
 //   erase_if(set<T, Compare, Allocator>& c, Predicate pred);
 
-#include <set>
+//#include <set>
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+//#include "test_macros.h"
+//#include "test_allocator.h"
+//#include "min_allocator.h"
 
 template <class S, class Pred>
 void test0(S s, Pred p, S expected, size_t expected_erased_count) {
-  ASSERT_SAME_TYPE(typename S::size_type, decltype(std::erase_if(s, p)));
-  assert(expected_erased_count == std::erase_if(s, p));
+  ASSERT_SAME_TYPE(typename S::size_type, decltype(erase_if(s, p)));
+  assert(expected_erased_count == erase_if(s, p));
   assert(s == expected);
 }
 
 template <typename S>
 void test()
 {
-    auto is1 = [](auto v) { return v == 1;};
-    auto is2 = [](auto v) { return v == 2;};
-    auto is3 = [](auto v) { return v == 3;};
-    auto is4 = [](auto v) { return v == 4;};
-    auto True  = [](auto) { return true; };
-    auto False = [](auto) { return false; };
+    using V = typename S::value_type;
+    auto is1 = [](V v) { return v == 1;};
+    auto is2 = [](V v) { return v == 2;};
+    auto is3 = [](V v) { return v == 3;};
+    auto is4 = [](V v) { return v == 4;};
+    auto True  = [](V) { return true; };
+    auto False = [](V) { return false; };
 
     test0(S(), is1, S(), 0);
 
@@ -54,14 +55,14 @@ void test()
     test0(S({1, 2, 3}), False, S({1, 2, 3}), 0);
 }
 
-int main(int, char**)
+void main()
 {
-    test<std::set<int>>();
-    test<std::set<int, std::less<int>, min_allocator<int>>> ();
-    test<std::set<int, std::less<int>, test_allocator<int>>> ();
+    test<set<int>>();
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+    test<set<int, std::less<int>, min_allocator<int>>> ();
+#endif
+    test<set<int, std::less<int>, test_allocator<int>>> ();
 
-    test<std::set<long>>();
-    test<std::set<double>>();
-
-  return 0;
+    test<set<long>>();
+    test<set<double>>();
 }
