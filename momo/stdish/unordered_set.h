@@ -531,6 +531,12 @@ public:
 		return mHashSet.Remove(key) ? 1 : 0;
 	}
 
+	template<typename Predicate>
+	friend size_type erase_if(unordered_set& cont, const Predicate& pred)
+	{
+		return cont.mHashSet.Remove(pred);
+	}
+
 	node_type extract(const_iterator where)
 	{
 		return node_type(*this, where);	// need RVO for exception safety
@@ -675,6 +681,7 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedSet;
 
 public:
+	using typename UnorderedSet::size_type;
 	using typename UnorderedSet::value_type;
 
 public:
@@ -691,6 +698,12 @@ public:
 	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
 	{
 		left.swap(right);
+	}
+
+	template<typename Predicate>
+	friend size_type erase_if(unordered_set_open& cont, const Predicate& pred)
+	{
+		return cont.get_nested_container().Remove(pred);
 	}
 };
 

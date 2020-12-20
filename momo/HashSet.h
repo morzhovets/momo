@@ -884,6 +884,22 @@ public:
 		return true;
 	}
 
+	template<typename Predicate,
+		typename = decltype(std::declval<const Predicate&>()(std::declval<const Item&>()))>
+	size_t Remove(const Predicate& pred)
+	{
+		size_t initCount = GetCount();
+		ConstIterator iter = GetBegin();
+		while (!!iter)
+		{
+			if (pred(*iter))
+				iter = Remove(iter);
+			else
+				++iter;
+		}
+		return initCount - GetCount();
+	}
+
 	ExtractedItem Extract(ConstPosition pos)
 	{
 		return ExtractedItem(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety
