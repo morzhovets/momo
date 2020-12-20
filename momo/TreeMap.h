@@ -612,6 +612,16 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
+	template<typename PairPredicate,
+		typename = decltype(std::declval<const PairPredicate&>()(std::declval<const Key&>(),
+			std::declval<const Value&>()))>
+	size_t Remove(const PairPredicate& pairPred)
+	{
+		auto itemPred = [&pairPred] (const KeyValuePair& item)
+			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
+		return mTreeSet.Remove(itemPred);
+	}
+
 	ExtractedPair Extract(ConstIterator iter)
 	{
 		return ExtractedPair(*this, iter);	// need RVO for exception safety
