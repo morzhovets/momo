@@ -100,6 +100,10 @@ LIBCXX_TEST_BEGIN(erase_const_iter)
 #include "libcxx/unord.set/erase_const_iter.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(erase_if_)
+#include "libcxx/unord.set/erase_if.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(erase_iter_db1)
 #include "libcxx/unord.set/erase_iter_db1.pass.cpp"
 LIBCXX_TEST_END
