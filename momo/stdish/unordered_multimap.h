@@ -589,6 +589,14 @@ public:
 		return mHashMultiMap.RemoveKey(key);
 	}
 
+	template<typename Predicate>
+	friend size_type erase_if(unordered_multimap& cont, const Predicate& pred)
+	{
+		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
+			{ return pred(const_reference(key, mapped)); };
+		return cont.mHashMultiMap.Remove(pairPred);
+	}
+
 	//iterator insert(node_type&& node)
 	//iterator insert(const_iterator, node_type&& node)
 	//node_type extract(const_iterator where)
@@ -740,7 +748,11 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMultiMap;
 
 public:
+	using typename UnorderedMultiMap::key_type;
+	using typename UnorderedMultiMap::mapped_type;
+	using typename UnorderedMultiMap::size_type;
 	using typename UnorderedMultiMap::value_type;
+	using typename UnorderedMultiMap::const_reference;
 
 public:
 	using UnorderedMultiMap::UnorderedMultiMap;
@@ -756,6 +768,14 @@ public:
 	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
 	{
 		left.swap(right);
+	}
+
+	template<typename Predicate>
+	friend size_type erase_if(unordered_multimap_open& cont, const Predicate& pred)
+	{
+		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
+			{ return pred(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairPred);
 	}
 };
 

@@ -1067,6 +1067,23 @@ public:
 			valueArray.GetBounds().GetBegin() + valueIndex, true);
 	}
 
+	template<typename PairPredicate,
+		typename = decltype(std::declval<const PairPredicate&>()(std::declval<const Key&>(),
+			std::declval<const Value&>()))>
+	size_t Remove(const PairPredicate& pairPred)
+	{
+		size_t initValueCount = mValueCount;
+		Iterator iter = GetBegin();
+		while (!!iter)
+		{
+			if (pairPred(iter->key, static_cast<const Value&>(iter->value)))
+				iter = Remove(iter);
+			else
+				++iter;
+		}
+		return initValueCount - mValueCount;
+	}
+
 	Iterator RemoveValues(ConstKeyIterator keyIter)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
