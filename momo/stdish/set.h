@@ -510,6 +510,12 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
+	template<typename Predicate>
+	friend size_type erase_if(set& cont, const Predicate& pred)
+	{
+		return cont.mTreeSet.Remove(pred);
+	}
+
 	node_type extract(const_iterator where)
 	{
 		return node_type(*this, where);	// need RVO for exception safety
@@ -660,6 +666,12 @@ public:
 	iterator emplace(ValueArgs&&... valueArgs)
 	{
 		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+	}
+
+	template<typename Predicate>
+	friend size_type erase_if(multiset& cont, const Predicate& pred)
+	{
+		return cont.get_nested_container().Remove(pred);
 	}
 };
 
