@@ -536,6 +536,16 @@ public:
 		return mHashSet.Remove(key);
 	}
 
+	template<typename PairPredicate,
+		typename = decltype(std::declval<const PairPredicate&>()(std::declval<const Key&>(),
+			std::declval<const Value&>()))>
+	size_t Remove(const PairPredicate& pairPred)
+	{
+		auto itemPred = [&pairPred] (const KeyValuePair& item)
+			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
+		return mHashSet.Remove(itemPred);
+	}
+
 	ExtractedPair Extract(ConstPosition pos)
 	{
 		return ExtractedPair(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety

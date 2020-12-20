@@ -648,6 +648,14 @@ public:
 		return mHashMap.Remove(key) ? 1 : 0;
 	}
 
+	template<typename Predicate>
+	friend size_type erase_if(unordered_map& cont, const Predicate& pred)
+	{
+		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
+			{ return pred(const_reference(key, mapped)); };
+		return cont.mHashMap.Remove(pairPred);
+	}
+
 	MOMO_FORCEINLINE typename HashMap::ValueReferenceRKey operator[](key_type&& key)
 	{
 		return mHashMap[std::move(key)];
@@ -988,7 +996,11 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMap;
 
 public:
+	using typename UnorderedMap::key_type;
+	using typename UnorderedMap::mapped_type;
+	using typename UnorderedMap::size_type;
 	using typename UnorderedMap::value_type;
+	using typename UnorderedMap::const_reference;
 
 public:
 	using UnorderedMap::UnorderedMap;
@@ -1004,6 +1016,14 @@ public:
 	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
 	{
 		left.swap(right);
+	}
+
+	template<typename Predicate>
+	friend size_type erase_if(unordered_map_open& cont, const Predicate& pred)
+	{
+		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
+			{ return pred(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairPred);
 	}
 };
 
