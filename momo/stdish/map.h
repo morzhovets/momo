@@ -858,6 +858,7 @@ private:
 	typedef TTreeMap TreeMap;
 
 public:
+	using typename BaseMap::size_type;
 	using typename BaseMap::key_type;
 	using typename BaseMap::mapped_type;
 	using typename BaseMap::value_type;
@@ -996,6 +997,7 @@ private:
 	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> BaseMap;
 
 public:
+	using typename BaseMap::size_type;
 	using typename BaseMap::key_type;
 	using typename BaseMap::mapped_type;
 	using typename BaseMap::value_type;

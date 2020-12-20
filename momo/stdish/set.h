@@ -625,6 +625,7 @@ private:
 	typedef set<TKey, TLessFunc, TAllocator, TTreeSet> Set;
 
 public:
+	using typename Set::size_type;
 	using typename Set::value_type;
 	using typename Set::iterator;
 	using typename Set::node_type;
