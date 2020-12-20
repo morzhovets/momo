@@ -501,14 +501,7 @@ namespace internal
 			template<typename RawFilter>
 			void FilterRaws(RawFilter rawFilter) noexcept
 			{
-				auto iter = mHashSet.GetBegin();
-				while (!!iter)
-				{
-					if (rawFilter(*iter))
-						++iter;
-					else
-						iter = mHashSet.Remove(iter);
-				}
+				mHashSet.Remove([rawFilter] (Raw* raw) { return !rawFilter(raw); });
 			}
 
 		private:
