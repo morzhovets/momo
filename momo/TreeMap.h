@@ -124,12 +124,12 @@ public:
 /*!
 	All `TreeMap` functions and constructors have strong exception safety,
 	but not the following cases:
-	1. Functions `Insert` and `Remove` receiving many items have basic
-	exception safety.
-	2. Functions `MergeFrom` and `MergeTo` have basic exception safety.
-	3. In case default `KeyValueTraits`: if insert/add function receiving
+	1. Functions `Insert` receiving many items have basic exception safety.
+	2. Function `Remove` receiving predicate have basic exception safety.
+	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+	4. In case default `KeyValueTraits`: if insert/add function receiving
 	argument `Key&& key` throws exception, this argument may be changed.
-	4. In case default `KeyValueTraits`: if function `Remove` throws exception
+	5. In case default `KeyValueTraits`: if function `Remove` throws exception
 	and `ObjectManager<Key, MemManager>::isNothrowAnywayAssignable` is false
 	and `ObjectManager<Value, MemManager>::isNothrowAnywayAssignable` is false,
 	removing value may be changed.
