@@ -269,7 +269,7 @@ public:
 			auto isEqual = [] (ConstReference ref, const std::pair<const Key, Value>& sref)
 				{ return ref.key == sref.first && ref.value == sref.second; };
 
-			for (bool e : { false, true })
+			for (int t = 0; t < 4; ++t)
 			{
 				std::shuffle(array, array + count, mt);
 				for (uint8_t c : array)
@@ -280,18 +280,40 @@ public:
 					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
 				}
 
-				std::shuffle(array, array + count, mt);
-				for (uint8_t c : array)
+				if (t < 2)
 				{
-					smap.erase(Key(c));
-					auto iter = map.Find(Key(c));
-					assert(iter != map.GetEnd());
-					if (e)
-						map.Extract(iter);
-					else
-						map.Remove(iter);
-					assert(map.GetCount() == smap.size());
-					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+					std::shuffle(array, array + count, mt);
+					for (uint8_t c : array)
+					{
+						smap.erase(Key(c));
+						auto iter = map.Find(Key(c));
+						assert(iter != map.GetEnd());
+						if (t == 0)
+							map.Extract(iter);
+						else
+							map.Remove(iter);
+						assert(map.GetCount() == smap.size());
+						assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+					}
+				}
+				else
+				{
+					while (!map.IsEmpty())
+					{
+						size_t mod = map.GetCount() + 1;
+						size_t index1 = size_t{mt()} % mod;
+						size_t index2 = size_t{mt()} % mod;
+						if (index1 > index2)
+							std::swap(index1, index2);
+
+						auto siter = smap.erase(momo::internal::UIntMath<>::Next(smap.begin(), index1),
+							momo::internal::UIntMath<>::Next(smap.begin(), index2));
+						auto iter = map.Remove(momo::internal::UIntMath<>::Next(map.GetBegin(), index1),
+							momo::internal::UIntMath<>::Next(map.GetBegin(), index2));
+						assert((iter == map.GetEnd() && siter == smap.end()) || isEqual(*iter, *siter));
+						assert(map.GetCount() == smap.size());
+						assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+					}
 				}
 			}
 		}
