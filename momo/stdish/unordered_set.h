@@ -521,7 +521,7 @@ public:
 		}
 		if (first == last)
 			return first;
-		if (std::next(first) == last)
+		if (first != end() && std::next(first) == last)
 			return erase(first);
 		throw std::invalid_argument("invalid unordered_set erase arguments");
 	}
