@@ -84,26 +84,15 @@ namespace internal
 					node = node->GetChild(node->GetCount());
 				itemIndex = node->GetCount();
 			}
-			if (itemIndex == 0)
+			while (itemIndex == 0)
 			{
-				while (true)
-				{
-					Node* childNode = node;
-					node = node->GetParent();
-					MOMO_CHECK(node != nullptr);
-					if (childNode != node->GetChild(0))
-					{
-						itemIndex = node->GetChildIndex(childNode) - 1;
-						break;
-					}
-				}
-			}
-			else
-			{
-				--itemIndex;
+				Node* childNode = node;
+				node = node->GetParent();
+				MOMO_CHECK(node != nullptr);
+				itemIndex = node->GetChildIndex(childNode);
 			}
 			mNode = node;
-			mItemIndex = itemIndex;
+			mItemIndex = itemIndex - 1;
 			return *this;
 		}
 
@@ -848,7 +837,13 @@ public:
 		}
 		ConstIteratorProxy::Check(begin, mCrew.GetVersion(), false);
 		ConstIteratorProxy::Check(end, mCrew.GetVersion(), false);
-		size_t remCount = pvDist(begin, end);
+		ConstIterator thisEnd = GetEnd();
+		size_t remCount = 0;
+		for (ConstIterator iter = begin; iter != end; ++iter)
+		{
+			MOMO_CHECK(iter != thisEnd);
+			++remCount;
+		}
 		if (remCount == 0)
 			return end;
 		if (remCount == mCount)
@@ -856,9 +851,27 @@ public:
 			Clear();
 			return GetEnd();
 		}
+		ConstIterator prevEnd = std::prev(end);
+		Node* node1 = ConstIteratorProxy::GetNode(begin);
+		size_t itemIndex1 = ConstIteratorProxy::GetItemIndex(begin);
+		Node* node2 = ConstIteratorProxy::GetNode(prevEnd);
+		size_t itemIndex2 = ConstIteratorProxy::GetItemIndex(prevEnd);
 		Node* resNode;
 		size_t resItemIndex;
-		pvRemove(begin, std::prev(end), resNode, resItemIndex);
+		if (node1 == node2 && node1->IsLeaf())
+		{
+			auto itemDestroyer = [this] (Item& item)
+				{ ItemTraits::Destroy(&GetMemManager(), item); };
+			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
+				node1->Remove(*mNodeParams, i - 1, itemDestroyer);
+			resNode = node1;
+			resItemIndex = itemIndex1;
+		}
+		else
+		{
+			resNode = pvRemoveRange(node1, itemIndex1, node2, itemIndex2);
+			resItemIndex = 0;
+		}
 		mCount -= remCount;
 		mCrew.IncVersion();
 		return pvMakeIterator(resNode, resItemIndex, true);
@@ -1329,11 +1342,8 @@ private:
 		Node* resNode;
 		if (childNode == node)
 		{
-			Node* leftNode = node->GetChild(itemIndex);
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
-			pvDestroy(leftNode);
-			node->SetChild(itemIndex, rightNode);
+			pvDestroyInternal(node, itemIndex, false, itemReplacer1);
 			resNode = rightNode;
 		}
 		else
@@ -1342,17 +1352,9 @@ private:
 			auto itemRemover = [node, itemIndex, itemReplacer2] (Item& item)
 				{ itemReplacer2(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
-			{
 				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
-			}
 			else
-			{
-				Node* leftNode = childNode->GetChild(childItemIndex);
-				Node* rightNode = childNode->GetChild(childItemIndex + 1);
-				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
-				pvDestroy(rightNode);
-				childNode->SetChild(childItemIndex, leftNode);
-			}
+				pvDestroyInternal(childNode, childItemIndex, true, itemRemover);
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
@@ -1361,39 +1363,14 @@ private:
 		return resNode;
 	}
 
-	size_t pvDist(ConstIterator iter1, ConstIterator iter2) const
+	Node* pvRemoveRange(Node* node1, size_t itemIndex1, Node* node2, size_t itemIndex2)
 	{
-		ConstIterator end = GetEnd();
-		ConstIterator iter = iter1;
-		size_t dist = 0;
-		while (iter != iter2 && iter != end)
-		{
-			++iter;
-			++dist;
-		}
-		MOMO_CHECK(iter == iter2);
-		return dist;
-	}
-
-	void pvRemove(ConstIterator iter1, ConstIterator iter2, Node*& resNode, size_t& resItemIndex)
-	{
-		Node* node1 = ConstIteratorProxy::GetNode(iter1);
-		size_t itemIndex1 = ConstIteratorProxy::GetItemIndex(iter1);
-		Node* node2 = ConstIteratorProxy::GetNode(iter2);
-		size_t itemIndex2 = ConstIteratorProxy::GetItemIndex(iter2);
 		auto itemDestroyer = [this] (Item& item)
 			{ ItemTraits::Destroy(&GetMemManager(), item); };
-		if (node1 == node2 && node1->IsLeaf())
-		{
-			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
-				node1->Remove(*mNodeParams, i - 1, itemDestroyer);
-			resNode = node1;
-			resItemIndex = itemIndex1;
-			return;
-		}
 		size_t comIndex1 = itemIndex1;
 		size_t comIndex2 = itemIndex2;
-		Node* comNode = pvGetCommonNode(node1, node2, comIndex1, comIndex2);
+		Node* comNode = pvGetCommonParent(node1, node2, comIndex1, comIndex2);
+		MOMO_ASSERT(!comNode->IsLeaf());
 		if (!node1->IsLeaf())
 		{
 			node1 = node1->GetChild(itemIndex1);
@@ -1421,12 +1398,12 @@ private:
 			}
 			else
 			{
-				pvRemoveInternal(node1, itemIndex1, true, itemReplacer);
+				pvDestroyInternal(node1, itemIndex1, true, itemReplacer);
 			}
 			while (node1 != comNode)
 			{
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					pvRemoveInternal(node1, i - 1, true, itemDestroyer);
+					pvDestroyInternal(node1, i - 1, true, itemDestroyer);
 				pvToParent(node1, itemIndex1);
 			}
 			++comIndex1;
@@ -1441,12 +1418,12 @@ private:
 			}
 			else
 			{
-				pvRemoveInternal(node2, itemIndex2, false, itemDestroyer);
+				pvDestroyInternal(node2, itemIndex2, false, itemDestroyer);
 			}
 			while (node2 != comNode)
 			{
 				for (size_t i = itemIndex2; i > 0; --i)
-					pvRemoveInternal(node2, i - 1, false, itemDestroyer);
+					pvDestroyInternal(node2, i - 1, false, itemDestroyer);
 				pvToParent(node2, itemIndex2);
 			}
 		}
@@ -1455,15 +1432,15 @@ private:
 			++comIndex2;
 		}
 		for (size_t i = comIndex2; i > comIndex1; --i)
-			pvRemoveInternal(comNode, i - 1, false, itemDestroyer);
-		resNode = comNode->GetChild(comIndex1);
+			pvDestroyInternal(comNode, i - 1, false, itemDestroyer);
+		Node* resNode = comNode->GetChild(comIndex1);
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
-		resItemIndex = 0;
+		return resNode;
 	}
 
 	template<typename ItemRemover>
-	void pvRemoveInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
+	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());
 		Node* leftNode = node->GetChild(itemIndex);
@@ -1473,26 +1450,14 @@ private:
 		node->SetChild(itemIndex, destroyRight ? leftNode : rightNode);
 	}
 
-	static void pvToParent(Node*& node, size_t& index) noexcept
+	static Node* pvGetCommonParent(Node* node1, Node* node2,
+		size_t& comIndex1, size_t& comIndex2) noexcept
 	{
-		Node* parentNode = node->GetParent();
-		MOMO_ASSERT(parentNode != nullptr);
-		index = parentNode->GetChildIndex(node);
-		node = parentNode;
-	}
-
-	Node* pvGetCommonNode(Node* node1, Node* node2,
-		size_t& comIndex1, size_t& comIndex2) const noexcept
-	{
-		size_t height1 = 0;
-		for (Node* node = node1; node != mRootNode; node = node->GetParent())
-			++height1;
-		size_t height2 = 0;
-		for (Node* node = node2; node != mRootNode; node = node->GetParent())
-			++height2;
-		for (; height1 > height2; --height1)
+		size_t height1 = pvGetHeight(node1);
+		size_t height2 = pvGetHeight(node2);
+		for (; height1 < height2; ++height1)
 			pvToParent(node1, comIndex1);
-		for (; height2 > height1; --height2)
+		for (; height2 < height1; ++height2)
 			pvToParent(node2, comIndex2);
 		while (node1 != node2)
 		{
@@ -1500,6 +1465,22 @@ private:
 			pvToParent(node2, comIndex2);
 		}
 		return node1;
+	}
+
+	static size_t pvGetHeight(Node* node) noexcept
+	{
+		size_t height = 1;
+		for (; !node->IsLeaf(); node = node->GetChild(0))
+			++height;
+		return height;
+	}
+
+	static void pvToParent(Node*& node, size_t& index) noexcept
+	{
+		Node* parentNode = node->GetParent();
+		MOMO_ASSERT(parentNode != nullptr);
+		index = parentNode->GetChildIndex(node);
+		node = parentNode;
 	}
 
 	void pvRebalance(Node* node, Node* savedNode) noexcept
@@ -1614,8 +1595,8 @@ private:
 
 	static Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)
 	{
-		size_t height1 = treeSet1.pvGetHeight();
-		size_t height2 = treeSet2.pvGetHeight();
+		size_t height1 = pvGetHeight(treeSet1.mRootNode);
+		size_t height2 = pvGetHeight(treeSet2.mRootNode);
 		TreeSet* treeSetPtr1 = &treeSet1;
 		TreeSet* treeSetPtr2 = &treeSet2;
 		bool swap = false;
@@ -1696,15 +1677,6 @@ private:
 			rootNode1->SetParent(node2);
 			return treeSetPtr2->mRootNode;
 		}
-	}
-
-	size_t pvGetHeight() const noexcept
-	{
-		MOMO_ASSERT(mRootNode != nullptr);
-		size_t height = 1;
-		for (Node* node = mRootNode; !node->IsLeaf(); node = node->GetChild(0))
-			++height;
-		return height;
 	}
 
 private:
