@@ -866,6 +866,7 @@ public:
 				node1->Remove(*mNodeParams, i - 1, itemDestroyer);
 			resNode = node1;
 			resItemIndex = itemIndex1;
+			pvRebalance(resNode, resNode, true);
 		}
 		else
 		{
@@ -1309,7 +1310,7 @@ private:
 		if (node->IsLeaf())
 		{
 			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
-			pvRebalance(node, node);
+			pvRebalance(node, node, true);
 		}
 		else
 		{
@@ -1359,7 +1360,7 @@ private:
 		}
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
-		pvRebalance(childNode, resNode);
+		pvRebalance(childNode, resNode, true);
 		return resNode;
 	}
 
@@ -1384,6 +1385,7 @@ private:
 			if (node1 == comNode)
 				break;
 		}
+		Node* rebNode1 = node1;
 		if (node1 != comNode)
 		{
 			--itemIndex1;
@@ -1436,6 +1438,9 @@ private:
 		Node* resNode = comNode->GetChild(comIndex1);
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
+		if (rebNode1 != comNode)
+			pvRebalance(rebNode1, resNode, false);
+		pvRebalance(resNode, resNode, false);
 		return resNode;
 	}
 
@@ -1483,8 +1488,15 @@ private:
 		node = parentNode;
 	}
 
-	void pvRebalance(Node* node, Node* savedNode) noexcept
+	void pvRebalance(Node* node, Node* savedNode, bool fast) noexcept
 	{
+		while (mRootNode->GetCount() == 0 && !mRootNode->IsLeaf())
+		{
+			MOMO_ASSERT(mRootNode != savedNode);
+			mRootNode = mRootNode->GetChild(0);
+			mRootNode->GetParent()->Destroy(*mNodeParams);
+			mRootNode->SetParent(nullptr);
+		}
 		try
 		{
 			while (true)
@@ -1492,21 +1504,11 @@ private:
 				Node* parentNode = node->GetParent();
 				MOMO_ASSERT(parentNode != savedNode);
 				if (parentNode == nullptr)
-				{
-					MOMO_ASSERT(mRootNode == node);
-					if (node->GetCount() == 0 && !node->IsLeaf())
-					{
-						MOMO_ASSERT(node != savedNode);
-						mRootNode = node->GetChild(0);
-						mRootNode->SetParent(nullptr);
-						node->Destroy(*mNodeParams);
-					}
 					break;
-				}
 				size_t index = parentNode->GetChildIndex(node);
-				bool brk = !pvRebalance(parentNode, index, savedNode)
-					&& !pvRebalance(parentNode, index + 1, savedNode);
-				if (brk)
+				bool stop = !pvRebalance(parentNode, index + 1, savedNode)
+					&& !pvRebalance(parentNode, index, savedNode) && fast;
+				if (stop)
 					break;
 				node = parentNode;
 			}
