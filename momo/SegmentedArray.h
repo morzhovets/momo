@@ -676,10 +676,10 @@ private:
 				--segIndex;
 				itemIndex = Settings::GetItemCount(segIndex);
 			}
-			size_t delCount = std::minmax(itemIndex, mCount - count).first;
-			ItemTraits::Destroy(memManager, mSegments[segIndex] + itemIndex - delCount, delCount);
-			itemIndex -= delCount;
-			mCount -= delCount;
+			size_t remCount = std::minmax(itemIndex, mCount - count).first;
+			ItemTraits::Destroy(memManager, mSegments[segIndex] + itemIndex - remCount, remCount);
+			itemIndex -= remCount;
+			mCount -= remCount;
 		}
 	}
 
