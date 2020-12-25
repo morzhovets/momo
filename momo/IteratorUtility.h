@@ -220,18 +220,6 @@ namespace internal
 		}
 	};
 
-	template<typename Reference>
-	struct ConstReferenceSelector
-	{
-		typedef typename Reference::ConstReference ConstReference;
-	};
-
-	template<typename Object>
-	struct ConstReferenceSelector<Object&>
-	{
-		typedef const Object& ConstReference;
-	};
-
 	template<typename Iterator>
 	struct ConstIteratorSelector
 	{
@@ -257,7 +245,7 @@ namespace internal
 		typedef TReference Reference;
 
 	private:
-		typedef typename ConstReferenceSelector<Reference>::ConstReference ConstReference;
+		typedef typename Reference::ConstReference ConstReference;
 
 	public:
 		typedef IteratorPointer<ConstReference> ConstPointer;
@@ -378,7 +366,7 @@ namespace internal
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef HashDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			typename ConstReferenceSelector<Reference>::ConstReference> ConstIterator;
+			typename Reference::ConstReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
