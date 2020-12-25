@@ -514,67 +514,6 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<typename TBucketIterator, typename TBaseBucketBounds>
-	class HashDerivedBucketBounds
-	{
-	protected:
-		typedef TBucketIterator BucketIterator;
-		typedef TBaseBucketBounds BaseBucketBounds;
-
-	public:
-		typedef BucketIterator Iterator;
-
-		typedef HashDerivedBucketBounds<typename ConstIteratorSelector<Iterator>::ConstIterator,
-			typename BaseBucketBounds::ConstBounds> ConstBounds;
-
-	private:
-		struct BucketIteratorProxy : public BucketIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(BucketIterator)
-		};
-
-		struct ConstBoundsProxy : public ConstBounds
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
-		};
-
-	public:
-		explicit HashDerivedBucketBounds() noexcept
-		{
-		}
-
-		operator ConstBounds() const noexcept
-		{
-			return ConstBoundsProxy(mBaseBucketBounds);
-		}
-
-		Iterator GetBegin() const noexcept
-		{
-			return BucketIteratorProxy(mBaseBucketBounds.GetBegin());
-		}
-
-		Iterator GetEnd() const noexcept
-		{
-			return BucketIteratorProxy(mBaseBucketBounds.GetEnd());
-		}
-
-		MOMO_FRIENDS_BEGIN_END(const HashDerivedBucketBounds&, BucketIterator)
-
-		size_t GetCount() const noexcept
-		{
-			return mBaseBucketBounds.GetCount();
-		}
-
-	protected:
-		explicit HashDerivedBucketBounds(BaseBucketBounds bounds) noexcept
-			: mBaseBucketBounds(bounds)
-		{
-		}
-
-	private:
-		BaseBucketBounds mBaseBucketBounds;
-	};
-
 	template<typename Iterator, typename IteratorCategory>
 	struct IteratorTraitsStd
 	{

@@ -194,6 +194,68 @@ namespace internal
 		HashSetIterator mHashSetIterator;
 	};
 
+	template<typename THashSetBucketBounds,
+		bool tIsConst = false>
+	class HashMapBucketBounds
+	{
+	protected:
+		typedef THashSetBucketBounds HashSetBucketBounds;
+
+		static const bool isConst = tIsConst;
+
+	public:
+		typedef HashMapIterator<typename HashSetBucketBounds::Iterator, isConst> Iterator;
+
+		typedef HashMapBucketBounds<HashSetBucketBounds, true> ConstBounds;
+
+	private:
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		};
+
+		struct ConstBoundsProxy : public ConstBounds
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
+		};
+
+	public:
+		explicit HashMapBucketBounds() noexcept
+		{
+		}
+
+		operator ConstBounds() const noexcept
+		{
+			return ConstBoundsProxy(mHashSetBucketBounds);
+		}
+
+		Iterator GetBegin() const noexcept
+		{
+			return IteratorProxy(mHashSetBucketBounds.GetBegin());
+		}
+
+		Iterator GetEnd() const noexcept
+		{
+			return IteratorProxy(mHashSetBucketBounds.GetEnd());
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const HashMapBucketBounds&, Iterator)
+
+		size_t GetCount() const noexcept
+		{
+			return mHashSetBucketBounds.GetCount();
+		}
+
+	protected:
+		explicit HashMapBucketBounds(HashSetBucketBounds hashSetBounds) noexcept
+			: mHashSetBucketBounds(HashSetBucketBounds)
+		{
+		}
+
+	private:
+		HashSetBucketBounds mHashSetBucketBounds;
+	};
+
 	template<typename TKeyValueTraits>
 	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
@@ -295,10 +357,6 @@ private:
 
 	typedef typename HashSet::ExtractedItem HashSetExtractedItem;
 
-	typedef typename HashSet::ConstBucketBounds HashSetConstBucketBounds;
-	typedef internal::HashDerivedIterator<typename HashSetConstBucketBounds::Iterator,
-		internal::MapReference<typename HashSetConstIterator::Reference>> BucketIterator;
-
 public:
 	typedef internal::HashMapIterator<HashSetConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -310,8 +368,7 @@ public:
 
 	typedef internal::MapExtractedPair<HashSetExtractedItem> ExtractedPair;
 
-	typedef internal::HashDerivedBucketBounds<BucketIterator,
-		HashSetConstBucketBounds> BucketBounds;
+	typedef internal::HashMapBucketBounds<typename HashSet::ConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
