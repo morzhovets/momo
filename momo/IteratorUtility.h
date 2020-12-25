@@ -425,7 +425,7 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<typename TBaseIterator, template<typename BaseReference> typename TReference>
+	template<typename TBaseIterator, template<typename BaseReference> class TReference>
 	class TreeDerivedIterator
 	{
 	protected:
@@ -524,7 +524,7 @@ namespace std
 	{
 	};
 
-	template<typename BI, template<typename> typename R>
+	template<typename BI, template<typename> class R>
 	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::TreeDerivedIterator<BI, R>,
 			bidirectional_iterator_tag>
