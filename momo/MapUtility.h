@@ -125,12 +125,18 @@ namespace internal
 		}
 	};
 
-	template<typename TSetIterator, typename TKey>
+	template<typename TSetIterator>
 	class MapKeyIterator
 	{
 	public:
 		typedef TSetIterator SetIterator;
-		typedef TKey Key;
+
+	private:
+		typedef typename std::iterator_traits<SetIterator>::reference SetReference;
+		typedef typename std::decay<SetReference>::type KeyValuePair;
+
+	public:
+		typedef typename KeyValuePair::Key Key;
 
 		typedef Key& Reference;
 		typedef Key* Pointer;
@@ -161,12 +167,18 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
-	template<typename TSetIterator, typename TValue>
+	template<typename TSetIterator>
 	class MapValueIterator
 	{
 	public:
 		typedef TSetIterator SetIterator;
-		typedef TValue Value;
+
+	private:
+		typedef typename std::iterator_traits<SetIterator>::reference SetReference;
+		typedef typename std::decay<SetReference>::type KeyValuePair;
+
+	public:
+		typedef typename KeyValuePair::Value Value;
 
 		typedef Value& Reference;
 		typedef Value* Pointer;
@@ -928,16 +940,16 @@ namespace internal
 
 namespace std
 {
-	template<typename SI, typename K>
-	struct iterator_traits<momo::internal::MapKeyIterator<SI, K>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::MapKeyIterator<SI, K>,
+	template<typename SI>
+	struct iterator_traits<momo::internal::MapKeyIterator<SI>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapKeyIterator<SI>,
 			forward_iterator_tag>
 	{
 	};
 
-	template<typename SI, typename V>
-	struct iterator_traits<momo::internal::MapValueIterator<SI, V>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::MapValueIterator<SI, V>,
+	template<typename SI>
+	struct iterator_traits<momo::internal::MapValueIterator<SI>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapValueIterator<SI>,
 			forward_iterator_tag>
 	{
 	};

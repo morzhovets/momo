@@ -271,8 +271,8 @@ namespace internal
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Item*, Key>(srcItems), MapValueIterator<Item*, Value>(srcItems),
-				MapKeyIterator<Item*, Key>(dstItems), MapValueIterator<Item*, Value>(dstItems),
+				MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
+				MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
 				count, func);
 		}
 	};

@@ -128,18 +128,16 @@ namespace internal
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Iterator, Key>(srcBegin), MapValueIterator<Iterator, Value>(srcBegin),
-				MapKeyIterator<Iterator, Key>(dstBegin), MapValueIterator<Iterator, Value>(dstBegin),
+				MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
+				MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
 				count, func);
 		}
 
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			KeyValueTraits::ShiftKeyNothrow(memManager,
-				MapKeyIterator<Iterator, Key>(begin), shift);
-			KeyValueTraits::ShiftValueNothrow(memManager,
-				MapValueIterator<Iterator, Value>(begin), shift);
+			KeyValueTraits::ShiftKeyNothrow(memManager, MapKeyIterator<Iterator>(begin), shift);
+			KeyValueTraits::ShiftValueNothrow(memManager, MapValueIterator<Iterator>(begin), shift);
 		}
 	};
 
