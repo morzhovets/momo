@@ -24,6 +24,84 @@ namespace momo
 
 namespace internal
 {
+	template<typename TTreeSetIterator,
+		bool tIsConst = false>
+	class TreeMapIterator
+	{
+	protected:
+		typedef TTreeSetIterator TreeSetIterator;
+
+		static const bool isConst = tIsConst;
+
+	public:
+		typedef MapReference<typename TreeSetIterator::Reference, isConst> Reference;
+
+		typedef IteratorPointer<Reference> Pointer;
+
+		typedef TreeMapIterator<TreeSetIterator, true> ConstIterator;
+
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator, TreeSetIterator)
+		};
+
+	public:
+		explicit TreeMapIterator() noexcept
+			: mTreeSetIterator()
+		{
+		}
+
+		operator ConstIterator() const noexcept
+		{
+			return ConstIteratorProxy(mTreeSetIterator);
+		}
+
+		TreeMapIterator& operator++()
+		{
+			++mTreeSetIterator;
+			return *this;
+		}
+
+		TreeMapIterator& operator--()
+		{
+			--mTreeSetIterator;
+			return *this;
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(ReferenceProxy(*mTreeSetIterator));
+		}
+
+		bool operator==(ConstIterator iter) const noexcept
+		{
+			return mTreeSetIterator == ConstIteratorProxy::GetTreeSetIterator(iter);
+		}
+
+		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeMapIterator)
+
+	protected:
+		explicit TreeMapIterator(TreeSetIterator treeSetIter) noexcept
+			: mTreeSetIterator(treeSetIter)
+		{
+		}
+
+		TreeSetIterator ptGetTreeSetIterator() const noexcept
+		{
+			return mTreeSetIterator;
+		}
+
+	private:
+		TreeSetIterator mTreeSetIterator;
+	};
+
 	template<typename TKeyValueTraits>
 	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
@@ -159,14 +237,11 @@ private:
 	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;
 
 	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
-	typedef typename TreeSetConstIterator::Reference TreeSetConstReference;
-
-	typedef internal::MapReference<Key, Value, TreeSetConstReference> Reference;
 
 	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
 
 public:
-	typedef internal::TreeDerivedIterator<TreeSetConstIterator, Reference> Iterator;
+	typedef internal::TreeMapIterator<TreeSetConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::InsertResult<Iterator> InsertResult;
@@ -192,7 +267,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator, TreeSetConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator, TreeSetConstIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -517,7 +592,7 @@ public:
 			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetBaseIterator(iter), std::move(itemCreator)));
+			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
@@ -568,7 +643,7 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetBaseIterator(iter),
+		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetTreeSetIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -592,19 +667,19 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetBaseIterator(iter)));
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter)));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetBaseIterator(iter),
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
 	Iterator Remove(ConstIterator begin, ConstIterator end)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetBaseIterator(begin),
-			ConstIteratorProxy::GetBaseIterator(end)));
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(begin),
+			ConstIteratorProxy::GetTreeSetIterator(end)));
 	}
 
 	size_t Remove(const Key& key)
@@ -630,7 +705,7 @@ public:
 	template<typename KeyArg, bool extraCheck = true>
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetBaseIterator(iter),
+		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetTreeSetIterator(iter),
 			std::forward<KeyArg>(keyArg));
 	}
 
@@ -649,12 +724,12 @@ public:
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		CheckIterator(iter);
-		return IteratorProxy(ConstIteratorProxy::GetBaseIterator(iter));
+		return IteratorProxy(ConstIteratorProxy::GetTreeSetIterator(iter));
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		mTreeSet.CheckIterator(ConstIteratorProxy::GetBaseIterator(iter), allowEmpty);
+		mTreeSet.CheckIterator(ConstIteratorProxy::GetTreeSetIterator(iter), allowEmpty);
 	}
 
 private:
@@ -687,7 +762,7 @@ private:
 				newItem->GetValuePtr());
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetBaseIterator(iter), std::move(itemCreator)));
+			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
 
 private:
@@ -698,3 +773,13 @@ template<typename TKey, typename TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
 
 } // namespace momo
+
+namespace std
+{
+	template<typename SI, bool c>
+	struct iterator_traits<momo::internal::TreeMapIterator<SI, c>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeMapIterator<SI, c>,
+			bidirectional_iterator_tag>
+	{
+	};
+} // namespace std

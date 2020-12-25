@@ -18,18 +18,22 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename TValue, typename TSetReference>
+	template<typename TSetReference,
+		bool tIsConst = false>
 	class MapReference
 	{
-	public:
-		typedef TKey Key;
-		typedef TValue Value;
-
 	protected:
 		typedef TSetReference SetReference;
+		typedef typename std::decay<SetReference>::type KeyValuePair;
+
+		static const bool isConst = tIsConst;
 
 	public:
-		typedef MapReference<Key, const Value, SetReference> ConstReference;
+		typedef typename KeyValuePair::Key Key;
+		typedef typename std::conditional<isConst, const typename KeyValuePair::Value,
+			typename KeyValuePair::Value>::type Value;
+
+		typedef MapReference<SetReference, true> ConstReference;
 
 	public:
 		explicit MapReference(const Key& key, Value& value) noexcept
