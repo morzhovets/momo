@@ -437,19 +437,19 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<typename TBaseIterator, typename TReference>
+	template<typename TBaseIterator, template<typename BaseReference> typename TReference>
 	class TreeDerivedIterator
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
 
 	public:
-		typedef TReference Reference;
+		typedef TReference<typename BaseIterator::Reference> Reference;
 
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef TreeDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			typename ConstReferenceSelector<Reference>::ConstReference> ConstIterator;
+			TReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
@@ -597,7 +597,7 @@ namespace std
 	{
 	};
 
-	template<typename BI, typename R>
+	template<typename BI, template<typename> typename R>
 	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::TreeDerivedIterator<BI, R>,
 			bidirectional_iterator_tag>

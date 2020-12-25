@@ -80,11 +80,12 @@ namespace internal
 
 		typedef map_value_compare<key_type, key_compare> value_compare;
 
-		typedef momo::internal::MapReferenceStd<typename TreeMapIterator::Reference> reference;
-		typedef typename reference::ConstReference const_reference;
-
-		typedef momo::internal::TreeDerivedIterator<TreeMapIterator, reference> iterator;
+		typedef momo::internal::TreeDerivedIterator<TreeMapIterator,
+			momo::internal::MapReferenceStd> iterator;
 		typedef typename iterator::ConstIterator const_iterator;
+
+		typedef typename iterator::Reference reference;
+		typedef typename const_iterator::Reference const_reference;
 
 		typedef typename iterator::Pointer pointer;
 		typedef typename const_iterator::Pointer const_pointer;
