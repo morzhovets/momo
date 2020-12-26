@@ -659,10 +659,9 @@ private:
 
 	typedef typename HashMap::Iterator HashMapIterator;
 
-	typedef internal::HashMultiMapKeyReference<typename HashMapIterator::Reference> KeyReference;
-
 public:
-	typedef internal::HashDerivedIterator<HashMapIterator, KeyReference> KeyIterator;
+	typedef internal::HashDerivedIterator<HashMapIterator,
+		internal::HashMultiMapKeyReference> KeyIterator;
 	typedef typename KeyIterator::ConstIterator ConstKeyIterator;
 
 	typedef internal::HashMultiMapKeyBounds<KeyIterator> KeyBounds;

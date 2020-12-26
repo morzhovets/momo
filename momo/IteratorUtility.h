@@ -354,19 +354,19 @@ namespace internal
 		}
 	};
 
-	template<typename TBaseIterator, typename TReference>
+	template<typename TBaseIterator, template<typename BaseReference> class TReference>
 	class HashDerivedIterator
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
 
 	public:
-		typedef TReference Reference;
+		typedef TReference<typename BaseIterator::Reference> Reference;
 
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef HashDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			typename Reference::ConstReference> ConstIterator;
+			TReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
@@ -517,7 +517,7 @@ namespace internal
 
 namespace std
 {
-	template<typename BI, typename R>
+	template<typename BI, template<typename> class R>
 	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::HashDerivedIterator<BI, R>,
 			forward_iterator_tag>

@@ -78,11 +78,12 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef momo::internal::MapReferenceStd<typename HashMultiMap::Iterator::Reference> reference;
-	typedef typename reference::ConstReference const_reference;
-
-	typedef momo::internal::HashDerivedIterator<typename HashMultiMap::Iterator, reference> iterator;
+	typedef momo::internal::HashDerivedIterator<typename HashMultiMap::Iterator,
+		momo::internal::MapReferenceStd> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
+
+	typedef typename iterator::Reference reference;
+	typedef typename const_iterator::Reference const_reference;
 
 	typedef typename iterator::Pointer pointer;
 	typedef typename const_iterator::Pointer const_pointer;
