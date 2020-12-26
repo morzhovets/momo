@@ -174,50 +174,57 @@ namespace internal
 		Value& value;
 	};
 
-	template<typename TKeyIterator, typename TValue, typename TSettings>
+	template<typename TKeyIterator, typename TSettings>
 	class HashMultiMapIterator : private VersionKeeper<TSettings, TSettings::checkValueVersion>
 	{
 	public:
 		typedef TKeyIterator KeyIterator;
-		typedef TValue Value;
 
-	protected:
+	private:
 		typedef TSettings Settings;
 
+		typedef typename KeyIterator::Reference KeyReference;
+		typedef typename KeyReference::Key Key;
+
+	protected:
 		typedef internal::VersionKeeper<Settings, Settings::checkValueVersion> VersionKeeper;
 
 	public:
-		typedef typename KeyIterator::Reference::Key Key;
+		typedef typename KeyReference::Iterator ValueIterator;
 
-		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator,
-			const Value, Settings> ConstIterator;
+	private:
+		typedef typename std::iterator_traits<ValueIterator>::reference ValueReference;
+		typedef typename std::remove_reference<ValueReference>::type Value;
 
+	public:
 		typedef HashMultiMapReference<Key, Value> Reference;
 		typedef IteratorPointer<Reference> Pointer;
+
+		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator,
+			Settings> ConstIterator;
 
 	private:
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetValuePtr, const Value*)
 		};
 
 	public:
 		explicit HashMultiMapIterator() noexcept
-			: mValuePtr(nullptr)
+			: mValueIterator()
 		{
 		}
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mKeyIterator, mValuePtr, *this);
+			return ConstIteratorProxy(mKeyIterator, mValueIterator, *this);
 		}
 
 		HashMultiMapIterator& operator++()
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mValuePtr != nullptr);
-			++mValuePtr;
+			MOMO_CHECK(mValueIterator != ValueIterator());
+			++mValueIterator;
 			pvMove();
 			return *this;
 		}
@@ -225,13 +232,13 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mValuePtr != nullptr);
-			return Pointer(Reference(mKeyIterator->key, *mValuePtr));
+			MOMO_CHECK(mValueIterator != ValueIterator());
+			return Pointer(Reference(mKeyIterator->key, *mValueIterator));
 		}
 
 		bool operator==(ConstIterator iter) const noexcept
 		{
-			return mValuePtr == ConstIteratorProxy::GetValuePtr(iter);
+			return mValueIterator == iter.GetValueIterator();
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMultiMapIterator)
@@ -241,54 +248,54 @@ namespace internal
 			return mKeyIterator;
 		}
 
+		ValueIterator GetValueIterator() const noexcept
+		{
+			return mValueIterator;
+		}
+
 	protected:
-		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue, const size_t& version,
-			bool move) noexcept
+		explicit HashMultiMapIterator(KeyIterator keyIter, ValueIterator valueIter,
+			const size_t& version, bool move) noexcept
 			: VersionKeeper(&version),
 			mKeyIterator(keyIter),
-			mValuePtr(pvalue)
+			mValueIterator(valueIter)
 		{
 			if (move)
 				pvMove();
 		}
 
-		explicit HashMultiMapIterator(KeyIterator keyIter, Value* pvalue,
+		explicit HashMultiMapIterator(KeyIterator keyIter, ValueIterator valueIter,
 			VersionKeeper version) noexcept
 			: VersionKeeper(version),
 			mKeyIterator(keyIter),
-			mValuePtr(pvalue)
+			mValueIterator(valueIter)
 		{
-		}
-
-		Value* ptGetValuePtr() const noexcept
-		{
-			return mValuePtr;
 		}
 
 		void ptCheck(const size_t& version) const
 		{
 			VersionKeeper::Check(&version);
-			MOMO_CHECK(mValuePtr != nullptr);
+			MOMO_CHECK(mValueIterator != ValueIterator());
 		}
 
 	private:
 		void pvMove() noexcept
 		{
-			if (mValuePtr != mKeyIterator->GetEnd())
+			if (mValueIterator != mKeyIterator->GetEnd())
 				return;
 			++mKeyIterator;
 			for (; !!mKeyIterator; ++mKeyIterator)
 			{
-				mValuePtr = mKeyIterator->GetBegin();
-				if (mValuePtr != mKeyIterator->GetEnd())
+				mValueIterator = mKeyIterator->GetBegin();
+				if (mValueIterator != mKeyIterator->GetEnd())
 					return;
 			}
-			mValuePtr = nullptr;
+			mValueIterator = ValueIterator();
 		}
 
 	private:
 		KeyIterator mKeyIterator;
-		Value* mValuePtr;
+		ValueIterator mValueIterator;
 	};
 
 	template<typename THashMultiMapKeyValueTraits>
@@ -667,7 +674,7 @@ public:
 	typedef internal::HashMultiMapKeyBounds<KeyIterator> KeyBounds;
 	typedef typename KeyBounds::ConstBounds ConstKeyBounds;
 
-	typedef internal::HashMultiMapIterator<KeyIterator, Value, Settings> Iterator;
+	typedef internal::HashMultiMapIterator<KeyIterator, Settings> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
@@ -682,7 +689,6 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetValuePtr, const Value*)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
 	};
 
@@ -977,7 +983,7 @@ public:
 		ValueArray& valueArray = hashMapIter->value;
 		pvAddValue(valueArray, std::forward<ValueCreator>(valueCreator));
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter),
-			valueArray.GetBounds().GetEnd() - 1, false);
+			valueArray.GetBounds().GetCount() - 1, false);
 	}
 
 	template<typename... ValueArgs>
@@ -1045,7 +1051,7 @@ public:
 	Iterator Remove(ConstKeyIterator keyIter, size_t valueIndex)
 	{
 		MOMO_CHECK(valueIndex < keyIter->GetCount());
-		return Remove(pvMakeIterator(keyIter, keyIter->GetBegin() + valueIndex, false));
+		return Remove(pvMakeIterator(keyIter, valueIndex, false));
 	}
 
 	Iterator Remove(ConstIterator iter)
@@ -1055,14 +1061,13 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(iter.GetKeyIterator()));
 		ValueArray& valueArray = hashMapIter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
-		ptrdiff_t valueIndex = ConstIteratorProxy::GetValuePtr(iter) - valueBounds.GetBegin();
+		ptrdiff_t valueIndex = iter.GetValueIterator() - valueBounds.GetBegin();
 		KeyValueTraits::AssignAnywayValue(GetMemManager(), *(valueBounds.GetEnd() - 1),
 			valueBounds.GetBegin()[valueIndex]);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());
 		--mValueCount;
 		++mValueCrew.GetValueVersion();
-		return pvMakeIterator(KeyIteratorProxy(hashMapIter),
-			valueArray.GetBounds().GetBegin() + valueIndex, true);
+		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
 	template<typename PairPredicate,
@@ -1142,9 +1147,7 @@ public:
 			return Iterator();
 		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
-		Value* valueBegin = keyIter->GetBegin();
-		return pvMakeIterator(keyIter,
-			valueBegin + (ConstIteratorProxy::GetValuePtr(iter) - valueBegin), false);
+		return pvMakeIterator(keyIter, iter.GetValueIterator() - keyIter->GetBegin(), false);
 	}
 
 	KeyIterator MakeMutableKeyIterator(ConstKeyIterator keyIter)
@@ -1179,18 +1182,20 @@ private:
 	{
 		if (!keyIter)
 			return Iterator();
-		return pvMakeIterator(keyIter, keyIter->GetBegin(), true);
+		return pvMakeIterator(keyIter, 0, true);
 	}
 
-	ConstIterator pvMakeIterator(ConstKeyIterator keyIter, const Value* pvalue,
+	ConstIterator pvMakeIterator(ConstKeyIterator keyIter, size_t valueIndex,
 		bool move) const noexcept
 	{
-		return ConstIteratorProxy(keyIter, pvalue, mValueCrew.GetValueVersion(), move);
+		return ConstIteratorProxy(keyIter, keyIter->GetBegin() + valueIndex,
+			mValueCrew.GetValueVersion(), move);
 	}
 
-	Iterator pvMakeIterator(KeyIterator keyIter, Value* pvalue, bool move) const noexcept
+	Iterator pvMakeIterator(KeyIterator keyIter, size_t valueIndex, bool move) const noexcept
 	{
-		return IteratorProxy(keyIter, pvalue, mValueCrew.GetValueVersion(), move);
+		return IteratorProxy(keyIter, keyIter->GetBegin() + valueIndex,
+			mValueCrew.GetValueVersion(), move);
 	}
 
 	template<typename Iterator, typename KeyIterator>
@@ -1200,7 +1205,7 @@ private:
 			return Iterator();
 		CheckKeyIterator(keyIter);
 		MOMO_CHECK(valueIndex <= keyIter->GetCount());
-		return pvMakeIterator(keyIter, keyIter->GetBegin() + valueIndex, true);
+		return pvMakeIterator(keyIter, valueIndex, true);
 	}
 
 	template<typename RKey, typename ValueCreator>
@@ -1218,7 +1223,7 @@ private:
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key),
 			std::move(valuesCreator)));
-		return pvMakeIterator(keyIter, keyIter->GetBegin(), false);
+		return pvMakeIterator(keyIter, 0, false);
 	}
 
 	template<typename ValueCreator>
@@ -1263,9 +1268,9 @@ namespace internal
 
 namespace std
 {
-	template<typename KI, typename V, typename S>
-	struct iterator_traits<momo::internal::HashMultiMapIterator<KI, V, S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::HashMultiMapIterator<KI, V, S>,
+	template<typename KI, typename S>
+	struct iterator_traits<momo::internal::HashMultiMapIterator<KI, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashMultiMapIterator<KI, S>,
 			forward_iterator_tag>
 	{
 	};
