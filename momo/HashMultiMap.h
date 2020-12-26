@@ -24,22 +24,20 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename TValues, typename THashMapReference, typename TSettings>
+	template<typename THashMapReference>
 	class HashMultiMapKeyReference
 	{
-	public:
-		typedef TKey Key;
-
 	protected:
-		typedef TValues Values;
 		typedef THashMapReference HashMapReference;
-		typedef TSettings Settings;
+
+		typedef decltype(std::declval<HashMapReference>().value.GetBounds()) Values;
 
 	public:
-		typedef HashMultiMapKeyReference<Key, typename Values::ConstBounds,
-			typename HashMapReference::ConstReference, Settings> ConstReference;
+		typedef typename HashMapReference::Key Key;
 
 		typedef typename Values::Iterator Iterator;
+
+		typedef HashMultiMapKeyReference<typename HashMapReference::ConstReference> ConstReference;
 
 	private:
 		struct ConstReferenceProxy : public ConstReference
@@ -74,7 +72,8 @@ namespace internal
 
 		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const
 		{
-			MOMO_CHECK(index < GetCount());
+			//MOMO_CHECK(index < GetCount());	//?
+			MOMO_ASSERT(index < GetCount());
 			return mValues[index];
 		}
 
@@ -660,8 +659,7 @@ private:
 
 	typedef typename HashMap::Iterator HashMapIterator;
 
-	typedef internal::HashMultiMapKeyReference<Key, typename ValueArray::Bounds,
-		typename HashMapIterator::Reference, Settings> KeyReference;
+	typedef internal::HashMultiMapKeyReference<typename HashMapIterator::Reference> KeyReference;
 
 public:
 	typedef internal::HashDerivedIterator<HashMapIterator, KeyReference> KeyIterator;
