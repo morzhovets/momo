@@ -250,41 +250,41 @@ public:
 	template<typename ResObject = void>
 	MOMO_NODISCARD ResObject* Allocate()
 	{
-		void* pblock;
+		void* block;
 		if (pvUseCache() && mCachedCount > 0)
 		{
-			pblock = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(pblock);
+			block = mCacheHead;
+			mCacheHead = internal::PtrCaster::FromBuffer(block);
 			--mCachedCount;
 		}
 		else
 		{
 			if (Params::blockCount > 1)
-				pblock = internal::PtrCaster::FromUInt(pvNewBlock());
+				block = internal::PtrCaster::FromUInt(pvNewBlock());
 			else if (pvGetAlignmentAddend() == 0)
-				pblock = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
+				block = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
 			else
-				pblock = internal::PtrCaster::FromUInt(pvNewBlock1());
+				block = internal::PtrCaster::FromUInt(pvNewBlock1());
 		}
 		++mAllocCount;
-		return static_cast<ResObject*>(pblock);
+		return static_cast<ResObject*>(block);
 	}
 
-	void Deallocate(void* pblock) noexcept
+	void Deallocate(void* block) noexcept
 	{
-		MOMO_ASSERT(pblock != nullptr);
+		MOMO_ASSERT(block != nullptr);
 		MOMO_ASSERT(mAllocCount > 0);
 		if (pvUseCache())
 		{
 			if (mCachedCount >= Params::cachedFreeBlockCount)
 				pvFlushDeallocate();
-			internal::PtrCaster::ToBuffer(mCacheHead, pblock);
-			mCacheHead = pblock;
+			internal::PtrCaster::ToBuffer(mCacheHead, block);
+			mCacheHead = block;
 			++mCachedCount;
 		}
 		else
 		{
-			pvDeleteBlock(pblock);
+			pvDeleteBlock(block);
 		}
 		--mAllocCount;
 	}
@@ -402,21 +402,21 @@ private:
 	{
 		while (mCachedCount > 0)
 		{
-			void* pblock = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(pblock);
-			pvDeleteBlock(pblock);
+			void* block = mCacheHead;
+			mCacheHead = internal::PtrCaster::FromBuffer(block);
+			pvDeleteBlock(block);
 			--mCachedCount;
 		}
 	}
 
-	void pvDeleteBlock(void* pblock) noexcept
+	void pvDeleteBlock(void* block) noexcept
 	{
 		if (Params::blockCount > 1)
-			pvDeleteBlock(internal::PtrCaster::ToUInt(pblock));
+			pvDeleteBlock(internal::PtrCaster::ToUInt(block));
 		else if (pvGetAlignmentAddend() == 0)
-			MemManagerProxy::Deallocate(GetMemManager(), pblock, pvGetBufferSize0());
+			MemManagerProxy::Deallocate(GetMemManager(), block, pvGetBufferSize0());
 		else
-			pvDeleteBlock1(internal::PtrCaster::ToUInt(pblock));
+			pvDeleteBlock1(internal::PtrCaster::ToUInt(block));
 	}
 
 	size_t pvGetAlignmentAddend() const noexcept
