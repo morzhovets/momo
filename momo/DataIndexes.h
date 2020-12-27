@@ -33,22 +33,17 @@ enum class DataMultiHashIndex : ptrdiff_t
 
 namespace internal
 {
-	template<typename TColumnList>
+	template<typename TRaw, typename TSettings>
 	class DataRawUniqueHashIterator
 	{
-	protected:
-		typedef TColumnList ColumnList;
-
 	public:
-		typedef typename ColumnList::Raw Raw;
+		typedef TRaw Raw;
+		typedef TSettings Settings;
 
 		typedef Raw* const& Reference;
 		typedef Raw* const* Pointer;
 
 		typedef DataRawUniqueHashIterator ConstIterator;
-
-	private:
-		typedef typename ColumnList::Settings Settings;
 
 	public:
 		explicit DataRawUniqueHashIterator() noexcept
@@ -102,22 +97,57 @@ namespace internal
 		size_t mRawIndex;
 	};
 
-	template<typename TColumnList, typename TKeyIterator>
-	class DataRawMultiHashIterator : private VersionKeeper<typename TColumnList::Settings>
+	template<typename TRaw, typename TSettings>
+	class DataRawUniqueHashBounds
 	{
-	protected:
-		typedef TColumnList ColumnList;
+	public:
+		typedef TRaw Raw;
+		typedef TSettings Settings;
+
+		typedef DataRawUniqueHashIterator<Raw, Settings> Iterator;
+
+		typedef DataRawUniqueHashBounds ConstBounds;
 
 	public:
-		typedef TKeyIterator KeyIterator;
+		explicit DataRawUniqueHashBounds(Raw* raw = nullptr) noexcept
+			: mRaw(raw)
+		{
+		}
+
+		Iterator GetBegin() const noexcept
+		{
+			return Iterator(mRaw, 0);
+		}
+
+		Iterator GetEnd() const noexcept
+		{
+			return Iterator(mRaw, GetCount());
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const DataRawUniqueHashBounds&, Iterator)
+
+		size_t GetCount() const noexcept
+		{
+			return (mRaw != nullptr) ? 1 : 0;
+		}
 
 	private:
-		typedef typename ColumnList::Settings Settings;
-		typedef typename ColumnList::Raw Raw;
+		Raw* mRaw;
+	};
+
+	template<typename TKeyIterator, typename TSettings>
+	class DataRawMultiHashIterator : private VersionKeeper<TSettings>
+	{
+	public:
+		typedef TKeyIterator KeyIterator;
+		typedef TSettings Settings;
+
+	private:
+		typedef typename KeyIterator::Reference::Key RawPtr;
 
 	public:
-		typedef Raw* const& Reference;
-		typedef Raw* const* Pointer;
+		typedef const RawPtr& Reference;
+		typedef const RawPtr* Pointer;
 
 		typedef DataRawMultiHashIterator ConstIterator;
 
@@ -183,6 +213,52 @@ namespace internal
 	private:
 		KeyIterator mKeyIterator;
 		size_t mRawIndex;
+	};
+
+	template<typename TKeyIterator, typename TSettings>
+	class DataRawMultiHashBounds : private VersionKeeper<TSettings>
+	{
+	public:
+		typedef TKeyIterator KeyIterator;
+		typedef TSettings Settings;
+
+		typedef DataRawMultiHashIterator<KeyIterator, Settings> Iterator;
+
+		typedef DataRawMultiHashBounds ConstBounds;
+
+	public:
+		explicit DataRawMultiHashBounds() noexcept
+			: mRawCount(0)
+		{
+		}
+
+		explicit DataRawMultiHashBounds(KeyIterator keyIter, VersionKeeper version) noexcept
+			: VersionKeeper(version),
+			mKeyIterator(keyIter),
+			mRawCount(!!keyIter ? keyIter->GetCount() + 1 : 0)
+		{
+		}
+
+		Iterator GetBegin() const noexcept
+		{
+			return Iterator(mKeyIterator, 0, *this);
+		}
+
+		Iterator GetEnd() const noexcept
+		{
+			return Iterator(mKeyIterator, mRawCount, *this);
+		}
+
+		MOMO_FRIENDS_BEGIN_END(const DataRawMultiHashBounds&, Iterator)
+
+		size_t GetCount() const noexcept
+		{
+			return mRawCount;
+		}
+
+	private:
+		KeyIterator mKeyIterator;
+		size_t mRawCount;
 	};
 
 	template<typename TColumnList, typename TDataTraits>
@@ -345,39 +421,7 @@ namespace internal
 			typedef typename HashSet::ConstPosition Position;
 
 		public:
-			class RawBounds
-			{
-			public:
-				typedef DataRawUniqueHashIterator<ColumnList> Iterator;
-
-				typedef RawBounds ConstBounds;
-
-			public:
-				explicit RawBounds(Raw* raw = nullptr) noexcept
-					: mRaw(raw)
-				{
-				}
-
-				Iterator GetBegin() const noexcept
-				{
-					return Iterator(mRaw, 0);
-				}
-
-				Iterator GetEnd() const noexcept
-				{
-					return Iterator(mRaw, GetCount());
-				}
-
-				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
-
-				size_t GetCount() const noexcept
-				{
-					return (mRaw != nullptr) ? 1 : 0;
-				}
-
-			private:
-				Raw* mRaw;
-			};
+			typedef DataRawUniqueHashBounds<Raw, Settings> RawBounds;
 
 			typedef UniqueHashIndex Index;
 
@@ -535,47 +579,7 @@ namespace internal
 				logInitialSegmentSize> SegmentedArraySettings;
 
 		public:
-			class RawBounds : private VersionKeeper
-			{
-			public:
-				typedef DataRawMultiHashIterator<ColumnList, ConstKeyIterator> Iterator;
-
-				typedef RawBounds ConstBounds;
-
-			public:
-				explicit RawBounds() noexcept
-					: mRawCount(0)
-				{
-				}
-
-				explicit RawBounds(ConstKeyIterator keyIter, VersionKeeper version) noexcept
-					: VersionKeeper(version),
-					mKeyIterator(keyIter),
-					mRawCount(!!keyIter ? keyIter->GetCount() + 1 : 0)
-				{
-				}
-
-				Iterator GetBegin() const noexcept
-				{
-					return Iterator(mKeyIterator, 0, *this);
-				}
-
-				Iterator GetEnd() const noexcept
-				{
-					return Iterator(mKeyIterator, mRawCount, *this);
-				}
-
-				MOMO_FRIENDS_BEGIN_END(const RawBounds&, Iterator)
-
-				size_t GetCount() const noexcept
-				{
-					return mRawCount;
-				}
-
-			private:
-				ConstKeyIterator mKeyIterator;
-				size_t mRawCount;
-			};
+			typedef DataRawMultiHashBounds<ConstKeyIterator, Settings> RawBounds;
 
 			typedef MultiHashIndex Index;
 
@@ -1408,16 +1412,16 @@ namespace internal
 
 namespace std
 {
-	template<typename CL>
-	struct iterator_traits<momo::internal::DataRawUniqueHashIterator<CL>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawUniqueHashIterator<CL>,
+	template<typename R, typename S>
+	struct iterator_traits<momo::internal::DataRawUniqueHashIterator<R, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawUniqueHashIterator<R, S>,
 			random_access_iterator_tag>
 	{
 	};
 
-	template<typename CL, typename KI>
-	struct iterator_traits<momo::internal::DataRawMultiHashIterator<CL, KI>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawMultiHashIterator<CL, KI>,
+	template<typename KI, typename S>
+	struct iterator_traits<momo::internal::DataRawMultiHashIterator<KI, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawMultiHashIterator<KI, S>,
 			random_access_iterator_tag>
 	{
 	};
