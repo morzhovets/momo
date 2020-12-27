@@ -627,12 +627,12 @@ public:
 		{
 			if (ref.GetCount() == 0)
 				continue;
-			typename HashMultiMap::ConstKeyIterator keyIterRight = right.mHashMultiMap.Find(ref.key);
-			if (!keyIterRight)
+			typename HashMultiMap::ConstKeyIterator rightKeyIter = right.mHashMultiMap.Find(ref.key);
+			if (!rightKeyIter)
 				return false;
-			if (ref.GetCount() != keyIterRight->GetCount())
+			if (ref.GetCount() != rightKeyIter->GetCount())
 				return false;
-			if (!std::is_permutation(ref.GetBegin(), ref.GetEnd(), keyIterRight->GetBegin()))
+			if (!std::is_permutation(ref.GetBegin(), ref.GetEnd(), rightKeyIter->GetBegin()))
 				return false;
 		}
 		return true;
