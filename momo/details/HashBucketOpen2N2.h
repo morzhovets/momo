@@ -144,8 +144,8 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* pitem = &mItems[maxCount - 1 - count];
-			std::forward<ItemCreator>(itemCreator)(pitem);
+			Item* newItem = &mItems[maxCount - 1 - count];
+			std::forward<ItemCreator>(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if (useHashCodePartGetter)
 			{
@@ -157,7 +157,7 @@ namespace internal
 					hashProbe = emptyHashProbe;
 			}
 			++mState[1];
-			return Iterator(pitem + 1);
+			return Iterator(newItem + 1);
 		}
 
 		template<typename ItemReplacer>

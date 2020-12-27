@@ -67,9 +67,9 @@ namespace internal
 			while (mask != 0)
 			{
 				size_t index = pvCountTrailingZeros(static_cast<uint32_t>(mask));
-				Item* pitem = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*pitem))
-					return pitem;
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(*itemPtr))
+					return itemPtr;
 				mask &= mask - 1;
 			}
 			return nullptr;

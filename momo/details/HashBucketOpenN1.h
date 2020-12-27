@@ -126,12 +126,12 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* pitem = ptGetItemPtr(count);
-			std::forward<ItemCreator>(itemCreator)(pitem);
+			Item* newItem = ptGetItemPtr(count);
+			std::forward<ItemCreator>(itemCreator)(newItem);
 			pvGetShortHash(count) = ptCalcShortHash(hashCode);
 			if (count + 1 < maxCount)
 				++pvGetState();
-			return pvMakeIterator(pitem);
+			return pvMakeIterator(newItem);
 		}
 
 		template<typename ItemReplacer>
@@ -209,9 +209,9 @@ namespace internal
 			return PtrCaster::Shift<Byte>(&mData, index);
 		}
 
-		static Iterator pvMakeIterator(Item* pitem) noexcept
+		static Iterator pvMakeIterator(Item* itemPtr) noexcept
 		{
-			return Iterator(pitem + (reverse ? 1 : 0));
+			return Iterator(itemPtr + (reverse ? 1 : 0));
 		}
 
 		size_t pvGetCount() const noexcept

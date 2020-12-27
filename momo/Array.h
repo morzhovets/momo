@@ -1073,20 +1073,20 @@ private:
 
 	size_t pvIndexOf(const Item& item) const noexcept
 	{
-		const Item* pitem = std::addressof(item);
+		const Item* itemPtr = std::addressof(item);
 		const Item* items = GetItems();
 		std::less<const Item*> less;
-		return (!less(pitem, items) && less(pitem, items + GetCount()))
-			? SMath::Dist(items, pitem) : internal::UIntConst::maxSize;
+		return (!less(itemPtr, items) && less(itemPtr, items + GetCount()))
+			? SMath::Dist(items, itemPtr) : internal::UIntConst::maxSize;
 	}
 
 	template<typename ItemArg>
 	bool pvIsInside(const ItemArg& itemArg) const noexcept
 	{
-		const void* pitem = std::addressof(itemArg);
+		const void* itemPtr = std::addressof(itemArg);
 		const Item* items = GetItems();
 		std::less<const void*> less;
-		return !less(pitem, items) && less(pitem, items + GetCount());
+		return !less(itemPtr, items) && less(itemPtr, items + GetCount());
 	}
 
 private:
