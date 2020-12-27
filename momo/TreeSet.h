@@ -171,15 +171,14 @@ namespace internal
 		size_t mItemIndex;
 	};
 
-	template<typename TSegment, typename TItem>
+	template<typename TSegment>
 	class TreeSetRelocatorIterator
 	{
 	public:
 		typedef TSegment Segment;
-		typedef TItem Item;
 
-		typedef Item& Reference;
-		typedef Item* Pointer;
+		typedef decltype(std::declval<Segment&>().node->GetItemPtr(size_t{})) Pointer;
+		typedef decltype(*Pointer()) Reference;
 
 	public:
 		explicit TreeSetRelocatorIterator(Segment* segmentPtr) noexcept
@@ -355,7 +354,7 @@ private:
 		typedef internal::NestedArrayIntCap<4, Node*, MemManagerPtr> Nodes;
 		typedef internal::NestedArrayIntCap<4, Segment, MemManagerPtr> Segments;
 
-		typedef internal::TreeSetRelocatorIterator<Segment, Item> Iterator;
+		typedef internal::TreeSetRelocatorIterator<Segment> Iterator;
 
 	public:
 		struct SplitResult
@@ -442,13 +441,13 @@ private:
 		}
 
 		template<typename ItemCreator>
-		void RelocateCreate(ItemCreator&& itemCreator, Item* pitem)
+		void RelocateCreate(ItemCreator&& itemCreator, Item* newItem)
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
 			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(),
 				Iterator(mSrcSegments.GetItems()), Iterator(mDstSegments.GetItems()),
-				mItemCount, std::forward<ItemCreator>(itemCreator), pitem);
+				mItemCount, std::forward<ItemCreator>(itemCreator), newItem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();
 			mItemCount = 0;
@@ -1702,9 +1701,9 @@ namespace std
 	{
 	};
 
-	template<typename S, typename I>
-	struct iterator_traits<momo::internal::TreeSetRelocatorIterator<S, I>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetRelocatorIterator<S, I>,
+	template<typename S>
+	struct iterator_traits<momo::internal::TreeSetRelocatorIterator<S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetRelocatorIterator<S>,
 			forward_iterator_tag>
 	{
 	};
