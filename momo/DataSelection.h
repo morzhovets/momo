@@ -100,22 +100,24 @@ namespace internal
 		}
 	};
 
-	template<typename TRowReference, typename TRawIterator>
+	template<typename TRawIterator, typename TRowReference>
 	class DataRowIterator : private VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
-		typedef TRowReference RowReference;
 		typedef TRawIterator RawIterator;
+		typedef TRowReference RowReference;
 		typedef typename RowReference::ColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
-
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef const RowReference Reference;
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef DataRowIterator<typename RowReference::ConstReference, RawIterator> ConstIterator;
+		typedef DataRowIterator<RawIterator, typename RowReference::ConstReference> ConstIterator;
+
+		typedef typename ColumnList::Settings Settings;
+
+	protected:
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	private:
 		struct RowReferenceProxy : public RowReference
@@ -197,21 +199,23 @@ namespace internal
 		RawIterator mRawIterator;
 	};
 
-	template<typename TRowReference, typename TRawBounds>
+	template<typename TRawBounds, typename TRowReference>
 	class DataRowBounds : private VersionKeeper<typename TRowReference::Settings>
 	{
 	protected:
-		typedef TRowReference RowReference;
 		typedef TRawBounds RawBounds;
+		typedef TRowReference RowReference;
 		typedef typename RowReference::ColumnList ColumnList;
-		typedef typename ColumnList::Settings Settings;
-
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
-		typedef DataRowIterator<RowReference, typename RawBounds::Iterator> Iterator;
+		typedef DataRowIterator<typename RawBounds::Iterator, RowReference> Iterator;
 
-		typedef DataRowBounds<typename RowReference::ConstReference, RawBounds> ConstBounds;
+		typedef DataRowBounds<RawBounds, typename RowReference::ConstReference> ConstBounds;
+
+		typedef typename ColumnList::Settings Settings;
+
+	protected:
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	private:
 		struct IteratorProxy : public Iterator
@@ -272,17 +276,14 @@ namespace internal
 		RawBounds mRawBounds;
 	};
 
-	template<typename TItem, typename TRowIterator, typename TSettings>
+	template<typename TRowIterator, typename TItem>
 	class DataConstItemIterator
 	{
 	public:
-		typedef TItem Item;
 		typedef TRowIterator RowIterator;
+		typedef TItem Item;
+		typedef typename RowIterator::Settings Settings;
 
-	protected:
-		typedef TSettings Settings;
-
-	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
@@ -347,18 +348,15 @@ namespace internal
 		RowIterator mRowIterator;
 	};
 
-	template<typename TItem, typename TRowBounds, typename TSettings>
+	template<typename TRowBounds, typename TItem>
 	class DataConstItemBounds
 	{
 	public:
-		typedef TItem Item;
 		typedef TRowBounds RowBounds;
+		typedef TItem Item;
+		typedef typename RowBounds::Settings Settings;
 
-	protected:
-		typedef TSettings Settings;
-
-	public:
-		typedef DataConstItemIterator<Item, typename RowBounds::Iterator, Settings> Iterator;
+		typedef DataConstItemIterator<typename RowBounds::Iterator, Item> Iterator;
 
 		typedef DataConstItemBounds ConstBounds;
 
@@ -433,16 +431,16 @@ namespace internal
 		typedef DataRawIterator<Raws, Settings> RawIterator;
 
 		typedef ArrayBounds<RawIterator> RawBounds;
-		typedef DataRowBounds<ConstRowReference, RawBounds> ConstRowBounds;
+		typedef DataRowBounds<RawBounds, ConstRowReference> ConstRowBounds;
 
 	public:
 		typedef DataSelection<ConstRowReference, DataTraits> ConstSelection;
 
-		typedef DataRowIterator<RowReference, RawIterator> ConstIterator;
+		typedef DataRowIterator<RawIterator, RowReference> ConstIterator;
 		typedef ConstIterator Iterator;
 
 		template<typename Item>
-		using ConstItemBounds = DataConstItemBounds<Item, ConstRowBounds, Settings>;
+		using ConstItemBounds = DataConstItemBounds<ConstRowBounds, Item>;
 
 	private:
 		struct RowReferenceProxy : public RowReference
@@ -921,16 +919,16 @@ namespace std
 	{
 	};
 
-	template<typename RR, typename RI>
-	struct iterator_traits<momo::internal::DataRowIterator<RR, RI>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::DataRowIterator<RR, RI>,
+	template<typename RI, typename RR>
+	struct iterator_traits<momo::internal::DataRowIterator<RI, RR>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRowIterator<RI, RR>,
 			random_access_iterator_tag>
 	{
 	};
 
-	template<typename I, typename RI, typename S>
-	struct iterator_traits<momo::internal::DataConstItemIterator<I, RI, S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::DataConstItemIterator<I, RI, S>,
+	template<typename RI, typename I>
+	struct iterator_traits<momo::internal::DataConstItemIterator<RI, I>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataConstItemIterator<RI, I>,
 			random_access_iterator_tag>
 	{
 	};

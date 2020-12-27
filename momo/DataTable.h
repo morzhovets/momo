@@ -106,22 +106,22 @@ private:
 	typedef internal::DataRawIterator<Raws, Settings> RawIterator;
 
 	typedef internal::ArrayBounds<RawIterator> RawBounds;
-	typedef internal::DataRowBounds<ConstRowReference, RawBounds> ConstRowBounds;
+	typedef internal::DataRowBounds<RawBounds, ConstRowReference> ConstRowBounds;
 
 public:
-	typedef internal::DataRowIterator<RowReference, RawIterator> Iterator;
+	typedef internal::DataRowIterator<RawIterator, RowReference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::DataRowPointer<internal::DataRowBounds<RowReference,
-		typename Indexes::UniqueHashRawBounds>> RowHashPointer;
+	typedef internal::DataRowPointer<internal::DataRowBounds<
+		typename Indexes::UniqueHashRawBounds, RowReference>> RowHashPointer;
 	typedef typename RowHashPointer::ConstPointer ConstRowHashPointer;
 
-	typedef internal::DataRowBounds<RowReference,
-		typename Indexes::MultiHashRawBounds> RowHashBounds;
+	typedef internal::DataRowBounds<
+		typename Indexes::MultiHashRawBounds, RowReference> RowHashBounds;
 	typedef typename RowHashBounds::ConstBounds ConstRowHashBounds;
 
 	template<typename Item>
-	using ConstItemBounds = internal::DataConstItemBounds<Item, ConstRowBounds, Settings>;
+	using ConstItemBounds = internal::DataConstItemBounds<ConstRowBounds, Item>;
 
 	typedef typename Indexes::UniqueHashIndex UniqueHashIndex;
 	typedef typename Indexes::MultiHashIndex MultiHashIndex;
