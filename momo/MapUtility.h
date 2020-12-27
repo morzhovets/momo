@@ -131,15 +131,8 @@ namespace internal
 	public:
 		typedef TSetIterator SetIterator;
 
-	private:
-		typedef typename std::iterator_traits<SetIterator>::reference SetReference;
-		typedef typename std::decay<SetReference>::type KeyValuePair;
-
-	public:
-		typedef typename KeyValuePair::Key Key;
-
-		typedef Key& Reference;
-		typedef Key* Pointer;
+		typedef decltype(std::declval<SetIterator>()->GetKeyPtr()) Pointer;
+		typedef decltype(*Pointer()) Reference;
 
 	public:
 		explicit MapKeyIterator(SetIterator setIterator) noexcept
@@ -173,15 +166,8 @@ namespace internal
 	public:
 		typedef TSetIterator SetIterator;
 
-	private:
-		typedef typename std::iterator_traits<SetIterator>::reference SetReference;
-		typedef typename std::decay<SetReference>::type KeyValuePair;
-
-	public:
-		typedef typename KeyValuePair::Value Value;
-
-		typedef Value& Reference;
-		typedef Value* Pointer;
+		typedef decltype(std::declval<SetIterator>()->GetValuePtr()) Pointer;
+		typedef decltype(*Pointer()) Reference;
 
 	public:
 		explicit MapValueIterator(SetIterator setIterator) noexcept
