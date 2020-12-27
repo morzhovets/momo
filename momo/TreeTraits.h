@@ -24,15 +24,15 @@ namespace momo
 namespace internal
 {
 	template<typename Key, typename KeyArg,
-		typename = bool, typename = bool>
+		typename = void>
 	struct TreeTraitsIsValidKeyArg : public std::false_type
 	{
 	};
 
 	template<typename Key, typename KeyArg>
-	struct TreeTraitsIsValidKeyArg<Key, KeyArg,
-		decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()),
-		decltype(std::declval<const KeyArg&>() < std::declval<const Key&>())>
+	struct TreeTraitsIsValidKeyArg<Key, KeyArg, EnableIf<
+		std::is_convertible<decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()), bool>::value &&
+		std::is_convertible<decltype(std::declval<const KeyArg&>() < std::declval<const Key&>()), bool>::value>>
 		: public std::true_type
 	{
 	};
