@@ -1004,7 +1004,7 @@ public:
 	}
 
 	template<typename ArgIterator,
-		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*ArgIterator()))>
+		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
 	void Add(ArgIterator begin, ArgIterator end)
 	{
 		for (ArgIterator iter = begin; iter != end; ++iter)

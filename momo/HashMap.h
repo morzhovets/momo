@@ -637,7 +637,7 @@ public:
 	}
 
 	template<typename ArgIterator,
-		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*ArgIterator()))>
+		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		size_t count = 0;
