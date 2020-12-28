@@ -1061,9 +1061,10 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(iter.GetKeyIterator()));
 		ValueArray& valueArray = hashMapIter->value;
 		typename ValueArray::Bounds valueBounds = valueArray.GetBounds();
-		ptrdiff_t valueIndex = iter.GetValueIterator() - valueBounds.GetBegin();
+		size_t valueIndex = internal::UIntMath<>::Dist<typename ConstIterator::ValueIterator>(
+			valueBounds.GetBegin(), iter.GetValueIterator());
 		KeyValueTraits::AssignAnywayValue(GetMemManager(), *(valueBounds.GetEnd() - 1),
-			valueBounds.GetBegin()[valueIndex]);
+			valueBounds[valueIndex]);
 		valueArray.RemoveBack(mValueCrew.GetValueArrayParams());
 		--mValueCount;
 		++mValueCrew.GetValueVersion();
@@ -1147,7 +1148,9 @@ public:
 			return Iterator();
 		ConstIteratorProxy::Check(iter, mValueCrew.GetValueVersion());
 		KeyIterator keyIter = MakeMutableKeyIterator(iter.GetKeyIterator());
-		return pvMakeIterator(keyIter, iter.GetValueIterator() - keyIter->GetBegin(), false);
+		size_t valueIndex = internal::UIntMath<>::Dist<typename ConstIterator::ValueIterator>(
+			keyIter->GetBegin(), iter.GetValueIterator());
+		return pvMakeIterator(keyIter, valueIndex, false);
 	}
 
 	KeyIterator MakeMutableKeyIterator(ConstKeyIterator keyIter)
