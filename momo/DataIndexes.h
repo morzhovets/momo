@@ -226,6 +226,8 @@ namespace internal
 
 		typedef DataRawMultiHashBounds ConstBounds;
 
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
+
 	public:
 		explicit DataRawMultiHashBounds() noexcept
 			: mRawCount(0)
