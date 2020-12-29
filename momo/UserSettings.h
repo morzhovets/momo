@@ -70,7 +70,7 @@
 #define MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpen8
 
 // Settings of node in B-tree
-#define MOMO_DEFAULT_TREE_NODE TreeNode<32, 4>
+#define MOMO_DEFAULT_TREE_NODE TreeNode<>
 
 //#define MOMO_HASH_CODER(key) key.GetHashCode() //hash_value(key)
 

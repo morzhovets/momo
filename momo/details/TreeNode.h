@@ -354,8 +354,9 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCapacity, size_t tCapacityStep,
-	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 32 : 1>,	//?
+template<size_t tMaxCapacity = 32,
+	size_t tCapacityStep = (tMaxCapacity >= 16) ? tMaxCapacity / 8 : 2,
+	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
 	bool tIsContinuous = true>
 class TreeNode
 {
