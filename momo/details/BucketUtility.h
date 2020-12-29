@@ -6,9 +6,6 @@
 
   momo/details/BucketUtility.h
 
-  namespace momo:
-    enum class HashBucketOneState
-
 \**********************************************************/
 
 #pragma once
