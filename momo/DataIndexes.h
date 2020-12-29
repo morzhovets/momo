@@ -135,37 +135,37 @@ namespace internal
 		Raw* mRaw;
 	};
 
-	template<typename TKeyIterator, typename TSettings>
+	template<typename TRawIterator, typename TSettings>
 	class DataRawMultiHashIterator : private VersionKeeper<TSettings>
 	{
 	public:
-		typedef TKeyIterator KeyIterator;
+		typedef TRawIterator RawIterator;
 		typedef TSettings Settings;
 
-	private:
-		typedef typename KeyIterator::Reference::Key RawPtr;
-
-	public:
-		typedef const RawPtr& Reference;
-		typedef const RawPtr* Pointer;
+		typedef typename std::iterator_traits<RawIterator>::reference Reference;
+		typedef typename std::iterator_traits<RawIterator>::pointer Pointer;
 
 		typedef DataRawMultiHashIterator ConstIterator;
+
+		typedef typename std::decay<Reference>::type RawPtr;
 
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		explicit DataRawMultiHashIterator() noexcept
-			: mRawIndex(0)
+			: mRaw0(nullptr),
+			mRawBegin(),
+			mRawIndex(0)
 		{
 		}
 
-		explicit DataRawMultiHashIterator(KeyIterator keyIter, size_t rawIndex,
+		explicit DataRawMultiHashIterator(RawPtr raw0, RawIterator rawBegin, size_t rawIndex,
 			VersionKeeper version) noexcept
 			: VersionKeeper(version),
-			mKeyIterator(keyIter),
+			mRaw0(raw0),
+			mRawBegin(rawBegin),
 			mRawIndex(rawIndex)
 		{
-			//MOMO_ASSERT(rawIndex <= (!!keyIter ? keyIter->GetCount() + 1 : 0));
 		}
 
 		DataRawMultiHashIterator& operator+=(ptrdiff_t diff)
@@ -173,8 +173,10 @@ namespace internal
 			if (diff != 0)
 			{
 				VersionKeeper::Check();
+				MOMO_CHECK(mRaw0 != nullptr);
+				MOMO_CHECK(diff > 0 || static_cast<size_t>(-diff) <= mRawIndex);
 				size_t newRawIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mRawIndex) + diff);
-				MOMO_CHECK(!!mKeyIterator && newRawIndex <= mKeyIterator->GetCount() + 1);
+				MOMO_CHECK(mRawBegin != RawIterator() || newRawIndex <= 1);
 				mRawIndex = newRawIndex;
 			}
 			return *this;
@@ -182,73 +184,84 @@ namespace internal
 
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
-			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
+			MOMO_CHECK(mRaw0 == iter.mRaw0);
 			return static_cast<ptrdiff_t>(mRawIndex) - static_cast<ptrdiff_t>(iter.mRawIndex);
 		}
 
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(!!mKeyIterator && mRawIndex <= mKeyIterator->GetCount());
 			if (mRawIndex > 0)
-				return &(*mKeyIterator)[mRawIndex - 1];
+			{
+				MOMO_CHECK(mRawBegin != RawIterator());
+				return &mRawBegin[mRawIndex - 1];
+			}
 			else
-				return &mKeyIterator->key;
+			{
+				MOMO_CHECK(mRaw0 != nullptr);
+				return &mRaw0;
+			}
 		}
 
 		bool operator==(ConstIterator iter) const noexcept
 		{
-			return mKeyIterator == iter.mKeyIterator
-				&& mRawIndex == iter.mRawIndex;
+			return mRaw0 == iter.mRaw0 && mRawIndex == iter.mRawIndex;
 		}
 
 		bool operator<(ConstIterator iter) const
 		{
-			MOMO_CHECK(mKeyIterator == iter.mKeyIterator);
+			MOMO_CHECK(mRaw0 == iter.mRaw0);
 			return mRawIndex < iter.mRawIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawMultiHashIterator)
 
 	private:
-		KeyIterator mKeyIterator;
+		RawPtr mRaw0;
+		RawIterator mRawBegin;
 		size_t mRawIndex;
 	};
 
-	template<typename TKeyIterator, typename TSettings>
+	template<typename TRawIterator, typename TSettings>
 	class DataRawMultiHashBounds : private VersionKeeper<TSettings>
 	{
 	public:
-		typedef TKeyIterator KeyIterator;
+		typedef TRawIterator RawIterator;
 		typedef TSettings Settings;
 
-		typedef DataRawMultiHashIterator<KeyIterator, Settings> Iterator;
+		typedef DataRawMultiHashIterator<RawIterator, Settings> Iterator;
 
 		typedef DataRawMultiHashBounds ConstBounds;
+
+		typedef typename Iterator::RawPtr RawPtr;
 
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		explicit DataRawMultiHashBounds() noexcept
-			: mRawCount(0)
+			: mRaw0(nullptr),
+			mRawBegin(),
+			mRawCount(0)
 		{
 		}
 
-		explicit DataRawMultiHashBounds(KeyIterator keyIter, VersionKeeper version) noexcept
+		explicit DataRawMultiHashBounds(RawPtr raw0, RawIterator rawBegin, size_t rawCount,
+			VersionKeeper version) noexcept
 			: VersionKeeper(version),
-			mKeyIterator(keyIter),
-			mRawCount(!!keyIter ? keyIter->GetCount() + 1 : 0)
+			mRaw0(raw0),
+			mRawBegin(rawBegin),
+			mRawCount(rawCount)
 		{
 		}
 
 		Iterator GetBegin() const noexcept
 		{
-			return Iterator(mKeyIterator, 0, *this);
+			return Iterator(mRaw0, mRawBegin, 0, *this);
 		}
 
 		Iterator GetEnd() const noexcept
 		{
-			return Iterator(mKeyIterator, mRawCount, *this);
+			return Iterator(mRaw0, mRawBegin, mRawCount, *this);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataRawMultiHashBounds&, Iterator)
@@ -259,7 +272,8 @@ namespace internal
 		}
 
 	private:
-		KeyIterator mKeyIterator;
+		RawPtr mRaw0;
+		RawIterator mRawBegin;
 		size_t mRawCount;
 	};
 
@@ -581,7 +595,8 @@ namespace internal
 				logInitialSegmentSize> SegmentedArraySettings;
 
 		public:
-			typedef DataRawMultiHashBounds<ConstKeyIterator, Settings> RawBounds;
+			typedef DataRawMultiHashBounds<typename ConstKeyIterator::Reference::Iterator,
+				Settings> RawBounds;
 
 			typedef MultiHashIndex Index;
 
@@ -629,7 +644,8 @@ namespace internal
 			template<typename... Items>
 			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey, VersionKeeper version) const
 			{
-				return RawBounds(mHashMultiMap.Find(hashTupleKey), version);
+				ConstKeyIterator keyIter = mHashMultiMap.Find(hashTupleKey);
+				return RawBounds(keyIter->key, keyIter->GetBegin(), keyIter->GetCount() + 1, version);
 			}
 
 			void Add(Raw* raw)
@@ -1421,9 +1437,9 @@ namespace std
 	{
 	};
 
-	template<typename KI, typename S>
-	struct iterator_traits<momo::internal::DataRawMultiHashIterator<KI, S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawMultiHashIterator<KI, S>,
+	template<typename RI, typename S>
+	struct iterator_traits<momo::internal::DataRawMultiHashIterator<RI, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DataRawMultiHashIterator<RI, S>,
 			random_access_iterator_tag>
 	{
 	};
