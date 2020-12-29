@@ -142,9 +142,7 @@ namespace internal
 			Node* node;
 			if (isLeaf)
 			{
-				size_t leafMemPoolIndex = (maxCapacity - count) / capacityStep;
-				if (leafMemPoolIndex >= leafMemPoolCount)
-					leafMemPoolIndex = leafMemPoolCount - 1;
+				size_t leafMemPoolIndex = pvGetLeafMemPoolIndex(params, count);
 				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
 				::new(static_cast<void*>(node)) Node(leafMemPoolIndex, count);
 			}
@@ -267,6 +265,16 @@ namespace internal
 		}
 
 		~Node() = default;
+
+		static size_t pvGetLeafMemPoolIndex(Params& params, size_t count) noexcept
+		{
+			if (params.GetInternalMemPool().GetAllocateCount() <= 1 && MemPoolParams::blockCount > 1)
+				return 0;
+			size_t leafMemPoolIndex = (maxCapacity - count) / capacityStep;
+			if (leafMemPoolIndex >= leafMemPoolCount)
+				leafMemPoolIndex = leafMemPoolCount - 1;
+			return leafMemPoolIndex;
+		}
 
 		Node** pvGetChildren() noexcept
 		{
