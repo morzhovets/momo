@@ -187,23 +187,23 @@ public:
 	{
 		std::mt19937 mt;
 
-		TestTemplTreeNode<  1, 1, 127, 0, 0>(mt);
-		TestTemplTreeNode<  2, 1,  66, 0, 1>(mt);
-		TestTemplTreeNode<  3, 1,  32, 0, 2>(mt);
-		TestTemplTreeNode<  4, 1,  15, 0, 3>(mt);
-		TestTemplTreeNode<  5, 1,   1, 1, 0>(mt);
-		TestTemplTreeNode< 10, 1,   3, 1, 1>(mt);
-		TestTemplTreeNode<101, 1,   2, 1, 2>(mt);
-		TestTemplTreeNode<255, 1,   1, 1, 3>(mt);
+		TestTemplTreeNode<  1, 1, 127, 3, 3>(mt);
+		TestTemplTreeNode<  2, 1,  66, 3, 2>(mt);
+		TestTemplTreeNode<  3, 1,  32, 2, 3>(mt);
+		TestTemplTreeNode<  4, 1,  15, 2, 2>(mt);
+		TestTemplTreeNode<  5, 1,   1, 1, 1>(mt);
+		TestTemplTreeNode< 10, 1,   3, 1, 0>(mt);
+		TestTemplTreeNode<101, 1,   2, 0, 1>(mt);
+		TestTemplTreeNode<255, 1,   1, 0, 0>(mt);
 
-		TestTemplTreeNode<  4, 2, 127, 2, 0>(mt);
-		TestTemplTreeNode<  5, 2,  66, 2, 1>(mt);
-		TestTemplTreeNode<  6, 2,  32, 2, 2>(mt);
-		TestTemplTreeNode<  7, 2,  15, 2, 3>(mt);
-		TestTemplTreeNode< 14, 3,   1, 3, 0>(mt);
-		TestTemplTreeNode< 77, 3,   3, 3, 1>(mt);
-		TestTemplTreeNode<121, 3,   2, 3, 2>(mt);
-		TestTemplTreeNode<255, 3,   1, 3, 3>(mt);
+		TestTemplTreeNode<  4, 2, 127, 1, 3>(mt);
+		TestTemplTreeNode<  5, 2,  66, 3, 1>(mt);
+		TestTemplTreeNode<  6, 2,  32, 1, 2>(mt);
+		TestTemplTreeNode<  7, 2,  15, 2, 1>(mt);
+		TestTemplTreeNode< 14, 3,   1, 0, 3>(mt);
+		TestTemplTreeNode< 77, 3,   3, 3, 0>(mt);
+		TestTemplTreeNode<121, 3,   2, 0, 2>(mt);
+		TestTemplTreeNode<255, 3,   1, 2, 0>(mt);
 
 		TestTemplTreeNode< 37,   7, 127, 3, 3>(mt);
 		TestTemplTreeNode< 42,  15,  66, 3, 3>(mt);
@@ -269,7 +269,7 @@ public:
 			auto isEqual = [] (ConstReference ref, const std::pair<const Key, Value>& sref)
 				{ return ref.key == sref.first && ref.value == sref.second; };
 
-			for (int t = 0; t < 4; ++t)
+			for (int t = 0; t < 3; ++t)
 			{
 				std::shuffle(array, array + count, mt);
 				for (uint8_t c : array)
