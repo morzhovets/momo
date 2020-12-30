@@ -68,13 +68,12 @@ struct LibcppIntHash
 #define LIBCXX_TEST_BEGIN(name) \
 	namespace name { \
 	void main(); \
-	int TestLibcxx() \
+	static int testLibcxx = [] \
 	{ \
 		std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
 		main(); \
 		std::cout << "ok" << std::endl; \
 		return 0; \
-	} \
-	static int testLibcxx = (TestLibcxx(), 0);
+	}();
 
 #define LIBCXX_TEST_END }
