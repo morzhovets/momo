@@ -35,11 +35,7 @@
 #define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible<Object>::value)
 
 // Using `memcpy` for relocate
-#define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
-#if defined(__GNUC__)	// gcc 4.9 & 8+
-#undef MOMO_IS_TRIVIALLY_RELOCATABLE
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
-#endif
 
 //#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
 
