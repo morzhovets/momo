@@ -359,11 +359,18 @@ struct DataStructDefault
 	typedef std::tuple<TVisitableItems...> VisitableItems;
 };
 
-template<typename TStruct = DataStructDefault<>>
+template<typename TStruct = DataStructDefault<>,
+	size_t tLogVertexCount = 8>
 class DataColumnTraits
 {
 public:
 	typedef TStruct Struct;
+
+	static const size_t logVertexCount = tLogVertexCount;
+	MOMO_STATIC_ASSERT(4 <= logVertexCount && logVertexCount < 16);
+
+	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
+	static const size_t maxCodeParam = 255;
 
 	typedef internal::DataColumnInfo<Struct> ColumnInfo;
 
@@ -375,10 +382,6 @@ public:
 
 	typedef typename ColumnInfo::Code ColumnCode;
 
-	static const size_t logVertexCount = 8;
-	static const size_t maxColumnCount = 200;
-	static const size_t maxCodeParam = 255;
-
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
@@ -387,12 +390,13 @@ public:
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
 		size_t shortCode = static_cast<size_t>(code + (code >> 32));
-		shortCode ^= (codeParam >> 4) ^ ((codeParam & 15) << 28);
 		shortCode += shortCode >> 16;
-		size_t vertex1 = shortCode & vertexCount1;
-		size_t vertex2 = (shortCode >> logVertexCount) & vertexCount1;
+		if (logVertexCount < 8)
+			shortCode += shortCode >> 8;
+		size_t vertex1 = (shortCode & vertexCount1) ^ (codeParam >> 4);
+		size_t vertex2 = ((shortCode >> logVertexCount) & vertexCount1) ^ (codeParam & 15);
 		vertex2 ^= (vertex1 == vertex2) ? 1 : 0;
-		return std::make_pair(vertex1, vertex2);
+		return { vertex1, vertex2 };
 	}
 
 	template<typename Item>
@@ -504,6 +508,7 @@ private:
 
 	static const size_t vertexCount = size_t{1} << logVertexCount;
 
+	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
 	{
 	private:

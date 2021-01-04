@@ -86,7 +86,7 @@ public:
 
 		{
 			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<Struct>> DataColumnList;
+			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>> DataColumnList;
 			DataColumnList columnList;
 			columnList.Add(strStruct);
 			columnList.Add(dblStruct.Mutable(), intStruct);
@@ -97,7 +97,7 @@ public:
 
 		{
 			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>, momo::MemManagerDefault,
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDefault,
 				momo::DataItemTraits<momo::MemManagerDefault>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.Add(dblString.Mutable());
