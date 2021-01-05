@@ -365,8 +365,7 @@ namespace internal
 
 		typedef DataRowPointer<typename RowBounds::ConstBounds> ConstPointer;
 
-	private:
-		typedef typename Reference::ColumnList::Settings Settings;
+		typedef typename RowBounds::Settings Settings;
 
 	public:
 		using RowBounds::RowBounds;

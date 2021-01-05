@@ -661,12 +661,12 @@ namespace internal
 		protected:
 			typedef TKeyReference KeyReference;
 
+			typedef typename Map::Settings Settings;
+
 		public:
 			typedef const Value& ConstReference;
 
 		private:
-			typedef typename Map::Settings Settings;
-
 			typedef typename std::add_pointer<KeyReference>::type KeyPointer;
 
 		public:

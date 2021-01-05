@@ -25,6 +25,8 @@ namespace internal
 		typedef TItem Item;
 		typedef TArray Array;
 
+		typedef typename Array::Settings Settings;
+
 	public:
 		typedef Item& Reference;
 		typedef Item* Pointer;
@@ -32,8 +34,6 @@ namespace internal
 		typedef ArrayIndexIterator<const Array, const Item> ConstIterator;
 
 	private:
-		typedef typename Array::Settings Settings;
-
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -201,8 +201,6 @@ namespace internal
 	public:
 		typedef TArray Array;
 		typedef typename Array::Item Item;
-
-	private:
 		typedef typename Array::MemManager MemManager;
 		typedef typename Array::ItemTraits ItemTraits;
 		typedef typename Array::Settings Settings;

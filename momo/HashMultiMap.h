@@ -180,14 +180,14 @@ namespace internal
 	public:
 		typedef TKeyIterator KeyIterator;
 
-	private:
+	protected:
 		typedef TSettings Settings;
 
+		typedef internal::VersionKeeper<Settings, Settings::checkValueVersion> VersionKeeper;
+
+	private:
 		typedef typename KeyIterator::Reference KeyReference;
 		typedef typename KeyReference::Key Key;
-
-	protected:
-		typedef internal::VersionKeeper<Settings, Settings::checkValueVersion> VersionKeeper;
 
 	public:
 		typedef typename KeyReference::Iterator ValueIterator;
