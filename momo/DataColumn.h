@@ -425,13 +425,13 @@ private:
 
 public:
 	template<typename Item>
-	static size_t GetSize() noexcept
+	static constexpr size_t GetSize() noexcept
 	{
 		return sizeof(Item);
 	}
 
 	template<typename Item>
-	static size_t GetAlignment() noexcept
+	static constexpr size_t GetAlignment() noexcept
 	{
 		return ItemManager<Item>::alignment;
 	}
@@ -913,12 +913,14 @@ private:
 	static void pvAddEdges(Graph& graph, size_t& offset, size_t& alignment, size_t codeParam,
 		const ColumnCode* columnCodes)
 	{
-		offset = internal::UIntMath<>::Ceil(offset, ItemTraits::template GetAlignment<Item>());
+		static const size_t size = ItemTraits::template GetSize<Item>();
+		static const size_t curAlignment = ItemTraits::template GetAlignment<Item>();
+		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(curAlignment, size));
+		offset = internal::UIntMath<>::Ceil(offset, curAlignment);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
-		offset += ItemTraits::template GetSize<Item>();
-		alignment = std::minmax(alignment,
-			ItemTraits::template GetAlignment<Item>()).second;
+		offset += size;
+		alignment = std::minmax(alignment, size_t{curAlignment}).second;
 		pvAddEdges<Void, Items...>(graph, offset, alignment, codeParam, columnCodes + 1);
 	}
 

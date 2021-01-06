@@ -481,6 +481,8 @@ public:
 	typedef TSettings Settings;
 	typedef typename ItemTraits::Item Item;
 
+	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+
 private:
 	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
 

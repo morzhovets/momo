@@ -563,6 +563,9 @@ public:
 	typedef TKeyValueTraits KeyValueTraits;
 	typedef TSettings Settings;
 
+	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Key>::Check(KeyValueTraits::keyAlignment));
+	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Value>::Check(KeyValueTraits::valueAlignment));
+
 private:
 	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,
 		Settings> HashMapKeyValueTraits;

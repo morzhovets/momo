@@ -526,6 +526,9 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 		static const size_t valueAlignment = tValueAlignment;
 
+		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Key>::Check(keyAlignment));
+		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Value>::Check(valueAlignment));
+
 	public:
 		MapKeyValuePair() = delete;
 
@@ -569,11 +572,7 @@ namespace internal
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 
-	private:
-		typedef ObjectManager<Item, MemManager> ItemManager;
-
-	public:
-		static const size_t alignment = ItemManager::alignment;
+		static const size_t alignment = AlignmentOf<Item>::value;
 
 		static const bool isNothrowRelocatable =
 			KeyValueTraits::isKeyNothrowRelocatable && KeyValueTraits::isValueNothrowRelocatable;

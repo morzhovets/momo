@@ -210,8 +210,7 @@ private:
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				mItems = MemManagerProxy::template Allocate<Item>(GetMemManager(),
-					capacity * sizeof(Item));
+				mItems = pvAllocate(capacity);
 				mCount = 0;
 				mCapacity = capacity;
 			}
@@ -296,8 +295,7 @@ private:
 			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
-				Item* items = MemManagerProxy::template Allocate<Item>(GetMemManager(),
-					capacity * sizeof(Item));
+				Item* items = pvAllocate(capacity);
 				try
 				{
 					itemsRelocator(items);
@@ -323,6 +321,13 @@ private:
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
 				throw std::length_error("momo::Array length error");
+		}
+
+		Item* pvAllocate(size_t capacity)
+		{
+			MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+			return MemManagerProxy::template Allocate<Item>(GetMemManager(),
+				capacity * sizeof(Item));
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>

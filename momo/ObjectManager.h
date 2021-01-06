@@ -126,6 +126,20 @@ namespace internal
 		}
 	};
 
+	template<typename TObject>
+	class ObjectAlignmenter
+	{
+	public:
+		typedef TObject Object;
+
+	public:
+		static constexpr bool Check(size_t alignment, size_t size = sizeof(Object)) noexcept
+		{
+			return alignment > 0 && size % alignment == 0
+				&& UIntConst::maxAlignment % alignment == 0;
+		}
+	};
+
 	template<typename TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
@@ -133,8 +147,7 @@ namespace internal
 		typedef TObject Object;
 
 		static const size_t alignment = tAlignment;
-
-		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(alignment) && sizeof(Object) % alignment == 0);
+		MOMO_STATIC_ASSERT(ObjectAlignmenter<Object>::Check(alignment));
 
 	public:
 		const Object* operator&() const noexcept

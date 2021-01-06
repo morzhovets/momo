@@ -30,6 +30,8 @@ namespace internal
 
 		typedef MemManagerPtr<ArrayBucketMemManager> MemManager;
 
+		static const size_t alignment = ArrayBucketItemTraits::alignment;
+
 		static const bool isTriviallyRelocatable = ArrayBucketItemTraits::isTriviallyRelocatable;
 
 		template<typename ItemArg>
