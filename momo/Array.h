@@ -163,7 +163,7 @@ public:
 		else if (!realloc && capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
 			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
 		else
-			throw std::length_error("momo::ArraySettings length error");
+			throw std::length_error("Invalid capacity");
 		if (newCapacity < minNewCapacity)
 			newCapacity = minNewCapacity;
 		return newCapacity;
@@ -320,7 +320,7 @@ private:
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
-				throw std::length_error("momo::Array length error");
+				throw std::length_error("Invalid capacity");
 		}
 
 		Item* pvAllocate(size_t capacity)

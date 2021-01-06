@@ -1321,7 +1321,7 @@ namespace internal
 			}
 			Index trueIndex = pvGetHashIndex(hashes, GetSortedOffsets(offsets));
 			if (trueIndex == Index::empty)
-				throw std::runtime_error("Index not found");
+				throw std::logic_error("Index not found");
 			return trueIndex;
 		}
 

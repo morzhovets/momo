@@ -816,7 +816,7 @@ private:
 		static const size_t columnCount = sizeof...(columns);
 		size_t initColumnCount = GetCount();
 		if (columnCount + initColumnCount > maxColumnCount)
-			throw std::runtime_error("Too many columns");
+			throw std::logic_error("Too many columns");
 		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo(columns).GetCode()... }};
 		Addends addends;
 		size_t offset;
@@ -1280,7 +1280,7 @@ private:
 	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
 		if (mColumns.IsEmpty())
-			throw std::runtime_error("Not prepared for visitors");
+			throw std::logic_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mColumns)
 		{
 			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo));

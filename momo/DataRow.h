@@ -35,7 +35,7 @@ namespace internal
 		template<typename ColumnInfo>
 		void operator()(Void* /*item*/, ColumnInfo /*columnInfo*/) const
 		{
-			throw std::runtime_error("Visit unknown type");
+			throw std::logic_error("Visit unknown type");
 		}
 
 		template<typename Item, typename ColumnInfo>

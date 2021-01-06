@@ -390,7 +390,7 @@ private:
 		size_t maxBlockSize = (internal::UIntConst::maxSize
 			- 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment) / Params::blockCount;
 		if (Params::blockSize > maxBlockSize)
-			throw std::length_error("momo::MemPool length error");
+			throw std::length_error("Invalid block size");
 	}
 
 	bool pvUseCache() const noexcept
@@ -674,7 +674,7 @@ namespace internal
 		{
 			MOMO_ASSERT(maxTotalBlockCount < size_t{UINT32_MAX});
 			if (mBlockSize > UIntConst::maxSize / blockCount)
-				throw std::length_error("momo::internal::MemPoolUInt32 length error");
+				throw std::length_error("Invalid block size");
 		}
 
 		MemPoolUInt32(const MemPoolUInt32&) = delete;
@@ -743,7 +743,7 @@ namespace internal
 		{
 			size_t bufferCount = mBuffers.GetCount();
 			if (bufferCount >= mMaxBufferCount)
-				throw std::length_error("momo::internal::MemPoolUInt32 length error");
+				throw std::length_error("Invalid buffer count");
 			mBuffers.Reserve(bufferCount + 1);
 			char* buffer = MemManagerProxy::template Allocate<char>(GetMemManager(),
 				pvGetBufferSize());
