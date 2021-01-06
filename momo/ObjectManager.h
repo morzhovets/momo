@@ -98,13 +98,6 @@ private:
 
 namespace internal
 {
-	template<typename Object>
-	struct AlignmentOf
-	{
-		static const size_t value = (alignof(Object) < UIntConst::maxAlignment)
-			? alignof(Object) : UIntConst::maxAlignment;
-	};
-
 	template<typename Object,
 		typename = void>
 	struct IsNothrowSwappable
@@ -131,6 +124,9 @@ namespace internal
 	{
 	public:
 		typedef TObject Object;
+
+		static const size_t alignment = (alignof(Object) < UIntConst::maxAlignment)
+			? alignof(Object) : UIntConst::maxAlignment;
 
 	public:
 		static constexpr bool Check(size_t alignment, size_t size = sizeof(Object)) noexcept
@@ -189,7 +185,7 @@ namespace internal
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
-		static const size_t alignment = AlignmentOf<Object>::value;
+		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
 
 		template<typename... Args>
 		class Creator

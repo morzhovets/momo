@@ -104,7 +104,7 @@ namespace internal
 		typedef momo::Array<Item, MemManagerPtr, ArrayItemTraits,
 			NestedArraySettings<ArraySettings>> Array;
 
-		static const size_t arrayAlignment = AlignmentOf<Array>::value;
+		static const size_t arrayAlignment = ObjectAlignmenter<Array>::alignment;
 		typedef MemPoolParamsStatic<sizeof(Array) + arrayAlignment, arrayAlignment,
 			MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> ArrayMemPoolParams;
 

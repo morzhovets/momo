@@ -572,7 +572,7 @@ namespace internal
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 
-		static const size_t alignment = AlignmentOf<Item>::value;
+		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
 
 		static const bool isNothrowRelocatable =
 			KeyValueTraits::isKeyNothrowRelocatable && KeyValueTraits::isValueNothrowRelocatable;

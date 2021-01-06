@@ -622,7 +622,7 @@ public:
 	explicit DataColumnList(MemManager memManager = MemManager())
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
-		mAlignment(Settings::keepRowNumber ? internal::AlignmentOf<size_t>::value : 1),
+		mAlignment(Settings::keepRowNumber ? internal::ObjectAlignmenter<size_t>::alignment : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
 		mColumns(MemManagerPtr(GetMemManager())),
 		mFuncRecords(MemManagerPtr(GetMemManager())),
@@ -753,7 +753,6 @@ public:
 		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
 		size_t offset = pvGetOffset(code);
 		MOMO_ASSERT(offset < mTotalSize);
-		//MOMO_ASSERT(offset % ItemTraits::template GetAlignment<Item>() == 0);
 		return offset;
 	}
 
@@ -1144,7 +1143,7 @@ public:
 		if (Settings::keepRowNumber)
 		{
 			totalSize = internal::UIntMath<>::Ceil(totalSize,
-				internal::AlignmentOf<size_t>::value);
+				internal::ObjectAlignmenter<size_t>::alignment);
 			totalSize += sizeof(size_t);
 		}
 		return totalSize;
@@ -1154,7 +1153,10 @@ public:
 	{
 		size_t alignment = RawManager::alignment;
 		if (Settings::keepRowNumber)
-			alignment = std::minmax(alignment, size_t{internal::AlignmentOf<size_t>::value}).second;
+		{
+			alignment = std::minmax(alignment,
+				size_t{internal::ObjectAlignmenter<size_t>::alignment}).second;
+		}
 		return alignment;
 	}
 
@@ -1183,7 +1185,6 @@ public:
 	{
 		size_t offset = pvGetOffset(columnInfo);
 		MOMO_ASSERT(offset < sizeof(Struct));
-		//MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
 		return offset;
 	}
 
@@ -1191,7 +1192,7 @@ public:
 	static Item& GetByOffset(Raw* raw, size_t offset) noexcept
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
-		//MOMO_ASSERT(offset % internal::AlignmentOf<Item>::value == 0);
+		//MOMO_ASSERT(offset % internal::ObjectAlignmenter<Item>::alignment == 0);
 		return *internal::PtrCaster::Shift<Item>(raw, offset);
 	}
 
@@ -1260,7 +1261,8 @@ private:
 	static size_t pvGetNumberOffset() noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return internal::UIntMath<>::Ceil(sizeof(Struct), internal::AlignmentOf<size_t>::value);
+		return internal::UIntMath<>::Ceil(sizeof(Struct),
+			internal::ObjectAlignmenter<size_t>::alignment);
 	}
 
 	template<typename Item, typename... Items>

@@ -163,7 +163,8 @@ protected:
 private:
 	static MemPoolParams pvGetMemPoolParams() noexcept
 	{
-		return MemPoolParams(sizeof(value_type), internal::AlignmentOf<value_type>::value);
+		return MemPoolParams(sizeof(value_type),
+			internal::ObjectAlignmenter<value_type>::alignment);
 	}
 
 	static bool pvIsEqual(const MemPoolParams& memPoolParams1,
