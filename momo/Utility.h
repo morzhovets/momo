@@ -368,7 +368,9 @@ namespace internal
 		MOMO_STATIC_ASSERT(nullPtr != invalidPtr);
 
 		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
-		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(maxAlignment));
+		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(maxAllocAlignment));
+		MOMO_STATIC_ASSERT(maxAllocAlignment % maxAlignment == 0);
 
 		static const size_t maxSize = SIZE_MAX;
 	};

@@ -421,8 +421,7 @@ private:
 
 	size_t pvGetAlignmentAddend() const noexcept
 	{
-		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		MOMO_STATIC_ASSERT(SMath::HasSingleBit(maxAllocAlignment));
+		static const size_t maxAllocAlignment = internal::UIntConst::maxAllocAlignment;
 		size_t addend = Params::blockAlignment;
 		if (SMath::HasSingleBit(Params::blockAlignment))
 			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{Params::blockAlignment}).first;
