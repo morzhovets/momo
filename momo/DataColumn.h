@@ -820,14 +820,14 @@ private:
 		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo(columns).GetCode()... }};
 		Addends addends;
 		size_t offset;
-		size_t alignment;
+		size_t maxAlignment;
 		size_t codeParam = mCodeParam;
 		while (true)
 		{
 			std::fill(addends.begin(), addends.end(), 0);
 			offset = mTotalSize;
-			alignment = mAlignment;
-			if (pvFillAddends<Items...>(addends, offset, alignment, codeParam, columnCodes.data()))
+			maxAlignment = mAlignment;
+			if (pvFillAddends<Items...>(addends, offset, maxAlignment, codeParam, columnCodes.data()))
 				break;
 			++codeParam;
 			if (codeParam > maxCodeParam)
@@ -873,13 +873,13 @@ private:
 		mCodeParam = codeParam;
 		mAddends = addends;
 		mTotalSize = offset;
-		mAlignment = alignment;
+		mAlignment = maxAlignment;
 		pvAddColumns(columnCodes.data(), columnMutables, columns...);
 		mFuncRecords.AddBackNogrow(std::move(funcRec));
 	}
 
 	template<typename... Items>
-	bool pvFillAddends(Addends& addends, size_t& offset, size_t& alignment, size_t codeParam,
+	bool pvFillAddends(Addends& addends, size_t& offset, size_t& maxAlignment, size_t codeParam,
 		const ColumnCode* columnCodes) const
 	{
 		Graph graph;
@@ -889,14 +889,14 @@ private:
 				codeParam);
 			graph.AddEdges(vertices.first, vertices.second, columnRec.GetOffset());
 		}
-		return pvFillAddends<Items...>(addends, graph, offset, alignment, codeParam, columnCodes);
+		return pvFillAddends<Items...>(addends, graph, offset, maxAlignment, codeParam, columnCodes);
 	}
 
 	template<typename... Items>
-	static bool pvFillAddends(Addends& addends, Graph& graph, size_t& offset, size_t& alignment,
+	static bool pvFillAddends(Addends& addends, Graph& graph, size_t& offset, size_t& maxAlignment,
 		size_t codeParam, const ColumnCode* columnCodes)
 	{
-		pvAddEdges<void, Items...>(graph, offset, alignment, codeParam, columnCodes);
+		pvAddEdges<void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
 			if (!graph.HasEdge(v) || addends[v] != 0)
@@ -909,22 +909,22 @@ private:
 	}
 
 	template<typename Void, typename Item, typename... Items>
-	static void pvAddEdges(Graph& graph, size_t& offset, size_t& alignment, size_t codeParam,
+	static void pvAddEdges(Graph& graph, size_t& offset, size_t& maxAlignment, size_t codeParam,
 		const ColumnCode* columnCodes)
 	{
 		static const size_t size = ItemTraits::template GetSize<Item>();
-		static const size_t curAlignment = ItemTraits::template GetAlignment<Item>();
-		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(curAlignment, size));
-		offset = internal::UIntMath<>::Ceil(offset, curAlignment);
+		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
+		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(alignment, size));
+		offset = internal::UIntMath<>::Ceil(offset, alignment);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
-		alignment = std::minmax(alignment, size_t{curAlignment}).second;
-		pvAddEdges<Void, Items...>(graph, offset, alignment, codeParam, columnCodes + 1);
+		maxAlignment = std::minmax(maxAlignment, size_t{alignment}).second;
+		pvAddEdges<Void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes + 1);
 	}
 
 	template<typename Void>
-	static void pvAddEdges(Graph& /*graph*/, size_t& /*offset*/, size_t& /*alignment*/,
+	static void pvAddEdges(Graph& /*graph*/, size_t& /*offset*/, size_t& /*maxAlignment*/,
 		size_t /*codeParam*/, const ColumnCode* /*columnCodes*/)
 	{
 	}
