@@ -373,6 +373,8 @@ namespace internal
 		MOMO_STATIC_ASSERT(maxAllocAlignment % maxAlignment == 0);
 
 		static const size_t maxSize = SIZE_MAX;
+
+		static const uint32_t max32 = UINT32_MAX;
 	};
 }
 

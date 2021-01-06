@@ -656,7 +656,7 @@ namespace internal
 		static const size_t blockCount = tBlockCount;
 		MOMO_STATIC_ASSERT(blockCount > 0);
 
-		static const uint32_t nullPtr = UINT32_MAX;
+		static const uint32_t nullPtr = UIntConst::max32;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -669,10 +669,10 @@ namespace internal
 			: mBuffers(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxBufferCount(maxTotalBlockCount / blockCount),
-			mBlockSize(UIntMath<>::Ceil(blockSize, sizeof(uint32_t))),
+			mBlockSize(std::minmax(blockSize, sizeof(uint32_t)).second),
 			mAllocCount(0)
 		{
-			MOMO_ASSERT(maxTotalBlockCount < size_t{UINT32_MAX});
+			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});
 			if (mBlockSize > UIntConst::maxSize / blockCount)
 				throw std::length_error("Invalid block size");
 		}
@@ -698,11 +698,11 @@ namespace internal
 		}
 
 		template<typename ResObject = void>
-		ResObject* GetRealPointer(uint32_t ptr) noexcept
+		ResObject* GetRealPointer(uint32_t block) noexcept
 		{
-			MOMO_ASSERT(ptr != nullPtr);
-			char* buffer = mBuffers[ptr / blockCount];
-			void* realPtr = buffer + (size_t{ptr} % blockCount) * mBlockSize;
+			MOMO_ASSERT(block != nullPtr);
+			char* buffer = mBuffers[block / blockCount];
+			void* realPtr = buffer + (size_t{block} % blockCount) * mBlockSize;
 			return static_cast<ResObject*>(realPtr);
 		}
 
@@ -710,18 +710,18 @@ namespace internal
 		{
 			if (mBlockHead == nullPtr)
 				pvNewBuffer();
-			uint32_t ptr = mBlockHead;
+			uint32_t block = mBlockHead;
 			mBlockHead = pvGetNextBlock(GetRealPointer(mBlockHead));
 			++mAllocCount;
-			return ptr;
+			return block;
 		}
 
-		void Deallocate(uint32_t ptr) noexcept
+		void Deallocate(uint32_t block) noexcept
 		{
-			MOMO_ASSERT(ptr != nullPtr);
+			MOMO_ASSERT(block != nullPtr);
 			MOMO_ASSERT(mAllocCount > 0);
-			pvGetNextBlock(GetRealPointer(ptr)) = mBlockHead;
-			mBlockHead = ptr;
+			pvSetNextBlock(mBlockHead, GetRealPointer(block));
+			mBlockHead = block;
 			--mAllocCount;
 			if (mAllocCount == 0 && mBuffers.GetCount() > 2)
 				pvClear();
@@ -734,9 +734,16 @@ namespace internal
 		}
 
 	private:
-		uint32_t& pvGetNextBlock(void* realPtr) noexcept
+		static uint32_t pvGetNextBlock(void* realPtr) noexcept
 		{
-			return *static_cast<uint32_t*>(realPtr);
+			uint32_t nextBlock = 0;
+			std::memcpy(&nextBlock, realPtr, sizeof(uint32_t));
+			return nextBlock;
+		}
+
+		static void pvSetNextBlock(uint32_t nextBlock, void* realPtr) noexcept
+		{
+			std::memcpy(realPtr, &nextBlock, sizeof(uint32_t));
 		}
 
 		void pvNewBuffer()
@@ -749,9 +756,9 @@ namespace internal
 				pvGetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
-				void* realPtr = buffer + mBlockSize * i;
-				pvGetNextBlock(realPtr) = (i + 1 < blockCount)
+				uint32_t nextBlock = (i + 1 < blockCount)
 					? static_cast<uint32_t>(bufferCount * blockCount + i + 1) : nullPtr;
+				pvSetNextBlock(nextBlock, buffer + mBlockSize * i);
 			}
 			mBlockHead = static_cast<uint32_t>(bufferCount * blockCount);
 			mBuffers.AddBackNogrow(buffer);
