@@ -63,10 +63,11 @@
 #define MOMO_CHECK(expr) \
 	do { \
 		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \
-		if (Settings::checkMode == CheckMode::exception && !(expr)) throw std::invalid_argument(#expr); \
+		if (Settings::checkMode == CheckMode::exception) MOMO_CHECK_EXCEPTION(expr); \
 	} while (false)
 
-#define MOMO_EXTRA_CHECK(expr) MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
+#define MOMO_EXTRA_CHECK(expr) \
+	MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
 	template<typename... Args> \
