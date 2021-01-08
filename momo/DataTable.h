@@ -478,10 +478,10 @@ public:
 	ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 	{
 		const ColumnList& columnList = GetColumnList();
-		size_t offset = columnList.GetOffset(column);
 		RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
-		return ConstItemBounds<Item>(offset, ConstRowBoundsProxy(&columnList, rawBounds,
-			VersionKeeper(&mCrew.GetRemoveVersion())));
+		return ConstItemBounds<Item>(
+			ConstRowBoundsProxy(&columnList, rawBounds, VersionKeeper(&mCrew.GetRemoveVersion())),
+			columnList.GetOffset(column));
 	}
 
 	Row NewRow()

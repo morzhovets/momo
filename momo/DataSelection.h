@@ -134,7 +134,8 @@ namespace internal
 
 	public:
 		explicit DataRowIterator() noexcept
-			: mColumnList(nullptr)
+			: mColumnList(nullptr),
+			mRawIterator()
 		{
 		}
 
@@ -291,13 +292,14 @@ namespace internal
 
 	public:
 		explicit DataConstItemIterator() noexcept
-			: mOffset(0)
+			: mRowIterator(),
+			mOffset(0)
 		{
 		}
 
-		explicit DataConstItemIterator(size_t offset, RowIterator rowIter) noexcept
-			: mOffset(offset),
-			mRowIterator(rowIter)
+		explicit DataConstItemIterator(RowIterator rowIter, size_t offset) noexcept
+			: mRowIterator(rowIter),
+			mOffset(offset)
 		{
 		}
 
@@ -333,19 +335,19 @@ namespace internal
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)
 
-		size_t GetOffset() const noexcept
-		{
-			return mOffset;
-		}
-
 		RowIterator GetRowIterator() const noexcept
 		{
 			return mRowIterator;
 		}
 
+		size_t GetOffset() const noexcept
+		{
+			return mOffset;
+		}
+
 	private:
-		size_t mOffset;
 		RowIterator mRowIterator;
+		size_t mOffset;
 	};
 
 	template<typename TRowBounds, typename TItem>
@@ -366,9 +368,9 @@ namespace internal
 		{
 		}
 
-		explicit DataConstItemBounds(size_t offset, RowBounds rowBounds) noexcept
-			: mOffset(offset),
-			mRowBounds(rowBounds)
+		explicit DataConstItemBounds(RowBounds rowBounds, size_t offset) noexcept
+			: mRowBounds(rowBounds),
+			mOffset(offset)
 		{
 		}
 
@@ -376,12 +378,12 @@ namespace internal
 
 		Iterator GetBegin() const noexcept
 		{
-			return Iterator(mOffset, mRowBounds.GetBegin());
+			return Iterator(mRowBounds.GetBegin(), mOffset);
 		}
 
 		Iterator GetEnd() const noexcept
 		{
-			return Iterator(mOffset, mRowBounds.GetEnd());
+			return Iterator(mRowBounds.GetEnd(), mOffset);
 		}
 
 		MOMO_FRIENDS_BEGIN_END(const DataConstItemBounds&, Iterator)
@@ -398,8 +400,8 @@ namespace internal
 		}
 
 	private:
-		size_t mOffset;
 		RowBounds mRowBounds;
+		size_t mOffset;
 	};
 
 	template<typename TRowReference, typename TDataTraits>
@@ -592,10 +594,9 @@ namespace internal
 		template<typename Item>
 		ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 		{
-			size_t offset = mColumnList->GetOffset(column);
 			RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
-			return ConstItemBounds<Item>(offset,
-				ConstRowBoundsProxy(mColumnList, rawBounds, *this));
+			return ConstItemBounds<Item>(ConstRowBoundsProxy(mColumnList, rawBounds, *this),
+				mColumnList->GetOffset(column));
 		}
 
 		template<typename RowIterator>
