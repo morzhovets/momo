@@ -192,9 +192,9 @@ public:
 private:
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc, typename SwapFunc>
 	static void pvSort(Iterator begin, size_t count, const HashFuncIter& hashFuncIter,
-		const EqualFunc& equalFunc, SwapFunc swapFunc)
+		const EqualFunc& equalFunc, const SwapFunc& swapFunc)
 	{
-		auto groupFunc = [&equalFunc, swapFunc] (Iterator begin, size_t count)
+		auto groupFunc = [&equalFunc, &swapFunc] (Iterator begin, size_t count)
 		{
 			if (count > 2)
 				pvGroup(begin, count, equalFunc, swapFunc);
@@ -203,7 +203,8 @@ private:
 	}
 
 	template<typename Iterator, typename EqualFunc, typename SwapFunc>
-	static void pvGroup(Iterator begin, size_t count, const EqualFunc& equalFunc, SwapFunc swapFunc)
+	static void pvGroup(Iterator begin, size_t count, const EqualFunc& equalFunc,
+		const SwapFunc& swapFunc)
 	{
 		for (size_t i = 1; i < count; ++i)
 		{
