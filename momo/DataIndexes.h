@@ -54,15 +54,16 @@ namespace internal
 
 		explicit DataRawUniqueHashIterator(Raw* raw, size_t rawIndex) noexcept
 			: mRaw(raw),
-			mRawIndex(rawIndex)
+			mRawIndex(static_cast<ptrdiff_t>(rawIndex))
 		{
-			//MOMO_ASSERT(rawIndex <= ((mRaw != nullptr) ? size_t{1} : size_t{0}));
 		}
+
+		//operator ConstIterator() const noexcept
 
 		DataRawUniqueHashIterator& operator+=(ptrdiff_t diff)
 		{
-			size_t newRawIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mRawIndex) + diff);
-			MOMO_CHECK(mRawIndex <= ((mRaw != nullptr) ? size_t{1} : size_t{0}));
+			ptrdiff_t newRawIndex = mRawIndex + diff;
+			MOMO_CHECK(0 <= newRawIndex && newRawIndex <= ((mRaw != nullptr) ? 1 : 0));
 			mRawIndex = newRawIndex;
 			return *this;
 		}
@@ -70,7 +71,7 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mRaw == iter.mRaw);
-			return static_cast<ptrdiff_t>(mRawIndex) - static_cast<ptrdiff_t>(iter.mRawIndex);
+			return mRawIndex - iter.mRawIndex;
 		}
 
 		Pointer operator->() const
@@ -94,7 +95,7 @@ namespace internal
 
 	private:
 		Raw* mRaw;
-		size_t mRawIndex;
+		ptrdiff_t mRawIndex;
 	};
 
 	template<typename TRaw, typename TSettings>
@@ -113,6 +114,8 @@ namespace internal
 			: mRaw(raw)
 		{
 		}
+
+		//operator ConstBounds() const noexcept
 
 		Iterator GetBegin() const noexcept
 		{
@@ -164,9 +167,11 @@ namespace internal
 			: VersionKeeper(version),
 			mRaw0(raw0),
 			mRawBegin(rawBegin),
-			mRawIndex(rawIndex)
+			mRawIndex(static_cast<ptrdiff_t>(rawIndex))
 		{
 		}
+
+		//operator ConstIterator() const noexcept
 
 		DataRawMultiHashIterator& operator+=(ptrdiff_t diff)
 		{
@@ -174,8 +179,8 @@ namespace internal
 			{
 				VersionKeeper::Check();
 				MOMO_CHECK(mRaw0 != nullptr);
-				MOMO_CHECK(diff > 0 || static_cast<size_t>(-diff) <= mRawIndex);
-				size_t newRawIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mRawIndex) + diff);
+				ptrdiff_t newRawIndex = mRawIndex + diff;
+				MOMO_CHECK(newRawIndex >= 0);
 				MOMO_CHECK(mRawBegin != RawIterator() || newRawIndex <= 1);
 				mRawIndex = newRawIndex;
 			}
@@ -185,7 +190,7 @@ namespace internal
 		ptrdiff_t operator-(ConstIterator iter) const
 		{
 			MOMO_CHECK(mRaw0 == iter.mRaw0);
-			return static_cast<ptrdiff_t>(mRawIndex) - static_cast<ptrdiff_t>(iter.mRawIndex);
+			return mRawIndex - iter.mRawIndex;
 		}
 
 		Pointer operator->() const
@@ -219,7 +224,7 @@ namespace internal
 	private:
 		RawPtr mRaw0;
 		RawIterator mRawBegin;
-		size_t mRawIndex;
+		ptrdiff_t mRawIndex;
 	};
 
 	template<typename TRawIterator, typename TSettings>
@@ -253,6 +258,8 @@ namespace internal
 			mRawCount(rawCount)
 		{
 		}
+
+		//operator ConstBounds() const noexcept
 
 		Iterator GetBegin() const noexcept
 		{
