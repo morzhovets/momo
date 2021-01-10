@@ -584,9 +584,9 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<typename Predicate,
-		typename = decltype(std::declval<const Predicate&>()(std::declval<const Item&>()))>
-	size_t Remove(const Predicate& pred)
+	template<typename Predicate>
+	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
+	Remove(const Predicate& pred)
 	{
 		return ArrayShifter::Remove(*this, pred);
 	}

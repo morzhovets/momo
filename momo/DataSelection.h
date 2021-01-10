@@ -658,9 +658,9 @@ namespace internal
 			mRaws.Remove(index, count);
 		}
 
-		template<typename RowFilter,
-			typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-		size_t Remove(const RowFilter& rowFilter)
+		template<typename RowFilter>
+		EnableIf<IsInvocable<const RowFilter&, bool, ConstRowReference>::value, size_t>
+		Remove(const RowFilter& rowFilter)
 		{
 			size_t newCount = 0;
 			for (Raw*& raw : mRaws)
@@ -701,19 +701,19 @@ namespace internal
 			return *this;
 		}
 
-		template<typename RowComparer,
-			typename = decltype(std::declval<const RowComparer&>()(
-				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
-		DataSelection&& Sort(const RowComparer& rowComp) &&
+		template<typename RowComparer>
+		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+			DataSelection&&>
+		Sort(const RowComparer& rowComp) &&
 		{
 			pvSort(rowComp);
 			return std::move(*this);
 		}
 
-		template<typename RowComparer,
-			typename = decltype(std::declval<const RowComparer&>()(
-				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
-		DataSelection& Sort(const RowComparer& rowComp) &
+		template<typename RowComparer>
+		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+			DataSelection&>
+		Sort(const RowComparer& rowComp) &
 		{
 			pvSort(rowComp);
 			return *this;
@@ -806,10 +806,10 @@ namespace internal
 			return 0;
 		}
 
-		template<typename RowComparer,
-			typename = decltype(std::declval<const RowComparer&>()(
-				std::declval<ConstRowReference>(), std::declval<ConstRowReference>()))>
-		void pvSort(const RowComparer& rowComp)
+		template<typename RowComparer>
+		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+			void>
+		pvSort(const RowComparer& rowComp)
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
 				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };

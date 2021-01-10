@@ -1074,10 +1074,10 @@ public:
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
-	template<typename PairPredicate,
-		typename = decltype(std::declval<const PairPredicate&>()(std::declval<const Key&>(),
-			std::declval<const Value&>()))>
-	size_t Remove(const PairPredicate& pairPred)
+	template<typename PairPredicate>
+	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+		size_t>
+	Remove(const PairPredicate& pairPred)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();

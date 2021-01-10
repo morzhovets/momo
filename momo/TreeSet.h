@@ -900,9 +900,9 @@ public:
 		return remCount;
 	}
 
-	template<typename Predicate,
-		typename = decltype(std::declval<const Predicate&>()(std::declval<const Item&>()))>
-	size_t Remove(const Predicate& pred)
+	template<typename Predicate>
+	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
+	Remove(const Predicate& pred)
 	{
 		size_t initCount = GetCount();
 		ConstIterator iter = GetBegin();

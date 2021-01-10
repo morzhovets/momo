@@ -39,15 +39,15 @@ namespace internal
 		}
 
 		template<typename Item, typename ColumnInfo>
-		EnableIf<IsInvocable<RefVisitor, void, Item&, ColumnInfo>::value> operator()(Item* item,
-			ColumnInfo columnInfo) const
+		EnableIf<IsInvocable<const RefVisitor&, void, Item&, ColumnInfo>::value> operator()(
+			Item* item, ColumnInfo columnInfo) const
 		{
 			mRefVisitor(*item, columnInfo);
 		}
 
 		template<typename Item, typename ColumnInfo>
-		EnableIf<IsInvocable<RefVisitor, void, Item&>::value &&
-			!IsInvocable<RefVisitor, void, Item&, ColumnInfo>::value>
+		EnableIf<IsInvocable<const RefVisitor&, void, Item&>::value &&
+			!IsInvocable<const RefVisitor&, void, Item&, ColumnInfo>::value>
 		operator()(Item* item, ColumnInfo /*columnInfo*/) const
 		{
 			mRefVisitor(*item);

@@ -728,9 +728,10 @@ public:
 		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	ConstSelection Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	template<typename RowFilter, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		ConstSelection>
+	Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -741,9 +742,10 @@ public:
 		return pvSelect<Selection>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	Selection Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
+	template<typename RowFilter, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		Selection>
+	Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -754,9 +756,10 @@ public:
 		return pvSelect<size_t>(EmptyRowFilter(), equalers...);
 	}
 
-	template<typename RowFilter, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	size_t SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	template<typename RowFilter, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		size_t>
+	SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
@@ -806,9 +809,10 @@ public:
 		return pvProject<false>(EmptyRowFilter(), column, columns...);
 	}
 
-	template<typename RowFilter, typename Item, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	DataTable Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	template<typename RowFilter, typename Item, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		DataTable>
+	Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(rowFilter, column, columns...);
@@ -821,9 +825,10 @@ public:
 		return pvProject<true>(EmptyRowFilter(), column, columns...);
 	}
 
-	template<typename RowFilter, typename Item, typename... Items,
-		typename = decltype(std::declval<const RowFilter&>()(std::declval<ConstRowReference>()))>
-	DataTable ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	template<typename RowFilter, typename Item, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		DataTable>
+	ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(rowFilter, column, columns...);

@@ -685,10 +685,10 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	template<typename PairPredicate,
-		typename = decltype(std::declval<const PairPredicate&>()(std::declval<const Key&>(),
-			std::declval<const Value&>()))>
-	size_t Remove(const PairPredicate& pairPred)
+	template<typename PairPredicate>
+	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+		size_t>
+	Remove(const PairPredicate& pairPred)
 	{
 		auto itemPred = [&pairPred] (const KeyValuePair& item)
 			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
