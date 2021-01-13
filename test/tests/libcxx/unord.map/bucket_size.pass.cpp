@@ -75,11 +75,7 @@ void main()
     {
         typedef unordered_map<int, std::string> C;
         C c;
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         LIBCPP_CATCH(c.bucket_size(3));
-#else
-        LIBCPP_CATCH(c.bucket_size(33));
-#endif
         //assert(false);
     }
 #endif

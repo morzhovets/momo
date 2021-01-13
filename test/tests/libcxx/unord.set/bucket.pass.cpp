@@ -66,13 +66,11 @@ void main()
     }
 #endif
 #if _LIBCPP_DEBUG_LEVEL >= 1
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef unordered_set<int> C;
         C c;
         LIBCPP_CATCH(c.bucket(3));
         //assert(false);
     }
-#endif
 #endif
 }
