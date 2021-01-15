@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -117,7 +117,7 @@ Static Public Attributes</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 32 : 1&gt;, bool tIsContinuous = true&gt; </div>
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef TMemPoolParams <a class="el" href="classmomo_1_1_tree_node.html">momo::TreeNode</a>&lt; tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;::<a class="el" href="classmomo_1_1_tree_node.html#a84c7dcc025faab64b8019a7cb49047e7">MemPoolParams</a></td>
@@ -133,7 +133,7 @@ template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 32 : 1&gt;, bool tIsContinuous = true&gt; </div>
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemTraits &gt; </div>
       <table class="memname">
@@ -152,7 +152,7 @@ template&lt;typename ItemTraits &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 32 : 1&gt;, bool tIsContinuous = true&gt; </div>
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -176,7 +176,7 @@ template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 32 : 1&gt;, bool tIsContinuous = true&gt; </div>
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -200,7 +200,7 @@ template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t tMaxCapacity, size_t tCapacityStep, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 32 : 1&gt;, bool tIsContinuous = true&gt; </div>
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

@@ -1,9 +1,11 @@
 var classmomo_1_1stdish_1_1map =
 [
     [ "const_iterator", "classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857", null ],
-    [ "iterator", "classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8", null ],
+    [ "const_reference", "classmomo_1_1stdish_1_1map.html#a4c3ec634db46b0aeeb6c999b3842c0ac", null ],
+    [ "iterator", "classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a", null ],
     [ "key_type", "classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903", null ],
     [ "mapped_type", "classmomo_1_1stdish_1_1map.html#a661c8c88a2b8e09625af0548a568d1ad", null ],
+    [ "size_type", "classmomo_1_1stdish_1_1map.html#af14762948a531a94dc09ac9c63277c8d", null ],
     [ "value_type", "classmomo_1_1stdish_1_1map.html#a007a3344c7365612b3e93681bb94638e", null ],
     [ "at", "classmomo_1_1stdish_1_1map.html#a31b0bfa23858538d4bea3769573814b7", null ],
     [ "at", "classmomo_1_1stdish_1_1map.html#ac0c24da2042b69170f6d039a5a4562c2", null ],
@@ -18,5 +20,6 @@ var classmomo_1_1stdish_1_1map =
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#ac7b71a60d372ad287987aad5b6b3f068", null ],
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#aed76514a50b6a9677158b0dbf9b045c7", null ],
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#a2f43966d4e5d8f37fe363a8f4a9e7132", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1map.html#ad568c35d925d3dc272c20c0df1bbbaff", null ],
     [ "swap", "classmomo_1_1stdish_1_1map.html#aa2cb4dd6fcaf25d79fa60aacac862eb3", null ]
 ];

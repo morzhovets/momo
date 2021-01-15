@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -95,8 +95,10 @@ $(document).ready(function(){initNavTree('classmomo_1_1_mem_pool_const.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aed38e18cc517a4fc24e11850d686fbd5"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_const.html#aed38e18cc517a4fc24e11850d686fbd5">GetBlockAlignment</a> (size_t blockSize, size_t maxAlignment=<a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a>) noexcept</td></tr>
-<tr class="separator:aed38e18cc517a4fc24e11850d686fbd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abebf4d65b54c37c40fab2da8fcdb92f1"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_const.html#abebf4d65b54c37c40fab2da8fcdb92f1">GetBlockAlignment</a> (size_t blockSize, size_t maxAlignment=<a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a6c81d86c1841ab6ab6a2aa73662d9d18">internal::UIntConst::maxAlignment</a>) noexcept</td></tr>
+<tr class="separator:abebf4d65b54c37c40fab2da8fcdb92f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a710474a7b9ea64823119be07bfeb0b1b"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_const.html#a710474a7b9ea64823119be07bfeb0b1b">CorrectBlockSize</a> (size_t blockSize, size_t blockAlignment, size_t blockCount) noexcept</td></tr>
+<tr class="separator:a710474a7b9ea64823119be07bfeb0b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -106,8 +108,50 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:a3553696c98aa89e8ed610c37c3f71896"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aed38e18cc517a4fc24e11850d686fbd5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed38e18cc517a4fc24e11850d686fbd5">&#9670;&nbsp;</a></span>GetBlockAlignment()</h2>
+<a id="a710474a7b9ea64823119be07bfeb0b1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a710474a7b9ea64823119be07bfeb0b1b">&#9670;&nbsp;</a></span>CorrectBlockSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t momo::MemPoolConst::CorrectBlockSize </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>blockSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>blockAlignment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>blockCount</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abebf4d65b54c37c40fab2da8fcdb92f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abebf4d65b54c37c40fab2da8fcdb92f1">&#9670;&nbsp;</a></span>GetBlockAlignment()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +169,7 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>maxAlignment</em> = <code><a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a></code>&#160;</td>
+          <td class="paramname"><em>maxAlignment</em> = <code><a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a6c81d86c1841ab6ab6a2aa73662d9d18">internal::UIntConst::maxAlignment</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>

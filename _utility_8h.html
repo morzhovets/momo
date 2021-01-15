@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -87,24 +87,27 @@ $(document).ready(function(){initNavTree('_utility_8h.html',''); initResizable()
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">Utility.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_user_settings_8h_source.html">UserSettings.h</a>&quot;</code><br />
-<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;exception&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
-<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
+<code>#include &lt;new&gt;</code><br />
+<code>#include &lt;iterator&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
+<code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;initializer_list&gt;</code><br />
 </div>
 <p><a href="_utility_8h_source.html">Go to the source code of this file.</a></p>
@@ -120,8 +123,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html">momo::internal::UIntSelector&lt; 4, Default &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html">momo::internal::UIntSelector&lt; 8, Default &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_ptr_const.html">momo::internal::UIntPtrConst</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_is_allocator_always_equal.html">momo::internal::IsAllocatorAlwaysEqual&lt; Allocator, typename &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,6 +146,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html">momo::internal::UIntMath&lt; TUInt &gt;::DivResult</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_const.html">momo::internal::UIntConst</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -165,7 +168,7 @@ Macros</h2></td></tr>
 <tr class="separator:a564a7cb6613a663174827706efd03269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61ba943cf82f91b4594bcc6021b291df"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">MOMO_CHECK</a>(expr)</td></tr>
 <tr class="separator:a61ba943cf82f91b4594bcc6021b291df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a275fbe2372c7324122b63eafa07da721"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">MOMO_EXTRA_CHECK</a>(expr)&#160;&#160;&#160;<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td></tr>
+<tr class="memitem:a275fbe2372c7324122b63eafa07da721"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">MOMO_EXTRA_CHECK</a>(expr)&#160;&#160;&#160;	<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td></tr>
 <tr class="separator:a275fbe2372c7324122b63eafa07da721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb0350eacdbc910de329afae60a2f31e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#adb0350eacdbc910de329afae60a2f31e">MOMO_DECLARE_PROXY_CONSTRUCTOR</a>(Object)</td></tr>
 <tr class="separator:adb0350eacdbc910de329afae60a2f31e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,11 +202,6 @@ Enumerations</h2></td></tr>
 <a class="el" href="namespacemomo.html#a3b987a8f889f3fbb48604439e10c2c27a21fe892d5520075ce0f887a292daf54e">momo::ExtraCheckMode::bydefault</a> = MOMO_DEFAULT_EXTRA_CHECK_MODE
  }</td></tr>
 <tr class="separator:a3b987a8f889f3fbb48604439e10c2c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:abc56e5a0c148f99224a315447eaba04e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#abc56e5a0c148f99224a315447eaba04e">MOMO_STATIC_ASSERT</a> (<a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &gt; 0 &amp;&amp;(<a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> &amp;(<a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a> - 1))==0)</td></tr>
-<tr class="separator:abc56e5a0c148f99224a315447eaba04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a61ba943cf82f91b4594bcc6021b291df"></a>
@@ -223,7 +221,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">do</span> { \</div>
 <div class="line">        MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \</div>
-<div class="line">        if (Settings::checkMode == CheckMode::exception &amp;&amp; !(expr)) <span class="keywordflow">throw</span> std::invalid_argument(#expr); \</div>
+<div class="line">        if (Settings::checkMode == CheckMode::exception) <a class="code" href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a>(expr); \</div>
 <div class="line">    } <span class="keywordflow">while</span> (<span class="keyword">false</span>)</div>
 </div><!-- fragment -->
 </div>
@@ -337,7 +335,7 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">expr</td><td>)</td>
-          <td>&#160;&#160;&#160;<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td>
+          <td>&#160;&#160;&#160;	<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -421,38 +419,10 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="abc56e5a0c148f99224a315447eaba04e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc56e5a0c148f99224a315447eaba04e">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">MOMO_STATIC_ASSERT </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a>&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">0 &amp;&amp;&#160;</td>
-          <td class="paramname">MOMO_MAX_ALIGNMENT &amp;(MOMO_MAX_ALIGNMENT - 1) = <code>=0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="a_utility_8h_html_a04478e8c251bfd597e779369ff8fd295"><div class="ttname"><a href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a></div><div class="ttdeci">#define MOMO_STATIC_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:53</div></div>
+<div class="ttc" id="a_utility_8h_html_a04478e8c251bfd597e779369ff8fd295"><div class="ttname"><a href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a></div><div class="ttdeci">#define MOMO_STATIC_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:57</div></div>
+<div class="ttc" id="a_user_settings_8h_html_af8bcba5a2dae5b1ce92b79f769aad846"><div class="ttname"><a href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a></div><div class="ttdeci">#define MOMO_CHECK_EXCEPTION(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:144</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

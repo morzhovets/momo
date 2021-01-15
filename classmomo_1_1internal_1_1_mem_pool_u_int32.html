@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -115,19 +115,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8bd8cd4d6df5319f4d57e08f17a8d2e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5f6de1576283b0ae1201e0385798a3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#a23a114af9e4b392b05e2af843615c1ea">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#aa5f6de1576283b0ae1201e0385798a3f">GetMemManager</a> () noexcept</td></tr>
 <tr class="separator:aa5f6de1576283b0ae1201e0385798a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa236dfe05510405797a25a579bf50678"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
-<tr class="memitem:aa236dfe05510405797a25a579bf50678"><td class="memTemplItemLeft" align="right" valign="top">ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#aa236dfe05510405797a25a579bf50678">GetRealPointer</a> (uint32_t ptr) noexcept</td></tr>
-<tr class="separator:aa236dfe05510405797a25a579bf50678"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5d835cfe0ea78263978bca8329162f1"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
+<tr class="memitem:af5d835cfe0ea78263978bca8329162f1"><td class="memTemplItemLeft" align="right" valign="top">ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#af5d835cfe0ea78263978bca8329162f1">GetRealPointer</a> (uint32_t block) noexcept</td></tr>
+<tr class="separator:af5d835cfe0ea78263978bca8329162f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbab5c962142fdce3e0aaba940f085c0"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#abbab5c962142fdce3e0aaba940f085c0">Allocate</a> ()</td></tr>
 <tr class="separator:abbab5c962142fdce3e0aaba940f085c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a193a13ca5dbedf5ebc6163156d6d2a51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#a193a13ca5dbedf5ebc6163156d6d2a51">Deallocate</a> (uint32_t ptr) noexcept</td></tr>
-<tr class="separator:a193a13ca5dbedf5ebc6163156d6d2a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4cc074191dac5163bac097b52686219"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#ac4cc074191dac5163bac097b52686219">Deallocate</a> (uint32_t block) noexcept</td></tr>
+<tr class="separator:ac4cc074191dac5163bac097b52686219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5965d66af4783293371c0fdb44a718c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#a5965d66af4783293371c0fdb44a718c9">DeallocateAll</a> () noexcept</td></tr>
+<tr class="separator:a5965d66af4783293371c0fdb44a718c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:ab6cad2ce1fd2e98e0cd17f3c1b2e3127"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#ab6cad2ce1fd2e98e0cd17f3c1b2e3127">blockCount</a> = tBlockCount</td></tr>
 <tr class="separator:ab6cad2ce1fd2e98e0cd17f3c1b2e3127"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4ab7c5199d21c79653b1d2ce80515f4"><td class="memItemLeft" align="right" valign="top">static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#af4ab7c5199d21c79653b1d2ce80515f4">nullPtr</a> = UINT32_MAX</td></tr>
+<tr class="memitem:af4ab7c5199d21c79653b1d2ce80515f4"><td class="memItemLeft" align="right" valign="top">static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#af4ab7c5199d21c79653b1d2ce80515f4">nullPtr</a> = <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a995919037a8c959767b86308a58623f3">UIntConst::max32</a></td></tr>
 <tr class="separator:af4ab7c5199d21c79653b1d2ce80515f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
@@ -275,8 +277,8 @@ template&lt;size_t tBlockCount, typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="a193a13ca5dbedf5ebc6163156d6d2a51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a193a13ca5dbedf5ebc6163156d6d2a51">&#9670;&nbsp;</a></span>Deallocate()</h2>
+<a id="ac4cc074191dac5163bac097b52686219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4cc074191dac5163bac097b52686219">&#9670;&nbsp;</a></span>Deallocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -290,7 +292,34 @@ template&lt;size_t tBlockCount, typename TMemManager &gt; </div>
           <td class="memname">void <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html">momo::internal::MemPoolUInt32</a>&lt; tBlockCount, TMemManager &gt;::Deallocate </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5965d66af4783293371c0fdb44a718c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5965d66af4783293371c0fdb44a718c9">&#9670;&nbsp;</a></span>DeallocateAll()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t tBlockCount, typename TMemManager &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html">momo::internal::MemPoolUInt32</a>&lt; tBlockCount, TMemManager &gt;::DeallocateAll </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -357,8 +386,8 @@ template&lt;size_t tBlockCount, typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="aa236dfe05510405797a25a579bf50678"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa236dfe05510405797a25a579bf50678">&#9670;&nbsp;</a></span>GetRealPointer()</h2>
+<a id="af5d835cfe0ea78263978bca8329162f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5d835cfe0ea78263978bca8329162f1">&#9670;&nbsp;</a></span>GetRealPointer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -374,7 +403,7 @@ template&lt;typename ResObject  = void&gt; </div>
           <td class="memname">ResObject* <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html">momo::internal::MemPoolUInt32</a>&lt; tBlockCount, TMemManager &gt;::GetRealPointer </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -482,7 +511,7 @@ template&lt;size_t tBlockCount, typename TMemManager &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const uint32_t <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html">momo::internal::MemPoolUInt32</a>&lt; tBlockCount, TMemManager &gt;::nullPtr = UINT32_MAX</td>
+          <td class="memname">const uint32_t <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html">momo::internal::MemPoolUInt32</a>&lt; tBlockCount, TMemManager &gt;::nullPtr = <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a995919037a8c959767b86308a58623f3">UIntConst::max32</a></td>
         </tr>
       </table>
   </td>

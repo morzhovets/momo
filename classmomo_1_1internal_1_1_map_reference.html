@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::MapReference&lt; TKey, TValue, TSetReference &gt; Class Template Reference</title>
+<title>momo: momo::internal::MapReference&lt; TSetReference, tIsConst &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -88,9 +88,10 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_map_referenc
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="classmomo_1_1internal_1_1_map_reference-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::MapReference&lt; TKey, TValue, TSetReference &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::MapReference&lt; TSetReference, tIsConst &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -98,83 +99,90 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_map_referenc
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a58d63971b0395c33cf525e21a76a1765"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a></td></tr>
-<tr class="separator:a58d63971b0395c33cf525e21a76a1765"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a658405f42a4b5ee8be7c7f4e37d650c5"><td class="memItemLeft" align="right" valign="top">typedef TValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a></td></tr>
-<tr class="separator:a658405f42a4b5ee8be7c7f4e37d650c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2dcdd1bb32697a569b6c96b06562274"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a>, const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a>, <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac2dcdd1bb32697a569b6c96b06562274">ConstReference</a></td></tr>
-<tr class="separator:ac2dcdd1bb32697a569b6c96b06562274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4210561dbcc033d8f6ac86a5c3a0ff32"><td class="memItemLeft" align="right" valign="top">typedef KeyValuePair::Key&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a></td></tr>
+<tr class="separator:a4210561dbcc033d8f6ac86a5c3a0ff32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a981dc2ee612d833a7cb8425de2f9f9fa"><td class="memItemLeft" align="right" valign="top">typedef std::conditional&lt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac1973c87603765e776ace767611ec50d">isConst</a>, const typename KeyValuePair::Value, typename KeyValuePair::Value &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a></td></tr>
+<tr class="separator:a981dc2ee612d833a7cb8425de2f9f9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a828fa8491132adb8e3c532f9584e3017"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a>, true &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a828fa8491132adb8e3c532f9584e3017">ConstReference</a></td></tr>
+<tr class="separator:a828fa8491132adb8e3c532f9584e3017"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1eb934779e31da9dbbe2c6ab966b9ac4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a1eb934779e31da9dbbe2c6ab966b9ac4">MapReference</a> (const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a2f9222548d8089415427afcfe45576d9">key</a>, <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a91b0b5e28f8cb65301603ca30a4cad79">value</a>) noexcept</td></tr>
-<tr class="separator:a1eb934779e31da9dbbe2c6ab966b9ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a883dc93f6c036bc59729dc939baadf06"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a883dc93f6c036bc59729dc939baadf06">operator ConstReference</a> () const noexcept</td></tr>
-<tr class="separator:a883dc93f6c036bc59729dc939baadf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac633605a4a21f8cdaaed5afd676de06"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aac633605a4a21f8cdaaed5afd676de06">MapReference</a> (const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ae44c51fe51bb122fef9518f2599a123b">key</a>, <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a53b8ed72d3b42ad2c38373286073dda2">value</a>) noexcept</td></tr>
+<tr class="separator:aac633605a4a21f8cdaaed5afd676de06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e5c6002773817de98d5cfa193e5e1ff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a6e5c6002773817de98d5cfa193e5e1ff">operator ConstReference</a> () const noexcept</td></tr>
+<tr class="separator:a6e5c6002773817de98d5cfa193e5e1ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a2f9222548d8089415427afcfe45576d9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a2f9222548d8089415427afcfe45576d9">key</a></td></tr>
-<tr class="separator:a2f9222548d8089415427afcfe45576d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91b0b5e28f8cb65301603ca30a4cad79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a91b0b5e28f8cb65301603ca30a4cad79">value</a></td></tr>
-<tr class="separator:a91b0b5e28f8cb65301603ca30a4cad79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae44c51fe51bb122fef9518f2599a123b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ae44c51fe51bb122fef9518f2599a123b">key</a></td></tr>
+<tr class="separator:ae44c51fe51bb122fef9518f2599a123b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53b8ed72d3b42ad2c38373286073dda2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a53b8ed72d3b42ad2c38373286073dda2">value</a></td></tr>
+<tr class="separator:a53b8ed72d3b42ad2c38373286073dda2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:ad38520a42204cc9a650d7658fb76d445"><td class="memItemLeft" align="right" valign="top">typedef TSetReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a></td></tr>
-<tr class="separator:ad38520a42204cc9a650d7658fb76d445"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0e756e9fd93f563928e83bdd4e9d463"><td class="memItemLeft" align="right" valign="top">typedef TSetReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a></td></tr>
+<tr class="separator:aa0e756e9fd93f563928e83bdd4e9d463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0da77f74b91c170c10e7689a7073ae1"><td class="memItemLeft" align="right" valign="top">typedef std::decay&lt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a> &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ab0da77f74b91c170c10e7689a7073ae1">KeyValuePair</a></td></tr>
+<tr class="separator:ab0da77f74b91c170c10e7689a7073ae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a8f8f1258d01d403b933ff6ad504abb8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a8f8f1258d01d403b933ff6ad504abb8b">MapReference</a> (<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a> setRef) noexcept</td></tr>
-<tr class="separator:a8f8f1258d01d403b933ff6ad504abb8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2ee8506ce615b4bff6a109f73361e3d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa2ee8506ce615b4bff6a109f73361e3d">MapReference</a> (<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a> setRef) noexcept</td></tr>
+<tr class="separator:aa2ee8506ce615b4bff6a109f73361e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:ac1973c87603765e776ace767611ec50d"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac1973c87603765e776ace767611ec50d">isConst</a> = tIsConst</td></tr>
+<tr class="separator:ac1973c87603765e776ace767611ec50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="ac2dcdd1bb32697a569b6c96b06562274"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2dcdd1bb32697a569b6c96b06562274">&#9670;&nbsp;</a></span>ConstReference</h2>
+<a id="a828fa8491132adb8e3c532f9584e3017"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a828fa8491132adb8e3c532f9584e3017">&#9670;&nbsp;</a></span>ConstReference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a>, const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a>, <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac2dcdd1bb32697a569b6c96b06562274">ConstReference</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a>, true&gt; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a828fa8491132adb8e3c532f9584e3017">ConstReference</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a58d63971b0395c33cf525e21a76a1765"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58d63971b0395c33cf525e21a76a1765">&#9670;&nbsp;</a></span>Key</h2>
+<a id="a4210561dbcc033d8f6ac86a5c3a0ff32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4210561dbcc033d8f6ac86a5c3a0ff32">&#9670;&nbsp;</a></span>Key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a></td>
+          <td class="memname">typedef KeyValuePair::Key <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad38520a42204cc9a650d7658fb76d445"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad38520a42204cc9a650d7658fb76d445">&#9670;&nbsp;</a></span>SetReference</h2>
+<a id="ab0da77f74b91c170c10e7689a7073ae1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0da77f74b91c170c10e7689a7073ae1">&#9670;&nbsp;</a></span>KeyValuePair</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TSetReference <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a></td>
+          <td class="memname">typedef std::decay&lt;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a>&gt;::type <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ab0da77f74b91c170c10e7689a7073ae1">KeyValuePair</a></td>
         </tr>
       </table>
   </td>
@@ -186,16 +194,40 @@ template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
 
 </div>
 </div>
-<a id="a658405f42a4b5ee8be7c7f4e37d650c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a658405f42a4b5ee8be7c7f4e37d650c5">&#9670;&nbsp;</a></span>Value</h2>
+<a id="aa0e756e9fd93f563928e83bdd4e9d463"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0e756e9fd93f563928e83bdd4e9d463">&#9670;&nbsp;</a></span>SetReference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TValue <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a></td>
+          <td class="memname">typedef TSetReference <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a981dc2ee612d833a7cb8425de2f9f9fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a981dc2ee612d833a7cb8425de2f9f9fa">&#9670;&nbsp;</a></span>Value</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::conditional&lt;<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac1973c87603765e776ace767611ec50d">isConst</a>, const typename KeyValuePair::Value, typename KeyValuePair::Value&gt;::type <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -203,27 +235,27 @@ template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1eb934779e31da9dbbe2c6ab966b9ac4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1eb934779e31da9dbbe2c6ab966b9ac4">&#9670;&nbsp;</a></span>MapReference() <span class="overload">[1/2]</span></h2>
+<a id="aac633605a4a21f8cdaaed5afd676de06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac633605a4a21f8cdaaed5afd676de06">&#9670;&nbsp;</a></span>MapReference() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a> &amp;&#160;</td>
           <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
@@ -241,21 +273,21 @@ template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
 
 </div>
 </div>
-<a id="a8f8f1258d01d403b933ff6ad504abb8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f8f1258d01d403b933ff6ad504abb8b">&#9670;&nbsp;</a></span>MapReference() <span class="overload">[2/2]</span></h2>
+<a id="aa2ee8506ce615b4bff6a109f73361e3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2ee8506ce615b4bff6a109f73361e3d">&#9670;&nbsp;</a></span>MapReference() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_reference.html">MapReference</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ad38520a42204cc9a650d7658fb76d445">SetReference</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aa0e756e9fd93f563928e83bdd4e9d463">SetReference</a>&#160;</td>
           <td class="paramname"><em>setRef</em></td><td>)</td>
           <td></td>
         </tr>
@@ -270,19 +302,19 @@ template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a883dc93f6c036bc59729dc939baadf06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a883dc93f6c036bc59729dc939baadf06">&#9670;&nbsp;</a></span>operator ConstReference()</h2>
+<a id="a6e5c6002773817de98d5cfa193e5e1ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e5c6002773817de98d5cfa193e5e1ff">&#9670;&nbsp;</a></span>operator ConstReference()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac2dcdd1bb32697a569b6c96b06562274">ConstReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a828fa8491132adb8e3c532f9584e3017">ConstReference</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -298,32 +330,56 @@ template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a2f9222548d8089415427afcfe45576d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f9222548d8089415427afcfe45576d9">&#9670;&nbsp;</a></span>key</h2>
+<a id="ac1973c87603765e776ace767611ec50d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1973c87603765e776ace767611ec50d">&#9670;&nbsp;</a></span>isConst</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a58d63971b0395c33cf525e21a76a1765">Key</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::key</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::isConst = tIsConst</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae44c51fe51bb122fef9518f2599a123b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae44c51fe51bb122fef9518f2599a123b">&#9670;&nbsp;</a></span>key</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a4210561dbcc033d8f6ac86a5c3a0ff32">Key</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::key</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a91b0b5e28f8cb65301603ca30a4cad79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91b0b5e28f8cb65301603ca30a4cad79">&#9670;&nbsp;</a></span>value</h2>
+<a id="a53b8ed72d3b42ad2c38373286073dda2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53b8ed72d3b42ad2c38373286073dda2">&#9670;&nbsp;</a></span>value</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValue , typename TSetReference &gt; </div>
+template&lt;typename TSetReference , bool tIsConst = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a658405f42a4b5ee8be7c7f4e37d650c5">Value</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TKey, TValue, TSetReference &gt;::value</td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a981dc2ee612d833a7cb8425de2f9f9fa">Value</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_map_reference.html">momo::internal::MapReference</a>&lt; TSetReference, tIsConst &gt;::value</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::DataRowBounds&lt; TRowReference, TRawBounds &gt; Class Template Reference</title>
+<title>momo: momo::internal::DataRowBounds&lt; TRawBounds, TRowReference &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -90,75 +90,75 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_row_bou
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classmomo_1_1internal_1_1_data_row_bounds-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::DataRowBounds&lt; TRowReference, TRawBounds &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::DataRowBounds&lt; TRawBounds, TRowReference &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_data_selection_8h_source.html">DataSelection.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for momo::internal::DataRowBounds&lt; TRowReference, TRawBounds &gt;:</div>
+Inheritance diagram for momo::internal::DataRowBounds&lt; TRawBounds, TRowReference &gt;:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classmomo_1_1internal_1_1_data_row_bounds.png" usemap="#momo::internal::DataRowBounds_3C_20TRowReference_2C_20TRawBounds_20_3E_map" alt=""/>
-  <map id="momo::internal::DataRowBounds_3C_20TRowReference_2C_20TRawBounds_20_3E_map" name="momo::internal::DataRowBounds_3C_20TRowReference_2C_20TRawBounds_20_3E_map">
+  <img src="classmomo_1_1internal_1_1_data_row_bounds.png" usemap="#momo::internal::DataRowBounds_3C_20TRawBounds_2C_20TRowReference_20_3E_map" alt=""/>
+  <map id="momo::internal::DataRowBounds_3C_20TRawBounds_2C_20TRowReference_20_3E_map" name="momo::internal::DataRowBounds_3C_20TRawBounds_2C_20TRowReference_20_3E_map">
 <area href="classmomo_1_1internal_1_1_version_keeper.html" alt="momo::internal::VersionKeeper&lt; TRowReference::Settings &gt;" shape="rect" coords="0,0,386,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a757bba6d669f68761229ddb5a6c09166"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_iterator.html">DataRowIterator</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a>, typename RawBounds::Iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a></td></tr>
-<tr class="separator:a757bba6d669f68761229ddb5a6c09166"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b876420ddf248cc63e11b6ea576de4a"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a>&lt; typename RowReference::ConstReference, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a4b876420ddf248cc63e11b6ea576de4a">ConstBounds</a></td></tr>
-<tr class="separator:a4b876420ddf248cc63e11b6ea576de4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ed81c22248fd257236eb061b826e033"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_iterator.html">DataRowIterator</a>&lt; typename RawBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a></td></tr>
+<tr class="separator:a1ed81c22248fd257236eb061b826e033"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a592442e0e664809cfe04d93841e8c654"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a>, typename RowReference::ConstReference &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a592442e0e664809cfe04d93841e8c654">ConstBounds</a></td></tr>
+<tr class="separator:a592442e0e664809cfe04d93841e8c654"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97d19d8d912379df9b228773e3c3094e"><td class="memItemLeft" align="right" valign="top">typedef ColumnList::Settings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a97d19d8d912379df9b228773e3c3094e">Settings</a></td></tr>
+<tr class="separator:a97d19d8d912379df9b228773e3c3094e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af978b6083cd78aa4504350e5061e9949"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af978b6083cd78aa4504350e5061e9949">DataRowBounds</a> () noexcept</td></tr>
-<tr class="separator:af978b6083cd78aa4504350e5061e9949"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80341e941b96c58bf4426f13594c4d9b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a80341e941b96c58bf4426f13594c4d9b">operator ConstBounds</a> () const noexcept</td></tr>
-<tr class="separator:a80341e941b96c58bf4426f13594c4d9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9985e522bc01552185e8cacf78dbcb3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9985e522bc01552185e8cacf78dbcb3">GetBegin</a> () const noexcept</td></tr>
-<tr class="separator:af9985e522bc01552185e8cacf78dbcb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4eacb15e26bcef5f21efa298d8b81bad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a4eacb15e26bcef5f21efa298d8b81bad">GetEnd</a> () const noexcept</td></tr>
-<tr class="separator:a4eacb15e26bcef5f21efa298d8b81bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cb644afdca0879a6f2234874a804869"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a3cb644afdca0879a6f2234874a804869">GetCount</a> () const noexcept</td></tr>
-<tr class="separator:a3cb644afdca0879a6f2234874a804869"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd1bc54cea3e14097bc5872fefc7ef59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#afd1bc54cea3e14097bc5872fefc7ef59">operator[]</a> (size_t index) const</td></tr>
-<tr class="separator:afd1bc54cea3e14097bc5872fefc7ef59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a103ed54a70d4efc472ab852f545c8f51"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a103ed54a70d4efc472ab852f545c8f51">DataRowBounds</a> () noexcept</td></tr>
+<tr class="separator:a103ed54a70d4efc472ab852f545c8f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb1219eb622c2aad082e966d21d24b15"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#afb1219eb622c2aad082e966d21d24b15">operator ConstBounds</a> () const noexcept</td></tr>
+<tr class="separator:afb1219eb622c2aad082e966d21d24b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65b2306cb1d2324df7a9fe0cf274ee56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a65b2306cb1d2324df7a9fe0cf274ee56">GetBegin</a> () const noexcept</td></tr>
+<tr class="separator:a65b2306cb1d2324df7a9fe0cf274ee56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c86e346c8f8c9c6f1f3efb75583fa44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1c86e346c8f8c9c6f1f3efb75583fa44">GetEnd</a> () const noexcept</td></tr>
+<tr class="separator:a1c86e346c8f8c9c6f1f3efb75583fa44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c6462529c1fecad889c8b4a6129e682"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a2c6462529c1fecad889c8b4a6129e682">GetCount</a> () const noexcept</td></tr>
+<tr class="separator:a2c6462529c1fecad889c8b4a6129e682"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a313b366e52b08deec597484c7fc25381"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a313b366e52b08deec597484c7fc25381">operator[]</a> (size_t index) const</td></tr>
+<tr class="separator:a313b366e52b08deec597484c7fc25381"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:ab17842c631ad41db6e9b64c30da04f63"><td class="memItemLeft" align="right" valign="top">typedef TRowReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a></td></tr>
-<tr class="separator:ab17842c631ad41db6e9b64c30da04f63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9724ca15048d604c8cc92d35418dbe0"><td class="memItemLeft" align="right" valign="top">typedef TRawBounds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a></td></tr>
-<tr class="separator:af9724ca15048d604c8cc92d35418dbe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bd865c5684eeb12281c0b68cae91e2d"><td class="memItemLeft" align="right" valign="top">typedef RowReference::ColumnList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a9bd865c5684eeb12281c0b68cae91e2d">ColumnList</a></td></tr>
-<tr class="separator:a9bd865c5684eeb12281c0b68cae91e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c70bfeb46aadd8cfcba9045a7afa426"><td class="memItemLeft" align="right" valign="top">typedef ColumnList::Settings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a2c70bfeb46aadd8cfcba9045a7afa426">Settings</a></td></tr>
-<tr class="separator:a2c70bfeb46aadd8cfcba9045a7afa426"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ac5e1e466707f166cfbcf690705604"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_version_keeper.html">internal::VersionKeeper</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a2c70bfeb46aadd8cfcba9045a7afa426">Settings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad9ac5e1e466707f166cfbcf690705604">VersionKeeper</a></td></tr>
-<tr class="separator:ad9ac5e1e466707f166cfbcf690705604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5e2d317c8b493c8b1276da7020e4c4a"><td class="memItemLeft" align="right" valign="top">typedef TRawBounds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a></td></tr>
+<tr class="separator:af5e2d317c8b493c8b1276da7020e4c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add0cb30094069e83672ebad2351fa411"><td class="memItemLeft" align="right" valign="top">typedef TRowReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a></td></tr>
+<tr class="separator:add0cb30094069e83672ebad2351fa411"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad73778d1f164ebea977ab1fa4d66b405"><td class="memItemLeft" align="right" valign="top">typedef RowReference::ColumnList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad73778d1f164ebea977ab1fa4d66b405">ColumnList</a></td></tr>
+<tr class="separator:ad73778d1f164ebea977ab1fa4d66b405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e632fa8b4149a94389b1e9381e80934"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_version_keeper.html">internal::VersionKeeper</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a97d19d8d912379df9b228773e3c3094e">Settings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a6e632fa8b4149a94389b1e9381e80934">VersionKeeper</a></td></tr>
+<tr class="separator:a6e632fa8b4149a94389b1e9381e80934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ab47ea9f47ae5aa65aaefb23a3cdf3200"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab47ea9f47ae5aa65aaefb23a3cdf3200">DataRowBounds</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a9bd865c5684eeb12281c0b68cae91e2d">ColumnList</a> *columnList, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a> rawBounds, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad9ac5e1e466707f166cfbcf690705604">VersionKeeper</a> version) noexcept</td></tr>
-<tr class="separator:ab47ea9f47ae5aa65aaefb23a3cdf3200"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57c10aad0032931b24a1144bf4143dfc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a57c10aad0032931b24a1144bf4143dfc">DataRowBounds</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad73778d1f164ebea977ab1fa4d66b405">ColumnList</a> *columnList, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a> rawBounds, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a6e632fa8b4149a94389b1e9381e80934">VersionKeeper</a> version) noexcept</td></tr>
+<tr class="separator:a57c10aad0032931b24a1144bf4143dfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a9bd865c5684eeb12281c0b68cae91e2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bd865c5684eeb12281c0b68cae91e2d">&#9670;&nbsp;</a></span>ColumnList</h2>
+<a id="ad73778d1f164ebea977ab1fa4d66b405"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad73778d1f164ebea977ab1fa4d66b405">&#9670;&nbsp;</a></span>ColumnList</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef RowReference::ColumnList <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a9bd865c5684eeb12281c0b68cae91e2d">ColumnList</a></td>
+          <td class="memname">typedef RowReference::ColumnList <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad73778d1f164ebea977ab1fa4d66b405">ColumnList</a></td>
         </tr>
       </table>
   </td>
@@ -170,51 +170,51 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="a4b876420ddf248cc63e11b6ea576de4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b876420ddf248cc63e11b6ea576de4a">&#9670;&nbsp;</a></span>ConstBounds</h2>
+<a id="a592442e0e664809cfe04d93841e8c654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a592442e0e664809cfe04d93841e8c654">&#9670;&nbsp;</a></span>ConstBounds</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a>&lt;typename RowReference::ConstReference, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a4b876420ddf248cc63e11b6ea576de4a">ConstBounds</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a>, typename RowReference::ConstReference&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a592442e0e664809cfe04d93841e8c654">ConstBounds</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a757bba6d669f68761229ddb5a6c09166"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a757bba6d669f68761229ddb5a6c09166">&#9670;&nbsp;</a></span>Iterator</h2>
+<a id="a1ed81c22248fd257236eb061b826e033"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ed81c22248fd257236eb061b826e033">&#9670;&nbsp;</a></span>Iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_iterator.html">DataRowIterator</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a>, typename RawBounds::Iterator&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_iterator.html">DataRowIterator</a>&lt;typename RawBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="af9724ca15048d604c8cc92d35418dbe0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9724ca15048d604c8cc92d35418dbe0">&#9670;&nbsp;</a></span>RawBounds</h2>
+<a id="af5e2d317c8b493c8b1276da7020e4c4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5e2d317c8b493c8b1276da7020e4c4a">&#9670;&nbsp;</a></span>RawBounds</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TRawBounds <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a></td>
+          <td class="memname">typedef TRawBounds <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a></td>
         </tr>
       </table>
   </td>
@@ -226,19 +226,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="ab17842c631ad41db6e9b64c30da04f63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab17842c631ad41db6e9b64c30da04f63">&#9670;&nbsp;</a></span>RowReference</h2>
+<a id="add0cb30094069e83672ebad2351fa411"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add0cb30094069e83672ebad2351fa411">&#9670;&nbsp;</a></span>RowReference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TRowReference <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a></td>
+          <td class="memname">typedef TRowReference <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a></td>
         </tr>
       </table>
   </td>
@@ -250,43 +250,35 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="a2c70bfeb46aadd8cfcba9045a7afa426"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c70bfeb46aadd8cfcba9045a7afa426">&#9670;&nbsp;</a></span>Settings</h2>
+<a id="a97d19d8d912379df9b228773e3c3094e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97d19d8d912379df9b228773e3c3094e">&#9670;&nbsp;</a></span>Settings</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef ColumnList::Settings <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a2c70bfeb46aadd8cfcba9045a7afa426">Settings</a></td>
+          <td class="memname">typedef ColumnList::Settings <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a97d19d8d912379df9b228773e3c3094e">Settings</a></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad9ac5e1e466707f166cfbcf690705604"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9ac5e1e466707f166cfbcf690705604">&#9670;&nbsp;</a></span>VersionKeeper</h2>
+<a id="a6e632fa8b4149a94389b1e9381e80934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e632fa8b4149a94389b1e9381e80934">&#9670;&nbsp;</a></span>VersionKeeper</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_version_keeper.html">internal::VersionKeeper</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a2c70bfeb46aadd8cfcba9045a7afa426">Settings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad9ac5e1e466707f166cfbcf690705604">VersionKeeper</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_version_keeper.html">internal::VersionKeeper</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a97d19d8d912379df9b228773e3c3094e">Settings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a6e632fa8b4149a94389b1e9381e80934">VersionKeeper</a></td>
         </tr>
       </table>
   </td>
@@ -299,19 +291,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af978b6083cd78aa4504350e5061e9949"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af978b6083cd78aa4504350e5061e9949">&#9670;&nbsp;</a></span>DataRowBounds() <span class="overload">[1/2]</span></h2>
+<a id="a103ed54a70d4efc472ab852f545c8f51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a103ed54a70d4efc472ab852f545c8f51">&#9670;&nbsp;</a></span>DataRowBounds() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -326,33 +318,33 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="ab47ea9f47ae5aa65aaefb23a3cdf3200"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab47ea9f47ae5aa65aaefb23a3cdf3200">&#9670;&nbsp;</a></span>DataRowBounds() <span class="overload">[2/2]</span></h2>
+<a id="a57c10aad0032931b24a1144bf4143dfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57c10aad0032931b24a1144bf4143dfc">&#9670;&nbsp;</a></span>DataRowBounds() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">DataRowBounds</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a9bd865c5684eeb12281c0b68cae91e2d">ColumnList</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad73778d1f164ebea977ab1fa4d66b405">ColumnList</a> *&#160;</td>
           <td class="paramname"><em>columnList</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af9724ca15048d604c8cc92d35418dbe0">RawBounds</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#af5e2d317c8b493c8b1276da7020e4c4a">RawBounds</a>&#160;</td>
           <td class="paramname"><em>rawBounds</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ad9ac5e1e466707f166cfbcf690705604">VersionKeeper</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a6e632fa8b4149a94389b1e9381e80934">VersionKeeper</a>&#160;</td>
           <td class="paramname"><em>version</em>&#160;</td>
         </tr>
         <tr>
@@ -371,19 +363,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af9985e522bc01552185e8cacf78dbcb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9985e522bc01552185e8cacf78dbcb3">&#9670;&nbsp;</a></span>GetBegin()</h2>
+<a id="a65b2306cb1d2324df7a9fe0cf274ee56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65b2306cb1d2324df7a9fe0cf274ee56">&#9670;&nbsp;</a></span>GetBegin()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::GetBegin </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::GetBegin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -398,19 +390,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="a3cb644afdca0879a6f2234874a804869"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cb644afdca0879a6f2234874a804869">&#9670;&nbsp;</a></span>GetCount()</h2>
+<a id="a2c6462529c1fecad889c8b4a6129e682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c6462529c1fecad889c8b4a6129e682">&#9670;&nbsp;</a></span>GetCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::GetCount </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::GetCount </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -425,19 +417,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="a4eacb15e26bcef5f21efa298d8b81bad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4eacb15e26bcef5f21efa298d8b81bad">&#9670;&nbsp;</a></span>GetEnd()</h2>
+<a id="a1c86e346c8f8c9c6f1f3efb75583fa44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c86e346c8f8c9c6f1f3efb75583fa44">&#9670;&nbsp;</a></span>GetEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a757bba6d669f68761229ddb5a6c09166">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::GetEnd </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a1ed81c22248fd257236eb061b826e033">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::GetEnd </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -452,19 +444,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="a80341e941b96c58bf4426f13594c4d9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80341e941b96c58bf4426f13594c4d9b">&#9670;&nbsp;</a></span>operator ConstBounds()</h2>
+<a id="afb1219eb622c2aad082e966d21d24b15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb1219eb622c2aad082e966d21d24b15">&#9670;&nbsp;</a></span>operator ConstBounds()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a4b876420ddf248cc63e11b6ea576de4a">ConstBounds</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#a592442e0e664809cfe04d93841e8c654">ConstBounds</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -479,19 +471,19 @@ template&lt;typename TRowReference , typename TRawBounds &gt; </div>
 
 </div>
 </div>
-<a id="afd1bc54cea3e14097bc5872fefc7ef59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd1bc54cea3e14097bc5872fefc7ef59">&#9670;&nbsp;</a></span>operator[]()</h2>
+<a id="a313b366e52b08deec597484c7fc25381"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a313b366e52b08deec597484c7fc25381">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRowReference , typename TRawBounds &gt; </div>
+template&lt;typename TRawBounds , typename TRowReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#ab17842c631ad41db6e9b64c30da04f63">RowReference</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRowReference, TRawBounds &gt;::operator[] </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html#add0cb30094069e83672ebad2351fa411">RowReference</a> <a class="el" href="classmomo_1_1internal_1_1_data_row_bounds.html">momo::internal::DataRowBounds</a>&lt; TRawBounds, TRowReference &gt;::operator[] </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -157,13 +157,13 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:a1f4cc24e5516e09444e4115629b76891"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ae93f99f6a1dd272607a89796670fe5"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3ae93f99f6a1dd272607a89796670fe5">isNothrowMoveConstructible</a></td></tr>
 <tr class="separator:a3ae93f99f6a1dd272607a89796670fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4df37622a609c1ee12742ead066070d"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">isNothrowSwappable</a> = <a class="el" href="structmomo_1_1internal_1_1_is_nothrow_swappable.html">IsNothrowSwappable</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::value</td></tr>
+<tr class="memitem:af4df37622a609c1ee12742ead066070d"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">isNothrowSwappable</a> = <a class="el" href="structmomo_1_1internal_1_1_is_nothrow_swappable.html">IsNothrowSwappable</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::GetValue()</td></tr>
 <tr class="separator:af4df37622a609c1ee12742ead066070d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a3cb9db5bc6d840adeac5b009b7c782"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a2a3cb9db5bc6d840adeac5b009b7c782">isNothrowAnywayAssignable</a></td></tr>
 <tr class="separator:a2a3cb9db5bc6d840adeac5b009b7c782"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0840138b58177705ef6272064ae7d85"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#ab0840138b58177705ef6272064ae7d85">isNothrowShiftable</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">isNothrowRelocatable</a> || <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">isNothrowSwappable</a></td></tr>
 <tr class="separator:ab0840138b58177705ef6272064ae7d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99bb4026112bfe291a0a5b06bdf87435"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">alignment</a> = <a class="el" href="structmomo_1_1internal_1_1_alignment_of.html">AlignmentOf</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::value</td></tr>
+<tr class="memitem:a99bb4026112bfe291a0a5b06bdf87435"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">alignment</a> = <a class="el" href="classmomo_1_1internal_1_1_object_alignmenter.html">ObjectAlignmenter</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::alignment</td></tr>
 <tr class="separator:a99bb4026112bfe291a0a5b06bdf87435"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
@@ -923,7 +923,7 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::alignment = <a class="el" href="structmomo_1_1internal_1_1_alignment_of.html">AlignmentOf</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::value</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::alignment = <a class="el" href="classmomo_1_1internal_1_1_object_alignmenter.html">ObjectAlignmenter</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::alignment</td>
         </tr>
       </table>
   </td>
@@ -1048,7 +1048,7 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::isNothrowSwappable = <a class="el" href="structmomo_1_1internal_1_1_is_nothrow_swappable.html">IsNothrowSwappable</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::value</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::isNothrowSwappable = <a class="el" href="structmomo_1_1internal_1_1_is_nothrow_swappable.html">IsNothrowSwappable</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>&gt;::GetValue()</td>
         </tr>
       </table>
   </td>
@@ -1089,8 +1089,8 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_a1f4cc24e5516e09444e4115629b76891"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">momo::internal::ObjectManager::isNothrowRelocatable</a></div><div class="ttdeci">static const bool isNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:168</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_af4df37622a609c1ee12742ead066070d"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">momo::internal::ObjectManager::isNothrowSwappable</a></div><div class="ttdeci">static const bool isNothrowSwappable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:173</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_a1f4cc24e5516e09444e4115629b76891"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">momo::internal::ObjectManager::isNothrowRelocatable</a></div><div class="ttdeci">static const bool isNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:175</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_af4df37622a609c1ee12742ead066070d"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">momo::internal::ObjectManager::isNothrowSwappable</a></div><div class="ttdeci">static const bool isNothrowSwappable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:180</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

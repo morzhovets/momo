@@ -2,8 +2,8 @@ var classmomo_1_1internal_1_1_data_selection =
 [
     [ "Column", "classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c", null ],
     [ "ColumnList", "classmomo_1_1internal_1_1_data_selection.html#a4f4e3880115ab83e91ebcfcc69872a6e", null ],
-    [ "ConstItemBounds", "classmomo_1_1internal_1_1_data_selection.html#af54c4f2ffcdf764b5fe444bab0dc2c8e", null ],
-    [ "ConstIterator", "classmomo_1_1internal_1_1_data_selection.html#a16946fe231be571b62114a6dac169679", null ],
+    [ "ConstItemBounds", "classmomo_1_1internal_1_1_data_selection.html#a7c271942459a4b25a742c3f93c01fe60", null ],
+    [ "ConstIterator", "classmomo_1_1internal_1_1_data_selection.html#acd09d00d41107785c4b4a3ebc2ba95d9", null ],
     [ "ConstSelection", "classmomo_1_1internal_1_1_data_selection.html#acb912cf7c44da539bf120a89cd302e2e", null ],
     [ "DataTraits", "classmomo_1_1internal_1_1_data_selection.html#a019a9f25be39f2c11f068aed6c90c90c", null ],
     [ "Equaler", "classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95", null ],
@@ -25,7 +25,6 @@ var classmomo_1_1internal_1_1_data_selection =
     [ "Assign", "classmomo_1_1internal_1_1_data_selection.html#abf426aca04bb96c4e4983d10664c68bf", null ],
     [ "BinarySearch", "classmomo_1_1internal_1_1_data_selection.html#a77a70c6009a98b8c31729370ef9770bf", null ],
     [ "Clear", "classmomo_1_1internal_1_1_data_selection.html#ac0b6e7f8b111de6cd2561cfb8f468212", null ],
-    [ "Filter", "classmomo_1_1internal_1_1_data_selection.html#af2c189307c4f749d7f95384efdf89896", null ],
     [ "GetBegin", "classmomo_1_1internal_1_1_data_selection.html#a95d9e74e12f34c52847e0be65d0ef07d", null ],
     [ "GetColumnItems", "classmomo_1_1internal_1_1_data_selection.html#a363752133f057d2031b83e959390a18f", null ],
     [ "GetColumnList", "classmomo_1_1internal_1_1_data_selection.html#a2a6c92309e379fa40f1c1e058a8cb2ae", null ],
@@ -45,7 +44,7 @@ var classmomo_1_1internal_1_1_data_selection =
     [ "operator=", "classmomo_1_1internal_1_1_data_selection.html#a66b8fc5fe32a1642787280ef677b0131", null ],
     [ "operator=", "classmomo_1_1internal_1_1_data_selection.html#a74d842a1d1365d3ea748dc2b297e9516", null ],
     [ "operator[]", "classmomo_1_1internal_1_1_data_selection.html#ad89ef198d0719949b345a6556ab8114e", null ],
-    [ "Remove", "classmomo_1_1internal_1_1_data_selection.html#a1925c61132921031ca7d85375a6a4270", null ],
+    [ "Remove", "classmomo_1_1internal_1_1_data_selection.html#afe67978b4072529fa2b7dac2ee5f1c18", null ],
     [ "Remove", "classmomo_1_1internal_1_1_data_selection.html#a61ab978bb4773b67b184ae51ff559235", null ],
     [ "Reserve", "classmomo_1_1internal_1_1_data_selection.html#a056c65032d09e83ce7117debb6eedb05", null ],
     [ "Reverse", "classmomo_1_1internal_1_1_data_selection.html#a9e137c5a80f0961005a9cd42ed829e5b", null ],
@@ -53,7 +52,7 @@ var classmomo_1_1internal_1_1_data_selection =
     [ "Set", "classmomo_1_1internal_1_1_data_selection.html#aad81ba69538e4c46a37967624eae6212", null ],
     [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a5ace9d5cbec470c47a4f090a7e010771", null ],
     [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a87f493c7dadecf14dbcbf363b8ecbb5f", null ],
-    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#afd9efd80c160d71ab9e316e08b3e3261", null ],
-    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#ac1e56db9693ec7441e2bc0a6e324ac77", null ],
+    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a9425928ff6bb303877130465cf3745a2", null ],
+    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#afdc3e4d539ae25e228c1e6bd9f47ef9f", null ],
     [ "Swap", "classmomo_1_1internal_1_1_data_selection.html#a3e165cd0ffacb2e9238c9c747d0b4d14", null ]
 ];

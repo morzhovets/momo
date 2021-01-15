@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -99,6 +99,12 @@ Public Types</h2></td></tr>
 <tr class="separator:a1d2a79b2c5210b0453f163883be24011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac71b05c6ed190678cb6d53a274ffc91b"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Array::Item</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#ac71b05c6ed190678cb6d53a274ffc91b">Item</a></td></tr>
 <tr class="separator:ac71b05c6ed190678cb6d53a274ffc91b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405540d7d64dc6d573382ff1edebd8d9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">Array::MemManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a405540d7d64dc6d573382ff1edebd8d9">MemManager</a></td></tr>
+<tr class="separator:a405540d7d64dc6d573382ff1edebd8d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac809cdfcbf9831bf3f66653479669168"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_array.html#aa479f56a2b46b52cb1a253fa40e9a9c3">Array::ItemTraits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#ac809cdfcbf9831bf3f66653479669168">ItemTraits</a></td></tr>
+<tr class="separator:ac809cdfcbf9831bf3f66653479669168"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cccbac66ebd4809beda2d298fe6c162"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_array.html#a8b006a227f3ae2fc41dc7b74d6422686">Array::Settings</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a6cccbac66ebd4809beda2d298fe6c162">Settings</a></td></tr>
+<tr class="separator:a6cccbac66ebd4809beda2d298fe6c162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -112,12 +118,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a7b379a6e9752c441e1cf3b1a646da5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2916647364bee3652d8efd08fc3ec127"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a2916647364bee3652d8efd08fc3ec127">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, size_t index, size_t count)</td></tr>
 <tr class="separator:a2916647364bee3652d8efd08fc3ec127"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa202d62e8cc88b43626811a84bc09823"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:aa202d62e8cc88b43626811a84bc09823"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#aa202d62e8cc88b43626811a84bc09823">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
-<tr class="separator:aa202d62e8cc88b43626811a84bc09823"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a860a5b09a347bc282cbebf989c90cfe4"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:a860a5b09a347bc282cbebf989c90cfe4"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a860a5b09a347bc282cbebf989c90cfe4">Filter</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
-<tr class="separator:a860a5b09a347bc282cbebf989c90cfe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2da24edd8fd1906005747f2f574f300"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:ad2da24edd8fd1906005747f2f574f300"><td class="memTemplItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#ad2da24edd8fd1906005747f2f574f300">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
+<tr class="separator:ad2da24edd8fd1906005747f2f574f300"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a1d2a79b2c5210b0453f163883be24011"></a>
@@ -152,47 +155,55 @@ template&lt;typename TArray &gt; </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a860a5b09a347bc282cbebf989c90cfe4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a860a5b09a347bc282cbebf989c90cfe4">&#9670;&nbsp;</a></span>Filter()</h2>
+<a id="ac809cdfcbf9831bf3f66653479669168"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac809cdfcbf9831bf3f66653479669168">&#9670;&nbsp;</a></span>ItemTraits</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TArray &gt; </div>
-<div class="memtemplate">
-template&lt;typename Predicate &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::Filter </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;&#160;</td>
-          <td class="paramname"><em>array</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_array.html#aa479f56a2b46b52cb1a253fa40e9a9c3">Array::ItemTraits</a> <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#ac809cdfcbf9831bf3f66653479669168">ItemTraits</a></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
+<a id="a405540d7d64dc6d573382ff1edebd8d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a405540d7d64dc6d573382ff1edebd8d9">&#9670;&nbsp;</a></span>MemManager</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArray &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">Array::MemManager</a> <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a405540d7d64dc6d573382ff1edebd8d9">MemManager</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6cccbac66ebd4809beda2d298fe6c162"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cccbac66ebd4809beda2d298fe6c162">&#9670;&nbsp;</a></span>Settings</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArray &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_array.html#a8b006a227f3ae2fc41dc7b74d6422686">Array::Settings</a> <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a6cccbac66ebd4809beda2d298fe6c162">Settings</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a00d4cf9e66cd1c43b3f154bbddbd4d90"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a00d4cf9e66cd1c43b3f154bbddbd4d90">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/3]</span></h2>
 
@@ -347,8 +358,8 @@ template&lt;typename TArray &gt; </div>
 
 </div>
 </div>
-<a id="aa202d62e8cc88b43626811a84bc09823"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa202d62e8cc88b43626811a84bc09823">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
+<a id="ad2da24edd8fd1906005747f2f574f300"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2da24edd8fd1906005747f2f574f300">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -361,7 +372,7 @@ template&lt;typename Predicate &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::Remove </td>
+          <td class="memname">static size_t <a class="el" href="classmomo_1_1internal_1_1_array_shifter.html">momo::internal::ArrayShifter</a>&lt; TArray &gt;::Remove </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;&#160;</td>
           <td class="paramname"><em>array</em>, </td>

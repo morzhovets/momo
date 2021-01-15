@@ -83,5 +83,7 @@ var classmomo_1_1stdish_1_1vector =
     [ "shrink_to_fit", "classmomo_1_1stdish_1_1vector.html#a8466560524dcbf6c4fc6272cdfd5462e", null ],
     [ "size", "classmomo_1_1stdish_1_1vector.html#a8a9e5eade797f4cbcbeb2014c71a88d3", null ],
     [ "swap", "classmomo_1_1stdish_1_1vector.html#ad614897826c8b27adefe664a3f179533", null ],
+    [ "erase", "classmomo_1_1stdish_1_1vector.html#a78473bdf280618b9856a7782d62781b7", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1vector.html#a1428b2bb02dc9b4037b140667c3022e5", null ],
     [ "swap", "classmomo_1_1stdish_1_1vector.html#afe6133d2d15d741f75108c59fc242655", null ]
 ];

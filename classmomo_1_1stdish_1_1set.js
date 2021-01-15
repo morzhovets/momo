@@ -89,5 +89,6 @@ var classmomo_1_1stdish_1_1set =
     [ "upper_bound", "classmomo_1_1stdish_1_1set.html#a5efbf011b99b667a83ec36a2c4cf541e", null ],
     [ "upper_bound", "classmomo_1_1stdish_1_1set.html#a7135b65133c656988ff85d8cfed57d99", null ],
     [ "value_comp", "classmomo_1_1stdish_1_1set.html#a1d1664d32d0d75ef51f2370a325928cf", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1set.html#a86d0df6b0994ac46682b66a92c5c884d", null ],
     [ "swap", "classmomo_1_1stdish_1_1set.html#ab1e7ca18e39370fc88a248dc76fe60b5", null ]
 ];

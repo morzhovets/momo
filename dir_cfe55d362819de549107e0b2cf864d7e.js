@@ -6,7 +6,12 @@ var dir_cfe55d362819de549107e0b2cf864d7e =
       [ "ArrayBucket", "classmomo_1_1internal_1_1_array_bucket.html", "classmomo_1_1internal_1_1_array_bucket" ],
       [ "Params", "classmomo_1_1internal_1_1_array_bucket_1_1_params.html", "classmomo_1_1internal_1_1_array_bucket_1_1_params" ]
     ] ],
-    [ "BucketUtility.h", "_bucket_utility_8h.html", "_bucket_utility_8h" ],
+    [ "BucketUtility.h", "_bucket_utility_8h.html", [
+      [ "BucketMemory", "classmomo_1_1internal_1_1_bucket_memory.html", "classmomo_1_1internal_1_1_bucket_memory" ],
+      [ "BucketParamsOpen", "classmomo_1_1internal_1_1_bucket_params_open.html", "classmomo_1_1internal_1_1_bucket_params_open" ],
+      [ "BucketBase", "classmomo_1_1internal_1_1_bucket_base.html", "classmomo_1_1internal_1_1_bucket_base" ],
+      [ "HashBucketBase", "classmomo_1_1internal_1_1_hash_bucket_base.html", null ]
+    ] ],
     [ "HashBucketLim4.h", "_hash_bucket_lim4_8h.html", [
       [ "BucketLim4", "classmomo_1_1internal_1_1_bucket_lim4.html", "classmomo_1_1internal_1_1_bucket_lim4" ],
       [ "Params", "classmomo_1_1internal_1_1_bucket_lim4_1_1_params.html", "classmomo_1_1internal_1_1_bucket_lim4_1_1_params" ],
@@ -32,13 +37,9 @@ var dir_cfe55d362819de549107e0b2cf864d7e =
       [ "Params", "classmomo_1_1internal_1_1_bucket_lim_p4_1_1_params.html", "classmomo_1_1internal_1_1_bucket_lim_p4_1_1_params" ],
       [ "HashBucketLimP4", "classmomo_1_1_hash_bucket_lim_p4.html", "classmomo_1_1_hash_bucket_lim_p4" ]
     ] ],
-    [ "HashBucketOneI1.h", "_hash_bucket_one_i1_8h.html", [
-      [ "BucketOneI1", "classmomo_1_1internal_1_1_bucket_one_i1.html", "classmomo_1_1internal_1_1_bucket_one_i1" ],
-      [ "HashBucketOneI1", "classmomo_1_1_hash_bucket_one_i1.html", "classmomo_1_1_hash_bucket_one_i1" ]
-    ] ],
-    [ "HashBucketOneIA.h", "_hash_bucket_one_i_a_8h.html", [
-      [ "BucketOneIA", "classmomo_1_1internal_1_1_bucket_one_i_a.html", "classmomo_1_1internal_1_1_bucket_one_i_a" ],
-      [ "HashBucketOneIA", "classmomo_1_1_hash_bucket_one_i_a.html", "classmomo_1_1_hash_bucket_one_i_a" ]
+    [ "HashBucketOne.h", "_hash_bucket_one_8h.html", [
+      [ "BucketOne", "classmomo_1_1internal_1_1_bucket_one.html", "classmomo_1_1internal_1_1_bucket_one" ],
+      [ "HashBucketOne", "classmomo_1_1_hash_bucket_one.html", "classmomo_1_1_hash_bucket_one" ]
     ] ],
     [ "HashBucketOpen2N2.h", "_hash_bucket_open2_n2_8h.html", [
       [ "BucketOpen2N2", "classmomo_1_1internal_1_1_bucket_open2_n2.html", "classmomo_1_1internal_1_1_bucket_open2_n2" ],

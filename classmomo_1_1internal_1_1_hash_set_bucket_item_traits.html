@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -104,8 +104,6 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ad98fcb0d9346b3c17803cecdd584d0b9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#ad98fcb0d9346b3c17803cecdd584d0b9">Destroy</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#ad0144c3ae0895ad321dcd997c8e64e6d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#a3f9e8097e303e0bad6a3b5cf24783281">Item</a> *items, size_t count) noexcept</td></tr>
-<tr class="separator:ad98fcb0d9346b3c17803cecdd584d0b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad1f4222f1bea47e9c8bcdab3ad773e0"><td class="memTemplParams" colspan="2">template&lt;typename ItemCreator &gt; </td></tr>
 <tr class="memitem:aad1f4222f1bea47e9c8bcdab3ad773e0"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#aad1f4222f1bea47e9c8bcdab3ad773e0">RelocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#ad0144c3ae0895ad321dcd997c8e64e6d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#a3f9e8097e303e0bad6a3b5cf24783281">Item</a> *srcItems, <a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#a3f9e8097e303e0bad6a3b5cf24783281">Item</a> *dstItems, size_t count, ItemCreator &amp;&amp;itemCreator, <a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#a3f9e8097e303e0bad6a3b5cf24783281">Item</a> *newItem)</td></tr>
 <tr class="separator:aad1f4222f1bea47e9c8bcdab3ad773e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,50 +176,6 @@ template&lt;typename THashSetItemTraits &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad98fcb0d9346b3c17803cecdd584d0b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad98fcb0d9346b3c17803cecdd584d0b9">&#9670;&nbsp;</a></span>Destroy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename THashSetItemTraits &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html">momo::internal::HashSetBucketItemTraits</a>&lt; THashSetItemTraits &gt;::Destroy </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#ad0144c3ae0895ad321dcd997c8e64e6d">MemManager</a> &amp;&#160;</td>
-          <td class="paramname"><em>memManager</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_set_bucket_item_traits.html#a3f9e8097e303e0bad6a3b5cf24783281">Item</a> *&#160;</td>
-          <td class="paramname"><em>items</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aad1f4222f1bea47e9c8bcdab3ad773e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aad1f4222f1bea47e9c8bcdab3ad773e0">&#9670;&nbsp;</a></span>RelocateCreate()</h2>
 

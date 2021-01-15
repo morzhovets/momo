@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -102,12 +102,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a08e92790e21286cc683948a3309c25ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00b86951c9868b9566120b8ae0732c21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html">Params</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#a00b86951c9868b9566120b8ae0732c21">operator=</a> (const <a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html">Params</a> &amp;)=delete</td></tr>
 <tr class="separator:a00b86951c9868b9566120b8ae0732c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8a10fe3f9354d1eb907600887c9bcf2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#ab8a10fe3f9354d1eb907600887c9bcf2">Clear</a> () noexcept</td></tr>
+<tr class="separator:ab8a10fe3f9354d1eb907600887c9bcf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7042c1bbb501e77a60a5c1dfe57ddf72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_bucket.html#af89d8664703bd3851c1a0a45cb12a346">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#a7042c1bbb501e77a60a5c1dfe57ddf72">GetMemManager</a> () noexcept</td></tr>
 <tr class="separator:a7042c1bbb501e77a60a5c1dfe57ddf72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff75bd467e61a2dcb5fb3022a6c0b634"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_pool.html">MemPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#aff75bd467e61a2dcb5fb3022a6c0b634">GetFastMemPool</a> (size_t memPoolIndex) noexcept</td></tr>
-<tr class="separator:aff75bd467e61a2dcb5fb3022a6c0b634"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5c0d934e76a80fcc00d847922eda9c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_pool.html">MemPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#ad5c0d934e76a80fcc00d847922eda9c1">GetArrayMemPool</a> () noexcept</td></tr>
-<tr class="separator:ad5c0d934e76a80fcc00d847922eda9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8080f417f913b5201dcaef75ddc2ca94"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_pool.html">FastMemPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#a8080f417f913b5201dcaef75ddc2ca94">GetFastMemPool</a> (size_t memPoolIndex) noexcept</td></tr>
+<tr class="separator:a8080f417f913b5201dcaef75ddc2ca94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78d5a0709daf1d849f465c38859e8713"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_pool.html">ArrayMemPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_1_1_params.html#a78d5a0709daf1d849f465c38859e8713">GetArrayMemPool</a> () noexcept</td></tr>
+<tr class="separator:a78d5a0709daf1d849f465c38859e8713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af2a81af9983684a2fa8b61d05eb68578"></a>
@@ -194,8 +196,8 @@ template&lt;typename TItemTraits , size_t tMaxFastCount, typename TMemPoolParams
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad5c0d934e76a80fcc00d847922eda9c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5c0d934e76a80fcc00d847922eda9c1">&#9670;&nbsp;</a></span>GetArrayMemPool()</h2>
+<a id="ab8a10fe3f9354d1eb907600887c9bcf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8a10fe3f9354d1eb907600887c9bcf2">&#9670;&nbsp;</a></span>Clear()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,7 +208,7 @@ template&lt;typename TItemTraits , size_t tMaxFastCount, typename TMemPoolParams
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_pool.html">MemPool</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">momo::internal::ArrayBucket</a>&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;::Params::GetArrayMemPool </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">momo::internal::ArrayBucket</a>&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;::Params::Clear </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -221,8 +223,8 @@ template&lt;typename TItemTraits , size_t tMaxFastCount, typename TMemPoolParams
 
 </div>
 </div>
-<a id="aff75bd467e61a2dcb5fb3022a6c0b634"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff75bd467e61a2dcb5fb3022a6c0b634">&#9670;&nbsp;</a></span>GetFastMemPool()</h2>
+<a id="a78d5a0709daf1d849f465c38859e8713"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78d5a0709daf1d849f465c38859e8713">&#9670;&nbsp;</a></span>GetArrayMemPool()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -233,7 +235,34 @@ template&lt;typename TItemTraits , size_t tMaxFastCount, typename TMemPoolParams
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_pool.html">MemPool</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">momo::internal::ArrayBucket</a>&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;::Params::GetFastMemPool </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_pool.html">ArrayMemPool</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">momo::internal::ArrayBucket</a>&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;::Params::GetArrayMemPool </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8080f417f913b5201dcaef75ddc2ca94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8080f417f913b5201dcaef75ddc2ca94">&#9670;&nbsp;</a></span>GetFastMemPool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItemTraits , size_t tMaxFastCount, typename TMemPoolParams , typename TArraySettings &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_pool.html">FastMemPool</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">momo::internal::ArrayBucket</a>&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;::Params::GetFastMemPool </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>memPoolIndex</em></td><td>)</td>

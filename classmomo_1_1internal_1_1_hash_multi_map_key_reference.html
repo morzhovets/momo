@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::HashMultiMapKeyReference&lt; TKey, TValues, THashMapReference, TSettings &gt; Class Template Reference</title>
+<title>momo: momo::internal::HashMultiMapKeyReference&lt; THashMapReference &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -89,9 +89,10 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_hash_multi_m
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classmomo_1_1internal_1_1_hash_multi_map_key_reference-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::HashMultiMapKeyReference&lt; TKey, TValues, THashMapReference, TSettings &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::HashMultiMapKeyReference&lt; THashMapReference &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -99,79 +100,80 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_hash_multi_m
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af425f595e3d2107504a31ff9d3f4a25d"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a></td></tr>
-<tr class="separator:af425f595e3d2107504a31ff9d3f4a25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07d28e929564ff5e3f58117a85ffb861"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a>, typename Values::ConstBounds, typename HashMapReference::ConstReference, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8ef7260a8900f1429f47d9e8594ece8e">Settings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a07d28e929564ff5e3f58117a85ffb861">ConstReference</a></td></tr>
-<tr class="separator:a07d28e929564ff5e3f58117a85ffb861"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea334e788d9f56b16e804739f85828b4"><td class="memItemLeft" align="right" valign="top">typedef Values::Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a></td></tr>
-<tr class="separator:aea334e788d9f56b16e804739f85828b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc7d82ad7b33ebb9335045837ad5c2bc"><td class="memItemLeft" align="right" valign="top">typedef HashMapReference::Key&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a></td></tr>
+<tr class="separator:adc7d82ad7b33ebb9335045837ad5c2bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcf9ceac475dca5fe05f9da8d8d85c2b"><td class="memItemLeft" align="right" valign="top">typedef Values::Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a></td></tr>
+<tr class="separator:abcf9ceac475dca5fe05f9da8d8d85c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedabb5226c5b15770ae2c09b08768c1e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a>&lt; typename HashMapReference::ConstReference &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aedabb5226c5b15770ae2c09b08768c1e">ConstReference</a></td></tr>
+<tr class="separator:aedabb5226c5b15770ae2c09b08768c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3412f62d7600cd8890b9c38e893ae010"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a3412f62d7600cd8890b9c38e893ae010">HashMultiMapKeyReference</a> ()=delete</td></tr>
-<tr class="separator:a3412f62d7600cd8890b9c38e893ae010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bbdaf942a69d6d8f65e08dec4d57703"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a1bbdaf942a69d6d8f65e08dec4d57703">operator ConstReference</a> () const noexcept</td></tr>
-<tr class="separator:a1bbdaf942a69d6d8f65e08dec4d57703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb5c254560391733cbcd80b17d894552"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#afb5c254560391733cbcd80b17d894552">GetBegin</a> () const noexcept</td></tr>
-<tr class="separator:afb5c254560391733cbcd80b17d894552"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6579eb58b6be8851d6229638b391c834"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a6579eb58b6be8851d6229638b391c834">GetEnd</a> () const noexcept</td></tr>
-<tr class="separator:a6579eb58b6be8851d6229638b391c834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82a8c3cb739034fb36dedec028e4c33f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a82a8c3cb739034fb36dedec028e4c33f">GetCount</a> () const noexcept</td></tr>
-<tr class="separator:a82a8c3cb739034fb36dedec028e4c33f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8fc116c4543eaff2b06160f09eb0469"><td class="memItemLeft" align="right" valign="top">std::iterator_traits&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a> &gt;::reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#ae8fc116c4543eaff2b06160f09eb0469">operator[]</a> (size_t index) const</td></tr>
-<tr class="separator:ae8fc116c4543eaff2b06160f09eb0469"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d2eefc5798cf17774b5392664de240a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a6d2eefc5798cf17774b5392664de240a">HashMultiMapKeyReference</a> ()=delete</td></tr>
+<tr class="separator:a6d2eefc5798cf17774b5392664de240a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a249eecb6006875676053a4eb713508ad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a249eecb6006875676053a4eb713508ad">operator ConstReference</a> () const noexcept</td></tr>
+<tr class="separator:a249eecb6006875676053a4eb713508ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88389bf42106deaeaeb9801c1555007b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a88389bf42106deaeaeb9801c1555007b">GetBegin</a> () const noexcept</td></tr>
+<tr class="separator:a88389bf42106deaeaeb9801c1555007b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6af30928bb5055d53155ed6639616fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aa6af30928bb5055d53155ed6639616fe">GetEnd</a> () const noexcept</td></tr>
+<tr class="separator:aa6af30928bb5055d53155ed6639616fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65a15d5aab4ef3c56662ee212f79dcec"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a65a15d5aab4ef3c56662ee212f79dcec">GetCount</a> () const noexcept</td></tr>
+<tr class="separator:a65a15d5aab4ef3c56662ee212f79dcec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38488319040203e8314e6cb4aaf43537"><td class="memItemLeft" align="right" valign="top">std::iterator_traits&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a> &gt;::reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a38488319040203e8314e6cb4aaf43537">operator[]</a> (size_t index) const</td></tr>
+<tr class="separator:a38488319040203e8314e6cb4aaf43537"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a14e222660e9ddea654f61afbd917e2b0"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a14e222660e9ddea654f61afbd917e2b0">key</a></td></tr>
-<tr class="separator:a14e222660e9ddea654f61afbd917e2b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18522ce08a9d28b284fe61e761e1525c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a18522ce08a9d28b284fe61e761e1525c">key</a></td></tr>
+<tr class="separator:a18522ce08a9d28b284fe61e761e1525c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:a645e1dc149e5fb9bebbaceb0c822b178"><td class="memItemLeft" align="right" valign="top">typedef TValues&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a645e1dc149e5fb9bebbaceb0c822b178">Values</a></td></tr>
-<tr class="separator:a645e1dc149e5fb9bebbaceb0c822b178"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8eb5e559a48c37daefe2222d46a3ef5e"><td class="memItemLeft" align="right" valign="top">typedef THashMapReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8eb5e559a48c37daefe2222d46a3ef5e">HashMapReference</a></td></tr>
-<tr class="separator:a8eb5e559a48c37daefe2222d46a3ef5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ef7260a8900f1429f47d9e8594ece8e"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8ef7260a8900f1429f47d9e8594ece8e">Settings</a></td></tr>
-<tr class="separator:a8ef7260a8900f1429f47d9e8594ece8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13bff3ca4943cdd4af2bf80c4f062c7e"><td class="memItemLeft" align="right" valign="top">typedef THashMapReference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a></td></tr>
+<tr class="separator:a13bff3ca4943cdd4af2bf80c4f062c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad3a02be500ced825c511ddcc46f4d041"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#ad3a02be500ced825c511ddcc46f4d041">HashMultiMapKeyReference</a> (const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a14e222660e9ddea654f61afbd917e2b0">key</a>, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a645e1dc149e5fb9bebbaceb0c822b178">Values</a> values) noexcept</td></tr>
-<tr class="separator:ad3a02be500ced825c511ddcc46f4d041"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab00c8096b34dfe4d4a3d081db2de26f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#ab00c8096b34dfe4d4a3d081db2de26f1">HashMultiMapKeyReference</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8eb5e559a48c37daefe2222d46a3ef5e">HashMapReference</a> hashMapRef) noexcept</td></tr>
-<tr class="separator:ab00c8096b34dfe4d4a3d081db2de26f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed760ece8588d7344b6cef0b2d6d41ca"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aed760ece8588d7344b6cef0b2d6d41ca">HashMultiMapKeyReference</a> (const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a> &amp;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a18522ce08a9d28b284fe61e761e1525c">key</a>, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af966f450931aced0225475bf3f932f17">Values</a> values) noexcept</td></tr>
+<tr class="separator:aed760ece8588d7344b6cef0b2d6d41ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1787649ca93ed1fb0a293c111b7f66f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#ad1787649ca93ed1fb0a293c111b7f66f">HashMultiMapKeyReference</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a> hashMapRef) noexcept</td></tr>
+<tr class="separator:ad1787649ca93ed1fb0a293c111b7f66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:af966f450931aced0225475bf3f932f17"><td class="memItemLeft" align="right" valign="top">decltype(std::declval&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a> &gt;().value.GetBounds()) typedef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af966f450931aced0225475bf3f932f17">Values</a></td></tr>
+<tr class="separator:af966f450931aced0225475bf3f932f17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a07d28e929564ff5e3f58117a85ffb861"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07d28e929564ff5e3f58117a85ffb861">&#9670;&nbsp;</a></span>ConstReference</h2>
+<a id="aedabb5226c5b15770ae2c09b08768c1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedabb5226c5b15770ae2c09b08768c1e">&#9670;&nbsp;</a></span>ConstReference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a>, typename Values::ConstBounds, typename HashMapReference::ConstReference, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8ef7260a8900f1429f47d9e8594ece8e">Settings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a07d28e929564ff5e3f58117a85ffb861">ConstReference</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a>&lt;typename HashMapReference::ConstReference&gt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aedabb5226c5b15770ae2c09b08768c1e">ConstReference</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a8eb5e559a48c37daefe2222d46a3ef5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8eb5e559a48c37daefe2222d46a3ef5e">&#9670;&nbsp;</a></span>HashMapReference</h2>
+<a id="a13bff3ca4943cdd4af2bf80c4f062c7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13bff3ca4943cdd4af2bf80c4f062c7e">&#9670;&nbsp;</a></span>HashMapReference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef THashMapReference <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8eb5e559a48c37daefe2222d46a3ef5e">HashMapReference</a></td>
+          <td class="memname">typedef THashMapReference <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a></td>
         </tr>
       </table>
   </td>
@@ -183,100 +185,52 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="aea334e788d9f56b16e804739f85828b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea334e788d9f56b16e804739f85828b4">&#9670;&nbsp;</a></span>Iterator</h2>
+<a id="abcf9ceac475dca5fe05f9da8d8d85c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abcf9ceac475dca5fe05f9da8d8d85c2b">&#9670;&nbsp;</a></span>Iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef Values::Iterator <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a></td>
+          <td class="memname">typedef Values::Iterator <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="af425f595e3d2107504a31ff9d3f4a25d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af425f595e3d2107504a31ff9d3f4a25d">&#9670;&nbsp;</a></span>Key</h2>
+<a id="adc7d82ad7b33ebb9335045837ad5c2bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc7d82ad7b33ebb9335045837ad5c2bc">&#9670;&nbsp;</a></span>Key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a></td>
+          <td class="memname">typedef HashMapReference::Key <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8ef7260a8900f1429f47d9e8594ece8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ef7260a8900f1429f47d9e8594ece8e">&#9670;&nbsp;</a></span>Settings</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8ef7260a8900f1429f47d9e8594ece8e">Settings</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a645e1dc149e5fb9bebbaceb0c822b178"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a645e1dc149e5fb9bebbaceb0c822b178">&#9670;&nbsp;</a></span>Values</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TValues <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a645e1dc149e5fb9bebbaceb0c822b178">Values</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3412f62d7600cd8890b9c38e893ae010"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3412f62d7600cd8890b9c38e893ae010">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[1/3]</span></h2>
+<a id="a6d2eefc5798cf17774b5392664de240a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d2eefc5798cf17774b5392664de240a">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -291,27 +245,27 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="ad3a02be500ced825c511ddcc46f4d041"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3a02be500ced825c511ddcc46f4d041">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[2/3]</span></h2>
+<a id="aed760ece8588d7344b6cef0b2d6d41ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed760ece8588d7344b6cef0b2d6d41ca">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a645e1dc149e5fb9bebbaceb0c822b178">Values</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af966f450931aced0225475bf3f932f17">Values</a>&#160;</td>
           <td class="paramname"><em>values</em>&#160;</td>
         </tr>
         <tr>
@@ -329,21 +283,21 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="ab00c8096b34dfe4d4a3d081db2de26f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab00c8096b34dfe4d4a3d081db2de26f1">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[3/3]</span></h2>
+<a id="ad1787649ca93ed1fb0a293c111b7f66f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1787649ca93ed1fb0a293c111b7f66f">&#9670;&nbsp;</a></span>HashMultiMapKeyReference() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">HashMultiMapKeyReference</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a8eb5e559a48c37daefe2222d46a3ef5e">HashMapReference</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a>&#160;</td>
           <td class="paramname"><em>hashMapRef</em></td><td>)</td>
           <td></td>
         </tr>
@@ -358,19 +312,19 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="afb5c254560391733cbcd80b17d894552"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb5c254560391733cbcd80b17d894552">&#9670;&nbsp;</a></span>GetBegin()</h2>
+<a id="a88389bf42106deaeaeb9801c1555007b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88389bf42106deaeaeb9801c1555007b">&#9670;&nbsp;</a></span>GetBegin()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::GetBegin </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::GetBegin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -385,19 +339,19 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="a82a8c3cb739034fb36dedec028e4c33f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82a8c3cb739034fb36dedec028e4c33f">&#9670;&nbsp;</a></span>GetCount()</h2>
+<a id="a65a15d5aab4ef3c56662ee212f79dcec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65a15d5aab4ef3c56662ee212f79dcec">&#9670;&nbsp;</a></span>GetCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::GetCount </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::GetCount </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -412,19 +366,19 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="a6579eb58b6be8851d6229638b391c834"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6579eb58b6be8851d6229638b391c834">&#9670;&nbsp;</a></span>GetEnd()</h2>
+<a id="aa6af30928bb5055d53155ed6639616fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6af30928bb5055d53155ed6639616fe">&#9670;&nbsp;</a></span>GetEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::GetEnd </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::GetEnd </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -439,19 +393,19 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="a1bbdaf942a69d6d8f65e08dec4d57703"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bbdaf942a69d6d8f65e08dec4d57703">&#9670;&nbsp;</a></span>operator ConstReference()</h2>
+<a id="a249eecb6006875676053a4eb713508ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a249eecb6006875676053a4eb713508ad">&#9670;&nbsp;</a></span>operator ConstReference()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a07d28e929564ff5e3f58117a85ffb861">ConstReference</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aedabb5226c5b15770ae2c09b08768c1e">ConstReference</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -466,19 +420,19 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 
 </div>
 </div>
-<a id="ae8fc116c4543eaff2b06160f09eb0469"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8fc116c4543eaff2b06160f09eb0469">&#9670;&nbsp;</a></span>operator[]()</h2>
+<a id="a38488319040203e8314e6cb4aaf43537"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38488319040203e8314e6cb4aaf43537">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::iterator_traits&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#aea334e788d9f56b16e804739f85828b4">Iterator</a>&gt;::reference <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::operator[] </td>
+          <td class="memname">std::iterator_traits&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#abcf9ceac475dca5fe05f9da8d8d85c2b">Iterator</a>&gt;::reference <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::operator[] </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>
@@ -495,18 +449,42 @@ template&lt;typename TKey , typename TValues , typename THashMapReference , type
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a14e222660e9ddea654f61afbd917e2b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14e222660e9ddea654f61afbd917e2b0">&#9670;&nbsp;</a></span>key</h2>
+<a id="a18522ce08a9d28b284fe61e761e1525c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18522ce08a9d28b284fe61e761e1525c">&#9670;&nbsp;</a></span>key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TValues , typename THashMapReference , typename TSettings &gt; </div>
+template&lt;typename THashMapReference &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af425f595e3d2107504a31ff9d3f4a25d">Key</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; TKey, TValues, THashMapReference, TSettings &gt;::key</td>
+          <td class="memname">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">Key</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::key</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af966f450931aced0225475bf3f932f17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af966f450931aced0225475bf3f932f17">&#9670;&nbsp;</a></span>Values</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename THashMapReference &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">decltype(std::declval&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#a13bff3ca4943cdd4af2bf80c4f062c7e">HashMapReference</a>&gt;().value.GetBounds()) typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html">momo::internal::HashMultiMapKeyReference</a>&lt; THashMapReference &gt;::Values</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

@@ -5,6 +5,7 @@ var classmomo_1_1internal_1_1_array_index_iterator =
     [ "Item", "classmomo_1_1internal_1_1_array_index_iterator.html#a26c5dc7af109935365dec53fd5c73f64", null ],
     [ "Pointer", "classmomo_1_1internal_1_1_array_index_iterator.html#a24608b8347fb73c099b9479e54975323", null ],
     [ "Reference", "classmomo_1_1internal_1_1_array_index_iterator.html#a40ccc124bcdf7b31d4eb18e29e4f5b57", null ],
+    [ "Settings", "classmomo_1_1internal_1_1_array_index_iterator.html#a9127d911664c595e548c981523a4607e", null ],
     [ "ArrayIndexIterator", "classmomo_1_1internal_1_1_array_index_iterator.html#a0734bc2ba4a4a3bae8cef69fee2122c1", null ],
     [ "ArrayIndexIterator", "classmomo_1_1internal_1_1_array_index_iterator.html#a39b10cf5662ccebb521b1e56a593e217", null ],
     [ "operator ConstIterator", "classmomo_1_1internal_1_1_array_index_iterator.html#a5f480e4dc1e857e3432e42d0c7e39031", null ],

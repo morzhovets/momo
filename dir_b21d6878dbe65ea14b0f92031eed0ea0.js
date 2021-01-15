@@ -28,8 +28,8 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "DataConstItemBounds", "classmomo_1_1internal_1_1_data_const_item_bounds.html", "classmomo_1_1internal_1_1_data_const_item_bounds" ],
       [ "DataSelection", "classmomo_1_1internal_1_1_data_selection.html", "classmomo_1_1internal_1_1_data_selection" ],
       [ "iterator_traits< momo::internal::DataRawIterator< R, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_raw_iterator_3_01_r_00_01_s_01_4_01_4.html", null ],
-      [ "iterator_traits< momo::internal::DataRowIterator< RR, RI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_row_iterator_3_01_r_r_00_01_r_i_01_4_01_4.html", null ],
-      [ "iterator_traits< momo::internal::DataConstItemIterator< I, RI, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_const_item_iterator_3_01_i_00_01_r_i_00_01_s_01_4_01_4.html", null ]
+      [ "iterator_traits< momo::internal::DataRowIterator< RI, RR > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_row_iterator_3_01_r_i_00_01_r_r_01_4_01_4.html", null ],
+      [ "iterator_traits< momo::internal::DataConstItemIterator< RI, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_const_item_iterator_3_01_r_i_00_01_i_01_4_01_4.html", null ]
     ] ],
     [ "DataTable.h", "_data_table_8h.html", [
       [ "DataTraits", "classmomo_1_1_data_traits.html", "classmomo_1_1_data_traits" ],
@@ -60,8 +60,8 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "MapValueReferencer", "classmomo_1_1internal_1_1_map_value_referencer.html", "classmomo_1_1internal_1_1_map_value_referencer" ],
       [ "MapExtractedPair", "classmomo_1_1internal_1_1_map_extracted_pair.html", "classmomo_1_1internal_1_1_map_extracted_pair" ],
       [ "MapPairConverter", "classmomo_1_1internal_1_1_map_pair_converter.html", "classmomo_1_1internal_1_1_map_pair_converter" ],
-      [ "iterator_traits< momo::internal::MapKeyIterator< SI, K > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_key_iterator_3_01_s_i_00_01_k_01_4_01_4.html", null ],
-      [ "iterator_traits< momo::internal::MapValueIterator< SI, V > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_value_iterator_3_01_s_i_00_01_v_01_4_01_4.html", null ]
+      [ "iterator_traits< momo::internal::MapKeyIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_key_iterator_3_01_s_i_01_4_01_4.html", null ],
+      [ "iterator_traits< momo::internal::MapValueIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_value_iterator_3_01_s_i_01_4_01_4.html", null ]
     ] ],
     [ "MemManager.h", "_mem_manager_8h.html", "_mem_manager_8h" ],
     [ "MemPool.h", "_mem_pool_8h.html", [
@@ -80,9 +80,9 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "IsNothrowMoveConstructible< Object, MemManagerStd< std::allocator< AllocObject > > >", "structmomo_1_1_is_nothrow_move_constructible_3_01_object_00_01_mem_manager_std_3_01std_1_1allocaac6e8c9a03f91eb5a393dac1b47dac15.html", null ],
       [ "ObjectDestroyer", "classmomo_1_1_object_destroyer.html", "classmomo_1_1_object_destroyer" ],
       [ "ObjectRelocator", "classmomo_1_1_object_relocator.html", "classmomo_1_1_object_relocator" ],
-      [ "AlignmentOf", "structmomo_1_1internal_1_1_alignment_of.html", null ],
       [ "IsNothrowSwappable", "structmomo_1_1internal_1_1_is_nothrow_swappable.html", null ],
       [ "IsNothrowSwappable< Object, decltype(std::swap(std::declval< Object & >(), std::declval< Object & >()))>", "structmomo_1_1internal_1_1_is_nothrow_swappable_3_01_object_00_01decltype_07std_1_1swap_07std_1_c0260c5a27c02eea793269ad3d94e2e9.html", null ],
+      [ "ObjectAlignmenter", "classmomo_1_1internal_1_1_object_alignmenter.html", "classmomo_1_1internal_1_1_object_alignmenter" ],
       [ "ObjectBuffer", "classmomo_1_1internal_1_1_object_buffer.html", "classmomo_1_1internal_1_1_object_buffer" ],
       [ "ObjectManager", "classmomo_1_1internal_1_1_object_manager.html", "classmomo_1_1internal_1_1_object_manager" ],
       [ "Creator", "classmomo_1_1internal_1_1_object_manager_1_1_creator.html", "classmomo_1_1internal_1_1_object_manager_1_1_creator" ]

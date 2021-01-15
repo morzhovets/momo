@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::DataConstItemBounds&lt; TItem, TRowBounds, TSettings &gt; Class Template Reference</title>
+<title>momo: momo::internal::DataConstItemBounds&lt; TRowBounds, TItem &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -85,10 +85,9 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_const_i
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-types">Protected Types</a> &#124;
 <a href="classmomo_1_1internal_1_1_data_const_item_bounds-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::DataConstItemBounds&lt; TItem, TRowBounds, TSettings &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::DataConstItemBounds&lt; TRowBounds, TItem &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,138 +95,127 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_const_i
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac9f425f7e022aef9b66b0a5aa9b117ed"><td class="memItemLeft" align="right" valign="top">typedef TItem&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ac9f425f7e022aef9b66b0a5aa9b117ed">Item</a></td></tr>
-<tr class="separator:ac9f425f7e022aef9b66b0a5aa9b117ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80347a1816a34175631feac8050fa2c9"><td class="memItemLeft" align="right" valign="top">typedef TRowBounds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a80347a1816a34175631feac8050fa2c9">RowBounds</a></td></tr>
-<tr class="separator:a80347a1816a34175631feac8050fa2c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee63e15b55de7089257848ea4195124d"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html">DataConstItemIterator</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ac9f425f7e022aef9b66b0a5aa9b117ed">Item</a>, typename RowBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a165b4c1901172bec7ca4f75644362ceb">Settings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a></td></tr>
-<tr class="separator:aee63e15b55de7089257848ea4195124d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add11f82467d67ce6d14d48840869774b"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#add11f82467d67ce6d14d48840869774b">ConstBounds</a></td></tr>
-<tr class="separator:add11f82467d67ce6d14d48840869774b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade3aaf3766af412dfae20ec0f7367c20"><td class="memItemLeft" align="right" valign="top">typedef TRowBounds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ade3aaf3766af412dfae20ec0f7367c20">RowBounds</a></td></tr>
+<tr class="separator:ade3aaf3766af412dfae20ec0f7367c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0828e639928e1b0577ad09ca67fd63ca"><td class="memItemLeft" align="right" valign="top">typedef TItem&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0828e639928e1b0577ad09ca67fd63ca">Item</a></td></tr>
+<tr class="separator:a0828e639928e1b0577ad09ca67fd63ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8a67bb232163eac712ab1dbf1c41a0f"><td class="memItemLeft" align="right" valign="top">typedef RowBounds::Settings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ab8a67bb232163eac712ab1dbf1c41a0f">Settings</a></td></tr>
+<tr class="separator:ab8a67bb232163eac712ab1dbf1c41a0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6eadf119ae8562cb976407f5df1ba3db"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html">DataConstItemIterator</a>&lt; typename RowBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0828e639928e1b0577ad09ca67fd63ca">Item</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a></td></tr>
+<tr class="separator:a6eadf119ae8562cb976407f5df1ba3db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0abc6dba357b7598b3e0059c3f46e86e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0abc6dba357b7598b3e0059c3f46e86e">ConstBounds</a></td></tr>
+<tr class="separator:a0abc6dba357b7598b3e0059c3f46e86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8d15a5dfa75a93f2c300f689df80f22d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a8d15a5dfa75a93f2c300f689df80f22d">DataConstItemBounds</a> () noexcept</td></tr>
-<tr class="separator:a8d15a5dfa75a93f2c300f689df80f22d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8feabbdc0d8070ca8fcbd814f67bd3c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a8feabbdc0d8070ca8fcbd814f67bd3c8">DataConstItemBounds</a> (size_t offset, <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a80347a1816a34175631feac8050fa2c9">RowBounds</a> rowBounds) noexcept</td></tr>
-<tr class="separator:a8feabbdc0d8070ca8fcbd814f67bd3c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedec612815757e5a4b35cfd2578cb475"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aedec612815757e5a4b35cfd2578cb475">GetBegin</a> () const noexcept</td></tr>
-<tr class="separator:aedec612815757e5a4b35cfd2578cb475"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49b97daf343740a72ffc50c188704e5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a49b97daf343740a72ffc50c188704e5e">GetEnd</a> () const noexcept</td></tr>
-<tr class="separator:a49b97daf343740a72ffc50c188704e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7264fd1ee1601f8551b2cae0bbbe418c"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a7264fd1ee1601f8551b2cae0bbbe418c">GetCount</a> () const noexcept</td></tr>
-<tr class="separator:a7264fd1ee1601f8551b2cae0bbbe418c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cb987a8616c3a1c67ce0d83a2ac5fed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html#a4a7edf5e2c2148efff32f89c9e92d87e">Iterator::Reference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6cb987a8616c3a1c67ce0d83a2ac5fed">operator[]</a> (size_t index) const</td></tr>
-<tr class="separator:a6cb987a8616c3a1c67ce0d83a2ac5fed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
-Protected Types</h2></td></tr>
-<tr class="memitem:a165b4c1901172bec7ca4f75644362ceb"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a165b4c1901172bec7ca4f75644362ceb">Settings</a></td></tr>
-<tr class="separator:a165b4c1901172bec7ca4f75644362ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0456ad442d2020433f75a83bc26a63e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ab0456ad442d2020433f75a83bc26a63e">DataConstItemBounds</a> () noexcept</td></tr>
+<tr class="separator:ab0456ad442d2020433f75a83bc26a63e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4b7c91d602c1f8828a877185d6fead"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#acb4b7c91d602c1f8828a877185d6fead">DataConstItemBounds</a> (<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ade3aaf3766af412dfae20ec0f7367c20">RowBounds</a> rowBounds, size_t offset) noexcept</td></tr>
+<tr class="separator:acb4b7c91d602c1f8828a877185d6fead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2c6acc07b16766048466591530bf97c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ae2c6acc07b16766048466591530bf97c">GetBegin</a> () const noexcept</td></tr>
+<tr class="separator:ae2c6acc07b16766048466591530bf97c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9f46942578db3c1b6273775ab9cc6ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ae9f46942578db3c1b6273775ab9cc6ef">GetEnd</a> () const noexcept</td></tr>
+<tr class="separator:ae9f46942578db3c1b6273775ab9cc6ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68c2d64ffe17e33a4d90f54d8e893b53"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a68c2d64ffe17e33a4d90f54d8e893b53">GetCount</a> () const noexcept</td></tr>
+<tr class="separator:a68c2d64ffe17e33a4d90f54d8e893b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe140834924041b21256d7d585170429"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html#ab751f728b1b20bfbff451ea669bfec68">Iterator::Reference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#afe140834924041b21256d7d585170429">operator[]</a> (size_t index) const</td></tr>
+<tr class="separator:afe140834924041b21256d7d585170429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="add11f82467d67ce6d14d48840869774b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add11f82467d67ce6d14d48840869774b">&#9670;&nbsp;</a></span>ConstBounds</h2>
+<a id="a0abc6dba357b7598b3e0059c3f46e86e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0abc6dba357b7598b3e0059c3f46e86e">&#9670;&nbsp;</a></span>ConstBounds</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#add11f82467d67ce6d14d48840869774b">ConstBounds</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0abc6dba357b7598b3e0059c3f46e86e">ConstBounds</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ac9f425f7e022aef9b66b0a5aa9b117ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9f425f7e022aef9b66b0a5aa9b117ed">&#9670;&nbsp;</a></span>Item</h2>
+<a id="a0828e639928e1b0577ad09ca67fd63ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0828e639928e1b0577ad09ca67fd63ca">&#9670;&nbsp;</a></span>Item</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TItem <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ac9f425f7e022aef9b66b0a5aa9b117ed">Item</a></td>
+          <td class="memname">typedef TItem <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0828e639928e1b0577ad09ca67fd63ca">Item</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aee63e15b55de7089257848ea4195124d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee63e15b55de7089257848ea4195124d">&#9670;&nbsp;</a></span>Iterator</h2>
+<a id="a6eadf119ae8562cb976407f5df1ba3db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6eadf119ae8562cb976407f5df1ba3db">&#9670;&nbsp;</a></span>Iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html">DataConstItemIterator</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ac9f425f7e022aef9b66b0a5aa9b117ed">Item</a>, typename RowBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a165b4c1901172bec7ca4f75644362ceb">Settings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html">DataConstItemIterator</a>&lt;typename RowBounds::Iterator, <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a0828e639928e1b0577ad09ca67fd63ca">Item</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a80347a1816a34175631feac8050fa2c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80347a1816a34175631feac8050fa2c9">&#9670;&nbsp;</a></span>RowBounds</h2>
+<a id="ade3aaf3766af412dfae20ec0f7367c20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade3aaf3766af412dfae20ec0f7367c20">&#9670;&nbsp;</a></span>RowBounds</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TRowBounds <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a80347a1816a34175631feac8050fa2c9">RowBounds</a></td>
+          <td class="memname">typedef TRowBounds <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ade3aaf3766af412dfae20ec0f7367c20">RowBounds</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a165b4c1901172bec7ca4f75644362ceb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a165b4c1901172bec7ca4f75644362ceb">&#9670;&nbsp;</a></span>Settings</h2>
+<a id="ab8a67bb232163eac712ab1dbf1c41a0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8a67bb232163eac712ab1dbf1c41a0f">&#9670;&nbsp;</a></span>Settings</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;typename TRowBounds , typename TItem &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a165b4c1901172bec7ca4f75644362ceb">Settings</a></td>
+          <td class="memname">typedef RowBounds::Settings <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ab8a67bb232163eac712ab1dbf1c41a0f">Settings</a></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8d15a5dfa75a93f2c300f689df80f22d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d15a5dfa75a93f2c300f689df80f22d">&#9670;&nbsp;</a></span>DataConstItemBounds() <span class="overload">[1/2]</span></h2>
+<a id="ab0456ad442d2020433f75a83bc26a63e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0456ad442d2020433f75a83bc26a63e">&#9670;&nbsp;</a></span>DataConstItemBounds() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -242,28 +230,28 @@ template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div
 
 </div>
 </div>
-<a id="a8feabbdc0d8070ca8fcbd814f67bd3c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8feabbdc0d8070ca8fcbd814f67bd3c8">&#9670;&nbsp;</a></span>DataConstItemBounds() <span class="overload">[2/2]</span></h2>
+<a id="acb4b7c91d602c1f8828a877185d6fead"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb4b7c91d602c1f8828a877185d6fead">&#9670;&nbsp;</a></span>DataConstItemBounds() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">DataConstItemBounds</a> </td>
           <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>offset</em>, </td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#ade3aaf3766af412dfae20ec0f7367c20">RowBounds</a>&#160;</td>
+          <td class="paramname"><em>rowBounds</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a80347a1816a34175631feac8050fa2c9">RowBounds</a>&#160;</td>
-          <td class="paramname"><em>rowBounds</em>&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>offset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -281,19 +269,19 @@ template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aedec612815757e5a4b35cfd2578cb475"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedec612815757e5a4b35cfd2578cb475">&#9670;&nbsp;</a></span>GetBegin()</h2>
+<a id="ae2c6acc07b16766048466591530bf97c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2c6acc07b16766048466591530bf97c">&#9670;&nbsp;</a></span>GetBegin()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::GetBegin </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::GetBegin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -308,19 +296,19 @@ template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div
 
 </div>
 </div>
-<a id="a7264fd1ee1601f8551b2cae0bbbe418c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7264fd1ee1601f8551b2cae0bbbe418c">&#9670;&nbsp;</a></span>GetCount()</h2>
+<a id="a68c2d64ffe17e33a4d90f54d8e893b53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68c2d64ffe17e33a4d90f54d8e893b53">&#9670;&nbsp;</a></span>GetCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::GetCount </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::GetCount </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -335,19 +323,19 @@ template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div
 
 </div>
 </div>
-<a id="a49b97daf343740a72ffc50c188704e5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49b97daf343740a72ffc50c188704e5e">&#9670;&nbsp;</a></span>GetEnd()</h2>
+<a id="ae9f46942578db3c1b6273775ab9cc6ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9f46942578db3c1b6273775ab9cc6ef">&#9670;&nbsp;</a></span>GetEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#aee63e15b55de7089257848ea4195124d">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::GetEnd </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html#a6eadf119ae8562cb976407f5df1ba3db">Iterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::GetEnd </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -362,19 +350,19 @@ template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div
 
 </div>
 </div>
-<a id="a6cb987a8616c3a1c67ce0d83a2ac5fed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cb987a8616c3a1c67ce0d83a2ac5fed">&#9670;&nbsp;</a></span>operator[]()</h2>
+<a id="afe140834924041b21256d7d585170429"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe140834924041b21256d7d585170429">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TRowBounds , typename TSettings &gt; </div>
+template&lt;typename TRowBounds , typename TItem &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html#a4a7edf5e2c2148efff32f89c9e92d87e">Iterator::Reference</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TItem, TRowBounds, TSettings &gt;::operator[] </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_const_item_iterator.html#ab751f728b1b20bfbff451ea669bfec68">Iterator::Reference</a> <a class="el" href="classmomo_1_1internal_1_1_data_const_item_bounds.html">momo::internal::DataConstItemBounds</a>&lt; TRowBounds, TItem &gt;::operator[] </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>

@@ -1,9 +1,9 @@
 var classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits =
 [
     [ "ValueCreator", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html", null ],
-    [ "HashMultiMapKeyValueTraits", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a2d408b9ed557b4a8354160850be6e646", null ],
-    [ "HashMultiMapValueArray", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abde72343772c4e745dcf0704f27f3fb6", null ],
-    [ "Key", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6", null ],
-    [ "MemManager", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86", null ],
-    [ "Value", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0", null ]
+    [ "HashMultiMapKeyValueTraits", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a57bf58fb4b09f18ca7657a01d54243be", null ],
+    [ "HashMultiMapSettings", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab0e73a82d9dc3b26875faff1cc06d186", null ],
+    [ "Key", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4", null ],
+    [ "MemManager", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4", null ],
+    [ "Value", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab", null ]
 ];

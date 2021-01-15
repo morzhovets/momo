@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -278,6 +278,12 @@ Public Member Functions</h2></td></tr>
 Friends</h2></td></tr>
 <tr class="memitem:afe6133d2d15d741f75108c59fc242655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1vector.html#afe6133d2d15d741f75108c59fc242655">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a> &amp;right) noexcept</td></tr>
 <tr class="separator:afe6133d2d15d741f75108c59fc242655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78473bdf280618b9856a7782d62781b7"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg &gt; </td></tr>
+<tr class="memitem:a78473bdf280618b9856a7782d62781b7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a5ee90e257d66ccb0910ec499fc1535be">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a78473bdf280618b9856a7782d62781b7">erase</a> (<a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a> &amp;cont, const ValueArg &amp;valueArg)</td></tr>
+<tr class="separator:a78473bdf280618b9856a7782d62781b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1428b2bb02dc9b4037b140667c3022e5"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:a1428b2bb02dc9b4037b140667c3022e5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a5ee90e257d66ccb0910ec499fc1535be">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a1428b2bb02dc9b4037b140667c3022e5">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a> &amp;cont, const Predicate &amp;pred)</td></tr>
+<tr class="separator:a1428b2bb02dc9b4037b140667c3022e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TValue, typename TAllocator = std::allocator&lt;TValue&gt;, typename TArray = Array&lt;TValue, MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
@@ -2621,6 +2627,86 @@ template&lt;typename TValue , typename TAllocator  = std::allocator&lt;TValue&gt
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a78473bdf280618b9856a7782d62781b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78473bdf280618b9856a7782d62781b7">&#9670;&nbsp;</a></span>erase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TValue , typename TAllocator  = std::allocator&lt;TValue&gt;, typename TArray  = Array&lt;TValue, MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename ValueArg &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a5ee90e257d66ccb0910ec499fc1535be">size_type</a> erase </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a>&lt; TValue, TAllocator, TArray &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cont</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ValueArg &amp;&#160;</td>
+          <td class="paramname"><em>valueArg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1428b2bb02dc9b4037b140667c3022e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1428b2bb02dc9b4037b140667c3022e5">&#9670;&nbsp;</a></span>erase_if</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TValue , typename TAllocator  = std::allocator&lt;TValue&gt;, typename TArray  = Array&lt;TValue, MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1vector.html#a5ee90e257d66ccb0910ec499fc1535be">size_type</a> erase_if </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1vector.html">vector</a>&lt; TValue, TAllocator, TArray &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cont</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="afe6133d2d15d741f75108c59fc242655"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe6133d2d15d741f75108c59fc242655">&#9670;&nbsp;</a></span>swap</h2>
 

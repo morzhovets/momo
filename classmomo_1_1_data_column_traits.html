@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::DataColumnTraits&lt; TStruct &gt; Class Template Reference</title>
+<title>momo: momo::DataColumnTraits&lt; TStruct, tLogVertexCount &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -84,11 +84,12 @@ $(document).ready(function(){initNavTree('classmomo_1_1_data_column_traits.html'
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_data_column_traits-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::DataColumnTraits&lt; TStruct &gt; Class Template Reference</div>  </div>
+<div class="title">momo::DataColumnTraits&lt; TStruct, tLogVertexCount &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,136 +97,141 @@ $(document).ready(function(){initNavTree('classmomo_1_1_data_column_traits.html'
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aaa74fed298a05d9a0f12aad9c2949f83"><td class="memItemLeft" align="right" valign="top">typedef TStruct&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#aaa74fed298a05d9a0f12aad9c2949f83">Struct</a></td></tr>
-<tr class="separator:aaa74fed298a05d9a0f12aad9c2949f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7923615037d35dd76e4b6043bd0d1013"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt; <a class="el" href="classmomo_1_1_data_column_traits.html#aaa74fed298a05d9a0f12aad9c2949f83">Struct</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a7923615037d35dd76e4b6043bd0d1013">ColumnInfo</a></td></tr>
-<tr class="separator:a7923615037d35dd76e4b6043bd0d1013"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70442b7ca50d4c3de7bd0fa947b18f7d"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a70442b7ca50d4c3de7bd0fa947b18f7d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a> = typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a>&lt; Item &gt;</td></tr>
-<tr class="separator:a70442b7ca50d4c3de7bd0fa947b18f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f98d2dd34f03503cd1b3b3d147ac754"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a0f98d2dd34f03503cd1b3b3d147ac754"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a> = <a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a>&lt; Item &gt;</td></tr>
-<tr class="separator:a0f98d2dd34f03503cd1b3b3d147ac754"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7477cf4f59172b162d00234d860bd4b7"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#ad8fe45e4e6584a719226318935e0699f">ColumnInfo::Code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a></td></tr>
-<tr class="separator:a7477cf4f59172b162d00234d860bd4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bb4a03994e58ff589e006bcd857e6b5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="namespacemomo.html#a73857e886f5385adbb88b5bafe83763e">HashTraitsOpen</a>&lt; <a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a5bb4a03994e58ff589e006bcd857e6b5">ColumnCodeHashTraits</a></td></tr>
-<tr class="separator:a5bb4a03994e58ff589e006bcd857e6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3e54aae5afcbc13efdb9e5b6a57456f"><td class="memItemLeft" align="right" valign="top">typedef TStruct&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#ab3e54aae5afcbc13efdb9e5b6a57456f">Struct</a></td></tr>
+<tr class="separator:ab3e54aae5afcbc13efdb9e5b6a57456f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a789d76c033aa80ad060ffa8e9db90da9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt; <a class="el" href="classmomo_1_1_data_column_traits.html#ab3e54aae5afcbc13efdb9e5b6a57456f">Struct</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a789d76c033aa80ad060ffa8e9db90da9">ColumnInfo</a></td></tr>
+<tr class="separator:a789d76c033aa80ad060ffa8e9db90da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3efdeb75d8437626a2520be4b554d4b2"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:a3efdeb75d8437626a2520be4b554d4b2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a> = typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a>&lt; Item &gt;</td></tr>
+<tr class="separator:a3efdeb75d8437626a2520be4b554d4b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f141b4ca2482c5512cf3aef8daf1862"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:a4f141b4ca2482c5512cf3aef8daf1862"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a> = <a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a>&lt; Item &gt;</td></tr>
+<tr class="separator:a4f141b4ca2482c5512cf3aef8daf1862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26e755d9e3b1be318fa3ac24e6c1477d"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#ad8fe45e4e6584a719226318935e0699f">ColumnInfo::Code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a></td></tr>
+<tr class="separator:a26e755d9e3b1be318fa3ac24e6c1477d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa58392d2974fd34d89e89b9f7d4df1c3"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="namespacemomo.html#a73857e886f5385adbb88b5bafe83763e">HashTraitsOpen</a>&lt; <a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#aa58392d2974fd34d89e89b9f7d4df1c3">ColumnCodeHashTraits</a></td></tr>
+<tr class="separator:aa58392d2974fd34d89e89b9f7d4df1c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a2af00e81aaa3c325b0eaa3a63978aad6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a2af00e81aaa3c325b0eaa3a63978aad6">MOMO_STATIC_ASSERT</a> (4&lt;=<a class="el" href="classmomo_1_1_data_column_traits.html#aea5235b96c40c788562ad7d0d0c3b52b">logVertexCount</a> &amp;&amp;<a class="el" href="classmomo_1_1_data_column_traits.html#aea5235b96c40c788562ad7d0d0c3b52b">logVertexCount</a>&lt; 16)</td></tr>
+<tr class="separator:a2af00e81aaa3c325b0eaa3a63978aad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa796e3cc6ad91317b53f743b589ed39f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> std::pair&lt; size_t, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#aa796e3cc6ad91317b53f743b589ed39f">GetVertices</a> (<a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a> code, size_t codeParam) noexcept</td></tr>
-<tr class="separator:aa796e3cc6ad91317b53f743b589ed39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cf6295d2a4165a6f904e4d3d0fd4d13"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a1cf6295d2a4165a6f904e4d3d0fd4d13"><td class="memTemplItemLeft" align="right" valign="top">static const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt; Item &gt;::BaseColumn &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a1cf6295d2a4165a6f904e4d3d0fd4d13">GetBaseColumn</a> (const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt; Item &gt; &amp;column) noexcept</td></tr>
-<tr class="separator:a1cf6295d2a4165a6f904e4d3d0fd4d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d790aada0d674261bf3529c7a439748"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a8d790aada0d674261bf3529c7a439748"><td class="memTemplItemLeft" align="right" valign="top">static bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a8d790aada0d674261bf3529c7a439748">IsMutable</a> (const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt; Item &gt; &amp;column) noexcept</td></tr>
-<tr class="separator:a8d790aada0d674261bf3529c7a439748"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80dcd5ac63c21e525d722f0bdf54f5ad"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> std::pair&lt; size_t, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a80dcd5ac63c21e525d722f0bdf54f5ad">GetVertices</a> (<a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a> code, size_t codeParam) noexcept</td></tr>
+<tr class="separator:a80dcd5ac63c21e525d722f0bdf54f5ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab662fb9715d21e60d484532746c3ca86"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:ab662fb9715d21e60d484532746c3ca86"><td class="memTemplItemLeft" align="right" valign="top">static const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt; Item &gt;::BaseColumn &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#ab662fb9715d21e60d484532746c3ca86">GetBaseColumn</a> (const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt; Item &gt; &amp;column) noexcept</td></tr>
+<tr class="separator:ab662fb9715d21e60d484532746c3ca86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9c1c38e66f2a911b727b526eb9148f2"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:ae9c1c38e66f2a911b727b526eb9148f2"><td class="memTemplItemLeft" align="right" valign="top">static bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#ae9c1c38e66f2a911b727b526eb9148f2">IsMutable</a> (const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt; Item &gt; &amp;column) noexcept</td></tr>
+<tr class="separator:ae9c1c38e66f2a911b727b526eb9148f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a6405e27daf8fc13f8398b0b37f3718e3"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a6405e27daf8fc13f8398b0b37f3718e3">logVertexCount</a> = 8</td></tr>
-<tr class="separator:a6405e27daf8fc13f8398b0b37f3718e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad05600d2930932725f6229c6498a539d"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#ad05600d2930932725f6229c6498a539d">maxColumnCount</a> = 200</td></tr>
-<tr class="separator:ad05600d2930932725f6229c6498a539d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8868a83da4740893203379cdd10e53e5"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a8868a83da4740893203379cdd10e53e5">maxCodeParam</a> = 255</td></tr>
-<tr class="separator:a8868a83da4740893203379cdd10e53e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea5235b96c40c788562ad7d0d0c3b52b"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#aea5235b96c40c788562ad7d0d0c3b52b">logVertexCount</a> = tLogVertexCount</td></tr>
+<tr class="separator:aea5235b96c40c788562ad7d0d0c3b52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d59453d4cdbe765e9d29da7d93b0548"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#a2d59453d4cdbe765e9d29da7d93b0548">maxColumnCount</a> = size_t{1} &lt;&lt; (<a class="el" href="classmomo_1_1_data_column_traits.html#aea5235b96c40c788562ad7d0d0c3b52b">logVertexCount</a> - 1)</td></tr>
+<tr class="separator:a2d59453d4cdbe765e9d29da7d93b0548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1836a21c6871227c1ba6aa5fe06f861"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html#ab1836a21c6871227c1ba6aa5fe06f861">maxCodeParam</a> = 255</td></tr>
+<tr class="separator:ab1836a21c6871227c1ba6aa5fe06f861"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a70442b7ca50d4c3de7bd0fa947b18f7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70442b7ca50d4c3de7bd0fa947b18f7d">&#9670;&nbsp;</a></span>Column</h2>
+<a id="a3efdeb75d8437626a2520be4b554d4b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3efdeb75d8437626a2520be4b554d4b2">&#9670;&nbsp;</a></span>Column</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a> =  typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a>&lt;Item&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a> =  typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a>&lt;Item&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a7477cf4f59172b162d00234d860bd4b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7477cf4f59172b162d00234d860bd4b7">&#9670;&nbsp;</a></span>ColumnCode</h2>
+<a id="a26e755d9e3b1be318fa3ac24e6c1477d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26e755d9e3b1be318fa3ac24e6c1477d">&#9670;&nbsp;</a></span>ColumnCode</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#ad8fe45e4e6584a719226318935e0699f">ColumnInfo::Code</a> <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#ad8fe45e4e6584a719226318935e0699f">ColumnInfo::Code</a> <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a5bb4a03994e58ff589e006bcd857e6b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bb4a03994e58ff589e006bcd857e6b5">&#9670;&nbsp;</a></span>ColumnCodeHashTraits</h2>
+<a id="aa58392d2974fd34d89e89b9f7d4df1c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa58392d2974fd34d89e89b9f7d4df1c3">&#9670;&nbsp;</a></span>ColumnCodeHashTraits</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="namespacemomo.html#a73857e886f5385adbb88b5bafe83763e">HashTraitsOpen</a>&lt;<a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a>&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a5bb4a03994e58ff589e006bcd857e6b5">ColumnCodeHashTraits</a></td>
+          <td class="memname">typedef <a class="el" href="namespacemomo.html#a73857e886f5385adbb88b5bafe83763e">HashTraitsOpen</a>&lt;<a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a>&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#aa58392d2974fd34d89e89b9f7d4df1c3">ColumnCodeHashTraits</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a7923615037d35dd76e4b6043bd0d1013"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7923615037d35dd76e4b6043bd0d1013">&#9670;&nbsp;</a></span>ColumnInfo</h2>
+<a id="a789d76c033aa80ad060ffa8e9db90da9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a789d76c033aa80ad060ffa8e9db90da9">&#9670;&nbsp;</a></span>ColumnInfo</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt;<a class="el" href="classmomo_1_1_data_column_traits.html#aaa74fed298a05d9a0f12aad9c2949f83">Struct</a>&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a7923615037d35dd76e4b6043bd0d1013">ColumnInfo</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt;<a class="el" href="classmomo_1_1_data_column_traits.html#ab3e54aae5afcbc13efdb9e5b6a57456f">Struct</a>&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a789d76c033aa80ad060ffa8e9db90da9">ColumnInfo</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0f98d2dd34f03503cd1b3b3d147ac754"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f98d2dd34f03503cd1b3b3d147ac754">&#9670;&nbsp;</a></span>QualifiedColumn</h2>
+<a id="a4f141b4ca2482c5512cf3aef8daf1862"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f141b4ca2482c5512cf3aef8daf1862">&#9670;&nbsp;</a></span>QualifiedColumn</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a> =  <a class="el" href="classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d">Column</a>&lt;Item&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a> =  <a class="el" href="classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2">Column</a>&lt;Item&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aaa74fed298a05d9a0f12aad9c2949f83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa74fed298a05d9a0f12aad9c2949f83">&#9670;&nbsp;</a></span>Struct</h2>
+<a id="ab3e54aae5afcbc13efdb9e5b6a57456f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3e54aae5afcbc13efdb9e5b6a57456f">&#9670;&nbsp;</a></span>Struct</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TStruct <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#aaa74fed298a05d9a0f12aad9c2949f83">Struct</a></td>
+          <td class="memname">typedef TStruct <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::<a class="el" href="classmomo_1_1_data_column_traits.html#ab3e54aae5afcbc13efdb9e5b6a57456f">Struct</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -233,13 +239,13 @@ template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1cf6295d2a4165a6f904e4d3d0fd4d13"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cf6295d2a4165a6f904e4d3d0fd4d13">&#9670;&nbsp;</a></span>GetBaseColumn()</h2>
+<a id="ab662fb9715d21e60d484532746c3ca86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab662fb9715d21e60d484532746c3ca86">&#9670;&nbsp;</a></span>GetBaseColumn()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
 <table class="mlabels">
@@ -247,9 +253,9 @@ template&lt;typename Item &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt;Item&gt;::BaseColumn&amp; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::GetBaseColumn </td>
+          <td class="memname">static const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt;Item&gt;::BaseColumn&amp; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::GetBaseColumn </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt; Item &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt; Item &gt; &amp;&#160;</td>
           <td class="paramname"><em>column</em></td><td>)</td>
           <td></td>
         </tr>
@@ -263,21 +269,21 @@ template&lt;typename Item &gt; </div>
 
 </div>
 </div>
-<a id="aa796e3cc6ad91317b53f743b589ed39f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa796e3cc6ad91317b53f743b589ed39f">&#9670;&nbsp;</a></span>GetVertices()</h2>
+<a id="a80dcd5ac63c21e525d722f0bdf54f5ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80dcd5ac63c21e525d722f0bdf54f5ad">&#9670;&nbsp;</a></span>GetVertices()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> std::pair&lt;size_t, size_t&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::GetVertices </td>
+          <td class="memname">static <a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> std::pair&lt;size_t, size_t&gt; <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::GetVertices </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7">ColumnCode</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d">ColumnCode</a>&#160;</td>
           <td class="paramname"><em>code</em>, </td>
         </tr>
         <tr>
@@ -301,13 +307,13 @@ template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
 
 </div>
 </div>
-<a id="a8d790aada0d674261bf3529c7a439748"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d790aada0d674261bf3529c7a439748">&#9670;&nbsp;</a></span>IsMutable()</h2>
+<a id="ae9c1c38e66f2a911b727b526eb9148f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9c1c38e66f2a911b727b526eb9148f2">&#9670;&nbsp;</a></span>IsMutable()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
 <table class="mlabels">
@@ -315,9 +321,9 @@ template&lt;typename Item &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::IsMutable </td>
+          <td class="memname">static bool <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::IsMutable </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754">QualifiedColumn</a>&lt; Item &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862">QualifiedColumn</a>&lt; Item &gt; &amp;&#160;</td>
           <td class="paramname"><em>column</em></td><td>)</td>
           <td></td>
         </tr>
@@ -331,20 +337,39 @@ template&lt;typename Item &gt; </div>
 
 </div>
 </div>
+<a id="a2af00e81aaa3c325b0eaa3a63978aad6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2af00e81aaa3c325b0eaa3a63978aad6">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::MOMO_STATIC_ASSERT </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6405e27daf8fc13f8398b0b37f3718e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6405e27daf8fc13f8398b0b37f3718e3">&#9670;&nbsp;</a></span>logVertexCount</h2>
+<a id="aea5235b96c40c788562ad7d0d0c3b52b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea5235b96c40c788562ad7d0d0c3b52b">&#9670;&nbsp;</a></span>logVertexCount</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::logVertexCount = 8</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::logVertexCount = tLogVertexCount</td>
         </tr>
       </table>
   </td>
@@ -356,19 +381,19 @@ template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
 
 </div>
 </div>
-<a id="a8868a83da4740893203379cdd10e53e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8868a83da4740893203379cdd10e53e5">&#9670;&nbsp;</a></span>maxCodeParam</h2>
+<a id="ab1836a21c6871227c1ba6aa5fe06f861"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1836a21c6871227c1ba6aa5fe06f861">&#9670;&nbsp;</a></span>maxCodeParam</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::maxCodeParam = 255</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::maxCodeParam = 255</td>
         </tr>
       </table>
   </td>
@@ -380,19 +405,19 @@ template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
 
 </div>
 </div>
-<a id="ad05600d2930932725f6229c6498a539d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad05600d2930932725f6229c6498a539d">&#9670;&nbsp;</a></span>maxColumnCount</h2>
+<a id="a2d59453d4cdbe765e9d29da7d93b0548"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d59453d4cdbe765e9d29da7d93b0548">&#9670;&nbsp;</a></span>maxColumnCount</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct  = DataStructDefault&lt;&gt;&gt; </div>
+template&lt;typename TStruct  = DataStructDefault&lt;&gt;, size_t tLogVertexCount = 8&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct &gt;::maxColumnCount = 200</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits</a>&lt; TStruct, tLogVertexCount &gt;::maxColumnCount = size_t{1} &lt;&lt; (<a class="el" href="classmomo_1_1_data_column_traits.html#aea5235b96c40c788562ad7d0d0c3b52b">logVertexCount</a> - 1)</td>
         </tr>
       </table>
   </td>

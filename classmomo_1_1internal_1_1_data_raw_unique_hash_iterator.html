@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::DataRawUniqueHashIterator&lt; TColumnList &gt; Class Template Reference</title>
+<title>momo: momo::internal::DataRawUniqueHashIterator&lt; TRaw, TSettings &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -85,10 +85,9 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_raw_uni
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-types">Protected Types</a> &#124;
 <a href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::DataRawUniqueHashIterator&lt; TColumnList &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::DataRawUniqueHashIterator&lt; TRaw, TSettings &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,120 +95,109 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_raw_uni
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a9323e039d1c8643d4b8c7c58cb50f695"><td class="memItemLeft" align="right" valign="top">typedef ColumnList::Raw&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a></td></tr>
-<tr class="separator:a9323e039d1c8643d4b8c7c58cb50f695"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59889c333201ec19ada23d2b4892d60e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a> *const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a59889c333201ec19ada23d2b4892d60e">Reference</a></td></tr>
-<tr class="separator:a59889c333201ec19ada23d2b4892d60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7520e30d41b884e90d9ba04269a7e21"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a> *const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ac7520e30d41b884e90d9ba04269a7e21">Pointer</a></td></tr>
-<tr class="separator:ac7520e30d41b884e90d9ba04269a7e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8531f5c1ef3b67773cbaf762a1f471a6"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a></td></tr>
-<tr class="separator:a8531f5c1ef3b67773cbaf762a1f471a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b33e3d39643af10f3d47726f606480b"><td class="memItemLeft" align="right" valign="top">typedef TRaw&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a></td></tr>
+<tr class="separator:a9b33e3d39643af10f3d47726f606480b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e28bfe9bd526a88c3163f14de4fd1d5"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a2e28bfe9bd526a88c3163f14de4fd1d5">Settings</a></td></tr>
+<tr class="separator:a2e28bfe9bd526a88c3163f14de4fd1d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab30e2cbd90256d6302c834793c424c87"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a> *const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab30e2cbd90256d6302c834793c424c87">Reference</a></td></tr>
+<tr class="separator:ab30e2cbd90256d6302c834793c424c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab86f5928b2774ac5a10736e1dffa7cc5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a> *const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab86f5928b2774ac5a10736e1dffa7cc5">Pointer</a></td></tr>
+<tr class="separator:ab86f5928b2774ac5a10736e1dffa7cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1acfb5320271f3294f1f9b049c244806"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a></td></tr>
+<tr class="separator:a1acfb5320271f3294f1f9b049c244806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5e9a8541f2dd2117dc512e597ced4dd2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a5e9a8541f2dd2117dc512e597ced4dd2">DataRawUniqueHashIterator</a> () noexcept</td></tr>
-<tr class="separator:a5e9a8541f2dd2117dc512e597ced4dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74f2ad3b3ff6cfbbc0f2265c17b5ad5a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a74f2ad3b3ff6cfbbc0f2265c17b5ad5a">DataRawUniqueHashIterator</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a> *raw, size_t rawIndex) noexcept</td></tr>
-<tr class="separator:a74f2ad3b3ff6cfbbc0f2265c17b5ad5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d65615f4a5db8df9eeb3635901dbef9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a0d65615f4a5db8df9eeb3635901dbef9">operator+=</a> (ptrdiff_t diff)</td></tr>
-<tr class="separator:a0d65615f4a5db8df9eeb3635901dbef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d33f078b6650755a8d131749283ca6e"><td class="memItemLeft" align="right" valign="top">ptrdiff_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a2d33f078b6650755a8d131749283ca6e">operator-</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a> iter) const</td></tr>
-<tr class="separator:a2d33f078b6650755a8d131749283ca6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca2a943090fbe099e4bf5acba8c16763"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ac7520e30d41b884e90d9ba04269a7e21">Pointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#aca2a943090fbe099e4bf5acba8c16763">operator-&gt;</a> () const</td></tr>
-<tr class="separator:aca2a943090fbe099e4bf5acba8c16763"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f202fca03791607c74c02754ce9ec7e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9f202fca03791607c74c02754ce9ec7e">operator==</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a> iter) const noexcept</td></tr>
-<tr class="separator:a9f202fca03791607c74c02754ce9ec7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e399ae3d682cc7fcdb7f8c99821cd84"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a5e399ae3d682cc7fcdb7f8c99821cd84">operator&lt;</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a> iter) const</td></tr>
-<tr class="separator:a5e399ae3d682cc7fcdb7f8c99821cd84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
-Protected Types</h2></td></tr>
-<tr class="memitem:a01f9fe43717c513ad655ca2ca7fe1ba5"><td class="memItemLeft" align="right" valign="top">typedef TColumnList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a01f9fe43717c513ad655ca2ca7fe1ba5">ColumnList</a></td></tr>
-<tr class="separator:a01f9fe43717c513ad655ca2ca7fe1ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6b094b6b054c4d8c4bff81eb3154ebe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab6b094b6b054c4d8c4bff81eb3154ebe">DataRawUniqueHashIterator</a> () noexcept</td></tr>
+<tr class="separator:ab6b094b6b054c4d8c4bff81eb3154ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5a6ee42a2d41a431131382049d01c80"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#aa5a6ee42a2d41a431131382049d01c80">DataRawUniqueHashIterator</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a> *raw, size_t rawIndex) noexcept</td></tr>
+<tr class="separator:aa5a6ee42a2d41a431131382049d01c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed4f4e2957697d81d022da54c31929ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#aed4f4e2957697d81d022da54c31929ce">operator+=</a> (ptrdiff_t diff)</td></tr>
+<tr class="separator:aed4f4e2957697d81d022da54c31929ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2a968ae28e1942f3a095ed18be5a610"><td class="memItemLeft" align="right" valign="top">ptrdiff_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#af2a968ae28e1942f3a095ed18be5a610">operator-</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a> iter) const</td></tr>
+<tr class="separator:af2a968ae28e1942f3a095ed18be5a610"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d424b93ccaa7c7e965aa46669989c4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab86f5928b2774ac5a10736e1dffa7cc5">Pointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a7d424b93ccaa7c7e965aa46669989c4f">operator-&gt;</a> () const</td></tr>
+<tr class="separator:a7d424b93ccaa7c7e965aa46669989c4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8448b303212386699b2cc3b2d4b4f3ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8448b303212386699b2cc3b2d4b4f3ca">operator==</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a> iter) const noexcept</td></tr>
+<tr class="separator:a8448b303212386699b2cc3b2d4b4f3ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6324dfbecf5156613b58ff31f0423e0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a6324dfbecf5156613b58ff31f0423e0d">operator&lt;</a> (<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a> iter) const</td></tr>
+<tr class="separator:a6324dfbecf5156613b58ff31f0423e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a01f9fe43717c513ad655ca2ca7fe1ba5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01f9fe43717c513ad655ca2ca7fe1ba5">&#9670;&nbsp;</a></span>ColumnList</h2>
+<a id="a1acfb5320271f3294f1f9b049c244806"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1acfb5320271f3294f1f9b049c244806">&#9670;&nbsp;</a></span>ConstIterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;typename TRaw , typename TSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TColumnList <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a01f9fe43717c513ad655ca2ca7fe1ba5">ColumnList</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8531f5c1ef3b67773cbaf762a1f471a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8531f5c1ef3b67773cbaf762a1f471a6">&#9670;&nbsp;</a></span>ConstIterator</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ac7520e30d41b884e90d9ba04269a7e21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7520e30d41b884e90d9ba04269a7e21">&#9670;&nbsp;</a></span>Pointer</h2>
+<a id="ab86f5928b2774ac5a10736e1dffa7cc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab86f5928b2774ac5a10736e1dffa7cc5">&#9670;&nbsp;</a></span>Pointer</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a>* const* <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ac7520e30d41b884e90d9ba04269a7e21">Pointer</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a>* const* <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab86f5928b2774ac5a10736e1dffa7cc5">Pointer</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a9323e039d1c8643d4b8c7c58cb50f695"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9323e039d1c8643d4b8c7c58cb50f695">&#9670;&nbsp;</a></span>Raw</h2>
+<a id="a9b33e3d39643af10f3d47726f606480b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b33e3d39643af10f3d47726f606480b">&#9670;&nbsp;</a></span>Raw</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef ColumnList::Raw <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a></td>
+          <td class="memname">typedef TRaw <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a59889c333201ec19ada23d2b4892d60e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59889c333201ec19ada23d2b4892d60e">&#9670;&nbsp;</a></span>Reference</h2>
+<a id="ab30e2cbd90256d6302c834793c424c87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab30e2cbd90256d6302c834793c424c87">&#9670;&nbsp;</a></span>Reference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a>* const&amp; <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a59889c333201ec19ada23d2b4892d60e">Reference</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a>* const&amp; <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab30e2cbd90256d6302c834793c424c87">Reference</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2e28bfe9bd526a88c3163f14de4fd1d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e28bfe9bd526a88c3163f14de4fd1d5">&#9670;&nbsp;</a></span>Settings</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TRaw , typename TSettings &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a2e28bfe9bd526a88c3163f14de4fd1d5">Settings</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -217,19 +205,19 @@ template&lt;typename TColumnList &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5e9a8541f2dd2117dc512e597ced4dd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e9a8541f2dd2117dc512e597ced4dd2">&#9670;&nbsp;</a></span>DataRawUniqueHashIterator() <span class="overload">[1/2]</span></h2>
+<a id="ab6b094b6b054c4d8c4bff81eb3154ebe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6b094b6b054c4d8c4bff81eb3154ebe">&#9670;&nbsp;</a></span>DataRawUniqueHashIterator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -244,21 +232,21 @@ template&lt;typename TColumnList &gt; </div>
 
 </div>
 </div>
-<a id="a74f2ad3b3ff6cfbbc0f2265c17b5ad5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74f2ad3b3ff6cfbbc0f2265c17b5ad5a">&#9670;&nbsp;</a></span>DataRawUniqueHashIterator() <span class="overload">[2/2]</span></h2>
+<a id="aa5a6ee42a2d41a431131382049d01c80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5a6ee42a2d41a431131382049d01c80">&#9670;&nbsp;</a></span>DataRawUniqueHashIterator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9323e039d1c8643d4b8c7c58cb50f695">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a9b33e3d39643af10f3d47726f606480b">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>
@@ -283,19 +271,19 @@ template&lt;typename TColumnList &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0d65615f4a5db8df9eeb3635901dbef9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d65615f4a5db8df9eeb3635901dbef9">&#9670;&nbsp;</a></span>operator+=()</h2>
+<a id="aed4f4e2957697d81d022da54c31929ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed4f4e2957697d81d022da54c31929ce">&#9670;&nbsp;</a></span>operator+=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::operator+= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">DataRawUniqueHashIterator</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::operator+= </td>
           <td>(</td>
           <td class="paramtype">ptrdiff_t&#160;</td>
           <td class="paramname"><em>diff</em></td><td>)</td>
@@ -311,21 +299,21 @@ template&lt;typename TColumnList &gt; </div>
 
 </div>
 </div>
-<a id="a2d33f078b6650755a8d131749283ca6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d33f078b6650755a8d131749283ca6e">&#9670;&nbsp;</a></span>operator-()</h2>
+<a id="af2a968ae28e1942f3a095ed18be5a610"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2a968ae28e1942f3a095ed18be5a610">&#9670;&nbsp;</a></span>operator-()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ptrdiff_t <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::operator- </td>
+          <td class="memname">ptrdiff_t <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::operator- </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a>&#160;</td>
           <td class="paramname"><em>iter</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -339,19 +327,19 @@ template&lt;typename TColumnList &gt; </div>
 
 </div>
 </div>
-<a id="aca2a943090fbe099e4bf5acba8c16763"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca2a943090fbe099e4bf5acba8c16763">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
+<a id="a7d424b93ccaa7c7e965aa46669989c4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d424b93ccaa7c7e965aa46669989c4f">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ac7520e30d41b884e90d9ba04269a7e21">Pointer</a> <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::operator-&gt; </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#ab86f5928b2774ac5a10736e1dffa7cc5">Pointer</a> <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::operator-&gt; </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -366,21 +354,21 @@ template&lt;typename TColumnList &gt; </div>
 
 </div>
 </div>
-<a id="a5e399ae3d682cc7fcdb7f8c99821cd84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e399ae3d682cc7fcdb7f8c99821cd84">&#9670;&nbsp;</a></span>operator&lt;()</h2>
+<a id="a6324dfbecf5156613b58ff31f0423e0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6324dfbecf5156613b58ff31f0423e0d">&#9670;&nbsp;</a></span>operator&lt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::operator&lt; </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::operator&lt; </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a>&#160;</td>
           <td class="paramname"><em>iter</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -394,21 +382,21 @@ template&lt;typename TColumnList &gt; </div>
 
 </div>
 </div>
-<a id="a9f202fca03791607c74c02754ce9ec7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f202fca03791607c74c02754ce9ec7e">&#9670;&nbsp;</a></span>operator==()</h2>
+<a id="a8448b303212386699b2cc3b2d4b4f3ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8448b303212386699b2cc3b2d4b4f3ca">&#9670;&nbsp;</a></span>operator==()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TColumnList &gt; </div>
+template&lt;typename TRaw , typename TSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TColumnList &gt;::operator== </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html">momo::internal::DataRawUniqueHashIterator</a>&lt; TRaw, TSettings &gt;::operator== </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a8531f5c1ef3b67773cbaf762a1f471a6">ConstIterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_raw_unique_hash_iterator.html#a1acfb5320271f3294f1f9b049c244806">ConstIterator</a>&#160;</td>
           <td class="paramname"><em>iter</em></td><td>)</td>
           <td> const</td>
         </tr>

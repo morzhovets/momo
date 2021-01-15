@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -101,8 +101,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac189caa2d5c52b47404db4a1f2a05df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa890fad64bc65fa11b26c5d1252177d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#aa890fad64bc65fa11b26c5d1252177d8">MemPoolParamsStatic</a> () noexcept</td></tr>
 <tr class="separator:aa890fad64bc65fa11b26c5d1252177d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adac9a79a9d780b68cb81ee3e94a896eb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#adac9a79a9d780b68cb81ee3e94a896eb">IsEqual</a> (const <a class="el" href="classmomo_1_1_mem_pool_params_static.html">MemPoolParamsStatic</a> &amp;) const noexcept</td></tr>
-<tr class="separator:adac9a79a9d780b68cb81ee3e94a896eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -144,34 +142,6 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adac9a79a9d780b68cb81ee3e94a896eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adac9a79a9d780b68cb81ee3e94a896eb">&#9670;&nbsp;</a></span>IsEqual()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAlignment(tBlockSize), size_t tBlockCount = MemPoolConst::defaultBlockCount, size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_mem_pool_params_static.html">momo::MemPoolParamsStatic</a>&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;::IsEqual </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_pool_params_static.html">MemPoolParamsStatic</a>&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt; &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ac189caa2d5c52b47404db4a1f2a05df9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac189caa2d5c52b47404db4a1f2a05df9">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT() <span class="overload">[1/2]</span></h2>
 
@@ -280,10 +250,8 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= (<a class="code" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a> == 1)</div>
-<div class="line">        ? ((tBlockSize &gt; 0) ? tBlockSize : 1)</div>
-<div class="line">        : ((tBlockSize &lt;= <a class="code" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>) ? 2 * <a class="code" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a></div>
-<div class="line">            : <a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">internal::UIntMath&lt;&gt;::Ceil</a>(tBlockSize, <a class="code" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>))</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="classmomo_1_1_mem_pool_const.html#a710474a7b9ea64823119be07bfeb0b1b">MemPoolConst::CorrectBlockSize</a>(tBlockSize,</div>
+<div class="line">        <a class="code" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>, <a class="code" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a>)</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -316,9 +284,9 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a69458fb6f46a8486f120132502050adb"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">momo::MemPoolParamsStatic::blockAlignment</a></div><div class="ttdeci">static const size_t blockAlignment</div><div class="ttdef"><b>Definition:</b> MemPool.h:104</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_ae6734ae8eb46074b9b61f0bfd2a626d3"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#ae6734ae8eb46074b9b61f0bfd2a626d3">momo::internal::UIntMath::Ceil</a></div><div class="ttdeci">static constexpr UInt Ceil(UInt value, UInt mod) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:245</div></div>
-<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a9d1394f291d497b2dcbc6cf8903dd3b9"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">momo::MemPoolParamsStatic::blockCount</a></div><div class="ttdeci">static const size_t blockCount</div><div class="ttdef"><b>Definition:</b> MemPool.h:101</div></div>
+<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a69458fb6f46a8486f120132502050adb"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">momo::MemPoolParamsStatic::blockAlignment</a></div><div class="ttdeci">static const size_t blockAlignment</div><div class="ttdef"><b>Definition:</b> MemPool.h:97</div></div>
+<div class="ttc" id="aclassmomo_1_1_mem_pool_const_html_a710474a7b9ea64823119be07bfeb0b1b"><div class="ttname"><a href="classmomo_1_1_mem_pool_const.html#a710474a7b9ea64823119be07bfeb0b1b">momo::MemPoolConst::CorrectBlockSize</a></div><div class="ttdeci">static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment, size_t blockCount) noexcept</div><div class="ttdef"><b>Definition:</b> MemPool.h:40</div></div>
+<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a9d1394f291d497b2dcbc6cf8903dd3b9"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">momo::MemPoolParamsStatic::blockCount</a></div><div class="ttdeci">static const size_t blockCount</div><div class="ttdef"><b>Definition:</b> MemPool.h:94</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

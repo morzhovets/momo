@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -93,8 +93,15 @@ $(document).ready(function(){initNavTree('functions_vars_i.html',''); initResiza
 : <a class="el" href="classmomo_1_1_array.html#a7821057d98fe417a3e6c6739a5aff4d4">momo::Array&lt; TItem, TMemManager, TItemTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_array_settings.html#a1e49451b93534e42a432d3fb1a118bcf">momo::ArraySettings&lt; tInternalCapacity, tGrowOnReserve, tUsePtrIterator &gt;</a>
 </li>
-<li>invalid
-: <a class="el" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a5aa6e4cb93799ff1d01d0ed2a0f14f08">momo::internal::UIntPtrConst</a>
+<li>invalidPtr
+: <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#ab2510950bb6c49403782e88f88d02feb">momo::internal::UIntConst</a>
+</li>
+<li>isConst
+: <a class="el" href="classmomo_1_1internal_1_1_hash_map_bucket_bounds.html#aa6ca236a3b630cf61e7cc2ced8914ae0">momo::internal::HashMapBucketBounds&lt; THashSetBucketBounds, tIsConst &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_hash_map_iterator.html#aef722bb113859e2ec85eec52f8669506">momo::internal::HashMapIterator&lt; THashSetIterator, tIsConst &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_hash_map_position.html#a1e550bec28bfd48184d64f39c4776cfb">momo::internal::HashMapPosition&lt; THashSetPosition, tIsConst &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#ac1973c87603765e776ace767611ec50d">momo::internal::MapReference&lt; TSetReference, tIsConst &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_tree_map_iterator.html#aae6f8e9803941050ad6bc4d165ea6295">momo::internal::TreeMapIterator&lt; TTreeSetIterator, tIsConst &gt;</a>
 </li>
 <li>isContinuous
 : <a class="el" href="classmomo_1_1internal_1_1_node.html#adda2a070e0bd7f71d9bd0a833c6820f5">momo::internal::Node&lt; TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;</a>
@@ -106,7 +113,7 @@ $(document).ready(function(){initNavTree('functions_vars_i.html',''); initResiza
 </li>
 <li>isKeyNothrowRelocatable
 : <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#aa499ee0b86e1a275710cb88386fb41c8">momo::HashMultiMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a91e3565a8d1b5023d6f6979b87249425">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a6039f915023653b259221969123eb61d">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ae9eb6114d0142135f81c39ca5159a9d6">momo::internal::MapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 </li>
 <li>isKeyNothrowShiftable
@@ -118,8 +125,7 @@ $(document).ready(function(){initNavTree('functions_vars_i.html',''); initResiza
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#a9daaad6964bda59c11727a51a52093f7">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#af124d6c2f7b439d2fe5716d1e3418353">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, false &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4.html#a2d2d3e7e9deae4bb717f91049ce2c98b">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, true &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_one_i1.html#a994f1e4220938bf8e61ac26fb6a8fc07">momo::internal::BucketOneI1&lt; TItemTraits &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_one_i_a.html#ad75e2fbb726beae03dc3d3ac7eae42f4">momo::internal::BucketOneIA&lt; TItemTraits, tStateSize &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#af2aef94ace419536d9168fd64da8a4d6">momo::internal::BucketOne&lt; TItemTraits, tStateSize &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#a51d54f74f99c150dc684f923204398cd">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ab2559ad70912e6d42feb3b1923f42e57">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_unlim_p.html#a4ba81b9c4147ed275581cc8249cf09fe">momo::internal::BucketUnlimP&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;</a>
@@ -156,7 +162,7 @@ $(document).ready(function(){initNavTree('functions_vars_i.html',''); initResiza
 , <a class="el" href="classmomo_1_1_object_relocator.html#a02a0606bb88217ab934d71265442bc30">momo::ObjectRelocator&lt; TObject, TMemManager &gt;</a>
 </li>
 <li>isValueNothrowRelocatable
-: <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ac0b14eebbb2c31ee6e0311054c0f020d">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a02e377d1e8b56a56bce2cabc6ce8e7de">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ad2cc394d0e9a4589bceaf6644b10b776">momo::internal::MapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 </li>
 <li>isValueNothrowShiftable

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -109,12 +109,16 @@ Public Types</h2></td></tr>
 <tr class="separator:a8a6d06f26af8dbd86c355fd267891903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a661c8c88a2b8e09625af0548a568d1ad"><td class="memItemLeft" align="right" valign="top">typedef TMapped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a></td></tr>
 <tr class="separator:a661c8c88a2b8e09625af0548a568d1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af14762948a531a94dc09ac9c63277c8d"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#af14762948a531a94dc09ac9c63277c8d">size_type</a></td></tr>
+<tr class="separator:af14762948a531a94dc09ac9c63277c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a007a3344c7365612b3e93681bb94638e"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1map.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a007a3344c7365612b3e93681bb94638e">value_type</a></td></tr>
 <tr class="separator:a007a3344c7365612b3e93681bb94638e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f73c7e649e498f16c9122e58f9a9857"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#a256ca000514a74dff6275326e60a79f5">iterator::ConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td></tr>
+<tr class="memitem:a4c3ec634db46b0aeeb6c999b3842c0ac"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a4c3ec634db46b0aeeb6c999b3842c0ac">const_reference</a></td></tr>
+<tr class="separator:a4c3ec634db46b0aeeb6c999b3842c0ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f73c7e649e498f16c9122e58f9a9857"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td></tr>
 <tr class="separator:a7f73c7e649e498f16c9122e58f9a9857"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ee29ad24ac37fa2de327853544b3ed8"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt; TreeMapIterator, reference &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a></td></tr>
-<tr class="separator:a0ee29ad24ac37fa2de327853544b3ed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf83e9c882ce3a053efd4f2dd427dc6a"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt; TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a></td></tr>
+<tr class="separator:acf83e9c882ce3a053efd4f2dd427dc6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -129,34 +133,37 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a31b0bfa23858538d4bea3769573814b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a31b0bfa23858538d4bea3769573814b7">at</a> (const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key)</td></tr>
 <tr class="separator:a31b0bfa23858538d4bea3769573814b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f43966d4e5d8f37fe363a8f4a9e7132"><td class="memTemplParams" colspan="2">template&lt;typename... MappedArgs&gt; </td></tr>
-<tr class="memitem:a2f43966d4e5d8f37fe363a8f4a9e7132"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a2f43966d4e5d8f37fe363a8f4a9e7132">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
+<tr class="memitem:a2f43966d4e5d8f37fe363a8f4a9e7132"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a2f43966d4e5d8f37fe363a8f4a9e7132">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
 <tr class="separator:a2f43966d4e5d8f37fe363a8f4a9e7132"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed76514a50b6a9677158b0dbf9b045c7"><td class="memTemplParams" colspan="2">template&lt;typename... MappedArgs&gt; </td></tr>
-<tr class="memitem:aed76514a50b6a9677158b0dbf9b045c7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#aed76514a50b6a9677158b0dbf9b045c7">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
+<tr class="memitem:aed76514a50b6a9677158b0dbf9b045c7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#aed76514a50b6a9677158b0dbf9b045c7">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
 <tr class="separator:aed76514a50b6a9677158b0dbf9b045c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34a098e52025d524a3ff431e57f20cfe"><td class="memTemplParams" colspan="2">template&lt;typename... MappedArgs&gt; </td></tr>
-<tr class="memitem:a34a098e52025d524a3ff431e57f20cfe"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a34a098e52025d524a3ff431e57f20cfe">try_emplace</a> (const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
+<tr class="memitem:a34a098e52025d524a3ff431e57f20cfe"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a34a098e52025d524a3ff431e57f20cfe">try_emplace</a> (const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
 <tr class="separator:a34a098e52025d524a3ff431e57f20cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7b71a60d372ad287987aad5b6b3f068"><td class="memTemplParams" colspan="2">template&lt;typename... MappedArgs&gt; </td></tr>
-<tr class="memitem:ac7b71a60d372ad287987aad5b6b3f068"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#ac7b71a60d372ad287987aad5b6b3f068">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
+<tr class="memitem:ac7b71a60d372ad287987aad5b6b3f068"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#ac7b71a60d372ad287987aad5b6b3f068">try_emplace</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArgs &amp;&amp;... mappedArgs)</td></tr>
 <tr class="separator:ac7b71a60d372ad287987aad5b6b3f068"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ee3cb5ff988bc69b75a609c02f00741"><td class="memTemplParams" colspan="2">template&lt;typename MappedArg &gt; </td></tr>
-<tr class="memitem:a8ee3cb5ff988bc69b75a609c02f00741"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a8ee3cb5ff988bc69b75a609c02f00741">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
+<tr class="memitem:a8ee3cb5ff988bc69b75a609c02f00741"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a8ee3cb5ff988bc69b75a609c02f00741">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
 <tr class="separator:a8ee3cb5ff988bc69b75a609c02f00741"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5d5ed13fbebe66cba2c274ebc810eb2"><td class="memTemplParams" colspan="2">template&lt;typename MappedArg &gt; </td></tr>
-<tr class="memitem:ac5d5ed13fbebe66cba2c274ebc810eb2"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#ac5d5ed13fbebe66cba2c274ebc810eb2">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
+<tr class="memitem:ac5d5ed13fbebe66cba2c274ebc810eb2"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#ac5d5ed13fbebe66cba2c274ebc810eb2">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
 <tr class="separator:ac5d5ed13fbebe66cba2c274ebc810eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49cb382fc4110931bf3ae62f08a3d875"><td class="memTemplParams" colspan="2">template&lt;typename MappedArg &gt; </td></tr>
-<tr class="memitem:a49cb382fc4110931bf3ae62f08a3d875"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a49cb382fc4110931bf3ae62f08a3d875">insert_or_assign</a> (const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
+<tr class="memitem:a49cb382fc4110931bf3ae62f08a3d875"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#a49cb382fc4110931bf3ae62f08a3d875">insert_or_assign</a> (const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
 <tr class="separator:a49cb382fc4110931bf3ae62f08a3d875"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabf3467061c9a78c36429b109f8c8a4d"><td class="memTemplParams" colspan="2">template&lt;typename MappedArg &gt; </td></tr>
-<tr class="memitem:aabf3467061c9a78c36429b109f8c8a4d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#aabf3467061c9a78c36429b109f8c8a4d">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
+<tr class="memitem:aabf3467061c9a78c36429b109f8c8a4d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#aabf3467061c9a78c36429b109f8c8a4d">insert_or_assign</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;key, MappedArg &amp;&amp;mappedArg)</td></tr>
 <tr class="separator:aabf3467061c9a78c36429b109f8c8a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:aa2cb4dd6fcaf25d79fa60aacac862eb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#aa2cb4dd6fcaf25d79fa60aacac862eb3">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html">map</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1map.html">map</a> &amp;right) noexcept</td></tr>
 <tr class="separator:aa2cb4dd6fcaf25d79fa60aacac862eb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad568c35d925d3dc272c20c0df1bbbaff"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:ad568c35d925d3dc272c20c0df1bbbaff"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1map.html#af14762948a531a94dc09ac9c63277c8d">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1map.html#ad568c35d925d3dc272c20c0df1bbbaff">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1map.html">map</a> &amp;cont, const Predicate &amp;pred)</td></tr>
+<tr class="separator:ad568c35d925d3dc272c20c0df1bbbaff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TKey, typename TMapped, typename TLessFunc = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
@@ -183,15 +190,15 @@ class momo::stdish::map&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;<
 template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#a256ca000514a74dff6275326e60a79f5">iterator::ConstIterator</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0ee29ad24ac37fa2de327853544b3ed8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ee29ad24ac37fa2de327853544b3ed8">&#9670;&nbsp;</a></span>iterator</h2>
+<a id="a4c3ec634db46b0aeeb6c999b3842c0ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c3ec634db46b0aeeb6c999b3842c0ac">&#9670;&nbsp;</a></span>const_reference</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +206,23 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt;TreeMapIterator, reference&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#a4c3ec634db46b0aeeb6c999b3842c0ac">const_reference</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acf83e9c882ce3a053efd4f2dd427dc6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf83e9c882ce3a053efd4f2dd427dc6a">&#9670;&nbsp;</a></span>iterator</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt;TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -232,6 +255,22 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
       <table class="memname">
         <tr>
           <td class="memname">typedef TMapped <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af14762948a531a94dc09ac9c63277c8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af14762948a531a94dc09ac9c63277c8d">&#9670;&nbsp;</a></span>size_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1map.html#af14762948a531a94dc09ac9c63277c8d">size_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -325,7 +364,7 @@ template&lt;typename MappedArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -365,7 +404,7 @@ template&lt;typename MappedArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
@@ -411,7 +450,7 @@ template&lt;typename MappedArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
@@ -457,7 +496,7 @@ template&lt;typename MappedArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert_or_assign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -581,7 +620,7 @@ template&lt;typename... MappedArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -621,7 +660,7 @@ template&lt;typename... MappedArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
@@ -667,7 +706,7 @@ template&lt;typename... MappedArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
@@ -713,7 +752,7 @@ template&lt;typename... MappedArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#a0ee29ad24ac37fa2de327853544b3ed8">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1map.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1map.html">momo::stdish::map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::try_emplace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -740,6 +779,46 @@ template&lt;typename... MappedArgs&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="ad568c35d925d3dc272c20c0df1bbbaff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad568c35d925d3dc272c20c0df1bbbaff">&#9670;&nbsp;</a></span>erase_if</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1map.html#af14762948a531a94dc09ac9c63277c8d">size_type</a> erase_if </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1map.html">map</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cont</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa2cb4dd6fcaf25d79fa60aacac862eb3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa2cb4dd6fcaf25d79fa60aacac862eb3">&#9670;&nbsp;</a></span>swap</h2>
 

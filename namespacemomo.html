@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -132,9 +132,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_bucket_lim_p4.html">HashBucketLimP4</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_bucket_one_i1.html">HashBucketOneI1</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_bucket_one_i_a.html">HashBucketOneIA</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_bucket_one.html">HashBucketOne</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_bucket_open2_n2.html">HashBucketOpen2N2</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,11 +283,6 @@ Enumerations</h2></td></tr>
 <tr class="memitem:ad431268a903997691474fa55f25f7ec9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo.html#ad431268a903997691474fa55f25f7ec9">DataMultiHashIndex</a> : ptrdiff_t { <a class="el" href="namespacemomo.html#ad431268a903997691474fa55f25f7ec9aa2e4822a98337283e39f7b60acf85ec9">DataMultiHashIndex::empty</a> = -1
  }</td></tr>
 <tr class="separator:ad431268a903997691474fa55f25f7ec9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a254c29ef680c5be86f2a4244e2b640f1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a254c29ef680c5be86f2a4244e2b640f1">HashBucketOneState</a> : uint8_t { <a class="el" href="namespacemomo.html#a254c29ef680c5be86f2a4244e2b640f1aa2e4822a98337283e39f7b60acf85ec9">HashBucketOneState::empty</a> = 0, 
-<a class="el" href="namespacemomo.html#a254c29ef680c5be86f2a4244e2b640f1ae9dc924f238fa6cc29465942875fe8f0">HashBucketOneState::full</a> = 1, 
-<a class="el" href="namespacemomo.html#a254c29ef680c5be86f2a4244e2b640f1ab07286ebbb5bc7aa91cc3eaa8bc19711">HashBucketOneState::removed</a> = 2
- }</td></tr>
-<tr class="separator:a254c29ef680c5be86f2a4244e2b640f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f82bcbab07ff73b612a079738df964c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a2f82bcbab07ff73b612a079738df964c">SegmentedArrayItemCountFunc</a> { <a class="el" href="namespacemomo.html#a2f82bcbab07ff73b612a079738df964cadd1de98e8b0e34d5cf5396e83036f4d5">SegmentedArrayItemCountFunc::sqrt</a> = 0, 
 <a class="el" href="namespacemomo.html#a2f82bcbab07ff73b612a079738df964ca10bec0db16670c1a19d58b808009312f">SegmentedArrayItemCountFunc::cnst</a> = 1
  }</td></tr>
@@ -633,33 +626,6 @@ template&lt;typename TKey &gt; </div>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d"></a>nothing&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3b987a8f889f3fbb48604439e10c2c27a2a7639f0b1870ad2e6b2d8c7b810ba11"></a>assertion&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3b987a8f889f3fbb48604439e10c2c27a21fe892d5520075ce0f887a292daf54e"></a>bydefault&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-</div>
-</div>
-<a id="a254c29ef680c5be86f2a4244e2b640f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a254c29ef680c5be86f2a4244e2b640f1">&#9670;&nbsp;</a></span>HashBucketOneState</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="namespacemomo.html#a254c29ef680c5be86f2a4244e2b640f1">momo::HashBucketOneState</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a254c29ef680c5be86f2a4244e2b640f1aa2e4822a98337283e39f7b60acf85ec9"></a>empty&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a254c29ef680c5be86f2a4244e2b640f1ae9dc924f238fa6cc29465942875fe8f0"></a>full&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a254c29ef680c5be86f2a4244e2b640f1ab07286ebbb5bc7aa91cc3eaa8bc19711"></a>removed&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>

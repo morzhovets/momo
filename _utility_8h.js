@@ -5,7 +5,6 @@ var _utility_8h =
     [ "UIntSelector< 2, Default >", "structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_012_00_01_default_01_4" ],
     [ "UIntSelector< 4, Default >", "structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_014_00_01_default_01_4" ],
     [ "UIntSelector< 8, Default >", "structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_018_00_01_default_01_4" ],
-    [ "UIntPtrConst", "structmomo_1_1internal_1_1_u_int_ptr_const.html", "structmomo_1_1internal_1_1_u_int_ptr_const" ],
     [ "IsAllocatorAlwaysEqual", "structmomo_1_1internal_1_1_is_allocator_always_equal.html", null ],
     [ "IsAllocatorAlwaysEqual< Allocator, decltype(Allocator::is_always_equal::value)>", "structmomo_1_1internal_1_1_is_allocator_always_equal_3_01_allocator_00_01decltype_07_allocator_1acd3889fe0125d2c6e87098cc70c5bf3.html", null ],
     [ "Sequence", "structmomo_1_1internal_1_1_sequence.html", null ],
@@ -17,6 +16,7 @@ var _utility_8h =
     [ "PtrCaster", "classmomo_1_1internal_1_1_ptr_caster.html", null ],
     [ "UIntMath", "classmomo_1_1internal_1_1_u_int_math.html", "classmomo_1_1internal_1_1_u_int_math" ],
     [ "DivResult", "structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html", "structmomo_1_1internal_1_1_u_int_math_1_1_div_result" ],
+    [ "UIntConst", "structmomo_1_1internal_1_1_u_int_const.html", "structmomo_1_1internal_1_1_u_int_const" ],
     [ "MOMO_CHECK", "_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df", null ],
     [ "MOMO_CHECK_ITERATOR_REFERENCE", "_utility_8h.html#a564a7cb6613a663174827706efd03269", null ],
     [ "MOMO_DECLARE_PROXY_CONSTRUCTOR", "_utility_8h.html#adb0350eacdbc910de329afae60a2f31e", null ],
@@ -38,6 +38,5 @@ var _utility_8h =
       [ "nothing", "_utility_8h.html#a3b987a8f889f3fbb48604439e10c2c27a3e47b75000b0924b6c9ba5759a7cf15d", null ],
       [ "assertion", "_utility_8h.html#a3b987a8f889f3fbb48604439e10c2c27a2a7639f0b1870ad2e6b2d8c7b810ba11", null ],
       [ "bydefault", "_utility_8h.html#a3b987a8f889f3fbb48604439e10c2c27a21fe892d5520075ce0f887a292daf54e", null ]
-    ] ],
-    [ "MOMO_STATIC_ASSERT", "_utility_8h.html#abc56e5a0c148f99224a315447eaba04e", null ]
+    ] ]
 ];

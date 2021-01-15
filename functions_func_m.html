@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -118,7 +118,7 @@ $(document).ready(function(){initNavTree('functions_func_m.html',''); initResiza
 : <a class="el" href="classmomo_1_1internal_1_1_map_extracted_pair.html#a43dec5a224ab5970d3fb16a9cb0f5aed">momo::internal::MapExtractedPair&lt; TSetExtractedItem &gt;</a>
 </li>
 <li>MapKeyIterator()
-: <a class="el" href="classmomo_1_1internal_1_1_map_key_iterator.html#a967be3b9fbe76dd38cd4c59d6707c93e">momo::internal::MapKeyIterator&lt; TSetIterator, TKey &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_map_key_iterator.html#a74f025d6e5445ce42beafc1f4e7f88be">momo::internal::MapKeyIterator&lt; TSetIterator &gt;</a>
 </li>
 <li>MapKeyValuePair()
 : <a class="el" href="classmomo_1_1internal_1_1_map_key_value_pair.html#aafa5e196bc2188e8e9fe452f27aa98fb">momo::internal::MapKeyValuePair&lt; TKey, TValue, tKeyAlignment, tValueAlignment &gt;</a>
@@ -127,13 +127,13 @@ $(document).ready(function(){initNavTree('functions_func_m.html',''); initResiza
 : <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html#a6268f2a8a09b296f05c6e8b645371466">momo::stdish::internal::map_node_handle&lt; TMapExtractedPair &gt;</a>
 </li>
 <li>MapReference()
-: <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#a1eb934779e31da9dbbe2c6ab966b9ac4">momo::internal::MapReference&lt; TKey, TValue, TSetReference &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_map_reference.html#aac633605a4a21f8cdaaed5afd676de06">momo::internal::MapReference&lt; TSetReference, tIsConst &gt;</a>
 </li>
 <li>MapReferenceStd()
-: <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html#aefc7307af9d3d93da727da5665584df8">momo::internal::MapReferenceStd&lt; TKey, TValue, TMapReference &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html#a046bd3acf67b4c449314b34377e50431">momo::internal::MapReferenceStd&lt; TMapReference &gt;</a>
 </li>
 <li>MapValueIterator()
-: <a class="el" href="classmomo_1_1internal_1_1_map_value_iterator.html#a9646c5f8ec95232d46d31686d09ccba5">momo::internal::MapValueIterator&lt; TSetIterator, TValue &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_map_value_iterator.html#a7f78186fb91d3503da554ba2019b5d2c">momo::internal::MapValueIterator&lt; TSetIterator &gt;</a>
 </li>
 <li>max_bucket_count()
 : <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#ab658e5b2b11e9eb62bd92f4714dbdf9f">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
@@ -166,10 +166,14 @@ $(document).ready(function(){initNavTree('functions_func_m.html',''); initResiza
 </li>
 <li>MemManagerStd()
 : <a class="el" href="classmomo_1_1_mem_manager_std.html#a51fb297672f56f27831f0f0172229534">momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt;</a>
-, <a class="el" href="classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html#a1a13daa5aacfe93be34455a4eccc49c0">momo::MemManagerStd&lt; std::allocator&lt; Item &gt;, true &gt;</a>
+, <a class="el" href="classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html#ae7a6d51001192e8dc462ad3ffc6038ca">momo::MemManagerStd&lt; std::allocator&lt; Item &gt;, true &gt;</a>
+</li>
+<li>MemManagerWrapper()
+: <a class="el" href="classmomo_1_1internal_1_1_mem_manager_wrapper_3_01_t_mem_manager_00_01false_01_4.html#af5b7b04a4f42425e7b7d48cd013119c5">momo::internal::MemManagerWrapper&lt; TMemManager, false &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_wrapper_3_01_t_mem_manager_00_01true_01_4.html#a13a707cc0668a2f3a7b421235a41fc0b">momo::internal::MemManagerWrapper&lt; TMemManager, true &gt;</a>
 </li>
 <li>MemPool()
-: <a class="el" href="classmomo_1_1_mem_pool.html#aff843e3553a40382fcc84d215b4220ab">momo::MemPool&lt; TParams, TMemManager, TSettings &gt;</a>
+: <a class="el" href="classmomo_1_1_mem_pool.html#a3d4335733e06d935411e2788f2ad8dee">momo::MemPool&lt; TParams, TMemManager, TSettings &gt;</a>
 </li>
 <li>MemPoolParams()
 : <a class="el" href="classmomo_1_1_mem_pool_params.html#a0b217efb68f9a226436aa9fbca4d864a">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a>
@@ -196,33 +200,39 @@ $(document).ready(function(){initNavTree('functions_func_m.html',''); initResiza
 </li>
 <li>MergeTo()
 : <a class="el" href="classmomo_1_1_hash_map.html#aa4d152340cb6806ee43adf89aa059c5e">momo::HashMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
-, <a class="el" href="classmomo_1_1_hash_set.html#aeabd979c9f1726232107258ba28745ed">momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;</a>
+, <a class="el" href="classmomo_1_1_hash_set.html#a22a91bdca092f08a11d02b4147d1699d">momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_map.html#afb7bff63b1d304d259e06a70ea3a6c04">momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_set.html#ad0cad1e97a1fb3390ee813b3edfcc9ac">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 </li>
 <li>MOMO_STATIC_ASSERT()
 : <a class="el" href="classmomo_1_1_data_column_list_static.html#ada4e495442c0c93a40015253b8a76332">momo::DataColumnListStatic&lt; TStruct, TMemManager, TSettings &gt;</a>
+, <a class="el" href="classmomo_1_1_data_column_traits.html#a2af00e81aaa3c325b0eaa3a63978aad6">momo::DataColumnTraits&lt; TStruct, tLogVertexCount &gt;</a>
+, <a class="el" href="classmomo_1_1_hash_multi_map.html#ae8fb72ba3a40c1109088efbace0b9af1">momo::HashMultiMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
+, <a class="el" href="classmomo_1_1_hash_set.html#a429fc7283d0e7a20b6d2a3d09c1bb559">momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html#a3374fadca1a6df88b271eda3887cd7b9">momo::internal::ArrayBucket&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim4.html#aff247f87bd2c8a65233541e69313d925">momo::internal::BucketLim4&lt; TItemTraits, tLogMaxCount, tMemPoolBlockCount &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p1.html#af0648ba40cb6444eb2dd257fb7284ec4">momo::internal::BucketLimP1&lt; TItemTraits, tMaxCount, TMemPoolParams &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#af03143a767d3de6522edc0165f36222d">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#abf44601c7d70e8b06edd170ee57edd2a">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(32&lt; tBitCount &amp;&amp;tBitCount&lt;=48)&gt; &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_counte19aeb938c0e48487220f51dead7bb66.html#afc54b7c10e9ad77885304e14e7403350">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(48&lt; tBitCount &amp;&amp;tBitCount&lt;=64)&gt; &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count9e2c4de9a677ec6184bb5ff5805df4e4.html#aec834e54b09a31ce8a0a09af89995a36">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(tBitCount&lt;=32)&gt; &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a615f359f89955c398fccfd60ae096a5f">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(32&lt; tBitCount &amp;&amp;tBitCount&lt;=48)&gt; &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_counte19aeb938c0e48487220f51dead7bb66.html#a6f7dd18690f5891317a806897e828494">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(48&lt; tBitCount &amp;&amp;tBitCount&lt;=64)&gt; &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count9e2c4de9a677ec6184bb5ff5805df4e4.html#ac822368639faa36bb1f976361da64f7f">momo::internal::BucketLimP4PtrState&lt; TItem, tMaskState, tBitCount, EnableIf&lt;(tBitCount&lt;=32)&gt; &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a2735945305242f0703a3d06bf0fdabe4">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, false &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4.html#af17ea1690703ba4b01aa18b630b83cca">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, true &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#a27c9f333f8b0b207adac3de5e4c26009">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8e8663bee8a193fe91703db6a4fc2daa">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a81276b03f12873d897703b9b9a96599b">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a995e20bbdeffae8081333afb8c6471d1">momo::internal::MemManagerProxy&lt; TMemManager &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_wrapper_3_01_t_mem_manager_00_01false_01_4.html#aa1b96a1367bd97937823cfee37c358e9">momo::internal::MemManagerWrapper&lt; TMemManager, false &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_wrapper_3_01_t_mem_manager_00_01true_01_4.html#aef1609aa3c76602be8360f69e093292b">momo::internal::MemManagerWrapper&lt; TMemManager, true &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_mem_pool_u_int32.html#a76d10f30c4d4ccf1457c478837662337">momo::internal::MemPoolUInt32&lt; tBlockCount, TMemManager &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_node.html#a8fffb39c786f3940dd484aedb267902a">momo::internal::Node&lt; TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a8448e35b6507cb0ec468d82d53d2f05c">momo::internal::ObjectBuffer&lt; TObject, tAlignment &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_node.html#ac9979a64ed463534463831771613a55e">momo::internal::Node&lt; TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a47810d8da184a6460b28f56d194ae66b">momo::internal::ObjectBuffer&lt; TObject, tAlignment &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#a4c2581f94b4defa78693622565289301">momo::internal::RadixSorter&lt; tRadixSize &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01false_01_4.html#ad33da83b557b04426c59c0f1d473580f">momo::internal::SetCrew&lt; TContainerTraits, TMemManager, tKeepVersion, false &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01true_01_4.html#abf34d025b6beffe7e6d857e29203f44a">momo::internal::SetCrew&lt; TContainerTraits, TMemManager, tKeepVersion, true &gt;</a>
-, <a class="el" href="structmomo_1_1internal_1_1_u_int_ptr_const.html#a247add153b44e82cd98122d7324f70f2">momo::internal::UIntPtrConst</a>
+, <a class="el" href="classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01false_01_4.html#af3dd3837044f54553521acc7b1d0207a">momo::internal::SetCrew&lt; TContainerTraits, TMemManager, tKeepVersion, false &gt;</a>
+, <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a50a706d08af08108164ce8e62e5c6336">momo::internal::UIntConst</a>
 , <a class="el" href="classmomo_1_1_mem_pool.html#a820e914cd08b5759c19863d1006489a6">momo::MemPool&lt; TParams, TMemManager, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_mem_pool_params.html#a2f2305e9a86f3482ed55a12d08ebe4be">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a>
 , <a class="el" href="classmomo_1_1_mem_pool_params_static.html#a7e18642866b149e44fca6b92a1d1b00f">momo::MemPoolParamsStatic&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;</a>
+, <a class="el" href="classmomo_1_1_tree_set.html#af899354129d239e3f3194f092b75e4ea">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 </li>
 <li>Move()
 : <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a63c293d8cefed3973a800233fdf5a8af">momo::internal::ObjectManager&lt; TObject, TMemManager &gt;</a>

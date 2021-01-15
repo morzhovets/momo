@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt; Class Template Reference</title>
+<title>momo: momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_hash_multi_m
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -103,66 +103,66 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a0a8c249a4bba5f4f7a5bd214080853b6"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a39880e22f51cdef54790319a75d2d2dd">HashMultiMapKeyValueTraits::Key</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a></td></tr>
-<tr class="separator:a0a8c249a4bba5f4f7a5bd214080853b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad637b145d1f7a8e7e6828c556d702a86"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a3c0dca60813288e8ace923de7ab93806">HashMultiMapKeyValueTraits::MemManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a></td></tr>
-<tr class="separator:ad637b145d1f7a8e7e6828c556d702a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83e821c550159e000bebf434ee4dd4b0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abde72343772c4e745dcf0704f27f3fb6">HashMultiMapValueArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a></td></tr>
-<tr class="separator:a83e821c550159e000bebf434ee4dd4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a350b46797bceecd61da9923d5a9d5db4"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a39880e22f51cdef54790319a75d2d2dd">HashMultiMapKeyValueTraits::Key</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a></td></tr>
+<tr class="separator:a350b46797bceecd61da9923d5a9d5db4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa69143fbcf599ee0a6c3ca5881434bf4"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a3c0dca60813288e8ace923de7ab93806">HashMultiMapKeyValueTraits::MemManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a></td></tr>
+<tr class="separator:aa69143fbcf599ee0a6c3ca5881434bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c688210408e081d72e53ade288a3eab"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">ArrayBucket</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_array_bucket_item_traits.html">HashMultiMapArrayBucketItemTraits</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a57bf58fb4b09f18ca7657a01d54243be">HashMultiMapKeyValueTraits</a> &gt;, <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#aa5381ee3028f24908f75a82052076849">HashMultiMapSettings::valueArrayMaxFastCount</a>, typename <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#a012c130ff150f2e98a8ac6beae8415da">HashMultiMapSettings::ValueArrayMemPoolParams</a>, typename <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#a766b79e9ca62d5f56d653271b1602d3c">HashMultiMapSettings::ValueArraySettings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a></td></tr>
+<tr class="separator:a8c688210408e081d72e53ade288a3eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:acf11234555bd0dba54437cb0bc57f2be"><td class="memTemplParams" colspan="2">template&lt;typename ValueCreator &gt; </td></tr>
-<tr class="memitem:acf11234555bd0dba54437cb0bc57f2be"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#acf11234555bd0dba54437cb0bc57f2be">Create</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html">ValueCreator</a> &amp;&amp;valueCreator, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *newKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *newValue)</td></tr>
-<tr class="separator:acf11234555bd0dba54437cb0bc57f2be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a743cd5b77fcd23f0e4949f4ac61abf21"><td class="memTemplParams" colspan="2">template&lt;typename ValueCreator &gt; </td></tr>
-<tr class="memitem:a743cd5b77fcd23f0e4949f4ac61abf21"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a743cd5b77fcd23f0e4949f4ac61abf21">Create</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;memManager, const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html">ValueCreator</a> &amp;&amp;valueCreator, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *newKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *newValue)</td></tr>
-<tr class="separator:a743cd5b77fcd23f0e4949f4ac61abf21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe1a5382f79897d839ba39f211a8ec95"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#afe1a5382f79897d839ba39f211a8ec95">Destroy</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> *memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;value) noexcept</td></tr>
-<tr class="separator:afe1a5382f79897d839ba39f211a8ec95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd217e467d941128f9caba6eb1626b84"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#acd217e467d941128f9caba6eb1626b84">Relocate</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> *memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *dstKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *dstValue)</td></tr>
-<tr class="separator:acd217e467d941128f9caba6eb1626b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab85a747eb75dc6d65d1f97894592e5c2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab85a747eb75dc6d65d1f97894592e5c2">Replace</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;dstKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;dstValue)</td></tr>
-<tr class="separator:ab85a747eb75dc6d65d1f97894592e5c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cd1b029dcd5a7829edfdadf3bddcb2b"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </td></tr>
-<tr class="memitem:a7cd1b029dcd5a7829edfdadf3bddcb2b"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a7cd1b029dcd5a7829edfdadf3bddcb2b">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Func &amp;&amp;func)</td></tr>
-<tr class="separator:a7cd1b029dcd5a7829edfdadf3bddcb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecae78c96f6ec7648b45e7d8b348db5d"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
-<tr class="memitem:aecae78c96f6ec7648b45e7d8b348db5d"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aecae78c96f6ec7648b45e7d8b348db5d">AssignKey</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;memManager, KeyArg &amp;&amp;keyArg, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;key)</td></tr>
-<tr class="separator:aecae78c96f6ec7648b45e7d8b348db5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c6adb29e81fb548bef51b970f9444fe"><td class="memTemplParams" colspan="2">template&lt;typename ValueCreator &gt; </td></tr>
+<tr class="memitem:a3c6adb29e81fb548bef51b970f9444fe"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a3c6adb29e81fb548bef51b970f9444fe">Create</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html">ValueCreator</a> &amp;&amp;valueCreator, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *newKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *newValue)</td></tr>
+<tr class="separator:a3c6adb29e81fb548bef51b970f9444fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa48ffa1b2645bc8693883aceebc5829f"><td class="memTemplParams" colspan="2">template&lt;typename ValueCreator &gt; </td></tr>
+<tr class="memitem:aa48ffa1b2645bc8693883aceebc5829f"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa48ffa1b2645bc8693883aceebc5829f">Create</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits_1_1_value_creator.html">ValueCreator</a> &amp;&amp;valueCreator, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *newKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *newValue)</td></tr>
+<tr class="separator:aa48ffa1b2645bc8693883aceebc5829f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafad3e716901fdda0d51c8c3f1117604"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aafad3e716901fdda0d51c8c3f1117604">Destroy</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> *memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;key, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;value) noexcept</td></tr>
+<tr class="separator:aafad3e716901fdda0d51c8c3f1117604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19292786b680dd45795bd38cf945291a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a19292786b680dd45795bd38cf945291a">Relocate</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> *memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *dstKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *dstValue)</td></tr>
+<tr class="separator:a19292786b680dd45795bd38cf945291a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf18662e25aad1f7164a2e04fc2ad7ce"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abf18662e25aad1f7164a2e04fc2ad7ce">Replace</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;dstKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;dstValue)</td></tr>
+<tr class="separator:abf18662e25aad1f7164a2e04fc2ad7ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6bf01ff56a05e914e736e76c52065b1"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </td></tr>
+<tr class="memitem:ab6bf01ff56a05e914e736e76c52065b1"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab6bf01ff56a05e914e736e76c52065b1">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Func &amp;&amp;func)</td></tr>
+<tr class="separator:ab6bf01ff56a05e914e736e76c52065b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae084fc674ef838152e16cda09e907e2c"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
+<tr class="memitem:ae084fc674ef838152e16cda09e907e2c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ae084fc674ef838152e16cda09e907e2c">AssignKey</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, KeyArg &amp;&amp;keyArg, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;key)</td></tr>
+<tr class="separator:ae084fc674ef838152e16cda09e907e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a5dcfd3478ae732f11153b60ce6fa1b83"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a5dcfd3478ae732f11153b60ce6fa1b83">keyAlignment</a> = HashMultiMapKeyValueTraits::keyAlignment</td></tr>
-<tr class="separator:a5dcfd3478ae732f11153b60ce6fa1b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37db6e82f8f967d9df85687a8f602b42"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a37db6e82f8f967d9df85687a8f602b42">valueAlignment</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">ValueManager::alignment</a></td></tr>
-<tr class="separator:a37db6e82f8f967d9df85687a8f602b42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91e3565a8d1b5023d6f6979b87249425"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a91e3565a8d1b5023d6f6979b87249425">isKeyNothrowRelocatable</a></td></tr>
-<tr class="separator:a91e3565a8d1b5023d6f6979b87249425"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0b14eebbb2c31ee6e0311054c0f020d"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ac0b14eebbb2c31ee6e0311054c0f020d">isValueNothrowRelocatable</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">ValueManager::isNothrowRelocatable</a></td></tr>
-<tr class="separator:ac0b14eebbb2c31ee6e0311054c0f020d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3de9bf1f804316bfa2f83f37b0165b1f"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a3de9bf1f804316bfa2f83f37b0165b1f">keyAlignment</a> = HashMultiMapKeyValueTraits::keyAlignment</td></tr>
+<tr class="separator:a3de9bf1f804316bfa2f83f37b0165b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1b53418536a79a831a3b2d4ada13d47"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#af1b53418536a79a831a3b2d4ada13d47">valueAlignment</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">ValueManager::alignment</a></td></tr>
+<tr class="separator:af1b53418536a79a831a3b2d4ada13d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6039f915023653b259221969123eb61d"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a6039f915023653b259221969123eb61d">isKeyNothrowRelocatable</a></td></tr>
+<tr class="separator:a6039f915023653b259221969123eb61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02e377d1e8b56a56bce2cabc6ce8e7de"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a02e377d1e8b56a56bce2cabc6ce8e7de">isValueNothrowRelocatable</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">ValueManager::isNothrowRelocatable</a></td></tr>
+<tr class="separator:a02e377d1e8b56a56bce2cabc6ce8e7de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:a2d408b9ed557b4a8354160850be6e646"><td class="memItemLeft" align="right" valign="top">typedef THashMultiMapKeyValueTraits&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a2d408b9ed557b4a8354160850be6e646">HashMultiMapKeyValueTraits</a></td></tr>
-<tr class="separator:a2d408b9ed557b4a8354160850be6e646"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abde72343772c4e745dcf0704f27f3fb6"><td class="memItemLeft" align="right" valign="top">typedef THashMultiMapValueArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abde72343772c4e745dcf0704f27f3fb6">HashMultiMapValueArray</a></td></tr>
-<tr class="separator:abde72343772c4e745dcf0704f27f3fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57bf58fb4b09f18ca7657a01d54243be"><td class="memItemLeft" align="right" valign="top">typedef THashMultiMapKeyValueTraits&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a57bf58fb4b09f18ca7657a01d54243be">HashMultiMapKeyValueTraits</a></td></tr>
+<tr class="separator:a57bf58fb4b09f18ca7657a01d54243be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0e73a82d9dc3b26875faff1cc06d186"><td class="memItemLeft" align="right" valign="top">typedef THashMultiMapSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab0e73a82d9dc3b26875faff1cc06d186">HashMultiMapSettings</a></td></tr>
+<tr class="separator:ab0e73a82d9dc3b26875faff1cc06d186"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a2d408b9ed557b4a8354160850be6e646"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d408b9ed557b4a8354160850be6e646">&#9670;&nbsp;</a></span>HashMultiMapKeyValueTraits</h2>
+<a id="a57bf58fb4b09f18ca7657a01d54243be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57bf58fb4b09f18ca7657a01d54243be">&#9670;&nbsp;</a></span>HashMultiMapKeyValueTraits</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef THashMultiMapKeyValueTraits <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a2d408b9ed557b4a8354160850be6e646">HashMultiMapKeyValueTraits</a></td>
+          <td class="memname">typedef THashMultiMapKeyValueTraits <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a57bf58fb4b09f18ca7657a01d54243be">HashMultiMapKeyValueTraits</a></td>
         </tr>
       </table>
   </td>
@@ -174,19 +174,19 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="abde72343772c4e745dcf0704f27f3fb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abde72343772c4e745dcf0704f27f3fb6">&#9670;&nbsp;</a></span>HashMultiMapValueArray</h2>
+<a id="ab0e73a82d9dc3b26875faff1cc06d186"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0e73a82d9dc3b26875faff1cc06d186">&#9670;&nbsp;</a></span>HashMultiMapSettings</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef THashMultiMapValueArray <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abde72343772c4e745dcf0704f27f3fb6">HashMultiMapValueArray</a></td>
+          <td class="memname">typedef THashMultiMapSettings <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab0e73a82d9dc3b26875faff1cc06d186">HashMultiMapSettings</a></td>
         </tr>
       </table>
   </td>
@@ -198,48 +198,48 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="a0a8c249a4bba5f4f7a5bd214080853b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a8c249a4bba5f4f7a5bd214080853b6">&#9670;&nbsp;</a></span>Key</h2>
+<a id="a350b46797bceecd61da9923d5a9d5db4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a350b46797bceecd61da9923d5a9d5db4">&#9670;&nbsp;</a></span>Key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a39880e22f51cdef54790319a75d2d2dd">HashMultiMapKeyValueTraits::Key</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a39880e22f51cdef54790319a75d2d2dd">HashMultiMapKeyValueTraits::Key</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad637b145d1f7a8e7e6828c556d702a86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad637b145d1f7a8e7e6828c556d702a86">&#9670;&nbsp;</a></span>MemManager</h2>
+<a id="aa69143fbcf599ee0a6c3ca5881434bf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa69143fbcf599ee0a6c3ca5881434bf4">&#9670;&nbsp;</a></span>MemManager</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a3c0dca60813288e8ace923de7ab93806">HashMultiMapKeyValueTraits::MemManager</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a3c0dca60813288e8ace923de7ab93806">HashMultiMapKeyValueTraits::MemManager</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a83e821c550159e000bebf434ee4dd4b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83e821c550159e000bebf434ee4dd4b0">&#9670;&nbsp;</a></span>Value</h2>
+<a id="a8c688210408e081d72e53ade288a3eab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c688210408e081d72e53ade288a3eab">&#9670;&nbsp;</a></span>Value</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abde72343772c4e745dcf0704f27f3fb6">HashMultiMapValueArray</a> <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_bucket.html">ArrayBucket</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_array_bucket_item_traits.html">HashMultiMapArrayBucketItemTraits</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a57bf58fb4b09f18ca7657a01d54243be">HashMultiMapKeyValueTraits</a>&gt;, <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#aa5381ee3028f24908f75a82052076849">HashMultiMapSettings::valueArrayMaxFastCount</a>, typename <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#a012c130ff150f2e98a8ac6beae8415da">HashMultiMapSettings::ValueArrayMemPoolParams</a>, typename <a class="el" href="classmomo_1_1_hash_multi_map_settings.html#a766b79e9ca62d5f56d653271b1602d3c">HashMultiMapSettings::ValueArraySettings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -247,13 +247,13 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aecae78c96f6ec7648b45e7d8b348db5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aecae78c96f6ec7648b45e7d8b348db5d">&#9670;&nbsp;</a></span>AssignKey()</h2>
+<a id="ae084fc674ef838152e16cda09e907e2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae084fc674ef838152e16cda09e907e2c">&#9670;&nbsp;</a></span>AssignKey()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg &gt; </div>
 <table class="mlabels">
@@ -261,9 +261,9 @@ template&lt;typename KeyArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::AssignKey </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::AssignKey </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
@@ -275,7 +275,7 @@ template&lt;typename KeyArg &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>&#160;</td>
         </tr>
         <tr>
@@ -293,13 +293,13 @@ template&lt;typename KeyArg &gt; </div>
 
 </div>
 </div>
-<a id="a743cd5b77fcd23f0e4949f4ac61abf21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a743cd5b77fcd23f0e4949f4ac61abf21">&#9670;&nbsp;</a></span>Create() <span class="overload">[1/2]</span></h2>
+<a id="aa48ffa1b2645bc8693883aceebc5829f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa48ffa1b2645bc8693883aceebc5829f">&#9670;&nbsp;</a></span>Create() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueCreator &gt; </div>
 <table class="mlabels">
@@ -307,15 +307,15 @@ template&lt;typename ValueCreator &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::Create </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::Create </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
@@ -327,13 +327,13 @@ template&lt;typename ValueCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *&#160;</td>
           <td class="paramname"><em>newKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *&#160;</td>
           <td class="paramname"><em>newValue</em>&#160;</td>
         </tr>
         <tr>
@@ -351,13 +351,13 @@ template&lt;typename ValueCreator &gt; </div>
 
 </div>
 </div>
-<a id="acf11234555bd0dba54437cb0bc57f2be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf11234555bd0dba54437cb0bc57f2be">&#9670;&nbsp;</a></span>Create() <span class="overload">[2/2]</span></h2>
+<a id="a3c6adb29e81fb548bef51b970f9444fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c6adb29e81fb548bef51b970f9444fe">&#9670;&nbsp;</a></span>Create() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueCreator &gt; </div>
 <table class="mlabels">
@@ -365,15 +365,15 @@ template&lt;typename ValueCreator &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::Create </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::Create </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
@@ -385,13 +385,13 @@ template&lt;typename ValueCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *&#160;</td>
           <td class="paramname"><em>newKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *&#160;</td>
           <td class="paramname"><em>newValue</em>&#160;</td>
         </tr>
         <tr>
@@ -409,33 +409,33 @@ template&lt;typename ValueCreator &gt; </div>
 
 </div>
 </div>
-<a id="afe1a5382f79897d839ba39f211a8ec95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe1a5382f79897d839ba39f211a8ec95">&#9670;&nbsp;</a></span>Destroy()</h2>
+<a id="aafad3e716901fdda0d51c8c3f1117604"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafad3e716901fdda0d51c8c3f1117604">&#9670;&nbsp;</a></span>Destroy()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::Destroy </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::Destroy </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> *&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;&#160;</td>
           <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
@@ -453,45 +453,45 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="acd217e467d941128f9caba6eb1626b84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd217e467d941128f9caba6eb1626b84">&#9670;&nbsp;</a></span>Relocate()</h2>
+<a id="a19292786b680dd45795bd38cf945291a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19292786b680dd45795bd38cf945291a">&#9670;&nbsp;</a></span>Relocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::Relocate </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::Relocate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> *&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>srcKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;&#160;</td>
           <td class="paramname"><em>srcValue</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> *&#160;</td>
           <td class="paramname"><em>dstKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> *&#160;</td>
           <td class="paramname"><em>dstValue</em>&#160;</td>
         </tr>
         <tr>
@@ -509,13 +509,13 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="a7cd1b029dcd5a7829edfdadf3bddcb2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cd1b029dcd5a7829edfdadf3bddcb2b">&#9670;&nbsp;</a></span>RelocateExec()</h2>
+<a id="ab6bf01ff56a05e914e736e76c52065b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6bf01ff56a05e914e736e76c52065b1">&#9670;&nbsp;</a></span>RelocateExec()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </div>
 <table class="mlabels">
@@ -523,9 +523,9 @@ template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; <
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::RelocateExec </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::RelocateExec </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
@@ -579,45 +579,45 @@ template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; <
 
 </div>
 </div>
-<a id="ab85a747eb75dc6d65d1f97894592e5c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab85a747eb75dc6d65d1f97894592e5c2">&#9670;&nbsp;</a></span>Replace()</h2>
+<a id="abf18662e25aad1f7164a2e04fc2ad7ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf18662e25aad1f7164a2e04fc2ad7ce">&#9670;&nbsp;</a></span>Replace()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::Replace </td>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::Replace </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ad637b145d1f7a8e7e6828c556d702a86">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>srcKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;&#160;</td>
           <td class="paramname"><em>srcValue</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a0a8c249a4bba5f4f7a5bd214080853b6">Key</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>dstKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a83e821c550159e000bebf434ee4dd4b0">Value</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;&#160;</td>
           <td class="paramname"><em>dstValue</em>&#160;</td>
         </tr>
         <tr>
@@ -636,19 +636,19 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a91e3565a8d1b5023d6f6979b87249425"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91e3565a8d1b5023d6f6979b87249425">&#9670;&nbsp;</a></span>isKeyNothrowRelocatable</h2>
+<a id="a6039f915023653b259221969123eb61d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6039f915023653b259221969123eb61d">&#9670;&nbsp;</a></span>isKeyNothrowRelocatable</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::isKeyNothrowRelocatable</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::isKeyNothrowRelocatable</td>
         </tr>
       </table>
   </td>
@@ -662,19 +662,19 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 </div><!-- fragment -->
 </div>
 </div>
-<a id="ac0b14eebbb2c31ee6e0311054c0f020d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0b14eebbb2c31ee6e0311054c0f020d">&#9670;&nbsp;</a></span>isValueNothrowRelocatable</h2>
+<a id="a02e377d1e8b56a56bce2cabc6ce8e7de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02e377d1e8b56a56bce2cabc6ce8e7de">&#9670;&nbsp;</a></span>isValueNothrowRelocatable</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::isValueNothrowRelocatable = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">ValueManager::isNothrowRelocatable</a></td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::isValueNothrowRelocatable = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">ValueManager::isNothrowRelocatable</a></td>
         </tr>
       </table>
   </td>
@@ -686,19 +686,19 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="a5dcfd3478ae732f11153b60ce6fa1b83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5dcfd3478ae732f11153b60ce6fa1b83">&#9670;&nbsp;</a></span>keyAlignment</h2>
+<a id="a3de9bf1f804316bfa2f83f37b0165b1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3de9bf1f804316bfa2f83f37b0165b1f">&#9670;&nbsp;</a></span>keyAlignment</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::keyAlignment = HashMultiMapKeyValueTraits::keyAlignment</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::keyAlignment = HashMultiMapKeyValueTraits::keyAlignment</td>
         </tr>
       </table>
   </td>
@@ -710,19 +710,19 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 
 </div>
 </div>
-<a id="a37db6e82f8f967d9df85687a8f602b42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37db6e82f8f967d9df85687a8f602b42">&#9670;&nbsp;</a></span>valueAlignment</h2>
+<a id="af1b53418536a79a831a3b2d4ada13d47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1b53418536a79a831a3b2d4ada13d47">&#9670;&nbsp;</a></span>valueAlignment</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueArray &gt; </div>
+template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapValueArray &gt;::valueAlignment = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">ValueManager::alignment</a></td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html">momo::internal::HashMultiMapNestedMapKeyValueTraits</a>&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;::valueAlignment = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">ValueManager::alignment</a></td>
         </tr>
       </table>
   </td>
@@ -739,7 +739,7 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapValueAr
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1_hash_multi_map_key_value_traits_html_aa499ee0b86e1a275710cb88386fb41c8"><div class="ttname"><a href="classmomo_1_1_hash_multi_map_key_value_traits.html#aa499ee0b86e1a275710cb88386fb41c8">momo::HashMultiMapKeyValueTraits::isKeyNothrowRelocatable</a></div><div class="ttdeci">static const bool isKeyNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> HashMultiMap.h:454</div></div>
+<div class="ttc" id="aclassmomo_1_1_hash_multi_map_key_value_traits_html_aa499ee0b86e1a275710cb88386fb41c8"><div class="ttname"><a href="classmomo_1_1_hash_multi_map_key_value_traits.html#aa499ee0b86e1a275710cb88386fb41c8">momo::HashMultiMapKeyValueTraits::isKeyNothrowRelocatable</a></div><div class="ttdeci">static const bool isKeyNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> HashMultiMap.h:464</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

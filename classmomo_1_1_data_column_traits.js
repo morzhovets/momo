@@ -1,9 +1,10 @@
 var classmomo_1_1_data_column_traits =
 [
-    [ "Column", "classmomo_1_1_data_column_traits.html#a70442b7ca50d4c3de7bd0fa947b18f7d", null ],
-    [ "ColumnCode", "classmomo_1_1_data_column_traits.html#a7477cf4f59172b162d00234d860bd4b7", null ],
-    [ "ColumnCodeHashTraits", "classmomo_1_1_data_column_traits.html#a5bb4a03994e58ff589e006bcd857e6b5", null ],
-    [ "ColumnInfo", "classmomo_1_1_data_column_traits.html#a7923615037d35dd76e4b6043bd0d1013", null ],
-    [ "QualifiedColumn", "classmomo_1_1_data_column_traits.html#a0f98d2dd34f03503cd1b3b3d147ac754", null ],
-    [ "Struct", "classmomo_1_1_data_column_traits.html#aaa74fed298a05d9a0f12aad9c2949f83", null ]
+    [ "Column", "classmomo_1_1_data_column_traits.html#a3efdeb75d8437626a2520be4b554d4b2", null ],
+    [ "ColumnCode", "classmomo_1_1_data_column_traits.html#a26e755d9e3b1be318fa3ac24e6c1477d", null ],
+    [ "ColumnCodeHashTraits", "classmomo_1_1_data_column_traits.html#aa58392d2974fd34d89e89b9f7d4df1c3", null ],
+    [ "ColumnInfo", "classmomo_1_1_data_column_traits.html#a789d76c033aa80ad060ffa8e9db90da9", null ],
+    [ "QualifiedColumn", "classmomo_1_1_data_column_traits.html#a4f141b4ca2482c5512cf3aef8daf1862", null ],
+    [ "Struct", "classmomo_1_1_data_column_traits.html#ab3e54aae5afcbc13efdb9e5b6a57456f", null ],
+    [ "MOMO_STATIC_ASSERT", "classmomo_1_1_data_column_traits.html#a2af00e81aaa3c325b0eaa3a63978aad6", null ]
 ];

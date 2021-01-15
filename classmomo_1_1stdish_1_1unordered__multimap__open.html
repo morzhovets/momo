@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.2</span>
+   &#160;<span id="projectnumber">3.3</span>
    </div>
   </td>
  </tr>
@@ -105,8 +105,16 @@ Inheritance diagram for momo::stdish::unordered_multimap_open&lt; TKey, TMapped,
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ad72a97e9643554b83cbf255189179378"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; const key_type, mapped_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad72a97e9643554b83cbf255189179378">value_type</a></td></tr>
+<tr class="memitem:af5377e5d0b9dd03ca1b7a1d009351aa9"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af5377e5d0b9dd03ca1b7a1d009351aa9">key_type</a></td></tr>
+<tr class="separator:af5377e5d0b9dd03ca1b7a1d009351aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad60b274a37a2622a447d895bc3a5cf69"><td class="memItemLeft" align="right" valign="top">typedef TMapped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad60b274a37a2622a447d895bc3a5cf69">mapped_type</a></td></tr>
+<tr class="separator:ad60b274a37a2622a447d895bc3a5cf69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf35601177673abc53c9abece5c43d35"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#acf35601177673abc53c9abece5c43d35">size_type</a></td></tr>
+<tr class="separator:acf35601177673abc53c9abece5c43d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad72a97e9643554b83cbf255189179378"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; const <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af5377e5d0b9dd03ca1b7a1d009351aa9">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad60b274a37a2622a447d895bc3a5cf69">mapped_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad72a97e9643554b83cbf255189179378">value_type</a></td></tr>
 <tr class="separator:ad72a97e9643554b83cbf255189179378"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2cf8b7efcd74b8e73899648b3223dc5"><td class="memItemLeft" align="right" valign="top">typedef const_iterator::Reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af2cf8b7efcd74b8e73899648b3223dc5">const_reference</a></td></tr>
+<tr class="separator:af2cf8b7efcd74b8e73899648b3223dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -119,6 +127,9 @@ Public Member Functions</h2></td></tr>
 Friends</h2></td></tr>
 <tr class="memitem:ac065ab43e552d6f7d38a8cd233b32384"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ac065ab43e552d6f7d38a8cd233b32384">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html">unordered_multimap_open</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html">unordered_multimap_open</a> &amp;right) noexcept</td></tr>
 <tr class="separator:ac065ab43e552d6f7d38a8cd233b32384"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8edbeb7dc114ee2c7e10aff5efbcf2e9"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
+<tr class="memitem:a8edbeb7dc114ee2c7e10aff5efbcf2e9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#acf35601177673abc53c9abece5c43d35">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#a8edbeb7dc114ee2c7e10aff5efbcf2e9">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html">unordered_multimap_open</a> &amp;cont, const Predicate &amp;pred)</td></tr>
+<tr class="separator:a8edbeb7dc114ee2c7e10aff5efbcf2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TKey, typename TMapped, typename THashFunc = HashCoder&lt;TKey&gt;, typename TEqualFunc = std::equal_to&lt;TKey&gt;, typename TAllocator = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt;<br />
@@ -136,6 +147,70 @@ class momo::stdish::unordered_multimap_open&lt; TKey, TMapped, THashFunc, TEqual
 </ol>
 <p>It is allowed to pass to functions <code>insert</code> and <code>emplace</code> references to items within the container. But in case of the function <code>insert</code>, receiving pair of iterators, it's not allowed to pass iterators pointing to the items within the container. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="af2cf8b7efcd74b8e73899648b3223dc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2cf8b7efcd74b8e73899648b3223dc5">&#9670;&nbsp;</a></span>const_reference</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef const_iterator::Reference <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af2cf8b7efcd74b8e73899648b3223dc5">const_reference</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af5377e5d0b9dd03ca1b7a1d009351aa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5377e5d0b9dd03ca1b7a1d009351aa9">&#9670;&nbsp;</a></span>key_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af5377e5d0b9dd03ca1b7a1d009351aa9">key_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad60b274a37a2622a447d895bc3a5cf69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad60b274a37a2622a447d895bc3a5cf69">&#9670;&nbsp;</a></span>mapped_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef TMapped <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad60b274a37a2622a447d895bc3a5cf69">mapped_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acf35601177673abc53c9abece5c43d35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf35601177673abc53c9abece5c43d35">&#9670;&nbsp;</a></span>size_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#acf35601177673abc53c9abece5c43d35">size_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ad72a97e9643554b83cbf255189179378"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad72a97e9643554b83cbf255189179378">&#9670;&nbsp;</a></span>value_type</h2>
 
@@ -145,7 +220,7 @@ class momo::stdish::unordered_multimap_open&lt; TKey, TMapped, THashFunc, TEqual
 template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::pair&lt;const key_type, mapped_type&gt; <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad72a97e9643554b83cbf255189179378">value_type</a></td>
+          <td class="memname">typedef std::pair&lt;const <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af5377e5d0b9dd03ca1b7a1d009351aa9">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad60b274a37a2622a447d895bc3a5cf69">mapped_type</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html">momo::stdish::unordered_multimap</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#ad72a97e9643554b83cbf255189179378">value_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -210,6 +285,46 @@ template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&l
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a8edbeb7dc114ee2c7e10aff5efbcf2e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8edbeb7dc114ee2c7e10aff5efbcf2e9">&#9670;&nbsp;</a></span>erase_if</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TMapped , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename Predicate &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#acf35601177673abc53c9abece5c43d35">size_type</a> erase_if </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html">unordered_multimap_open</a>&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cont</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Predicate &amp;&#160;</td>
+          <td class="paramname"><em>pred</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac065ab43e552d6f7d38a8cd233b32384"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac065ab43e552d6f7d38a8cd233b32384">&#9670;&nbsp;</a></span>swap</h2>
 

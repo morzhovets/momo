@@ -96,5 +96,6 @@ var classmomo_1_1stdish_1_1unordered__set =
     [ "reserve", "classmomo_1_1stdish_1_1unordered__set.html#adaed126de573503bf37e4ab84ed9507f", null ],
     [ "size", "classmomo_1_1stdish_1_1unordered__set.html#a0163aced13e1a8447de067f51f913e8d", null ],
     [ "swap", "classmomo_1_1stdish_1_1unordered__set.html#a26bf7b51cfa3960eb35a49165fdad92e", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1unordered__set.html#a278dcf1f552f58f0b0a06cacf5e1a08a", null ],
     [ "swap", "classmomo_1_1stdish_1_1unordered__set.html#a48a358f1da9e4df79fb37692560629ea", null ]
 ];
