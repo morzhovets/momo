@@ -17,6 +17,8 @@
 namespace
 {
 
+#undef _LIBCPP_DEBUG
+#undef _LIBCPP_DEBUG_LEVEL
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
