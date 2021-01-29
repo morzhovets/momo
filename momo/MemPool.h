@@ -31,7 +31,7 @@ public:
 
 public:
 	static constexpr size_t GetBlockAlignment(size_t blockSize,
-		size_t maxAlignment = internal::UIntConst::maxAlignment) noexcept
+		size_t maxAlignment = momo::internal::UIntConst::maxAlignment) noexcept	// c++/cli
 	{
 		return (maxAlignment > blockSize && maxAlignment > 1)
 			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
