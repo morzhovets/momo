@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/morzhovets/momo.svg?branch=master)](https://travis-ci.org/morzhovets/momo) [![Build Status](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=master&svg=true)](https://ci.appveyor.com/project/morzhovets/momo/branch/master)
+[![Build Status](https://travis-ci.org/morzhovets/momo.svg?branch=branch_cpp11)](https://travis-ci.org/morzhovets/momo) [![Build Status](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=branch_cpp11&svg=true)](https://ci.appveyor.com/project/morzhovets/momo/branch/branch_cpp11)
 
 #### momo (Memory Optimization is the Main Objective)
 
@@ -48,7 +48,7 @@ Some documentation is [here](https://morzhovets.github.io/momo).
 
 #### DataTable
 
-`momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html), but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable). Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/tests/SimpleDataSampler.cpp).
+`momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html), but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable). Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/test/tests/SimpleDataSampler.cpp).
 
 #### Supported compilers
 
