@@ -54,4 +54,4 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 - GCC (10+) with -std=c++20
 
-- Clang (10+) with -std=c++20
+- Clang (11+) with -std=c++20
