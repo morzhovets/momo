@@ -148,13 +148,14 @@ public:
 		for (size_t i = count / 2; i < count; ++i)
 		{
 			Row row = table.NewRow();
-#if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
+
 			auto visitor = [i] (auto& item)
 			{
 				if constexpr (std::is_same<decltype(item), int&>::value)
 					item = static_cast<int>(i);
 			};
 			row.VisitReferences(visitor);
+
 			auto visitor2 = [i] (const auto& item)
 			{
 				typedef std::decay_t<decltype(item)> Item;
@@ -165,9 +166,7 @@ public:
 			};
 			static_cast<const Row&>(row).VisitReferences(visitor2);
 			static_cast<const Row&>(row).VisitPointers(visitor2);
-#else
-			row[intCol] = static_cast<int>(i);
-#endif
+
 			Row row2 = table.NewRow();
 			row2 = std::move(row);
 			assert(static_cast<const Row&>(row2)[intCol] == static_cast<int>(i));
@@ -304,7 +303,6 @@ public:
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
-#if defined(__cpp_generic_lambdas)
 		{
 			std::stringstream sstream;
 			auto visitor = [&sstream] (const auto& item, auto columnInfo)
@@ -315,7 +313,6 @@ public:
 			ctable[0].VisitReferences(visitor);
 			assert(sstream.str() == "00");
 		}
-#endif
 
 		{
 			Table table2(table);

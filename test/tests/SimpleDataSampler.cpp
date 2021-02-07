@@ -166,7 +166,6 @@ namespace sample3
 		table.AddRow(intCol = 2, dblCol = 0.5, strCol = "a");
 		table.InsertRow(0, intCol = 1, dblCol = 1.5, strCol = "b");	// at position 0
 
-#if defined(__cpp_generic_lambdas)
 		for (auto row : table)
 		{
 			row.VisitReferences([] (auto& item) { std::cout << item << " "; });
@@ -184,7 +183,6 @@ namespace sample3
 		}
 		// intCol=1 dblCol=1.5 strCol=b 
 		// intCol=2 dblCol=0.5 strCol=a 
-#endif
 
 		table.RemoveRow(table[0]);
 		std::cout << table[0][dblCol] << std::endl;	// 0.5
