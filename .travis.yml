@@ -1,13 +1,10 @@
 language: cpp
 os: linux
-dist: xenial
 
-before_script:
+script:
   - cd test
   - mkdir build
   - cd build
-
-script:
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
   - make
   - ./momo_test
@@ -15,88 +12,55 @@ script:
 matrix:
   include:
 
-    - os: windows
-      # VS 2017 Debug
-      script:
-        - cmake ..
-        - cmake --build . --config Debug
-        - ./Debug/momo_test.exe
-
-    - os: windows
-      # VS 2017 Release
-      script:
-        - cmake ..
-        - travis_wait 30 cmake --build . --config Release
-        - ./Release/momo_test.exe
-
-    - os: windows
-      # MinGW GNU 8.1.0 Release
-      env:
-        - CXXFLAGS="-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-      script:
-        - cmake .. -G"MinGW Makefiles"
-        - cmake --build .
-        - ./momo_test.exe
-
-    - compiler: gcc
+    - compiler: clang
+      dist: xenial
       addons:
         apt:
-          packages: g++-4.9
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - clang-10
       env:
-        - COMPILER="g++-4.9"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++11 -msse2"
-
-    - compiler: gcc
-      addons:
-        apt:
-          packages: g++-5
-      env:
-        - COMPILER="g++-5"
+        - COMPILER="clang++-10"
         - BUILD_TYPE="Debug"
-        - CXXFLAGS="-std=c++14 -msse2"
+        - CXXFLAGS="-msse2 -fsanitize=address,undefined"
 
     - compiler: gcc
+      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
-          packages: g++-6
+          packages: g++-10
       env:
-        - COMPILER="g++-6"
+        - COMPILER="g++-10"
         - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DMOMO_USE_SAFE_MAP_BRACKETS"
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-7
-      env:
-        - COMPILER="g++-7"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DMOMO_USE_UNORDERED_HINT_ITERATORS"
-
-    - compiler: gcc
-      arch: ppc64le
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-8
-      env:
-        - COMPILER="g++-8"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -DLIBCPP_TEST_DEDUCTION_GUIDES"
+        - CXXFLAGS="-msse2"
 
     - compiler: gcc
       arch: arm64
+      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
-          packages: g++-9
+          packages: g++-10
       env:
-        - COMPILER="g++-9"
+        - COMPILER="g++-10"
         - BUILD_TYPE="Debug"
-        - CXXFLAGS="-std=c++17 -DLIBCPP_TEST_DEDUCTION_GUIDES"
+        - CXXFLAGS=""
+
+    - compiler: gcc
+      arch: ppc64le
+      dist: bionic
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-10
+      env:
+        - COMPILER="g++-10"
+        - BUILD_TYPE="Release"
+        - CXXFLAGS="-DMOMO_USE_SAFE_MAP_BRACKETS"
 
     - compiler: gcc
       arch: s390x
@@ -108,84 +72,4 @@ matrix:
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++20 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env:
-        - COMPILER="clang++"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++11 -msse2 -Wno-c++1z-extensions"
-
-    - os: osx
-      osx_image: xcode11
-      compiler: clang
-      env:
-        - COMPILER="clang++"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-    - compiler: clang
-      addons:
-        apt:
-          packages: clang-3.6
-      env:
-        - COMPILER="clang++-3.6"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++11 -msse2"
-
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-4.0
-          packages: clang-4.0
-      env:
-        - COMPILER="clang++-4.0"
-        - BUILD_TYPE="Debug"
-        - CXXFLAGS="-std=c++14 -msse2 -Wno-c++1z-extensions"
-
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-5.0
-          packages: clang-5.0
-      env:
-        - COMPILER="clang++-5.0"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DMOMO_USE_SAFE_MAP_BRACKETS"
-
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-6.0
-          packages: clang-6.0
-      env:
-        - COMPILER="clang++-6.0"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DMOMO_USE_UNORDERED_HINT_ITERATORS"
-
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-8
-          packages: clang-8
-      env:
-        - COMPILER="clang++-8"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-    - compiler: clang
-      # clang 7.0.0
-      env:
-        - COMPILER="clang++"
-        - BUILD_TYPE="Debug"
-        - CXXFLAGS="-std=c++17 -msse2 -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES"
+        - CXXFLAGS="-DMOMO_USE_UNORDERED_HINT_ITERATORS"
