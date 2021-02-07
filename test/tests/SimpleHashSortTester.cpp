@@ -47,11 +47,7 @@ public:
 		static const size_t count = 128;
 		momo::Array<std::pair<std::string, size_t>> data;
 		for (size_t i = 0; i < count; ++i)
-		{
-			std::stringstream sstream;	// gcc 4.9
-			sstream << mt();
-			data.AddBack({ sstream.str(), mt() % 32 + 1 });
-		}
+			data.AddBack({ std::to_string(mt()), mt() % 32 + 1 });
 
 		momo::Array<std::string> array;
 		for (const auto& pair : data)
