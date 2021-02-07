@@ -143,10 +143,3 @@
 
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)
-
-#ifdef __cpp_guaranteed_copy_elision
-#define MOMO_HAS_GUARANTEED_COPY_ELISION
-#if defined(_MSC_VER) && !defined(__clang__)	// vs2017
-#undef MOMO_HAS_GUARANTEED_COPY_ELISION
-#endif
-#endif

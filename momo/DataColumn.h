@@ -74,7 +74,7 @@ namespace internal
 		{
 		}
 
-#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
+#ifdef _MSC_VER	//?
 		DataOperator(DataOperator&& oper) noexcept
 			: mColumn(oper.mColumn),
 			mItemArg(std::forward<ItemArg>(oper.mItemArg))
