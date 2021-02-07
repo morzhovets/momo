@@ -92,27 +92,6 @@ public:
 
 namespace internal
 {
-	template<typename Object,
-		typename = void>
-	struct IsNothrowSwappable
-	{
-		static constexpr bool GetValue() noexcept
-		{
-			return false;
-		}
-	};
-
-	template<typename Object>
-	struct IsNothrowSwappable<Object,
-		decltype(std::swap(std::declval<Object&>(), std::declval<Object&>()))>
-	{
-		static constexpr bool GetValue() noexcept
-		{
-			using std::swap;
-			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
-		}
-	};
-
 	template<typename TObject>
 	class ObjectAlignmenter
 	{
@@ -171,7 +150,7 @@ namespace internal
 		static const bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
+		static const bool isNothrowSwappable = std::is_nothrow_swappable_v<Object>;
 
 		static const bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
