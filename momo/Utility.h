@@ -146,22 +146,6 @@ namespace internal
 	template<bool value>
 	using BoolConstant = std::integral_constant<bool, value>;
 
-	template<size_t... sequence>
-	struct Sequence
-	{
-	};
-
-	template<size_t count, size_t... sequence>
-	struct SequenceMaker : public SequenceMaker<count - 1, count - 1, sequence...>
-	{
-	};
-
-	template<size_t... sequence>
-	struct SequenceMaker<0, sequence...>
-	{
-		typedef internal::Sequence<sequence...> Sequence;
-	};
-
 	template<typename Func, typename Result, typename... Args>
 	struct IsInvocable : public std::false_type
 	{

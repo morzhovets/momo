@@ -211,26 +211,25 @@ namespace internal
 
 			void operator()(Object* newObject) &&
 			{
-				pvCreate(mMemManager, newObject,
-					typename SequenceMaker<sizeof...(Args)>::Sequence());
+				pvCreate(mMemManager, newObject, std::index_sequence_for<Args...>());
 			}
 
 		private:
-			template<typename MemManager, size_t... sequence>
+			template<typename MemManager, size_t... indexes>
 			void pvCreate(MemManager& /*memManager*/, Object* newObject,
-				Sequence<sequence...>)
+				std::index_sequence<indexes...>)
 			{
 				::new(static_cast<void*>(newObject))
-					Object(std::forward<Args>(std::get<sequence>(mArgs))...);
+					Object(std::forward<Args>(std::get<indexes>(mArgs))...);
 			}
 
-			template<typename Allocator, size_t... sequence>
+			template<typename Allocator, size_t... indexes>
 			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
-				Sequence<sequence...>)
+				std::index_sequence<indexes...>)
 			{
 				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
 					memManager.GetByteAllocator(), newObject,
-					std::forward<Args>(std::get<sequence>(mArgs))...);
+					std::forward<Args>(std::get<indexes>(mArgs))...);
 			}
 
 		private:
