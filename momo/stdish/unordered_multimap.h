@@ -761,8 +761,6 @@ public:
 public:
 	using UnorderedMultiMap::UnorderedMultiMap;
 
-	unordered_multimap_open() {}	// clang 3.6
-
 	unordered_multimap_open& operator=(std::initializer_list<value_type> values)
 	{
 		UnorderedMultiMap::operator=(values);
