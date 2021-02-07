@@ -30,8 +30,6 @@ Just copy the folder `momo` in your source code. This folder contains only heade
 
 Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, namespace `momo::stdish`.
 
-Some documentation is [here](https://morzhovets.github.io/momo).
-
 #### Other classes
 
 - `stdish::unordered_set_open` and `stdish::unordered_map_open` are based on open addressing hash tables.
@@ -52,10 +50,8 @@ Some documentation is [here](https://morzhovets.github.io/momo).
 
 #### Supported compilers
 
-- MS Visual C++ (19.0+, Visual Studio 2015+)
+- MS Visual C++ (19.28+, Visual Studio 2019) with /std:c++latest
 
-- GCC (4.9+) with -std=c++11
+- GCC (10+) with -std=c++20
 
-- Clang (3.6+) with -std=c++11
-
-- Apple Clang (8.1+, Xcode 8.3+) with -std=c++11
+- Clang (10+) with -std=c++20
