@@ -539,7 +539,7 @@ public:
 
 	node_type extract(const_iterator where)
 	{
-		return node_type(*this, where);	// need RVO for exception safety
+		return node_type(*this, where);
 	}
 
 	node_type extract(const key_type& key)

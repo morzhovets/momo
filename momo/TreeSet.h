@@ -918,7 +918,7 @@ public:
 
 	ExtractedItem Extract(ConstIterator iter)
 	{
-		return ExtractedItem(*this, iter);	// need RVO for exception safety
+		return ExtractedItem(*this, iter);
 	}
 
 	template<typename KeyArg, bool extraCheck = true>

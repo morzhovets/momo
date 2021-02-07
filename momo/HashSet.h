@@ -905,7 +905,7 @@ public:
 
 	ExtractedItem Extract(ConstPosition pos)
 	{
-		return ExtractedItem(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety
+		return ExtractedItem(*this, static_cast<ConstIterator>(pos));
 	}
 
 	template<typename KeyArg, bool extraCheck = true>

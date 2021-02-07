@@ -765,7 +765,7 @@ public:
 
 	ExtractedPair Extract(ConstPosition pos)
 	{
-		return ExtractedPair(*this, static_cast<ConstIterator>(pos));	// need RVO for exception safety
+		return ExtractedPair(*this, static_cast<ConstIterator>(pos));
 	}
 
 	template<typename KeyArg, bool extraCheck = true>

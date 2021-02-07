@@ -697,7 +697,7 @@ public:
 
 	ExtractedPair Extract(ConstIterator iter)
 	{
-		return ExtractedPair(*this, iter);	// need RVO for exception safety
+		return ExtractedPair(*this, iter);
 	}
 
 	template<typename KeyArg, bool extraCheck = true>
