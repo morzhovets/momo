@@ -65,9 +65,7 @@
 
 //#define MOMO_HASH_CODER(key) key.GetHashCode() //hash_value(key)
 
-#ifdef __cpp_lib_string_view
 #define MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-#endif
 
 // If hash function is slow, hash bucket can store part of hash code
 // to avoid its recalculation during table grow
