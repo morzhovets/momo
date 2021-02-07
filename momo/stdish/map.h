@@ -1005,7 +1005,6 @@ public:
 	using typename BaseMap::value_type;
 	using typename BaseMap::iterator;
 	using typename BaseMap::const_reference;
-	using typename BaseMap::const_iterator;
 	using typename BaseMap::node_type;
 
 	typedef iterator insert_return_type;
@@ -1024,16 +1023,11 @@ public:
 		left.swap(right);
 	}
 
-	//using BaseMap::insert;	// gcc 5 & 6
+	using BaseMap::insert;
 
 	iterator insert(std::pair<key_type, mapped_type>&& value)
 	{
 		return BaseMap::insert(std::move(value)).first;
-	}
-
-	iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
-	{
-		return BaseMap::insert(hint, std::move(value));
 	}
 
 	template<typename First, typename Second>
@@ -1045,14 +1039,6 @@ public:
 	}
 
 	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
-	insert(const_iterator hint, const std::pair<First, Second>& value)
-	{
-		return BaseMap::insert(hint, value);
-	}
-
-	template<typename First, typename Second>
 	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(std::pair<First, Second>&& value)
@@ -1060,33 +1046,9 @@ public:
 		return BaseMap::insert(std::move(value)).first;
 	}
 
-	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
-	insert(const_iterator hint, std::pair<First, Second>&& value)
-	{
-		return BaseMap::insert(hint, std::move(value));
-	}
-
 	iterator insert(node_type&& node)
 	{
 		return BaseMap::insert(std::move(node)).position;
-	}
-
-	iterator insert(const_iterator hint, node_type&& node)
-	{
-		return BaseMap::insert(hint, std::move(node));
-	}
-
-	template<typename Iterator>
-	void insert(Iterator first, Iterator last)
-	{
-		BaseMap::insert(first, last);
-	}
-
-	void insert(std::initializer_list<value_type> values)
-	{
-		BaseMap::insert(values);
 	}
 
 	template<typename... ValueArgs>
