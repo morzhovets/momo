@@ -14,5 +14,5 @@
 
 #pragma once
 
-#define MOMO_VERSION_MAJOR 3
-#define MOMO_VERSION_MINOR 3
+#define MOMO_VERSION_MAJOR 4
+#define MOMO_VERSION_MINOR 0
