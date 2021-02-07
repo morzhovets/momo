@@ -1066,8 +1066,6 @@ public:
 	}
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
 template<typename Iterator, \
 	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
@@ -1098,8 +1096,6 @@ MOMO_DECLARE_DEDUCTION_GUIDES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif
 
 } // namespace stdish
 

@@ -676,8 +676,6 @@ public:
 	}
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
@@ -706,8 +704,6 @@ MOMO_DECLARE_DEDUCTION_GUIDES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif
 
 } // namespace stdish
 
