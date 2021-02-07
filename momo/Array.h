@@ -461,10 +461,7 @@ public:
 	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
-	Array()
-#ifndef _MSC_VER	// vs2017
-		noexcept(noexcept(MemManager()))
-#endif
+	Array() noexcept(noexcept(MemManager()))
 		: Array(MemManager())
 	{
 	}
