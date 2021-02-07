@@ -174,7 +174,7 @@ namespace internal
 		}
 
 		map_base(map_base&& right, const allocator_type& alloc)
-			noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 			: mTreeMap(pvCreateMap(std::move(right), alloc))
 		{
 		}
@@ -192,12 +192,12 @@ namespace internal
 		~map_base() = default;
 
 		map_base& operator=(map_base&& right)
-			noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 		{
 			if (this != &right)
 			{
-				bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+				bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
 					std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
 				allocator_type alloc = (propagate ? &right : this)->get_allocator();
 				mTreeMap = pvCreateMap(std::move(right), alloc);
@@ -209,7 +209,7 @@ namespace internal
 		{
 			if (this != &right)
 			{
-				bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+				bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
 					std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
 				allocator_type alloc = (propagate ? &right : this)->get_allocator();
 				mTreeMap = TreeMap(right.mTreeMap, MemManager(alloc));

@@ -105,7 +105,7 @@ public:
 	}
 
 	vector(vector&& right, const allocator_type& alloc)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 		: mArray(pvCreateArray(std::move(right), alloc))
 	{
 	}
@@ -123,12 +123,12 @@ public:
 	~vector() = default;
 
 	vector& operator=(vector&& right)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mArray = pvCreateArray(std::move(right), alloc);
@@ -140,7 +140,7 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mArray = Array(right.mArray, MemManager(alloc));
