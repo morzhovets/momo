@@ -24,21 +24,17 @@ LIBCXX_TEST_BEGIN(contains)
 #include "libcxx/unord.multimap/contains.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "libcxx/unord.multimap/contains.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(count)
 #include "libcxx/unord.multimap/count.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(count_transparent)
 #include "libcxx/unord.multimap/count.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(db_iterators_7)
 #include "libcxx/unord.multimap/db_iterators_7.pass.cpp"
@@ -68,21 +64,17 @@ LIBCXX_TEST_BEGIN(equal_range_const)
 #include "libcxx/unord.multimap/equal_range_const.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(equal_range_const_transparent)
 #include "libcxx/unord.multimap/equal_range_const.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(equal_range_non_const)
 #include "libcxx/unord.multimap/equal_range_non_const.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(equal_range_non_const_transparent)
 #include "libcxx/unord.multimap/equal_range_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 #if defined(_MSC_VER) || defined(__cpp_generic_lambdas)
 LIBCXX_TEST_BEGIN(erase_if_)
@@ -94,21 +86,17 @@ LIBCXX_TEST_BEGIN(find_const)
 #include "libcxx/unord.multimap/find_const.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(find_const_transparent)
 #include "libcxx/unord.multimap/find_const.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "libcxx/unord.multimap/find_non_const.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 LIBCXX_TEST_BEGIN(find_non_const_transparent)
 #include "libcxx/unord.multimap/find_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 //LIBCXX_TEST_BEGIN(incomplete)
 //#include "libcxx/unord.multimap/incomplete.pass.cpp"

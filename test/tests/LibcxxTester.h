@@ -19,10 +19,6 @@
 #include <optional>
 #endif
 
-#if !defined(_MSC_VER) && !defined(__cpp_lib_transparent_operators)
-#define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
-#endif
-
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 //#define LIBCPP_TEST_MIN_ALLOCATOR
 
