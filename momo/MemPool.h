@@ -52,7 +52,7 @@ class MemPoolParams
 {
 public:
 	static const size_t blockCount = tBlockCount;
-	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+	static_assert(0 < blockCount && blockCount < 128);
 
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
@@ -92,10 +92,10 @@ class MemPoolParamsStatic
 {
 public:
 	static const size_t blockCount = tBlockCount;
-	MOMO_STATIC_ASSERT(0 < blockCount && blockCount < 128);
+	static_assert(0 < blockCount && blockCount < 128);
 
 	static const size_t blockAlignment = tBlockAlignment;
-	MOMO_STATIC_ASSERT(0 < blockAlignment && blockAlignment <= 1024);
+	static_assert(0 < blockAlignment && blockAlignment <= 1024);
 
 	static const size_t blockSize = MemPoolConst::CorrectBlockSize(tBlockSize,
 		blockAlignment, blockCount);
@@ -125,8 +125,8 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-	MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<Params>::value);
-	MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<Params>::value);
+	static_assert(std::is_nothrow_move_constructible<Params>::value);
+	static_assert(std::is_nothrow_move_assignable<Params>::value);
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -654,7 +654,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 		static const size_t blockCount = tBlockCount;
-		MOMO_STATIC_ASSERT(blockCount > 0);
+		static_assert(blockCount > 0);
 
 		static const uint32_t nullPtr = UIntConst::max32;
 

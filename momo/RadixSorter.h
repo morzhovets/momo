@@ -48,7 +48,7 @@ namespace internal
 	{
 	public:
 		static const size_t radixSize = tRadixSize;
-		MOMO_STATIC_ASSERT(0 < radixSize && radixSize <= 16);
+		static_assert(0 < radixSize && radixSize <= 16);
 
 	private:
 		static const size_t radixCount = size_t{1} << radixSize;

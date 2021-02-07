@@ -140,16 +140,16 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg&, const KeyArgBase&>::value));
-		//MOMO_STATIC_ASSERT(std::is_empty<HashCoder<KeyArgBase>>::value);
+		static_assert((std::is_convertible<const KeyArg&, const KeyArgBase&>::value));
+		//static_assert(std::is_empty<HashCoder<KeyArgBase>>::value);
 		return HashCoder<KeyArgBase>()(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg1&, const KeyArgBase&>::value));
-		MOMO_STATIC_ASSERT((std::is_convertible<const KeyArg2&, const KeyArgBase&>::value));
+		static_assert((std::is_convertible<const KeyArg1&, const KeyArgBase&>::value));
+		static_assert((std::is_convertible<const KeyArg2&, const KeyArgBase&>::value));
 		return std::equal_to<KeyArgBase>()(key1, key2);
 	}
 };
@@ -232,15 +232,15 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
+		static_assert((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
 		return mHashFunc(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value));
+		static_assert((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
+		static_assert((std::is_same<Key, KeyArg2>::value));
 		return mEqualFunc(key1, key2);
 	}
 

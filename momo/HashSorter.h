@@ -423,7 +423,7 @@ private:
 
 	static size_t pvMultShift(HashFuncResult value1, size_t value2) noexcept
 	{
-		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
+		static_assert(sizeof(HashFuncResult) >= sizeof(size_t));
 		static const size_t halfSize = 4 * sizeof(HashFuncResult);
 		static const HashFuncResult halfMask = (HashFuncResult{1} << halfSize) - 1;
 		HashFuncResult res = (value1 >> halfSize) * (value2 >> halfSize)

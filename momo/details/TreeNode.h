@@ -29,13 +29,13 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 
 		static const size_t maxCapacity = tMaxCapacity;
-		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
+		static_assert(0 < maxCapacity && maxCapacity < 256);
 
 		static const size_t capacityStep = tCapacityStep;
-		MOMO_STATIC_ASSERT(capacityStep > 0);
+		static_assert(capacityStep > 0);
 
 		static const bool isContinuous = tIsContinuous;
-		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
+		static_assert(!isContinuous || ItemTraits::isNothrowShiftable);
 
 	public:
 		typedef typename ItemTraits::Item Item;

@@ -54,9 +54,7 @@
 		return ref.GetEnd(); \
 	}
 
-#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
-
-#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) MOMO_STATIC_ASSERT((std::is_same<Type, \
+#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert((std::is_same<Type, \
 	typename std::decay<typename std::iterator_traits<Iterator>::reference>::type>::value) \
 	&& std::is_reference<typename std::iterator_traits<Iterator>::reference>::value)
 
@@ -84,7 +82,7 @@
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		MOMO_STATIC_ASSERT((std::is_same<Object, typename std::decay<ObjectArg>::type>::value)); \
+		static_assert((std::is_same<Object, typename std::decay<ObjectArg>::type>::value)); \
 		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
@@ -323,12 +321,12 @@ namespace internal
 	{
 		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
 		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
-		MOMO_STATIC_ASSERT(nullPtr != invalidPtr);
+		static_assert(nullPtr != invalidPtr);
 
 		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
 		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(maxAllocAlignment));
-		MOMO_STATIC_ASSERT(maxAllocAlignment % maxAlignment == 0);
+		static_assert(UIntMath<>::HasSingleBit(maxAllocAlignment));
+		static_assert(maxAllocAlignment % maxAlignment == 0);
 
 		static const size_t maxSize = SIZE_MAX;
 

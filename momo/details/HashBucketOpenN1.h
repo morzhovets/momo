@@ -33,8 +33,8 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 8);
-		MOMO_STATIC_ASSERT(maxCount + 1 <= sizeof(Data));
+		static_assert(0 < maxCount && maxCount < 8);
+		static_assert(maxCount + 1 <= sizeof(Data));
 
 		static const bool isNothrowAddableIfNothrowCreatable = true;
 

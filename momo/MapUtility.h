@@ -526,8 +526,8 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 		static const size_t valueAlignment = tValueAlignment;
 
-		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Key>::Check(keyAlignment));
-		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Value>::Check(valueAlignment));
+		//static_assert(ObjectAlignmenter<Key>::Check(keyAlignment));
+		//static_assert(ObjectAlignmenter<Value>::Check(valueAlignment));
 
 	public:
 		MapKeyValuePair() = delete;
@@ -580,7 +580,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
+			static_assert((std::is_same<ItemArg, const Item&>::value));
 
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
@@ -896,7 +896,7 @@ namespace internal
 			typename ValueArg = decltype(std::declval<Pair>().value)>
 		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) noexcept
 		{
-			MOMO_STATIC_ASSERT(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
+			static_assert(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
 			return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
 		}
 
@@ -904,7 +904,7 @@ namespace internal
 		static std::pair<KeyArg&&, ValueArg&&> Convert(
 			std::pair<KeyArg, ValueArg>&& pair) noexcept
 		{
-			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
+			static_assert((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
 				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
@@ -914,7 +914,7 @@ namespace internal
 		static std::pair<const KeyArg&, const ValueArg&> Convert(
 			const std::pair<KeyArg, ValueArg>& pair) noexcept
 		{
-			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
+			static_assert((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
 				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}

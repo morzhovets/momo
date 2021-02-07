@@ -234,7 +234,7 @@ public:
 		}
 		assert(table.GetCount() == count + count2);
 
-		MOMO_STATIC_ASSERT(count2 % 6 == 0);
+		static_assert(count2 % 6 == 0);
 		for (size_t i = 0; i < count2 / 6; ++i)
 		{
 			table.RemoveRow(count, false);

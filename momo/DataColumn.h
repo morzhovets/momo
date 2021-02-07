@@ -33,7 +33,7 @@
 	name(uint64_t{offsetof(Struct, name)}, #name)
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	MOMO_STATIC_ASSERT(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
+	static_assert(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
 	constexpr momo::internal::DataColumn<Type, Tag> \
 	name(momo::internal::StrHasher::GetHashCode64(#name), #name)
 
@@ -367,7 +367,7 @@ public:
 	typedef TStruct Struct;
 
 	static const size_t logVertexCount = tLogVertexCount;
-	MOMO_STATIC_ASSERT(4 <= logVertexCount && logVertexCount < 16);
+	static_assert(4 <= logVertexCount && logVertexCount < 16);
 
 	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
 	static const size_t maxCodeParam = 255;
@@ -772,13 +772,13 @@ public:
 
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
-		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
+		static_assert(Settings::keepRowNumber);
 		return *internal::PtrCaster::Shift<const size_t>(raw, 0);
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
-		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
+		static_assert(Settings::keepRowNumber);
 		*internal::PtrCaster::Shift<size_t>(raw, 0) = number;
 	}
 
@@ -914,7 +914,7 @@ private:
 	{
 		static const size_t size = ItemTraits::template GetSize<Item>();
 		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
-		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(alignment, size));
+		static_assert(internal::ObjectAlignmenter<Item>::Check(alignment, size));
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
@@ -1078,7 +1078,7 @@ public:
 
 	typedef Struct Raw;
 
-	MOMO_STATIC_ASSERT(std::is_class<Struct>::value);
+	static_assert(std::is_class<Struct>::value);
 
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
@@ -1260,7 +1260,7 @@ private:
 
 	static size_t pvGetNumberOffset() noexcept
 	{
-		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
+		static_assert(Settings::keepRowNumber);
 		return internal::UIntMath<>::Ceil(sizeof(Struct),
 			internal::ObjectAlignmenter<size_t>::alignment);
 	}

@@ -35,7 +35,7 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
+		static_assert(0 < maxCount && maxCount < 16);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -292,7 +292,7 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
+		static_assert(0 < maxCount && maxCount < 16);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 

@@ -325,7 +325,7 @@ private:
 
 		Item* pvAllocate(size_t capacity)
 		{
-			MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+			static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 			return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 				capacity * sizeof(Item));
 		}
@@ -348,7 +348,7 @@ private:
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
 		std::enable_if_t<hasInternalCapacity> pvCreateMove(Data&& data) noexcept
 		{
-			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			static_assert(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
 			{
 				mItems = &mInternalItems;
@@ -420,7 +420,7 @@ private:
 			bool hasInternalCapacity = (internalCapacity > 0)>
 		std::enable_if_t<hasInternalCapacity> pvReset(size_t count, ItemsRelocator itemsRelocator)
 		{
-			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			static_assert(ItemTraits::isNothrowRelocatable);
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
 			itemsRelocator(&internalData);
 			pvDeallocate();

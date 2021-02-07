@@ -547,7 +547,7 @@ public:
 		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
-		MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+		static_assert((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
 		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second));
 		size_t count = res.inserted ? 1 : 0;
@@ -647,7 +647,7 @@ public:
 
 	ValueReferenceRKey operator[](Key&& key)
 	{
-		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
+		static_assert(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
 		return !pvIsGreater(iter, static_cast<const Key&>(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
@@ -656,7 +656,7 @@ public:
 
 	ValueReferenceCKey operator[](const Key& key)
 	{
-		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
+		static_assert(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(key);
 		return !pvIsGreater(iter, key)
 			? ValueReferencer::template GetReference<const Key&>(*this, iter)

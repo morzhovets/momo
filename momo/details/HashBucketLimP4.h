@@ -35,7 +35,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 32;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		static_assert((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -71,7 +71,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 48;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		static_assert((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -110,7 +110,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 64;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		static_assert((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -150,7 +150,7 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
+		static_assert(0 < maxCount && maxCount <= 4);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -183,7 +183,7 @@ namespace internal
 		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
 			MemManagerProxy<MemManager>::ptrUsefulBitCount> PtrState;
 
-		MOMO_STATIC_ASSERT(PtrState::bitCount % 8 == 0);
+		static_assert(PtrState::bitCount % 8 == 0);
 		static const size_t hashCount = 4 +
 			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
 

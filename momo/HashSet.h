@@ -481,7 +481,7 @@ public:
 	typedef TSettings Settings;
 	typedef typename ItemTraits::Item Item;
 
-	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+	static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
 private:
 	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
@@ -927,8 +927,8 @@ public:
 	template<typename Set>
 	void MergeTo(Set& dstSet)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, typename Set::Key>::value));
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
+		static_assert((std::is_same<Key, typename Set::Key>::value));
+		static_assert((std::is_same<Item, typename Set::Item>::value));
 		pvMergeTo(dstSet);
 	}
 

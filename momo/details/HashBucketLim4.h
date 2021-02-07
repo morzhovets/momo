@@ -28,7 +28,7 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 
 		static const size_t logMaxCount = tLogMaxCount;
-		MOMO_STATIC_ASSERT(0 < logMaxCount && logMaxCount <= 4);	//?
+		static_assert(0 < logMaxCount && logMaxCount <= 4);	//?
 
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 

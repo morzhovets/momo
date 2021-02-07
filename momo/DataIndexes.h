@@ -1183,7 +1183,7 @@ namespace internal
 		static std::array<size_t, columnCount> GetSortedOffsets(
 			const std::array<size_t, columnCount>& offsets)
 		{
-			MOMO_STATIC_ASSERT(columnCount > 0);
+			static_assert(columnCount > 0);
 			std::array<size_t, columnCount> sortedOffsets = offsets;
 			RadixSorter<>::Sort(sortedOffsets.data(), columnCount);
 			MOMO_CHECK(std::unique(sortedOffsets.begin(), sortedOffsets.end()) == sortedOffsets.end());

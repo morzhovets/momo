@@ -37,7 +37,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
+			static_assert((std::is_same<ItemArg, const Item&>::value));
 
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
@@ -87,7 +87,7 @@ namespace internal
 		typedef TArraySettings ArraySettings;
 
 		static const size_t maxFastCount = tMaxFastCount;
-		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);
+		static_assert(0 < maxFastCount && maxFastCount < 16);
 
 	public:
 		typedef typename ItemTraits::Item Item;

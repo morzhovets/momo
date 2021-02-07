@@ -170,7 +170,7 @@ public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> ByteAllocator;
 
-	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ByteAllocator>::value);
+	//static_assert(std::is_nothrow_move_constructible<ByteAllocator>::value);
 
 public:
 	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))
@@ -277,7 +277,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
 
 	private:
 		template<typename MemManager,
@@ -421,7 +421,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept
@@ -471,7 +471,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept

@@ -193,12 +193,12 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ContainerTraits>::value);
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<ContainerTraits>::value);
-		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible<ContainerTraits>::value);
+		static_assert(std::is_nothrow_move_assignable<ContainerTraits>::value);
+		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
 
 		static const bool keepVersion = tKeepVersion;
-		MOMO_STATIC_ASSERT(!keepVersion);
+		static_assert(!keepVersion);
 
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)

@@ -36,7 +36,7 @@ namespace internal
 		template<typename Value>
 		bool operator()(const Value& value1, const Value& value2) const
 		{
-			MOMO_STATIC_ASSERT((std::is_same<Key,
+			static_assert((std::is_same<Key,
 				typename std::decay<decltype(value1.first)>::type>::value));
 			return comp(value1.first, value2.first);
 		}

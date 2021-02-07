@@ -143,7 +143,7 @@ namespace internal
 		typedef TObject Object;
 
 		static const size_t alignment = tAlignment;
-		MOMO_STATIC_ASSERT(ObjectAlignmenter<Object>::Check(alignment));
+		static_assert(ObjectAlignmenter<Object>::Check(alignment));
 
 	public:
 		const Object* operator&() const noexcept
@@ -345,7 +345,7 @@ namespace internal
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			MOMO_STATIC_ASSERT(isNothrowShiftable);
+			static_assert(isNothrowShiftable);
 			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
 			pvShiftNothrow(memManager, begin, shift, BoolConstant<isNothrowRelocatable>(),
 				BoolConstant<isNothrowSwappable>());
