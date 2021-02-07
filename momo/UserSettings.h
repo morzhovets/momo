@@ -12,12 +12,7 @@
 
 #pragma once
 
-#ifdef __has_include
-#if __has_include(<version>)
-#include <version>	// feature macros
-#endif
-#endif
-
+//#include <version>	// feature macros
 #include <cassert>
 
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
