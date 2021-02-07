@@ -21,6 +21,7 @@ matrix:
             - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
+            - g++-10
             - clang-11
       env:
         - COMPILER="clang++-11"
