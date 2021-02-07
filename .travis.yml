@@ -1,5 +1,6 @@
 language: cpp
 os: linux
+dist: bionic
 
 script:
   - cd test
@@ -13,22 +14,20 @@ matrix:
   include:
 
     - compiler: clang
-      dist: xenial
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main'
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - clang-10
+            - clang-11
       env:
-        - COMPILER="clang++-10"
+        - COMPILER="clang++-11"
         - BUILD_TYPE="Debug"
         - CXXFLAGS="-msse2 -fsanitize=address,undefined"
 
     - compiler: gcc
-      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
@@ -40,7 +39,6 @@ matrix:
 
     - compiler: gcc
       arch: arm64
-      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
@@ -52,7 +50,6 @@ matrix:
 
     - compiler: gcc
       arch: ppc64le
-      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
@@ -64,7 +61,6 @@ matrix:
 
     - compiler: gcc
       arch: s390x
-      dist: bionic
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
