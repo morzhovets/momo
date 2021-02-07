@@ -242,7 +242,7 @@ namespace internal
 	};
 
 	template<typename Struct>
-	struct DataVisitableItemsGetter<Struct, Void<typename Struct::VisitableItems>>
+	struct DataVisitableItemsGetter<Struct, std::void_t<typename Struct::VisitableItems>>
 	{
 		typedef typename Struct::VisitableItems VisitableItems;
 	};

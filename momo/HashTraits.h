@@ -63,7 +63,7 @@ namespace internal
 
 	template<typename HashFunc, typename EqualFunc>
 	struct HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc,
-		Void<typename HashFunc::is_transparent, typename EqualFunc::is_transparent>>
+		std::void_t<typename HashFunc::is_transparent, typename EqualFunc::is_transparent>>
 		: public std::true_type
 	{
 	};

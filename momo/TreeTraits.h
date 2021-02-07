@@ -44,7 +44,7 @@ namespace internal
 	};
 
 	template<typename LessFunc>
-	struct TreeTraitsStdIsValidKeyArg<LessFunc, Void<typename LessFunc::is_transparent>>
+	struct TreeTraitsStdIsValidKeyArg<LessFunc, std::void_t<typename LessFunc::is_transparent>>
 		: public std::true_type
 	{
 	};
