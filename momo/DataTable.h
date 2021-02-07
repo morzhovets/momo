@@ -729,7 +729,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 		ConstSelection>
 	Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
@@ -743,7 +743,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 		Selection>
 	Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
@@ -757,7 +757,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 		size_t>
 	SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
@@ -810,7 +810,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 		DataTable>
 	Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
@@ -826,7 +826,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 		DataTable>
 	ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
@@ -1001,24 +1001,24 @@ private:
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
+	std::enable_if_t<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
 	{
 		GetColumnList().SetNumber(raw, number);
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
+	std::enable_if_t<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
 	{
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	std::enable_if_t<keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
 	{
 		return pvExtractRaw(rowRef.GetNumber());
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	std::enable_if_t<!keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
 	{
 		const Raw* raw = rowRef.GetRaw();
 		size_t number = mRaws.GetCount() - 1;
@@ -1067,7 +1067,7 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	std::enable_if_t<keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
@@ -1107,7 +1107,7 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	std::enable_if_t<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1137,7 +1137,7 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	std::enable_if_t<keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1160,7 +1160,7 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	std::enable_if_t<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1176,7 +1176,7 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	std::enable_if_t<keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1198,7 +1198,7 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	std::enable_if_t<!keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1273,7 +1273,7 @@ private:
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
 		size_t columnCount = sizeof...(Items) + 1,
-		typename = internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount)>>
+		typename = std::enable_if_t<(columnCount > DataTraits::selectEqualerMaxCount)>>
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
@@ -1289,7 +1289,7 @@ private:
 
 	template<typename Result, typename RowFilter, typename... Items,
 		size_t columnCount = sizeof...(Items),
-		typename = internal::EnableIf<(0 < columnCount
+		typename = std::enable_if_t<(0 < columnCount
 			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{

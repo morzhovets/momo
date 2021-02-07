@@ -140,7 +140,7 @@ namespace internal
 		}
 
 		template<typename ArgIterator,
-			typename = EnableIf<std::is_convertible<ArgIterator, Iterator>::value>>
+			typename = std::enable_if_t<std::is_convertible<ArgIterator, Iterator>::value>>
 		HashMapPosition(ArgIterator iter) noexcept
 			: mHashSetPosition(IteratorProxy::GetHashSetIterator(static_cast<Iterator>(iter)))
 		{
@@ -152,7 +152,7 @@ namespace internal
 		}
 
 		template<typename ResIterator,
-			typename = EnableIf<std::is_convertible<Iterator, ResIterator>::value>>
+			typename = std::enable_if_t<std::is_convertible<Iterator, ResIterator>::value>>
 		operator ResIterator() const noexcept
 		{
 			Iterator iter = IteratorProxy(mHashSetPosition);
@@ -558,14 +558,14 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
 		const KeyArg& key) const
 	{
 		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, Position> Find(
 		const KeyArg& key)
 	{
 		return PositionProxy(mHashSet.Find(key));
@@ -577,7 +577,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
 		const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
@@ -754,7 +754,7 @@ public:
 	}
 
 	template<typename PairPredicate>
-	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+	std::enable_if_t<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
 		size_t>
 	Remove(const PairPredicate& pairPred)
 	{

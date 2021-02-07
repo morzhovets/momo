@@ -27,7 +27,7 @@ namespace internal
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
 	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		EnableIf<(tBitCount <= 32)>>
+		std::enable_if_t<(tBitCount <= 32)>>
 	{
 	public:
 		typedef TItem Item;
@@ -63,7 +63,7 @@ namespace internal
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
 	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		EnableIf<(32 < tBitCount && tBitCount <= 48)>>
+		std::enable_if_t<(32 < tBitCount && tBitCount <= 48)>>
 	{
 	public:
 		typedef TItem Item;
@@ -102,7 +102,7 @@ namespace internal
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
 	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		EnableIf<(48 < tBitCount && tBitCount <= 64)>>
+		std::enable_if_t<(48 < tBitCount && tBitCount <= 64)>>
 	{
 	public:
 		typedef TItem Item;

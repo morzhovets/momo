@@ -403,14 +403,14 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> GetLowerBound(
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstIterator> GetLowerBound(
 		const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> GetLowerBound(const KeyArg& key)
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, Iterator> GetLowerBound(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.GetLowerBound(key));
 	}
@@ -426,14 +426,14 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> GetUpperBound(
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstIterator> GetUpperBound(
 		const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> GetUpperBound(const KeyArg& key)
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, Iterator> GetUpperBound(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.GetUpperBound(key));
 	}
@@ -449,13 +449,13 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mTreeSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key)
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, Iterator> Find(const KeyArg& key)
 	{
 		return IteratorProxy(mTreeSet.Find(key));
 	}
@@ -466,7 +466,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
 	{
 		return mTreeSet.ContainsKey(key);
 	}
@@ -477,7 +477,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_t> GetKeyCount(const KeyArg& key) const
+	std::enable_if_t<IsValidKeyArg<KeyArg>::value, size_t> GetKeyCount(const KeyArg& key) const
 	{
 		return mTreeSet.GetKeyCount(key);
 	}
@@ -686,7 +686,7 @@ public:
 	}
 
 	template<typename PairPredicate>
-	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+	std::enable_if_t<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
 		size_t>
 	Remove(const PairPredicate& pairPred)
 	{

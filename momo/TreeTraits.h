@@ -30,7 +30,7 @@ namespace internal
 	};
 
 	template<typename Key, typename KeyArg>
-	struct TreeTraitsIsValidKeyArg<Key, KeyArg, EnableIf<
+	struct TreeTraitsIsValidKeyArg<Key, KeyArg, std::enable_if_t<
 		std::is_convertible<decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()), bool>::value &&
 		std::is_convertible<decltype(std::declval<const KeyArg&>() < std::declval<const Key&>()), bool>::value>>
 		: public std::true_type

@@ -754,7 +754,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
 		const KeyArg& key) const
 	{
 		return pvFind(key);
@@ -766,7 +766,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
 		const KeyArg& key) const
 	{
 		return !!pvFind(key);
@@ -888,7 +888,7 @@ public:
 	}
 
 	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
+	std::enable_if_t<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
 	Remove(const Predicate& pred)
 	{
 		size_t initCount = GetCount();

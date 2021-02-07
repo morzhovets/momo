@@ -585,7 +585,7 @@ public:
 	}
 
 	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
+	std::enable_if_t<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
 	Remove(const Predicate& pred)
 	{
 		return ArrayShifter::Remove(*this, pred);

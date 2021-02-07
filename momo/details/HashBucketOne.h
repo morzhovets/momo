@@ -125,7 +125,7 @@ namespace internal
 
 	private:
 		template<size_t hashStateSize = sizeof(HashState)>
-		static EnableIf<(hashStateSize < sizeof(size_t)), HashState> pvGetHashState(
+		static std::enable_if_t<(hashStateSize < sizeof(size_t)), HashState> pvGetHashState(
 			size_t hashCode) noexcept
 		{
 			static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
@@ -133,7 +133,7 @@ namespace internal
 		}
 
 		template<size_t hashStateSize = sizeof(HashState)>
-		static EnableIf<(hashStateSize >= sizeof(size_t)), HashState> pvGetHashState(
+		static std::enable_if_t<(hashStateSize >= sizeof(size_t)), HashState> pvGetHashState(
 			size_t hashCode) noexcept
 		{
 			return (static_cast<HashState>(hashCode) << 1) | 1;

@@ -907,14 +907,14 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
 		const KeyArg& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(
 		const KeyArg& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
@@ -926,7 +926,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
 		const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
@@ -1075,7 +1075,7 @@ public:
 	}
 
 	template<typename PairPredicate>
-	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+	std::enable_if_t<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
 		size_t>
 	Remove(const PairPredicate& pairPred)
 	{

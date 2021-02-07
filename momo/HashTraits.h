@@ -46,7 +46,7 @@ namespace internal
 		typename TChar = typename TString::value_type,
 		typename TCharTraits = typename TString::traits_type,
 		typename TStringView = std::basic_string_view<TChar, TCharTraits>,
-		typename = EnableIf<std::is_convertible_v<const TString&, TStringView>
+		typename = std::enable_if_t<std::is_convertible_v<const TString&, TStringView>
 			&& !std::is_same_v<TString, TStringView>>>
 	struct HashTraitsStringViewSelector
 	{

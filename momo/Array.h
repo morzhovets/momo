@@ -331,14 +331,14 @@ private:
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<hasInternalCapacity> pvCreate() noexcept
+		std::enable_if_t<hasInternalCapacity> pvCreate() noexcept
 		{
 			mItems = &mInternalItems;
 			mCount = 0;
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<!hasInternalCapacity> pvCreate() noexcept
+		std::enable_if_t<!hasInternalCapacity> pvCreate() noexcept
 		{
 			mItems = nullptr;
 			mCount = 0;
@@ -346,7 +346,7 @@ private:
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<hasInternalCapacity> pvCreateMove(Data&& data) noexcept
+		std::enable_if_t<hasInternalCapacity> pvCreateMove(Data&& data) noexcept
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
@@ -364,7 +364,7 @@ private:
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<!hasInternalCapacity> pvCreateMove(Data&& data) noexcept
+		std::enable_if_t<!hasInternalCapacity> pvCreateMove(Data&& data) noexcept
 		{
 			mItems = data.mItems;
 			mCount = data.mCount;
@@ -418,7 +418,7 @@ private:
 
 		template<typename ItemsRelocator,
 			bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<hasInternalCapacity> pvReset(size_t count, ItemsRelocator itemsRelocator)
+		std::enable_if_t<hasInternalCapacity> pvReset(size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
@@ -431,7 +431,7 @@ private:
 
 		template<typename ItemsRelocator,
 			bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<!hasInternalCapacity> pvReset(size_t count,
+		std::enable_if_t<!hasInternalCapacity> pvReset(size_t count,
 			ItemsRelocator /*itemsRelocator*/) noexcept
 		{
 			(void)count;
@@ -903,7 +903,7 @@ public:
 	}
 
 	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
+	std::enable_if_t<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
 	Remove(const Predicate& pred)
 	{
 		return ArrayShifter::Remove(*this, pred);
@@ -939,7 +939,7 @@ private:
 	}
 
 	template<typename ArgIterator>
-	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value> pvFill(
+	std::enable_if_t<internal::IsForwardIterator<ArgIterator>::value> pvFill(
 		ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<
@@ -950,7 +950,7 @@ private:
 	}
 
 	template<typename ArgIterator>
-	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value> pvFill(
+	std::enable_if_t<!internal::IsForwardIterator<ArgIterator>::value> pvFill(
 		ArgIterator begin, ArgIterator end)
 	{
 		typedef typename ItemTraits::template Creator<

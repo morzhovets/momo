@@ -298,7 +298,7 @@ namespace internal
 
 	private:
 		template<size_t index, typename Void, typename PtrVisitor>
-		EnableIf<(index < std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
+		std::enable_if_t<(index < std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
 			const PtrVisitor& ptrVisitor) const
 		{
 			typedef typename std::tuple_element<index, VisitableItems>::type Item;
@@ -311,21 +311,21 @@ namespace internal
 		}
 
 		template<size_t index, typename Void, typename PtrVisitor>
-		EnableIf<(index == std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
+		std::enable_if_t<(index == std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
 			const PtrVisitor& ptrVisitor) const
 		{
 			pvVisit(item, ptrVisitor);
 		}
 
 		template<typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, DataColumnInfo>::value> pvVisit(
+		std::enable_if_t<IsInvocable<const PtrVisitor&, void, Item*, DataColumnInfo>::value> pvVisit(
 			Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, *this);
 		}
 
 		template<typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*>::value &&
+		std::enable_if_t<IsInvocable<const PtrVisitor&, void, Item*>::value &&
 			!IsInvocable<const PtrVisitor&, void, Item*, DataColumnInfo>::value>
 		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{

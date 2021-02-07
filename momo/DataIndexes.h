@@ -410,7 +410,7 @@ namespace internal
 
 		private:
 			template<size_t index, typename... Items>
-			EnableIf<(index < sizeof...(Items)), bool> pvIsEqual(
+			std::enable_if_t<(index < sizeof...(Items)), bool> pvIsEqual(
 				const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
 				const auto& pair = std::get<index>(key1.tuple);
@@ -421,7 +421,7 @@ namespace internal
 			}
 
 			template<size_t index, typename... Items>
-			EnableIf<(index == sizeof...(Items)), bool> pvIsEqual(
+			std::enable_if_t<(index == sizeof...(Items)), bool> pvIsEqual(
 				const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
 			{
 				return true;
@@ -1375,7 +1375,7 @@ namespace internal
 		}
 
 		template<size_t index, typename... Items>
-		static EnableIf<(index < sizeof...(Items)), size_t> pvGetHashCode(
+		static std::enable_if_t<(index < sizeof...(Items)), size_t> pvGetHashCode(
 			const OffsetItemTuple<Items...>& tuple)
 		{
 			const auto& pair = std::get<index>(tuple);
@@ -1386,7 +1386,7 @@ namespace internal
 		}
 
 		template<size_t index, typename... Items>
-		static EnableIf<(index == sizeof...(Items)), size_t> pvGetHashCode(
+		static std::enable_if_t<(index == sizeof...(Items)), size_t> pvGetHashCode(
 			const OffsetItemTuple<Items...>& /*tuple*/) noexcept
 		{
 			return 0;

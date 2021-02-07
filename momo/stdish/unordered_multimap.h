@@ -359,14 +359,14 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, const_iterator> find(
 		const KeyArg& key) const
 	{
 		return equal_range(key).first;
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, iterator> find(
 		const KeyArg& key)
 	{
 		return equal_range(key).first;
@@ -379,7 +379,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, size_type> count(
 		const KeyArg& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
@@ -392,7 +392,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> contains(
 		const KeyArg& key) const
 	{
 		return count(key) > 0;
@@ -410,7 +410,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value,
 		std::pair<const_iterator, const_iterator>>
 	equal_range(const KeyArg& key) const
 	{
@@ -419,7 +419,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value,
 		std::pair<iterator, iterator>>
 	equal_range(const KeyArg& key)
 	{
@@ -427,11 +427,11 @@ public:
 	}
 
 	//template<typename Value>
-	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
+	//std::enable_if_t<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
+	//std::enable_if_t<std::is_constructible<value_type, Value>::value, iterator>
 	//insert(const_iterator hint, Value&& value)
 
 	//iterator insert(value_type&& value)
@@ -454,7 +454,7 @@ public:
 	}
 
 	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+	std::enable_if_t<std::is_constructible<key_type, const First&>::value
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
 	insert(const std::pair<First, Second>& value)
 	{
@@ -462,7 +462,7 @@ public:
 	}
 
 	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
+	std::enable_if_t<std::is_constructible<key_type, const First&>::value
 		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
 	insert(const_iterator, const std::pair<First, Second>& value)
 	{
@@ -470,7 +470,7 @@ public:
 	}
 
 	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+	std::enable_if_t<std::is_constructible<key_type, First&&>::value
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(std::pair<First, Second>&& value)
 	{
@@ -479,7 +479,7 @@ public:
 	}
 
 	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
+	std::enable_if_t<std::is_constructible<key_type, First&&>::value
 		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
 	insert(const_iterator, std::pair<First, Second>&& value)
 	{
@@ -705,7 +705,7 @@ private:
 
 	template<typename RKey, typename MappedCreator,
 		typename Key = typename std::decay<RKey>::type>
-	momo::internal::EnableIf<std::is_same<key_type, Key>::value, iterator>
+	std::enable_if_t<std::is_same<key_type, Key>::value, iterator>
 	pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
