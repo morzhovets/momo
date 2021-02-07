@@ -56,14 +56,12 @@ void test()
   test0(S({1, 2, 2}), 2, S({1}), 2);
   test0(S({1, 2, 2}), 3, S({1, 2, 2}), 0);
 
-#ifdef __cpp_lib_optional
   //  Test cross-type erasure
   using opt = std::optional<typename S::value_type>;
   test0(S({1, 2, 1}), opt(), S({1, 2, 1}), 0);
   test0(S({1, 2, 1}), opt(1), S({2}), 2);
   test0(S({1, 2, 1}), opt(2), S({1, 1}), 1);
   test0(S({1, 2, 1}), opt(3), S({1, 2, 1}), 0);
-#endif
 }
 
 void main()

@@ -14,10 +14,7 @@
 #include <cfloat>
 #include <string>
 #include <cmath>
-
-#ifdef __cpp_lib_optional
 #include <optional>
-#endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 //#define LIBCPP_TEST_MIN_ALLOCATOR
