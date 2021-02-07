@@ -196,11 +196,9 @@ LIBCXX_TEST_BEGIN(modifiers_merge)
 #include "libcxx/multimap/multimap.modifiers/merge.pass.cpp"
 LIBCXX_TEST_END
 
-#if defined(_MSC_VER) || defined(__cpp_generic_lambdas)
 LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/multimap/multimap.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/multimap/multimap.ops/contains.pass.cpp"

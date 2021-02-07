@@ -76,11 +76,9 @@ LIBCXX_TEST_BEGIN(equal_range_non_const_transparent)
 #include "libcxx/unord.map/equal_range_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
 
-#if defined(_MSC_VER) || defined(__cpp_generic_lambdas)
 LIBCXX_TEST_BEGIN(erase_if_)
 #include "libcxx/unord.map/erase_if.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(find_const)
 #include "libcxx/unord.map/find_const.pass.cpp"
