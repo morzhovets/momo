@@ -160,11 +160,9 @@ LIBCXX_TEST_BEGIN(cons_copy_assign)
 #include "libcxx/set/set.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/set/set.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/set/set.cons/default.pass.cpp"

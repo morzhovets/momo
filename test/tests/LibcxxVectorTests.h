@@ -183,11 +183,9 @@ LIBCXX_TEST_BEGIN(cons_copy_alloc)
 LIBCXX_TEST_END
 
 #ifdef LIBCXX_TEST_ARRAY
-#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/vector/vector.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
-#endif
 #endif
 
 #ifndef LIBCXX_TEST_INTCAP_ARRAY

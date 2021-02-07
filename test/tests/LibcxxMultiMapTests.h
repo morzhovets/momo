@@ -60,8 +60,6 @@ LIBCXX_TEST_BEGIN(cons_copy_assign)
 #include "libcxx/multimap/multimap.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
-
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/multimap/multimap.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
@@ -69,8 +67,6 @@ LIBCXX_TEST_END
 //LIBCXX_TEST_BEGIN(cons_deduct_const)
 //#include "libcxx/multimap/multimap.cons/deduct_const.pass.cpp"
 //LIBCXX_TEST_END
-
-#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/multimap/multimap.cons/default.pass.cpp"

@@ -72,8 +72,6 @@ LIBCXX_TEST_BEGIN(cons_copy_assign)
 #include "libcxx/map/map.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
-
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/map/map.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
@@ -81,8 +79,6 @@ LIBCXX_TEST_END
 //LIBCXX_TEST_BEGIN(cons_deduct_const)
 //#include "libcxx/map/map.cons/deduct_const.pass.cpp"
 //LIBCXX_TEST_END
-
-#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/map/map.cons/default.pass.cpp"
