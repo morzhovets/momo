@@ -56,7 +56,7 @@ namespace internal
 
 		set_node_handle& operator=(const set_node_handle&) = delete;
 
-		MOMO_NODISCARD bool empty() const noexcept
+		[[nodiscard]] bool empty() const noexcept
 		{
 			return mSetExtractedItem.IsEmpty();
 		}
@@ -137,7 +137,7 @@ namespace internal
 
 		map_node_handle& operator=(const map_node_handle&) = delete;
 
-		MOMO_NODISCARD bool empty() const noexcept
+		[[nodiscard]] bool empty() const noexcept
 		{
 			return mMapExtractedPair.IsEmpty();
 		}

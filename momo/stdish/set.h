@@ -306,7 +306,7 @@ public:
 		return mTreeSet.GetCount();
 	}
 
-	MOMO_NODISCARD bool empty() const noexcept
+	[[nodiscard]] bool empty() const noexcept
 	{
 		return mTreeSet.IsEmpty();
 	}

@@ -326,7 +326,7 @@ namespace internal
 			return mTreeMap.GetCount();
 		}
 
-		MOMO_NODISCARD bool empty() const noexcept
+		[[nodiscard]] bool empty() const noexcept
 		{
 			return mTreeMap.IsEmpty();
 		}

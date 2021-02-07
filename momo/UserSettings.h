@@ -154,12 +154,3 @@
 #undef MOMO_HAS_GUARANTEED_COPY_ELISION
 #endif
 #endif
-
-#ifdef __has_cpp_attribute
-#if __has_cpp_attribute(nodiscard)
-#define MOMO_NODISCARD [[nodiscard]]
-#endif
-#endif
-#ifndef MOMO_NODISCARD
-#define MOMO_NODISCARD
-#endif

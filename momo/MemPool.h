@@ -248,7 +248,7 @@ public:
 	}
 
 	template<typename ResObject = void>
-	MOMO_NODISCARD ResObject* Allocate()
+	[[nodiscard]] ResObject* Allocate()
 	{
 		void* block;
 		if (pvUseCache() && mCachedCount > 0)

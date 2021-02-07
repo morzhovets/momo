@@ -271,7 +271,7 @@ public:
 		mArray.SetCount(size, value);
 	}
 
-	MOMO_NODISCARD bool empty() const noexcept
+	[[nodiscard]] bool empty() const noexcept
 	{
 		return mArray.IsEmpty();
 	}

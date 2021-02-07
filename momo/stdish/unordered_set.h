@@ -334,7 +334,7 @@ public:
 		return mHashSet.GetCount();
 	}
 
-	MOMO_NODISCARD bool empty() const noexcept
+	[[nodiscard]] bool empty() const noexcept
 	{
 		return mHashSet.IsEmpty();
 	}
