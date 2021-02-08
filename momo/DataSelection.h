@@ -453,7 +453,6 @@ namespace internal
 
 		struct ConstIteratorProxy : public ConstIterator
 		{
-			typedef typename DataSelection::ConstIterator ConstIterator;	//? vs
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		};
 

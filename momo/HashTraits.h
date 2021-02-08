@@ -78,8 +78,7 @@ template<typename Key,
 	typename Result = size_t>
 struct HashCoder : private std::hash<Key>
 {
-	Result operator()(const Key& key) const
-		//noexcept(noexcept(std::hash<Key>::operator()(key)))	// gcc
+	Result operator()(const Key& key) const noexcept(noexcept(std::hash<Key>::operator()(key)))
 	{
 		return static_cast<Result>(std::hash<Key>::operator()(key));
 	}
@@ -89,8 +88,7 @@ struct HashCoder : private std::hash<Key>
 template<typename Key>
 struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
-	decltype(auto) operator()(const Key& key) const
-		//noexcept(noexcept(MOMO_HASH_CODER(key)))
+	decltype(auto) operator()(const Key& key) const noexcept(noexcept(MOMO_HASH_CODER(key)))
 	{
 		return MOMO_HASH_CODER(key);
 	}
