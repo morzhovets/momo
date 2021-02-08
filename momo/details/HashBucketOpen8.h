@@ -36,6 +36,8 @@ namespace internal
 	private:
 		typedef internal::BucketOpenN1<TItemTraits, 7, false, int64_t> BucketOpenN1;
 
+		using typename BucketOpenN1::Byte;
+
 	public:
 		static const size_t maxCount = 7;
 
@@ -59,7 +61,7 @@ namespace internal
 		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
 			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, BucketOpenN1::ptGetData());
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));

@@ -31,6 +31,8 @@ namespace internal
 
 		static const bool reverse = tReverse;
 
+		typedef unsigned char Byte;	//?
+
 	public:
 		static const size_t maxCount = tMaxCount;
 		static_assert(0 < maxCount && maxCount < 8);
@@ -47,8 +49,6 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef unsigned char Byte;
-
 		static const Byte emptyShortHash = 248;
 		static const Byte infProbeExp = 255;
 
