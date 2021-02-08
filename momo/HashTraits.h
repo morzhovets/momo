@@ -78,7 +78,10 @@ template<typename Key,
 	typename Result = size_t>
 struct HashCoder : private std::hash<Key>
 {
-	Result operator()(const Key& key) const noexcept(noexcept(std::hash<Key>::operator()(key)))
+	Result operator()(const Key& key) const
+#ifndef __GNUC__	//?
+		noexcept(noexcept(std::hash<Key>::operator()(key)))
+#endif
 	{
 		return static_cast<Result>(std::hash<Key>::operator()(key));
 	}
