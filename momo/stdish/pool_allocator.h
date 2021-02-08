@@ -15,10 +15,7 @@
 
 #include "../MemPool.h"
 
-namespace momo
-{
-
-namespace stdish
+namespace momo::stdish
 {
 
 /*!
@@ -178,6 +175,4 @@ private:
 	std::shared_ptr<MemPool> mMemPool;
 };
 
-} // namespace stdish
-
-} // namespace momo
+} // namespace momo::stdish

@@ -17,10 +17,7 @@
 #include "../TreeMap.h"
 #include "node_handle.h"
 
-namespace momo
-{
-
-namespace stdish
+namespace momo::stdish
 {
 
 namespace internal
@@ -1088,6 +1085,4 @@ MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
 
-} // namespace stdish
-
-} // namespace momo
+} // namespace momo::stdish

@@ -13,10 +13,7 @@
 #include "../SetUtility.h"
 #include "../MapUtility.h"
 
-namespace momo
-{
-
-namespace stdish
+namespace momo::stdish
 {
 
 namespace internal
@@ -190,6 +187,4 @@ namespace internal
 	};
 }
 
-} // namespace stdish
-
-} // namespace momo
+} // namespace momo::stdish

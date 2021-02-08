@@ -16,10 +16,7 @@
 
 #include "../HashMultiMap.h"
 
-namespace momo
-{
-
-namespace stdish
+namespace momo::stdish
 {
 
 /*!
@@ -829,6 +826,4 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
 
-} // namespace stdish
-
-} // namespace momo
+} // namespace momo::stdish

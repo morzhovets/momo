@@ -16,10 +16,7 @@
 
 #include "../Array.h"
 
-namespace momo
-{
-
-namespace stdish
+namespace momo::stdish
 {
 
 /*!
@@ -514,6 +511,4 @@ template<size_t tInternalCapacity, typename TValue,
 using vector_intcap = vector<TValue, TAllocator,
 	ArrayIntCap<tInternalCapacity, TValue, MemManagerStd<TAllocator>>>;
 
-} // namespace stdish
-
-} // namespace momo
+} // namespace momo::stdish
