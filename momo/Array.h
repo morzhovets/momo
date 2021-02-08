@@ -223,7 +223,28 @@ private:
 		Data(Data&& data) noexcept
 			: MemManager(std::move(data.GetMemManager()))
 		{
-			pvCreateMove(std::move(data));
+			if constexpr (internalCapacity == 0)
+			{
+				mItems = data.mItems;
+				mCount = data.mCount;
+				mCapacity = data.mCapacity;
+			}
+			else
+			{
+				static_assert(ItemTraits::isNothrowRelocatable);
+				if (data.pvIsInternal())
+				{
+					mItems = &mInternalItems;
+					ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
+				}
+				else
+				{
+					mItems = data.mItems;
+					mCapacity = data.mCapacity;
+				}
+				mCount = data.mCount;
+			}
+			data.pvCreate();
 		}
 
 		Data(const Data&) = delete;
@@ -265,10 +286,26 @@ private:
 			pvCheckCapacity(capacity);
 			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
 				return false;
-			static const bool canReallocate = ItemTraits::isTriviallyRelocatable
-				&& MemManagerProxy::canReallocate;
-			return pvSetCapacity(capacity, internal::BoolConstant<canReallocate>(),
-				internal::BoolConstant<MemManagerProxy::canReallocateInplace>());
+			if constexpr (ItemTraits::isTriviallyRelocatable && MemManagerProxy::canReallocate)
+			{
+				mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
+					mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
+				mCapacity = capacity;
+				return true;
+			}
+			else if constexpr (MemManagerProxy::canReallocateInplace)
+			{
+				bool reallocDone = MemManagerProxy::ReallocateInplace(GetMemManager(),
+					mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
+				if (!reallocDone)
+					return false;
+				mCapacity = capacity;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		size_t GetCount() const noexcept
@@ -310,9 +347,21 @@ private:
 				mCount = count;
 				mCapacity = capacity;
 			}
+			else if constexpr (internalCapacity == 0)
+			{
+				MOMO_ASSERT(count == 0);
+				pvDeallocate();
+				pvCreate();
+			}
 			else
 			{
-				pvReset(count, itemsRelocator);
+				static_assert(ItemTraits::isNothrowRelocatable);
+				internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
+				itemsRelocator(&internalData);
+				pvDeallocate();
+				mItems = &mInternalItems;
+				ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
+				mCount = count;
 			}
 		}
 
@@ -330,46 +379,18 @@ private:
 				capacity * sizeof(Item));
 		}
 
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<hasInternalCapacity> pvCreate() noexcept
+		void pvCreate() noexcept
 		{
-			mItems = &mInternalItems;
-			mCount = 0;
-		}
-
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<!hasInternalCapacity> pvCreate() noexcept
-		{
-			mItems = nullptr;
-			mCount = 0;
-			mCapacity = 0;
-		}
-
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<hasInternalCapacity> pvCreateMove(Data&& data) noexcept
-		{
-			static_assert(ItemTraits::isNothrowRelocatable);
-			if (data.pvIsInternal())
+			if constexpr (internalCapacity == 0)
 			{
-				mItems = &mInternalItems;
-				ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
+				mItems = nullptr;
+				mCapacity = 0;
 			}
 			else
 			{
-				mItems = data.mItems;
-				mCapacity = data.mCapacity;
+				mItems = &mInternalItems;
 			}
-			mCount = data.mCount;
-			data.pvCreate();
-		}
-
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<!hasInternalCapacity> pvCreateMove(Data&& data) noexcept
-		{
-			mItems = data.mItems;
-			mCount = data.mCount;
-			mCapacity = data.mCapacity;
-			data.pvCreate();
+			mCount = 0;
 		}
 
 		void pvDestroy() noexcept
@@ -387,57 +408,6 @@ private:
 		bool pvIsInternal() const noexcept
 		{
 			return mItems == &mInternalItems;
-		}
-
-		template<bool canReallocateInplace>
-		bool pvSetCapacity(size_t capacity, std::true_type /*canReallocate*/,
-			internal::BoolConstant<canReallocateInplace>)
-		{
-			mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
-				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
-			mCapacity = capacity;
-			return true;
-		}
-
-		bool pvSetCapacity(size_t capacity, std::false_type /*canReallocate*/,
-			std::true_type /*canReallocateInplace*/) noexcept
-		{
-			bool reallocDone = MemManagerProxy::ReallocateInplace(GetMemManager(),
-				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
-			if (!reallocDone)
-				return false;
-			mCapacity = capacity;
-			return true;
-		}
-
-		bool pvSetCapacity(size_t /*capacity*/, std::false_type /*canReallocate*/,
-			std::false_type /*canReallocateInplace*/) noexcept
-		{
-			return false;
-		}
-
-		template<typename ItemsRelocator,
-			bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<hasInternalCapacity> pvReset(size_t count, ItemsRelocator itemsRelocator)
-		{
-			static_assert(ItemTraits::isNothrowRelocatable);
-			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
-			itemsRelocator(&internalData);
-			pvDeallocate();
-			mItems = &mInternalItems;
-			ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
-			mCount = count;
-		}
-
-		template<typename ItemsRelocator,
-			bool hasInternalCapacity = (internalCapacity > 0)>
-		std::enable_if_t<!hasInternalCapacity> pvReset(size_t count,
-			ItemsRelocator /*itemsRelocator*/) noexcept
-		{
-			(void)count;
-			MOMO_ASSERT(count == 0);
-			pvDeallocate();
-			pvCreate();
 		}
 
 	private:
@@ -491,7 +461,16 @@ public:
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
 			std::move(memManager))
 	{
-		pvFill(begin, end);
+		typedef typename ItemTraits::template Creator<
+			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
+		for (ArgIterator iter = begin; iter != end; ++iter)
+		{
+			if constexpr (internal::IsForwardIterator<ArgIterator>::value)
+				AddBackNogrowCrt(IterCreator(thisMemManager, *iter));
+			else
+				AddBackCrt(IterCreator(thisMemManager, *iter));
+		}
 	}
 
 	Array(std::initializer_list<Item> items)
@@ -517,7 +496,8 @@ public:
 	explicit Array(const Array& array, bool shrink)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		pvFill(array.GetBegin(), array.GetEnd());
+		for (const Item& item : array)
+			AddBackNogrow(item);
 	}
 
 	explicit Array(const Array& array, MemManager memManager)
@@ -789,27 +769,60 @@ public:
 
 	void AddBack(Item&& item)
 	{
-		if (GetCount() < GetCapacity())
+		size_t initCount = GetCount();
+		if (initCount < GetCapacity())
 		{
 			pvAddBackNogrow(typename ItemTraits::template Creator<Item&&>(
 				GetMemManager(), std::move(item)));
 		}
+		else if constexpr (ItemTraits::isNothrowMoveConstructible)
+		{
+			size_t newCount = initCount + 1;
+			size_t itemIndex = pvIndexOf(static_cast<const Item&>(item));
+			pvGrow(newCount, ArrayGrowCause::add);
+			Item* items = GetItems();
+			typename ItemTraits::template Creator<Item&&>(GetMemManager(),
+				std::move((itemIndex == internal::UIntConst::maxSize)
+					? item : items[itemIndex]))(items + initCount);
+			mData.SetCount(newCount);
+		}
 		else
 		{
-			pvAddBackGrow(std::move(item));
+			pvAddBackGrow(typename ItemTraits::template Creator<Item&&>(
+				GetMemManager(), std::move(item)));
 		}
 	}
 
 	void AddBack(const Item& item)
 	{
-		if (GetCount() < GetCapacity())
+		size_t initCount = GetCount();
+		if (initCount < GetCapacity())
 		{
 			pvAddBackNogrow(typename ItemTraits::template Creator<const Item&>(
 				GetMemManager(), item));
 		}
+		else if constexpr (ItemTraits::isNothrowRelocatable)
+		{
+			size_t newCount = initCount + 1;
+			internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
+			MemManager& memManager = GetMemManager();
+			typename ItemTraits::template Creator<const Item&>(memManager, item)(&itemBuffer);
+			try
+			{
+				pvGrow(newCount, ArrayGrowCause::add);
+			}
+			catch (...)
+			{
+				ItemTraits::Destroy(memManager, &itemBuffer, 1);
+				throw;
+			}
+			ItemTraits::Relocate(memManager, &itemBuffer, GetItems() + initCount, 1);
+			mData.SetCount(newCount);
+		}
 		else
 		{
-			pvAddBackGrow(item);
+			pvAddBackGrow(typename ItemTraits::template Creator<const Item&>(
+				GetMemManager(), item));
 		}
 	}
 
@@ -939,28 +952,6 @@ private:
 		::new(static_cast<void*>(&mData)) Data(std::move(array.mData));
 	}
 
-	template<typename ArgIterator>
-	std::enable_if_t<internal::IsForwardIterator<ArgIterator>::value> pvFill(
-		ArgIterator begin, ArgIterator end)
-	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-		MemManager& memManager = GetMemManager();
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackNogrowCrt(IterCreator(memManager, *iter));
-	}
-
-	template<typename ArgIterator>
-	std::enable_if_t<!internal::IsForwardIterator<ArgIterator>::value> pvFill(
-		ArgIterator begin, ArgIterator end)
-	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-		MemManager& memManager = GetMemManager();
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackCrt(IterCreator(memManager, *iter));
-	}
-
 	static size_t pvGrowCapacity(size_t capacity, size_t minNewCapacity,
 		ArrayGrowCause growCause, bool realloc)
 	{
@@ -1009,62 +1000,6 @@ private:
 				std::forward<ItemCreator>(itemCreator), newItems + initCount);
 		};
 		mData.Reset(newCapacity, newCount, itemsRelocator);
-	}
-
-	void pvAddBackGrow(Item&& item)
-	{
-		pvAddBackGrow(std::move(item),
-			internal::BoolConstant<ItemTraits::isNothrowMoveConstructible>());
-	}
-
-	void pvAddBackGrow(Item&& item, std::true_type /*isNothrowMoveConstructible*/)
-	{
-		size_t initCount = GetCount();
-		size_t newCount = initCount + 1;
-		size_t itemIndex = pvIndexOf(static_cast<const Item&>(item));
-		pvGrow(newCount, ArrayGrowCause::add);
-		Item* items = GetItems();
-		typename ItemTraits::template Creator<Item&&>(GetMemManager(),
-			std::move((itemIndex == internal::UIntConst::maxSize)
-				? item : items[itemIndex]))(items + initCount);
-		mData.SetCount(newCount);
-	}
-
-	void pvAddBackGrow(Item&& item, std::false_type /*isNothrowMoveConstructible*/)
-	{
-		pvAddBackGrow(typename ItemTraits::template Creator<Item&&>(GetMemManager(),
-			std::move(item)));
-	}
-
-	void pvAddBackGrow(const Item& item)
-	{
-		pvAddBackGrow(item,
-			internal::BoolConstant<ItemTraits::isNothrowRelocatable>());
-	}
-
-	void pvAddBackGrow(const Item& item, std::true_type /*isNothrowRelocatable*/)
-	{
-		size_t initCount = GetCount();
-		size_t newCount = initCount + 1;
-		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		MemManager& memManager = GetMemManager();
-		typename ItemTraits::template Creator<const Item&>(memManager, item)(&itemBuffer);
-		try
-		{
-			pvGrow(newCount, ArrayGrowCause::add);
-		}
-		catch (...)
-		{
-			ItemTraits::Destroy(memManager, &itemBuffer, 1);
-			throw;
-		}
-		ItemTraits::Relocate(memManager, &itemBuffer, GetItems() + initCount, 1);
-		mData.SetCount(newCount);
-	}
-
-	void pvAddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
-	{
-		pvAddBackGrow(typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
 	void pvRemoveBack(size_t count) noexcept
