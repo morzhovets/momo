@@ -1000,30 +1000,26 @@ private:
 			pvSetNumber(mRaws[i], i);
 	}
 
-	template<bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
+	void pvSetNumber(Raw* raw, size_t number) noexcept
 	{
-		GetColumnList().SetNumber(raw, number);
+		if constexpr (Settings::keepRowNumber)
+			GetColumnList().SetNumber(raw, number);
 	}
 
-	template<bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
+	Raw* pvExtractRaw(ConstRowReference rowRef)
 	{
-	}
-
-	template<bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
-	{
-		return pvExtractRaw(rowRef.GetNumber());
-	}
-
-	template<bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<!keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
-	{
-		const Raw* raw = rowRef.GetRaw();
-		size_t number = mRaws.GetCount() - 1;
-		while (mRaws[number] != raw)
-			--number;
+		size_t number;
+		if constexpr (Settings::keepRowNumber)
+		{
+			number = rowRef.GetNumber();
+		}
+		else
+		{
+			const Raw* raw = rowRef.GetRaw();
+			number = mRaws.GetCount() - 1;
+			while (mRaws[number] != raw)
+				--number;
+		}
 		return pvExtractRaw(number);
 	}
 

@@ -298,23 +298,22 @@ namespace internal
 
 	private:
 		template<size_t index, typename Void, typename PtrVisitor>
-		std::enable_if_t<(index < std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
-			const PtrVisitor& ptrVisitor) const
+		void pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
 		{
-			typedef typename std::tuple_element<index, VisitableItems>::type Item;
-			typedef typename std::conditional<std::is_const<Void>::value,
-				const Item*, Item*>::type ItemPtr;
-			if (typeid(Item) == mTypeInfo)
-				pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
+			if constexpr (index < std::tuple_size_v<VisitableItems>)
+			{
+				typedef typename std::tuple_element<index, VisitableItems>::type Item;
+				typedef typename std::conditional<std::is_const<Void>::value,
+					const Item*, Item*>::type ItemPtr;
+				if (typeid(Item) == mTypeInfo)
+					pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
+				else
+					pvVisitRec<index + 1>(item, ptrVisitor);
+			}
 			else
-				pvVisitRec<index + 1>(item, ptrVisitor);
-		}
-
-		template<size_t index, typename Void, typename PtrVisitor>
-		std::enable_if_t<(index == std::tuple_size<VisitableItems>::value)> pvVisitRec(Void* item,
-			const PtrVisitor& ptrVisitor) const
-		{
-			pvVisit(item, ptrVisitor);
+			{
+				return pvVisit(item, ptrVisitor);
+			}
 		}
 
 		template<typename Item, typename PtrVisitor>

@@ -410,21 +410,21 @@ namespace internal
 
 		private:
 			template<size_t index, typename... Items>
-			std::enable_if_t<(index < sizeof...(Items)), bool> pvIsEqual(
-				const HashTupleKey<Items...>& key1, Raw* key2) const
+			bool pvIsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
 			{
-				const auto& pair = std::get<index>(key1.tuple);
-				const auto& item1 = pair.second;
-				typedef typename std::decay<decltype(item1)>::type Item;
-				const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair.first);
-				return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
-			}
-
-			template<size_t index, typename... Items>
-			std::enable_if_t<(index == sizeof...(Items)), bool> pvIsEqual(
-				const HashTupleKey<Items...>& /*key1*/, Raw* /*key2*/) const noexcept
-			{
-				return true;
+				if constexpr (index < sizeof...(Items))
+				{
+					const auto& pair = std::get<index>(key1.tuple);
+					const auto& item1 = pair.second;
+					typedef typename std::decay<decltype(item1)>::type Item;
+					const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair.first);
+					return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
+				}
+				else
+				{
+					(void)key1; (void)key2;
+					return true;
+				}
 			}
 
 		private:
@@ -1375,21 +1375,21 @@ namespace internal
 		}
 
 		template<size_t index, typename... Items>
-		static std::enable_if_t<(index < sizeof...(Items)), size_t> pvGetHashCode(
-			const OffsetItemTuple<Items...>& tuple)
+		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& tuple)
 		{
-			const auto& pair = std::get<index>(tuple);
-			const auto& item = pair.second;
-			size_t hashCode = pvGetHashCode<index + 1>(tuple);
-			DataTraits::AccumulateHashCode(hashCode, item, pair.first);
-			return hashCode;
-		}
-
-		template<size_t index, typename... Items>
-		static std::enable_if_t<(index == sizeof...(Items)), size_t> pvGetHashCode(
-			const OffsetItemTuple<Items...>& /*tuple*/) noexcept
-		{
-			return 0;
+			if constexpr (index < sizeof...(Items))
+			{
+				const auto& pair = std::get<index>(tuple);
+				const auto& item = pair.second;
+				size_t hashCode = pvGetHashCode<index + 1>(tuple);
+				DataTraits::AccumulateHashCode(hashCode, item, pair.first);
+				return hashCode;
+			}
+			else
+			{
+				(void)tuple;
+				return 0;
+			}
 		}
 
 		template<typename Void, typename Item, typename... Items>
