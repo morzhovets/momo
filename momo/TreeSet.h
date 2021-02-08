@@ -1092,7 +1092,7 @@ private:
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = node->GetCount();
-		if (TreeTraits::useLinearSearch)
+		if constexpr (TreeTraits::useLinearSearch)
 		{
 			for (; leftIndex < rightIndex; ++leftIndex)
 			{

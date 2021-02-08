@@ -430,7 +430,7 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			if (useHashCodePartGetter)
+			if constexpr (useHashCodePartGetter)
 				return size_t{mPtrState.GetState()} + 1;
 			else if (maxCount == 4 && IsFull())
 				return 4;

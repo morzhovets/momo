@@ -390,7 +390,7 @@ public:
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
 		size_t shortCode = static_cast<size_t>(code + (code >> 32));
 		shortCode += shortCode >> 16;
-		if (logVertexCount < 8)
+		if constexpr (logVertexCount < 8)
 			shortCode += shortCode >> 8;
 		size_t vertex1 = (shortCode & vertexCount1) ^ (codeParam >> 4);
 		size_t vertex2 = ((shortCode >> logVertexCount) & vertexCount1) ^ (codeParam & 15);

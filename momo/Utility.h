@@ -61,7 +61,8 @@
 #define MOMO_CHECK(expr) \
 	do { \
 		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \
-		if (Settings::checkMode == CheckMode::exception) MOMO_CHECK_EXCEPTION(expr); \
+		if constexpr (Settings::checkMode == CheckMode::exception) \
+			MOMO_CHECK_EXCEPTION(expr); \
 	} while (false)
 
 #define MOMO_EXTRA_CHECK(expr) \

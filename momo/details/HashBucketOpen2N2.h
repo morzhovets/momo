@@ -147,7 +147,7 @@ namespace internal
 			Item* newItem = &mItems[maxCount - 1 - count];
 			std::forward<ItemCreator>(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
-			if (useHashCodePartGetter)
+			if constexpr (useHashCodePartGetter)
 			{
 				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);
@@ -169,7 +169,7 @@ namespace internal
 			std::forward<ItemReplacer>(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
 			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
 			mHashData.shortHashes[maxCount - count] = emptyShortHash;
-			if (useHashCodePartGetter)
+			if constexpr (useHashCodePartGetter)
 				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
 			--mState[1];
 			return iter;
