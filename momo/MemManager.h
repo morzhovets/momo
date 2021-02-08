@@ -382,32 +382,18 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
+			if constexpr (HasIsEqual<MemManager>::value)
+				return memManager1.IsEqual(memManager2);
+			else
+				return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
 		}
 
 	private:
-		template<size_t shift = ptrUsefulBitCount>
-		static std::enable_if_t<(shift < sizeof(void*) * 8)> pvCheckBits(void* ptr) noexcept
+		static void pvCheckBits(void* ptr) noexcept
 		{
 			(void)ptr;
-			MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> shift == uintptr_t{0});
-		}
-
-		template<size_t shift = ptrUsefulBitCount>
-		static std::enable_if_t<(shift == sizeof(void*) * 8)> pvCheckBits(void* /*ptr*/) noexcept
-		{
-		}
-
-		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
-			std::true_type /*hasIsEqual*/) noexcept
-		{
-			return memManager1.IsEqual(memManager2);
-		}
-
-		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
-			std::false_type /*hasIsEqual*/) noexcept
-		{
-			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
+			if constexpr (ptrUsefulBitCount < sizeof(void*) * 8)
+				MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> ptrUsefulBitCount == uintptr_t{0});
 		}
 	};
 
