@@ -83,15 +83,7 @@ public:
 	{
 		static_assert((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
 		static_assert((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
-		return key1 < key2;
-	}
-
-	template<typename KeyArg1, typename KeyArg2>
-	bool IsLess(KeyArg1* key1, KeyArg2* key2) const noexcept
-	{
-		static_assert((std::is_same<Key, KeyArg1*>::value) || IsValidKeyArg<KeyArg1*>::value);
-		static_assert((std::is_same<Key, KeyArg2*>::value) || IsValidKeyArg<KeyArg2*>::value);
-		return std::less<const void*>()(key1, key2);
+		return std::less<>()(key1, key2);
 	}
 };
 
