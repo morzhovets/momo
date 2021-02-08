@@ -13,20 +13,20 @@ script:
 matrix:
   include:
 
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
-              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-          packages:
-            - g++-10
-            - clang-10
-      env:
-        - COMPILER="clang++-10"
-        - BUILD_TYPE="Debug"
-        - CXXFLAGS="-msse2 -fsanitize=address,undefined"
+#    - compiler: clang
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
+#              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+#          packages:
+#            - g++-10
+#            - clang-11
+#      env:
+#        - COMPILER="clang++-11"
+#        - BUILD_TYPE="Debug"
+#        - CXXFLAGS="-msse2 -fsanitize=address,undefined"
 
     - compiler: gcc
       addons:
