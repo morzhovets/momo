@@ -558,8 +558,15 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last,
-			std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
+		if constexpr (std::is_same_v<key_type, std::decay_t<decltype(first->first)>>)
+		{
+			mHashMap.Insert(first, last);
+		}
+		else
+		{
+			for (Iterator iter = first; iter != last; ++iter)
+				insert(*iter);
+		}
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -945,19 +952,6 @@ private:
 		return { IteratorProxy(resPos), true };
 	}
 #endif
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
-	{
-		mHashMap.Insert(first, last);
-	}
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
-	{
-		for (Iterator iter = first; iter != last; ++iter)
-			insert(*iter);
-	}
 
 	template<typename Hint, typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)

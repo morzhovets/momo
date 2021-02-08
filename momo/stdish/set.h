@@ -461,8 +461,15 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last,
-			std::is_same<value_type, typename std::decay<decltype(*first)>::type>());
+		if constexpr (std::is_same_v<value_type, std::decay_t<decltype(*first)>>)
+		{
+			mTreeSet.Insert(first, last);
+		}
+		else
+		{
+			for (Iterator iter = first; iter != last; ++iter)
+				emplace(*iter);
+		}
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -587,19 +594,6 @@ private:
 		if (hint != end() && !pvIsOrdered(key, *hint))
 			return false;
 		return true;
-	}
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isValueType*/)
-	{
-		mTreeSet.Insert(first, last);
-	}
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isValueType*/)
-	{
-		for (Iterator iter = first; iter != last; ++iter)
-			emplace(*iter);
 	}
 
 private:

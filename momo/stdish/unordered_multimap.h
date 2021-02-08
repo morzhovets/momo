@@ -489,8 +489,15 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last,
-			std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
+		if constexpr (std::is_same_v<key_type, std::decay_t<decltype(first->first)>>)
+		{
+			mHashMultiMap.Add(first, last);
+		}
+		else
+		{
+			for (Iterator iter = first; iter != last; ++iter)
+				insert(*iter);
+		}
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -710,19 +717,6 @@ private:
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator)));
-	}
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
-	{
-		mHashMultiMap.Add(first, last);
-	}
-
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
-	{
-		for (Iterator iter = first; iter != last; ++iter)
-			insert(*iter);
 	}
 
 private:
