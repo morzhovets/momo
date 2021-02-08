@@ -26,7 +26,7 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 
-#if defined(_MSC_VER) && _MSC_VER == 1900 && !defined(_DEBUG)   // VS2015 Release
+#if defined(_MSC_VER) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
 #undef TEST_LIBCXX_TREE_MAP
 #endif
 
