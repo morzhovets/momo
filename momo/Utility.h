@@ -189,7 +189,7 @@ namespace internal
 		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{
 			typedef std::conditional_t<std::is_const<Object>::value,
-				const char, char> Byte;
+				const std::byte, std::byte> Byte;
 			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
 				+ static_cast<ptrdiff_t>(byteOffset));
 		}

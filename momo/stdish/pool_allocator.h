@@ -34,7 +34,7 @@ namespace stdish
 */
 
 template<typename TValue,
-	typename TBaseAllocator = std::allocator<char>,
+	typename TBaseAllocator = std::allocator<std::byte>,
 	typename TMemPoolParams = MemPoolParams<>>
 class unsynchronized_pool_allocator
 {

@@ -161,14 +161,14 @@ public:
 };
 #endif
 
-//! `MemManagerStd` uses `allocator<char>::allocate` and `deallocate`
+//! `MemManagerStd` uses `allocator<std::byte>::allocate` and `deallocate`
 template<typename TAllocator,
 	bool tUseMemManagerDefault = true>
-class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<char>
+class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<std::byte>
 {
 public:
 	typedef TAllocator Allocator;
-	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> ByteAllocator;
+	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<std::byte> ByteAllocator;
 
 	//static_assert(std::is_nothrow_move_constructible<ByteAllocator>::value);
 
@@ -205,7 +205,7 @@ public:
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
 		std::allocator_traits<ByteAllocator>::deallocate(GetByteAllocator(),
-			static_cast<char*>(ptr), size);
+			static_cast<std::byte*>(ptr), size);
 	}
 
 	bool IsEqual(const MemManagerStd& memManager) const noexcept
@@ -230,11 +230,11 @@ typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 //! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
 template<typename Item>
 class MemManagerStd<std::allocator<Item>, true>
-	: private std::allocator<char>, public MemManagerDefault
+	: private std::allocator<std::byte>, public MemManagerDefault
 {
 public:
 	typedef std::allocator<Item> Allocator;
-	typedef std::allocator<char> ByteAllocator;
+	typedef std::allocator<std::byte> ByteAllocator;
 
 public:
 	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())

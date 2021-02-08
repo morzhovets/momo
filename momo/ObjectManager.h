@@ -200,7 +200,7 @@ namespace internal
 			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
 				std::index_sequence<indexes...>)
 			{
-				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
+				std::allocator_traits<Allocator>::template rebind_traits<std::byte>::construct(
 					memManager.GetByteAllocator(), newObject,
 					std::forward<Args>(std::get<indexes>(mArgs))...);
 			}
