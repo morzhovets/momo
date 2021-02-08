@@ -304,9 +304,8 @@ namespace internal
 		{
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
-				typedef typename std::tuple_element<index, VisitableItems>::type Item;
-				typedef typename std::conditional<std::is_const<Void>::value,
-					const Item*, Item*>::type ItemPtr;
+				typedef std::tuple_element_t<index, VisitableItems> Item;
+				typedef std::conditional_t<std::is_const<Void>::value, const Item*, Item*> ItemPtr;
 				if (typeid(Item) == mTypeInfo)
 					pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
 				else

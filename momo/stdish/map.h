@@ -36,8 +36,7 @@ namespace internal
 		template<typename Value>
 		bool operator()(const Value& value1, const Value& value2) const
 		{
-			static_assert((std::is_same<Key,
-				typename std::decay<decltype(value1.first)>::type>::value));
+			static_assert((std::is_same<Key, std::decay_t<decltype(value1.first)>>::value));
 			return comp(value1.first, value2.first);
 		}
 
@@ -795,7 +794,7 @@ namespace internal
 		}
 
 		template<typename Hint, typename RKey, typename MappedCreator,
-			typename Key = typename std::decay<RKey>::type>
+			typename Key = std::decay_t<RKey>>
 		std::enable_if_t<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
 		pvInsert(Hint hint, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 		{

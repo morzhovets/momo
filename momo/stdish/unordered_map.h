@@ -906,7 +906,7 @@ private:
 	}
 
 	template<typename Hint, typename RKey, typename MappedCreator,
-		typename Key = typename std::decay<RKey>::type>
+		typename Key = std::decay_t<RKey>>
 	std::enable_if_t<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
 	pvInsert(Hint /*hint*/, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
@@ -943,7 +943,7 @@ private:
 	}
 
 	template<typename RKey, typename MappedCreator,
-		typename Key = typename std::decay<RKey>::type>
+		typename Key = std::decay_t<RKey>>
 	std::enable_if_t<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
 	pvInsert(const_iterator hint, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{

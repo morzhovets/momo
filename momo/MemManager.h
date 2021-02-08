@@ -574,13 +574,13 @@ namespace internal
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
-		typename std::conditional<BaseMemManagerProxy::canReallocate, void*, void>::type
+		std::conditional_t<BaseMemManagerProxy::canReallocate, void*, void>
 		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		typename std::conditional<BaseMemManagerProxy::canReallocateInplace, bool, void>::type
+		std::conditional_t<BaseMemManagerProxy::canReallocateInplace, bool, void>
 		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
@@ -639,13 +639,13 @@ namespace internal
 			mBaseMemManager.Deallocate(ptr, size);
 		}
 
-		typename std::conditional<BaseMemManagerProxy::canReallocate, void*, void>::type
+		std::conditional_t<BaseMemManagerProxy::canReallocate, void*, void>
 		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return mBaseMemManager.Reallocate(ptr, size, newSize);
 		}
 
-		typename std::conditional<BaseMemManagerProxy::canReallocateInplace, bool, void>::type
+		std::conditional_t<BaseMemManagerProxy::canReallocateInplace, bool, void>
 		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);

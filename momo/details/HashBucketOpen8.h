@@ -109,10 +109,10 @@ class HashBucketOpen8 : public internal::HashBucketBase
 {
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = typename std::conditional<
+	using Bucket = std::conditional_t<
 		(useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
 		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
-		internal::BucketOpen8<ItemTraits>>::type;
+		internal::BucketOpen8<ItemTraits>>;
 
 public:
 	static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) noexcept

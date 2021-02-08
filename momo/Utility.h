@@ -55,7 +55,7 @@
 	}
 
 #define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert((std::is_same<Type, \
-	typename std::decay<typename std::iterator_traits<Iterator>::reference>::type>::value) \
+	std::decay_t<typename std::iterator_traits<Iterator>::reference>>::value) \
 	&& std::is_reference<typename std::iterator_traits<Iterator>::reference>::value)
 
 #define MOMO_CHECK(expr) \
@@ -83,7 +83,7 @@
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		static_assert((std::is_same<Object, typename std::decay<ObjectArg>::type>::value)); \
+		static_assert((std::is_same<Object, std::decay_t<ObjectArg>>::value)); \
 		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
@@ -188,8 +188,8 @@ namespace internal
 		template<typename ResObject, typename Object, typename Offset>
 		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{
-			typedef typename std::conditional<std::is_const<Object>::value,
-				const char, char>::type Byte;
+			typedef std::conditional_t<std::is_const<Object>::value,
+				const char, char> Byte;
 			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
 				+ static_cast<ptrdiff_t>(byteOffset));
 		}

@@ -150,7 +150,7 @@ namespace internal
 
 		typedef DataRawMultiHashIterator ConstIterator;
 
-		typedef typename std::decay<Reference>::type RawPtr;
+		typedef std::decay_t<Reference> RawPtr;
 
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
@@ -416,7 +416,7 @@ namespace internal
 				{
 					const auto& pair = std::get<index>(key1.tuple);
 					const auto& item1 = pair.second;
-					typedef typename std::decay<decltype(item1)>::type Item;
+					typedef std::decay_t<decltype(item1)> Item;
 					const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair.first);
 					return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 				}

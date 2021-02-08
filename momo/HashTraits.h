@@ -112,8 +112,8 @@ public:
 	typedef TKeyArgBase KeyArgBase;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = typename std::conditional<std::is_same<KeyArgBase, Key>::value,
-		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>::type;	//?
+	using IsValidKeyArg = std::conditional_t<std::is_same<KeyArgBase, Key>::value,
+		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>;	//?
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
 

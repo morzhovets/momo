@@ -24,14 +24,14 @@ namespace internal
 	{
 	protected:
 		typedef TSetReference SetReference;
-		typedef typename std::decay<SetReference>::type KeyValuePair;
+		typedef std::decay_t<SetReference> KeyValuePair;
 
 		static const bool isConst = tIsConst;
 
 	public:
 		typedef typename KeyValuePair::Key Key;
-		typedef typename std::conditional<isConst, const typename KeyValuePair::Value,
-			typename KeyValuePair::Value>::type Value;
+		typedef std::conditional_t<isConst, const typename KeyValuePair::Value,
+			typename KeyValuePair::Value> Value;
 
 		typedef MapReference<SetReference, true> ConstReference;
 
@@ -586,7 +586,7 @@ namespace internal
 			typedef const Value& ConstReference;
 
 		private:
-			typedef typename std::add_pointer<KeyReference>::type KeyPointer;
+			typedef std::add_pointer_t<KeyReference> KeyPointer;
 
 		public:
 			ValueReference() = delete;

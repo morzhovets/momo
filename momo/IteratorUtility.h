@@ -263,7 +263,7 @@ namespace internal
 			return ConstPointer(mReference);
 		}
 
-		typename std::remove_reference<const Reference>::type* operator->() const noexcept
+		std::remove_reference_t<const Reference>* operator->() const noexcept
 		{
 			return std::addressof(mReference);
 		}
@@ -509,7 +509,7 @@ namespace internal
 		typedef ptrdiff_t difference_type;
 		typedef typename Iterator::Pointer pointer;
 		typedef typename Iterator::Reference reference;
-		typedef typename std::decay<reference>::type value_type;
+		typedef std::decay_t<reference> value_type;
 	};
 }
 

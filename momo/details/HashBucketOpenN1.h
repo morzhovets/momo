@@ -41,8 +41,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
-		typedef typename std::conditional<reverse,
-			std::reverse_iterator<Item*>, Item*>::type Iterator;
+		typedef std::conditional_t<reverse, std::reverse_iterator<Item*>, Item*> Iterator;
 		typedef ArrayBounds<Iterator> Bounds;
 
 		typedef BucketParamsOpen<MemManager> Params;

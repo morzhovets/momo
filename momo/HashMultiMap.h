@@ -194,7 +194,7 @@ namespace internal
 
 	private:
 		typedef typename std::iterator_traits<ValueIterator>::reference ValueReference;
-		typedef typename std::remove_reference<ValueReference>::type Value;
+		typedef std::remove_reference_t<ValueReference> Value;
 
 	public:
 		typedef HashMultiMapReference<Key, Value> Reference;
@@ -1015,7 +1015,7 @@ public:
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
-			static_assert((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+			static_assert((std::is_same<Key, std::decay_t<KeyArg>>::value));
 			AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 		}
 	}

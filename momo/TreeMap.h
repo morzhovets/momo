@@ -547,7 +547,7 @@ public:
 		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
-		static_assert((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+		static_assert((std::is_same<Key, std::decay_t<KeyArg>>::value));
 		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second));
 		size_t count = res.inserted ? 1 : 0;

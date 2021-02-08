@@ -130,7 +130,7 @@ namespace internal
 		}
 
 	private:
-		typename std::aligned_storage<sizeof(Object), alignment>::type mBuffer;
+		std::aligned_storage_t<sizeof(Object), alignment> mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager>

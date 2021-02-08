@@ -71,7 +71,7 @@ private:
 		}
 
 	private:
-		typename std::aligned_storage<size, alignment>::type mStorage;
+		std::aligned_storage_t<size, alignment> mStorage;
 	};
 
 public:
