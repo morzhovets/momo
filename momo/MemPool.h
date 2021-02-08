@@ -30,19 +30,21 @@ public:
 	static const size_t defaultCachedFreeBlockCount = MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT;
 
 public:
-	static constexpr size_t GetBlockAlignment(size_t blockSize,
-		size_t maxAlignment = internal::UIntConst::maxAlignment) noexcept
+	static constexpr size_t GetBlockAlignment(size_t blockSize) noexcept
 	{
-		return (maxAlignment > blockSize && maxAlignment > 1)
-			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
+		size_t alignment = internal::UIntConst::maxAlignment;
+		while (alignment > blockSize && alignment > 1)
+			alignment /= 2;
+		return alignment;
 	}
 
 	static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment,
 		size_t blockCount) noexcept
 	{
-		return (blockCount == 1) ? ((blockSize > 0) ? blockSize : 1)
-			: ((blockSize <= blockAlignment) ? 2 * blockAlignment
-				: internal::UIntMath<>::Ceil(blockSize, blockAlignment));
+		if (blockCount == 1)
+			return (blockSize > 0) ? blockSize : 1;
+		return (blockSize <= blockAlignment) ? 2 * blockAlignment
+			: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
 	}
 };
 
