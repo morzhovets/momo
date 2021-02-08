@@ -42,8 +42,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	private:
-		typedef BoolConstant<isContinuous> IsContinuous;
-
 		template<size_t capacity, bool hasIndexes>
 		struct Counter;
 
@@ -223,7 +221,10 @@ namespace internal
 
 		Item* GetItemPtr(size_t index) noexcept
 		{
-			return pvGetItemPtr(index, IsContinuous());
+			if constexpr (isContinuous)
+				return &mFirstItem + index;
+			else
+				return &mFirstItem + mCounter.indexes[index];
 		}
 
 		void AcceptBackItem(Params& params, size_t index) noexcept
@@ -231,7 +232,18 @@ namespace internal
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			pvAcceptBackItem(params, index, count, IsContinuous());
+			if constexpr (isContinuous)
+			{
+				ItemTraits::ShiftNothrow(params.GetMemManager(),
+					std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
+			}
+			else
+			{
+				uint8_t realIndex = mCounter.indexes[count];
+				std::copy_backward(mCounter.indexes + index, mCounter.indexes + count,
+					mCounter.indexes + count + 1);
+				mCounter.indexes[index] = realIndex;
+			}
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
@@ -246,7 +258,28 @@ namespace internal
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			pvRemove(params, index, count, std::forward<ItemRemover>(itemRemover), IsContinuous());
+			if constexpr (isContinuous)
+			{
+				ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
+				try
+				{
+					std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
+				}
+				catch (...)
+				{
+					ItemTraits::ShiftNothrow(params.GetMemManager(),
+						std::reverse_iterator<Item*>(GetItemPtr(count)), count - index - 1);
+					throw;
+				}
+			}
+			else
+			{
+				std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
+				uint8_t realIndex = mCounter.indexes[index];
+				std::copy(mCounter.indexes + index + 1, mCounter.indexes + count,
+					mCounter.indexes + index);
+				mCounter.indexes[count - 1] = realIndex;
+			}
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren();
@@ -261,7 +294,11 @@ namespace internal
 			mMemPoolIndex(static_cast<uint8_t>(memPoolIndex))
 		{
 			mCounter.count = static_cast<uint8_t>(count);
-			pvInitIndexes(IsContinuous());
+			if constexpr (!isContinuous)
+			{
+				for (size_t i = 0; i < maxCapacity; ++i)
+					mCounter.indexes[i] = static_cast<uint8_t>(i);
+			}
 		}
 
 		~Node() = default;
@@ -280,70 +317,6 @@ namespace internal
 		{
 			MOMO_ASSERT(!IsLeaf());
 			return &mParent - maxCapacity - 1;
-		}
-
-		void pvInitIndexes(std::true_type /*isContinuous*/) noexcept
-		{
-		}
-
-		void pvInitIndexes(std::false_type /*isContinuous*/) noexcept
-		{
-			for (size_t i = 0; i < maxCapacity; ++i)
-				mCounter.indexes[i] = static_cast<uint8_t>(i);
-		}
-
-		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) noexcept
-		{
-			return &mFirstItem + index;
-		}
-
-		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) noexcept
-		{
-			return &mFirstItem + mCounter.indexes[index];
-		}
-
-		void pvAcceptBackItem(Params& params, size_t index, size_t count,
-			std::true_type /*isContinuous*/) noexcept
-		{
-			ItemTraits::ShiftNothrow(params.GetMemManager(),
-				std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
-		}
-
-		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
-			std::false_type /*isContinuous*/) noexcept
-		{
-			uint8_t realIndex = mCounter.indexes[count];
-			std::copy_backward(mCounter.indexes + index, mCounter.indexes + count,
-				mCounter.indexes + count + 1);
-			mCounter.indexes[index] = realIndex;
-		}
-
-		template<typename ItemRemover>
-		void pvRemove(Params& params, size_t index, size_t count, ItemRemover&& itemRemover,
-			std::true_type /*isContinuous*/)
-		{
-			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
-			try
-			{
-				std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
-			}
-			catch (...)
-			{
-				ItemTraits::ShiftNothrow(params.GetMemManager(),
-					std::reverse_iterator<Item*>(GetItemPtr(count)), count - index - 1);
-				throw;
-			}
-		}
-
-		template<typename ItemRemover>
-		void pvRemove(Params& /*params*/, size_t index, size_t count, ItemRemover&& itemRemover,
-			std::false_type /*isContinuous*/)
-		{
-			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
-			uint8_t realIndex = mCounter.indexes[index];
-			std::copy(mCounter.indexes + index + 1, mCounter.indexes + count,
-				mCounter.indexes + index);
-			mCounter.indexes[count - 1] = realIndex;
 		}
 
 	private:
