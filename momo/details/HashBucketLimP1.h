@@ -254,7 +254,7 @@ namespace internal
 		}
 
 	private:
-		char mItemPtrBuffer[sizeof(Item*)];
+		std::byte mItemPtrBuffer[sizeof(Item*)];
 		uint8_t mState;
 	};
 }

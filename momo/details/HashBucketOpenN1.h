@@ -22,7 +22,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tReverse,
-		typename TData = std::array<char, tMaxCount + 1>>
+		typename TData = std::array<std::byte, tMaxCount + 1>>
 	class BucketOpenN1 : public BucketBase
 	{
 	protected:

@@ -663,7 +663,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		typedef Array<char*, MemManager, ArrayItemTraits<char*, MemManager>,
+		typedef Array<std::byte*, MemManager, ArrayItemTraits<std::byte*, MemManager>,
 			NestedArraySettings<>> Buffers;
 
 	public:
@@ -703,7 +703,7 @@ namespace internal
 		ResObject* GetRealPointer(uint32_t block) noexcept
 		{
 			MOMO_ASSERT(block != nullPtr);
-			char* buffer = mBuffers[block / blockCount];
+			std::byte* buffer = mBuffers[block / blockCount];
 			void* realPtr = buffer + (size_t{block} % blockCount) * mBlockSize;
 			return static_cast<ResObject*>(realPtr);
 		}
@@ -754,7 +754,7 @@ namespace internal
 			if (bufferCount >= mMaxBufferCount)
 				throw std::length_error("Invalid buffer count");
 			mBuffers.Reserve(bufferCount + 1);
-			char* buffer = MemManagerProxy::template Allocate<char>(GetMemManager(),
+			std::byte* buffer = MemManagerProxy::template Allocate<std::byte>(GetMemManager(),
 				pvGetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
@@ -770,7 +770,7 @@ namespace internal
 		{
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = pvGetBufferSize();
-			for (char* buffer : mBuffers)
+			for (std::byte* buffer : mBuffers)
 				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
 			mBlockHead = nullPtr;
 			mBuffers.Clear(true);
