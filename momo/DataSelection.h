@@ -658,7 +658,7 @@ namespace internal
 		}
 
 		template<typename RowFilter>
-		std::enable_if_t<IsInvocable<const RowFilter&, bool, ConstRowReference>::value, size_t>
+		std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>, size_t>
 		Remove(const RowFilter& rowFilter)
 		{
 			size_t newCount = 0;
@@ -701,7 +701,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
 			DataSelection&&>
 		Sort(const RowComparer& rowComp) &&
 		{
@@ -710,7 +710,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
 			DataSelection&>
 		Sort(const RowComparer& rowComp) &
 		{
@@ -806,7 +806,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
+		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
 			void>
 		pvSort(const RowComparer& rowComp)
 		{

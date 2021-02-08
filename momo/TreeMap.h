@@ -686,7 +686,7 @@ public:
 	}
 
 	template<typename PairPredicate>
-	std::enable_if_t<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const PairPredicate&, const Key&, const Value&>,
 		size_t>
 	Remove(const PairPredicate& pairPred)
 	{

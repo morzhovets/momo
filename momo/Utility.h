@@ -144,17 +144,6 @@ namespace internal
 	template<bool value>
 	using BoolConstant = std::integral_constant<bool, value>;
 
-	template<typename Func, typename Result, typename... Args>
-	struct IsInvocable : public std::false_type
-	{
-	};
-
-	template<typename Func, typename... Args>
-	struct IsInvocable<Func, decltype(std::declval<Func>()(std::declval<Args>()...)), Args...>
-		: public std::true_type
-	{
-	};
-
 	class PtrCaster
 	{
 	public:

@@ -729,7 +729,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
 		ConstSelection>
 	Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
@@ -743,7 +743,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
 		Selection>
 	Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
@@ -757,7 +757,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
 		size_t>
 	SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
@@ -810,7 +810,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
 		DataTable>
 	Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
@@ -826,7 +826,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	std::enable_if_t<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
 		DataTable>
 	ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
