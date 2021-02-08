@@ -89,7 +89,7 @@ struct HashCoder : private std::hash<Key>
 template<typename Key>
 struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
-	decltype(MOMO_HASH_CODER(std::declval<const Key&>())) operator()(const Key& key) const
+	decltype(auto) operator()(const Key& key) const
 		//noexcept(noexcept(MOMO_HASH_CODER(key)))
 	{
 		return MOMO_HASH_CODER(key);

@@ -704,8 +704,7 @@ public:
 	}
 
 	template<typename Item>
-	static auto GetBaseColumn(const QualifiedColumn<Item>& column) noexcept
-		-> decltype(ColumnTraits::GetBaseColumn(column))
+	static decltype(auto) GetBaseColumn(const QualifiedColumn<Item>& column) noexcept
 	{
 		return ColumnTraits::GetBaseColumn(column);
 	}
