@@ -275,20 +275,20 @@ private:
 	struct RowProxy : public Row
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Row)
-		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw, Raw*)
-		MOMO_DECLARE_PROXY_FUNCTION(Row, ExtractRaw, Raw*)
+		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw)
+		MOMO_DECLARE_PROXY_FUNCTION(Row, ExtractRaw)
 	};
 
 	struct ConstRowReferenceProxy : public ConstRowReference
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowReference)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstRowReference, GetRaw, Raw*)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstRowReference, GetRaw)
 	};
 
 	struct RowReferenceProxy : public RowReference
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-		//MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+		//MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw)
 	};
 
 	struct IteratorProxy : public Iterator

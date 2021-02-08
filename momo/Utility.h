@@ -76,10 +76,9 @@
 	{ \
 	}
 
-// Result = decltype((std::declval<ObjectArg&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
-#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \
+#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func) \
 	template<typename ObjectArg, typename... Args> \
-	static Result Func(ObjectArg&& object, Args&&... args) \
+	static decltype(auto) Func(ObjectArg&& object, Args&&... args) \
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \

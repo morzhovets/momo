@@ -107,15 +107,14 @@ private:
 	{
 		typedef const_iterator ConstIterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-			typename ConstIterator::BaseIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 	};
 
 	struct IteratorProxy : public iterator
 	{
 		typedef iterator Iterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator, HashMapIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator)
 	};
 
 	struct ConstLocalIteratorProxy : public const_local_iterator
@@ -133,8 +132,7 @@ private:
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
-		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair,
-			typename NodeType::MapExtractedPair&)
+		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedPair)
 	};
 
 public:

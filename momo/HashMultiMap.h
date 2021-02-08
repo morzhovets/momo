@@ -692,7 +692,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -703,14 +703,13 @@ private:
 	struct ConstKeyIteratorProxy : public ConstKeyIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstKeyIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstKeyIterator, GetBaseIterator,
-			typename ConstKeyIterator::BaseIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstKeyIterator, GetBaseIterator)
 	};
 
 	struct KeyIteratorProxy : public KeyIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(KeyIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(KeyIterator, GetBaseIterator, HashMapIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(KeyIterator, GetBaseIterator)
 	};
 
 	struct ConstKeyBoundsProxy : public ConstKeyBounds

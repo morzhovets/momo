@@ -99,8 +99,7 @@ private:
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
-		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem,
-			typename NodeType::SetExtractedItem&)
+		MOMO_DECLARE_PROXY_FUNCTION(NodeType, GetExtractedItem)
 	};
 
 public:

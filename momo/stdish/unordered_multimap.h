@@ -105,8 +105,7 @@ private:
 	{
 		typedef const_iterator ConstIterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-			typename ConstIterator::BaseIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 	};
 
 	struct IteratorProxy : public iterator

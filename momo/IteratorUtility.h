@@ -377,8 +377,7 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-				typename ConstIterator::BaseIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 		};
 
 	public:
@@ -448,8 +447,7 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-				typename ConstIterator::BaseIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 		};
 
 	public:

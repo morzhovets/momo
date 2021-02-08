@@ -128,8 +128,8 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetColumnList, const ColumnList*)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetRawIterator, RawIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetColumnList)
+			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetRawIterator)
 		};
 
 	public:
@@ -448,7 +448,7 @@ namespace internal
 		struct RowReferenceProxy : public RowReference
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw)
 		};
 
 		struct ConstIteratorProxy : public ConstIterator
