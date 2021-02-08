@@ -909,13 +909,14 @@ public:
 		return ArrayShifter::Remove(*this, pred);
 	}
 
-	template<typename EqualFunc = std::equal_to<Item>>
-	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
+	template<typename ItemArg,
+		typename EqualFunc = std::equal_to<>>
+	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		const Item* begin = GetItems();
 		const Item* end = begin + GetCount();
 		return std::find_if(begin, end,
-			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(item, thisItem); }) != end;
+			[&itemArg, &equalFunc] (const Item& item) { return equalFunc(itemArg, item); }) != end;
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>
