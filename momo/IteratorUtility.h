@@ -57,21 +57,21 @@
 	{ \
 		return *(*this + diff); \
 	} \
-	bool operator!=(ConstIterator iter) const noexcept \
+	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
 	{ \
-		return !(*this == iter); \
+		return !(iter1 == iter2); \
 	} \
-	bool operator>(ConstIterator iter) const \
+	friend bool operator>(Iterator iter1, Iterator iter2) \
 	{ \
-		return iter < *this; \
+		return iter2 < iter1; \
 	} \
-	bool operator<=(ConstIterator iter) const \
+	friend bool operator<=(Iterator iter1, Iterator iter2) \
 	{ \
-		return !(iter < *this); \
+		return !(iter2 < iter1); \
 	} \
-	bool operator>=(ConstIterator iter) const \
+	friend bool operator>=(Iterator iter1, Iterator iter2) \
 	{ \
-		return iter <= *this; \
+		return iter2 <= iter1; \
 	}
 
 #define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
