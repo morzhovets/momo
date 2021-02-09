@@ -91,32 +91,12 @@ namespace internal
 			return RefPair::first == ref.first && RefPair::second == ref.second;
 		}
 
-		bool operator!=(const MapReferenceStd& ref) const
-		{
-			return !(*this == ref);
-		}
-
 		bool operator==(const std::pair<const Key, Value>& pair) const
 		{
 			return RefPair::first == pair.first && RefPair::second == pair.second;
 		}
 
-		bool operator!=(const std::pair<const Key, Value>& pair) const
-		{
-			return !(*this == pair);
-		}
-
-		friend bool operator==(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
-		{
-			return ref == pair;
-		}
-
-		friend bool operator!=(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
-		{
-			return !(ref == pair);
-		}
-
-		//? <, >, <=, >=
+		//operator<=>
 
 	protected:
 		explicit MapReferenceStd(MapReference mapRef) noexcept
