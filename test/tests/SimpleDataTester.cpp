@@ -151,7 +151,7 @@ public:
 
 			auto visitor = [i] (auto& item)
 			{
-				if constexpr (std::is_same<decltype(item), int&>::value)
+				if constexpr (std::is_same_v<decltype(item), int&>)
 					item = static_cast<int>(i);
 			};
 			row.VisitReferences(visitor);
@@ -159,9 +159,9 @@ public:
 			auto visitor2 = [i] (const auto& item)
 			{
 				typedef std::decay_t<decltype(item)> Item;
-				if constexpr (std::is_same<Item, int>::value)
+				if constexpr (std::is_same_v<Item, int>)
 					assert(item == static_cast<int>(i));
-				if constexpr (std::is_same<Item, const int*>::value)
+				if constexpr (std::is_same_v<Item, const int*>)
 					assert(*item == static_cast<int>(i));
 			};
 			static_cast<const Row&>(row).VisitReferences(visitor2);

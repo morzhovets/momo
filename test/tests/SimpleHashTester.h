@@ -34,7 +34,7 @@ private:
 		class HashTraits : public momo::HashTraits<TemplItem, HashBucket>
 		{
 		public:
-			static const bool isFastNothrowHashable = std::is_same<HashBucket, momo::HashBucketOpen8>::value;	//?
+			static const bool isFastNothrowHashable = std::is_same_v<HashBucket, momo::HashBucketOpen8>;	//?
 
 		public:
 			size_t GetHashCode(const TemplItem& /*key*/) const
