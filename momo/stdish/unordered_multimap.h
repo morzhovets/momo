@@ -641,11 +641,6 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_multimap& right) const
-	{
-		return !(*this == right);
-	}
-
 private:
 	static HashMultiMap pvCreateMultiMap(unordered_multimap&& right, const allocator_type& alloc)
 	{

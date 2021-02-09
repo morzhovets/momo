@@ -146,11 +146,6 @@ public:
 		return mMemPool == alloc.mMemPool;
 	}
 
-	bool operator!=(const unsynchronized_pool_allocator& alloc) const noexcept
-	{
-		return !(*this == alloc);
-	}
-
 protected:
 	explicit unsynchronized_pool_allocator(const std::shared_ptr<MemPool>& memPool) noexcept
 		: mMemPool(memPool)

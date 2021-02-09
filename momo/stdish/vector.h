@@ -452,11 +452,6 @@ public:
 		return mArray.IsEqual(right.mArray);
 	}
 
-	bool operator!=(const vector& right) const
-	{
-		return !(*this == right);
-	}
-
 	bool operator<(const vector& right) const
 	{
 		return std::lexicographical_compare(begin(), end(), right.begin(), right.end());

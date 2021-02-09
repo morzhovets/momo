@@ -827,11 +827,6 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_map& right) const
-	{
-		return !(*this == right);
-	}
-
 private:
 	static HashMap pvCreateMap(unordered_map&& right, const allocator_type& alloc)
 	{

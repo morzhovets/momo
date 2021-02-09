@@ -628,11 +628,6 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_set& right) const
-	{
-		return !(*this == right);
-	}
-
 private:
 	static HashSet pvCreateSet(unordered_set&& right, const allocator_type& alloc)
 	{
