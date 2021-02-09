@@ -224,7 +224,7 @@ public:
 	}
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(std::is_empty<allocator_type>::value)
 		: mHashMap(pvCreateMap(std::move(right), alloc))
 	{
 	}
@@ -242,12 +242,12 @@ public:
 	~unordered_map() = default;
 
 	unordered_map& operator=(unordered_map&& right)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(std::is_empty<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mHashMap = pvCreateMap(std::move(right), alloc);
@@ -259,7 +259,7 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mHashMap = HashMap(right.mHashMap, MemManager(alloc));

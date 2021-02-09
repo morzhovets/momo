@@ -150,7 +150,7 @@ public:
 	}
 
 	set(set&& right, const allocator_type& alloc)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(std::is_empty<allocator_type>::value)
 		: mTreeSet(pvCreateSet(std::move(right), alloc))
 	{
 	}
@@ -168,12 +168,12 @@ public:
 	~set() = default;
 
 	set& operator=(set&& right)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(std::is_empty<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mTreeSet = pvCreateSet(std::move(right), alloc);
@@ -185,7 +185,7 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mTreeSet = TreeSet(right.mTreeSet, MemManager(alloc));

@@ -190,7 +190,7 @@ public:
 	}
 
 	unordered_set(unordered_set&& right, const allocator_type& alloc)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value)
+		noexcept(std::is_empty<allocator_type>::value)
 		: mHashSet(pvCreateSet(std::move(right), alloc))
 	{
 	}
@@ -208,12 +208,12 @@ public:
 	~unordered_set() = default;
 
 	unordered_set& operator=(unordered_set&& right)
-		noexcept(momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+		noexcept(std::is_empty<allocator_type>::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mHashSet = pvCreateSet(std::move(right), alloc);
@@ -225,7 +225,7 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = momo::internal::IsAllocatorAlwaysEqual<allocator_type>::value ||
+			bool propagate = std::is_empty<allocator_type>::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
 			allocator_type alloc = (propagate ? &right : this)->get_allocator();
 			mHashSet = HashSet(right.mHashSet, MemManager(alloc));
