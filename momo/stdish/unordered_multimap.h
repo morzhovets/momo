@@ -423,11 +423,11 @@ public:
 	}
 
 	//template<typename Value>
-	//std::enable_if_t<std::is_constructible<value_type, Value>::value, iterator>
+	//std::enable_if_t<std::is_constructible_v<value_type, Value>, iterator>
 	//insert(Value&& value)
 
 	//template<typename Value>
-	//std::enable_if_t<std::is_constructible<value_type, Value>::value, iterator>
+	//std::enable_if_t<std::is_constructible_v<value_type, Value>, iterator>
 	//insert(const_iterator hint, Value&& value)
 
 	//iterator insert(value_type&& value)
@@ -450,24 +450,24 @@ public:
 	}
 
 	template<typename First, typename Second>
-	std::enable_if_t<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
+	std::enable_if_t<std::is_constructible_v<key_type, const First&>
+		&& std::is_constructible_v<mapped_type, const Second&>, iterator>
 	insert(const std::pair<First, Second>& value)
 	{
 		return pvEmplace(std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
 	}
 
 	template<typename First, typename Second>
-	std::enable_if_t<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
+	std::enable_if_t<std::is_constructible_v<key_type, const First&>
+		&& std::is_constructible_v<mapped_type, const Second&>, iterator>
 	insert(const_iterator, const std::pair<First, Second>& value)
 	{
 		return insert(value);
 	}
 
 	template<typename First, typename Second>
-	std::enable_if_t<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
+	std::enable_if_t<std::is_constructible_v<key_type, First&&>
+		&& std::is_constructible_v<mapped_type, Second&&>, iterator>
 	insert(std::pair<First, Second>&& value)
 	{
 		return pvEmplace(std::forward_as_tuple(std::forward<First>(value.first)),
@@ -475,8 +475,8 @@ public:
 	}
 
 	template<typename First, typename Second>
-	std::enable_if_t<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
+	std::enable_if_t<std::is_constructible_v<key_type, First&&>
+		&& std::is_constructible_v<mapped_type, Second&&>, iterator>
 	insert(const_iterator, std::pair<First, Second>&& value)
 	{
 		return insert(std::move(value));
@@ -708,7 +708,7 @@ private:
 
 	template<typename RKey, typename MappedCreator,
 		typename Key = std::decay_t<RKey>>
-	std::enable_if_t<std::is_same<key_type, Key>::value, iterator>
+	std::enable_if_t<std::is_same_v<key_type, Key>, iterator>
 	pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
