@@ -429,8 +429,7 @@ namespace internal
 			if (this != &memManagerWrapper)
 			{
 				std::destroy_at(&mMemManager);
-				new(static_cast<void*>(&mMemManager))
-					MemManager(std::move(memManagerWrapper.mMemManager));
+				std::construct_at(&mMemManager, std::move(memManagerWrapper.mMemManager));
 			}
 			return *this;
 		}
