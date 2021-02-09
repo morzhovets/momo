@@ -68,7 +68,7 @@ namespace internal
 			mask &= (1 << maxCount) - 1;
 			while (mask != 0)
 			{
-				size_t index = pvCountTrailingZeros(static_cast<uint32_t>(mask));
+				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
 				if (pred(*itemPtr))
 					return itemPtr;
@@ -81,28 +81,6 @@ namespace internal
 			size_t bucketCount, size_t probe) noexcept
 		{
 			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
-		}
-
-	private:
-		static size_t pvCountTrailingZeros(uint32_t mask) noexcept
-		{
-			MOMO_ASSERT(0 < mask && mask < 128);
-#ifdef MOMO_CTZ32
-			return static_cast<size_t>(MOMO_CTZ32(mask));
-#else
-			static const uint8_t tab[127] =
-			{
-				   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-			};
-			return size_t{tab[mask - 1]};
-#endif
 		}
 	};
 }
