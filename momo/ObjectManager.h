@@ -83,7 +83,7 @@ public:
 		}
 		else
 		{
-			::new(static_cast<void*>(dstObject)) Object(std::move(srcObject));
+			std::construct_at(dstObject, std::move(srcObject));
 			ObjectDestroyer<Object, MemManager>::Destroy(memManager, srcObject);
 		}
 	}
@@ -191,8 +191,7 @@ namespace internal
 			void pvCreate(MemManager& /*memManager*/, Object* newObject,
 				std::index_sequence<indexes...>)
 			{
-				::new(static_cast<void*>(newObject))
-					Object(std::forward<Args>(std::get<indexes>(mArgs))...);
+				std::construct_at(newObject, std::forward<Args>(std::get<indexes>(mArgs))...);
 			}
 
 			template<typename Allocator, size_t... indexes>

@@ -1205,7 +1205,7 @@ private:
 				sizeof(NodeParams));
 			try
 			{
-				::new(static_cast<void*>(mNodeParams)) NodeParams(memManager);
+				std::construct_at(mNodeParams, memManager);
 			}
 			catch (...)
 			{

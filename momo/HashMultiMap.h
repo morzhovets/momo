@@ -603,7 +603,7 @@ private:
 			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
 			try
 			{
-				::new(static_cast<void*>(mData)) Data(memManager);
+				std::construct_at(mData, memManager);
 			}
 			catch (...)
 			{
@@ -1041,7 +1041,7 @@ public:
 		auto pairCreator = [&keyCreator] (Key* newKey, ValueArray* newValueArray)
 		{
 			std::forward<KeyCreator>(keyCreator)(newKey);
-			::new(static_cast<void*>(newValueArray)) ValueArray();
+			std::construct_at(newValueArray);
 		};
 		return KeyIteratorProxy(mHashMap.AddCrt(ConstKeyIteratorProxy::GetBaseIterator(keyIter),
 			pairCreator));
@@ -1223,7 +1223,7 @@ private:
 		{
 			ValueArray valueArray;
 			this->pvAddValue(valueArray, std::forward<ValueCreator>(valueCreator));
-			::new(static_cast<void*>(newValueArray)) ValueArray(std::move(valueArray));
+			std::construct_at(newValueArray, std::move(valueArray));
 		};
 		keyIter = KeyIteratorProxy(mHashMap.template AddCrt<decltype(valuesCreator), false>(
 			KeyIteratorProxy::GetBaseIterator(keyIter), std::forward<RKey>(key),

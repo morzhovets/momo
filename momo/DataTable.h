@@ -193,7 +193,7 @@ private:
 		{
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
-			::new(static_cast<void*>(mData)) Data(std::move(columnList));
+			std::construct_at(mData, std::move(columnList));
 		}
 
 		Crew(Crew&& crew) noexcept

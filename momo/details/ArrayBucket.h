@@ -216,8 +216,8 @@ namespace internal
 			else
 			{
 				ArrayMemory memory(params.GetArrayMemPool());
-				::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
-					Array(bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
+				std::construct_at(&pvGetArray(memory.GetPointer()),
+					bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
 				pvSet(memory.Extract(), uint8_t{0});
 			}
 		}
@@ -297,8 +297,7 @@ namespace internal
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::forward<ItemCreator>(itemCreator), newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
-							::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
-								Array(std::move(array));
+							std::construct_at(&pvGetArray(memory.GetPointer()), std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), uint8_t{0});
 						}

@@ -111,7 +111,7 @@ namespace internal
 			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
 			try
 			{
-				::new(static_cast<void*>(mData)) Data(containerTraits, std::move(memManager));
+				std::construct_at(mData, containerTraits, std::move(memManager));
 			}
 			catch (...)
 			{

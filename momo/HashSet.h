@@ -61,7 +61,7 @@ namespace internal
 			try
 			{
 				for (; bucketIndex < bucketCount; ++bucketIndex)
-					::new(static_cast<void*>(buckets + bucketIndex)) Bucket();
+					std::construct_at(buckets + bucketIndex);
 				if (bucketParams == nullptr)
 					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
 				else
@@ -173,7 +173,7 @@ namespace internal
 				memManager, sizeof(BucketParams));
 			try
 			{
-				::new(static_cast<void*>(bucketParams)) BucketParams(memManager);
+				std::construct_at(bucketParams, memManager);
 			}
 			catch (...)
 			{

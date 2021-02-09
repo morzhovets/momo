@@ -949,7 +949,7 @@ private:
 	{
 		MOMO_ASSERT(this != &array);
 		mData.~Data();	//?
-		::new(static_cast<void*>(&mData)) Data(std::move(array.mData));
+		std::construct_at(&mData, std::move(array.mData));
 	}
 
 	static size_t pvGrowCapacity(size_t capacity, size_t minNewCapacity,
