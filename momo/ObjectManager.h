@@ -22,8 +22,7 @@ namespace momo
 {
 
 template<typename Object>
-struct IsTriviallyRelocatable
-	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
+struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
 {
 };
 

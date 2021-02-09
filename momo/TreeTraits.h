@@ -51,7 +51,7 @@ namespace internal
 }
 
 template<typename Key>
-struct IsFastComparable : public internal::BoolConstant<MOMO_IS_FAST_COMPARABLE(Key)>
+struct IsFastComparable : public std::bool_constant<MOMO_IS_FAST_COMPARABLE(Key)>
 {
 };
 

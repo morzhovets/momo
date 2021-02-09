@@ -141,9 +141,6 @@ namespace internal
 	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
 		typename std::iterator_traits<Iterator>::iterator_category>;
 
-	template<bool value>
-	using BoolConstant = std::integral_constant<bool, value>;
-
 	class PtrCaster
 	{
 	public:

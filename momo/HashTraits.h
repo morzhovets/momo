@@ -70,7 +70,7 @@ namespace internal
 }
 
 template<typename Key>
-struct IsFastNothrowHashable : public internal::BoolConstant<MOMO_IS_FAST_NOTHROW_HASHABLE(Key)>
+struct IsFastNothrowHashable : public std::bool_constant<MOMO_IS_FAST_NOTHROW_HASHABLE(Key)>
 {
 };
 
