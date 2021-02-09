@@ -425,7 +425,7 @@ private:
 	{
 		static const size_t maxAllocAlignment = internal::UIntConst::maxAllocAlignment;
 		size_t addend = Params::blockAlignment;
-		if (SMath::HasSingleBit(Params::blockAlignment))
+		if (std::has_single_bit(Params::blockAlignment))
 			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{Params::blockAlignment}).first;
 		else
 			addend -= SMath::GCD(maxAllocAlignment, Params::blockAlignment);

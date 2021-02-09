@@ -32,6 +32,7 @@
 #include <array>
 #include <tuple>
 #include <initializer_list>
+#include <bit>
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 #include <windows.h>
@@ -192,11 +193,6 @@ namespace internal
 		};
 
 	public:
-		static constexpr bool HasSingleBit(UInt value) noexcept
-		{
-			return value != 0 && (value & (value - 1)) == 0;
-		}
-
 		static constexpr UInt Ceil(UInt value, UInt mod) noexcept
 		{
 			return ((value + mod - 1) / mod) * mod;
@@ -310,7 +306,7 @@ namespace internal
 
 		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
 		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		static_assert(UIntMath<>::HasSingleBit(maxAllocAlignment));
+		static_assert(std::has_single_bit(maxAllocAlignment));
 		static_assert(maxAllocAlignment % maxAlignment == 0);
 
 		static const size_t maxSize = SIZE_MAX;
