@@ -984,7 +984,7 @@ public:
 				return;
 			}
 		}
-		if (count * internal::UIntMath<>::Log2(count + dstCount) < count + dstCount)	//?
+		if (count * std::bit_width(count + dstCount) < count + dstCount)	//?
 			pvMergeTo(dstTreeSet);
 		else
 			pvMergeToLinear(dstTreeSet);

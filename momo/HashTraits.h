@@ -199,7 +199,7 @@ public:
 		mMaxLoadFactor(0.0)
 	{
 		startBucketCount = std::minmax(startBucketCount, size_t{8}).second;
-		mLogStartBucketCount = static_cast<uint8_t>(internal::UIntMath<>::Log2(startBucketCount - 1)) + 1;
+		mLogStartBucketCount = static_cast<uint8_t>(std::bit_width(startBucketCount - 1));
 	}
 
 	HashTraitsStd(const HashTraitsStd& hashTraits, float maxLoadFactor)
