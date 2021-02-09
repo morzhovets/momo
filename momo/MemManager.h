@@ -444,7 +444,7 @@ namespace internal
 			if (this != &memManagerWrapper)
 			{
 				mMemManager.~MemManager();
-				new(static_cast<void*>(&mMemManager))
+				::new(static_cast<void*>(&mMemManager))
 					MemManager(std::move(memManagerWrapper.mMemManager));
 			}
 			return *this;
