@@ -33,7 +33,7 @@
 	name(uint64_t{offsetof(Struct, name)}, #name)
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	static_assert(!std::is_class<Tag>::value || std::is_empty<Tag>::value); \
+	static_assert(!std::is_class_v<Tag> || std::is_empty_v<Tag>); \
 	constexpr momo::internal::DataColumn<Type, Tag> \
 	name(momo::internal::StrHasher::GetHashCode64(#name), #name)
 
@@ -305,7 +305,7 @@ namespace internal
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
 				typedef std::tuple_element_t<index, VisitableItems> Item;
-				typedef std::conditional_t<std::is_const<Void>::value, const Item*, Item*> ItemPtr;
+				typedef std::conditional_t<std::is_const_v<Void>, const Item*, Item*> ItemPtr;
 				if (typeid(Item) == mTypeInfo)
 					pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
 				else
@@ -959,10 +959,10 @@ private:
 		size_t offset = columns->GetOffset();
 		Item* item = internal::PtrCaster::Shift<Item>(raw, offset);
 		const Item* srcItem = nullptr;
-		if (!std::is_same<RawPtr, std::nullptr_t>::value)
+		if (!std::is_same_v<RawPtr, std::nullptr_t>)
 		{
 			size_t srcOffset = offset;
-			if (std::is_same<DataColumnListPtr, std::nullptr_t>::value ||
+			if (std::is_same_v<DataColumnListPtr, std::nullptr_t> ||
 				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
 			{
 				srcItem = internal::PtrCaster::Shift<const Item>(
@@ -1077,7 +1077,7 @@ public:
 
 	typedef Struct Raw;
 
-	static_assert(std::is_class<Struct>::value);
+	static_assert(std::is_class_v<Struct>);
 
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;

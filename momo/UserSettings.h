@@ -27,10 +27,10 @@
 
 // If your program does not use exceptions, define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
-#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible<Object>::value)
+#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible_v<Object>)
 
 // Using `memcpy` for relocate
-#define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
+#define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial_v<Object>)
 
 //#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
 
@@ -69,10 +69,10 @@
 
 // If hash function is slow, hash bucket can store part of hash code
 // to avoid its recalculation during table grow
-#define MOMO_IS_FAST_NOTHROW_HASHABLE(Key) (std::is_arithmetic<Key>::value)
+#define MOMO_IS_FAST_NOTHROW_HASHABLE(Key) (std::is_arithmetic_v<Key>)
 
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
-#define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
+#define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic_v<Key> || std::is_pointer_v<Key>)
 
 #if defined(_MSC_VER) //defined(_WIN32)
 #define MOMO_USE_MEM_MANAGER_WIN

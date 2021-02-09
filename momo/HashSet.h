@@ -927,8 +927,8 @@ public:
 	template<typename Set>
 	void MergeTo(Set& dstSet)
 	{
-		static_assert((std::is_same<Key, typename Set::Key>::value));
-		static_assert((std::is_same<Item, typename Set::Item>::value));
+		static_assert((std::is_same_v<Key, typename Set::Key>));
+		static_assert((std::is_same_v<Item, typename Set::Item>));
 		pvMergeTo(dstSet);
 	}
 

@@ -163,7 +163,7 @@ private:
 
 	class Crew
 	{
-		static_assert(std::is_nothrow_move_constructible<ColumnList>::value);
+		static_assert(std::is_nothrow_move_constructible_v<ColumnList>);
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -855,7 +855,7 @@ private:
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
-		if (std::is_same<RowFilter, EmptyRowFilter>::value)
+		if (std::is_same_v<RowFilter, EmptyRowFilter>)
 			Reserve(rows.GetCount());
 		try
 		{

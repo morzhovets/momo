@@ -138,7 +138,7 @@ namespace internal
 		}
 
 		template<typename ArgIterator,
-			typename = std::enable_if_t<std::is_convertible<ArgIterator, Iterator>::value>>
+			typename = std::enable_if_t<std::is_convertible_v<ArgIterator, Iterator>>>
 		HashMapPosition(ArgIterator iter) noexcept
 			: mHashSetPosition(IteratorProxy::GetHashSetIterator(static_cast<Iterator>(iter)))
 		{
@@ -150,7 +150,7 @@ namespace internal
 		}
 
 		template<typename ResIterator,
-			typename = std::enable_if_t<std::is_convertible<Iterator, ResIterator>::value>>
+			typename = std::enable_if_t<std::is_convertible_v<Iterator, ResIterator>>>
 		operator ResIterator() const noexcept
 		{
 			Iterator iter = IteratorProxy(mHashSetPosition);
@@ -644,7 +644,7 @@ public:
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
-			static_assert((std::is_same<Key, std::decay_t<KeyArg>>::value));
+			static_assert((std::is_same_v<Key, std::decay_t<KeyArg>>));
 			InsertResult res = InsertVar(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 			count += res.inserted ? 1 : 0;

@@ -37,7 +37,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator
 		{
-			static_assert((std::is_same<ItemArg, const Item&>::value));
+			static_assert((std::is_same_v<ItemArg, const Item&>));
 
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept

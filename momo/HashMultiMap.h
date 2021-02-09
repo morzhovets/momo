@@ -364,7 +364,7 @@ namespace internal
 		template<typename ValueArg>
 		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{
-			static_assert((std::is_same<ValueArg, Value>::value));
+			static_assert((std::is_same_v<ValueArg, Value>));
 
 		private:
 			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
@@ -1014,7 +1014,7 @@ public:
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
-			static_assert((std::is_same<Key, std::decay_t<KeyArg>>::value));
+			static_assert((std::is_same_v<Key, std::decay_t<KeyArg>>));
 			AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 		}
 	}

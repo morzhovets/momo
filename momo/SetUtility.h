@@ -72,9 +72,9 @@ namespace internal
 	};
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion,
-		bool tUsePtr = !std::is_nothrow_move_constructible<TContainerTraits>::value
-			|| !std::is_nothrow_move_assignable<TContainerTraits>::value
-			|| !std::is_empty<MemManagerPtr<TMemManager>>::value || tKeepVersion>
+		bool tUsePtr = !std::is_nothrow_move_constructible_v<TContainerTraits>
+			|| !std::is_nothrow_move_assignable_v<TContainerTraits>
+			|| !std::is_empty_v<MemManagerPtr<TMemManager>> || tKeepVersion>
 	class SetCrew;
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
@@ -193,9 +193,9 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		static_assert(std::is_nothrow_move_constructible<ContainerTraits>::value);
-		static_assert(std::is_nothrow_move_assignable<ContainerTraits>::value);
-		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible_v<ContainerTraits>);
+		static_assert(std::is_nothrow_move_assignable_v<ContainerTraits>);
+		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 		static const bool keepVersion = tKeepVersion;
 		static_assert(!keepVersion);

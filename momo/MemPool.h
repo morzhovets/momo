@@ -127,8 +127,8 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-	static_assert(std::is_nothrow_move_constructible<Params>::value);
-	static_assert(std::is_nothrow_move_assignable<Params>::value);
+	static_assert(std::is_nothrow_move_constructible_v<Params>);
+	static_assert(std::is_nothrow_move_assignable_v<Params>);
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;

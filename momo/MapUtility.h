@@ -500,7 +500,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator
 		{
-			static_assert((std::is_same<ItemArg, const Item&>::value));
+			static_assert((std::is_same_v<ItemArg, const Item&>));
 
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
@@ -816,7 +816,7 @@ namespace internal
 			typename ValueArg = decltype(std::declval<Pair>().value)>
 		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) noexcept
 		{
-			static_assert(std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value);
+			static_assert(std::is_reference_v<KeyArg>&& std::is_reference_v<ValueArg>);
 			return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
 		}
 
@@ -824,8 +824,8 @@ namespace internal
 		static std::pair<KeyArg&&, ValueArg&&> Convert(
 			std::pair<KeyArg, ValueArg>&& pair) noexcept
 		{
-			static_assert((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
-				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
+				|| std::is_reference_v<typename std::iterator_traits<Iterator>::reference>);
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 		}
@@ -834,8 +834,8 @@ namespace internal
 		static std::pair<const KeyArg&, const ValueArg&> Convert(
 			const std::pair<KeyArg, ValueArg>& pair) noexcept
 		{
-			static_assert((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
-				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
+				|| std::is_reference_v<typename std::iterator_traits<Iterator>::reference>);
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}
 	};

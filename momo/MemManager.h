@@ -170,7 +170,7 @@ public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<std::byte> ByteAllocator;
 
-	//static_assert(std::is_nothrow_move_constructible<ByteAllocator>::value);
+	//static_assert(std::is_nothrow_move_constructible_v<ByteAllocator);
 
 public:
 	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))
@@ -277,7 +277,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	private:
 		template<typename MemManager,
@@ -385,7 +385,7 @@ namespace internal
 			if constexpr (HasIsEqual<MemManager>::value)
 				return memManager1.IsEqual(memManager2);
 			else
-				return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
+				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
 		}
 
 	private:
@@ -398,7 +398,7 @@ namespace internal
 	};
 
 	template<typename TMemManager,
-		bool tIsEmpty = std::is_empty<TMemManager>::value>
+		bool tIsEmpty = std::is_empty_v<TMemManager>>
 	class MemManagerWrapper;
 
 	template<typename TMemManager>
@@ -407,7 +407,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept
@@ -457,7 +457,7 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		static_assert(std::is_nothrow_move_constructible<MemManager>::value);
+		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept
@@ -520,8 +520,8 @@ namespace internal
 	};
 
 	template<typename TBaseMemManager,
-		bool tIsEmpty = std::is_empty<TBaseMemManager>::value
-			&& std::is_nothrow_default_constructible<TBaseMemManager>::value>
+		bool tIsEmpty = std::is_empty_v<TBaseMemManager>
+			&& std::is_nothrow_default_constructible_v<TBaseMemManager>>
 	class MemManagerPtr;
 
 	template<typename TBaseMemManager>

@@ -54,9 +54,9 @@
 		return ref.GetEnd(); \
 	}
 
-#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert((std::is_same<Type, \
-	std::decay_t<typename std::iterator_traits<Iterator>::reference>>::value) \
-	&& std::is_reference<typename std::iterator_traits<Iterator>::reference>::value)
+#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert( \
+	(std::is_same_v<Type, std::decay_t<typename std::iterator_traits<Iterator>::reference>>) \
+	&& std::is_reference_v<typename std::iterator_traits<Iterator>::reference>)
 
 #define MOMO_CHECK(expr) \
 	do { \
@@ -71,7 +71,7 @@
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
 	template<typename... Args> \
 	explicit Object##Proxy(Args&&... args) \
-		noexcept((std::is_nothrow_constructible<Object, Args&&...>::value)) \
+		noexcept((std::is_nothrow_constructible_v<Object, Args&&...>)) \
 		: Object(std::forward<Args>(args)...) \
 	{ \
 	}
@@ -82,7 +82,7 @@
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		static_assert((std::is_same<Object, std::decay_t<ObjectArg>>::value)); \
+		static_assert((std::is_same_v<Object, std::decay_t<ObjectArg>>)); \
 		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
@@ -173,8 +173,7 @@ namespace internal
 		template<typename ResObject, typename Object, typename Offset>
 		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{
-			typedef std::conditional_t<std::is_const<Object>::value,
-				const std::byte, std::byte> Byte;
+			typedef std::conditional_t<std::is_const_v<Object>, const std::byte, std::byte> Byte;
 			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
 				+ static_cast<ptrdiff_t>(byteOffset));
 		}

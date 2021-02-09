@@ -941,8 +941,8 @@ public:
 	template<typename Set>
 	void MergeTo(Set& dstSet)
 	{
-		static_assert((std::is_same<Key, typename Set::Key>::value));
-		static_assert((std::is_same<Item, typename Set::Item>::value));
+		static_assert((std::is_same_v<Key, typename Set::Key>));
+		static_assert((std::is_same_v<Item, typename Set::Item>));
 		pvMergeTo(dstSet);
 	}
 
@@ -950,7 +950,7 @@ public:
 	{
 		if (this == &dstTreeSet)
 			return;
-		if (!std::is_empty<TreeTraits>::value)
+		if (!std::is_empty_v<TreeTraits>)
 			return pvMergeTo(dstTreeSet);
 		size_t count = GetCount();
 		if (count == 0)

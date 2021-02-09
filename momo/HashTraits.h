@@ -113,7 +113,7 @@ public:
 	typedef TKeyArgBase KeyArgBase;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::conditional_t<std::is_same<KeyArgBase, Key>::value,
+	using IsValidKeyArg = std::conditional_t<std::is_same_v<KeyArgBase, Key>,
 		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>;	//?
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
@@ -141,16 +141,16 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		static_assert((std::is_convertible<const KeyArg&, const KeyArgBase&>::value));
-		//static_assert(std::is_empty<HashCoder<KeyArgBase>>::value);
+		static_assert((std::is_convertible_v<const KeyArg&, const KeyArgBase&>));
+		//static_assert(std::is_empty_v<HashCoder<KeyArgBase>>);
 		return HashCoder<KeyArgBase>()(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_convertible<const KeyArg1&, const KeyArgBase&>::value));
-		static_assert((std::is_convertible<const KeyArg2&, const KeyArgBase&>::value));
+		static_assert((std::is_convertible_v<const KeyArg1&, const KeyArgBase&>));
+		static_assert((std::is_convertible_v<const KeyArg2&, const KeyArgBase&>));
 		return std::equal_to<KeyArgBase>()(key1, key2);
 	}
 };
@@ -187,9 +187,8 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc>;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
-		&& (std::is_same<HashFunc, HashCoder<Key>>::value
-		|| std::is_same<HashFunc, std::hash<Key>>::value);
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value &&
+		(std::is_same_v<HashFunc, HashCoder<Key>> || std::is_same_v<HashFunc, std::hash<Key>>);
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
@@ -233,15 +232,15 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		static_assert((std::is_same<Key, KeyArg>::value) || IsValidKeyArg<KeyArg>::value);
+		static_assert((std::is_same_v<Key, KeyArg>) || IsValidKeyArg<KeyArg>::value);
 		return mHashFunc(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same<Key, KeyArg2>::value));
+		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
+		static_assert((std::is_same_v<Key, KeyArg2>));
 		return mEqualFunc(key1, key2);
 	}
 

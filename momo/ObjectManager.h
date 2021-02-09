@@ -69,7 +69,7 @@ public:
 	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
 	static const bool isNothrowRelocatable = isTriviallyRelocatable
-		|| std::is_nothrow_move_constructible<Object>::value
+		|| std::is_nothrow_move_constructible_v<Object>
 		|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object);
 
 public:
@@ -152,8 +152,8 @@ namespace internal
 		static const bool isNothrowSwappable = std::is_nothrow_swappable_v<Object>;
 
 		static const bool isNothrowAnywayAssignable =
-			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
-			|| isNothrowRelocatable || std::is_nothrow_copy_assignable<Object>::value;
+			std::is_nothrow_move_assignable_v<Object> || isNothrowSwappable
+			|| isNothrowRelocatable || std::is_nothrow_copy_assignable_v<Object>;
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 

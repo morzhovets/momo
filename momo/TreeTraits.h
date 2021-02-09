@@ -31,8 +31,8 @@ namespace internal
 
 	template<typename Key, typename KeyArg>
 	struct TreeTraitsIsValidKeyArg<Key, KeyArg, std::enable_if_t<
-		std::is_convertible<decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()), bool>::value &&
-		std::is_convertible<decltype(std::declval<const KeyArg&>() < std::declval<const Key&>()), bool>::value>>
+		std::is_convertible_v<decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()), bool> &&
+		std::is_convertible_v<decltype(std::declval<const KeyArg&>() < std::declval<const Key&>()), bool>>>
 		: public std::true_type
 	{
 	};
@@ -81,8 +81,8 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
+		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
+		static_assert((std::is_same_v<Key, KeyArg2>) || IsValidKeyArg<KeyArg2>::value);
 		return std::less<>()(key1, key2);
 	}
 };
@@ -101,7 +101,7 @@ public:
 	static const bool multiKey = tMultiKey;
 
 	static const bool useLinearSearch =
-		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
+		std::is_same_v<LessFunc, std::less<Key>> && IsFastComparable<Key>::value;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;
@@ -115,8 +115,8 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
+		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
+		static_assert((std::is_same_v<Key, KeyArg2>) || IsValidKeyArg<KeyArg2>::value);
 		return LessFunc::operator()(key1, key2);
 	}
 
