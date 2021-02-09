@@ -391,8 +391,7 @@ namespace internal
 			std::false_type /*isNothrowMoveAssignable*/, std::true_type /*isNothrowSwappable*/,
 			BoolConstant<isNothrowRelocatable>, BoolConstant<isNothrowCopyAssignable>) noexcept
 		{
-			using std::swap;
-			swap(srcObject, dstObject);
+			std::iter_swap(std::addressof(srcObject), std::addressof(dstObject));
 		}
 
 		template<bool isNothrowCopyAssignable>
@@ -526,10 +525,9 @@ namespace internal
 			std::false_type /*isNothrowRelocatable*/,
 			std::true_type /*isNothrowSwappable*/) noexcept
 		{
-			using std::swap;
 			Iterator iter = begin;
 			for (size_t i = 0; i < shift; ++i, (void)++iter)
-				swap(*iter, *std::next(iter));
+				std::iter_swap(iter, std::next(iter));
 		}
 	};
 }
