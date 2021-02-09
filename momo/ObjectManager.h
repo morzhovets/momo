@@ -77,7 +77,7 @@ public:
 		Object* dstObject) noexcept(isNothrowRelocatable)
 	{
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-		if constexpr (IsTriviallyRelocatable<Object>::value)
+		if constexpr (isTriviallyRelocatable)
 		{
 			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
 		}
@@ -291,8 +291,7 @@ namespace internal
 			}
 			else if constexpr (isNothrowSwappable)
 			{
-				using std::swap;
-				swap(srcObject, dstObject);
+				std::iter_swap(std::addressof(srcObject), std::addressof(dstObject));
 			}
 			else if constexpr (isNothrowRelocatable)
 			{
@@ -428,10 +427,9 @@ namespace internal
 			}
 			else
 			{
-				using std::swap;
 				Iterator iter = begin;
 				for (size_t i = 0; i < shift; ++i, (void)++iter)
-					swap(*iter, *std::next(iter));
+					std::iter_swap(iter, std::next(iter));
 			}
 		}
 	};
