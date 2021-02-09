@@ -71,7 +71,9 @@ public:
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		operator delete(ptr, size);
+		(void)size;
+		operator delete(ptr);
+		//operator delete(ptr, size);
 	}
 };
 
