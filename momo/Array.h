@@ -948,7 +948,7 @@ private:
 	void pvAssign(Array&& array) noexcept
 	{
 		MOMO_ASSERT(this != &array);
-		mData.~Data();	//?
+		std::destroy_at(&mData);	//?
 		std::construct_at(&mData, std::move(array.mData));
 	}
 

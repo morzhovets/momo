@@ -428,7 +428,7 @@ namespace internal
 		{
 			if (this != &memManagerWrapper)
 			{
-				mMemManager.~MemManager();
+				std::destroy_at(&mMemManager);
 				new(static_cast<void*>(&mMemManager))
 					MemManager(std::move(memManagerWrapper.mMemManager));
 			}

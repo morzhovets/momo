@@ -635,7 +635,7 @@ private:
 		void Destroy(MemManager& memManager) noexcept
 		{
 			MOMO_ASSERT(!IsNull());
-			mData->~Data();
+			std::destroy_at(mData);
 			MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			mData = nullptr;
 		}

@@ -54,8 +54,7 @@ public:
 public:
 	static void Destroy(MemManager* /*memManager*/, Object& object) noexcept
 	{
-		(void)object;	// vs warning
-		object.~Object();
+		std::destroy_at(std::addressof(object));
 	}
 };
 

@@ -209,7 +209,7 @@ private:
 			if (!IsNull())
 			{
 				ColumnList columnList = std::move(mData->columnList);
-				mData->~Data();
+				std::destroy_at(mData);
 				MemManagerProxy::Deallocate(columnList.GetMemManager(), mData, sizeof(Data));
 			}
 		}

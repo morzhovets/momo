@@ -133,7 +133,7 @@ namespace internal
 			if (!pvIsNull())
 			{
 				MemManager memManager = std::move(GetMemManager());
-				mData->~Data();
+				std::destroy_at(mData);
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
 		}

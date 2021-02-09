@@ -69,8 +69,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				for (size_t i = 0; i < bucketIndex; ++i)
-					buckets[i].~Bucket();
+				std::destroy_n(buckets, bucketIndex);
 				resBuckets->~HashSetBuckets();
 				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
 				throw;
@@ -83,12 +82,11 @@ namespace internal
 			MOMO_ASSERT(mNextBuckets == nullptr);
 			size_t bucketCount = GetCount();
 			Bucket* buckets = pvGetBuckets();
-			for (size_t i = 0; i < bucketCount; ++i)
-				buckets[i].~Bucket();
+			std::destroy_n(buckets, bucketCount);
 			if (destroyBucketParams)
 			{
 				mBucketParams->Clear();
-				mBucketParams->~BucketParams();
+				std::destroy_at(mBucketParams);
 				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
 			}
 			size_t bufferSize = pvGetBufferSize(GetLogCount());

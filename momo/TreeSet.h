@@ -1002,7 +1002,7 @@ private:
 			pvDestroy(mRootNode);
 		if (mNodeParams != nullptr)
 		{
-			mNodeParams->~NodeParams();
+			std::destroy_at(mNodeParams);
 			MemManagerProxy::Deallocate(GetMemManager(), mNodeParams, sizeof(NodeParams));
 		}
 	}

@@ -434,7 +434,7 @@ namespace internal
 			}
 			else
 			{
-				pvGetArray().~Array();
+				std::destroy_at(&pvGetArray());
 				ArrayMemPool& memPool = params.GetArrayMemPool();
 				if (!onClear || !memPool.CanDeallocateAll())
 					memPool.Deallocate(mPtr);
