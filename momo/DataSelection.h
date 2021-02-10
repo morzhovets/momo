@@ -79,10 +79,10 @@ namespace internal
 				&& iter1.pvGetIndex() == iter2.pvGetIndex();
 		}
 
-		friend bool operator<(DataRawIterator iter1, DataRawIterator iter2)
+		friend auto operator<=>(DataRawIterator iter1, DataRawIterator iter2)
 		{
 			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return iter1.pvGetIndex() < iter2.pvGetIndex();
+			return iter1.pvGetIndex() <=> iter2.pvGetIndex();
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
@@ -165,10 +165,10 @@ namespace internal
 				&& iter1.mRawIterator == iter2.mRawIterator;
 		}
 
-		friend bool operator<(DataRowIterator iter1, DataRowIterator iter2)
+		friend auto operator<=>(DataRowIterator iter1, DataRowIterator iter2)
 		{
 			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
-			return iter1.mRawIterator < iter2.mRawIterator;
+			return iter1.mRawIterator <=> iter2.mRawIterator;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
@@ -324,10 +324,10 @@ namespace internal
 			return iter1.mOffset == iter2.mOffset && iter1.mRowIterator == iter2.mRowIterator;
 		}
 
-		friend bool operator<(DataConstItemIterator iter1, DataConstItemIterator iter2)
+		friend auto operator<=>(DataConstItemIterator iter1, DataConstItemIterator iter2)
 		{
 			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
-			return iter1.mRowIterator < iter2.mRowIterator;
+			return iter1.mRowIterator <=> iter2.mRowIterator;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)

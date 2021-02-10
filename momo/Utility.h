@@ -32,6 +32,7 @@
 #include <array>
 #include <tuple>
 #include <initializer_list>
+#include <compare>
 #include <bit>
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN

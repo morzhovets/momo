@@ -86,10 +86,10 @@ namespace internal
 			return iter1.mRaw == iter2.mRaw && iter1.mRawIndex == iter2.mRawIndex;
 		}
 
-		friend bool operator<(DataRawUniqueHashIterator iter1, DataRawUniqueHashIterator iter2)
+		friend auto operator<=>(DataRawUniqueHashIterator iter1, DataRawUniqueHashIterator iter2)
 		{
 			MOMO_CHECK(iter1.mRaw == iter2.mRaw);
-			return iter1.mRawIndex < iter2.mRawIndex;
+			return iter1.mRawIndex <=> iter2.mRawIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawUniqueHashIterator)
@@ -215,10 +215,10 @@ namespace internal
 			return iter1.mRaw0 == iter2.mRaw0 && iter1.mRawIndex == iter2.mRawIndex;
 		}
 
-		friend bool operator<(DataRawMultiHashIterator iter1, DataRawMultiHashIterator iter2)
+		friend auto operator<=>(DataRawMultiHashIterator iter1, DataRawMultiHashIterator iter2)
 		{
 			MOMO_CHECK(iter1.mRaw0 == iter2.mRaw0);
-			return iter1.mRawIndex < iter2.mRawIndex;
+			return iter1.mRawIndex <=> iter2.mRawIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawMultiHashIterator)

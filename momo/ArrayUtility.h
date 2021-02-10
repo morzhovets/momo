@@ -76,10 +76,10 @@ namespace internal
 			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
 		}
 
-		friend bool operator<(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
+		friend auto operator<=>(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
 		{
 			MOMO_CHECK(iter1.mArray == iter2.mArray);
-			return iter1.mIndex < iter2.mIndex;
+			return iter1.mIndex <=> iter2.mIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
