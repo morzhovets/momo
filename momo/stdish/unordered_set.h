@@ -534,6 +534,7 @@ public:
 	}
 
 	template<typename Predicate>
+		requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(unordered_set& cont, const Predicate& pred)
 	{
 		return cont.mHashSet.Remove(pred);
@@ -667,6 +668,7 @@ private:
 public:
 	using typename UnorderedSet::size_type;
 	using typename UnorderedSet::value_type;
+	using typename UnorderedSet::const_reference;
 
 public:
 	using UnorderedSet::UnorderedSet;
@@ -683,6 +685,7 @@ public:
 	}
 
 	template<typename Predicate>
+		requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(unordered_set_open& cont, const Predicate& pred)
 	{
 		return cont.get_nested_container().Remove(pred);

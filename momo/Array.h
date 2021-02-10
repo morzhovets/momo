@@ -916,8 +916,8 @@ public:
 	}
 
 	template<typename Predicate>
-	std::enable_if_t<std::is_invocable_r_v<bool, const Predicate&, const Item&>, size_t>
-	Remove(const Predicate& pred)
+		requires std::predicate<Predicate, const Item&>
+	size_t Remove(const Predicate& pred)
 	{
 		return ArrayShifter::Remove(*this, pred);
 	}

@@ -1074,9 +1074,8 @@ public:
 	}
 
 	template<typename PairPredicate>
-	std::enable_if_t<std::is_invocable_r_v<bool, const PairPredicate&, const Key&, const Value&>,
-		size_t>
-	Remove(const PairPredicate& pairPred)
+		requires std::predicate<PairPredicate, const Key&, const Value&>
+	size_t Remove(const PairPredicate& pairPred)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();

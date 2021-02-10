@@ -750,9 +750,8 @@ public:
 	}
 
 	template<typename PairPredicate>
-	std::enable_if_t<std::is_invocable_r_v<bool, const PairPredicate&, const Key&, const Value&>,
-		size_t>
-	Remove(const PairPredicate& pairPred)
+		requires std::predicate<PairPredicate, const Key&, const Value&>
+	size_t Remove(const PairPredicate& pairPred)
 	{
 		auto itemPred = [&pairPred] (const KeyValuePair& item)
 			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };

@@ -514,6 +514,7 @@ public:
 	}
 
 	template<typename Predicate>
+		requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(set& cont, const Predicate& pred)
 	{
 		return cont.mTreeSet.Remove(pred);
@@ -614,6 +615,7 @@ public:
 	using typename Set::value_type;
 	using typename Set::iterator;
 	using typename Set::node_type;
+	using typename Set::const_reference;
 
 	typedef iterator insert_return_type;
 
@@ -655,6 +657,7 @@ public:
 	}
 
 	template<typename Predicate>
+		requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(multiset& cont, const Predicate& pred)
 	{
 		return cont.get_nested_container().Remove(pred);

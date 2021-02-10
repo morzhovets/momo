@@ -32,6 +32,7 @@
 #include <array>
 #include <tuple>
 #include <initializer_list>
+#include <concepts>
 #include <compare>
 #include <bit>
 
