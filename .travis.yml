@@ -180,12 +180,21 @@ matrix:
           packages: clang-8
       env:
         - COMPILER="clang++-8"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
-
-    - compiler: clang
-      # clang 7.0.0
-      env:
-        - COMPILER="clang++"
         - BUILD_TYPE="Debug"
         - CXXFLAGS="-std=c++17 -msse2 -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES"
+
+    - compiler: clang
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - g++-10
+            - clang-11
+      env:
+        - COMPILER="clang++-11"
+        - BUILD_TYPE="Release"
+        - CXXFLAGS="-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
