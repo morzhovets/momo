@@ -57,10 +57,6 @@
 	{ \
 		return *(*this + diff); \
 	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
-	} \
 	friend bool operator>(Iterator iter1, Iterator iter2) \
 	{ \
 		return iter2 < iter1; \
@@ -85,10 +81,6 @@
 	{ \
 		return *operator->(); \
 	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
-	} \
 	bool operator!() const noexcept \
 	{ \
 		return *this == Iterator(); \
@@ -102,10 +94,6 @@
 	Reference operator*() const \
 	{ \
 		return *operator->(); \
-	} \
-	friend bool operator!=(Position pos1, Position pos2) noexcept \
-	{ \
-		return !(pos1 == pos2); \
 	} \
 	bool operator!() const noexcept \
 	{ \
@@ -132,10 +120,6 @@
 	Reference operator*() const \
 	{ \
 		return *operator->(); \
-	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
 	}
 
 namespace momo
