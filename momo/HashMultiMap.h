@@ -236,9 +236,9 @@ namespace internal
 			return Pointer(Reference(mKeyIterator->key, *mValueIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(HashMultiMapIterator iter1, HashMultiMapIterator iter2) noexcept
 		{
-			return mValueIterator == iter.GetValueIterator();
+			return iter1.mValueIterator == iter2.mValueIterator;
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMultiMapIterator)

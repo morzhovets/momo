@@ -85,13 +85,13 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstIterator iter) const noexcept \
+	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
 	{ \
-		return !(*this == iter); \
+		return !(iter1 == iter2); \
 	} \
 	bool operator!() const noexcept \
 	{ \
-		return *this == ConstIterator(); \
+		return *this == Iterator(); \
 	} \
 	explicit operator bool() const noexcept \
 	{ \
@@ -103,13 +103,13 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstPosition pos) const noexcept \
+	friend bool operator!=(Position pos1, Position pos2) noexcept \
 	{ \
-		return !(*this == pos); \
+		return !(pos1 == pos2); \
 	} \
 	bool operator!() const noexcept \
 	{ \
-		return *this == ConstPosition(); \
+		return *this == Position(); \
 	} \
 	explicit operator bool() const noexcept \
 	{ \
@@ -377,7 +377,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 		};
 
 	public:
@@ -402,9 +401,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(HashDerivedIterator iter1, HashDerivedIterator iter2) noexcept
 		{
-			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
+			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)

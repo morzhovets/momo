@@ -49,7 +49,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetHashSetIterator)
 		};
 
 	public:
@@ -74,9 +73,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mHashSetIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(HashMapIterator iter1, HashMapIterator iter2) noexcept
 		{
-			return mHashSetIterator == ConstIteratorProxy::GetHashSetIterator(iter);
+			return iter1.mHashSetIterator == iter2.mHashSetIterator;
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMapIterator)
@@ -122,7 +121,6 @@ namespace internal
 		struct ConstPositionProxy : public ConstPosition
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashSetPosition)
 		};
 
 		struct IteratorProxy : public Iterator
@@ -162,9 +160,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mHashSetPosition));
 		}
 
-		bool operator==(ConstPosition iter) const noexcept
+		friend bool operator==(HashMapPosition pos1, HashMapPosition pos2) noexcept
 		{
-			return mHashSetPosition == ConstPositionProxy::GetHashSetPosition(iter);
+			return pos1.mHashSetPosition == pos2.mHashSetPosition;
 		}
 
 		MOMO_MORE_HASH_POSITION_OPERATORS(HashMapPosition)
