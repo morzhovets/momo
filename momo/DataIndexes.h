@@ -68,10 +68,10 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(DataRawUniqueHashIterator iter1, DataRawUniqueHashIterator iter2)
 		{
-			MOMO_CHECK(mRaw == iter.mRaw);
-			return mRawIndex - iter.mRawIndex;
+			MOMO_CHECK(iter1.mRaw == iter2.mRaw);
+			return iter1.mRawIndex - iter2.mRawIndex;
 		}
 
 		Pointer operator->() const
@@ -80,15 +80,16 @@ namespace internal
 			return &mRaw;
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(DataRawUniqueHashIterator iter1,
+			DataRawUniqueHashIterator iter2) noexcept
 		{
-			return mRaw == iter.mRaw && mRawIndex == iter.mRawIndex;
+			return iter1.mRaw == iter2.mRaw && iter1.mRawIndex == iter2.mRawIndex;
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(DataRawUniqueHashIterator iter1, DataRawUniqueHashIterator iter2)
 		{
-			MOMO_CHECK(mRaw == iter.mRaw);
-			return mRawIndex < iter.mRawIndex;
+			MOMO_CHECK(iter1.mRaw == iter2.mRaw);
+			return iter1.mRawIndex < iter2.mRawIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawUniqueHashIterator)
@@ -187,10 +188,10 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(DataRawMultiHashIterator iter1, DataRawMultiHashIterator iter2)
 		{
-			MOMO_CHECK(mRaw0 == iter.mRaw0);
-			return mRawIndex - iter.mRawIndex;
+			MOMO_CHECK(iter1.mRaw0 == iter2.mRaw0);
+			return iter1.mRawIndex - iter2.mRawIndex;
 		}
 
 		Pointer operator->() const
@@ -208,15 +209,16 @@ namespace internal
 			}
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(DataRawMultiHashIterator iter1,
+			DataRawMultiHashIterator iter2) noexcept
 		{
-			return mRaw0 == iter.mRaw0 && mRawIndex == iter.mRawIndex;
+			return iter1.mRaw0 == iter2.mRaw0 && iter1.mRawIndex == iter2.mRawIndex;
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(DataRawMultiHashIterator iter1, DataRawMultiHashIterator iter2)
 		{
-			MOMO_CHECK(mRaw0 == iter.mRaw0);
-			return mRawIndex < iter.mRawIndex;
+			MOMO_CHECK(iter1.mRaw0 == iter2.mRaw0);
+			return iter1.mRawIndex < iter2.mRawIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawMultiHashIterator)

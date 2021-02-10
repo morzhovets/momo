@@ -234,9 +234,9 @@ namespace internal
 			return std::addressof(*mBucketIterator);
 		}
 
-		bool operator==(ConstPosition pos) const noexcept
+		friend bool operator==(HashSetConstPosition pos1, HashSetConstPosition pos2) noexcept
 		{
-			return mBucketIterator == pos.mBucketIterator;
+			return pos1.mBucketIterator == pos2.mBucketIterator;
 		}
 
 		MOMO_MORE_HASH_POSITION_OPERATORS(HashSetConstPosition)

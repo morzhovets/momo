@@ -57,21 +57,21 @@
 	{ \
 		return *(*this + diff); \
 	} \
-	bool operator!=(ConstIterator iter) const noexcept \
+	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
 	{ \
-		return !(*this == iter); \
+		return !(iter1 == iter2); \
 	} \
-	bool operator>(ConstIterator iter) const \
+	friend bool operator>(Iterator iter1, Iterator iter2) \
 	{ \
-		return iter < *this; \
+		return iter2 < iter1; \
 	} \
-	bool operator<=(ConstIterator iter) const \
+	friend bool operator<=(Iterator iter1, Iterator iter2) \
 	{ \
-		return !(iter < *this); \
+		return !(iter2 < iter1); \
 	} \
-	bool operator>=(ConstIterator iter) const \
+	friend bool operator>=(Iterator iter1, Iterator iter2) \
 	{ \
-		return iter <= *this; \
+		return iter2 <= iter1; \
 	}
 
 #define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
@@ -85,13 +85,13 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstIterator iter) const noexcept \
+	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
 	{ \
-		return !(*this == iter); \
+		return !(iter1 == iter2); \
 	} \
 	bool operator!() const noexcept \
 	{ \
-		return *this == ConstIterator(); \
+		return *this == Iterator(); \
 	} \
 	explicit operator bool() const noexcept \
 	{ \
@@ -103,13 +103,13 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstPosition pos) const noexcept \
+	friend bool operator!=(Position pos1, Position pos2) noexcept \
 	{ \
-		return !(*this == pos); \
+		return !(pos1 == pos2); \
 	} \
 	bool operator!() const noexcept \
 	{ \
-		return *this == ConstPosition(); \
+		return *this == Position(); \
 	} \
 	explicit operator bool() const noexcept \
 	{ \
@@ -133,9 +133,9 @@
 	{ \
 		return *operator->(); \
 	} \
-	bool operator!=(ConstIterator iter) const noexcept \
+	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
 	{ \
-		return !(*this == iter); \
+		return !(iter1 == iter2); \
 	}
 
 namespace momo

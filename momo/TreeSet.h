@@ -104,9 +104,9 @@ namespace internal
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(TreeSetConstIterator iter1, TreeSetConstIterator iter2) noexcept
 		{
-			return mNode == iter.mNode && mItemIndex == iter.mItemIndex;
+			return iter1.mNode == iter2.mNode && iter1.mItemIndex == iter2.mItemIndex;
 		}
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)

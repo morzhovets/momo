@@ -49,7 +49,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator, TreeSetIterator)
 		};
 
 	public:
@@ -80,9 +79,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mTreeSetIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(TreeMapIterator iter1, TreeMapIterator iter2) noexcept
 		{
-			return mTreeSetIterator == ConstIteratorProxy::GetTreeSetIterator(iter);
+			return iter1.mTreeSetIterator == iter2.mTreeSetIterator;
 		}
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeMapIterator)

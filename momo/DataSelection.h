@@ -59,31 +59,30 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(pvGetRaws() == iter.pvGetRaws());
-			return ArrayIndexIterator::operator-(iter);
+			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
+			return static_cast<ptrdiff_t>(iter1.ptGetIndex() - iter2.ptGetIndex());
 		}
 
 		Pointer operator->() const
 		{
 			const Raws* raws = pvGetRaws();
 			size_t index = pvGetIndex();
-			(void)raws; (void)index;
 			MOMO_CHECK(raws != nullptr && index < raws->GetCount());
-			return ArrayIndexIterator::operator->();
-			//return raws->GetItems() + index;
+			return raws->GetItems() + index;
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(DataRawIterator iter1, DataRawIterator iter2) noexcept
 		{
-			return ArrayIndexIterator::operator==(iter);
+			return iter1.pvGetRaws() == iter2.pvGetRaws()
+				&& iter1.pvGetIndex() == iter2.pvGetIndex();
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(pvGetRaws() == iter.pvGetRaws());
-			return ArrayIndexIterator::operator<(iter);
+			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
+			return iter1.pvGetIndex() < iter2.pvGetIndex();
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
@@ -128,8 +127,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetColumnList, const ColumnList*)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetRawIterator, RawIterator)
 		};
 
 	public:
@@ -150,10 +147,10 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(DataRowIterator iter1, DataRowIterator iter2)
 		{
-			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
-			return mRawIterator - ConstIteratorProxy::GetRawIterator(iter);
+			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
+			return iter1.mRawIterator - iter2.mRawIterator;
 		}
 
 		Pointer operator->() const
@@ -162,16 +159,16 @@ namespace internal
 			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(DataRowIterator iter1, DataRowIterator iter2) noexcept
 		{
-			return mColumnList == ConstIteratorProxy::GetColumnList(iter)
-				&& mRawIterator == ConstIteratorProxy::GetRawIterator(iter);
+			return iter1.mColumnList == iter2.mColumnList
+				&& iter1.mRawIterator == iter2.mRawIterator;
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(DataRowIterator iter1, DataRowIterator iter2)
 		{
-			MOMO_CHECK(mColumnList == ConstIteratorProxy::GetColumnList(iter));
-			return mRawIterator < ConstIteratorProxy::GetRawIterator(iter);
+			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
+			return iter1.mRawIterator < iter2.mRawIterator;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
@@ -311,10 +308,10 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(DataConstItemIterator iter1, DataConstItemIterator iter2)
 		{
-			MOMO_CHECK(mOffset == iter.GetOffset());
-			return mRowIterator - iter.GetRowIterator();
+			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
+			return iter1.mRowIterator - iter2.mRowIterator;
 		}
 
 		Pointer operator->() const
@@ -322,15 +319,15 @@ namespace internal
 			return std::addressof(mRowIterator->template GetByOffset<Item>(mOffset));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(DataConstItemIterator iter1, DataConstItemIterator iter2) noexcept
 		{
-			return mOffset == iter.GetOffset() && mRowIterator == iter.GetRowIterator();
+			return iter1.mOffset == iter2.mOffset && iter1.mRowIterator == iter2.mRowIterator;
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(DataConstItemIterator iter1, DataConstItemIterator iter2)
 		{
-			MOMO_CHECK(mOffset == iter.GetOffset());
-			return mRowIterator < iter.GetRowIterator();
+			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
+			return iter1.mRowIterator < iter2.mRowIterator;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)
