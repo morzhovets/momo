@@ -37,8 +37,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetArray)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetIndex)
 		};
 
 	public:
@@ -61,10 +59,10 @@ namespace internal
 			return *this;
 		}
 
-		ptrdiff_t operator-(ConstIterator iter) const
+		friend ptrdiff_t operator-(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
 		{
-			MOMO_CHECK(mArray == ConstIteratorProxy::GetArray(iter));
-			return static_cast<ptrdiff_t>(mIndex - ConstIteratorProxy::GetIndex(iter));
+			MOMO_CHECK(iter1.mArray == iter2.mArray);
+			return static_cast<ptrdiff_t>(iter1.mIndex - iter2.mIndex);
 		}
 
 		Pointer operator->() const
@@ -73,16 +71,15 @@ namespace internal
 			return std::addressof((*mArray)[mIndex]);
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
 		{
-			return mArray == ConstIteratorProxy::GetArray(iter)
-				&& mIndex == ConstIteratorProxy::GetIndex(iter);
+			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
 		}
 
-		bool operator<(ConstIterator iter) const
+		friend bool operator<(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
 		{
-			MOMO_CHECK(mArray == ConstIteratorProxy::GetArray(iter));
-			return mIndex < ConstIteratorProxy::GetIndex(iter);
+			MOMO_CHECK(iter1.mArray == iter2.mArray);
+			return iter1.mIndex < iter2.mIndex;
 		}
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
