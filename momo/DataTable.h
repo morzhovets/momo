@@ -729,9 +729,8 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
-		ConstSelection>
-	Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	requires std::predicate<RowFilter, ConstRowReference>
+	ConstSelection Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -743,9 +742,8 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
-		Selection>
-	Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
+	requires std::predicate<RowFilter, ConstRowReference>
+	Selection Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -757,9 +755,8 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
-		size_t>
-	SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	requires std::predicate<RowFilter, ConstRowReference>
+	size_t SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
@@ -810,9 +807,8 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
-		DataTable>
-	Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	requires std::predicate<RowFilter, ConstRowReference>
+	DataTable Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(rowFilter, column, columns...);
@@ -826,9 +822,8 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>,
-		DataTable>
-	ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	requires std::predicate<RowFilter, ConstRowReference>
+	DataTable ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(rowFilter, column, columns...);

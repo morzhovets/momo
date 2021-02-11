@@ -655,8 +655,8 @@ namespace internal
 		}
 
 		template<typename RowFilter>
-		std::enable_if_t<std::is_invocable_r_v<bool, const RowFilter&, ConstRowReference>, size_t>
-		Remove(const RowFilter& rowFilter)
+		requires std::predicate<RowFilter, ConstRowReference>
+		size_t Remove(const RowFilter& rowFilter)
 		{
 			size_t newCount = 0;
 			for (Raw*& raw : mRaws)
@@ -742,6 +742,7 @@ namespace internal
 		}
 
 		template<typename RowPredicate>
+		requires std::predicate<RowPredicate, ConstRowReference>
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
