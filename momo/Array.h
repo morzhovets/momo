@@ -590,8 +590,8 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(Array)
-	MOMO_FRIENDS_BEGIN_END(const Array&, ConstIterator)
-	MOMO_FRIENDS_BEGIN_END(Array&, Iterator)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(Array)
+	MOMO_FRIENDS_BEGIN_END(Array)
 
 	const Item* GetItems() const noexcept
 	{

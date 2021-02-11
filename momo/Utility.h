@@ -44,14 +44,32 @@
 		object1.Swap(object2); \
 	}
 
-#define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
-	friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \
+#define MOMO_FRIENDS_SIZE_BEGIN_END_CONST(Object) \
+	friend size_t size(const Object& object) noexcept(noexcept(object.GetCount())) \
 	{ \
-		return ref.GetBegin(); \
+		return object.GetCount(); \
 	} \
-	friend Iterator end(Reference ref) noexcept(noexcept(ref.GetEnd())) \
+	friend auto begin(const Object& object) noexcept(noexcept(object.GetBegin())) \
+		-> decltype(object.GetBegin()) \
 	{ \
-		return ref.GetEnd(); \
+		return object.GetBegin(); \
+	} \
+	friend auto end(const Object& object) noexcept(noexcept(object.GetEnd())) \
+		-> decltype(object.GetEnd()) \
+	{ \
+		return object.GetEnd(); \
+	}
+
+#define MOMO_FRIENDS_BEGIN_END(Object) \
+	friend auto begin(Object& object) noexcept(noexcept(object.GetBegin())) \
+		-> decltype(object.GetBegin()) \
+	{ \
+		return object.GetBegin(); \
+	} \
+	friend auto end(Object& object) noexcept(noexcept(object.GetEnd())) \
+		-> decltype(object.GetEnd()) \
+	{ \
+		return object.GetEnd(); \
 	}
 
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
