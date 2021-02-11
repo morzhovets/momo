@@ -1092,7 +1092,7 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires !Settings::keepRowNumber
+	requires (!Settings::keepRowNumber)
 	void pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
@@ -1145,7 +1145,7 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires !Settings::keepRowNumber
+	requires (!Settings::keepRowNumber)
 	void pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
@@ -1183,7 +1183,7 @@ private:
 	}
 
 	template<typename RowFilter>
-	requires !Settings::keepRowNumber
+	requires (!Settings::keepRowNumber)
 	void pvRemoveRows(const RowFilter& rowFilter)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
