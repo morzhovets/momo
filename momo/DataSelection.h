@@ -698,18 +698,16 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
-			DataSelection&&>
-		Sort(const RowComparer& rowComp) &&
+		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		DataSelection&& Sort(const RowComparer& rowComp) &&
 		{
 			pvSort(rowComp);
 			return std::move(*this);
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
-			DataSelection&>
-		Sort(const RowComparer& rowComp) &
+		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		DataSelection& Sort(const RowComparer& rowComp) &
 		{
 			pvSort(rowComp);
 			return *this;
@@ -804,9 +802,8 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		std::enable_if_t<std::is_invocable_r_v<bool, const RowComparer&, ConstRowReference, ConstRowReference>,
-			void>
-		pvSort(const RowComparer& rowComp)
+		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		void pvSort(const RowComparer& rowComp)
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
 				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
