@@ -337,10 +337,6 @@ public:
 		return IteratorProxy(this, mCount);
 	}
 
-	MOMO_FRIEND_SWAP(SegmentedArray)
-	MOMO_FRIENDS_BEGIN_END(const SegmentedArray&, ConstIterator)
-	MOMO_FRIENDS_BEGIN_END(SegmentedArray&, Iterator)
-
 	const MemManager& GetMemManager() const noexcept
 	{
 		return mSegments.GetMemManager();

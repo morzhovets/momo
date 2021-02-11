@@ -677,8 +677,6 @@ public:
 		return mColumns.GetEnd();
 	}
 
-	MOMO_FRIENDS_BEGIN_END(const DataColumnList&, ConstIterator)
-
 	const MemManager& GetMemManager() const noexcept
 	{
 		return mColumnCodeSet.GetMemManager();

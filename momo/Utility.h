@@ -9,6 +9,10 @@
   namespace momo:
     enum class CheckMode
     enum class ExtraCheckMode
+    function swap
+    function size
+    function begin
+    function end
 
 \**********************************************************/
 
@@ -39,23 +43,6 @@
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 #include <windows.h>
 #endif
-
-#define MOMO_FRIEND_SWAP(Object) \
-	friend void swap(Object& object1, Object& object2) \
-		noexcept(noexcept(object1.Swap(object2))) \
-	{ \
-		object1.Swap(object2); \
-	}
-
-#define MOMO_FRIENDS_BEGIN_END(Reference, Iterator) \
-	friend Iterator begin(Reference ref) noexcept(noexcept(ref.GetBegin())) \
-	{ \
-		return ref.GetBegin(); \
-	} \
-	friend Iterator end(Reference ref) noexcept(noexcept(ref.GetEnd())) \
-	{ \
-		return ref.GetEnd(); \
-	}
 
 #define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert( \
 	(std::is_same_v<Type, std::decay_t<typename std::iterator_traits<Iterator>::reference>>) \
@@ -109,6 +96,31 @@ enum class ExtraCheckMode
 
 namespace internal
 {
+	template<typename Object>
+	auto swap(Object& object1, Object& object2) noexcept(noexcept(object1.Swap(object2)))
+		-> decltype(object1.Swap(object2))
+	{
+		return object1.Swap(object2);
+	}
+
+	template<typename Object>
+	auto size(Object& object) noexcept(noexcept(object.GetCount())) -> decltype(object.GetCount())
+	{
+		return object.GetCount();
+	}
+
+	template<typename Object>
+	auto begin(Object& object) noexcept(noexcept(object.GetBegin())) -> decltype(object.GetBegin())
+	{
+		return object.GetBegin();
+	}
+
+	template<typename Object>
+	auto end(Object& object) noexcept(noexcept(object.GetEnd())) -> decltype(object.GetEnd())
+	{
+		return object.GetEnd();
+	}
+
 	template<size_t size,
 		typename Default = void>
 	struct UIntSelector
@@ -268,5 +280,10 @@ namespace internal
 		static const uint32_t max32 = UINT32_MAX;
 	};
 }
+
+using internal::swap;
+using internal::size;
+using internal::begin;
+using internal::end;
 
 } // namespace momo

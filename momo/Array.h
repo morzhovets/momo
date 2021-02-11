@@ -566,10 +566,6 @@ public:
 		return IteratorSelector::MakeIterator(*this, GetCount());
 	}
 
-	MOMO_FRIEND_SWAP(Array)
-	MOMO_FRIENDS_BEGIN_END(const Array&, ConstIterator)
-	MOMO_FRIENDS_BEGIN_END(Array&, Iterator)
-
 	const Item* GetItems() const noexcept
 	{
 		return mData.GetItems();

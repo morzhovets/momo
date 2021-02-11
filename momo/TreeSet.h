@@ -602,9 +602,6 @@ public:
 		return pvMakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
 
-	MOMO_FRIEND_SWAP(TreeSet)
-	MOMO_FRIENDS_BEGIN_END(const TreeSet&, ConstIterator)
-
 	const TreeTraits& GetTreeTraits() const noexcept
 	{
 		return mCrew.GetContainerTraits();

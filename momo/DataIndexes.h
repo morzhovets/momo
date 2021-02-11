@@ -128,8 +128,6 @@ namespace internal
 			return Iterator(mRaw, GetCount());
 		}
 
-		MOMO_FRIENDS_BEGIN_END(const DataRawUniqueHashBounds&, Iterator)
-
 		size_t GetCount() const noexcept
 		{
 			return (mRaw != nullptr) ? 1 : 0;
@@ -272,8 +270,6 @@ namespace internal
 		{
 			return Iterator(mRaw0, mRawBegin, mRawCount, *this);
 		}
-
-		MOMO_FRIENDS_BEGIN_END(const DataRawMultiHashBounds&, Iterator)
 
 		size_t GetCount() const noexcept
 		{
