@@ -67,6 +67,7 @@ public:
 
 template<typename TColumnList = DataColumnList<>,
 	typename TDataTraits = DataTraits>
+requires std::is_nothrow_move_constructible_v<TColumnList>
 class DataTable
 {
 public:
@@ -163,8 +164,6 @@ private:
 
 	class Crew
 	{
-		static_assert(std::is_nothrow_move_constructible_v<ColumnList>);
-
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
@@ -1056,9 +1055,9 @@ private:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	template<typename RowIterator,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	template<typename RowIterator>
+	requires Settings::keepRowNumber
+	void pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
@@ -1096,9 +1095,9 @@ private:
 		}
 	}
 
-	template<typename RowIterator,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	template<typename RowIterator>
+	requires !Settings::keepRowNumber
+	void pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1126,9 +1125,9 @@ private:
 		}
 	}
 
-	template<typename RowIterator,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	template<typename RowIterator>
+	requires Settings::keepRowNumber
+	void pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1149,9 +1148,9 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename RowIterator,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	template<typename RowIterator>
+	requires !Settings::keepRowNumber
+	void pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1165,9 +1164,9 @@ private:
 		pvFilterRaws(rawFilter);
 	}
 
-	template<typename RowFilter,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	template<typename RowFilter>
+	requires Settings::keepRowNumber
+	void pvRemoveRows(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1187,9 +1186,9 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename RowFilter,
-		bool keepRowNumber = Settings::keepRowNumber>
-	std::enable_if_t<!keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	template<typename RowFilter>
+	requires !Settings::keepRowNumber
+	void pvRemoveRows(const RowFilter& rowFilter)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1263,8 +1262,8 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
-		size_t columnCount = sizeof...(Items) + 1,
-		typename = std::enable_if_t<(columnCount > DataTraits::selectEqualerMaxCount)>>
+		size_t columnCount = sizeof...(Items) + 1>
+	requires (columnCount > DataTraits::selectEqualerMaxCount)
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
@@ -1279,9 +1278,8 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename... Items,
-		size_t columnCount = sizeof...(Items),
-		typename = std::enable_if_t<(0 < columnCount
-			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
+		size_t columnCount = sizeof...(Items)>
+	requires (0 < columnCount && columnCount <= DataTraits::selectEqualerMaxCount)
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
 		auto offsets = pvGetOffsets(equalers...);
