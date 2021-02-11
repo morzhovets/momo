@@ -50,11 +50,11 @@ public:
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
+requires (0 < tBlockCount && tBlockCount < 128)
 class MemPoolParams
 {
 public:
 	static const size_t blockCount = tBlockCount;
-	static_assert(0 < blockCount && blockCount < 128);
 
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
@@ -90,14 +90,14 @@ template<size_t tBlockSize,
 	size_t tBlockAlignment = MemPoolConst::GetBlockAlignment(tBlockSize),
 	size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
+requires (0 < tBlockCount && tBlockCount < 128
+	&& 0 < tBlockAlignment && tBlockAlignment <= 1024)
 class MemPoolParamsStatic
 {
 public:
 	static const size_t blockCount = tBlockCount;
-	static_assert(0 < blockCount && blockCount < 128);
 
 	static const size_t blockAlignment = tBlockAlignment;
-	static_assert(0 < blockAlignment && blockAlignment <= 1024);
 
 	static const size_t blockSize = MemPoolConst::CorrectBlockSize(tBlockSize,
 		blockAlignment, blockCount);
@@ -120,15 +120,14 @@ public:
 template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
+requires std::is_nothrow_move_constructible_v<TParams>
+	&& std::is_nothrow_move_assignable_v<TParams>
 class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
 	typedef TParams Params;
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
-
-	static_assert(std::is_nothrow_move_constructible_v<Params>);
-	static_assert(std::is_nothrow_move_assignable_v<Params>);
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -650,13 +649,13 @@ namespace internal
 	};
 
 	template<size_t tBlockCount, typename TMemManager>
+	requires (tBlockCount > 0)
 	class MemPoolUInt32
 	{
 	public:
 		typedef TMemManager MemManager;
 
 		static const size_t blockCount = tBlockCount;
-		static_assert(blockCount > 0);
 
 		static const uint32_t nullPtr = UIntConst::max32;
 
