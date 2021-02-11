@@ -377,8 +377,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-				typename ConstIterator::BaseIterator)
 		};
 
 	public:
@@ -403,9 +401,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(HashDerivedIterator iter1, HashDerivedIterator iter2) noexcept
 		{
-			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
+			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
 		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
@@ -448,8 +446,6 @@ namespace internal
 		struct ConstIteratorProxy : public ConstIterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator,
-				typename ConstIterator::BaseIterator)
 		};
 
 	public:
@@ -480,9 +476,9 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		bool operator==(ConstIterator iter) const noexcept
+		friend bool operator==(TreeDerivedIterator iter1, TreeDerivedIterator iter2) noexcept
 		{
-			return mBaseIterator == ConstIteratorProxy::GetBaseIterator(iter);
+			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
 		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
