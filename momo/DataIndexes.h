@@ -312,13 +312,6 @@ namespace internal
 
 		typedef NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
-		template<typename... Items>
-		struct HashTupleKey
-		{
-			OffsetItemTuple<Items...> tuple;
-			size_t hashCode;	// vs2015
-		};
-
 		template<typename Item = void>
 		struct HashMixedKey
 		{
@@ -341,7 +334,7 @@ namespace internal
 			};
 
 			template<typename... Items>
-			struct IsValidKeyArg<HashTupleKey<Items...>> : public std::true_type
+			struct IsValidKeyArg<OffsetItemTuple<Items...>> : public std::true_type
 			{
 			};
 
@@ -379,9 +372,9 @@ namespace internal
 			}
 
 			template<typename... Items>
-			size_t GetHashCode(const HashTupleKey<Items...>& key) const noexcept
+			size_t GetHashCode(const OffsetItemTuple<Items...>& key) const
 			{
-				return key.hashCode;
+				return pvGetHashCode<0>(key);
 			}
 
 			template<typename Item>
@@ -392,13 +385,11 @@ namespace internal
 
 			bool IsEqual(Raw* key1, Raw* key2) const
 			{
-				//if (key1 == key2)
-				//	return true;
 				return mEqualFunc(key1, key2, mOffsets.GetItems());
 			}
 
 			template<typename... Items>
-			bool IsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
+			bool IsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
 			{
 				return pvIsEqual<0>(key1, key2);
 			}
@@ -412,14 +403,32 @@ namespace internal
 
 		private:
 			template<size_t index, typename... Items>
-			bool pvIsEqual(const HashTupleKey<Items...>& key1, Raw* key2) const
+			size_t pvGetHashCode(const OffsetItemTuple<Items...>& key) const
 			{
 				if constexpr (index < sizeof...(Items))
 				{
-					const auto& pair = std::get<index>(key1.tuple);
-					const auto& item1 = pair.second;
+					const auto& pair = std::get<index>(key);
+					const auto& item = pair.second;
+					size_t hashCode = pvGetHashCode<index + 1>(key);
+					DataTraits::AccumulateHashCode(hashCode, item, pair.first);
+					return hashCode;
+				}
+				else
+				{
+					(void)key;
+					return 0;
+				}
+			}
+
+			template<size_t index, typename... Items>
+			bool pvIsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
+			{
+				if constexpr (index < sizeof...(Items))
+				{
+					const auto& pair1 = std::get<index>(key1);
+					const auto& item1 = pair1.second;
 					typedef std::decay_t<decltype(item1)> Item;
-					const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair.first);
+					const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair1.first);
 					return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
 				}
 				else
@@ -497,9 +506,9 @@ namespace internal
 			}
 
 			template<typename... Items>
-			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey, VersionKeeper /*version*/) const
+			RawBounds Find(const OffsetItemTuple<Items...>& tuple, VersionKeeper /*version*/) const
 			{
-				return pvFind(hashTupleKey);
+				return pvFind(tuple);
 			}
 
 			Raw* Add(Raw* raw, Raw* oldRaw = nullptr)
@@ -651,9 +660,9 @@ namespace internal
 			}
 
 			template<typename... Items>
-			RawBounds Find(const HashTupleKey<Items...>& hashTupleKey, VersionKeeper version) const
+			RawBounds Find(const OffsetItemTuple<Items...>& tuple, VersionKeeper version) const
 			{
-				ConstKeyIterator keyIter = mHashMultiMap.Find(hashTupleKey);
+				ConstKeyIterator keyIter = mHashMultiMap.Find(tuple);
 				return RawBounds(keyIter->key, keyIter->GetBegin(), keyIter->GetCount() + 1, version);
 			}
 
@@ -971,18 +980,16 @@ namespace internal
 		UniqueHashRawBounds FindRaws(UniqueHashIndex uniqueHashIndex,
 			const OffsetItemTuple<Items...>& tuple, VersionKeeper version) const
 		{
-			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple) };
 			const UniqueHash& uniqueHash = pvGetHash(mUniqueHashes, uniqueHashIndex);
-			return uniqueHash.Find(hashTupleKey, version);
+			return uniqueHash.Find(tuple, version);
 		}
 
 		template<typename... Items>
 		MultiHashRawBounds FindRaws(MultiHashIndex multiHashIndex,
 			const OffsetItemTuple<Items...>& tuple, VersionKeeper version) const
 		{
-			HashTupleKey<Items...> hashTupleKey{ tuple, pvGetHashCode<0>(tuple) };
 			const MultiHash& multiHash = pvGetHash(mMultiHashes, multiHashIndex);
-			return multiHash.Find(hashTupleKey, version);
+			return multiHash.Find(tuple, version);
 		}
 
 		void ClearRaws() noexcept
@@ -1374,24 +1381,6 @@ namespace internal
 		static size_t pvGetHashCode(HashMixedKey<> /*key*/, const size_t* /*offsets*/) noexcept
 		{
 			return 0;
-		}
-
-		template<size_t index, typename... Items>
-		static size_t pvGetHashCode(const OffsetItemTuple<Items...>& tuple)
-		{
-			if constexpr (index < sizeof...(Items))
-			{
-				const auto& pair = std::get<index>(tuple);
-				const auto& item = pair.second;
-				size_t hashCode = pvGetHashCode<index + 1>(tuple);
-				DataTraits::AccumulateHashCode(hashCode, item, pair.first);
-				return hashCode;
-			}
-			else
-			{
-				(void)tuple;
-				return 0;
-			}
 		}
 
 		template<typename Void, typename Item, typename... Items>
