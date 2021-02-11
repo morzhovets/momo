@@ -906,15 +906,15 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE ConstKeyIterator Find(const KeyArg& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(
-		const KeyArg& key)
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE KeyIterator Find(const KeyArg& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
@@ -925,8 +925,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE bool ContainsKey(const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}

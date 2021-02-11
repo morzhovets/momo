@@ -752,8 +752,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE ConstPosition Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -764,8 +764,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE bool ContainsKey(const KeyArg& key) const
 	{
 		return !!pvFind(key);
 	}
