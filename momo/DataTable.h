@@ -411,6 +411,9 @@ public:
 		return pvMakeIterator(GetCount());
 	}
 
+	MOMO_FRIEND_SWAP(DataTable)
+	MOMO_FRIENDS_SIZE_BEGIN_END(DataTable)
+
 	const ColumnList& GetColumnList() const noexcept
 	{
 		return mCrew.GetColumnList();

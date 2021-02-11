@@ -227,6 +227,8 @@ namespace internal
 			return IteratorProxy(mHashSetBucketBounds.GetEnd());
 		}
 
+		MOMO_FRIENDS_SIZE_BEGIN_END(HashMapBucketBounds)
+
 		size_t GetCount() const noexcept
 		{
 			return mHashSetBucketBounds.GetCount();
@@ -491,6 +493,9 @@ public:
 	{
 		return Iterator();
 	}
+
+	MOMO_FRIEND_SWAP(HashMap)
+	MOMO_FRIENDS_SIZE_BEGIN_END(HashMap)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

@@ -357,6 +357,9 @@ public:
 		return IteratorProxy(mTreeSet.GetEnd());
 	}
 
+	MOMO_FRIEND_SWAP(TreeMap)
+	MOMO_FRIENDS_SIZE_BEGIN_END(TreeMap)
+
 	const TreeTraits& GetTreeTraits() const noexcept
 	{
 		return mTreeSet.GetTreeTraits();

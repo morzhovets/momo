@@ -288,6 +288,8 @@ namespace internal
 			return UIntMath<>::Next(mBegin, mCount);
 		}
 
+		MOMO_FRIENDS_SIZE_BEGIN_END(ArrayBoundsBase)
+
 		size_t GetCount() const noexcept
 		{
 			return mCount;

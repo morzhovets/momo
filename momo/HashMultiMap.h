@@ -63,6 +63,8 @@ namespace internal
 			return mValues.GetEnd();
 		}
 
+		MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMapKeyReference)
+
 		size_t GetCount() const noexcept
 		{
 			return mValues.GetCount();
@@ -126,6 +128,8 @@ namespace internal
 		{
 			return KeyIterator();
 		}
+
+		MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMapKeyBounds)
 
 		size_t GetCount() const noexcept	//?
 		{
@@ -835,6 +839,9 @@ public:
 	{
 		return Iterator();
 	}
+
+	MOMO_FRIEND_SWAP(HashMultiMap)
+	MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMap)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

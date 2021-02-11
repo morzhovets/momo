@@ -104,6 +104,8 @@ namespace internal
 			return pvGetBuckets() + GetCount();
 		}
 
+		MOMO_FRIENDS_SIZE_BEGIN_END(HashSetBuckets)
+
 		HashSetBuckets* GetNextBuckets() noexcept
 		{
 			return mNextBuckets;
@@ -660,6 +662,9 @@ public:
 	{
 		return ConstIterator();
 	}
+
+	MOMO_FRIEND_SWAP(HashSet)
+	MOMO_FRIENDS_SIZE_BEGIN_END(HashSet)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

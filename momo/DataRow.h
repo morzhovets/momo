@@ -114,6 +114,8 @@ namespace internal
 			std::swap(mFreeRaws, row.mFreeRaws);
 		}
 
+		MOMO_FRIEND_SWAP(DataRow)
+
 		const ColumnList& GetColumnList() const noexcept
 		{
 			return *mColumnList;
