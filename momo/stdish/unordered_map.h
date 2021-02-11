@@ -650,7 +650,7 @@ public:
 	}
 
 	template<typename Predicate>
-		requires std::predicate<Predicate, const_reference>
+	requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(unordered_map& cont, const Predicate& pred)
 	{
 		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
@@ -1001,7 +1001,7 @@ public:
 	}
 
 	template<typename Predicate>
-		requires std::predicate<Predicate, const_reference>
+	requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(unordered_map_open& cont, const Predicate& pred)
 	{
 		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)

@@ -425,7 +425,7 @@ public:
 	}
 
 	template<typename Predicate>
-		requires std::predicate<Predicate, const_reference>
+	requires std::predicate<Predicate, const_reference>
 	friend size_type erase_if(vector& cont, const Predicate& pred)
 	{
 		return cont.mArray.Remove(pred);

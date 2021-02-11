@@ -886,7 +886,7 @@ public:
 	}
 
 	template<typename Predicate>
-		requires std::predicate<Predicate, const Item&>
+	requires std::predicate<Predicate, const Item&>
 	size_t Remove(const Predicate& pred)
 	{
 		size_t initCount = GetCount();

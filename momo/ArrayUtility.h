@@ -286,7 +286,7 @@ namespace internal
 		}
 
 		template<typename Predicate>
-			requires std::predicate<Predicate, const Item&>
+		requires std::predicate<Predicate, const Item&>
 		static size_t Remove(Array& array, const Predicate& pred)
 		{
 			size_t initCount = array.GetCount();
