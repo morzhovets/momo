@@ -924,6 +924,7 @@ public:
 
 	template<typename ItemArg,
 		typename EqualFunc = std::equal_to<>>
+	requires std::equivalence_relation<EqualFunc, const ItemArg&, const Item&>
 	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		const Item* begin = GetItems();
@@ -933,6 +934,7 @@ public:
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>
+	requires std::equivalence_relation<EqualFunc, const Item&, const Item&>
 	bool IsEqual(const Array& array, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		return GetCount() == array.GetCount() &&
