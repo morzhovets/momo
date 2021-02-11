@@ -355,15 +355,15 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, const_iterator> find(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE const_iterator find(const KeyArg& key) const
 	{
 		return equal_range(key).first;
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, iterator> find(
-		const KeyArg& key)
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE iterator find(const KeyArg& key)
 	{
 		return equal_range(key).first;
 	}
@@ -375,8 +375,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, size_type> count(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE size_type count(const KeyArg& key) const
 	{
 		typename HashMultiMap::ConstKeyIterator keyIter = mHashMultiMap.Find(key);
 		return !!keyIter ? keyIter->GetCount() : 0;
@@ -388,8 +388,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> contains(
-		const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE bool contains(const KeyArg& key) const
 	{
 		return count(key) > 0;
 	}
@@ -406,18 +406,16 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value,
-		std::pair<const_iterator, const_iterator>>
-	equal_range(const KeyArg& key) const
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
 	{
 		return pvEqualRange<const_iterator, ConstIteratorProxy>(mHashMultiMap,
 			mHashMultiMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE std::enable_if_t<IsValidKeyArg<KeyArg>::value,
-		std::pair<iterator, iterator>>
-	equal_range(const KeyArg& key)
+	requires IsValidKeyArg<KeyArg>::value
+	MOMO_FORCEINLINE std::pair<iterator, iterator> equal_range(const KeyArg& key)
 	{
 		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, mHashMultiMap.Find(key));
 	}

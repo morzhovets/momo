@@ -341,14 +341,15 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, const_iterator> find(
-			const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		const_iterator find(const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.Find(key));
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
+		requires IsValidKeyArg<KeyArg>::value
+		iterator find(const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.Find(key));
 		}
@@ -359,8 +360,8 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, size_type> count(
-			const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		size_type count(const KeyArg& key) const
 		{
 			return mTreeMap.GetKeyCount(key);
 		}
@@ -371,8 +372,8 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, bool> contains(
-			const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		bool contains(const KeyArg& key) const
 		{
 			return mTreeMap.ContainsKey(key);
 		}
@@ -388,15 +389,15 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, const_iterator> lower_bound(
-			const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		const_iterator lower_bound(const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, iterator> lower_bound(
-			const KeyArg& key)
+		requires IsValidKeyArg<KeyArg>::value
+		iterator lower_bound(const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.GetLowerBound(key));
 		}
@@ -412,15 +413,15 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, const_iterator> upper_bound(
-			const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		const_iterator upper_bound(const KeyArg& key) const
 		{
 			return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, iterator> upper_bound(
-			const KeyArg& key)
+		requires IsValidKeyArg<KeyArg>::value
+		iterator upper_bound(const KeyArg& key)
 		{
 			return IteratorProxy(mTreeMap.GetUpperBound(key));
 		}
@@ -446,16 +447,15 @@ namespace internal
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value,
-			std::pair<const_iterator, const_iterator>>
-		equal_range(const KeyArg& key) const
+		requires IsValidKeyArg<KeyArg>::value
+		std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
 		{
 			return { lower_bound(key), upper_bound(key) };
 		}
 
 		template<typename KeyArg>
-		std::enable_if_t<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
-		equal_range(const KeyArg& key)
+		requires IsValidKeyArg<KeyArg>::value
+		std::pair<iterator, iterator> equal_range(const KeyArg& key)
 		{
 			return { lower_bound(key), upper_bound(key) };
 		}
