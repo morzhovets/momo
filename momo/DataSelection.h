@@ -247,7 +247,7 @@ namespace internal
 			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
 		}
 
-		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataRowBounds)
+		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataRowBounds, Iterator)
 
 		size_t GetCount() const noexcept
 		{
@@ -383,7 +383,7 @@ namespace internal
 			return Iterator(mRowBounds.GetEnd(), mOffset);
 		}
 
-		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataConstItemBounds)
+		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataConstItemBounds, Iterator)
 
 		size_t GetCount() const noexcept
 		{
@@ -537,7 +537,7 @@ namespace internal
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
-		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataSelection)
+		MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataSelection, ConstIterator)
 
 		const ColumnList& GetColumnList() const noexcept
 		{

@@ -358,8 +358,8 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(TreeMap)
-	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(TreeMap)
-	MOMO_FRIENDS_BEGIN_END(TreeMap)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(TreeMap, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(TreeMap, Iterator)
 
 	const TreeTraits& GetTreeTraits() const noexcept
 	{

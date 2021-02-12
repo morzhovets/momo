@@ -413,8 +413,8 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(DataTable)
-	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataTable)
-	MOMO_FRIENDS_BEGIN_END(DataTable)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(DataTable, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(DataTable, Iterator)
 
 	const ColumnList& GetColumnList() const noexcept
 	{
