@@ -388,14 +388,16 @@ namespace internal
 
 	private:
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift < sizeof(void*) * 8)> pvCheckBits(void* ptr) noexcept
+		static EnableIf<(shift < sizeof(void*) * 8)>
+		pvCheckBits(void* ptr) noexcept
 		{
 			(void)ptr;
 			MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> shift == uintptr_t{0});
 		}
 
 		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift == sizeof(void*) * 8)> pvCheckBits(void* /*ptr*/) noexcept
+		static EnableIf<(shift == sizeof(void*) * 8)>
+		pvCheckBits(void* /*ptr*/) noexcept
 		{
 		}
 

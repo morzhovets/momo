@@ -907,15 +907,15 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstKeyIterator> Find(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	ConstKeyIterator> Find(const KeyArg& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, KeyIterator> Find(
-		const KeyArg& key)
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	KeyIterator> Find(const KeyArg& key)
 	{
 		return KeyIteratorProxy(mHashMap.Find(key));
 	}
@@ -926,8 +926,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	bool> ContainsKey(const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
@@ -1076,8 +1076,7 @@ public:
 
 	template<typename PairPredicate>
 	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
-		size_t>
-	Remove(const PairPredicate& pairPred)
+	size_t> Remove(const PairPredicate& pairPred)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();

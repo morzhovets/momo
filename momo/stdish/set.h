@@ -324,14 +324,15 @@ public:
 	//iterator find(const key_type& key)
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
-		const KeyArg& key) const
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	const_iterator> find(const KeyArg& key) const
 	{
 		return mTreeSet.Find(key);
 	}
 
 	//template<typename KeyArg>
-	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(const KeyArg& key)
+	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	//iterator> find(const KeyArg& key)
 
 	size_type count(const key_type& key) const
 	{
@@ -339,8 +340,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
-		const KeyArg& key) const
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	size_type> count(const KeyArg& key) const
 	{
 		return mTreeSet.GetKeyCount(key);
 	}
@@ -351,7 +352,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(const KeyArg& key) const
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	bool> contains(const KeyArg& key) const
 	{
 		return mTreeSet.ContainsKey(key);
 	}
@@ -364,14 +366,15 @@ public:
 	//iterator lower_bound(const key_type& key)
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> lower_bound(
-		const KeyArg& key) const
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	const_iterator> lower_bound(const KeyArg& key) const
 	{
 		return mTreeSet.GetLowerBound(key);
 	}
 
 	//template<typename KeyArg>
-	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> lower_bound(const KeyArg& key)
+	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	//iterator> lower_bound(const KeyArg& key)
 
 	const_iterator upper_bound(const key_type& key) const
 	{
@@ -381,14 +384,15 @@ public:
 	//iterator upper_bound(const key_type& key)
 
 	template<typename KeyArg>
-	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> upper_bound(
-		const KeyArg& key) const
+	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	const_iterator> upper_bound(const KeyArg& key) const
 	{
 		return mTreeSet.GetUpperBound(key);
 	}
 
 	//template<typename KeyArg>
-	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> upper_bound(const KeyArg& key)
+	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	//iterator> upper_bound(const KeyArg& key)
 
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
@@ -404,15 +408,14 @@ public:
 
 	template<typename KeyArg>
 	momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
-		std::pair<const_iterator, const_iterator>>
-	equal_range(const KeyArg& key) const
+	std::pair<const_iterator, const_iterator>> equal_range(const KeyArg& key) const
 	{
 		return { lower_bound(key), upper_bound(key) };
 	}
 
 	//template<typename KeyArg>
-	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, std::pair<iterator, iterator>>
-	//equal_range(const KeyArg& key)
+	//momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	//std::pair<iterator, iterator>> equal_range(const KeyArg& key)
 
 	std::pair<iterator, bool> insert(value_type&& value)
 	{

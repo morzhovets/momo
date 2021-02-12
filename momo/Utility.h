@@ -199,7 +199,8 @@ namespace internal
 	{
 	};
 
-	template<bool value, typename Type = void>
+	template<bool value,
+		typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
 
 	class PtrCaster
@@ -322,7 +323,8 @@ namespace internal
 
 	private:
 		template<size_t size = sizeof(UInt)>
-		static EnableIf<size == 4, UInt> pvLog2(UInt value) noexcept
+		static EnableIf<size == 4,
+		UInt> pvLog2(UInt value) noexcept
 		{
 			static const UInt tab32[32] =
 			{
@@ -340,7 +342,8 @@ namespace internal
 		}
 
 		template<size_t size = sizeof(UInt)>
-		static EnableIf<size == 8, UInt> pvLog2(UInt value) noexcept
+		static EnableIf<size == 8,
+		UInt> pvLog2(UInt value) noexcept
 		{
 			static const UInt tab64[64] =
 			{

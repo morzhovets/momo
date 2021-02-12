@@ -730,8 +730,7 @@ public:
 
 	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-		ConstSelection>
-	Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	ConstSelection> Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -744,8 +743,7 @@ public:
 
 	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-		Selection>
-	Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
+	Selection> Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
 	}
@@ -758,8 +756,7 @@ public:
 
 	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-		size_t>
-	SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
+	size_t> SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);
 	}
@@ -811,8 +808,7 @@ public:
 
 	template<typename RowFilter, typename Item, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-		DataTable>
-	Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	DataTable> Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(rowFilter, column, columns...);
@@ -827,8 +823,7 @@ public:
 
 	template<typename RowFilter, typename Item, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-		DataTable>
-	ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
+	DataTable> ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(rowFilter, column, columns...);
@@ -1001,24 +996,28 @@ private:
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvSetNumber(Raw* raw, size_t number) noexcept
+	internal::EnableIf<keepRowNumber>
+	pvSetNumber(Raw* raw, size_t number) noexcept
 	{
 		GetColumnList().SetNumber(raw, number);
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
+	internal::EnableIf<!keepRowNumber>
+	pvSetNumber(Raw* /*raw*/, size_t /*number*/) noexcept
 	{
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	internal::EnableIf<keepRowNumber,
+	Raw*> pvExtractRaw(ConstRowReference rowRef)
 	{
 		return pvExtractRaw(rowRef.GetNumber());
 	}
 
 	template<bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber, Raw*> pvExtractRaw(ConstRowReference rowRef)
+	internal::EnableIf<!keepRowNumber,
+	Raw*> pvExtractRaw(ConstRowReference rowRef)
 	{
 		const Raw* raw = rowRef.GetRaw();
 		size_t number = mRaws.GetCount() - 1;
@@ -1067,7 +1066,8 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	internal::EnableIf<keepRowNumber>
+	pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
@@ -1107,7 +1107,8 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvAssignRows(RowIterator begin, RowIterator end)
+	internal::EnableIf<!keepRowNumber>
+	pvAssignRows(RowIterator begin, RowIterator end)
 	{
 		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1137,7 +1138,8 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	internal::EnableIf<keepRowNumber>
+	pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1160,7 +1162,8 @@ private:
 
 	template<typename RowIterator,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvRemoveRows(RowIterator begin, RowIterator end)
+	internal::EnableIf<!keepRowNumber>
+	pvRemoveRows(RowIterator begin, RowIterator end)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1176,7 +1179,8 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	internal::EnableIf<keepRowNumber>
+	pvRemoveRows(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1198,7 +1202,8 @@ private:
 
 	template<typename RowFilter,
 		bool keepRowNumber = Settings::keepRowNumber>
-	internal::EnableIf<!keepRowNumber> pvRemoveRows(const RowFilter& rowFilter)
+	internal::EnableIf<!keepRowNumber>
+	pvRemoveRows(const RowFilter& rowFilter)
 	{
 		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
 			MemManagerPtr(GetMemManager()));
@@ -1272,9 +1277,9 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
-		size_t columnCount = sizeof...(Items) + 1,
-		typename = internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount)>>
-	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
+		size_t columnCount = sizeof...(Items) + 1>
+	internal::EnableIf<(columnCount > DataTraits::selectEqualerMaxCount),
+	Result> pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
 	{
 		auto newRowFilter = [&rowFilter, &equaler] (ConstRowReference rowRef)
@@ -1288,10 +1293,9 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename... Items,
-		size_t columnCount = sizeof...(Items),
-		typename = internal::EnableIf<(0 < columnCount
-			&& columnCount <= DataTraits::selectEqualerMaxCount)>>
-	Result pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
+		size_t columnCount = sizeof...(Items)>
+	internal::EnableIf<(0 < columnCount && columnCount <= DataTraits::selectEqualerMaxCount),
+	Result> pvSelect(const RowFilter& rowFilter, const Equaler<Items>&... equalers) const
 	{
 		auto offsets = pvGetOffsets(equalers...);
 		auto sortedOffsets = Indexes::GetSortedOffsets(offsets);

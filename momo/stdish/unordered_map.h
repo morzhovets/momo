@@ -404,15 +404,15 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, const_iterator> find(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	const_iterator> find(const KeyArg& key) const
 	{
 		return ConstIteratorProxy(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, iterator> find(
-		const KeyArg& key)
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	iterator> find(const KeyArg& key)
 	{
 		return IteratorProxy(mHashMap.Find(key));
 	}
@@ -423,8 +423,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_type> count(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	size_type> count(const KeyArg& key) const
 	{
 		return contains(key) ? 1 : 0;
 	}
@@ -435,8 +435,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> contains(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	bool> contains(const KeyArg& key) const
 	{
 		return mHashMap.ContainsKey(key);
 	}
@@ -453,28 +453,25 @@ public:
 
 	template<typename KeyArg>
 	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
-		std::pair<const_iterator, const_iterator>>
-	equal_range(const KeyArg& key) const
+	std::pair<const_iterator, const_iterator>> equal_range(const KeyArg& key) const
 	{
 		return { find(key), end() };
 	}
 
 	template<typename KeyArg>
 	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
-		std::pair<iterator, iterator>>
-	equal_range(const KeyArg& key)
+	std::pair<iterator, iterator>> equal_range(const KeyArg& key)
 	{
 		return { find(key), end() };
 	}
 
 	//template<typename Value>
 	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value,
-	//	std::pair<iterator, bool>>
-	//insert(Value&& value)
+	//std::pair<iterator, bool>> insert(Value&& value)
 
 	//template<typename Value>
-	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value, iterator>
-	//insert(const_iterator hint, Value&& value)
+	//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value,
+	//iterator> insert(const_iterator hint, Value&& value)
 
 	//std::pair<iterator, bool> insert(value_type&& value)
 
@@ -498,8 +495,8 @@ public:
 
 	template<typename First, typename Second>
 	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, std::pair<iterator, bool>>
-	insert(const std::pair<First, Second>& value)
+		&& std::is_constructible<mapped_type, const Second&>::value,
+	std::pair<iterator, bool>> insert(const std::pair<First, Second>& value)
 	{
 		return pvEmplace(nullptr, std::forward_as_tuple(value.first),
 			std::forward_as_tuple(value.second));
@@ -507,8 +504,8 @@ public:
 
 	template<typename First, typename Second>
 	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value, iterator>
-	insert(const_iterator hint, const std::pair<First, Second>& value)
+		&& std::is_constructible<mapped_type, const Second&>::value,
+	iterator> insert(const_iterator hint, const std::pair<First, Second>& value)
 	{
 		return pvEmplace(hint, std::forward_as_tuple(value.first),
 			std::forward_as_tuple(value.second)).first;
@@ -516,8 +513,8 @@ public:
 
 	template<typename First, typename Second>
 	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, std::pair<iterator, bool>>
-	insert(std::pair<First, Second>&& value)
+		&& std::is_constructible<mapped_type, Second&&>::value,
+	std::pair<iterator, bool>> insert(std::pair<First, Second>&& value)
 	{
 		return pvEmplace(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second)));
@@ -525,8 +522,8 @@ public:
 
 	template<typename First, typename Second>
 	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value, iterator>
-	insert(const_iterator hint, std::pair<First, Second>&& value)
+		&& std::is_constructible<mapped_type, Second&&>::value,
+	iterator> insert(const_iterator hint, std::pair<First, Second>&& value)
 	{
 		return pvEmplace(hint, std::forward_as_tuple(std::forward<First>(value.first)),
 			std::forward_as_tuple(std::forward<Second>(value.second))).first;
@@ -900,8 +897,9 @@ private:
 
 	template<typename Hint, typename RKey, typename MappedCreator,
 		typename Key = typename std::decay<RKey>::type>
-	momo::internal::EnableIf<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
-	pvInsert(Hint /*hint*/, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
+	momo::internal::EnableIf<std::is_same<key_type, Key>::value,
+	std::pair<iterator, bool>> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
+		MappedCreator&& mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
@@ -937,8 +935,9 @@ private:
 
 	template<typename RKey, typename MappedCreator,
 		typename Key = typename std::decay<RKey>::type>
-	momo::internal::EnableIf<std::is_same<key_type, Key>::value, std::pair<iterator, bool>>
-	pvInsert(const_iterator hint, std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
+	momo::internal::EnableIf<std::is_same<key_type, Key>::value,
+	std::pair<iterator, bool>> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
+		MappedCreator&& mappedCreator)
 	{
 		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));

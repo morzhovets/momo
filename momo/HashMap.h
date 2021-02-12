@@ -555,15 +555,15 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstPosition> Find(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	ConstPosition> Find(const KeyArg& key) const
 	{
 		return ConstPositionProxy(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, Position> Find(
-		const KeyArg& key)
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	Position> Find(const KeyArg& key)
 	{
 		return PositionProxy(mHashSet.Find(key));
 	}
@@ -574,8 +574,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(
-		const KeyArg& key) const
+	MOMO_FORCEINLINE internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	bool> ContainsKey(const KeyArg& key) const
 	{
 		return mHashSet.ContainsKey(key);
 	}
@@ -752,8 +752,7 @@ public:
 
 	template<typename PairPredicate>
 	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
-		size_t>
-	Remove(const PairPredicate& pairPred)
+	size_t> Remove(const PairPredicate& pairPred)
 	{
 		auto itemPred = [&pairPred] (const KeyValuePair& item)
 			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };

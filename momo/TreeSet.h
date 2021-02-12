@@ -645,8 +645,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> GetLowerBound(
-		const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	ConstIterator> GetLowerBound(const KeyArg& key) const
 	{
 		return pvGetLowerBound(key);
 	}
@@ -657,8 +657,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> GetUpperBound(
-		const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	ConstIterator> GetUpperBound(const KeyArg& key) const
 	{
 		return pvGetUpperBound(key);
 	}
@@ -669,7 +669,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, ConstIterator> Find(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	ConstIterator> Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -680,7 +681,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, bool> ContainsKey(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	bool> ContainsKey(const KeyArg& key) const
 	{
 		return !pvIsGreater(pvGetLowerBound(key), key);
 	}
@@ -691,7 +693,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	internal::EnableIf<IsValidKeyArg<KeyArg>::value, size_t> GetKeyCount(const KeyArg& key) const
+	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
+	size_t> GetKeyCount(const KeyArg& key) const
 	{
 		return pvGetKeyCount(key);
 	}
@@ -901,8 +904,8 @@ public:
 	}
 
 	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value, size_t>
-	Remove(const Predicate& pred)
+	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value,
+	size_t> Remove(const Predicate& pred)
 	{
 		size_t initCount = GetCount();
 		ConstIterator iter = GetBegin();

@@ -656,8 +656,8 @@ namespace internal
 		}
 
 		template<typename RowFilter>
-		EnableIf<IsInvocable<const RowFilter&, bool, ConstRowReference>::value, size_t>
-		Remove(const RowFilter& rowFilter)
+		EnableIf<IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+		size_t> Remove(const RowFilter& rowFilter)
 		{
 			size_t newCount = 0;
 			for (Raw*& raw : mRaws)
@@ -700,8 +700,7 @@ namespace internal
 
 		template<typename RowComparer>
 		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
-			DataSelection&&>
-		Sort(const RowComparer& rowComp) &&
+		DataSelection&&> Sort(const RowComparer& rowComp) &&
 		{
 			pvSort(rowComp);
 			return std::move(*this);
@@ -709,8 +708,7 @@ namespace internal
 
 		template<typename RowComparer>
 		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
-			DataSelection&>
-		Sort(const RowComparer& rowComp) &
+		DataSelection&> Sort(const RowComparer& rowComp) &
 		{
 			pvSort(rowComp);
 			return *this;
@@ -804,8 +802,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
-			void>
+		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value>
 		pvSort(const RowComparer& rowComp)
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
