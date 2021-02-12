@@ -390,7 +390,7 @@ namespace internal
 			return mRowBounds.GetCount();
 		}
 
-		typename Iterator::Reference operator[](size_t index) const
+		decltype(auto) operator[](size_t index) const
 		{
 			MOMO_CHECK(index < GetCount());
 			return *UIntMath<>::Next(GetBegin(), index);

@@ -295,7 +295,7 @@ namespace internal
 			return mCount;
 		}
 
-		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const noexcept
+		decltype(auto) operator[](size_t index) const noexcept
 		{
 			MOMO_ASSERT(index < mCount);
 			return *UIntMath<>::Next(mBegin, index);

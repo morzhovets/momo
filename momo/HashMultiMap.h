@@ -70,7 +70,7 @@ namespace internal
 			return mValues.GetCount();
 		}
 
-		typename std::iterator_traits<Iterator>::reference operator[](size_t index) const
+		decltype(auto) operator[](size_t index) const
 		{
 			//MOMO_CHECK(index < GetCount());	//?
 			MOMO_ASSERT(index < GetCount());
