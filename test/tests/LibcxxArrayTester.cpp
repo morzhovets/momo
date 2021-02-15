@@ -18,14 +18,6 @@
 #include "../../momo/SegmentedArray.h"
 #include "../../momo/MergeArray.h"
 
-template<typename TValue, typename TMemManager>
-class LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>
-{
-public:
-	static const bool isNothrowMoveConstructible =
-		momo::internal::ObjectManager<TValue, TMemManager>::isNothrowMoveConstructible;
-};
-
 #undef _LIBCPP_DEBUG
 #undef _LIBCPP_DEBUG_LEVEL
 #define _LIBCPP_DEBUG 1
@@ -69,7 +61,7 @@ template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-		LibcxxSegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
@@ -88,7 +80,7 @@ template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-		LibcxxSegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 #include "LibcxxVectorTests.h"
 }
