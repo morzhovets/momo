@@ -73,15 +73,15 @@ matrix:
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Release"
-        - CXXFLAGS="-DMOMO_USE_SAFE_MAP_BRACKETS"
+        - CXXFLAGS="-DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS"
 
-    - compiler: gcc
-      arch: s390x
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-10
-      env:
-        - COMPILER="g++-10"
-        - BUILD_TYPE="Release"
-        - CXXFLAGS="-DMOMO_USE_UNORDERED_HINT_ITERATORS"
+#    - compiler: gcc
+#      arch: s390x
+#      addons:
+#        apt:
+#          sources: ubuntu-toolchain-r-test
+#          packages: g++-10
+#      env:
+#        - COMPILER="g++-10"
+#        - BUILD_TYPE="Release"
+#        - CXXFLAGS="-DMOMO_USE_UNORDERED_HINT_ITERATORS"
