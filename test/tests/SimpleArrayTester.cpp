@@ -14,6 +14,7 @@
 
 #include "../../momo/Array.h"
 #include "../../momo/SegmentedArray.h"
+#include "../../momo/MergeArray.h"
 
 #include <string>
 #include <iostream>
@@ -72,6 +73,10 @@ public:
 
 		std::cout << "momo::SegmentedArraySqrt<std::string>: " << std::flush;
 		TestStrArray<momo::SegmentedArraySqrt<std::string>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::MergeArray<std::string>: " << std::flush;
+		TestStrArray<momo::MergeArray<std::string>>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -179,6 +184,10 @@ public:
 
 		std::cout << "momo::SegmentedArraySqrt<size_t>: " << std::flush;
 		TestTemplArray<momo::SegmentedArraySqrt<size_t>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::MergeArray<size_t>: " << std::flush;
+		TestTemplArray<momo::MergeArray<size_t>>();
 		std::cout << "ok" << std::endl;
 	}
 
