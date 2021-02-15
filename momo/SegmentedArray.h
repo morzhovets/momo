@@ -411,7 +411,7 @@ public:
 
 	void Shrink() noexcept
 	{
-		return Shrink(mCount);
+		Shrink(mCount);
 	}
 
 	void Shrink(size_t capacity) noexcept
@@ -492,17 +492,17 @@ public:
 		{
 			MOMO_ASSERT(itemIndex == 0);
 			mSegments.Reserve(segCount + 1);
-			Item* segMemory = pvGetSegMemory(segCount);
+			Item* segment = pvAllocateSegment(segCount);
 			try
 			{
-				std::forward<ItemCreator>(itemCreator)(segMemory);
+				std::forward<ItemCreator>(itemCreator)(segment);
 			}
 			catch (...)
 			{
-				pvFreeSegMemory(segCount, segMemory);
+				pvDeallocateSegment(segCount, segment);
 				throw;
 			}
-			mSegments.AddBackNogrow(segMemory);
+			mSegments.AddBackNogrow(segment);
 		}
 		++mCount;
 	}
@@ -562,7 +562,7 @@ public:
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if (internal::IsForwardIterator<ArgIterator>::value)
+		if constexpr (internal::IsForwardIterator<ArgIterator>::value)
 			Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
 		ArrayShifter::Insert(*this, index, begin, end);
 	}
@@ -609,7 +609,7 @@ public:
 	}
 
 private:
-	Item* pvGetSegMemory(size_t segIndex)
+	Item* pvAllocateSegment(size_t segIndex)
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
@@ -619,10 +619,10 @@ private:
 			itemCount * sizeof(Item));
 	}
 
-	void pvFreeSegMemory(size_t segIndex, Item* segMemory) noexcept
+	void pvDeallocateSegment(size_t segIndex, Item* segment) noexcept
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
-		MemManagerProxy::Deallocate(GetMemManager(), segMemory, itemCount * sizeof(Item));
+		MemManagerProxy::Deallocate(GetMemManager(), segment, itemCount * sizeof(Item));
 	}
 
 	Item& pvGetItem(size_t index) const
@@ -698,8 +698,8 @@ private:
 			for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
 			{
 				mSegments.Reserve(segCount + 1);
-				Item* segMemory = pvGetSegMemory(segCount);
-				mSegments.AddBackNogrow(segMemory);
+				Item* segment = pvAllocateSegment(segCount);
+				mSegments.AddBackNogrow(segment);
 			}
 		}
 		catch (...)
@@ -718,7 +718,7 @@ private:
 			++segIndex;
 		size_t segCount = mSegments.GetCount();
 		for (size_t i = segIndex; i < segCount; ++i)
-			pvFreeSegMemory(i, mSegments[i]);
+			pvDeallocateSegment(i, mSegments[i]);
 		mSegments.RemoveBack(segCount - segIndex);
 	}
 
