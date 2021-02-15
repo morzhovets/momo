@@ -347,15 +347,16 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator>
-		static void Relocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+		template<typename SrcIterator, typename DstIterator>
+		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_CHECK_ITERATOR_REFERENCE(SrcIterator, Object);
+			MOMO_CHECK_ITERATOR_REFERENCE(DstIterator, Object);
 			if constexpr (isNothrowRelocatable)
 			{
-				Iterator srcIter = srcBegin;
-				Iterator dstIter = dstBegin;
+				SrcIterator srcIter = srcBegin;
+				DstIterator dstIter = dstBegin;
 				for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
 					Relocate(memManager, *srcIter, std::addressof(*dstIter));
 			}
@@ -370,8 +371,8 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator, typename ObjectCreator>
-		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+		template<typename SrcIterator, typename DstIterator, typename ObjectCreator>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
 			auto func = [&objectCreator, newObject] ()
@@ -379,11 +380,12 @@ namespace internal
 			RelocateExec(memManager, srcBegin, dstBegin, count, func);
 		}
 
-		template<typename Iterator, typename Func>
-		static void RelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+		template<typename SrcIterator, typename DstIterator, typename Func>
+		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_CHECK_ITERATOR_REFERENCE(SrcIterator, Object);
+			MOMO_CHECK_ITERATOR_REFERENCE(DstIterator, Object);
 			if constexpr (isNothrowRelocatable)
 			{
 				std::forward<Func>(func)();
@@ -394,8 +396,8 @@ namespace internal
 				size_t index = 0;
 				try
 				{
-					Iterator srcIter = srcBegin;
-					Iterator dstIter = dstBegin;
+					SrcIterator srcIter = srcBegin;
+					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
 						Copy(memManager, *srcIter, std::addressof(*dstIter));
 					std::forward<Func>(func)();
