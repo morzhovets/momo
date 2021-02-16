@@ -202,6 +202,7 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			ar.AddBack(Item(i));
 
+		ar.Reserve(count * 3);
 		ar.Shrink();
 
 		for (size_t i = 0; i < count; ++i)
