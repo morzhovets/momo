@@ -220,6 +220,7 @@ namespace internal
 		}
 
 		template<typename Func>
+		requires std::invocable<Func&&>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -245,6 +246,7 @@ namespace internal
 		}
 
 		template<typename Func>
+		requires std::invocable<Func&&>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -372,6 +374,7 @@ namespace internal
 		}
 
 		template<typename SrcIterator, typename DstIterator, typename ObjectCreator>
+		requires std::invocable<ObjectCreator&&, Object*>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
@@ -381,6 +384,7 @@ namespace internal
 		}
 
 		template<typename SrcIterator, typename DstIterator, typename Func>
+		requires std::invocable<Func&&>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)
 		{
