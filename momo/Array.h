@@ -207,7 +207,6 @@ private:
 		explicit Data(size_t capacity, MemManager&& memManager)
 			: MemManager(std::move(memManager))
 		{
-			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
 				mItems = pvAllocate(capacity);
@@ -283,9 +282,9 @@ private:
 
 		bool SetCapacity(size_t capacity)
 		{
-			pvCheckCapacity(capacity);
 			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
 				return false;
+			pvCheckCapacity(capacity);
 			if constexpr (ItemTraits::isTriviallyRelocatable && MemManagerProxy::canReallocate)
 			{
 				mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
@@ -329,7 +328,6 @@ private:
 		void Reset(size_t capacity, size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_ASSERT(count <= capacity);
-			pvCheckCapacity(capacity);
 			if (capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
@@ -369,11 +367,12 @@ private:
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
-				throw std::length_error("Invalid capacity");
+				throw std::bad_array_new_length();
 		}
 
 		Item* pvAllocate(size_t capacity)
 		{
+			pvCheckCapacity(capacity);
 			static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 			return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 				capacity * sizeof(Item));

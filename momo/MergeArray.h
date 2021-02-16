@@ -637,7 +637,7 @@ private:
 	{
 		size_t itemCount = pvGetItemCount(segIndex);
 		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
-			throw std::length_error("Invalid item count");
+			throw std::bad_array_new_length();
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			itemCount * sizeof(Item));

@@ -51,7 +51,7 @@ namespace internal
 		{
 			size_t bucketCount = size_t{1} << logBucketCount;
 			if (bucketCount > maxBucketCount)
-				throw std::length_error("Invalid bucket count");
+				throw std::bad_array_new_length();
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			HashSetBuckets* resBuckets = MemManagerProxy::template Allocate<HashSetBuckets>(
 				memManager, bufferSize);
