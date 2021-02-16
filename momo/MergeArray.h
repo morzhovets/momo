@@ -290,7 +290,7 @@ public:
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(this, size_t{0});
+		return pvMakeIterator(0);
 	}
 
 	ConstIterator GetEnd() const noexcept
@@ -300,7 +300,7 @@ public:
 
 	Iterator GetEnd() noexcept
 	{
-		return IteratorProxy(this, mCount);
+		return pvMakeIterator(mCount);
 	}
 
 	MOMO_FRIEND_SWAP(MergeArray)
@@ -403,7 +403,7 @@ public:
 				mCapacity >> (segIndex + logInitialItemCount))
 			{
 				size_t itemCount = mCount & ((initialItemCount << segIndex) - 1);
-				ItemTraits::Relocate(GetMemManager(), GetEnd() - itemCount,
+				ItemTraits::Relocate(GetMemManager(), pvMakeIterator(mCount - itemCount),
 					mSegments[segIndex], itemCount);
 			}
 		}
@@ -484,14 +484,14 @@ public:
 		}
 		else if (mCapacity > 0)
 		{
-			size_t segIndex = std::countr_one(mCount >> logInitialItemCount) + 1;
+			size_t segIndex = static_cast<size_t>(std::countr_one(mCount >> logInitialItemCount) + 1);
 			if (segIndex >= mSegments.GetCount())
 				mSegments.SetCount(segIndex + 1, nullptr);
 			mSegments[segIndex] = pvAllocateSegment(segIndex);
 			try
 			{
 				size_t itemCount = initialItemCount << (segIndex - 1);
-				ItemTraits::RelocateCreate(GetMemManager(), GetEnd() - (itemCount - 1),
+				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - itemCount + 1),
 					mSegments[segIndex], itemCount - 1, std::forward<ItemCreator>(itemCreator),
 					mSegments[segIndex] + itemCount - 1);
 			}
@@ -696,6 +696,11 @@ private:
 		mCapacity = capacity;
 	}
 
+	Iterator pvMakeIterator(size_t index) noexcept
+	{
+		return IteratorProxy(this, index);
+	}
+
 	Item& pvGetItem(size_t index) const
 	{
 		MOMO_CHECK(index < mCount);
@@ -711,7 +716,7 @@ private:
 
 	void pvRemoveBack(size_t count) noexcept
 	{
-		ItemTraits::Destroy(GetMemManager(), GetEnd() - count, count);
+		ItemTraits::Destroy(GetMemManager(), pvMakeIterator(mCount - count), count);
 		mCount -= count;
 	}
 
