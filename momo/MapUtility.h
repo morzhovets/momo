@@ -754,6 +754,7 @@ namespace internal
 		}
 
 		template<typename PairCreator>
+		requires std::invocable<PairCreator&&, Key*, Value*>
 		void Create(PairCreator&& pairCreator)
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
@@ -765,6 +766,7 @@ namespace internal
 		}
 
 		template<typename PairRemover>
+		requires std::invocable<PairRemover&&, Key&, Value&>
 		void Remove(PairRemover&& pairRemover)
 		{
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)

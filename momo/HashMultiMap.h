@@ -931,6 +931,7 @@ public:
 	}
 
 	template<typename ValueCreator>
+	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd(std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -954,6 +955,7 @@ public:
 	}
 
 	template<typename ValueCreator>
+	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd(key, std::forward<ValueCreator>(valueCreator));
@@ -977,6 +979,7 @@ public:
 	}
 
 	template<typename ValueCreator>
+	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator&& valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(

@@ -579,6 +579,7 @@ public:
 	}
 
 	template<typename ValueCreator>
+	requires std::invocable<ValueCreator&&, Value*>
 	InsertResult InsertCrt(Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -602,6 +603,7 @@ public:
 	}
 
 	template<typename ValueCreator>
+	requires std::invocable<ValueCreator&&, Value*>
 	InsertResult InsertCrt(const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(key, std::forward<ValueCreator>(valueCreator));
@@ -656,6 +658,7 @@ public:
 	}
 
 	template<typename PairCreator, bool extraCheck = true>
+	requires std::invocable<PairCreator&&, Key*, Value*>
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
@@ -667,6 +670,7 @@ public:
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
+	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -690,6 +694,7 @@ public:
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
+	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, key, std::forward<ValueCreator>(valueCreator));
