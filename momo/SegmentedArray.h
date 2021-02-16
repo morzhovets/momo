@@ -454,6 +454,7 @@ public:
 	}
 
 	template<typename ItemCreator>
+	requires std::invocable<ItemCreator&&, Item*>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
@@ -481,6 +482,7 @@ public:
 	}
 
 	template<typename ItemCreator>
+	requires std::invocable<ItemCreator&&, Item*>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
@@ -527,6 +529,7 @@ public:
 	}
 
 	template<typename ItemCreator>
+	requires std::invocable<ItemCreator&&, Item*>
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));

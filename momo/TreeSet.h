@@ -700,6 +700,7 @@ public:
 	}
 
 	template<typename ItemCreator>
+	requires std::invocable<ItemCreator&&, Item*>
 	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
 	{
 		return pvInsert<true>(key, std::forward<ItemCreator>(itemCreator));
@@ -778,6 +779,7 @@ public:
 	}
 
 	template<typename ItemCreator, bool extraCheck = true>
+	requires std::invocable<ItemCreator&&, Item*>
 	ConstIterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		return pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));

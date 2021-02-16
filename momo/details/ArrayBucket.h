@@ -256,6 +256,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
+		requires std::invocable<ItemCreator&&, Item*>
 		void AddBackCrt(Params& params, ItemCreator&& itemCreator)
 		{
 			if (mPtr == nullptr)

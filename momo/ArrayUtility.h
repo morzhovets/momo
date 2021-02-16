@@ -167,6 +167,7 @@ namespace internal
 
 	public:
 		template<typename ItemCreator>
+		requires std::invocable<ItemCreator&&, Item*>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
 			: mMemManager(memManager)
 		{

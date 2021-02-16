@@ -127,6 +127,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
+		requires std::invocable<ItemCreator&&, Item*>
 		Iterator AddCrt(Params& params, ItemCreator&& itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{

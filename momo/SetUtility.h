@@ -322,6 +322,7 @@ namespace internal
 		}
 
 		template<typename ItemCreator>
+		requires std::invocable<ItemCreator&&, Item*>
 		void Create(ItemCreator&& itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
