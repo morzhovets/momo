@@ -284,6 +284,7 @@ public:
 	}
 
 	template<typename MultiItemCreator>
+	requires std::regular_invocable<const MultiItemCreator&, Item*>
 	static SegmentedArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
 		MemManager memManager = MemManager())
 	{
@@ -356,6 +357,7 @@ public:
 	}
 
 	template<typename MultiItemCreator>
+	requires std::regular_invocable<const MultiItemCreator&, Item*>
 	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		if (count < mCount)

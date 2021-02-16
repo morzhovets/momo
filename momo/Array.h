@@ -510,6 +510,7 @@ public:
 	}
 
 	template<typename MultiItemCreator>
+	requires std::regular_invocable<const MultiItemCreator&, Item*>
 	static Array CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
 		MemManager memManager = MemManager())
 	{
@@ -594,6 +595,7 @@ public:
 	}
 
 	template<typename MultiItemCreator>
+	requires std::regular_invocable<const MultiItemCreator&, Item*>
 	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
 	{
 		size_t newCount = count;
