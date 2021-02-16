@@ -105,12 +105,6 @@ public:
 		ItemManager::Destroy(memManager, items, count);
 	}
 
-	template<typename ItemArg>
-	static void Assign(MemManager& /*memManager*/, ItemArg&& itemArg, Item& item)
-	{
-		item = std::forward<ItemArg>(itemArg);
-	}
-
 	static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		noexcept(isNothrowRelocatable)
 	{
@@ -123,6 +117,12 @@ public:
 	{
 		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count,
 			std::forward<ItemCreator>(itemCreator), newItem);
+	}
+
+	template<typename ItemArg>
+	static void Assign(MemManager& /*memManager*/, ItemArg&& itemArg, Item& item)
+	{
+		item = std::forward<ItemArg>(itemArg);
 	}
 };
 
@@ -716,7 +716,7 @@ public:
 
 	void Shrink()
 	{
-		return Shrink(GetCount());
+		Shrink(GetCount());
 	}
 
 	void Shrink(size_t capacity)
