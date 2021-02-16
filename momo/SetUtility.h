@@ -331,6 +331,7 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
+		requires std::invocable<ItemRemover&&, Item&>
 		void Remove(ItemRemover&& itemRemover)
 		{
 			MOMO_CHECK(mHasItem);

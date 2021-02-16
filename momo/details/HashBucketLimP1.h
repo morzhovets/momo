@@ -199,6 +199,7 @@ namespace internal
 		}
 
 		template<typename ItemReplacer>
+		requires std::invocable<ItemReplacer&&, Item&, Item&>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();

@@ -254,6 +254,7 @@ namespace internal
 		}
 
 		template<typename ItemRemover>
+		requires std::invocable<ItemRemover&&, Item&>
 		void Remove(Params& params, size_t index, ItemRemover&& itemRemover)
 		{
 			size_t count = GetCount();
