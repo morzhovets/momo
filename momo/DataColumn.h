@@ -919,7 +919,7 @@ private:
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
 		maxAlignment = std::minmax(maxAlignment, size_t{alignment}).second;
-		pvAddEdges<Void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes + 1);
+		pvAddEdges<void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes + 1);
 	}
 
 	template<typename Void>
