@@ -20,7 +20,7 @@
 namespace momo
 {
 
-template<typename TItem, typename TMemManager>
+template<typename TItem, conceptMemManager TMemManager>
 class MergeArrayItemTraits
 {
 public:
@@ -86,7 +86,7 @@ public:
 */
 
 template<typename TItem,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = MergeArraySettings<>>
 class MergeArray

@@ -175,7 +175,7 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
-	template<typename TKey, typename TValue, typename TMemManager>
+	template<typename TKey, typename TValue, conceptMemManager TMemManager>
 	class MapKeyValueTraits
 	{
 	public:

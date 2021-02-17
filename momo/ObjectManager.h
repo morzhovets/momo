@@ -26,7 +26,7 @@ struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELO
 {
 };
 
-template<typename Object, typename MemManager>
+template<typename Object, conceptMemManager MemManager>
 struct IsNothrowMoveConstructible
 	: public std::is_nothrow_move_constructible<Object>
 {
@@ -44,7 +44,7 @@ struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObje
 {
 };
 
-template<typename TObject, typename TMemManager>
+template<typename TObject, conceptMemManager TMemManager>
 class ObjectDestroyer
 {
 public:
@@ -58,7 +58,7 @@ public:
 	}
 };
 
-template<typename TObject, typename TMemManager>
+template<typename TObject, conceptMemManager TMemManager>
 class ObjectRelocator
 {
 public:
@@ -131,7 +131,7 @@ namespace internal
 		std::aligned_storage_t<sizeof(Object), alignment> mBuffer;
 	};
 
-	template<typename TObject, typename TMemManager>
+	template<typename TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{
 	public:

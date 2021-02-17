@@ -413,7 +413,7 @@ public:
 	}
 };
 
-template<typename TMemManager>
+template<conceptMemManager TMemManager>
 class DataItemTraits
 {
 public:
@@ -462,7 +462,7 @@ public:
 };
 
 template<typename TColumnTraits = DataColumnTraits<>,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = DataItemTraits<TMemManager>,
 	typename TSettings = DataSettings<>>
 class DataColumnList
@@ -1058,7 +1058,7 @@ private:
 };
 
 template<typename TStruct,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = DataSettings<>>
 class DataColumnListStatic
 {

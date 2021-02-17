@@ -22,7 +22,7 @@
 namespace momo
 {
 
-template<typename TItem, typename TMemManager>
+template<typename TItem, conceptMemManager TMemManager>
 class SegmentedArrayItemTraits
 {
 public:
@@ -153,7 +153,7 @@ public:
 */
 
 template<typename TItem,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
 class SegmentedArray
@@ -733,7 +733,7 @@ private:
 };
 
 template<typename TItem,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
 using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
 	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;

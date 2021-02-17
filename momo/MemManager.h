@@ -7,6 +7,7 @@
   momo/MemManager.h
 
   namespace momo:
+    concept conceptMemManager
     class MemManagerCpp
     class MemManagerC
     class MemManagerWin
@@ -47,6 +48,24 @@
 
 namespace momo
 {
+
+template<typename MemManager>
+concept conceptMemManager =
+	std::is_nothrow_destructible_v<MemManager> &&
+	std::is_nothrow_move_constructible_v<MemManager> &&
+	requires (MemManager& memManager, void* ptr, size_t size) {
+		{ memManager.Allocate(size) } -> std::same_as<void*>;
+		{ memManager.Deallocate(ptr, size) } noexcept -> std::same_as<void>;
+	};
+
+namespace internal
+{
+	template<typename Allocator>
+	concept conceptAllocator =
+	requires (Allocator& alloc) {
+		{ alloc.allocate(size_t{}) };
+	};
+}
 
 //! `MemManagerCpp` uses `new` and `delete`
 class MemManagerCpp
@@ -167,7 +186,7 @@ public:
 #endif
 
 //! `MemManagerStd` uses `allocator<std::byte>::allocate` and `deallocate`
-template<typename TAllocator,
+template<internal::conceptAllocator TAllocator,
 	bool tUseMemManagerDefault = true>
 class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<std::byte>
 {
@@ -276,13 +295,11 @@ public:
 
 namespace internal
 {
-	template<typename TMemManager>
+	template<conceptMemManager TMemManager>
 	class MemManagerProxy
 	{
 	public:
 		typedef TMemManager MemManager;
-
-		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	private:
 		template<typename MemManager,
@@ -402,7 +419,7 @@ namespace internal
 		}
 	};
 
-	template<typename TMemManager,
+	template<conceptMemManager TMemManager,
 		bool tIsEmpty = std::is_empty_v<TMemManager>>
 	class MemManagerWrapper;
 
@@ -411,8 +428,6 @@ namespace internal
 	{
 	public:
 		typedef TMemManager MemManager;
-
-		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept
@@ -460,8 +475,6 @@ namespace internal
 	{
 	public:
 		typedef TMemManager MemManager;
-
-		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 	public:
 		explicit MemManagerWrapper(MemManager&& memManager) noexcept
@@ -523,7 +536,7 @@ namespace internal
 		}
 	};
 
-	template<typename TBaseMemManager,
+	template<conceptMemManager TBaseMemManager,
 		bool tIsEmpty = std::is_empty_v<TBaseMemManager>
 			&& std::is_nothrow_default_constructible_v<TBaseMemManager>>
 	class MemManagerPtr;

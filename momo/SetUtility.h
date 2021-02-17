@@ -17,7 +17,7 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, typename TMemManager>
+	template<typename TKey, conceptMemManager TMemManager>
 	class SetItemTraits
 	{
 	public:
@@ -71,7 +71,7 @@ namespace internal
 		}
 	};
 
-	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion,
+	template<typename TContainerTraits, conceptMemManager TMemManager, bool tKeepVersion,
 		bool tUsePtr = !std::is_nothrow_move_constructible_v<TContainerTraits>
 			|| !std::is_nothrow_move_assignable_v<TContainerTraits>
 			|| !std::is_empty_v<MemManagerPtr<TMemManager>> || tKeepVersion>
@@ -195,7 +195,6 @@ namespace internal
 
 		static_assert(std::is_nothrow_move_constructible_v<ContainerTraits>);
 		static_assert(std::is_nothrow_move_assignable_v<ContainerTraits>);
-		static_assert(std::is_nothrow_move_constructible_v<MemManager>);
 
 		static const bool keepVersion = tKeepVersion;
 		static_assert(!keepVersion);

@@ -445,7 +445,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, typename TMemManager>
+template<typename TKey, typename TValue, conceptMemManager TMemManager>
 class HashMultiMapKeyValueTraits
 {
 public:
@@ -550,7 +550,7 @@ public:
 
 template<typename TKey, typename TValue,
 	typename THashTraits = HashTraits<TKey>,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
 class HashMultiMap

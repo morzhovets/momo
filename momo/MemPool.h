@@ -118,7 +118,7 @@ public:
 };
 
 template<typename TParams = MemPoolParams<>,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
 requires std::is_nothrow_move_constructible_v<TParams>
 	&& std::is_nothrow_move_assignable_v<TParams>
@@ -648,7 +648,7 @@ namespace internal
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 	};
 
-	template<size_t tBlockCount, typename TMemManager>
+	template<size_t tBlockCount, conceptMemManager TMemManager>
 	requires (tBlockCount > 0)
 	class MemPoolUInt32
 	{

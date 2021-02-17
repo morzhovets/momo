@@ -236,7 +236,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TMemManager>
+template<typename TKey, conceptMemManager TMemManager>
 class TreeSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:
@@ -286,7 +286,7 @@ public:
 
 template<typename TKey,
 	typename TTreeTraits = TreeTraits<TKey>,
-	typename TMemManager = MemManagerDefault,
+	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
 class TreeSet
