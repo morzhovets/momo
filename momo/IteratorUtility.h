@@ -121,6 +121,11 @@ namespace internal
 			typename std::iterator_traits<Iterator>::iterator_category>;
 
 	template<typename Iterator>
+	concept conceptForwardIterator = conceptInputIterator<Iterator> &&
+		std::is_base_of_v<std::forward_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>;
+
+	template<typename Iterator>
 	struct InsertResult
 	{
 		Iterator iterator;
