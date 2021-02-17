@@ -1019,16 +1019,16 @@ unordered_map(Iterator, Iterator) \
 template<typename Iterator, \
 	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
 	typename Mapped = std::iter_value_t<Iterator>::second_type, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
 	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
 	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>()))> \
+	requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
@@ -1043,14 +1043,14 @@ template<typename Key, typename Mapped> \
 unordered_map(std::initializer_list<std::pair<Key, Mapped>>) \
 	-> unordered_map<Key, Mapped>; \
 template<typename Key, typename Mapped, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>()))> \
+	requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, typename EqualFunc, \

@@ -1055,8 +1055,8 @@ public:
 template<typename Iterator, \
 	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
 	typename Mapped = std::iter_value_t<Iterator>::second_type, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
@@ -1067,8 +1067,8 @@ template<typename Iterator, typename LessFunc, \
 map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>; \
 template<typename Key, typename Mapped, \
-	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 map(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename LessFunc, \

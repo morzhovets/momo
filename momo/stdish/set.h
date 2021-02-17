@@ -670,8 +670,8 @@ public:
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
-	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<Key>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
@@ -681,8 +681,8 @@ template<typename Iterator, typename LessFunc, \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>; \
 template<typename Key, \
-	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename Allocator = std::allocator<Key>> \
+	requires momo::internal::conceptAllocator<Allocator> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessFunc, \
