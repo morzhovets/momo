@@ -727,7 +727,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	requires std::predicate<RowFilter, ConstRowReference>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	ConstSelection Select(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
@@ -740,7 +740,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	requires std::predicate<RowFilter, ConstRowReference>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	Selection Select(const RowFilter& rowFilter, Equaler<Items>... equalers)
 	{
 		return pvSelect<Selection>(rowFilter, equalers...);
@@ -753,7 +753,7 @@ public:
 	}
 
 	template<typename RowFilter, typename... Items>
-	requires std::predicate<RowFilter, ConstRowReference>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	size_t SelectCount(const RowFilter& rowFilter, Equaler<Items>... equalers) const
 	{
 		return pvSelect<size_t>(rowFilter, equalers...);
@@ -805,7 +805,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	requires std::predicate<RowFilter, ConstRowReference>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	DataTable Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
@@ -820,7 +820,7 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	requires std::predicate<RowFilter, ConstRowReference>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	DataTable ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{

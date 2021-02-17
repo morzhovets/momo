@@ -756,7 +756,7 @@ public:
 	}
 
 	template<typename PairPredicate>
-	requires std::predicate<PairPredicate, const Key&, const Value&>
+	requires std::predicate<const PairPredicate&, const Key&, const Value&>
 	size_t Remove(const PairPredicate& pairPred)
 	{
 		auto itemPred = [&pairPred] (const KeyValuePair& item)

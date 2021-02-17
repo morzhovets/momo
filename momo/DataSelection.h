@@ -655,7 +655,7 @@ namespace internal
 		}
 
 		template<typename RowFilter>
-		requires std::predicate<RowFilter, ConstRowReference>
+		requires std::predicate<const RowFilter&, ConstRowReference>
 		size_t Remove(const RowFilter& rowFilter)
 		{
 			size_t newCount = 0;
@@ -698,7 +698,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
 		DataSelection&& Sort(const RowComparer& rowComp) &&
 		{
 			pvSort(rowComp);
@@ -706,7 +706,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
 		DataSelection& Sort(const RowComparer& rowComp) &
 		{
 			pvSort(rowComp);
@@ -740,7 +740,7 @@ namespace internal
 		}
 
 		template<typename RowPredicate>
-		requires std::predicate<RowPredicate, ConstRowReference>
+		requires std::predicate<const RowPredicate&, ConstRowReference>
 		size_t BinarySearch(const RowPredicate& rowPred) const
 		{
 			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
@@ -802,7 +802,7 @@ namespace internal
 		}
 
 		template<typename RowComparer>
-		requires std::strict_weak_order<RowComparer, ConstRowReference, ConstRowReference>
+		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
 		void pvSort(const RowComparer& rowComp)
 		{
 			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)

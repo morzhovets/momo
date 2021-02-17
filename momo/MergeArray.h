@@ -630,7 +630,7 @@ public:
 	}
 
 	template<typename Predicate>
-	requires std::predicate<Predicate, const Item&>
+	requires std::predicate<const Predicate&, const Item&>
 	size_t Remove(const Predicate& pred)
 	{
 		return ArrayShifter::Remove(*this, pred);
@@ -638,7 +638,7 @@ public:
 
 	template<typename ItemArg,
 		typename EqualFunc = std::equal_to<>>
-	requires std::equivalence_relation<EqualFunc, const ItemArg&, const Item&>
+	requires std::equivalence_relation<const EqualFunc&, const ItemArg&, const Item&>
 	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		ConstIterator end = GetEnd();
@@ -647,7 +647,7 @@ public:
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>
-	requires std::equivalence_relation<EqualFunc, const Item&, const Item&>
+	requires std::equivalence_relation<const EqualFunc&, const Item&, const Item&>
 	bool IsEqual(const MergeArray& array, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		return GetCount() == array.GetCount() &&
