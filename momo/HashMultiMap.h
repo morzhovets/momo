@@ -1128,7 +1128,8 @@ public:
 		return valueCount;
 	}
 
-	template<typename KeyArg, bool extraCheck = true>
+	template<typename KeyArg,
+		bool extraCheck = true>
 	void ResetKey(ConstKeyIterator keyIter, KeyArg&& keyArg)
 	{
 		mHashMap.template ResetKey<KeyArg, extraCheck>(

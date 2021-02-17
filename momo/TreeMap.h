@@ -588,7 +588,8 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<typename PairCreator, bool extraCheck = true>
+	template<typename PairCreator,
+		bool extraCheck = true>
 	requires std::invocable<PairCreator&&, Key*, Value*>
 	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
 	{
@@ -600,7 +601,8 @@ public:
 			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
 
-	template<typename ValueCreator, bool extraCheck = true>
+	template<typename ValueCreator,
+		bool extraCheck = true>
 	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator&& valueCreator)
 	{
@@ -624,7 +626,8 @@ public:
 		return AddVar(iter, std::move(key), value);
 	}
 
-	template<typename ValueCreator, bool extraCheck = true>
+	template<typename ValueCreator,
+		bool extraCheck = true>
 	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator&& valueCreator)
 	{
@@ -708,7 +711,8 @@ public:
 		return ExtractedPair(*this, iter);
 	}
 
-	template<typename KeyArg, bool extraCheck = true>
+	template<typename KeyArg,
+		bool extraCheck = true>
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
 		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetTreeSetIterator(iter),

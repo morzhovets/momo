@@ -657,7 +657,8 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<typename PairCreator, bool extraCheck = true>
+	template<typename PairCreator,
+		bool extraCheck = true>
 	requires std::invocable<PairCreator&&, Key*, Value*>
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
@@ -669,7 +670,8 @@ public:
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
 
-	template<typename ValueCreator, bool extraCheck = true>
+	template<typename ValueCreator,
+		bool extraCheck = true>
 	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator&& valueCreator)
 	{
@@ -693,7 +695,8 @@ public:
 		return AddVar(pos, std::move(key), value);
 	}
 
-	template<typename ValueCreator, bool extraCheck = true>
+	template<typename ValueCreator,
+		bool extraCheck = true>
 	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator&& valueCreator)
 	{
@@ -767,7 +770,8 @@ public:
 		return ExtractedPair(*this, static_cast<ConstIterator>(pos));
 	}
 
-	template<typename KeyArg, bool extraCheck = true>
+	template<typename KeyArg,
+		bool extraCheck = true>
 	void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 	{
 		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstPositionProxy::GetHashSetPosition(pos),

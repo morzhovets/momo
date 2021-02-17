@@ -824,7 +824,8 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<typename ItemCreator, bool extraCheck = true>
+	template<typename ItemCreator,
+		bool extraCheck = true>
 	requires std::invocable<ItemCreator&&, Item*>
 	ConstPosition AddCrt(ConstPosition pos, ItemCreator&& itemCreator)
 	{
@@ -908,7 +909,8 @@ public:
 		return ExtractedItem(*this, static_cast<ConstIterator>(pos));
 	}
 
-	template<typename KeyArg, bool extraCheck = true>
+	template<typename KeyArg,
+		bool extraCheck = true>
 	void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 	{
 		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);

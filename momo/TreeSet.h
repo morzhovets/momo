@@ -778,7 +778,8 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<typename ItemCreator, bool extraCheck = true>
+	template<typename ItemCreator,
+		bool extraCheck = true>
 	requires std::invocable<ItemCreator&&, Item*>
 	ConstIterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
 	{
@@ -926,7 +927,8 @@ public:
 		return ExtractedItem(*this, iter);
 	}
 
-	template<typename KeyArg, bool extraCheck = true>
+	template<typename KeyArg,
+		bool extraCheck = true>
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
