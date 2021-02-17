@@ -669,13 +669,13 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
-	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>, \
 	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
-	typename Key = typename std::iterator_traits<Iterator>::value_type, \
+	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>, \
 	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \

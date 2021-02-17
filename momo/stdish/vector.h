@@ -489,9 +489,9 @@ private:
 };
 
 template<typename Iterator,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
+	typename Allocator = std::allocator<std::iter_value_t<Iterator>>>
 vector(Iterator, Iterator, Allocator = Allocator())
-	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
+	-> vector<std::iter_value_t<Iterator>, Allocator>;
 
 /*!
 	\brief

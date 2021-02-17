@@ -105,8 +105,8 @@ private:
 
 public:
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>,
+		typename HashFunc = HashCoder<std::iter_value_t<Iterator>>,
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>,
 		typename SwapFunc = Swapper<Iterator>>
 	static void Sort(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc(), const SwapFunc& swapFunc = SwapFunc())
@@ -115,7 +115,7 @@ public:
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>,
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>,
 		typename SwapFunc = Swapper<Iterator>>
 	static void SortPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const EqualFunc& equalFunc = EqualFunc(), const SwapFunc& swapFunc = SwapFunc())
@@ -130,8 +130,8 @@ public:
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename HashFunc = HashCoder<std::iter_value_t<Iterator>>,
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -139,7 +139,7 @@ public:
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static bool IsSortedPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -148,10 +148,10 @@ public:
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename HashFunc = HashCoder<std::iter_value_t<Iterator>>,
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static FindResult<Iterator> Find(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item,
+		const std::iter_value_t<Iterator>& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvFind(begin, count, item, hashFunc(item),
@@ -159,9 +159,9 @@ public:
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvFind(begin, count, item, itemHash,
@@ -169,10 +169,10 @@ public:
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename HashFunc = HashCoder<std::iter_value_t<Iterator>>,
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static Bounds<Iterator> GetBounds(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item,
+		const std::iter_value_t<Iterator>& item,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvGetBounds(begin, count, item, hashFunc(item),
@@ -180,9 +180,9 @@ public:
 	}
 
 	template<typename Iterator, typename HashIterator,
-		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
+		typename EqualFunc = std::equal_to<std::iter_value_t<Iterator>>>
 	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count,
-		HashIterator hashBegin, const typename std::iterator_traits<Iterator>::value_type& item,
+		HashIterator hashBegin, const std::iter_value_t<Iterator>& item,
 		HashFuncResult itemHash, const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvGetBounds(begin, count, item, itemHash,
@@ -260,7 +260,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
@@ -278,7 +278,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
@@ -309,7 +309,7 @@ private:
 
 	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
 	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
 		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;

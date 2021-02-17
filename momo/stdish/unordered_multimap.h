@@ -768,28 +768,28 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap) \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type> \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type> \
 unordered_multimap(Iterator, Iterator) \
 	-> unordered_multimap<Key, Mapped>; \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_multimap(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
 	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_multimap(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
 	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \

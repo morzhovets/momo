@@ -1053,15 +1053,15 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Key = std::remove_const_t<std::iter_value_t<Iterator>::first_type>, \
+	typename Mapped = std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
 map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \

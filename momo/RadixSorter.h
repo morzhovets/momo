@@ -23,9 +23,9 @@ namespace internal
 
 	template<typename Iterator>
 	struct RadixSorterCodeGetter<Iterator,
-		std::enable_if_t<std::is_integral_v<typename std::iterator_traits<Iterator>::value_type>>>
+		std::enable_if_t<std::is_integral_v<std::iter_value_t<Iterator>>>>
 	{
-		typedef typename UIntSelector<sizeof(typename std::iterator_traits<Iterator>::value_type)>::UInt Code;
+		typedef typename UIntSelector<sizeof(std::iter_value_t<Iterator>)>::UInt Code;
 
 		Code operator()(Iterator iter) const noexcept
 		{
@@ -35,7 +35,7 @@ namespace internal
 
 	template<typename Iterator>
 	struct RadixSorterCodeGetter<Iterator,
-		std::enable_if_t<std::is_pointer_v<typename std::iterator_traits<Iterator>::value_type>>>
+		std::enable_if_t<std::is_pointer_v<std::iter_value_t<Iterator>>>>
 	{
 		uintptr_t operator()(Iterator iter) const noexcept
 		{
