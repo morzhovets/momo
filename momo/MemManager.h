@@ -60,6 +60,24 @@ concept conceptMemManager =
 
 namespace internal
 {
+	template<typename MemManager>
+	concept conceptMemManagerWithReallocate = conceptMemManager<MemManager> &&
+	requires (MemManager& memManager, void* ptr, size_t size) {
+		{ memManager.Reallocate(ptr, size, size) } -> std::same_as<void*>;
+	};
+
+	template<typename MemManager>
+	concept conceptMemManagerWithReallocateInplace = conceptMemManager<MemManager> &&
+	requires (MemManager& memManager, void* ptr, size_t size) {
+		{ memManager.ReallocateInplace(ptr, size, size) } noexcept -> std::same_as<bool>;
+	};
+
+	template<typename MemManager>
+	concept conceptMemManagerWithIsEqual = conceptMemManager<MemManager> &&
+	requires (const MemManager& memManager) {
+		{ memManager.IsEqual(memManager) } noexcept -> std::same_as<bool>;
+	};
+
 	template<typename Allocator>
 	concept conceptAllocator =
 	requires (Allocator& alloc) {
@@ -303,32 +321,6 @@ namespace internal
 
 	private:
 		template<typename MemManager,
-			typename = void*>
-		struct CanReallocate : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct CanReallocate<MemManager,
-			decltype(std::declval<MemManager&>().Reallocate(nullptr, size_t{}, size_t{}))>
-			: public std::true_type
-		{
-		};
-
-		template<typename MemManager,
-			typename = bool>
-		struct CanReallocateInplace : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct CanReallocateInplace<MemManager,
-			decltype(std::declval<MemManager&>().ReallocateInplace(nullptr, size_t{}, size_t{}))>
-			: public std::true_type
-		{
-		};
-
-		template<typename MemManager,
 			typename = size_t>
 		struct PtrUsefulBitCount
 		{
@@ -345,22 +337,9 @@ namespace internal
 			static const size_t value = MemManager::ptrUsefulBitCount;
 		};
 
-		template<typename MemManager,
-			typename = bool>
-		struct HasIsEqual : public std::false_type
-		{
-		};
-
-		template<typename MemManager>
-		struct HasIsEqual<MemManager,
-			decltype(std::declval<const MemManager&>().IsEqual(std::declval<const MemManager&>()))>
-			: public std::true_type
-		{
-		};
-
 	public:
-		static const bool canReallocate = CanReallocate<MemManager>::value;
-		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
+		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
+		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
 
 		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
 
@@ -404,7 +383,7 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			if constexpr (HasIsEqual<MemManager>::value)
+			if constexpr (conceptMemManagerWithIsEqual<MemManager>)
 				return memManager1.IsEqual(memManager2);
 			else
 				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
@@ -591,14 +570,14 @@ namespace internal
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
-		std::conditional_t<BaseMemManagerProxy::canReallocate, void*, void>
-		Reallocate(void* ptr, size_t size, size_t newSize)
+		template<typename = void> requires BaseMemManagerProxy::canReallocate
+		void* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		std::conditional_t<BaseMemManagerProxy::canReallocateInplace, bool, void>
-		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		template<typename = void> requires BaseMemManagerProxy::canReallocateInplace
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
@@ -656,14 +635,14 @@ namespace internal
 			mBaseMemManager.Deallocate(ptr, size);
 		}
 
-		std::conditional_t<BaseMemManagerProxy::canReallocate, void*, void>
-		Reallocate(void* ptr, size_t size, size_t newSize)
+		template<typename = void> requires BaseMemManagerProxy::canReallocate
+		void* Reallocate(void* ptr, size_t size, size_t newSize)
 		{
 			return mBaseMemManager.Reallocate(ptr, size, newSize);
 		}
 
-		std::conditional_t<BaseMemManagerProxy::canReallocateInplace, bool, void>
-		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		template<typename = void> requires BaseMemManagerProxy::canReallocateInplace
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
 		}
