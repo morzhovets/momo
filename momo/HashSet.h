@@ -809,7 +809,7 @@ public:
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
-	template<typename ArgIterator>
+	template<internal::conceptInputIterator ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);

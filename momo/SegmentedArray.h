@@ -212,8 +212,7 @@ public:
 		SetCount(count, item);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	template<internal::conceptInputIterator ArgIterator>
 	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
@@ -563,8 +562,7 @@ public:
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	template<internal::conceptInputIterator ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		if constexpr (internal::IsForwardIterator<ArgIterator>::value)

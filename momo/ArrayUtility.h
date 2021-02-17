@@ -232,7 +232,7 @@ namespace internal
 			}
 		}
 
-		template<typename ArgIterator>
+		template<conceptInputIterator ArgIterator>
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<

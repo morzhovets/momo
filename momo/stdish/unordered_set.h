@@ -126,13 +126,13 @@ public:
 	{
 	}
 
-	template<typename Iterator>
+	template<momo::internal::conceptInputIterator Iterator>
 	unordered_set(Iterator first, Iterator last)
 	{
 		insert(first, last);
 	}
 
-	template<typename Iterator>
+	template<momo::internal::conceptInputIterator Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, alloc)
@@ -140,7 +140,7 @@ public:
 		insert(first, last);
 	}
 
-	template<typename Iterator>
+	template<momo::internal::conceptInputIterator Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, hashFunc, alloc)
@@ -148,7 +148,7 @@ public:
 		insert(first, last);
 	}
 
-	template<typename Iterator>
+	template<momo::internal::conceptInputIterator Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
@@ -466,7 +466,7 @@ public:
 #endif
 	}
 
-	template<typename Iterator>
+	template<momo::internal::conceptInputIterator Iterator>
 	void insert(Iterator first, Iterator last)
 	{
 		if constexpr (std::is_same_v<value_type, std::decay_t<decltype(*first)>>)

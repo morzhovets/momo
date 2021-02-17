@@ -454,8 +454,7 @@ public:
 			AddBackNogrow(item);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	template<internal::conceptInputIterator ArgIterator>
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
 			std::move(memManager))
@@ -886,8 +885,7 @@ public:
 		}
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
+	template<internal::conceptInputIterator ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?

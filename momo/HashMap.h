@@ -632,7 +632,7 @@ public:
 		return { PositionProxy(res.iterator), res.inserted };
 	}
 
-	template<typename ArgIterator,
+	template<internal::conceptInputIterator ArgIterator,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{

@@ -116,6 +116,11 @@ namespace momo
 namespace internal
 {
 	template<typename Iterator>
+	concept conceptInputIterator =
+		std::is_base_of_v<std::input_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>;
+
+	template<typename Iterator>
 	struct InsertResult
 	{
 		Iterator iterator;

@@ -1007,7 +1007,7 @@ public:
 		return AddVar(keyIter, value);
 	}
 
-	template<typename ArgIterator,
+	template<internal::conceptInputIterator ArgIterator,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
 	void Add(ArgIterator begin, ArgIterator end)
 	{

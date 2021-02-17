@@ -135,14 +135,14 @@ namespace internal
 		{
 		}
 
-		template<typename Iterator>
+		template<momo::internal::conceptInputIterator Iterator>
 		map_base(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 			: map_base(alloc)
 		{
 			insert(first, last);
 		}
 
-		template<typename Iterator>
+		template<momo::internal::conceptInputIterator Iterator>
 		map_base(Iterator first, Iterator last, const key_compare& lessFunc,
 			const allocator_type& alloc = allocator_type())
 			: map_base(lessFunc, alloc)
@@ -545,7 +545,7 @@ namespace internal
 				std::move(NodeTypeProxy::GetExtractedPair(node))));
 		}
 
-		template<typename Iterator>
+		template<momo::internal::conceptInputIterator Iterator>
 		void insert(Iterator first, Iterator last)
 		{
 			if constexpr (std::is_same_v<key_type, std::decay_t<decltype(first->first)>>)
