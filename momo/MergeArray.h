@@ -175,8 +175,7 @@ public:
 	explicit MergeArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: MergeArray(std::move(memManager))
 	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
 		if constexpr (internal::IsForwardIterator<ArgIterator>::value)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));

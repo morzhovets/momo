@@ -146,7 +146,7 @@ namespace internal
 		typedef TRawIterator RawIterator;
 		typedef TSettings Settings;
 
-		typedef typename std::iterator_traits<RawIterator>::reference Reference;
+		typedef std::iter_reference_t<RawIterator> Reference;
 		typedef typename std::iterator_traits<RawIterator>::pointer Pointer;
 
 		typedef DataRawMultiHashIterator ConstIterator;

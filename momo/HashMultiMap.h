@@ -193,7 +193,7 @@ namespace internal
 		typedef typename KeyReference::Iterator ValueIterator;
 
 	private:
-		typedef typename std::iterator_traits<ValueIterator>::reference ValueReference;
+		typedef std::iter_reference_t<ValueIterator> ValueReference;
 		typedef std::remove_reference_t<ValueReference> Value;
 
 	public:

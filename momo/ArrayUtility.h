@@ -236,7 +236,7 @@ namespace internal
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& memManager = array.GetMemManager();
 			if constexpr (IsForwardIterator<ArgIterator>::value)
 			{

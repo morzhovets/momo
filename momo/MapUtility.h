@@ -807,7 +807,7 @@ namespace internal
 			std::pair<KeyArg, ValueArg>&& pair) noexcept
 		{
 			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
-				|| std::is_reference_v<typename std::iterator_traits<Iterator>::reference>);
+				|| std::is_reference_v<std::iter_reference_t<Iterator>>);
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 		}
@@ -817,7 +817,7 @@ namespace internal
 			const std::pair<KeyArg, ValueArg>& pair) noexcept
 		{
 			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
-				|| std::is_reference_v<typename std::iterator_traits<Iterator>::reference>);
+				|| std::is_reference_v<std::iter_reference_t<Iterator>>);
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}
 	};

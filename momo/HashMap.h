@@ -34,8 +34,7 @@ namespace internal
 		static const bool isConst = tIsConst;
 
 	public:
-		typedef MapReference<typename std::iterator_traits<HashSetIterator>::reference,
-			isConst> Reference;
+		typedef MapReference<std::iter_reference_t<HashSetIterator>, isConst> Reference;
 		typedef IteratorPointer<Reference> Pointer;
 
 		typedef HashMapIterator<HashSetIterator, true> ConstIterator;

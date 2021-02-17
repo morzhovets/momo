@@ -460,8 +460,7 @@ public:
 		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
 			std::move(memManager))
 	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{

@@ -220,7 +220,7 @@ public:
 		try
 		{
 			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+				std::iter_reference_t<ArgIterator>> IterCreator;
 			for (ArgIterator iter = begin; iter != end; ++iter)
 				AddBackCrt(IterCreator(GetMemManager(), *iter));
 		}
