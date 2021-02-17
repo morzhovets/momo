@@ -490,6 +490,7 @@ private:
 
 template<typename Iterator,
 	typename Allocator = std::allocator<std::iter_value_t<Iterator>>>
+requires momo::internal::conceptAllocator<Allocator> \
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<std::iter_value_t<Iterator>, Allocator>;
 
