@@ -83,12 +83,12 @@ public:
 	template<typename Array>
 	static void TestStrArray()
 	{
-		Array ar = Array::CreateCrt(1, [] (void* ptr) { ::new(ptr) std::string(); });
+		Array ar = Array::CreateCrt(1, [] (std::string* ptr) { std::construct_at(ptr); });
 
 		std::string s1 = "s1";
 		ar.AddBack(s1);
 		ar.AddBack("s2");
-		ar.AddBackCrt([] (void* ptr) { ::new(ptr) std::string("s3"); });
+		ar.AddBackCrt([] (std::string* ptr) { std::construct_at(ptr, "s3"); });
 
 		ar.Reserve(10);
 		assert(ar.GetCapacity() >= 10);
@@ -98,7 +98,7 @@ public:
 
 		ar.AddBackNogrow(s1);
 		ar.AddBackNogrow("s2");
-		ar.AddBackNogrowCrt([] (void* ptr) { ::new(ptr) std::string("s3"); });
+		ar.AddBackNogrowCrt([] (std::string* ptr) { std::construct_at(ptr, "s3"); });
 
 		ar.Insert(0, s1);
 		ar.Insert(1, "s2");

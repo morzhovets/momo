@@ -127,8 +127,8 @@ public:
 		std::string s4 = "s4";
 
 		TreeMap map = { { "s1", "s1" }, { "s2", s2 } };
-		map.InsertCrt("s3", [] (void* ptr) { ::new(ptr) std::string("s3"); });
-		map.InsertCrt(s4, [] (void* ptr) { ::new(ptr) std::string("s4"); });
+		map.InsertCrt("s3", [] (std::string* ptr) { std::construct_at(ptr, "s3"); });
+		map.InsertCrt(s4, [] (std::string* ptr) { std::construct_at(ptr, "s4"); });
 
 		map.Insert("s1", "s2");
 		map.Insert("s2", s3);
@@ -153,17 +153,16 @@ public:
 		auto pairRemover = [] (std::string& key, std::string& value)
 		{
 			assert(key == "s1" && value == "s1");
-			typedef std::string String;
-			key.~String();
-			value.~String();
+			std::destroy_at(&key);
+			std::destroy_at(&value);
 		};
 		ep.Remove(pairRemover);
 		assert(ep.IsEmpty());
 
-		auto pairCrerator = [] (void* pkey, void* pvalue)
+		auto pairCrerator = [] (std::string* keyPtr, std::string* valuePtr)
 		{
-			::new(pkey) std::string("1");
-			::new(pvalue) std::string("2");
+			std::construct_at(keyPtr, "1");
+			std::construct_at(valuePtr, "2");
 		};
 		ep.Create(pairCrerator);
 		assert(ep.GetKey() == "1" && ep.GetValue() == "2");
