@@ -189,7 +189,7 @@ private:
 	};
 
 public:
-	SegmentedArray() noexcept(noexcept(MemManager()))
+	SegmentedArray() noexcept(std::is_nothrow_default_constructible<MemManager>::value)	// vs2017
 		: SegmentedArray(MemManager())
 	{
 	}

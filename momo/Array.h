@@ -466,10 +466,7 @@ public:
 	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
-	Array()
-#ifndef _MSC_VER	// vs2017
-		noexcept(noexcept(MemManager()))
-#endif
+	Array() noexcept(std::is_nothrow_default_constructible<MemManager>::value)	// vs2017
 		: Array(MemManager())
 	{
 	}
