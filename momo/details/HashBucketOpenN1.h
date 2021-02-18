@@ -122,7 +122,7 @@ namespace internal
 		requires std::invocable<ItemCreator&&, Item*>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
-			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
+			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
