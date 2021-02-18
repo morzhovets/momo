@@ -245,7 +245,7 @@ namespace internal
 			return ConstPointer(mReference);
 		}
 
-		std::remove_reference_t<const Reference>* operator->() const noexcept
+		decltype(auto) operator->() const noexcept
 		{
 			return std::addressof(mReference);
 		}

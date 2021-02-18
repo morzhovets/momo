@@ -380,7 +380,7 @@ namespace internal
 			return ConstPointer(static_cast<const RowBounds&>(*this));
 		}
 
-		typename RowBounds::Iterator operator->() const
+		decltype(auto) operator->() const
 		{
 			MOMO_CHECK(RowBounds::GetCount() == 1);
 			return RowBounds::GetBegin();
