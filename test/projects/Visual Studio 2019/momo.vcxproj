@@ -337,6 +337,7 @@
     <ClCompile Include="..\..\tests\SimpleHashTesterOpen8.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterOpenN1.cpp" />
     <ClCompile Include="..\..\tests\SimpleHashTesterUnlimP.cpp" />
+    <ClCompile Include="..\..\tests\SimpleMergeTester.cpp" />
     <ClCompile Include="..\..\tests\SimpleTreeTester.cpp" />
     <ClCompile Include="..\..\tests\SpeedMapTester.cpp" />
   </ItemGroup>
@@ -355,6 +356,7 @@
     <ClInclude Include="..\..\..\momo\IteratorUtility.h" />
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
     <ClInclude Include="..\..\..\momo\MergeArray.h" />
+    <ClInclude Include="..\..\..\momo\MergeSet.h" />
     <ClInclude Include="..\..\..\momo\RadixSorter.h" />
     <ClInclude Include="..\..\..\momo\SetUtility.h" />
     <ClInclude Include="..\..\..\momo\stdish\map.h" />
