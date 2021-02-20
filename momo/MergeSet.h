@@ -115,7 +115,8 @@ namespace internal
 
 		static void pvCopy(MemManager& memManager, const Item& srcItem, Item* dstItem)
 		{
-			ItemTraits::template Creator<const Item&>(memManager.GetBaseMemManager(), srcItem)(dstItem);
+			typename ItemTraits::template Creator<const Item&>(
+				memManager.GetBaseMemManager(), srcItem)(dstItem);
 		}
 
 		static void pvMerge(MemManager& memManager, Item* srcItems1, Item* dstItems, size_t count)
