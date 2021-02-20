@@ -24,17 +24,55 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits>
+	template<typename TMergeSetCrew>
+	class MergeSetNestedArrayMemManager : private TMergeSetCrew,
+		public MemManagerPtr<typename TMergeSetCrew::MemManager>
+	{
+	public:
+		typedef TMergeSetCrew MergeSetCrew;
+
+		typedef internal::MemManagerPtr<typename MergeSetCrew::MemManager> MemManagerPtr;
+
+	public:
+		explicit MergeSetNestedArrayMemManager(MergeSetCrew&& mergeSetCrew) noexcept
+			: MergeSetCrew(std::move(mergeSetCrew)),
+			MemManagerPtr(GetMergeSetCrew().GetMemManager())
+		{
+		}
+
+		MergeSetNestedArrayMemManager(MergeSetNestedArrayMemManager&& arrayMemManager) noexcept
+			: MergeSetCrew(std::move(arrayMemManager.GetMergeSetCrew())),
+			MemManagerPtr(GetMergeSetCrew().GetMemManager())
+		{
+		}
+
+		MergeSetNestedArrayMemManager(const MergeSetNestedArrayMemManager&) = delete;
+
+		~MergeSetNestedArrayMemManager() = default;
+
+		MergeSetNestedArrayMemManager& operator=(const MergeSetNestedArrayMemManager&) = delete;
+
+		const MergeSetCrew& GetMergeSetCrew() const noexcept
+		{
+			return *this;
+		}
+
+		MergeSetCrew& GetMergeSetCrew() noexcept
+		{
+			return *this;
+		}
+	};
+
+	template<typename TItemTraits, typename TMemManager>
 	class MergeSetNestedArrayItemTraits
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
-		typedef typename ItemTraits::MemManager MergeSetMemManager;
 
 	public:
-		typedef typename ItemTraits::Item Item;
+		typedef TMemManager MemManager;
 
-		typedef MemManagerPtr<MergeSetMemManager> MemManager;
+		typedef typename ItemTraits::Item Item;
 
 		static const size_t alignment = ItemTraits::alignment;
 
@@ -45,18 +83,80 @@ namespace internal
 			ItemTraits::Destroy(memManager.GetBaseMemManager(), begin, count);
 		}
 
-		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
-		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
+		template<typename SrcIterator, typename ItemCreator>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
-			ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcBegin, dstBegin, count,
-				std::forward<ItemCreator>(itemCreator), newItem);
+			MOMO_ASSERT(std::has_single_bit(count));
+			pvCopy(memManager, *pvGetItemPtr(srcBegin, count - 1), dstBegin + count - 1);
+			for (size_t index = 1; index < count; index *= 2)
+			{
+				Item* srcItems1 = pvGetItemPtr(srcBegin, count - 2 * index);
+				pvMerge(memManager, srcItems1, dstBegin + count - 2 * index, index);
+			}
+			try
+			{
+				std::forward<ItemCreator>(itemCreator)(newItem);
+			}
+			catch (...)
+			{
+				Destroy(memManager, dstBegin, count);
+				throw;
+			}
+			Destroy(memManager, srcBegin, count);
+		}
+
+	private:
+		template<typename Iterator>
+		static Item* pvGetItemPtr(Iterator begin, size_t index) noexcept
+		{
+			return std::addressof(begin[static_cast<ptrdiff_t>(index)]);
+		}
+
+		static void pvCopy(MemManager& memManager, const Item& srcItem, Item* dstItem)
+		{
+			ItemTraits::template Creator<const Item&>(memManager.GetBaseMemManager(), srcItem)(dstItem);
+		}
+
+		static void pvMerge(MemManager& memManager, Item* srcItems1, Item* dstItems, size_t count)
+		{
+			const auto& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
+			Item* srcItems2 = dstItems + count;
+			size_t srcIndex1 = 0;
+			size_t srcIndex2 = 0;
+			size_t dstIndex = 0;
+			try
+			{
+				while (srcIndex1 < count)
+				{
+					if (srcIndex2 < count && mergeTraits.IsLess(
+						ItemTraits::GetKey(srcItems2[srcIndex2]),
+						ItemTraits::GetKey(srcItems1[srcIndex1])))
+					{
+						ItemTraits::Relocate(memManager.GetBaseMemManager(),
+							srcItems2[srcIndex2], dstItems + dstIndex);
+						++srcIndex2;
+					}
+					else
+					{
+						pvCopy(memManager, srcItems1[srcIndex1], dstItems + dstIndex);
+						++srcIndex1;
+					}
+					++dstIndex;
+				}
+			}
+			catch (...)
+			{
+				Destroy(memManager, dstItems, dstIndex);
+				Destroy(memManager, srcItems2 + srcIndex2, count - srcIndex2);
+				throw;
+			}
 		}
 	};
 
 	template<typename TMergeTraits>
 	class MergeSetNestedArraySettings
-		: public MergeArraySettings<TMergeTraits::logInitialItemCount>
+		: public MergeArraySettings<0 /*TMergeTraits::logInitialItemCount*/>
 	{
 	protected:
 		typedef TMergeTraits MergeTraits;
@@ -120,12 +220,9 @@ public:
 		ItemManager::Destroy(memManager, begin, count);
 	}
 
-	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
-	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-		size_t count, ItemCreator&& itemCreator, Item* newItem)
+	static void Relocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 	{
-		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
-			std::forward<ItemCreator>(itemCreator), newItem);
+		ItemManager::Relocate(memManager, srcItem, dstItem);
 	}
 };
 
@@ -163,12 +260,11 @@ public:
 	static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
 private:
-	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
 	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;
 
-	typedef internal::MergeSetNestedArrayItemTraits<ItemTraits> MergeArrayItemTraits;
-	typedef typename MergeArrayItemTraits::MemManager MergeArrayMemManager;
+	typedef internal::MergeSetNestedArrayMemManager<Crew> MergeArrayMemManager;
+	typedef internal::MergeSetNestedArrayItemTraits<ItemTraits,
+		MergeArrayMemManager> MergeArrayItemTraits;
 
 	typedef momo::MergeArray<Item, MergeArrayMemManager, MergeArrayItemTraits,
 		internal::MergeSetNestedArraySettings<MergeTraits>> MergeArray;
@@ -193,8 +289,7 @@ public:
 	}
 
 	explicit MergeSet(const MergeTraits& mergeTraits, MemManager memManager = MemManager())
-		: mCrew(mergeTraits, std::move(memManager)),
-		mMergeArray(MergeArrayMemManager(GetMemManager()))
+		: mMergeArray(MergeArrayMemManager(Crew(mergeTraits, std::move(memManager))))
 	{
 	}
 
@@ -211,8 +306,7 @@ public:
 	}
 
 	MergeSet(MergeSet&& mergeSet) noexcept
-		: mCrew(std::move(mergeSet.mCrew)),
-		mMergeArray(std::move(mergeSet.mMergeArray))
+		: mMergeArray(std::move(mergeSet.mMergeArray))
 	{
 	}
 
@@ -222,8 +316,8 @@ public:
 	}
 
 	explicit MergeSet(const MergeSet& mergeSet, MemManager memManager)
-		: mCrew(mergeSet.GetMergeTraits(), std::move(memManager)),
-		mMergeArray(MergeArray::CreateCap(mergeSet.GetCount(), MergeArrayMemManager(GetMemManager())))
+		: mMergeArray(MergeArray::CreateCap(mergeSet.GetCount(),
+			MergeArrayMemManager(Crew(mergeSet.GetMergeTraits(), std::move(memManager)))))
 	{
 		MemManager& thisMemManager = GetMemManager();
 		for (const Item& item : mergeSet.mMergeArray)
@@ -249,7 +343,6 @@ public:
 
 	void Swap(MergeSet& mergeSet) noexcept
 	{
-		mCrew.Swap(mergeSet.mCrew);
 		mMergeArray.Swap(mergeSet.mMergeArray);
 	}
 
@@ -268,17 +361,17 @@ public:
 
 	const MergeTraits& GetMergeTraits() const noexcept
 	{
-		return mCrew.GetContainerTraits();
+		return pvGetCrew().GetContainerTraits();
 	}
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mCrew.GetMemManager();
+		return pvGetCrew().GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mCrew.GetMemManager();
+		return pvGetCrew().GetMemManager();
 	}
 
 	size_t GetCount() const noexcept
@@ -294,7 +387,7 @@ public:
 	void Clear(bool shrink = true) noexcept
 	{
 		mMergeArray.Clear(shrink);
-		mCrew.IncVersion();
+		pvGetCrew().IncVersion();
 	}
 
 	ConstPosition Find(const Key& key) const
@@ -377,13 +470,38 @@ public:
 	//void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 
 private:
+	const Crew& pvGetCrew() const noexcept
+	{
+		return mMergeArray.GetMemManager().GetMergeSetCrew();
+	}
+
+	Crew& pvGetCrew() noexcept
+	{
+		return mMergeArray.GetMemManager().GetMergeSetCrew();
+	}
+
 	ConstPosition pvFind(const Key& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		for (const Item& item : mMergeArray)
+		auto comp = [&mergeTraits] (const Item& item1, const Key& key2)
+			{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
+		size_t index = 0;
+		size_t capacity = mMergeArray.GetCapacity();
+		while (capacity > 1)
 		{
-			if (mergeTraits.IsEqual(key, ItemTraits::GetKey(item)))
-				return ConstPosition(std::addressof(item));
+			size_t segItemCount = std::bit_floor(capacity - 1);
+			const Item* segment = std::addressof(mMergeArray[index]);
+			const Item* itemPtr = std::lower_bound(segment, segment + segItemCount - 1, key, comp);
+			if (mergeTraits.IsEqual(ItemTraits::GetKey(*itemPtr), key))
+				return ConstPosition(itemPtr);
+			index += segItemCount;
+			capacity -= segItemCount;
+		}
+		if (index < mMergeArray.GetCount())
+		{
+			const Item* itemPtr = std::addressof(mMergeArray[index]);
+			if (mergeTraits.IsEqual(ItemTraits::GetKey(*itemPtr), key))
+				return ConstPosition(itemPtr);
 		}
 		return ConstPosition();
 	}
@@ -402,14 +520,13 @@ private:
 	ConstPosition pvAdd(ItemCreator&& itemCreator)
 	{
 		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
-		mCrew.IncVersion();
+		pvGetCrew().IncVersion();
 		ConstPosition resPos = std::addressof(mMergeArray.GetBackItem());
 		MOMO_EXTRA_CHECK(!extraCheck || resPos == pvFind(ItemTraits::GetKey(*resPos)));
 		return resPos;
 	}
 
 private:
-	Crew mCrew;
 	MergeArray mMergeArray;
 };
 
