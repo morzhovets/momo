@@ -25,10 +25,9 @@ namespace internal
 	struct RadixSorterCodeGetter<Iterator,
 		std::enable_if_t<std::is_integral_v<std::iter_value_t<Iterator>>>>
 	{
-		typedef typename UIntSelector<sizeof(std::iter_value_t<Iterator>)>::UInt Code;
-
-		Code operator()(Iterator iter) const noexcept
+		auto operator()(Iterator iter) const noexcept
 		{
+			typedef typename UIntSelector<sizeof(std::iter_value_t<Iterator>)>::UInt Code;
 			return static_cast<Code>(*iter);
 		}
 	};
