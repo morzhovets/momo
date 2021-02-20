@@ -24,6 +24,126 @@ namespace momo
 
 namespace internal
 {
+	template<typename TItem, typename TSettings>
+	class MergeSetConstPosition : private VersionKeeper<TSettings>
+	{
+	protected:
+		typedef TItem Item;
+		typedef TSettings Settings;
+
+	private:
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
+
+	public:
+		typedef const Item& Reference;
+		typedef const Item* Pointer;
+
+		typedef MergeSetConstPosition ConstPosition;
+
+		//typedef ... Iterator;
+
+	public:
+		explicit MergeSetConstPosition() noexcept
+			: mItemPtr(nullptr)
+		{
+		}
+
+		//operator ConstPosition() const noexcept
+
+		Pointer operator->() const
+		{
+			VersionKeeper::Check();
+			MOMO_CHECK(mItemPtr != nullptr);
+			return mItemPtr;
+		}
+
+		friend bool operator==(MergeSetConstPosition pos1, MergeSetConstPosition pos2) noexcept
+		{
+			return pos1.mItemPtr == pos2.mItemPtr;
+		}
+
+		MOMO_MORE_HASH_POSITION_OPERATORS(MergeSetConstPosition)	//?
+
+	protected:
+		explicit MergeSetConstPosition(const Item& item, const size_t* version) noexcept
+			: VersionKeeper(version),
+			mItemPtr(std::addressof(item))
+		{
+		}
+
+	private:
+		const Item* mItemPtr;
+	};
+
+	template<typename TMergeArrayIterator, typename TSettings>
+	class MergeSetConstIterator : private VersionKeeper<TSettings>
+	{
+	protected:
+		typedef TMergeArrayIterator MergeArrayIterator;
+		typedef TSettings Settings;
+
+	public:
+		typedef typename MergeArrayIterator::Reference Reference;
+		typedef typename MergeArrayIterator::Pointer Pointer;
+
+		typedef MergeSetConstIterator ConstIterator;
+
+	private:
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
+
+		struct MergeArrayIteratorProxy : public MergeArrayIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(MergeArrayIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(MergeArrayIterator, GetArray)
+			MOMO_DECLARE_PROXY_FUNCTION(MergeArrayIterator, GetIndex)
+		};
+
+	public:
+		explicit MergeSetConstIterator() noexcept
+			: mMergeArrayIterator()
+		{
+		}
+
+		//operator ConstIterator() const noexcept
+
+		MergeSetConstIterator& operator++()
+		{
+			VersionKeeper::Check();
+			const auto* array = MergeArrayIteratorProxy::GetArray(mMergeArrayIterator);
+			MOMO_CHECK(array != nullptr);
+			if (MergeArrayIteratorProxy::GetIndex(mMergeArrayIterator) + 1 < array->GetCount())
+				++mMergeArrayIterator;
+			else
+				mMergeArrayIterator = MergeArrayIterator();
+			return *this;
+		}
+
+		Pointer operator->() const
+		{
+			VersionKeeper::Check();
+			MOMO_CHECK(mMergeArrayIterator != MergeArrayIterator());
+			return mMergeArrayIterator.operator->();
+		}
+
+		friend bool operator==(MergeSetConstIterator iter1, MergeSetConstIterator iter2) noexcept
+		{
+			return iter1.mMergeArrayIterator == iter2.mMergeArrayIterator;
+		}
+
+		MOMO_MORE_HASH_ITERATOR_OPERATORS(MergeSetConstIterator)	//?
+
+	protected:
+		explicit MergeSetConstIterator(MergeArrayIterator mergeArrayIterator,
+			const size_t* version) noexcept
+			: VersionKeeper(version),
+			mMergeArrayIterator(mergeArrayIterator)
+		{
+		}
+
+	private:
+		MergeArrayIterator mMergeArrayIterator;
+	};
+
 	template<typename TMergeSetCrew>
 	class MergeSetNestedArrayMemManager : private TMergeSetCrew,
 		public MemManagerPtr<typename TMergeSetCrew::MemManager>
@@ -88,10 +208,10 @@ namespace internal
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
 			MOMO_ASSERT(std::has_single_bit(count));
-			pvCopy(memManager, *pvGetItemPtr(srcBegin, count - 1), dstBegin + count - 1);
+			pvCopy(memManager, *UIntMath<>::Next(srcBegin, count - 1), dstBegin + count - 1);
 			for (size_t index = 1; index < count; index *= 2)
 			{
-				Item* srcItems1 = pvGetItemPtr(srcBegin, count - 2 * index);
+				Item* srcItems1 = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
 				pvMerge(memManager, srcItems1, dstBegin + count - 2 * index, index);
 			}
 			try
@@ -107,12 +227,6 @@ namespace internal
 		}
 
 	private:
-		template<typename Iterator>
-		static Item* pvGetItemPtr(Iterator begin, size_t index) noexcept
-		{
-			return std::addressof(begin[static_cast<ptrdiff_t>(index)]);
-		}
-
 		static void pvCopy(MemManager& memManager, const Item& srcItem, Item* dstItem)
 		{
 			typename ItemTraits::template Creator<const Item&>(
@@ -271,10 +385,11 @@ private:
 		internal::MergeSetNestedArraySettings<MergeTraits>> MergeArray;
 
 public:
-	typedef typename MergeArray::ConstIterator ConstIterator;
+	typedef internal::MergeSetConstIterator<typename MergeArray::ConstIterator,
+		Settings> ConstIterator;
 	typedef ConstIterator Iterator;
 
-	typedef const Item* ConstPosition;
+	typedef internal::MergeSetConstPosition<Item, Settings> ConstPosition;
 	typedef ConstPosition Position;
 
 	typedef internal::InsertResult<ConstPosition> InsertResult;
@@ -282,6 +397,16 @@ public:
 private:
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+
+	struct ConstPositionProxy : public ConstPosition
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
+	};
+
+	struct ConstIteratorProxy : public ConstIterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+	};
 
 public:
 	MergeSet()
@@ -349,12 +474,14 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return mMergeArray.GetBegin();
+		if (IsEmpty())
+			return ConstIterator();
+		return ConstIteratorProxy(mMergeArray.GetBegin(), pvGetCrew().GetVersion());
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return mMergeArray.GetEnd();
+		return ConstIterator();
 	}
 
 	MOMO_FRIEND_SWAP(MergeSet)
@@ -481,6 +608,11 @@ private:
 		return mMergeArray.GetMemManager().GetMergeSetCrew();
 	}
 
+	ConstPosition pvMakePosition(const Item& item) const noexcept
+	{
+		return ConstPositionProxy(item, pvGetCrew().GetVersion());
+	}
+
 	ConstPosition pvFind(const Key& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
@@ -494,7 +626,7 @@ private:
 			const Item* segment = std::addressof(mMergeArray[index]);
 			const Item* itemPtr = std::lower_bound(segment, segment + segItemCount - 1, key, comp);
 			if (mergeTraits.IsEqual(ItemTraits::GetKey(*itemPtr), key))
-				return ConstPosition(itemPtr);
+				return pvMakePosition(*itemPtr);
 			index += segItemCount;
 			capacity -= segItemCount;
 		}
@@ -502,7 +634,7 @@ private:
 		{
 			const Item* itemPtr = std::addressof(mMergeArray[index]);
 			if (mergeTraits.IsEqual(ItemTraits::GetKey(*itemPtr), key))
-				return ConstPosition(itemPtr);
+				return pvMakePosition(*itemPtr);
 		}
 		return ConstPosition();
 	}
@@ -522,7 +654,7 @@ private:
 	{
 		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
 		pvGetCrew().IncVersion();
-		ConstPosition resPos = std::addressof(mMergeArray.GetBackItem());
+		ConstPosition resPos = pvMakePosition(mMergeArray.GetBackItem());
 		MOMO_EXTRA_CHECK(!extraCheck || resPos == pvFind(ItemTraits::GetKey(*resPos)));
 		return resPos;
 	}
@@ -532,3 +664,13 @@ private:
 };
 
 } // namespace momo
+
+namespace std
+{
+	template<typename AI, typename S>
+	struct iterator_traits<momo::internal::MergeSetConstIterator<AI, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MergeSetConstIterator<AI, S>,
+			forward_iterator_tag>
+	{
+	};
+} // namespace std
