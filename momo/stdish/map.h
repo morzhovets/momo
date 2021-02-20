@@ -530,7 +530,7 @@ namespace internal
 				return { end(), false, node_type() };
 			typename TreeMap::InsertResult res = mTreeMap.Insert(
 				std::move(NodeTypeProxy::GetExtractedPair(node)));
-			return { IteratorProxy(res.iterator), res.inserted,
+			return { IteratorProxy(res.position), res.inserted,
 				res.inserted ? node_type() : std::move(node) };
 		}
 

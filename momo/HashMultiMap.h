@@ -1029,12 +1029,12 @@ public:
 
 	KeyIterator InsertKey(Key&& key)
 	{
-		return KeyIteratorProxy(mHashMap.Insert(std::move(key), ValueArray()).iterator);
+		return KeyIteratorProxy(mHashMap.Insert(std::move(key), ValueArray()).position);
 	}
 
 	KeyIterator InsertKey(const Key& key)
 	{
-		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).iterator);
+		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).position);
 	}
 
 	template<typename KeyCreator>
