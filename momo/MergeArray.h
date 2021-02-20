@@ -113,7 +113,6 @@ private:
 
 	static const size_t logInitialItemCount = Settings::logInitialItemCount;
 	static const size_t initialItemCount = size_t{1} << logInitialItemCount;
-	static_assert(logInitialItemCount > 0);
 
 	struct ConstIteratorProxy : public ConstIterator
 	{
@@ -389,13 +388,16 @@ public:
 	{
 		if (capacity <= mCapacity)
 			return;
+		if (mCapacity == 0)
+			return pvInitCapacity(capacity);
 		capacity = pvCeilCapacity(capacity);
-		size_t segIndex = pvGetSegIndex(mCapacity, capacity);
-		if (segIndex >= mSegments.GetCount())
+		size_t segIndex = pvGetSegIndex(mCapacity - 1, capacity);
+		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, nullptr);
+		mSegments[segIndex] = pvAllocateSegment(segIndex);
 		try
 		{
-			for (size_t i = 0; i <= segIndex; ++i)
+			for (size_t i = 1; i < segIndex; ++i)
 			{
 				if (mSegments[i] == nullptr && pvHasSegment(i, capacity))
 					mSegments[i] = pvAllocateSegment(i);
@@ -433,7 +435,7 @@ public:
 			return;
 		size_t initCapacity = mCapacity;
 		mCapacity = capacity;
-		size_t segIndex = pvGetSegIndex(mCapacity, initCapacity);
+		size_t segIndex = pvGetSegIndex(mCapacity - 1, initCapacity);
 		try
 		{
 			for (size_t i = 1; i < segIndex; ++i)
@@ -512,41 +514,47 @@ public:
 		{
 			std::forward<ItemCreator>(itemCreator)(pvGetItemPtr(mCount));
 		}
-		else if (mCapacity > 0)
+		else if ((mCount & initialItemCount) > 0 || mCount == 0)
 		{
-			size_t segIndex = static_cast<size_t>(std::countr_one(mCount >> logInitialItemCount) + 1);
-			if (segIndex >= mSegments.GetCount())
-				mSegments.SetCount(segIndex + 1, nullptr);
-			mSegments[segIndex] = pvAllocateSegment(segIndex);
+			if (mSegments.GetCount() <= 1)
+				mSegments.SetCount(2, nullptr);
+			Item* segment0 = pvAllocateSegment(0);
 			try
 			{
-				size_t segItemCount = initialItemCount << (segIndex - 1);
-				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount + 1),
-					mSegments[segIndex], segItemCount - 1, std::forward<ItemCreator>(itemCreator),
-					mSegments[segIndex] + segItemCount - 1);
+				std::forward<ItemCreator>(itemCreator)(segment0);
+			}
+			catch (...)
+			{
+				pvDeallocateSegment(0, segment0);
+				throw;
+			}
+			mCapacity += initialItemCount;
+			mSegments[1] = mSegments[0];
+			mSegments[0] = segment0;
+		}
+		else
+		{
+			size_t segIndex = static_cast<size_t>(std::countr_zero(mCount >> logInitialItemCount) + 1);
+			if (mSegments.GetCount() <= segIndex)
+				mSegments.SetCount(segIndex + 1, nullptr);
+			Item* segment0 = pvAllocateSegment(0);
+			try
+			{
+				mSegments[segIndex] = pvAllocateSegment(segIndex);
+				size_t segItemCount = pvGetSegItemCount(segIndex);
+				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
+					mSegments[segIndex], segItemCount, std::forward<ItemCreator>(itemCreator), segment0);
 			}
 			catch (...)
 			{
 				pvDeallocateSegments();
+				pvDeallocateSegment(0, segment0);
 				throw;
 			}
 			mCapacity += initialItemCount;
 			pvDeallocateSegments();
-		}
-		else
-		{
-			mSegments.SetCount(1, nullptr);
-			mSegments[0] = pvAllocateSegment(0);
-			try
-			{
-				std::forward<ItemCreator>(itemCreator)(mSegments[0]);
-			}
-			catch (...)
-			{
-				pvDeallocateSegments();
-				throw;
-			}
-			mCapacity = initialItemCount - 1;
+			pvDeallocateSegment(0, mSegments[0]);
+			mSegments[0] = segment0;
 		}
 		++mCount;
 	}
@@ -655,24 +663,27 @@ public:
 private:
 	static size_t pvGetSegItemCount(size_t segIndex) noexcept
 	{
-		return (segIndex > 0) ? initialItemCount << (segIndex - 1) : initialItemCount - 1;
+		return initialItemCount << ((segIndex > 0) ? segIndex - 1 : 0);
 	}
 
 	static bool pvHasSegment(size_t segIndex, size_t capacity) noexcept
 	{
-		return (segIndex > 0) ? (capacity & (initialItemCount << (segIndex - 1))) > 0 : capacity > 0;
+		if (capacity == 0)
+			return false;
+		if (segIndex == 0)
+			return true;
+		return ((capacity - 1) & (initialItemCount << (segIndex - 1))) > 0;
 	}
 
 	static size_t pvGetSegIndex(size_t index, size_t capacity) noexcept
 	{
 		MOMO_ASSERT(index < capacity);
-		return std::bit_width((index ^ capacity) >> logInitialItemCount);
+		return std::bit_width((index ^ (capacity - 1)) >> logInitialItemCount);
 	}
 
 	static size_t pvCeilCapacity(size_t capacity) noexcept
 	{
-		MOMO_ASSERT(capacity > 0);
-		return (((capacity >> logInitialItemCount) + 1) << logInitialItemCount) - 1;
+		return internal::UIntMath<>::Ceil(capacity, initialItemCount);
 	}
 
 	Item* pvAllocateSegment(size_t segIndex)

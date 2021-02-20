@@ -89,7 +89,7 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #define LIBCXX_TEST_PREFIX "libcxx_test_merge_array"
 namespace libcxx_test_merge_array
 {
-class LibcxxMergeArraySettings : public momo::MergeArraySettings<1>
+class LibcxxMergeArraySettings : public momo::MergeArraySettings<0>
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
