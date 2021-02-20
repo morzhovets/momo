@@ -128,6 +128,12 @@ namespace internal
 	template<typename Position>
 	struct InsertResult
 	{
+		InsertResult(Position pos, bool inserted) noexcept
+			: position(pos),
+			inserted(inserted)
+		{
+		}
+
 		union
 		{
 			Position position;
