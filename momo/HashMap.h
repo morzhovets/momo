@@ -866,9 +866,9 @@ namespace internal
 
 namespace std
 {
-	template<typename HI, bool c>
-	struct iterator_traits<momo::internal::HashMapIterator<HI, c>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::HashMapIterator<HI, c>,
+	template<typename SI, bool c>
+	struct iterator_traits<momo::internal::HashMapIterator<SI, c>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashMapIterator<SI, c>,
 			forward_iterator_tag>
 	{
 	};
