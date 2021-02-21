@@ -99,7 +99,7 @@ matrix:
         - CXXFLAGS="-std=c++17 -DLIBCPP_TEST_DEDUCTION_GUIDES"
 
     - compiler: gcc
-#      arch: s390x
+      arch: s390x
       dist: bionic
       addons:
         apt:
