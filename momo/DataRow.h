@@ -33,7 +33,7 @@ namespace internal
 		}
 
 		template<typename ColumnInfo>
-		void operator()(Void* /*item*/, ColumnInfo /*columnInfo*/) const
+		[[noreturn]] void operator()(Void* /*item*/, ColumnInfo /*columnInfo*/) const
 		{
 			throw std::logic_error("Visit unknown type");
 		}

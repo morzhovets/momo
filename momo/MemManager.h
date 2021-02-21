@@ -503,7 +503,7 @@ namespace internal
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
-		void* Allocate(size_t /*size*/)
+		[[noreturn]] void* Allocate(size_t /*size*/)
 		{
 			MOMO_ASSERT(false);
 			throw std::bad_alloc();
