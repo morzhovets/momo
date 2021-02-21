@@ -1690,7 +1690,7 @@ private:
 	}
 
 private:
-	Crew mCrew;
+	[[no_unique_address]] Crew mCrew;
 	size_t mCount;
 	Node* mRootNode;
 	NodeParams* mNodeParams;

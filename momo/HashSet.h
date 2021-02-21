@@ -1327,7 +1327,7 @@ private:
 	}
 
 private:
-	Crew mCrew;
+	[[no_unique_address]] Crew mCrew;
 	size_t mCount;
 	size_t mCapacity;
 	Buckets* mBuckets;

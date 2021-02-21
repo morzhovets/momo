@@ -187,7 +187,6 @@ namespace internal
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
 	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false>
-		: private TContainerTraits, private TMemManager
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
@@ -201,14 +200,14 @@ namespace internal
 
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
-			: ContainerTraits(containerTraits),
-			MemManager(std::move(memManager))
+			: mContainerTraits(containerTraits),
+			mMemManager(std::move(memManager))
 		{
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
-			: ContainerTraits(std::move(crew.pvGetContainerTraits())),
-			MemManager(std::move(crew.GetMemManager()))
+			: mContainerTraits(std::move(crew.mContainerTraits)),
+			mMemManager(std::move(crew.mMemManager))
 		{
 		}
 
@@ -220,7 +219,7 @@ namespace internal
 
 		void Swap(SetCrew& crew) noexcept
 		{
-			std::swap(pvGetContainerTraits(), crew.pvGetContainerTraits());
+			std::swap(mContainerTraits, crew.mContainerTraits);
 		}
 
 		const size_t* GetVersion() const noexcept
@@ -234,24 +233,22 @@ namespace internal
 
 		const ContainerTraits& GetContainerTraits() const noexcept
 		{
-			return *this;
+			return mContainerTraits;
 		}
 
 		const MemManager& GetMemManager() const noexcept
 		{
-			return *this;
+			return mMemManager;
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
-			return *this;
+			return mMemManager;
 		}
 
 	private:
-		ContainerTraits& pvGetContainerTraits() noexcept
-		{
-			return *this;
-		}
+		[[no_unique_address]] ContainerTraits mContainerTraits;
+		[[no_unique_address]] MemManager mMemManager;
 	};
 
 	template<typename TItemTraits, typename TSettings>

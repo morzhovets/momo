@@ -91,7 +91,7 @@ template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
-class TreeTraitsStd : private TLessFunc
+class TreeTraitsStd
 {
 public:
 	typedef TKey Key;
@@ -108,7 +108,7 @@ public:
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
-		: LessFunc(lessFunc)
+		: mLessFunc(lessFunc)
 	{
 	}
 
@@ -117,13 +117,16 @@ public:
 	{
 		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
 		static_assert((std::is_same_v<Key, KeyArg2>) || IsValidKeyArg<KeyArg2>::value);
-		return LessFunc::operator()(key1, key2);
+		return mLessFunc(key1, key2);
 	}
 
 	const LessFunc& GetLessFunc() const noexcept
 	{
-		return *this;
+		return mLessFunc;
 	}
+
+private:
+	[[no_unique_address]] LessFunc mLessFunc;
 };
 
 } // namespace momo
