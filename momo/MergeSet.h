@@ -7,7 +7,6 @@
   momo/MergeSet.h
 
   namespace momo:
-    class MergeTraits
     class MergeSetItemTraits
     class MergeSetSettings
     class MergeSet
@@ -16,6 +15,7 @@
 
 #pragma once
 
+#include "MergeTraits.h"
 #include "MergeArray.h"
 #include "SetUtility.h"
 
@@ -306,33 +306,6 @@ namespace internal
 		static const CheckMode checkMode = CheckMode::assertion;
 	};
 }
-
-template<typename TKey,
-	bool tIsNothrowComparable = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>()),
-	size_t tLogInitialItemCount = 5>
-class MergeTraits
-{
-public:
-	typedef TKey Key;
-
-	static const bool isNothrowComparable = tIsNothrowComparable;
-	static const size_t logInitialItemCount = tLogInitialItemCount;
-
-public:
-	explicit MergeTraits() noexcept
-	{
-	}
-
-	bool IsLess(const Key& key1, const Key& key2) const noexcept(isNothrowComparable)
-	{
-		return std::less<>()(key1, key2);
-	}
-
-	bool IsEqual(const Key& key1, const Key& key2) const
-	{
-		return key1 == key2;
-	}
-};
 
 template<typename TKey, conceptMemManager TMemManager>
 class MergeSetItemTraits

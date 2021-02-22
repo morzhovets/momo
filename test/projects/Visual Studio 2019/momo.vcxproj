@@ -357,6 +357,7 @@
     <ClInclude Include="..\..\..\momo\MapUtility.h" />
     <ClInclude Include="..\..\..\momo\MergeArray.h" />
     <ClInclude Include="..\..\..\momo\MergeSet.h" />
+    <ClInclude Include="..\..\..\momo\MergeTraits.h" />
     <ClInclude Include="..\..\..\momo\RadixSorter.h" />
     <ClInclude Include="..\..\..\momo\SetUtility.h" />
     <ClInclude Include="..\..\..\momo\stdish\map.h" />
