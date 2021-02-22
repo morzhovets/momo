@@ -109,7 +109,7 @@ namespace internal
 			return iter1.mNode == iter2.mNode && iter1.mItemIndex == iter2.mItemIndex;
 		}
 
-		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeSetConstIterator)
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeSetConstIterator)
 
 	protected:
 		explicit TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,

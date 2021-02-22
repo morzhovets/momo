@@ -241,7 +241,7 @@ namespace internal
 			return iter1.mValueIterator == iter2.mValueIterator;
 		}
 
-		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMultiMapIterator)
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashMultiMapIterator)
 
 		KeyIterator GetKeyIterator() const noexcept
 		{

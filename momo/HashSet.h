@@ -237,7 +237,7 @@ namespace internal
 			return pos1.mBucketIterator == pos2.mBucketIterator;
 		}
 
-		MOMO_MORE_HASH_POSITION_OPERATORS(HashSetConstPosition)
+		MOMO_MORE_POSITION_OPERATORS(HashSetConstPosition)
 
 	protected:
 		explicit HashSetConstPosition(size_t indexCode, BucketIterator bucketIter,
@@ -331,7 +331,7 @@ namespace internal
 			return *this;
 		}
 
-		//MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
+		//MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashSetConstIterator)
 		HashSetConstIterator operator++(int)
 		{
 			HashSetConstIterator tempIter = *this;

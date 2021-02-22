@@ -77,7 +77,7 @@ namespace internal
 			return iter1.mHashSetIterator == iter2.mHashSetIterator;
 		}
 
-		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashMapIterator)
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashMapIterator)
 
 	protected:
 		explicit HashMapIterator(HashSetIterator hashSetIter) noexcept
@@ -164,7 +164,7 @@ namespace internal
 			return pos1.mHashSetPosition == pos2.mHashSetPosition;
 		}
 
-		MOMO_MORE_HASH_POSITION_OPERATORS(HashMapPosition)
+		MOMO_MORE_POSITION_OPERATORS(HashMapPosition)
 
 	protected:
 		explicit HashMapPosition(HashSetPosition hashSetPos) noexcept

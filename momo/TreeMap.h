@@ -84,7 +84,7 @@ namespace internal
 			return iter1.mTreeSetIterator == iter2.mTreeSetIterator;
 		}
 
-		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeMapIterator)
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeMapIterator)
 
 	protected:
 		explicit TreeMapIterator(TreeSetIterator treeSetIter) noexcept

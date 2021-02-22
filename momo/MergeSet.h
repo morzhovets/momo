@@ -62,7 +62,7 @@ namespace internal
 			return pos1.mItemPtr == pos2.mItemPtr;
 		}
 
-		MOMO_MORE_HASH_POSITION_OPERATORS(MergeSetConstPosition)	//?
+		MOMO_MORE_POSITION_OPERATORS(MergeSetConstPosition)
 
 	protected:
 		explicit MergeSetConstPosition(const Item& item, const size_t* version) noexcept
@@ -130,7 +130,7 @@ namespace internal
 			return iter1.mMergeArrayIterator == iter2.mMergeArrayIterator;
 		}
 
-		MOMO_MORE_HASH_ITERATOR_OPERATORS(MergeSetConstIterator)	//?
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(MergeSetConstIterator)
 
 	protected:
 		explicit MergeSetConstIterator(MergeArrayIterator mergeArrayIterator,

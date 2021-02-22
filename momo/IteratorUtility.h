@@ -58,7 +58,25 @@
 		return *(*this + diff); \
 	}
 
-#define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
+#define MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(Iterator) \
+	Iterator operator++(int) \
+	{ \
+		Iterator tempIter = *this; \
+		++*this; \
+		return tempIter; \
+	} \
+	Iterator operator--(int) \
+	{ \
+		Iterator tempIter = *this; \
+		--*this; \
+		return tempIter; \
+	} \
+	Reference operator*() const \
+	{ \
+		return *operator->(); \
+	}
+
+#define MOMO_MORE_FORWARD_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
 		Iterator tempIter = *this; \
@@ -78,7 +96,7 @@
 		return !!*this; \
 	}
 
-#define MOMO_MORE_HASH_POSITION_OPERATORS(Position) \
+#define MOMO_MORE_POSITION_OPERATORS(Position) \
 	Reference operator*() const \
 	{ \
 		return *operator->(); \
@@ -90,24 +108,6 @@
 	explicit operator bool() const noexcept \
 	{ \
 		return !!*this; \
-	}
-
-#define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
-	Iterator operator++(int) \
-	{ \
-		Iterator tempIter = *this; \
-		++*this; \
-		return tempIter; \
-	} \
-	Iterator operator--(int) \
-	{ \
-		Iterator tempIter = *this; \
-		--*this; \
-		return tempIter; \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
 	}
 
 namespace momo
@@ -398,7 +398,7 @@ namespace internal
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
-		MOMO_MORE_HASH_ITERATOR_OPERATORS(HashDerivedIterator)
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashDerivedIterator)
 
 	protected:
 		explicit HashDerivedIterator(BaseIterator iter) noexcept
@@ -473,7 +473,7 @@ namespace internal
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
-		MOMO_MORE_TREE_ITERATOR_OPERATORS(TreeDerivedIterator)
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeDerivedIterator)
 
 	protected:
 		explicit TreeDerivedIterator(BaseIterator iter) noexcept
