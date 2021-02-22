@@ -23,26 +23,27 @@ class SimpleMergeTester
 public:
 	static void TestAll()
 	{
-		std::cout << "momo::MergeSet<1>: " << std::flush;
-		TestMergeSet<1>();
-		std::cout << "ok" << std::endl;
+		std::mt19937 mt;
 
-		std::cout << "momo::MergeSet<5>: " << std::flush;
-		TestMergeSet<5>();
-		std::cout << "ok" << std::endl;
+		TestTemplMergeSet<false, 1>(mt);
+		TestTemplMergeSet<false, 5>(mt);
+		TestTemplMergeSet<true, 1>(mt);
+		TestTemplMergeSet<true, 5>(mt);
 	}
 
-	template<size_t logInitialItemCount>
-	static void TestMergeSet()
+	template<bool isNothrowComparable, size_t logInitialItemCount>
+	static void TestTemplMergeSet(std::mt19937& mt)
 	{
-		std::mt19937 mt;
+		std::cout << "momo::MergeSet<" << isNothrowComparable << ", "
+			<< logInitialItemCount << ">: " << std::flush;
 
 		static const size_t count = 1 << 10;
 		static size_t array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = i;
 
-		momo::MergeSet<size_t, momo::MergeTraits<size_t, logInitialItemCount>> set;
+		typedef momo::MergeTraits<size_t, isNothrowComparable, logInitialItemCount> MergeTraits;
+		momo::MergeSet<size_t, MergeTraits> set;
 
 		std::shuffle(array, array + count, mt);
 		for (size_t k : array)
@@ -60,6 +61,8 @@ public:
 
 		set2.Clear();
 		assert(set2.IsEmpty());
+
+		std::cout << "ok" << std::endl;
 	}
 };
 
