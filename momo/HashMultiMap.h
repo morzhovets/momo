@@ -415,10 +415,11 @@ namespace internal
 			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
-			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func)
+		template<typename SrcKeyIterator, typename SrcValueIterator,
+			typename DstKeyIterator, typename DstValueIterator, typename Func>
+		static void RelocateExec(MemManager& memManager,
+			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
+			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func&& func)
 		{
 			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
 				count, std::forward<Func>(func));
@@ -497,9 +498,9 @@ public:
 		KeyManager::Relocate(memManager, srcKey, dstKey);
 	}
 
-	template<typename KeyIterator, typename Func>
-	static void RelocateExecKeys(MemManager& memManager, KeyIterator srcKeyBegin,
-		KeyIterator dstKeyBegin, size_t count, Func&& func)
+	template<typename SrcKeyIterator, typename DstKeyIterator, typename Func>
+	static void RelocateExecKeys(MemManager& memManager, SrcKeyIterator srcKeyBegin,
+		DstKeyIterator dstKeyBegin, size_t count, Func&& func)
 	{
 		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
 			std::forward<Func>(func));

@@ -105,76 +105,6 @@ namespace internal
 		}
 	};
 
-	template<typename TSetIterator>
-	class MapKeyIterator
-	{
-	public:
-		typedef TSetIterator SetIterator;
-
-		typedef decltype(std::declval<SetIterator>()->GetKeyPtr()) Pointer;
-		typedef decltype(*Pointer()) Reference;
-
-	public:
-		explicit MapKeyIterator(SetIterator setIterator) noexcept
-			: mSetIterator(setIterator)
-		{
-		}
-
-		MapKeyIterator& operator++() noexcept
-		{
-			++mSetIterator;
-			return *this;
-		}
-
-		Pointer operator->() const noexcept
-		{
-			return mSetIterator->GetKeyPtr();
-		}
-
-		Reference operator*() const noexcept
-		{
-			return *operator->();
-		}
-
-	private:
-		SetIterator mSetIterator;
-	};
-
-	template<typename TSetIterator>
-	class MapValueIterator
-	{
-	public:
-		typedef TSetIterator SetIterator;
-
-		typedef decltype(std::declval<SetIterator>()->GetValuePtr()) Pointer;
-		typedef decltype(*Pointer()) Reference;
-
-	public:
-		explicit MapValueIterator(SetIterator setIterator) noexcept
-			: mSetIterator(setIterator)
-		{
-		}
-
-		MapValueIterator& operator++() noexcept
-		{
-			++mSetIterator;
-			return *this;
-		}
-
-		Pointer operator->() const noexcept
-		{
-			return mSetIterator->GetValuePtr();
-		}
-
-		Reference operator*() const noexcept
-		{
-			return *operator->();
-		}
-
-	private:
-		SetIterator mSetIterator;
-	};
-
 	template<typename TKey, typename TValue, conceptMemManager TMemManager>
 	class MapKeyValueTraits
 	{
@@ -340,10 +270,11 @@ namespace internal
 			}
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
-		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
-			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func)
+		template<typename SrcKeyIterator, typename SrcValueIterator,
+			typename DstKeyIterator, typename DstValueIterator, typename Func>
+		static void RelocateExec(MemManager& memManager,
+			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
+			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func&& func)
 		{
 			if constexpr (isKeyNothrowRelocatable)
 			{
@@ -363,27 +294,27 @@ namespace internal
 				size_t valueIndex = 0;
 				try
 				{
-					KeyIterator srcKeyIter = srcKeyBegin;
-					KeyIterator dstKeyIter = dstKeyBegin;
+					SrcKeyIterator srcKeyIter = srcKeyBegin;
+					DstKeyIterator dstKeyIter = dstKeyBegin;
 					for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
 						KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
-					ValueIterator srcValueIter = srcValueBegin;
-					ValueIterator dstValueIter = dstValueBegin;
+					SrcValueIterator srcValueIter = srcValueBegin;
+					DstValueIterator dstValueIter = dstValueBegin;
 					for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
 						ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
 					std::forward<Func>(func)();
 				}
 				catch (...)
 				{
-					for (KeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, (void)++itd)
+					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, (void)++itd)
 						KeyManager::Destroy(memManager, *itd);
-					for (ValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, (void)++itd)
+					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, (void)++itd)
 						ValueManager::Destroy(memManager, *itd);
 					throw;
 				}
-				for (KeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, (void)++its)
+				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, (void)++its)
 					KeyManager::Destroy(memManager, *its);
-				for (ValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, (void)++its)
+				for (SrcValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, (void)++its)
 					ValueManager::Destroy(memManager, *its);
 			}
 		}
@@ -824,20 +755,3 @@ namespace internal
 }
 
 } // namespace momo
-
-namespace std
-{
-	template<typename SI>
-	struct iterator_traits<momo::internal::MapKeyIterator<SI>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::MapKeyIterator<SI>,
-			forward_iterator_tag>
-	{
-	};
-
-	template<typename SI>
-	struct iterator_traits<momo::internal::MapValueIterator<SI>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::MapValueIterator<SI>,
-			forward_iterator_tag>
-	{
-	};
-} // namespace std

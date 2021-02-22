@@ -263,12 +263,15 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
+			auto srcKeyGen = [srcIter = srcItems] () mutable { return (srcIter++)->GetKeyPtr(); };
+			auto srcValueGen = [srcIter = srcItems] () mutable { return (srcIter++)->GetValuePtr(); };
+			auto dstKeyGen = [dstIter = dstItems] () mutable { return (dstIter++)->GetKeyPtr(); };
+			auto dstValueGen = [dstIter = dstItems] () mutable { return (dstIter++)->GetValuePtr(); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
-				MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
-				count, func);
+				InputIterator(srcKeyGen), InputIterator(srcValueGen),
+				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
 		}
 	};
 

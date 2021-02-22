@@ -171,48 +171,6 @@ namespace internal
 		size_t mItemIndex;
 	};
 
-	template<typename TSegment>
-	class TreeSetRelocatorIterator
-	{
-	public:
-		typedef TSegment Segment;
-
-		typedef decltype(std::declval<Segment&>().node->GetItemPtr(size_t{})) Pointer;
-		typedef decltype(*Pointer()) Reference;
-
-	public:
-		explicit TreeSetRelocatorIterator(Segment* segmentPtr) noexcept
-			: mSegmentPtr(segmentPtr),
-			mItemIndex(segmentPtr->beginIndex)
-		{
-		}
-
-		TreeSetRelocatorIterator& operator++() noexcept
-		{
-			++mItemIndex;
-			if (mItemIndex == mSegmentPtr->endIndex)
-			{
-				++mSegmentPtr;
-				mItemIndex = mSegmentPtr->beginIndex;
-			}
-			return *this;
-		}
-
-		Pointer operator->() const noexcept
-		{
-			return mSegmentPtr->node->GetItemPtr(mItemIndex);
-		}
-
-		Reference operator*() const noexcept
-		{
-			return *operator->();
-		}
-
-	private:
-		Segment* mSegmentPtr;
-		size_t mItemIndex;
-	};
-
 	template<typename TTreeSetItemTraits>
 	class TreeSetNodeItemTraits
 	{
@@ -253,8 +211,8 @@ public:
 	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 public:
-	template<typename Iterator, typename ItemCreator>
-	static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator&& itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
@@ -356,8 +314,6 @@ private:
 		typedef internal::NestedArrayIntCap<4, Node*, MemManagerPtr> Nodes;
 		typedef internal::NestedArrayIntCap<4, Segment, MemManagerPtr> Segments;
 
-		typedef internal::TreeSetRelocatorIterator<Segment> Iterator;
-
 	public:
 		struct SplitResult
 		{
@@ -447,9 +403,13 @@ private:
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
+			auto srcGen = [segPtr = mSrcSegments.GetItems(), index = mSrcSegments[0].beginIndex] () mutable
+				{ return pvGenerate(segPtr, index); };
+			auto dstGen = [segPtr = mDstSegments.GetItems(), index = mDstSegments[0].beginIndex] () mutable
+				{ return pvGenerate(segPtr, index); };
 			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(),
-				Iterator(mSrcSegments.GetItems()), Iterator(mDstSegments.GetItems()),
-				mItemCount, std::forward<ItemCreator>(itemCreator), newItem);
+				internal::InputIterator(srcGen), internal::InputIterator(dstGen), mItemCount,
+				std::forward<ItemCreator>(itemCreator), newItem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();
 			mItemCount = 0;
@@ -457,6 +417,18 @@ private:
 		}
 
 	private:
+		static Item* pvGenerate(Segment*& segPtr, size_t& index) noexcept
+		{
+			Item* res = segPtr->node->GetItemPtr(index);
+			++index;
+			if (index == segPtr->endIndex)
+			{
+				++segPtr;
+				index = segPtr->beginIndex;
+			}
+			return res;
+		}
+
 		SplitResult pvSplitNode(Node* node, size_t itemIndex)
 		{
 			bool isLeaf = node->IsLeaf();
@@ -1707,13 +1679,6 @@ namespace std
 	struct iterator_traits<momo::internal::TreeSetConstIterator<N, S>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetConstIterator<N, S>,
 			bidirectional_iterator_tag>
-	{
-	};
-
-	template<typename S>
-	struct iterator_traits<momo::internal::TreeSetRelocatorIterator<S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetRelocatorIterator<S>,
-			forward_iterator_tag>
 	{
 	};
 } // namespace std

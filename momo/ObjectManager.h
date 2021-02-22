@@ -366,9 +366,11 @@ namespace internal
 			{
 				if (count > 0)
 				{
+					Object& srcObject0 = *srcBegin;
+					Object& dstObject0 = *dstBegin;
 					RelocateCreate(memManager, std::next(srcBegin), std::next(dstBegin), count - 1,
-						Creator<Object&&>(memManager, std::move(*srcBegin)), std::addressof(*dstBegin));
-					Destroy(memManager, *srcBegin);
+						Creator<Object&&>(memManager, std::move(srcObject0)), std::addressof(dstObject0));
+					Destroy(memManager, srcObject0);
 				}
 			}
 		}
@@ -420,20 +422,34 @@ namespace internal
 		{
 			static_assert(isNothrowShiftable);
 			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			if (shift == 0)
+				return;
 			if constexpr (isNothrowRelocatable)
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
-				Relocate(memManager, *begin, &objectBuffer);
 				Iterator iter = begin;
-				for (size_t i = 0; i < shift; ++i, (void)++iter)
-					Relocate(memManager, *std::next(iter), std::addressof(*iter));
-				Relocate(memManager, *&objectBuffer, std::addressof(*iter));
+				Object* objectPtr = std::addressof(*iter);
+				Relocate(memManager, *objectPtr, &objectBuffer);
+				for (size_t i = 0; i < shift; ++i)
+				{
+					++iter;
+					Object* nextObjectPtr = std::addressof(*iter);
+					Relocate(memManager, *nextObjectPtr, objectPtr);
+					objectPtr = nextObjectPtr;
+				}
+				Relocate(memManager, *&objectBuffer, objectPtr);
 			}
 			else
 			{
 				Iterator iter = begin;
-				for (size_t i = 0; i < shift; ++i, (void)++iter)
-					std::iter_swap(iter, std::next(iter));
+				Object* objectPtr = std::addressof(*iter);
+				for (size_t i = 0; i < shift; ++i)
+				{
+					++iter;
+					Object* nextObjectPtr = std::addressof(*iter);
+					std::iter_swap(objectPtr, nextObjectPtr);
+					objectPtr = nextObjectPtr;
+				}
 			}
 		}
 	};

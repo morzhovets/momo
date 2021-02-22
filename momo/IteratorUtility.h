@@ -490,6 +490,47 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
+	template<typename TGenerator>
+	class InputIterator
+	{
+	public:
+		typedef TGenerator Generator;
+
+		typedef decltype(std::declval<Generator>()()) Pointer;
+		typedef decltype(*Pointer()) Reference;
+
+	public:
+		explicit InputIterator(Generator gen) noexcept
+			: mGenerator(gen),
+			mInvoked(false)
+		{
+		}
+
+		InputIterator& operator++() noexcept
+		{
+			MOMO_ASSERT(mInvoked);
+			mInvoked = false;
+			return *this;
+		}
+
+		Pointer operator->() noexcept
+		{
+			MOMO_ASSERT(!mInvoked);
+			Pointer ptr = mGenerator();
+			mInvoked = true;
+			return ptr;
+		}
+
+		Reference operator*() noexcept
+		{
+			return *operator->();
+		}
+
+	private:
+		Generator mGenerator;
+		bool mInvoked;
+	};
+
 	template<typename Iterator, typename IteratorCategory>
 	struct IteratorTraitsStd
 	{
@@ -516,6 +557,13 @@ namespace std
 	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::TreeDerivedIterator<BI, R>,
 			bidirectional_iterator_tag>
+	{
+	};
+
+	template<typename G>
+	struct iterator_traits<momo::internal::InputIterator<G>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::InputIterator<G>,
+			input_iterator_tag>
 	{
 	};
 } // namespace std

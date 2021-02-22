@@ -120,23 +120,45 @@ namespace internal
 			&& KeyValueTraits::isValueNothrowShiftable;
 
 	public:
-		template<typename Iterator, typename ItemCreator>
-		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
+			auto srcKeyGen = [srcIter = srcBegin] () mutable { return pvGenerateKeyPtr(srcIter); };
+			auto srcValueGen = [srcIter = srcBegin] () mutable { return pvGenerateValuePtr(srcIter); };
+			auto dstKeyGen = [dstIter = dstBegin] () mutable { return pvGenerateKeyPtr(dstIter); };
+			auto dstValueGen = [dstIter = dstBegin] () mutable { return pvGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
-				MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
-				count, func);
+				InputIterator(srcKeyGen), InputIterator(srcValueGen),
+				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
 		}
 
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			KeyValueTraits::ShiftKeyNothrow(memManager, MapKeyIterator<Iterator>(begin), shift);
-			KeyValueTraits::ShiftValueNothrow(memManager, MapValueIterator<Iterator>(begin), shift);
+			auto keyGen = [iter = begin] () mutable { return pvGenerateKeyPtr(iter); };
+			auto valueGen = [iter = begin] () mutable { return pvGenerateValuePtr(iter); };
+			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
+			KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
+		}
+
+	private:
+		template<typename Iterator>
+		static Key* pvGenerateKeyPtr(Iterator& iter) noexcept
+		{
+			Key* keyPtr = iter->GetKeyPtr();
+			++iter;
+			return keyPtr;
+		}
+
+		template<typename Iterator>
+		static Value* pvGenerateValuePtr(Iterator& iter) noexcept
+		{
+			Value* valuePtr = iter->GetValuePtr();
+			++iter;
+			return valuePtr;
 		}
 	};
 
