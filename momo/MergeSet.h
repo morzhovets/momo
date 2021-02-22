@@ -31,7 +31,6 @@ namespace internal
 		typedef TItem Item;
 		typedef TSettings Settings;
 
-	private:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
@@ -76,11 +75,13 @@ namespace internal
 	};
 
 	template<typename TMergeArrayIterator, typename TSettings>
-	class MergeSetConstIterator : private VersionKeeper<TSettings>
+	class MergeSetConstIterator : private VersionKeeper<TSettings>, private TMergeArrayIterator
 	{
 	protected:
 		typedef TMergeArrayIterator MergeArrayIterator;
 		typedef TSettings Settings;
+
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		typedef typename MergeArrayIterator::Reference Reference;
@@ -88,19 +89,8 @@ namespace internal
 
 		typedef MergeSetConstIterator ConstIterator;
 
-	private:
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
-
-		struct MergeArrayIteratorProxy : public MergeArrayIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(MergeArrayIterator)
-			MOMO_DECLARE_PROXY_FUNCTION(MergeArrayIterator, GetArray)
-			MOMO_DECLARE_PROXY_FUNCTION(MergeArrayIterator, GetIndex)
-		};
-
 	public:
 		explicit MergeSetConstIterator() noexcept
-			: mMergeArrayIterator()
 		{
 		}
 
@@ -109,25 +99,25 @@ namespace internal
 		MergeSetConstIterator& operator++()
 		{
 			VersionKeeper::Check();
-			const auto* array = MergeArrayIteratorProxy::GetArray(mMergeArrayIterator);
+			const auto* array = MergeArrayIterator::ptGetArray();
 			MOMO_CHECK(array != nullptr);
-			if (MergeArrayIteratorProxy::GetIndex(mMergeArrayIterator) + 1 < array->GetCount())
-				++mMergeArrayIterator;
+			if (MergeArrayIterator::ptGetIndex() + 1 < array->GetCount())
+				MergeArrayIterator::operator++();
 			else
-				mMergeArrayIterator = MergeArrayIterator();
+				*this = MergeSetConstIterator();
 			return *this;
 		}
 
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mMergeArrayIterator != MergeArrayIterator());
-			return mMergeArrayIterator.operator->();
+			MOMO_CHECK(*this != MergeSetConstIterator());
+			return MergeArrayIterator::operator->();
 		}
 
 		friend bool operator==(MergeSetConstIterator iter1, MergeSetConstIterator iter2) noexcept
 		{
-			return iter1.mMergeArrayIterator == iter2.mMergeArrayIterator;
+			return static_cast<MergeArrayIterator>(iter1) == static_cast<MergeArrayIterator>(iter2);
 		}
 
 		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(MergeSetConstIterator)
@@ -136,12 +126,9 @@ namespace internal
 		explicit MergeSetConstIterator(MergeArrayIterator mergeArrayIterator,
 			const size_t* version) noexcept
 			: VersionKeeper(version),
-			mMergeArrayIterator(mergeArrayIterator)
+			MergeArrayIterator(mergeArrayIterator)
 		{
 		}
-
-	private:
-		MergeArrayIterator mMergeArrayIterator;
 	};
 
 	template<typename TMergeSetCrew>
