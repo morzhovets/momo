@@ -551,9 +551,9 @@ public:
 		return mMergeArray.IsEmpty();
 	}
 
-	void Clear(bool shrink = true) noexcept
+	void Clear() noexcept
 	{
-		mMergeArray.Clear(shrink);
+		mMergeArray.Clear(true);
 		pvGetCrew().IncVersion();
 	}
 
@@ -611,30 +611,27 @@ public:
 	template<typename ItemCreator,
 		bool extraCheck = true>
 	requires std::invocable<ItemCreator&&, Item*>
-	ConstPosition AddCrt(ItemCreator&& itemCreator)
+	ConstPosition AddCrt(ConstPosition pos, ItemCreator&& itemCreator)
 	{
-		return pvAdd<extraCheck>(std::forward<ItemCreator>(itemCreator));
+		return pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
-	ConstPosition AddVar(ItemArgs&&... itemArgs)
+	ConstPosition AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
+		return AddCrt(pos,
+			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
-	ConstPosition Add(Item&& item)
+	ConstPosition Add(ConstPosition pos, Item&& item)
 	{
-		return AddVar(std::move(item));
+		return AddVar(pos, std::move(item));
 	}
 
-	ConstPosition Add(const Item& item)
+	ConstPosition Add(ConstPosition pos, const Item& item)
 	{
-		return AddVar(item);
+		return AddVar(pos, item);
 	}
-
-	//template<typename KeyArg,
-	//	bool extraCheck = true>
-	//void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 
 private:
 	const Crew& pvGetCrew() const noexcept
@@ -684,7 +681,7 @@ private:
 		if (segIndex > 0)
 		{
 			const Item* segment = mMergeArray.GetSegment(0);
-			size_t segItemCount = (GetCount() - 1) & (initialItemCount - 1) + 1;
+			size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
 			const Item* itemPtr = std::find_if(segment, segment + segItemCount, pred);
 			if (itemPtr != segment + segItemCount)
 				return pvMakePosition(*itemPtr);
@@ -703,8 +700,10 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	ConstPosition pvAdd(ItemCreator&& itemCreator)
+	ConstPosition pvAdd(ConstPosition pos, ItemCreator&& itemCreator)
 	{
+		(void)pos;
+		MOMO_CHECK(!pos);
 		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
 		pvGetCrew().IncVersion();
 		ConstPosition resPos = pvMakePosition(mMergeArray.GetBackItem());
