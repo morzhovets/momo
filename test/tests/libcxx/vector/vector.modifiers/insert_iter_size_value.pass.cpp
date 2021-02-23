@@ -88,7 +88,7 @@ void main()
 #if _LIBCPP_DEBUG >= 1
     {
         vector<int> c1(100);
-        vector<int> c2;
+        vector<int> c2(10);
         LIBCPP_CATCH(c1.insert(c2.cbegin() + 10, 5, 1));
         //assert(false);
     }
