@@ -54,7 +54,7 @@ public:
 			else if (k < count / 2)
 				map.Insert(k, k);
 			else
-				map.Add(MergeMap::ConstPosition(), k, k);
+				map.Add(typename MergeMap::ConstPosition(), k, k);
 		}
 
 		auto map2 = map;
