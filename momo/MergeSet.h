@@ -695,7 +695,7 @@ private:
 		ConstPosition pos = pvFind(key);
 		if (!!pos)
 			return { pos, false };
-		pos = pvAdd<extraCheck>(std::forward<ItemCreator>(itemCreator));
+		pos = pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
 		return { pos, true };
 	}
 
