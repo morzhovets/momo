@@ -642,6 +642,22 @@ public:
 		return ArrayShifter::Remove(*this, pred);
 	}
 
+	size_t GetSegmentCount() const noexcept
+	{
+		//return mSegments.GetCount();
+		return (mCapacity > 0) ? pvGetSegIndex(0, mCapacity) + 1 : 0;
+	}
+
+	const Item* GetSegment(size_t segIndex) const
+	{
+		return pvGetSegment(segIndex);
+	}
+
+	Item* GetSegment(size_t segIndex)
+	{
+		return pvGetSegment(segIndex);
+	}
+
 	template<typename ItemArg,
 		typename EqualFunc = std::equal_to<>>
 	requires std::equivalence_relation<const EqualFunc&, const ItemArg&, const Item&>
@@ -771,6 +787,12 @@ private:
 	{
 		ItemTraits::Destroy(GetMemManager(), pvMakeIterator(mCount - count), count);
 		mCount -= count;
+	}
+
+	Item* pvGetSegment(size_t segIndex) const
+	{
+		MOMO_CHECK(segIndex < GetSegmentCount());
+		return mSegments[segIndex];
 	}
 
 private:
