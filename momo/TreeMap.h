@@ -24,83 +24,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename TTreeSetIterator,
-		bool tIsConst = false>
-	class TreeMapIterator
-	{
-	protected:
-		typedef TTreeSetIterator TreeSetIterator;
-
-		static const bool isConst = tIsConst;
-
-	public:
-		typedef MapReference<typename TreeSetIterator::Reference, isConst> Reference;
-
-		typedef IteratorPointer<Reference> Pointer;
-
-		typedef TreeMapIterator<TreeSetIterator, true> ConstIterator;
-
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
-	public:
-		explicit TreeMapIterator() noexcept
-			: mTreeSetIterator()
-		{
-		}
-
-		operator ConstIterator() const noexcept
-		{
-			return ConstIteratorProxy(mTreeSetIterator);
-		}
-
-		TreeMapIterator& operator++()
-		{
-			++mTreeSetIterator;
-			return *this;
-		}
-
-		TreeMapIterator& operator--()
-		{
-			--mTreeSetIterator;
-			return *this;
-		}
-
-		Pointer operator->() const
-		{
-			return Pointer(ReferenceProxy(*mTreeSetIterator));
-		}
-
-		friend bool operator==(TreeMapIterator iter1, TreeMapIterator iter2) noexcept
-		{
-			return iter1.mTreeSetIterator == iter2.mTreeSetIterator;
-		}
-
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeMapIterator)
-
-	protected:
-		explicit TreeMapIterator(TreeSetIterator treeSetIter) noexcept
-			: mTreeSetIterator(treeSetIter)
-		{
-		}
-
-		TreeSetIterator ptGetTreeSetIterator() const noexcept
-		{
-			return mTreeSetIterator;
-		}
-
-	private:
-		TreeSetIterator mTreeSetIterator;
-	};
-
 	template<typename TKeyValueTraits>
 	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
@@ -260,7 +183,7 @@ private:
 	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
 
 public:
-	typedef internal::TreeMapIterator<TreeSetConstIterator> Iterator;
+	typedef internal::MapBidirectionalIterator<TreeSetConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::InsertResult<Iterator> InsertResult;
@@ -286,7 +209,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSetIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -620,7 +543,7 @@ public:
 			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
+			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
 	template<typename ValueCreator,
@@ -675,7 +598,7 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetTreeSetIterator(iter),
+		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetSetIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -699,19 +622,19 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter)));
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter),
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
 	Iterator Remove(ConstIterator begin, ConstIterator end)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(begin),
-			ConstIteratorProxy::GetTreeSetIterator(end)));
+		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(begin),
+			ConstIteratorProxy::GetSetIterator(end)));
 	}
 
 	size_t Remove(const Key& key)
@@ -737,7 +660,7 @@ public:
 		bool extraCheck = true>
 	void ResetKey(ConstIterator iter, KeyArg&& keyArg)
 	{
-		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetTreeSetIterator(iter),
+		mTreeSet.template ResetKey<KeyArg, extraCheck>(ConstIteratorProxy::GetSetIterator(iter),
 			std::forward<KeyArg>(keyArg));
 	}
 
@@ -756,12 +679,12 @@ public:
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		CheckIterator(iter);
-		return IteratorProxy(ConstIteratorProxy::GetTreeSetIterator(iter));
+		return IteratorProxy(ConstIteratorProxy::GetSetIterator(iter));
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 	{
-		mTreeSet.CheckIterator(ConstIteratorProxy::GetTreeSetIterator(iter), allowEmpty);
+		mTreeSet.CheckIterator(ConstIteratorProxy::GetSetIterator(iter), allowEmpty);
 	}
 
 private:
@@ -794,7 +717,7 @@ private:
 				newItem->GetValuePtr());
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
+			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
 private:
@@ -805,13 +728,3 @@ template<typename TKey, typename TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
 
 } // namespace momo
-
-namespace std
-{
-	template<typename SI, bool c>
-	struct iterator_traits<momo::internal::TreeMapIterator<SI, c>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::TreeMapIterator<SI, c>,
-			bidirectional_iterator_tag>
-	{
-	};
-} // namespace std

@@ -105,6 +105,154 @@ namespace internal
 		}
 	};
 
+	template<typename TSetIterator,
+		bool tIsConst = false>
+	class MapBidirectionalIterator
+	{
+	protected:
+		typedef TSetIterator SetIterator;
+
+		static const bool isConst = tIsConst;
+
+	public:
+		typedef MapReference<typename SetIterator::Reference, isConst> Reference;
+
+		typedef IteratorPointer<Reference> Pointer;
+
+		typedef MapBidirectionalIterator<SetIterator, true> ConstIterator;
+
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		};
+
+	public:
+		explicit MapBidirectionalIterator() noexcept
+			: mSetIterator()
+		{
+		}
+
+		operator ConstIterator() const noexcept
+		{
+			return ConstIteratorProxy(mSetIterator);
+		}
+
+		MapBidirectionalIterator& operator++()
+		{
+			++mSetIterator;
+			return *this;
+		}
+
+		MapBidirectionalIterator& operator--()
+		{
+			--mSetIterator;
+			return *this;
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(ReferenceProxy(*mSetIterator));
+		}
+
+		friend bool operator==(MapBidirectionalIterator iter1,
+			MapBidirectionalIterator iter2) noexcept
+		{
+			return iter1.mSetIterator == iter2.mSetIterator;
+		}
+
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(MapBidirectionalIterator)
+
+	protected:
+		explicit MapBidirectionalIterator(SetIterator setIter) noexcept
+			: mSetIterator(setIter)
+		{
+		}
+
+		SetIterator ptGetSetIterator() const noexcept
+		{
+			return mSetIterator;
+		}
+
+	private:
+		SetIterator mSetIterator;
+	};
+
+	template<typename TSetIterator,
+		bool tIsConst = false>
+	class MapForwardIterator
+	{
+	protected:
+		typedef TSetIterator SetIterator;
+
+		static const bool isConst = tIsConst;
+
+	public:
+		typedef MapReference<std::iter_reference_t<SetIterator>, isConst> Reference;
+		typedef IteratorPointer<Reference> Pointer;
+
+		typedef MapForwardIterator<SetIterator, true> ConstIterator;
+
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
+		struct ConstIteratorProxy : public ConstIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		};
+
+	public:
+		explicit MapForwardIterator() noexcept
+			: mSetIterator()
+		{
+		}
+
+		operator ConstIterator() const noexcept
+		{
+			return ConstIteratorProxy(mSetIterator);
+		}
+
+		MapForwardIterator& operator++()
+		{
+			++mSetIterator;
+			return *this;
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(ReferenceProxy(*mSetIterator));
+		}
+
+		friend bool operator==(MapForwardIterator iter1, MapForwardIterator iter2) noexcept
+		{
+			return iter1.mSetIterator == iter2.mSetIterator;
+		}
+
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(MapForwardIterator)
+
+	protected:
+		explicit MapForwardIterator(SetIterator setIter) noexcept
+			: mSetIterator(setIter)
+		{
+		}
+
+		SetIterator ptGetSetIterator() const noexcept
+		{
+			return mSetIterator;
+		}
+
+	private:
+		SetIterator mSetIterator;
+	};
+
 	template<typename TKey, typename TValue, conceptMemManager TMemManager>
 	class MapKeyValueTraits
 	{
@@ -755,3 +903,20 @@ namespace internal
 }
 
 } // namespace momo
+
+namespace std
+{
+	template<typename SI, bool c>
+	struct iterator_traits<momo::internal::MapBidirectionalIterator<SI, c>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapBidirectionalIterator<SI, c>,
+			bidirectional_iterator_tag>
+	{
+	};
+
+	template<typename SI, bool c>
+	struct iterator_traits<momo::internal::MapForwardIterator<SI, c>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MapForwardIterator<SI, c>,
+			forward_iterator_tag>
+	{
+	};
+} // namespace std
