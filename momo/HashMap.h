@@ -253,10 +253,10 @@ namespace internal
 
 	protected:
 		using typename MapNestedSetItemTraits::KeyValueTraits;
-		using typename MapNestedSetItemTraits::Key;
 		using typename MapNestedSetItemTraits::Value;
 
 	public:
+		using typename MapNestedSetItemTraits::Key;
 		using typename MapNestedSetItemTraits::Item;
 		using typename MapNestedSetItemTraits::MemManager;
 
