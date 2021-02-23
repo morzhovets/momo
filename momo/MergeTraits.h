@@ -20,7 +20,7 @@ namespace momo
 
 template<typename TKey,
 	bool tIsNothrowComparable = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>()),
-	size_t tLogInitialItemCount = 5>
+	size_t tLogInitialItemCount = 4>
 class MergeTraits
 {
 public:

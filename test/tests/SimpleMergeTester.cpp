@@ -25,16 +25,16 @@ public:
 	{
 		std::mt19937 mt;
 
-		TestTemplMergeSet<false, 1>(mt);
-		TestTemplMergeSet<false, 5>(mt);
-		TestTemplMergeSet<true, 1>(mt);
-		TestTemplMergeSet<true, 5>(mt);
+		TestTemplMergeTraits<false, 0>(mt);
+		TestTemplMergeTraits<false, 4>(mt);
+		TestTemplMergeTraits<true, 0>(mt);
+		TestTemplMergeTraits<true, 4>(mt);
 	}
 
 	template<bool isNothrowComparable, size_t logInitialItemCount>
-	static void TestTemplMergeSet(std::mt19937& mt)
+	static void TestTemplMergeTraits(std::mt19937& mt)
 	{
-		std::cout << "momo::MergeSet<" << isNothrowComparable << ", "
+		std::cout << "momo::MergeTraits<" << isNothrowComparable << ", "
 			<< logInitialItemCount << ">: " << std::flush;
 
 		static const size_t count = 1 << 10;
