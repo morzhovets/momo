@@ -12,7 +12,7 @@
 
 #ifdef TEST_SIMPLE_MERGE
 
-#include "../../momo/MergeSet.h"
+#include "../../momo/MergeMap.h"
 
 #include <iostream>
 #include <random>
@@ -43,24 +43,32 @@ public:
 			array[i] = i;
 
 		typedef momo::MergeTraits<size_t, isNothrowComparable, logInitialItemCount> MergeTraits;
-		momo::MergeSet<size_t, MergeTraits> set;
+		typedef momo::MergeMap<size_t, size_t, MergeTraits> MergeMap;
+		MergeMap map;
 
 		std::shuffle(array, array + count, mt);
 		for (size_t k : array)
-			set.Insert(k);
+		{
+			if (k < count / 4)
+				map[k] = k;
+			else if (k < count / 2)
+				map.Insert(k, k);
+			else
+				map.Add(MergeMap::ConstPosition(), k, k);
+		}
 
-		auto set2 = set;
-		assert(set2.GetCount() == count);
+		auto map2 = map;
+		assert(map2.GetCount() == count);
 
 		std::shuffle(array, array + count, mt);
 		for (size_t k : array)
-			assert(set2.ContainsKey(k));
+			assert(map2.ContainsKey(k));
 
-		for (size_t k : set2)
-			assert(set.ContainsKey(k));
+		for (auto [k, v] : map2)
+			assert(map.ContainsKey(k));
 
-		set2.Clear();
-		assert(set2.IsEmpty());
+		map2.Clear();
+		assert(map2.IsEmpty());
 
 		std::cout << "ok" << std::endl;
 	}
