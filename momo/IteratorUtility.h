@@ -347,7 +347,7 @@ namespace internal
 	};
 
 	template<typename TBaseIterator, template<typename BaseReference> class TReference>
-	class HashDerivedIterator
+	class DerivedBidirectionalIterator
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
@@ -357,8 +357,8 @@ namespace internal
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef HashDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
-			TReference> ConstIterator;
+		typedef DerivedBidirectionalIterator<
+			typename ConstIteratorSelector<BaseIterator>::ConstIterator, TReference> ConstIterator;
 
 	private:
 		struct ReferenceProxy : public Reference
@@ -372,7 +372,7 @@ namespace internal
 		};
 
 	public:
-		explicit HashDerivedIterator() noexcept
+		explicit DerivedBidirectionalIterator() noexcept
 			: mBaseIterator()
 		{
 		}
@@ -382,9 +382,15 @@ namespace internal
 			return ConstIteratorProxy(mBaseIterator);
 		}
 
-		HashDerivedIterator& operator++()
+		DerivedBidirectionalIterator& operator++()
 		{
 			++mBaseIterator;
+			return *this;
+		}
+
+		DerivedBidirectionalIterator& operator--()
+		{
+			--mBaseIterator;
 			return *this;
 		}
 
@@ -393,15 +399,16 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		friend bool operator==(HashDerivedIterator iter1, HashDerivedIterator iter2) noexcept
+		friend bool operator==(DerivedBidirectionalIterator iter1,
+			DerivedBidirectionalIterator iter2) noexcept
 		{
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
-		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashDerivedIterator)
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(DerivedBidirectionalIterator)
 
 	protected:
-		explicit HashDerivedIterator(BaseIterator iter) noexcept
+		explicit DerivedBidirectionalIterator(BaseIterator iter) noexcept
 			: mBaseIterator(iter)
 		{
 		}
@@ -416,7 +423,7 @@ namespace internal
 	};
 
 	template<typename TBaseIterator, template<typename BaseReference> class TReference>
-	class TreeDerivedIterator
+	class DerivedForwardIterator
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
@@ -426,7 +433,7 @@ namespace internal
 
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef TreeDerivedIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
+		typedef DerivedForwardIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
 			TReference> ConstIterator;
 
 	private:
@@ -441,7 +448,7 @@ namespace internal
 		};
 
 	public:
-		explicit TreeDerivedIterator() noexcept
+		explicit DerivedForwardIterator() noexcept
 			: mBaseIterator()
 		{
 		}
@@ -451,15 +458,9 @@ namespace internal
 			return ConstIteratorProxy(mBaseIterator);
 		}
 
-		TreeDerivedIterator& operator++()
+		DerivedForwardIterator& operator++()
 		{
 			++mBaseIterator;
-			return *this;
-		}
-
-		TreeDerivedIterator& operator--()
-		{
-			--mBaseIterator;
 			return *this;
 		}
 
@@ -468,15 +469,15 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		friend bool operator==(TreeDerivedIterator iter1, TreeDerivedIterator iter2) noexcept
+		friend bool operator==(DerivedForwardIterator iter1, DerivedForwardIterator iter2) noexcept
 		{
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
 
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeDerivedIterator)
+		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(DerivedForwardIterator)
 
 	protected:
-		explicit TreeDerivedIterator(BaseIterator iter) noexcept
+		explicit DerivedForwardIterator(BaseIterator iter) noexcept
 			: mBaseIterator(iter)
 		{
 		}
@@ -547,16 +548,16 @@ namespace internal
 namespace std
 {
 	template<typename BI, template<typename> class R>
-	struct iterator_traits<momo::internal::HashDerivedIterator<BI, R>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::HashDerivedIterator<BI, R>,
-			forward_iterator_tag>
+	struct iterator_traits<momo::internal::DerivedBidirectionalIterator<BI, R>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DerivedBidirectionalIterator<BI, R>,
+			bidirectional_iterator_tag>
 	{
 	};
 
 	template<typename BI, template<typename> class R>
-	struct iterator_traits<momo::internal::TreeDerivedIterator<BI, R>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::TreeDerivedIterator<BI, R>,
-			bidirectional_iterator_tag>
+	struct iterator_traits<momo::internal::DerivedForwardIterator<BI, R>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::DerivedForwardIterator<BI, R>,
+			forward_iterator_tag>
 	{
 	};
 

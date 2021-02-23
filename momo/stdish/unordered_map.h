@@ -75,7 +75,7 @@ public:
 
 	typedef std::pair<const key_type, mapped_type> value_type;
 
-	typedef momo::internal::HashDerivedIterator<HashMapIterator,
+	typedef momo::internal::DerivedForwardIterator<HashMapIterator,
 		momo::internal::MapReferenceStd> iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
@@ -90,7 +90,7 @@ public:
 	typedef internal::map_node_handle<typename HashMap::ExtractedPair> node_type;
 	typedef internal::insert_return_type<iterator, node_type> insert_return_type;
 
-	typedef momo::internal::HashDerivedIterator<typename HashMap::BucketBounds::Iterator,
+	typedef momo::internal::DerivedForwardIterator<typename HashMap::BucketBounds::Iterator,
 		momo::internal::MapReferenceStd> local_iterator;
 	typedef typename local_iterator::ConstIterator const_local_iterator;
 
