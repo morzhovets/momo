@@ -193,7 +193,7 @@ public:
 	//	return newPtr;
 	//}
 
-	bool ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
+	[[nodiscard]] bool ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
 	{
 		void* newPtr = HeapReAlloc(GetProcessHeap(), HEAP_REALLOC_IN_PLACE_ONLY,
 			ptr, newSize);
