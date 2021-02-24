@@ -1110,8 +1110,10 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvAssignRows(RowIterator begin, RowIterator end)
 	{
-		HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr> rawMap((HashTraits<void*>()),
-			MemManagerPtr(GetMemManager()));
+		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
+			HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
+			internal::NestedHashMapSettings> RawMap;
+		RawMap rawMap((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		size_t count = 0;
 		for (RowIterator iter = begin; iter != end; ++iter)
 		{
@@ -1165,8 +1167,9 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvRemoveRows(RowIterator begin, RowIterator end)
 	{
-		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
-			MemManagerPtr(GetMemManager()));
+		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
+			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
+		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (RowIterator iter = begin; iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
@@ -1205,8 +1208,9 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvRemoveRows(const RowFilter& rowFilter)
 	{
-		HashSet<void*, HashTraits<void*>, MemManagerPtr> rawSet((HashTraits<void*>()),
-			MemManagerPtr(GetMemManager()));
+		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
+			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
+		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (Raw* raw : mRaws)
 		{
 			if (rowFilter(pvMakeConstRowReference(raw)))
