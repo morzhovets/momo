@@ -70,7 +70,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*itemPtr))
+				if (pred(*itemPtr)) [[likely]]
 					return itemPtr;
 				mask &= mask - 1;
 			}

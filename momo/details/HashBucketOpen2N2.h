@@ -99,8 +99,11 @@ namespace internal
 			ShortHash shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashData.shortHashes[i] == shortHash && pred(*&mItems[i]))
-					return Iterator(&mItems[i] + 1);
+				if (mHashData.shortHashes[i] == shortHash)
+				{
+					if (pred(*&mItems[i])) [[likely]]
+						return Iterator(&mItems[i] + 1);
+				}
 			}
 			return Iterator();
 		}

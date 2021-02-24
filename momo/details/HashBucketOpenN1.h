@@ -79,8 +79,11 @@ namespace internal
 			const Byte* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
-					return pvMakeIterator(&mItems[i]);
+				if (thisShortHashes[i] == shortHash)
+				{
+					if (pred(*&mItems[i])) [[likely]]
+						return pvMakeIterator(&mItems[i]);
+				}
 			}
 			return Iterator();
 		}

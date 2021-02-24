@@ -70,9 +70,12 @@ namespace internal
 		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
-			if (mHashState != pvGetHashState(hashCode))
-				return nullptr;
-			return pred(*&mItemBuffer) ? &mItemBuffer : nullptr;
+			if (mHashState == pvGetHashState(hashCode))
+			{
+				if (pred(*&mItemBuffer)) [[likely]]
+					return &mItemBuffer;
+			}
+			return nullptr;
 		}
 
 		bool IsFull() const noexcept

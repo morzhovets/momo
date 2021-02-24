@@ -276,7 +276,7 @@ namespace internal
 				if (mShortHashes[i] == shortHash)
 				{
 					Item* items = mPtrState.GetPointer();
-					if (pred(items[i]))
+					if (pred(items[i])) [[likely]]
 						return items + i;
 				}
 			}
