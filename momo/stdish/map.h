@@ -228,19 +228,14 @@ namespace internal
 			return mTreeMap;
 		}
 
-		iterator begin() noexcept
-		{
-			return IteratorProxy(mTreeMap.GetBegin());
-		}
-
 		const_iterator begin() const noexcept
 		{
 			return ConstIteratorProxy(mTreeMap.GetBegin());
 		}
 
-		iterator end() noexcept
+		iterator begin() noexcept
 		{
-			return IteratorProxy(mTreeMap.GetEnd());
+			return IteratorProxy(mTreeMap.GetBegin());
 		}
 
 		const_iterator end() const noexcept
@@ -248,9 +243,9 @@ namespace internal
 			return ConstIteratorProxy(mTreeMap.GetEnd());
 		}
 
-		reverse_iterator rbegin() noexcept
+		iterator end() noexcept
 		{
-			return reverse_iterator(end());
+			return IteratorProxy(mTreeMap.GetEnd());
 		}
 
 		const_reverse_iterator rbegin() const noexcept
@@ -258,14 +253,19 @@ namespace internal
 			return const_reverse_iterator(end());
 		}
 
-		reverse_iterator rend() noexcept
+		reverse_iterator rbegin() noexcept
 		{
-			return reverse_iterator(begin());
+			return reverse_iterator(end());
 		}
 
 		const_reverse_iterator rend() const noexcept
 		{
 			return const_reverse_iterator(begin());
+		}
+
+		reverse_iterator rend() noexcept
+		{
+			return reverse_iterator(begin());
 		}
 
 		const_iterator cbegin() const noexcept
