@@ -180,7 +180,7 @@ public:
 	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
 
 private:
-	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
+	typedef internal::MapValueReferencer<TreeMap, Iterator> ValueReferencer;
 
 public:
 	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;

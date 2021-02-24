@@ -636,13 +636,12 @@ namespace internal
 		}
 	};
 
-	template<typename TMap,
-		typename TIterator = typename TMap::Iterator>
+	template<typename TMap, typename TPosition>
 	class MapValueReferencer
 	{
 	public:
 		typedef TMap Map;
-		typedef TIterator Iterator;
+		typedef TPosition Position;
 
 	private:
 		typedef typename Map::Value Value;
@@ -669,7 +668,7 @@ namespace internal
 
 			ValueReference(const ValueReference& valueRef) noexcept
 				: mMap(valueRef.mMap),
-				mIterator(valueRef.mIterator),
+				mPosition(valueRef.mPosition),
 				mKeyPtr(valueRef.mKeyPtr)
 			{
 			}
@@ -695,20 +694,20 @@ namespace internal
 			Value& Get()
 			{
 				MOMO_CHECK(mKeyPtr == nullptr);
-				return mIterator->value;
+				return mPosition->value;
 			}
 
 		protected:
-			explicit ValueReference(Map& map, Iterator iter) noexcept
+			explicit ValueReference(Map& map, Position pos) noexcept
 				: mMap(map),
-				mIterator(iter),
+				mPosition(pos),
 				mKeyPtr(nullptr)
 			{
 			}
 
-			explicit ValueReference(Map& map, Iterator iter, KeyReference keyRef) noexcept
+			explicit ValueReference(Map& map, Position pos, KeyReference keyRef) noexcept
 				: mMap(map),
-				mIterator(iter),
+				mPosition(pos),
 				mKeyPtr(std::addressof(keyRef))
 			{
 			}
@@ -720,13 +719,13 @@ namespace internal
 				if (mKeyPtr == nullptr)
 				{
 					KeyValueTraits::AssignValue(mMap.GetMemManager(),
-						std::forward<ValueArg>(valueArg), mIterator->value);
+						std::forward<ValueArg>(valueArg), mPosition->value);
 				}
 				else
 				{
 					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
 						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
-					mIterator = mMap.AddCrt(mIterator, std::forward<KeyReference>(*mKeyPtr),
+					mPosition = mMap.AddCrt(mPosition, std::forward<KeyReference>(*mKeyPtr),
 						std::move(valueCreator));
 				}
 				mKeyPtr = nullptr;
@@ -735,7 +734,7 @@ namespace internal
 
 		private:
 			Map& mMap;
-			Iterator mIterator;
+			Position mPosition;
 			KeyPointer mKeyPtr;
 		};
 
@@ -749,16 +748,16 @@ namespace internal
 
 	public:
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter) noexcept
+		static ValueReference<KeyReference> GetReference(Map& map, Position pos) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, iter);
+			return ValueReferenceProxy<KeyReference>(map, pos);
 		}
 
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
+		static ValueReference<KeyReference> GetReference(Map& map, Position pos,
 			KeyReference keyRef) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, iter,
+			return ValueReferenceProxy<KeyReference>(map, pos,
 				std::forward<KeyReference>(keyRef));
 		}
 #else
@@ -768,17 +767,17 @@ namespace internal
 
 	public:
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) noexcept
+		static ValueReference<KeyReference> GetReference(Map& /*map*/, Position pos) noexcept
 		{
-			return iter->value;
+			return pos->value;
 		}
 
 		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
+		static ValueReference<KeyReference> GetReference(Map& map, Position pos,
 			KeyReference keyRef)
 		{
 			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
-			return map.AddCrt(iter, std::forward<KeyReference>(keyRef),
+			return map.AddCrt(pos, std::forward<KeyReference>(keyRef),
 				std::move(valueCreator))->value;
 		}
 #endif
