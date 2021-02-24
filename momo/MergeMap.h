@@ -194,6 +194,8 @@ public:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. In case default `KeyValueTraits`: if insert/add function receiving
 	argument `Key&& key` throws exception, this argument may be changed.
+
+	Swap and move operations invalidate all container iterators.
 */
 
 template<typename TKey, typename TValue,
