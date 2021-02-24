@@ -26,7 +26,7 @@ namespace momo
 namespace internal
 {
 	template<typename TNode, typename TSettings>
-	class TreeSetConstIterator : private VersionKeeper<TSettings>
+	class TreeSetIterator : private VersionKeeper<TSettings>
 	{
 	protected:
 		typedef TNode Node;
@@ -37,13 +37,13 @@ namespace internal
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
-		typedef TreeSetConstIterator ConstIterator;
+		typedef TreeSetIterator ConstIterator;
 
 	private:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
-		explicit TreeSetConstIterator() noexcept
+		explicit TreeSetIterator() noexcept
 			: mNode(nullptr),
 			mItemIndex(0)
 		{
@@ -51,7 +51,7 @@ namespace internal
 
 		//operator ConstIterator() const noexcept
 
-		TreeSetConstIterator& operator++()
+		TreeSetIterator& operator++()
 		{
 			VersionKeeper::Check();
 			MOMO_CHECK(mNode != nullptr);
@@ -71,7 +71,7 @@ namespace internal
 			return *this;
 		}
 
-		TreeSetConstIterator& operator--()
+		TreeSetIterator& operator--()
 		{
 			VersionKeeper::Check();
 			MOMO_CHECK(mNode != nullptr);
@@ -104,15 +104,15 @@ namespace internal
 			return mNode->GetItemPtr(mItemIndex);
 		}
 
-		friend bool operator==(TreeSetConstIterator iter1, TreeSetConstIterator iter2) noexcept
+		friend bool operator==(TreeSetIterator iter1, TreeSetIterator iter2) noexcept
 		{
 			return iter1.mNode == iter2.mNode && iter1.mItemIndex == iter2.mItemIndex;
 		}
 
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeSetConstIterator)
+		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeSetIterator)
 
 	protected:
-		explicit TreeSetConstIterator(Node& node, size_t itemIndex, const size_t* version,
+		explicit TreeSetIterator(Node& node, size_t itemIndex, const size_t* version,
 			bool move) noexcept
 			: VersionKeeper(version),
 			mNode(&node),
@@ -275,10 +275,10 @@ private:
 	static_assert(nodeMaxCapacity > 0);
 
 public:
-	typedef internal::TreeSetConstIterator<Node, Settings> ConstIterator;
-	typedef ConstIterator Iterator;
+	typedef internal::TreeSetIterator<Node, Settings> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::InsertResult<ConstIterator> InsertResult;
+	typedef internal::InsertResult<Iterator> InsertResult;
 
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
@@ -291,12 +291,16 @@ private:
 	{
 	};
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
+	};
+
+	struct IteratorProxy : public Iterator
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
 	class Relocator
@@ -557,20 +561,20 @@ public:
 		std::swap(mNodeParams, treeSet.mNodeParams);
 	}
 
-	ConstIterator GetBegin() const noexcept
+	Iterator GetBegin() const noexcept
 	{
 		if (mRootNode == nullptr)
-			return ConstIterator();
+			return Iterator();
 		Node* node = mRootNode;
 		while (!node->IsLeaf())
 			node = node->GetChild(0);
 		return pvMakeIterator(node, 0, true);
 	}
 
-	ConstIterator GetEnd() const noexcept
+	Iterator GetEnd() const noexcept
 	{
 		if (mRootNode == nullptr)
-			return ConstIterator();
+			return Iterator();
 		return pvMakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
 
@@ -611,38 +615,38 @@ public:
 		mCrew.IncVersion();
 	}
 
-	ConstIterator GetLowerBound(const Key& key) const
+	Iterator GetLowerBound(const Key& key) const
 	{
 		return pvGetLowerBound(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	ConstIterator GetLowerBound(const KeyArg& key) const
+	Iterator GetLowerBound(const KeyArg& key) const
 	{
 		return pvGetLowerBound(key);
 	}
 
-	ConstIterator GetUpperBound(const Key& key) const
+	Iterator GetUpperBound(const Key& key) const
 	{
 		return pvGetUpperBound(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	ConstIterator GetUpperBound(const KeyArg& key) const
+	Iterator GetUpperBound(const KeyArg& key) const
 	{
 		return pvGetUpperBound(key);
 	}
 
-	ConstIterator Find(const Key& key) const
+	Iterator Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	ConstIterator Find(const KeyArg& key) const
+	Iterator Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -753,29 +757,29 @@ public:
 	template<typename ItemCreator,
 		bool extraCheck = true>
 	requires std::invocable<ItemCreator&&, Item*>
-	ConstIterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
+	Iterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		return pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
-	ConstIterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
+	Iterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
 	{
 		return AddCrt(iter,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
-	ConstIterator Add(ConstIterator iter, Item&& item)
+	Iterator Add(ConstIterator iter, Item&& item)
 	{
 		return AddVar(iter, std::move(item));
 	}
 
-	ConstIterator Add(ConstIterator iter, const Item& item)
+	Iterator Add(ConstIterator iter, const Item& item)
 	{
 		return AddVar(iter, item);
 	}
 
-	ConstIterator Add(ConstIterator iter, ExtractedItem&& extItem)
+	Iterator Add(ConstIterator iter, ExtractedItem&& extItem)
 	{
 		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
@@ -788,7 +792,7 @@ public:
 		return AddCrt(iter, itemCreator);
 	}
 
-	ConstIterator Remove(ConstIterator iter)
+	Iterator Remove(ConstIterator iter)
 	{
 		auto itemReplacer1 = [this] (Item& srcItem)
 			{ ItemTraits::Destroy(&GetMemManager(), srcItem); };
@@ -797,22 +801,22 @@ public:
 		return pvRemove(iter, itemReplacer1, itemReplacer2);
 	}
 
-	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
+	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
 		MOMO_CHECK(extItem.IsEmpty());
-		ConstIterator resIter;
+		Iterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
 			{ resIter = pvExtract(iter, newItem); };
 		extItem.Create(itemCreator);
 		return resIter;
 	}
 
-	ConstIterator Remove(ConstIterator begin, ConstIterator end)
+	Iterator Remove(ConstIterator begin, ConstIterator end)
 	{
 		if (mRootNode == nullptr)
 		{
 			MOMO_CHECK(begin == ConstIterator() && end == ConstIterator());
-			return ConstIterator();
+			return Iterator();
 		}
 		ConstIteratorProxy::Check(begin, mCrew.GetVersion(), false);
 		ConstIteratorProxy::Check(end, mCrew.GetVersion(), false);
@@ -859,7 +863,7 @@ public:
 
 	size_t Remove(const Key& key)
 	{
-		ConstIterator iter = pvGetLowerBound(key);
+		Iterator iter = pvGetLowerBound(key);
 		if (pvIsGreater(iter, key))
 			return 0;
 		if (!TreeTraits::multiKey)
@@ -867,7 +871,7 @@ public:
 			Remove(iter);
 			return 1;
 		}
-		ConstIterator iter2 = std::next(iter);
+		Iterator iter2 = std::next(iter);
 		size_t remCount = 1;
 		while (!pvIsGreater(iter2, key))
 		{
@@ -883,7 +887,7 @@ public:
 	size_t Remove(const Predicate& pred)
 	{
 		size_t initCount = GetCount();
-		ConstIterator iter = GetBegin();
+		Iterator iter = GetBegin();
 		while (iter != GetEnd())
 		{
 			if (pred(*iter))
@@ -986,9 +990,9 @@ private:
 		}
 	}
 
-	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
+	Iterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
 	{
-		return ConstIteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
+		return IteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
 	template<typename KeyArg>
@@ -1030,7 +1034,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvGetLowerBound(const KeyArg& key) const
+	Iterator pvGetLowerBound(const KeyArg& key) const
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
 		auto pred = [&treeTraits, &key] (const Item& item)
@@ -1039,7 +1043,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvGetUpperBound(const KeyArg& key) const
+	Iterator pvGetUpperBound(const KeyArg& key) const
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
 		auto pred = [&treeTraits, &key] (const Item& item)
@@ -1048,11 +1052,11 @@ private:
 	}
 
 	template<typename Predicate>
-	ConstIterator pvFindFirst(const Predicate& pred) const
+	Iterator pvFindFirst(const Predicate& pred) const
 	{
 		if (mRootNode == nullptr)
-			return ConstIterator();
-		ConstIterator iter = GetEnd();
+			return Iterator();
+		Iterator iter = GetEnd();
 		Node* node = mRootNode;
 		while (true)
 		{
@@ -1094,9 +1098,9 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvFind(const KeyArg& key) const
+	Iterator pvFind(const KeyArg& key) const
 	{
-		ConstIterator iter = pvGetLowerBound(key);	//?
+		Iterator iter = pvGetLowerBound(key);	//?
 		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 
@@ -1104,7 +1108,7 @@ private:
 	size_t pvGetKeyCount(const KeyArg& key) const
 	{
 		size_t count = 0;
-		for (ConstIterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); ++iter)
+		for (Iterator iter = pvGetLowerBound(key); !pvIsGreater(iter, key); ++iter)
 			++count;
 		return count;
 	}
@@ -1125,10 +1129,10 @@ private:
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
-		ConstIterator iter = pvGetUpperBound(key);
+		Iterator iter = pvGetUpperBound(key);
 		if (!TreeTraits::multiKey && iter != GetBegin())
 		{
-			ConstIterator prevIter = std::prev(iter);
+			Iterator prevIter = std::prev(iter);
 			if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
 				return { prevIter, false };
 		}
@@ -1137,7 +1141,7 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	ConstIterator pvAdd(ConstIterator iter, ItemCreator&& itemCreator)
+	Iterator pvAdd(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, std::forward<ItemCreator>(itemCreator));
@@ -1167,13 +1171,13 @@ private:
 		}
 		++mCount;
 		mCrew.IncVersion();
-		ConstIterator resIter = pvMakeIterator(node, itemIndex, false);
+		Iterator resIter = pvMakeIterator(node, itemIndex, false);
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resIter));
 		return resIter;
 	}
 
 	template<typename ItemCreator>
-	ConstIterator pvAddFirst(ConstIterator iter, ItemCreator&& itemCreator)
+	Iterator pvAddFirst(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
@@ -1280,7 +1284,7 @@ private:
 	}
 
 	template<typename ItemReplacer1, typename ItemReplacer2>
-	ConstIterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
+	Iterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
 		ItemReplacer2 itemReplacer2)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
@@ -1302,7 +1306,7 @@ private:
 		return pvMakeIterator(node, itemIndex, true);
 	}
 
-	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
+	Iterator pvExtract(ConstIterator iter, Item* extItem)
 	{
 		auto itemReplacer1 = [this, extItem] (Item& srcItem)
 			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
@@ -1543,7 +1547,7 @@ private:
 	template<typename Set>
 	void pvMergeTo(Set& dstSet)
 	{
-		ConstIterator iter = GetBegin();
+		Iterator iter = GetBegin();
 		while (iter != GetEnd())
 		{
 			auto itemCreator = [this, &iter] (Item* newItem)
@@ -1555,8 +1559,8 @@ private:
 
 	void pvMergeToLinear(TreeSet& dstTreeSet)
 	{
-		ConstIterator iter = GetBegin();
-		ConstIterator dstIter = dstTreeSet.GetBegin();
+		Iterator iter = GetBegin();
+		Iterator dstIter = dstTreeSet.GetBegin();
 		while (iter != GetEnd())
 		{
 			while (dstIter != dstTreeSet.GetEnd() && pvIsOrdered(dstIter, iter))
@@ -1676,8 +1680,8 @@ using TreeMultiSet = TreeSet<TKey, TreeTraits<TKey, true>>;
 namespace std
 {
 	template<typename N, typename S>
-	struct iterator_traits<momo::internal::TreeSetConstIterator<N, S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetConstIterator<N, S>,
+	struct iterator_traits<momo::internal::TreeSetIterator<N, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::TreeSetIterator<N, S>,
 			bidirectional_iterator_tag>
 	{
 	};
