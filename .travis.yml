@@ -26,7 +26,7 @@ matrix:
       env:
         - COMPILER="clang++-11"
         - BUILD_TYPE="Debug"
-        - CXXFLAGS="-msse2 -fsized-deallocation -fsanitize=address,undefined"
+        - CXXFLAGS="-msse2 -Wno-unknown-attributes -fsized-deallocation -fsanitize=address,undefined"
 
     - compiler: clang
       addons:
@@ -41,7 +41,7 @@ matrix:
       env:
         - COMPILER="clang++-11"
         - BUILD_TYPE="Release"
-        - CXXFLAGS="-msse2"
+        - CXXFLAGS="-msse2 -Wno-unknown-attributes"
 
     - compiler: gcc
       addons:
