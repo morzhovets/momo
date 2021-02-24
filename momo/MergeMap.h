@@ -133,32 +133,19 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
-			auto srcKeyGen = [srcIter = srcBegin] () mutable { return pvGenerateKeyPtr(srcIter); };
-			auto srcValueGen = [srcIter = srcBegin] () mutable { return pvGenerateValuePtr(srcIter); };
-			auto dstKeyGen = [dstIter = dstBegin] () mutable { return pvGenerateKeyPtr(dstIter); };
-			auto dstValueGen = [dstIter = dstBegin] () mutable { return pvGenerateValuePtr(dstIter); };
+			auto srcKeyGen = [srcIter = srcBegin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
+			auto srcValueGen = [srcIter = srcBegin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
+			auto dstKeyGen = [dstIter = dstBegin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
+			auto dstValueGen = [dstIter = dstBegin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
 				InputIterator(srcKeyGen), InputIterator(srcValueGen),
 				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
-		}
-
-	private:
-		template<typename Iterator>
-		static Key* pvGenerateKeyPtr(Iterator& iter) noexcept
-		{
-			Key* keyPtr = iter->GetKeyPtr();
-			++iter;
-			return keyPtr;
-		}
-
-		template<typename Iterator>
-		static Value* pvGenerateValuePtr(Iterator& iter) noexcept
-		{
-			Value* valuePtr = iter->GetValuePtr();
-			++iter;
-			return valuePtr;
 		}
 	};
 

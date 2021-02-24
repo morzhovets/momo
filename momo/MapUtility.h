@@ -617,6 +617,23 @@ namespace internal
 		{
 			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
 		}
+
+	protected:
+		template<typename Iterator>
+		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
+		{
+			Key* keyPtr = iter->GetKeyPtr();
+			++iter;
+			return keyPtr;
+		}
+
+		template<typename Iterator>
+		static Value* ptGenerateValuePtr(Iterator& iter) noexcept
+		{
+			Value* valuePtr = iter->GetValuePtr();
+			++iter;
+			return valuePtr;
+		}
 	};
 
 	template<typename TMap,

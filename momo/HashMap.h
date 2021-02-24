@@ -193,10 +193,14 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
-			auto srcKeyGen = [srcIter = srcItems] () mutable { return (srcIter++)->GetKeyPtr(); };
-			auto srcValueGen = [srcIter = srcItems] () mutable { return (srcIter++)->GetValuePtr(); };
-			auto dstKeyGen = [dstIter = dstItems] () mutable { return (dstIter++)->GetKeyPtr(); };
-			auto dstValueGen = [dstIter = dstItems] () mutable { return (dstIter++)->GetValuePtr(); };
+			auto srcKeyGen = [srcIter = srcItems] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
+			auto srcValueGen = [srcIter = srcItems] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
+			auto dstKeyGen = [dstIter = dstItems] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
+			auto dstValueGen = [dstIter = dstItems] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
