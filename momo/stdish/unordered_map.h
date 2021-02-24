@@ -297,24 +297,24 @@ public:
 		return mHashMap;
 	}
 
-	iterator begin() noexcept
-	{
-		return IteratorProxy(mHashMap.GetBegin());
-	}
-
 	const_iterator begin() const noexcept
 	{
 		return ConstIteratorProxy(mHashMap.GetBegin());
 	}
 
-	iterator end() noexcept
+	iterator begin() noexcept
 	{
-		return IteratorProxy(mHashMap.GetEnd());
+		return IteratorProxy(mHashMap.GetBegin());
 	}
 
 	const_iterator end() const noexcept
 	{
 		return ConstIteratorProxy(mHashMap.GetEnd());
+	}
+
+	iterator end() noexcept
+	{
+		return IteratorProxy(mHashMap.GetEnd());
 	}
 
 	const_iterator cbegin() const noexcept

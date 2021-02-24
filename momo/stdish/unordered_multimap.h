@@ -277,24 +277,24 @@ public:
 		return mHashMultiMap;
 	}
 
-	iterator begin() noexcept
-	{
-		return IteratorProxy(mHashMultiMap.GetBegin());
-	}
-
 	const_iterator begin() const noexcept
 	{
 		return ConstIteratorProxy(mHashMultiMap.GetBegin());
 	}
 
-	iterator end() noexcept
+	iterator begin() noexcept
 	{
-		return IteratorProxy(mHashMultiMap.GetEnd());
+		return IteratorProxy(mHashMultiMap.GetBegin());
 	}
 
 	const_iterator end() const noexcept
 	{
 		return ConstIteratorProxy(mHashMultiMap.GetEnd());
+	}
+
+	iterator end() noexcept
+	{
+		return IteratorProxy(mHashMultiMap.GetEnd());
 	}
 
 	const_iterator cbegin() const noexcept

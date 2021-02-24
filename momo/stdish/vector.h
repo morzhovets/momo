@@ -176,19 +176,14 @@ public:
 		return mArray;
 	}
 
-	iterator begin() noexcept
-	{
-		return mArray.GetBegin();
-	}
-
 	const_iterator begin() const noexcept
 	{
 		return mArray.GetBegin();
 	}
 
-	iterator end() noexcept
+	iterator begin() noexcept
 	{
-		return mArray.GetEnd();
+		return mArray.GetBegin();
 	}
 
 	const_iterator end() const noexcept
@@ -196,9 +191,9 @@ public:
 		return mArray.GetEnd();
 	}
 
-	reverse_iterator rbegin() noexcept
+	iterator end() noexcept
 	{
-		return reverse_iterator(end());
+		return mArray.GetEnd();
 	}
 
 	const_reverse_iterator rbegin() const noexcept
@@ -206,14 +201,19 @@ public:
 		return const_reverse_iterator(end());
 	}
 
-	reverse_iterator rend() noexcept
+	reverse_iterator rbegin() noexcept
 	{
-		return reverse_iterator(begin());
+		return reverse_iterator(end());
 	}
 
 	const_reverse_iterator rend() const noexcept
 	{
 		return const_reverse_iterator(begin());
+	}
+
+	reverse_iterator rend() noexcept
+	{
+		return reverse_iterator(begin());
 	}
 
 	const_iterator cbegin() const noexcept

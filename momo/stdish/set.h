@@ -221,45 +221,33 @@ public:
 		return mTreeSet;
 	}
 
-	iterator begin() noexcept
-	{
-		return mTreeSet.GetBegin();
-	}
-
 	const_iterator begin() const noexcept
 	{
 		return mTreeSet.GetBegin();
 	}
 
-	iterator end() noexcept
-	{
-		return mTreeSet.GetEnd();
-	}
+	//iterator begin() noexcept
 
 	const_iterator end() const noexcept
 	{
 		return mTreeSet.GetEnd();
 	}
 
-	reverse_iterator rbegin() noexcept
-	{
-		return reverse_iterator(end());
-	}
+	//iterator end() noexcept
 
 	const_reverse_iterator rbegin() const noexcept
 	{
 		return const_reverse_iterator(end());
 	}
 
-	reverse_iterator rend() noexcept
-	{
-		return reverse_iterator(begin());
-	}
+	//reverse_iterator rbegin() noexcept
 
 	const_reverse_iterator rend() const noexcept
 	{
 		return const_reverse_iterator(begin());
 	}
+
+	//reverse_iterator rend() noexcept
 
 	const_iterator cbegin() const noexcept
 	{

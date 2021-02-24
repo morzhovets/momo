@@ -261,25 +261,19 @@ public:
 		return mHashSet;
 	}
 
-	iterator begin() noexcept
-	{
-		return mHashSet.GetBegin();
-	}
-
 	const_iterator begin() const noexcept
 	{
 		return mHashSet.GetBegin();
 	}
 
-	iterator end() noexcept
-	{
-		return mHashSet.GetEnd();
-	}
+	//iterator begin() noexcept
 
 	const_iterator end() const noexcept
 	{
 		return mHashSet.GetEnd();
 	}
+
+	//iterator end() noexcept
 
 	const_iterator cbegin() const noexcept
 	{
