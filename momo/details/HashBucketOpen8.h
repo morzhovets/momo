@@ -20,6 +20,7 @@
 #include "HashBucketOpenN1.h"
 
 #include <emmintrin.h>
+#include <xmmintrin.h>
 
 #endif
 
@@ -61,6 +62,8 @@ namespace internal
 		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
+			if constexpr (first)
+				_mm_prefetch(reinterpret_cast<char*>(BucketOpenN1::ptGetItemPtr(3)), _MM_HINT_T0);
 			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
 			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, BucketOpenN1::ptGetData());
