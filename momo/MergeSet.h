@@ -16,7 +16,6 @@
 #pragma once
 
 #include "MergeTraits.h"
-#include "MergeArray.h"
 #include "SetUtility.h"
 
 namespace momo
@@ -189,7 +188,8 @@ namespace internal
 		typedef typename MemManager::MemManagerPtr MemManagerPtr;
 		typedef typename MemManager::MergeSetCrew::ContainerTraits MergeTraits;
 
-		static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
+		static const size_t initialItemCount =
+			size_t{1} << MergeTraits::MergeArraySettings::logInitialItemCount;
 
 		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0, Item*, MemManagerPtr> ItemPtrs;
 
@@ -342,17 +342,6 @@ namespace internal
 			}
 		}
 	};
-
-	template<typename TMergeTraits>
-	class MergeSetNestedArraySettings
-		: public MergeArraySettings<TMergeTraits::logInitialItemCount>
-	{
-	protected:
-		typedef TMergeTraits MergeTraits;
-
-	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-	};
 }
 
 template<typename TKey, conceptMemManager TMemManager>
@@ -417,11 +406,13 @@ private:
 	typedef internal::MergeSetNestedArrayMemManager<Crew> MergeArrayMemManager;
 	typedef internal::MergeSetNestedArrayItemTraits<ItemTraits,
 		MergeArrayMemManager> MergeArrayItemTraits;
+	typedef internal::NestedArraySettings<
+		typename MergeTraits::MergeArraySettings> MergeArraySettings;	//?
 
 	typedef momo::MergeArray<Item, MergeArrayMemManager, MergeArrayItemTraits,
-		internal::MergeSetNestedArraySettings<MergeTraits>> MergeArray;
+		MergeArraySettings> MergeArray;
 
-	static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
+	static const size_t initialItemCount = size_t{1} << MergeArraySettings::logInitialItemCount;
 
 public:
 	typedef internal::MergeSetIterator<typename MergeArray::ConstIterator, Settings> Iterator;

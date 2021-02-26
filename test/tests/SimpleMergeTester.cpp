@@ -42,7 +42,8 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = i;
 
-		typedef momo::MergeTraits<size_t, isNothrowComparable, logInitialItemCount> MergeTraits;
+		typedef momo::MergeTraits<size_t, isNothrowComparable,
+			momo::MergeArraySettings<logInitialItemCount>> MergeTraits;
 		typedef momo::MergeMap<size_t, size_t, MergeTraits> MergeMap;
 		MergeMap map;
 

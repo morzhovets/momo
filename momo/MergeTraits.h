@@ -13,21 +13,21 @@
 
 #pragma once
 
-#include "Utility.h"
+#include "MergeArray.h"
 
 namespace momo
 {
 
 template<typename TKey,
 	bool tIsNothrowComparable = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>()),
-	size_t tLogInitialItemCount = 4>
+	typename TMergeArraySettings = MergeArraySettings<4>>
 class MergeTraits
 {
 public:
 	typedef TKey Key;
+	typedef TMergeArraySettings MergeArraySettings;
 
 	static const bool isNothrowComparable = tIsNothrowComparable;
-	static const size_t logInitialItemCount = tLogInitialItemCount;
 
 public:
 	explicit MergeTraits() noexcept
