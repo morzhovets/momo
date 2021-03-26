@@ -470,14 +470,14 @@ public:
 		return pvGetItem(index);
 	}
 
-	const Item& GetBackItem() const
+	const Item& GetBackItem(size_t revIndex = 0) const
 	{
-		return pvGetItem(mCount - 1);
+		return pvGetItem(mCount - 1 - revIndex);
 	}
 
-	Item& GetBackItem()
+	Item& GetBackItem(size_t revIndex = 0)
 	{
-		return pvGetItem(mCount - 1);
+		return pvGetItem(mCount - 1 - revIndex);
 	}
 
 	template<typename ItemCreator>

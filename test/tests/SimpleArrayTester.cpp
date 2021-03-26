@@ -127,7 +127,7 @@ public:
 		assert(ar[1] == "s1");
 		assert(ar[2] == "s2");
 		assert(ar[3] == "");
-		assert(ar[4] == "s3");
+		assert(ar.GetBackItem(1) == "s3");
 		assert(ar.GetBackItem() == "");
 
 		assert(ar.Remove([] (const std::string& s) { return s.empty(); }) == 3);
