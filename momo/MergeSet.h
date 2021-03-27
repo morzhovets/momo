@@ -169,21 +169,21 @@ namespace internal
 		}
 	};
 
-	template<typename TItemTraits, typename TMemManager>
+	template<typename TMergeSetItemTraits, typename TMemManager>
 	class MergeSetNestedArrayItemTraits
 	{
 	protected:
-		typedef TItemTraits ItemTraits;
+		typedef TMergeSetItemTraits MergeSetItemTraits;
 
 	public:
 		typedef TMemManager MemManager;
 
-		typedef typename ItemTraits::Item Item;
+		typedef typename MergeSetItemTraits::Item Item;
 
-		static const size_t alignment = ItemTraits::alignment;
+		static const size_t alignment = MergeSetItemTraits::alignment;
 
 	private:
-		typedef typename ItemTraits::Key Key;
+		typedef typename MergeSetItemTraits::Key Key;
 
 		typedef typename MemManager::MemManagerPtr MemManagerPtr;
 		typedef typename MemManager::MergeSetCrew::ContainerTraits MergeTraits;
@@ -199,7 +199,7 @@ namespace internal
 		{
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, (void)++iter)
-				ItemTraits::Destroy(&memManager.GetBaseMemManager(), *iter);
+				MergeSetItemTraits::Destroy(&memManager.GetBaseMemManager(), *iter);
 		}
 
 		template<typename SrcIterator, typename ItemCreator>
@@ -210,7 +210,7 @@ namespace internal
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
 			Item* srcItems1 = std::addressof(*UIntMath<>::Next(srcBegin, count - initialItemCount));
 			Item* srcItems2 = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * initialItemCount));
-			if constexpr (ItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
+			if constexpr (MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
 			{
 				std::forward<ItemCreator>(itemCreator)(newItem);
 				for (size_t i = 0; i < initialItemCount; ++i)
@@ -242,30 +242,31 @@ namespace internal
 				}
 				auto srcGen = [srcIter = itemPtrs.GetItems()] () mutable
 					{ return *srcIter++; };
-				ItemTraits::RelocateCreate(memManager.GetBaseMemManager(), InputIterator(srcGen),
-					dstBegin, count, std::forward<ItemCreator>(itemCreator), newItem);
+				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
+					InputIterator(srcGen), dstBegin, count,
+					std::forward<ItemCreator>(itemCreator), newItem);
 			}
 		}
 
 	private:
 		static void pvRelocate(MemManager& memManager, Item& srcItem, Item* dstItem)
-			noexcept(ItemTraits::isNothrowRelocatable)
+			noexcept(MergeSetItemTraits::isNothrowRelocatable)
 		{
-			ItemTraits::Relocate(&memManager.GetBaseMemManager(), srcItem, dstItem);
+			MergeSetItemTraits::Relocate(&memManager.GetBaseMemManager(), srcItem, dstItem);
 		}
 
 		static void pvSortRelocate(MemManager& memManager, const MergeTraits& mergeTraits, Item* items)
-			noexcept(ItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
+			noexcept(MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
 				ObjectBuffer<Item, alignment> itemBuffer;
 				pvRelocate(memManager, items[i], &itemBuffer);
-				const Key& key = ItemTraits::GetKey(*&itemBuffer);
+				const Key& key = MergeSetItemTraits::GetKey(*&itemBuffer);
 				size_t j = i;
 				for (; j > 0; --j)
 				{
-					if (!mergeTraits.IsLess(key, ItemTraits::GetKey(items[j - 1])))
+					if (!mergeTraits.IsLess(key, MergeSetItemTraits::GetKey(items[j - 1])))
 						break;
 					pvRelocate(memManager, items[j - 1], items + j);
 				}
@@ -279,11 +280,11 @@ namespace internal
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
 				Item* itemPtr = items[i];
-				const Key& key = ItemTraits::GetKey(*itemPtr);
+				const Key& key = MergeSetItemTraits::GetKey(*itemPtr);
 				size_t j = i;
 				for (; j > 0; --j)
 				{
-					if (!mergeTraits.IsLess(key, ItemTraits::GetKey(*items[j - 1])))
+					if (!mergeTraits.IsLess(key, MergeSetItemTraits::GetKey(*items[j - 1])))
 						break;
 					items[j] = items[j - 1];
 				}
@@ -293,7 +294,7 @@ namespace internal
 
 		static void pvMergeRelocate(MemManager& memManager, const MergeTraits& mergeTraits,
 			Item* srcItems1, Item* dstItems, size_t count)
-			noexcept(ItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
+			noexcept(MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
 		{
 			Item* srcItems2 = dstItems + count;
 			size_t srcIndex1 = 0;
@@ -302,8 +303,8 @@ namespace internal
 			while (srcIndex1 < count)
 			{
 				if (srcIndex2 < count && mergeTraits.IsLess(
-					ItemTraits::GetKey(srcItems2[srcIndex2]),
-					ItemTraits::GetKey(srcItems1[srcIndex1])))
+					MergeSetItemTraits::GetKey(srcItems2[srcIndex2]),
+					MergeSetItemTraits::GetKey(srcItems1[srcIndex1])))
 				{
 					pvRelocate(memManager, srcItems2[srcIndex2], dstItems + dstIndex);
 					++srcIndex2;
@@ -327,8 +328,8 @@ namespace internal
 			while (srcIndex1 < count)
 			{
 				if (srcIndex2 < count && mergeTraits.IsLess(
-					ItemTraits::GetKey(*srcItems2[srcIndex2]),
-					ItemTraits::GetKey(srcItems1[srcIndex1])))
+					MergeSetItemTraits::GetKey(*srcItems2[srcIndex2]),
+					MergeSetItemTraits::GetKey(srcItems1[srcIndex1])))
 				{
 					dstItems[dstIndex] = srcItems2[srcIndex2];
 					++srcIndex2;
