@@ -425,12 +425,11 @@ private:
 		internal::EnableIf<hasInternalCapacity>
 		pvReset(size_t count, ItemsRelocator itemsRelocator)
 		{
-			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
-			internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
-			itemsRelocator(&internalData);
-			pvDeallocate();
+			MOMO_ASSERT(!pvIsInternal());
+			size_t initCapacity = mCapacity;
+			itemsRelocator(&mInternalItems);
+			MemManagerProxy::Deallocate(GetMemManager(), mItems, initCapacity * sizeof(Item));
 			mItems = &mInternalItems;
-			ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
 			mCount = count;
 		}
 
