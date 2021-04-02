@@ -178,6 +178,14 @@ public:
 		TestTemplArray<momo::ArrayIntCap<4, size_t>>();
 		std::cout << "ok" << std::endl;
 
+		std::cout << "momo::ArrayIntCap<8, TemplItem<false>>: " << std::flush;
+		TestTemplArray<momo::ArrayIntCap<8, TemplItem<false>>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::ArrayIntCap<1, TemplItem<true>>: " << std::flush;
+		TestTemplArray<momo::ArrayIntCap<1, TemplItem<true>>>();
+		std::cout << "ok" << std::endl;
+
 		std::cout << "momo::SegmentedArray<size_t>: " << std::flush;
 		TestTemplArray<momo::SegmentedArray<size_t>>();
 		std::cout << "ok" << std::endl;
@@ -192,7 +200,7 @@ public:
 	}
 
 	template<typename Array>
-	static void TestTemplArray()
+	static Array TestTemplArray()
 	{
 		typedef typename Array::Item Item;
 
@@ -207,6 +215,8 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 			assert(ar[i] == Item(i));
+
+		return Array(ar);
 	}
 };
 

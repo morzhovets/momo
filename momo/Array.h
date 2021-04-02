@@ -324,11 +324,11 @@ private:
 			pvCreate();
 		}
 
-		template<typename ItemsRelocator>
+		template<bool grow, typename ItemsRelocator>
 		void Reset(size_t capacity, size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_ASSERT(count <= capacity);
-			if (capacity > internalCapacity)
+			if (grow || capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
 				try
@@ -337,10 +337,11 @@ private:
 				}
 				catch (...)
 				{
-					MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
+					pvDeallocate(items, capacity);
 					throw;
 				}
-				pvDeallocate();
+				if (!pvIsInternal() && mCapacity > 0)
+					pvDeallocate(mItems, mCapacity);
 				mItems = items;
 				mCount = count;
 				mCapacity = capacity;
@@ -348,17 +349,17 @@ private:
 			else if constexpr (internalCapacity == 0)
 			{
 				MOMO_ASSERT(count == 0);
-				pvDeallocate();
+				MOMO_ASSERT(mCapacity > 0);
+				pvDeallocate(mItems, mCapacity);
 				pvCreate();
 			}
 			else
 			{
-				static_assert(ItemTraits::isNothrowRelocatable);
-				internal::ArrayBuffer<ItemTraits, internalCapacity> internalData;
-				itemsRelocator(&internalData);
-				pvDeallocate();
+				MOMO_ASSERT(!pvIsInternal());
+				size_t initCapacity = mCapacity;
+				itemsRelocator(&mInternalItems);
+				pvDeallocate(mItems, initCapacity);
 				mItems = &mInternalItems;
-				ItemTraits::Relocate(GetMemManager(), &internalData, mItems, count);
 				mCount = count;
 			}
 		}
@@ -378,6 +379,11 @@ private:
 				capacity * sizeof(Item));
 		}
 
+		void pvDeallocate(Item* items, size_t capacity) noexcept
+		{
+			MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
+		}
+
 		void pvCreate() noexcept
 		{
 			if constexpr (internalCapacity == 0)
@@ -395,13 +401,8 @@ private:
 		void pvDestroy() noexcept
 		{
 			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
-			pvDeallocate();
-		}
-
-		void pvDeallocate() noexcept
-		{
-			if (GetCapacity() > internalCapacity)
-				MemManagerProxy::Deallocate(GetMemManager(), mItems, mCapacity * sizeof(Item));
+			if (!pvIsInternal() && mCapacity > 0)
+				pvDeallocate(mItems, mCapacity);
 		}
 
 		bool pvIsInternal() const noexcept
@@ -638,7 +639,7 @@ public:
 					throw;
 				}
 			};
-			mData.Reset(newCapacity, newCount, itemsRelocator);
+			mData.Reset<true>(newCapacity, newCount, itemsRelocator);
 		}
 	}
 
@@ -701,7 +702,7 @@ public:
 		{
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.Reset(capacity, count, itemsRelocator);
+			mData.Reset<false>(capacity, count, itemsRelocator);
 		}
 	}
 
@@ -970,7 +971,7 @@ private:
 			size_t count = GetCount();
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.Reset(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
+			mData.Reset<true>(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
 				count, itemsRelocator);
 		}
 	}
@@ -1001,7 +1002,7 @@ private:
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				std::forward<ItemCreator>(itemCreator), newItems + initCount);
 		};
-		mData.Reset(newCapacity, newCount, itemsRelocator);
+		mData.Reset<true>(newCapacity, newCount, itemsRelocator);
 	}
 
 	void pvRemoveBack(size_t count) noexcept
