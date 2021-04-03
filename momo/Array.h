@@ -639,7 +639,7 @@ public:
 					throw;
 				}
 			};
-			mData.Reset<true>(newCapacity, newCount, itemsRelocator);
+			mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
 		}
 	}
 
@@ -702,7 +702,7 @@ public:
 		{
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.Reset<false>(capacity, count, itemsRelocator);
+			mData.template Reset<false>(capacity, count, itemsRelocator);
 		}
 	}
 
@@ -971,7 +971,7 @@ private:
 			size_t count = GetCount();
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.Reset<true>(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
+			mData.template Reset<true>(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
 				count, itemsRelocator);
 		}
 	}
@@ -1002,7 +1002,7 @@ private:
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				std::forward<ItemCreator>(itemCreator), newItems + initCount);
 		};
-		mData.Reset<true>(newCapacity, newCount, itemsRelocator);
+		mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
 	}
 
 	void pvRemoveBack(size_t count) noexcept
