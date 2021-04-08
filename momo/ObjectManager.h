@@ -273,9 +273,9 @@ namespace internal
 		}
 
 		template<typename Iterator>
+		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, (void)++iter)
 				Destroy(memManager, *iter);
@@ -355,11 +355,11 @@ namespace internal
 		}
 
 		template<typename SrcIterator, typename DstIterator>
+		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
+			std::is_same_v<Object&, std::iter_reference_t<DstIterator>>
 		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(SrcIterator, Object);
-			MOMO_CHECK_ITERATOR_REFERENCE(DstIterator, Object);
 			if constexpr (isNothrowRelocatable)
 			{
 				SrcIterator srcIter = srcBegin;
@@ -381,7 +381,9 @@ namespace internal
 		}
 
 		template<typename SrcIterator, typename DstIterator, typename ObjectCreator>
-		requires std::invocable<ObjectCreator&&, Object*>
+		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
+			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
+			std::invocable<ObjectCreator&&, Object*>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
@@ -391,12 +393,12 @@ namespace internal
 		}
 
 		template<typename SrcIterator, typename DstIterator, typename Func>
-		requires std::invocable<Func&&>
+		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
+			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
+			std::invocable<Func&&>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(SrcIterator, Object);
-			MOMO_CHECK_ITERATOR_REFERENCE(DstIterator, Object);
 			if constexpr (isNothrowRelocatable)
 			{
 				std::forward<Func>(func)();
@@ -423,10 +425,10 @@ namespace internal
 		}
 
 		template<typename Iterator>
+		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			static_assert(isNothrowShiftable);
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
 			if (shift == 0)
 				return;
 			if constexpr (isNothrowRelocatable)

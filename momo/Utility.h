@@ -69,10 +69,6 @@
 		return object.GetEnd(); \
 	}
 
-#define MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Type) static_assert( \
-	(std::is_same_v<Type, std::decay_t<std::iter_reference_t<Iterator>>>) \
-	&& std::is_reference_v<std::iter_reference_t<Iterator>>)
-
 #define MOMO_CHECK(expr) \
 	do { \
 		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \

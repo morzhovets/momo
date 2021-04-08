@@ -585,9 +585,10 @@ public:
 	}
 
 	template<internal::conceptInputIterator ArgIterator>
+	requires std::is_reference_v<std::iter_reference_t<ArgIterator>> &&
+		std::is_same_v<Item, std::decay_t<std::iter_reference_t<ArgIterator>>>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
 			count += Insert(*iter).inserted ? size_t{1} : size_t{0};

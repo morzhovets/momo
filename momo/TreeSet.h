@@ -715,9 +715,10 @@ public:
 	}
 
 	template<internal::conceptInputIterator ArgIterator>
+	requires std::is_reference_v<std::iter_reference_t<ArgIterator>> &&
+		std::is_same_v<Item, std::decay_t<std::iter_reference_t<ArgIterator>>>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		MOMO_CHECK_ITERATOR_REFERENCE(ArgIterator, Item);
 		if (begin == end)
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
