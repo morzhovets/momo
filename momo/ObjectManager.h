@@ -22,29 +22,33 @@ namespace momo
 {
 
 template<typename Object>
+concept conceptObject = std::is_object_v<Object>
+	&& !std::is_const_v<Object> && !std::is_volatile_v<Object>;
+
+template<conceptObject Object>
 struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
 {
 };
 
-template<typename Object, conceptMemManager MemManager>
+template<conceptObject Object, conceptMemManager MemManager>
 struct IsNothrowMoveConstructible
 	: public std::is_nothrow_move_constructible<Object>
 {
 };
 
-template<typename Object, typename Allocator>
+template<conceptObject Object, typename Allocator>
 struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
 	: public std::false_type
 {
 };
 
-template<typename Object, typename AllocObject>
+template<conceptObject Object, typename AllocObject>
 struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
 	: public std::is_nothrow_move_constructible<Object>
 {
 };
 
-template<typename TObject, conceptMemManager TMemManager>
+template<conceptObject TObject, conceptMemManager TMemManager>
 class ObjectDestroyer
 {
 public:
@@ -54,11 +58,12 @@ public:
 public:
 	static void Destroy(MemManager* /*memManager*/, Object& object) noexcept
 	{
-		std::destroy_at(std::addressof(object));
+		if constexpr (!std::is_trivially_destructible_v<Object>)
+			std::destroy_at(std::addressof(object));
 	}
 };
 
-template<typename TObject, conceptMemManager TMemManager>
+template<conceptObject TObject, conceptMemManager TMemManager>
 class ObjectRelocator
 {
 public:
@@ -90,7 +95,7 @@ public:
 
 namespace internal
 {
-	template<typename TObject>
+	template<conceptObject TObject>
 	class ObjectAlignmenter
 	{
 	public:
@@ -107,7 +112,7 @@ namespace internal
 		}
 	};
 
-	template<typename TObject, size_t tAlignment>
+	template<conceptObject TObject, size_t tAlignment>
 	class ObjectBuffer
 	{
 	public:
@@ -131,7 +136,7 @@ namespace internal
 		std::aligned_storage_t<sizeof(Object), alignment> mBuffer;
 	};
 
-	template<typename TObject, conceptMemManager TMemManager>
+	template<conceptObject TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{
 	public:
