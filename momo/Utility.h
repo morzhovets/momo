@@ -117,6 +117,16 @@ enum class ExtraCheckMode
 
 namespace internal
 {
+	template<typename Iterator>
+	concept conceptInputIterator =
+		std::is_base_of_v<std::input_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>;
+
+	template<typename Iterator>
+	concept conceptForwardIterator = conceptInputIterator<Iterator> &&
+		std::is_base_of_v<std::forward_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>;
+
 	template<size_t size,
 		typename Default = void>
 	struct UIntSelector
@@ -204,13 +214,13 @@ namespace internal
 			return ((value + mod - 1) / mod) * mod;
 		}
 
-		template<typename Iterator>
+		template<conceptInputIterator Iterator>
 		static UInt Dist(Iterator begin, Iterator end)
 		{
 			return static_cast<UInt>(std::distance(begin, end));
 		}
 
-		template<typename Iterator>
+		template<conceptInputIterator Iterator>
 		static Iterator Next(Iterator iter, UInt dist)
 		{
 			return std::next(iter, static_cast<ptrdiff_t>(dist));

@@ -272,7 +272,7 @@ namespace internal
 			Destroyer::Destroy(&memManager, object);
 		}
 
-		template<typename Iterator>
+		template<conceptInputIterator Iterator>
 		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
@@ -354,7 +354,7 @@ namespace internal
 			}
 		}
 
-		template<typename SrcIterator, typename DstIterator>
+		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>>
 		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
@@ -380,7 +380,8 @@ namespace internal
 			}
 		}
 
-		template<typename SrcIterator, typename DstIterator, typename ObjectCreator>
+		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator,
+			typename ObjectCreator>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
 			std::invocable<ObjectCreator&&, Object*>
@@ -392,7 +393,7 @@ namespace internal
 			RelocateExec(memManager, srcBegin, dstBegin, count, func);
 		}
 
-		template<typename SrcIterator, typename DstIterator, typename Func>
+		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator, typename Func>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
 			std::invocable<Func&&>
@@ -424,7 +425,7 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator>
+		template<conceptInputIterator Iterator>
 		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
