@@ -7,6 +7,7 @@
   momo/ObjectManager.h
 
   namespace momo:
+    concept conceptObject
     struct IsTriviallyRelocatable
     struct IsNothrowMoveConstructible
     class ObjectDestroyer
