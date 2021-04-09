@@ -8,6 +8,7 @@
 
   namespace momo:
     class MemPoolConst
+    concept conceptMemPoolParams
     class MemPoolParams
     class MemPoolParamsStatic
     class MemPoolSettings
@@ -47,6 +48,12 @@ public:
 			: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
 	}
 };
+
+template<typename MemPoolParams>
+concept conceptMemPoolParams =
+	std::is_nothrow_destructible_v<MemPoolParams> &&
+	std::is_nothrow_move_constructible_v<MemPoolParams> &&
+	std::is_nothrow_move_assignable_v<MemPoolParams>;
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
@@ -117,11 +124,9 @@ public:
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
-template<typename TParams = MemPoolParams<>,
+template<conceptMemPoolParams TParams = MemPoolParams<>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-requires std::is_nothrow_move_constructible_v<TParams>
-	&& std::is_nothrow_move_assignable_v<TParams>
 class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
 {
 public:
@@ -162,8 +167,8 @@ public:
 	{
 	}
 
-	explicit MemPool(const Params& params, MemManager memManager = MemManager())
-		: Params(params),
+	explicit MemPool(Params params, MemManager memManager = MemManager())
+		: Params(std::move(params)),
 		MemManagerWrapper(std::move(memManager)),
 		mFreeBufferHead(nullPtr),
 		mAllocCount(0),
