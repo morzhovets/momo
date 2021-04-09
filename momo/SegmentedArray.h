@@ -22,7 +22,7 @@
 namespace momo
 {
 
-template<typename TItem, conceptMemManager TMemManager>
+template<conceptObject TItem, conceptMemManager TMemManager>
 class SegmentedArrayItemTraits
 {
 public:
@@ -152,7 +152,7 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<typename TItem,
+template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
@@ -730,7 +730,7 @@ private:
 	size_t mCount;
 };
 
-template<typename TItem,
+template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
 using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,

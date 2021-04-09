@@ -79,7 +79,7 @@ namespace internal
 	};
 }
 
-template<typename TItem, conceptMemManager TMemManager>
+template<conceptObject TItem, conceptMemManager TMemManager>
 class ArrayItemTraits
 {
 public:
@@ -177,7 +177,7 @@ public:
 	basic exception safety.
 */
 
-template<typename TItem,
+template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
@@ -1034,7 +1034,7 @@ private:
 	Data mData;
 };
 
-template<size_t tInternalCapacity, typename TItem,
+template<size_t tInternalCapacity, conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>>
 using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, ArraySettings<tInternalCapacity>>;
@@ -1051,7 +1051,7 @@ namespace internal
 		static const CheckMode checkMode = CheckMode::assertion;
 	};
 
-	template<size_t tInternalCapacity, typename TItem, conceptMemManager TMemManager>
+	template<size_t tInternalCapacity, conceptObject TItem, conceptMemManager TMemManager>
 	using NestedArrayIntCap = Array<TItem, TMemManager, ArrayItemTraits<TItem, TMemManager>,
 		NestedArraySettings<ArraySettings<tInternalCapacity>>>;
 }

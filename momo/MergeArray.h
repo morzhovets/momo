@@ -20,7 +20,7 @@
 namespace momo
 {
 
-template<typename TItem, conceptMemManager TMemManager>
+template<conceptObject TItem, conceptMemManager TMemManager>
 class MergeArrayItemTraits
 {
 public:
@@ -85,7 +85,7 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<typename TItem,
+template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = MergeArraySettings<>>
