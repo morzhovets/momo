@@ -282,7 +282,8 @@ namespace internal
 		template<typename Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_STATIC_ASSERT((std::is_same<Object&,
+				typename std::iterator_traits<Iterator>::reference>::value));
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, (void)++iter)
 				Destroy(memManager, *iter);
@@ -321,7 +322,8 @@ namespace internal
 		static void Relocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_STATIC_ASSERT((std::is_same<Object&,
+				typename std::iterator_traits<Iterator>::reference>::value));
 			pvRelocate(memManager, srcBegin, dstBegin, count, BoolConstant<isNothrowRelocatable>());
 		}
 
@@ -338,7 +340,8 @@ namespace internal
 		static void RelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count, Func&& func)
 		{
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_STATIC_ASSERT((std::is_same<Object&,
+				typename std::iterator_traits<Iterator>::reference>::value));
 			pvRelocateExec(memManager, srcBegin, dstBegin, count, std::forward<Func>(func),
 				BoolConstant<isNothrowRelocatable>());
 		}
@@ -347,7 +350,8 @@ namespace internal
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			MOMO_STATIC_ASSERT(isNothrowShiftable);
-			MOMO_CHECK_ITERATOR_REFERENCE(Iterator, Object);
+			MOMO_STATIC_ASSERT((std::is_same<Object&,
+				typename std::iterator_traits<Iterator>::reference>::value));
 			pvShiftNothrow(memManager, begin, shift, BoolConstant<isNothrowRelocatable>(),
 				BoolConstant<isNothrowSwappable>());
 		}
