@@ -423,7 +423,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptMemManager TMemManager>
 class HashSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:
@@ -464,7 +464,7 @@ public:
 	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
-template<typename TKey,
+template<conceptObject TKey,
 	typename THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
@@ -1342,7 +1342,7 @@ private:
 	Buckets* mBuckets;
 };
 
-template<typename TKey>
+template<conceptObject TKey>
 using HashSetOpen = HashSet<TKey, HashTraitsOpen<TKey>>;
 
 namespace internal

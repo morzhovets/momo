@@ -224,7 +224,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
 };
@@ -253,7 +253,7 @@ public:
 	removing value may be changed.
 */
 
-template<typename TKey, typename TValue,
+template<conceptObject TKey, conceptObject TValue,
 	typename THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue, TMemManager>,
@@ -791,7 +791,7 @@ private:
 	HashSet mHashSet;
 };
 
-template<typename TKey, typename TValue>
+template<conceptObject TKey, conceptObject TValue>
 using HashMapOpen = HashMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 namespace internal

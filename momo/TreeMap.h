@@ -87,7 +87,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
 private:
@@ -144,7 +144,7 @@ public:
 	removing value may be changed.
 */
 
-template<typename TKey, typename TValue,
+template<conceptObject TKey, conceptObject TValue,
 	typename TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
@@ -713,7 +713,7 @@ private:
 	TreeSet mTreeSet;
 };
 
-template<typename TKey, typename TValue>
+template<conceptObject TKey, conceptObject TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
 
 } // namespace momo

@@ -162,7 +162,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 class MergeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
 };
@@ -185,7 +185,7 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<typename TKey, typename TValue,
+template<conceptObject TKey, conceptObject TValue,
 	typename TMergeTraits = MergeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = MergeMapKeyValueTraits<TKey, TValue, TMemManager>,

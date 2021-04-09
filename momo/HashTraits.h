@@ -102,7 +102,7 @@ typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
-template<typename TKey,
+template<conceptObject TKey,
 	typename THashBucket = HashBucketDefault,
 	typename TKeyArgBase = TKey>
 class HashTraits
@@ -169,10 +169,10 @@ public:
 };
 #endif
 
-template<typename TKey>
+template<conceptObject TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
 
-template<typename TKey,
+template<conceptObject TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>

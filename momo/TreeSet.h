@@ -194,7 +194,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptMemManager TMemManager>
 class TreeSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:
@@ -242,7 +242,7 @@ public:
 	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
-template<typename TKey,
+template<conceptObject TKey,
 	typename TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
@@ -1673,7 +1673,7 @@ private:
 	NodeParams* mNodeParams;
 };
 
-template<typename TKey>
+template<conceptObject TKey>
 using TreeMultiSet = TreeSet<TKey, TreeTraits<TKey, true>>;
 
 } // namespace momo

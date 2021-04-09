@@ -17,7 +17,7 @@ namespace momo
 
 namespace internal
 {
-	template<typename TKey, conceptMemManager TMemManager>
+	template<conceptObject TKey, conceptMemManager TMemManager>
 	class SetItemTraits
 	{
 	public:

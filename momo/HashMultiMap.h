@@ -446,7 +446,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 class HashMultiMapKeyValueTraits
 {
 public:
@@ -549,7 +549,7 @@ public:
 	this argument may be changed.
 */
 
-template<typename TKey, typename TValue,
+template<conceptObject TKey, conceptObject TValue,
 	typename THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
@@ -1257,7 +1257,7 @@ private:
 	ValueCrew mValueCrew;
 };
 
-template<typename TKey, typename TValue>
+template<conceptObject TKey, conceptObject TValue>
 using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 namespace internal

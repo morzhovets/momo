@@ -345,7 +345,7 @@ namespace internal
 	};
 }
 
-template<typename TKey, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptMemManager TMemManager>
 class MergeSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:
@@ -384,7 +384,7 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<typename TKey,
+template<conceptObject TKey,
 	typename TMergeTraits = MergeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeSetItemTraits<TKey, TMemManager>,

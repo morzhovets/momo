@@ -18,7 +18,7 @@
 namespace momo
 {
 
-template<typename TKey,
+template<conceptObject TKey,
 	bool tIsNothrowComparable = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>()),
 	typename TMergeArraySettings = MergeArraySettings<4>>
 class MergeTraits
