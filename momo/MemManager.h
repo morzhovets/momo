@@ -229,12 +229,12 @@ public:
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
 //! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
-template<typename Item>
-class MemManagerStd<std::allocator<Item>, true>
+template<typename Object>
+class MemManagerStd<std::allocator<Object>, true>
 	: private std::allocator<char>, public MemManagerDefault
 {
 public:
-	typedef std::allocator<Item> Allocator;
+	typedef std::allocator<Object> Allocator;
 	typedef std::allocator<char> ByteAllocator;
 
 public:
