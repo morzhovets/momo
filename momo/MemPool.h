@@ -53,7 +53,13 @@ template<typename MemPoolParams>
 concept conceptMemPoolParams =
 	std::is_nothrow_destructible_v<MemPoolParams> &&
 	std::is_nothrow_move_constructible_v<MemPoolParams> &&
-	std::is_nothrow_move_assignable_v<MemPoolParams>;
+	std::is_nothrow_move_assignable_v<MemPoolParams> &&
+	requires {
+		{ MemPoolParams::blockSize } -> std::convertible_to<size_t>;
+		{ MemPoolParams::blockAlignment } -> std::convertible_to<size_t>;
+		{ MemPoolParams::blockCount } -> std::convertible_to<size_t>;
+		{ MemPoolParams::cachedFreeBlockCount } -> std::convertible_to<size_t>;
+	};
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
