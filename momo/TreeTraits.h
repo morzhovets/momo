@@ -23,6 +23,9 @@ namespace momo
 
 namespace internal
 {
+	template<typename LessFunc, typename Key>
+	concept conceptLessFunc = std::strict_weak_order<const LessFunc&, const Key&, const Key&>;
+
 	template<typename Key, typename KeyArg,
 		typename = void>
 	struct TreeTraitsIsValidKeyArg : public std::false_type
@@ -79,10 +82,10 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
+	requires requires (const KeyArg1& key1, const KeyArg2& key2)
+		{ { key1 < key2 } -> std::convertible_to<bool>; }
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same_v<Key, KeyArg2>) || IsValidKeyArg<KeyArg2>::value);
 		return std::less<>()(key1, key2);
 	}
 };
@@ -91,6 +94,7 @@ template<conceptObject TKey,
 	typename TLessFunc = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
+requires internal::conceptLessFunc<TLessFunc, TKey> && std::is_copy_constructible_v<TLessFunc>
 class TreeTraitsStd
 {
 public:
@@ -100,8 +104,8 @@ public:
 
 	static const bool multiKey = tMultiKey;
 
-	static const bool useLinearSearch =
-		std::is_same_v<LessFunc, std::less<Key>> && IsFastComparable<Key>::value;
+	static const bool useLinearSearch = IsFastComparable<Key>::value
+		&& (std::is_same_v<LessFunc, std::less<Key>> || std::is_same_v<LessFunc, std::less<>>);
 
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;
@@ -113,10 +117,10 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
+	requires (std::is_same_v<Key, KeyArg1> || IsValidKeyArg<KeyArg1>::value) &&
+		(std::is_same_v<Key, KeyArg2> || IsValidKeyArg<KeyArg2>::value)
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same_v<Key, KeyArg2>) || IsValidKeyArg<KeyArg2>::value);
 		return mLessFunc(key1, key2);
 	}
 
