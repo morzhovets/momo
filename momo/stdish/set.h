@@ -665,8 +665,8 @@ set(Iterator, Iterator, Allocator = Allocator()) \
 template<typename Iterator, typename LessFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires std::strict_weak_order<const LessFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptLessFunc<LessFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>; \
 template<typename Key, \
@@ -676,8 +676,8 @@ set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires std::strict_weak_order<const LessFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptLessFunc<LessFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 

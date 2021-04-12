@@ -700,16 +700,16 @@ unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
 template<typename Iterator, typename HashFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& std::equivalence_relation<const EqualFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
 template<typename Key> \
@@ -722,15 +722,15 @@ unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& std::equivalence_relation<const EqualFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 

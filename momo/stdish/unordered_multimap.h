@@ -783,17 +783,17 @@ template<typename Iterator, typename HashFunc, \
 	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
 	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_multimap(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
 	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& std::equivalence_relation<const EqualFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_multimap(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>; \
 template<typename Key, typename Mapped> \
@@ -806,15 +806,15 @@ unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, Alloca
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename Mapped, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires std::regular_invocable<const HashFunc&, const Key&> \
-	&& std::equivalence_relation<const EqualFunc&, const Key&, const Key&> \
-	&& momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
 unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 
