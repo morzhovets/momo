@@ -53,7 +53,8 @@ template<typename MemManager>
 concept conceptMemManager =
 	std::is_nothrow_destructible_v<MemManager> &&
 	std::is_nothrow_move_constructible_v<MemManager> &&
-	requires (MemManager& memManager, void* ptr, size_t size) {
+	requires (MemManager& memManager, void* ptr, size_t size)
+	{
 		{ memManager.Allocate(size) } -> std::same_as<void*>;
 		{ memManager.Deallocate(ptr, size) } noexcept -> std::same_as<void>;
 	};
@@ -62,27 +63,23 @@ namespace internal
 {
 	template<typename MemManager>
 	concept conceptMemManagerWithReallocate = conceptMemManager<MemManager> &&
-		requires (MemManager& memManager, void* ptr, size_t size) {
-			{ memManager.Reallocate(ptr, size, size) } -> std::same_as<void*>;
-		};
+		requires (MemManager& memManager, void* ptr, size_t size)
+			{ { memManager.Reallocate(ptr, size, size) } -> std::same_as<void*>; };
 
 	template<typename MemManager>
 	concept conceptMemManagerWithReallocateInplace = conceptMemManager<MemManager> &&
-		requires (MemManager& memManager, void* ptr, size_t size) {
-			{ memManager.ReallocateInplace(ptr, size, size) } noexcept -> std::same_as<bool>;
-		};
+		requires (MemManager& memManager, void* ptr, size_t size)
+			{ { memManager.ReallocateInplace(ptr, size, size) } noexcept -> std::same_as<bool>; };
 
 	template<typename MemManager>
 	concept conceptMemManagerWithIsEqual = conceptMemManager<MemManager> &&
-		requires (const MemManager& memManager) {
-			{ memManager.IsEqual(memManager) } noexcept -> std::same_as<bool>;
-		};
+		requires (const MemManager& memManager)
+			{ { memManager.IsEqual(memManager) } noexcept -> std::same_as<bool>; };
 
 	template<typename Allocator>
 	concept conceptAllocator =
-		requires (Allocator& alloc) {
-			{ alloc.allocate(size_t{}) };
-		};
+		requires (Allocator& alloc)
+			{ { alloc.allocate(size_t{}) }; };
 }
 
 //! `MemManagerCpp` uses `new` and `delete`

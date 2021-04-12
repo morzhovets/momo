@@ -54,7 +54,8 @@ concept conceptMemPoolParams =
 	std::is_nothrow_destructible_v<MemPoolParams> &&
 	std::is_nothrow_move_constructible_v<MemPoolParams> &&
 	std::is_nothrow_move_assignable_v<MemPoolParams> &&
-	requires {
+	requires
+	{
 		{ MemPoolParams::blockSize } -> std::convertible_to<size_t>;
 		{ MemPoolParams::blockAlignment } -> std::convertible_to<size_t>;
 		{ MemPoolParams::blockCount } -> std::convertible_to<size_t>;
