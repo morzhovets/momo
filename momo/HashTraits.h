@@ -41,6 +41,14 @@ namespace momo
 
 namespace internal
 {
+	template<typename HashFunc, typename Key>
+	concept conceptHashFunc =
+		requires (const HashFunc& hashFunc, const Key& key)
+			{ { hashFunc(key) } -> std::convertible_to<size_t>; };
+
+	template<typename EqualFunc, typename Key>
+	concept conceptEqualFunc = std::equivalence_relation<const EqualFunc&, const Key&, const Key&>;
+
 #ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
 	template<typename TString,
 		typename TChar = typename TString::value_type,
@@ -139,19 +147,21 @@ public:
 	}
 
 	template<typename KeyArg>
+	requires std::is_convertible_v<const KeyArg&, const KeyArgBase&> &&
+		internal::conceptHashFunc<HashCoder<KeyArgBase>, KeyArgBase> &&
+		std::is_default_constructible_v<HashCoder<KeyArgBase>> // && std::is_empty_v<HashCoder<KeyArgBase>>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		static_assert((std::is_convertible_v<const KeyArg&, const KeyArgBase&>));
-		//static_assert(std::is_empty_v<HashCoder<KeyArgBase>>);
-		return HashCoder<KeyArgBase>()(key);
+		return HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key));
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
+	requires std::is_convertible_v<const KeyArg1&, const KeyArgBase&> &&
+		std::is_convertible_v<const KeyArg2&, const KeyArgBase&> &&
+		requires (const KeyArgBase& key) { { key == key } -> std::convertible_to<bool>; }
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_convertible_v<const KeyArg1&, const KeyArgBase&>));
-		static_assert((std::is_convertible_v<const KeyArg2&, const KeyArgBase&>));
-		return std::equal_to<KeyArgBase>()(key1, key2);
+		return static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2);
 	}
 };
 
@@ -176,6 +186,8 @@ template<conceptObject TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
+requires internal::conceptHashFunc<THashFunc, TKey> && std::is_copy_constructible_v<THashFunc> &&
+	internal::conceptEqualFunc<TEqualFunc, TKey> && std::is_copy_constructible_v<TEqualFunc>
 class HashTraitsStd
 {
 public:
@@ -230,17 +242,17 @@ public:
 	}
 
 	template<typename KeyArg>
+	requires std::is_same_v<Key, KeyArg> || IsValidKeyArg<KeyArg>::value
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		static_assert((std::is_same_v<Key, KeyArg>) || IsValidKeyArg<KeyArg>::value);
 		return mHashFunc(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
+	requires (std::is_same_v<Key, KeyArg1> || IsValidKeyArg<KeyArg1>::value) &&
+		(std::is_same_v<Key, KeyArg2> || IsValidKeyArg<KeyArg2>::value)
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		static_assert((std::is_same_v<Key, KeyArg1>) || IsValidKeyArg<KeyArg1>::value);
-		static_assert((std::is_same_v<Key, KeyArg2>));
 		return mEqualFunc(key1, key2);
 	}
 
