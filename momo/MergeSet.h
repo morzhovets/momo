@@ -389,6 +389,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
+requires conceptMergeTraits<TMergeTraits, TKey>
 class MergeSet
 {
 public:

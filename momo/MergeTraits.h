@@ -7,6 +7,7 @@
   momo/MergeTraits.h
 
   namespace momo:
+    concept conceptMergeTraits
     class MergeTraits
 
 \**********************************************************/
@@ -17,6 +18,18 @@
 
 namespace momo
 {
+
+template<typename MergeTraits, typename Key>
+concept conceptMergeTraits =
+	std::is_nothrow_destructible_v<MergeTraits> &&
+	std::is_copy_constructible_v<MergeTraits> &&
+	requires (const MergeTraits& mergeTraits, const Key& key)
+	{
+		typename MergeTraits::MergeArraySettings;
+		{ MergeTraits::isNothrowComparable } -> std::convertible_to<bool>;
+		{ mergeTraits.IsLess(key, key) } -> std::convertible_to<bool>;
+		{ mergeTraits.IsEqual(key, key) } -> std::convertible_to<bool>;
+	};
 
 template<conceptObject TKey,
 	bool tIsNothrowComparable = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>()),

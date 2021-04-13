@@ -190,6 +190,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = MergeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = MergeMapSettings>
+requires conceptMergeTraits<TMergeTraits, TKey>
 class MergeMap
 {
 public:
