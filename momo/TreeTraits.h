@@ -71,7 +71,7 @@ concept conceptTreeTraits =
 		{ TreeTraits::multiKey } -> std::convertible_to<bool>;
 		{ TreeTraits::useLinearSearch } -> std::convertible_to<bool>;
 		{ TreeTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
-		{ treeTraits.IsLess(key, key) } -> std::convertible_to<bool>;
+		{ treeTraits.IsLess(key, key) } -> std::same_as<bool>;
 	};
 
 template<conceptObject TKey,

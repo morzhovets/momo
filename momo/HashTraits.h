@@ -120,11 +120,11 @@ concept conceptHashTraits =
 		typename HashTraits::HashBucket;
 		{ HashTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
 		{ HashTraits::isFastNothrowHashable } -> std::convertible_to<bool>;
-		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::convertible_to<size_t>;
-		{ hashTraits.GetBucketCountShift(size_t{}, size_t{}) } -> std::convertible_to<size_t>;
-		{ hashTraits.GetLogStartBucketCount() } -> std::convertible_to<size_t>;
-		{ hashTraits.GetHashCode(key) } -> std::convertible_to<size_t>;
-		{ hashTraits.IsEqual(key, key) } -> std::convertible_to<bool>;
+		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::same_as<size_t>;
+		{ hashTraits.GetBucketCountShift(size_t{}, size_t{}) } -> std::same_as<size_t>;
+		{ hashTraits.GetLogStartBucketCount() } -> std::same_as<size_t>;
+		{ hashTraits.GetHashCode(key) } -> std::same_as<size_t>;
+		{ hashTraits.IsEqual(key, key) } -> std::same_as<bool>;
 	};
 
 template<conceptObject TKey,

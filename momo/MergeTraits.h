@@ -27,8 +27,8 @@ concept conceptMergeTraits =
 	{
 		typename MergeTraits::MergeArraySettings;
 		{ MergeTraits::isNothrowComparable } -> std::convertible_to<bool>;
-		{ mergeTraits.IsLess(key, key) } -> std::convertible_to<bool>;
-		{ mergeTraits.IsEqual(key, key) } -> std::convertible_to<bool>;
+		{ mergeTraits.IsLess(key, key) } -> std::same_as<bool>;
+		{ mergeTraits.IsEqual(key, key) } -> std::same_as<bool>;
 	};
 
 template<conceptObject TKey,
