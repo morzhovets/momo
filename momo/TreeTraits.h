@@ -9,6 +9,7 @@
   namespace momo:
     struct IsFastComparable
     class TreeNodeDefault
+    concept conceptTreeTraits
     class TreeTraits
     class TreeTraitsStd
 
@@ -59,6 +60,19 @@ struct IsFastComparable : public std::bool_constant<MOMO_IS_FAST_COMPARABLE(Key)
 };
 
 typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
+
+template<typename TreeTraits, typename Key>
+concept conceptTreeTraits =
+	std::is_nothrow_destructible_v<TreeTraits> &&
+	std::is_copy_constructible_v<TreeTraits> &&
+	requires (const TreeTraits& treeTraits, const Key& key)
+	{
+		typename TreeTraits::TreeNode;
+		{ TreeTraits::multiKey } -> std::convertible_to<bool>;
+		{ TreeTraits::useLinearSearch } -> std::convertible_to<bool>;
+		{ TreeTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
+		{ treeTraits.IsLess(key, key) } -> std::convertible_to<bool>;
+	};
 
 template<conceptObject TKey,
 	bool tMultiKey = false,

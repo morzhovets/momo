@@ -149,6 +149,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
+requires conceptTreeTraits<TTreeTraits, TKey>
 class TreeMap
 {
 public:

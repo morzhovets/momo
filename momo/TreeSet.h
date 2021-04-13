@@ -247,6 +247,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
+requires conceptTreeTraits<TTreeTraits, TKey>
 class TreeSet
 {
 public:
