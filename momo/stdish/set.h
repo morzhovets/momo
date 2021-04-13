@@ -533,24 +533,21 @@ public:
 		return size() == right.size() && std::equal(begin(), end(), right.begin());
 	}
 
-	bool operator<(const set& right) const
+	auto operator<=>(const set& right) const
 	{
-		return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
-	}
-
-	bool operator>(const set& right) const
-	{
-		return right < *this;
-	}
-
-	bool operator<=(const set& right) const
-	{
-		return !(right < *this);
-	}
-
-	bool operator>=(const set& right) const
-	{
-		return right <= *this;
+		auto comp = [] (const value_type& value1, const value_type& value2)
+		{
+			if constexpr (std::three_way_comparable<value_type>)
+				return value1 <=> value2;
+			else if (value1 < value2)
+				return std::weak_ordering::less;
+			else if (value2 < value1)
+				return std::weak_ordering::greater;
+			else
+				return std::weak_ordering::equivalent;
+		};
+		return std::lexicographical_compare_three_way(begin(), end(),
+			right.begin(), right.end(), comp);
 	}
 
 private:
