@@ -78,8 +78,11 @@ namespace internal
 
 	template<typename Allocator>
 	concept conceptAllocator =
-		requires (Allocator& alloc)
-			{ { alloc.allocate(size_t{}) }; };
+		requires (Allocator& alloc, typename Allocator::value_type* ptr, size_t count)
+		{
+			{ alloc.allocate(count) } -> std::same_as<typename Allocator::value_type*>;
+			{ alloc.deallocate(ptr, count) } -> std::same_as<void>;
+		};
 }
 
 //! `MemManagerCpp` uses `new` and `delete`
