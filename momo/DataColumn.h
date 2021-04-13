@@ -12,6 +12,7 @@
     MOMO_DATA_COLUMN_STRING
 
   namespace momo:
+    concept conceptDataColumnList
     class DataSettings
     struct DataStructDefault
     class DataColumnTraits
@@ -339,6 +340,28 @@ namespace internal
 	};
 }
 
+template<typename DataColumnList,
+	typename TestItem = void*>
+concept conceptDataColumnList =
+	std::is_nothrow_destructible_v<DataColumnList> &&
+	std::is_nothrow_move_constructible_v<DataColumnList> &&
+	conceptMemManager<typename DataColumnList::MemManager> &&
+	requires (const DataColumnList& columnList, DataColumnList& columnListMut,
+		typename DataColumnList::Raw* raw, typename DataColumnList::ColumnInfo columnInfo)
+	{
+		typename DataColumnList::Settings;
+		typename DataColumnList::template Column<TestItem>;
+		{ columnListMut.GetMemManager() } noexcept
+			-> std::same_as<typename DataColumnList::MemManager&>;
+		{ columnList.GetTotalSize() } noexcept -> std::same_as<size_t>;
+		{ columnList.GetAlignment() } noexcept -> std::same_as<size_t>;
+		{ columnListMut.CreateRaw(raw) } -> std::same_as<void>;
+		{ columnListMut.DestroyRaw(raw) } noexcept -> std::same_as<void>;
+		{ columnList.GetOffset(columnInfo) } -> std::same_as<size_t>;
+		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
+			-> std::same_as<TestItem&>;
+	};
+
 template<bool tKeepRowNumber = false>
 class DataSettings
 {
@@ -361,13 +384,13 @@ struct DataStructDefault
 
 template<typename TStruct = DataStructDefault<>,
 	size_t tLogVertexCount = 8>
+requires (4 <= tLogVertexCount && tLogVertexCount < 16)
 class DataColumnTraits
 {
 public:
 	typedef TStruct Struct;
 
 	static const size_t logVertexCount = tLogVertexCount;
-	static_assert(4 <= logVertexCount && logVertexCount < 16);
 
 	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
 	static const size_t maxCodeParam = 255;
@@ -1060,6 +1083,7 @@ private:
 template<typename TStruct,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = DataSettings<>>
+requires std::is_class_v<TStruct>
 class DataColumnListStatic
 {
 public:
@@ -1076,8 +1100,6 @@ public:
 	using QualifiedColumn = Column<Item>;	//?
 
 	typedef Struct Raw;
-
-	static_assert(std::is_class_v<Struct>);
 
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;

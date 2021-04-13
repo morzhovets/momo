@@ -65,9 +65,8 @@ public:
 	`momo::DataTable` is similar to `Boost.MultiIndex`, but its API looks like `ADO.NET DataTable`.
 */
 
-template<typename TColumnList = DataColumnList<>,
+template<conceptDataColumnList TColumnList = DataColumnList<>,
 	typename TDataTraits = DataTraits>
-requires std::is_nothrow_move_constructible_v<TColumnList>
 class DataTable
 {
 public:
