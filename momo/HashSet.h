@@ -469,6 +469,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
+requires conceptHashTraits<THashTraits, TKey>
 class HashSet
 {
 public:

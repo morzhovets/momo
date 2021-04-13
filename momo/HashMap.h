@@ -258,6 +258,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
+requires conceptHashTraits<THashTraits, TKey>
 class HashMap
 {
 public:

@@ -11,6 +11,7 @@
     struct HashCoder
     class HashBucketDefault
     class HashBucketOpenDefault
+    concept conceptHashTraits
     class HashTraits
     class HashTraitsOpen
     class HashTraitsStd
@@ -109,6 +110,22 @@ struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
+
+template<typename HashTraits, typename Key>
+concept conceptHashTraits =
+	std::is_nothrow_destructible_v<HashTraits> &&
+	std::is_copy_constructible_v<HashTraits> &&
+	requires (const HashTraits& hashTraits, const Key& key)
+	{
+		typename HashTraits::HashBucket;
+		{ HashTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
+		{ HashTraits::isFastNothrowHashable } -> std::convertible_to<bool>;
+		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::convertible_to<size_t>;
+		{ hashTraits.GetBucketCountShift(size_t{}, size_t{}) } -> std::convertible_to<size_t>;
+		{ hashTraits.GetLogStartBucketCount() } -> std::convertible_to<size_t>;
+		{ hashTraits.GetHashCode(key) } -> std::convertible_to<size_t>;
+		{ hashTraits.IsEqual(key, key) } -> std::convertible_to<bool>;
+	};
 
 template<conceptObject TKey,
 	typename THashBucket = HashBucketDefault,
