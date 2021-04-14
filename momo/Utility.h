@@ -117,15 +117,13 @@ enum class ExtraCheckMode
 
 namespace internal
 {
-	template<typename Iterator>
-	concept conceptInputIterator =
-		std::is_base_of_v<std::input_iterator_tag,
+	template<typename Iterator, typename IteratorCategory>
+	concept conceptIterator =
+		std::is_base_of_v<IteratorCategory,
 			typename std::iterator_traits<Iterator>::iterator_category>;
 
 	template<typename Iterator>
-	concept conceptForwardIterator = conceptInputIterator<Iterator> &&
-		std::is_base_of_v<std::forward_iterator_tag,
-			typename std::iterator_traits<Iterator>::iterator_category>;
+	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };

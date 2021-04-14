@@ -565,7 +565,7 @@ public:
 	template<internal::conceptInputIterator ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if constexpr (internal::conceptForwardIterator<ArgIterator>)
+		if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
 			Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
 		ArrayShifter::Insert(*this, index, begin, end);
 	}

@@ -238,7 +238,7 @@ namespace internal
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& memManager = array.GetMemManager();
-			if constexpr (conceptForwardIterator<ArgIterator>)
+			if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
 			{
 				size_t initCount = array.GetCount();
 				MOMO_CHECK(index <= initCount);

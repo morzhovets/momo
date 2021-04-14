@@ -457,14 +457,14 @@ public:
 
 	template<internal::conceptInputIterator ArgIterator>
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
-		: mData(internal::conceptForwardIterator<ArgIterator> ? SMath::Dist(begin, end) : 0,
-			std::move(memManager))
+		: mData(internal::conceptIterator<ArgIterator, std::forward_iterator_tag>
+			? SMath::Dist(begin, end) : 0, std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
-			if constexpr (internal::conceptForwardIterator<ArgIterator>)
+			if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
 				AddBackNogrowCrt(IterCreator(thisMemManager, *iter));
 			else
 				AddBackCrt(IterCreator(thisMemManager, *iter));
@@ -890,7 +890,7 @@ public:
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
-		if constexpr (internal::conceptForwardIterator<ArgIterator>)
+		if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
 		{
 			size_t count = SMath::Dist(begin, end);
 			size_t newCount = GetCount() + count;
