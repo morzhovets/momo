@@ -39,16 +39,16 @@ namespace internal
 		}
 
 		template<typename Item, typename ColumnInfo>
-		std::enable_if_t<std::is_invocable_r_v<void, const RefVisitor&, Item&, ColumnInfo>> operator()(
-			Item* item, ColumnInfo columnInfo) const
+		requires std::is_invocable_r_v<void, const RefVisitor&, Item&, ColumnInfo>
+		void operator()(Item* item, ColumnInfo columnInfo) const
 		{
 			mRefVisitor(*item, columnInfo);
 		}
 
 		template<typename Item, typename ColumnInfo>
-		std::enable_if_t<std::is_invocable_r_v<void, const RefVisitor&, Item&> &&
-			!std::is_invocable_r_v<void, const RefVisitor&, Item&, ColumnInfo>>
-		operator()(Item* item, ColumnInfo /*columnInfo*/) const
+		requires std::is_invocable_r_v<void, const RefVisitor&, Item&> &&
+			!std::is_invocable_r_v<void, const RefVisitor&, Item&, ColumnInfo>
+		void operator()(Item* item, ColumnInfo /*columnInfo*/) const
 		{
 			mRefVisitor(*item);
 		}

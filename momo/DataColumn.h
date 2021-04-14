@@ -319,16 +319,16 @@ namespace internal
 		}
 
 		template<typename Item, typename PtrVisitor>
-		std::enable_if_t<std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>> pvVisit(
-			Item* item, const PtrVisitor& ptrVisitor) const
+		requires std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>
+		void pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, *this);
 		}
 
 		template<typename Item, typename PtrVisitor>
-		std::enable_if_t<std::is_invocable_r_v<void, const PtrVisitor&, Item*> &&
-			!std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>>
-		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		requires std::is_invocable_r_v<void, const PtrVisitor&, Item*> &&
+			!std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>
+		void pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item);
 		}
