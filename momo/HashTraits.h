@@ -63,19 +63,6 @@ namespace internal
 		typedef TStringView StringView;
 	};
 #endif
-
-	template<typename HashFunc, typename EqualFunc,
-		typename = void>
-	struct HashTraitsStdIsValidKeyArg : public std::false_type
-	{
-	};
-
-	template<typename HashFunc, typename EqualFunc>
-	struct HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc,
-		std::void_t<typename HashFunc::is_transparent, typename EqualFunc::is_transparent>>
-		: public std::true_type
-	{
-	};
 }
 
 template<typename Key>
@@ -214,7 +201,8 @@ public:
 	typedef THashBucket HashBucket;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc>;
+	using IsValidKeyArg = std::bool_constant<
+		internal::conceptTransparent<HashFunc> && internal::conceptTransparent<EqualFunc>>;
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value &&
 		(std::is_same_v<HashFunc, HashCoder<Key>> || std::is_same_v<HashFunc, std::hash<Key>>);

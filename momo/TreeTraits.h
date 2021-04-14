@@ -40,18 +40,6 @@ namespace internal
 		: public std::true_type
 	{
 	};
-
-	template<typename LessFunc,
-		typename = void>
-	struct TreeTraitsStdIsValidKeyArg : public std::false_type
-	{
-	};
-
-	template<typename LessFunc>
-	struct TreeTraitsStdIsValidKeyArg<LessFunc, std::void_t<typename LessFunc::is_transparent>>
-		: public std::true_type
-	{
-	};
 }
 
 template<typename Key>
@@ -122,7 +110,7 @@ public:
 		&& (std::is_same_v<LessFunc, std::less<Key>> || std::is_same_v<LessFunc, std::less<>>);
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;
+	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessFunc>>;
 
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())

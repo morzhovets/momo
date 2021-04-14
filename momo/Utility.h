@@ -127,6 +127,9 @@ namespace internal
 		std::is_base_of_v<std::forward_iterator_tag,
 			typename std::iterator_traits<Iterator>::iterator_category>;
 
+	template<typename Predicate>
+	concept conceptTransparent = requires { typename Predicate::is_transparent; };
+
 	template<size_t size,
 		typename Default = void>
 	struct UIntSelector
