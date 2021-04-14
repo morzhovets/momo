@@ -71,14 +71,14 @@ namespace internal
 		}
 	};
 
-	template<typename TContainerTraits, conceptMemManager TMemManager, bool tKeepVersion,
-		bool tUsePtr = !std::is_nothrow_move_constructible_v<TContainerTraits>
-			|| !std::is_nothrow_move_assignable_v<TContainerTraits>
-			|| !std::is_empty_v<MemManagerPtr<TMemManager>> || tKeepVersion>
+	template<typename TContainerTraits, conceptMemManager TMemManager, bool tKeepVersion>
 	class SetCrew;
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
-	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, true>
+	requires (!std::is_nothrow_move_constructible_v<TContainerTraits> ||
+		!std::is_nothrow_move_assignable_v<TContainerTraits> ||
+		!std::is_empty_v<MemManagerPtr<TMemManager>> || tKeepVersion)
+	class SetCrew<TContainerTraits, TMemManager, tKeepVersion>
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
@@ -186,17 +186,16 @@ namespace internal
 	};
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
-	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false>
+	requires (std::is_nothrow_move_constructible_v<TContainerTraits> &&
+		std::is_nothrow_move_assignable_v<TContainerTraits> &&
+		std::is_empty_v<MemManagerPtr<TMemManager>> && !tKeepVersion)
+	class SetCrew<TContainerTraits, TMemManager, tKeepVersion>
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		static_assert(std::is_nothrow_move_constructible_v<ContainerTraits>);
-		static_assert(std::is_nothrow_move_assignable_v<ContainerTraits>);
-
 		static const bool keepVersion = tKeepVersion;
-		static_assert(!keepVersion);
 
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)

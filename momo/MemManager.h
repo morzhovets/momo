@@ -398,12 +398,12 @@ namespace internal
 		}
 	};
 
-	template<conceptMemManager TMemManager,
-		bool tIsEmpty = std::is_empty_v<TMemManager>>
+	template<conceptMemManager TMemManager>
 	class MemManagerWrapper;
 
 	template<typename TMemManager>
-	class MemManagerWrapper<TMemManager, false>
+	requires (!std::is_empty_v<TMemManager>)
+	class MemManagerWrapper<TMemManager>
 	{
 	public:
 		typedef TMemManager MemManager;
@@ -450,7 +450,8 @@ namespace internal
 	};
 
 	template<typename TMemManager>
-	class MemManagerWrapper<TMemManager, true> : private TMemManager
+	requires (std::is_empty_v<TMemManager>)
+	class MemManagerWrapper<TMemManager> : private TMemManager
 	{
 	public:
 		typedef TMemManager MemManager;
@@ -515,13 +516,13 @@ namespace internal
 		}
 	};
 
-	template<conceptMemManager TBaseMemManager,
-		bool tIsEmpty = std::is_empty_v<TBaseMemManager>
-			&& std::is_nothrow_default_constructible_v<TBaseMemManager>>
+	template<conceptMemManager TBaseMemManager>
 	class MemManagerPtr;
 
 	template<typename TBaseMemManager>
-	class MemManagerPtr<TBaseMemManager, true> : private TBaseMemManager
+	requires (std::is_empty_v<TBaseMemManager> &&
+		std::is_nothrow_default_constructible_v<TBaseMemManager>)
+	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
 	{
 	public:
 		typedef TBaseMemManager BaseMemManager;
@@ -589,7 +590,9 @@ namespace internal
 	};
 
 	template<typename TBaseMemManager>
-	class MemManagerPtr<TBaseMemManager, false>
+	requires (!std::is_empty_v<TBaseMemManager> ||
+		!std::is_nothrow_default_constructible_v<TBaseMemManager>)
+	class MemManagerPtr<TBaseMemManager>
 	{
 	public:
 		typedef TBaseMemManager BaseMemManager;
