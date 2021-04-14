@@ -21,13 +21,12 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItem, uint8_t tMaskState, size_t tBitCount,
-		typename = void>
+	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
 	class BucketLimP4PtrState;
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
-	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		std::enable_if_t<(tBitCount <= 32)>>
+	requires (tBitCount <= 32)
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount>
 	{
 	public:
 		typedef TItem Item;
@@ -62,8 +61,8 @@ namespace internal
 	};
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
-	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		std::enable_if_t<(32 < tBitCount && tBitCount <= 48)>>
+	requires (32 < tBitCount && tBitCount <= 48)
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount>
 	{
 	public:
 		typedef TItem Item;
@@ -101,8 +100,8 @@ namespace internal
 	};
 
 	template<typename TItem, uint8_t tMaskState, size_t tBitCount>
-	class BucketLimP4PtrState<TItem, tMaskState, tBitCount,
-		std::enable_if_t<(48 < tBitCount && tBitCount <= 64)>>
+	requires (48 < tBitCount && tBitCount <= 64)
+	class BucketLimP4PtrState<TItem, tMaskState, tBitCount>
 	{
 	public:
 		typedef TItem Item;
