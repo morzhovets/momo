@@ -27,19 +27,13 @@ namespace internal
 	template<typename LessFunc, typename Key>
 	concept conceptLessFunc = std::strict_weak_order<const LessFunc&, const Key&, const Key&>;
 
-	template<typename Key, typename KeyArg,
-		typename = void>
-	struct TreeTraitsIsValidKeyArg : public std::false_type
-	{
-	};
-
 	template<typename Key, typename KeyArg>
-	struct TreeTraitsIsValidKeyArg<Key, KeyArg, std::enable_if_t<
-		std::is_convertible_v<decltype(std::declval<const Key&>() < std::declval<const KeyArg&>()), bool> &&
-		std::is_convertible_v<decltype(std::declval<const KeyArg&>() < std::declval<const Key&>()), bool>>>
-		: public std::true_type
-	{
-	};
+	concept conceptTreeTraitsValidKeyArg =
+		requires (const Key& key1, const KeyArg& key2)
+		{
+			{ key1 < key2 } -> std::convertible_to<bool>;
+			{ key2 < key1 } -> std::convertible_to<bool>;
+		};
 }
 
 template<typename Key>
@@ -76,7 +70,7 @@ public:
 	static const bool useLinearSearch = tUseLinearSearch;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::TreeTraitsIsValidKeyArg<Key, KeyArg>;
+	using IsValidKeyArg = std::bool_constant<internal::conceptTreeTraitsValidKeyArg<Key, KeyArg>>;
 
 public:
 	explicit TreeTraits() noexcept
