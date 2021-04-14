@@ -199,7 +199,7 @@ namespace internal
 		}
 	};
 
-	template<typename TUInt = size_t>
+	template<std::unsigned_integral TUInt = size_t>
 	class UIntMath
 	{
 	public:

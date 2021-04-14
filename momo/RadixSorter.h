@@ -17,13 +17,13 @@ namespace momo
 
 namespace internal
 {
-	template<typename Iterator,
-		typename = void>
+	template<typename Iterator>
 	struct RadixSorterCodeGetter;
 
 	template<typename Iterator>
-	struct RadixSorterCodeGetter<Iterator,
-		std::enable_if_t<std::is_integral_v<std::iter_value_t<Iterator>>>>
+	requires std::integral<std::iter_value_t<Iterator>> &&
+		std::unsigned_integral<typename UIntSelector<sizeof(std::iter_value_t<Iterator>)>::UInt>
+	struct RadixSorterCodeGetter<Iterator>
 	{
 		auto operator()(Iterator iter) const noexcept
 		{
@@ -33,8 +33,8 @@ namespace internal
 	};
 
 	template<typename Iterator>
-	struct RadixSorterCodeGetter<Iterator,
-		std::enable_if_t<std::is_pointer_v<std::iter_value_t<Iterator>>>>
+	requires std::is_pointer_v<std::iter_value_t<Iterator>>
+	struct RadixSorterCodeGetter<Iterator>
 	{
 		uintptr_t operator()(Iterator iter) const noexcept
 		{
@@ -43,11 +43,11 @@ namespace internal
 	};
 
 	template<size_t tRadixSize = 8>
+	requires (0 < tRadixSize && tRadixSize <= 16)
 	class RadixSorter
 	{
 	public:
 		static const size_t radixSize = tRadixSize;
-		static_assert(0 < radixSize && radixSize <= 16);
 
 	private:
 		static const size_t radixCount = size_t{1} << radixSize;
