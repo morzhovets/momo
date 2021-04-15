@@ -100,8 +100,7 @@ typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
 template<typename HashTraits, typename Key>
 concept conceptHashTraits =
-	std::is_nothrow_destructible_v<HashTraits> &&
-	std::is_copy_constructible_v<HashTraits> &&
+	std::copy_constructible<HashTraits> &&
 	requires (const HashTraits& hashTraits, const Key& key)
 	{
 		typename HashTraits::HashBucket;
@@ -190,8 +189,8 @@ template<conceptObject TKey,
 	typename THashFunc = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
-requires internal::conceptHashFunc<THashFunc, TKey> && std::is_copy_constructible_v<THashFunc> &&
-	internal::conceptEqualFunc<TEqualFunc, TKey> && std::is_copy_constructible_v<TEqualFunc>
+requires internal::conceptHashFunc<THashFunc, TKey> && std::copy_constructible<THashFunc> &&
+	internal::conceptEqualFunc<TEqualFunc, TKey> && std::copy_constructible<TEqualFunc>
 class HashTraitsStd
 {
 public:

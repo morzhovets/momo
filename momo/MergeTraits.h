@@ -21,8 +21,7 @@ namespace momo
 
 template<typename MergeTraits, typename Key>
 concept conceptMergeTraits =
-	std::is_nothrow_destructible_v<MergeTraits> &&
-	std::is_copy_constructible_v<MergeTraits> &&
+	std::copy_constructible<MergeTraits> &&
 	requires (const MergeTraits& mergeTraits, const Key& key)
 	{
 		typename MergeTraits::MergeArraySettings;

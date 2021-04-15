@@ -45,8 +45,7 @@ typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
 
 template<typename TreeTraits, typename Key>
 concept conceptTreeTraits =
-	std::is_nothrow_destructible_v<TreeTraits> &&
-	std::is_copy_constructible_v<TreeTraits> &&
+	std::copy_constructible<TreeTraits> &&
 	requires (const TreeTraits& treeTraits, const Key& key)
 	{
 		typename TreeTraits::TreeNode;
@@ -90,7 +89,7 @@ template<conceptObject TKey,
 	typename TLessFunc = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
-requires internal::conceptLessFunc<TLessFunc, TKey> && std::is_copy_constructible_v<TLessFunc>
+requires internal::conceptLessFunc<TLessFunc, TKey> && std::copy_constructible<TLessFunc>
 class TreeTraitsStd
 {
 public:

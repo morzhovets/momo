@@ -71,16 +71,11 @@ namespace internal
 		}
 	};
 
-	template<typename ContainerTraits>
-	concept conceptContainerTraits =
-		std::is_nothrow_destructible_v<ContainerTraits> &&
-		std::is_copy_constructible_v<ContainerTraits>;
-
-	template<conceptContainerTraits TContainerTraits, conceptMemManager TMemManager,
+	template<std::copy_constructible TContainerTraits, conceptMemManager TMemManager,
 		bool tKeepVersion>
 	class SetCrew;
 
-	template<conceptContainerTraits TContainerTraits, conceptMemManager TMemManager,
+	template<std::copy_constructible TContainerTraits, conceptMemManager TMemManager,
 		bool tKeepVersion>
 	requires (!std::is_nothrow_move_constructible_v<TContainerTraits> ||
 		!std::is_nothrow_move_assignable_v<TContainerTraits> ||
@@ -192,7 +187,7 @@ namespace internal
 		Data* mData;
 	};
 
-	template<conceptContainerTraits TContainerTraits, conceptMemManager TMemManager,
+	template<std::copy_constructible TContainerTraits, conceptMemManager TMemManager,
 		bool tKeepVersion>
 	requires (std::is_nothrow_move_constructible_v<TContainerTraits> &&
 		std::is_nothrow_move_assignable_v<TContainerTraits> &&
