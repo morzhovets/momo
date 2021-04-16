@@ -59,6 +59,7 @@ public:
 	static const bool isNothrowDestructible = std::is_nothrow_destructible_v<Object>;
 
 public:
+	template<typename = void> requires isNothrowDestructible
 	static void Destroy(MemManager* /*memManager*/, Object& object) noexcept
 	{
 		if constexpr (!std::is_trivially_destructible_v<Object>)
@@ -84,6 +85,7 @@ public:
 			|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object));
 
 public:
+	template<typename = void> requires isRelocatable
 	static void Relocate(MemManager* memManager, Object& srcObject,
 		Object* dstObject) noexcept(isNothrowRelocatable)
 	{
@@ -265,7 +267,8 @@ namespace internal
 		}
 
 		template<typename Func>
-		requires std::invocable<Func&&> && isMoveConstructible && isNothrowDestructible
+		requires std::invocable<Func&&> &&
+			isMoveConstructible && isNothrowDestructible
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -291,7 +294,8 @@ namespace internal
 		}
 
 		template<typename Func>
-		requires std::invocable<Func&&> && isCopyConstructible && isNothrowDestructible
+		requires std::invocable<Func&&> &&
+			isCopyConstructible && isNothrowDestructible
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -477,7 +481,8 @@ namespace internal
 		}
 
 		template<conceptInputIterator Iterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> && isNothrowShiftable
+		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> &&
+			isNothrowShiftable
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			if (shift == 0)
