@@ -464,6 +464,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
+	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
 		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
@@ -511,6 +512,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
+	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
 		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
@@ -537,6 +539,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
+	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
 		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),

@@ -523,6 +523,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return pvInsert(std::move(key),
@@ -547,6 +548,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
 	{
 		return pvInsert(key,
@@ -616,6 +618,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	Position AddVar(ConstPosition pos, Key&& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(pos, std::move(key),
@@ -641,6 +644,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	Position AddVar(ConstPosition pos, const Key& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(pos, key,

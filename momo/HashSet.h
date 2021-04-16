@@ -787,6 +787,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
+	requires requires { Creator<ItemArgs...>; }
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
 		return InsertCrt(key,
@@ -842,6 +843,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
+	requires requires { Creator<ItemArgs...>; }
 	Position AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
 		return AddCrt(pos,

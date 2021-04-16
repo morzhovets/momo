@@ -429,6 +429,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return pvInsert(std::move(key),
@@ -453,6 +454,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
 	{
 		return pvInsert(key,
@@ -545,6 +547,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(iter, std::move(key),
@@ -570,6 +573,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
+	requires requires { ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(iter, key,
