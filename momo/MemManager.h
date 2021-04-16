@@ -325,21 +325,26 @@ namespace internal
 
 	private:
 		template<conceptMemManager MemManager>
-		static const size_t ptrUsefulBitCountTempl =
+		struct PtrUsefulBitCount
+		{
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-			MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 #else
-			sizeof(void*) * 8;
+			static const size_t value = sizeof(void*) * 8;
 #endif
+		};
 
 		template<conceptMemManagerWithPtrUsefulBitCount MemManager>
-		static const size_t ptrUsefulBitCountTempl<MemManager> = MemManager::ptrUsefulBitCount;
+		struct PtrUsefulBitCount<MemManager>
+		{
+			static const size_t value = MemManager::ptrUsefulBitCount;
+		};
 
 	public:
 		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
 		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
 
-		static const size_t ptrUsefulBitCount = ptrUsefulBitCountTempl<MemManager>;
+		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
 
 	public:
 		template<typename ResObject = void>
