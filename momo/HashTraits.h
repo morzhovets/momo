@@ -11,6 +11,7 @@
     struct HashCoder
     class HashBucketDefault
     class HashBucketOpenDefault
+    struct HashTraitsKeyArgBaseSelector
     concept conceptHashTraits
     class HashTraits
     class HashTraitsOpen
@@ -49,20 +50,6 @@ namespace internal
 
 	template<typename EqualFunc, typename Key>
 	concept conceptEqualFunc = std::equivalence_relation<const EqualFunc&, const Key&, const Key&>;
-
-#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-	template<typename TString,
-		typename TChar = typename TString::value_type,
-		typename TCharTraits = typename TString::traits_type,
-		typename TStringView = std::basic_string_view<TChar, TCharTraits>,
-		typename = std::enable_if_t<std::is_convertible_v<const TString&, TStringView>
-			&& !std::is_same_v<TString, TStringView>>>
-	struct HashTraitsStringViewSelector
-	{
-		typedef TString String;
-		typedef TStringView StringView;
-	};
-#endif
 }
 
 template<typename Key>
@@ -98,6 +85,22 @@ typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
+template<typename Key>
+struct HashTraitsKeyArgBaseSelector
+{
+	typedef Key KeyArgBase;
+};
+
+#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+template<typename Key>
+requires std::is_convertible_v<const Key&,
+	const std::basic_string_view<typename Key::value_type, typename Key::traits_type>&>
+struct HashTraitsKeyArgBaseSelector<Key>
+{
+	typedef std::basic_string_view<typename Key::value_type, typename Key::traits_type> KeyArgBase;
+};
+#endif
+
 template<typename HashTraits, typename Key>
 concept conceptHashTraits =
 	std::copy_constructible<HashTraits> &&
@@ -115,7 +118,8 @@ concept conceptHashTraits =
 
 template<conceptObject TKey,
 	typename THashBucket = HashBucketDefault,
-	typename TKeyArgBase = TKey>
+	typename TKeyArgBase = typename HashTraitsKeyArgBaseSelector<TKey>::KeyArgBase>
+requires std::is_convertible_v<const TKey&, const TKeyArgBase&>
 class HashTraits
 {
 public:
@@ -167,20 +171,6 @@ public:
 		return static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2);
 	}
 };
-
-#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-template<typename StringKey, typename HashBucket>
-class HashTraits<StringKey, HashBucket,
-	typename internal::HashTraitsStringViewSelector<StringKey>::String>
-	: public HashTraits<StringKey, HashBucket,
-		typename internal::HashTraitsStringViewSelector<StringKey>::StringView>
-{
-public:
-	explicit HashTraits() noexcept
-	{
-	}
-};
-#endif
 
 template<conceptObject TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
