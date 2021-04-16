@@ -740,9 +740,7 @@ public:
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		typedef typename std::iterator_traits<ArgIterator>::reference ArgReference;
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename std::decay<ArgReference>::type>::value)
-			&& std::is_reference<ArgReference>::value);
+		MOMO_STATIC_ASSERT((internal::IsSetArgIterator<ArgIterator, Item>::value));
 		if (begin == end)
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();

@@ -452,8 +452,7 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last,
-			std::is_same<value_type, typename std::decay<decltype(*first)>::type>());
+		pvInsert(first, last, momo::internal::IsSetArgIterator<Iterator, value_type>());
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -581,13 +580,13 @@ private:
 	}
 
 	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isValueType*/)
+	void pvInsert(Iterator first, Iterator last, std::true_type /*isSetArgIterator*/)
 	{
 		mTreeSet.Insert(first, last);
 	}
 
 	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isValueType*/)
+	void pvInsert(Iterator first, Iterator last, std::false_type /*isSetArgIterator*/)
 	{
 		for (Iterator iter = first; iter != last; ++iter)
 			emplace(*iter);

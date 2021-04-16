@@ -341,6 +341,13 @@ namespace internal
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 		bool mHasItem;
 	};
+
+	template<typename ArgIterator, typename Item,
+		typename ArgReference = typename std::iterator_traits<ArgIterator>::reference>
+	struct IsSetArgIterator : public BoolConstant<std::is_reference<ArgReference>::value
+		&& std::is_same<Item, typename std::decay<ArgReference>::type>::value>
+	{
+	};
 }
 
 } // namespace momo

@@ -813,9 +813,7 @@ public:
 	template<typename ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		typedef typename std::iterator_traits<ArgIterator>::reference ArgReference;
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename std::decay<ArgReference>::type>::value)
-			&& std::is_reference<ArgReference>::value);
+		MOMO_STATIC_ASSERT((internal::IsSetArgIterator<ArgIterator, Item>::value));
 		size_t count = 0;
 		for (ArgIterator iter = begin; iter != end; ++iter)
 			count += Insert(*iter).inserted ? size_t{1} : size_t{0};
