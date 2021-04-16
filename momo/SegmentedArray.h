@@ -593,6 +593,21 @@ public:
 		return ArrayShifter::Remove(*this, pred);
 	}
 
+	size_t GetSegmentCount() const noexcept
+	{
+		return mSegments.GetCount();
+	}
+
+	const Item* GetSegmentItems(size_t segIndex) const
+	{
+		return pvGetSegmentItems(segIndex);
+	}
+
+	Item* GetSegmentItems(size_t segIndex)
+	{
+		return pvGetSegmentItems(segIndex);
+	}
+
 	template<typename ItemArg,
 		typename EqualFunc = std::equal_to<>>
 	requires std::equivalence_relation<const EqualFunc&, const ItemArg&, const Item&>
@@ -723,6 +738,12 @@ private:
 		for (size_t i = segIndex; i < segCount; ++i)
 			pvDeallocateSegment(i, mSegments[i]);
 		mSegments.RemoveBack(segCount - segIndex);
+	}
+
+	Item* pvGetSegmentItems(size_t segIndex) const
+	{
+		MOMO_CHECK(segIndex < GetSegmentCount());
+		return mSegments[segIndex];
 	}
 
 private:
