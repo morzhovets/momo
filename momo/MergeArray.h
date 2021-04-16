@@ -648,14 +648,14 @@ public:
 		return (mCapacity > 0) ? pvGetSegIndex(0, mCapacity) + 1 : 0;
 	}
 
-	const Item* GetSegment(size_t segIndex) const
+	const Item* GetSegmentItems(size_t segIndex) const
 	{
-		return pvGetSegment(segIndex);
+		return pvGetSegmentItems(segIndex);
 	}
 
-	Item* GetSegment(size_t segIndex)
+	Item* GetSegmentItems(size_t segIndex)
 	{
-		return pvGetSegment(segIndex);
+		return pvGetSegmentItems(segIndex);
 	}
 
 	template<typename ItemArg,
@@ -789,7 +789,7 @@ private:
 		mCount -= count;
 	}
 
-	Item* pvGetSegment(size_t segIndex) const
+	Item* pvGetSegmentItems(size_t segIndex) const
 	{
 		MOMO_CHECK(segIndex < GetSegmentCount());
 		return mSegments[segIndex];

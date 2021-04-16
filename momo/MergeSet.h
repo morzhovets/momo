@@ -652,30 +652,30 @@ private:
 		while (segIndex > 2)
 		{
 			--segIndex;
-			const Item* segment = mMergeArray.GetSegment(segIndex);
-			if (segment == nullptr)
+			const Item* segItems = mMergeArray.GetSegmentItems(segIndex);
+			if (segItems == nullptr)
 				continue;
 			size_t segItemCount = initialItemCount << (segIndex - 1);
-			const Item* itemPtr = std::lower_bound(segment, segment + segItemCount - 1, key, comp);
+			const Item* itemPtr = std::lower_bound(segItems, segItems + segItemCount - 1, key, comp);
 			if (pred(*itemPtr))
 				return pvMakePosition(*itemPtr);
 		}
 		if (segIndex > 1)
 		{
-			const Item* segment = mMergeArray.GetSegment(1);
-			if (segment != nullptr)
+			const Item* segItems = mMergeArray.GetSegmentItems(1);
+			if (segItems != nullptr)
 			{
-				const Item* itemPtr = std::find_if(segment, segment + initialItemCount, pred);
-				if (itemPtr != segment + initialItemCount)
+				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount, pred);
+				if (itemPtr != segItems + initialItemCount)
 					return pvMakePosition(*itemPtr);
 			}
 		}
 		if (segIndex > 0)
 		{
-			const Item* segment = mMergeArray.GetSegment(0);
+			const Item* segItems = mMergeArray.GetSegmentItems(0);
 			size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
-			const Item* itemPtr = std::find_if(segment, segment + segItemCount, pred);
-			if (itemPtr != segment + segItemCount)
+			const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, pred);
+			if (itemPtr != segItems + segItemCount)
 				return pvMakePosition(*itemPtr);
 		}
 		return Position();
