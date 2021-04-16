@@ -76,6 +76,10 @@ namespace internal
 		requires (const MemManager& memManager)
 			{ { memManager.IsEqual(memManager) } noexcept -> std::same_as<bool>; };
 
+	template<typename MemManager>
+	concept conceptMemManagerWithPtrUsefulBitCount = conceptMemManager<MemManager> &&
+		requires { { MemManager::ptrUsefulBitCount } -> std::convertible_to<size_t>; };
+
 	template<typename Allocator>
 	concept conceptAllocator =
 		requires (Allocator& alloc, typename Allocator::value_type* ptr, size_t count)
@@ -320,28 +324,22 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		template<typename MemManager,
-			typename = size_t>
-		struct PtrUsefulBitCount
-		{
+		template<conceptMemManager MemManager>
+		static const size_t ptrUsefulBitCountTempl =
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+			MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 #else
-			static const size_t value = sizeof(void*) * 8;
+			sizeof(void*) * 8;
 #endif
-		};
 
-		template<typename MemManager>
-		struct PtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
-		{
-			static const size_t value = MemManager::ptrUsefulBitCount;
-		};
+		template<conceptMemManagerWithPtrUsefulBitCount MemManager>
+		static const size_t ptrUsefulBitCountTempl<MemManager> = MemManager::ptrUsefulBitCount;
 
 	public:
 		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
 		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
 
-		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
+		static const size_t ptrUsefulBitCount = ptrUsefulBitCountTempl<MemManager>;
 
 	public:
 		template<typename ResObject = void>
