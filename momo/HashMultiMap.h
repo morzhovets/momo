@@ -939,7 +939,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
-	requires requires { ValueCreator<ValueArgs...>; }
+	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(Key&& key, ValueArgs&&... valueArgs)
 	{
 		return pvAdd(std::move(key),
@@ -964,7 +964,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
-	requires requires { ValueCreator<ValueArgs...>; }
+	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(const Key& key, ValueArgs&&... valueArgs)
 	{
 		return pvAdd(key,
@@ -994,7 +994,7 @@ public:
 	}
 
 	template<typename... ValueArgs>
-	requires requires { ValueCreator<ValueArgs...>; }
+	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstKeyIterator keyIter, ValueArgs&&... valueArgs)
 	{
 		return AddCrt(keyIter,

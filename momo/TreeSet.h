@@ -684,7 +684,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
-	requires requires { Creator<ItemArgs...>; }
+	requires requires { typename Creator<ItemArgs...>; }
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
 		return InsertCrt(key,
@@ -765,7 +765,7 @@ public:
 	}
 
 	template<typename... ItemArgs>
-	requires requires { Creator<ItemArgs...>; }
+	requires requires { typename Creator<ItemArgs...>; }
 	Iterator AddVar(ConstIterator iter, ItemArgs&&... itemArgs)
 	{
 		return AddCrt(iter,
