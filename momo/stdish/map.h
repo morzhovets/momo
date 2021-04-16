@@ -31,9 +31,9 @@ namespace internal
 
 	public:
 		template<typename Value>
+		requires std::is_same_v<Key, std::decay_t<decltype(std::declval<Value>().first)>>
 		bool operator()(const Value& value1, const Value& value2) const
 		{
-			static_assert((std::is_same_v<Key, std::decay_t<decltype(value1.first)>>));
 			return comp(value1.first, value2.first);
 		}
 

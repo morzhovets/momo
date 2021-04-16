@@ -212,7 +212,7 @@ public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<std::byte> ByteAllocator;
 
-	//static_assert(std::is_nothrow_move_constructible_v<ByteAllocator);
+	//static_assert(std::is_nothrow_move_constructible_v<ByteAllocator>);
 
 public:
 	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))

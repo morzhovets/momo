@@ -362,10 +362,9 @@ namespace internal
 		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 		template<typename ValueArg>
+		requires std::is_same_v<ValueArg, Value>
 		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{
-			static_assert((std::is_same_v<ValueArg, Value>));
-
 		private:
 			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
 

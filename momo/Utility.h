@@ -82,7 +82,7 @@
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
 	template<typename... Args> \
 	explicit Object##Proxy(Args&&... args) \
-		noexcept((std::is_nothrow_constructible_v<Object, Args&&...>)) \
+		noexcept(std::is_nothrow_constructible_v<Object, Args&&...>) \
 		: Object(std::forward<Args>(args)...) \
 	{ \
 	}
@@ -93,7 +93,7 @@
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		static_assert((std::is_same_v<Object, std::decay_t<ObjectArg>>)); \
+		static_assert(std::is_same_v<Object, std::decay_t<ObjectArg>>); \
 		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}

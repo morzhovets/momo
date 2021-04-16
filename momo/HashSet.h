@@ -936,10 +936,9 @@ public:
 	}
 
 	template<typename Set>
+	requires std::is_same_v<Key, typename Set::Key> && std::is_same_v<Item, typename Set::Item>
 	void MergeTo(Set& dstSet)
 	{
-		static_assert((std::is_same_v<Key, typename Set::Key>));
-		static_assert((std::is_same_v<Item, typename Set::Item>));
 		pvMergeTo(dstSet);
 	}
 

@@ -35,10 +35,9 @@ namespace internal
 		static const bool isTriviallyRelocatable = ArrayBucketItemTraits::isTriviallyRelocatable;
 
 		template<typename ItemArg>
+		requires std::is_same_v<ItemArg, const Item&>
 		class Creator
 		{
-			static_assert((std::is_same_v<ItemArg, const Item&>));
-
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
 				: mMemManager(memManager),
