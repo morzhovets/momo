@@ -341,6 +341,11 @@ namespace internal
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
 		bool mHasItem;
 	};
+
+	template<typename ArgIterator, typename Item>
+	concept conceptSetArgIterator = conceptInputIterator<ArgIterator> &&
+		std::is_reference_v<std::iter_reference_t<ArgIterator>> &&
+		std::is_same_v<Item, std::decay_t<std::iter_reference_t<ArgIterator>>>;
 }
 
 } // namespace momo

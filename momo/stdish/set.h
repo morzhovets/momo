@@ -448,7 +448,7 @@ public:
 	template<momo::internal::conceptInputIterator Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		if constexpr (std::is_same_v<value_type, std::decay_t<decltype(*first)>>)
+		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)
 		{
 			mTreeSet.Insert(first, last);
 		}

@@ -585,9 +585,8 @@ public:
 			Creator<const Item&>(GetMemManager(), item));
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
-	requires std::is_reference_v<std::iter_reference_t<ArgIterator>> &&
-		std::is_same_v<Item, std::decay_t<std::iter_reference_t<ArgIterator>>>
+	template<typename ArgIterator>
+	requires internal::conceptSetArgIterator<ArgIterator, Item>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		size_t count = 0;
