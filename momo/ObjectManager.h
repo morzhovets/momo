@@ -23,8 +23,8 @@ namespace momo
 {
 
 template<typename Object>
-concept conceptObject = std::is_object_v<Object>
-	&& !std::is_const_v<Object> && !std::is_volatile_v<Object>;
+concept conceptObject = std::is_object_v<Object> &&
+	!std::is_const_v<Object> && !std::is_volatile_v<Object>;
 
 template<conceptObject Object>
 struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
@@ -137,6 +137,24 @@ namespace internal
 		std::aligned_storage_t<sizeof(Object), alignment> mBuffer;
 	};
 
+	template<conceptObject Object, conceptMemManager MemManager, typename... ObjectArgs>
+	struct IsConstructible
+		: public std::is_constructible<Object, ObjectArgs...>
+	{
+	};
+
+	template<conceptObject Object, typename Allocator, typename... ObjectArgs>
+	struct IsConstructible<Object, MemManagerStd<Allocator>, ObjectArgs...>
+		: public std::true_type
+	{
+	};
+
+	template<conceptObject Object, typename AllocObject, typename... ObjectArgs>
+	struct IsConstructible<Object, MemManagerStd<std::allocator<AllocObject>>, ObjectArgs...>
+		: public std::is_constructible<Object, ObjectArgs...>
+	{
+	};
+
 	template<conceptObject TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{
@@ -165,6 +183,7 @@ namespace internal
 		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
 
 		template<typename... Args>
+		requires IsConstructible<Object, MemManager, Args...>::value
 		class Creator
 		{
 		public:
