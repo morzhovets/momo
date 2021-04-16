@@ -56,6 +56,8 @@ public:
 	typedef TObject Object;
 	typedef TMemManager MemManager;
 
+	static const bool isNothrowDestructible = std::is_nothrow_destructible_v<Object>;
+
 public:
 	static void Destroy(MemManager* /*memManager*/, Object& object) noexcept
 	{
@@ -73,9 +75,13 @@ public:
 
 	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
-	static const bool isNothrowRelocatable = isTriviallyRelocatable
-		|| std::is_nothrow_move_constructible_v<Object>
-		|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object);
+	static const bool isRelocatable = isTriviallyRelocatable
+		|| (std::is_move_constructible_v<Object>
+			&& ObjectDestroyer<Object, MemManager>::isNothrowDestructible);
+
+	static const bool isNothrowRelocatable = isRelocatable
+		&& (isTriviallyRelocatable || std::is_nothrow_move_constructible_v<Object>
+			|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object));
 
 public:
 	static void Relocate(MemManager* memManager, Object& srcObject,
@@ -232,20 +238,34 @@ namespace internal
 			std::tuple<Args&&...> mArgs;
 		};
 
+	private:
+		static const bool isNothrowDestructible = Destroyer::isNothrowDestructible;
+
+		static const bool isRelocatable = Relocator::isRelocatable;
+
+		static const bool isMoveConstructible = IsConstructible<Object, MemManager, Object&&>::value;
+
+		static const bool isCopyConstructible = IsConstructible<Object, MemManager, const Object&>::value;
+
+		static const bool isAnywayAssignable = std::is_move_assignable_v<Object>
+			|| isNothrowSwappable || isNothrowRelocatable;
+
 	public:
+		template<typename = void> requires isMoveConstructible
 		static void Move(MemManager& memManager, Object&& srcObject, Object* dstObject)
 			noexcept(isNothrowMoveConstructible)
 		{
 			Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 		}
 
+		template<typename = void> requires isCopyConstructible
 		static void Copy(MemManager& memManager, const Object& srcObject, Object* dstObject)
 		{
 			Creator<const Object&>(memManager, srcObject)(dstObject);
 		}
 
 		template<typename Func>
-		requires std::invocable<Func&&>
+		requires std::invocable<Func&&> && isMoveConstructible && isNothrowDestructible
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -271,7 +291,7 @@ namespace internal
 		}
 
 		template<typename Func>
-		requires std::invocable<Func&&>
+		requires std::invocable<Func&&> && isCopyConstructible && isNothrowDestructible
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -287,13 +307,15 @@ namespace internal
 			}
 		}
 
+		template<typename = void> requires isNothrowDestructible
 		static void Destroy(MemManager& memManager, Object& object) noexcept
 		{
 			Destroyer::Destroy(&memManager, object);
 		}
 
 		template<conceptInputIterator Iterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
+		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> &&
+			isNothrowDestructible
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
 			Iterator iter = begin;
@@ -301,12 +323,14 @@ namespace internal
 				Destroy(memManager, *iter);
 		}
 
+		template<typename = void> requires isRelocatable
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
 			noexcept(isNothrowRelocatable)
 		{
 			Relocator::Relocate(&memManager, srcObject, dstObject);
 		}
 
+		template<typename = void> requires isAnywayAssignable
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)
 			noexcept(isNothrowAnywayAssignable)
 		{
@@ -338,6 +362,7 @@ namespace internal
 			}
 		}
 
+		template<typename = void> requires isAnywayAssignable && isNothrowDestructible
 		static void Replace(MemManager& memManager, Object& srcObject, Object& dstObject)
 			noexcept(isNothrowAnywayAssignable)
 		{
@@ -345,6 +370,9 @@ namespace internal
 			Destroy(memManager, srcObject);
 		}
 
+		template<typename = void> requires isNothrowRelocatable ||
+			(isNothrowAnywayAssignable && isMoveConstructible && isNothrowDestructible) ||
+			(isAnywayAssignable && isCopyConstructible && isNothrowDestructible)
 		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
 			Object* dstObject) noexcept(isNothrowRelocatable)
 		{
@@ -376,7 +404,8 @@ namespace internal
 
 		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
-			std::is_same_v<Object&, std::iter_reference_t<DstIterator>>
+			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
+			(isNothrowRelocatable || (isCopyConstructible && isMoveConstructible && isNothrowDestructible))
 		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 		{
@@ -404,7 +433,8 @@ namespace internal
 			typename ObjectCreator>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			std::invocable<ObjectCreator&&, Object*>
+			std::invocable<ObjectCreator&&, Object*> &&
+			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
@@ -416,7 +446,8 @@ namespace internal
 		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator, typename Func>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			std::invocable<Func&&>
+			std::invocable<Func&&> &&
+			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)
 		{
@@ -446,10 +477,9 @@ namespace internal
 		}
 
 		template<conceptInputIterator Iterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>>
+		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> && isNothrowShiftable
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			static_assert(isNothrowShiftable);
 			if (shift == 0)
 				return;
 			if constexpr (isNothrowRelocatable)
