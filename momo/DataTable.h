@@ -847,7 +847,7 @@ private:
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
-		if (std::is_same_v<RowFilter, EmptyRowFilter>)
+		if constexpr (std::is_same_v<RowFilter, EmptyRowFilter>)
 			Reserve(rows.GetCount());
 		try
 		{
@@ -1456,7 +1456,7 @@ private:
 		DataTable resTable(std::move(resColumnList));
 		auto offsets = pvGetOffsets(columns...);
 		auto resOffsets = resTable.pvGetOffsets(columns...);
-		if (distinct)
+		if constexpr (distinct)
 			resTable.mIndexes.template AddUniqueHashIndex<Items...>(resTable.mRaws, resOffsets);
 		for (Raw* raw : mRaws)
 		{

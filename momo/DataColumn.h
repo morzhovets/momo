@@ -982,10 +982,10 @@ private:
 		size_t offset = columns->GetOffset();
 		Item* item = internal::PtrCaster::Shift<Item>(raw, offset);
 		const Item* srcItem = nullptr;
-		if (!std::is_same_v<RawPtr, std::nullptr_t>)
+		if constexpr (!std::is_null_pointer_v<RawPtr>)
 		{
 			size_t srcOffset = offset;
-			if (std::is_same_v<DataColumnListPtr, std::nullptr_t> ||
+			if (std::is_null_pointer_v<DataColumnListPtr> ||
 				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
 			{
 				srcItem = internal::PtrCaster::Shift<const Item>(
@@ -1161,7 +1161,7 @@ public:
 	size_t GetTotalSize() const noexcept
 	{
 		size_t totalSize = sizeof(Struct);
-		if (Settings::keepRowNumber)
+		if constexpr (Settings::keepRowNumber)
 		{
 			totalSize = internal::UIntMath<>::Ceil(totalSize,
 				internal::ObjectAlignmenter<size_t>::alignment);
@@ -1173,7 +1173,7 @@ public:
 	size_t GetAlignment() const noexcept
 	{
 		size_t alignment = RawManager::alignment;
-		if (Settings::keepRowNumber)
+		if constexpr (Settings::keepRowNumber)
 		{
 			alignment = std::minmax(alignment,
 				size_t{internal::ObjectAlignmenter<size_t>::alignment}).second;
