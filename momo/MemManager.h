@@ -324,7 +324,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		template<conceptMemManager MemManager>
+		template<typename MemManager>
 		struct PtrUsefulBitCount
 		{
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
