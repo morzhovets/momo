@@ -323,28 +323,8 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-	private:
-		template<typename MemManager>
-		struct PtrUsefulBitCount
-		{
-#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-#else
-			static const size_t value = sizeof(void*) * 8;
-#endif
-		};
-
-		template<conceptMemManagerWithPtrUsefulBitCount MemManager>
-		struct PtrUsefulBitCount<MemManager>
-		{
-			static const size_t value = MemManager::ptrUsefulBitCount;
-		};
-
-	public:
 		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
 		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
-
-		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
 
 	public:
 		template<typename ResObject = void>
@@ -364,6 +344,7 @@ namespace internal
 		}
 
 		template<typename ResObject = void>
+		requires canReallocate
 		static ResObject* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
@@ -375,6 +356,7 @@ namespace internal
 			return static_cast<ResObject*>(newPtr);
 		}
 
+		template<typename = void> requires canReallocateInplace
 		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
 			size_t newSize) noexcept
 		{
@@ -392,10 +374,27 @@ namespace internal
 				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
 		}
 
+		static constexpr size_t GetPtrUsefulBitCount() noexcept
+		{
+			if constexpr (conceptMemManagerWithPtrUsefulBitCount<MemManager>)
+			{
+				return MemManager::ptrUsefulBitCount;
+			}
+			else
+			{
+#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
+				return MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+#else
+				return sizeof(void*) * 8;
+#endif
+			}
+		}
+
 	private:
 		static void pvCheckBits(void* ptr) noexcept
 		{
 			(void)ptr;
+			static const size_t ptrUsefulBitCount = GetPtrUsefulBitCount();
 			if constexpr (ptrUsefulBitCount < sizeof(void*) * 8)
 				MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> ptrUsefulBitCount == uintptr_t{0});
 		}
@@ -534,7 +533,7 @@ namespace internal
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
 
 	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::GetPtrUsefulBitCount();
 
 	public:
 		//explicit MemManagerPtr() noexcept
@@ -604,7 +603,7 @@ namespace internal
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
 
 	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::GetPtrUsefulBitCount();
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
