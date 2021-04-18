@@ -549,11 +549,10 @@ public:
 */
 
 template<conceptObject TKey, conceptObject TValue,
-	typename THashTraits = HashTraits<TKey>,
+	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
-requires conceptHashTraits<THashTraits, TKey>
 class HashMultiMap
 {
 public:

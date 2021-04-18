@@ -385,11 +385,10 @@ public:
 */
 
 template<conceptObject TKey,
-	typename TMergeTraits = MergeTraits<TKey>,
+	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
-requires conceptMergeTraits<TMergeTraits, TKey>
 class MergeSet
 {
 public:
@@ -586,8 +585,7 @@ public:
 			Creator<const Item&>(GetMemManager(), item));
 	}
 
-	template<typename ArgIterator>
-	requires internal::conceptSetArgIterator<ArgIterator, Item>
+	template<internal::conceptSetArgIterator<Item> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		size_t count = 0;

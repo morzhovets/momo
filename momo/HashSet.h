@@ -465,11 +465,10 @@ public:
 */
 
 template<conceptObject TKey,
-	typename THashTraits = HashTraits<TKey>,
+	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
-requires conceptHashTraits<THashTraits, TKey>
 class HashSet
 {
 public:
@@ -819,8 +818,7 @@ public:
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
-	template<typename ArgIterator>
-	requires internal::conceptSetArgIterator<ArgIterator, Item>
+	template<internal::conceptSetArgIterator<Item> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		size_t count = 0;

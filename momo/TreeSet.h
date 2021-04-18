@@ -243,11 +243,10 @@ public:
 */
 
 template<conceptObject TKey,
-	typename TTreeTraits = TreeTraits<TKey>,
+	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
-requires conceptTreeTraits<TTreeTraits, TKey>
 class TreeSet
 {
 public:
@@ -716,8 +715,7 @@ public:
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
-	template<typename ArgIterator>
-	requires internal::conceptSetArgIterator<ArgIterator, Item>
+	template<internal::conceptSetArgIterator<Item> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		if (begin == end)

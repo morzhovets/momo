@@ -86,10 +86,10 @@ public:
 };
 
 template<conceptObject TKey,
-	typename TLessFunc = std::less<TKey>,
+	internal::conceptLessFunc<TKey> TLessFunc = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
-requires internal::conceptLessFunc<TLessFunc, TKey> && std::copy_constructible<TLessFunc>
+requires std::copy_constructible<TLessFunc>
 class TreeTraitsStd
 {
 public:

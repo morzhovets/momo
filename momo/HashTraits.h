@@ -176,11 +176,10 @@ template<conceptObject TKey>
 using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
 
 template<conceptObject TKey,
-	typename THashFunc = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	internal::conceptHashFunc<TKey> THashFunc = HashCoder<TKey>,
+	internal::conceptEqualFunc<TKey> TEqualFunc = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
-requires internal::conceptHashFunc<THashFunc, TKey> && std::copy_constructible<THashFunc> &&
-	internal::conceptEqualFunc<TEqualFunc, TKey> && std::copy_constructible<TEqualFunc>
+requires std::copy_constructible<THashFunc> && std::copy_constructible<TEqualFunc>
 class HashTraitsStd
 {
 public:

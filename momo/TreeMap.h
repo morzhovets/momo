@@ -145,11 +145,10 @@ public:
 */
 
 template<conceptObject TKey, conceptObject TValue,
-	typename TTreeTraits = TreeTraits<TKey>,
+	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
-requires conceptTreeTraits<TTreeTraits, TKey>
 class TreeMap
 {
 public:
