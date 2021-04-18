@@ -190,6 +190,8 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = MergeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = MergeMapSettings>
+requires (internal::ObjectAlignmenter<TKey>::Check(TKeyValueTraits::keyAlignment) &&
+	internal::ObjectAlignmenter<TValue>::Check(TKeyValueTraits::valueAlignment))
 class MergeMap
 {
 public:

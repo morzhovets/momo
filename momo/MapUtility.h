@@ -505,9 +505,6 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 		static const size_t valueAlignment = tValueAlignment;
 
-		//static_assert(ObjectAlignmenter<Key>::Check(keyAlignment));
-		//static_assert(ObjectAlignmenter<Value>::Check(valueAlignment));
-
 	public:
 		MapKeyValuePair() = delete;
 

@@ -247,6 +247,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
+requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class TreeSet
 {
 public:
@@ -256,8 +257,6 @@ public:
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
 	typedef typename ItemTraits::Item Item;
-
-	static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;

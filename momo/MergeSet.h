@@ -389,6 +389,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
+requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class MergeSet
 {
 public:
@@ -398,8 +399,6 @@ public:
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
 	typedef typename ItemTraits::Item Item;
-
-	static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
 private:
 	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;

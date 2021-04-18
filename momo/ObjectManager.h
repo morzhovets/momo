@@ -122,13 +122,13 @@ namespace internal
 	};
 
 	template<conceptObject TObject, size_t tAlignment>
+	requires (ObjectAlignmenter<TObject>::Check(tAlignment))
 	class ObjectBuffer
 	{
 	public:
 		typedef TObject Object;
 
 		static const size_t alignment = tAlignment;
-		static_assert(ObjectAlignmenter<Object>::Check(alignment));
 
 	public:
 		const Object* operator&() const noexcept

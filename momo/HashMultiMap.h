@@ -553,6 +553,8 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
+requires (internal::ObjectAlignmenter<TKey>::Check(TKeyValueTraits::keyAlignment) &&
+	internal::ObjectAlignmenter<TValue>::Check(TKeyValueTraits::valueAlignment))
 class HashMultiMap
 {
 public:
@@ -562,9 +564,6 @@ public:
 	typedef TMemManager MemManager;
 	typedef TKeyValueTraits KeyValueTraits;
 	typedef TSettings Settings;
-
-	static_assert(internal::ObjectAlignmenter<Key>::Check(KeyValueTraits::keyAlignment));
-	static_assert(internal::ObjectAlignmenter<Value>::Check(KeyValueTraits::valueAlignment));
 
 private:
 	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,

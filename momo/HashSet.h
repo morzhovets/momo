@@ -469,6 +469,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
+requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class HashSet
 {
 public:
@@ -478,8 +479,6 @@ public:
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
 	typedef typename ItemTraits::Item Item;
-
-	static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
 private:
 	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
