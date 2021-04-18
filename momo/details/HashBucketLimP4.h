@@ -139,6 +139,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
 		bool tUseHashCodePartGetter>
+	requires (0 < tMaxCount && tMaxCount <= 4)
 	class BucketLimP4 : public BucketBase
 	{
 	protected:
@@ -149,7 +150,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		static_assert(0 < maxCount && maxCount <= 4);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -530,6 +530,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
+requires (0 < tMaxCount && tMaxCount <= 4)
 class HashBucketLimP4 : public internal::HashBucketBase
 {
 public:

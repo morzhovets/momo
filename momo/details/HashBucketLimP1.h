@@ -22,6 +22,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	requires (0 < tMaxCount && tMaxCount < 16)
 	class BucketLimP1 : public BucketBase
 	{
 	protected:
@@ -30,7 +31,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		static_assert(0 < maxCount && maxCount < 16);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -263,6 +263,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
+requires (0 < tMaxCount && tMaxCount < 16)
 class HashBucketLimP1 : public internal::HashBucketBase
 {
 public:

@@ -22,6 +22,8 @@ namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
 		typename TMemPoolParams, bool tIsContinuous>
+	requires (0 < tMaxCapacity && tMaxCapacity < 256 && tCapacityStep > 0 &&
+		(!tIsContinuous || TItemTraits::isNothrowShiftable))
 	class Node
 	{
 	protected:
@@ -29,13 +31,9 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 
 		static const size_t maxCapacity = tMaxCapacity;
-		static_assert(0 < maxCapacity && maxCapacity < 256);
-
 		static const size_t capacityStep = tCapacityStep;
-		static_assert(capacityStep > 0);
 
 		static const bool isContinuous = tIsContinuous;
-		static_assert(!isContinuous || ItemTraits::isNothrowShiftable);
 
 	public:
 		typedef typename ItemTraits::Item Item;
@@ -332,6 +330,7 @@ template<size_t tMaxCapacity = 32,
 	size_t tCapacityStep = (tMaxCapacity >= 16) ? tMaxCapacity / 8 : 2,
 	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
 	bool tIsContinuous = true>
+requires (0 < tMaxCapacity && tMaxCapacity < 256 && tCapacityStep > 0)
 class TreeNode
 {
 public:

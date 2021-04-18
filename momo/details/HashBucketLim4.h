@@ -22,14 +22,13 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tLogMaxCount, size_t tMemPoolBlockCount>
+	requires (0 < tLogMaxCount && tLogMaxCount <= 4)	//?
 	class BucketLim4 : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
 		static const size_t logMaxCount = tLogMaxCount;
-		static_assert(0 < logMaxCount && logMaxCount <= 4);	//?
-
 		static const size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	public:
@@ -285,6 +284,7 @@ namespace internal
 
 template<size_t tLogMaxCount = 2,
 	size_t tMemPoolBlockCount = MemPoolConst::defaultBlockCount>
+requires (0 < tLogMaxCount && tLogMaxCount <= 4)
 class HashBucketLim4 : public internal::HashBucketBase
 {
 public:

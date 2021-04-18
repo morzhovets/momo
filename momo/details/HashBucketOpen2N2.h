@@ -22,6 +22,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCount, bool tUseHashCodePartGetter>
+	requires (0 < tMaxCount && tMaxCount < 4)
 	class BucketOpen2N2 : public BucketBase
 	{
 	protected:
@@ -31,7 +32,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		static_assert(0 < maxCount && maxCount < 4);
 
 		static const bool isNothrowAddableIfNothrowCreatable = true;
 
@@ -259,6 +259,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = 3>
+requires (0 < tMaxCount && tMaxCount < 4)
 class HashBucketOpen2N2 : public internal::HashBucketBase
 {
 public:

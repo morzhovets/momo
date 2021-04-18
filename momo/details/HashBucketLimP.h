@@ -25,6 +25,7 @@ namespace internal
 	class BucketLimP;
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	requires (0 < tMaxCount && tMaxCount < 16)
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false> : public BucketBase
 	{
 	protected:
@@ -35,7 +36,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		static_assert(0 < maxCount && maxCount < 16);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -284,6 +284,7 @@ namespace internal
 	};
 
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	requires (0 < tMaxCount && tMaxCount < 16)
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true> : public BucketBase
 	{
 	protected:
@@ -294,7 +295,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-		static_assert(0 < maxCount && maxCount < 16);
 
 		static const bool isNothrowAddableIfNothrowCreatable = false;
 
@@ -551,6 +551,7 @@ namespace internal
 template<size_t tMaxCount = sizeof(void*),
 	typename TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
+requires (0 < tMaxCount && tMaxCount < 16)
 class HashBucketLimP : public internal::HashBucketBase
 {
 public:

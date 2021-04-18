@@ -78,6 +78,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
 		typename TArraySettings>
+	requires (0 < tMaxFastCount && tMaxFastCount < 16)
 	class ArrayBucket
 	{
 	protected:
@@ -86,7 +87,6 @@ namespace internal
 		typedef TArraySettings ArraySettings;
 
 		static const size_t maxFastCount = tMaxFastCount;
-		static_assert(0 < maxFastCount && maxFastCount < 16);
 
 	public:
 		typedef typename ItemTraits::Item Item;
