@@ -180,7 +180,7 @@ namespace internal
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
 		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
-			MemManagerProxy<MemManager>::GetPtrUsefulBitCount()> PtrState;
+			MemManagerProxy<MemManager>::ptrUsefulBitCount> PtrState;
 
 		static_assert(PtrState::bitCount % 8 == 0);
 		static const size_t hashCount = 4 +

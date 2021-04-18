@@ -323,8 +323,28 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
+	private:
+		static constexpr size_t pvGetPtrUsefulBitCount() noexcept
+		{
+			if constexpr (conceptMemManagerWithPtrUsefulBitCount<MemManager>)
+			{
+				return MemManager::ptrUsefulBitCount;
+			}
+			else
+			{
+#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
+				return MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+#else
+				return sizeof(void*) * 8;
+#endif
+			}
+		}
+
+	public:
 		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
 		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
+
+		static const size_t ptrUsefulBitCount = pvGetPtrUsefulBitCount();
 
 	public:
 		template<typename ResObject = void>
@@ -374,27 +394,10 @@ namespace internal
 				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
 		}
 
-		static constexpr size_t GetPtrUsefulBitCount() noexcept
-		{
-			if constexpr (conceptMemManagerWithPtrUsefulBitCount<MemManager>)
-			{
-				return MemManager::ptrUsefulBitCount;
-			}
-			else
-			{
-#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-				return MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-#else
-				return sizeof(void*) * 8;
-#endif
-			}
-		}
-
 	private:
 		static void pvCheckBits(void* ptr) noexcept
 		{
 			(void)ptr;
-			static const size_t ptrUsefulBitCount = GetPtrUsefulBitCount();
 			if constexpr (ptrUsefulBitCount < sizeof(void*) * 8)
 				MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> ptrUsefulBitCount == uintptr_t{0});
 		}
@@ -533,7 +536,7 @@ namespace internal
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
 
 	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::GetPtrUsefulBitCount();
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		//explicit MemManagerPtr() noexcept
@@ -603,7 +606,7 @@ namespace internal
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
 
 	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::GetPtrUsefulBitCount();
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
