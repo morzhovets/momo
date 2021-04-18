@@ -560,9 +560,9 @@ public:
 
 	typedef TMemPoolParams MemPoolParams;
 
-private:
+public:	// clang
 	template<typename ItemTraits>
-	static constexpr bool pvCorrectUsePtrState() noexcept
+	static constexpr bool CorrectUsePtrState() noexcept
 	{
 		size_t size = sizeof(typename ItemTraits::Item);
 		size_t alignment = ItemTraits::alignment;
@@ -576,7 +576,7 @@ private:
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLimP<ItemTraits, maxCount, MemPoolParams,
-		pvCorrectUsePtrState<ItemTraits>()>;
+		CorrectUsePtrState<ItemTraits>()>;
 };
 
 } // namespace momo
