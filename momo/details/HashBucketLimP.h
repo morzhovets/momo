@@ -562,25 +562,21 @@ public:
 
 private:
 	template<typename ItemTraits>
-	class Bucketer
+	static constexpr bool pvCorrectUsePtrState() noexcept
 	{
-	private:
-		static const size_t size = sizeof(typename ItemTraits::Item);
-		static const size_t alignment = ItemTraits::alignment;
-
-		static const bool usePtrState = HashBucketLimP::usePtrState && ((maxCount <= 1)
+		size_t size = sizeof(typename ItemTraits::Item);
+		size_t alignment = ItemTraits::alignment;
+		return usePtrState && ((maxCount <= 1)
 			|| (maxCount <= 2 && size % 2 == 0 && (size > 2 || alignment == 2))
 			|| (maxCount <= 4 && size % 4 == 0 && (size > 4 || alignment == 4))
 			|| (maxCount <= 8 && size % 8 == 0 && (size > 8 || alignment == 8))
 			|| (maxCount <= 16 && size % 16 == 0 && (size > 16 || alignment == 16)));
-
-	public:
-		typedef internal::BucketLimP<ItemTraits, maxCount, MemPoolParams, usePtrState> Bucket;
-	};
+	}
 
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = typename Bucketer<ItemTraits>::Bucket;
+	using Bucket = internal::BucketLimP<ItemTraits, maxCount, MemPoolParams,
+		pvCorrectUsePtrState<ItemTraits>()>;
 };
 
 } // namespace momo
