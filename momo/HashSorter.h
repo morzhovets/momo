@@ -117,12 +117,11 @@ public:
 	}
 
 	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
-		internal::conceptIterator<std::random_access_iterator_tag> HashIterator,
+		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>,
 		typename SwapFunc = Swapper<Iterator>>
-	requires std::is_same_v<HashFuncResult&, std::iter_reference_t<HashIterator>> &&
-		std::invocable<const SwapFunc&, Iterator, Iterator>
+	requires std::invocable<const SwapFunc&, Iterator, Iterator>
 	static void SortPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const EqualFunc& equalFunc = EqualFunc(), const SwapFunc& swapFunc = SwapFunc())
 	{
@@ -146,10 +145,9 @@ public:
 	}
 
 	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
-		internal::conceptIterator<std::random_access_iterator_tag> HashIterator,
+		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	requires std::is_same_v<HashFuncResult&, std::iter_reference_t<HashIterator>>
 	static bool IsSortedPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
@@ -170,10 +168,9 @@ public:
 	}
 
 	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
-		internal::conceptIterator<std::random_access_iterator_tag> HashIterator,
+		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	requires std::is_same_v<HashFuncResult&, std::iter_reference_t<HashIterator>>
 	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
 		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
 		const EqualFunc& equalFunc = EqualFunc())
@@ -195,10 +192,9 @@ public:
 	}
 
 	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
-		internal::conceptIterator<std::random_access_iterator_tag> HashIterator,
+		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	requires std::is_same_v<HashFuncResult&, std::iter_reference_t<HashIterator>>
 	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count,
 		HashIterator hashBegin, const std::iter_value_t<Iterator>& item,
 		HashFuncResult itemHash, const EqualFunc& equalFunc = EqualFunc())

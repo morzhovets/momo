@@ -125,6 +125,10 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
+	template<typename Iterator, typename IteratorCategory, typename Reference>
+	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
+		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
+
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };
 

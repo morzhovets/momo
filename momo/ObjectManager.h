@@ -315,9 +315,8 @@ namespace internal
 			Destroyer::Destroy(&memManager, object);
 		}
 
-		template<conceptInputIterator Iterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> &&
-			isNothrowDestructible
+		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> Iterator>
+		requires isNothrowDestructible
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
 			Iterator iter = begin;
@@ -404,10 +403,10 @@ namespace internal
 			}
 		}
 
-		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
-			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			(isNothrowRelocatable || (isCopyConstructible && isMoveConstructible && isNothrowDestructible))
+		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
+			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator>
+		requires isNothrowRelocatable ||
+			(isCopyConstructible && isMoveConstructible && isNothrowDestructible)
 		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 		{
@@ -431,11 +430,10 @@ namespace internal
 			}
 		}
 
-		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator,
+		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
+			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
 			std::invocable<Object*> ObjectCreator>
-		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
-			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
+		requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
@@ -444,11 +442,10 @@ namespace internal
 			RelocateExec(memManager, srcBegin, dstBegin, count, func);
 		}
 
-		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator,
+		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
+			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
 			std::invocable Func>
-		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
-			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
+		requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)
 		{
@@ -477,9 +474,8 @@ namespace internal
 			}
 		}
 
-		template<conceptInputIterator Iterator>
-		requires std::is_same_v<Object&, std::iter_reference_t<Iterator>> &&
-			isNothrowShiftable
+		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> Iterator>
+		requires isNothrowShiftable
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			if (shift == 0)
