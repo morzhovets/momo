@@ -1085,7 +1085,7 @@ public:
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			if (pairPred(iter->key, static_cast<const Value&>(iter->value)))
+			if (pairPred(iter->key, std::as_const(iter->value)))
 				iter = Remove(iter);
 			else
 				++iter;

@@ -702,7 +702,7 @@ public:
 	size_t Remove(const PairPredicate& pairPred)
 	{
 		auto itemPred = [&pairPred] (const KeyValuePair& item)
-			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
+			{ return pairPred(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
 		return mHashSet.Remove(itemPred);
 	}
 

@@ -335,7 +335,7 @@ namespace internal
 				if (memManager != nullptr)
 					KeyManager::Copy(*memManager, srcKey, dstKey);
 				else
-					std::construct_at(dstKey, static_cast<const Key&>(srcKey));	//?
+					std::construct_at(dstKey, std::as_const(srcKey));	//?
 				try
 				{
 					ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);

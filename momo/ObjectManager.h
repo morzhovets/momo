@@ -358,7 +358,7 @@ namespace internal
 			}
 			else if constexpr (std::is_nothrow_copy_assignable_v<Object>)
 			{
-				dstObject = static_cast<const Object&>(srcObject);
+				dstObject = std::as_const(srcObject);
 			}
 			else
 			{

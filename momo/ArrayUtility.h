@@ -292,12 +292,12 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
-			while (newCount < initCount && !pred(static_cast<const Item&>(array[newCount])))
+			while (newCount < initCount && !pred(std::as_const(array[newCount])))
 				++newCount;
 			MemManager& memManager = array.GetMemManager();
 			for (size_t i = newCount + 1; i < initCount; ++i)
 			{
-				if (pred(static_cast<const Item&>(array[i])))
+				if (pred(std::as_const(array[i])))
 					continue;
 				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
 				++newCount;
