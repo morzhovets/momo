@@ -6,6 +6,9 @@
 
   momo/MapUtility.h
 
+  namespace momo:
+    concept conceptMapKeyValueTraits
+
 \**********************************************************/
 
 #pragma once
@@ -15,6 +18,20 @@
 
 namespace momo
 {
+
+template<typename MapKeyValueTraits, typename Key, typename Value, typename MemManager>
+concept conceptMapKeyValueTraits =
+	std::is_same_v<typename MapKeyValueTraits::Key, Key> &&
+	std::is_same_v<typename MapKeyValueTraits::Value, Value> &&
+	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> &&
+	requires (Key& key, Value& value, MemManager& memManager)
+	{
+		{ MapKeyValueTraits::keyAlignment } -> std::convertible_to<size_t>;
+		{ MapKeyValueTraits::valueAlignment } -> std::convertible_to<size_t>;
+		{ MapKeyValueTraits::Destroy(&memManager, key, value) } noexcept;
+	} &&
+	internal::ObjectAlignmenter<Key>::Check(MapKeyValueTraits::keyAlignment) &&
+	internal::ObjectAlignmenter<Value>::Check(MapKeyValueTraits::valueAlignment);
 
 namespace internal
 {

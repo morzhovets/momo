@@ -147,10 +147,9 @@ public:
 template<conceptObject TKey, conceptObject TValue,
 	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
+	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
+		= TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
-requires (internal::ObjectAlignmenter<TKey>::Check(TKeyValueTraits::keyAlignment) &&
-	internal::ObjectAlignmenter<TValue>::Check(TKeyValueTraits::valueAlignment))
 class TreeMap
 {
 public:

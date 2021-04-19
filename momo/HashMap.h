@@ -256,10 +256,9 @@ public:
 template<conceptObject TKey, conceptObject TValue,
 	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = HashMapKeyValueTraits<TKey, TValue, TMemManager>,
+	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
+		= HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
-requires (internal::ObjectAlignmenter<TKey>::Check(TKeyValueTraits::keyAlignment) &&
-	internal::ObjectAlignmenter<TValue>::Check(TKeyValueTraits::valueAlignment))
 class HashMap
 {
 public:
