@@ -944,8 +944,7 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	Iterator AddCrt(Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd(std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -969,8 +968,7 @@ public:
 		return AddVar(std::move(key), value);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	Iterator AddCrt(const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd(key, std::forward<ValueCreator>(valueCreator));
@@ -994,8 +992,7 @@ public:
 		return AddVar(key, value);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator&& valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(

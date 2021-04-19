@@ -673,8 +673,7 @@ public:
 		return pvGetKeyCount(key);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
 	{
 		return pvInsert<true>(key, std::forward<ItemCreator>(itemCreator));
@@ -752,9 +751,8 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<typename ItemCreator,
+	template<std::invocable<Item*> ItemCreator,
 		bool extraCheck = true>
-	requires std::invocable<ItemCreator&&, Item*>
 	Iterator AddCrt(ConstIterator iter, ItemCreator&& itemCreator)
 	{
 		return pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));

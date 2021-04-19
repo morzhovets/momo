@@ -254,8 +254,7 @@ namespace internal
 			pvRemoveAll<true>(params);
 		}
 
-		template<typename ItemCreator>
-		requires std::invocable<ItemCreator&&, Item*>
+		template<std::invocable<Item*> ItemCreator>
 		void AddBackCrt(Params& params, ItemCreator&& itemCreator)
 		{
 			if (mPtr == nullptr)

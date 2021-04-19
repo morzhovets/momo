@@ -266,9 +266,8 @@ namespace internal
 			Creator<const Object&>(memManager, srcObject)(dstObject);
 		}
 
-		template<typename Func>
-		requires std::invocable<Func&&> &&
-			isMoveConstructible && isNothrowDestructible
+		template<std::invocable Func>
+		requires isMoveConstructible && isNothrowDestructible
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -293,9 +292,8 @@ namespace internal
 			}
 		}
 
-		template<typename Func>
-		requires std::invocable<Func&&> &&
-			isCopyConstructible && isNothrowDestructible
+		template<std::invocable Func>
+		requires isCopyConstructible && isNothrowDestructible
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func&& func)
 		{
@@ -434,10 +432,9 @@ namespace internal
 		}
 
 		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator,
-			typename ObjectCreator>
+			std::invocable<Object*> ObjectCreator>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			std::invocable<ObjectCreator&&, Object*> &&
 			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
@@ -447,10 +444,10 @@ namespace internal
 			RelocateExec(memManager, srcBegin, dstBegin, count, func);
 		}
 
-		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator, typename Func>
+		template<conceptInputIterator SrcIterator, conceptInputIterator DstIterator,
+			std::invocable Func>
 		requires std::is_same_v<Object&, std::iter_reference_t<SrcIterator>> &&
 			std::is_same_v<Object&, std::iter_reference_t<DstIterator>> &&
-			std::invocable<Func&&> &&
 			(isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible))
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func&& func)

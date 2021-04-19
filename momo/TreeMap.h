@@ -421,8 +421,7 @@ public:
 		return mTreeSet.GetKeyCount(key);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -446,8 +445,7 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(key, std::forward<ValueCreator>(valueCreator));
@@ -525,9 +523,8 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<typename PairCreator,
+	template<std::invocable<Key*, Value*> PairCreator,
 		bool extraCheck = true>
-	requires std::invocable<PairCreator&&, Key*, Value*>
 	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
@@ -538,9 +535,8 @@ public:
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
-	template<typename ValueCreator,
+	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(iter, std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -564,9 +560,8 @@ public:
 		return AddVar(iter, std::move(key), value);
 	}
 
-	template<typename ValueCreator,
+	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	requires std::invocable<ValueCreator&&, Value*>
 	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(iter, key, std::forward<ValueCreator>(valueCreator));

@@ -140,8 +140,7 @@ namespace internal
 			pvSetEmpty();
 		}
 
-		template<typename ItemCreator>
-		requires std::invocable<ItemCreator&&, Item*>
+		template<std::invocable<Item*> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
@@ -164,8 +163,7 @@ namespace internal
 			return Iterator(newItem + 1);
 		}
 
-		template<typename ItemReplacer>
-		requires std::invocable<ItemReplacer&&, Item&, Item&>
+		template<std::invocable<Item&, Item&> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();

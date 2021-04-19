@@ -166,8 +166,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
-		template<typename ItemCreator>
-		requires std::invocable<ItemCreator&&, Item*>
+		template<std::invocable<Item*> ItemCreator>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
 			: mMemManager(memManager)
 		{

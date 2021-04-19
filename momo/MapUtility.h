@@ -861,8 +861,7 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<typename PairCreator>
-		requires std::invocable<PairCreator&&, Key*, Value*>
+		template<std::invocable<Key*, Value*> PairCreator>
 		void Create(PairCreator&& pairCreator)
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
@@ -873,8 +872,7 @@ namespace internal
 			mSetExtractedItem.Create(itemCreator);
 		}
 
-		template<typename PairRemover>
-		requires std::invocable<PairRemover&&, Key&, Value&>
+		template<std::invocable<Key&, Value&> PairRemover>
 		void Remove(PairRemover&& pairRemover)
 		{
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)

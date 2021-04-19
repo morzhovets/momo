@@ -452,8 +452,7 @@ public:
 		return pvGetItem(mCount - 1 - revIndex);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
@@ -481,8 +480,7 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		size_t segIndex, itemIndex;
@@ -529,8 +527,7 @@ public:
 		AddBackVar(item);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));

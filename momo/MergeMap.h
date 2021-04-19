@@ -381,8 +381,7 @@ public:
 		return mMergeSet.ContainsKey(key);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -406,8 +405,7 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<typename ValueCreator>
-	requires std::invocable<ValueCreator&&, Value*>
+	template<std::invocable<Value*> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvInsert(key, std::forward<ValueCreator>(valueCreator));
@@ -455,9 +453,8 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<typename PairCreator,
+	template<std::invocable<Key*, Value*> PairCreator,
 		bool extraCheck = true>
-	requires std::invocable<PairCreator&&, Key*, Value*>
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
@@ -468,9 +465,8 @@ public:
 			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
 	}
 
-	template<typename ValueCreator,
+	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, std::move(key), std::forward<ValueCreator>(valueCreator));
@@ -494,9 +490,8 @@ public:
 		return AddVar(pos, std::move(key), value);
 	}
 
-	template<typename ValueCreator,
+	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	requires std::invocable<ValueCreator&&, Value*>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator&& valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, key, std::forward<ValueCreator>(valueCreator));

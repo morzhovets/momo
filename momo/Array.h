@@ -726,8 +726,7 @@ public:
 		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
 		MOMO_CHECK(GetCount() < GetCapacity());
@@ -752,8 +751,7 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
 		if (GetCount() < GetCapacity())
@@ -829,8 +827,7 @@ public:
 		}
 	}
 
-	template<typename ItemCreator>
-	requires std::invocable<ItemCreator&&, Item*>
+	template<std::invocable<Item*> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));

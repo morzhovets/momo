@@ -335,8 +335,7 @@ namespace internal
 			return *&mItemBuffer;
 		}
 
-		template<typename ItemCreator>
-		requires std::invocable<ItemCreator&&, Item*>
+		template<std::invocable<Item*> ItemCreator>
 		void Create(ItemCreator&& itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
@@ -344,8 +343,7 @@ namespace internal
 			mHasItem = true;
 		}
 
-		template<typename ItemRemover>
-		requires std::invocable<ItemRemover&&, Item&>
+		template<std::invocable<Item&> ItemRemover>
 		void Remove(ItemRemover&& itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
