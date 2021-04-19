@@ -164,12 +164,12 @@ public:
 				if constexpr (std::is_same_v<Item, const int*>)
 					assert(*item == static_cast<int>(i));
 			};
-			static_cast<const Row&>(row).VisitReferences(visitor2);
-			static_cast<const Row&>(row).VisitPointers(visitor2);
+			std::as_const(row).VisitReferences(visitor2);
+			std::as_const(row).VisitPointers(visitor2);
 
 			Row row2 = table.NewRow();
 			row2 = std::move(row);
-			assert(static_cast<const Row&>(row2)[intCol] == static_cast<int>(i));
+			assert(std::as_const(row2)[intCol] == static_cast<int>(i));
 			table.AddRow(std::move(row2));
 		}
 

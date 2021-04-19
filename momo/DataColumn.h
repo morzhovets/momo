@@ -346,18 +346,18 @@ concept conceptDataColumnList =
 	std::is_nothrow_destructible_v<DataColumnList> &&
 	std::is_nothrow_move_constructible_v<DataColumnList> &&
 	conceptMemManager<typename DataColumnList::MemManager> &&
-	requires (const DataColumnList& columnList, DataColumnList& columnListMut,
-		typename DataColumnList::Raw* raw, typename DataColumnList::ColumnInfo columnInfo)
+	requires (DataColumnList& columnList, typename DataColumnList::Raw* raw,
+		typename DataColumnList::ColumnInfo columnInfo)
 	{
 		typename DataColumnList::Settings;
 		typename DataColumnList::template Column<TestItem>;
-		{ columnListMut.GetMemManager() } noexcept
+		{ columnList.GetMemManager() } noexcept
 			-> std::same_as<typename DataColumnList::MemManager&>;
-		{ columnList.GetTotalSize() } noexcept -> std::same_as<size_t>;
-		{ columnList.GetAlignment() } noexcept -> std::same_as<size_t>;
-		{ columnListMut.CreateRaw(raw) } -> std::same_as<void>;
-		{ columnListMut.DestroyRaw(raw) } noexcept -> std::same_as<void>;
-		{ columnList.GetOffset(columnInfo) } -> std::same_as<size_t>;
+		{ std::as_const(columnList).GetTotalSize() } noexcept -> std::same_as<size_t>;
+		{ std::as_const(columnList).GetAlignment() } noexcept -> std::same_as<size_t>;
+		{ columnList.CreateRaw(raw) } -> std::same_as<void>;
+		{ columnList.DestroyRaw(raw) } noexcept -> std::same_as<void>;
+		{ std::as_const(columnList).GetOffset(columnInfo) } -> std::same_as<size_t>;
 		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
 			-> std::same_as<TestItem&>;
 	};
