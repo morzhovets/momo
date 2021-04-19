@@ -7,6 +7,7 @@
   momo/HashMultiMap.h
 
   namespace momo:
+    concept conceptHashMultiMapKeyValueTraits
     class HashMultiMapKeyValueTraits
     class HashMultiMapSettings
     class HashMultiMap
@@ -445,6 +446,21 @@ namespace internal
 	};
 }
 
+template<typename HashMultiMapKeyValueTraits, typename Key, typename Value, typename MemManager>
+concept conceptHashMultiMapKeyValueTraits =
+	std::is_same_v<typename HashMultiMapKeyValueTraits::Key, Key> &&
+	std::is_same_v<typename HashMultiMapKeyValueTraits::Value, Value> &&
+	std::is_same_v<typename HashMultiMapKeyValueTraits::MemManager, MemManager> &&
+	requires (Key& key, Value* values, MemManager& memManager)
+	{
+		{ HashMultiMapKeyValueTraits::keyAlignment } -> std::convertible_to<size_t>;
+		{ HashMultiMapKeyValueTraits::valueAlignment } -> std::convertible_to<size_t>;
+		{ HashMultiMapKeyValueTraits::DestroyKey(memManager, key) } noexcept;
+		{ HashMultiMapKeyValueTraits::DestroyValues(memManager, values, size_t{}) } noexcept;
+	} &&
+	internal::ObjectAlignmenter<Key>::Check(HashMultiMapKeyValueTraits::keyAlignment) &&
+	internal::ObjectAlignmenter<Value>::Check(HashMultiMapKeyValueTraits::valueAlignment);
+
 template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 class HashMultiMapKeyValueTraits
 {
@@ -551,10 +567,9 @@ public:
 template<conceptObject TKey, conceptObject TValue,
 	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
+	conceptHashMultiMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
+		= HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
-requires (internal::ObjectAlignmenter<TKey>::Check(TKeyValueTraits::keyAlignment) &&
-	internal::ObjectAlignmenter<TValue>::Check(TKeyValueTraits::valueAlignment))
 class HashMultiMap
 {
 public:
