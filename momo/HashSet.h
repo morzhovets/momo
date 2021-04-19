@@ -467,9 +467,8 @@ public:
 template<conceptObject TKey,
 	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
+	conceptSetItemTraits<TKey, TMemManager> TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
-requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class HashSet
 {
 public:

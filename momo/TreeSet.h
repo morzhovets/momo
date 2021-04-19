@@ -245,9 +245,8 @@ public:
 template<conceptObject TKey,
 	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
+	conceptSetItemTraits<TKey, TMemManager> TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
-requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class TreeSet
 {
 public:

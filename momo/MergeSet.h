@@ -387,9 +387,8 @@ public:
 template<conceptObject TKey,
 	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
+	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
-requires (internal::ObjectAlignmenter<typename TItemTraits::Item>::Check(TItemTraits::alignment))
 class MergeSet
 {
 public:

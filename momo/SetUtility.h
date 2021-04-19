@@ -6,14 +6,30 @@
 
   momo/SetUtility.h
 
+  namespace momo:
+    concept conceptSetItemTraits
+
 \**********************************************************/
 
 #pragma once
 
-#include "Utility.h"
+#include "ObjectManager.h"
 
 namespace momo
 {
+
+template<typename SetItemTraits, typename Key, typename MemManager>
+concept conceptSetItemTraits =
+	std::is_same_v<typename SetItemTraits::Key, Key> &&
+	std::is_same_v<typename SetItemTraits::MemManager, MemManager> &&
+	conceptObject<typename SetItemTraits::Item> &&
+	requires (typename SetItemTraits::Item& item, MemManager& memManager)
+	{
+		{ SetItemTraits::alignment } -> std::convertible_to<size_t>;
+		{ SetItemTraits::GetKey(std::as_const(item)) } noexcept -> std::same_as<const Key&>;
+		{ SetItemTraits::Destroy(&memManager, item) } noexcept;
+	} &&
+	internal::ObjectAlignmenter<typename SetItemTraits::Item>::Check(SetItemTraits::alignment);
 
 namespace internal
 {
