@@ -15,7 +15,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning (disable: 4127)	// conditional expression is constant
 #pragma warning (disable: 4458)	// declaration of '...' hides class member
-#pragma warning (disable: 4648)	// standard attribute 'no_unique_address' is ignored
 #endif
 
 #include "TestSettings.h"
