@@ -54,8 +54,9 @@ namespace internal
 		static const size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
 
 	public:
-		template<typename Iterator,
+		template<conceptIterator<std::random_access_iterator_tag> Iterator,
 			typename CodeGetter = RadixSorterCodeGetter<Iterator>>
+		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>>
 		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter = CodeGetter())
 		{
 			auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
@@ -63,7 +64,11 @@ namespace internal
 			Sort(begin, count, codeGetter, swapFunc, groupFunc);
 		}
 
-		template<typename Iterator, typename CodeGetter, typename SwapFunc, typename GroupFunc>
+		template<conceptIterator<std::random_access_iterator_tag> Iterator,
+			typename CodeGetter, typename SwapFunc, typename GroupFunc>
+		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>> &&
+			std::invocable<const SwapFunc&, Iterator, Iterator> &&
+			std::invocable<const GroupFunc&, Iterator, size_t>
 		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter,
 			const SwapFunc& swapFunc, const GroupFunc& groupFunc)
 		{

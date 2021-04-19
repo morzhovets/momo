@@ -226,11 +226,7 @@ namespace internal
 	public:
 		typedef TReference Reference;
 
-	private:
-		typedef typename Reference::ConstReference ConstReference;
-
-	public:
-		typedef IteratorPointer<ConstReference> ConstPointer;
+		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
 
 	public:
 		IteratorPointer() = delete;
@@ -269,7 +265,7 @@ namespace internal
 		Reference mReference;
 	};
 
-	template<typename TIterator>
+	template<conceptIterator<std::random_access_iterator_tag> TIterator>
 	class ArrayBoundsBase
 	{
 	public:
@@ -316,7 +312,7 @@ namespace internal
 		size_t mCount;
 	};
 
-	template<typename TIterator>
+	template<conceptIterator<std::random_access_iterator_tag> TIterator>
 	class ArrayBounds : public ArrayBoundsBase<TIterator>
 	{
 	private:
@@ -336,7 +332,8 @@ namespace internal
 		}
 	};
 
-	template<typename TBaseIterator, template<typename BaseReference> class TReference>
+	template<conceptIterator<std::bidirectional_iterator_tag> TBaseIterator,
+		template<typename BaseReference> class TReference>
 	class DerivedBidirectionalIterator
 	{
 	protected:
@@ -412,7 +409,8 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<typename TBaseIterator, template<typename BaseReference> class TReference>
+	template<conceptIterator<std::forward_iterator_tag> TBaseIterator,
+		template<typename BaseReference> class TReference>
 	class DerivedForwardIterator
 	{
 	protected:
@@ -482,6 +480,7 @@ namespace internal
 	};
 
 	template<typename TGenerator>
+	requires std::is_pointer_v<std::invoke_result_t<TGenerator>>
 	class InputIterator
 	{
 	public:
