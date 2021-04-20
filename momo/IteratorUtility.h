@@ -244,11 +244,7 @@ namespace internal
 	public:
 		typedef TReference Reference;
 
-	private:
-		typedef typename Reference::ConstReference ConstReference;
-
-	public:
-		typedef IteratorPointer<ConstReference> ConstPointer;
+		typedef IteratorPointer<typename Reference::ConstReference> ConstPointer;
 
 	public:
 		IteratorPointer() = delete;
