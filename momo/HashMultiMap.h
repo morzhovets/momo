@@ -1021,17 +1021,14 @@ public:
 		return AddVar(keyIter, value);
 	}
 
-	template<internal::conceptInputIterator ArgIterator,
-		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
+	template<internal::conceptMapArgIterator<Key> ArgIterator>
 	void Add(ArgIterator begin, ArgIterator end)
 	{
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
-			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
-			typedef decltype(pair.first) KeyArg;
-			typedef decltype(pair.second) ValueArg;
-			static_assert((std::is_same_v<Key, std::decay_t<KeyArg>>));
-			AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
+			AddVar(std::forward<decltype(pair.first)>(pair.first),
+				std::forward<decltype(pair.second)>(pair.second));
 		}
 	}
 

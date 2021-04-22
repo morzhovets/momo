@@ -549,7 +549,7 @@ public:
 	template<momo::internal::conceptInputIterator Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		if constexpr (std::is_same_v<key_type, std::decay_t<decltype(first->first)>>)
+		if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
 		{
 			mHashMap.Insert(first, last);
 		}

@@ -476,8 +476,7 @@ public:
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
-	template<internal::conceptInputIterator ArgIterator,
-		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
+	template<internal::conceptMapArgIterator<Key> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
 		if (begin == end)
@@ -485,17 +484,16 @@ public:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		ArgIterator iter = begin;
-		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
+		auto pair0 = internal::MapArgReferencer<>::GetReferencePair(iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
-		static_assert((std::is_same_v<Key, std::decay_t<KeyArg>>));
 		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second));
 		size_t count = res.inserted ? 1 : 0;
 		++iter;
 		for (; iter != end; ++iter)
 		{
-			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
+			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
 			const Key& key = pair.first;
 			const Key& prevKey = res.position->key;
 			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))

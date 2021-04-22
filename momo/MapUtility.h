@@ -892,41 +892,53 @@ namespace internal
 		SetExtractedItem mSetExtractedItem;
 	};
 
-	template<typename TIterator>
-	class MapPairConverter
+	template<bool tAllowKeyValue = true>
+	class MapArgReferencer
 	{
 	public:
-		typedef TIterator Iterator;
+		static const bool allowKeyValue = tAllowKeyValue;
 
 	public:
-		template<typename Pair,
-			typename KeyArg = decltype(std::declval<Pair>().key),
-			typename ValueArg = decltype(std::declval<Pair>().value)>
-		static std::pair<KeyArg, ValueArg> Convert(const Pair& pair) noexcept
+		template<typename ArgIterator,
+			typename KeyArg = decltype(std::declval<ArgIterator>()->key),
+			typename ValueArg = decltype(std::declval<ArgIterator>()->value)>
+		static auto GetReferencePair(ArgIterator iter) noexcept
+			requires allowKeyValue && std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>
 		{
-			static_assert(std::is_reference_v<KeyArg>&& std::is_reference_v<ValueArg>);
-			return std::pair<KeyArg, ValueArg>(pair.key, pair.value);
+			return std::pair<KeyArg, ValueArg>(iter->key, iter->value);
 		}
 
-		template<typename KeyArg, typename ValueArg>
-		static std::pair<KeyArg&&, ValueArg&&> Convert(
-			std::pair<KeyArg, ValueArg>&& pair) noexcept
+		template<typename ArgIterator>
+		static auto GetReferencePair(ArgIterator iter) noexcept
+			requires requires { pvGetReferencePair<ArgIterator>(*iter); }
 		{
-			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
-				|| std::is_reference_v<std::iter_reference_t<Iterator>>);
+			return pvGetReferencePair<ArgIterator>(*iter);
+		}
+
+	private:
+		template<typename ArgIterator, typename KeyArg, typename ValueArg>
+		static auto pvGetReferencePair(std::pair<KeyArg, ValueArg>&& pair) noexcept
+			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
+				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
+		{
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 		}
 
-		template<typename KeyArg, typename ValueArg>
-		static std::pair<const KeyArg&, const ValueArg&> Convert(
-			const std::pair<KeyArg, ValueArg>& pair) noexcept
+		template<typename ArgIterator, typename KeyArg, typename ValueArg>
+		static auto pvGetReferencePair(const std::pair<KeyArg, ValueArg>& pair) noexcept
+			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
+				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		{
-			static_assert((std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
-				|| std::is_reference_v<std::iter_reference_t<Iterator>>);
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}
 	};
+
+	template<typename ArgIterator, typename Key,
+		bool allowKeyValue = true>
+	concept conceptMapArgIterator = conceptInputIterator<ArgIterator> &&
+		std::is_same_v<Key, std::decay_t<decltype(
+			MapArgReferencer<allowKeyValue>::GetReferencePair(std::declval<ArgIterator>()).first)>>;
 }
 
 } // namespace momo
