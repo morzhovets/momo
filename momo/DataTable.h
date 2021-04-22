@@ -1054,8 +1054,8 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires Settings::keepRowNumber
 	void pvAssignRows(RowIterator begin, RowIterator end)
+		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
@@ -1094,8 +1094,8 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires (!Settings::keepRowNumber)
 	void pvAssignRows(RowIterator begin, RowIterator end)
+		requires (!Settings::keepRowNumber)
 	{
 		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
 			HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
@@ -1126,8 +1126,8 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires Settings::keepRowNumber
 	void pvRemoveRows(RowIterator begin, RowIterator end)
+		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1149,8 +1149,8 @@ private:
 	}
 
 	template<typename RowIterator>
-	requires (!Settings::keepRowNumber)
 	void pvRemoveRows(RowIterator begin, RowIterator end)
+		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
 			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
@@ -1166,8 +1166,8 @@ private:
 	}
 
 	template<typename RowFilter>
-	requires Settings::keepRowNumber
 	void pvRemoveRows(const RowFilter& rowFilter)
+		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
@@ -1188,8 +1188,8 @@ private:
 	}
 
 	template<typename RowFilter>
-	requires (!Settings::keepRowNumber)
 	void pvRemoveRows(const RowFilter& rowFilter)
+		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
 			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;

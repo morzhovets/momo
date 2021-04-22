@@ -364,8 +364,8 @@ namespace internal
 		}
 
 		template<typename ResObject = void>
-		requires canReallocate
 		static ResObject* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
+			requires canReallocate
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
@@ -376,9 +376,8 @@ namespace internal
 			return static_cast<ResObject*>(newPtr);
 		}
 
-		template<typename = void> requires canReallocateInplace
 		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
-			size_t newSize) noexcept
+			size_t newSize) noexcept requires canReallocateInplace
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
@@ -576,14 +575,14 @@ namespace internal
 			GetBaseMemManager().Deallocate(ptr, size);
 		}
 
-		template<typename = void> requires BaseMemManagerProxy::canReallocate
 		void* Reallocate(void* ptr, size_t size, size_t newSize)
+			requires BaseMemManagerProxy::canReallocate
 		{
 			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		template<typename = void> requires BaseMemManagerProxy::canReallocateInplace
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+			requires BaseMemManagerProxy::canReallocateInplace
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
@@ -643,14 +642,14 @@ namespace internal
 			mBaseMemManager.Deallocate(ptr, size);
 		}
 
-		template<typename = void> requires BaseMemManagerProxy::canReallocate
 		void* Reallocate(void* ptr, size_t size, size_t newSize)
+			requires BaseMemManagerProxy::canReallocate
 		{
 			return mBaseMemManager.Reallocate(ptr, size, newSize);
 		}
 
-		template<typename = void> requires BaseMemManagerProxy::canReallocateInplace
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+			requires BaseMemManagerProxy::canReallocateInplace
 		{
 			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
 		}
