@@ -910,14 +910,14 @@ namespace internal
 
 		template<typename ArgIterator>
 		static auto GetReferencePair(ArgIterator iter) noexcept
-			requires requires { pvGetReferencePair<ArgIterator>(*iter); }
+			requires requires { ConvertReferencePair<ArgIterator>(*iter); }
 		{
-			return pvGetReferencePair<ArgIterator>(*iter);
+			return ConvertReferencePair<ArgIterator>(*iter);
 		}
 
-	private:
+	public:	// clang
 		template<typename ArgIterator, typename KeyArg, typename ValueArg>
-		static auto pvGetReferencePair(std::pair<KeyArg, ValueArg>&& pair) noexcept
+		static auto ConvertReferencePair(std::pair<KeyArg, ValueArg>&& pair) noexcept
 			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
 				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		{
@@ -926,7 +926,7 @@ namespace internal
 		}
 
 		template<typename ArgIterator, typename KeyArg, typename ValueArg>
-		static auto pvGetReferencePair(const std::pair<KeyArg, ValueArg>& pair) noexcept
+		static auto ConvertReferencePair(const std::pair<KeyArg, ValueArg>& pair) noexcept
 			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
 				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		{
