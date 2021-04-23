@@ -908,27 +908,26 @@ namespace internal
 			return std::pair<KeyArg, ValueArg>(iter->key, iter->value);
 		}
 
-		template<typename ArgIterator>
+		template<typename ArgIterator,
+			typename KeyArg = decltype(std::declval<ArgIterator>()->first),
+			typename ValueArg = decltype(std::declval<ArgIterator>()->second)>
 		static auto GetReferencePair(ArgIterator iter) noexcept
-			requires requires { ConvertReferencePair<ArgIterator>(*iter); }
-		{
-			return ConvertReferencePair<ArgIterator>(*iter);
-		}
-
-	public:	// clang
-		template<typename ArgIterator, typename KeyArg, typename ValueArg>
-		static auto ConvertReferencePair(std::pair<KeyArg, ValueArg>&& pair) noexcept
 			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
 				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
+		{
+			return pvGetReferencePair<KeyArg, ValueArg>(*iter);
+		}
+
+	private:
+		template<typename KeyArg, typename ValueArg, typename Pair>
+		static auto pvGetReferencePair(Pair&& pair) noexcept
 		{
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 		}
 
-		template<typename ArgIterator, typename KeyArg, typename ValueArg>
-		static auto ConvertReferencePair(const std::pair<KeyArg, ValueArg>& pair) noexcept
-			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
-				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
+		template<typename KeyArg, typename ValueArg, typename Pair>
+		static auto pvGetReferencePair(const Pair& pair) noexcept
 		{
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}
