@@ -21,9 +21,12 @@ namespace momo
 
 namespace internal
 {
+	template<size_t maxCount>
+	concept conceptBucketOpenN1MaxCount = (0 < maxCount && maxCount < 8);
+
 	template<typename TItemTraits, size_t tMaxCount, bool tReverse,
 		typename TData = std::array<std::byte, tMaxCount + 1>>
-	requires (0 < tMaxCount && tMaxCount < 8 && tMaxCount + 1 <= sizeof(TData))
+	requires conceptBucketOpenN1MaxCount<tMaxCount> && (tMaxCount + 1 <= sizeof(TData))
 	class BucketOpenN1 : public BucketBase
 	{
 	protected:
@@ -255,7 +258,7 @@ namespace internal
 
 template<size_t tMaxCount = 3,
 	bool tReverse = true>
-requires (0 < tMaxCount && tMaxCount < 8)
+requires internal::conceptBucketOpenN1MaxCount<tMaxCount>
 class HashBucketOpenN1 : public internal::HashBucketBase
 {
 public:

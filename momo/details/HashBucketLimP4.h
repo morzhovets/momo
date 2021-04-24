@@ -137,9 +137,12 @@ namespace internal
 		uint32_t mPtrState[2];
 	};
 
+	template<size_t maxCount>
+	concept conceptBucketLimP4MaxCount = (0 < maxCount && maxCount <= 4);
+
 	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams,
 		bool tUseHashCodePartGetter>
-	requires (0 < tMaxCount && tMaxCount <= 4)
+	requires conceptBucketLimP4MaxCount<tMaxCount>
 	class BucketLimP4 : public BucketBase
 	{
 	protected:
@@ -528,7 +531,7 @@ namespace internal
 
 template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>>
-requires (0 < tMaxCount && tMaxCount <= 4)
+requires internal::conceptBucketLimP4MaxCount<tMaxCount>
 class HashBucketLimP4 : public internal::HashBucketBase
 {
 public:

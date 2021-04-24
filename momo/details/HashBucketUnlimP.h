@@ -50,6 +50,7 @@ namespace internal
 
 	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
 		typename TArraySettings>
+	requires conceptArrayBucketMaxFastCount<tMaxFastCount>
 	class BucketUnlimP : public BucketBase
 	{
 	protected:
@@ -161,6 +162,7 @@ namespace internal
 template<size_t tMaxFastCount = 7,
 	typename TMemPoolParams = MemPoolParams<>,
 	typename TArraySettings = ArraySettings<>>
+requires internal::conceptArrayBucketMaxFastCount<tMaxFastCount>
 class HashBucketUnlimP : public internal::HashBucketBase
 {
 public:

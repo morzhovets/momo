@@ -660,8 +660,11 @@ namespace internal
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 	};
 
+	template<size_t blockCount>
+	concept conceptMemPoolUInt32BlockCount = (blockCount > 0);
+
 	template<size_t tBlockCount, conceptMemManager TMemManager>
-	requires (tBlockCount > 0)
+	requires conceptMemPoolUInt32BlockCount<tBlockCount>
 	class MemPoolUInt32
 	{
 	public:
