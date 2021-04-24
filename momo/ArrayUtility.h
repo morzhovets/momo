@@ -232,46 +232,48 @@ namespace internal
 		}
 
 		template<conceptInputIterator ArgIterator>
+		requires (!conceptIterator<ArgIterator, std::forward_iterator_tag>)
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& memManager = array.GetMemManager();
-			if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
+			size_t count = 0;
+			for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
+				array.InsertCrt(index + count, IterCreator(memManager, *iter));
+		}
+
+		template<conceptIterator<std::forward_iterator_tag> ArgIterator>
+		static void Insert(Array& array, size_t index, ArgIterator begin, size_t count)
+		{
+			size_t initCount = array.GetCount();
+			MOMO_CHECK(index <= initCount);
+			MemManager& memManager = array.GetMemManager();
+			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
+			if (index + count < initCount)
 			{
-				size_t initCount = array.GetCount();
-				MOMO_CHECK(index <= initCount);
-				size_t count = UIntMath<>::Dist(begin, end);
-				MOMO_ASSERT(array.GetCapacity() >= initCount + count);
-				if (index + count < initCount)
-				{
-					for (size_t i = initCount - count; i < initCount; ++i)
-						array.AddBackNogrow(std::move(array[i]));
-					for (size_t i = initCount - count; i > index; --i)
-						ItemTraits::Assign(memManager, std::move(array[i - 1]), array[i + count - 1]);
-					ArgIterator iter = begin;
-					for (size_t i = index; i < index + count; ++i, (void)++iter)
-						ItemTraits::Assign(memManager, *iter, array[i]);
-				}
-				else
-				{
-					ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
-					for (size_t i = initCount; i < index + count; ++i, (void)++iter)
-						array.AddBackNogrowCrt(IterCreator(memManager, *iter));
-					iter = begin;
-					for (size_t i = index; i < initCount; ++i, (void)++iter)
-					{
-						Item& arrayItem = array[i];
-						array.AddBackNogrow(std::move(arrayItem));
-						ItemTraits::Assign(memManager, *iter, arrayItem);
-					}
-				}
+				for (size_t i = initCount - count; i < initCount; ++i)
+					array.AddBackNogrow(std::move(array[i]));
+				for (size_t i = initCount - count; i > index; --i)
+					ItemTraits::Assign(memManager, std::move(array[i - 1]), array[i + count - 1]);
+				ArgIterator iter = begin;
+				for (size_t i = index; i < index + count; ++i, (void)++iter)
+					ItemTraits::Assign(memManager, *iter, array[i]);
 			}
 			else
 			{
-				size_t count = 0;
-				for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
-					array.InsertCrt(index + count, IterCreator(memManager, *iter));
+				typedef typename ItemTraits::template Creator<
+					std::iter_reference_t<ArgIterator>> IterCreator;
+				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
+				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
+					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
+				iter = begin;
+				for (size_t i = index; i < initCount; ++i, (void)++iter)
+				{
+					Item& arrayItem = array[i];
+					array.AddBackNogrow(std::move(arrayItem));
+					ItemTraits::Assign(memManager, *iter, arrayItem);
+				}
 			}
 		}
 

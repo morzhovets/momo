@@ -531,8 +531,8 @@ public:
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
-		std::move_iterator<Item*> begin(&itemHandler);
-		Insert(index, begin, begin + 1);
+		Reserve(mCount + 1);
+		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
 	template<typename... ItemArgs>
@@ -566,8 +566,15 @@ public:
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
-			Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
-		ArrayShifter::Insert(*this, index, begin, end);
+		{
+			size_t count = internal::UIntMath<>::Dist(begin, end);
+			Reserve(mCount + count);
+			ArrayShifter::Insert(*this, index, begin, count);
+		}
+		else
+		{
+			ArrayShifter::Insert(*this, index, begin, end);
+		}
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
