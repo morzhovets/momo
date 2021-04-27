@@ -81,16 +81,12 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
 		return key1 < key2;
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(KeyArg1* key1, KeyArg2* key2) const noexcept
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1*>::value) || IsValidKeyArg<KeyArg1*>::value);
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2*>::value) || IsValidKeyArg<KeyArg2*>::value);
 		return std::less<const void*>()(key1, key2);
 	}
 };
@@ -123,8 +119,6 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg1>::value) || IsValidKeyArg<KeyArg1>::value);
-		MOMO_STATIC_ASSERT((std::is_same<Key, KeyArg2>::value) || IsValidKeyArg<KeyArg2>::value);
 		return LessFunc::operator()(key1, key2);
 	}
 
