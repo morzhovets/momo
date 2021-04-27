@@ -154,19 +154,17 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires std::is_convertible_v<const KeyArg&, const KeyArgBase&> &&
-		internal::conceptHashFunc<HashCoder<KeyArgBase>, KeyArgBase> &&
-		std::is_default_constructible_v<HashCoder<KeyArgBase>> // && std::is_empty_v<HashCoder<KeyArgBase>>
 	size_t GetHashCode(const KeyArg& key) const
+		requires requires { { HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key)) }
+			-> std::convertible_to<size_t>; }
 	{
 		return HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key));
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	requires std::is_convertible_v<const KeyArg1&, const KeyArgBase&> &&
-		std::is_convertible_v<const KeyArg2&, const KeyArgBase&> &&
-		requires (const KeyArgBase& key) { { key == key } -> std::convertible_to<bool>; }
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
+		requires requires { { static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2) }
+			-> std::convertible_to<bool>; }
 	{
 		return static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2);
 	}
@@ -235,15 +233,12 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires std::is_same_v<Key, KeyArg> || IsValidKeyArg<KeyArg>::value
 	size_t GetHashCode(const KeyArg& key) const
 	{
 		return mHashFunc(key);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	requires (std::is_same_v<Key, KeyArg1> || IsValidKeyArg<KeyArg1>::value) &&
-		(std::is_same_v<Key, KeyArg2> || IsValidKeyArg<KeyArg2>::value)
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
 		return mEqualFunc(key1, key2);

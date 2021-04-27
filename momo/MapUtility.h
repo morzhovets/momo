@@ -902,8 +902,8 @@ namespace internal
 		template<typename ArgIterator,
 			typename KeyArg = decltype(std::declval<ArgIterator>()->key),
 			typename ValueArg = decltype(std::declval<ArgIterator>()->value)>
-		static auto GetReferencePair(ArgIterator iter) noexcept
-			requires allowKeyValue && std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>
+		requires std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>
+		static auto GetReferencePair(ArgIterator iter) noexcept requires allowKeyValue
 		{
 			return std::pair<KeyArg, ValueArg>(iter->key, iter->value);
 		}
@@ -911,9 +911,9 @@ namespace internal
 		template<typename ArgIterator,
 			typename KeyArg = decltype(std::declval<ArgIterator>()->first),
 			typename ValueArg = decltype(std::declval<ArgIterator>()->second)>
+		requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
+			(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		static auto GetReferencePair(ArgIterator iter) noexcept
-			requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
-				(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		{
 			return pvGetReferencePair<KeyArg, ValueArg>(*iter);
 		}

@@ -77,9 +77,8 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	requires requires (const KeyArg1& key1, const KeyArg2& key2)
-		{ { key1 < key2 } -> std::convertible_to<bool>; }
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
+		requires requires { { key1 < key2 } -> std::convertible_to<bool>; }
 	{
 		return std::less<>()(key1, key2);
 	}
@@ -112,8 +111,6 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	requires (std::is_same_v<Key, KeyArg1> || IsValidKeyArg<KeyArg1>::value) &&
-		(std::is_same_v<Key, KeyArg2> || IsValidKeyArg<KeyArg2>::value)
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
 		return mLessFunc(key1, key2);
