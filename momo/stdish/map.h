@@ -554,8 +554,7 @@ namespace internal
 		template<typename Iterator>
 		void insert(Iterator first, Iterator last)
 		{
-			pvInsert(first, last,
-				std::is_same<key_type, typename std::decay<decltype(first->first)>::type>());
+			pvInsert(first, last, momo::internal::IsMapArgIteratorStd<Iterator, key_type>());
 		}
 
 		void insert(std::initializer_list<value_type> values)
@@ -802,13 +801,13 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		void pvInsert(Iterator first, Iterator last, std::true_type /*isKeyType*/)
+		void pvInsert(Iterator first, Iterator last, std::true_type /*isMapArgIterator*/)
 		{
 			mTreeMap.Insert(first, last);
 		}
 
 		template<typename Iterator>
-		void pvInsert(Iterator first, Iterator last, std::false_type /*isKeyType*/)
+		void pvInsert(Iterator first, Iterator last, std::false_type /*isMapArgIterator*/)
 		{
 			for (Iterator iter = first; iter != last; ++iter)
 				insert(*iter);
