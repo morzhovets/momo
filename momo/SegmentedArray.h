@@ -74,41 +74,42 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
+	static void GetSegmentItemIndexes(size_t index, size_t& segIndex, size_t& segItemIndex) noexcept
 	{
 		size_t index1 = (index >> logInitialItemCount) + 1;
 		size_t index2 = index & ((size_t{1} << logInitialItemCount) - 1);
-		size_t logItemCount = pvIndexToLogItemCount(index1);
-		size_t itemIndex1 = index1 & ((size_t{1} << logItemCount) - 1);
-		size_t itemIndex2 = index2;
-		segIndex = (index1 >> logItemCount) + (size_t{1} << logItemCount) - 2;
-		itemIndex = (itemIndex1 << logInitialItemCount) + itemIndex2;
+		size_t logSegItemCount = pvIndexToLogSegmentItemCount(index1);
+		size_t segItemIndex1 = index1 & ((size_t{1} << logSegItemCount) - 1);
+		size_t segItemIndex2 = index2;
+		segIndex = (index1 >> logSegItemCount) + (size_t{1} << logSegItemCount) - 2;
+		segItemIndex = (segItemIndex1 << logInitialItemCount) + segItemIndex2;
 	}
 
-	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
+	static size_t GetIndex(size_t segIndex, size_t segItemIndex) noexcept
 	{
-		size_t itemIndex1 = itemIndex >> logInitialItemCount;
-		size_t itemIndex2 = itemIndex & ((size_t{1} << logInitialItemCount) - 1);
-		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
-		size_t index1 = ((segIndex + 2 - (size_t{1} << logItemCount)) << logItemCount) + itemIndex1;
-		size_t index2 = itemIndex2;
+		size_t segItemIndex1 = segItemIndex >> logInitialItemCount;
+		size_t segItemIndex2 = segItemIndex & ((size_t{1} << logInitialItemCount) - 1);
+		size_t logSegItemCount = pvSegmentIndexToLogSegmentItemCount(segIndex);
+		size_t index1 = ((segIndex + 2 - (size_t{1} << logSegItemCount)) << logSegItemCount)
+			+ segItemIndex1;
+		size_t index2 = segItemIndex2;
 		size_t index = ((index1 - 1) << logInitialItemCount) + index2;
 		return index;
 	}
 
-	static size_t GetItemCount(size_t segIndex) noexcept
+	static size_t GetSegmentItemCount(size_t segIndex) noexcept
 	{
-		size_t logItemCount = pvSegIndexToLogItemCount(segIndex);
-		return size_t{1} << (logItemCount + logInitialItemCount);
+		size_t logSegItemCount = pvSegmentIndexToLogSegmentItemCount(segIndex);
+		return size_t{1} << (logSegItemCount + logInitialItemCount);
 	}
 
 private:
-	static size_t pvIndexToLogItemCount(size_t index1) noexcept
+	static size_t pvIndexToLogSegmentItemCount(size_t index1) noexcept
 	{
 		return std::bit_width(index1) / 2;
 	}
 
-	static size_t pvSegIndexToLogItemCount(size_t segIndex) noexcept
+	static size_t pvSegmentIndexToLogSegmentItemCount(size_t segIndex) noexcept
 	{
 		return std::bit_width((segIndex * 2 + 4) / 3) - 1;
 	}
@@ -126,18 +127,18 @@ public:
 	typedef ArraySettings<> SegmentsSettings;
 
 public:
-	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
+	static void GetSegmentItemIndexes(size_t index, size_t& segIndex, size_t& segItemIndex) noexcept
 	{
 		segIndex = index >> logInitialItemCount;
-		itemIndex = index & ((size_t{1} << logInitialItemCount) - 1);
+		segItemIndex = index & ((size_t{1} << logInitialItemCount) - 1);
 	}
 
-	static size_t GetIndex(size_t segIndex, size_t itemIndex) noexcept
+	static size_t GetIndex(size_t segIndex, size_t segItemIndex) noexcept
 	{
-		return (segIndex << logInitialItemCount) + itemIndex;
+		return (segIndex << logInitialItemCount) + segItemIndex;
 	}
 
-	static size_t GetItemCount(size_t /*segIndex*/) noexcept
+	static size_t GetSegmentItemCount(size_t /*segIndex*/) noexcept
 	{
 		return size_t{1} << logInitialItemCount;
 	}
@@ -455,10 +456,10 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
 		MOMO_CHECK(segIndex < mSegments.GetCount());
-		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
+		std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + segItemIndex);
 		++mCount;
 	}
 
@@ -483,16 +484,16 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
 		size_t segCount = mSegments.GetCount();
 		if (segIndex < segCount)
 		{
-			std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + itemIndex);
+			std::forward<ItemCreator>(itemCreator)(mSegments[segIndex] + segItemIndex);
 		}
 		else
 		{
-			MOMO_ASSERT(itemIndex == 0);
+			MOMO_ASSERT(segItemIndex == 0);
 			mSegments.Reserve(segCount + 1);
 			Item* segment = pvAllocateSegment(segCount);
 			try
@@ -636,26 +637,26 @@ public:
 private:
 	Item* pvAllocateSegment(size_t segIndex)
 	{
-		size_t itemCount = Settings::GetItemCount(segIndex);
-		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
+		size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
+		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
 			throw std::bad_array_new_length();
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
-			itemCount * sizeof(Item));
+			segItemCount * sizeof(Item));
 	}
 
 	void pvDeallocateSegment(size_t segIndex, Item* segment) noexcept
 	{
-		size_t itemCount = Settings::GetItemCount(segIndex);
-		MemManagerProxy::Deallocate(GetMemManager(), segment, itemCount * sizeof(Item));
+		size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
+		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
 	Item& pvGetItem(size_t index) const
 	{
 		MOMO_CHECK(index < mCount);
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(index, segIndex, itemIndex);
-		return mSegments[segIndex][itemIndex];
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(index, segIndex, segItemIndex);
+		return mSegments[segIndex][segItemIndex];
 	}
 
 	template<typename MultiItemCreator>
@@ -668,18 +669,18 @@ private:
 			pvIncCapacity(initCapacity, count);
 		try
 		{
-			size_t segIndex, itemIndex;
-			Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
+			size_t segIndex, segItemIndex;
+			Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
 			while (mCount < count)
 			{
 				Item* segment = mSegments[segIndex];
-				size_t itemCount = Settings::GetItemCount(segIndex);
-				for (; itemIndex < itemCount && mCount < count; ++itemIndex, ++mCount)
-					multiItemCreator(segment + itemIndex);
-				if (itemIndex == itemCount)
+				size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
+				for (; segItemIndex < segItemCount && mCount < count; ++segItemIndex, ++mCount)
+					multiItemCreator(segment + segItemIndex);
+				if (segItemIndex == segItemCount)
 				{
 					++segIndex;
-					itemIndex = 0;
+					segItemIndex = 0;
 				}
 			}
 		}
@@ -694,19 +695,19 @@ private:
 	void pvDecCount(size_t count) noexcept
 	{
 		MOMO_ASSERT(count <= mCount);
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
 		MemManager& memManager = GetMemManager();
 		while (mCount > count)
 		{
-			if (itemIndex == 0)
+			if (segItemIndex == 0)
 			{
 				--segIndex;
-				itemIndex = Settings::GetItemCount(segIndex);
+				segItemIndex = Settings::GetSegmentItemCount(segIndex);
 			}
-			size_t remCount = std::minmax(itemIndex, mCount - count).first;
-			ItemTraits::Destroy(memManager, mSegments[segIndex] + itemIndex - remCount, remCount);
-			itemIndex -= remCount;
+			size_t remCount = std::minmax(segItemIndex, mCount - count).first;
+			ItemTraits::Destroy(memManager, mSegments[segIndex] + segItemIndex - remCount, remCount);
+			segItemIndex -= remCount;
 			mCount -= remCount;
 		}
 	}
@@ -714,9 +715,9 @@ private:
 	void pvIncCapacity(size_t initCapacity, size_t capacity)
 	{
 		MOMO_ASSERT(capacity >= initCapacity);
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(capacity, segIndex, itemIndex);
-		if (itemIndex > 0)
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(capacity, segIndex, segItemIndex);
+		if (segItemIndex > 0)
 			++segIndex;
 		try
 		{
@@ -737,9 +738,9 @@ private:
 	void pvDecCapacity(size_t capacity) noexcept
 	{
 		MOMO_ASSERT(capacity <= GetCapacity());
-		size_t segIndex, itemIndex;
-		Settings::GetSegItemIndexes(capacity, segIndex, itemIndex);
-		if (itemIndex > 0)
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(capacity, segIndex, segItemIndex);
+		if (segItemIndex > 0)
 			++segIndex;
 		size_t segCount = mSegments.GetCount();
 		for (size_t i = segIndex; i < segCount; ++i)

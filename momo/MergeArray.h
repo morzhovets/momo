@@ -391,7 +391,7 @@ public:
 		if (mCapacity == 0)
 			return pvInitCapacity(capacity);
 		capacity = pvCeilCapacity(capacity);
-		size_t segIndex = pvGetSegIndex(mCapacity - 1, capacity);
+		size_t segIndex = pvGetSegmentIndex(mCapacity - 1, capacity);
 		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, nullptr);
 		mSegments[segIndex] = pvAllocateSegment(segIndex);
@@ -435,7 +435,7 @@ public:
 			return;
 		size_t initCapacity = mCapacity;
 		mCapacity = capacity;
-		size_t segIndex = pvGetSegIndex(mCapacity - 1, initCapacity);
+		size_t segIndex = pvGetSegmentIndex(mCapacity - 1, initCapacity);
 		try
 		{
 			for (size_t i = 1; i < segIndex; ++i)
@@ -540,7 +540,7 @@ public:
 			try
 			{
 				mSegments[segIndex] = pvAllocateSegment(segIndex);
-				size_t segItemCount = pvGetSegItemCount(segIndex);
+				size_t segItemCount = pvGetSegmentItemCount(segIndex);
 				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
 					mSegments[segIndex], segItemCount, std::forward<ItemCreator>(itemCreator), segment0);
 			}
@@ -652,7 +652,7 @@ public:
 	size_t GetSegmentCount() const noexcept
 	{
 		//return mSegments.GetCount();
-		return (mCapacity > 0) ? pvGetSegIndex(0, mCapacity) + 1 : 0;
+		return (mCapacity > 0) ? pvGetSegmentIndex(0, mCapacity) + 1 : 0;
 	}
 
 	const Item* GetSegmentItems(size_t segIndex) const
@@ -684,7 +684,7 @@ public:
 	}
 
 private:
-	static size_t pvGetSegItemCount(size_t segIndex) noexcept
+	static size_t pvGetSegmentItemCount(size_t segIndex) noexcept
 	{
 		return initialItemCount << ((segIndex > 0) ? segIndex - 1 : 0);
 	}
@@ -698,7 +698,7 @@ private:
 		return ((capacity - 1) & (initialItemCount << (segIndex - 1))) > 0;
 	}
 
-	static size_t pvGetSegIndex(size_t index, size_t capacity) noexcept
+	static size_t pvGetSegmentIndex(size_t index, size_t capacity) noexcept
 	{
 		MOMO_ASSERT(index < capacity);
 		return std::bit_width((index ^ (capacity - 1)) >> logInitialItemCount);
@@ -711,7 +711,7 @@ private:
 
 	Item* pvAllocateSegment(size_t segIndex)
 	{
-		size_t segItemCount = pvGetSegItemCount(segIndex);
+		size_t segItemCount = pvGetSegmentItemCount(segIndex);
 		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
 			throw std::bad_array_new_length();
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
@@ -721,7 +721,7 @@ private:
 
 	void pvDeallocateSegment(size_t segIndex, Item* segment) noexcept
 	{
-		size_t segItemCount = pvGetSegItemCount(segIndex);
+		size_t segItemCount = pvGetSegmentItemCount(segIndex);
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
@@ -754,7 +754,7 @@ private:
 		if (capacity == 0)
 			return;
 		capacity = pvCeilCapacity(capacity);
-		size_t segCount = pvGetSegIndex(0, capacity) + 1;
+		size_t segCount = pvGetSegmentIndex(0, capacity) + 1;
 		mSegments.SetCount(segCount, nullptr);
 		try
 		{
@@ -785,7 +785,7 @@ private:
 
 	Item* pvGetItemPtr(size_t index) const noexcept
 	{
-		size_t segIndex = pvGetSegIndex(index, mCapacity);
+		size_t segIndex = pvGetSegmentIndex(index, mCapacity);
 		size_t segItemIndex = index & ((initialItemCount << segIndex) - 1);
 		return mSegments[segIndex] + segItemIndex;
 	}
