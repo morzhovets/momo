@@ -17,8 +17,8 @@ matrix:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-12 main'
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - clang-12
@@ -32,8 +32,8 @@ matrix:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-12 main'
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - clang-12
@@ -46,8 +46,10 @@ matrix:
     - compiler: gcc
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-10
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-10
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Release"
@@ -57,8 +59,10 @@ matrix:
       arch: arm64
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-10
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-10
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Debug"
@@ -68,8 +72,10 @@ matrix:
       arch: ppc64le
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-10
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-10
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Release"
@@ -79,8 +85,10 @@ matrix:
       arch: s390x
       addons:
         apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-10
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-10
       env:
         - COMPILER="g++-10"
         - BUILD_TYPE="Release"
