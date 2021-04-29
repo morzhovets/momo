@@ -759,7 +759,7 @@ namespace internal
 							break;
 						}
 						rawIndex1 = rawIndex2;
-						rawIndex2 += SegmentedArraySettings::GetItemCount(segIndex + 1);
+						rawIndex2 += SegmentedArraySettings::GetSegmentItemCount(segIndex + 1);
 					}
 					if (rawIndex2 >= rawCount)
 					{
@@ -793,7 +793,7 @@ namespace internal
 					{
 						pvSortRaws(keyIter, rawIndex1, rawIndex2);
 						rawIndex1 = rawIndex2;
-						rawIndex2 += SegmentedArraySettings::GetItemCount(segIndex + 1);
+						rawIndex2 += SegmentedArraySettings::GetSegmentItemCount(segIndex + 1);
 					}
 					if (rawFilter(keyIter->key))
 					{
@@ -818,10 +818,10 @@ namespace internal
 				if (rawCount > 0 && (rawCount & ((1 << logInitialSegmentSize) - 1)) == 0)
 				{
 					size_t segIndex, rawIndex;
-					SegmentedArraySettings::GetSegItemIndexes(rawCount, segIndex, rawIndex);
+					SegmentedArraySettings::GetSegmentItemIndexes(rawCount, segIndex, rawIndex);
 					if (rawIndex == 0)
 					{
-						size_t segSize = SegmentedArraySettings::GetItemCount(segIndex - 1);
+						size_t segSize = SegmentedArraySettings::GetSegmentItemCount(segIndex - 1);
 						pvSortRaws(keyIter, rawCount - segSize, rawCount);
 					}
 				}
