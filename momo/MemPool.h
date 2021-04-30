@@ -47,6 +47,16 @@ public:
 		return (blockSize <= blockAlignment) ? 2 * blockAlignment
 			: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
 	}
+
+	static constexpr bool CheckBlockCount(size_t blockCount) noexcept
+	{
+		return 0 < blockCount && blockCount < 128;
+	}
+
+	static constexpr bool CheckBlockAlignment(size_t blockAlignment) noexcept
+	{
+		return 0 < blockAlignment && blockAlignment <= 1024;
+	}
 };
 
 template<typename MemPoolParams>
@@ -64,7 +74,7 @@ concept conceptMemPoolParams =
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
-requires (0 < tBlockCount && tBlockCount < 128)
+requires (MemPoolConst::CheckBlockCount(tBlockCount))
 class MemPoolParams
 {
 public:
@@ -104,8 +114,8 @@ template<size_t tBlockSize,
 	size_t tBlockAlignment = MemPoolConst::GetBlockAlignment(tBlockSize),
 	size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
-requires (0 < tBlockCount && tBlockCount < 128
-	&& 0 < tBlockAlignment && tBlockAlignment <= 1024)
+requires (MemPoolConst::CheckBlockCount(tBlockCount) &&
+	MemPoolConst::CheckBlockAlignment(tBlockAlignment))
 class MemPoolParamsStatic
 {
 public:
@@ -395,8 +405,8 @@ private:
 
 	void pvCheckParams() const
 	{
-		MOMO_CHECK(0 < Params::blockCount && Params::blockCount < 128);
-		MOMO_CHECK(0 < Params::blockAlignment && Params::blockAlignment <= 1024);
+		MOMO_CHECK(MemPoolConst::CheckBlockCount(Params::blockCount));
+		MOMO_CHECK(MemPoolConst::CheckBlockAlignment(Params::blockAlignment));
 		MOMO_CHECK(Params::blockSize > 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
@@ -653,7 +663,7 @@ private:
 
 namespace internal
 {
-	class NestedMemPoolSettings
+	class NestedMemPoolSettings : public MemPoolSettings
 	{
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
