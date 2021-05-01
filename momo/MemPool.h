@@ -63,14 +63,14 @@ template<typename MemPoolParams>
 concept conceptMemPoolParams =
 	std::is_nothrow_destructible_v<MemPoolParams> &&
 	std::is_nothrow_move_constructible_v<MemPoolParams> &&
-	std::is_nothrow_move_assignable_v<MemPoolParams> /*&&
-	requires
+	std::is_nothrow_move_assignable_v<MemPoolParams> &&
+	requires (const MemPoolParams& params)
 	{
-		{ MemPoolParams::blockSize } -> std::convertible_to<size_t>;
-		{ MemPoolParams::blockAlignment } -> std::convertible_to<size_t>;
-		{ MemPoolParams::blockCount } -> std::convertible_to<size_t>;
-		{ MemPoolParams::cachedFreeBlockCount } -> std::convertible_to<size_t>;
-	}*/;
+		{ params.GetBlockSize() } -> std::same_as<size_t>;
+		{ params.GetBlockAlignment() } -> std::same_as<size_t>;
+		{ params.GetBlockCount() } -> std::same_as<size_t>;
+		{ params.GetCachedFreeBlockCount() } -> std::same_as<size_t>;
+	};
 
 template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 	size_t tCachedFreeBlockCount = MemPoolConst::defaultCachedFreeBlockCount>
@@ -91,23 +91,33 @@ public:
 	explicit MemPoolParams(size_t blockSize, size_t blockAlignment) noexcept
 	{
 		MOMO_ASSERT(blockAlignment > 0);
-		this->blockSize = MemPoolConst::CorrectBlockSize(blockSize, blockAlignment, blockCount);
-		this->blockAlignment = blockAlignment;
+		mBlockSize = MemPoolConst::CorrectBlockSize(blockSize, blockAlignment, blockCount);
+		mBlockAlignment = blockAlignment;
 	}
 
 	size_t GetBlockSize() const noexcept
 	{
-		return blockSize;
+		return mBlockSize;
 	}
 
 	size_t GetBlockAlignment() const noexcept
 	{
-		return blockAlignment;
+		return mBlockAlignment;
 	}
 
-protected:
-	size_t blockSize;
-	size_t blockAlignment;
+	static constexpr size_t GetBlockCount() noexcept
+	{
+		return blockCount;
+	}
+
+	static constexpr size_t GetCachedFreeBlockCount() noexcept
+	{
+		return cachedFreeBlockCount;
+	}
+
+private:
+	size_t mBlockSize;
+	size_t mBlockAlignment;
 };
 
 template<size_t tBlockSize,
@@ -131,6 +141,26 @@ public:
 public:
 	explicit MemPoolParamsStatic() noexcept
 	{
+	}
+
+	static constexpr size_t GetBlockSize() noexcept
+	{
+		return blockSize;
+	}
+
+	static constexpr size_t GetBlockAlignment() noexcept
+	{
+		return blockAlignment;
+	}
+
+	static constexpr size_t GetBlockCount() noexcept
+	{
+		return blockCount;
+	}
+
+	static constexpr size_t GetCachedFreeBlockCount() noexcept
+	{
+		return cachedFreeBlockCount;
 	}
 };
 
@@ -242,17 +272,17 @@ public:
 
 	size_t GetBlockSize() const noexcept
 	{
-		return Params::blockSize;
+		return Params::GetBlockSize();
 	}
 
 	size_t GetBlockAlignment() const noexcept
 	{
-		return Params::blockAlignment;
+		return Params::GetBlockAlignment();
 	}
 
 	size_t GetBlockCount() const noexcept
 	{
-		return Params::blockCount;
+		return Params::GetBlockCount();
 	}
 
 	const Params& GetParams() const noexcept
@@ -282,7 +312,7 @@ public:
 		}
 		else
 		{
-			if (Params::blockCount > 1)
+			if (Params::GetBlockCount() > 1)
 				block = internal::PtrCaster::FromUInt(pvNewBlock());
 			else if (pvGetAlignmentAddend() == 0)
 				block = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
@@ -299,7 +329,7 @@ public:
 		MOMO_ASSERT(mAllocCount > 0);
 		if (pvUseCache())
 		{
-			if (mCachedCount >= Params::cachedFreeBlockCount)
+			if (mCachedCount >= Params::GetCachedFreeBlockCount())
 				pvFlushDeallocate();
 			internal::PtrCaster::ToBuffer(mCacheHead, block);
 			mCacheHead = block;
@@ -319,7 +349,7 @@ public:
 
 	bool CanDeallocateAll() const noexcept
 	{
-		return Params::blockCount > 1;
+		return Params::GetBlockCount() > 1;
 	}
 
 	void DeallocateAll() noexcept
@@ -348,9 +378,9 @@ public:
 	{
 		if (this == &memPool)
 			return;
-		MOMO_CHECK(Params::blockSize == memPool.GetBlockSize());
-		MOMO_CHECK(Params::blockAlignment == memPool.GetBlockAlignment());
-		MOMO_CHECK(Params::blockCount == memPool.GetBlockCount());
+		MOMO_CHECK(GetBlockSize() == memPool.GetBlockSize());
+		MOMO_CHECK(GetBlockAlignment() == memPool.GetBlockAlignment());
+		MOMO_CHECK(GetBlockCount() == memPool.GetBlockCount());
 		MOMO_CHECK(MemManagerProxy::IsEqual(GetMemManager(), memPool.GetMemManager()));
 		if (memPool.pvUseCache())
 			memPool.pvFlushDeallocate();
@@ -405,20 +435,23 @@ private:
 
 	void pvCheckParams() const
 	{
-		MOMO_CHECK(MemPoolConst::CheckBlockCount(Params::blockCount));
-		MOMO_CHECK(MemPoolConst::CheckBlockAlignment(Params::blockAlignment));
-		MOMO_CHECK(Params::blockSize > 0);
-		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
-		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
-		size_t maxBlockSize = (internal::UIntConst::maxSize
-			- 2 - 3 * sizeof(void*) - 4 * Params::blockAlignment) / Params::blockCount;
-		if (Params::blockSize > maxBlockSize)
+		const size_t blockSize = Params::GetBlockSize();
+		const size_t blockAlignment = Params::GetBlockAlignment();
+		const size_t blockCount = Params::GetBlockCount();
+		MOMO_CHECK(MemPoolConst::CheckBlockCount(blockCount));
+		MOMO_CHECK(MemPoolConst::CheckBlockAlignment(blockAlignment));
+		MOMO_CHECK(blockSize > 0);
+		MOMO_CHECK(blockCount == 1 || blockSize % blockAlignment == 0);
+		MOMO_CHECK(blockCount == 1 || blockSize / blockAlignment >= 2);
+		const size_t maxBlockSize = (internal::UIntConst::maxSize
+			- 2 - 3 * sizeof(void*) - 4 * blockAlignment) / blockCount;
+		if (blockSize > maxBlockSize)
 			throw std::length_error("Invalid block size");
 	}
 
 	bool pvUseCache() const noexcept
 	{
-		return Params::cachedFreeBlockCount > 0 && Params::blockSize >= sizeof(void*);	//?
+		return Params::GetCachedFreeBlockCount() > 0 && Params::GetBlockSize() >= sizeof(void*);	//?
 	}
 
 	MOMO_NOINLINE void pvFlushDeallocate() noexcept
@@ -434,7 +467,7 @@ private:
 
 	void pvDeleteBlock(void* block) noexcept
 	{
-		if (Params::blockCount > 1)
+		if (Params::GetBlockCount() > 1)
 			pvDeleteBlock(internal::PtrCaster::ToUInt(block));
 		else if (pvGetAlignmentAddend() == 0)
 			MemManagerProxy::Deallocate(GetMemManager(), block, pvGetBufferSize0());
@@ -445,24 +478,25 @@ private:
 	size_t pvGetAlignmentAddend() const noexcept
 	{
 		static const size_t maxAllocAlignment = internal::UIntConst::maxAllocAlignment;
-		size_t addend = Params::blockAlignment;
-		if (std::has_single_bit(Params::blockAlignment))
-			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{Params::blockAlignment}).first;
+		const size_t blockAlignment = Params::GetBlockAlignment();
+		size_t addend = blockAlignment;
+		if (std::has_single_bit(blockAlignment))
+			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{blockAlignment}).first;
 		else
-			addend -= SMath::GCD(maxAllocAlignment, Params::blockAlignment);
+			addend -= SMath::GCD(maxAllocAlignment, blockAlignment);
 		return addend;
 	}
 
 	size_t pvGetBufferSize0() const noexcept
 	{
-		return std::minmax(size_t{Params::blockSize}, size_t{Params::blockAlignment}).second;
+		return std::minmax(Params::GetBlockSize(), Params::GetBlockAlignment()).second;
 	}
 
 	uintptr_t pvNewBlock1()
 	{
 		uintptr_t begin = internal::PtrCaster::ToUInt(
 			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize1()));
-		uintptr_t block = PMath::Ceil(begin, uintptr_t{Params::blockAlignment});
+		uintptr_t block = PMath::Ceil(begin, uintptr_t{Params::GetBlockAlignment()});
 		pvGetBufferBegin1(block) = begin;
 		return block;
 	}
@@ -476,14 +510,14 @@ private:
 
 	size_t pvGetBufferSize1() const noexcept
 	{
-		size_t bufferUsefulSize = Params::blockSize + pvGetAlignmentAddend();
+		size_t bufferUsefulSize = Params::GetBlockSize() + pvGetAlignmentAddend();
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
 	}
 
 	uintptr_t& pvGetBufferBegin1(uintptr_t block) noexcept
 	{
 		return *internal::PtrCaster::FromUInt<uintptr_t>(
-			PMath::Ceil(block + uintptr_t{Params::blockSize}, uintptr_t{sizeof(void*)}));
+			PMath::Ceil(block + uintptr_t{Params::GetBlockSize()}, uintptr_t{sizeof(void*)}));
 	}
 
 	uintptr_t pvNewBlock()
@@ -516,7 +550,7 @@ private:
 		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
 		if (freeBlockCount == 1)
 			pvMoveBuffer(buffer);
-		if (freeBlockCount == Params::blockCount)
+		if (freeBlockCount == Params::GetBlockCount())
 		{
 			bool del = true;
 			if (buffer == mFreeBufferHead)
@@ -539,18 +573,19 @@ private:
 	uintptr_t pvGetBlock(uintptr_t buffer, int8_t index) const noexcept
 	{
 		return static_cast<uintptr_t>(static_cast<intptr_t>(buffer)
-			+ intptr_t{index} * static_cast<intptr_t>(Params::blockSize)
-			+ (static_cast<intptr_t>(Params::blockAlignment) & -intptr_t{index >= 0}));
+			+ intptr_t{index} * static_cast<intptr_t>(Params::GetBlockSize())
+			+ (static_cast<intptr_t>(Params::GetBlockAlignment()) & -intptr_t{index >= 0}));
 	}
 
 	int8_t pvGetBlockIndex(uintptr_t block, uintptr_t& buffer) const noexcept
 	{
-		const uintptr_t uipBlockSize = uintptr_t{Params::blockSize};
-		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
+		const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
+		const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
+		const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
 		MOMO_ASSERT(block % uipBlockAlignment == 0);
 		intptr_t dir = static_cast<intptr_t>(((block % uipBlockSize) / uipBlockAlignment) % 2);
-		intptr_t index = static_cast<intptr_t>((block / uipBlockSize) % uintptr_t{Params::blockCount})
-			- (static_cast<intptr_t>(Params::blockCount) & (dir - 1));
+		intptr_t index = static_cast<intptr_t>((block / uipBlockSize) % uipBlockCount)
+			- (static_cast<intptr_t>(uipBlockCount) & (dir - 1));
 		buffer = static_cast<uintptr_t>(static_cast<intptr_t>(block)
 			- index * static_cast<intptr_t>(uipBlockSize)
 			- (static_cast<intptr_t>(uipBlockAlignment) & -dir));
@@ -559,27 +594,28 @@ private:
 
 	MOMO_NOINLINE uintptr_t pvNewBuffer()
 	{
-		const uintptr_t uipBlockSize = uintptr_t{Params::blockSize};
-		const uintptr_t uipBlockAlignment = uintptr_t{Params::blockAlignment};
+		const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
+		const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
+		const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
 		uintptr_t begin = internal::PtrCaster::ToUInt(
 			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize()));
 		uintptr_t block = PMath::Ceil(begin, uipBlockAlignment);
 		block += (block % uipBlockSize) % (2 * uipBlockAlignment);
 		if ((block + uipBlockAlignment) % uipBlockSize == 0)
 			block += uipBlockAlignment;
-		if ((block / uipBlockSize) % uintptr_t{Params::blockCount} == 0)
+		if ((block / uipBlockSize) % uipBlockCount == 0)
 			block += uipBlockAlignment;
 		uintptr_t buffer;
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
 		pvGetFirstBlockIndex(buffer) = blockIndex;
 		BufferBytes& bytes = pvGetBufferBytes(buffer);
 		bytes.firstFreeBlockIndex = blockIndex;
-		bytes.freeBlockCount = static_cast<int8_t>(Params::blockCount);
+		bytes.freeBlockCount = static_cast<int8_t>(uipBlockCount);
 		BufferPointers& pointers = pvGetBufferPointers(buffer);
 		pointers.prevBuffer = nullPtr;
 		pointers.nextBuffer = nullPtr;
 		pointers.begin = begin;
-		for (size_t i = 1; i < Params::blockCount; ++i)
+		for (uintptr_t i = 1; i < uipBlockCount; ++i)
 		{
 			++blockIndex;
 			pvGetNextFreeBlockIndex(block) = blockIndex;
@@ -621,10 +657,12 @@ private:
 
 	size_t pvGetBufferSize() const noexcept
 	{
-		size_t bufferUsefulSize = Params::blockCount * Params::blockSize + pvGetAlignmentAddend()
-			+ (2 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment;
+		const size_t blockSize = Params::GetBlockSize();
+		const size_t blockAlignment = Params::GetBlockAlignment();
+		size_t bufferUsefulSize = Params::GetBlockCount() * blockSize + pvGetAlignmentAddend()
+			+ (2 + (blockSize / blockAlignment) % 2) * blockAlignment;
 		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + 3 * sizeof(void*)
-			+ ((Params::blockAlignment <= 2) ? 2 : 0);
+			+ ((blockAlignment <= 2) ? 2 : 0);
 	}
 
 	int8_t& pvGetFirstBlockIndex(uintptr_t buffer) noexcept
@@ -634,7 +672,7 @@ private:
 
 	BufferBytes& pvGetBufferBytes(uintptr_t buffer) noexcept
 	{
-		if (Params::blockAlignment > 2)
+		if (Params::GetBlockAlignment() > 2)
 		{
 			return *internal::PtrCaster::FromUInt<BufferBytes>(buffer + 1);
 		}
@@ -647,10 +685,10 @@ private:
 
 	BufferPointers& pvGetBufferPointers(uintptr_t buffer) noexcept
 	{
-		size_t offset = Params::blockCount;
+		size_t offset = Params::GetBlockCount();
 		offset -= static_cast<size_t>(-pvGetFirstBlockIndex(buffer));	// gcc warning
-		return *internal::PtrCaster::FromUInt<BufferPointers>(
-			PMath::Ceil(buffer + uintptr_t{Params::blockAlignment + Params::blockSize * offset},
+		return *internal::PtrCaster::FromUInt<BufferPointers>(PMath::Ceil(
+			buffer + uintptr_t{Params::GetBlockAlignment() + Params::GetBlockSize() * offset},
 			uintptr_t{sizeof(void*)}));
 	}
 
