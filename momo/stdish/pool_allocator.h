@@ -31,8 +31,8 @@ namespace momo::stdish
 */
 
 template<typename TValue,
-	typename TBaseAllocator = std::allocator<std::byte>,
-	typename TMemPoolParams = MemPoolParams<>>
+	momo::internal::conceptAllocator TBaseAllocator = std::allocator<std::byte>,
+	momo::internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams = MemPoolParams<>>
 class unsynchronized_pool_allocator
 {
 public:
