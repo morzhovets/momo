@@ -48,8 +48,8 @@ namespace internal
 		}
 	};
 
-	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
-		typename TArraySettings>
+	template<typename TItemTraits, size_t tMaxFastCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, typename TArraySettings>
 	requires conceptArrayBucketMaxFastCount<tMaxFastCount>
 	class BucketUnlimP : public BucketBase
 	{
@@ -160,7 +160,7 @@ namespace internal
 }
 
 template<size_t tMaxFastCount = 7,
-	typename TMemPoolParams = MemPoolParams<>,
+	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams = MemPoolParams<>,
 	typename TArraySettings = ArraySettings<>>
 requires internal::conceptArrayBucketMaxFastCount<tMaxFastCount>
 class HashBucketUnlimP : public internal::HashBucketBase

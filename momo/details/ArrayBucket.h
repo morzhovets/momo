@@ -79,8 +79,8 @@ namespace internal
 	template<size_t maxFastCount>
 	concept conceptArrayBucketMaxFastCount = (0 < maxFastCount && maxFastCount < 16);
 
-	template<typename TItemTraits, size_t tMaxFastCount, typename TMemPoolParams,
-		typename TArraySettings>
+	template<typename TItemTraits, size_t tMaxFastCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, typename TArraySettings>
 	requires conceptArrayBucketMaxFastCount<tMaxFastCount>
 	class ArrayBucket
 	{

@@ -24,7 +24,8 @@ namespace internal
 	template<size_t maxCount>
 	concept conceptBucketLimP1MaxCount = (0 < maxCount && maxCount < 16);
 
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	template<typename TItemTraits, size_t tMaxCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams>
 	requires conceptBucketLimP1MaxCount<tMaxCount>
 	class BucketLimP1 : public BucketBase
 	{
@@ -263,7 +264,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = 4,
-	typename TMemPoolParams = MemPoolParams<>>
+	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams = MemPoolParams<>>
 requires internal::conceptBucketLimP1MaxCount<tMaxCount>
 class HashBucketLimP1 : public internal::HashBucketBase
 {

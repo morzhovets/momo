@@ -24,7 +24,7 @@ namespace internal
 	concept conceptNodeCapacity = (0 < maxCapacity && maxCapacity < 256 && capacityStep > 0);
 
 	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
-		typename TMemPoolParams, bool tIsContinuous>
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tIsContinuous>
 	requires conceptNodeCapacity<tMaxCapacity, tCapacityStep> &&
 		(!tIsContinuous || TItemTraits::isNothrowShiftable)
 	class Node
@@ -330,7 +330,8 @@ namespace internal
 
 template<size_t tMaxCapacity = 32,
 	size_t tCapacityStep = (tMaxCapacity >= 16) ? tMaxCapacity / 8 : 2,
-	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
+	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams
+		= MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
 	bool tIsContinuous = true>
 requires internal::conceptNodeCapacity<tMaxCapacity, tCapacityStep>
 class TreeNode

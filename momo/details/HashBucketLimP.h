@@ -24,10 +24,12 @@ namespace internal
 	template<size_t maxCount>
 	concept conceptBucketLimPMaxCount = (0 < maxCount && maxCount < 16);
 
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams, bool tUsePtrState>
+	template<typename TItemTraits, size_t tMaxCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tUsePtrState>
 	class BucketLimP;
 
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	template<typename TItemTraits, size_t tMaxCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams>
 	requires conceptBucketLimPMaxCount<tMaxCount>
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, false> : public BucketBase
 	{
@@ -284,7 +286,8 @@ namespace internal
 		uintptr_t mPtr;
 	};
 
-	template<typename TItemTraits, size_t tMaxCount, typename TMemPoolParams>
+	template<typename TItemTraits, size_t tMaxCount,
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams>
 	requires conceptBucketLimPMaxCount<tMaxCount>
 	class BucketLimP<TItemTraits, tMaxCount, TMemPoolParams, true> : public BucketBase
 	{
@@ -548,7 +551,7 @@ namespace internal
 }
 
 template<size_t tMaxCount = sizeof(void*),
-	typename TMemPoolParams = MemPoolParams<>,
+	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
 requires internal::conceptBucketLimPMaxCount<tMaxCount>
 class HashBucketLimP : public internal::HashBucketBase

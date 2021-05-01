@@ -701,6 +701,16 @@ private:
 
 namespace internal
 {
+	template<typename MemPoolParams>
+	concept conceptMemPoolParamsBlockSizeAlignment = conceptMemPoolParams<MemPoolParams> &&
+		requires (size_t blockSize, size_t blockAlignment)
+		{
+			{ MemPoolParams(blockSize) };
+			{ MemPoolParams(blockSize, blockAlignment) };
+			typename std::integer_sequence<size_t,
+				MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount>;
+		};
+
 	class NestedMemPoolSettings : public MemPoolSettings
 	{
 	public:
