@@ -49,9 +49,9 @@ concept conceptTreeTraits =
 	requires (const TreeTraits& treeTraits, const Key& key)
 	{
 		typename TreeTraits::TreeNode;
-		{ TreeTraits::multiKey } -> std::convertible_to<bool>;
-		{ TreeTraits::useLinearSearch } -> std::convertible_to<bool>;
-		{ TreeTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
+		typename std::bool_constant<TreeTraits::multiKey>;
+		typename std::bool_constant<TreeTraits::useLinearSearch>;
+		typename std::bool_constant<TreeTraits::template IsValidKeyArg<Key>::value>;
 		{ treeTraits.IsLess(key, key) } -> std::same_as<bool>;
 	};
 

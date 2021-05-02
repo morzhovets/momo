@@ -26,8 +26,8 @@ concept conceptMapKeyValueTraits =
 	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> &&
 	requires (Key& key, Value& value, MemManager& memManager)
 	{
-		{ MapKeyValueTraits::keyAlignment } -> std::convertible_to<size_t>;
-		{ MapKeyValueTraits::valueAlignment } -> std::convertible_to<size_t>;
+		typename std::integral_constant<size_t, MapKeyValueTraits::keyAlignment>;
+		typename std::integral_constant<size_t, MapKeyValueTraits::valueAlignment>;
 		{ MapKeyValueTraits::Destroy(&memManager, key, value) } noexcept;
 	} &&
 	internal::ObjectAlignmenter<Key>::Check(MapKeyValueTraits::keyAlignment) &&

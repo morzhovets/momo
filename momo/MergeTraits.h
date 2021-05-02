@@ -25,7 +25,7 @@ concept conceptMergeTraits =
 	requires (const MergeTraits& mergeTraits, const Key& key)
 	{
 		typename MergeTraits::MergeArraySettings;
-		{ MergeTraits::isNothrowComparable } -> std::convertible_to<bool>;
+		typename std::bool_constant<MergeTraits::isNothrowComparable>;
 		{ mergeTraits.IsLess(key, key) } -> std::same_as<bool>;
 		{ mergeTraits.IsEqual(key, key) } -> std::same_as<bool>;
 	};

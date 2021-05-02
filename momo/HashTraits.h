@@ -107,8 +107,8 @@ concept conceptHashTraits =
 	requires (const HashTraits& hashTraits, const Key& key)
 	{
 		typename HashTraits::HashBucket;
-		{ HashTraits::template IsValidKeyArg<Key>::value } -> std::convertible_to<bool>;
-		{ HashTraits::isFastNothrowHashable } -> std::convertible_to<bool>;
+		typename std::bool_constant<HashTraits::template IsValidKeyArg<Key>::value>;
+		typename std::bool_constant<HashTraits::isFastNothrowHashable>;
 		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::same_as<size_t>;
 		{ hashTraits.GetBucketCountShift(size_t{}, size_t{}) } -> std::same_as<size_t>;
 		{ hashTraits.GetLogStartBucketCount() } -> std::same_as<size_t>;

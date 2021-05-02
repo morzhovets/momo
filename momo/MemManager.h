@@ -78,7 +78,7 @@ namespace internal
 
 	template<typename MemManager>
 	concept conceptMemManagerWithPtrUsefulBitCount = conceptMemManager<MemManager> &&
-		requires { { MemManager::ptrUsefulBitCount } -> std::convertible_to<size_t>; };
+		requires { typename std::integral_constant<size_t, MemManager::ptrUsefulBitCount>; };
 
 	template<typename Allocator>
 	concept conceptAllocator =

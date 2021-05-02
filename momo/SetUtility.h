@@ -25,7 +25,7 @@ concept conceptSetItemTraits =
 	conceptObject<typename SetItemTraits::Item> &&
 	requires (typename SetItemTraits::Item& item, MemManager& memManager)
 	{
-		{ SetItemTraits::alignment } -> std::convertible_to<size_t>;
+		typename std::integral_constant<size_t, SetItemTraits::alignment>;
 		{ SetItemTraits::GetKey(std::as_const(item)) } noexcept -> std::same_as<const Key&>;
 		{ SetItemTraits::Destroy(&memManager, item) } noexcept;
 	} &&

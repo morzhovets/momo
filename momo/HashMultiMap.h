@@ -453,8 +453,8 @@ concept conceptHashMultiMapKeyValueTraits =
 	std::is_same_v<typename HashMultiMapKeyValueTraits::MemManager, MemManager> &&
 	requires (Key& key, Value* values, MemManager& memManager)
 	{
-		{ HashMultiMapKeyValueTraits::keyAlignment } -> std::convertible_to<size_t>;
-		{ HashMultiMapKeyValueTraits::valueAlignment } -> std::convertible_to<size_t>;
+		typename std::integral_constant<size_t, HashMultiMapKeyValueTraits::keyAlignment>;
+		typename std::integral_constant<size_t, HashMultiMapKeyValueTraits::valueAlignment>;
 		{ HashMultiMapKeyValueTraits::DestroyKey(memManager, key) } noexcept;
 		{ HashMultiMapKeyValueTraits::DestroyValues(memManager, values, size_t{}) } noexcept;
 	} &&
