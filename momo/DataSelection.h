@@ -99,6 +99,10 @@ namespace internal
 		}
 	};
 
+	template<typename RowIterator, typename RowReference>
+	concept conceptDataRowIterator = conceptInputIterator<RowIterator> &&
+		requires (RowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
+
 	template<typename TRawIterator, typename TRowReference>
 	class DataRowIterator : private VersionKeeper<typename TRowReference::Settings>
 	{
@@ -596,7 +600,7 @@ namespace internal
 				mColumnList->GetOffset(column));
 		}
 
-		template<typename RowIterator>
+		template<conceptDataRowIterator<RowReference> RowIterator>
 		void Assign(RowIterator begin, RowIterator end)
 		{
 			size_t initCount = GetCount();
@@ -611,7 +615,7 @@ namespace internal
 			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<typename RowIterator>
+		template<conceptDataRowIterator<RowReference> RowIterator>
 		void Add(RowIterator begin, RowIterator end)
 		{
 			size_t initCount = GetCount();
@@ -639,7 +643,7 @@ namespace internal
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<typename RowIterator>
+		template<conceptDataRowIterator<RowReference> RowIterator>
 		void Insert(size_t index, RowIterator begin, RowIterator end)
 		{
 			size_t initCount = GetCount();

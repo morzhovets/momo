@@ -654,13 +654,13 @@ public:
 		return pvTryUpdateRow(rowRef, column, newItem);
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void AssignRows(RowIterator begin, RowIterator end)
 	{
 		pvAssignRows(begin, end);
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void RemoveRows(RowIterator begin, RowIterator end)
 	{
 		pvRemoveRows(begin, end);
