@@ -7,6 +7,7 @@
   momo/DataTable.h
 
   namespace momo:
+    concept conceptDataTraits
     class DataTraits
     class DataTable
 
@@ -21,6 +22,10 @@
 
 namespace momo
 {
+
+template<typename DataTraits>
+concept conceptDataTraits =
+	internal::conceptMemPoolParamsBlockSizeAlignment<typename DataTraits::RawMemPoolParams>;
 
 class DataTraits
 {
@@ -66,7 +71,7 @@ public:
 */
 
 template<conceptDataColumnList TColumnList = DataColumnList<>,
-	typename TDataTraits = DataTraits>
+	conceptDataTraits TDataTraits = DataTraits>
 class DataTable
 {
 public:
