@@ -481,6 +481,7 @@ namespace internal
 		}
 
 		template<typename RowFilter>
+		requires std::predicate<const RowFilter&, ConstRowReference>
 		explicit DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
 			: VersionKeeper(selection),
 			mColumnList(selection.mColumnList),

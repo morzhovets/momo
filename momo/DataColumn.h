@@ -237,15 +237,15 @@ namespace internal
 		DataColumn& operator=(const DataColumn&) = default;
 	};
 
-	template<typename Struct,
-		typename = void>
+	template<typename Struct>
 	struct DataVisitableItemsGetter
 	{
 		typedef std::tuple<> VisitableItems;
 	};
 
 	template<typename Struct>
-	struct DataVisitableItemsGetter<Struct, std::void_t<typename Struct::VisitableItems>>
+	requires requires { typename Struct::VisitableItems; }
+	struct DataVisitableItemsGetter<Struct>
 	{
 		typedef typename Struct::VisitableItems VisitableItems;
 	};

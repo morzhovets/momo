@@ -350,6 +350,7 @@ public:
 	}
 
 	template<typename RowFilter>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	explicit DataTable(const DataTable& table, const RowFilter& rowFilter)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
@@ -666,6 +667,7 @@ public:
 	}
 
 	template<typename RowFilter>
+	requires std::predicate<const RowFilter&, ConstRowReference>
 	size_t RemoveRows(const RowFilter& rowFilter)
 	{
 		size_t initCount = GetCount();
