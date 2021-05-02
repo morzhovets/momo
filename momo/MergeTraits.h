@@ -47,11 +47,13 @@ public:
 	}
 
 	bool IsLess(const Key& key1, const Key& key2) const noexcept(isNothrowComparable)
+		requires requires { { key1 < key2 } -> std::convertible_to<bool>; }
 	{
 		return std::less<>()(key1, key2);
 	}
 
 	bool IsEqual(const Key& key1, const Key& key2) const
+		requires requires { { key1 == key2 } -> std::convertible_to<bool>; }
 	{
 		return key1 == key2;
 	}
