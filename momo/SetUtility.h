@@ -278,7 +278,7 @@ namespace internal
 
 	public:
 		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
+		//typedef typename ItemTraits::MemManager MemManager;
 
 	public:
 		explicit SetExtractedItem() noexcept
@@ -356,10 +356,10 @@ namespace internal
 		bool mHasItem;
 	};
 
-	template<typename ArgIterator, typename Item>
-	concept conceptSetArgIterator = conceptInputIterator<ArgIterator> &&
-		std::is_reference_v<std::iter_reference_t<ArgIterator>> &&
-		std::is_same_v<Item, std::decay_t<std::iter_reference_t<ArgIterator>>>;
+	template<typename SetArgIterator, typename Item>
+	concept conceptSetArgIterator = conceptInputIterator<SetArgIterator> &&
+		std::is_reference_v<std::iter_reference_t<SetArgIterator>> &&
+		std::is_same_v<Item, std::decay_t<std::iter_reference_t<SetArgIterator>>>;
 }
 
 } // namespace momo

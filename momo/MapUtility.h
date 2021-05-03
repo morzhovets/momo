@@ -806,7 +806,7 @@ namespace internal
 	public:
 		typedef typename KeyValuePair::Key Key;
 		typedef typename KeyValuePair::Value Value;
-		typedef typename SetExtractedItem::MemManager MemManager;
+		//typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
 		explicit MapExtractedPair() noexcept
@@ -933,11 +933,11 @@ namespace internal
 		}
 	};
 
-	template<typename ArgIterator, typename Key,
+	template<typename MapArgIterator, typename Key,
 		bool allowKeyValue = true>
-	concept conceptMapArgIterator = conceptInputIterator<ArgIterator> &&
+	concept conceptMapArgIterator = conceptInputIterator<MapArgIterator> &&
 		std::is_same_v<Key, std::decay_t<decltype(
-			MapArgReferencer<allowKeyValue>::GetReferencePair(std::declval<ArgIterator>()).first)>>;
+			MapArgReferencer<allowKeyValue>::GetReferencePair(std::declval<MapArgIterator>()).first)>>;
 }
 
 } // namespace momo

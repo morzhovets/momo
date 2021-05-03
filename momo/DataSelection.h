@@ -99,9 +99,9 @@ namespace internal
 		}
 	};
 
-	template<typename RowIterator, typename RowReference>
-	concept conceptDataRowIterator = conceptInputIterator<RowIterator> &&
-		requires (RowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
+	template<typename DataRowIterator, typename RowReference>
+	concept conceptDataRowIterator = conceptInputIterator<DataRowIterator> &&
+		requires (DataRowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
 
 	template<typename TRawIterator, typename TRowReference>
 	class DataRowIterator : private VersionKeeper<typename TRowReference::Settings>
