@@ -271,6 +271,7 @@ namespace internal
 		}
 
 		size_t GetNumber() const
+			requires (Settings::keepRowNumber)
 		{
 			return mColumnList->GetNumber(GetRaw());
 		}

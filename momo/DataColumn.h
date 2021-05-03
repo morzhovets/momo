@@ -793,14 +793,14 @@ public:
 	}
 
 	size_t GetNumber(const Raw* raw) const noexcept
+		requires (Settings::keepRowNumber)
 	{
-		static_assert(Settings::keepRowNumber);
 		return *internal::PtrCaster::Shift<const size_t>(raw, 0);
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
+		requires (Settings::keepRowNumber)
 	{
-		static_assert(Settings::keepRowNumber);
 		*internal::PtrCaster::Shift<size_t>(raw, 0) = number;
 	}
 
@@ -1227,11 +1227,13 @@ public:
 	}
 
 	size_t GetNumber(const Raw* raw) const noexcept
+		requires (Settings::keepRowNumber)
 	{
 		return *internal::PtrCaster::Shift<const size_t>(raw, pvGetNumberOffset());
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
+		requires (Settings::keepRowNumber)
 	{
 		*internal::PtrCaster::Shift<size_t>(raw, pvGetNumberOffset()) = number;
 	}
@@ -1284,7 +1286,6 @@ private:
 
 	static size_t pvGetNumberOffset() noexcept
 	{
-		static_assert(Settings::keepRowNumber);
 		return internal::UIntMath<>::Ceil(sizeof(Struct),
 			internal::ObjectAlignmenter<size_t>::alignment);
 	}
