@@ -1147,7 +1147,7 @@ public:
 	template<typename... Items>
 	void SetMutable(const Column<Items>&... columns)
 	{
-		pvSetMutable(columns...);
+		(pvSetMutable(GetOffset(columns)), ...);
 	}
 
 	void ResetMutable() noexcept
@@ -1245,13 +1245,13 @@ public:
 		return true;
 	}
 
-	template<typename Item, typename... Items>
-	void PrepareForVisitors(const Column<Item>& column, const Column<Items>&... columns)	//?
+	template<typename... Items>
+	void PrepareForVisitors(const Column<Items>&... columns)	//?
 	{
-		static const size_t columnCount = 1 + sizeof...(columns);
+		static const size_t columnCount = sizeof...(columns);
 		mColumns.Reserve(columnCount);
 		mColumns.Clear(false);
-		pvAddColumns(column, columns...);
+		(mColumns.AddBackNogrow(ColumnInfo(columns)), ...);
 	}
 
 	template<typename PtrVisitor>
@@ -1267,16 +1267,9 @@ public:
 	}
 
 private:
-	template<typename Item, typename... Items>
-	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
+	void pvSetMutable(size_t offset) noexcept
 	{
-		size_t offset = GetOffset(column);
 		mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
-		pvSetMutable(columns...);
-	}
-
-	void pvSetMutable() noexcept
-	{
 	}
 
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
@@ -1288,17 +1281,6 @@ private:
 	{
 		return internal::UIntMath<>::Ceil(sizeof(Struct),
 			internal::ObjectAlignmenter<size_t>::alignment);
-	}
-
-	template<typename Item, typename... Items>
-	void pvAddColumns(const Column<Item>& column, const Column<Items>&... columns) noexcept
-	{
-		mColumns.AddBackNogrow(ColumnInfo(column));
-		pvAddColumns(columns...);
-	}
-
-	void pvAddColumns() noexcept
-	{
 	}
 
 	template<typename Void, typename PtrVisitor>

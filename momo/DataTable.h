@@ -492,8 +492,8 @@ public:
 		return pvMakeRow(pvCreateRaw());
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
-	Row NewRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
+	Row NewRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
 	{
 		return pvNewRow(assigner, assigners...);
 	}
@@ -516,8 +516,8 @@ public:
 		return res.rowReference;
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
-	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
+	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
 	{
 		return AddRow(pvNewRow(assigner, assigners...));
 	}
@@ -536,8 +536,8 @@ public:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
-	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigners... assigners)
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
+	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
 	{
 		return TryAddRow(pvNewRow(assigner, assigners...));
 	}
@@ -550,9 +550,9 @@ public:
 		return res.rowReference;
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	RowReference InsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
-		Assigners... assigners)
+		Assigner<Items, ItemArgs>... assigners)
 	{
 		return InsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
@@ -570,9 +570,9 @@ public:
 		return res;
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	TryResult TryInsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
-		Assigners... assigners)
+		Assigner<Items, ItemArgs>... assigners)
 	{
 		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
 	}
@@ -963,13 +963,13 @@ private:
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
-	Row pvNewRow(const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	template<typename... Items, typename... ItemArgs>
+	Row pvNewRow(const Assigner<Items, ItemArgs>&... assigners)
 	{
 		Raw* raw = pvCreateRaw();
 		try
 		{
-			pvFillRaw(raw, assigner, assigners...);
+			pvFillRaw(raw, assigners...);
 		}
 		catch (...)
 		{
@@ -979,8 +979,9 @@ private:
 		return pvMakeRow(raw);
 	}
 
-	template<typename Item, typename ItemArg, typename... Assigners>
-	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner, const Assigners&... assigners)
+	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
+	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner,
+		const Assigner<Items, ItemArgs>&... assigners)
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(assigner.GetColumn());
@@ -1271,7 +1272,7 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
-		size_t columnCount = sizeof...(Items) + 1>
+		size_t columnCount = 1 + sizeof...(Items)>
 	requires (columnCount > DataTraits::selectEqualerMaxCount)
 	Result pvSelect(const RowFilter& rowFilter, const Equaler<Item>& equaler,
 		const Equaler<Items>&... equalers) const
