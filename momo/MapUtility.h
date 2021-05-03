@@ -798,7 +798,7 @@ namespace internal
 	public:
 		typedef typename KeyValuePair::Key Key;
 		typedef typename KeyValuePair::Value Value;
-		typedef typename SetExtractedItem::MemManager MemManager;
+		//typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
 		explicit MapExtractedPair() noexcept

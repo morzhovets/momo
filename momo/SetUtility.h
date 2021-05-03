@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Utility.h"
+#include "MemManager.h"
 
 namespace momo
 {
@@ -264,7 +264,7 @@ namespace internal
 
 	public:
 		typedef typename ItemTraits::Item Item;
-		typedef typename ItemTraits::MemManager MemManager;
+		//typedef typename ItemTraits::MemManager MemManager;
 
 	public:
 		explicit SetExtractedItem() noexcept
