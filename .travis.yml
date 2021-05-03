@@ -110,6 +110,17 @@ matrix:
         - BUILD_TYPE="Release"
         - CXXFLAGS="-std=c++20 -DLIBCPP_TEST_DEDUCTION_GUIDES"
 
+    - compiler: gcc
+      dist: bionic
+      addons:
+        apt:
+          sources: ubuntu-toolchain-r-test
+          packages: g++-11
+      env:
+        - COMPILER="g++-11"
+        - BUILD_TYPE="Release"
+        - CXXFLAGS="-std=c++20 -DLIBCPP_TEST_DEDUCTION_GUIDES"
+
     - os: osx
       osx_image: xcode8.3
       compiler: clang
@@ -189,12 +200,12 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-10
-            - clang-11
+            - clang-12
       env:
-        - COMPILER="clang++-11"
+        - COMPILER="clang++-12"
         - BUILD_TYPE="Release"
         - CXXFLAGS="-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES"
