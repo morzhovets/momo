@@ -984,12 +984,15 @@ private:
 		const Item* srcItem = nullptr;
 		if constexpr (!std::is_null_pointer_v<RawPtr>)
 		{
-			size_t srcOffset = offset;
-			if (std::is_null_pointer_v<DataColumnListPtr> ||
-				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
+			if constexpr (std::is_null_pointer_v<DataColumnListPtr>)
 			{
-				srcItem = internal::PtrCaster::Shift<const Item>(
-					static_cast<const Raw*>(srcRaw), srcOffset);
+				srcItem = internal::PtrCaster::Shift<const Item>(srcRaw, offset);
+			}
+			else
+			{
+				size_t srcOffset;
+				if (srcColumnList->Contains(*columns, &srcOffset))
+					srcItem = internal::PtrCaster::Shift<const Item>(srcRaw, srcOffset);
 			}
 		}
 		if (srcItem == nullptr)
