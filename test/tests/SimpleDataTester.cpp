@@ -408,11 +408,16 @@ public:
 		{
 			Table tablePrj = ctable.Project(dblCol, intCol);
 			assert(tablePrj.GetCount() == count);
+
 			for (const auto& col : tablePrj.GetColumnList())
 			{
 				assert(strcmp(col.GetName(), dblCol.GetName()) == 0
 					|| strcmp(col.GetName(), intCol.GetName()) == 0);
 			}
+
+			auto row = table.NewRow(tablePrj[0]);
+			assert(row[dblCol] == tablePrj[0][dblCol]);
+			assert(row[intCol] == tablePrj[0][intCol]);
 
 			assert(ctable.Project(strFilter, dblCol.Mutable(), intCol).GetCount() == count / 2);
 			assert(ctable.ProjectDistinct(strCol.Mutable()).GetCount() == 2);
