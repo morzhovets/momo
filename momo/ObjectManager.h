@@ -63,7 +63,7 @@ public:
 		requires isNothrowDestructible
 	{
 		if constexpr (!std::is_trivially_destructible_v<Object>)
-			std::destroy_at(std::addressof(object));
+			object.~Object();
 	}
 };
 
