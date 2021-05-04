@@ -161,14 +161,14 @@ private:
 		}
 	};
 
+	typedef std::atomic<void*> FreeRaws;
+
 	class Crew
 	{
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ColumnList>::value);
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
-		typedef std::atomic<void*> FreeRaws;
 
 		class Data
 		{
@@ -329,7 +329,7 @@ public:
 	template<typename Item, typename... Items>
 	explicit DataTable(const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns)
-		: DataTable(ColumnList(column, columns...))
+		: DataTable(ColumnList({ column, columns... }))
 	{
 	}
 

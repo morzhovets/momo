@@ -619,7 +619,12 @@ public:
 	typedef ConstIterator Iterator;
 
 public:
-	explicit DataColumnList(MemManager memManager = MemManager())
+	DataColumnList()
+		: DataColumnList(MemManager())
+	{
+	}
+
+	explicit DataColumnList(MemManager memManager)
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::ObjectAlignmenter<size_t>::alignment : 1),
@@ -632,8 +637,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	explicit DataColumnList(const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns)
+	DataColumnList(const QualifiedColumn<Item>& column, const QualifiedColumn<Items>&... columns)
 		: DataColumnList()
 	{
 		Add(column, columns...);
@@ -963,8 +967,8 @@ private:
 		if (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
 			size_t srcOffset = offset;
-			if (std::is_same<DataColumnListPtr, std::nullptr_t>::value ||
-				static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
+			if (srcColumnList == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
+				|| static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
 			{
 				srcItem = internal::PtrCaster::Shift<const Item>(
 					static_cast<const Raw*>(srcRaw), srcOffset);

@@ -87,9 +87,8 @@ public:
 		{
 			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>> DataColumnList;
-			DataColumnList columnList;
+			DataColumnList columnList = { dblStruct.Mutable(), intStruct };
 			columnList.Add(strStruct);
-			columnList.Add(dblStruct.Mutable(), intStruct);
 			momo::DataTable<DataColumnList> table(std::move(columnList));
 			TestData<true>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
