@@ -226,9 +226,7 @@ namespace internal
 		}
 
 	protected:
-		constexpr explicit DataColumn() noexcept
-		{
-		}
+		explicit DataColumn() = default;
 
 		DataColumn(const DataColumn&) = default;
 

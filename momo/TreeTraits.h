@@ -72,9 +72,7 @@ public:
 	using IsValidKeyArg = std::bool_constant<internal::conceptTreeTraitsValidKeyArg<Key, KeyArg>>;
 
 public:
-	explicit TreeTraits() noexcept
-	{
-	}
+	explicit TreeTraits() = default;
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const

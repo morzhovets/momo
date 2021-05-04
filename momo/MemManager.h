@@ -93,9 +93,7 @@ namespace internal
 class MemManagerCpp
 {
 public:
-	explicit MemManagerCpp() noexcept
-	{
-	}
+	explicit MemManagerCpp() = default;
 
 	MemManagerCpp(MemManagerCpp&&) = default;
 
@@ -125,9 +123,7 @@ public:
 class MemManagerC
 {
 public:
-	explicit MemManagerC() noexcept
-	{
-	}
+	explicit MemManagerC() = default;
 
 	MemManagerC(MemManagerC&&) = default;
 
@@ -164,9 +160,7 @@ public:
 class MemManagerWin
 {
 public:
-	explicit MemManagerWin() noexcept
-	{
-	}
+	explicit MemManagerWin() = default;
 
 	MemManagerWin(MemManagerWin&&) = default;
 
@@ -496,9 +490,7 @@ namespace internal
 	class MemManagerDummy
 	{
 	public:
-		explicit MemManagerDummy() noexcept
-		{
-		}
+		explicit MemManagerDummy() = default;
 
 		MemManagerDummy(MemManagerDummy&&) = default;
 

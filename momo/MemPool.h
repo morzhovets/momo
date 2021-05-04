@@ -139,9 +139,7 @@ public:
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	explicit MemPoolParamsStatic() noexcept
-	{
-	}
+	explicit MemPoolParamsStatic() = default;
 
 	static constexpr size_t GetBlockSize() noexcept
 	{

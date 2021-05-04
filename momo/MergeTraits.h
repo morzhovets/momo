@@ -42,9 +42,7 @@ public:
 	static const bool isNothrowComparable = tIsNothrowComparable;
 
 public:
-	explicit MergeTraits() noexcept
-	{
-	}
+	explicit MergeTraits() = default;
 
 	bool IsLess(const Key& key1, const Key& key2) const noexcept(isNothrowComparable)
 		requires requires { { key1 < key2 } -> std::convertible_to<bool>; }

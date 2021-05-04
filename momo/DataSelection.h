@@ -38,9 +38,7 @@ namespace internal
 		typedef DataRawIterator ConstIterator;
 
 	public:
-		explicit DataRawIterator() noexcept
-		{
-		}
+		explicit DataRawIterator() = default;
 
 		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
 			: ArrayIndexIterator(&raws, index)

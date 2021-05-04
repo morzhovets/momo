@@ -809,9 +809,7 @@ namespace internal
 		//typedef typename SetExtractedItem::MemManager MemManager;
 
 	public:
-		explicit MapExtractedPair() noexcept
-		{
-		}
+		explicit MapExtractedPair() = default;
 
 		template<typename Map>
 		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)

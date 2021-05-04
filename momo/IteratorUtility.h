@@ -185,9 +185,7 @@ namespace internal
 		static const bool checkVersion = false;
 
 	public:
-		explicit VersionKeeper() noexcept
-		{
-		}
+		explicit VersionKeeper() = default;
 
 		explicit VersionKeeper(const size_t* /*version*/) noexcept
 		{

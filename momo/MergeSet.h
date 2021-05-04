@@ -89,9 +89,7 @@ namespace internal
 		typedef MergeSetIterator ConstIterator;
 
 	public:
-		explicit MergeSetIterator() noexcept
-		{
-		}
+		explicit MergeSetIterator() = default;
 
 		//operator ConstIterator() const noexcept
 

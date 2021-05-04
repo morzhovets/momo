@@ -134,9 +134,7 @@ public:
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
 
 public:
-	explicit HashTraits() noexcept
-	{
-	}
+	explicit HashTraits() = default;
 
 	size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) const noexcept
 	{
