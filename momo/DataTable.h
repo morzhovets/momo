@@ -321,7 +321,13 @@ private:
 	};
 
 public:
-	explicit DataTable(ColumnList&& columnList = ColumnList())
+	explicit DataTable()
+		requires requires { ColumnList(); } && !requires { ColumnList({}); }
+		: DataTable(ColumnList())
+	{
+	}
+
+	explicit DataTable(ColumnList&& columnList)
 		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
 		mRawMemPool(pvCreateRawMemPool()),
@@ -332,7 +338,7 @@ public:
 	template<typename Item, typename... Items>
 	explicit DataTable(const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns)
-		: DataTable(ColumnList(column, columns...))
+		: DataTable(ColumnList({ column, columns... }))
 	{
 	}
 

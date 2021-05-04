@@ -642,7 +642,12 @@ public:
 	typedef ConstIterator Iterator;
 
 public:
-	explicit DataColumnList(MemManager memManager = MemManager())
+	DataColumnList()
+		: DataColumnList(MemManager())
+	{
+	}
+
+	explicit DataColumnList(MemManager memManager)
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::ObjectAlignmenter<size_t>::alignment : 1),
@@ -655,8 +660,7 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	explicit DataColumnList(const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns)
+	DataColumnList(const QualifiedColumn<Item>& column, const QualifiedColumn<Items>&... columns)
 		: DataColumnList()
 	{
 		Add(column, columns...);
