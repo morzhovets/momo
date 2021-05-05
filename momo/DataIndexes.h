@@ -1417,7 +1417,7 @@ namespace internal
 			const Item& item1 = (offset != key1.offset)
 				? ColumnList::template GetByOffset<const Item>(key1.raw, offset)
 				: *static_cast<const Item*>(key1.item);
-			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, *offsets);
+			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, offset);
 			return DataTraits::IsEqual(item1, item2)
 				&& pvIsEqual<void, Items...>(key1, key2, offsets + 1);
 		}

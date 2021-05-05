@@ -967,8 +967,9 @@ private:
 		if (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
 			size_t srcOffset = offset;
-			if (srcColumnList == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
-				|| static_cast<const DataColumnList*>(srcColumnList)->Contains(*columns, &srcOffset))
+			const DataColumnList* srcColumnListPtr = static_cast<const DataColumnList*>(srcColumnList);
+			if (srcColumnListPtr == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
+				|| srcColumnListPtr->Contains(*columns, &srcOffset))
 			{
 				srcItem = internal::PtrCaster::Shift<const Item>(
 					static_cast<const Raw*>(srcRaw), srcOffset);
