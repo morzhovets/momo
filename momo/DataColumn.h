@@ -345,17 +345,16 @@ concept conceptDataColumnList =
 	std::is_nothrow_move_constructible_v<DataColumnList> &&
 	conceptMemManager<typename DataColumnList::MemManager> &&
 	requires (DataColumnList& columnList, typename DataColumnList::Raw* raw,
-		typename DataColumnList::ColumnInfo columnInfo)
+		const typename DataColumnList::template Column<TestItem>& column)
 	{
 		typename DataColumnList::Settings;
-		typename DataColumnList::template Column<TestItem>;
 		{ columnList.GetMemManager() } noexcept
 			-> std::same_as<typename DataColumnList::MemManager&>;
 		{ std::as_const(columnList).GetTotalSize() } noexcept -> std::same_as<size_t>;
 		{ std::as_const(columnList).GetAlignment() } noexcept -> std::same_as<size_t>;
 		{ columnList.CreateRaw(raw) } -> std::same_as<void>;
 		{ columnList.DestroyRaw(raw) } noexcept -> std::same_as<void>;
-		{ std::as_const(columnList).GetOffset(columnInfo) } -> std::same_as<size_t>;
+		{ std::as_const(columnList).GetOffset(column) } -> std::same_as<size_t>;
 		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
 			-> std::same_as<TestItem&>;
 	};
