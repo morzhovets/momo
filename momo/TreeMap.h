@@ -590,8 +590,8 @@ public:
 	}
 
 	ValueReferenceRKey operator[](Key&& key)
+		requires (!TreeTraits::multiKey)
 	{
-		static_assert(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
 		return !pvIsGreater(iter, static_cast<const Key&>(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
@@ -599,8 +599,8 @@ public:
 	}
 
 	ValueReferenceCKey operator[](const Key& key)
+		requires (!TreeTraits::multiKey)
 	{
-		static_assert(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(key);
 		return !pvIsGreater(iter, key)
 			? ValueReferencer::template GetReference<const Key&>(*this, iter)
