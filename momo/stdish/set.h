@@ -409,7 +409,7 @@ public:
 
 	iterator insert(const_iterator hint, value_type&& value)
 	{
-		if (!pvCheckHint(hint, static_cast<const key_type&>(value)))
+		if (!pvCheckHint(hint, std::as_const(value)))
 			return insert(std::move(value)).first;
 		return mTreeSet.Add(hint, std::move(value));
 	}

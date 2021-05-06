@@ -779,7 +779,7 @@ public:
 		else if constexpr (ItemTraits::isNothrowMoveConstructible)
 		{
 			size_t newCount = initCount + 1;
-			size_t itemIndex = pvIndexOf(static_cast<const Item&>(item));
+			size_t itemIndex = pvIndexOf(std::as_const(item));
 			pvGrow(newCount, ArrayGrowCause::add);
 			Item* items = GetItems();
 			typename ItemTraits::template Creator<Item&&>(GetMemManager(),
@@ -849,7 +849,7 @@ public:
 	{
 		size_t initCount = GetCount();
 		size_t grow = (initCount + 1 > GetCapacity());
-		size_t itemIndex = pvIndexOf(item);
+		size_t itemIndex = pvIndexOf(std::as_const(item));
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 			InsertVar(index, std::move(item));
 		else

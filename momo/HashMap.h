@@ -660,7 +660,7 @@ public:
 
 	MOMO_FORCEINLINE ValueReferenceRKey operator[](Key&& key)
 	{
-		Position pos = Find(static_cast<const Key&>(key));
+		Position pos = Find(std::as_const(key));
 		return !!pos ? ValueReferencer::template GetReference<Key&&>(*this, pos)
 			: ValueReferencer::template GetReference<Key&&>(*this, pos, std::move(key));
 	}
@@ -762,7 +762,7 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Position pos = Find(static_cast<const Key&>(key));
+		Position pos = Find(std::as_const(key));
 		if (!!pos)
 			return { pos, false };
 		pos = pvAdd<false>(pos, std::forward<RKey>(key),

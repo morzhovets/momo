@@ -1229,7 +1229,7 @@ private:
 	template<typename RKey, typename ValueCreator>
 	Iterator pvAdd(RKey&& key, ValueCreator&& valueCreator)
 	{
-		KeyIterator keyIter = Find(static_cast<const Key&>(key));
+		KeyIterator keyIter = Find(std::as_const(key));
 		if (!!keyIter)
 			return AddCrt(keyIter, std::forward<ValueCreator>(valueCreator));
 		auto valuesCreator = [this, &valueCreator] (ValueArray* newValueArray)

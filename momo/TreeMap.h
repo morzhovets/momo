@@ -592,8 +592,8 @@ public:
 	ValueReferenceRKey operator[](Key&& key)
 		requires (!TreeTraits::multiKey)
 	{
-		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
-		return !pvIsGreater(iter, static_cast<const Key&>(key))
+		Iterator iter = GetLowerBound(std::as_const(key));
+		return !pvIsGreater(iter, std::as_const(key))
 			? ValueReferencer::template GetReference<Key&&>(*this, iter)
 			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
 	}
@@ -689,8 +689,7 @@ private:
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
 		};
-		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
-			static_cast<const Key&>(key), itemCreator);
+		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(std::as_const(key), itemCreator);
 		return { IteratorProxy(res.position), res.inserted };
 	}
 

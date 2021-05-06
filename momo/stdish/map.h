@@ -788,8 +788,7 @@ namespace internal
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
 			MappedCreator&& mappedCreator)
 		{
-			std::pair<iterator, bool> res = pvFind(hint,
-				static_cast<const key_type&>(std::get<0>(key)));
+			std::pair<iterator, bool> res = pvFind(hint, std::as_const(std::get<0>(key)));
 			if (!res.second)
 				return res;
 			TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),

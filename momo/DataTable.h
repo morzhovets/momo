@@ -1053,7 +1053,7 @@ private:
 		size_t offset = GetColumnList().GetOffset(column);
 		auto assigner = [&columnList, raw, offset, &newItem] ()
 			{ columnList.template Assign<Item>(raw, offset, std::forward<RItem>(newItem)); };
-		auto res = mIndexes.UpdateRaw(raw, offset, static_cast<const Item&>(newItem), assigner);
+		auto res = mIndexes.UpdateRaw(raw, offset, std::as_const(newItem), assigner);
 		if (res.raw != nullptr)
 			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
 		++mCrew.GetChangeVersion();
