@@ -166,12 +166,12 @@ private:
 		}
 	};
 
+	typedef std::atomic<void*> FreeRaws;
+
 	class Crew
 	{
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
-		typedef std::atomic<void*> FreeRaws;
 
 		class Data
 		{
@@ -322,7 +322,7 @@ private:
 
 public:
 	explicit DataTable()
-		requires requires { ColumnList(); } && !requires { ColumnList({}); }
+		requires requires { ColumnList(); } && (!requires { ColumnList({}); })
 		: DataTable(ColumnList())
 	{
 	}
