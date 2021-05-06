@@ -975,7 +975,7 @@ private:
 		Raw* raw = pvCreateRaw();
 		try
 		{
-			pvFillRaw(raw, assigners...);
+			(pvFillRaw(raw, assigners), ...);
 		}
 		catch (...)
 		{
@@ -985,19 +985,12 @@ private:
 		return pvMakeRow(raw);
 	}
 
-	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner,
-		const Assigner<Items, ItemArgs>&... assigners)
+	template<typename Item, typename ItemArg>
+	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner) const
 	{
 		const ColumnList& columnList = GetColumnList();
 		size_t offset = columnList.GetOffset(assigner.GetColumn());
-		columnList.template Assign<Item>(raw, offset,
-			std::forward<ItemArg>(assigner.GetItemArg()));
-		pvFillRaw(raw, assigners...);
-	}
-
-	void pvFillRaw(Raw* /*raw*/) noexcept
-	{
+		columnList.template Assign<Item>(raw, offset, std::forward<ItemArg>(assigner.GetItemArg()));
 	}
 
 	void pvSetNumbers(size_t beginNumber = 0) noexcept
@@ -1313,7 +1306,11 @@ private:
 				OffsetItemTuple<>(), equalers...);
 		}
 		auto newRowFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
-			{ return pvIsSatisfied(rowRef, offsets.data(), equalers...) && rowFilter(rowRef); };
+		{
+			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+			size_t* offset = offsets.data();
+			return (pvIsSatisfied(raw, equalers, *offset++) && ...) && rowFilter(rowRef);
+		};
 		return pvMakeSelection(mRaws, newRowFilter, static_cast<Result*>(nullptr));
 	}
 
@@ -1323,19 +1320,11 @@ private:
 		return pvMakeSelection(mRaws, rowFilter, static_cast<Result*>(nullptr));
 	}
 
-	template<typename Item, typename... Items>
-	static bool pvIsSatisfied(ConstRowReference rowRef, const size_t* offsets,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers)
+	template<typename Item>
+	static bool pvIsSatisfied(Raw* raw, const Equaler<Item>& equaler, size_t offset)
 	{
-		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-		const Item& item = ColumnList::template GetByOffset<const Item>(raw, *offsets);
-		return DataTraits::IsEqual(item, equaler.GetItemArg())
-			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
-	}
-
-	static bool pvIsSatisfied(ConstRowReference /*rowRef*/, const size_t* /*offsets*/) noexcept
-	{
-		return true;
+		const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
+		return DataTraits::IsEqual(item, equaler.GetItemArg());
 	}
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Item,
@@ -1479,8 +1468,7 @@ private:
 			resTable.mRaws.Reserve(resTable.mRaws.GetCount() + 1);
 			Raw* resRaw = resTable.pvCreateRaw();
 			resTable.mRaws.AddBackNogrow(resRaw);
-			resTable.template pvAssign<void, Items...>(raw, offsets.data(),
-				resRaw, resOffsets.data());
+			resTable.template pvAssign<Items...>(raw, offsets.data(), resRaw, resOffsets.data());
 			if (distinct && resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
 			{
 				resTable.mRaws.RemoveBack();
@@ -1492,18 +1480,14 @@ private:
 		return resTable;
 	}
 
-	template<typename Void, typename Item, typename... Items>
-	void pvAssign(Raw* srcRaw, const size_t* srcOffsets, Raw* dstRaw, const size_t* dstOffsets)
+	template<typename... Items>
+	void pvAssign(Raw* srcRaw, const size_t* srcOffsets, Raw* dstRaw, const size_t* dstOffsets) const
 	{
-		GetColumnList().template Assign<Item>(dstRaw, *dstOffsets,
-			ColumnList::template GetByOffset<const Item>(srcRaw, *srcOffsets));
-		pvAssign<void, Items...>(srcRaw, srcOffsets + 1, dstRaw, dstOffsets + 1);
-	}
-
-	template<typename Void>
-	void pvAssign(Raw* /*srcRaw*/, const size_t* /*srcOffsets*/, Raw* /*dstRaw*/,
-		const size_t* /*dstOffsets*/) noexcept
-	{
+		const ColumnList& columnList = GetColumnList();
+		const size_t* srcOffset = srcOffsets;
+		const size_t* dstOffset = dstOffsets;
+		(columnList.template Assign<Items>(dstRaw, *dstOffset++,
+			ColumnList::template GetByOffset<const Items>(srcRaw, *srcOffset++)), ...);
 	}
 
 private:

@@ -374,7 +374,11 @@ namespace internal
 			template<typename... Items>
 			size_t GetHashCode(const OffsetItemTuple<Items...>& key) const
 			{
-				return pvGetHashCode<0>(key);
+				size_t hashCode = 0;
+				auto tupleFunc = [&hashCode] (const auto&... pairs)
+					{ (DataTraits::AccumulateHashCode(hashCode, pairs.second, pairs.first), ...); };
+				std::apply(tupleFunc, key);
+				return hashCode;
 			}
 
 			template<typename Item>
@@ -391,7 +395,12 @@ namespace internal
 			template<typename... Items>
 			bool IsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
 			{
-				return pvIsEqual<0>(key1, key2);
+				auto tupleFunc = [key2] (const auto&... pairs)
+				{
+					return (DataTraits::IsEqual(pairs.second,
+						ColumnList::template GetByOffset<const Items>(key2, pairs.first)) && ...);
+				};
+				return std::apply(tupleFunc, key1);
 			}
 
 			template<typename Item>
@@ -399,43 +408,6 @@ namespace internal
 			{
 				return mEqualMixedFunc({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
-			}
-
-		private:
-			template<size_t index, typename... Items>
-			size_t pvGetHashCode(const OffsetItemTuple<Items...>& key) const
-			{
-				if constexpr (index < sizeof...(Items))
-				{
-					const auto& pair = std::get<index>(key);
-					const auto& item = pair.second;
-					size_t hashCode = pvGetHashCode<index + 1>(key);
-					DataTraits::AccumulateHashCode(hashCode, item, pair.first);
-					return hashCode;
-				}
-				else
-				{
-					(void)key;
-					return 0;
-				}
-			}
-
-			template<size_t index, typename... Items>
-			bool pvIsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
-			{
-				if constexpr (index < sizeof...(Items))
-				{
-					const auto& pair1 = std::get<index>(key1);
-					const auto& item1 = pair1.second;
-					typedef std::decay_t<decltype(item1)> Item;
-					const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, pair1.first);
-					return DataTraits::IsEqual(item1, item2) && pvIsEqual<index + 1>(key1, key2);
-				}
-				else
-				{
-					(void)key1; (void)key2;
-					return true;
-				}
 			}
 
 		private:
@@ -1303,13 +1275,29 @@ namespace internal
 			if (index != Index::empty)
 				return index;
 			auto hashFunc = [] (Raw* key, const size_t* offsets)
-				{ return pvGetHashCode<void, Items...>(key, offsets); };
+			{
+				size_t hashCode = 0;
+				const size_t* offset = offsets;
+				(pvAccumulateHashCode<Items>(hashCode, key, *offset++), ...);
+				return hashCode;
+			};
 			auto equalFunc = [] (Raw* key1, Raw* key2, const size_t* offsets)
-				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
+			{
+				const size_t* offset = offsets;
+				return (pvIsEqual<Items>(key1, key2, *offset++) && ...);
+			};
 			auto hashMixedFunc = [] (HashMixedKey<> key, const size_t* offsets)
-				{ return pvGetHashCode<void, Items...>(key, offsets); };
+			{
+				size_t hashCode = 0;
+				const size_t* offset = offsets;
+				(pvAccumulateHashCode<Items>(hashCode, key, *offset++), ...);
+				return hashCode;
+			};
 			auto equalMixedFunc = [] (HashMixedKey<> key1, Raw* key2, const size_t* offsets)
-				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
+			{
+				const size_t* offset = offsets;
+				return (pvIsEqual<Items>(key1, key2, *offset++) && ...);
+			};
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
 			HashTraits hashTraits(hashFunc, equalFunc, hashMixedFunc, equalMixedFunc,
 				Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)));
@@ -1349,73 +1337,38 @@ namespace internal
 			//return std::binary_search(sortedOffsets.GetBegin(), sortedOffsets.GetEnd(), offset);
 		}
 
-		template<typename Void, typename Item, typename... Items>
-		static size_t pvGetHashCode(Raw* key, const size_t* offsets)
+		template<typename Item>
+		static void pvAccumulateHashCode(size_t& hashCode, Raw* key, size_t offset)
 		{
-			size_t offset = *offsets;
 			const Item& item = ColumnList::template GetByOffset<const Item>(key, offset);
-			size_t hashCode = pvGetHashCode<void, Items...>(key, offsets + 1);
 			DataTraits::AccumulateHashCode(hashCode, item, offset);
-			return hashCode;
 		}
 
-		template<typename Void>
-		static size_t pvGetHashCode(Raw* /*key*/, const size_t* /*offsets*/) noexcept
+		template<typename Item>
+		static void pvAccumulateHashCode(size_t& hashCode, HashMixedKey<> key, size_t offset)
 		{
-			return 0;
-		}
-
-		template<typename Void, typename Item, typename... Items>
-		static size_t pvGetHashCode(HashMixedKey<> key, const size_t* offsets)
-		{
-			size_t offset = *offsets;
 			const Item& item = (offset != key.offset)
 				? ColumnList::template GetByOffset<const Item>(key.raw, offset)
 				: *static_cast<const Item*>(key.item);
-			size_t hashCode = pvGetHashCode<void, Items...>(key, offsets + 1);
 			DataTraits::AccumulateHashCode(hashCode, item, offset);
-			return hashCode;
 		}
 
-		template<typename Void>
-		static size_t pvGetHashCode(HashMixedKey<> /*key*/, const size_t* /*offsets*/) noexcept
+		template<typename Item>
+		static bool pvIsEqual(Raw* key1, Raw* key2, size_t offset)
 		{
-			return 0;
-		}
-
-		template<typename Void, typename Item, typename... Items>
-		static bool pvIsEqual(Raw* key1, Raw* key2, const size_t* offsets)
-		{
-			size_t offset = *offsets;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(key1, offset);
 			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, offset);
-			return DataTraits::IsEqual(item1, item2)
-				&& pvIsEqual<void, Items...>(key1, key2, offsets + 1);
+			return DataTraits::IsEqual(item1, item2);
 		}
 
-		template<typename Void>
-		static bool pvIsEqual(Raw* /*key1*/, Raw* /*key2*/, const size_t* /*offsets*/) noexcept
+		template<typename Item>
+		static bool pvIsEqual(HashMixedKey<> key1, Raw* key2, size_t offset)
 		{
-			return true;
-		}
-
-		template<typename Void, typename Item, typename... Items>
-		static bool pvIsEqual(HashMixedKey<> key1, Raw* key2, const size_t* offsets)
-		{
-			size_t offset = *offsets;
 			const Item& item1 = (offset != key1.offset)
 				? ColumnList::template GetByOffset<const Item>(key1.raw, offset)
 				: *static_cast<const Item*>(key1.item);
-			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, *offsets);
-			return DataTraits::IsEqual(item1, item2)
-				&& pvIsEqual<void, Items...>(key1, key2, offsets + 1);
-		}
-
-		template<typename Void>
-		static bool pvIsEqual(HashMixedKey<> /*key1*/, Raw* /*key2*/,
-			const size_t* /*offsets*/) noexcept
-		{
-			return true;
+			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, offset);
+			return DataTraits::IsEqual(item1, item2);
 		}
 
 	private:
