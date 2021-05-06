@@ -1421,25 +1421,11 @@ private:
 	{
 		auto offsets = pvGetOffsets(equalers...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
-		return pvFindByHashRec<RowBoundsProxy>(trueIndex, offsets.data(),
-			OffsetItemTuple<>(), equalers...);
-	}
-
-	template<typename RowBoundsProxy, typename Index, typename Tuple, typename Item, typename... Items>
-	RowBoundsProxy pvFindByHashRec(Index index, const size_t* offsets, Tuple&& tuple,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
-	{
-		auto newTuple = std::tuple_cat(std::move(tuple),
-			std::make_tuple(std::pair<size_t, const Item&>(*offsets, equaler.GetItemArg())));
-		return pvFindByHashRec<RowBoundsProxy>(index, offsets + 1, std::move(newTuple), equalers...);
-	}
-
-	template<typename RowBoundsProxy, typename Index, typename Tuple>
-	RowBoundsProxy pvFindByHashRec(Index index, const size_t* /*offsets*/, Tuple&& tuple) const
-	{
-		return RowBoundsProxy(&GetColumnList(),
-			mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
-			VersionKeeper(&mCrew.GetRemoveVersion()));
+		OffsetItemTuple<Items...> tuple = { { 0, equalers.GetItemArg() }... };
+		const size_t* offset = offsets.data();
+		std::apply([&offset] (auto&... pairs) { ((pairs.first = *offset++), ...); }, tuple);
+		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
+		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<bool distinct, typename RowFilter, typename... Items>

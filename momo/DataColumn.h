@@ -878,7 +878,11 @@ private:
 			}
 		};
 		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
-			{ pvDestroy<void, Items...>(memManager, columns, raw); };
+		{
+			const ColumnRecord* column = columns;
+			(ItemTraits::Destroy(memManager,
+				*internal::PtrCaster::Shift<Items>(raw, (column++)->GetOffset())), ...);
+		};
 		mColumns.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
@@ -919,7 +923,8 @@ private:
 	static bool pvFillAddends(Addends& addends, Graph& graph, size_t& offset, size_t& maxAlignment,
 		size_t codeParam, const ColumnCode* columnCodes)
 	{
-		pvAddEdges<void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes);
+		const ColumnCode* columnCode = columnCodes;
+		(pvAddEdge<Items>(graph, offset, maxAlignment, codeParam, *columnCode++), ...);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
 			if (!graph.HasEdge(v) || addends[v] != 0)
@@ -931,40 +936,36 @@ private:
 		return true;
 	}
 
-	template<typename Void, typename Item, typename... Items>
-	static void pvAddEdges(Graph& graph, size_t& offset, size_t& maxAlignment, size_t codeParam,
-		const ColumnCode* columnCodes)
+	template<typename Item>
+	static void pvAddEdge(Graph& graph, size_t& offset, size_t& maxAlignment,
+		size_t codeParam, ColumnCode code)
 	{
 		static const size_t size = ItemTraits::template GetSize<Item>();
 		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
 		static_assert(internal::ObjectAlignmenter<Item>::Check(alignment, size));
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
 		maxAlignment = std::minmax(maxAlignment, size_t{alignment}).second;
-		pvAddEdges<void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes + 1);
 	}
 
-	template<typename Void>
-	static void pvAddEdges(Graph& /*graph*/, size_t& /*offset*/, size_t& /*maxAlignment*/,
-		size_t /*codeParam*/, const ColumnCode* /*columnCodes*/)
-	{
-	}
-
-	template<typename Item, typename... Items>
+	template<typename... Items>
 	void pvAddColumns(const ColumnCode* columnCodes, const bool* columnMutables,
-		const Column<Item>& column, const Column<Items>&... columns) noexcept
+		const Column<Items>&... columns) noexcept
 	{
-		size_t offset = pvGetOffset(*columnCodes);
-		mColumns.AddBackNogrow(ColumnRecord(column, offset));
-		if (*columnMutables)
-			mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
-		pvAddColumns(columnCodes + 1, columnMutables + 1, columns...);
+		const ColumnCode* columnCode = columnCodes;
+		const bool* columnMutable = columnMutables;
+		(pvAddColumn(*columnCode++, *columnMutable++, columns), ...);
 	}
 
-	void pvAddColumns(const ColumnCode* /*columnCodes*/, const bool* /*columnMutables*/) noexcept
+	template<typename Item>
+	void pvAddColumn(ColumnCode code, bool columnMutable, const Column<Item>& column) noexcept
 	{
+		size_t offset = pvGetOffset(code);
+		mColumns.AddBackNogrow(ColumnRecord(column, offset));
+		if (columnMutable)
+			mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
 	}
 
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode code) const noexcept
@@ -1015,20 +1016,6 @@ private:
 	template<typename DataColumnListPtr, typename RawPtr>
 	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columns*/,
 		DataColumnListPtr /*srcColumnList*/, RawPtr /*srcRaw*/, Raw* /*raw*/) noexcept
-	{
-	}
-
-	template<typename Void, typename Item, typename... Items>
-	static void pvDestroy(MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
-	{
-		size_t offset = columns->GetOffset();
-		ItemTraits::Destroy(memManager, *internal::PtrCaster::Shift<Item>(raw, offset));
-		pvDestroy<void, Items...>(memManager, columns + 1, raw);
-	}
-
-	template<typename Void>
-	static void pvDestroy(MemManager* /*memManager*/, const ColumnRecord* /*columns*/,
-		Raw* /*raw*/) noexcept
 	{
 	}
 
