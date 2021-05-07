@@ -1277,26 +1277,26 @@ namespace internal
 			auto hashFunc = [] (Raw* key, const size_t* offsets)
 			{
 				size_t hashCode = 0;
-				const size_t* offset = offsets;
-				(pvAccumulateHashCode<Items>(hashCode, key, *offset++), ...);
+				const size_t* offsetPtr = offsets;
+				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
 				return hashCode;
 			};
 			auto equalFunc = [] (Raw* key1, Raw* key2, const size_t* offsets)
 			{
-				const size_t* offset = offsets;
-				return (pvIsEqual<Items>(key1, key2, *offset++) && ...);
+				const size_t* offsetPtr = offsets;
+				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
 			};
 			auto hashMixedFunc = [] (HashMixedKey<> key, const size_t* offsets)
 			{
 				size_t hashCode = 0;
-				const size_t* offset = offsets;
-				(pvAccumulateHashCode<Items>(hashCode, key, *offset++), ...);
+				const size_t* offsetPtr = offsets;
+				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
 				return hashCode;
 			};
 			auto equalMixedFunc = [] (HashMixedKey<> key1, Raw* key2, const size_t* offsets)
 			{
-				const size_t* offset = offsets;
-				return (pvIsEqual<Items>(key1, key2, *offset++) && ...);
+				const size_t* offsetPtr = offsets;
+				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
 			};
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
 			HashTraits hashTraits(hashFunc, equalFunc, hashMixedFunc, equalMixedFunc,

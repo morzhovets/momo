@@ -1308,8 +1308,8 @@ private:
 		auto newRowFilter = [&offsets, &rowFilter, &equalers...] (ConstRowReference rowRef)
 		{
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-			size_t* offset = offsets.data();
-			return (pvIsSatisfied(raw, equalers, *offset++) && ...) && rowFilter(rowRef);
+			const size_t* offsetPtr = offsets.data();
+			return (pvIsSatisfied(raw, equalers, *offsetPtr++) && ...) && rowFilter(rowRef);
 		};
 		return pvMakeSelection(mRaws, newRowFilter, static_cast<Result*>(nullptr));
 	}
@@ -1329,15 +1329,15 @@ private:
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple, typename Item,
 		typename... Items>
-	Result pvSelectRec(Index index, const size_t* offsets, const RowFilter& rowFilter,
+	Result pvSelectRec(Index index, const size_t* offsetPtr, const RowFilter& rowFilter,
 		Tuple&& tuple, const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
 	{
-		size_t offset = *offsets;
+		size_t offset = *offsetPtr;
 		if (mIndexes.ContainsOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(std::move(tuple),
 				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
-			return pvSelectRec<Result>(index, offsets + 1, rowFilter, std::move(newTuple),
+			return pvSelectRec<Result>(index, offsetPtr + 1, rowFilter, std::move(newTuple),
 				equalers...);
 		}
 		else
@@ -1348,13 +1348,13 @@ private:
 				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
 				return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
 			};
-			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, std::move(tuple),
+			return pvSelectRec<Result>(index, offsetPtr + 1, newRowFilter, std::move(tuple),
 				equalers...);
 		}
 	}
 
 	template<typename Result, typename Index, typename RowFilter, typename Tuple>
-	Result pvSelectRec(Index index, const size_t* /*offsets*/, const RowFilter& rowFilter,
+	Result pvSelectRec(Index index, const size_t* /*offsetPtr*/, const RowFilter& rowFilter,
 		Tuple&& tuple) const
 	{
 		return pvMakeSelection(mIndexes.FindRaws(index, tuple, VersionKeeper(&mCrew.GetChangeVersion())),
@@ -1422,8 +1422,8 @@ private:
 		auto offsets = pvGetOffsets(equalers...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
 		OffsetItemTuple<Items...> tuple = { { 0, equalers.GetItemArg() }... };
-		const size_t* offset = offsets.data();
-		std::apply([&offset] (auto&... pairs) { ((pairs.first = *offset++), ...); }, tuple);
+		const size_t* offsetPtr = offsets.data();
+		std::apply([&offsetPtr] (auto&... pairs) { ((pairs.first = *offsetPtr++), ...); }, tuple);
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
@@ -1470,10 +1470,10 @@ private:
 	void pvAssign(Raw* srcRaw, const size_t* srcOffsets, Raw* dstRaw, const size_t* dstOffsets) const
 	{
 		const ColumnList& columnList = GetColumnList();
-		const size_t* srcOffset = srcOffsets;
-		const size_t* dstOffset = dstOffsets;
-		(columnList.template Assign<Items>(dstRaw, *dstOffset++,
-			ColumnList::template GetByOffset<const Items>(srcRaw, *srcOffset++)), ...);
+		const size_t* srcOffsetPtr = srcOffsets;
+		const size_t* dstOffsetPtr = dstOffsets;
+		(columnList.template Assign<Items>(dstRaw, *dstOffsetPtr++,
+			ColumnList::template GetByOffset<const Items>(srcRaw, *srcOffsetPtr++)), ...);
 	}
 
 private:

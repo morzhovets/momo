@@ -785,8 +785,8 @@ namespace internal
 			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
 			{
 				int cmp = 0;
-				const size_t* offset = offsets.data();
-				((cmp = pvCompare<Items>(raw1, raw2, *offset++)) || ...);
+				const size_t* offsetPtr = offsets.data();
+				((cmp = pvCompare<Items>(raw1, raw2, *offsetPtr++)) || ...);
 				return cmp < 0;
 			};
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
@@ -817,14 +817,14 @@ namespace internal
 			auto hashFunc = [&offsets] (Raw* raw)
 			{
 				size_t hashCode = 0;
-				const size_t* offset = offsets.data();
-				(pvAccumulateHashCode<Items>(hashCode, raw, *offset++), ...);
+				const size_t* offsetPtr = offsets.data();
+				(pvAccumulateHashCode<Items>(hashCode, raw, *offsetPtr++), ...);
 				return hashCode;
 			};
 			auto equalFunc = [&offsets] (Raw* raw1, Raw* raw2)
 			{
-				const size_t* offset = offsets.data();
-				return (pvIsEqual<Items>(raw1, raw2, *offset++) && ...);
+				const size_t* offsetPtr = offsets.data();
+				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
 			};
 			Array<size_t, MemManagerPtr<MemManager>> hashes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
@@ -862,12 +862,13 @@ namespace internal
 		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
 		{
 			static const size_t columnCount = sizeof...(equalers);
-			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(equalers.GetColumn())... }};
+			std::array<size_t, columnCount> offsets =
+				{{ mColumnList->GetOffset(equalers.GetColumn())... }};
 			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 			{
 				int cmp = 0;
-				const size_t* offset = offsets.data();
-				((cmp = pvCompare<Items>(raw, equalers.GetItemArg(), *offset++)) || ...);
+				const size_t* offsetPtr = offsets.data();
+				((cmp = pvCompare<Items>(raw, equalers.GetItemArg(), *offsetPtr++)) || ...);
 				return cmp > bound;
 			};
 			return UIntMath<>::Dist(mRaws.GetBegin(),

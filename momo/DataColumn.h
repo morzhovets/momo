@@ -405,11 +405,11 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode code,
+	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode columnCode,
 		size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(code + (code >> 32));
+		size_t shortCode = static_cast<size_t>(columnCode + (columnCode >> 32));
 		shortCode += shortCode >> 16;
 		if constexpr (logVertexCount < 8)
 			shortCode += shortCode >> 8;
@@ -617,7 +617,7 @@ private:
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> Columns;
+	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> ColumnRecords;
 
 	typedef std::function<void(MemManager&, const ColumnRecord*, const DataColumnList*,
 		const Raw*, Raw*)> CreateFunc;
@@ -635,7 +635,7 @@ private:
 	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
 
 public:
-	typedef typename Columns::ConstIterator ConstIterator;
+	typedef typename ColumnRecords::ConstIterator ConstIterator;
 	typedef ConstIterator Iterator;
 
 public:
@@ -649,7 +649,7 @@ public:
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
 		mAlignment(Settings::keepRowNumber ? internal::ObjectAlignmenter<size_t>::alignment : 1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
-		mColumns(MemManagerPtr(GetMemManager())),
+		mColumnRecords(MemManagerPtr(GetMemManager())),
 		mFuncRecords(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
@@ -669,7 +669,7 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(std::move(columnList.mColumnCodeSet)),
-		mColumns(std::move(columnList.mColumns)),
+		mColumnRecords(std::move(columnList.mColumnRecords)),
 		mFuncRecords(std::move(columnList.mFuncRecords)),
 		mMutableOffsets(std::move(columnList.mMutableOffsets))
 	{
@@ -681,7 +681,7 @@ public:
 		mTotalSize(columnList.mTotalSize),
 		mAlignment(columnList.mAlignment),
 		mColumnCodeSet(columnList.mColumnCodeSet),
-		mColumns(columnList.mColumns, MemManagerPtr(GetMemManager())),
+		mColumnRecords(columnList.mColumnRecords, MemManagerPtr(GetMemManager())),
 		mFuncRecords(columnList.mFuncRecords, MemManagerPtr(GetMemManager())),
 		mMutableOffsets(columnList.mMutableOffsets, MemManagerPtr(GetMemManager()))
 	{
@@ -693,12 +693,12 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return mColumns.GetBegin();
+		return mColumnRecords.GetBegin();
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return mColumns.GetEnd();
+		return mColumnRecords.GetEnd();
 	}
 
 	MOMO_FRIENDS_SIZE_BEGIN_END(DataColumnList)
@@ -715,7 +715,7 @@ public:
 
 	size_t GetCount() const noexcept
 	{
-		return mColumns.GetCount();
+		return mColumnRecords.GetCount();
 	}
 
 	template<typename Item, typename... Items>
@@ -772,9 +772,9 @@ public:
 	template<bool extraCheck = true>
 	MOMO_FORCEINLINE size_t GetOffset(ColumnInfo columnInfo) const
 	{
-		ColumnCode code = columnInfo.GetCode();
-		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
-		size_t offset = pvGetOffset(code);
+		ColumnCode columnCode = columnInfo.GetCode();
+		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(columnCode));
+		size_t offset = pvGetOffset(columnCode);
 		MOMO_ASSERT(offset < mTotalSize);
 		return offset;
 	}
@@ -807,13 +807,13 @@ public:
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
-		ColumnCode code = columnInfo.GetCode();
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		ColumnCode columnCode = columnInfo.GetCode();
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		if (addend1 == 0 || addend2 == 0)
 			return false;
-		if (!mColumnCodeSet.ContainsKey(code))
+		if (!mColumnCodeSet.ContainsKey(columnCode))
 			return false;
 		if (resOffset != nullptr)
 			*resOffset = addend1 + addend2;
@@ -858,32 +858,32 @@ private:
 		}
 		FuncRecord funcRec;
 		funcRec.columnIndex = initColumnCount;
-		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns,
+		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columnRecords,
 			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
 		{
 			if (srcRaw == nullptr)
 			{
-				pvCreate<std::nullptr_t, std::nullptr_t, Items...>(memManager, columns,
+				pvCreate<std::nullptr_t, std::nullptr_t, Items...>(memManager, columnRecords,
 					nullptr, nullptr, raw);
 			}
 			else if (srcColumnList == nullptr)
 			{
-				pvCreate<std::nullptr_t, const Raw*, Items...>(memManager, columns,
+				pvCreate<std::nullptr_t, const Raw*, Items...>(memManager, columnRecords,
 					nullptr, srcRaw, raw);
 			}
 			else
 			{
-				pvCreate<const DataColumnList*, const Raw*, Items...>(memManager, columns,
+				pvCreate<const DataColumnList*, const Raw*, Items...>(memManager, columnRecords,
 					srcColumnList, srcRaw, raw);
 			}
 		};
-		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
+		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columnRecords, Raw* raw)
 		{
-			const ColumnRecord* column = columns;
+			const ColumnRecord* columnRecordPtr = columnRecords;
 			(ItemTraits::Destroy(memManager,
-				*internal::PtrCaster::Shift<Items>(raw, (column++)->GetOffset())), ...);
+				*internal::PtrCaster::Shift<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
 		};
-		mColumns.Reserve(initColumnCount + columnCount);
+		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
 		try
@@ -892,8 +892,8 @@ private:
 		}
 		catch (...)
 		{
-			for (ColumnCode code : columnCodes)
-				mColumnCodeSet.Remove(code);	// no throw
+			for (ColumnCode columnCode : columnCodes)
+				mColumnCodeSet.Remove(columnCode);	// no throw
 			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
 			throw;
 		}
@@ -910,7 +910,7 @@ private:
 		const ColumnCode* columnCodes) const
 	{
 		Graph graph;
-		for (const ColumnRecord& columnRec : mColumns)
+		for (const ColumnRecord& columnRec : mColumnRecords)
 		{
 			std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnRec.GetCode(),
 				codeParam);
@@ -923,8 +923,8 @@ private:
 	static bool pvFillAddends(Addends& addends, Graph& graph, size_t& offset, size_t& maxAlignment,
 		size_t codeParam, const ColumnCode* columnCodes)
 	{
-		const ColumnCode* columnCode = columnCodes;
-		(pvAddEdge<Items>(graph, offset, maxAlignment, codeParam, *columnCode++), ...);
+		const ColumnCode* columnCodePtr = columnCodes;
+		(pvAddEdge<Items>(graph, offset, maxAlignment, codeParam, *columnCodePtr++), ...);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
 			if (!graph.HasEdge(v) || addends[v] != 0)
@@ -938,13 +938,13 @@ private:
 
 	template<typename Item>
 	static void pvAddEdge(Graph& graph, size_t& offset, size_t& maxAlignment,
-		size_t codeParam, ColumnCode code)
+		size_t codeParam, ColumnCode columnCode)
 	{
 		static const size_t size = ItemTraits::template GetSize<Item>();
 		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
 		static_assert(internal::ObjectAlignmenter<Item>::Check(alignment, size));
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, codeParam);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
 		maxAlignment = std::minmax(maxAlignment, size_t{alignment}).second;
@@ -954,23 +954,23 @@ private:
 	void pvAddColumns(const ColumnCode* columnCodes, const bool* columnMutables,
 		const Column<Items>&... columns) noexcept
 	{
-		const ColumnCode* columnCode = columnCodes;
-		const bool* columnMutable = columnMutables;
-		(pvAddColumn(*columnCode++, *columnMutable++, columns), ...);
+		const ColumnCode* columnCodePtr = columnCodes;
+		const bool* columnMutablePtr = columnMutables;
+		(pvAddColumn(*columnCodePtr++, *columnMutablePtr++, columns), ...);
 	}
 
 	template<typename Item>
-	void pvAddColumn(ColumnCode code, bool columnMutable, const Column<Item>& column) noexcept
+	void pvAddColumn(ColumnCode columnCode, bool columnMutable, const Column<Item>& column) noexcept
 	{
-		size_t offset = pvGetOffset(code);
-		mColumns.AddBackNogrow(ColumnRecord(column, offset));
+		size_t offset = pvGetOffset(columnCode);
+		mColumnRecords.AddBackNogrow(ColumnRecord(column, offset));
 		if (columnMutable)
 			mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
 	}
 
-	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode code) const noexcept
+	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
 	{
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
@@ -978,10 +978,10 @@ private:
 	}
 
 	template<typename DataColumnListPtr, typename RawPtr, typename Item, typename... Items>
-	static void pvCreate(MemManager& memManager, const ColumnRecord* columns,
+	static void pvCreate(MemManager& memManager, const ColumnRecord* columnRecordPtr,
 		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
-		size_t offset = columns->GetOffset();
+		size_t offset = columnRecordPtr->GetOffset();
 		Item* item = internal::PtrCaster::Shift<Item>(raw, offset);
 		const Item* srcItem = nullptr;
 		if constexpr (!std::is_null_pointer_v<RawPtr>)
@@ -993,7 +993,7 @@ private:
 			else
 			{
 				size_t srcOffset;
-				if (srcColumnList->Contains(*columns, &srcOffset))
+				if (srcColumnList->Contains(*columnRecordPtr, &srcOffset))
 					srcItem = internal::PtrCaster::Shift<const Item>(srcRaw, srcOffset);
 			}
 		}
@@ -1003,7 +1003,7 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		try
 		{
-			pvCreate<DataColumnListPtr, RawPtr, Items...>(memManager, columns + 1,
+			pvCreate<DataColumnListPtr, RawPtr, Items...>(memManager, columnRecordPtr + 1,
 				srcColumnList, srcRaw, raw);
 		}
 		catch (...)
@@ -1014,7 +1014,7 @@ private:
 	}
 
 	template<typename DataColumnListPtr, typename RawPtr>
-	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columns*/,
+	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columnRecordPtr*/,
 		DataColumnListPtr /*srcColumnList*/, RawPtr /*srcRaw*/, Raw* /*raw*/) noexcept
 	{
 	}
@@ -1029,7 +1029,7 @@ private:
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
 				const FuncRecord& funcRec = mFuncRecords[funcIndex];
-				funcRec.createFunc(memManager, &mColumns[funcRec.columnIndex],
+				funcRec.createFunc(memManager, &mColumnRecords[funcRec.columnIndex],
 					srcColumnList, srcRaw, raw);
 			}
 		}
@@ -1038,7 +1038,7 @@ private:
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
 				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.destroyFunc(&memManager, &mColumns[funcRec.columnIndex], raw);
+				funcRec.destroyFunc(&memManager, &mColumnRecords[funcRec.columnIndex], raw);
 			}
 			throw;
 		}
@@ -1047,13 +1047,13 @@ private:
 	void pvDestroyRaw(MemManager* memManager, Raw* raw) const noexcept
 	{
 		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(memManager, &mColumns[funcRec.columnIndex], raw);
+			funcRec.destroyFunc(memManager, &mColumnRecords[funcRec.columnIndex], raw);
 	}
 
 	template<typename Void, typename PtrVisitor>
 	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		for (const ColumnRecord& columnRec : mColumns)
+		for (const ColumnRecord& columnRec : mColumnRecords)
 		{
 			Void* item = internal::PtrCaster::Shift<Void>(raw, columnRec.GetOffset());
 			columnRec.Visit(item, ptrVisitor);	//?
@@ -1066,7 +1066,7 @@ private:
 	size_t mTotalSize;
 	size_t mAlignment;
 	ColumnCodeSet mColumnCodeSet;
-	Columns mColumns;
+	ColumnRecords mColumnRecords;
 	FuncRecords mFuncRecords;
 	MutableOffsets mMutableOffsets;
 };
@@ -1095,25 +1095,25 @@ public:
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
 
-	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> Columns;
+	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> VisitableColumns;
 
 	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
 
 public:
 	explicit DataColumnListStatic(MemManager memManager = MemManager())
-		: mColumns(std::move(memManager))
+		: mVisitableColumns(std::move(memManager))
 	{
 		ResetMutable();
 	}
 
 	DataColumnListStatic(DataColumnListStatic&& columnList) noexcept
-		: mColumns(std::move(columnList.mColumns)),
+		: mVisitableColumns(std::move(columnList.mVisitableColumns)),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
 
 	DataColumnListStatic(const DataColumnListStatic& columnList)
-		: mColumns(columnList.mColumns),
+		: mVisitableColumns(columnList.mVisitableColumns),
 		mMutableOffsets(columnList.mMutableOffsets)
 	{
 	}
@@ -1124,12 +1124,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mColumns.GetMemManager();
+		return mVisitableColumns.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mColumns.GetMemManager();
+		return mVisitableColumns.GetMemManager();
 	}
 
 	template<typename... Items>
@@ -1237,9 +1237,9 @@ public:
 	void PrepareForVisitors(const Column<Items>&... columns)	//?
 	{
 		static const size_t columnCount = sizeof...(columns);
-		mColumns.Reserve(columnCount);
-		mColumns.Clear(false);
-		(mColumns.AddBackNogrow(ColumnInfo(columns)), ...);
+		mVisitableColumns.Reserve(columnCount);
+		mVisitableColumns.Clear(false);
+		(mVisitableColumns.AddBackNogrow(ColumnInfo(columns)), ...);
 	}
 
 	template<typename PtrVisitor>
@@ -1274,9 +1274,9 @@ private:
 	template<typename Void, typename PtrVisitor>
 	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
 	{
-		if (mColumns.IsEmpty())
+		if (mVisitableColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
-		for (const ColumnInfo& columnInfo : mColumns)
+		for (const ColumnInfo& columnInfo : mVisitableColumns)
 		{
 			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo));
 			columnInfo.Visit(item, ptrVisitor);
@@ -1284,7 +1284,7 @@ private:
 	}
 
 private:
-	Columns mColumns;
+	VisitableColumns mVisitableColumns;
 	MutableOffsets mMutableOffsets;
 };
 
