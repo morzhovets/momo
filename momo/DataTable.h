@@ -1445,7 +1445,8 @@ private:
 	{
 		auto offsets = pvGetOffsets(equalers...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
-		OffsetItemTuple<Items...> tuple = { { offsets[sequence], equalers.GetItemArg() }... };
+		OffsetItemTuple<Items...> tuple{
+			std::pair<size_t, const Items&>(offsets[sequence], equalers.GetItemArg())... };
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
