@@ -235,10 +235,16 @@ private:
 			return mData->columnList;
 		}
 
-		ColumnList& GetColumnList() noexcept
+		const MemManager& GetMemManager() const noexcept
 		{
 			MOMO_ASSERT(!IsNull());
-			return mData->columnList;
+			return mData->columnList.GetMemManager();
+		}
+
+		MemManager& GetMemManager() noexcept
+		{
+			MOMO_ASSERT(!IsNull());
+			return mData->columnList.GetMemManager();
 		}
 
 		const size_t& GetChangeVersion() const noexcept
@@ -432,12 +438,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return mCrew.GetColumnList().GetMemManager();
+		return mCrew.GetMemManager();
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return mCrew.GetColumnList().GetMemManager();
+		return mCrew.GetMemManager();
 	}
 
 	size_t GetCount() const noexcept
@@ -912,7 +918,7 @@ private:
 		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			mCrew.GetColumnList().CreateRaw(raw);
+			GetColumnList().CreateRaw(GetMemManager(), raw);
 		}
 		catch (...)
 		{
@@ -927,7 +933,7 @@ private:
 		Raw* raw = mRawMemPool.template Allocate<Raw>();
 		try
 		{
-			mCrew.GetColumnList().ImportRaw(srcColumnList, srcRaw, raw);
+			GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
@@ -948,7 +954,7 @@ private:
 
 	void pvFreeRaw(Raw* raw) noexcept
 	{
-		mCrew.GetColumnList().DestroyRaw(raw);
+		GetColumnList().DestroyRaw(&GetMemManager(), raw);
 		mRawMemPool.Deallocate(raw);
 	}
 

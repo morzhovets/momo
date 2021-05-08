@@ -345,6 +345,7 @@ concept conceptDataColumnList =
 	std::is_nothrow_move_constructible_v<DataColumnList> &&
 	conceptMemManager<typename DataColumnList::MemManager> &&
 	requires (DataColumnList& columnList, typename DataColumnList::Raw* raw,
+		typename DataColumnList::MemManager& memManager,
 		const typename DataColumnList::template Column<TestItem>& column)
 	{
 		typename DataColumnList::Settings;
@@ -352,8 +353,8 @@ concept conceptDataColumnList =
 			-> std::same_as<typename DataColumnList::MemManager&>;
 		{ std::as_const(columnList).GetTotalSize() } noexcept -> std::same_as<size_t>;
 		{ std::as_const(columnList).GetAlignment() } noexcept -> std::same_as<size_t>;
-		{ columnList.CreateRaw(raw) } -> std::same_as<void>;
-		{ columnList.DestroyRaw(raw) } noexcept -> std::same_as<void>;
+		{ std::as_const(columnList).CreateRaw(memManager, raw) } -> std::same_as<void>;
+		{ std::as_const(columnList).DestroyRaw(&memManager, raw) } noexcept -> std::same_as<void>;
 		{ std::as_const(columnList).GetOffset(column) } -> std::same_as<size_t>;
 		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
 			-> std::same_as<TestItem&>;
@@ -749,24 +750,21 @@ public:
 		return mAlignment;
 	}
 
-	void CreateRaw(Raw* raw)
+	void CreateRaw(MemManager& memManager, Raw* raw) const
 	{
-		pvCreateRaw(nullptr, nullptr, raw);
+		pvCreateRaw(memManager, nullptr, nullptr, raw);
 	}
 
-	void DestroyRaw(Raw* raw) const noexcept
+	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
 	{
-		pvDestroyRaw(nullptr, raw);
+		for (const FuncRecord& funcRec : mFuncRecords)
+			funcRec.destroyFunc(memManager, &mColumnRecords[funcRec.columnIndex], raw);
 	}
 
-	void DestroyRaw(Raw* raw) noexcept
+	void ImportRaw(MemManager& memManager, const DataColumnList& srcColumnList,
+		const Raw* srcRaw, Raw* raw) const
 	{
-		pvDestroyRaw(&GetMemManager(), raw);
-	}
-
-	void ImportRaw(const DataColumnList& srcColumnList, const Raw* srcRaw, Raw* raw)
-	{
-		pvCreateRaw((&srcColumnList != this) ? &srcColumnList : nullptr, srcRaw, raw);
+		pvCreateRaw(memManager, (&srcColumnList != this) ? &srcColumnList : nullptr, srcRaw, raw);
 	}
 
 	template<bool extraCheck = true>
@@ -1019,9 +1017,9 @@ private:
 	{
 	}
 
-	void pvCreateRaw(const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
+	void pvCreateRaw(MemManager& memManager, const DataColumnList* srcColumnList,
+		const Raw* srcRaw, Raw* raw) const
 	{
-		MemManager& memManager = GetMemManager();
 		size_t funcIndex = 0;
 		try
 		{
@@ -1042,12 +1040,6 @@ private:
 			}
 			throw;
 		}
-	}
-
-	void pvDestroyRaw(MemManager* memManager, Raw* raw) const noexcept
-	{
-		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(memManager, &mColumnRecords[funcRec.columnIndex], raw);
 	}
 
 	template<typename Void, typename PtrVisitor>
@@ -1172,24 +1164,20 @@ public:
 		return alignment;
 	}
 
-	void CreateRaw(Raw* raw)
+	void CreateRaw(MemManager& memManager, Raw* raw) const
 	{
-		(typename RawManager::template Creator<>(GetMemManager()))(raw);
+		(typename RawManager::template Creator<>(memManager))(raw);
 	}
 
-	void DestroyRaw(Raw* raw) const noexcept
+	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
 	{
-		RawManager::Destroyer::Destroy(nullptr, *raw);
+		RawManager::Destroyer::Destroy(memManager, *raw);
 	}
 
-	void DestroyRaw(Raw* raw) noexcept
+	void ImportRaw(MemManager& memManager, const DataColumnListStatic& /*srcColumnList*/,
+		const Raw* srcRaw, Raw* raw) const
 	{
-		RawManager::Destroy(GetMemManager(), *raw);
-	}
-
-	void ImportRaw(const DataColumnListStatic& /*srcColumnList*/, const Raw* srcRaw, Raw* raw)
-	{
-		RawManager::Copy(GetMemManager(), *srcRaw, raw);
+		RawManager::Copy(memManager, *srcRaw, raw);
 	}
 
 	template<bool extraCheck = true>
