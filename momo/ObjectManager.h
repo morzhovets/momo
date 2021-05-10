@@ -130,6 +130,14 @@ namespace internal
 		static const size_t alignment = tAlignment;
 
 	public:
+		ObjectBuffer() = default;
+
+		ObjectBuffer(const ObjectBuffer&) = delete;
+
+		~ObjectBuffer() = default;
+
+		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
+
 		const Object* operator&() const noexcept
 		{
 			return reinterpret_cast<const Object*>(&mBuffer);
