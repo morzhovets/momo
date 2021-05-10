@@ -88,7 +88,7 @@ namespace internal
 		{
 			if (mRaw == nullptr)
 				return;
-			mColumnList->DestroyRaw(mRaw);
+			mColumnList->DestroyRaw(nullptr, mRaw);
 			void* raw = mRaw;
 			while (true)
 			{
