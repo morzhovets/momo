@@ -19,6 +19,8 @@
 #include "DataRow.h"
 #include "DataSelection.h"
 #include "DataIndexes.h"
+#include "Array.h"
+#include "MemPool.h"
 
 namespace momo
 {
@@ -93,7 +95,6 @@ public:
 	template<typename Item, typename ItemArg>
 	using Assigner = internal::DataAssigner<Column<Item>, ItemArg>;
 
-	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
 
@@ -102,6 +103,8 @@ public:
 
 private:
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+	typedef internal::MemPoolLazy<typename DataTraits::RawMemPoolParams, MemManagerPtr> RawMemPool;
 
 	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*, MemManagerPtr>,
 		internal::NestedArraySettings<typename Settings::TableRawsSettings>> Raws;
@@ -114,6 +117,8 @@ private:
 	typedef internal::DataRowBounds<RawBounds, ConstRowReference> ConstRowBounds;
 
 public:
+	typedef internal::DataRow<ColumnList, RawMemPool> Row;
+
 	typedef internal::DataRowIterator<RawIterator, RowReference> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
@@ -152,9 +157,6 @@ private:
 
 	static const size_t invalidNumber = internal::UIntConst::maxSize;
 
-	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
-		internal::NestedMemPoolSettings> RawMemPool;
-
 	template<typename... Items>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Items...>;
 
@@ -166,12 +168,12 @@ private:
 		}
 	};
 
-	typedef std::atomic<void*> FreeRaws;
-
 	class Crew
 	{
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
+		typedef typename RawMemPool::Params RawMemPoolParams;
 
 		class Data
 		{
@@ -179,8 +181,7 @@ private:
 			explicit Data(ColumnList&& columnList) noexcept
 				: columnList(std::move(columnList)),
 				changeVersion(0),
-				removeVersion(0),
-				freeRaws(nullptr)
+				removeVersion(0)
 			{
 			}
 
@@ -188,7 +189,7 @@ private:
 			ColumnList columnList;
 			size_t changeVersion;
 			size_t removeVersion;
-			FreeRaws freeRaws;
+			internal::ObjectBuffer<RawMemPool, alignof(RawMemPool)> rawMemPoolBuffer;
 		};
 
 	public:
@@ -196,7 +197,12 @@ private:
 		{
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
+			RawMemPoolParams rawMemPoolParams(
+				std::minmax(columnList.GetTotalSize(), sizeof(void*)).second,
+				columnList.GetAlignment());
 			std::construct_at(mData, std::move(columnList));
+			std::construct_at(&mData->rawMemPoolBuffer, std::move(rawMemPoolParams),
+				MemManagerPtr(GetMemManager()));	//? nothrow
 		}
 
 		Crew(Crew&& crew) noexcept
@@ -211,6 +217,7 @@ private:
 		{
 			if (!IsNull())
 			{
+				std::destroy_at(&mData->rawMemPoolBuffer);
 				ColumnList columnList = std::move(mData->columnList);
 				std::destroy_at(mData);
 				MemManagerProxy::Deallocate(columnList.GetMemManager(), mData, sizeof(Data));
@@ -271,10 +278,10 @@ private:
 			return mData->removeVersion;
 		}
 
-		FreeRaws& GetFreeRaws() noexcept
+		RawMemPool& GetRawMemPool() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
-			return mData->freeRaws;
+			return *&mData->rawMemPoolBuffer;
 		}
 
 	private:
@@ -336,7 +343,6 @@ public:
 	explicit DataTable(ColumnList&& columnList)
 		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
-		mRawMemPool(pvCreateRawMemPool()),
 		mIndexes(GetMemManager())
 	{
 	}
@@ -351,7 +357,6 @@ public:
 	DataTable(DataTable&& table) noexcept
 		: mCrew(std::move(table.mCrew)),
 		mRaws(std::move(table.mRaws)),
-		mRawMemPool(std::move(table.mRawMemPool)),
 		mIndexes(std::move(table.mIndexes))
 	{
 	}
@@ -404,7 +409,6 @@ public:
 	{
 		mCrew.Swap(table.mCrew);
 		mRaws.Swap(table.mRaws);
-		mRawMemPool.Swap(table.mRawMemPool);
 		mIndexes.Swap(table.mIndexes);
 	}
 
@@ -854,14 +858,6 @@ public:
 	}
 
 private:
-	RawMemPool pvCreateRawMemPool()
-	{
-		const ColumnList& columnList = GetColumnList();
-		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
-		return RawMemPool(typename RawMemPool::Params(size, columnList.GetAlignment()),
-			MemManagerPtr(GetMemManager()));
-	}
-
 	template<typename Rows, typename RowFilter>
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
@@ -915,14 +911,14 @@ private:
 
 	Raw* pvCreateRaw()
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
 		try
 		{
 			GetColumnList().CreateRaw(GetMemManager(), raw);
 		}
 		catch (...)
 		{
-			mRawMemPool.Deallocate(raw);
+			mCrew.GetRawMemPool().Deallocate(raw);
 			throw;
 		}
 		return raw;
@@ -930,14 +926,14 @@ private:
 
 	Raw* pvImportRaw(const ColumnList& srcColumnList, const Raw* srcRaw)
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
 		try
 		{
 			GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
-			mRawMemPool.Deallocate(raw);
+			mCrew.GetRawMemPool().Deallocate(raw);
 			throw;
 		}
 		return raw;
@@ -947,7 +943,6 @@ private:
 	{
 		if (mCrew.IsNull())
 			return;
-		pvFreeNewRaws();
 		for (Raw* raw : mRaws)
 			pvFreeRaw(raw);
 	}
@@ -955,24 +950,12 @@ private:
 	void pvFreeRaw(Raw* raw) noexcept
 	{
 		GetColumnList().DestroyRaw(&GetMemManager(), raw);
-		mRawMemPool.Deallocate(raw);
-	}
-
-	void pvFreeNewRaws() noexcept
-	{
-		void* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
-		while (headRaw != nullptr)
-		{
-			void* nextRaw = internal::PtrCaster::FromBuffer(headRaw);
-			mRawMemPool.Deallocate(headRaw);
-			headRaw = nextRaw;
-		}
+		mCrew.GetRawMemPool().Deallocate(raw);
 	}
 
 	Row pvMakeRow(Raw* raw) noexcept
 	{
-		pvFreeNewRaws();
-		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
+		return RowProxy(&GetColumnList(), raw, &mCrew.GetRawMemPool());
 	}
 
 	template<typename... Items, typename... ItemArgs>
@@ -1485,7 +1468,6 @@ private:
 private:
 	Crew mCrew;
 	Raws mRaws;
-	RawMemPool mRawMemPool;
 	Indexes mIndexes;
 };
 

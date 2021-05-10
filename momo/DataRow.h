@@ -10,9 +10,7 @@
 
 #pragma once
 
-#include "Utility.h"
-
-#include <atomic>
+#include "IteratorUtility.h"
 
 namespace momo
 {
@@ -57,9 +55,12 @@ namespace internal
 		const RefVisitor& mRefVisitor;
 	};
 
-	template<typename TColumnList>
+	template<typename TColumnList, typename TRawMemPool>
 	class DataRow
 	{
+	protected:
+		typedef TRawMemPool RawMemPool;
+
 	public:
 		typedef TColumnList ColumnList;
 		typedef typename ColumnList::Raw Raw;
@@ -67,19 +68,16 @@ namespace internal
 		template<typename Item>
 		using Column = typename ColumnList::template Column<Item>;
 
-	protected:
-		typedef std::atomic<void*> FreeRaws;
-
 	public:
 		DataRow() = delete;
 
 		DataRow(DataRow&& row) noexcept
 			: mColumnList(row.mColumnList),
 			mRaw(row.mRaw),
-			mFreeRaws(row.mFreeRaws)
+			mRawMemPool(row.mRawMemPool)
 		{
 			row.mRaw = nullptr;
-			row.mFreeRaws = nullptr;
+			row.mRawMemPool = nullptr;
 		}
 
 		DataRow(const DataRow&) = delete;
@@ -89,14 +87,7 @@ namespace internal
 			if (mRaw == nullptr)
 				return;
 			mColumnList->DestroyRaw(nullptr, mRaw);
-			void* raw = mRaw;
-			while (true)
-			{
-				void* headRaw = *mFreeRaws;
-				PtrCaster::ToBuffer(headRaw, raw);
-				if (mFreeRaws->compare_exchange_weak(headRaw, raw))
-					break;
-			}
+			mRawMemPool->DeallocateLazy(mRaw);
 		}
 
 		DataRow& operator=(DataRow&& row) noexcept
@@ -111,7 +102,7 @@ namespace internal
 		{
 			std::swap(mColumnList, row.mColumnList);
 			std::swap(mRaw, row.mRaw);
-			std::swap(mFreeRaws, row.mFreeRaws);
+			std::swap(mRawMemPool, row.mRawMemPool);
 		}
 
 		MOMO_FRIEND_SWAP(DataRow)
@@ -202,10 +193,10 @@ namespace internal
 		}
 
 	protected:
-		explicit DataRow(const ColumnList* columnList, Raw* raw, FreeRaws* freeRaws) noexcept
+		explicit DataRow(const ColumnList* columnList, Raw* raw, RawMemPool* rawMemPool) noexcept
 			: mColumnList(columnList),
 			mRaw(raw),
-			mFreeRaws(freeRaws)
+			mRawMemPool(rawMemPool)
 		{
 		}
 
@@ -224,7 +215,7 @@ namespace internal
 	private:
 		const ColumnList* mColumnList;
 		Raw* mRaw;
-		FreeRaws* mFreeRaws;
+		RawMemPool* mRawMemPool;
 	};
 
 	template<typename TColumnList>
