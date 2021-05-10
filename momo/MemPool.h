@@ -726,7 +726,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		typedef MemPool<Params, MemManager, NestedMemPoolSettings> MemPool;
+		typedef momo::MemPool<Params, MemManager, NestedMemPoolSettings> MemPool;
 
 	public:
 		explicit MemPoolLazy(Params&& params, MemManager&& memManager)
