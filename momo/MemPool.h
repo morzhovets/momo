@@ -21,6 +21,8 @@
 #include "MemManager.h"
 #include "Array.h"
 
+#include <atomic>
+
 namespace momo
 {
 
@@ -714,6 +716,76 @@ namespace internal
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+	};
+
+	template<conceptMemPoolParams TParams, conceptMemManager TMemManager>
+	class MemPoolLazy
+	{
+	public:
+		typedef TParams Params;
+		typedef TMemManager MemManager;
+
+	private:
+		typedef MemPool<Params, MemManager, NestedMemPoolSettings> MemPool;
+
+	public:
+		explicit MemPoolLazy(Params&& params, MemManager&& memManager)
+			: mMemPool(std::move(params), std::move(memManager)),
+			mFreeBlockHead(nullptr)
+		{
+			MOMO_ASSERT(mMemPool.GetBlockSize() >= sizeof(void*));
+		}
+
+		MemPoolLazy(const MemPoolLazy&) = delete;
+
+		~MemPoolLazy() noexcept
+		{
+			pvFlushDeallocate();
+		}
+
+		MemPoolLazy& operator=(const MemPoolLazy&) = delete;
+
+		template<typename ResObject = void>
+		[[nodiscard]] ResObject* Allocate()
+		{
+			if (mFreeBlockHead != nullptr)
+				pvFlushDeallocate();
+			return mMemPool.template Allocate<ResObject>();
+		}
+
+		void Deallocate(void* block) noexcept
+		{
+			if (mFreeBlockHead != nullptr)
+				pvFlushDeallocate();
+			mMemPool.Deallocate(block);
+		}
+
+		void DeallocateLazy(void* block) noexcept
+		{
+			while (true)
+			{
+				void* blockHead = mFreeBlockHead;
+				PtrCaster::ToBuffer(blockHead, block);
+				if (mFreeBlockHead.compare_exchange_weak(blockHead, block))
+					break;
+			}
+		}
+
+	private:
+		void pvFlushDeallocate() noexcept
+		{
+			void* block = mFreeBlockHead.exchange(nullptr);
+			while (block != nullptr)
+			{
+				void* nextBlock = PtrCaster::FromBuffer(block);
+				mMemPool.Deallocate(block);
+				block = nextBlock;
+			}
+		}
+
+	private:
+		MemPool mMemPool;
+		std::atomic<void*> mFreeBlockHead;
 	};
 
 	template<size_t blockCount>
