@@ -18,6 +18,8 @@
 #include "DataRow.h"
 #include "DataSelection.h"
 #include "DataIndexes.h"
+#include "Array.h"
+#include "MemPool.h"
 
 namespace momo
 {
