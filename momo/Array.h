@@ -804,19 +804,12 @@ public:
 		else if constexpr (ItemTraits::isNothrowRelocatable)
 		{
 			size_t newCount = initCount + 1;
-			internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
 			MemManager& memManager = GetMemManager();
-			typename ItemTraits::template Creator<const Item&>(memManager, item)(&itemBuffer);
-			try
-			{
-				pvGrow(newCount, ArrayGrowCause::add);
-			}
-			catch (...)
-			{
-				ItemTraits::Destroy(memManager, &itemBuffer, 1);
-				throw;
-			}
-			ItemTraits::Relocate(memManager, &itemBuffer, GetItems() + initCount, 1);
+			ItemHandler itemHandler(memManager,
+				typename ItemTraits::template Creator<const Item&>(memManager, item));
+			pvGrow(newCount, ArrayGrowCause::add);
+			ItemTraits::Relocate(memManager, &itemHandler, GetItems() + initCount, 1);
+			itemHandler.Release();
 			mData.SetCount(newCount);
 		}
 		else
