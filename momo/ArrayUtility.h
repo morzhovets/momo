@@ -118,6 +118,14 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 	public:
+		ArrayBuffer() = default;
+
+		ArrayBuffer(const ArrayBuffer&) = delete;
+
+		~ArrayBuffer() = default;
+
+		ArrayBuffer& operator=(const ArrayBuffer&) = delete;
+
 		const Item* operator&() const noexcept
 		{
 			return &*mItems;
@@ -144,6 +152,14 @@ namespace internal
 		//typedef typename ItemTraits::Item Item;
 
 	public:
+		ArrayBuffer() = default;
+
+		ArrayBuffer(const ArrayBuffer&) = delete;
+
+		~ArrayBuffer() = default;
+
+		ArrayBuffer& operator=(const ArrayBuffer&) = delete;
+
 		const void* operator&() const noexcept
 		{
 			return this;
