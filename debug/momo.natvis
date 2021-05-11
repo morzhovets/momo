@@ -74,9 +74,9 @@
 </Type>
 
 <Type Name="momo::DataColumnList&lt;*&gt;">
-    <DisplayString>{{ Count={mColumns.mData.mCount} }}</DisplayString>
+    <DisplayString>{{ Count={mColumnRecords.mData.mCount} }}</DisplayString>
     <Expand>
-        <ExpandedItem>mColumns</ExpandedItem>
+        <ExpandedItem>mColumnRecords</ExpandedItem>
     </Expand>
 </Type>
 
