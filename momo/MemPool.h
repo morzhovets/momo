@@ -740,7 +740,7 @@ namespace internal
 
 		~MemPoolLazy() noexcept
 		{
-			pvFlushDeallocate();
+			pvFlushDeallocate(mFreeBlockHead);
 		}
 
 		MemPoolLazy& operator=(const MemPoolLazy&) = delete;
@@ -749,14 +749,21 @@ namespace internal
 		[[nodiscard]] ResObject* Allocate()
 		{
 			if (mFreeBlockHead != nullptr)
-				pvFlushDeallocate();
+			{
+				void* block = mFreeBlockHead.exchange(nullptr);
+				if (block != nullptr)
+				{
+					pvFlushDeallocate(PtrCaster::FromBuffer(block));
+					return static_cast<ResObject*>(block);
+				}
+			}
 			return mMemPool.template Allocate<ResObject>();
 		}
 
 		void Deallocate(void* block) noexcept
 		{
 			if (mFreeBlockHead != nullptr)
-				pvFlushDeallocate();
+				pvFlushDeallocate(mFreeBlockHead.exchange(nullptr));
 			mMemPool.Deallocate(block);
 		}
 
@@ -772,9 +779,8 @@ namespace internal
 		}
 
 	private:
-		void pvFlushDeallocate() noexcept
+		void pvFlushDeallocate(void* block) noexcept
 		{
-			void* block = mFreeBlockHead.exchange(nullptr);
 			while (block != nullptr)
 			{
 				void* nextBlock = PtrCaster::FromBuffer(block);
