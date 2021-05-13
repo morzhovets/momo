@@ -376,7 +376,7 @@ public:
 
 	~DataTable() noexcept
 	{
-		pvFreeRaws();
+		pvDestroyRaws();
 	}
 
 	DataTable& operator=(DataTable&& table) noexcept
@@ -452,7 +452,7 @@ public:
 	void Clear() noexcept
 	{
 		mIndexes.ClearRaws();
-		pvFreeRaws();
+		pvDestroyRaws();
 		mRaws.Clear();
 		++mCrew.GetChangeVersion();
 		++mCrew.GetRemoveVersion();
@@ -585,13 +585,13 @@ public:
 	void RemoveRow(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		pvFreeRaw(pvExtractRaw(rowRef));
+		pvDestroyRaw(pvExtractRaw(rowRef));
 	}
 
 	void RemoveRow(size_t rowNumber, bool keepRowOrder = true)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
-		pvFreeRaw(pvExtractRaw(rowNumber, keepRowOrder));
+		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
 	Row ExtractRow(ConstRowReference rowRef)
@@ -639,7 +639,7 @@ public:
 		auto res = mIndexes.UpdateRaw(raw, row.GetRaw());
 		if (res.raw != nullptr)
 			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
-		pvFreeRaw(raw);
+		pvDestroyRaw(raw);
 		raw = RowProxy::ExtractRaw(row);
 		pvSetNumber(raw, rowNumber);
 		++mCrew.GetChangeVersion();
@@ -874,7 +874,7 @@ private:
 				}
 				catch (...)
 				{
-					pvFreeRaw(raw);
+					pvDestroyRaw(raw);
 					throw;
 				}
 				mRaws.AddBackNogrow(raw);
@@ -882,7 +882,7 @@ private:
 		}
 		catch (...)
 		{
-			pvFreeRaws();
+			pvDestroyRaws();
 			throw;
 		}
 		pvSetNumbers();
@@ -907,7 +907,7 @@ private:
 
 	Raw* pvCreateRaw()
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = pvAllocateRaw();
 		try
 		{
 			GetColumnList().CreateRaw(GetMemManager(), raw);
@@ -922,7 +922,7 @@ private:
 
 	Raw* pvImportRaw(const ColumnList& srcColumnList, const Raw* srcRaw)
 	{
-		Raw* raw = mRawMemPool.template Allocate<Raw>();
+		Raw* raw = pvAllocateRaw();
 		try
 		{
 			GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw);
@@ -935,22 +935,29 @@ private:
 		return raw;
 	}
 
-	void pvFreeRaws() noexcept
+	Raw* pvAllocateRaw()
+	{
+		if (mCrew.GetFreeRaws() != nullptr)
+			pvDeallocateFreeRaws();
+		return mRawMemPool.template Allocate<Raw>();
+	}
+
+	void pvDestroyRaws() noexcept
 	{
 		if (mCrew.IsNull())
 			return;
-		pvFreeNewRaws();
+		pvDeallocateFreeRaws();
 		for (Raw* raw : mRaws)
-			pvFreeRaw(raw);
+			pvDestroyRaw(raw);
 	}
 
-	void pvFreeRaw(Raw* raw) noexcept
+	void pvDestroyRaw(Raw* raw) noexcept
 	{
 		GetColumnList().DestroyRaw(&GetMemManager(), raw);
 		mRawMemPool.Deallocate(raw);
 	}
 
-	void pvFreeNewRaws() noexcept
+	void pvDeallocateFreeRaws() noexcept
 	{
 		void* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
@@ -963,7 +970,6 @@ private:
 
 	Row pvMakeRow(Raw* raw) noexcept
 	{
-		pvFreeNewRaws();
 		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
@@ -977,7 +983,7 @@ private:
 		}
 		catch (...)
 		{
-			pvFreeRaw(raw);
+			pvDestroyRaw(raw);
 			throw;
 		}
 		return pvMakeRow(raw);
@@ -1246,7 +1252,7 @@ private:
 		{
 			if (!rawFilter(raw))
 			{
-				pvFreeRaw(raw);
+				pvDestroyRaw(raw);
 				continue;
 			}
 			mRaws[count] = raw;
@@ -1490,7 +1496,7 @@ private:
 			if (distinct && resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
 			{
 				resTable.mRaws.RemoveBack();
-				resTable.pvFreeRaw(resRaw);
+				resTable.pvDestroyRaw(resRaw);
 			}
 		}
 		resTable.RemoveUniqueHashIndexes();
