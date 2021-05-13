@@ -340,7 +340,10 @@ namespace internal
 		}
 
 	protected:
-		using ConstReference::ptGetRaw;
+		Raw* ptGetRaw() const noexcept
+		{
+			return ConstReference::ptGetRaw();
+		}
 	};
 
 	template<typename TRowBounds>
