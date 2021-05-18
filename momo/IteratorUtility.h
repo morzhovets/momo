@@ -146,12 +146,31 @@ namespace internal
 	template<typename Position>
 	struct InsertResult
 	{
+	public:
 		InsertResult(Position pos, bool inserted) noexcept
 			: position(pos),
 			inserted(inserted)
 		{
 		}
 
+		InsertResult(const InsertResult& insRes) noexcept	// gcc 6, clang 4
+			: position(insRes.position),
+			inserted(insRes.inserted)
+		{
+		}
+
+		~InsertResult() noexcept
+		{
+		}
+
+		InsertResult& operator=(const InsertResult& insRes) noexcept
+		{
+			position = insRes.position;
+			inserted = insRes.inserted;
+			return *this;
+		}
+
+	public:
 		union
 		{
 			Position position;
