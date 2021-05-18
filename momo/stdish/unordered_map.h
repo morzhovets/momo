@@ -535,7 +535,7 @@ public:
 			return { end(), false, node_type() };
 		typename HashMap::InsertResult res = mHashMap.Insert(
 			std::move(NodeTypeProxy::GetExtractedPair(node)));
-		return { IteratorProxy(res.iterator), res.inserted,
+		return { IteratorProxy(res.position), res.inserted,
 			res.inserted ? node_type() : std::move(node) };
 	}
 
@@ -902,7 +902,7 @@ private:
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-		return { IteratorProxy(res.iterator), res.inserted };
+		return { IteratorProxy(res.position), res.inserted };
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS

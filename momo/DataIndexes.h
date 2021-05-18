@@ -506,9 +506,9 @@ namespace internal
 			{
 				MOMO_ASSERT(!mPositionAdd);
 				auto insRes = mHashSet.Insert(raw);
-				if (insRes.inserted || *insRes.iterator == oldRaw)
-					mPositionAdd = insRes.iterator;
-				return *insRes.iterator;
+				if (insRes.inserted || *insRes.position == oldRaw)
+					mPositionAdd = insRes.position;
+				return *insRes.position;
 			}
 
 			template<typename Item>

@@ -537,7 +537,7 @@ public:
 	{
 		typename TreeSet::InsertResult res =
 			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { IteratorProxy(res.iterator), res.inserted };
+		return { IteratorProxy(res.position), res.inserted };
 	}
 
 	template<typename ArgIterator,
@@ -561,14 +561,14 @@ public:
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			const Key& key = pair.first;
-			const Key& prevKey = res.iterator->key;
-			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.iterator), key))
+			const Key& prevKey = res.position->key;
+			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))
 			{
 				res = InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 			}
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
-				res.iterator = pvAdd<false>(std::next(res.iterator), std::forward<KeyArg>(pair.first),
+				res.position = pvAdd<false>(std::next(res.position), std::forward<KeyArg>(pair.first),
 					ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(pair.second)));
 				res.inserted = true;
 			}
@@ -751,7 +751,7 @@ private:
 		};
 		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
 			static_cast<const Key&>(key), itemCreator);
-		return { IteratorProxy(res.iterator), res.inserted };
+		return { IteratorProxy(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>

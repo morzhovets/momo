@@ -415,7 +415,7 @@ public:
 	std::pair<iterator, bool> insert(value_type&& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(value));
-		return { res.iterator, res.inserted };
+		return { res.position, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, value_type&& value)
@@ -431,7 +431,7 @@ public:
 	std::pair<iterator, bool> insert(const value_type& value)
 	{
 		typename HashSet::InsertResult res = mHashSet.Insert(value);
-		return { res.iterator, res.inserted };
+		return { res.position, res.inserted };
 	}
 
 	iterator insert(const_iterator hint, const value_type& value)
@@ -450,7 +450,7 @@ public:
 			return { end(), false, node_type() };
 		typename HashSet::InsertResult res = mHashSet.Insert(
 			std::move(NodeTypeProxy::GetExtractedItem(node)));
-		return { res.iterator, res.inserted, res.inserted ? node_type() : std::move(node) };
+		return { res.position, res.inserted, res.inserted ? node_type() : std::move(node) };
 	}
 
 	iterator insert(const_iterator hint, node_type&& node)
@@ -484,7 +484,7 @@ public:
 		typedef typename HashSet::ItemTraits::template Creator<ValueArgs...> ValueCreator;
 		extItem.Create(ValueCreator(memManager, std::forward<ValueArgs>(valueArgs)...));
 		typename HashSet::InsertResult res = mHashSet.Insert(std::move(extItem));
-		return { res.iterator, res.inserted };
+		return { res.position, res.inserted };
 	}
 
 	template<typename... ValueArgs>

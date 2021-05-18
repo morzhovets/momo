@@ -630,7 +630,7 @@ public:
 	{
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { PositionProxy(res.iterator), res.inserted };
+		return { PositionProxy(res.position), res.inserted };
 	}
 
 	template<typename ArgIterator,

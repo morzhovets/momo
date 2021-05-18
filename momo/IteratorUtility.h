@@ -143,10 +143,20 @@ namespace momo
 
 namespace internal
 {
-	template<typename Iterator>
+	template<typename Position>
 	struct InsertResult
 	{
-		Iterator iterator;
+		InsertResult(Position pos, bool inserted) noexcept
+			: position(pos),
+			inserted(inserted)
+		{
+		}
+
+		union
+		{
+			Position position;
+			Position iterator MOMO_DEPRECATED;
+		};
 		bool inserted;
 	};
 

@@ -752,14 +752,14 @@ public:
 		for (; iter != end; ++iter)
 		{
 			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(*iter));
-			const Key& prevKey = ItemTraits::GetKey(*res.iterator);
-			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.iterator), key))
+			const Key& prevKey = ItemTraits::GetKey(*res.position);
+			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))
 			{
 				res = Insert(*iter);
 			}
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
-				res.iterator = pvAdd<false>(std::next(res.iterator),
+				res.position = pvAdd<false>(std::next(res.position),
 					Creator<decltype(*iter)>(memManager, *iter));
 				res.inserted = true;
 			}

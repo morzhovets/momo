@@ -252,7 +252,7 @@ public:
 		{
 			auto pos = set.Find(Item(c));
 			assert(!!pos);
-			set.Remove(set.Insert(set.Extract(pos)).iterator);
+			set.Remove(set.Insert(set.Extract(pos)).position);
 		}
 		assert(set.IsEmpty());
 

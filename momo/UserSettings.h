@@ -163,3 +163,5 @@
 #ifndef MOMO_NODISCARD
 #define MOMO_NODISCARD
 #endif
+
+#define MOMO_DEPRECATED //[[deprecated]]
