@@ -11,8 +11,8 @@ var classmomo_1_1internal_1_1_data_const_item_iterator =
     [ "GetOffset", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a8a18ee34365bd2b44479c048f9b8e7f3", null ],
     [ "GetRowIterator", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a8467bf54c48f67be6a0c26a8f45b6b4e", null ],
     [ "operator+=", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a9eb18b38875c3f6a4342356851f1d7c6", null ],
-    [ "operator-", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a504f22010ac4256f4a0dfd606efb07b9", null ],
     [ "operator->", "classmomo_1_1internal_1_1_data_const_item_iterator.html#ac0288f0cc5e71cbcceab321fadb459af", null ],
-    [ "operator<", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a36ca583424cb7f2ecf68a0b5051db6e7", null ],
-    [ "operator==", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a73d8f4630c2736079af38017092178e7", null ]
+    [ "operator-", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a9e7d6873f46a9ae07653ed769cbf98a1", null ],
+    [ "operator<", "classmomo_1_1internal_1_1_data_const_item_iterator.html#a6cc11607bf1af398d918eea1d7eb2768", null ],
+    [ "operator==", "classmomo_1_1internal_1_1_data_const_item_iterator.html#ab66672936b756e474c9ece6c6ab34a70", null ]
 ];

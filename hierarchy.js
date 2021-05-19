@@ -1,7 +1,7 @@
 var hierarchy =
 [
     [ "allocator", null, [
-      [ "momo::MemManagerStd< std::allocator< Item >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html", null ]
+      [ "momo::MemManagerStd< std::allocator< Object >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_00_01true_01_4.html", null ]
     ] ],
     [ "momo::Array< TItem, TMemManager, TItemTraits, TSettings >", "classmomo_1_1_array.html", null ],
     [ "momo::Array< 0, ColumnInfo, MemManager >", "classmomo_1_1_array.html", null ],
@@ -51,6 +51,10 @@ var hierarchy =
       [ "momo::IsFastComparable< Key >", "structmomo_1_1_is_fast_comparable.html", null ],
       [ "momo::IsFastNothrowHashable< Key >", "structmomo_1_1_is_fast_nothrow_hashable.html", null ],
       [ "momo::IsTriviallyRelocatable< Object >", "structmomo_1_1_is_trivially_relocatable.html", null ]
+    ] ],
+    [ "BoolConstant", null, [
+      [ "momo::internal::IsMapArgIteratorStd< ArgIterator, Key, KeyArg >", "structmomo_1_1internal_1_1_is_map_arg_iterator_std.html", null ],
+      [ "momo::internal::IsSetArgIterator< ArgIterator, Item, ArgReference >", "structmomo_1_1internal_1_1_is_set_arg_iterator.html", null ]
     ] ],
     [ "momo::internal::BucketBase", "classmomo_1_1internal_1_1_bucket_base.html", [
       [ "momo::internal::BucketLim4< TItemTraits, tLogMaxCount, tMemPoolBlockCount >", "classmomo_1_1internal_1_1_bucket_lim4.html", null ],
@@ -169,15 +173,9 @@ var hierarchy =
     [ "momo::HashTraits< Raw *, DataTraits::HashBucket >", "classmomo_1_1_hash_traits.html", null ],
     [ "momo::HashTraitsStd< TKey, THashFunc, TEqualFunc, THashBucket >", "classmomo_1_1_hash_traits_std.html", null ],
     [ "momo::stdish::internal::insert_return_type< Iterator, NodeHandle >", "structmomo_1_1stdish_1_1internal_1_1insert__return__type.html", null ],
-    [ "momo::internal::InsertResult< Iterator >", "structmomo_1_1internal_1_1_insert_result.html", null ],
+    [ "momo::internal::InsertResult< Position >", "structmomo_1_1internal_1_1_insert_result.html", null ],
     [ "InternalMemPoolParams", null, [
       [ "momo::MemPool< InternalMemPoolParams, MemManagerPtr, NestedMemPoolSettings >", "classmomo_1_1_mem_pool.html", null ]
-    ] ],
-    [ "is_always_equal", null, [
-      [ "momo::internal::IsAllocatorAlwaysEqual< Allocator, decltype(Allocator::is_always_equal::value)>", "structmomo_1_1internal_1_1_is_allocator_always_equal_3_01_allocator_00_01decltype_07_allocator_1acd3889fe0125d2c6e87098cc70c5bf3.html", null ]
-    ] ],
-    [ "is_empty", null, [
-      [ "momo::internal::IsAllocatorAlwaysEqual< Allocator, typename >", "structmomo_1_1internal_1_1_is_allocator_always_equal.html", null ]
     ] ],
     [ "is_nothrow_move_constructible", null, [
       [ "momo::IsNothrowMoveConstructible< Object, MemManager >", "structmomo_1_1_is_nothrow_move_constructible.html", null ],
@@ -208,8 +206,8 @@ var hierarchy =
     [ "momo::internal::IteratorTraitsStd< momo::internal::HashDerivedIterator< BI, R >, forward_iterator_tag >", "structmomo_1_1internal_1_1_iterator_traits_std.html", [
       [ "std::iterator_traits< momo::internal::HashDerivedIterator< BI, R > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_derived_iterator_3_01_b_i_00_01_r_01_4_01_4.html", null ]
     ] ],
-    [ "momo::internal::IteratorTraitsStd< momo::internal::HashMapIterator< HI, c >, forward_iterator_tag >", "structmomo_1_1internal_1_1_iterator_traits_std.html", [
-      [ "std::iterator_traits< momo::internal::HashMapIterator< HI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_h_i_00_01c_01_4_01_4.html", null ]
+    [ "momo::internal::IteratorTraitsStd< momo::internal::HashMapIterator< SI, c >, forward_iterator_tag >", "structmomo_1_1internal_1_1_iterator_traits_std.html", [
+      [ "std::iterator_traits< momo::internal::HashMapIterator< SI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_s_i_00_01c_01_4_01_4.html", null ]
     ] ],
     [ "momo::internal::IteratorTraitsStd< momo::internal::HashMultiMapIterator< KI, S >, forward_iterator_tag >", "structmomo_1_1internal_1_1_iterator_traits_std.html", [
       [ "std::iterator_traits< momo::internal::HashMultiMapIterator< KI, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_multi_map_iterator_3_01_k_i_00_01_s_01_4_01_4.html", null ]
@@ -265,7 +263,7 @@ var hierarchy =
     [ "momo::MemManagerC", "classmomo_1_1_mem_manager_c.html", null ],
     [ "momo::MemManagerCpp", "classmomo_1_1_mem_manager_cpp.html", null ],
     [ "MemManagerDefault", null, [
-      [ "momo::MemManagerStd< std::allocator< Item >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_item_01_4_00_01true_01_4.html", null ]
+      [ "momo::MemManagerStd< std::allocator< Object >, true >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_00_01true_01_4.html", null ]
     ] ],
     [ "momo::internal::MemManagerDummy", "classmomo_1_1internal_1_1_mem_manager_dummy.html", null ],
     [ "momo::internal::MemManagerProxy< TMemManager >", "classmomo_1_1internal_1_1_mem_manager_proxy.html", null ],
@@ -287,9 +285,10 @@ var hierarchy =
       [ "momo::MemPool< TParams, TMemManager, TSettings >", "classmomo_1_1_mem_pool.html", null ]
     ] ],
     [ "momo::MemPoolParamsStatic< tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount >", "classmomo_1_1_mem_pool_params_static.html", null ],
-    [ "momo::MemPoolSettings", "classmomo_1_1_mem_pool_settings.html", null ],
+    [ "momo::MemPoolSettings", "classmomo_1_1_mem_pool_settings.html", [
+      [ "momo::internal::NestedMemPoolSettings", "classmomo_1_1internal_1_1_nested_mem_pool_settings.html", null ]
+    ] ],
     [ "momo::internal::MemPoolUInt32< tBlockCount, TMemManager >", "classmomo_1_1internal_1_1_mem_pool_u_int32.html", null ],
-    [ "momo::internal::NestedMemPoolSettings", "classmomo_1_1internal_1_1_nested_mem_pool_settings.html", null ],
     [ "momo::internal::Node< TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous >", "classmomo_1_1internal_1_1_node.html", null ],
     [ "momo::internal::ObjectAlignmenter< TObject >", "classmomo_1_1internal_1_1_object_alignmenter.html", null ],
     [ "momo::internal::ObjectBuffer< TObject, tAlignment >", "classmomo_1_1internal_1_1_object_buffer.html", null ],
@@ -302,13 +301,13 @@ var hierarchy =
     [ "pair", null, [
       [ "momo::internal::MapReferenceStd< TMapReference >", "classmomo_1_1internal_1_1_map_reference_std.html", null ]
     ] ],
-    [ "momo::internal::BucketLimP< TItemTraits, tMaxCount, TMemPoolParams, false >::Params", "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4_1_1_params.html", null ],
-    [ "momo::internal::Node< TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous >::Params", "classmomo_1_1internal_1_1_node_1_1_params.html", null ],
     [ "momo::internal::BucketLimP4< TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter >::Params", "classmomo_1_1internal_1_1_bucket_lim_p4_1_1_params.html", null ],
     [ "momo::internal::BucketLim4< TItemTraits, tLogMaxCount, tMemPoolBlockCount >::Params", "classmomo_1_1internal_1_1_bucket_lim4_1_1_params.html", null ],
     [ "momo::internal::ArrayBucket< TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings >::Params", "classmomo_1_1internal_1_1_array_bucket_1_1_params.html", null ],
+    [ "momo::internal::Node< TItemTraits, tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous >::Params", "classmomo_1_1internal_1_1_node_1_1_params.html", null ],
     [ "momo::internal::BucketLimP1< TItemTraits, tMaxCount, TMemPoolParams >::Params", "classmomo_1_1internal_1_1_bucket_lim_p1_1_1_params.html", null ],
     [ "momo::internal::BucketLimP< TItemTraits, tMaxCount, TMemPoolParams, true >::Params", "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4_1_1_params.html", null ],
+    [ "momo::internal::BucketLimP< TItemTraits, tMaxCount, TMemPoolParams, false >::Params", "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4_1_1_params.html", null ],
     [ "momo::internal::PtrCaster", "classmomo_1_1internal_1_1_ptr_caster.html", null ],
     [ "momo::internal::RadixSorter< tRadixSize >", "classmomo_1_1internal_1_1_radix_sorter.html", null ],
     [ "momo::internal::RadixSorterCodeGetter< Iterator, typename >", "structmomo_1_1internal_1_1_radix_sorter_code_getter.html", null ],

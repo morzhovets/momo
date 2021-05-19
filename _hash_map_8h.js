@@ -9,6 +9,6 @@ var _hash_map_8h =
     [ "HashMapSettings", "classmomo_1_1_hash_map_settings.html", null ],
     [ "HashMap", "classmomo_1_1_hash_map.html", "classmomo_1_1_hash_map" ],
     [ "NestedHashMapSettings", "classmomo_1_1internal_1_1_nested_hash_map_settings.html", null ],
-    [ "iterator_traits< momo::internal::HashMapIterator< HI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_h_i_00_01c_01_4_01_4.html", null ],
+    [ "iterator_traits< momo::internal::HashMapIterator< SI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_s_i_00_01c_01_4_01_4.html", null ],
     [ "HashMapOpen", "_hash_map_8h.html#a6eb9786396d09f0fee939ef6957ded3b", null ]
 ];

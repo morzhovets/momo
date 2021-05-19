@@ -10,10 +10,10 @@ var classmomo_1_1internal_1_1_array_index_iterator =
     [ "ArrayIndexIterator", "classmomo_1_1internal_1_1_array_index_iterator.html#a39b10cf5662ccebb521b1e56a593e217", null ],
     [ "operator ConstIterator", "classmomo_1_1internal_1_1_array_index_iterator.html#a5f480e4dc1e857e3432e42d0c7e39031", null ],
     [ "operator+=", "classmomo_1_1internal_1_1_array_index_iterator.html#a4edc6cf2628d813ca75327e9464820ad", null ],
-    [ "operator-", "classmomo_1_1internal_1_1_array_index_iterator.html#aa36e8029405478107d0c17f3dbaaff15", null ],
     [ "operator->", "classmomo_1_1internal_1_1_array_index_iterator.html#a87df75d003ed85605e33e0eba4639c06", null ],
-    [ "operator<", "classmomo_1_1internal_1_1_array_index_iterator.html#a9049df2b1fd9f561360fe3a45abea454", null ],
-    [ "operator==", "classmomo_1_1internal_1_1_array_index_iterator.html#a79dd69f917326c673c69e4dfdf70dbd2", null ],
     [ "ptGetArray", "classmomo_1_1internal_1_1_array_index_iterator.html#ab015e287a30f9466f4f466d8511d4d7e", null ],
-    [ "ptGetIndex", "classmomo_1_1internal_1_1_array_index_iterator.html#ac4a07caa6d01d73ed45b2bc4dce237b9", null ]
+    [ "ptGetIndex", "classmomo_1_1internal_1_1_array_index_iterator.html#ac4a07caa6d01d73ed45b2bc4dce237b9", null ],
+    [ "operator-", "classmomo_1_1internal_1_1_array_index_iterator.html#a09c8bc135e524f25dd7c2e51f0ccaa37", null ],
+    [ "operator<", "classmomo_1_1internal_1_1_array_index_iterator.html#a2ddff5c0dfb8b244864b3c94d60189f0", null ],
+    [ "operator==", "classmomo_1_1internal_1_1_array_index_iterator.html#a0eca7d816a795fbfc4d826815db22695", null ]
 ];

@@ -10,6 +10,6 @@ var classmomo_1_1internal_1_1_tree_map_iterator =
     [ "operator++", "classmomo_1_1internal_1_1_tree_map_iterator.html#af838c2b9fd37cce895c220c82871cff7", null ],
     [ "operator--", "classmomo_1_1internal_1_1_tree_map_iterator.html#a34957161ae856971779163a3df9d10cd", null ],
     [ "operator->", "classmomo_1_1internal_1_1_tree_map_iterator.html#a376d98723c7abd26e06ef8a6fa7b06e9", null ],
-    [ "operator==", "classmomo_1_1internal_1_1_tree_map_iterator.html#ad45ca9899d8a9ba64c130f4477cee9b7", null ],
-    [ "ptGetTreeSetIterator", "classmomo_1_1internal_1_1_tree_map_iterator.html#aaed011ea36860f5c9e97d9c35d55e8bf", null ]
+    [ "ptGetTreeSetIterator", "classmomo_1_1internal_1_1_tree_map_iterator.html#aaed011ea36860f5c9e97d9c35d55e8bf", null ],
+    [ "operator==", "classmomo_1_1internal_1_1_tree_map_iterator.html#ab327c026580679aa8aea186a1b49cf00", null ]
 ];

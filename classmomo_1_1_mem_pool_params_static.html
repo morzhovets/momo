@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -95,10 +95,10 @@ $(document).ready(function(){initNavTree('classmomo_1_1_mem_pool_params_static.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7e18642866b149e44fca6b92a1d1b00f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#a7e18642866b149e44fca6b92a1d1b00f">MOMO_STATIC_ASSERT</a> (0&lt; <a class="el" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a> &amp;&amp;<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a>&lt; 128)</td></tr>
-<tr class="separator:a7e18642866b149e44fca6b92a1d1b00f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac189caa2d5c52b47404db4a1f2a05df9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#ac189caa2d5c52b47404db4a1f2a05df9">MOMO_STATIC_ASSERT</a> (0&lt; <a class="el" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a> &amp;&amp;<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>&lt;=1024)</td></tr>
-<tr class="separator:ac189caa2d5c52b47404db4a1f2a05df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a420b1871ad6b0716ab34ae8fb7995eb9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#a420b1871ad6b0716ab34ae8fb7995eb9">MOMO_STATIC_ASSERT</a> (<a class="el" href="classmomo_1_1_mem_pool_const.html#a05495edbc272822516ffd96efe1f8816">MemPoolConst::CheckBlockCount</a>(<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a>))</td></tr>
+<tr class="separator:a420b1871ad6b0716ab34ae8fb7995eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38c1e5c3651a1671db9ca3210fb87211"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#a38c1e5c3651a1671db9ca3210fb87211">MOMO_STATIC_ASSERT</a> (<a class="el" href="classmomo_1_1_mem_pool_const.html#a665066b61bd4b2b211ff9c0810e8ee23">MemPoolConst::CheckBlockAlignment</a>(<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>))</td></tr>
+<tr class="separator:a38c1e5c3651a1671db9ca3210fb87211"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa890fad64bc65fa11b26c5d1252177d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool_params_static.html#aa890fad64bc65fa11b26c5d1252177d8">MemPoolParamsStatic</a> () noexcept</td></tr>
 <tr class="separator:aa890fad64bc65fa11b26c5d1252177d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -142,8 +142,8 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac189caa2d5c52b47404db4a1f2a05df9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac189caa2d5c52b47404db4a1f2a05df9">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT() <span class="overload">[1/2]</span></h2>
+<a id="a38c1e5c3651a1671db9ca3210fb87211"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38c1e5c3651a1671db9ca3210fb87211">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -153,6 +153,7 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
         <tr>
           <td class="memname"><a class="el" href="classmomo_1_1_mem_pool_params_static.html">momo::MemPoolParamsStatic</a>&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;::MOMO_STATIC_ASSERT </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_mem_pool_const.html#a665066b61bd4b2b211ff9c0810e8ee23">MemPoolConst::CheckBlockAlignment</a>(<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">blockAlignment</a>)&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -161,8 +162,8 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
 
 </div>
 </div>
-<a id="a7e18642866b149e44fca6b92a1d1b00f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e18642866b149e44fca6b92a1d1b00f">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT() <span class="overload">[2/2]</span></h2>
+<a id="a420b1871ad6b0716ab34ae8fb7995eb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a420b1871ad6b0716ab34ae8fb7995eb9">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,6 +173,7 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
         <tr>
           <td class="memname"><a class="el" href="classmomo_1_1_mem_pool_params_static.html">momo::MemPoolParamsStatic</a>&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;::MOMO_STATIC_ASSERT </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_mem_pool_const.html#a05495edbc272822516ffd96efe1f8816">MemPoolConst::CheckBlockCount</a>(<a class="el" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">blockCount</a>)&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -284,9 +286,9 @@ template&lt;size_t tBlockSize, size_t tBlockAlignment = MemPoolConst::GetBlockAl
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a69458fb6f46a8486f120132502050adb"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">momo::MemPoolParamsStatic::blockAlignment</a></div><div class="ttdeci">static const size_t blockAlignment</div><div class="ttdef"><b>Definition:</b> MemPool.h:97</div></div>
+<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a69458fb6f46a8486f120132502050adb"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a69458fb6f46a8486f120132502050adb">momo::MemPoolParamsStatic::blockAlignment</a></div><div class="ttdeci">static const size_t blockAlignment</div><div class="ttdef"><b>Definition:</b> MemPool.h:107</div></div>
 <div class="ttc" id="aclassmomo_1_1_mem_pool_const_html_a710474a7b9ea64823119be07bfeb0b1b"><div class="ttname"><a href="classmomo_1_1_mem_pool_const.html#a710474a7b9ea64823119be07bfeb0b1b">momo::MemPoolConst::CorrectBlockSize</a></div><div class="ttdeci">static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment, size_t blockCount) noexcept</div><div class="ttdef"><b>Definition:</b> MemPool.h:40</div></div>
-<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a9d1394f291d497b2dcbc6cf8903dd3b9"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">momo::MemPoolParamsStatic::blockCount</a></div><div class="ttdeci">static const size_t blockCount</div><div class="ttdef"><b>Definition:</b> MemPool.h:94</div></div>
+<div class="ttc" id="aclassmomo_1_1_mem_pool_params_static_html_a9d1394f291d497b2dcbc6cf8903dd3b9"><div class="ttname"><a href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">momo::MemPoolParamsStatic::blockCount</a></div><div class="ttdeci">static const size_t blockCount</div><div class="ttdef"><b>Definition:</b> MemPool.h:104</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

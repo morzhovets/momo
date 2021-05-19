@@ -11,6 +11,6 @@ var classmomo_1_1internal_1_1_hash_map_position =
     [ "operator ConstPosition", "classmomo_1_1internal_1_1_hash_map_position.html#acb7eccc125af8d2cb0fa109d1ae6dba3", null ],
     [ "operator ResIterator", "classmomo_1_1internal_1_1_hash_map_position.html#a5c1b114f4cf7d926b8c632c4d1a48f07", null ],
     [ "operator->", "classmomo_1_1internal_1_1_hash_map_position.html#a1dcc8341bca28809d5282eb29da58e33", null ],
-    [ "operator==", "classmomo_1_1internal_1_1_hash_map_position.html#a684f6940b4754f72bb1ee2db8d88aea9", null ],
-    [ "ptGetHashSetPosition", "classmomo_1_1internal_1_1_hash_map_position.html#a879ee5d3e7d5e5851017a4781b81d4f5", null ]
+    [ "ptGetHashSetPosition", "classmomo_1_1internal_1_1_hash_map_position.html#a879ee5d3e7d5e5851017a4781b81d4f5", null ],
+    [ "operator==", "classmomo_1_1internal_1_1_hash_map_position.html#abf453a8ee51aef4b97ed5fec2159c9bd", null ]
 ];

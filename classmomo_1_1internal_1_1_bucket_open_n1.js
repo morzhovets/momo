@@ -1,6 +1,7 @@
 var classmomo_1_1internal_1_1_bucket_open_n1 =
 [
     [ "Bounds", "classmomo_1_1internal_1_1_bucket_open_n1.html#a520f9b84affffb1bd713871567c3cfa6", null ],
+    [ "Byte", "classmomo_1_1internal_1_1_bucket_open_n1.html#ab888f24710e9f7494cf0c53e8e7c42dc", null ],
     [ "Data", "classmomo_1_1internal_1_1_bucket_open_n1.html#ae0f209c127d3b4d94bfe94d1ac97b9c9", null ],
     [ "Item", "classmomo_1_1internal_1_1_bucket_open_n1.html#a6eda41ee6a7487922bbe0ef8c2788a0f", null ],
     [ "ItemTraits", "classmomo_1_1internal_1_1_bucket_open_n1.html#ab102ce7c4241880e5dd48e034257814c", null ],

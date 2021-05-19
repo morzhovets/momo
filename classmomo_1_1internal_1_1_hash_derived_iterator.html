@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -88,6 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_hash_derived
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classmomo_1_1internal_1_1_hash_derived_iterator-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">momo::internal::HashDerivedIterator&lt; TBaseIterator, TReference &gt; Class Template Reference</div>  </div>
@@ -115,8 +116,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a50d786b7d7140127593704f404a20b60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cf928b4386a0ec9935e6bb05054f085"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#ac9a31c962ef0b60826a7df4d4e237399">Pointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#a9cf928b4386a0ec9935e6bb05054f085">operator-&gt;</a> () const</td></tr>
 <tr class="separator:a9cf928b4386a0ec9935e6bb05054f085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1cb7ffdfa4f35df639d3e0bb602f37e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#ac1cb7ffdfa4f35df639d3e0bb602f37e">operator==</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#a7b8d63ac468542d5c73b00e20c0d62b8">ConstIterator</a> iter) const noexcept</td></tr>
-<tr class="separator:ac1cb7ffdfa4f35df639d3e0bb602f37e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
@@ -129,6 +128,11 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a64ee0f675a790fec90ae01ac9d9c47ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7478bc53a5d682dcfb7b49c9b6601da9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#adbecbc8219f94b633d8efe1847ba7ef1">BaseIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#a7478bc53a5d682dcfb7b49c9b6601da9">ptGetBaseIterator</a> () const noexcept</td></tr>
 <tr class="separator:a7478bc53a5d682dcfb7b49c9b6601da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a1e0a1906cf87b9f79979f9d599113a39"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#a1e0a1906cf87b9f79979f9d599113a39">operator==</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html">HashDerivedIterator</a> iter1, <a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html">HashDerivedIterator</a> iter2) noexcept</td></tr>
+<tr class="separator:a1e0a1906cf87b9f79979f9d599113a39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="adbecbc8219f94b633d8efe1847ba7ef1"></a>
@@ -341,34 +345,6 @@ template&lt;typename TBaseIterator , template&lt; typename BaseReference &gt; cl
 
 </div>
 </div>
-<a id="ac1cb7ffdfa4f35df639d3e0bb602f37e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1cb7ffdfa4f35df639d3e0bb602f37e">&#9670;&nbsp;</a></span>operator==()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TBaseIterator , template&lt; typename BaseReference &gt; class TReference&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html">momo::internal::HashDerivedIterator</a>&lt; TBaseIterator, TReference &gt;::operator== </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html#a7b8d63ac468542d5c73b00e20c0d62b8">ConstIterator</a>&#160;</td>
-          <td class="paramname"><em>iter</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a7478bc53a5d682dcfb7b49c9b6601da9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7478bc53a5d682dcfb7b49c9b6601da9">&#9670;&nbsp;</a></span>ptGetBaseIterator()</h2>
 
@@ -390,6 +366,45 @@ template&lt;typename TBaseIterator , template&lt; typename BaseReference &gt; cl
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a1e0a1906cf87b9f79979f9d599113a39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e0a1906cf87b9f79979f9d599113a39">&#9670;&nbsp;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TBaseIterator , template&lt; typename BaseReference &gt; class TReference&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html">HashDerivedIterator</a>&lt; TBaseIterator, TReference &gt;&#160;</td>
+          <td class="paramname"><em>iter1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_hash_derived_iterator.html">HashDerivedIterator</a>&lt; TBaseIterator, TReference &gt;&#160;</td>
+          <td class="paramname"><em>iter2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

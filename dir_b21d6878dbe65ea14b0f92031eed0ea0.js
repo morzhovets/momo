@@ -60,6 +60,7 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "MapValueReferencer", "classmomo_1_1internal_1_1_map_value_referencer.html", "classmomo_1_1internal_1_1_map_value_referencer" ],
       [ "MapExtractedPair", "classmomo_1_1internal_1_1_map_extracted_pair.html", "classmomo_1_1internal_1_1_map_extracted_pair" ],
       [ "MapPairConverter", "classmomo_1_1internal_1_1_map_pair_converter.html", "classmomo_1_1internal_1_1_map_pair_converter" ],
+      [ "IsMapArgIteratorStd", "structmomo_1_1internal_1_1_is_map_arg_iterator_std.html", null ],
       [ "iterator_traits< momo::internal::MapKeyIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_key_iterator_3_01_s_i_01_4_01_4.html", null ],
       [ "iterator_traits< momo::internal::MapValueIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_value_iterator_3_01_s_i_01_4_01_4.html", null ]
     ] ],
@@ -97,7 +98,8 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "SetItemTraits", "classmomo_1_1internal_1_1_set_item_traits.html", "classmomo_1_1internal_1_1_set_item_traits" ],
       [ "SetCrew< TContainerTraits, TMemManager, tKeepVersion, true >", "classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01true_01_4.html", "classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01true_01_4" ],
       [ "SetCrew< TContainerTraits, TMemManager, tKeepVersion, false >", "classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01false_01_4.html", "classmomo_1_1internal_1_1_set_crew_3_01_t_container_traits_00_01_t_mem_manager_00_01t_keep_version_00_01false_01_4" ],
-      [ "SetExtractedItem", "classmomo_1_1internal_1_1_set_extracted_item.html", "classmomo_1_1internal_1_1_set_extracted_item" ]
+      [ "SetExtractedItem", "classmomo_1_1internal_1_1_set_extracted_item.html", "classmomo_1_1internal_1_1_set_extracted_item" ],
+      [ "IsSetArgIterator", "structmomo_1_1internal_1_1_is_set_arg_iterator.html", null ]
     ] ],
     [ "TreeMap.h", "_tree_map_8h.html", "_tree_map_8h" ],
     [ "TreeSet.h", "_tree_set_8h.html", "_tree_set_8h" ],

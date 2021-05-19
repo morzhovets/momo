@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -103,6 +103,14 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a47810d8da184a6460b28f56d194ae66b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a47810d8da184a6460b28f56d194ae66b">MOMO_STATIC_ASSERT</a> (<a class="el" href="classmomo_1_1internal_1_1_object_alignmenter.html">ObjectAlignmenter</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a321a5a9730b1be6dd46336915fa70bdd">Object</a> &gt;::Check(<a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a2c995df35c1a7db712af834ba09ff5b6">alignment</a>))</td></tr>
 <tr class="separator:a47810d8da184a6460b28f56d194ae66b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52906f7c7701b249244a53d27bb6e3d9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a52906f7c7701b249244a53d27bb6e3d9">ObjectBuffer</a> ()=default</td></tr>
+<tr class="separator:a52906f7c7701b249244a53d27bb6e3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace890e87b960f833b4d24a7a7fab5d42"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#ace890e87b960f833b4d24a7a7fab5d42">ObjectBuffer</a> (const <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> &amp;)=delete</td></tr>
+<tr class="separator:ace890e87b960f833b4d24a7a7fab5d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86f1145da76b9498ab9e07cec1536407"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a86f1145da76b9498ab9e07cec1536407">~ObjectBuffer</a> ()=default</td></tr>
+<tr class="separator:a86f1145da76b9498ab9e07cec1536407"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3085b1dc1ba4c75514169f17dd584369"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a3085b1dc1ba4c75514169f17dd584369">operator=</a> (const <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> &amp;)=delete</td></tr>
+<tr class="separator:a3085b1dc1ba4c75514169f17dd584369"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5a9d385e77afd5c87a6aca4d0bee65e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a321a5a9730b1be6dd46336915fa70bdd">Object</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#ab5a9d385e77afd5c87a6aca4d0bee65e">operator&amp;</a> () const noexcept</td></tr>
 <tr class="separator:ab5a9d385e77afd5c87a6aca4d0bee65e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe37750b0b5c22ee463e1ef97cd2dfe2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a321a5a9730b1be6dd46336915fa70bdd">Object</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#abe37750b0b5c22ee463e1ef97cd2dfe2">operator&amp;</a> () noexcept</td></tr>
@@ -126,6 +134,89 @@ template&lt;typename TObject , size_t tAlignment&gt; </div>
           <td class="memname">typedef TObject <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">momo::internal::ObjectBuffer</a>&lt; TObject, tAlignment &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_buffer.html#a321a5a9730b1be6dd46336915fa70bdd">Object</a></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a52906f7c7701b249244a53d27bb6e3d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52906f7c7701b249244a53d27bb6e3d9">&#9670;&nbsp;</a></span>ObjectBuffer() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , size_t tAlignment&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">momo::internal::ObjectBuffer</a>&lt; TObject, tAlignment &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ace890e87b960f833b4d24a7a7fab5d42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace890e87b960f833b4d24a7a7fab5d42">&#9670;&nbsp;</a></span>ObjectBuffer() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , size_t tAlignment&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">momo::internal::ObjectBuffer</a>&lt; TObject, tAlignment &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a>&lt; TObject, tAlignment &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a86f1145da76b9498ab9e07cec1536407"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86f1145da76b9498ab9e07cec1536407">&#9670;&nbsp;</a></span>~ObjectBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , size_t tAlignment&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">momo::internal::ObjectBuffer</a>&lt; TObject, tAlignment &gt;::~<a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -199,6 +290,34 @@ template&lt;typename TObject , size_t tAlignment&gt; </div>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3085b1dc1ba4c75514169f17dd584369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3085b1dc1ba4c75514169f17dd584369">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , size_t tAlignment&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">momo::internal::ObjectBuffer</a>&lt; TObject, tAlignment &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_object_buffer.html">ObjectBuffer</a>&lt; TObject, tAlignment &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

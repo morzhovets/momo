@@ -2,7 +2,6 @@ var classmomo_1_1internal_1_1_set_extracted_item =
 [
     [ "Item", "classmomo_1_1internal_1_1_set_extracted_item.html#a5e25e4c0eacc465b0fdf9209c83e4a30", null ],
     [ "ItemTraits", "classmomo_1_1internal_1_1_set_extracted_item.html#aa60ca91bdfb600d7046dde472cbf2e79", null ],
-    [ "MemManager", "classmomo_1_1internal_1_1_set_extracted_item.html#a3b602b3e94479cf2e607d2797c0dbd4b", null ],
     [ "Settings", "classmomo_1_1internal_1_1_set_extracted_item.html#aa16c644792c1f1e37af825606bba93d2", null ],
     [ "SetExtractedItem", "classmomo_1_1internal_1_1_set_extracted_item.html#a1706fb5ef7cc757a63974fb4ab3123cb", null ],
     [ "SetExtractedItem", "classmomo_1_1internal_1_1_set_extracted_item.html#a642048e74b6470d660e0a484b06e6265", null ],

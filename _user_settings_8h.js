@@ -11,6 +11,7 @@ var _user_settings_8h =
     [ "MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT", "_user_settings_8h.html#a4d783b7f44062bc97097f8108e2bba9a", null ],
     [ "MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT", "_user_settings_8h.html#a9769d16036b136410a1e7cafad0af1f7", null ],
     [ "MOMO_DEFAULT_TREE_NODE", "_user_settings_8h.html#a897cef27bd0db01f4762a3f7651b52da", null ],
+    [ "MOMO_DEPRECATED", "_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1", null ],
     [ "MOMO_FORCEINLINE", "_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559", null ],
     [ "MOMO_INVALID_UINTPTR", "_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9", null ],
     [ "MOMO_IS_FAST_COMPARABLE", "_user_settings_8h.html#a603cfabe60fde34513bcbf8a24564984", null ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('_iterator_utility_8h.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult&lt; Iterator &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult&lt; Position &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4.html">momo::internal::VersionKeeper&lt; TSettings, true &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,13 +189,13 @@ Macros</h2></td></tr>
 <div class="line">    { \</div>
 <div class="line">        return *operator-&gt;(); \</div>
 <div class="line">    } \</div>
-<div class="line">    bool operator!=(ConstIterator iter) <span class="keyword">const</span> noexcept \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator!=(Iterator iter1, Iterator iter2) noexcept \</div>
 <div class="line">    { \</div>
-<div class="line">        return !(*<span class="keyword">this</span> == iter); \</div>
+<div class="line">        return !(iter1 == iter2); \</div>
 <div class="line">    } \</div>
 <div class="line">    bool operator!() const noexcept \</div>
 <div class="line">    { \</div>
-<div class="line">        return *<span class="keyword">this</span> == ConstIterator(); \</div>
+<div class="line">        return *<span class="keyword">this</span> == Iterator(); \</div>
 <div class="line">    } \</div>
 <div class="line">    explicit <span class="keyword">operator</span> bool() const noexcept \</div>
 <div class="line">    { \</div>
@@ -223,13 +223,13 @@ Macros</h2></td></tr>
 <div class="line">    { \</div>
 <div class="line">        return *operator-&gt;(); \</div>
 <div class="line">    } \</div>
-<div class="line">    bool operator!=(ConstPosition pos) <span class="keyword">const</span> noexcept \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator!=(Position pos1, Position pos2) noexcept \</div>
 <div class="line">    { \</div>
-<div class="line">        return !(*<span class="keyword">this</span> == pos); \</div>
+<div class="line">        return !(pos1 == pos2); \</div>
 <div class="line">    } \</div>
 <div class="line">    bool operator!() const noexcept \</div>
 <div class="line">    { \</div>
-<div class="line">        return *<span class="keyword">this</span> == ConstPosition(); \</div>
+<div class="line">        return *<span class="keyword">this</span> == Position(); \</div>
 <div class="line">    } \</div>
 <div class="line">    explicit <span class="keyword">operator</span> bool() const noexcept \</div>
 <div class="line">    { \</div>
@@ -269,9 +269,9 @@ Macros</h2></td></tr>
 <div class="line">    { \</div>
 <div class="line">        return *operator-&gt;(); \</div>
 <div class="line">    } \</div>
-<div class="line">    bool operator!=(ConstIterator iter) <span class="keyword">const</span> noexcept \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator!=(Iterator iter1, Iterator iter2) noexcept \</div>
 <div class="line">    { \</div>
-<div class="line">        return !(*<span class="keyword">this</span> == iter); \</div>
+<div class="line">        return !(iter1 == iter2); \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>

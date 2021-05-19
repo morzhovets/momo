@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_mem_pool_params.html',''
   <tr><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html#a18bfb2465641d191e444da553255ae31">GetBlockSize</a>() const noexcept</td><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html#a0b217efb68f9a226436aa9fbca4d864a">MemPoolParams</a>(size_t blockSize) noexcept</td><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
   <tr><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html#adee4f363e94dc256d8717fc8908357df">MemPoolParams</a>(size_t blockSize, size_t blockAlignment) noexcept</td><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html#a2f2305e9a86f3482ed55a12d08ebe4be">MOMO_STATIC_ASSERT</a>(0&lt; blockCount &amp;&amp;blockCount&lt; 128)</td><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html#adbceae38522b55b74cd8e48abeb5054e">MOMO_STATIC_ASSERT</a>(MemPoolConst::CheckBlockCount(blockCount))</td><td class="entry"><a class="el" href="classmomo_1_1_mem_pool_params.html">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

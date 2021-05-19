@@ -7,7 +7,7 @@ var namespacestd =
     [ "iterator_traits< momo::internal::DataRawUniqueHashIterator< R, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_raw_unique_hash_iterator_3_01_r_00_01_s_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::DataRowIterator< RI, RR > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_row_iterator_3_01_r_i_00_01_r_r_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::HashDerivedIterator< BI, R > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_derived_iterator_3_01_b_i_00_01_r_01_4_01_4.html", null ],
-    [ "iterator_traits< momo::internal::HashMapIterator< HI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_h_i_00_01c_01_4_01_4.html", null ],
+    [ "iterator_traits< momo::internal::HashMapIterator< SI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_s_i_00_01c_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::HashMultiMapIterator< KI, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_multi_map_iterator_3_01_k_i_00_01_s_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::HashSetConstIterator< B, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_set_const_iterator_3_01_b_00_01_s_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::MapKeyIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_key_iterator_3_01_s_i_01_4_01_4.html", null ],

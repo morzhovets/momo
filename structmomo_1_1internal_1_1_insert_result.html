@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::InsertResult&lt; Iterator &gt; Struct Template Reference</title>
+<title>momo: momo::internal::InsertResult&lt; Position &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.3</span>
+   &#160;<span id="projectnumber">3.4</span>
    </div>
   </td>
  </tr>
@@ -83,49 +83,219 @@ $(document).ready(function(){initNavTree('structmomo_1_1internal_1_1_insert_resu
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structmomo_1_1internal_1_1_insert_result-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::InsertResult&lt; Iterator &gt; Struct Template Reference</div>  </div>
+<div class="title">momo::internal::InsertResult&lt; Position &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_iterator_utility_8h_source.html">IteratorUtility.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a92412df031792388066d07dc05e66551"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a92412df031792388066d07dc05e66551">InsertResult</a> (Position pos, bool <a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a5acdce5f760dcfd07a00efbc2b6b2842">inserted</a>) noexcept</td></tr>
+<tr class="separator:a92412df031792388066d07dc05e66551"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf1f1993f29153c983962383c73aebfb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#acf1f1993f29153c983962383c73aebfb">InsertResult</a> (const <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> &amp;insRes) noexcept</td></tr>
+<tr class="separator:acf1f1993f29153c983962383c73aebfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a986aea87ca45327b461be58030ed1ee1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a986aea87ca45327b461be58030ed1ee1">~InsertResult</a> () noexcept</td></tr>
+<tr class="separator:a986aea87ca45327b461be58030ed1ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45bc5a28ae453cb59f3be7c5feaa1027"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a45bc5a28ae453cb59f3be7c5feaa1027">operator=</a> (const <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> &amp;insRes) noexcept</td></tr>
+<tr class="separator:a45bc5a28ae453cb59f3be7c5feaa1027"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a5d434d53c4d0e8ee874d6d133848945c"><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a5d434d53c4d0e8ee874d6d133848945c">iterator</a></td></tr>
-<tr class="separator:a5d434d53c4d0e8ee874d6d133848945c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb276d92d567f9f57859792287fc9ade"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#acb276d92d567f9f57859792287fc9ade">inserted</a></td></tr>
-<tr class="separator:acb276d92d567f9f57859792287fc9ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80c272c7636dcfa9aa52eceec3bd821b"><td class="memItemLeft" >union {</td></tr>
+<tr class="memitem:a40ce6932fe70f34a7764d66c77dbb08d"><td class="memItemLeft" >&#160;&#160;&#160;Position&#160;&#160;&#160;<a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a8fcc9a9bf2e92813e41249e67b042de5">position</a></td></tr>
+<tr class="separator:a40ce6932fe70f34a7764d66c77dbb08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3570d165e92d8a54815e4d64baf76cb"><td class="memItemLeft" >&#160;&#160;&#160;Position iterator&#160;&#160;&#160;<a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a35c863d8abbf27b609c97c5eea8e64ad">MOMO_DEPRECATED</a></td></tr>
+<tr class="separator:ab3570d165e92d8a54815e4d64baf76cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80c272c7636dcfa9aa52eceec3bd821b"><td class="memItemLeft" valign="top">};&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="separator:a80c272c7636dcfa9aa52eceec3bd821b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5acdce5f760dcfd07a00efbc2b6b2842"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html#a5acdce5f760dcfd07a00efbc2b6b2842">inserted</a></td></tr>
+<tr class="separator:a5acdce5f760dcfd07a00efbc2b6b2842"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="acb276d92d567f9f57859792287fc9ade"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb276d92d567f9f57859792287fc9ade">&#9670;&nbsp;</a></span>inserted</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a92412df031792388066d07dc05e66551"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92412df031792388066d07dc05e66551">&#9670;&nbsp;</a></span>InsertResult() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator &gt; </div>
+template&lt;typename Position &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Iterator &gt;::inserted</td>
+          <td class="memname"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::<a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> </td>
+          <td>(</td>
+          <td class="paramtype">Position&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>inserted</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acf1f1993f29153c983962383c73aebfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf1f1993f29153c983962383c73aebfb">&#9670;&nbsp;</a></span>InsertResult() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Position &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::<a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a>&lt; Position &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insRes</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a986aea87ca45327b461be58030ed1ee1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a986aea87ca45327b461be58030ed1ee1">&#9670;&nbsp;</a></span>~InsertResult()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Position &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::~<a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a45bc5a28ae453cb59f3be7c5feaa1027"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45bc5a28ae453cb59f3be7c5feaa1027">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Position &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a>&amp; <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">InsertResult</a>&lt; Position &gt; &amp;&#160;</td>
+          <td class="paramname"><em>insRes</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a80c272c7636dcfa9aa52eceec3bd821b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80c272c7636dcfa9aa52eceec3bd821b">&#9670;&nbsp;</a></span>@1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">union { ... } </td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a5d434d53c4d0e8ee874d6d133848945c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d434d53c4d0e8ee874d6d133848945c">&#9670;&nbsp;</a></span>iterator</h2>
+<a id="a5acdce5f760dcfd07a00efbc2b6b2842"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5acdce5f760dcfd07a00efbc2b6b2842">&#9670;&nbsp;</a></span>inserted</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator &gt; </div>
+template&lt;typename Position &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Iterator <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Iterator &gt;::iterator</td>
+          <td class="memname">bool <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::inserted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a35c863d8abbf27b609c97c5eea8e64ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35c863d8abbf27b609c97c5eea8e64ad">&#9670;&nbsp;</a></span>MOMO_DEPRECATED</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Position &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Position iterator <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::MOMO_DEPRECATED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8fcc9a9bf2e92813e41249e67b042de5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fcc9a9bf2e92813e41249e67b042de5">&#9670;&nbsp;</a></span>position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Position &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Position <a class="el" href="structmomo_1_1internal_1_1_insert_result.html">momo::internal::InsertResult</a>&lt; Position &gt;::position</td>
         </tr>
       </table>
 </div><div class="memdoc">
