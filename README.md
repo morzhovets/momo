@@ -50,7 +50,7 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 
 #### Supported compilers
 
-- MS Visual C++ (19.28+, Visual Studio 2019) with /std:c++latest
+- MS Visual C++ (19.29+, Visual Studio 2019 16.10+) with /std:c++latest
 
 - GCC (11+) with -std=c++20
 
