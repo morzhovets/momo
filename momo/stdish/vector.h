@@ -453,16 +453,7 @@ public:
 	auto operator<=>(const vector& right) const
 	{
 		auto comp = [] (const value_type& value1, const value_type& value2)
-		{
-			if constexpr (std::three_way_comparable<value_type>)
-				return value1 <=> value2;
-			else if (value1 < value2)
-				return std::weak_ordering::less;
-			else if (value2 < value1)
-				return std::weak_ordering::greater;
-			else
-				return std::weak_ordering::equivalent;
-		};
+			{ return std::tie(value1) <=> std::tie(value2); };
 		return std::lexicographical_compare_three_way(begin(), end(),
 			right.begin(), right.end(), comp);
 	}

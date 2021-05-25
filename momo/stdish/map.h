@@ -657,24 +657,10 @@ namespace internal
 			return size() == right.size() && std::equal(begin(), end(), right.begin());
 		}
 
-		bool operator<(const map_base& right) const
+		auto operator<=>(const map_base& right) const
 		{
-			return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
-		}
-
-		bool operator>(const map_base& right) const
-		{
-			return right < *this;
-		}
-
-		bool operator<=(const map_base& right) const
-		{
-			return !(right < *this);
-		}
-
-		bool operator>=(const map_base& right) const
-		{
-			return right <= *this;
+			return std::lexicographical_compare_three_way(begin(), end(),
+				right.begin(), right.end());
 		}
 
 	protected:	//?
