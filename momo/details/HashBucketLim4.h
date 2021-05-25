@@ -138,6 +138,7 @@ namespace internal
 		}
 
 		template<bool first, typename Predicate>
+		requires std::predicate<const Predicate&, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& params, const Predicate& pred, size_t /*hashCode*/)
 		{
 			for (Item& item : GetBounds(params))
