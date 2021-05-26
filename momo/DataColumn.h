@@ -248,6 +248,11 @@ namespace internal
 		typedef typename Struct::VisitableItems VisitableItems;
 	};
 
+	template<typename DataPtrVisitor, typename Void, typename ColumnInfo>
+	concept conceptDataPtrVisitor =
+		std::is_invocable_v<const DataPtrVisitor&, Void*> ||
+		std::is_invocable_v<const DataPtrVisitor&, Void*, ColumnInfo>;
+
 	template<typename TStruct,
 		typename TCode = uint64_t>
 	class DataColumnInfo
@@ -285,13 +290,13 @@ namespace internal
 			return mTypeInfo;
 		}
 
-		template<typename PtrVisitor>
+		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
 		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
 		{
 			pvVisitRec<0>(item, ptrVisitor);
 		}
 
-		template<typename PtrVisitor>
+		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
 		void Visit(void* item, const PtrVisitor& ptrVisitor) const
 		{
 			pvVisitRec<0>(item, ptrVisitor);
@@ -317,18 +322,12 @@ namespace internal
 		}
 
 		template<typename Item, typename PtrVisitor>
-		requires (std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>)
 		void pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
-			ptrVisitor(item, *this);
-		}
-
-		template<typename Item, typename PtrVisitor>
-		requires (std::is_invocable_r_v<void, const PtrVisitor&, Item*> &&
-			!std::is_invocable_r_v<void, const PtrVisitor&, Item*, DataColumnInfo>)
-		void pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
-		{
-			ptrVisitor(item);
+			if constexpr (std::is_invocable_v<const PtrVisitor&, Item*, DataColumnInfo>)
+				ptrVisitor(item, *this);
+			else
+				ptrVisitor(item);
 		}
 
 	private:
@@ -818,13 +817,13 @@ public:
 		return true;
 	}
 
-	template<typename PtrVisitor>
+	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		pvVisitPointers<const void>(raw, ptrVisitor);
 	}
 
-	template<typename PtrVisitor>
+	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
 	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		pvVisitPointers<void>(raw, ptrVisitor);
@@ -1230,13 +1229,13 @@ public:
 		(mVisitableColumns.AddBackNogrow(ColumnInfo(columns)), ...);
 	}
 
-	template<typename PtrVisitor>
+	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		pvVisitPointers<const void>(raw, ptrVisitor);
 	}
 
-	template<typename PtrVisitor>
+	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
 	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		pvVisitPointers<void>(raw, ptrVisitor);
