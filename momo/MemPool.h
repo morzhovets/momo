@@ -731,7 +731,7 @@ namespace internal
 	public:
 		explicit MemPoolLazy(Params&& params, MemManager&& memManager)
 			: mMemPool(std::move(params), std::move(memManager)),
-			mFreeBlockHead(nullptr)
+			mLazyHead(nullptr)
 		{
 			MOMO_ASSERT(mMemPool.GetBlockSize() >= sizeof(void*));
 		}
@@ -740,7 +740,7 @@ namespace internal
 
 		~MemPoolLazy() noexcept
 		{
-			pvFlushDeallocate(mFreeBlockHead);
+			pvFlushDeallocate(mLazyHead);
 		}
 
 		MemPoolLazy& operator=(const MemPoolLazy&) = delete;
@@ -748,9 +748,9 @@ namespace internal
 		template<typename ResObject = void>
 		[[nodiscard]] ResObject* Allocate()
 		{
-			if (mFreeBlockHead != nullptr)
+			if (mLazyHead != nullptr)
 			{
-				void* block = mFreeBlockHead.exchange(nullptr);
+				void* block = mLazyHead.exchange(nullptr);
 				if (block != nullptr)
 				{
 					pvFlushDeallocate(PtrCaster::FromBuffer(block));
@@ -762,8 +762,8 @@ namespace internal
 
 		void Deallocate(void* block) noexcept
 		{
-			if (mFreeBlockHead != nullptr)
-				pvFlushDeallocate(mFreeBlockHead.exchange(nullptr));
+			if (mLazyHead != nullptr)
+				pvFlushDeallocate(mLazyHead.exchange(nullptr));
 			mMemPool.Deallocate(block);
 		}
 
@@ -771,9 +771,9 @@ namespace internal
 		{
 			while (true)
 			{
-				void* blockHead = mFreeBlockHead;
-				PtrCaster::ToBuffer(blockHead, block);
-				if (mFreeBlockHead.compare_exchange_weak(blockHead, block))
+				void* lazyHead = mLazyHead;
+				PtrCaster::ToBuffer(lazyHead, block);
+				if (mLazyHead.compare_exchange_weak(lazyHead, block))
 					break;
 			}
 		}
@@ -791,7 +791,7 @@ namespace internal
 
 	private:
 		MemPool mMemPool;
-		std::atomic<void*> mFreeBlockHead;
+		std::atomic<void*> mLazyHead;
 	};
 
 	template<size_t blockCount>
@@ -856,7 +856,7 @@ namespace internal
 			return static_cast<ResObject*>(realPtr);
 		}
 
-		uint32_t Allocate()
+		[[nodiscard]] uint32_t Allocate()
 		{
 			if (mBlockHead == nullPtr)
 				pvNewBuffer();
