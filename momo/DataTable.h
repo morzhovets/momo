@@ -195,11 +195,11 @@ private:
 	public:
 		explicit Crew(ColumnList&& columnList)
 		{
-			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
-				sizeof(Data));
 			RawMemPoolParams rawMemPoolParams(
 				std::minmax(columnList.GetTotalSize(), sizeof(void*)).second,
 				columnList.GetAlignment());
+			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
+				sizeof(Data));
 			std::construct_at(mData, std::move(columnList));
 			std::construct_at(&mData->rawMemPoolBuffer, std::move(rawMemPoolParams),
 				MemManagerPtr(GetMemManager()));	//? nothrow
@@ -335,7 +335,7 @@ private:
 
 public:
 	explicit DataTable()
-		requires requires { ColumnList(); } && (!requires { ColumnList({}); })
+		requires (requires { ColumnList(); }) && (!requires { ColumnList({}); })
 		: DataTable(ColumnList())
 	{
 	}
