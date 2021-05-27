@@ -1180,18 +1180,8 @@ private:
 		if (mNodeParams == nullptr)
 		{
 			MemManager& memManager = GetMemManager();
-			mNodeParams = MemManagerProxy::template Allocate<NodeParams>(memManager,
-				sizeof(NodeParams));
-			try
-			{
-				std::construct_at(mNodeParams, memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, mNodeParams, sizeof(NodeParams));
-				mNodeParams = nullptr;
-				throw;
-			}
+			mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
+				memManager, memManager);
 		}
 		mRootNode = Node::Create(*mNodeParams, true, 0);
 		try

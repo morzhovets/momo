@@ -351,6 +351,22 @@ namespace internal
 			return static_cast<ResObject*>(ptr);
 		}
 
+		template<typename ResObject, typename... ResObjectArgs>
+		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
+		{
+			ResObject* resObjectPtr = Allocate<ResObject>(memManager, sizeof(ResObject));
+			try
+			{
+				std::construct_at(resObjectPtr, std::forward<ResObjectArgs>(resObjectArgs)...);
+			}
+			catch (...)
+			{
+				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
+				throw;
+			}
+			return resObjectPtr;
+		}
+
 		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0);

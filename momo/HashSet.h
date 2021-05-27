@@ -62,10 +62,8 @@ namespace internal
 			{
 				for (; bucketIndex < bucketCount; ++bucketIndex)
 					std::construct_at(buckets + bucketIndex);
-				if (bucketParams == nullptr)
-					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
-				else
-					resBuckets->mBucketParams = bucketParams;
+				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
+					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
 			}
 			catch (...)
 			{
@@ -163,22 +161,6 @@ namespace internal
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept
 		{
 			return sizeof(HashSetBuckets) + (sizeof(Bucket) << logBucketCount);
-		}
-
-		static BucketParams* pvCreateBucketParams(MemManager& memManager)
-		{
-			BucketParams* bucketParams = MemManagerProxy::template Allocate<BucketParams>(
-				memManager, sizeof(BucketParams));
-			try
-			{
-				std::construct_at(bucketParams, memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, bucketParams, sizeof(BucketParams));
-				throw;
-			}
-			return bucketParams;
 		}
 
 	private:

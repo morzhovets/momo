@@ -126,16 +126,8 @@ namespace internal
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
-			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
-			try
-			{
-				std::construct_at(mData, containerTraits, std::move(memManager));
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));	// memManager not moved
-				throw;
-			}
+			mData = MemManagerProxy::template AllocateCreate<Data>(memManager,
+				containerTraits, std::move(memManager));	//?
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
