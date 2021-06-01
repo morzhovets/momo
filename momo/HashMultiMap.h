@@ -351,6 +351,8 @@ namespace internal
 			typename HashMultiMapSettings::ValueArrayMemPoolParams,
 			typename HashMultiMapSettings::ValueArraySettings> Value;
 
+		static const bool useValuePtr = false;
+
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;
 

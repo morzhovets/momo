@@ -135,17 +135,31 @@ namespace internal
 		{
 			auto srcKeyGen = [srcIter = srcBegin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
-			auto srcValueGen = [srcIter = srcBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
-			auto dstValueGen = [dstIter = dstBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				InputIterator(srcKeyGen), InputIterator(srcValueGen),
-				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				KeyValueTraits::RelocateExecKeys(memManager,
+					InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
+				auto srcValueGen = [srcIter = srcBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(srcIter); };
+				auto dstValueGen = [dstIter = dstBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(dstIter); };
+				ObjectManager<Value*, MemManager>::Relocate(memManager,
+					InputIterator(srcValueGen), InputIterator(dstValueGen), count);
+			}
+			else
+			{
+				auto srcValueGen = [srcIter = srcBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
+				auto dstValueGen = [dstIter = dstBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
+				KeyValueTraits::RelocateExec(memManager,
+					InputIterator(srcKeyGen), InputIterator(srcValueGen),
+					InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			}
 		}
 	};
 
@@ -207,7 +221,8 @@ private:
 
 	typedef internal::MergeMapNestedSetSettings<Settings> MergeSetSettings;
 
-	typedef momo::MergeSet<Key, MergeTraits, MemManager, MergeSetItemTraits, MergeSetSettings> MergeSet;
+	typedef momo::MergeSet<Key, MergeTraits, typename MergeSetItemTraits::MemManager,
+		MergeSetItemTraits, MergeSetSettings> MergeSet;
 
 	typedef typename MergeSet::ConstIterator MergeSetConstIterator;
 	typedef typename MergeSet::ConstPosition MergeSetConstPosition;
@@ -529,23 +544,18 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Position pos = Find(std::as_const(key));
-		if (!!pos)
-			return { pos, false };
-		pos = pvAdd<false>(pos, std::forward<RKey>(key),
-			std::forward<ValueCreator>(valueCreator));
-		return { pos, true };
+		internal::MapNestedSetItemCreator<MergeSetItemTraits, RKey, ValueCreator> itemCreator(
+			mMergeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		typename MergeSet::InsertResult res = mMergeSet.InsertCrt(
+			std::as_const(key), std::move(itemCreator));
+		return { PositionProxy(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
-		{
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
-		};
+		internal::MapNestedSetItemCreator<MergeSetItemTraits, RKey, ValueCreator> itemCreator(
+			mMergeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
 	}

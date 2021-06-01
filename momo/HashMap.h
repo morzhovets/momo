@@ -195,17 +195,31 @@ namespace internal
 		{
 			auto srcKeyGen = [srcIter = srcItems] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
-			auto srcValueGen = [srcIter = srcItems] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstItems] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
-			auto dstValueGen = [dstIter = dstItems] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				InputIterator(srcKeyGen), InputIterator(srcValueGen),
-				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				KeyValueTraits::RelocateExecKeys(memManager,
+					InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
+				auto srcValueGen = [srcIter = srcItems] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(srcIter); };
+				auto dstValueGen = [dstIter = dstItems] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(dstIter); };
+				ObjectManager<Value*, MemManager>::Relocate(memManager,
+					InputIterator(srcValueGen), InputIterator(dstValueGen), count);
+			}
+			else
+			{
+				auto srcValueGen = [srcIter = srcItems] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
+				auto dstValueGen = [dstIter = dstItems] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
+				KeyValueTraits::RelocateExec(memManager,
+					InputIterator(srcKeyGen), InputIterator(srcValueGen),
+					InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			}
 		}
 	};
 
@@ -275,7 +289,8 @@ private:
 
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 
-	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
+	typedef momo::HashSet<Key, HashTraits, typename HashSetItemTraits::MemManager,
+		HashSetItemTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSet::ConstPosition HashSetConstPosition;
@@ -291,7 +306,8 @@ public:
 
 	typedef internal::InsertResult<Position> InsertResult;
 
-	typedef internal::MapExtractedPair<HashSetExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<HashSetExtractedItem,
+		KeyValueTraits::useValuePtr> ExtractedPair;
 
 	typedef internal::HashMapBucketBounds<typename HashSet::ConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
@@ -339,6 +355,7 @@ private:
 	struct ExtractedPairProxy : private ExtractedPair
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetValueMemPool)
 	};
 
 	struct ConstBucketBoundsProxy : public ConstBucketBounds
@@ -565,6 +582,8 @@ public:
 
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
+		if constexpr (KeyValueTraits::useValuePtr)
+			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mHashSet.GetMemManager().GetMemPool());
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return { PositionProxy(res.position), res.inserted };
@@ -654,6 +673,8 @@ public:
 
 	Position Add(ConstPosition pos, ExtractedPair&& extPair)
 	{
+		if constexpr (KeyValueTraits::useValuePtr)
+			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mHashSet.GetMemManager().GetMemPool());
 		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetHashSetPosition(pos),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
@@ -679,8 +700,11 @@ public:
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
+		Iterator resIter = IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
+		if constexpr (KeyValueTraits::useValuePtr)
+			ExtractedPairProxy::GetValueMemPool(extPair) = &mHashSet.GetMemManager().GetMemPool();
+		return resIter;
 	}
 
 	bool Remove(const Key& key)
@@ -712,12 +736,14 @@ public:
 
 	template<typename RMap>
 	void MergeFrom(RMap&& srcMap)
+		requires (!KeyValueTraits::useValuePtr)
 	{
 		srcMap.MergeTo(mHashSet);
 	}
 
 	template<typename Map>
 	void MergeTo(Map& dstMap)
+		requires (!KeyValueTraits::useValuePtr)
 	{
 		dstMap.MergeFrom(mHashSet);
 	}
@@ -762,23 +788,18 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Position pos = Find(std::as_const(key));
-		if (!!pos)
-			return { pos, false };
-		pos = pvAdd<false>(pos, std::forward<RKey>(key),
-			std::forward<ValueCreator>(valueCreator));
-		return { pos, true };
+		internal::MapNestedSetItemCreator<HashSetItemTraits, RKey, ValueCreator> itemCreator(
+			mHashSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		typename HashSet::InsertResult res = mHashSet.InsertCrt(
+			std::as_const(key), std::move(itemCreator));
+		return { PositionProxy(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
-		{
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
-		};
+		internal::MapNestedSetItemCreator<HashSetItemTraits, RKey, ValueCreator> itemCreator(
+			mHashSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}

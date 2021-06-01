@@ -49,17 +49,31 @@ namespace internal
 		{
 			auto srcKeyGen = [srcIter = srcBegin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
-			auto srcValueGen = [srcIter = srcBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
-			auto dstValueGen = [dstIter = dstBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				InputIterator(srcKeyGen), InputIterator(srcValueGen),
-				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				KeyValueTraits::RelocateExecKeys(memManager,
+					InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
+				auto srcValueGen = [srcIter = srcBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(srcIter); };
+				auto dstValueGen = [dstIter = dstBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(dstIter); };
+				ObjectManager<Value*, MemManager>::Relocate(memManager,
+					InputIterator(srcValueGen), InputIterator(dstValueGen), count);
+			}
+			else
+			{
+				auto srcValueGen = [srcIter = srcBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
+				auto dstValueGen = [dstIter = dstBegin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
+				KeyValueTraits::RelocateExec(memManager,
+					InputIterator(srcKeyGen), InputIterator(srcValueGen),
+					InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+			}
 		}
 
 		template<typename Iterator>
@@ -67,10 +81,20 @@ namespace internal
 		{
 			auto keyGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
-			auto valueGen = [iter = begin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
-			KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				auto valueGen = [iter = begin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(iter); };
+				ObjectManager<Value*, MemManager>::ShiftNothrow(memManager,
+					InputIterator(valueGen), shift);
+			}
+			else
+			{
+				auto valueGen = [iter = begin] () mutable
+					{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
+				KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
+			}
 		}
 	};
 
@@ -166,7 +190,8 @@ private:
 
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
-	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;
+	typedef momo::TreeSet<Key, TreeTraits, typename TreeSetItemTraits::MemManager,
+		TreeSetItemTraits, TreeSetSettings> TreeSet;
 
 	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
 
@@ -178,7 +203,8 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef internal::MapExtractedPair<TreeSetExtractedItem> ExtractedPair;
+	typedef internal::MapExtractedPair<TreeSetExtractedItem,
+		KeyValueTraits::useValuePtr> ExtractedPair;
 
 private:
 	typedef internal::MapValueReferencer<TreeMap, Iterator> ValueReferencer;
@@ -210,6 +236,7 @@ private:
 	struct ExtractedPairProxy : private ExtractedPair
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetValueMemPool)
 	};
 
 public:
@@ -471,6 +498,8 @@ public:
 
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
+		if constexpr (KeyValueTraits::useValuePtr)
+			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mTreeSet.GetMemManager().GetMemPool());
 		typename TreeSet::InsertResult res =
 			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return { IteratorProxy(res.position), res.inserted };
@@ -585,6 +614,8 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
+		if constexpr (KeyValueTraits::useValuePtr)
+			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mTreeSet.GetMemManager().GetMemPool());
 		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetSetIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
@@ -614,8 +645,11 @@ public:
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
+		Iterator resIter = IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
+		if constexpr (KeyValueTraits::useValuePtr)
+			ExtractedPairProxy::GetValueMemPool(extPair) = &mTreeSet.GetMemManager().GetMemPool();
+		return resIter;
 	}
 
 	Iterator Remove(ConstIterator begin, ConstIterator end)
@@ -653,12 +687,14 @@ public:
 
 	template<typename RMap>
 	void MergeFrom(RMap&& srcMap)
+		requires (!KeyValueTraits::useValuePtr)
 	{
 		srcMap.MergeTo(mTreeSet);
 	}
 
 	template<typename Map>
 	void MergeTo(Map& dstMap)
+		requires (!KeyValueTraits::useValuePtr)
 	{
 		dstMap.MergeFrom(mTreeSet);
 	}
@@ -683,25 +719,18 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
-		{
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
-		};
-		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(std::as_const(key), itemCreator);
+		internal::MapNestedSetItemCreator<TreeSetItemTraits, RKey, ValueCreator> itemCreator(
+			mTreeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
+			std::as_const(key), std::move(itemCreator));
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator&& valueCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
-		{
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
-		};
+		internal::MapNestedSetItemCreator<TreeSetItemTraits, RKey, ValueCreator> itemCreator(
+			mTreeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}

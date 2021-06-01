@@ -15,6 +15,7 @@
 
 #include "ObjectManager.h"
 #include "IteratorUtility.h"
+#include "MemPool.h"
 
 namespace momo
 {
@@ -23,7 +24,7 @@ template<typename MapKeyValueTraits, typename Key, typename Value, typename MemM
 concept conceptMapKeyValueTraits =
 	std::is_same_v<typename MapKeyValueTraits::Key, Key> &&
 	std::is_same_v<typename MapKeyValueTraits::Value, Value> &&
-	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> &&
+	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> /*&&
 	requires (Key& key, Value& value, MemManager& memManager)
 	{
 		typename std::integral_constant<size_t, MapKeyValueTraits::keyAlignment>;
@@ -31,7 +32,7 @@ concept conceptMapKeyValueTraits =
 		{ MapKeyValueTraits::Destroy(&memManager, key, value) } noexcept;
 	} &&
 	internal::ObjectAlignmenter<Key>::Check(MapKeyValueTraits::keyAlignment) &&
-	internal::ObjectAlignmenter<Value>::Check(MapKeyValueTraits::valueAlignment);
+	internal::ObjectAlignmenter<Value>::Check(MapKeyValueTraits::valueAlignment)*/;
 
 namespace internal
 {
@@ -270,13 +271,19 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
+	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+		bool tUseValuePtr = false>
+	class MapKeyValueTraits;
+
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
-	class MapKeyValueTraits
+	class MapKeyValueTraits<TKey, TValue, TMemManager, false>
 	{
 	public:
 		typedef TKey Key;
 		typedef TValue Value;
 		typedef TMemManager MemManager;
+
+		static const bool useValuePtr = false;
 
 	private:
 		typedef ObjectManager<Key, MemManager> KeyManager;
@@ -510,8 +517,100 @@ namespace internal
 		}
 	};
 
-	template<typename TKey, typename TValue,
-		size_t tKeyAlignment, size_t tValueAlignment>
+	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
+	class MapKeyValueTraits<TKey, TValue, TMemManager, true>
+	{
+	public:
+		typedef TKey Key;
+		typedef TValue Value;
+		typedef TMemManager MemManager;
+
+		static const bool useValuePtr = true;
+
+	private:
+		typedef ObjectManager<Key, MemManager> KeyManager;
+		typedef ObjectManager<Value, MemManager> ValueManager;
+
+	public:
+		static const size_t keyAlignment = KeyManager::alignment;
+
+		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+
+		template<typename... ValueArgs>
+		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
+
+		static_assert(sizeof(Value) >= sizeof(void*));
+		typedef MemPoolParamsStatic<sizeof(Value), ValueManager::alignment> ValueMemPoolParams;
+
+	public:
+		template<typename ValueCreator>
+		static void Create(MemManager& memManager, Key&& key,
+			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
+		{
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
+			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
+		}
+
+		template<typename ValueCreator>
+		static void Create(MemManager& memManager, const Key& key,
+			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
+		{
+			auto func = [&valueCreator, newValue] ()
+				{ std::forward<ValueCreator>(valueCreator)(newValue); };
+			KeyManager::CopyExec(memManager, key, newKey, func);
+		}
+
+		static void DestroyKey(MemManager* memManager, Key& key) noexcept
+		{
+			KeyManager::Destroyer::Destroy(memManager, key);
+		}
+
+		static void DestroyValue(MemManager* memManager, Value& value) noexcept
+		{
+			ValueManager::Destroyer::Destroy(memManager, value);
+		}
+
+		static void RelocateKey(MemManager* memManager, Key& srcKey, Key* dstKey)
+		{
+			KeyManager::Relocator::Relocate(memManager, srcKey, dstKey);
+		}
+
+		static void ReplaceKey(MemManager& memManager, Key& srcKey, Key& dstKey)
+		{
+			KeyManager::Replace(memManager, srcKey, dstKey);
+		}
+
+		static void ReplaceRelocateKeys(MemManager& memManager, Key& srcKey,
+			Key& midKey, Key* dstKey)
+		{
+			KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
+		}
+
+		template<typename SrcKeyIterator, typename DstKeyIterator, typename Func>
+		static void RelocateExecKeys(MemManager& memManager,
+			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func&& func)
+		{
+			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
+				std::forward<Func>(func));
+		}
+
+		template<typename KeyArg>
+		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
+		{
+			key = std::forward<KeyArg>(keyArg);
+		}
+
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+		template<typename ValueArg>
+		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
+		{
+			value = std::forward<ValueArg>(valueArg);
+		}
+#endif
+	};
+
+	template<typename TKey, typename TValue, size_t tKeyAlignment, size_t tValueAlignment>
 	class MapKeyValuePair
 	{
 	public:
@@ -551,8 +650,112 @@ namespace internal
 		mutable ObjectBuffer<Value, valueAlignment> mValueBuffer;
 	};
 
+	template<typename TKey, typename TValue, size_t tKeyAlignment>
+	class MapKeyValuePtrPair
+	{
+	public:
+		typedef TKey Key;
+		typedef TValue Value;
+
+	protected:
+		static const size_t keyAlignment = tKeyAlignment;
+
+	public:
+		MapKeyValuePtrPair() = delete;
+
+		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;
+
+		~MapKeyValuePtrPair() = delete;
+
+		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
+
+		const Key* GetKeyPtr() const noexcept
+		{
+			return &mKeyBuffer;
+		}
+
+		Key* GetKeyPtr() noexcept
+		{
+			return &mKeyBuffer;
+		}
+
+		Value* GetValuePtr() const noexcept
+		{
+			return mValuePtr;
+		}
+
+		Value*& GetValuePtr() noexcept
+		{
+			return mValuePtr;
+		}
+
+	private:
+		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
+		Value* mValuePtr;
+	};
+
+	template<typename ItemTraits, typename RKey, typename ValueCreator>
+	class MapNestedSetItemCreator : private ItemTraits
+	{
+	public:
+		using typename ItemTraits::Item;
+		using typename ItemTraits::MemManager;
+
+	private:
+		using typename ItemTraits::KeyValueTraits;
+		using typename ItemTraits::Value;
+
+	public:
+		explicit MapNestedSetItemCreator(MemManager& memManager,
+			RKey&& key, ValueCreator&& valueCreator) noexcept
+			: mMemManager(memManager),
+			mKey(std::forward<RKey>(key)),
+			mValueCreator(std::forward<ValueCreator>(valueCreator))
+		{
+		}
+
+		void operator()(Item* newItem) &&
+		{
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				Value* valuePtr = mMemManager.GetMemPool().template Allocate<Value>();
+				newItem->GetValuePtr() = valuePtr;
+				try
+				{
+					pvCreate(newItem);
+				}
+				catch (...)
+				{
+					mMemManager.GetMemPool().Deallocate(valuePtr);
+					throw;
+				}
+			}
+			else
+			{
+				pvCreate(newItem);
+			}
+		}
+
+	private:
+		void pvCreate(Item* newItem)
+		{
+			KeyValueTraits::Create(mMemManager, std::forward<RKey>(mKey),
+				std::forward<ValueCreator>(mValueCreator), newItem->GetKeyPtr(),
+				newItem->GetValuePtr());
+		}
+
+	private:
+		MemManager& mMemManager;
+		RKey&& mKey;
+		ValueCreator&& mValueCreator;
+	};
+
 	template<typename TKeyValueTraits>
-	class MapNestedSetItemTraits
+	class MapNestedSetItemTraits;
+
+	template<typename TKeyValueTraits>
+	requires (!TKeyValueTraits::useValuePtr)
+	class MapNestedSetItemTraits<TKeyValueTraits>
 	{
 	protected:
 		typedef TKeyValueTraits KeyValueTraits;
@@ -647,6 +850,332 @@ namespace internal
 			++iter;
 			return valuePtr;
 		}
+	};
+
+	template<typename TKeyValueTraits>
+	requires (TKeyValueTraits::useValuePtr)
+	class MapNestedSetItemTraits<TKeyValueTraits>
+	{
+	protected:
+		typedef TKeyValueTraits KeyValueTraits;
+		typedef typename KeyValueTraits::Value Value;
+
+	public:
+		typedef typename KeyValueTraits::Key Key;
+		typedef MemManagerPoolLazy<typename KeyValueTraits::MemManager,
+			typename KeyValueTraits::ValueMemPoolParams> MemManager;
+
+		typedef MapKeyValuePtrPair<Key, Value, KeyValueTraits::keyAlignment> Item;
+
+		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
+
+		static const bool isNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
+
+		template<typename ItemArg>
+		requires std::is_same_v<ItemArg, const Item&>
+		class Creator
+		{
+		public:
+			explicit Creator(MemManager& memManager, const Item& item) noexcept
+				: mMemManager(memManager),
+				mItem(item)
+			{
+			}
+
+			void operator()(Item* newItem) &&
+			{
+				Value* valuePtr = mMemManager.GetMemPool().template Allocate<Value>();
+				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
+					mMemManager, *mItem.GetValuePtr());
+				try
+				{
+					KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator),
+						newItem->GetKeyPtr(), valuePtr);
+				}
+				catch (...)
+				{
+					mMemManager.GetMemPool().Deallocate(valuePtr);
+					throw;
+				}
+				newItem->GetValuePtr() = valuePtr;
+			}
+
+		private:
+			MemManager& mMemManager;
+			const Item& mItem;
+		};
+
+	public:
+		static const Key& GetKey(const Item& item) noexcept
+		{
+			return *item.GetKeyPtr();
+		}
+
+		static void Destroy(MemManager* memManager, Item& item) noexcept
+		{
+			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
+			Value* valuePtr = item.GetValuePtr();
+			KeyValueTraits::DestroyValue(memManager, *valuePtr);
+			if (memManager != nullptr) [[likely]]
+				memManager->GetMemPool().Deallocate(valuePtr);
+		}
+
+		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
+		{
+			KeyValueTraits::RelocateKey(memManager, *srcItem.GetKeyPtr(), dstItem->GetKeyPtr());
+			dstItem->GetValuePtr() = srcItem.GetValuePtr();
+		}
+
+		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
+		{
+			KeyValueTraits::ReplaceKey(memManager, *srcItem.GetKeyPtr(), *dstItem.GetKeyPtr());
+			Value* dstValuePtr = dstItem.GetValuePtr();
+			KeyValueTraits::DestroyValue(&memManager, *dstValuePtr);
+			memManager.GetMemPool().Deallocate(dstValuePtr);
+			dstItem.GetValuePtr() = srcItem.GetValuePtr();
+		}
+
+		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
+			Item* dstItem)
+		{
+			KeyValueTraits::ReplaceRelocateKeys(memManager, *srcItem.GetKeyPtr(),
+				*midItem.GetKeyPtr(), dstItem->GetKeyPtr());
+			dstItem->GetValuePtr() = midItem.GetValuePtr();
+			midItem.GetValuePtr() = srcItem.GetValuePtr();
+		}
+
+		template<typename KeyArg>
+		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
+		{
+			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
+		}
+
+	protected:
+		template<typename Iterator>
+		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
+		{
+			Key* keyPtr = iter->GetKeyPtr();
+			++iter;
+			return keyPtr;
+		}
+
+		template<typename Iterator>
+		static Value** ptGenerateValuePtrPtr(Iterator& iter) noexcept
+		{
+			Value** valuePtrPtr = &iter->GetValuePtr();
+			++iter;
+			return valuePtrPtr;
+		}
+	};
+
+	template<typename TSetExtractedItem, bool tUseValuePtr>
+	class MapExtractedPair;
+
+	template<typename TSetExtractedItem>
+	class MapExtractedPair<TSetExtractedItem, false>
+	{
+	protected:
+		typedef TSetExtractedItem SetExtractedItem;
+		typedef typename SetExtractedItem::Item KeyValuePair;
+
+		static const bool useValuePtr = false;
+
+	public:
+		typedef typename KeyValuePair::Key Key;
+		typedef typename KeyValuePair::Value Value;
+
+	public:
+		explicit MapExtractedPair() = default;
+
+		template<typename Map>
+		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)
+		{
+			map.Remove(iter, *this);
+		}
+
+		MapExtractedPair(MapExtractedPair&& extractedPair)
+			noexcept(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
+			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
+		{
+		}
+
+		MapExtractedPair(const MapExtractedPair&) = delete;
+
+		~MapExtractedPair() = default;
+
+		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
+
+		bool IsEmpty() const noexcept
+		{
+			return mSetExtractedItem.IsEmpty();
+		}
+
+		void Clear() noexcept
+		{
+			mSetExtractedItem.Clear();
+		}
+
+		const Key& GetKey() const
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		Key& GetKey()
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		const Value& GetValue() const
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		Value& GetValue()
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		template<std::invocable<Key*, Value*> PairCreator>
+		void Create(PairCreator&& pairCreator)
+		{
+			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
+			{
+				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
+					newItem->GetValuePtr());
+			};
+			mSetExtractedItem.Create(itemCreator);
+		}
+
+		template<std::invocable<Key&, Value&> PairRemover>
+		void Remove(PairRemover&& pairRemover)
+		{
+			auto itemRemover = [&pairRemover] (KeyValuePair& item)
+			{
+				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+			};
+			mSetExtractedItem.Remove(itemRemover);
+		}
+
+	protected:
+		SetExtractedItem& ptGetSetExtractedItem() noexcept
+		{
+			return mSetExtractedItem;
+		}
+
+	private:
+		SetExtractedItem mSetExtractedItem;
+	};
+
+	template<typename TSetExtractedItem>
+	class MapExtractedPair<TSetExtractedItem, true>
+	{
+	protected:
+		typedef TSetExtractedItem SetExtractedItem;
+		typedef typename SetExtractedItem::Item KeyValuePair;
+
+		static const bool useValuePtr = true;
+
+		typedef typename SetExtractedItem::ItemTraits::MemManager::MemPool ValueMemPool;
+
+	public:
+		typedef typename KeyValuePair::Key Key;
+		typedef typename KeyValuePair::Value Value;
+
+	public:
+		explicit MapExtractedPair()
+			: mValueMemPool(nullptr)
+		{
+		}
+
+		template<typename Map>
+		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)
+			: mValueMemPool(nullptr)
+		{
+			map.Remove(iter, *this);
+		}
+
+		MapExtractedPair(MapExtractedPair&& extractedPair)
+			noexcept(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
+			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem)),
+			mValueMemPool(extractedPair.mValueMemPool)
+		{
+		}
+
+		MapExtractedPair(const MapExtractedPair&) = delete;
+
+		~MapExtractedPair() noexcept
+		{
+			Clear();
+		}
+
+		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
+
+		bool IsEmpty() const noexcept
+		{
+			return mSetExtractedItem.IsEmpty();
+		}
+
+		void Clear() noexcept
+		{
+			if (!IsEmpty())
+			{
+				MOMO_ASSERT(mValueMemPool != nullptr);
+				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
+				mSetExtractedItem.Clear();
+				mValueMemPool->DeallocateLazy(valuePtr);
+			}
+		}
+
+		const Key& GetKey() const
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		Key& GetKey()
+		{
+			return *mSetExtractedItem.GetItem().GetKeyPtr();
+		}
+
+		const Value& GetValue() const
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		Value& GetValue()
+		{
+			return *mSetExtractedItem.GetItem().GetValuePtr();
+		}
+
+		//template<std::invocable<Key*, Value*> PairCreator>
+		//void Create(PairCreator&& pairCreator)
+
+		template<std::invocable<Key&, Value&> PairRemover>
+		void Remove(PairRemover&& pairRemover)
+		{
+			auto itemRemover = [this, &pairRemover] (KeyValuePair& item)
+			{
+				MOMO_ASSERT(mValueMemPool != nullptr);
+				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
+				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *valuePtr);
+				mValueMemPool->DeallocateLazy(valuePtr);
+			};
+			mSetExtractedItem.Remove(itemRemover);
+		}
+
+	protected:
+		SetExtractedItem& ptGetSetExtractedItem() noexcept
+		{
+			return mSetExtractedItem;
+		}
+
+		ValueMemPool*& ptGetValueMemPool() noexcept
+		{
+			return mValueMemPool;
+		}
+
+	private:
+		SetExtractedItem mSetExtractedItem;
+		ValueMemPool* mValueMemPool;
 	};
 
 	template<typename TMap, typename TPosition>
@@ -794,100 +1323,6 @@ namespace internal
 				std::move(valueCreator))->value;
 		}
 #endif
-	};
-
-	template<typename TSetExtractedItem>
-	class MapExtractedPair
-	{
-	protected:
-		typedef TSetExtractedItem SetExtractedItem;
-		typedef typename SetExtractedItem::Item KeyValuePair;
-
-	public:
-		typedef typename KeyValuePair::Key Key;
-		typedef typename KeyValuePair::Value Value;
-		//typedef typename SetExtractedItem::MemManager MemManager;
-
-	public:
-		explicit MapExtractedPair() = default;
-
-		template<typename Map>
-		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)
-		{
-			map.Remove(iter, *this);
-		}
-
-		MapExtractedPair(MapExtractedPair&& extractedPair)
-			noexcept(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
-			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
-		{
-		}
-
-		MapExtractedPair(const MapExtractedPair&) = delete;
-
-		~MapExtractedPair() = default;
-
-		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
-
-		bool IsEmpty() const noexcept
-		{
-			return mSetExtractedItem.IsEmpty();
-		}
-
-		void Clear() noexcept
-		{
-			mSetExtractedItem.Clear();
-		}
-
-		const Key& GetKey() const
-		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
-		}
-
-		Key& GetKey()
-		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
-		}
-
-		const Value& GetValue() const
-		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
-		}
-
-		Value& GetValue()
-		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
-		}
-
-		template<std::invocable<Key*, Value*> PairCreator>
-		void Create(PairCreator&& pairCreator)
-		{
-			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-			{
-				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
-					newItem->GetValuePtr());
-			};
-			mSetExtractedItem.Create(itemCreator);
-		}
-
-		template<std::invocable<Key&, Value&> PairRemover>
-		void Remove(PairRemover&& pairRemover)
-		{
-			auto itemRemover = [&pairRemover] (KeyValuePair& item)
-			{
-				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
-			};
-			mSetExtractedItem.Remove(itemRemover);
-		}
-
-	protected:
-		SetExtractedItem& ptGetSetExtractedItem() noexcept
-		{
-			return mSetExtractedItem;
-		}
-
-	private:
-		SetExtractedItem mSetExtractedItem;
 	};
 
 	template<bool tAllowKeyValue = true>

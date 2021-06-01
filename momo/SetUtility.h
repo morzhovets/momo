@@ -265,12 +265,11 @@ namespace internal
 	class SetExtractedItem
 	{
 	protected:
-		typedef TItemTraits ItemTraits;
 		typedef TSettings Settings;
 
 	public:
+		typedef TItemTraits ItemTraits;
 		typedef typename ItemTraits::Item Item;
-		//typedef typename ItemTraits::MemManager MemManager;
 
 	public:
 		explicit SetExtractedItem() noexcept
