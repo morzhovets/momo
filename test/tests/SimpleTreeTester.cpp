@@ -146,8 +146,7 @@ public:
 		map2 = map;
 
 		auto ep = map.Extract(map.Find("s1"));
-		const auto& cep = ep;
-		assert(cep.GetKey() == s1 && cep.GetValue() == s1);
+		assert(std::as_const(ep).GetKey() == s1 && std::as_const(ep).GetValue() == s1);
 		assert(map.GetCount() == 3);
 
 		auto pairRemover = [] (std::string& key, std::string& value)
@@ -158,16 +157,7 @@ public:
 		};
 		ep.Remove(pairRemover);
 		assert(ep.IsEmpty());
-
-		auto pairCrerator = [] (std::string* keyPtr, std::string* valuePtr)
-		{
-			std::construct_at(keyPtr, "1");
-			std::construct_at(valuePtr, "2");
-		};
-		ep.Create(pairCrerator);
-		assert(ep.GetKey() == "1" && ep.GetValue() == "2");
 		ep.Clear();
-		assert(ep.IsEmpty());
 
 		map.Insert(map2.GetBegin(), std::next(map2.GetBegin()));
 		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), pred));

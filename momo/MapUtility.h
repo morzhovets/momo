@@ -1068,17 +1068,6 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<std::invocable<Key*, Value*> PairCreator>
-		void Create(PairCreator&& pairCreator)
-		{
-			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-			{
-				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
-					newItem->GetValuePtr());
-			};
-			mSetExtractedItem.Create(itemCreator);
-		}
-
 		template<std::invocable<Key&, Value&> PairRemover>
 		void Remove(PairRemover&& pairRemover)
 		{
@@ -1178,9 +1167,6 @@ namespace internal
 		{
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
-
-		//template<std::invocable<Key*, Value*> PairCreator>
-		//void Create(PairCreator&& pairCreator)
 
 		template<std::invocable<Key&, Value&> PairRemover>
 		void Remove(PairRemover&& pairRemover)
