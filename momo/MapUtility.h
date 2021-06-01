@@ -762,20 +762,26 @@ namespace internal
 
 		template<typename ItemArg>
 		requires std::is_same_v<ItemArg, const Item&>
-		class Creator : public MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&,
-			typename KeyValueTraits::template ValueCreator<const Value&>>
+		class Creator
 		{
-		private:
-			typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-			typedef MapNestedSetItemCreator<MapNestedSetItemTraits,
-				const Key&, ValueCreator> BaseCreator;
-
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
-				: BaseCreator(memManager, *item.GetKeyPtr(),
-					ValueCreator(memManager, *item.GetValuePtr()))
+				: mMemManager(memManager),
+				mItem(item)
 			{
 			}
+
+			void operator()(Item* newItem) &&
+			{
+				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
+				ValueCreator valueCreator(mMemManager, *mItem.GetValuePtr());
+				MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&, ValueCreator>(
+					mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator))(newItem);
+			}
+
+		private:
+			MemManager& mMemManager;
+			const Item& mItem;
 		};
 
 	public:
@@ -870,20 +876,26 @@ namespace internal
 
 		template<typename ItemArg>
 		requires std::is_same_v<ItemArg, const Item&>
-		class Creator : public MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&,
-			typename KeyValueTraits::template ValueCreator<const Value&>>
+		class Creator
 		{
-		private:
-			typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-			typedef MapNestedSetItemCreator<MapNestedSetItemTraits,
-				const Key&, ValueCreator> BaseCreator;
-
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept
-				: BaseCreator(memManager, *item.GetKeyPtr(),
-					ValueCreator(memManager, *item.GetValuePtr()))
+				: mMemManager(memManager),
+				mItem(item)
 			{
 			}
+
+			void operator()(Item* newItem) &&
+			{
+				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
+				ValueCreator valueCreator(mMemManager, *mItem.GetValuePtr());
+				MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&, ValueCreator>(
+					mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator))(newItem);
+			}
+
+		private:
+			MemManager& mMemManager;
+			const Item& mItem;
 		};
 
 	public:
