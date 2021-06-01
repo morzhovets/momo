@@ -176,51 +176,6 @@ namespace internal
 	template<typename TKeyValueTraits>
 	class HashMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
-	private:
-		typedef internal::MapNestedSetItemTraits<TKeyValueTraits> MapNestedSetItemTraits;
-
-	protected:
-		using typename MapNestedSetItemTraits::KeyValueTraits;
-		using typename MapNestedSetItemTraits::Value;
-
-	public:
-		using typename MapNestedSetItemTraits::Key;
-		using typename MapNestedSetItemTraits::Item;
-		using typename MapNestedSetItemTraits::MemManager;
-
-	public:
-		template<typename ItemCreator>
-		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
-		{
-			auto srcKeyGen = [srcIter = srcItems] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
-			auto dstKeyGen = [dstIter = dstItems] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
-			auto func = [&itemCreator, newItem] ()
-				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				KeyValueTraits::RelocateExecKeys(memManager,
-					InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
-				auto srcValueGen = [srcIter = srcItems] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(srcIter); };
-				auto dstValueGen = [dstIter = dstItems] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(dstIter); };
-				ObjectManager<Value*, MemManager>::Relocate(memManager,
-					InputIterator(srcValueGen), InputIterator(dstValueGen), count);
-			}
-			else
-			{
-				auto srcValueGen = [srcIter = srcItems] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
-				auto dstValueGen = [dstIter = dstItems] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
-				KeyValueTraits::RelocateExec(memManager,
-					InputIterator(srcKeyGen), InputIterator(srcValueGen),
-					InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
-			}
-		}
 	};
 
 	template<typename THashMapSettings>

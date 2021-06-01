@@ -43,39 +43,6 @@ namespace internal
 			&& KeyValueTraits::isValueNothrowShiftable;
 
 	public:
-		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
-		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
-		{
-			auto srcKeyGen = [srcIter = srcBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(srcIter); };
-			auto dstKeyGen = [dstIter = dstBegin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(dstIter); };
-			auto func = [&itemCreator, newItem] ()
-				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				KeyValueTraits::RelocateExecKeys(memManager,
-					InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
-				auto srcValueGen = [srcIter = srcBegin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(srcIter); };
-				auto dstValueGen = [dstIter = dstBegin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(dstIter); };
-				ObjectManager<Value*, MemManager>::Relocate(memManager,
-					InputIterator(srcValueGen), InputIterator(dstValueGen), count);
-			}
-			else
-			{
-				auto srcValueGen = [srcIter = srcBegin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtr(srcIter); };
-				auto dstValueGen = [dstIter = dstBegin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtr(dstIter); };
-				KeyValueTraits::RelocateExec(memManager,
-					InputIterator(srcKeyGen), InputIterator(srcValueGen),
-					InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
-			}
-		}
-
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{

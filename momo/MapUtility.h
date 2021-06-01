@@ -828,6 +828,21 @@ namespace internal
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
+		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
+			size_t count, ItemCreator&& itemCreator, Item* newItem)
+		{
+			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
+			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
+			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
+			auto dstValueGen = [dstIter = dstBegin] () mutable { return ptGenerateValuePtr(dstIter); };
+			auto func = [&itemCreator, newItem] ()
+				{ std::forward<ItemCreator>(itemCreator)(newItem); };
+			KeyValueTraits::RelocateExec(memManager,
+				InputIterator(srcKeyGen), InputIterator(srcValueGen),
+				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+		}
+
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
@@ -942,6 +957,24 @@ namespace internal
 				*midItem.GetKeyPtr(), dstItem->GetKeyPtr());
 			dstItem->GetValuePtr() = midItem.GetValuePtr();
 			midItem.GetValuePtr() = srcItem.GetValuePtr();
+		}
+
+		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
+			size_t count, ItemCreator&& itemCreator, Item* newItem)
+		{
+			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
+			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
+			auto func = [&itemCreator, newItem] ()
+				{ std::forward<ItemCreator>(itemCreator)(newItem); };
+			KeyValueTraits::RelocateExecKeys(memManager,
+				InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
+			auto srcValueGen = [srcIter = srcBegin] () mutable
+				{ return ptGenerateValuePtrPtr(srcIter); };
+			auto dstValueGen = [dstIter = dstBegin] () mutable
+				{ return ptGenerateValuePtrPtr(dstIter); };
+			ObjectManager<Value*, MemManager>::Relocate(memManager,
+				InputIterator(srcValueGen), InputIterator(dstValueGen), count);
 		}
 
 		template<typename KeyArg>
