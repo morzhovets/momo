@@ -794,6 +794,69 @@ namespace internal
 		std::atomic<void*> mLazyHead;
 	};
 
+	template<conceptMemManager TBaseMemManager, conceptMemPoolParams TMemPoolParams>
+	requires std::is_default_constructible_v<TMemPoolParams>
+	class MemManagerPoolLazy : public TBaseMemManager
+	{
+	public:
+		typedef TBaseMemManager BaseMemManager;
+		typedef TMemPoolParams MemPoolParams;
+
+		typedef MemPoolLazy<MemPoolParams, MemManagerPtr<BaseMemManager>> MemPool;
+
+	public:
+		MemManagerPoolLazy(BaseMemManager&& baseMemManager) noexcept
+			: BaseMemManager(std::move(baseMemManager)),
+			mHasMemPool(false)
+		{
+		}
+
+		MemManagerPoolLazy(MemManagerPoolLazy&& memManager) noexcept
+			: BaseMemManager((memManager.pvDestroyMemPool(), std::move(memManager))),
+			mHasMemPool(false)
+		{
+		}
+
+		MemManagerPoolLazy(const MemManagerPoolLazy& memManager)
+			: BaseMemManager(memManager),
+			mHasMemPool(false)
+		{
+		}
+
+		~MemManagerPoolLazy() noexcept
+		{
+			MOMO_ASSERT(!mHasMemPool);
+		}
+
+		MemManagerPoolLazy& operator=(MemManagerPoolLazy&) = delete;
+
+		MemPool& GetMemPool()
+		{
+			if (!mHasMemPool) [[unlikely]]
+				pvCreateMemPool();
+			return *&mMemPoolBuffer;
+		}
+
+	private:
+		void pvDestroyMemPool() noexcept
+		{
+			if (mHasMemPool)
+				std::destroy_at(&mMemPoolBuffer);
+			mHasMemPool = false;
+		}
+
+		MOMO_NOINLINE void pvCreateMemPool()
+		{
+			std::construct_at(&mMemPoolBuffer,
+				MemPoolParams(), MemManagerPtr<BaseMemManager>(*this));
+			mHasMemPool = true;
+		}
+
+	private:
+		ObjectBuffer<MemPool, alignof(MemPool)> mMemPoolBuffer;
+		bool mHasMemPool;
+	};
+
 	template<size_t blockCount>
 	concept conceptMemPoolUInt32BlockCount = (blockCount > 0);
 
