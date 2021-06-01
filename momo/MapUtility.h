@@ -24,15 +24,17 @@ template<typename MapKeyValueTraits, typename Key, typename Value, typename MemM
 concept conceptMapKeyValueTraits =
 	std::is_same_v<typename MapKeyValueTraits::Key, Key> &&
 	std::is_same_v<typename MapKeyValueTraits::Value, Value> &&
-	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> /*&&
+	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> &&
 	requires (Key& key, Value& value, MemManager& memManager)
 	{
+		typename std::bool_constant<MapKeyValueTraits::useValuePtr>;
 		typename std::integral_constant<size_t, MapKeyValueTraits::keyAlignment>;
 		typename std::integral_constant<size_t, MapKeyValueTraits::valueAlignment>;
-		{ MapKeyValueTraits::Destroy(&memManager, key, value) } noexcept;
+		{ MapKeyValueTraits::DestroyKey(&memManager, key) } noexcept;
+		{ MapKeyValueTraits::DestroyValue(&memManager, value) } noexcept;
 	} &&
 	internal::ObjectAlignmenter<Key>::Check(MapKeyValueTraits::keyAlignment) &&
-	internal::ObjectAlignmenter<Value>::Check(MapKeyValueTraits::valueAlignment)*/;
+	internal::ObjectAlignmenter<Value>::Check(MapKeyValueTraits::valueAlignment);
 
 namespace internal
 {
@@ -271,21 +273,15 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
-	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
-		bool tUseValuePtr = false>
-	class MapKeyValueTraits;
-
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
-	class MapKeyValueTraits<TKey, TValue, TMemManager, false>
+	class MapKeyValueTraitsBase
 	{
 	public:
 		typedef TKey Key;
 		typedef TValue Value;
 		typedef TMemManager MemManager;
 
-		static const bool useValuePtr = false;
-
-	private:
+	protected:
 		typedef ObjectManager<Key, MemManager> KeyManager;
 		typedef ObjectManager<Value, MemManager> ValueManager;
 
@@ -294,7 +290,6 @@ namespace internal
 		static const size_t valueAlignment = ValueManager::alignment;
 
 		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
@@ -318,12 +313,58 @@ namespace internal
 			KeyManager::CopyExec(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
+		static void DestroyKey(MemManager* memManager, Key& key) noexcept
 		{
 			KeyManager::Destroyer::Destroy(memManager, key);
+		}
+
+		static void DestroyValue(MemManager* memManager, Value& value) noexcept
+		{
 			ValueManager::Destroyer::Destroy(memManager, value);
 		}
 
+		template<typename KeyArg>
+		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
+		{
+			key = std::forward<KeyArg>(keyArg);
+		}
+
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+		template<typename ValueArg>
+		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
+		{
+			value = std::forward<ValueArg>(valueArg);
+		}
+#endif
+	};
+
+	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+		bool tUseValuePtr = false>
+	class MapKeyValueTraits;
+
+	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
+	class MapKeyValueTraits<TKey, TValue, TMemManager, false>
+		: public MapKeyValueTraitsBase<TKey, TValue, TMemManager>
+	{
+	private:
+		typedef internal::MapKeyValueTraitsBase<TKey, TValue, TMemManager> MapKeyValueTraitsBase;
+
+	public:
+		using typename MapKeyValueTraitsBase::Key;
+		using typename MapKeyValueTraitsBase::Value;
+		using typename MapKeyValueTraitsBase::MemManager;
+
+		static const bool useValuePtr = false;
+
+	private:
+		using typename MapKeyValueTraitsBase::KeyManager;
+		using typename MapKeyValueTraitsBase::ValueManager;
+
+	public:
+		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
+		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+
+	public:
 		static void Relocate(MemManager* memManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{
@@ -491,20 +532,6 @@ namespace internal
 			}
 		}
 
-		template<typename KeyArg>
-		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
-		{
-			key = std::forward<KeyArg>(keyArg);
-		}
-
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		template<typename ValueArg>
-		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
-		{
-			value = std::forward<ValueArg>(valueArg);
-		}
-#endif
-
 	private:
 		static void pvReplaceUnsafe(MemManager& memManager, Key& srcKey, Value& srcValue,
 			Key& dstKey, Value& dstValue)
@@ -519,58 +546,28 @@ namespace internal
 
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 	class MapKeyValueTraits<TKey, TValue, TMemManager, true>
+		: public MapKeyValueTraitsBase<TKey, TValue, TMemManager>
 	{
+	private:
+		typedef internal::MapKeyValueTraitsBase<TKey, TValue, TMemManager> MapKeyValueTraitsBase;
+
 	public:
-		typedef TKey Key;
-		typedef TValue Value;
-		typedef TMemManager MemManager;
+		using typename MapKeyValueTraitsBase::Key;
+		using typename MapKeyValueTraitsBase::Value;
+		using typename MapKeyValueTraitsBase::MemManager;
 
 		static const bool useValuePtr = true;
 
 	private:
-		typedef ObjectManager<Key, MemManager> KeyManager;
-		typedef ObjectManager<Value, MemManager> ValueManager;
+		using typename MapKeyValueTraitsBase::KeyManager;
+		using typename MapKeyValueTraitsBase::ValueManager;
 
 	public:
-		static const size_t keyAlignment = KeyManager::alignment;
-
-		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
-
-		template<typename... ValueArgs>
-		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
-
 		static_assert(sizeof(Value) >= sizeof(void*));
-		typedef MemPoolParamsStatic<sizeof(Value), ValueManager::alignment> ValueMemPoolParams;
+		typedef MemPoolParamsStatic<sizeof(Value),
+			MapKeyValueTraitsBase::valueAlignment> ValueMemPoolParams;
 
 	public:
-		template<typename ValueCreator>
-		static void Create(MemManager& memManager, Key&& key,
-			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
-		{
-			auto func = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
-		}
-
-		template<typename ValueCreator>
-		static void Create(MemManager& memManager, const Key& key,
-			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
-		{
-			auto func = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, func);
-		}
-
-		static void DestroyKey(MemManager* memManager, Key& key) noexcept
-		{
-			KeyManager::Destroyer::Destroy(memManager, key);
-		}
-
-		static void DestroyValue(MemManager* memManager, Value& value) noexcept
-		{
-			ValueManager::Destroyer::Destroy(memManager, value);
-		}
-
 		static void RelocateKey(MemManager* memManager, Key& srcKey, Key* dstKey)
 		{
 			KeyManager::Relocator::Relocate(memManager, srcKey, dstKey);
@@ -594,20 +591,6 @@ namespace internal
 			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
 				std::forward<Func>(func));
 		}
-
-		template<typename KeyArg>
-		static void AssignKey(MemManager& /*memManager*/, KeyArg&& keyArg, Key& key)
-		{
-			key = std::forward<KeyArg>(keyArg);
-		}
-
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		template<typename ValueArg>
-		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
-		{
-			value = std::forward<ValueArg>(valueArg);
-		}
-#endif
 	};
 
 	template<typename TKey, typename TValue, size_t tKeyAlignment, size_t tValueAlignment>
@@ -803,7 +786,8 @@ namespace internal
 
 		static void Destroy(MemManager* memManager, Item& item) noexcept
 		{
-			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
+			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
+			KeyValueTraits::DestroyValue(memManager, *item.GetValuePtr());
 		}
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
@@ -926,10 +910,10 @@ namespace internal
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
 			KeyValueTraits::ReplaceKey(memManager, *srcItem.GetKeyPtr(), *dstItem.GetKeyPtr());
-			Value* dstValuePtr = dstItem.GetValuePtr();
+			Value*& dstValuePtr = dstItem.GetValuePtr();
 			KeyValueTraits::DestroyValue(&memManager, *dstValuePtr);
 			memManager.GetMemPool().Deallocate(dstValuePtr);
-			dstItem.GetValuePtr() = srcItem.GetValuePtr();
+			dstValuePtr = srcItem.GetValuePtr();
 		}
 
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,

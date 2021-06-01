@@ -394,10 +394,15 @@ namespace internal
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, func);
 		}
 
-		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
+		static void DestroyKey(MemManager* memManager, Key& key) noexcept
 		{
 			MOMO_ASSERT(memManager != nullptr);
 			HashMultiMapKeyValueTraits::DestroyKey(*memManager, key);
+		}
+
+		static void DestroyValue(MemManager* memManager, Value& value) noexcept
+		{
+			MOMO_ASSERT(memManager != nullptr);
 			ValueManager::Destroy(*memManager, value);
 		}
 
