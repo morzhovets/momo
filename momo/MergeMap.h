@@ -501,7 +501,7 @@ private:
 	{
 		internal::MapNestedSetItemCreator<MergeSetItemTraits, RKey, ValueCreator> itemCreator(
 			mMergeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
-		typename MergeSet::InsertResult res = mMergeSet.InsertCrt(
+		typename MergeSet::InsertResult res = mMergeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { PositionProxy(res.position), res.inserted };
 	}

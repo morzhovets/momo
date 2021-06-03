@@ -745,7 +745,7 @@ private:
 	{
 		internal::MapNestedSetItemCreator<HashSetItemTraits, RKey, ValueCreator> itemCreator(
 			mHashSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
-		typename HashSet::InsertResult res = mHashSet.InsertCrt(
+		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { PositionProxy(res.position), res.inserted };
 	}

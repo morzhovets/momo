@@ -688,7 +688,7 @@ private:
 	{
 		internal::MapNestedSetItemCreator<TreeSetItemTraits, RKey, ValueCreator> itemCreator(
 			mTreeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
-		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
+		typename TreeSet::InsertResult res = mTreeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { IteratorProxy(res.position), res.inserted };
 	}
