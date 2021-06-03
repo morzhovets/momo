@@ -772,10 +772,10 @@ public:
 		return !!pvFind(key);
 	}
 
-	template<typename ItemCreator>
+	template<typename ItemCreator, bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
 	{
-		return pvInsert<true>(key, std::forward<ItemCreator>(itemCreator));
+		return pvInsert<extraCheck>(key, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>

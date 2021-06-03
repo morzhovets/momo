@@ -823,12 +823,15 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		Position pos = Find(static_cast<const Key&>(key));
-		if (!!pos)
-			return { pos, false };
-		pos = pvAdd<false>(pos, std::forward<RKey>(key),
-			std::forward<ValueCreator>(valueCreator));
-		return { pos, true };
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
+				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
+				newItem->GetValuePtr());
+		};
+		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
+			static_cast<const Key&>(key), std::move(itemCreator));
+		return { IteratorProxy(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>

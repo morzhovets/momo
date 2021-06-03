@@ -749,8 +749,8 @@ private:
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
 		};
-		typename TreeSet::InsertResult res = mTreeSet.InsertCrt(
-			static_cast<const Key&>(key), itemCreator);
+		typename TreeSet::InsertResult res = mTreeSet.template InsertCrt<decltype(itemCreator), false>(
+			static_cast<const Key&>(key), std::move(itemCreator));
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
