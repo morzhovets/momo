@@ -37,7 +37,7 @@ namespace internal
 		}
 
 		set_node_handle(set_node_handle&& node)
-			noexcept(noexcept(SetExtractedItem(std::move(node.mSetExtractedItem))))
+			noexcept(std::is_nothrow_move_constructible<SetExtractedItem>::value)
 			: mSetExtractedItem(std::move(node.mSetExtractedItem))
 		{
 		}
@@ -117,7 +117,7 @@ namespace internal
 		}
 
 		map_node_handle(map_node_handle&& node)
-			noexcept(noexcept(MapExtractedPair(std::move(node.mMapExtractedPair))))
+			noexcept(std::is_nothrow_move_constructible<MapExtractedPair>::value)
 			: mMapExtractedPair(std::move(node.mMapExtractedPair))
 		{
 		}

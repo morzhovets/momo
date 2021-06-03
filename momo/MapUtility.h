@@ -812,7 +812,7 @@ namespace internal
 		}
 
 		MapExtractedPair(MapExtractedPair&& extractedPair)
-			noexcept(noexcept(SetExtractedItem(std::declval<SetExtractedItem&&>())))
+			noexcept(std::is_nothrow_move_constructible<SetExtractedItem>::value)
 			: mSetExtractedItem(std::move(extractedPair.mSetExtractedItem))
 		{
 		}
