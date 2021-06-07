@@ -792,7 +792,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(&memManager, item, newItem); };
+				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
@@ -844,7 +844,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(&memManager, item, newItem); };
+				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return AddCrt(pos, itemCreator);
@@ -862,7 +862,17 @@ public:
 		MOMO_CHECK(extItem.IsEmpty());
 		Iterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
-			{ resIter = pvExtract(iter, newItem); };
+		{
+			auto itemReplacer = [this, newItem] (Item& srcItem, Item& dstItem)
+			{
+				MemManager& memManager = GetMemManager();
+				if (std::addressof(srcItem) == std::addressof(dstItem))
+					ItemTraits::Relocate(&memManager, nullptr, dstItem, newItem);
+				else
+					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
+			};
+			resIter = pvRemove(iter, itemReplacer);
+		};
 		extItem.Create(itemCreator);
 		return resIter;
 	}
@@ -915,7 +925,7 @@ public:
 	}
 
 	template<typename Set>
-	requires std::is_same_v<Key, typename Set::Key> && std::is_same_v<Item, typename Set::Item>
+	requires std::is_same_v<ItemTraits, typename Set::ItemTraits>
 	void MergeTo(Set& dstSet)
 	{
 		pvMergeTo(dstSet);
@@ -1203,19 +1213,6 @@ private:
 		return IteratorProxy(*buckets, bucketIndex, bucketIter, mCrew.GetVersion());
 	}
 
-	Iterator pvExtract(ConstIterator iter, Item* extItem)
-	{
-		auto itemReplacer = [this, extItem] (Item& srcItem, Item& dstItem)
-		{
-			MemManager& memManager = GetMemManager();
-			if (std::addressof(srcItem) == std::addressof(dstItem))
-				ItemTraits::Relocate(&memManager, srcItem, extItem);
-			else
-				ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, extItem);
-		};
-		return pvRemove(iter, itemReplacer);
-	}
-
 	Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
 	{
 		MOMO_ASSERT(mBuckets != nullptr);
@@ -1286,12 +1283,12 @@ private:
 				--bucketIter;
 				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
 					buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, hashCode, &memManager] (Item& backItem, Item& item)
+				auto itemReplacer = [this, hashCode, &memManager] (Item& srcItem, Item& dstItem)
 				{
-					(void)backItem;
-					MOMO_ASSERT(std::addressof(backItem) == std::addressof(item));
-					auto relocateCreator = [&memManager, &item] (Item* newItem)
-						{ ItemTraits::Relocate(&memManager, item, newItem); };
+					(void)srcItem;
+					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
+					auto relocateCreator = [&memManager, &dstItem] (Item* newItem)
+						{ ItemTraits::Relocate(&memManager, &memManager, dstItem, newItem); };
 					pvAddNogrow<false>(*mBuckets, hashCode, relocateCreator);
 				};
 				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
@@ -1303,11 +1300,20 @@ private:
 	template<typename Set>
 	void pvMergeTo(Set& dstSet)
 	{
+		MemManager& dstMemManager = dstSet.GetMemManager();
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			auto itemCreator = [this, &iter] (Item* newItem)
-				{ iter = pvExtract(iter, newItem); };
+			auto itemCreator = [this, &iter, &dstMemManager] (Item* newItem)
+			{
+				auto itemReplacer = [this, newItem, &dstMemManager] (Item& srcItem, Item& dstItem)
+				{
+					(void)srcItem;
+					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
+					ItemTraits::Relocate(&GetMemManager(), &dstMemManager, dstItem, newItem);
+				};
+				iter = pvRemove(iter, itemReplacer);
+			};
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
 		}

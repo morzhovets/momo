@@ -184,6 +184,7 @@ namespace internal
 		typedef typename MergeSetItemTraits::Key Key;
 
 		typedef typename MemManager::MemManagerPtr MemManagerPtr;
+		typedef typename MemManager::BaseMemManager SetMemManager;
 		typedef typename MemManager::MergeSetCrew::ContainerTraits MergeTraits;
 
 		static const size_t initialItemCount =
@@ -195,9 +196,10 @@ namespace internal
 		template<typename Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
+			SetMemManager* setMemManager = &memManager.GetBaseMemManager();
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i, (void)++iter)
-				MergeSetItemTraits::Destroy(&memManager.GetBaseMemManager(), *iter);
+				MergeSetItemTraits::Destroy(setMemManager, *iter);
 		}
 
 		template<typename SrcIterator, typename ItemCreator>
@@ -250,7 +252,8 @@ namespace internal
 		static void pvRelocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 			noexcept(MergeSetItemTraits::isNothrowRelocatable)
 		{
-			MergeSetItemTraits::Relocate(&memManager.GetBaseMemManager(), srcItem, dstItem);
+			SetMemManager* setMemManager = &memManager.GetBaseMemManager();
+			MergeSetItemTraits::Relocate(setMemManager, setMemManager, srcItem, dstItem);
 		}
 
 		static void pvSortRelocate(MemManager& memManager, const MergeTraits& mergeTraits, Item* items)

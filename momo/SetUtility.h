@@ -63,10 +63,10 @@ namespace internal
 			ItemManager::Destroyer::Destroy(memManager, item);
 		}
 
-		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
-			noexcept(isNothrowRelocatable)
+		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
+			Item& srcItem, Item* dstItem) noexcept(isNothrowRelocatable)
 		{
-			ItemManager::Relocator::Relocate(memManager, srcItem, dstItem);
+			ItemManager::Relocator::Relocate(dstMemManager, srcItem, dstItem);	//?
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
@@ -74,10 +74,10 @@ namespace internal
 			ItemManager::Replace(memManager, srcItem, dstItem);
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
+		static void ReplaceRelocate(MemManager& srcMemManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
-			ItemManager::ReplaceRelocate(memManager, srcItem, midItem, dstItem);
+			ItemManager::ReplaceRelocate(srcMemManager, srcItem, midItem, dstItem);
 		}
 
 		template<typename KeyArg>
@@ -289,7 +289,7 @@ namespace internal
 			: mHasItem(extractedItem.mHasItem)
 		{
 			if (mHasItem)
-				ItemTraits::Relocate(nullptr, *&extractedItem.mItemBuffer, &mItemBuffer);
+				ItemTraits::Relocate(nullptr, nullptr, *&extractedItem.mItemBuffer, &mItemBuffer);
 			extractedItem.mHasItem = false;
 		}
 

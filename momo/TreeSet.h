@@ -707,7 +707,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(&memManager, item, newItem); };
+				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
@@ -784,7 +784,7 @@ public:
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
 			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(&memManager, item, newItem); };
+				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return AddCrt(iter, itemCreator);
@@ -804,7 +804,7 @@ public:
 		MOMO_CHECK(extItem.IsEmpty());
 		Iterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
-			{ resIter = pvExtract(iter, newItem); };
+			{ resIter = pvExtract(iter, newItem, nullptr); };
 		extItem.Create(itemCreator);
 		return resIter;
 	}
@@ -920,7 +920,7 @@ public:
 	}
 
 	template<typename Set>
-	requires std::is_same_v<Key, typename Set::Key> && std::is_same_v<Item, typename Set::Item>
+	requires std::is_same_v<ItemTraits, typename Set::ItemTraits>
 	void MergeTo(Set& dstSet)
 	{
 		pvMergeTo(dstSet);
@@ -1293,12 +1293,16 @@ private:
 		return pvMakeIterator(node, itemIndex, true);
 	}
 
-	Iterator pvExtract(ConstIterator iter, Item* extItem)
+	Iterator pvExtract(ConstIterator iter, Item* extItem, MemManager* extMemManager)
 	{
-		auto itemReplacer1 = [this, extItem] (Item& srcItem)
-			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
-		auto itemReplacer2 = [this, extItem] (Item& srcItem, Item& dstItem)
-			{ ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem); };
+		auto itemReplacer1 = [this, extItem, extMemManager] (Item& srcItem)
+			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, srcItem, extItem); };
+		auto itemReplacer2 = [this, extItem, extMemManager] (Item& srcItem, Item& dstItem)
+		{
+			(void)extMemManager;
+			MOMO_ASSERT(extMemManager == nullptr);
+			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
+		};
 		return pvRemove(iter, itemReplacer1, itemReplacer2);
 	}
 
@@ -1509,7 +1513,7 @@ private:
 		{
 			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &item] (Item* newItem)
-				{ ItemTraits::Relocate(&memManager, item, newItem); };
+				{ ItemTraits::Relocate(&memManager, &memManager, item, newItem); };
 			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
 		};
 		parentNode->Remove(*mNodeParams, index, itemRemover);
@@ -1534,11 +1538,12 @@ private:
 	template<typename Set>
 	void pvMergeTo(Set& dstSet)
 	{
+		MemManager& dstMemManager = dstSet.GetMemManager();
 		Iterator iter = GetBegin();
 		while (iter != GetEnd())
 		{
-			auto itemCreator = [this, &iter] (Item* newItem)
-				{ iter = pvExtract(iter, newItem); };
+			auto itemCreator = [this, &iter, &dstMemManager] (Item* newItem)
+				{ iter = pvExtract(iter, newItem, &dstMemManager); };
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
 				++iter;
 		}
@@ -1546,6 +1551,7 @@ private:
 
 	void pvMergeToLinear(TreeSet& dstTreeSet)
 	{
+		MemManager& dstMemManager = dstTreeSet.GetMemManager();
 		Iterator iter = GetBegin();
 		Iterator dstIter = dstTreeSet.GetBegin();
 		while (iter != GetEnd())
@@ -1554,8 +1560,8 @@ private:
 				++dstIter;
 			if (TreeTraits::multiKey || dstTreeSet.pvIsGreater(dstIter, ItemTraits::GetKey(*iter)))
 			{
-				auto itemCreator = [this, &iter] (Item* newItem)
-					{ iter = pvExtract(iter, newItem); };
+				auto itemCreator = [this, &iter, &dstMemManager] (Item* newItem)
+					{ iter = pvExtract(iter, newItem, &dstMemManager); };
 				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
 			}
 			else
@@ -1602,10 +1608,10 @@ private:
 			}
 			Node* node1 = ConstIteratorProxy::GetNode(
 				swap ? treeSetPtr1->GetBegin() : std::prev(treeSetPtr1->GetEnd()));
-			auto itemRemover = [treeSetPtr1, node2] (Item& item)
+			auto itemRemover = [treeSetPtr1, treeSetPtr2, node2] (Item& item)
 			{
-				ItemTraits::Relocate(&treeSetPtr1->GetMemManager(), item,
-					node2->GetItemPtr(node2->GetCount()));
+				ItemTraits::Relocate(&treeSetPtr1->GetMemManager(), &treeSetPtr2->GetMemManager(),
+					item, node2->GetItemPtr(node2->GetCount()));
 			};
 			if (node1->IsLeaf())
 			{

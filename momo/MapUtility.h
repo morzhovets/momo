@@ -796,9 +796,10 @@ namespace internal
 			KeyValueTraits::DestroyValue(memManager, *item.GetValuePtr());
 		}
 
-		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
+			Item& srcItem, Item* dstItem)
 		{
-			KeyValueTraits::Relocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+			KeyValueTraits::Relocate(dstMemManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
@@ -808,10 +809,11 @@ namespace internal
 				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
+		static void ReplaceRelocate(MemManager& srcMemManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
-			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+			KeyValueTraits::ReplaceRelocate(srcMemManager,
+				*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
@@ -913,9 +915,10 @@ namespace internal
 				memManager->GetMemPool().Deallocate(valuePtr);
 		}
 
-		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
+		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
+			Item& srcItem, Item* dstItem)
 		{
-			KeyValueTraits::RelocateKey(memManager, *srcItem.GetKeyPtr(), dstItem->GetKeyPtr());
+			KeyValueTraits::RelocateKey(dstMemManager, *srcItem.GetKeyPtr(), dstItem->GetKeyPtr());
 			dstItem->GetValuePtr() = srcItem.GetValuePtr();
 		}
 
