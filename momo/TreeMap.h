@@ -470,7 +470,8 @@ public:
 			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mTreeSet.GetMemManager().GetMemPool())
 			{
 				InsertResult res = Insert(std::move(extPair.GetKey()), std::move(extPair.GetValue()));
-				extPair.Clear();
+				if (res.inserted)
+					extPair.Clear();
 				return res;
 			}
 		}
@@ -528,9 +529,26 @@ public:
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
 	{
-		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
+		auto itemCreator = [this, &pairCreator] (KeyValuePair* newItem)
 		{
-			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				Value*& newValuePtr = newItem->GetValuePtr();
+				newValuePtr = mTreeSet.GetMemManager().GetMemPool().template Allocate<Value>();
+				try
+				{
+					std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newValuePtr);
+				}
+				catch (...)
+				{
+					mTreeSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
+					throw;
+				}
+			}
+			else
+			{
+				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
+			}
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
@@ -668,14 +686,12 @@ public:
 
 	template<typename RMap>
 	void MergeFrom(RMap&& srcMap)
-		requires (!KeyValueTraits::useValuePtr)
 	{
 		srcMap.MergeTo(mTreeSet);
 	}
 
 	template<typename Map>
 	void MergeTo(Map& dstMap)
-		requires (!KeyValueTraits::useValuePtr)
 	{
 		dstMap.MergeFrom(mTreeSet);
 	}

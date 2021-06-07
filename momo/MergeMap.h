@@ -423,9 +423,26 @@ public:
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
-		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
+		auto itemCreator = [this, &pairCreator] (KeyValuePair* newItem)
 		{
-			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
+			if constexpr (KeyValueTraits::useValuePtr)
+			{
+				Value*& newValuePtr = newItem->GetValuePtr();
+				newValuePtr = mMergeSet.GetMemManager().GetMemPool().template Allocate<Value>();
+				try
+				{
+					std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newValuePtr);
+				}
+				catch (...)
+				{
+					mMergeSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
+					throw;
+				}
+			}
+			else
+			{
+				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
+			}
 		};
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
