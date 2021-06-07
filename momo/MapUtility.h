@@ -909,7 +909,7 @@ namespace internal
 			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
 			Value* valuePtr = item.GetValuePtr();
 			KeyValueTraits::DestroyValue(memManager, *valuePtr);
-			if (memManager != nullptr) [[likely]]
+			if (memManager != nullptr)
 				memManager->GetMemPool().Deallocate(valuePtr);
 		}
 

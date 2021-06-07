@@ -538,7 +538,14 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		if constexpr (KeyValueTraits::useValuePtr)
-			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mHashSet.GetMemManager().GetMemPool());
+		{
+			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mHashSet.GetMemManager().GetMemPool())
+			{
+				InsertResult res = Insert(std::move(extPair.GetKey()), std::move(extPair.GetValue()));
+				extPair.Clear();
+				return res;
+			}
+		}
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return { PositionProxy(res.position), res.inserted };
@@ -629,7 +636,14 @@ public:
 	Position Add(ConstPosition pos, ExtractedPair&& extPair)
 	{
 		if constexpr (KeyValueTraits::useValuePtr)
-			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mHashSet.GetMemManager().GetMemPool());
+		{
+			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mHashSet.GetMemManager().GetMemPool())
+			{
+				Position resPos = Add(pos, std::move(extPair.GetKey()), std::move(extPair.GetValue()));
+				extPair.Clear();
+				return resPos;
+			}
+		}
 		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetHashSetPosition(pos),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}

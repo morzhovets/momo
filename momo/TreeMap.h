@@ -466,7 +466,14 @@ public:
 	InsertResult Insert(ExtractedPair&& extPair)
 	{
 		if constexpr (KeyValueTraits::useValuePtr)
-			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mTreeSet.GetMemManager().GetMemPool());
+		{
+			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mTreeSet.GetMemManager().GetMemPool())
+			{
+				InsertResult res = Insert(std::move(extPair.GetKey()), std::move(extPair.GetValue()));
+				extPair.Clear();
+				return res;
+			}
+		}
 		typename TreeSet::InsertResult res =
 			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		return { IteratorProxy(res.position), res.inserted };
@@ -582,7 +589,14 @@ public:
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
 		if constexpr (KeyValueTraits::useValuePtr)
-			MOMO_CHECK(ExtractedPairProxy::GetValueMemPool(extPair) == &mTreeSet.GetMemManager().GetMemPool());
+		{
+			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mTreeSet.GetMemManager().GetMemPool())
+			{
+				Iterator resIter = Add(iter, std::move(extPair.GetKey()), std::move(extPair.GetValue()));
+				extPair.Clear();
+				return resIter;
+			}
+		}
 		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetSetIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
