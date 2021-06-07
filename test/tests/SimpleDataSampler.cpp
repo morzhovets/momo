@@ -30,7 +30,7 @@ namespace sample1
 	void Test()
 	{
 		// construct empty table with 3 columns
-		momo::DataTable<> table(intCol, dblCol, strCol);
+		momo::DataTable<> table({ intCol, dblCol, strCol });
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);
@@ -89,7 +89,7 @@ namespace sample2
 	void Test()
 	{
 		// construct empty table with 3 columns
-		Table table(intCol, dblCol, strCol);
+		Table table({ intCol, dblCol, strCol });
 
 		// for fast select
 		table.AddMultiHashIndex(strCol);
@@ -161,7 +161,7 @@ namespace sample3
 	void Test()
 	{
 		// construct empty table with 3 columns
-		Table table(intCol, dblCol, strCol);
+		Table table({ intCol, dblCol, strCol });
 
 		table.AddRow(intCol = 2, dblCol = 0.5, strCol = "a");
 		table.InsertRow(0, intCol = 1, dblCol = 1.5, strCol = "b");	// at position 0
