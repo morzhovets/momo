@@ -787,12 +787,10 @@ public:
 
 	InsertResult Insert(ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
-		MemManager& memManager = GetMemManager();
-		auto itemCreator = [&memManager, &extItem] (Item* newItem)
+		auto itemCreator = [this, &extItem] (Item* newItem)
 		{
-			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
+			auto itemRemover = [this, newItem] (Item& item)
+				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
@@ -839,12 +837,10 @@ public:
 
 	Position Add(ConstPosition pos, ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
-		MemManager& memManager = GetMemManager();
-		auto itemCreator = [&memManager, &extItem] (Item* newItem)
+		auto itemCreator = [this, &extItem] (Item* newItem)
 		{
-			auto itemRemover = [&memManager, newItem] (Item& item)
-				{ ItemTraits::Relocate(nullptr, &memManager, item, newItem); };
+			auto itemRemover = [this, newItem] (Item& item)
+				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
 		return AddCrt(pos, itemCreator);
@@ -859,7 +855,6 @@ public:
 
 	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
-		MOMO_CHECK(extItem.IsEmpty());
 		Iterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
 		{
@@ -1283,13 +1278,13 @@ private:
 				--bucketIter;
 				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
 					buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, hashCode, &memManager] (Item& srcItem, Item& dstItem)
+				auto itemReplacer = [this, &memManager, hashCode] (Item& srcItem, Item& dstItem)
 				{
 					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
-					auto relocateCreator = [&memManager, &dstItem] (Item* newItem)
+					auto itemCreator = [&memManager, &dstItem] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, &memManager, dstItem, newItem); };
-					pvAddNogrow<false>(*mBuckets, hashCode, relocateCreator);
+					pvAddNogrow<false>(*mBuckets, hashCode, itemCreator);
 				};
 				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
 			}
@@ -1300,17 +1295,18 @@ private:
 	template<typename Set>
 	void pvMergeTo(Set& dstSet)
 	{
+		MemManager& memManager = GetMemManager();
 		MemManager& dstMemManager = dstSet.GetMemManager();
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			auto itemCreator = [this, &iter, &dstMemManager] (Item* newItem)
+			auto itemCreator = [this, &memManager, &dstMemManager, &iter] (Item* newItem)
 			{
-				auto itemReplacer = [this, newItem, &dstMemManager] (Item& srcItem, Item& dstItem)
+				auto itemReplacer = [&memManager, &dstMemManager, newItem] (Item& srcItem, Item& dstItem)
 				{
 					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
-					ItemTraits::Relocate(&GetMemManager(), &dstMemManager, dstItem, newItem);
+					ItemTraits::Relocate(&memManager, &dstMemManager, dstItem, newItem);
 				};
 				iter = pvRemove(iter, itemReplacer);
 			};
