@@ -25,7 +25,11 @@ namespace momo
 namespace internal
 {
 	template<typename TKeyValueTraits>
-	class TreeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
+	class TreeMapNestedSetItemTraits;
+
+	template<typename TKeyValueTraits>
+	requires (!TKeyValueTraits::useValuePtr)
+	class TreeMapNestedSetItemTraits<TKeyValueTraits> : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
 	private:
 		typedef internal::MapNestedSetItemTraits<TKeyValueTraits> MapNestedSetItemTraits;
@@ -35,8 +39,6 @@ namespace internal
 		using typename MapNestedSetItemTraits::Value;
 
 	public:
-		using typename MapNestedSetItemTraits::Key;
-		using typename MapNestedSetItemTraits::Item;
 		using typename MapNestedSetItemTraits::MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
@@ -49,19 +51,39 @@ namespace internal
 			auto keyGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				auto valueGen = [iter = begin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(iter); };
-				ObjectManager<Value*, MemManager>::ShiftNothrow(memManager,
-					InputIterator(valueGen), shift);
-			}
-			else
-			{
-				auto valueGen = [iter = begin] () mutable
-					{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
-				KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
-			}
+			auto valueGen = [iter = begin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
+			KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
+		}
+	};
+
+	template<typename TKeyValueTraits>
+	requires (TKeyValueTraits::useValuePtr)
+	class TreeMapNestedSetItemTraits<TKeyValueTraits> : public MapNestedSetItemTraits<TKeyValueTraits>
+	{
+	private:
+		typedef internal::MapNestedSetItemTraits<TKeyValueTraits> MapNestedSetItemTraits;
+
+	protected:
+		using typename MapNestedSetItemTraits::KeyValueTraits;
+		using typename MapNestedSetItemTraits::Value;
+
+	public:
+		using typename MapNestedSetItemTraits::MemManager;
+
+		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable;
+
+	public:
+		template<typename Iterator>
+		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
+		{
+			auto keyGen = [iter = begin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
+			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
+			auto valueGen = [iter = begin] () mutable
+				{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(iter); };
+			ObjectManager<Value*, MemManager>::ShiftNothrow(memManager,
+				InputIterator(valueGen), shift);
 		}
 	};
 
@@ -78,22 +100,23 @@ namespace internal
 	};
 }
 
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+	bool tUseValuePtr = false>
+class TreeMapKeyValueTraits;
+
 template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
-class TreeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
+class TreeMapKeyValueTraits<TKey, TValue, TMemManager, false>
+	: public internal::MapKeyValueTraits<TKey, TValue, TMemManager, false>
 {
 private:
-	typedef internal::MapKeyValueTraits<TKey, TValue, TMemManager> MapKeyValueTraits;
+	typedef internal::MapKeyValueTraits<TKey, TValue, TMemManager, false> MapKeyValueTraits;
+
+	using typename MapKeyValueTraits::KeyManager;
+	using typename MapKeyValueTraits::ValueManager;
 
 public:
-	using typename MapKeyValueTraits::Key;
-	using typename MapKeyValueTraits::Value;
 	using typename MapKeyValueTraits::MemManager;
 
-private:
-	typedef internal::ObjectManager<Key, MemManager> KeyManager;
-	typedef internal::ObjectManager<Value, MemManager> ValueManager;
-
-public:
 	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
 	static const bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
 
@@ -110,6 +133,29 @@ public:
 		size_t shift) noexcept
 	{
 		ValueManager::ShiftNothrow(memManager, valueBegin, shift);
+	}
+};
+
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
+class TreeMapKeyValueTraits<TKey, TValue, TMemManager, true>
+	: public internal::MapKeyValueTraits<TKey, TValue, TMemManager, true>
+{
+private:
+	typedef internal::MapKeyValueTraits<TKey, TValue, TMemManager, true> MapKeyValueTraits;
+
+	using typename MapKeyValueTraits::KeyManager;
+
+public:
+	using typename MapKeyValueTraits::MemManager;
+
+	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
+
+public:
+	template<typename KeyIterator>
+	static void ShiftKeyNothrow(MemManager& memManager, KeyIterator keyBegin,
+		size_t shift) noexcept
+	{
+		KeyManager::ShiftNothrow(memManager, keyBegin, shift);
 	}
 };
 
@@ -469,10 +515,29 @@ public:
 		{
 			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mTreeSet.GetMemManager().GetMemPool())
 			{
-				InsertResult res = Insert(std::move(extPair.GetKey()), std::move(extPair.GetValue()));
-				if (res.inserted)
-					extPair.Clear();
-				return res;
+				auto itemCreator = [this, &extPair] (KeyValuePair* newItem)
+				{
+					auto pairRemover = [this, newItem] (Key& key, Value& value)
+					{
+						Value*& newValuePtr = newItem->GetValuePtr();
+						newValuePtr = mTreeSet.GetMemManager().GetMemPool().template Allocate<Value>();
+						try
+						{
+							KeyValueTraits::Relocate(&GetMemManager(), key, value,
+								newItem->GetKeyPtr(), newItem->GetValuePtr());
+						}
+						catch (...)
+						{
+							mTreeSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
+							throw;
+						}
+					};
+					extPair.Remove(pairRemover);
+				};
+				typename TreeSet::InsertResult res =
+					mTreeSet.template InsertCrt<decltype(itemCreator), false>(
+					std::as_const(extPair.GetKey()), std::move(itemCreator));
+				return { IteratorProxy(res.position), res.inserted };
 			}
 		}
 		typename TreeSet::InsertResult res =
@@ -610,9 +675,13 @@ public:
 		{
 			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mTreeSet.GetMemManager().GetMemPool())
 			{
-				Iterator resIter = Add(iter, std::move(extPair.GetKey()), std::move(extPair.GetValue()));
-				extPair.Clear();
-				return resIter;
+				auto pairCreator = [this, &extPair] (Key* newKey, Value* newValue)
+				{
+					auto pairRemover = [this, newKey, newValue] (Key& key, Value& value)
+						{ KeyValueTraits::Relocate(&GetMemManager(), key, value, newKey, newValue); };
+					extPair.Remove(pairRemover);
+				};
+				return AddCrt(iter, pairCreator);
 			}
 		}
 		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetSetIterator(iter),

@@ -131,8 +131,9 @@ namespace internal
 	};
 }
 
-template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
-class MergeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+	bool tUseValuePtr = false>
+class MergeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
 {
 };
 

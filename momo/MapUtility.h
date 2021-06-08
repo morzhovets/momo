@@ -371,8 +371,7 @@ namespace internal
 #endif
 	};
 
-	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
-		bool tUseValuePtr = false>
+	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager, bool tUseValuePtr>
 	class MapKeyValueTraits;
 
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
@@ -382,6 +381,10 @@ namespace internal
 	private:
 		typedef internal::MapKeyValueTraitsBase<TKey, TValue, TMemManager> MapKeyValueTraitsBase;
 
+	protected:
+		using typename MapKeyValueTraitsBase::KeyManager;
+		using typename MapKeyValueTraitsBase::ValueManager;
+
 	public:
 		using typename MapKeyValueTraitsBase::Key;
 		using typename MapKeyValueTraitsBase::Value;
@@ -389,11 +392,6 @@ namespace internal
 
 		static const bool useValuePtr = false;
 
-	private:
-		using typename MapKeyValueTraitsBase::KeyManager;
-		using typename MapKeyValueTraitsBase::ValueManager;
-
-	public:
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 		using MapKeyValueTraitsBase::isValueNothrowRelocatable;
 
@@ -552,6 +550,10 @@ namespace internal
 	private:
 		typedef internal::MapKeyValueTraitsBase<TKey, TValue, TMemManager> MapKeyValueTraitsBase;
 
+	protected:
+		using typename MapKeyValueTraitsBase::KeyManager;
+		using typename MapKeyValueTraitsBase::ValueManager;
+
 	public:
 		using typename MapKeyValueTraitsBase::Key;
 		using typename MapKeyValueTraitsBase::Value;
@@ -559,11 +561,6 @@ namespace internal
 
 		static const bool useValuePtr = true;
 
-	private:
-		using typename MapKeyValueTraitsBase::KeyManager;
-		using typename MapKeyValueTraitsBase::ValueManager;
-
-	public:
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 
 		static_assert(sizeof(Value) >= sizeof(void*));

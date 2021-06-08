@@ -193,8 +193,9 @@ namespace internal
 	};
 }
 
-template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
-class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
+template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+	bool tUseValuePtr = false>
+class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
 {
 };
 
@@ -541,10 +542,29 @@ public:
 		{
 			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mHashSet.GetMemManager().GetMemPool())
 			{
-				InsertResult res = Insert(std::move(extPair.GetKey()), std::move(extPair.GetValue()));
-				if (res.inserted)
-					extPair.Clear();
-				return res;
+				auto itemCreator = [this, &extPair] (KeyValuePair* newItem)
+				{
+					auto pairRemover = [this, newItem] (Key& key, Value& value)
+					{
+						Value*& newValuePtr = newItem->GetValuePtr();
+						newValuePtr = mHashSet.GetMemManager().GetMemPool().template Allocate<Value>();
+						try
+						{
+							KeyValueTraits::Relocate(&GetMemManager(), key, value,
+								newItem->GetKeyPtr(), newItem->GetValuePtr());
+						}
+						catch (...)
+						{
+							mHashSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
+							throw;
+						}
+					};
+					extPair.Remove(pairRemover);
+				};
+				typename HashSet::InsertResult res =
+					mHashSet.template InsertCrt<decltype(itemCreator), false>(
+					std::as_const(extPair.GetKey()), std::move(itemCreator));
+				return { PositionProxy(res.position), res.inserted };
 			}
 		}
 		typename HashSet::InsertResult res =
@@ -657,9 +677,13 @@ public:
 		{
 			if (ExtractedPairProxy::GetValueMemPool(extPair) != &mHashSet.GetMemManager().GetMemPool())
 			{
-				Position resPos = Add(pos, std::move(extPair.GetKey()), std::move(extPair.GetValue()));
-				extPair.Clear();
-				return resPos;
+				auto pairCreator = [this, &extPair] (Key* newKey, Value* newValue)
+				{
+					auto pairRemover = [this, newKey, newValue] (Key& key, Value& value)
+						{ KeyValueTraits::Relocate(&GetMemManager(), key, value, newKey, newValue); };
+					extPair.Remove(pairRemover);
+				};
+				return AddCrt(pos, pairCreator);
 			}
 		}
 		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetHashSetPosition(pos),
