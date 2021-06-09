@@ -96,7 +96,7 @@ public:
 		TestStrHashMultiMap<HashTraits, momo::HashMultiMapSettings>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMultiMap (1): " << std::flush;
+		std::cout << bucketName << ": HashMultiMap (valueArrayMaxFastCount = 1): " << std::flush;
 		TestStrHashMultiMap<HashTraits, HashMultiMapSettings<1>>();
 		std::cout << "ok" << std::endl;
 	}

@@ -63,7 +63,7 @@ public:
 		TestStrArray<momo::Array<std::string>>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::ArrayIntCap<..., std::string>: " << std::flush;
+		std::cout << "momo::ArrayIntCap<2, std::string>: " << std::flush;
 		TestStrArray<momo::ArrayIntCap<2, std::string>>();
 		std::cout << "ok" << std::endl;
 
