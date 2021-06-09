@@ -597,26 +597,7 @@ public:
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [this, &pairCreator] (KeyValuePair* newItem)
-		{
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				Value*& newValuePtr = newItem->GetValuePtr();
-				newValuePtr = mHashSet.GetMemManager().GetMemPool().template Allocate<Value>();
-				try
-				{
-					std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newValuePtr);
-				}
-				catch (...)
-				{
-					mHashSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
-					throw;
-				}
-			}
-			else
-			{
-				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
-			}
-		};
+			{ newItem->Create(mHashSet.GetMemManager(), std::forward<PairCreator>(pairCreator)); };
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}

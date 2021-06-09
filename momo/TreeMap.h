@@ -595,26 +595,7 @@ public:
 	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [this, &pairCreator] (KeyValuePair* newItem)
-		{
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				Value*& newValuePtr = newItem->GetValuePtr();
-				newValuePtr = mTreeSet.GetMemManager().GetMemPool().template Allocate<Value>();
-				try
-				{
-					std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newValuePtr);
-				}
-				catch (...)
-				{
-					mTreeSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
-					throw;
-				}
-			}
-			else
-			{
-				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
-			}
-		};
+			{ newItem->Create(mTreeSet.GetMemManager(), std::forward<PairCreator>(pairCreator)); };
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}

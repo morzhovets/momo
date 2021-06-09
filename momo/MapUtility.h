@@ -612,6 +612,12 @@ namespace internal
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
+		template<typename MemManager, typename PairCreator>
+		void Create(MemManager& /*memManager*/, PairCreator&& pairCreator)
+		{
+			std::forward<PairCreator>(pairCreator)(GetKeyPtr(), GetValuePtr());
+		}
+
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
 		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
 		{
@@ -658,20 +664,30 @@ namespace internal
 
 		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
 
-		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
-		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		template<typename MemManager, typename PairCreator>
+		void Create(MemManager& memManager, PairCreator&& pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
 			try
 			{
-				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
-					std::forward<ValueCreator>(valueCreator), GetKeyPtr(), mValuePtr);
+				std::forward<PairCreator>(pairCreator)(GetKeyPtr(), mValuePtr);
 			}
 			catch (...)
 			{
 				memManager.GetMemPool().Deallocate(mValuePtr);
 				throw;
 			}
+		}
+
+		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		{
+			auto pairCreator = [&memManager, &key, &valueCreator] (Key* newKey, Value* newValue)
+			{
+				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
+					std::forward<ValueCreator>(valueCreator), newKey, newValue);
+			};
+			Create(memManager, pairCreator);
 		}
 
 		const Key* GetKeyPtr() const noexcept
