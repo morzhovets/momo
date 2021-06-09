@@ -519,18 +519,8 @@ public:
 				{
 					auto pairRemover = [this, newItem] (Key& key, Value& value)
 					{
-						Value*& newValuePtr = newItem->GetValuePtr();
-						newValuePtr = mTreeSet.GetMemManager().GetMemPool().template Allocate<Value>();
-						try
-						{
-							KeyValueTraits::Relocate(&GetMemManager(), key, value,
-								newItem->GetKeyPtr(), newItem->GetValuePtr());
-						}
-						catch (...)
-						{
-							mTreeSet.GetMemManager().GetMemPool().Deallocate(newValuePtr);
-							throw;
-						}
+						newItem->template Relocate<KeyValueTraits>(mTreeSet.GetMemManager(),
+							key, value);
 					};
 					extPair.Remove(pairRemover);
 				};

@@ -690,6 +690,14 @@ namespace internal
 			Create(memManager, pairCreator);
 		}
 
+		template<typename KeyValueTraits, typename MemManager>
+		void Relocate(MemManager& memManager, Key& srcKey, Value& dstValue)
+		{
+			auto pairCreator = [&memManager, &srcKey, &dstValue] (Key* newKey, Value* newValue)
+				{ KeyValueTraits::Relocate(&memManager, srcKey, dstValue, newKey, newValue); };
+			Create(memManager, pairCreator);
+		}
+
 		const Key* GetKeyPtr() const noexcept
 		{
 			return &mKeyBuffer;
@@ -894,26 +902,16 @@ namespace internal
 		static void Relocate(MemManager* srcMemManager, MemManager* dstMemManager,
 			Item& srcItem, Item* dstItem)
 		{
+			Key* srcKeyPtr = srcItem.GetKeyPtr();
 			Value* srcValuePtr = srcItem.GetValuePtr();
-			Value*& dstValuePtr = dstItem->GetValuePtr();
 			if (srcMemManager == dstMemManager || srcMemManager == nullptr || dstMemManager == nullptr)
 			{
-				KeyValueTraits::RelocateKey(dstMemManager, *srcItem.GetKeyPtr(), dstItem->GetKeyPtr());
-				dstValuePtr = srcValuePtr;
+				KeyValueTraits::RelocateKey(dstMemManager, *srcKeyPtr, dstItem->GetKeyPtr());
+				dstItem->GetValuePtr() = srcValuePtr;
 			}
 			else
 			{
-				dstValuePtr = dstMemManager->GetMemPool().template Allocate<Value>();
-				try
-				{
-					KeyValueTraits::Relocate(dstMemManager, *srcItem.GetKeyPtr(), *srcValuePtr,
-						dstItem->GetKeyPtr(), dstValuePtr);
-				}
-				catch (...)
-				{
-					dstMemManager->GetMemPool().Deallocate(dstValuePtr);
-					throw;
-				}
+				dstItem->template Relocate<KeyValueTraits>(*dstMemManager, *srcKeyPtr, *srcValuePtr);
 				srcMemManager->GetMemPool().Deallocate(srcValuePtr);
 			}
 		}
