@@ -142,6 +142,14 @@
     </Expand>
 </Type>
 
+<Type Name="momo::internal::MapKeyValuePtrPair&lt;*&gt;">
+    <DisplayString>{{ Key={*(Key*)&amp;mKeyBuffer} Value={*mValuePtr} }}</DisplayString>
+    <Expand>
+        <Item Name="[Key]">*(Key*)&amp;mKeyBuffer</Item>
+        <Item Name="[Value]">*mValuePtr</Item>
+    </Expand>
+</Type>
+
 <Type Name="momo::internal::HashSetBuckets&lt;*&gt;">
     <DisplayString>{{ BucketCount={(size_t)1 &lt;&lt; mLogCount} }}</DisplayString>
     <Expand>
