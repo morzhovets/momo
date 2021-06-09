@@ -797,8 +797,11 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<HashSetItemTraits, RKey, ValueCreator> itemCreator(
-			mHashSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mHashSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { PositionProxy(res.position), res.inserted };
@@ -807,8 +810,11 @@ private:
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<HashSetItemTraits, RKey, ValueCreator> itemCreator(
-			mHashSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mHashSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}

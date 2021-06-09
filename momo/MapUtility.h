@@ -563,8 +563,7 @@ namespace internal
 
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 
-		static_assert(sizeof(Value) >= sizeof(void*));
-		typedef MemPoolParamsStatic<sizeof(Value),
+		typedef MemPoolParamsStatic<std::minmax(sizeof(Value), sizeof(void*)).second,
 			MapKeyValueTraitsBase::valueAlignment> ValueMemPoolParams;
 
 	public:
@@ -613,6 +612,13 @@ namespace internal
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
+		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		{
+			KeyValueTraits::Create(memManager, std::forward<RKey>(key),
+				std::forward<ValueCreator>(valueCreator), GetKeyPtr(), GetValuePtr());
+		}
+
 		const Key* GetKeyPtr() const noexcept
 		{
 			return &mKeyBuffer;
@@ -652,6 +658,22 @@ namespace internal
 
 		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
 
+		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		{
+			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
+			try
+			{
+				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
+					std::forward<ValueCreator>(valueCreator), GetKeyPtr(), mValuePtr);
+			}
+			catch (...)
+			{
+				memManager.GetMemPool().Deallocate(mValuePtr);
+				throw;
+			}
+		}
+
 		const Key* GetKeyPtr() const noexcept
 		{
 			return &mKeyBuffer;
@@ -675,66 +697,6 @@ namespace internal
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
 		Value* mValuePtr;
-	};
-
-	template<typename TItemTraits, typename TRKey, typename TValueCreator>
-	class MapNestedSetItemCreator : private TItemTraits
-	{
-	public:
-		typedef TItemTraits ItemTraits;
-		typedef TRKey RKey;
-		typedef TValueCreator ValueCreator;
-
-		using typename ItemTraits::Item;
-		using typename ItemTraits::MemManager;
-
-	private:
-		using typename ItemTraits::KeyValueTraits;
-		using typename ItemTraits::Value;
-
-	public:
-		explicit MapNestedSetItemCreator(MemManager& memManager,
-			RKey&& key, ValueCreator&& valueCreator) noexcept
-			: mMemManager(memManager),
-			mKey(std::forward<RKey>(key)),
-			mValueCreator(std::forward<ValueCreator>(valueCreator))
-		{
-		}
-
-		void operator()(Item* newItem) &&
-		{
-			if constexpr (KeyValueTraits::useValuePtr)
-			{
-				Value* valuePtr = mMemManager.GetMemPool().template Allocate<Value>();
-				newItem->GetValuePtr() = valuePtr;
-				try
-				{
-					pvCreate(newItem);
-				}
-				catch (...)
-				{
-					mMemManager.GetMemPool().Deallocate(valuePtr);
-					throw;
-				}
-			}
-			else
-			{
-				pvCreate(newItem);
-			}
-		}
-
-	private:
-		void pvCreate(Item* newItem)
-		{
-			KeyValueTraits::Create(mMemManager, std::forward<RKey>(mKey),
-				std::forward<ValueCreator>(mValueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
-		}
-
-	private:
-		MemManager& mMemManager;
-		RKey&& mKey;
-		ValueCreator&& mValueCreator;
 	};
 
 	template<typename TKeyValueTraits>
@@ -774,9 +736,8 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				ValueCreator valueCreator(mMemManager, *mItem.GetValuePtr());
-				MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&, ValueCreator>(
-					mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator))(newItem);
+				newItem->template Create<KeyValueTraits>(mMemManager, *mItem.GetKeyPtr(),
+					ValueCreator(mMemManager, *mItem.GetValuePtr()));
 			}
 
 		private:
@@ -890,9 +851,8 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				ValueCreator valueCreator(mMemManager, *mItem.GetValuePtr());
-				MapNestedSetItemCreator<MapNestedSetItemTraits, const Key&, ValueCreator>(
-					mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator))(newItem);
+				newItem->template Create<KeyValueTraits>(mMemManager, *mItem.GetKeyPtr(),
+					ValueCreator(mMemManager, *mItem.GetValuePtr()));
 			}
 
 		private:

@@ -785,8 +785,11 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<TreeSetItemTraits, RKey, ValueCreator> itemCreator(
-			mTreeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mTreeSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		typename TreeSet::InsertResult res = mTreeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { IteratorProxy(res.position), res.inserted };
@@ -795,8 +798,11 @@ private:
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<TreeSetItemTraits, RKey, ValueCreator> itemCreator(
-			mTreeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mTreeSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}

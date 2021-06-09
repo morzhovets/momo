@@ -517,8 +517,11 @@ private:
 	template<typename RKey, typename ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<MergeSetItemTraits, RKey, ValueCreator> itemCreator(
-			mMergeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		typename MergeSet::InsertResult res = mMergeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { PositionProxy(res.position), res.inserted };
@@ -527,8 +530,11 @@ private:
 	template<bool extraCheck, typename RKey, typename ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
 	{
-		internal::MapNestedSetItemCreator<MergeSetItemTraits, RKey, ValueCreator> itemCreator(
-			mMergeSet.GetMemManager(), std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		{
+			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+		};
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
 	}
