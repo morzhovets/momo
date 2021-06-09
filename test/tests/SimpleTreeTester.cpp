@@ -80,8 +80,12 @@ public:
 		TestStrTreeSet();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::TreeMap: " << std::flush;
-		TestStrTreeMap();
+		std::cout << "momo::TreeMap (-useValuePtr): " << std::flush;
+		TestStrTreeMap<false>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::TreeMap (+useValuePtr): " << std::flush;
+		TestStrTreeMap<true>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -114,11 +118,14 @@ public:
 		assert(std::equal(set.GetBegin(), set.GetEnd(), set2.GetBegin()));
 	}
 
+	template<bool useValuePtr>
 	static void TestStrTreeMap()
 	{
-		typedef momo::TreeMap<std::string, std::string> TreeMap;
-		typedef TreeMap::ConstIterator::Reference Reference;
-		auto pred = [] (Reference ref1, Reference ref2)
+		typedef momo::TreeMap<std::string, std::string, momo::TreeTraits<std::string>,
+			momo::MemManagerDefault, momo::TreeMapKeyValueTraits<std::string, std::string,
+			momo::MemManagerDefault, useValuePtr>> TreeMap;
+
+		auto pred = [] (auto ref1, auto ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };
 
 		std::string s1 = "s1";
@@ -249,13 +256,12 @@ public:
 
 			typedef momo::TreeTraits<Key, false, TreeNode, true> TreeTraits;
 			typedef momo::TreeMap<Key, Value, TreeTraits> TreeMap;
-			typedef typename TreeMap::ConstIterator::Reference ConstReference;
 
 			std::map<Key, Value, std::less<Key>,
 				momo::stdish::unsynchronized_pool_allocator<std::pair<const Key, Value>>> smap;
 			TreeMap map;
 
-			auto isEqual = [] (ConstReference ref, const std::pair<const Key, Value>& sref)
+			auto isEqual = [] (auto ref, const std::pair<const Key, Value>& sref)
 				{ return ref.key == sref.first && ref.value == sref.second; };
 
 			for (int t = 0; t < 3; ++t)
