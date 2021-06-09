@@ -84,8 +84,12 @@ public:
 		TestStrHashSet<HashTraits>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMap: " << std::flush;
-		TestStrHashMap<HashTraits>();
+		std::cout << bucketName << ": HashMap (-useValuePtr): " << std::flush;
+		TestStrHashMap<HashTraits, false>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << bucketName << ": HashMap (+useValuePtr): " << std::flush;
+		TestStrHashMap<HashTraits, true>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << bucketName << ": HashMultiMap: " << std::flush;
@@ -136,10 +140,12 @@ public:
 		assert(set.GetCapacity() == 0);
 	}
 
-	template<typename HashTraits>
+	template<typename HashTraits, bool useValuePtr>
 	static void TestStrHashMap()
 	{
-		typedef momo::HashMap<std::string, std::string, HashTraits> HashMap;
+		typedef momo::HashMap<std::string, std::string, HashTraits, momo::MemManagerDefault,
+			momo::HashMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault,
+			useValuePtr>> HashMap;
 
 		std::string s1 = "s1";
 		std::string s2 = "s2";
