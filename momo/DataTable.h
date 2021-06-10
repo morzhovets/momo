@@ -334,12 +334,14 @@ public:
 	{
 	}
 
+#ifdef MOMO_ENABLE_DEPRECATED_DATA_TABLE_CONSTRUCTOR
 	template<typename Item, typename... Items>
-	explicit DataTable(const QualifiedColumn<Item>& column,
+	/*MOMO_DEPRECATED*/ explicit DataTable(const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns)
 		: DataTable(ColumnList({ column, columns... }))
 	{
 	}
+#endif
 
 	DataTable(DataTable&& table) noexcept
 		: mCrew(std::move(table.mCrew)),

@@ -110,7 +110,7 @@ public:
 		{
 			std::cout << "momo::DataColumnList (string, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>> DataColumnList;
-			momo::DataTable<DataColumnList> table(intString, strString, dblString.Mutable());
+			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
