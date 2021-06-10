@@ -77,15 +77,6 @@ namespace internal
 		{
 		}
 
-#ifdef _MSC_VER	//?
-		DataOperator(DataOperator&& oper) noexcept
-			: mColumn(oper.mColumn),
-			mItemArg(std::forward<ItemArg>(oper.mItemArg))
-		{
-			//MOMO_ASSERT(false);
-		}
-#endif
-
 		DataOperator(const DataOperator&) = delete;
 
 		~DataOperator() = default;

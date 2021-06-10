@@ -1343,14 +1343,6 @@ private:
 			rowFilter, static_cast<Result*>(nullptr));
 	}
 
-#ifdef _MSC_VER	//?
-	template<typename Result, typename Index, typename RowFilter>
-	Result pvSelectRec(Index, const size_t*, const RowFilter&, OffsetItemTuple<>&&) const
-	{
-		throw std::exception();
-	}
-#endif
-
 	template<typename Raws, typename RowFilter>
 	Selection pvMakeSelection(const Raws& raws, const RowFilter& rowFilter, Selection*) const
 	{
