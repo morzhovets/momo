@@ -74,11 +74,14 @@ public:
 	typedef TObject Object;
 	typedef TMemManager MemManager;
 
+private:
+	typedef ObjectDestroyer<Object, MemManager> Destroyer;
+
+public:
 	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
 	static const bool isRelocatable = isTriviallyRelocatable
-		|| (std::is_move_constructible_v<Object>
-			&& ObjectDestroyer<Object, MemManager>::isNothrowDestructible);
+		|| (std::is_move_constructible_v<Object> && Destroyer::isNothrowDestructible);
 
 	static const bool isNothrowRelocatable = isRelocatable
 		&& (isTriviallyRelocatable || std::is_nothrow_move_constructible_v<Object>
@@ -89,14 +92,15 @@ public:
 		Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 	{
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-		if constexpr (isTriviallyRelocatable)
+		if constexpr (!isTriviallyRelocatable ||
+			(std::is_nothrow_move_constructible_v<Object> && Destroyer::isNothrowDestructible))
 		{
-			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+			std::construct_at(dstObject, std::move(srcObject));
+			Destroyer::Destroy(memManager, srcObject);
 		}
 		else
 		{
-			std::construct_at(dstObject, std::move(srcObject));
-			ObjectDestroyer<Object, MemManager>::Destroy(memManager, srcObject);
+			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
 		}
 	}
 };
