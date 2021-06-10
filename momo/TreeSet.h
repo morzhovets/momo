@@ -726,7 +726,6 @@ public:
 
 	InsertResult Insert(ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
@@ -802,7 +801,6 @@ public:
 
 	ConstIterator Add(ConstIterator iter, ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
@@ -824,7 +822,6 @@ public:
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
-		MOMO_CHECK(extItem.IsEmpty());
 		ConstIterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
 			{ resIter = pvExtract(iter, newItem); };

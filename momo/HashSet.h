@@ -799,7 +799,6 @@ public:
 
 	InsertResult Insert(ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
@@ -850,7 +849,6 @@ public:
 
 	ConstPosition Add(ConstPosition pos, ExtractedItem&& extItem)
 	{
-		MOMO_CHECK(!extItem.IsEmpty());
 		MemManager& memManager = GetMemManager();
 		auto itemCreator = [&memManager, &extItem] (Item* newItem)
 		{
@@ -870,7 +868,6 @@ public:
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
-		MOMO_CHECK(extItem.IsEmpty());
 		ConstIterator resIter;
 		auto itemCreator = [this, iter, &resIter] (Item* newItem)
 			{ resIter = pvExtract(iter, newItem); };
@@ -1301,9 +1298,9 @@ private:
 				{
 					(void)backItem;
 					MOMO_ASSERT(std::addressof(backItem) == std::addressof(item));
-					auto relocateCreator = [&memManager, &item] (Item* newItem)
+					auto itemCreator = [&memManager, &item] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, item, newItem); };
-					pvAddNogrow<false>(*mBuckets, hashCode, relocateCreator);
+					pvAddNogrow<false>(*mBuckets, hashCode, itemCreator);
 				};
 				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
 			}
