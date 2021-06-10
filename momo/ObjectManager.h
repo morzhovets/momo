@@ -170,6 +170,47 @@ namespace internal
 	{
 	};
 
+	template<conceptMemManager TMemManager>
+	class ObjectCreatorAllocator : private std::allocator<std::byte>
+	{
+	public:
+		typedef TMemManager MemManager;
+		typedef std::allocator<std::byte> ByteAllocator;
+
+	public:
+		explicit ObjectCreatorAllocator(MemManager& /*memManager*/) noexcept
+		{
+		}
+
+		ByteAllocator& GetByteAllocator() noexcept
+		{
+			return *this;
+		}
+	};
+
+	template<typename Allocator>
+	class ObjectCreatorAllocator<MemManagerStd<Allocator>>
+		: private MemManagerPtr<MemManagerStd<Allocator>>
+	{
+	public:
+		typedef MemManagerStd<Allocator> MemManager;
+		typedef typename MemManager::ByteAllocator ByteAllocator;
+
+	private:
+		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+	public:
+		explicit ObjectCreatorAllocator(MemManager& memManager) noexcept
+			: MemManagerPtr(memManager)
+		{
+		}
+
+		ByteAllocator& GetByteAllocator() noexcept
+		{
+			return MemManagerPtr::GetBaseMemManager().GetByteAllocator();
+		}
+	};
+
 	template<conceptObject TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{
@@ -199,17 +240,20 @@ namespace internal
 
 		template<typename... Args>
 		requires IsConstructible<Object, MemManager, Args...>::value
-		class Creator
+		class Creator : private ObjectCreatorAllocator<MemManager>
 		{
+		private:
+			typedef ObjectCreatorAllocator<MemManager> CreatorAllocator;
+
 		public:
 			explicit Creator(MemManager& memManager, Args&&... args) noexcept
-				: mMemManager(memManager),
+				: CreatorAllocator(memManager),
 				mArgs(std::forward<Args>(args)...)
 			{
 			}
 
 			explicit Creator(MemManager& memManager, std::tuple<Args...>&& args) noexcept
-				: mMemManager(memManager),
+				: CreatorAllocator(memManager),
 				mArgs(std::move(args))
 			{
 			}
@@ -222,28 +266,15 @@ namespace internal
 
 			void operator()(Object* newObject) &&
 			{
-				pvCreate(mMemManager, newObject, std::index_sequence_for<Args...>());
+				auto tupleFunc = [this, newObject] (Args&&... args)
+				{
+					std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
+						CreatorAllocator::GetByteAllocator(), newObject, std::forward<Args>(args)...);
+				};
+				std::apply(tupleFunc, std::move(mArgs));
 			}
 
 		private:
-			template<typename MemManager, size_t... indexes>
-			void pvCreate(MemManager& /*memManager*/, Object* newObject,
-				std::index_sequence<indexes...>)
-			{
-				std::construct_at(newObject, std::forward<Args>(std::get<indexes>(mArgs))...);
-			}
-
-			template<typename Allocator, size_t... indexes>
-			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
-				std::index_sequence<indexes...>)
-			{
-				std::allocator_traits<Allocator>::template rebind_traits<std::byte>::construct(
-					memManager.GetByteAllocator(), newObject,
-					std::forward<Args>(std::get<indexes>(mArgs))...);
-			}
-
-		private:
-			MemManager& mMemManager;
 			std::tuple<Args&&...> mArgs;
 		};
 
