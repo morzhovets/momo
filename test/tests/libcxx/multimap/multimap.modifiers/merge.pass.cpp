@@ -26,7 +26,14 @@
 //#include "test_macros.h"
 //#include "Counter.h"
 
-using momo::stdish::map;
+//using momo::stdish::map;
+template<typename TKey, typename TMapped,
+	typename TLessFunc = std::less<TKey>,
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
+	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false>,
+		momo::MemManagerStd<TAllocator>,
+		typename multimap<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
