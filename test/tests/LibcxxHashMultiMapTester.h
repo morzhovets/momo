@@ -22,7 +22,7 @@ namespace
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_multimap_" LIBCXX_TEST_BUCKET_NAME
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_BUCKET_NAME
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:

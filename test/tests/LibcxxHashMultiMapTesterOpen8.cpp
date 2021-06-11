@@ -26,7 +26,7 @@
 namespace
 {
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_multimap_open"
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_open"
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
