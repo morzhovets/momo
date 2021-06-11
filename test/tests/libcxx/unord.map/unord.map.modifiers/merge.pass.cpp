@@ -26,7 +26,7 @@
 //#include "test_macros.h"
 //#include "Counter.h"
 
-#define unordered_multimap momo::stdish::unordered_map
+#define unordered_multimap unordered_map
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
