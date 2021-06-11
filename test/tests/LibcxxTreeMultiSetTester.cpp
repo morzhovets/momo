@@ -19,7 +19,7 @@
 namespace
 {
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_multiset"
+#define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>

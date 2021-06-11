@@ -26,7 +26,7 @@
 namespace
 {
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_unordered_set_open"
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"
 template<typename TKey,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
