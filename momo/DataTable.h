@@ -361,10 +361,11 @@ public:
 
 	template<typename RowFilter>
 	requires std::predicate<const RowFilter&, ConstRowReference>
-	explicit DataTable(const DataTable& table, const RowFilter& rowFilter)
+	explicit DataTable(const DataTable& table, const RowFilter& rowFilter, bool copyIndexes = true)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
-		mIndexes.Assign(table.mIndexes);
+		if (copyIndexes)
+			mIndexes.Assign(table.mIndexes);
 		pvFill(table, rowFilter);
 	}
 
