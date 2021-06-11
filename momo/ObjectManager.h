@@ -78,7 +78,8 @@ public:
 		Object* dstObject) noexcept(isNothrowRelocatable)
 	{
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-		pvRelocate(memManager, srcObject, dstObject, IsTriviallyRelocatable<Object>());
+		pvRelocate(memManager, srcObject, dstObject, internal::BoolConstant<isTriviallyRelocatable
+			&& !std::is_nothrow_move_constructible<Object>::value>());
 	}
 
 private:
