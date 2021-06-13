@@ -40,7 +40,7 @@ template<typename TKey, typename TMapped,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
 	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false,
-		momo::TreeNode<32, 4, momo::MemPoolParams<1>, false>>,
+		momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 		momo::TreeMapSettings>>;

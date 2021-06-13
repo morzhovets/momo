@@ -24,7 +24,7 @@ template<typename TKey, typename TMapped,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
 	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, true,
-		momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>,
+		momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
 		momo::TreeMapSettings>>;
@@ -40,7 +40,7 @@ template<typename TKey, typename TMapped,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
 	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, true,
-		momo::TreeNode<32, 4, momo::MemPoolParams<1>>>,
+		momo::TreeNode<4, 2, momo::MemPoolParams<1>, true>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 		momo::TreeMapSettings>>;
