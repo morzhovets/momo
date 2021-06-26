@@ -86,7 +86,7 @@
 #endif
 
 // Inlining
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define MOMO_FORCEINLINE __forceinline
 #define MOMO_NOINLINE __declspec(noinline)
 #elif defined(__GNUC__) || defined(__clang__)
