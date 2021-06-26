@@ -66,19 +66,21 @@ namespace internal
 		static const size_t internalOffset = UIntMath<>::Ceil(sizeof(Node*) * (maxCapacity + 1),
 			UIntConst::maxAlignment);
 
-		static const size_t internalNodeSize = sizeof(Node*) + 2 + (isContinuous ? 0 : maxCapacity)
-			+ sizeof(Item) * maxCapacity + internalOffset;
-		typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
-			MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
-
-		typedef MemPool<InternalMemPoolParams, MemManagerPtr, NestedMemPoolSettings> InternalMemPool;
-		typedef MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> LeafMemPool;
-
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
 	public:
 		class Params
 		{
+		private:
+			static const size_t internalNodeSize =
+				sizeof(Node) + sizeof(Item) * (maxCapacity - 1) + internalOffset;
+			typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
+				MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
+
+		public:
+			typedef MemPool<InternalMemPoolParams, MemManagerPtr, NestedMemPoolSettings> InternalMemPool;
+			typedef MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> LeafMemPool;
+
 		private:
 			typedef NestedArrayIntCap<leafMemPoolCount, LeafMemPool, MemManagerDummy> LeafMemPools;
 
