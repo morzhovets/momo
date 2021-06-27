@@ -1,6 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"classmomo_1_1_tree_set.html#ac0477cb40b950ed3fc0f459f6ecee8d8":[1,0,0,60,19],
 "classmomo_1_1_tree_set.html#ad0cad1e97a1fb3390ee813b3edfcc9ac":[1,0,0,60,52],
 "classmomo_1_1_tree_set.html#ad120d22d8553b20e6c9ba3d161501e09":[1,0,0,60,56],
 "classmomo_1_1_tree_set.html#ad1ffe90d55de2b0591f6e30a01200d98":[1,0,0,60,13],
@@ -249,5 +248,6 @@ var NAVTREEINDEX4 =
 "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a64a1cba42b178ffeca4d3edaaea578f4":[1,0,0,0,21,16],
 "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a66ad80fc735ee69ddfccd57e382e74e9":[1,0,0,0,21,11],
 "classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a6d4dadf03f048b773e2eb8eff68e1d89":[1,0,0,0,21,12],
-"classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a7242467f12ae91f580d338d79a62a478":[1,0,0,0,21,4]
+"classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a7242467f12ae91f580d338d79a62a478":[1,0,0,0,21,4],
+"classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a8a06f64e149568f51a863a3a844ff5c1":[1,0,0,0,21,2]
 };

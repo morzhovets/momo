@@ -47,7 +47,7 @@ var classmomo_1_1_tree_set =
     [ "Insert", "classmomo_1_1_tree_set.html#adf82cd6f8b16570e3abcd1af9a88c8ed", null ],
     [ "Insert", "classmomo_1_1_tree_set.html#a59a625b852a1472c2ecda14766eedad3", null ],
     [ "Insert", "classmomo_1_1_tree_set.html#afbadc9cbe3e791388775ff51d6e07a93", null ],
-    [ "InsertCrt", "classmomo_1_1_tree_set.html#aa0ff11a4910498d78c8e116d58ca89dd", null ],
+    [ "InsertCrt", "classmomo_1_1_tree_set.html#a9756b5dfd1cc69aa92417cff0e7b660f", null ],
     [ "InsertVar", "classmomo_1_1_tree_set.html#a39118396f0e6965c31e1713601a450ff", null ],
     [ "IsEmpty", "classmomo_1_1_tree_set.html#a497f39d8085636f89929b9bc05a47330", null ],
     [ "MergeFrom", "classmomo_1_1_tree_set.html#abd437f6d23b2f973ec925a5f67edacaf", null ],

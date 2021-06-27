@@ -1,5 +1,7 @@
 var classmomo_1_1internal_1_1_node_1_1_params =
 [
+    [ "InternalMemPool", "classmomo_1_1internal_1_1_node_1_1_params.html#a284ce2786164ffe4e3de8f7282aac245", null ],
+    [ "LeafMemPool", "classmomo_1_1internal_1_1_node_1_1_params.html#a2ac0aca3eb02cb75ecae84fd6511fe47", null ],
     [ "Params", "classmomo_1_1internal_1_1_node_1_1_params.html#abaaf7635d73b76c1738a200186ec886f", null ],
     [ "Params", "classmomo_1_1internal_1_1_node_1_1_params.html#a63936b5ff9890fc84e07b829dc4aceed", null ],
     [ "~Params", "classmomo_1_1internal_1_1_node_1_1_params.html#a5db3b63759a71f751c66e618edb2003c", null ],
