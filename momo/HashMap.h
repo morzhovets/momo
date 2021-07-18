@@ -168,6 +168,26 @@ namespace internal
 
 		MOMO_MORE_HASH_POSITION_OPERATORS(HashMapPosition)
 
+		friend bool operator==(HashMapPosition pos1, Iterator iter2) noexcept
+		{
+			return pos1 == static_cast<HashMapPosition>(iter2);
+		}
+
+		friend bool operator!=(HashMapPosition pos1, Iterator iter2) noexcept
+		{
+			return !(pos1 == iter2);
+		}
+
+		friend bool operator==(Iterator iter1, HashMapPosition pos2) noexcept
+		{
+			return pos2 == iter1;
+		}
+
+		friend bool operator!=(Iterator iter1, HashMapPosition pos2) noexcept
+		{
+			return !(pos2 == iter1);
+		}
+
 	protected:
 		explicit HashMapPosition(HashSetPosition hashSetPos) noexcept
 			: mHashSetPosition(hashSetPos)
