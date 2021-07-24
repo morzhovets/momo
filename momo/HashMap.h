@@ -94,6 +94,16 @@ namespace internal
 			return pos1.mHashSetPosition == pos2.mHashSetPosition;
 		}
 
+		friend bool operator==(HashMapPosition pos1, Iterator iter2) noexcept
+		{
+			return pos1 == static_cast<HashMapPosition>(iter2);
+		}
+
+		friend bool operator==(Iterator iter1, HashMapPosition pos2) noexcept
+		{
+			return pos2 == iter1;
+		}
+
 		MOMO_MORE_POSITION_OPERATORS(HashMapPosition)
 
 	protected:
