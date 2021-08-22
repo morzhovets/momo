@@ -14,28 +14,23 @@
 #pragma once
 
 #include "HashBucketOpen2N2.h"
-
-#ifdef MOMO_USE_SSE2
-
 #include "HashBucketOpenN1.h"
 
+#ifdef MOMO_USE_SSE2
 #include <emmintrin.h>
 #include <xmmintrin.h>
-
 #endif
 
 namespace momo
 {
 
-#ifdef MOMO_USE_SSE2
-
 namespace internal
 {
 	template<typename TItemTraits>
-	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, int64_t>
+	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, uint64_t>
 	{
 	private:
-		typedef internal::BucketOpenN1<TItemTraits, 7, false, int64_t> BucketOpenN1;
+		typedef internal::BucketOpenN1<TItemTraits, 7, false, uint64_t> BucketOpenN1;
 
 		using typename BucketOpenN1::Byte;
 
@@ -61,11 +56,14 @@ namespace internal
 		requires std::predicate<const Predicate&, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
+			static_assert(std::endian::native == std::endian::little);
+#ifdef MOMO_USE_SSE2
 			if constexpr (first)
 				_mm_prefetch(reinterpret_cast<char*>(BucketOpenN1::ptGetItemPtr(3)), _MM_HINT_T0);
 			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, BucketOpenN1::ptGetData());
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
+				static_cast<int64_t>(BucketOpenN1::ptGetData()));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
 			while (mask != 0)
@@ -77,6 +75,21 @@ namespace internal
 				mask &= mask - 1;
 			}
 			return nullptr;
+#else
+			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+			uint64_t shortHashes = shortHash * 0x0101010101010101ull;
+			uint64_t xorHashes = shortHashes ^ BucketOpenN1::ptGetData();
+			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0008080808080808ull;
+			while (mask != 0)
+			{
+				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(*itemPtr)) [[likely]]
+					return itemPtr;
+				mask &= mask - 1;
+			}
+			return nullptr;
+#endif
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -91,8 +104,8 @@ class HashBucketOpen8 : public internal::HashBucketBase
 {
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = std::conditional_t<
-		(useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
+	using Bucket = std::conditional_t<(std::endian::native != std::endian::little
+		|| useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
 		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
 		internal::BucketOpen8<ItemTraits>>;
 
@@ -112,11 +125,5 @@ public:
 		return 1;
 	}
 };
-
-#else
-
-typedef HashBucketOpen2N2<3> HashBucketOpen8;
-
-#endif
 
 } // namespace momo
