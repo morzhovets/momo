@@ -58,6 +58,10 @@ namespace internal
 		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
+#ifdef MOMO_PREFETCH
+			if (first)
+				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
+#endif
 #ifdef MOMO_USE_SSE2
 			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));

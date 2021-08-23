@@ -130,6 +130,7 @@
 #if defined(__GNUC__) || defined(__clang__)
 #define MOMO_CTZ32(value) __builtin_ctz(value)
 #define MOMO_CTZ64(value) __builtin_ctzll(value)
+//#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 #endif
 
 // `nullptr`, converted to the type `uintptr_t`
