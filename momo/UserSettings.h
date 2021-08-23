@@ -122,8 +122,14 @@
 #endif
 #endif
 
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) \
+	&& __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define MOMO_LITTLE_ENDIAN
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
 #define MOMO_CTZ32(value) __builtin_ctz(value)
+#define MOMO_CTZ64(value) __builtin_ctzll(value)
 #endif
 
 // `nullptr`, converted to the type `uintptr_t`

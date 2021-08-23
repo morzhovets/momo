@@ -14,27 +14,24 @@
 #pragma once
 
 #include "HashBucketOpen2N2.h"
-
-#ifdef MOMO_USE_SSE2
-
 #include "HashBucketOpenN1.h"
 
+#ifdef MOMO_USE_SSE2
 #include <emmintrin.h>
-
 #endif
 
 namespace momo
 {
 
-#ifdef MOMO_USE_SSE2
+#if defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
 
 namespace internal
 {
 	template<typename TItemTraits>
-	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, int64_t>
+	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, uint64_t>
 	{
 	private:
-		typedef internal::BucketOpenN1<TItemTraits, 7, false, int64_t> BucketOpenN1;
+		typedef internal::BucketOpenN1<TItemTraits, 7, false, uint64_t> BucketOpenN1;
 
 		using typename BucketOpenN1::Byte;
 
@@ -61,20 +58,38 @@ namespace internal
 		template<bool first, typename Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
 		{
+#ifdef MOMO_USE_SSE2
 			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, BucketOpenN1::ptGetData());
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
+				static_cast<int64_t>(BucketOpenN1::ptGetData()));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
 			while (mask != 0)
 			{
-				size_t index = pvCountTrailingZeros(static_cast<uint32_t>(mask));
+				size_t index = pvCountTrailingZeros15(static_cast<uint32_t>(mask));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
 				if (pred(*itemPtr))
 					return itemPtr;
 				mask &= mask - 1;
 			}
 			return nullptr;
+#else
+			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+			static const uint64_t k01 = 0x0101010101010101ull;
+			static const uint64_t k08 = 0x0008080808080808ull;
+			uint64_t xorHashes = (shortHash * k01) ^ BucketOpenN1::ptGetData();
+			uint64_t mask = (xorHashes - k01) & ~xorHashes & k08;
+			while (mask != 0)
+			{
+				size_t index = static_cast<size_t>(MOMO_CTZ64(mask)) >> 3;
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(*itemPtr))
+					return itemPtr;
+				mask &= mask - 1;
+			}
+			return nullptr;
+#endif
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -84,7 +99,7 @@ namespace internal
 		}
 
 	private:
-		static size_t pvCountTrailingZeros(uint32_t mask) noexcept
+		static size_t pvCountTrailingZeros15(uint32_t mask) noexcept
 		{
 			MOMO_ASSERT(0 < mask && mask < 128);
 #ifdef MOMO_CTZ32
