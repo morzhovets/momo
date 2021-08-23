@@ -77,9 +77,10 @@ namespace internal
 			return nullptr;
 #else
 			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
-			uint64_t shortHashes = shortHash * 0x0101010101010101ull;
-			uint64_t xorHashes = shortHashes ^ BucketOpenN1::ptGetData();
-			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0008080808080808ull;
+			static const uint64_t k01 = 0x0101010101010101ull;
+			static const uint64_t k08 = 0x0008080808080808ull;
+			uint64_t xorHashes = (shortHash * k01) ^ BucketOpenN1::ptGetData();
+			uint64_t mask = (xorHashes - k01) & ~xorHashes & k08;
 			while (mask != 0)
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
