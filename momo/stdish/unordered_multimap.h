@@ -592,6 +592,19 @@ public:
 		return mHashMultiMap.RemoveKey(key);
 	}
 
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value &&
+		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+	size_type erase(KeyArg&& key)
+	{
+		typename HashMultiMap::KeyIterator keyIter = mHashMultiMap.Find(std::forward<KeyArg>(key));
+		if (!keyIter)
+			return 0;
+		size_t count = keyIter->GetCount();
+		mHashMultiMap.RemoveKey(keyIter);
+		return count;
+	}
+
 	template<typename Predicate>
 	requires std::predicate<const Predicate&, const_reference>
 	friend size_type erase_if(unordered_multimap& cont, const Predicate& pred)

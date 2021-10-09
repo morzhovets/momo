@@ -504,6 +504,16 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	size_type erase(KeyArg&& key)
+	{
+		std::pair<iterator, iterator> range = equal_range(std::forward<KeyArg>(key));
+		size_t count = momo::internal::UIntMath<>::Dist(range.first, range.second);
+		erase(range.first, range.second);
+		return count;
+	}
+
 	template<typename Predicate>
 	requires std::predicate<const Predicate&, const_reference>
 	friend size_type erase_if(set& cont, const Predicate& pred)
@@ -518,7 +528,15 @@ public:
 
 	node_type extract(const key_type& key)
 	{
-		const_iterator iter = find(key);
+		iterator iter = find(key);
+		return (iter != end()) ? extract(iter) : node_type();
+	}
+
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	node_type extract(KeyArg&& key)
+	{
+		iterator iter = find(std::forward<KeyArg>(key));
 		return (iter != end()) ? extract(iter) : node_type();
 	}
 

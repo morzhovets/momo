@@ -527,6 +527,17 @@ public:
 		return mHashSet.Remove(key) ? 1 : 0;
 	}
 
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	size_type erase(KeyArg&& key)
+	{
+		iterator iter = find(std::forward<KeyArg>(key));
+		if (iter == end())
+			return 0;
+		erase(iter);
+		return 1;
+	}
+
 	template<typename Predicate>
 	requires std::predicate<const Predicate&, const_reference>
 	friend size_type erase_if(unordered_set& cont, const Predicate& pred)
@@ -541,7 +552,15 @@ public:
 
 	node_type extract(const key_type& key)
 	{
-		const_iterator iter = find(key);
+		iterator iter = find(key);
+		return (iter != end()) ? extract(iter) : node_type();
+	}
+
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	node_type extract(KeyArg&& key)
+	{
+		iterator iter = find(std::forward<KeyArg>(key));
 		return (iter != end()) ? extract(iter) : node_type();
 	}
 

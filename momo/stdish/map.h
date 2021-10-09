@@ -635,6 +635,17 @@ namespace internal
 			return mTreeMap.Remove(key);
 		}
 
+		template<typename KeyArg>
+		requires IsValidKeyArg<KeyArg>::value &&
+			!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+		size_type erase(KeyArg&& key)
+		{
+			std::pair<iterator, iterator> range = equal_range(std::forward<KeyArg>(key));
+			size_t count = momo::internal::UIntMath<>::Dist(range.first, range.second);
+			erase(range.first, range.second);
+			return count;
+		}
+
 		node_type extract(const_iterator where)
 		{
 			return node_type(*this, where);
@@ -642,7 +653,16 @@ namespace internal
 
 		node_type extract(const key_type& key)
 		{
-			const_iterator iter = find(key);
+			iterator iter = find(key);
+			return (iter != end()) ? extract(iter) : node_type();
+		}
+
+		template<typename KeyArg>
+		requires IsValidKeyArg<KeyArg>::value &&
+			!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+		node_type extract(KeyArg&& key)
+		{
+			iterator iter = find(std::forward<KeyArg>(key));
 			return (iter != end()) ? extract(iter) : node_type();
 		}
 
