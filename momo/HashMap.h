@@ -759,6 +759,21 @@ public:
 		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetHashSetIterator(iter)));
 	}
 
+	Iterator Remove(Iterator iter)
+	{
+		return Remove(static_cast<ConstIterator>(iter));
+	}
+
+	void Remove(ConstPosition pos)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
+	void Remove(Position pos)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
 		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetHashSetIterator(iter),
