@@ -853,6 +853,11 @@ public:
 		return pvRemove(iter, itemReplacer);
 	}
 
+	void Remove(ConstPosition pos)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
 	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
 	{
 		Iterator resIter;
@@ -877,7 +882,7 @@ public:
 		Position pos = pvFind(key);
 		if (!pos)
 			return false;
-		Remove(static_cast<ConstIterator>(pos));
+		Remove(pos);
 		return true;
 	}
 

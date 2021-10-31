@@ -682,6 +682,11 @@ public:
 		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
 	}
 
+	Iterator Remove(Iterator iter)
+	{
+		return Remove(static_cast<ConstIterator>(iter));
+	}
+
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
 		Iterator resIter = IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
