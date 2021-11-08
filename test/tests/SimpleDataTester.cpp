@@ -120,6 +120,7 @@ public:
 	static void TestData(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
+		typedef typename Table::ColumnList ColumnList;
 		typedef typename Table::Row Row;
 		typedef typename Table::ConstRowReference ConstRowReference;
 		typedef typename Table::ConstSelection ConstSelection;
@@ -405,7 +406,7 @@ public:
 
 		if constexpr (dynamic)
 		{
-			Table tablePrj = ctable.Project(dblCol, intCol);
+			Table tablePrj = ctable.Project({ dblCol, intCol }, dblCol, intCol);
 			assert(tablePrj.GetCount() == count);
 
 			for (const auto& col : tablePrj.GetColumnList())
@@ -418,9 +419,16 @@ public:
 			assert(row[dblCol] == tablePrj[0][dblCol]);
 			assert(row[intCol] == tablePrj[0][intCol]);
 
-			assert(ctable.Project(strFilter, dblCol.Mutable(), intCol).GetCount() == count / 2);
-			assert(ctable.ProjectDistinct(strCol.Mutable()).GetCount() == 2);
-			assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
+			assert(ctable.Project({ dblCol.Mutable(), intCol }, strFilter, dblCol, intCol).GetCount() == count / 2);
+			assert(ctable.ProjectDistinct({ strCol.Mutable() }, strCol).GetCount() == 2);
+			assert(ctable.ProjectDistinct(ColumnList(ctable.GetColumnList()), strFilter, strCol).GetCount() == 1);
+		}
+		else
+		{
+			assert(ctable.Project(ColumnList(), dblCol, intCol).GetCount() == count);
+			assert(ctable.Project(ColumnList(), strFilter, dblCol, intCol).GetCount() == count / 2);
+			assert(ctable.ProjectDistinct(ColumnList(), strCol).GetCount() == 2);
+			assert(ctable.ProjectDistinct(ColumnList(), strFilter, strCol).GetCount() == 1);
 		}
 
 		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),

@@ -1069,9 +1069,6 @@ public:
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
 
-	template<typename Item>
-	using QualifiedColumn = Column<Item>;	//?
-
 	typedef Struct Raw;
 
 private:

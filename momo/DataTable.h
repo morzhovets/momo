@@ -87,9 +87,6 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using QualifiedColumn = typename ColumnList::template QualifiedColumn<Item>;
-
-	template<typename Item>
 	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
 
 	template<typename Item, typename ItemArg>
@@ -814,33 +811,33 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	DataTable Project(const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns) const
+	DataTable Project(ColumnList&& resColumnList, const Column<Item>& column,
+		const Column<Items>&... columns) const
 	{
-		return pvProject<false>(EmptyRowFilter(), column, columns...);
+		return pvProject<false>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
 	requires std::predicate<const RowFilter&, ConstRowReference>
-	DataTable Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns) const
+	DataTable Project(ColumnList&& resColumnList, const RowFilter& rowFilter,
+		const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return pvProject<false>(rowFilter, column, columns...);
+		return pvProject<false>(std::move(resColumnList), rowFilter, column, columns...);
 	}
 
 	template<typename Item, typename... Items>
-	DataTable ProjectDistinct(const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns) const
+	DataTable ProjectDistinct(ColumnList&& resColumnList, const Column<Item>& column,
+		const Column<Items>&... columns) const
 	{
-		return pvProject<true>(EmptyRowFilter(), column, columns...);
+		return pvProject<true>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
 	requires std::predicate<const RowFilter&, ConstRowReference>
-	DataTable ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
-		const QualifiedColumn<Items>&... columns) const
+	DataTable ProjectDistinct(ColumnList&& resColumnList, const RowFilter& rowFilter,
+		const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return pvProject<true>(rowFilter, column, columns...);
+		return pvProject<true>(std::move(resColumnList), rowFilter, column, columns...);
 	}
 
 	RowReference MakeMutableReference(ConstRowReference rowRef)
@@ -1401,16 +1398,6 @@ private:
 		std::apply([&offsetPtr] (auto&... pairs) { ((pairs.first = *offsetPtr++), ...); }, tuple);
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
-	}
-
-	template<bool distinct, typename RowFilter, typename... Items>
-	DataTable pvProject(const RowFilter& rowFilter, const QualifiedColumn<Items>&... columns) const
-	{
-		MemManager memManager = GetMemManager();
-		ColumnList resColumnList(std::move(memManager));
-		resColumnList.Add(columns...);
-		return pvProject<distinct>(std::move(resColumnList), rowFilter,
-			ColumnList::GetBaseColumn(columns)...);
 	}
 
 	template<bool distinct, typename RowFilter, typename... Items>
