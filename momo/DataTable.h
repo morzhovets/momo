@@ -819,8 +819,8 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	requires std::predicate<const RowFilter&, ConstRowReference>
-	DataTable Project(ColumnList&& resColumnList, const RowFilter& rowFilter,
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	DataTable> Project(ColumnList&& resColumnList, const RowFilter& rowFilter,
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return pvProject<false>(std::move(resColumnList), rowFilter, column, columns...);
@@ -834,8 +834,8 @@ public:
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	requires std::predicate<const RowFilter&, ConstRowReference>
-	DataTable ProjectDistinct(ColumnList&& resColumnList, const RowFilter& rowFilter,
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	DataTable> ProjectDistinct(ColumnList&& resColumnList, const RowFilter& rowFilter,
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return pvProject<true>(std::move(resColumnList), rowFilter, column, columns...);
