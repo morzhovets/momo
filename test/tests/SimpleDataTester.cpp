@@ -432,25 +432,36 @@ private:
 	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(const Table& ctable,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
+		typedef typename Table::ColumnList ColumnList;
 		typedef typename Table::ConstRowReference ConstRowReference;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		size_t count = ctable.GetCount();
 
-		Table tablePrj = ctable.Project(dblCol, intCol);
+		Table tablePrj = ctable.Project({ dblCol, intCol }, dblCol, intCol);
 		assert(tablePrj.GetCount() == count);
 		for (const auto& col : tablePrj.GetColumnList())
 			assert(strcmp(col.GetName(), dblCol.GetName()) == 0 || strcmp(col.GetName(), intCol.GetName()) == 0);
 
-		assert(ctable.Project(strFilter, dblCol.Mutable(), intCol).GetCount() == count / 2);
-		assert(ctable.ProjectDistinct(strCol.Mutable()).GetCount() == 2);
-		assert(ctable.ProjectDistinct(strFilter, strCol).GetCount() == 1);
+		assert(ctable.Project({ dblCol.Mutable(), intCol }, strFilter, dblCol, intCol).GetCount() == count / 2);
+		assert(ctable.ProjectDistinct({ strCol.Mutable() }, strCol).GetCount() == 2);
+		assert(ctable.ProjectDistinct(ColumnList(ctable.GetColumnList()), strFilter, strCol).GetCount() == 1);
 	}
 
 	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const Table& /*ctable*/,
-		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
+	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const Table& ctable,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
+		typedef typename Table::ColumnList ColumnList;
+		typedef typename Table::ConstRowReference ConstRowReference;
+
+		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
+		size_t count = ctable.GetCount();
+
+		assert(ctable.Project(ColumnList(), dblCol, intCol).GetCount() == count);
+		assert(ctable.Project(ColumnList(), strFilter, dblCol, intCol).GetCount() == count / 2);
+		assert(ctable.ProjectDistinct(ColumnList(), strCol).GetCount() == 2);
+		assert(ctable.ProjectDistinct(ColumnList(), strFilter, strCol).GetCount() == 1);
 	}
 };
 

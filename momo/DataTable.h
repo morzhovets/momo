@@ -81,8 +81,10 @@ public:
 	template<typename Item>
 	using Column = typename ColumnList::template Column<Item>;
 
+#ifdef MOMO_ENABLE_DEPRECATED_DATA_TABLE_CONSTRUCTOR
 	template<typename Item>
 	using QualifiedColumn = typename ColumnList::template QualifiedColumn<Item>;
+#endif
 
 	template<typename Item>
 	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
@@ -810,14 +812,45 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	DataTable Project(const QualifiedColumn<Item>& column,
+	DataTable Project(ColumnList&& resColumnList, const Column<Item>& column,
+		const Column<Items>&... columns) const
+	{
+		return pvProject<false>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items>
+	requires std::predicate<const RowFilter&, ConstRowReference>
+	DataTable Project(ColumnList&& resColumnList, const RowFilter& rowFilter,
+		const Column<Item>& column, const Column<Items>&... columns) const
+	{
+		return pvProject<false>(std::move(resColumnList), rowFilter, column, columns...);
+	}
+
+	template<typename Item, typename... Items>
+	DataTable ProjectDistinct(ColumnList&& resColumnList, const Column<Item>& column,
+		const Column<Items>&... columns) const
+	{
+		return pvProject<true>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items>
+	requires std::predicate<const RowFilter&, ConstRowReference>
+	DataTable ProjectDistinct(ColumnList&& resColumnList, const RowFilter& rowFilter,
+		const Column<Item>& column, const Column<Items>&... columns) const
+	{
+		return pvProject<true>(std::move(resColumnList), rowFilter, column, columns...);
+	}
+
+#ifdef MOMO_ENABLE_DEPRECATED_DATA_TABLE_CONSTRUCTOR
+	template<typename Item, typename... Items>
+	MOMO_DEPRECATED DataTable Project(const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<false>(EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	MOMO_DEPRECATED internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 	DataTable> Project(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
@@ -825,19 +858,20 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	DataTable ProjectDistinct(const QualifiedColumn<Item>& column,
+	MOMO_DEPRECATED DataTable ProjectDistinct(const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(EmptyRowFilter(), column, columns...);
 	}
 
 	template<typename RowFilter, typename Item, typename... Items>
-	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	MOMO_DEPRECATED internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 	DataTable> ProjectDistinct(const RowFilter& rowFilter, const QualifiedColumn<Item>& column,
 		const QualifiedColumn<Items>&... columns) const
 	{
 		return pvProject<true>(rowFilter, column, columns...);
 	}
+#endif
 
 	RowReference MakeMutableReference(ConstRowReference rowRef)
 	{
@@ -1467,6 +1501,7 @@ private:
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+#ifdef MOMO_ENABLE_DEPRECATED_DATA_TABLE_CONSTRUCTOR
 	template<bool distinct, typename RowFilter, typename... Items>
 	DataTable pvProject(const RowFilter& rowFilter, const QualifiedColumn<Items>&... columns) const
 	{
@@ -1476,6 +1511,7 @@ private:
 		return pvProject<distinct>(std::move(resColumnList), rowFilter,
 			ColumnList::GetBaseColumn(columns)...);
 	}
+#endif
 
 	template<bool distinct, typename RowFilter, typename... Items>
 	DataTable pvProject(ColumnList&& resColumnList, const RowFilter& rowFilter,
