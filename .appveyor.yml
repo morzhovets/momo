@@ -13,12 +13,17 @@ environment:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       CONFIGURATION: Debug
-      ARCH: Win32
-      CMAKE_GENERATOR: Visual Studio 14 2015
+      ARCH: x64
+      CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      CONFIGURATION: Debug
+      ARCH: x64
+      CMAKE_GENERATOR: Visual Studio 15 2017 Win64
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       CONFIGURATION: Debug
-      ARCH: x64
+      ARCH: Win32
       CMAKE_GENERATOR: Visual Studio 16 2019
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -41,12 +46,12 @@ environment:
 #      ARCH: x64
 #      CMAKE_GENERATOR: Visual Studio 15 2017 Win64
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CONFIGURATION: Release
-      ARCH: Win32
-      CMAKE_GENERATOR: Visual Studio 16 2019
-
 #    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 #      CONFIGURATION: Release
-#      ARCH: x64
+#      ARCH: Win32
 #      CMAKE_GENERATOR: Visual Studio 16 2019
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CONFIGURATION: Release
+      ARCH: x64
+      CMAKE_GENERATOR: Visual Studio 16 2019
