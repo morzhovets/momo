@@ -11,17 +11,22 @@ test_script:
 environment:
   matrix:
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CONFIGURATION: Debug
-      ARCH: x64
-      CMAKE_GENERATOR: Visual Studio 16 2019
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#      CONFIGURATION: Debug
+#      ARCH: Win32
+#      CMAKE_GENERATOR: Visual Studio 16 2019
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      CONFIGURATION: Debug
+      ARCH: Win32
+      CMAKE_GENERATOR: Visual Studio 17 2022
+
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#      CONFIGURATION: Release
+#      ARCH: Win32
+#      CMAKE_GENERATOR: Visual Studio 16 2019
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
       CONFIGURATION: Release
       ARCH: Win32
-      CMAKE_GENERATOR: Visual Studio 16 2019
-
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CONFIGURATION: Release
-      ARCH: x64
-      CMAKE_GENERATOR: Visual Studio 16 2019
+      CMAKE_GENERATOR: Visual Studio 17 2022
