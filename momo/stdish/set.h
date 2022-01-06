@@ -505,7 +505,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	requires (IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>)
 	size_type erase(KeyArg&& key)
 	{
 		std::pair<iterator, iterator> range = equal_range(std::forward<KeyArg>(key));
@@ -533,7 +533,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>
+	requires (IsValidKeyArg<KeyArg>::value && !std::is_convertible_v<KeyArg&&, const_iterator>)
 	node_type extract(KeyArg&& key)
 	{
 		iterator iter = find(std::forward<KeyArg>(key));

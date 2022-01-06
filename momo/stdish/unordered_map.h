@@ -648,8 +648,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires IsValidKeyArg<KeyArg>::value &&
-		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+	requires (IsValidKeyArg<KeyArg>::value &&
+		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>)
 	size_type erase(KeyArg&& key)
 	{
 		iterator iter = find(std::forward<KeyArg>(key));
@@ -758,8 +758,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires IsValidKeyArg<KeyArg>::value &&
-		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+	requires (IsValidKeyArg<KeyArg>::value &&
+		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>)
 	node_type extract(KeyArg&& key)
 	{
 		iterator iter = find(std::forward<KeyArg>(key));

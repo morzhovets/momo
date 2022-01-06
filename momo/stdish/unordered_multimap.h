@@ -593,8 +593,8 @@ public:
 	}
 
 	template<typename KeyArg>
-	requires IsValidKeyArg<KeyArg>::value &&
-		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>
+	requires (IsValidKeyArg<KeyArg>::value &&
+		!std::is_convertible_v<KeyArg&&, const_iterator> && !std::is_convertible_v<KeyArg&&, iterator>)
 	size_type erase(KeyArg&& key)
 	{
 		typename HashMultiMap::KeyIterator keyIter = mHashMultiMap.Find(std::forward<KeyArg>(key));
