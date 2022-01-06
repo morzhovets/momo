@@ -10,15 +10,15 @@ jobs:
 
         - gcc_ver: '11'
           build_type: 'Release'
-          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-msse2'
 
         - gcc_ver: '11'
           build_type: 'Release'
-          flags: '-std=c++20 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+          flags: '-DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
 
         - gcc_ver: '11'
           build_type: 'Debug'
-          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-msse2'
 
     runs-on: ubuntu-20.04
 
