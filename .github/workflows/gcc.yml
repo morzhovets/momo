@@ -1,0 +1,81 @@
+name: GCC
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+#        - gcc_ver: '4.9'
+
+        - gcc_ver: '5'
+          build_type: 'Release'
+          flags: '-std=c++11 -msse2'
+          ubuntu_ver: '18.04'
+
+        - gcc_ver: '5'
+          build_type: 'Release'
+          flags: '-std=c++14 -msse2'
+          ubuntu_ver: '18.04'
+
+        - gcc_ver: '6'
+          build_type: 'Release'
+          flags: '-std=c++17 -msse2'
+          ubuntu_ver: '18.04'
+
+        - gcc_ver: '7'
+          build_type: 'Release'
+          flags: '-std=c++17 -msse2'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '8'
+          build_type: 'Release'
+          flags: '-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '9'
+          build_type: 'Release'
+          flags: '-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '10'
+          build_type: 'Release'
+          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '11'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '11'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+          ubuntu_ver: '20.04'
+
+        - gcc_ver: '11'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '20.04'
+
+    runs-on: ubuntu-${{ matrix.ubuntu_ver }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install
+      run: sudo apt install g++-${{ matrix.gcc_ver }}
+    - name: Build
+      env:
+        CXX: g++-${{ matrix.gcc_ver }}
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        make
+    - name: Test
+      run: test/build/momo_test
