@@ -1,0 +1,41 @@
+name: GCC
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+        - gcc_ver: '11'
+          build_type: 'Release'
+          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+        - gcc_ver: '11'
+          build_type: 'Release'
+          flags: '-std=c++20 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+
+        - gcc_ver: '11'
+          build_type: 'Debug'
+          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install
+      run: sudo apt install g++-${{ matrix.gcc_ver }}
+    - name: Build
+      env:
+        CXX: g++-${{ matrix.gcc_ver }}
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        make
+    - name: Test
+      run: test/build/momo_test
