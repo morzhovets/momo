@@ -1,7 +1,7 @@
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?query=branch%3Amaster)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Amaster)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?query=branch%3Amaster)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Amaster)
 [![MSVC](https://github.com/morzhovets/momo/actions/workflows/msvc.yml/badge.svg?query=branch%3Amaster)](https://github.com/morzhovets/momo/actions/workflows/msvc.yml?query=branch%3Amaster)
-[![MSVC32](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=master&svg=true)](https://ci.appveyor.com/project/morzhovets/momo/branch/master)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=master&svg=true)](https://ci.appveyor.com/project/morzhovets/momo/branch/master)
 
 #### momo (Memory Optimization is the Main Objective)
 
