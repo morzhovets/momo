@@ -1,0 +1,41 @@
+name: Apple Clang
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+        # Apple Clang 12.0.0
+        - build_type: 'Release'
+          flags: '-std=c++11 -msse2 -Wno-c++1z-extensions'
+          macos_ver: '10.15'
+
+        - build_type: 'Release'
+          flags: '-std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          macos_ver: '10.15'
+
+        # Apple Clang 13.0.0
+        - build_type: 'Release'
+          flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          macos_ver: '11'
+
+    runs-on: macos-${{ matrix.macos_ver }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build
+      env:
+        CXX: clang++
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        make
+    - name: Test
+      run: test/build/momo_test
