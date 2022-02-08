@@ -666,8 +666,7 @@ public:
 	}
 
 	template<typename ItemArg,
-		typename EqualFunc = std::equal_to<>>
-	requires std::equivalence_relation<const EqualFunc&, const ItemArg&, const Item&>
+		internal::conceptEqualFunc<ItemArg, Item> EqualFunc = std::equal_to<>>
 	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		ConstIterator end = GetEnd();
@@ -675,8 +674,7 @@ public:
 			[&itemArg, &equalFunc] (const Item& item) { return equalFunc(itemArg, item); }) != end;
 	}
 
-	template<typename EqualFunc = std::equal_to<Item>>
-	requires std::equivalence_relation<const EqualFunc&, const Item&, const Item&>
+	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
 	bool IsEqual(const MergeArray& array, const EqualFunc& equalFunc = EqualFunc()) const
 	{
 		return GetCount() == array.GetCount() &&

@@ -132,6 +132,10 @@ namespace internal
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };
 
+	template<typename EqualFunc, typename Object1,
+		typename Object2 = Object1>
+	concept conceptEqualFunc = std::equivalence_relation<const EqualFunc&, const Object1&, const Object2&>;
+
 	template<size_t size,
 		typename Default = void>
 	struct UIntSelector

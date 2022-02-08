@@ -47,9 +47,6 @@ namespace internal
 	concept conceptHashFunc =
 		requires (const HashFunc& hashFunc, const Key& key)
 			{ { hashFunc(key) } -> std::convertible_to<size_t>; };
-
-	template<typename EqualFunc, typename Key>
-	concept conceptEqualFunc = std::equivalence_relation<const EqualFunc&, const Key&, const Key&>;
 }
 
 template<typename Key>
