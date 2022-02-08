@@ -155,49 +155,45 @@ public:
 			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
-	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptHashFunc<Item> HashFunc = HashCoder<Item>,
-		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
 	static FindResult<Iterator> Find(Iterator begin, size_t count,
-		const std::iter_value_t<Iterator>& item,
+		const ItemArg& item, HashFuncResult itemHash,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvFind(begin, count, item, hashFunc(item),
-			HashFuncIter<HashFunc>(hashFunc), equalFunc);
+		return pvFind(begin, count, item, itemHash, HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
 		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
-		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
-		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
-		const EqualFunc& equalFunc = EqualFunc())
+		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, const ItemArg& item,
+		HashFuncResult itemHash, HashIterator hashBegin, const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvFind(begin, count, item, itemHash,
 			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
-	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
 		conceptObject Item = std::iter_value_t<Iterator>,
 		internal::conceptHashFunc<Item> HashFunc = HashCoder<Item>,
-		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
 	static Bounds<Iterator> GetBounds(Iterator begin, size_t count,
-		const std::iter_value_t<Iterator>& item,
+		const ItemArg& item, HashFuncResult itemHash,
 		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvGetBounds(begin, count, item, hashFunc(item),
-			HashFuncIter<HashFunc>(hashFunc), equalFunc);
+		return pvGetBounds(begin, count, item, itemHash, HashFuncIter<HashFunc>(hashFunc), equalFunc);
 	}
 
-	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
 		internal::conceptIteratorWithReference<std::random_access_iterator_tag, HashFuncResult&> HashIterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
-		internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count,
-		HashIterator hashBegin, const std::iter_value_t<Iterator>& item,
-		HashFuncResult itemHash, const EqualFunc& equalFunc = EqualFunc())
+		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count, const ItemArg& item,
+		HashFuncResult itemHash, HashIterator hashBegin, const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvGetBounds(begin, count, item, itemHash,
 			HashFuncIterPrehashed<Iterator, HashIterator>(begin, hashBegin), equalFunc);
@@ -272,10 +268,9 @@ private:
 		return true;
 	}
 
-	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
-		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
-		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
+	template<typename Iterator, typename ItemArg, typename HashFuncIter, typename EqualFunc>
+	static FindResult<Iterator> pvFind(Iterator begin, size_t count, const ItemArg& item,
+		HashFuncResult itemHash, const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
 		if (!res.found)
@@ -290,10 +285,9 @@ private:
 			item, itemHash, hashFuncIter, equalFunc);
 	}
 
-	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count,
-		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
-		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
+	template<typename Iterator, typename ItemArg, typename HashFuncIter, typename EqualFunc>
+	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count, const ItemArg& item,
+		HashFuncResult itemHash, const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, hashFuncIter);
 		if (!res.found)
@@ -321,10 +315,9 @@ private:
 			pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc));
 	}
 
-	template<typename Iterator, typename HashFuncIter, typename EqualFunc>
-	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
-		const std::iter_value_t<Iterator>& item, HashFuncResult itemHash,
-		const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
+	template<typename Iterator, typename ItemArg, typename HashFuncIter, typename EqualFunc>
+	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count, const ItemArg& item,
+		HashFuncResult itemHash, const HashFuncIter& hashFuncIter, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;
 		while (true)
@@ -356,7 +349,7 @@ private:
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		size_t middleIndex = pvMultShift(itemHash, count);
-		size_t step = (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
+		size_t step = pvGetStepCount(count);
 		while (true)
 		{
 			HashFuncResult middleHash = hashFuncIter(SMath::Next(begin, middleIndex));
@@ -428,6 +421,11 @@ private:
 				return { SMath::Next(begin, middleIndex), true };
 		}
 		return { SMath::Next(begin, leftIndex), false };
+	}
+
+	static size_t pvGetStepCount(size_t count) noexcept
+	{
+		return (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 	}
 
 	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
