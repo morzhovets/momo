@@ -7,8 +7,6 @@
   momo/HashTraits.h
 
   namespace momo:
-    struct IsFastNothrowHashable
-    struct HashCoder
     class HashBucketDefault
     class HashBucketOpenDefault
     struct HashTraitsKeyArgBaseSelector
@@ -21,6 +19,7 @@
 
 #pragma once
 
+#include "KeyUtility.h"
 #include "details/HashBucketLimP4.h"
 #include "details/HashBucketOpen2N2.h"
 #include "details/HashBucketOpen8.h"
@@ -40,43 +39,6 @@
 
 namespace momo
 {
-
-namespace internal
-{
-	template<typename HashFunc, typename Key>
-	concept conceptHashFunc =
-		requires (const HashFunc& hashFunc, const Key& key)
-			{ { hashFunc(key) } -> std::convertible_to<size_t>; };
-}
-
-template<typename Key>
-struct IsFastNothrowHashable : public std::bool_constant<MOMO_IS_FAST_NOTHROW_HASHABLE(Key)>
-{
-};
-
-template<typename Key,
-	typename Result = size_t>
-struct HashCoder : private std::hash<Key>
-{
-	Result operator()(const Key& key) const
-#ifndef __GNUC__	//?
-		noexcept(noexcept(std::hash<Key>::operator()(key)))
-#endif
-	{
-		return static_cast<Result>(std::hash<Key>::operator()(key));
-	}
-};
-
-#ifdef MOMO_HASH_CODER
-template<typename Key>
-struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
-{
-	decltype(auto) operator()(const Key& key) const noexcept(noexcept(MOMO_HASH_CODER(key)))
-	{
-		return MOMO_HASH_CODER(key);
-	}
-};
-#endif
 
 typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 

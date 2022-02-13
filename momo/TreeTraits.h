@@ -7,7 +7,6 @@
   momo/TreeTraits.h
 
   namespace momo:
-    struct IsFastComparable
     class TreeNodeDefault
     concept conceptTreeTraits
     class TreeTraits
@@ -17,6 +16,7 @@
 
 #pragma once
 
+#include "KeyUtility.h"
 #include "details/TreeNode.h"
 
 namespace momo
@@ -24,9 +24,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename LessFunc, typename Key>
-	concept conceptLessFunc = std::strict_weak_order<const LessFunc&, const Key&, const Key&>;
-
 	template<typename Key, typename KeyArg>
 	concept conceptTreeTraitsValidKeyArg =
 		requires (const Key& key1, const KeyArg& key2)
@@ -35,11 +32,6 @@ namespace internal
 			{ key2 < key1 } -> std::convertible_to<bool>;
 		};
 }
-
-template<typename Key>
-struct IsFastComparable : public std::bool_constant<MOMO_IS_FAST_COMPARABLE(Key)>
-{
-};
 
 typedef MOMO_DEFAULT_TREE_NODE TreeNodeDefault;
 
