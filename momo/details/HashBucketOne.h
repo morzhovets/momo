@@ -21,13 +21,17 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tStateSize>
+	template<size_t minStateSize>
+	concept conceptBucketOneMinStateSize = (0 < minStateSize && minStateSize <= sizeof(size_t));
+
+	template<typename TItemTraits, size_t tMinStateSize>
+	requires conceptBucketOneMinStateSize<tMinStateSize>
 	class BucketOne : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t stateSize = tStateSize;
+		static const size_t minStateSize = tMinStateSize;
 
 	public:
 		static const size_t maxCount = 1;
@@ -43,9 +47,8 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef typename UIntSelector<
-			(stateSize < ItemTraits::alignment) ? ItemTraits::alignment : stateSize,
-			uint8_t>::UInt HashState;
+		typedef typename UIntSelector<std::minmax(minStateSize,
+			std::minmax(ItemTraits::alignment, sizeof(size_t)).first).second>::UInt HashState;
 
 	public:
 		explicit BucketOne() noexcept
@@ -147,14 +150,15 @@ namespace internal
 	};
 }
 
-template<size_t tStateSize = 1>
+template<size_t tMinStateSize = 1>
+requires internal::conceptBucketOneMinStateSize<tMinStateSize>
 class HashBucketOne : public internal::HashBucketBase
 {
 public:
-	static const size_t stateSize = tStateSize;
+	static const size_t minStateSize = tMinStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOne<ItemTraits, stateSize>;
+	using Bucket = internal::BucketOne<ItemTraits, minStateSize>;
 };
 
 } // namespace momo

@@ -129,33 +129,33 @@ namespace internal
 	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
 		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
 
-	template<size_t size,
-		typename Default = void>
-	struct UIntSelector
-	{
-		typedef Default UInt;
-	};
+	template<size_t size>
+	struct UIntSelector;
 
-	template<typename Default>
-	struct UIntSelector<1, Default>
+	template<size_t size>
+	requires (size == 1)
+	struct UIntSelector<size>
 	{
 		typedef uint8_t UInt;
 	};
 
-	template<typename Default>
-	struct UIntSelector<2, Default>
+	template<size_t size>
+	requires (size == 2)
+	struct UIntSelector<size>
 	{
 		typedef uint16_t UInt;
 	};
 
-	template<typename Default>
-	struct UIntSelector<4, Default>
+	template<size_t size>
+	requires (2 < size && size <= 4)
+	struct UIntSelector<size>
 	{
 		typedef uint32_t UInt;
 	};
 
-	template<typename Default>
-	struct UIntSelector<8, Default>
+	template<size_t size>
+	requires (4 < size && size <= 8)
+	struct UIntSelector<size>
 	{
 		typedef uint64_t UInt;
 	};
