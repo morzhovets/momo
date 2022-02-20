@@ -15,9 +15,13 @@ environment:
   matrix:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CONFIGURATION: Debug
       CMAKE_GENERATOR: Visual Studio 16 2019
+      CONFIGURATION: Debug
+      ARCH: Win32
+      PLATFORM: x86
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CONFIGURATION: Release
       CMAKE_GENERATOR: Visual Studio 16 2019
+      CONFIGURATION: Release
+      ARCH: Win32
+      PLATFORM: x86
