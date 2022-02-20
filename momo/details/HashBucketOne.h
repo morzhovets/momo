@@ -21,13 +21,14 @@ namespace momo
 
 namespace internal
 {
-	template<typename TItemTraits, size_t tStateSize>
+	template<typename TItemTraits, size_t tMinStateSize>
 	class BucketOne : public BucketBase
 	{
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t stateSize = tStateSize;
+		static const size_t minStateSize = tMinStateSize;
+		MOMO_STATIC_ASSERT(0 < minStateSize && minStateSize <= sizeof(size_t));
 
 	public:
 		static const size_t maxCount = 1;
@@ -43,9 +44,10 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef typename UIntSelector<
-			(stateSize < ItemTraits::alignment) ? ItemTraits::alignment : stateSize,
-			uint8_t>::UInt HashState;
+		static const size_t availableStateSize = (ItemTraits::alignment <= sizeof(size_t))
+			? ItemTraits::alignment : sizeof(size_t);
+		typedef typename UIntSelector<(minStateSize < availableStateSize)
+			? availableStateSize : minStateSize>::UInt HashState;
 
 	public:
 		explicit BucketOne() noexcept
@@ -124,16 +126,16 @@ namespace internal
 		}
 
 	private:
-		template<size_t hashStateSize = sizeof(HashState)>
-		static EnableIf<(hashStateSize < sizeof(size_t)),
+		template<size_t stateSize = sizeof(HashState)>
+		static EnableIf<(stateSize < sizeof(size_t)),
 		HashState> pvGetHashState(size_t hashCode) noexcept
 		{
-			static const size_t hashCodeShift = (sizeof(size_t) - hashStateSize) * 8;
+			static const size_t hashCodeShift = (sizeof(size_t) - stateSize) * 8;
 			return static_cast<HashState>(hashCode >> hashCodeShift) | 1;
 		}
 
-		template<size_t hashStateSize = sizeof(HashState)>
-		static EnableIf<(hashStateSize >= sizeof(size_t)),
+		template<size_t stateSize = sizeof(HashState)>
+		static EnableIf<(stateSize >= sizeof(size_t)),
 		HashState> pvGetHashState(size_t hashCode) noexcept
 		{
 			return (static_cast<HashState>(hashCode) << 1) | 1;
@@ -145,14 +147,14 @@ namespace internal
 	};
 }
 
-template<size_t tStateSize = 1>
+template<size_t tMinStateSize = 1>
 class HashBucketOne : public internal::HashBucketBase
 {
 public:
-	static const size_t stateSize = tStateSize;
+	static const size_t minStateSize = tMinStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = internal::BucketOne<ItemTraits, stateSize>;
+	using Bucket = internal::BucketOne<ItemTraits, minStateSize>;
 };
 
 } // namespace momo

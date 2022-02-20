@@ -20,12 +20,12 @@
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketOne<>>("momo::HashBucketOne<>");
-	SimpleHashTester::TestStrHash<momo::HashBucketOne<8>>("momo::HashBucketOne<8>");
+	SimpleHashTester::TestStrHash<momo::HashBucketOne<sizeof(size_t)>>("momo::HashBucketOne<sizeof(size_t)>");
 
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOne<1>, 1, 1>("momo::HashBucketOne<1>");
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOne<4>, 6, 2>("momo::HashBucketOne<4>");
 	SimpleHashTester::TestTemplHashSet<momo::HashBucketOne<2>, 4, 4>("momo::HashBucketOne<2>");
-	SimpleHashTester::TestTemplHashSet<momo::HashBucketOne<8>, 8, 8>("momo::HashBucketOne<8>");
+	SimpleHashTester::TestTemplHashSet<momo::HashBucketOne<sizeof(size_t)>, 8, 8>("momo::HashBucketOne<sizeof(size_t)>");
 
 	return 0;
 }();

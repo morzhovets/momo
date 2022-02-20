@@ -118,37 +118,6 @@ enum class ExtraCheckMode
 
 namespace internal
 {
-	template<size_t size,
-		typename Default = void>
-	struct UIntSelector
-	{
-		typedef Default UInt;
-	};
-
-	template<typename Default>
-	struct UIntSelector<1, Default>
-	{
-		typedef uint8_t UInt;
-	};
-
-	template<typename Default>
-	struct UIntSelector<2, Default>
-	{
-		typedef uint16_t UInt;
-	};
-
-	template<typename Default>
-	struct UIntSelector<4, Default>
-	{
-		typedef uint32_t UInt;
-	};
-
-	template<typename Default>
-	struct UIntSelector<8, Default>
-	{
-		typedef uint64_t UInt;
-	};
-
 	template<typename Iterator>
 	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
 		typename std::iterator_traits<Iterator>::iterator_category>;
@@ -198,6 +167,34 @@ namespace internal
 	template<bool value,
 		typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
+
+	template<size_t size,
+		typename = void>
+	struct UIntSelector;
+
+	template<>
+	struct UIntSelector<1, void>
+	{
+		typedef uint8_t UInt;
+	};
+
+	template<>
+	struct UIntSelector<2, void>
+	{
+		typedef uint16_t UInt;
+	};
+
+	template<size_t size>
+	struct UIntSelector<size, EnableIf<(2 < size && size <= 4)>>
+	{
+		typedef uint32_t UInt;
+	};
+
+	template<size_t size>
+	struct UIntSelector<size, EnableIf<(4 < size && size <= 8)>>
+	{
+		typedef uint64_t UInt;
+	};
 
 	class PtrCaster
 	{
