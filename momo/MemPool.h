@@ -45,9 +45,9 @@ public:
 		size_t blockCount) noexcept
 	{
 		if (blockCount == 1)
-			return (blockSize > 0) ? blockSize : 1;
-		return (blockSize <= blockAlignment) ? 2 * blockAlignment
-			: internal::UIntMath<>::Ceil(blockSize, blockAlignment);
+			return std::minmax(blockSize, size_t{1}).second;
+		return std::minmax(internal::UIntMath<>::Ceil(blockSize, blockAlignment),
+			2 * blockAlignment).second;
 	}
 
 	static constexpr bool CheckBlockCount(size_t blockCount) noexcept
