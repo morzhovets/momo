@@ -12,6 +12,7 @@
 
 int main()
 {
-	std::cout << "Done!" << std::endl;
+	std::cout << "__cplusplus: " << __cplusplus << std::endl;
+	std::cout << "sizeof(void*): " << sizeof(void*) << std::endl;
 	return 0;
 }
