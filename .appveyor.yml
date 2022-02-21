@@ -23,3 +23,8 @@ environment:
       CMAKE_GENERATOR: Visual Studio 16 2019
       ARCH: Win32
       CONFIGURATION: Release
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      CMAKE_GENERATOR: Visual Studio 17 2022
+      ARCH: Win32
+      CONFIGURATION: Release
