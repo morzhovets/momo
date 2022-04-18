@@ -327,10 +327,10 @@ namespace internal
 			const Item* item;
 		};
 
-		typedef std::function<size_t(Raw*, const size_t*)> HashFunc;
-		typedef std::function<bool(Raw*, Raw*, const size_t*)> EqualFunc;
-		typedef std::function<size_t(HashMixedKey<>, const size_t*)> HashMixedFunc;
-		typedef std::function<bool(HashMixedKey<>, Raw*, const size_t*)> EqualMixedFunc;
+		typedef size_t (*HashFunc)(Raw*, const size_t*);
+		typedef bool (*EqualFunc)(Raw*, Raw*, const size_t*);
+		typedef size_t (*HashMixedFunc)(HashMixedKey<>, const size_t*);
+		typedef bool (*EqualMixedFunc)(HashMixedKey<>, Raw*, const size_t*);
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
@@ -353,13 +353,13 @@ namespace internal
 			static const bool isFastNothrowHashable = false;
 
 		public:
-			explicit HashTraits(HashFunc&& hashFunc, EqualFunc&& equalFunc,
-				HashMixedFunc&& hashMixedFunc, EqualMixedFunc&& equalMixedFunc,
+			explicit HashTraits(HashFunc hashFunc, EqualFunc equalFunc,
+				HashMixedFunc hashMixedFunc, EqualMixedFunc equalMixedFunc,
 				Offsets&& offsets) noexcept
-				: mHashFunc(std::move(hashFunc)),
-				mEqualFunc(std::move(equalFunc)),
-				mHashMixedFunc(std::move(hashMixedFunc)),
-				mEqualMixedFunc(std::move(equalMixedFunc)),
+				: mHashFunc(hashFunc),
+				mEqualFunc(equalFunc),
+				mHashMixedFunc(hashMixedFunc),
+				mEqualMixedFunc(equalMixedFunc),
 				mOffsets(std::move(offsets))
 			{
 			}

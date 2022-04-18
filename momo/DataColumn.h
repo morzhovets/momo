@@ -599,9 +599,9 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> Columns;
 
-	typedef std::function<void(MemManager&, const ColumnRecord*, const DataColumnList*,
-		const Raw*, Raw*)> CreateFunc;
-	typedef std::function<void(MemManager*, const ColumnRecord*, Raw*)> DestroyFunc;
+	typedef void (*CreateFunc)(MemManager&, const ColumnRecord*, const DataColumnList*,
+		const Raw*, Raw*);
+	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*);
 
 	struct FuncRecord
 	{
