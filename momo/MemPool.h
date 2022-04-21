@@ -228,7 +228,7 @@ public:
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
 		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
-		mFreeBufferHead(std::exchange(memPool.mFreeBufferHead, nullPtr)),
+		mFreeBufferHead(std::exchange(memPool.mFreeBufferHead, uintptr_t{nullPtr})),
 		mAllocCount(std::exchange(memPool.mAllocCount, 0)),
 		mCachedCount(std::exchange(memPool.mCachedCount, 0)),
 		mCacheHead(std::exchange(memPool.mCacheHead, nullptr))
