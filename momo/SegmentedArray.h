@@ -244,9 +244,8 @@ public:
 
 	SegmentedArray(SegmentedArray&& array) noexcept
 		: mSegments(std::move(array.mSegments)),
-		mCount(array.mCount)
+		mCount(std::exchange(array.mCount, 0))
 	{
-		array.mCount = 0;
 	}
 
 	SegmentedArray(const SegmentedArray& array)

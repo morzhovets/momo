@@ -206,11 +206,9 @@ public:
 
 	MergeArray(MergeArray&& array) noexcept
 		: mSegments(std::move(array.mSegments)),
-		mCount(array.mCount),
-		mCapacity(array.mCapacity)
+		mCount(std::exchange(array.mCount, 0)),
+		mCapacity(std::exchange(array.mCapacity, 0))
 	{
-		array.mCount = 0;
-		array.mCapacity = 0;
 	}
 
 	MergeArray(const MergeArray& array)

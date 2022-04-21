@@ -228,15 +228,11 @@ public:
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
 		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
-		mFreeBufferHead(memPool.mFreeBufferHead),
-		mAllocCount(memPool.mAllocCount),
-		mCachedCount(memPool.mCachedCount),
-		mCacheHead(memPool.mCacheHead)
+		mFreeBufferHead(std::exchange(memPool.mFreeBufferHead, nullPtr)),
+		mAllocCount(std::exchange(memPool.mAllocCount, 0)),
+		mCachedCount(std::exchange(memPool.mCachedCount, 0)),
+		mCacheHead(std::exchange(memPool.mCacheHead, nullptr))
 	{
-		memPool.mFreeBufferHead = nullPtr;
-		memPool.mAllocCount = 0;
-		memPool.mCachedCount = 0;
-		memPool.mCacheHead = nullptr;
 	}
 
 	MemPool(const MemPool&) = delete;

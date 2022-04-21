@@ -504,13 +504,10 @@ public:
 
 	TreeSet(TreeSet&& treeSet) noexcept
 		: mCrew(std::move(treeSet.mCrew)),
-		mCount(treeSet.mCount),
-		mRootNode(treeSet.mRootNode),
-		mNodeParams(treeSet.mNodeParams)
+		mCount(std::exchange(treeSet.mCount, 0)),
+		mRootNode(std::exchange(treeSet.mRootNode, nullptr)),
+		mNodeParams(std::exchange(treeSet.mNodeParams, nullptr))
 	{
-		treeSet.mCount = 0;
-		treeSet.mRootNode = nullptr;
-		treeSet.mNodeParams = nullptr;
 	}
 
 	TreeSet(const TreeSet& treeSet)

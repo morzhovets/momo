@@ -565,13 +565,10 @@ public:
 
 	HashSet(HashSet&& hashSet) noexcept
 		: mCrew(std::move(hashSet.mCrew)),
-		mCount(hashSet.mCount),
-		mCapacity(hashSet.mCapacity),
-		mBuckets(hashSet.mBuckets)
+		mCount(std::exchange(hashSet.mCount, 0)),
+		mCapacity(std::exchange(hashSet.mCapacity, 0)),
+		mBuckets(std::exchange(hashSet.mBuckets, nullptr))
 	{
-		hashSet.mCount = 0;
-		hashSet.mCapacity = 0;
-		hashSet.mBuckets = nullptr;
 	}
 
 	HashSet(const HashSet& hashSet)

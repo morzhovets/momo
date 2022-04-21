@@ -75,11 +75,9 @@ namespace internal
 
 		DataRow(DataRow&& row) noexcept
 			: mColumnList(row.mColumnList),
-			mRaw(row.mRaw),
-			mRawMemPool(row.mRawMemPool)
+			mRaw(std::exchange(row.mRaw, nullptr)),
+			mRawMemPool(std::exchange(row.mRawMemPool, nullptr))
 		{
-			row.mRaw = nullptr;
-			row.mRawMemPool = nullptr;
 		}
 
 		DataRow(const DataRow&) = delete;

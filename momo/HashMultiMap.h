@@ -772,10 +772,9 @@ public:
 
 	HashMultiMap(HashMultiMap&& hashMultiMap) noexcept
 		: mHashMap(std::move(hashMultiMap.mHashMap)),
-		mValueCount(hashMultiMap.mValueCount),
+		mValueCount(std::exchange(hashMultiMap.mValueCount, 0)),
 		mValueCrew(std::move(hashMultiMap.mValueCrew))
 	{
-		hashMultiMap.mValueCount = 0;
 	}
 
 	HashMultiMap(const HashMultiMap& hashMultiMap)
