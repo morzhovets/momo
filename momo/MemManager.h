@@ -46,6 +46,10 @@
 
 #include "Utility.h"
 
+#ifdef MOMO_USE_MEM_MANAGER_WIN
+#include <windows.h>
+#endif
+
 namespace momo
 {
 
@@ -183,13 +187,13 @@ public:
 		HeapFree(GetProcessHeap(), 0, ptr);
 	}
 
-	//[[nodiscard]] void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
-	//{
-	//	void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
-	//	if (newPtr == nullptr)
-	//		throw std::bad_alloc();
-	//	return newPtr;
-	//}
+	[[nodiscard]] void* Reallocate(void* ptr, size_t /*size*/, size_t newSize)
+	{
+		void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
+		if (newPtr == nullptr)
+			throw std::bad_alloc();
+		return newPtr;
+	}
 
 	[[nodiscard]] bool ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
 	{
