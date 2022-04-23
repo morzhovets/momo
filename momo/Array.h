@@ -146,7 +146,7 @@ public:
 
 public:
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
-		ArrayGrowCause growCause, bool realloc)
+		ArrayGrowCause growCause, bool /*realloc*/)
 	{
 		MOMO_ASSERT(capacity < minNewCapacity);
 		if (growCause == ArrayGrowCause::reserve && !growOnReserve)
@@ -158,9 +158,7 @@ public:
 			newCapacity = capacity * 2;
 		else if (capacity < 8192)
 			newCapacity = capacity + capacity / 2;
-		else if (realloc && capacity <= internal::UIntConst::maxSize - 4096)
-			newCapacity = capacity + 4096;
-		else if (!realloc && capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
+		else if (capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
 			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
 		else
 			throw std::length_error("Invalid capacity");
