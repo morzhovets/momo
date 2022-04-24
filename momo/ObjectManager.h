@@ -144,16 +144,16 @@ namespace internal
 
 		const Object* operator&() const noexcept
 		{
-			return reinterpret_cast<const Object*>(&mBuffer);
+			return reinterpret_cast<const Object*>(mBuffer);
 		}
 
 		Object* operator&() noexcept
 		{
-			return reinterpret_cast<Object*>(&mBuffer);
+			return reinterpret_cast<Object*>(mBuffer);
 		}
 
 	private:
-		std::aligned_storage_t<sizeof(Object), alignment> mBuffer;
+		alignas(alignment) std::byte mBuffer[sizeof(Object)];
 	};
 
 	template<conceptObject Object, conceptMemManager MemManager, typename... ObjectArgs>

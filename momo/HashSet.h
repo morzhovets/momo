@@ -169,7 +169,7 @@ namespace internal
 		union
 		{
 			BucketParams* mBucketParams;
-			std::aligned_storage_t<alignof(Bucket), alignof(Bucket)> mBucketPadding;
+			alignas(Bucket) std::byte mBucketPadding[alignof(Bucket)];
 		};
 	};
 
