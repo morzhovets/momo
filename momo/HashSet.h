@@ -33,8 +33,7 @@ namespace internal
 		typedef typename Bucket::MemManager MemManager;
 		typedef typename Bucket::Params BucketParams;
 
-		static const size_t maxBucketCount =
-			(UIntConst::maxSize - sizeof(size_t) - 2 * sizeof(void*)) / sizeof(Bucket);
+		static const size_t maxBucketCount = UIntConst::maxSize / sizeof(Bucket);
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -155,22 +154,19 @@ namespace internal
 
 		Bucket* pvGetBuckets() noexcept
 		{
-			return PtrCaster::Shift<Bucket>(this, sizeof(HashSetBuckets));
+			return &mFirstBucket;
 		}
 
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept
 		{
-			return sizeof(HashSetBuckets) + (sizeof(Bucket) << logBucketCount);
+			return sizeof(HashSetBuckets) - sizeof(Bucket) + (sizeof(Bucket) << logBucketCount);
 		}
 
 	private:
 		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
-		union
-		{
-			BucketParams* mBucketParams;
-			alignas(Bucket) std::byte mBucketPadding[alignof(Bucket)];
-		};
+		BucketParams* mBucketParams;
+		ObjectBuffer<Bucket, alignof(Bucket)> mFirstBucket;
 	};
 
 	template<typename TBucket, typename TSettings>
