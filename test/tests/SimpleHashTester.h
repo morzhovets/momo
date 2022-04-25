@@ -51,27 +51,16 @@ private:
 	public:
 		explicit TemplItem(unsigned char value) noexcept
 		{
-			*pvGetPtr() = value;
+			*mStorage = value;
 		}
 
 		unsigned char GetValue() const noexcept
 		{
-			return *pvGetPtr();
+			return *mStorage;
 		}
 
 	private:
-		const unsigned char* pvGetPtr() const noexcept
-		{
-			return reinterpret_cast<const unsigned char*>(&mStorage);
-		}
-
-		unsigned char* pvGetPtr() noexcept
-		{
-			return reinterpret_cast<unsigned char*>(&mStorage);
-		}
-
-	private:
-		typename std::aligned_storage<size, alignment>::type mStorage;
+		alignas(alignment) unsigned char mStorage[size];
 	};
 
 public:

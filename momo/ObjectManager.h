@@ -166,7 +166,7 @@ namespace internal
 		}
 
 	private:
-		typename std::aligned_storage<sizeof(Object), alignment>::type mBuffer;
+		alignas(alignment) char mBuffer[sizeof(Object)];
 	};
 
 	template<typename TObject, typename TMemManager>
