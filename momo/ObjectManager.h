@@ -166,7 +166,7 @@ namespace internal
 		}
 
 	private:
-		alignas(alignment) char mBuffer[sizeof(Object)];
+		MOMO_ALIGNED_STORAGE(sizeof(Object), alignment) mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager>
