@@ -533,7 +533,7 @@ public:
 			res.inserted ? node_type() : std::move(node) };
 	}
 
-	iterator insert(const_iterator hint, node_type&& node)
+	iterator insert([[maybe_unused]] const_iterator hint, node_type&& node)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		if (node.empty())
@@ -541,7 +541,6 @@ public:
 		return IteratorProxy(mHashMap.Add(ConstIteratorProxy::GetBaseIterator(hint),
 			std::move(NodeTypeProxy::GetExtractedPair(node))));
 #else
-		(void)hint;
 		return insert(std::move(node)).position;
 #endif
 	}

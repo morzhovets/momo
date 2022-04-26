@@ -1167,9 +1167,8 @@ private:
 	}
 
 	template<typename ItemCreator>
-	Iterator pvAddFirst(ConstIterator iter, ItemCreator&& itemCreator)
+	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter, ItemCreator&& itemCreator)
 	{
-		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)
 		{
@@ -1292,7 +1291,6 @@ private:
 			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, srcItem, extItem); };
 		auto itemReplacer2 = [this, extItem, extMemManager] (Item& srcItem, Item& dstItem)
 		{
-			(void)extMemManager;
 			MOMO_ASSERT(extMemManager == nullptr);
 			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
 		};

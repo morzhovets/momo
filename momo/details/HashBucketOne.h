@@ -109,9 +109,9 @@ namespace internal
 		}
 
 		template<std::invocable<Item&, Item&> ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
+		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter,
+			ItemReplacer&& itemReplacer)
 		{
-			(void)iter;
 			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
 			std::forward<ItemReplacer>(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
@@ -120,10 +120,10 @@ namespace internal
 		}
 
 		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
-			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
+		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter,
+			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
+			size_t /*newLogBucketCount*/)
 		{
-			(void)iter;
 			MOMO_ASSERT(iter == &mItemBuffer);
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();

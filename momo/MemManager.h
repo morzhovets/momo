@@ -112,12 +112,11 @@ public:
 		return operator new(size);
 	}
 
-	void Deallocate(void* ptr, size_t size) noexcept
+	void Deallocate(void* ptr, [[maybe_unused]] size_t size) noexcept
 	{
 #ifdef __cpp_sized_deallocation	// clang
 		operator delete(ptr, size);
 #else
-		(void)size;
 		operator delete(ptr);
 #endif
 	}
@@ -408,9 +407,8 @@ namespace internal
 		}
 
 	private:
-		static void pvCheckBits(void* ptr) noexcept
+		static void pvCheckBits([[maybe_unused]] void* ptr) noexcept
 		{
-			(void)ptr;
 			if constexpr (ptrUsefulBitCount < sizeof(void*) * 8)
 				MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> ptrUsefulBitCount == uintptr_t{0});
 		}

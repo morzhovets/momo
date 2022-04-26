@@ -413,12 +413,11 @@ public:
 		return { res.position, res.inserted };
 	}
 
-	iterator insert(const_iterator hint, value_type&& value)
+	iterator insert([[maybe_unused]] const_iterator hint, value_type&& value)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		return mHashSet.Add(hint, std::move(value));
 #else
-		(void)hint;
 		return insert(std::move(value)).first;
 #endif
 	}
@@ -429,12 +428,11 @@ public:
 		return { res.position, res.inserted };
 	}
 
-	iterator insert(const_iterator hint, const value_type& value)
+	iterator insert([[maybe_unused]] const_iterator hint, const value_type& value)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		return mHashSet.Add(hint, value);
 #else
-		(void)hint;
 		return insert(value).first;
 #endif
 	}
@@ -448,14 +446,13 @@ public:
 		return { res.position, res.inserted, res.inserted ? node_type() : std::move(node) };
 	}
 
-	iterator insert(const_iterator hint, node_type&& node)
+	iterator insert([[maybe_unused]] const_iterator hint, node_type&& node)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		if (node.empty())
 			return end();
 		return mHashSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
 #else
-		(void)hint;
 		return insert(std::move(node)).position;
 #endif
 	}
@@ -491,12 +488,11 @@ public:
 	}
 
 	template<typename... ValueArgs>
-	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
+	iterator emplace_hint([[maybe_unused]] const_iterator hint, ValueArgs&&... valueArgs)
 	{
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 		return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
 #else
-		(void)hint;
 		return emplace(std::forward<ValueArgs>(valueArgs)...).first;
 #endif
 	}

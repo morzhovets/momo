@@ -49,9 +49,9 @@ namespace internal
 
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
-			const Raws* raws = pvGetRaws();
-			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(pvGetIndex()) + diff);
-			(void)raws; (void)newIndex;
+			[[maybe_unused]] const Raws* raws = pvGetRaws();
+			[[maybe_unused]] size_t newIndex =
+				static_cast<size_t>(static_cast<ptrdiff_t>(pvGetIndex()) + diff);
 			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
 			ArrayIndexIterator::operator+=(diff);
 			return *this;

@@ -1276,9 +1276,9 @@ private:
 				--bucketIter;
 				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
 					buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, &memManager, hashCode] (Item& srcItem, Item& dstItem)
+				auto itemReplacer = [this, &memManager, hashCode]
+					([[maybe_unused]] Item& srcItem, Item& dstItem)
 				{
-					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
 					auto itemCreator = [&memManager, &dstItem] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, &memManager, dstItem, newItem); };
@@ -1300,9 +1300,9 @@ private:
 		{
 			auto itemCreator = [this, &memManager, &dstMemManager, &iter] (Item* newItem)
 			{
-				auto itemReplacer = [&memManager, &dstMemManager, newItem] (Item& srcItem, Item& dstItem)
+				auto itemReplacer = [&memManager, &dstMemManager, newItem]
+					([[maybe_unused]] Item& srcItem, Item& dstItem)
 				{
-					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
 					ItemTraits::Relocate(&memManager, &dstMemManager, dstItem, newItem);
 				};

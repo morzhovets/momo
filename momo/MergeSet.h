@@ -690,9 +690,8 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	Position pvAdd(ConstPosition pos, ItemCreator&& itemCreator)
+	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator&& itemCreator)
 	{
-		(void)pos;
 		MOMO_CHECK(!pos);
 		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
 		pvGetCrew().IncVersion();
