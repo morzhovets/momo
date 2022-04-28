@@ -10,7 +10,15 @@
 
 #pragma once
 
-#if defined(_MSC_VER) && !defined(__clang__)
+#if defined(__clang__)
+#define TEST_CLANG
+#elif defined(__GNUC__)	// && !defined(__clang__)
+#define TEST_GCC
+#elif defined(_MSC_VER)	// && !defined(__clang__)
+#define TEST_MSVC
+#endif
+
+#ifdef TEST_MSVC
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning (disable: 4127)	// conditional expression is constant

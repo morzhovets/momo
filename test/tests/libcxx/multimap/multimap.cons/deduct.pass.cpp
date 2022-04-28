@@ -82,7 +82,7 @@ void main()
     assert(m.size() == 0);
     }
 
-#if !defined(__GNUC__) && !defined(__clang__)
+#if !defined(TEST_GCC) && !defined(TEST_CLANG)
     {
     momo::stdish::multimap<int, long> source;
     momo::stdish::multimap m(source, momo::stdish::multimap<int, long>::allocator_type());
@@ -91,7 +91,7 @@ void main()
     }
 #endif
 
-#if !defined(__GNUC__)
+#if !defined(TEST_GCC)
     {
     momo::stdish::multimap m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
