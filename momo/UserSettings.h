@@ -81,13 +81,7 @@
 // If key has fast `operator<`, linear search is used in the tree nodes instead of binary one
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
 
-#if defined(__linux__)
-// Linux has fast `realloc`
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerC
-#else
-// Function `realloc` operates slowly under Windows and therefore is not used by default
-#define MOMO_DEFAULT_MEM_MANAGER MemManagerCpp
-#endif
 
 // Inlining
 #if defined(_MSC_VER)
