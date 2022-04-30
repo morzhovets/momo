@@ -100,7 +100,7 @@ LIBCXX_TEST_BEGIN(erase_const_iter)
 #include "libcxx/unord.set/erase_const_iter.pass.cpp"
 LIBCXX_TEST_END
 
-#if defined(_MSC_VER) || defined(__cpp_generic_lambdas)
+#if defined(TEST_MSVC) || defined(__cpp_generic_lambdas)
 LIBCXX_TEST_BEGIN(erase_if_)
 #include "libcxx/unord.set/erase_if.pass.cpp"
 LIBCXX_TEST_END

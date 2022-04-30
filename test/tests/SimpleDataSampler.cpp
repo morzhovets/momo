@@ -17,7 +17,7 @@
 #include <string>
 #include <iostream>
 
-#if defined(_MSC_VER) && !defined(__clang__)
+#ifdef TEST_MSVC
 #pragma warning (disable: 4307)	// integral constant overflow
 #endif
 

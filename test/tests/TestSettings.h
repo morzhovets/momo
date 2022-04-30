@@ -10,6 +10,14 @@
 
 #pragma once
 
+#if defined(__clang__)
+#define TEST_CLANG
+#elif defined(__GNUC__)	// && !defined(__clang__)
+#define TEST_GCC
+#elif defined(_MSC_VER)	// && !defined(__clang__)
+#define TEST_MSVC
+#endif
+
 //#define TEST_SPEED_MAP
 
 #ifndef TEST_SPEED_MAP
@@ -27,11 +35,9 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 
-#if defined(_MSC_VER) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
+#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
 #undef TEST_LIBCXX_TREE_MAP
 #endif
-
-#undef NDEBUG
 
 #endif
 

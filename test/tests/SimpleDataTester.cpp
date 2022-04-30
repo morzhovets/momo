@@ -33,7 +33,7 @@ namespace
 	MOMO_DATA_COLUMN_STRUCT(Struct, dblStruct);
 	MOMO_DATA_COLUMN_STRUCT(Struct, strStruct);
 
-#if defined(_MSC_VER) && !defined(__clang__)
+#ifdef TEST_MSVC
 #pragma warning (push)
 #pragma warning (disable: 4307)	// integral constant overflow
 #endif
@@ -42,7 +42,7 @@ namespace
 	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, double, dblString);
 	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, std::string, strString);
 
-#if defined(_MSC_VER) && !defined(__clang__)
+#ifdef TEST_MSVC
 #pragma warning (pop)
 #endif
 }

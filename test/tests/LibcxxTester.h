@@ -19,15 +19,15 @@
 #include <optional>
 #endif
 
-#if !defined(_MSC_VER) && !defined(__cpp_lib_transparent_operators)
+#if !defined(TEST_MSVC) && !defined(__cpp_lib_transparent_operators)
 #define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif
 
 #if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(MOMO_HAS_DEDUCTION_GUIDES)
-#if defined(_MSC_VER) && _MSC_VER >= 1924
+#if defined(TEST_MSVC) && _MSC_VER >= 1924
 #define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
-#if defined(__GNUC__) && __GNUC__ >= 8
+#if defined(TEST_GCC) && __GNUC__ >= 8
 #define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
 #endif

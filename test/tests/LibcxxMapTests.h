@@ -144,7 +144,7 @@ LIBCXX_TEST_END
 //#include "libcxx/map/map.cons/move_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
-#if defined(_MSC_VER) || defined(__cpp_generic_lambdas)
+#if defined(TEST_MSVC) || defined(__cpp_generic_lambdas)
 LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/map/map.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END

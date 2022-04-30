@@ -10,7 +10,13 @@
 
 #pragma once
 
-#if defined(_MSC_VER) && !defined(__clang__)
+#include "TestSettings.h"
+
+#ifndef TEST_SPEED_MAP
+#undef NDEBUG
+#endif
+
+#ifdef TEST_MSVC
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning (disable: 4127)	// conditional expression is constant
@@ -21,7 +27,10 @@
 #endif
 #endif
 
-#include "TestSettings.h"
+#ifdef _WIN32
+#define MOMO_USE_MEM_MANAGER_WIN
+#include <windows.h>
+#endif
 
 #include "../../momo/Utility.h"
 
