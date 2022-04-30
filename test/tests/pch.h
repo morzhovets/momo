@@ -10,12 +10,10 @@
 
 #pragma once
 
-#if defined(__clang__)
-#define TEST_CLANG
-#elif defined(__GNUC__)	// && !defined(__clang__)
-#define TEST_GCC
-#elif defined(_MSC_VER)	// && !defined(__clang__)
-#define TEST_MSVC
+#include "TestSettings.h"
+
+#ifndef TEST_SPEED_MAP
+#undef NDEBUG
 #endif
 
 #ifdef TEST_MSVC
@@ -27,9 +25,8 @@
 
 #ifdef _WIN32
 #define MOMO_USE_MEM_MANAGER_WIN
+#include <windows.h>
 #endif
-
-#include "TestSettings.h"
 
 #include "../../momo/Utility.h"
 
