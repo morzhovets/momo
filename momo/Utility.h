@@ -33,10 +33,6 @@
 #include <tuple>
 #include <initializer_list>
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-#include <windows.h>
-#endif
-
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
 		noexcept(noexcept(object1.Swap(object2))) \
