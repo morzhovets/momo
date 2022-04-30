@@ -152,12 +152,12 @@ public:
 		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::Array<size_t, momo::MemManagerC>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerC>>();
-		std::cout << "ok" << std::endl;
-
 		std::cout << "momo::Array<TemplItem<false>, momo::MemManagerCpp>: " << std::flush;
 		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<size_t, momo::MemManagerC>: " << std::flush;
+		TestTemplArray<momo::Array<size_t, momo::MemManagerC>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerC>: " << std::flush;
@@ -167,6 +167,10 @@ public:
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 		std::cout << "momo::Array<size_t, momo::MemManagerWin>: " << std::flush;
 		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerWin>: " << std::flush;
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerWin>>();
 		std::cout << "ok" << std::endl;
 #endif
 
