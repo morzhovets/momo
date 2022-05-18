@@ -146,7 +146,7 @@ public:
 
 public:
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
-		ArrayGrowCause growCause, bool /*realloc*/)
+		ArrayGrowCause growCause, bool linear) noexcept
 	{
 		MOMO_ASSERT(capacity < minNewCapacity);
 		if (growCause == ArrayGrowCause::reserve && !growOnReserve)
@@ -154,14 +154,12 @@ public:
 		size_t newCapacity;
 		if (capacity <= 2)
 			newCapacity = 4;
-		else if (capacity < 256)
+		else if (capacity <= 64)
 			newCapacity = capacity * 2;
-		else if (capacity < 8192)
-			newCapacity = capacity + capacity / 2;
-		else if (capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
-			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
+		else if (linear || capacity < 150)
+			newCapacity = capacity + 64;
 		else
-			throw std::length_error("Invalid capacity");
+			newCapacity = capacity + (capacity / 50) * 23;	// k^4 < 1 + k + k^2
 		if (newCapacity < minNewCapacity)
 			newCapacity = minNewCapacity;
 		return newCapacity;
@@ -278,33 +276,6 @@ private:
 			return pvIsInternal() ? internalCapacity : mCapacity;
 		}
 
-		bool SetCapacity(size_t capacity)
-		{
-			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
-				return false;
-			pvCheckCapacity(capacity);
-			if constexpr (ItemTraits::isTriviallyRelocatable && MemManagerProxy::canReallocate)
-			{
-				mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
-					mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
-				mCapacity = capacity;
-				return true;
-			}
-			else if constexpr (MemManagerProxy::canReallocateInplace)
-			{
-				bool reallocDone = MemManagerProxy::ReallocateInplace(GetMemManager(),
-					mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
-				if (!reallocDone)
-					return false;
-				mCapacity = capacity;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
 		size_t GetCount() const noexcept
 		{
 			return mCount;
@@ -320,6 +291,39 @@ private:
 		{
 			pvDestroy();
 			pvCreate();
+		}
+
+		bool Reallocate(size_t capacityLin, size_t capacityExp)
+		{
+			if (GetCapacity() == internalCapacity)
+				return false;
+			if (capacityLin <= internalCapacity || capacityExp <= internalCapacity)
+				return false;
+			if constexpr (MemManagerProxy::canReallocateInplace)
+			{
+				if (!pvCanReallocate() || capacityLin < capacityExp)
+				{
+					pvCheckCapacity(capacityLin);
+					if (MemManagerProxy::ReallocateInplace(GetMemManager(),
+						mItems, mCapacity * sizeof(Item), capacityLin * sizeof(Item)))
+					{
+						mCapacity = capacityLin;
+						return true;
+					}
+				}
+			}
+			if constexpr (pvCanReallocate())
+			{
+				pvCheckCapacity(capacityExp);
+				mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
+					mItems, mCapacity * sizeof(Item), capacityExp * sizeof(Item));
+				mCapacity = capacityExp;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		template<bool grow, typename ItemsRelocator>
@@ -406,6 +410,14 @@ private:
 		bool pvIsInternal() const noexcept
 		{
 			return mItems == &mInternalItems;
+		}
+
+		static constexpr bool pvCanReallocate() noexcept
+		{
+			if constexpr (MemManagerProxy::canReallocate)
+				return ItemTraits::isTriviallyRelocatable;
+			else
+				return false;
 		}
 
 	private:
@@ -597,12 +609,11 @@ public:
 	{
 		size_t newCount = count;
 		size_t initCount = GetCount();
-		size_t initCapacity = GetCapacity();
 		if (newCount <= initCount)
 		{
 			pvRemoveBack(initCount - newCount);
 		}
-		else if (newCount <= initCapacity)
+		else if (newCount <= GetCapacity())
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
@@ -620,8 +631,7 @@ public:
 		}
 		else
 		{
-			size_t newCapacity = pvGrowCapacity(initCapacity, newCount,
-				ArrayGrowCause::reserve, false);
+			size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::reserve, false);
 			auto itemsRelocator = [this, initCount, newCount, &multiItemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
@@ -696,7 +706,7 @@ public:
 		size_t count = GetCount();
 		if (capacity < count)
 			capacity = count;
-		if (!mData.SetCapacity(capacity))
+		if (!mData.Reallocate(capacity, capacity))
 		{
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
@@ -944,24 +954,24 @@ private:
 		std::construct_at(&mData, std::move(array.mData));
 	}
 
-	static size_t pvGrowCapacity(size_t capacity, size_t minNewCapacity,
-		ArrayGrowCause growCause, bool realloc)
+	size_t pvGrowCapacity(size_t minNewCapacity, ArrayGrowCause growCause, bool linear) const
 	{
-		size_t newCapacity = Settings::GrowCapacity(capacity, minNewCapacity, growCause, realloc);
+		size_t newCapacity = Settings::GrowCapacity(GetCapacity(),
+			minNewCapacity, growCause, linear);
 		MOMO_ASSERT(newCapacity >= minNewCapacity);
 		return newCapacity;
 	}
 
 	void pvGrow(size_t minNewCapacity, ArrayGrowCause growCause)
 	{
-		size_t initCapacity = GetCapacity();
-		if (!mData.SetCapacity(pvGrowCapacity(initCapacity, minNewCapacity, growCause, true)))
+		size_t newCapacityLin = pvGrowCapacity(minNewCapacity, growCause, true);
+		size_t newCapacityExp = pvGrowCapacity(minNewCapacity, growCause, false);
+		if (!mData.Reallocate(newCapacityLin, newCapacityExp))
 		{
 			size_t count = GetCount();
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<true>(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
-				count, itemsRelocator);
+			mData.template Reset<true>(newCapacityExp, count, itemsRelocator);
 		}
 	}
 
@@ -985,7 +995,7 @@ private:
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
-		size_t newCapacity = pvGrowCapacity(GetCapacity(), newCount, ArrayGrowCause::add, false);
+		size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::add, false);
 		auto itemsRelocator = [this, initCount, &itemCreator] (Item* newItems)
 		{
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
