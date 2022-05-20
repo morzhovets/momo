@@ -199,7 +199,8 @@ public:
 	{
 	}
 
-	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
+	unordered_multimap(unordered_multimap&& right,
+		const std::type_identity_t<allocator_type>& alloc)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
 	{
@@ -210,7 +211,8 @@ public:
 	{
 	}
 
-	unordered_multimap(const unordered_multimap& right, const allocator_type& alloc)
+	unordered_multimap(const unordered_multimap& right,
+		const std::type_identity_t<allocator_type>& alloc)
 		: mHashMultiMap(right.mHashMultiMap, MemManager(alloc))
 	{
 	}

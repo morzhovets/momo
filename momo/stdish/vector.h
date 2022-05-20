@@ -100,7 +100,7 @@ public:
 	{
 	}
 
-	vector(vector&& right, const allocator_type& alloc)
+	vector(vector&& right, const std::type_identity_t<allocator_type>& alloc)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 		: mArray(pvCreateArray(std::move(right), alloc))
 	{
@@ -111,7 +111,7 @@ public:
 	{
 	}
 
-	vector(const vector& right, const allocator_type& alloc)
+	vector(const vector& right, const std::type_identity_t<allocator_type>& alloc)
 		: mArray(right.mArray, MemManager(alloc))
 	{
 	}

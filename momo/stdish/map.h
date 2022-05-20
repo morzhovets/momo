@@ -167,7 +167,7 @@ namespace internal
 		{
 		}
 
-		map_base(map_base&& right, const allocator_type& alloc)
+		map_base(map_base&& right, const std::type_identity_t<allocator_type>& alloc)
 			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 			: mTreeMap(pvCreateMap(std::move(right), alloc))
 		{
@@ -178,7 +178,7 @@ namespace internal
 		{
 		}
 
-		map_base(const map_base& right, const allocator_type& alloc)
+		map_base(const map_base& right, const std::type_identity_t<allocator_type>& alloc)
 			: mTreeMap(right.mTreeMap, MemManager(alloc))
 		{
 		}

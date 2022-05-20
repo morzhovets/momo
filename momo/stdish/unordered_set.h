@@ -185,7 +185,7 @@ public:
 	{
 	}
 
-	unordered_set(unordered_set&& right, const allocator_type& alloc)
+	unordered_set(unordered_set&& right, const std::type_identity_t<allocator_type>& alloc)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 		: mHashSet(pvCreateSet(std::move(right), alloc))
 	{
@@ -196,7 +196,7 @@ public:
 	{
 	}
 
-	unordered_set(const unordered_set& right, const allocator_type& alloc)
+	unordered_set(const unordered_set& right, const std::type_identity_t<allocator_type>& alloc)
 		: mHashSet(right.mHashSet, MemManager(alloc))
 	{
 	}

@@ -145,7 +145,7 @@ public:
 	{
 	}
 
-	set(set&& right, const allocator_type& alloc)
+	set(set&& right, const std::type_identity_t<allocator_type>& alloc)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
 		: mTreeSet(pvCreateSet(std::move(right), alloc))
 	{
@@ -156,7 +156,7 @@ public:
 	{
 	}
 
-	set(const set& right, const allocator_type& alloc)
+	set(const set& right, const std::type_identity_t<allocator_type>& alloc)
 		: mTreeSet(right.mTreeSet, MemManager(alloc))
 	{
 	}
