@@ -15,8 +15,7 @@
 #include "LibcxxTester.h"
 
 #include "../../momo/stdish/vector.h"
-#include "../../momo/SegmentedArray.h"
-#include "../../momo/MergeArray.h"
+#include "../../momo/stdish/segmented_vector.h"
 
 #undef _LIBCPP_DEBUG
 #undef _LIBCPP_DEBUG_LEVEL
@@ -48,11 +47,11 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
-namespace libcxx_test_segmented_array_sqrt
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt_0"
+namespace libcxx_test_segmented_array_sqrt_0
 {
 class LibcxxSegmentedArraySettings
-	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 3>
+	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 0>
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
@@ -67,8 +66,8 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 }
 #undef LIBCXX_TEST_PREFIX
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
-namespace libcxx_test_segmented_array_cnst
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst_0"
+namespace libcxx_test_segmented_array_cnst_0
 {
 class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0>
@@ -86,8 +85,8 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 }
 #undef LIBCXX_TEST_PREFIX
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_merge_array"
-namespace libcxx_test_merge_array
+#define LIBCXX_TEST_PREFIX "libcxx_test_merge_array_0"
+namespace libcxx_test_merge_array_0
 {
 class LibcxxMergeArraySettings : public momo::MergeArraySettings<0>
 {
@@ -120,5 +119,39 @@ using vector = momo::stdish::vector_intcap<5, TValue, TAllocator>;
 }
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_INTCAP_ARRAY
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
+namespace libcxx_test_segmented_array_cnst
+{
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::segmented_vector<TValue, TAllocator>;
+#include "LibcxxVectorTests.h"
+}
+#undef LIBCXX_TEST_PREFIX
+
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
+namespace libcxx_test_segmented_array_sqrt
+{
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::segmented_vector_sqrt<TValue, TAllocator>;
+#include "LibcxxVectorTests.h"
+}
+#undef LIBCXX_TEST_PREFIX
+
+#define LIBCXX_TEST_PREFIX "libcxx_test_merge_array"
+namespace libcxx_test_merge_array
+{
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::merge_vector<TValue, TAllocator>;
+#include "LibcxxVectorTests.h"
+}
+#undef LIBCXX_TEST_PREFIX
+
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
 
 #endif // TEST_LIBCXX_ARRAY

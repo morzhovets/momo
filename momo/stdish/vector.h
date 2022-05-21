@@ -233,11 +233,13 @@ public:
 	}
 
 	value_type* data() noexcept
+		requires requires { { this->mArray.GetItems() } -> std::same_as<value_type*>; }
 	{
 		return mArray.GetItems();
 	}
 
 	const value_type* data() const noexcept
+		requires requires { { this->mArray.GetItems() } -> std::same_as<const value_type*>; }
 	{
 		return mArray.GetItems();
 	}
@@ -475,7 +477,7 @@ private:
 
 template<typename Iterator,
 	typename Allocator = std::allocator<std::iter_value_t<Iterator>>>
-requires momo::internal::conceptAllocator<Allocator> \
+requires momo::internal::conceptAllocator<Allocator>
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<std::iter_value_t<Iterator>, Allocator>;
 
