@@ -233,13 +233,15 @@ public:
 	}
 
 	value_type* data() noexcept
-		requires requires { { std::declval<Array&>().GetItems() } -> std::same_as<value_type*>; }
+		requires requires { { std::declval<Array&>().GetItems() } noexcept
+			-> std::same_as<value_type*>; }
 	{
 		return mArray.GetItems();
 	}
 
 	const value_type* data() const noexcept
-		requires requires { { std::declval<const Array&>().GetItems() } -> std::same_as<const value_type*>; }
+		requires requires { { std::declval<const Array&>().GetItems() } noexcept
+			-> std::same_as<const value_type*>; }
 	{
 		return mArray.GetItems();
 	}
