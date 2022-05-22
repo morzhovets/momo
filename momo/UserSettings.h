@@ -87,21 +87,11 @@
 #if defined(_MSC_VER)
 #define MOMO_FORCEINLINE __forceinline
 #define MOMO_NOINLINE __declspec(noinline)
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
 #define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
 #define MOMO_NOINLINE __attribute__((__noinline__))
-#elif defined(__clang__)
-#if __has_attribute(__always_inline__)
-#define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
-#endif
-#if __has_attribute(__noinline__)
-#define MOMO_NOINLINE __attribute__((__noinline__))
-#endif
-#endif
-#ifndef MOMO_FORCEINLINE
+#else
 #define MOMO_FORCEINLINE inline
-#endif
-#ifndef MOMO_NOINLINE
 #define MOMO_NOINLINE
 #endif
 
