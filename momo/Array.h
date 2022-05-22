@@ -145,7 +145,7 @@ public:
 
 public:
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
-		ArrayGrowCause growCause, bool /*realloc*/)
+		ArrayGrowCause growCause, bool linear) noexcept
 	{
 		MOMO_ASSERT(capacity < minNewCapacity);
 		if (growCause == ArrayGrowCause::reserve && !growOnReserve)
@@ -153,14 +153,12 @@ public:
 		size_t newCapacity;
 		if (capacity <= 2)
 			newCapacity = 4;
-		else if (capacity < 256)
+		else if (capacity <= 64)
 			newCapacity = capacity * 2;
-		else if (capacity < 8192)
-			newCapacity = capacity + capacity / 2;
-		else if (capacity <= (internal::UIntConst::maxSize / 146) * 100 + 99)
-			newCapacity = (capacity / 100) * 146;	// k^4 < 1 + k + k^2
+		else if (linear || capacity < 150)
+			newCapacity = capacity + 64;
 		else
-			throw std::length_error("Invalid capacity");
+			newCapacity = capacity + (capacity / 50) * 23;	// k^4 < 1 + k + k^2
 		if (newCapacity < minNewCapacity)
 			newCapacity = minNewCapacity;
 		return newCapacity;
@@ -257,17 +255,6 @@ private:
 			return pvIsInternal() ? internalCapacity : mCapacity;
 		}
 
-		bool SetCapacity(size_t capacity)
-		{
-			pvCheckCapacity(capacity);
-			if (GetCapacity() == internalCapacity || capacity <= internalCapacity)
-				return false;
-			static const bool canReallocate = ItemTraits::isTriviallyRelocatable
-				&& MemManagerProxy::canReallocate;
-			return pvSetCapacity(capacity, internal::BoolConstant<canReallocate>(),
-				internal::BoolConstant<MemManagerProxy::canReallocateInplace>());
-		}
-
 		size_t GetCount() const noexcept
 		{
 			return mCount;
@@ -283,6 +270,20 @@ private:
 		{
 			pvDestroy();
 			pvCreate();
+		}
+
+		bool Reallocate(size_t capacityLin, size_t capacityExp)
+		{
+			if (GetCapacity() == internalCapacity)
+				return false;
+			if (capacityLin <= internalCapacity || capacityExp <= internalCapacity)
+				return false;
+			if (!pvCanReallocate() || capacityLin < capacityExp)
+			{
+				if (pvReallocateInplace(capacityLin))
+					return true;
+			}
+			return pvReallocate(capacityExp);
 		}
 
 		template<typename ItemsRelocator>
@@ -314,10 +315,15 @@ private:
 		}
 
 	private:
+		static constexpr bool pvCanReallocate() noexcept
+		{
+			return MemManagerProxy::canReallocate && ItemTraits::isTriviallyRelocatable;
+		}
+
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
-				throw std::length_error("Invalid capacity");
+				throw std::bad_array_new_length();
 		}
 
 		Item* pvAllocate(size_t capacity)
@@ -390,29 +396,41 @@ private:
 			return mItems == &mInternalItems;
 		}
 
-		template<bool canReallocateInplace>
-		bool pvSetCapacity(size_t capacity, std::true_type /*canReallocate*/,
-			internal::BoolConstant<canReallocateInplace>)
+		template<bool canReallocateInplace = MemManagerProxy::canReallocateInplace>
+		internal::EnableIf<canReallocateInplace,
+		bool> pvReallocateInplace(size_t capacity)
 		{
+			pvCheckCapacity(capacity);
+			if (!MemManagerProxy::ReallocateInplace(GetMemManager(),
+				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item)))
+			{
+				return false;
+			}
+			mCapacity = capacity;
+			return true;
+		}
+
+		template<bool canReallocateInplace = MemManagerProxy::canReallocateInplace>
+		internal::EnableIf<!canReallocateInplace,
+		bool> pvReallocateInplace(size_t /*capacity*/) noexcept
+		{
+			return false;
+		}
+
+		template<bool canReallocate = pvCanReallocate()>
+		internal::EnableIf<canReallocate,
+		bool> pvReallocate(size_t capacity)
+		{
+			pvCheckCapacity(capacity);
 			mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
 				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
 			mCapacity = capacity;
 			return true;
 		}
 
-		bool pvSetCapacity(size_t capacity, std::false_type /*canReallocate*/,
-			std::true_type /*canReallocateInplace*/) noexcept
-		{
-			bool reallocDone = MemManagerProxy::ReallocateInplace(GetMemManager(),
-				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
-			if (!reallocDone)
-				return false;
-			mCapacity = capacity;
-			return true;
-		}
-
-		bool pvSetCapacity(size_t /*capacity*/, std::false_type /*canReallocate*/,
-			std::false_type /*canReallocateInplace*/) noexcept
+		template<bool canReallocate = pvCanReallocate()>
+		internal::EnableIf<!canReallocate,
+		bool> pvReallocate(size_t /*capacity*/) noexcept
 		{
 			return false;
 		}
@@ -720,7 +738,7 @@ public:
 		size_t count = GetCount();
 		if (capacity < count)
 			capacity = count;
-		if (!mData.SetCapacity(capacity))
+		if (!mData.Reallocate(capacity, capacity))
 		{
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
@@ -962,9 +980,9 @@ private:
 	}
 
 	static size_t pvGrowCapacity(size_t capacity, size_t minNewCapacity,
-		ArrayGrowCause growCause, bool realloc)
+		ArrayGrowCause growCause, bool linear)
 	{
-		size_t newCapacity = Settings::GrowCapacity(capacity, minNewCapacity, growCause, realloc);
+		size_t newCapacity = Settings::GrowCapacity(capacity, minNewCapacity, growCause, linear);
 		MOMO_ASSERT(newCapacity >= minNewCapacity);
 		return newCapacity;
 	}
@@ -972,13 +990,14 @@ private:
 	void pvGrow(size_t minNewCapacity, ArrayGrowCause growCause)
 	{
 		size_t initCapacity = GetCapacity();
-		if (!mData.SetCapacity(pvGrowCapacity(initCapacity, minNewCapacity, growCause, true)))
+		size_t newCapacityLin = pvGrowCapacity(initCapacity, minNewCapacity, growCause, true);
+		size_t newCapacityExp = pvGrowCapacity(initCapacity, minNewCapacity, growCause, false);
+		if (!mData.Reallocate(newCapacityLin, newCapacityExp))
 		{
 			size_t count = GetCount();
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.Reset(pvGrowCapacity(initCapacity, minNewCapacity, growCause, false),
-				count, itemsRelocator);
+			mData.Reset(newCapacityExp, count, itemsRelocator);
 		}
 	}
 
