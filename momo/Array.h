@@ -278,12 +278,15 @@ private:
 				return false;
 			if (capacityLin <= internalCapacity || capacityExp <= internalCapacity)
 				return false;
-			if (!pvCanReallocate() || capacityLin < capacityExp)
+			static const bool canReallocateInplace = MemManagerProxy::canReallocateInplace;
+			static const bool canReallocate = MemManagerProxy::canReallocate
+				&& ItemTraits::isTriviallyRelocatable;
+			if (!canReallocate || capacityLin < capacityExp)
 			{
-				if (pvReallocateInplace(capacityLin))
+				if (pvReallocateInplace(capacityLin, internal::BoolConstant<canReallocateInplace>()))
 					return true;
 			}
-			return pvReallocate(capacityExp);
+			return pvReallocate(capacityExp, internal::BoolConstant<canReallocate>());
 		}
 
 		template<typename ItemsRelocator>
@@ -315,11 +318,6 @@ private:
 		}
 
 	private:
-		static constexpr bool pvCanReallocate() noexcept
-		{
-			return MemManagerProxy::canReallocate && ItemTraits::isTriviallyRelocatable;
-		}
-
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
@@ -396,9 +394,7 @@ private:
 			return mItems == &mInternalItems;
 		}
 
-		template<bool canReallocateInplace = MemManagerProxy::canReallocateInplace>
-		internal::EnableIf<canReallocateInplace,
-		bool> pvReallocateInplace(size_t capacity)
+		bool pvReallocateInplace(size_t capacity, std::true_type /*canReallocateInplace*/)
 		{
 			pvCheckCapacity(capacity);
 			if (!MemManagerProxy::ReallocateInplace(GetMemManager(),
@@ -410,16 +406,13 @@ private:
 			return true;
 		}
 
-		template<bool canReallocateInplace = MemManagerProxy::canReallocateInplace>
-		internal::EnableIf<!canReallocateInplace,
-		bool> pvReallocateInplace(size_t /*capacity*/) noexcept
+		bool pvReallocateInplace(size_t /*capacity*/,
+			std::false_type /*canReallocateInplace*/) noexcept
 		{
 			return false;
 		}
 
-		template<bool canReallocate = pvCanReallocate()>
-		internal::EnableIf<canReallocate,
-		bool> pvReallocate(size_t capacity)
+		bool pvReallocate(size_t capacity, std::true_type /*canReallocate*/)
 		{
 			pvCheckCapacity(capacity);
 			mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
@@ -428,9 +421,7 @@ private:
 			return true;
 		}
 
-		template<bool canReallocate = pvCanReallocate()>
-		internal::EnableIf<!canReallocate,
-		bool> pvReallocate(size_t /*capacity*/) noexcept
+		bool pvReallocate(size_t /*capacity*/, std::false_type /*canReallocate*/) noexcept
 		{
 			return false;
 		}
