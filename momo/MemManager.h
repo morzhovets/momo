@@ -205,8 +205,7 @@ public:
 #endif
 
 //! `MemManagerStd` uses `allocator<std::byte>::allocate` and `deallocate`
-template<internal::conceptAllocator TAllocator,
-	bool tUseMemManagerDefault = true>
+template<internal::conceptAllocator TAllocator>
 class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<std::byte>
 {
 public:
@@ -270,9 +269,10 @@ public:
 //! `MemManagerDefault` is defined in UserSettings.h
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
+#ifdef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
 //! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
 template<typename Object>
-class MemManagerStd<std::allocator<Object>, true>
+class MemManagerStd<std::allocator<Object>>
 	: private std::allocator<std::byte>, public MemManagerDefault
 {
 public:
@@ -311,6 +311,7 @@ public:
 		return *this;
 	}
 };
+#endif
 
 namespace internal
 {
