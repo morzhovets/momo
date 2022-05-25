@@ -82,6 +82,7 @@
 #define MOMO_IS_FAST_COMPARABLE(Key) (std::is_arithmetic<Key>::value || std::is_pointer<Key>::value)
 
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerC
+#define MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
 
 // Inlining
 #if defined(_MSC_VER)

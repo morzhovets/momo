@@ -55,7 +55,7 @@ public:
 	typedef std::true_type propagate_on_container_swap;
 
 private:
-	typedef MemManagerStd<base_allocator_type, false> MemManager;
+	typedef MemManagerStd<base_allocator_type> MemManager;
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef mem_pool_params MemPoolParams;
@@ -71,7 +71,7 @@ private:
 
 public:
 	explicit unsynchronized_pool_allocator(const base_allocator_type& alloc = base_allocator_type())
-		: mMemPool(std::allocate_shared<MemPool>(alloc, pvGetMemPoolParams(), MemManager(alloc)))
+		: mMemPool(std::allocate_shared<MemPool>(alloc, pvGetMemPoolParams(), MemManager(alloc)))	//?
 	{
 	}
 
