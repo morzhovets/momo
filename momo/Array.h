@@ -925,13 +925,11 @@ public:
 	}
 
 	template<typename ItemArg,
-		internal::conceptEqualFunc<ItemArg, Item> EqualFunc = std::equal_to<>>
+		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
 	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
 	{
-		const Item* begin = GetItems();
-		const Item* end = begin + GetCount();
-		return std::find_if(begin, end,
-			[&itemArg, &equalFunc] (const Item& item) { return equalFunc(itemArg, item); }) != end;
+		return std::any_of(GetBegin(), GetEnd(),
+			[&itemArg, &equalFunc] (const Item& item) { return equalFunc(item, itemArg); });
 	}
 
 	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
