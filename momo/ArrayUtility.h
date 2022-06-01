@@ -184,8 +184,7 @@ namespace internal
 	public:
 		template<std::invocable<Item*> ItemCreator>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
-			: mMemManager(memManager),
-			mHasItem(true)
+			: mMemManager(&memManager)
 		{
 			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 		}
@@ -194,27 +193,26 @@ namespace internal
 
 		~ArrayItemHandler() noexcept
 		{
-			if (mHasItem)
-				ItemTraits::Destroy(mMemManager, &mItemBuffer, 1);
+			if (mMemManager != nullptr)
+				ItemTraits::Destroy(*mMemManager, &mItemBuffer, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
 		Item* operator&() noexcept
 		{
-			MOMO_ASSERT(mHasItem);
+			MOMO_ASSERT(mMemManager != nullptr);
 			return &mItemBuffer;
 		}
 
 		void Release() noexcept
 		{
-			mHasItem = false;
+			mMemManager = nullptr;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
-		MemManager& mMemManager;
-		bool mHasItem;
+		MemManager* mMemManager;
 	};
 
 	template<typename TArray>
