@@ -28,7 +28,7 @@ jobs:
           build_type: 'Debug'
           flags: '-msse2 -fsanitize=address,undefined'
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout
