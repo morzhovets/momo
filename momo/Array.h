@@ -922,10 +922,8 @@ public:
 	template<typename EqualFunc = std::equal_to<Item>>
 	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
 	{
-		const Item* begin = GetItems();
-		const Item* end = begin + GetCount();
-		return std::find_if(begin, end,
-			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(item, thisItem); }) != end;
+		return std::any_of(GetBegin(), GetEnd(),
+			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(thisItem, item); });
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>
