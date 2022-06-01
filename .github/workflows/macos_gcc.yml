@@ -12,7 +12,7 @@ jobs:
           build_type: 'Release'
           flags: '-msse2'
 
-    runs-on: macos-10.15
+    runs-on: macos-11
 
     steps:
     - name: Checkout
