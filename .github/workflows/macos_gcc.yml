@@ -12,7 +12,7 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-    runs-on: macos-10.15
+    runs-on: macos-11
 
     steps:
     - name: Checkout
