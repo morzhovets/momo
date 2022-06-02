@@ -17,6 +17,7 @@
 
 #include "MergeTraits.h"
 #include "SetUtility.h"
+#include "HashSorter.h"
 
 namespace momo
 {
@@ -190,7 +191,15 @@ namespace internal
 		static const size_t initialItemCount =
 			size_t{1} << MergeTraits::MergeArraySettings::logInitialItemCount;
 
+		struct ItemPtrHash
+		{
+			Item* ptr;
+			size_t hash;
+		};
+
 		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0, Item*, MemManagerPtr> ItemPtrs;
+		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0,
+			ItemPtrHash, MemManagerPtr> ItemPtrHashes;
 
 	public:
 		template<typename Iterator>
@@ -210,7 +219,30 @@ namespace internal
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
 			Item* srcItems1 = std::addressof(*UIntMath<>::Next(srcBegin, count - initialItemCount));
 			Item* srcItems2 = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * initialItemCount));
-			if constexpr (MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
+			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+			{
+				ItemPtrHashes itemPtrHashes(count, memManager);
+				for (size_t i = 0; i < initialItemCount; ++i)
+				{
+					itemPtrHashes[count - initialItemCount + i] = { srcItems1 + i,
+						mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems1[i])) };
+					itemPtrHashes[count - 2 * initialItemCount + i] = { srcItems2 + i,
+						mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems2[i])) };
+				}
+				pvSortPtrHashes(&itemPtrHashes[count - 2 * initialItemCount]);
+				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
+				{
+					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
+					pvMergePtrHashes(mergeTraits, srcItems, &itemPtrHashes[count - 2 * index], index);
+				}
+				auto srcGen = [srcIter = itemPtrHashes.GetItems()] () mutable
+					{ return (srcIter++)->ptr; };
+				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
+					InputIterator(srcGen), dstBegin, count,
+					std::forward<ItemCreator>(itemCreator), newItem);
+			}
+			else if constexpr (MergeTraits::func == MergeTraitsFunc::lessNothrow
+				&& MergeSetItemTraits::isNothrowRelocatable)
 			{
 				std::forward<ItemCreator>(itemCreator)(newItem);
 				for (size_t i = 0; i < initialItemCount; ++i)
@@ -257,7 +289,6 @@ namespace internal
 		}
 
 		static void pvSortRelocate(MemManager& memManager, const MergeTraits& mergeTraits, Item* items)
-			noexcept(MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
@@ -275,27 +306,41 @@ namespace internal
 			}
 		}
 
-		static void pvSortPtrs(const MergeTraits& mergeTraits, Item** items)
-			noexcept(MergeTraits::isNothrowComparable)
+		static void pvSortPtrs(const MergeTraits& mergeTraits, Item** itemPtrs)
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
-				Item* itemPtr = items[i];
+				Item* itemPtr = itemPtrs[i];
 				const Key& key = MergeSetItemTraits::GetKey(*itemPtr);
 				size_t j = i;
 				for (; j > 0; --j)
 				{
-					if (!mergeTraits.IsLess(key, MergeSetItemTraits::GetKey(*items[j - 1])))
+					if (!mergeTraits.IsLess(key, MergeSetItemTraits::GetKey(*itemPtrs[j - 1])))
 						break;
-					items[j] = items[j - 1];
+					itemPtrs[j] = itemPtrs[j - 1];
 				}
-				items[j] = itemPtr;
+				itemPtrs[j] = itemPtr;
+			}
+		}
+
+		static void pvSortPtrHashes(ItemPtrHash* itemPtrHashes)
+		{
+			for (size_t i = 1; i < 2 * initialItemCount; ++i)
+			{
+				ItemPtrHash itemPtrHash = itemPtrHashes[i];
+				size_t j = i;
+				for (; j > 0; --j)
+				{
+					if (itemPtrHashes[j - 1].hash <= itemPtrHash.hash)
+						break;
+					itemPtrHashes[j] = itemPtrHashes[j - 1];
+				}
+				itemPtrHashes[j] = itemPtrHash;
 			}
 		}
 
 		static void pvMergeRelocate(MemManager& memManager, const MergeTraits& mergeTraits,
 			Item* srcItems1, Item* dstItems, size_t count)
-			noexcept(MergeSetItemTraits::isNothrowRelocatable && MergeTraits::isNothrowComparable)
 		{
 			Item* srcItems2 = dstItems + count;
 			size_t srcIndex1 = 0;
@@ -319,27 +364,50 @@ namespace internal
 			}
 		}
 
-		static void pvMergePtrs(const MergeTraits& mergeTraits, Item* srcItems1, Item** dstItems,
-			size_t count) noexcept(MergeTraits::isNothrowComparable)
+		static void pvMergePtrs(const MergeTraits& mergeTraits, Item* srcItems1,
+			Item** dstItemPtrs, size_t count)
 		{
-			Item** srcItems2 = dstItems + count;
+			Item** srcItemPtrs2 = dstItemPtrs + count;
 			size_t srcIndex1 = 0;
 			size_t srcIndex2 = 0;
 			size_t dstIndex = 0;
 			while (srcIndex1 < count)
 			{
 				if (srcIndex2 < count && mergeTraits.IsLess(
-					MergeSetItemTraits::GetKey(*srcItems2[srcIndex2]),
+					MergeSetItemTraits::GetKey(*srcItemPtrs2[srcIndex2]),
 					MergeSetItemTraits::GetKey(srcItems1[srcIndex1])))
 				{
-					dstItems[dstIndex] = srcItems2[srcIndex2];
+					dstItemPtrs[dstIndex] = srcItemPtrs2[srcIndex2];
 					++srcIndex2;
 				}
 				else
 				{
-					dstItems[dstIndex] = srcItems1 + srcIndex1;
+					dstItemPtrs[dstIndex] = srcItems1 + srcIndex1;
 					++srcIndex1;
 				}
+				++dstIndex;
+			}
+		}
+
+		static void pvMergePtrHashes(const MergeTraits& mergeTraits, Item* srcItems1,
+			ItemPtrHash* dstItemPtrHashes, size_t count)
+		{
+			ItemPtrHash* srcItemPtrHashes2 = dstItemPtrHashes + count;
+			size_t srcIndex1 = 0;
+			size_t srcIndex2 = 0;
+			size_t dstIndex = 0;
+			while (srcIndex1 < count)
+			{
+				size_t srcHash1 =
+					mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems1[srcIndex1]));
+				while (srcIndex2 < count && srcItemPtrHashes2[srcIndex2].hash < srcHash1)
+				{
+					dstItemPtrHashes[dstIndex] = srcItemPtrHashes2[srcIndex2];
+					++srcIndex2;
+					++dstIndex;
+				}
+				dstItemPtrHashes[dstIndex] = { srcItems1 + srcIndex1, srcHash1 };
+				++srcIndex1;
 				++dstIndex;
 			}
 		}
@@ -642,8 +710,6 @@ private:
 	Position pvFind(const Key& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		auto comp = [&mergeTraits] (const Item& item1, const Key& key2)
-			{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 		auto pred = [&mergeTraits, &key] (const Item& item)
 			{ return mergeTraits.IsEqual(ItemTraits::GetKey(item), key); };
 		size_t segIndex = mMergeArray.GetSegmentCount();
@@ -654,9 +720,30 @@ private:
 			if (segItems == nullptr)
 				continue;
 			size_t segItemCount = initialItemCount << (segIndex - 1);
-			const Item* itemPtr = std::lower_bound(segItems, segItems + segItemCount - 1, key, comp);
-			if (pred(*itemPtr))
-				return pvMakePosition(*itemPtr);
+			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+			{
+				auto hashFunc = [&mergeTraits] (const Item& item)
+					{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
+				auto equalFunc = [&mergeTraits] (const Item& item1, const auto& item2)
+				{
+					if constexpr (std::is_same_v<decltype(item2), const Key&>)
+						return mergeTraits.IsEqual(ItemTraits::GetKey(item1), item2);
+					else
+						return mergeTraits.IsEqual(ItemTraits::GetKey(item1), ItemTraits::GetKey(item2));
+				};
+				auto findRes = HashSorter::Find(segItems, segItemCount, key,
+					mergeTraits.GetHashCode(key), hashFunc, equalFunc);
+				if (findRes.found)
+					return pvMakePosition(*findRes.iterator);
+			}
+			else
+			{
+				auto lessFunc = [&mergeTraits] (const Item& item1, const Key& key2)
+					{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
+				const Item* itemPtr = std::lower_bound(segItems, segItems + segItemCount - 1, key, lessFunc);
+				if (pred(*itemPtr))
+					return pvMakePosition(*itemPtr);
+			}
 		}
 		if (segIndex > 1)
 		{

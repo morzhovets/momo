@@ -25,20 +25,24 @@ public:
 	{
 		std::mt19937 mt;
 
-		TestTemplMergeTraits<false, 0, false>(mt);
-		TestTemplMergeTraits<false, 4, false>(mt);
-		TestTemplMergeTraits<true, 0, false>(mt);
-		TestTemplMergeTraits<true, 4, false>(mt);
-		TestTemplMergeTraits<false, 0, true>(mt);
-		TestTemplMergeTraits<false, 4, true>(mt);
-		TestTemplMergeTraits<true, 0, true>(mt);
-		TestTemplMergeTraits<true, 4, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 0, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 4, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 0, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 4, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 4, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 0, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 4, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 0, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 4, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 4, true>(mt);
 	}
 
-	template<bool isNothrowComparable, size_t logInitialItemCount, bool useValuePtr>
+	template<momo::MergeTraitsFunc mergeTraitsFunc, size_t logInitialItemCount, bool useValuePtr>
 	static void TestTemplMergeTraits(std::mt19937& mt)
 	{
-		std::cout << "momo::MergeTraits<" << isNothrowComparable << ", " << logInitialItemCount
+		std::cout << "momo::MergeTraits<" << static_cast<int>(mergeTraitsFunc) << ", " << logInitialItemCount
 			<< "> (" << (useValuePtr ? "+" : "-") << "useValuePtr): " << std::flush;
 
 		static const size_t count = 1 << 10;
@@ -46,7 +50,7 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			array[i] = i;
 
-		typedef momo::MergeTraits<size_t, isNothrowComparable,
+		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
 			momo::MergeArraySettings<logInitialItemCount>> MergeTraits;
 		typedef momo::MergeMap<size_t, size_t, MergeTraits, momo::MemManagerDefault,
 			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDefault,
