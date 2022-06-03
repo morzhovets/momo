@@ -230,7 +230,9 @@ namespace internal
 					itemPtrHashes[count - 2 * initialItemCount + i] = { srcItems2 + i,
 						mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems2[i])) };
 				}
-				pvSortPtrHashes(&itemPtrHashes[count - 2 * initialItemCount]);
+				auto lessFunc = [] (ItemPtrHash itemPtrHash1, ItemPtrHash itemPtrHash2)
+					{ return itemPtrHash1.hash < itemPtrHash2.hash; };
+				pvSortPtrs(&itemPtrHashes[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
 					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
@@ -267,7 +269,12 @@ namespace internal
 					itemPtrs[count - initialItemCount + i] = srcItems1 + i;
 					itemPtrs[count - 2 * initialItemCount + i] = srcItems2 + i;
 				}
-				pvSortPtrs(mergeTraits, &itemPtrs[count - 2 * initialItemCount]);
+				auto lessFunc = [&mergeTraits] (Item* itemPtr1, Item* itemPtr2)
+				{
+					return mergeTraits.IsLess(MergeSetItemTraits::GetKey(*itemPtr1),
+						MergeSetItemTraits::GetKey(*itemPtr2));
+				};
+				pvSortPtrs(&itemPtrs[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
 					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
@@ -306,37 +313,21 @@ namespace internal
 				pvRelocate(memManager, *&itemBuffer, items + j);
 			}
 		}
-
-		static void pvSortPtrs(const MergeTraits& mergeTraits, Item** itemPtrs)
+		
+		template<typename ItemPtr, typename LessFunc>
+		static void pvSortPtrs(ItemPtr* itemPtrs, const LessFunc& lessFunc)
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
-				Item* itemPtr = itemPtrs[i];
-				const Key& key = MergeSetItemTraits::GetKey(*itemPtr);
+				ItemPtr itemPtr = itemPtrs[i];
 				size_t j = i;
 				for (; j > 0; --j)
 				{
-					if (!mergeTraits.IsLess(key, MergeSetItemTraits::GetKey(*itemPtrs[j - 1])))
+					if (!lessFunc(itemPtr, itemPtrs[j - 1]))
 						break;
 					itemPtrs[j] = itemPtrs[j - 1];
 				}
 				itemPtrs[j] = itemPtr;
-			}
-		}
-
-		static void pvSortPtrHashes(ItemPtrHash* itemPtrHashes)
-		{
-			for (size_t i = 1; i < 2 * initialItemCount; ++i)
-			{
-				ItemPtrHash itemPtrHash = itemPtrHashes[i];
-				size_t j = i;
-				for (; j > 0; --j)
-				{
-					if (itemPtrHashes[j - 1].hash <= itemPtrHash.hash)
-						break;
-					itemPtrHashes[j] = itemPtrHashes[j - 1];
-				}
-				itemPtrHashes[j] = itemPtrHash;
 			}
 		}
 
