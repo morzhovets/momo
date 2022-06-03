@@ -10,6 +10,7 @@
     class MergeMapKeyValueTraits
     class MergeMapSettings
     class MergeMap
+    class MergeMapHash
 
 \**********************************************************/
 
@@ -523,5 +524,8 @@ private:
 private:
 	MergeSet mMergeSet;
 };
+
+template<conceptObject TKey>
+using MergeMapHash = MergeMap<TKey, MergeTraitsHash<TKey>>;
 
 } // namespace momo

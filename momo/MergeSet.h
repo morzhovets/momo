@@ -10,6 +10,7 @@
     class MergeSetItemTraits
     class MergeSetSettings
     class MergeSet
+    class MergeSetHash
 
 \**********************************************************/
 
@@ -790,6 +791,9 @@ private:
 private:
 	MergeArray mMergeArray;
 };
+
+template<conceptObject TKey>
+using MergeSetHash = MergeSet<TKey, MergeTraitsHash<TKey>>;
 
 } // namespace momo
 
