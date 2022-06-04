@@ -702,60 +702,78 @@ private:
 	Position pvFind(const Key& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
+		size_t hashCode = 0;
+		if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+			hashCode = mergeTraits.GetHashCode(key);
 		auto pred = [&mergeTraits, &key] (const Item& item)
 			{ return mergeTraits.IsEqual(ItemTraits::GetKey(item), key); };
-		size_t segIndex = mMergeArray.GetSegmentCount();
-		while (segIndex > 2)
+		switch (size_t segCount = mMergeArray.GetSegmentCount(); segCount)
 		{
-			--segIndex;
-			const Item* segItems = mMergeArray.GetSegmentItems(segIndex);
-			if (segItems == nullptr)
-				continue;
-			size_t segItemCount = initialItemCount << (segIndex - 1);
-			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+		default:
 			{
-				auto hashFunc = [&mergeTraits] (const Item& item)
-					{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
-				auto equalFunc = [&mergeTraits] (const Item& item1, const auto& item2)
+				size_t segIndex = segCount - 1;
+				const Item* segItems = mMergeArray.GetSegmentItems(segIndex);
+				while (true)
 				{
-					if constexpr (std::is_same_v<decltype(item2), const Key&>)
-						return mergeTraits.IsEqual(ItemTraits::GetKey(item1), item2);
+					size_t segItemCount = initialItemCount << (segIndex - 1);
+					if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+					{
+						auto hashFunc = [&mergeTraits] (const Item& item)
+							{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
+						auto equalFunc = [&mergeTraits] (const Item& item1, const auto& item2)
+						{
+							const Key& key1 = ItemTraits::GetKey(item1);
+							if constexpr (std::is_same_v<decltype(item2), const Key&>)
+								return mergeTraits.IsEqual(key1, item2);
+							else
+								return mergeTraits.IsEqual(key1, ItemTraits::GetKey(item2));
+						};
+						auto findRes = HashSorter::Find(segItems, segItemCount, key,
+							hashCode, hashFunc, equalFunc);
+						if (findRes.found)
+							return pvMakePosition(*findRes.iterator);
+					}
 					else
-						return mergeTraits.IsEqual(ItemTraits::GetKey(item1), ItemTraits::GetKey(item2));
-				};
-				auto findRes = HashSorter::Find(segItems, segItemCount, key,
-					mergeTraits.GetHashCode(key), hashFunc, equalFunc);
-				if (findRes.found)
-					return pvMakePosition(*findRes.iterator);
+					{
+						auto lessFunc = [&mergeTraits] (const Item& item1, const Key& key2)
+							{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
+						const Item* itemPtr = std::lower_bound(segItems,
+							segItems + segItemCount - 1, key, lessFunc);
+						if (pred(*itemPtr))
+							return pvMakePosition(*itemPtr);
+					}
+					while (true)
+					{
+						--segIndex;
+						segItems = mMergeArray.GetSegmentItems(segIndex);
+						if (segItems != nullptr)
+							break;
+					}
+					if (segIndex < 2)
+						break;
+				}
 			}
-			else
-			{
-				auto lessFunc = [&mergeTraits] (const Item& item1, const Key& key2)
-					{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
-				const Item* itemPtr = std::lower_bound(segItems, segItems + segItemCount - 1, key, lessFunc);
-				if (pred(*itemPtr))
-					return pvMakePosition(*itemPtr);
-			}
-		}
-		if (segIndex > 1)
-		{
-			const Item* segItems = mMergeArray.GetSegmentItems(1);
-			if (segItems != nullptr)
+			[[fallthrough]];
+		case 2:
+			if (const Item* segItems = mMergeArray.GetSegmentItems(1); segItems != nullptr)
 			{
 				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount, pred);
 				if (itemPtr != segItems + initialItemCount)
 					return pvMakePosition(*itemPtr);
 			}
+			[[fallthrough]];
+		case 1:
+			{
+				const Item* segItems = mMergeArray.GetSegmentItems(0);
+				size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
+				const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, pred);
+				if (itemPtr != segItems + segItemCount)
+					return pvMakePosition(*itemPtr);
+			}
+			[[fallthrough]];
+		case 0:
+			return Position();
 		}
-		if (segIndex > 0)
-		{
-			const Item* segItems = mMergeArray.GetSegmentItems(0);
-			size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
-			const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, pred);
-			if (itemPtr != segItems + segItemCount)
-				return pvMakePosition(*itemPtr);
-		}
-		return Position();
 	}
 
 	template<bool extraCheck, typename ItemCreator>
