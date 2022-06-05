@@ -224,6 +224,18 @@ namespace internal
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
 		}
 
+		static bool GetBit(const UInt* data, size_t bitIndex)
+		{
+			static const size_t bitSize = sizeof(UInt) * 8;
+			return (data[bitIndex / bitSize] & (UInt{1} << static_cast<UInt>(bitIndex % bitSize))) != 0;
+		}
+
+		static void SetBit(UInt* data, size_t bitIndex)
+		{
+			static const size_t bitSize = sizeof(UInt) * 8;
+			data[bitIndex / bitSize] |= UInt{1} << static_cast<UInt>(bitIndex % bitSize);
+		}
+
 		static constexpr UInt GCD(UInt value1, UInt value2) noexcept
 		{
 			while (value2 != 0)
