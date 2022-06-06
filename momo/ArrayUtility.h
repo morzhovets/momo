@@ -184,8 +184,7 @@ namespace internal
 	public:
 		template<std::invocable<Item*> ItemCreator>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
-			: mItemBuffer(),	// gcc 12 warning
-			mMemManager(&memManager)
+			: mMemManager(&memManager)
 		{
 			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 		}

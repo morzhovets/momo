@@ -153,7 +153,7 @@ namespace internal
 		}
 
 	private:
-		alignas(alignment) std::byte mBuffer[sizeof(Object)];
+		alignas(alignment) std::byte mBuffer[sizeof(Object)] = {};
 	};
 
 	template<conceptObject Object, conceptMemManager MemManager, typename... ObjectArgs>
