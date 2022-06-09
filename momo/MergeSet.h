@@ -472,6 +472,8 @@ private:
 	typedef momo::MergeArray<Item, MergeArrayMemManager, MergeArrayItemTraits,
 		MergeArraySettings> MergeArray;
 
+	typedef typename MergeTraits::BloomFilter BloomFilter;
+
 	static const size_t initialItemCount = size_t{1} << MergeArraySettings::logInitialItemCount;
 
 public:
@@ -517,11 +519,20 @@ public:
 		MemManager memManager = MemManager())
 		: MergeSet(mergeTraits, std::move(memManager))
 	{
-		Insert(items);
+		try
+		{
+			Insert(items);
+		}
+		catch (...)
+		{
+			pvFilterClear();
+			throw;
+		}
 	}
 
 	MergeSet(MergeSet&& mergeSet) noexcept
-		: mMergeArray(std::move(mergeSet.mMergeArray))
+		: mMergeArray(std::move(mergeSet.mMergeArray)),
+		mBloomFilter(std::move(mergeSet.mBloomFilter))
 	{
 	}
 
@@ -537,10 +548,18 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		for (const Item& item : mergeSet.mMergeArray)
 			mMergeArray.AddBackNogrowCrt(Creator<const Item&>(thisMemManager, item));
+		try
+		{
+			mBloomFilter.Init(thisMemManager, pvGetFilterLogMaxCount(), mergeSet.mBloomFilter);
+		}
+		catch (...)
+		{
+		}
 	}
 
 	~MergeSet() noexcept
 	{
+		pvFilterClear();
 	}
 
 	MergeSet& operator=(MergeSet&& mergeSet) noexcept
@@ -559,6 +578,7 @@ public:
 	void Swap(MergeSet& mergeSet) noexcept
 	{
 		mMergeArray.Swap(mergeSet.mMergeArray);
+		mBloomFilter.Swap(mergeSet.mBloomFilter);
 	}
 
 	Iterator GetBegin() const noexcept
@@ -603,6 +623,7 @@ public:
 
 	void Clear() noexcept
 	{
+		pvFilterClear();
 		mMergeArray.Clear(true);
 		pvGetCrew().IncVersion();
 	}
@@ -699,11 +720,24 @@ private:
 		return PositionProxy(item, pvGetCrew().GetVersion());
 	}
 
+	bool pvExtraCheck(ConstPosition pos) const noexcept
+	{
+		try
+		{
+			return pos == pvFind(ItemTraits::GetKey(*pos));
+		}
+		catch (...)
+		{
+			//?
+			return false;
+		}
+	}
+
 	Position pvFind(const Key& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		size_t hashCode = 0;
-		if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
+		if constexpr (MergeTraits::func == MergeTraitsFunc::hash || !BloomFilter::isAlwaysEmpty)
 			hashCode = mergeTraits.GetHashCode(key);
 		auto pred = [&mergeTraits, &key] (const Item& item)
 			{ return mergeTraits.IsEqual(ItemTraits::GetKey(item), key); };
@@ -742,6 +776,8 @@ private:
 						if (pred(*itemPtr))
 							return pvMakePosition(*itemPtr);
 					}
+					if (segIndex == segCount - 1 && !pvFilterTest(hashCode))
+						return Position();
 					while (true)
 					{
 						--segIndex;
@@ -791,14 +827,76 @@ private:
 	{
 		MOMO_CHECK(!pos);
 		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
+		const Item& item = mMergeArray.GetBackItem();
+		pvFilterSet(ItemTraits::GetKey(item));
 		pvGetCrew().IncVersion();
-		Position resPos = pvMakePosition(mMergeArray.GetBackItem());
-		MOMO_EXTRA_CHECK(!extraCheck || resPos == pvFind(ItemTraits::GetKey(*resPos)));
+		Position resPos = pvMakePosition(item);
+		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
 		return resPos;
+	}
+
+	size_t pvGetFilterLogMaxCount() const noexcept
+	{
+		size_t count = GetCount();
+		MOMO_ASSERT(count > 1);
+		return std::bit_width(count - 1) - 1;
+	}
+
+	void pvFilterClear() noexcept
+	{
+		if constexpr (!BloomFilter::isAlwaysEmpty)
+		{
+			if (!mBloomFilter.IsEmpty())
+				mBloomFilter.Clear(GetMemManager(), pvGetFilterLogMaxCount());
+		}
+	}
+
+	bool pvFilterTest(size_t hashCode) const noexcept
+	{
+		if constexpr (BloomFilter::isAlwaysEmpty)
+			return true;
+		else
+			return mBloomFilter.IsEmpty() || mBloomFilter.Test(hashCode, pvGetFilterLogMaxCount());
+	}
+
+	void pvFilterSet(const Key& key) noexcept
+	{
+		if constexpr (!BloomFilter::isAlwaysEmpty)
+		{
+			size_t count = GetCount() - 1;
+			if (count < 2 * initialItemCount)
+				return;
+			size_t logCount = std::bit_width(count) - 1;
+			MemManager& memManager = GetMemManager();
+			if (count == size_t{1} << logCount)
+			{
+				if (!mBloomFilter.IsEmpty())
+					mBloomFilter.Clear(memManager, logCount - 1);
+				try
+				{
+					mBloomFilter.Init(memManager, logCount);
+				}
+				catch (...)
+				{
+				}
+			}
+			if (mBloomFilter.IsEmpty())
+				return;
+			try
+			{
+				size_t hashCode = GetMergeTraits().GetHashCode(key);
+				mBloomFilter.Set(hashCode, logCount);
+			}
+			catch (...)
+			{
+				mBloomFilter.Clear(memManager, logCount);
+			}
+		}
 	}
 
 private:
 	MergeArray mMergeArray;
+	[[no_unique_address]] BloomFilter mBloomFilter;
 };
 
 template<conceptObject TKey>

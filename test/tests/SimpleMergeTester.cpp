@@ -25,25 +25,39 @@ public:
 	{
 		std::mt19937 mt;
 
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 0, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 4, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 0, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 4, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 4, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 0, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 4, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 0, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 4, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 4, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 0, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 0, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
+
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 1, momo::MergeBloomFilter<0>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 2, momo::MergeBloomFilter<1>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, momo::MergeBloomFilter<2>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, false>(mt);
+
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, true>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, true>(mt);
 	}
 
-	template<momo::MergeTraitsFunc mergeTraitsFunc, size_t logInitialItemCount, bool useValuePtr>
+	template<momo::MergeTraitsFunc mergeTraitsFunc, size_t logInitialItemCount,
+		typename MergeBloomFilter, bool useValuePtr>
 	static void TestTemplMergeTraits(std::mt19937& mt)
 	{
-		std::cout << "momo::MergeTraits<" << static_cast<int>(mergeTraitsFunc) << ", " << logInitialItemCount
-			<< "> (" << (useValuePtr ? "+" : "-") << "useValuePtr): " << std::flush;
+		std::cout << "momo::MergeTraits<" << static_cast<int>(mergeTraitsFunc) << ", "
+			<< logInitialItemCount << ", ";
+		if constexpr (MergeBloomFilter::isAlwaysEmpty)
+			std::cout << "empty";
+		else
+			std::cout << MergeBloomFilter::logMult;
+		std::cout << "> (" << (useValuePtr ? "+" : "-") << "useValuePtr): " << std::flush;
 
 		static const size_t count = 1 << 10;
 		static size_t array[count];
@@ -51,7 +65,7 @@ public:
 			array[i] = i;
 
 		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
-			momo::MergeArraySettings<logInitialItemCount>> MergeTraits;
+			momo::MergeArraySettings<logInitialItemCount>, MergeBloomFilter> MergeTraits;
 		typedef momo::MergeMap<size_t, size_t, MergeTraits, momo::MemManagerDefault,
 			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDefault,
 			useValuePtr>> MergeMap;
