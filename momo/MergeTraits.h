@@ -124,7 +124,7 @@ private:
 
 	static size_t pvGetBitIndex1(size_t hashCode, size_t logMaxCount) noexcept
 	{
-		return hashCode & ((1 << (logMaxCount + logMult)) - 1);
+		return hashCode & ((size_t{1} << (logMaxCount + logMult)) - 1);
 	}
 
 	static size_t pvGetBitIndex2(size_t hashCode, size_t logMaxCount) noexcept
