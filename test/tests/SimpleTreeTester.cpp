@@ -160,12 +160,12 @@ public:
 		ep.Remove(pairRemover);
 		assert(ep.IsEmpty());
 
-		auto pairCrerator = [] (void* pkey, void* pvalue)
+		auto pairCreator = [] (void* pkey, void* pvalue)
 		{
 			::new(pkey) std::string("1");
 			::new(pvalue) std::string("2");
 		};
-		ep.Create(pairCrerator);
+		ep.Create(pairCreator);
 		assert(ep.GetKey() == "1" && ep.GetValue() == "2");
 		ep.Clear();
 		assert(ep.IsEmpty());
