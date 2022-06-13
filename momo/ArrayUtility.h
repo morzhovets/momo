@@ -118,7 +118,7 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 	public:
-		ArrayBuffer() = default;
+		explicit ArrayBuffer() = default;
 
 		ArrayBuffer(const ArrayBuffer&) = delete;
 
@@ -152,7 +152,7 @@ namespace internal
 		//typedef typename ItemTraits::Item Item;
 
 	public:
-		ArrayBuffer() = default;
+		explicit ArrayBuffer() = default;
 
 		ArrayBuffer(const ArrayBuffer&) = delete;
 

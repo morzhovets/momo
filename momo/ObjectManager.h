@@ -134,7 +134,7 @@ namespace internal
 		static const size_t alignment = tAlignment;
 
 	public:
-		ObjectBuffer() = default;
+		explicit ObjectBuffer() = default;
 
 		ObjectBuffer(const ObjectBuffer&) = delete;
 
@@ -153,7 +153,7 @@ namespace internal
 		}
 
 	private:
-		alignas(alignment) std::byte mBuffer[sizeof(Object)] = {};
+		alignas(alignment) std::byte mBuffer[sizeof(Object)];
 	};
 
 	template<conceptObject Object, conceptMemManager MemManager, typename... ObjectArgs>
