@@ -63,7 +63,7 @@
 // Settings of node in B-tree
 #define MOMO_DEFAULT_TREE_NODE TreeNode<>
 
-//#define MOMO_HASH_CODER(key) key.GetHashCode() //hash_value(key)
+//#define MOMO_HASH_CODER(key) hash_code(std::addressof(key))
 
 #define MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
 
