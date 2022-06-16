@@ -30,7 +30,7 @@ namespace sample1
 	void Test()
 	{
 		// construct empty table with 3 columns
-		momo::DataTable<> table({ intCol, dblCol, strCol} );
+		momo::DataTable<> table({ intCol, dblCol, strCol });
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);
