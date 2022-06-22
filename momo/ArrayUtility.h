@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_ARRAY_UTILITY
+#define MOMO_INCLUDE_GUARD_ARRAY_UTILITY
 
 #include "ObjectManager.h"
 #include "IteratorUtility.h"
@@ -322,3 +323,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_ARRAY_UTILITY

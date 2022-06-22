@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_UNLIMP
+#define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_UNLIMP
 
 #include "ArrayBucket.h"
 
@@ -174,3 +175,5 @@ public:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_UNLIMP

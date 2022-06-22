@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_BUCKET_UTILITY
+#define MOMO_INCLUDE_GUARD_DETAILS_BUCKET_UTILITY
 
 #include "../IteratorUtility.h"
 
@@ -154,3 +155,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_BUCKET_UTILITY

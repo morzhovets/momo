@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_OBJECT_MANAGER
+#define MOMO_INCLUDE_GUARD_OBJECT_MANAGER
 
 #include "MemManager.h"
 
@@ -546,3 +547,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_OBJECT_MANAGER

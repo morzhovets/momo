@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN2N2
+#define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN2N2
 
 #include "BucketUtility.h"
 #include "../ObjectManager.h"
@@ -276,3 +277,5 @@ public:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN2N2

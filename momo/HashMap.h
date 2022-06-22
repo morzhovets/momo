@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_HASH_MAP
+#define MOMO_INCLUDE_GUARD_HASH_MAP
 
 #include "HashSet.h"
 #include "MapUtility.h"
@@ -911,3 +912,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_HASH_MAP

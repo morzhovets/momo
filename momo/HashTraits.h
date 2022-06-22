@@ -17,7 +17,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_HASH_TRAITS
+#define MOMO_INCLUDE_GUARD_HASH_TRAITS
 
 #include "details/HashBucketLimP4.h"
 #include "details/HashBucketOpen2N2.h"
@@ -265,3 +266,5 @@ private:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_HASH_TRAITS

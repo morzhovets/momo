@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_TREE_TRAITS
+#define MOMO_INCLUDE_GUARD_TREE_TRAITS
 
 #include "details/TreeNode.h"
 
@@ -129,3 +130,5 @@ public:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_TREE_TRAITS

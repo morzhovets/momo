@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_ITERATOR_UTILITY
+#define MOMO_INCLUDE_GUARD_ITERATOR_UTILITY
 
 #include "Utility.h"
 
@@ -552,3 +553,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_ITERATOR_UTILITY

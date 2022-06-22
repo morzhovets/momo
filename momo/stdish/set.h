@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_SET
+#define MOMO_INCLUDE_GUARD_STDISH_SET
 
 #include "../TreeSet.h"
 #include "node_handle.h"
@@ -702,3 +703,5 @@ MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_SET

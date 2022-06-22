@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_TREE_SET
+#define MOMO_INCLUDE_GUARD_TREE_SET
 
 #include "TreeTraits.h"
 #include "SetUtility.h"
@@ -1710,3 +1711,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_TREE_SET

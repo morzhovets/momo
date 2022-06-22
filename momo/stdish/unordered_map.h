@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP
+#define MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP
 
 #include "../HashMap.h"
 #include "node_handle.h"
@@ -1088,3 +1089,5 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP

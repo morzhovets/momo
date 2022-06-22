@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_RADIX_SORTER
+#define MOMO_INCLUDE_GUARD_RADIX_SORTER
 
 #include "Utility.h"
 
@@ -210,3 +211,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_RADIX_SORTER

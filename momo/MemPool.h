@@ -15,7 +15,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_MEM_POOL
+#define MOMO_INCLUDE_GUARD_MEM_POOL
 
 #include "MemManager.h"
 #include "Array.h"
@@ -799,3 +800,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_MEM_POOL

@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_ARRAY_BUCKET
+#define MOMO_INCLUDE_GUARD_DETAILS_ARRAY_BUCKET
 
 #include "BucketUtility.h"
 #include "../MemPool.h"
@@ -449,3 +450,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_ARRAY_BUCKET

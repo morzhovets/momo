@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_POOL_ALLOCATOR
+#define MOMO_INCLUDE_GUARD_STDISH_POOL_ALLOCATOR
 
 #include "../MemPool.h"
 
@@ -181,3 +182,5 @@ private:
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_POOL_ALLOCATOR

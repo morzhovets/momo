@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN8
+#define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN8
 
 #include "HashBucketOpen2N2.h"
 #include "HashBucketOpenN1.h"
@@ -157,3 +158,5 @@ typedef HashBucketOpen2N2<3> HashBucketOpen8;
 #endif
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN8

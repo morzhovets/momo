@@ -41,7 +41,8 @@
 	\endcode
 */
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_MEM_MANAGER
+#define MOMO_INCLUDE_GUARD_MEM_MANAGER
 
 #include "Utility.h"
 
@@ -684,3 +685,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_MEM_MANAGER

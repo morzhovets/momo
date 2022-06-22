@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_TREE_NODE
+#define MOMO_INCLUDE_GUARD_DETAILS_TREE_NODE
 
 #include "../MemPool.h"
 
@@ -375,3 +376,5 @@ public:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_TREE_NODE

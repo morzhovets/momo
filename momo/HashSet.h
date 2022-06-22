@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_HASH_SET
+#define MOMO_INCLUDE_GUARD_HASH_SET
 
 #include "HashTraits.h"
 #include "SetUtility.h"
@@ -1354,3 +1355,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_HASH_SET

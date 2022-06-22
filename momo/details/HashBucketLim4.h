@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_LIM4
+#define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_LIM4
 
 #include "BucketUtility.h"
 #include "../MemPool.h"
@@ -294,3 +295,5 @@ public:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_LIM4

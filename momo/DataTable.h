@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DATA_TABLE
+#define MOMO_INCLUDE_GUARD_DATA_TABLE
 
 #include "DataColumn.h"
 #include "DataRow.h"
@@ -1564,3 +1565,5 @@ private:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DATA_TABLE

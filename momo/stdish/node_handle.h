@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE
+#define MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE
 
 #include "../SetUtility.h"
 #include "../MapUtility.h"
@@ -194,3 +195,5 @@ namespace internal
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE

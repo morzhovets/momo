@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_MAP_UTILITY
+#define MOMO_INCLUDE_GUARD_MAP_UTILITY
 
 #include "ObjectManager.h"
 #include "IteratorUtility.h"
@@ -948,3 +949,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_MAP_UTILITY

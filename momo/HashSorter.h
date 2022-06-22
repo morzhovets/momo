@@ -11,7 +11,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_HASH_SORTER
+#define MOMO_INCLUDE_GUARD_HASH_SORTER
 
 #include "RadixSorter.h"
 #include "HashTraits.h"
@@ -434,3 +435,5 @@ private:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_HASH_SORTER

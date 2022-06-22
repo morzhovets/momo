@@ -21,7 +21,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DATA_COLUMN
+#define MOMO_INCLUDE_GUARD_DATA_COLUMN
 
 #include "Array.h"
 #include "HashSet.h"
@@ -1288,3 +1289,5 @@ private:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DATA_COLUMN

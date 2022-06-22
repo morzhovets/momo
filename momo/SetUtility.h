@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_SET_UTILITY
+#define MOMO_INCLUDE_GUARD_SET_UTILITY
 
 #include "ObjectManager.h"
 
@@ -351,3 +352,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_SET_UTILITY

@@ -12,7 +12,10 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_VERSION
+#define MOMO_INCLUDE_GUARD_VERSION
 
 #define MOMO_VERSION_MAJOR 3
 #define MOMO_VERSION_MINOR 5
+
+#endif // MOMO_INCLUDE_GUARD_VERSION

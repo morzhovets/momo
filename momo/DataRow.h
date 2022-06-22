@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DATA_ROW
+#define MOMO_INCLUDE_GUARD_DATA_ROW
 
 #include "IteratorUtility.h"
 
@@ -409,3 +410,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_DATA_ROW

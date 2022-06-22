@@ -8,7 +8,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DATA_SELECTION
+#define MOMO_INCLUDE_GUARD_DATA_SELECTION
 
 #include "DataColumn.h"
 #include "Array.h"
@@ -928,3 +929,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_DATA_SELECTION

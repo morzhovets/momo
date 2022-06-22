@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_DATA_INDEXES
+#define MOMO_INCLUDE_GUARD_DATA_INDEXES
 
 #include "HashMultiMap.h"
 #include "SegmentedArray.h"
@@ -1453,3 +1454,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_DATA_INDEXES

@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_VECTOR
+#define MOMO_INCLUDE_GUARD_STDISH_VECTOR
 
 #include "../Array.h"
 
@@ -519,3 +520,5 @@ using vector_intcap = vector<TValue, TAllocator,
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_VECTOR

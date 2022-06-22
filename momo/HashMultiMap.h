@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_HASH_MULTI_MAP
+#define MOMO_INCLUDE_GUARD_HASH_MULTI_MAP
 
 #include "HashMap.h"
 #include "details/ArrayBucket.h"
@@ -1280,3 +1281,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_HASH_MULTI_MAP

@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_UTILITY
+#define MOMO_INCLUDE_GUARD_UTILITY
 
 #include "UserSettings.h"
 
@@ -374,3 +375,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_UTILITY

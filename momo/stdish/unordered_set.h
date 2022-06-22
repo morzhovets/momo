@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_UNORDERED_SET
+#define MOMO_INCLUDE_GUARD_STDISH_UNORDERED_SET
 
 #include "../HashSet.h"
 #include "node_handle.h"
@@ -758,3 +759,5 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_UNORDERED_SET

@@ -12,7 +12,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_STDISH_MAP
+#define MOMO_INCLUDE_GUARD_STDISH_MAP
 
 #include "../TreeMap.h"
 #include "node_handle.h"
@@ -1141,3 +1142,5 @@ MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
 } // namespace stdish
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_STDISH_MAP

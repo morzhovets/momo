@@ -15,7 +15,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_ARRAY
+#define MOMO_INCLUDE_GUARD_ARRAY
 
 #include "ArrayUtility.h"
 
@@ -1127,3 +1128,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_ARRAY

@@ -15,7 +15,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_SEGMENTED_ARRAY
+#define MOMO_INCLUDE_GUARD_SEGMENTED_ARRAY
 
 #include "Array.h"
 
@@ -731,3 +732,5 @@ using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
 	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_SEGMENTED_ARRAY

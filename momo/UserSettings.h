@@ -10,7 +10,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_USER_SETTINGS
+#define MOMO_INCLUDE_GUARD_USER_SETTINGS
 
 #ifdef __has_include
 #if __has_include(<version>)
@@ -160,3 +161,5 @@
 #endif
 
 #define MOMO_DEPRECATED //[[deprecated]]
+
+#endif // MOMO_INCLUDE_GUARD_USER_SETTINGS

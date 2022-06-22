@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_TREE_MAP
+#define MOMO_INCLUDE_GUARD_TREE_MAP
 
 #include "TreeSet.h"
 #include "MapUtility.h"
@@ -790,3 +791,5 @@ namespace std
 	{
 	};
 } // namespace std
+
+#endif // MOMO_INCLUDE_GUARD_TREE_MAP
