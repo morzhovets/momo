@@ -362,13 +362,11 @@ namespace internal
 			key = std::forward<KeyArg>(keyArg);
 		}
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
 		template<typename ValueArg>
 		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
 		{
 			value = std::forward<ValueArg>(valueArg);
 		}
-#endif
 	};
 
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager, bool tUseValuePtr>

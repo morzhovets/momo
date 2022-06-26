@@ -852,6 +852,13 @@ public:
 	using typename BaseMap::const_iterator;
 	using typename BaseMap::iterator;
 
+private:
+	struct IteratorProxy : public BaseMap::iterator
+	{
+		typedef iterator Iterator;
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+	};
+
 public:
 	using BaseMap::BaseMap;
 
@@ -923,25 +930,25 @@ public:
 	template<typename MappedArg>
 	std::pair<iterator, bool> insert_or_assign(key_type&& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(nullptr, std::move(key), std::forward<MappedArg>(mappedArg));
+		return pvInsertOrAssign(std::move(key), std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename MappedArg>
 	iterator insert_or_assign(const_iterator hint, key_type&& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(hint, std::move(key), std::forward<MappedArg>(mappedArg)).first;
+		return pvInsertOrAssign(hint, std::move(key), std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename MappedArg>
 	std::pair<iterator, bool> insert_or_assign(const key_type& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(nullptr, key, std::forward<MappedArg>(mappedArg));
+		return pvInsertOrAssign(key, std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename MappedArg>
 	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
 	{
-		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
+		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg));
 	}
 
 	template<typename Predicate>
@@ -954,15 +961,26 @@ public:
 	}
 
 private:
-	template<typename Hint, typename RKey, typename MappedArg>
-	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
+	template<typename RKey, typename MappedArg>
+	std::pair<iterator, bool> pvInsertOrAssign(RKey&& key, MappedArg&& mappedArg)
+	{
+		typename TreeMap::InsertResult res = BaseMap::get_nested_container().InsertOrAssign(
+			std::forward<RKey>(key), std::forward<MappedArg>(mappedArg));
+		return { IteratorProxy(res.position), res.inserted };
+	}
+
+	template<typename RKey, typename MappedArg>
+	iterator pvInsertOrAssign(const_iterator hint, RKey&& key, MappedArg&& mappedArg)
 	{
 		std::pair<iterator, bool> res = BaseMap::ptEmplace(hint,
 			std::forward_as_tuple(std::forward<RKey>(key)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 		if (!res.second)
-			res.first->second = std::forward<MappedArg>(mappedArg);
-		return res;
+		{
+			TreeMap::KeyValueTraits::AssignValue(BaseMap::get_nested_container().GetMemManager(),
+				std::forward<MappedArg>(mappedArg), res.first->second);
+		}
+		return res.first;
 	}
 };
 

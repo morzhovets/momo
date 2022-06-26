@@ -659,6 +659,20 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
+	template<typename ValueArg>
+	InsertResult InsertOrAssign(Key&& key, ValueArg&& valueArg)
+		requires (!TreeTraits::multiKey)
+	{
+		return pvInsertOrAssign(std::move(key), std::forward<ValueArg>(valueArg));
+	}
+
+	template<typename ValueArg>
+	InsertResult InsertOrAssign(const Key& key, ValueArg&& valueArg)
+		requires (!TreeTraits::multiKey)
+	{
+		return pvInsertOrAssign(key, std::forward<ValueArg>(valueArg));
+	}
+
 	ValueReferenceRKey operator[](Key&& key)
 		requires (!TreeTraits::multiKey)
 	{
@@ -781,6 +795,25 @@ private:
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
+	}
+
+	template<typename RKey, typename ValueArg>
+	InsertResult pvInsertOrAssign(RKey&& key, ValueArg&& valueArg)
+	{
+		MemManager& memManager = GetMemManager();
+		Iterator iter = GetLowerBound(std::as_const(key));
+		if (!pvIsGreater(iter, std::as_const(key)))
+		{
+			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), iter->value);
+			return { iter, false };
+		}
+		else
+		{
+			typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
+				memManager, std::forward<ValueArg>(valueArg));
+			iter = pvAdd<false>(iter, std::forward<RKey>(key), std::move(valueCreator));
+			return { iter, true };
+		}
 	}
 
 private:

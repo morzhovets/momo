@@ -671,6 +671,18 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
+	template<typename ValueArg>
+	InsertResult InsertOrAssign(Key&& key, ValueArg&& valueArg)
+	{
+		return pvInsertOrAssign(std::move(key), std::forward<ValueArg>(valueArg));
+	}
+
+	template<typename ValueArg>
+	InsertResult InsertOrAssign(const Key& key, ValueArg&& valueArg)
+	{
+		return pvInsertOrAssign(key, std::forward<ValueArg>(valueArg));
+	}
+
 	MOMO_FORCEINLINE ValueReferenceRKey operator[](Key&& key)
 	{
 		Position pos = Find(std::as_const(key));
@@ -813,6 +825,25 @@ private:
 		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
+	}
+
+	template<typename RKey, typename ValueArg>
+	InsertResult pvInsertOrAssign(RKey&& key, ValueArg&& valueArg)
+	{
+		MemManager& memManager = GetMemManager();
+		Position pos = Find(std::as_const(key));
+		if (!!pos)
+		{
+			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), pos->value);
+			return { pos, false };
+		}
+		else
+		{
+			typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
+				memManager, std::forward<ValueArg>(valueArg));
+			pos = pvAdd<false>(pos, std::forward<RKey>(key), std::move(valueCreator));
+			return { pos, true };
+		}
 	}
 
 private:
