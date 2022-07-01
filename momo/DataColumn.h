@@ -612,7 +612,7 @@ private:
 
 	typedef void (*CreateFunc)(MemManager&, const ColumnRecord*, const DataColumnList*,
 		const Raw*, Raw*);
-	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*);
+	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*) noexcept;
 
 	struct FuncRecord
 	{
@@ -865,7 +865,8 @@ private:
 					srcColumnList, srcRaw, raw);
 			}
 		};
-		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columnRecords, Raw* raw)
+		funcRec.destroyFunc = []
+			(MemManager* memManager, const ColumnRecord* columnRecords, Raw* raw) noexcept
 		{
 			const ColumnRecord* columnRecordPtr = columnRecords;
 			(ItemTraits::Destroy(memManager,
