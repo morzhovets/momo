@@ -52,11 +52,8 @@ namespace internal
 		LessFunc comp;
 	};
 
-	template<typename TKey, typename TMapped,
-		typename TLessFunc = std::less<TKey>,
-		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-		typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessFunc>,
-			MemManagerStd<TAllocator>>>
+	template<typename TKey, typename TMapped, typename TLessFunc, typename TAllocator,
+		typename TTreeMap>
 	class map_base
 	{
 	private:
