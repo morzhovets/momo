@@ -831,19 +831,11 @@ private:
 	InsertResult pvInsertOrAssign(RKey&& key, ValueArg&& valueArg)
 	{
 		MemManager& memManager = GetMemManager();
-		Position pos = Find(std::as_const(key));
-		if (!!pos)
-		{
-			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), pos->value);
-			return { pos, false };
-		}
-		else
-		{
-			typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
-				memManager, std::forward<ValueArg>(valueArg));
-			pos = pvAdd<false>(pos, std::forward<RKey>(key), std::move(valueCreator));
-			return { pos, true };
-		}
+		InsertResult res = pvInsert(std::forward<RKey>(key),
+			ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(valueArg)));
+		if (!res.inserted)
+			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), res.position->value);
+		return res;
 	}
 
 private:
