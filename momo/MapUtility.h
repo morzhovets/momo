@@ -1209,26 +1209,26 @@ namespace internal
 
 			~ValueReference() = default;
 
-			ValueReference& operator=(const ValueReference& valueRef)
+			Value& operator=(const ValueReference& valueRef)
 			{
 				return pvAssign(valueRef.Get());
 			}
 
 			template<typename ValueArg>
-			ValueReference& operator=(ValueArg&& valueArg)
+			Value& operator=(ValueArg&& valueArg)
 			{
 				return pvAssign(std::forward<ValueArg>(valueArg));
 			}
 
-			operator Value&()
-			{
-				return Get();
-			}
-
-			Value& Get()
+			Value& operator*()
 			{
 				MOMO_CHECK(mKeyPtr == nullptr);
 				return mPosition->value;
+			}
+
+			operator Value&()
+			{
+				return operator*();
 			}
 
 		protected:
@@ -1248,7 +1248,7 @@ namespace internal
 
 		private:
 			template<typename ValueArg>
-			ValueReference& pvAssign(ValueArg&& valueArg)
+			Value& pvAssign(ValueArg&& valueArg)
 			{
 				if (mKeyPtr == nullptr)
 				{
@@ -1263,7 +1263,7 @@ namespace internal
 						std::move(valueCreator));
 				}
 				mKeyPtr = nullptr;
-				return *this;
+				return mPosition->value;
 			}
 
 		private:
