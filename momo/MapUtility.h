@@ -1211,7 +1211,7 @@ namespace internal
 
 			Value& operator=(const ValueReference& valueRef)
 			{
-				return pvAssign(valueRef.Get());
+				return pvAssign(*valueRef);
 			}
 
 			template<typename ValueArg>
