@@ -318,7 +318,7 @@ private:
 	template<typename TreeMap>
 	TestResult<double> pvTestTreeMap(const std::string& mapTitle, size_t keyCount)
 	{
-		auto afterCreate = [] (TreeMap&) { };
+		auto afterCreate = [] (TreeMap&) {};
 
 		TestResult<> res = pvTestMap<TreeMap>(mapTitle, keyCount, afterCreate);
 

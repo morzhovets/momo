@@ -297,7 +297,7 @@ namespace internal
 							Item* newItems = array.GetItems();
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::forward<ItemCreator>(itemCreator), newItems + count);
-							array.SetCountCrt(newCount, [] (Item* /*newItem*/) { });
+							array.SetCountCrt(newCount, [] (Item* /*newItem*/) {});
 							::new(static_cast<void*>(&pvGetArray(memory.GetPointer())))
 								Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
