@@ -11,7 +11,7 @@ jobs:
         # MinGW GNU 8.1.0 Release
         - flags: '-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-    runs-on: windows-2022
+    runs-on: windows-2019
 
     steps:
     - name: Checkout
