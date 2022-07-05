@@ -8,6 +8,10 @@ jobs:
       matrix:
         include:
 
+        - gcc_ver: '10'
+          build_type: 'Release'
+          flags: '-msse2'
+
         - gcc_ver: '11'
           build_type: 'Release'
           flags: '-msse2'
