@@ -1211,7 +1211,7 @@ namespace internal
 
 			Value& operator=(const ValueReference& valueRef)
 			{
-				return pvAssign(*valueRef);
+				return pvAssign(valueRef.pvGet());
 			}
 
 			template<typename ValueArg>
@@ -1220,15 +1220,14 @@ namespace internal
 				return pvAssign(std::forward<ValueArg>(valueArg));
 			}
 
-			Value& operator*()
+			operator Value&() const
 			{
-				MOMO_CHECK(mKeyPtr == nullptr);
-				return mPosition->value;
+				return pvGet();
 			}
 
-			operator Value&()
+			decltype(auto) operator&() const
 			{
-				return operator*();
+				return &pvGet();
 			}
 
 		protected:
@@ -1247,6 +1246,12 @@ namespace internal
 			}
 
 		private:
+			Value& pvGet() const
+			{
+				MOMO_CHECK(mKeyPtr == nullptr);
+				return mPosition->value;
+			}
+
 			template<typename ValueArg>
 			Value& pvAssign(ValueArg&& valueArg)
 			{

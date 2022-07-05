@@ -145,6 +145,9 @@ public:
 		map.ResetKey(map.GetLowerBound("s1"), s1);
 		map.ResetKey(map.GetUpperBound(s1), "s2");
 
+		map[s4] = map["s3"];
+		*&map["s4"] = s4;
+
 		assert(map.GetCount() == 4);
 		for (auto ref : map)
 			assert(ref.key == ref.value);
