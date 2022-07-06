@@ -1200,60 +1200,22 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(const ValueReference& valueRef) noexcept
+			ValueReference(ValueReference&& valueRef) noexcept
 				: mMap(valueRef.mMap),
 				mPosition(valueRef.mPosition),
 				mKeyPtr(valueRef.mKeyPtr)
 			{
 			}
 
+			ValueReference(const ValueReference&) = delete;
+
 			~ValueReference() = default;
 
-			Value& operator=(const ValueReference& valueRef)
-			{
-				return pvAssign(valueRef.pvGet());
-			}
+			ValueReference& operator=(ValueReference&&) = delete;
+			ValueReference& operator=(const ValueReference&) = delete;
 
 			template<typename ValueArg>
-			Value& operator=(ValueArg&& valueArg)
-			{
-				return pvAssign(std::forward<ValueArg>(valueArg));
-			}
-
-			operator Value&() const
-			{
-				return pvGet();
-			}
-
-			decltype(auto) operator&() const
-			{
-				return &pvGet();
-			}
-
-		protected:
-			explicit ValueReference(Map& map, Position pos) noexcept
-				: mMap(map),
-				mPosition(pos),
-				mKeyPtr(nullptr)
-			{
-			}
-
-			explicit ValueReference(Map& map, Position pos, KeyReference keyRef) noexcept
-				: mMap(map),
-				mPosition(pos),
-				mKeyPtr(std::addressof(keyRef))
-			{
-			}
-
-		private:
-			Value& pvGet() const
-			{
-				MOMO_CHECK(mKeyPtr == nullptr);
-				return mPosition->value;
-			}
-
-			template<typename ValueArg>
-			Value& pvAssign(ValueArg&& valueArg)
+			Value& operator=(ValueArg&& valueArg) &&
 			{
 				if (mKeyPtr == nullptr)
 				{
@@ -1269,6 +1231,32 @@ namespace internal
 				}
 				mKeyPtr = nullptr;
 				return mPosition->value;
+			}
+
+			operator Value&() const
+			{
+				MOMO_CHECK(mKeyPtr == nullptr);
+				return mPosition->value;
+			}
+
+			decltype(auto) operator&() const
+			{
+				return &operator Value&();
+			}
+
+		protected:
+			explicit ValueReference(Map& map, Position pos) noexcept
+				: mMap(map),
+				mPosition(pos),
+				mKeyPtr(nullptr)
+			{
+			}
+
+			explicit ValueReference(Map& map, Position pos, KeyReference keyRef) noexcept
+				: mMap(map),
+				mPosition(pos),
+				mKeyPtr(std::addressof(keyRef))
+			{
 			}
 
 		private:
