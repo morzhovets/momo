@@ -13,6 +13,11 @@ jobs:
           flags: '-std=c++11 -msse2'
           ubuntu_ver: '18.04'
 
+        - gcc_ver: '4.9'
+          build_type: 'Release'
+          flags: '-std=c++11 -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+          ubuntu_ver: '18.04'
+
         - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++14 -msse2'
