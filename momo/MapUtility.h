@@ -1200,19 +1200,21 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(ValueReference&& valueRef) noexcept
-				: mMap(valueRef.mMap),
-				mPosition(valueRef.mPosition),
-				mKeyPtr(valueRef.mKeyPtr)
-			{
-			}
+			ValueReference(ValueReference&&) = default;
 
 			ValueReference(const ValueReference&) = delete;
 
 			~ValueReference() = default;
 
-			ValueReference& operator=(ValueReference&&) = delete;
-			ValueReference& operator=(const ValueReference&) = delete;
+			Value& operator=(ValueReference&& valueRef) &&
+			{
+				return std::move(*this).operator=<Value&>(std::move(valueRef));
+			}
+
+			Value& operator=(const ValueReference& valueRef) &&
+			{
+				return std::move(*this).operator=<const Value&>(valueRef);
+			}
 
 			template<typename ValueArg>
 			Value& operator=(ValueArg&& valueArg) &&
@@ -1233,15 +1235,26 @@ namespace internal
 				return mPosition->value;
 			}
 
-			operator Value&() const
+			operator Value&() &&
 			{
 				MOMO_CHECK(mKeyPtr == nullptr);
 				return mPosition->value;
 			}
 
-			decltype(auto) operator&() const
+			operator const Value&() const&
 			{
-				return &operator Value&();
+				MOMO_CHECK(mKeyPtr == nullptr);
+				return mPosition->value;
+			}
+
+			decltype(auto) operator&() &&
+			{
+				return &std::move(*this).operator Value&();
+			}
+
+			decltype(auto) operator&() const&
+			{
+				return &operator const Value&();
 			}
 
 		protected:
