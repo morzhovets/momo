@@ -672,35 +672,61 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(const ValueReference& valueRef) noexcept
-				: mMap(valueRef.mMap),
-				mIterator(valueRef.mIterator),
-				mKeyPtr(valueRef.mKeyPtr)
-			{
-			}
+			ValueReference(ValueReference&&) = default;
+
+			ValueReference(const ValueReference&) = delete;
 
 			~ValueReference() = default;
 
-			ValueReference& operator=(const ValueReference& valueRef)
+			Value& operator=(ValueReference&& valueRef) &&
 			{
-				return pvAssign(valueRef.Get());
+				return std::move(*this).template operator=<Value&>(std::move(valueRef));
+			}
+
+			Value& operator=(const ValueReference& valueRef) &&
+			{
+				return std::move(*this).template operator=<const Value&>(valueRef);
 			}
 
 			template<typename ValueArg>
-			ValueReference& operator=(ValueArg&& valueArg)
+			Value& operator=(ValueArg&& valueArg) &&
 			{
-				return pvAssign(std::forward<ValueArg>(valueArg));
+				if (mKeyPtr == nullptr)
+				{
+					KeyValueTraits::AssignValue(mMap.GetMemManager(),
+						std::forward<ValueArg>(valueArg), mIterator->value);
+				}
+				else
+				{
+					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
+						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
+					mIterator = mMap.AddCrt(mIterator, std::forward<KeyReference>(*mKeyPtr),
+						std::move(valueCreator));
+				}
+				mKeyPtr = nullptr;
+				return mIterator->value;
 			}
 
-			operator Value&()
-			{
-				return Get();
-			}
-
-			Value& Get()
+			operator Value&() &&
 			{
 				MOMO_CHECK(mKeyPtr == nullptr);
 				return mIterator->value;
+			}
+
+			operator const Value&() const&
+			{
+				MOMO_CHECK(mKeyPtr == nullptr);
+				return mIterator->value;
+			}
+
+			decltype(&std::declval<Value&>()) operator&() &&
+			{
+				return &std::move(*this).operator Value&();
+			}
+
+			decltype(&std::declval<const Value&>()) operator&() const&
+			{
+				return &operator const Value&();
 			}
 
 		protected:
@@ -716,26 +742,6 @@ namespace internal
 				mIterator(iter),
 				mKeyPtr(std::addressof(keyRef))
 			{
-			}
-
-		private:
-			template<typename ValueArg>
-			ValueReference& pvAssign(ValueArg&& valueArg)
-			{
-				if (mKeyPtr == nullptr)
-				{
-					KeyValueTraits::AssignValue(mMap.GetMemManager(),
-						std::forward<ValueArg>(valueArg), mIterator->value);
-				}
-				else
-				{
-					typename KeyValueTraits::template ValueCreator<ValueArg> valueCreator(
-						mMap.GetMemManager(), std::forward<ValueArg>(valueArg));
-					mIterator = mMap.AddCrt(mIterator, std::forward<KeyReference>(*mKeyPtr),
-						std::move(valueCreator));
-				}
-				mKeyPtr = nullptr;
-				return *this;
 			}
 
 		private:

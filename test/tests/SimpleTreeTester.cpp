@@ -127,7 +127,7 @@ public:
 		std::string s4 = "s4";
 
 		TreeMap map = { { "s1", "s1" }, { "s2", s2 } };
-		map.InsertCrt("s3", [] (void* ptr) { ::new(ptr) std::string("s3"); });
+		map[s3] = "s3";
 		map.InsertCrt(s4, [] (void* ptr) { ::new(ptr) std::string("s4"); });
 
 		map.Insert("s1", "s2");
@@ -137,6 +137,22 @@ public:
 
 		map.ResetKey(map.GetLowerBound("s1"), s1);
 		map.ResetKey(map.GetUpperBound(s1), "s2");
+
+		{
+			const auto& ms1 = map[s1];
+			map[s4] = ms1;
+			assert(s1.compare(map[s4]) == 0);
+
+			auto ms2 = map[s2];
+			map[s4] = *&ms2;
+			assert(s2 == *&map[s4]);
+
+			map[s4] = map[s3];
+			assert(*&map[s4] == s3);
+
+			(*&map[s4]).clear();
+			*&map[s4] += s4;
+		}
 
 		assert(map.GetCount() == 4);
 		for (auto ref : map)
