@@ -1208,12 +1208,12 @@ namespace internal
 
 			Value& operator=(ValueReference&& valueRef) &&
 			{
-				return std::move(*this).operator=<Value&>(std::move(valueRef));
+				return std::move(*this).template operator=<Value&>(std::move(valueRef));
 			}
 
 			Value& operator=(const ValueReference& valueRef) &&
 			{
-				return std::move(*this).operator=<const Value&>(valueRef);
+				return std::move(*this).template operator=<const Value&>(valueRef);
 			}
 
 			template<typename ValueArg>
