@@ -482,12 +482,14 @@ public:
 	}
 
 	template<typename ValueArg>
+	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(Key&& key, ValueArg&& valueArg)
 	{
 		return pvInsertOrAssign(std::move(key), std::forward<ValueArg>(valueArg));
 	}
 
 	template<typename ValueArg>
+	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(const Key& key, ValueArg&& valueArg)
 	{
 		return pvInsertOrAssign(key, std::forward<ValueArg>(valueArg));

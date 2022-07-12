@@ -1217,6 +1217,7 @@ namespace internal
 			}
 
 			template<typename ValueArg>
+			requires requires { typename KeyValueTraits::template ValueCreator<ValueArg>; }
 			Value& operator=(ValueArg&& valueArg) &&
 			{
 				if (mKeyPtr == nullptr)

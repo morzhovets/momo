@@ -660,6 +660,7 @@ public:
 	}
 
 	template<typename ValueArg>
+	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(Key&& key, ValueArg&& valueArg)
 		requires (!TreeTraits::multiKey)
 	{
@@ -667,6 +668,7 @@ public:
 	}
 
 	template<typename ValueArg>
+	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(const Key& key, ValueArg&& valueArg)
 		requires (!TreeTraits::multiKey)
 	{
