@@ -37,15 +37,9 @@ struct IsNothrowMoveConstructible
 {
 };
 
-template<conceptObject Object, typename Allocator>
+template<conceptObject Object, internal::conceptAllocatorWithConstruct<Object&&> Allocator>
 struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
 	: public std::false_type
-{
-};
-
-template<conceptObject Object, typename AllocObject>
-struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
-	: public std::is_nothrow_move_constructible<Object>
 {
 };
 
@@ -162,15 +156,10 @@ namespace internal
 	{
 	};
 
-	template<conceptObject Object, typename Allocator, typename... ObjectArgs>
+	template<conceptObject Object, typename... ObjectArgs,
+		conceptAllocatorWithConstruct<ObjectArgs...> Allocator>
 	struct IsConstructible<Object, MemManagerStd<Allocator>, ObjectArgs...>
 		: public std::true_type
-	{
-	};
-
-	template<conceptObject Object, typename AllocObject, typename... ObjectArgs>
-	struct IsConstructible<Object, MemManagerStd<std::allocator<AllocObject>>, ObjectArgs...>
-		: public std::is_constructible<Object, ObjectArgs...>
 	{
 	};
 

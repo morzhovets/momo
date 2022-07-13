@@ -91,6 +91,13 @@ namespace internal
 			{ alloc.allocate(count) } -> std::same_as<typename Allocator::value_type*>;
 			{ alloc.deallocate(ptr, count) } -> std::same_as<void>;
 		};
+
+	template<typename Allocator, typename... Args>
+	concept conceptAllocatorWithConstruct = conceptAllocator<Allocator> &&
+		requires (Allocator& alloc, typename Allocator::value_type* ptr, Args&&... args)
+		{
+			{ alloc.construct(ptr, std::forward<Args>(args)...) };
+		};
 }
 
 //! `MemManagerCpp` uses `new` and `delete`
