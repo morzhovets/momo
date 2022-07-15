@@ -22,6 +22,28 @@
 namespace momo
 {
 
+namespace internal
+{
+	template<typename Allocator, typename Object,
+		typename = void>
+	struct HasCustomMoveConstructor : public std::false_type
+	{
+	};
+
+	template<typename Allocator, typename Object>
+	struct HasCustomMoveConstructor<Allocator, Object,
+		decltype(std::declval<Allocator&>().construct(std::declval<Object*>(), std::declval<Object&&>()))>
+		: public std::true_type
+	{
+	};
+
+	template<typename AllocObject, typename Object>
+	struct HasCustomMoveConstructor<std::allocator<AllocObject>, Object, void>
+		: public std::false_type
+	{
+	};
+}
+
 template<typename Object>
 struct IsTriviallyRelocatable
 	: public internal::BoolConstant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
@@ -36,13 +58,8 @@ struct IsNothrowMoveConstructible
 
 template<typename Object, typename Allocator>
 struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
-	: public std::false_type
-{
-};
-
-template<typename Object, typename AllocObject>
-struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
-	: public std::is_nothrow_move_constructible<Object>
+	: public internal::BoolConstant<internal::HasCustomMoveConstructor<Allocator, Object>::value
+		? false : std::is_nothrow_move_constructible<Object>::value>
 {
 };
 
