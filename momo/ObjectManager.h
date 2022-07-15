@@ -189,9 +189,8 @@ namespace internal
 
 		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
 
-		static const bool isNothrowAnywayAssignable =
-			std::is_nothrow_move_assignable<Object>::value || isNothrowSwappable
-			|| isNothrowRelocatable || std::is_nothrow_copy_assignable<Object>::value;
+		static const bool isNothrowAnywayAssignable = std::is_nothrow_move_assignable<Object>::value
+			|| isNothrowSwappable || isNothrowRelocatable;
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
@@ -309,8 +308,7 @@ namespace internal
 			noexcept(isNothrowAnywayAssignable)
 		{
 			pvAssignAnyway(memManager, srcObject, dstObject, std::is_nothrow_move_assignable<Object>(),
-				BoolConstant<isNothrowSwappable>(), BoolConstant<isNothrowRelocatable>(),
-				std::is_nothrow_copy_assignable<Object>());
+				BoolConstant<isNothrowSwappable>(), BoolConstant<isNothrowRelocatable>());
 		}
 
 		static void Replace(MemManager& memManager, Object& srcObject, Object& dstObject)
@@ -392,27 +390,25 @@ namespace internal
 			}
 		}
 
-		template<bool isNothrowSwappable, bool isNothrowRelocatable, bool isNothrowCopyAssignable>
+		template<bool isNothrowSwappable, bool isNothrowRelocatable>
 		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::true_type /*isNothrowMoveAssignable*/, BoolConstant<isNothrowSwappable>,
-			BoolConstant<isNothrowRelocatable>, BoolConstant<isNothrowCopyAssignable>) noexcept
+			BoolConstant<isNothrowRelocatable>) noexcept
 		{
 			dstObject = std::move(srcObject);
 		}
 
-		template<bool isNothrowRelocatable, bool isNothrowCopyAssignable>
+		template<bool isNothrowRelocatable>
 		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::true_type /*isNothrowSwappable*/,
-			BoolConstant<isNothrowRelocatable>, BoolConstant<isNothrowCopyAssignable>) noexcept
+			BoolConstant<isNothrowRelocatable>) noexcept
 		{
 			std::iter_swap(std::addressof(srcObject), std::addressof(dstObject));
 		}
 
-		template<bool isNothrowCopyAssignable>
 		static void pvAssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::true_type /*isNothrowRelocatable*/,
-			BoolConstant<isNothrowCopyAssignable>) noexcept
+			std::true_type /*isNothrowRelocatable*/) noexcept
 		{
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
@@ -425,15 +421,7 @@ namespace internal
 
 		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
 			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::false_type /*isNothrowRelocatable*/,
-			std::true_type /*isNothrowCopyAssignable*/) noexcept
-		{
-			dstObject = static_cast<const Object&>(srcObject);
-		}
-
-		static void pvAssignAnyway(MemManager& /*memManager*/, Object& srcObject, Object& dstObject,
-			std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowSwappable*/,
-			std::false_type /*isNothrowRelocatable*/, std::false_type /*isNothrowCopyAssignable*/)
+			std::false_type /*isNothrowRelocatable*/)
 		{
 			dstObject = std::move(srcObject);
 		}
