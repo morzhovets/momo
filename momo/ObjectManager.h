@@ -224,8 +224,7 @@ namespace internal
 		static const bool isNothrowSwappable = std::is_nothrow_swappable_v<Object>;
 
 		static const bool isNothrowAnywayAssignable =
-			std::is_nothrow_move_assignable_v<Object> || isNothrowSwappable
-			|| isNothrowRelocatable || std::is_nothrow_copy_assignable_v<Object>;
+			std::is_nothrow_move_assignable_v<Object> || isNothrowSwappable || isNothrowRelocatable;
 
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
@@ -378,10 +377,6 @@ namespace internal
 					Relocate(memManager, srcObject, std::addressof(dstObject));
 					Relocate(memManager, *&objectBuffer, std::addressof(srcObject));
 				}
-			}
-			else if constexpr (std::is_nothrow_copy_assignable_v<Object>)
-			{
-				dstObject = std::as_const(srcObject);
 			}
 			else
 			{
