@@ -36,12 +36,6 @@ namespace internal
 		: public std::true_type
 	{
 	};
-
-	template<typename AllocObject, typename Object>
-	struct HasCustomMoveConstructor<std::allocator<AllocObject>, Object, void>
-		: public std::false_type
-	{
-	};
 }
 
 template<typename Object>
@@ -60,6 +54,12 @@ template<typename Object, typename Allocator>
 struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
 	: public internal::BoolConstant<internal::HasCustomMoveConstructor<Allocator, Object>::value
 		? false : std::is_nothrow_move_constructible<Object>::value>
+{
+};
+
+template<typename Object, typename AllocObject>
+struct IsNothrowMoveConstructible<Object, MemManagerStd<std::allocator<AllocObject>>>
+	: public std::is_nothrow_move_constructible<Object>
 {
 };
 
