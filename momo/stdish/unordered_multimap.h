@@ -692,7 +692,7 @@ private:
 	}
 
 	template<typename... KeyArgs, typename MappedCreator>
-	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, MappedCreator&& mappedCreator)
+	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, MappedCreator mappedCreator)
 	{
 		MemManager& memManager = mHashMultiMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -703,8 +703,7 @@ private:
 		iterator resIter;
 		try
 		{
-			resIter = pvInsert(std::forward_as_tuple(std::move(*&keyBuffer)),
-				std::forward<MappedCreator>(mappedCreator));
+			resIter = pvInsert(std::forward_as_tuple(std::move(*&keyBuffer)), std::move(mappedCreator));
 		}
 		catch (...)
 		{
@@ -718,10 +717,10 @@ private:
 	template<typename RKey, typename MappedCreator,
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
-	iterator pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
+	iterator pvInsert(std::tuple<RKey>&& key, MappedCreator mappedCreator)
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
-			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator)));
+			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator)));
 	}
 
 private:

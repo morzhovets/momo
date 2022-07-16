@@ -868,7 +868,7 @@ private:
 
 	template<typename Hint, typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
-		MappedCreator&& mappedCreator)
+		MappedCreator mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -886,14 +886,15 @@ private:
 				keyDestroyed = true;
 				return { IteratorProxy(pos), false };
 			}
-			auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
-				(key_type* newKey, mapped_type* newMapped)
+			auto valueCreator = [&memManager, &keyBuffer, &keyDestroyed,
+				mappedCreator = std::move(mappedCreator)]
+				(key_type* newKey, mapped_type* newMapped) mutable
 			{
 				KeyManager::Relocate(memManager, *&keyBuffer, newKey);
 				keyDestroyed = true;
 				try
 				{
-					std::forward<MappedCreator>(mappedCreator)(newMapped);
+					std::move(mappedCreator)(newMapped);
 				}
 				catch (...)
 				{
@@ -901,7 +902,7 @@ private:
 					throw;
 				}
 			};
-			typename HashMap::Position resPos = mHashMap.AddCrt(pos, valueCreator);
+			typename HashMap::Position resPos = mHashMap.AddCrt(pos, std::move(valueCreator));
 			return { IteratorProxy(resPos), true };
 		}
 		catch (...)
@@ -916,28 +917,28 @@ private:
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
-		MappedCreator&& mappedCreator)
+		MappedCreator mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
-			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
+			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 	template<typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
-		MappedCreator&& mappedCreator)
+		MappedCreator mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
-		auto valueCreator = [&memManager, &keyArgs, &mappedCreator]
-			(key_type* newKey, mapped_type* newMapped)
+		auto valueCreator = [&memManager, &keyArgs, mappedCreator = std::move(mappedCreator)]
+			(key_type* newKey, mapped_type* newMapped) mutable
 		{
 			KeyCreator(memManager, std::move(keyArgs))(newKey);
 			try
 			{
-				std::forward<MappedCreator>(mappedCreator)(newMapped);
+				std::move(mappedCreator)(newMapped);
 			}
 			catch (...)
 			{
@@ -946,7 +947,7 @@ private:
 			}
 		};
 		typename HashMap::Position resPos = mHashMap.AddCrt(
-			ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
+			ConstIteratorProxy::GetBaseIterator(hint), std::move(valueCreator));
 		return { IteratorProxy(resPos), true };
 	}
 
@@ -954,10 +955,10 @@ private:
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
-		MappedCreator&& mappedCreator)
+		MappedCreator mappedCreator)
 	{
 		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
-			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
+			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
 		return { IteratorProxy(resPos), true };
 	}
 #endif

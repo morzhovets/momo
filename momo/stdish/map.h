@@ -739,7 +739,7 @@ namespace internal
 
 		template<typename Hint, typename... KeyArgs, typename MappedCreator>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
-			MappedCreator&& mappedCreator)
+			MappedCreator mappedCreator)
 		{
 			MemManager& memManager = mTreeMap.GetMemManager();
 			typedef momo::internal::ObjectBuffer<key_type,
@@ -758,14 +758,15 @@ namespace internal
 					keyDestroyed = true;
 					return res;
 				}
-				auto valueCreator = [&memManager, &keyBuffer, &mappedCreator, &keyDestroyed]
-					(key_type* newKey, mapped_type* newMapped)
+				auto valueCreator = [&memManager, &keyBuffer, &keyDestroyed,
+					mappedCreator = std::move(mappedCreator)]
+					(key_type* newKey, mapped_type* newMapped) mutable
 				{
 					KeyManager::Relocate(memManager, *&keyBuffer, newKey);
 					keyDestroyed = true;
 					try
 					{
-						std::forward<MappedCreator>(mappedCreator)(newMapped);
+						std::move(mappedCreator)(newMapped);
 					}
 					catch (...)
 					{
@@ -774,7 +775,7 @@ namespace internal
 					}
 				};
 				TreeMapIterator resIter = mTreeMap.AddCrt(
-					IteratorProxy::GetBaseIterator(res.first), valueCreator);
+					IteratorProxy::GetBaseIterator(res.first), std::move(valueCreator));
 				return { IteratorProxy(resIter), true };
 			}
 			catch (...)
@@ -789,13 +790,13 @@ namespace internal
 			typename Key = std::decay_t<RKey>>
 		requires std::is_same_v<key_type, Key>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
-			MappedCreator&& mappedCreator)
+			MappedCreator mappedCreator)
 		{
 			std::pair<iterator, bool> res = pvFind(hint, std::as_const(std::get<0>(key)));
 			if (!res.second)
 				return res;
 			TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
-				std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
+				std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
 			return { IteratorProxy(resIter), true };
 		}
 
