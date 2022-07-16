@@ -393,10 +393,10 @@ namespace internal
 	public:
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			HashSetItemTraits::RelocateCreate(memManager, srcItems, dstItems, count,
-				std::forward<ItemCreator>(itemCreator), newItem);
+				std::move(itemCreator), newItem);
 		}
 	};
 }
@@ -417,10 +417,10 @@ private:
 public:
 	template<typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-		size_t count, ItemCreator&& itemCreator, Item* newItem)
+		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count,
-			std::forward<ItemCreator>(itemCreator), newItem);
+			std::move(itemCreator), newItem);
 	}
 };
 
@@ -762,7 +762,7 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
-		return InsertCrt(key,
+		return pvInsert<true>(key,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -814,7 +814,7 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	Position AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(pos,
+		return pvAdd<true>(pos,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -836,7 +836,7 @@ public:
 				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return AddCrt(pos, itemCreator);
+		return pvAdd<true>(pos, std::move(itemCreator));
 	}
 
 	Iterator Remove(ConstIterator iter)
@@ -1093,26 +1093,26 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
+	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Position pos = pvFind(key);
 		if (!!pos)
 			return { pos, false };
-		pos = pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
+		pos = pvAdd<extraCheck>(pos, std::move(itemCreator));
 		return { pos, true };
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	Position pvAdd(ConstPosition pos, ItemCreator&& itemCreator)
+	Position pvAdd(ConstPosition pos, ItemCreator itemCreator)
 	{
 		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
 		MOMO_CHECK(ConstPositionProxy::GetBucketIterator(pos) == BucketIterator());
 		size_t hashCode = ConstPositionProxy::GetHashCode(pos);
 		Position resPos;
 		if (mCount < mCapacity)
-			resPos = pvAddNogrow<true>(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
+			resPos = pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 		else
-			resPos = pvAddGrow(hashCode, std::forward<ItemCreator>(itemCreator));
+			resPos = pvAddGrow(hashCode, std::move(itemCreator));
 		if (mBuckets->GetNextBuckets() != nullptr)
 			pvRelocateItems(resPos);
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
@@ -1120,7 +1120,7 @@ private:
 	}
 
 	template<bool incCount, typename ItemCreator>
-	Position pvAddNogrow(Buckets& buckets, size_t hashCode, ItemCreator&& itemCreator)
+	Position pvAddNogrow(Buckets& buckets, size_t hashCode, ItemCreator itemCreator)
 	{
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
@@ -1136,7 +1136,7 @@ private:
 			bucket = &buckets[bucketIndex];
 		}
 		BucketIterator bucketIter = bucket->AddCrt(buckets.GetBucketParams(),
-			std::forward<ItemCreator>(itemCreator), hashCode, buckets.GetLogCount(), probe);
+			std::move(itemCreator), hashCode, buckets.GetLogCount(), probe);
 		startBucket.UpdateMaxProbe(probe);
 		if (incCount)
 		{
@@ -1147,7 +1147,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
+	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, ItemCreator itemCreator)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
@@ -1164,17 +1164,13 @@ private:
 		catch (const std::bad_alloc& exception)
 		{
 			if (Settings::overloadIfCannotGrow && hasBuckets)
-			{
-				return pvAddNogrow<true>(*mBuckets, hashCode,
-					std::forward<ItemCreator>(itemCreator));
-			}
+				return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 			throw exception;
 		}
 		Position resPos;
 		try
 		{
-			resPos = pvAddNogrow<true>(*newBuckets, hashCode,
-				std::forward<ItemCreator>(itemCreator));
+			resPos = pvAddNogrow<true>(*newBuckets, hashCode, std::move(itemCreator));
 		}
 		catch (...)
 		{
@@ -1308,7 +1304,7 @@ private:
 				};
 				iter = pvRemove(iter, itemReplacer);
 			};
-			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), itemCreator).inserted)
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), std::move(itemCreator)).inserted)
 				++iter;
 		}
 	}

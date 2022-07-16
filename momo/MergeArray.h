@@ -52,10 +52,10 @@ public:
 
 	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-		size_t count, ItemCreator&& itemCreator, Item* newItem)
+		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
-			std::forward<ItemCreator>(itemCreator), newItem);
+			std::move(itemCreator), newItem);
 	}
 
 	template<typename ItemArg>
@@ -182,9 +182,9 @@ public:
 			for (ArgIterator iter = begin; iter != end; ++iter)
 			{
 				if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
-					AddBackNogrowCrt(IterCreator(thisMemManager, *iter));
+					pvAddBackNogrow(IterCreator(thisMemManager, *iter));
 				else
-					AddBackCrt(IterCreator(thisMemManager, *iter));
+					pvAddBack(IterCreator(thisMemManager, *iter));
 			}
 		}
 		catch (...)
@@ -481,16 +481,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
-		MOMO_CHECK(mCount < mCapacity);
-		std::forward<ItemCreator>(itemCreator)(pvGetItemPtr(mCount));
-		++mCount;
+		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvAddBackNogrow(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -507,60 +505,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
-		if (mCount < mCapacity)
-		{
-			std::forward<ItemCreator>(itemCreator)(pvGetItemPtr(mCount));
-		}
-		else if ((mCount & initialItemCount) > 0 || mCount == 0)
-		{
-			if (mSegments.GetCount() <= 1)
-				mSegments.SetCount(2, nullptr);
-			Item* segment0 = pvAllocateSegment(0);
-			try
-			{
-				std::forward<ItemCreator>(itemCreator)(segment0);
-			}
-			catch (...)
-			{
-				pvDeallocateSegment(0, segment0);
-				throw;
-			}
-			mCapacity += initialItemCount;
-			mSegments[1] = mSegments[0];
-			mSegments[0] = segment0;
-		}
-		else
-		{
-			size_t segIndex = static_cast<size_t>(std::countr_zero(mCount >> logInitialItemCount) + 1);
-			if (mSegments.GetCount() <= segIndex)
-				mSegments.SetCount(segIndex + 1, nullptr);
-			Item* segment0 = pvAllocateSegment(0);
-			try
-			{
-				mSegments[segIndex] = pvAllocateSegment(segIndex);
-				size_t segItemCount = pvGetSegmentItemCount(segIndex);
-				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
-					mSegments[segIndex], segItemCount, std::forward<ItemCreator>(itemCreator), segment0);
-			}
-			catch (...)
-			{
-				pvDeallocateSegments();
-				pvDeallocateSegment(0, segment0);
-				throw;
-			}
-			mCapacity += initialItemCount;
-			pvDeallocateSegments();
-			pvDeallocateSegment(0, mSegments[0]);
-			mSegments[0] = segment0;
-		}
-		++mCount;
+		pvAddBack(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvAddBack(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -577,16 +529,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
-		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
-		Reserve(mCount + 1);
-		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
+		pvInsert(index, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvInsert(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -783,6 +733,74 @@ private:
 		size_t segIndex = pvGetSegmentIndex(index, mCapacity);
 		size_t segItemIndex = index & ((initialItemCount << segIndex) - 1);
 		return mSegments[segIndex] + segItemIndex;
+	}
+
+	template<typename ItemCreator>
+	void pvAddBackNogrow(ItemCreator itemCreator)
+	{
+		MOMO_CHECK(mCount < mCapacity);
+		std::move(itemCreator)(pvGetItemPtr(mCount));
+		++mCount;
+	}
+
+	template<typename ItemCreator>
+	void pvAddBack(ItemCreator itemCreator)
+	{
+		if (mCount < mCapacity)
+		{
+			std::move(itemCreator)(pvGetItemPtr(mCount));
+		}
+		else if ((mCount & initialItemCount) > 0 || mCount == 0)
+		{
+			if (mSegments.GetCount() <= 1)
+				mSegments.SetCount(2, nullptr);
+			Item* segment0 = pvAllocateSegment(0);
+			try
+			{
+				std::move(itemCreator)(segment0);
+			}
+			catch (...)
+			{
+				pvDeallocateSegment(0, segment0);
+				throw;
+			}
+			mCapacity += initialItemCount;
+			mSegments[1] = mSegments[0];
+			mSegments[0] = segment0;
+		}
+		else
+		{
+			size_t segIndex = static_cast<size_t>(std::countr_zero(mCount >> logInitialItemCount) + 1);
+			if (mSegments.GetCount() <= segIndex)
+				mSegments.SetCount(segIndex + 1, nullptr);
+			Item* segment0 = pvAllocateSegment(0);
+			try
+			{
+				mSegments[segIndex] = pvAllocateSegment(segIndex);
+				size_t segItemCount = pvGetSegmentItemCount(segIndex);
+				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
+					mSegments[segIndex], segItemCount, std::move(itemCreator), segment0);
+			}
+			catch (...)
+			{
+				pvDeallocateSegments();
+				pvDeallocateSegment(0, segment0);
+				throw;
+			}
+			mCapacity += initialItemCount;
+			pvDeallocateSegments();
+			pvDeallocateSegment(0, mSegments[0]);
+			mSegments[0] = segment0;
+		}
+		++mCount;
+	}
+
+	template<typename ItemCreator>
+	void pvInsert(size_t index, ItemCreator itemCreator)
+	{
+		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
+		Reserve(mCount + 1);
+		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
 	void pvRemoveBack(size_t count) noexcept

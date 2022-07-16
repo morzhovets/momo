@@ -113,10 +113,10 @@ public:
 
 	template<typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-		size_t count, ItemCreator&& itemCreator, Item* newItem)
+		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count,
-			std::forward<ItemCreator>(itemCreator), newItem);
+			std::move(itemCreator), newItem);
 	}
 
 	template<typename ItemArg>
@@ -475,9 +475,9 @@ public:
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
 			if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
-				AddBackNogrowCrt(IterCreator(thisMemManager, *iter));
+				pvAddBackNogrow<false>(IterCreator(thisMemManager, *iter));
 			else
-				AddBackCrt(IterCreator(thisMemManager, *iter));
+				pvAddBack(IterCreator(thisMemManager, *iter));
 		}
 	}
 
@@ -737,15 +737,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator&& itemCreator)
 	{
-		MOMO_CHECK(GetCount() < GetCapacity());
-		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
+		pvAddBackNogrow<true>(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvAddBackNogrow<true>(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -762,17 +761,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator&& itemCreator)
 	{
-		if (GetCount() < GetCapacity())
-			pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
-		else
-			pvAddBackGrow(std::forward<ItemCreator>(itemCreator));
+		pvAddBack(std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvAddBack(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -781,7 +777,7 @@ public:
 		size_t initCount = GetCount();
 		if (initCount < GetCapacity())
 		{
-			pvAddBackNogrow(typename ItemTraits::template Creator<Item&&>(
+			pvAddBackNogrow<false>(typename ItemTraits::template Creator<Item&&>(
 				GetMemManager(), std::move(item)));
 		}
 		else if constexpr (ItemTraits::isNothrowMoveConstructible)
@@ -807,7 +803,7 @@ public:
 		size_t initCount = GetCount();
 		if (initCount < GetCapacity())
 		{
-			pvAddBackNogrow(typename ItemTraits::template Creator<const Item&>(
+			pvAddBackNogrow<false>(typename ItemTraits::template Creator<const Item&>(
 				GetMemManager(), item));
 		}
 		else if constexpr (ItemTraits::isNothrowRelocatable)
@@ -831,18 +827,14 @@ public:
 	template<std::invocable<Item*> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
-		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
-		size_t newCount = GetCount() + 1;
-		if (newCount > GetCapacity())
-			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
+		pvInsert(index, std::forward<ItemCreator>(itemCreator));
 	}
 
 	template<typename... ItemArgs>
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		pvInsert(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -981,25 +973,46 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddBackNogrow(ItemCreator&& itemCreator)
+	void pvAddBack(ItemCreator itemCreator)
 	{
+		if (GetCount() < GetCapacity())
+			pvAddBackNogrow<false>(std::move(itemCreator));
+		else
+			pvAddBackGrow(std::move(itemCreator));
+	}
+
+	template<bool check, typename ItemCreator>
+	void pvAddBackNogrow(ItemCreator itemCreator)
+	{
+		MOMO_CHECK(!check || GetCount() < GetCapacity());
 		size_t count = GetCount();
-		std::forward<ItemCreator>(itemCreator)(GetItems() + count);
+		std::move(itemCreator)(GetItems() + count);
 		mData.SetCount(count + 1);
 	}
 
 	template<typename ItemCreator>
-	void pvAddBackGrow(ItemCreator&& itemCreator)
+	void pvAddBackGrow(ItemCreator itemCreator)
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::add, false);
-		auto itemsRelocator = [this, initCount, &itemCreator] (Item* newItems)
+		auto itemsRelocator = [this, initCount, itemCreator = std::move(itemCreator)]
+			(Item* newItems) mutable
 		{
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
-				std::forward<ItemCreator>(itemCreator), newItems + initCount);
+				std::move(itemCreator), newItems + initCount);
 		};
-		mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
+		mData.template Reset<true>(newCapacity, newCount, std::move(itemsRelocator));
+	}
+
+	template<typename ItemCreator>
+	void pvInsert(size_t index, ItemCreator itemCreator)
+	{
+		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
+		size_t newCount = GetCount() + 1;
+		if (newCount > GetCapacity())
+			pvGrow(newCount, ArrayGrowCause::add);
+		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
 	void pvRemoveBack(size_t count) noexcept

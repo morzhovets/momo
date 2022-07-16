@@ -425,10 +425,7 @@ public:
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
-		auto itemCreator = [this, &pairCreator] (KeyValuePair* newItem)
-			{ newItem->Create(mMergeSet.GetMemManager(), std::forward<PairCreator>(pairCreator)); };
-		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
+		return pvAdd<extraCheck>(pos, std::forward<PairCreator>(pairCreator));
 	}
 
 	template<std::invocable<Value*> ValueCreator,
@@ -442,7 +439,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Position AddVar(ConstPosition pos, Key&& key, ValueArgs&&... valueArgs)
 	{
-		return AddCrt(pos, std::move(key),
+		return pvAdd<true>(pos, std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -467,7 +464,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Position AddVar(ConstPosition pos, const Key& key, ValueArgs&&... valueArgs)
 	{
-		return AddCrt(pos, key,
+		return pvAdd<true>(pos, key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -511,25 +508,36 @@ public:
 
 private:
 	template<typename RKey, typename ValueCreator>
-	InsertResult pvInsert(RKey&& key, ValueCreator&& valueCreator)
+	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
+			(KeyValuePair* newItem) mutable
 		{
 			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
-				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		typename MergeSet::InsertResult res = mMergeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, typename RKey, typename ValueCreator>
-	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator&& valueCreator)
+	template<bool extraCheck, typename PairCreator>
+	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
-		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
+		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
+			{ newItem->Create(mMergeSet.GetMemManager(), std::move(pairCreator)); };
+		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
+			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
+	}
+
+	template<bool extraCheck, typename RKey, typename ValueCreator>
+	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator valueCreator)
+	{
+		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
+			(KeyValuePair* newItem) mutable
 		{
 			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
-				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
+				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));

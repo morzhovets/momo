@@ -41,10 +41,10 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			BucketUnlimPItemTraits::RelocateCreate(memManager, srcItems, dstItems, count,
-				std::forward<ItemCreator>(itemCreator), newItem);
+				std::move(itemCreator), newItem);
 		}
 	};
 
@@ -127,10 +127,10 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		Iterator AddCrt(Params& params, ItemCreator&& itemCreator, size_t /*hashCode*/,
+		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
-			mArrayBucket.AddBackCrt(params, std::forward<ItemCreator>(itemCreator));
+			mArrayBucket.AddBackCrt(params, std::move(itemCreator));
 			return GetBounds(params).GetEnd() - 1;
 		}
 

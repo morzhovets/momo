@@ -98,12 +98,12 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
+		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			MOMO_ASSERT(!IsFull());
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::move(itemCreator)(&mItemBuffer);
 			mHashState = pvGetHashState(hashCode);
 			return &mItemBuffer;
 		}

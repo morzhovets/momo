@@ -171,7 +171,7 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		Iterator AddCrt(Params& params, ItemCreator&& itemCreator, size_t /*hashCode*/,
+		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			if (pvIsEmpty())
@@ -182,7 +182,7 @@ namespace internal
 				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
 				Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
-				std::forward<ItemCreator>(itemCreator)(newItems);
+				std::move(itemCreator)(newItems);
 				pvSet(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
 			}
@@ -204,14 +204,14 @@ namespace internal
 					Memory memory(newMemPool);
 					Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
 					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
-						std::forward<ItemCreator>(itemCreator), newItems + count);
+						std::move(itemCreator), newItems + count);
 					memPool.Deallocate(ptr);
 					pvSet(memory.Extract(), newMemPoolIndex, newCount);
 					return newItems + count;
 				}
 				else
 				{
-					std::forward<ItemCreator>(itemCreator)(items + count);
+					std::move(itemCreator)(items + count);
 					++mPtrState;
 					return items + count;
 				}

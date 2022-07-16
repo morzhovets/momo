@@ -250,6 +250,8 @@ namespace internal
 			{
 			}
 
+			Creator(Creator&&) = default;
+
 			Creator(const Creator&) = delete;
 
 			~Creator() = default;
@@ -296,12 +298,12 @@ namespace internal
 		}
 
 		template<std::invocable Func>
-		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			Func&& func) requires isMoveConstructible && isNothrowDestructible
+		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject, Func func)
+			requires isMoveConstructible && isNothrowDestructible
 		{
 			if constexpr (isNothrowMoveConstructible)
 			{
-				std::forward<Func>(func)();
+				std::move(func)();
 				Move(memManager, std::move(srcObject), dstObject);
 			}
 			else
@@ -309,7 +311,7 @@ namespace internal
 				Move(memManager, std::move(srcObject), dstObject);
 				try
 				{
-					std::forward<Func>(func)();
+					std::move(func)();
 				}
 				catch (...)
 				{
@@ -322,12 +324,12 @@ namespace internal
 
 		template<std::invocable Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
-			Func&& func) requires isCopyConstructible && isNothrowDestructible
+			Func func) requires isCopyConstructible && isNothrowDestructible
 		{
 			Copy(memManager, srcObject, dstObject);
 			try
 			{
-				std::forward<Func>(func)();
+				std::move(func)();
 			}
 			catch (...)
 			{
@@ -455,24 +457,24 @@ namespace internal
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
 			std::invocable<Object*> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ObjectCreator&& objectCreator, Object* newObject)
+			size_t count, ObjectCreator objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
-			auto func = [&objectCreator, newObject] ()
-				{ std::forward<ObjectCreator>(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, func);
+			auto func = [objectCreator = std::move(objectCreator), newObject] () mutable
+				{ std::move(objectCreator)(newObject); };
+			RelocateExec(memManager, srcBegin, dstBegin, count, std::move(func));
 		}
 
 		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
 			std::invocable Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, Func&& func)
+			size_t count, Func func)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
 			if constexpr (isNothrowRelocatable)
 			{
-				std::forward<Func>(func)();
+				std::move(func)();
 				Relocate(memManager, srcBegin, dstBegin, count);
 			}
 			else
@@ -484,7 +486,7 @@ namespace internal
 					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
 						Copy(memManager, *srcIter, std::addressof(*dstIter));
-					std::forward<Func>(func)();
+					std::move(func)();
 				}
 				catch (...)
 				{

@@ -145,14 +145,14 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		Iterator AddCrt(Params& /*params*/, ItemCreator&& itemCreator, size_t hashCode,
+		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
 			Item* newItem = &mItems[maxCount - 1 - count];
-			std::forward<ItemCreator>(itemCreator)(newItem);
+			std::move(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if constexpr (useHashCodePartGetter)
 			{

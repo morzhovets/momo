@@ -69,10 +69,10 @@ namespace internal
 
 		template<typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
-				dstItems, count, std::forward<ItemCreator>(itemCreator), newItem);
+				dstItems, count, std::move(itemCreator), newItem);
 		}
 	};
 
@@ -258,14 +258,14 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		void AddBackCrt(Params& params, ItemCreator&& itemCreator)
+		void AddBackCrt(Params& params, ItemCreator itemCreator)
 		{
 			if (mPtr == nullptr)
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 				FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-				std::forward<ItemCreator>(itemCreator)(pvGetFastItems(memory.GetPointer()));
+				std::move(itemCreator)(pvGetFastItems(memory.GetPointer()));
 				pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 			}
 			else
@@ -285,7 +285,7 @@ namespace internal
 							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
 							Item* newItems = pvGetFastItems(memory.GetPointer());
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
-								count, std::forward<ItemCreator>(itemCreator), newItems + count);
+								count, std::move(itemCreator), newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 						}
@@ -297,7 +297,7 @@ namespace internal
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							Item* newItems = array.GetItems();
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
-								count, std::forward<ItemCreator>(itemCreator), newItems + count);
+								count, std::move(itemCreator), newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) {});
 							std::construct_at(&pvGetArray(memory.GetPointer()), std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
@@ -306,13 +306,13 @@ namespace internal
 					}
 					else
 					{
-						std::forward<ItemCreator>(itemCreator)(pvGetFastItems() + count);
+						std::move(itemCreator)(pvGetFastItems() + count);
 						++*mPtr;
 					}
 				}
 				else
 				{
-					pvGetArray().AddBackCrt(std::forward<ItemCreator>(itemCreator));
+					pvGetArray().AddBackCrt(std::move(itemCreator));
 				}
 			}
 		}

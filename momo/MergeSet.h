@@ -214,7 +214,7 @@ namespace internal
 
 		template<typename SrcIterator, typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			MOMO_ASSERT(std::has_single_bit(count) && count > initialItemCount);
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
@@ -241,13 +241,12 @@ namespace internal
 				auto srcGen = [srcIter = itemPtrHashes.GetItems()] () mutable
 					{ return (srcIter++)->ptr; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					InputIterator(srcGen), dstBegin, count,
-					std::forward<ItemCreator>(itemCreator), newItem);
+					InputIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
 			}
 			else if constexpr (MergeTraits::func == MergeTraitsFunc::lessNothrow
 				&& MergeSetItemTraits::isNothrowRelocatable)
 			{
-				std::forward<ItemCreator>(itemCreator)(newItem);
+				std::move(itemCreator)(newItem);
 				for (size_t i = 0; i < initialItemCount; ++i)
 				{
 					pvRelocate(memManager, srcItems1[i], dstBegin + count - initialItemCount + i);
@@ -283,8 +282,7 @@ namespace internal
 				auto srcGen = [srcIter = itemPtrs.GetItems()] () mutable
 					{ return *srcIter++; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					InputIterator(srcGen), dstBegin, count,
-					std::forward<ItemCreator>(itemCreator), newItem);
+					InputIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
 			}
 		}
 
@@ -422,10 +420,10 @@ private:
 public:
 	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-		size_t count, ItemCreator&& itemCreator, Item* newItem)
+		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
-			std::forward<ItemCreator>(itemCreator), newItem);
+			std::move(itemCreator), newItem);
 	}
 };
 
@@ -649,7 +647,7 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
-		return InsertCrt(key,
+		return pvInsert<true>(key,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -690,7 +688,7 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	Position AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
-		return AddCrt(pos,
+		return pvAdd<true>(pos,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -813,20 +811,20 @@ private:
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
+	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Position pos = pvFind(key);
 		if (!!pos)
 			return { pos, false };
-		pos = pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
+		pos = pvAdd<extraCheck>(pos, std::move(itemCreator));
 		return { pos, true };
 	}
 
 	template<bool extraCheck, typename ItemCreator>
-	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator&& itemCreator)
+	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(!pos);
-		mMergeArray.AddBackCrt(std::forward<ItemCreator>(itemCreator));
+		mMergeArray.AddBackCrt(std::move(itemCreator));
 		const Item& item = mMergeArray.GetBackItem();
 		pvFilterSet(ItemTraits::GetKey(item));
 		pvGetCrew().IncVersion();

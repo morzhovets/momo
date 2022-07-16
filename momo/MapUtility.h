@@ -298,20 +298,20 @@ namespace internal
 	public:
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, Key&& key,
-			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
+			ValueCreator valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
+			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
+				{ std::move(valueCreator)(newValue); };
+			KeyManager::MoveExec(memManager, std::move(key), newKey, std::move(func));
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
-			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
+			ValueCreator valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, func);
+			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
+				{ std::move(valueCreator)(newValue); };
+			KeyManager::CopyExec(memManager, key, newKey, std::move(func));
 		}
 
 		static void DestroyKey(MemManager* memManager, Key& key) noexcept
@@ -484,18 +484,17 @@ namespace internal
 			typename DstKeyIterator, typename DstValueIterator, typename Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
-			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func&& func)
+			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
 		{
 			if constexpr (isKeyNothrowRelocatable)
 			{
-				ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin, count,
-					std::forward<Func>(func));
+				ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin,
+					count, std::move(func));
 				KeyManager::Relocate(memManager, srcKeyBegin, dstKeyBegin, count);
 			}
 			else if constexpr (isValueNothrowRelocatable)
 			{
-				KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
-					std::forward<Func>(func));
+				KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
 				ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 			}
 			else
@@ -512,7 +511,7 @@ namespace internal
 					DstValueIterator dstValueIter = dstValueBegin;
 					for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
 						ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
-					std::forward<Func>(func)();
+					std::move(func)();
 				}
 				catch (...)
 				{
@@ -583,10 +582,9 @@ namespace internal
 
 		template<typename SrcKeyIterator, typename DstKeyIterator, typename Func>
 		static void RelocateExecKeys(MemManager& memManager,
-			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func&& func)
+			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func func)
 		{
-			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
-				std::forward<Func>(func));
+			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
 		}
 	};
 
@@ -611,16 +609,16 @@ namespace internal
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
 		template<typename MemManager, typename PairCreator>
-		void Create(MemManager& /*memManager*/, PairCreator&& pairCreator)
+		void Create(MemManager& /*memManager*/, PairCreator pairCreator)
 		{
-			std::forward<PairCreator>(pairCreator)(GetKeyPtr(), GetValuePtr());
+			std::move(pairCreator)(GetKeyPtr(), GetValuePtr());
 		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
-		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		void Create(MemManager& memManager, RKey&& key, ValueCreator valueCreator)
 		{
 			KeyValueTraits::Create(memManager, std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), GetKeyPtr(), GetValuePtr());
+				std::move(valueCreator), GetKeyPtr(), GetValuePtr());
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -663,12 +661,12 @@ namespace internal
 		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
 
 		template<typename MemManager, typename PairCreator>
-		void Create(MemManager& memManager, PairCreator&& pairCreator)
+		void Create(MemManager& memManager, PairCreator pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
 			try
 			{
-				std::forward<PairCreator>(pairCreator)(GetKeyPtr(), mValuePtr);
+				std::move(pairCreator)(GetKeyPtr(), mValuePtr);
 			}
 			catch (...)
 			{
@@ -678,14 +676,15 @@ namespace internal
 		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
-		void Create(MemManager& memManager, RKey&& key, ValueCreator&& valueCreator)
+		void Create(MemManager& memManager, RKey&& key, ValueCreator valueCreator)
 		{
-			auto pairCreator = [&memManager, &key, &valueCreator] (Key* newKey, Value* newValue)
+			auto pairCreator = [&memManager, &key, valueCreator = std::move(valueCreator)]
+				(Key* newKey, Value* newValue) mutable
 			{
 				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
-					std::forward<ValueCreator>(valueCreator), newKey, newValue);
+					std::move(valueCreator), newKey, newValue);
 			};
-			Create(memManager, pairCreator);
+			Create(memManager, std::move(pairCreator));
 		}
 
 		template<typename KeyValueTraits, typename MemManager>
@@ -693,7 +692,7 @@ namespace internal
 		{
 			auto pairCreator = [&memManager, &srcKey, &dstValue] (Key* newKey, Value* newValue)
 				{ KeyValueTraits::Relocate(&memManager, srcKey, dstValue, newKey, newValue); };
-			Create(memManager, pairCreator);
+			Create(memManager, std::move(pairCreator));
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -803,17 +802,17 @@ namespace internal
 
 		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
 			auto dstValueGen = [dstIter = dstBegin] () mutable { return ptGenerateValuePtr(dstIter); };
-			auto func = [&itemCreator, newItem] ()
-				{ std::forward<ItemCreator>(itemCreator)(newItem); };
+			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
+				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
 				InputIterator(srcKeyGen), InputIterator(srcValueGen),
-				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, func);
+				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, std::move(func));
 		}
 
 		template<typename KeyArg>
@@ -934,14 +933,14 @@ namespace internal
 
 		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ItemCreator&& itemCreator, Item* newItem)
+			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
-			auto func = [&itemCreator, newItem] ()
-				{ std::forward<ItemCreator>(itemCreator)(newItem); };
+			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
+				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExecKeys(memManager,
-				InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, func);
+				InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, std::move(func));
 			auto srcValueGen = [srcIter = srcBegin] () mutable
 				{ return ptGenerateValuePtrPtr(srcIter); };
 			auto dstValueGen = [dstIter = dstBegin] () mutable

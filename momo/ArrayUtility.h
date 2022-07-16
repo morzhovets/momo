@@ -183,10 +183,10 @@ namespace internal
 
 	public:
 		template<std::invocable<Item*> ItemCreator>
-		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
+		explicit ArrayItemHandler(MemManager& memManager, ItemCreator itemCreator)
 			: mMemManager(&memManager)
 		{
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::move(itemCreator)(&mItemBuffer);
 		}
 
 		ArrayItemHandler(const ArrayItemHandler&) = delete;
