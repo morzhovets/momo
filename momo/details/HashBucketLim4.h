@@ -219,7 +219,7 @@ namespace internal
 		}
 
 		template<std::invocable<Item&, Item&> ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
+		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Data data = pvGetData();
@@ -231,7 +231,7 @@ namespace internal
 			if (count == 1)
 			{
 				MOMO_ASSERT(iter == items);
-				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
+				std::move(itemReplacer)(*items, *items);
 				memPool.Deallocate(ptr);
 				mPtrState = (memPoolIndex < pvGetMemPoolIndex(maxCount))
 					? stateNull : stateNullWasFull;
@@ -240,7 +240,7 @@ namespace internal
 			else
 			{
 				MOMO_ASSERT(items <= iter && iter < items + count);
-				std::forward<ItemReplacer>(itemReplacer)(items[count - 1], *iter);
+				std::move(itemReplacer)(items[count - 1], *iter);
 				--mPtrState;
 				return iter;
 			}

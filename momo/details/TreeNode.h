@@ -257,7 +257,7 @@ namespace internal
 		}
 
 		template<std::invocable<Item&> ItemRemover>
-		void Remove(Params& params, size_t index, ItemRemover&& itemRemover)
+		void Remove(Params& params, size_t index, ItemRemover itemRemover)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
@@ -266,7 +266,7 @@ namespace internal
 				ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 				try
 				{
-					std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
+					std::move(itemRemover)(*GetItemPtr(count - 1));
 				}
 				catch (...)
 				{
@@ -277,7 +277,7 @@ namespace internal
 			}
 			else
 			{
-				std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
+				std::move(itemRemover)(*GetItemPtr(index));
 				uint8_t realIndex = mCounter.indexes[index];
 				std::copy(mCounter.indexes + index + 1, mCounter.indexes + count,
 					mCounter.indexes + index);

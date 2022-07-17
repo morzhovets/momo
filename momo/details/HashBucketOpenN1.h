@@ -140,13 +140,12 @@ namespace internal
 		}
 
 		template<std::invocable<Item&, Item&> ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
+		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();
 			size_t index = internal::UIntMath<>::Dist(pvMakeIterator(ptGetItemPtr(0)), iter);
 			MOMO_ASSERT(index < count);
-			std::forward<ItemReplacer>(itemReplacer)(*ptGetItemPtr(count - 1),
-				*ptGetItemPtr(index));
+			std::move(itemReplacer)(*ptGetItemPtr(count - 1), *ptGetItemPtr(index));
 			pvGetShortHash(index) = pvGetShortHash(count - 1);
 			pvGetShortHash(count - 1) = emptyShortHash;
 			if (count < maxCount)

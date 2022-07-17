@@ -109,12 +109,11 @@ namespace internal
 		}
 
 		template<std::invocable<Item&, Item&> ItemReplacer>
-		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter,
-			ItemReplacer&& itemReplacer)
+		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter, ItemReplacer itemReplacer)
 		{
 			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
-			std::forward<ItemReplacer>(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
+			std::move(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
 			mHashState = HashState{2};
 			return nullptr;
 		}
