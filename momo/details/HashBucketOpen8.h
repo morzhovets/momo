@@ -52,8 +52,8 @@ namespace internal
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
 		template<bool first, typename Predicate>
-		requires std::predicate<const Predicate&, const Item&>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		requires std::predicate<Predicate, const Item&>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			static_assert(std::endian::native == std::endian::little);
 #ifdef MOMO_PREFETCH
@@ -71,7 +71,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*itemPtr)) [[likely]]
+				if (pred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 				mask &= mask - 1;
 			}
@@ -84,7 +84,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*itemPtr)) [[likely]]
+				if (pred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 				mask &= mask - 1;
 			}

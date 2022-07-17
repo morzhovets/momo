@@ -97,15 +97,15 @@ namespace internal
 		}
 
 		template<bool first, typename Predicate>
-		requires std::predicate<const Predicate&, const Item&>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		requires std::predicate<Predicate, const Item&>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			ShortHash shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
 				if (mHashData.shortHashes[i] == shortHash)
 				{
-					if (pred(*&mItems[i])) [[likely]]
+					if (pred(std::as_const(*&mItems[i]))) [[likely]]
 						return Iterator(&mItems[i] + 1);
 				}
 			}

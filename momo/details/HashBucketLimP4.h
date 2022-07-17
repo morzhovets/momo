@@ -270,8 +270,8 @@ namespace internal
 		}
 
 		template<bool first, typename Predicate>
-		requires std::predicate<const Predicate&, const Item&>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		requires std::predicate<Predicate, const Item&>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			uint8_t shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
@@ -279,7 +279,7 @@ namespace internal
 				if (mShortHashes[i] == shortHash)
 				{
 					Item* items = mPtrState.GetPointer();
-					if (pred(items[i])) [[likely]]
+					if (pred(std::as_const(items[i]))) [[likely]]
 						return items + i;
 				}
 			}

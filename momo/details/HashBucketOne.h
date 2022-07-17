@@ -71,12 +71,12 @@ namespace internal
 		}
 
 		template<bool first, typename Predicate>
-		requires std::predicate<const Predicate&, const Item&>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		requires std::predicate<Predicate, const Item&>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			if (mHashState == pvGetHashState(hashCode))
 			{
-				if (pred(*&mItemBuffer)) [[likely]]
+				if (pred(std::as_const(*&mItemBuffer))) [[likely]]
 					return &mItemBuffer;
 			}
 			return nullptr;

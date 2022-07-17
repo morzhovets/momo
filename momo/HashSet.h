@@ -1063,8 +1063,7 @@ private:
 	}
 
 	template<typename Predicate>
-	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
-		const Predicate& pred) const
+	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets, Predicate pred) const
 	{
 		size_t hashCode = indexCode;
 		BucketParams& bucketParams = buckets.GetBucketParams();
