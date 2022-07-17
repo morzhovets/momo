@@ -204,6 +204,53 @@ namespace internal
 		}
 	};
 
+	template<conceptObject TObject, conceptMemManager TMemManager, typename... ObjectArgs>
+	requires IsConstructible<TObject, TMemManager, ObjectArgs...>::value
+	class ObjectCreator : private ObjectCreatorAllocator<TMemManager>
+	{
+	public:
+		typedef TObject Object;
+		typedef TMemManager MemManager;
+
+	private:
+		typedef ObjectCreatorAllocator<MemManager> CreatorAllocator;
+
+	public:
+		explicit ObjectCreator(MemManager& memManager, ObjectArgs&&... objectArgs) noexcept
+			: CreatorAllocator(memManager),
+			mObjectArgs(std::forward<ObjectArgs>(objectArgs)...)
+		{
+		}
+
+		explicit ObjectCreator(MemManager& memManager, std::tuple<ObjectArgs...>&& objectArgs) noexcept
+			: CreatorAllocator(memManager),
+			mObjectArgs(std::move(objectArgs))
+		{
+		}
+
+		ObjectCreator(ObjectCreator&&) = default;
+
+		ObjectCreator(const ObjectCreator&) = delete;
+
+		~ObjectCreator() = default;
+
+		ObjectCreator& operator=(const ObjectCreator&) = delete;
+
+		void operator()(Object* newObject) &&
+		{
+			auto tupleFunc = [this, newObject] (ObjectArgs&&... objectArgs)
+			{
+				std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
+					CreatorAllocator::GetByteAllocator(), newObject,
+					std::forward<ObjectArgs>(objectArgs)...);
+			};
+			std::apply(tupleFunc, std::move(mObjectArgs));
+		}
+
+	private:
+		std::tuple<ObjectArgs&&...> mObjectArgs;
+	};
+
 	template<conceptObject TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{
@@ -213,6 +260,9 @@ namespace internal
 
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
+
+		template<typename... Args>
+		using Creator = ObjectCreator<Object, MemManager, Args...>;
 
 		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
@@ -229,48 +279,6 @@ namespace internal
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
 		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
-
-		template<typename... Args>
-		requires IsConstructible<Object, MemManager, Args...>::value
-		class Creator : private ObjectCreatorAllocator<MemManager>
-		{
-		private:
-			typedef ObjectCreatorAllocator<MemManager> CreatorAllocator;
-
-		public:
-			explicit Creator(MemManager& memManager, Args&&... args) noexcept
-				: CreatorAllocator(memManager),
-				mArgs(std::forward<Args>(args)...)
-			{
-			}
-
-			explicit Creator(MemManager& memManager, std::tuple<Args...>&& args) noexcept
-				: CreatorAllocator(memManager),
-				mArgs(std::move(args))
-			{
-			}
-
-			Creator(Creator&&) = default;
-
-			Creator(const Creator&) = delete;
-
-			~Creator() = default;
-
-			Creator& operator=(const Creator&) = delete;
-
-			void operator()(Object* newObject) &&
-			{
-				auto tupleFunc = [this, newObject] (Args&&... args)
-				{
-					std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
-						CreatorAllocator::GetByteAllocator(), newObject, std::forward<Args>(args)...);
-				};
-				std::apply(tupleFunc, std::move(mArgs));
-			}
-
-		private:
-			std::tuple<Args&&...> mArgs;
-		};
 
 	private:
 		static const bool isNothrowDestructible = Destroyer::isNothrowDestructible;
