@@ -204,9 +204,37 @@ namespace internal
 		}
 	};
 
-	template<conceptObject TObject, conceptMemManager TMemManager, typename... ObjectArgs>
+	template<typename TObjectArg, size_t index>
+	class ObjectCreatorArg
+	{
+	public:
+		typedef TObjectArg ObjectArg;
+
+	public:
+		explicit ObjectCreatorArg(ObjectArg&& objectArg) noexcept
+			: mObjectArg(std::forward<ObjectArg>(objectArg))
+		{
+		}
+
+		ObjectArg&& Get() && noexcept
+		{
+			return std::forward<ObjectArg>(mObjectArg);
+		}
+
+	private:
+		ObjectArg&& mObjectArg;
+	};
+
+	template<conceptObject TObject, conceptMemManager TMemManager,
+		typename Indexes, typename... ObjectArgs>
+	class ObjectCreator;
+
+	template<conceptObject TObject, conceptMemManager TMemManager,
+		typename... ObjectArgs, size_t... indexes>
 	requires IsConstructible<TObject, TMemManager, ObjectArgs...>::value
-	class ObjectCreator : private ObjectCreatorAllocator<TMemManager>
+	class ObjectCreator<TObject, TMemManager, std::index_sequence<indexes...>, ObjectArgs...>
+		: private ObjectCreatorAllocator<TMemManager>,
+		private ObjectCreatorArg<ObjectArgs, indexes>...
 	{
 	public:
 		typedef TObject Object;
@@ -218,13 +246,13 @@ namespace internal
 	public:
 		explicit ObjectCreator(MemManager& memManager, ObjectArgs&&... objectArgs) noexcept
 			: CreatorAllocator(memManager),
-			mObjectArgs(std::forward<ObjectArgs>(objectArgs)...)
+			ObjectCreatorArg<ObjectArgs, indexes>(std::forward<ObjectArgs>(objectArgs))...
 		{
 		}
 
 		explicit ObjectCreator(MemManager& memManager, std::tuple<ObjectArgs...>&& objectArgs) noexcept
-			: CreatorAllocator(memManager),
-			mObjectArgs(std::move(objectArgs))
+			: ObjectCreator(memManager,
+				std::forward<ObjectArgs>(std::get<indexes>(std::move(objectArgs)))...)
 		{
 		}
 
@@ -238,17 +266,11 @@ namespace internal
 
 		void operator()(Object* newObject) &&
 		{
-			auto tupleFunc = [this, newObject] (ObjectArgs&&... objectArgs)
-			{
-				std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
-					CreatorAllocator::GetByteAllocator(), newObject,
-					std::forward<ObjectArgs>(objectArgs)...);
-			};
-			std::apply(tupleFunc, std::move(mObjectArgs));
+			std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
+				CreatorAllocator::GetByteAllocator(), newObject,
+				std::forward<ObjectArgs>(
+					std::move(*static_cast<ObjectCreatorArg<ObjectArgs, indexes>*>(this)).Get())...);
 		}
-
-	private:
-		std::tuple<ObjectArgs&&...> mObjectArgs;
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
@@ -262,7 +284,7 @@ namespace internal
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 
 		template<typename... Args>
-		using Creator = ObjectCreator<Object, MemManager, Args...>;
+		using Creator = ObjectCreator<Object, MemManager, std::index_sequence_for<Args...>, Args...>;
 
 		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
