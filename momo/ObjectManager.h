@@ -204,12 +204,9 @@ namespace internal
 		}
 	};
 
-	template<typename TObjectArg, size_t index>
+	template<typename ObjectArg, size_t index>
 	class ObjectCreatorArg
 	{
-	public:
-		typedef TObjectArg ObjectArg;
-
 	public:
 		explicit ObjectCreatorArg(ObjectArg&& objectArg) noexcept
 			: mObjectArg(std::forward<ObjectArg>(objectArg))
@@ -223,6 +220,36 @@ namespace internal
 
 	private:
 		ObjectArg&& mObjectArg;
+	};
+
+	template<typename ObjectArg, size_t index>
+	requires (!std::is_reference_v<ObjectArg> && std::is_trivially_move_constructible_v<ObjectArg>
+		&& sizeof(ObjectArg) <= sizeof(void*))
+	class ObjectCreatorArg<ObjectArg, index>
+	{
+	public:
+		explicit ObjectCreatorArg(ObjectArg objectArg) noexcept
+			: mObjectArg(std::move(objectArg))
+		{
+		}
+
+		ObjectArg Get() && noexcept
+		{
+			return std::move(mObjectArg);
+		}
+
+	private:
+		ObjectArg mObjectArg;
+	};
+
+	template<typename ObjectArg, size_t index>
+	class ObjectCreatorArg<ObjectArg&&, index> : public ObjectCreatorArg<ObjectArg, index>
+	{
+	private:
+		typedef ObjectCreatorArg<ObjectArg, index> ObjectCreatorArgBase;
+
+	public:
+		using ObjectCreatorArgBase::ObjectCreatorArgBase;
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager,
