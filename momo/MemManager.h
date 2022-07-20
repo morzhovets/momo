@@ -104,13 +104,13 @@ namespace internal
 class MemManagerCpp
 {
 public:
-	explicit MemManagerCpp() = default;
+	explicit MemManagerCpp() noexcept = default;
 
-	MemManagerCpp(MemManagerCpp&&) = default;
+	MemManagerCpp(MemManagerCpp&&) noexcept = default;
 
-	MemManagerCpp(const MemManagerCpp&) = default;
+	MemManagerCpp(const MemManagerCpp&) noexcept = default;
 
-	~MemManagerCpp() = default;
+	~MemManagerCpp() noexcept = default;
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
@@ -133,13 +133,13 @@ public:
 class MemManagerC
 {
 public:
-	explicit MemManagerC() = default;
+	explicit MemManagerC() noexcept = default;
 
-	MemManagerC(MemManagerC&&) = default;
+	MemManagerC(MemManagerC&&) noexcept = default;
 
-	MemManagerC(const MemManagerC&) = default;
+	MemManagerC(const MemManagerC&) noexcept = default;
 
-	~MemManagerC() = default;
+	~MemManagerC() noexcept = default;
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
@@ -170,13 +170,13 @@ public:
 class MemManagerWin
 {
 public:
-	explicit MemManagerWin() = default;
+	explicit MemManagerWin() noexcept = default;
 
-	MemManagerWin(MemManagerWin&&) = default;
+	MemManagerWin(MemManagerWin&&) noexcept = default;
 
-	MemManagerWin(const MemManagerWin&) = default;
+	MemManagerWin(const MemManagerWin&) noexcept = default;
 
-	~MemManagerWin() = default;
+	~MemManagerWin() noexcept = default;
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
@@ -222,19 +222,14 @@ public:
 	//static_assert(std::is_nothrow_move_constructible_v<ByteAllocator>);
 
 public:
-	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))
-	{
-	}
+	explicit MemManagerStd() = default;
 
 	explicit MemManagerStd(const Allocator& alloc) noexcept
 		: ByteAllocator(alloc)
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: ByteAllocator(std::move(memManager.GetByteAllocator()))
-	{
-	}
+	MemManagerStd(MemManagerStd&&) noexcept = default;
 
 	MemManagerStd(const MemManagerStd& memManager)
 		: ByteAllocator(std::allocator_traits<ByteAllocator>
@@ -242,7 +237,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() = default;
+	~MemManagerStd() noexcept = default;
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
@@ -287,16 +282,13 @@ public:
 	typedef std::allocator<std::byte> ByteAllocator;
 
 public:
-	explicit MemManagerStd(const Allocator& /*alloc*/ = Allocator())
-		noexcept(noexcept(MemManagerDefault()))
+	explicit MemManagerStd() = default;
+
+	explicit MemManagerStd(const Allocator& /*alloc*/) noexcept(noexcept(MemManagerDefault()))
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: ByteAllocator(),
-		MemManagerDefault(std::move(memManager))
-	{
-	}
+	MemManagerStd(MemManagerStd&&) noexcept = default;
 
 	MemManagerStd(const MemManagerStd& memManager)
 		: ByteAllocator(),
@@ -304,7 +296,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() = default;
+	~MemManagerStd() noexcept = default;
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
@@ -423,11 +415,7 @@ namespace internal
 	};
 
 	template<conceptMemManager TMemManager>
-	class MemManagerWrapper;
-
-	template<conceptMemManager TMemManager>
-	requires (!std::is_empty_v<TMemManager>)
-	class MemManagerWrapper<TMemManager>
+	class MemManagerWrapper
 	{
 	public:
 		typedef TMemManager MemManager;
@@ -438,14 +426,11 @@ namespace internal
 		{
 		}
 
-		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) noexcept
-			: mMemManager(std::move(memManagerWrapper.mMemManager))
-		{
-		}
+		MemManagerWrapper(MemManagerWrapper&&) noexcept = default;
 
 		MemManagerWrapper(const MemManagerWrapper&) = delete;
 
-		~MemManagerWrapper() = default;
+		~MemManagerWrapper() noexcept = default;
 
 		MemManagerWrapper& operator=(MemManagerWrapper&& memManagerWrapper) noexcept
 		{
@@ -486,14 +471,11 @@ namespace internal
 		{
 		}
 
-		MemManagerWrapper(MemManagerWrapper&& memManagerWrapper) noexcept
-			: MemManager(std::move(memManagerWrapper.GetMemManager()))
-		{
-		}
+		MemManagerWrapper(MemManagerWrapper&&) noexcept = default;
 
 		MemManagerWrapper(const MemManagerWrapper&) = delete;
 
-		~MemManagerWrapper() = default;
+		~MemManagerWrapper() noexcept = default;
 
 		MemManagerWrapper& operator=(MemManagerWrapper&& /*memManagerWrapper*/) noexcept
 		{
@@ -516,13 +498,13 @@ namespace internal
 	class MemManagerDummy
 	{
 	public:
-		explicit MemManagerDummy() = default;
+		explicit MemManagerDummy() noexcept = default;
 
-		MemManagerDummy(MemManagerDummy&&) = default;
+		MemManagerDummy(MemManagerDummy&&) noexcept = default;
 
-		MemManagerDummy(const MemManagerDummy&) = default;
+		MemManagerDummy(const MemManagerDummy&) noexcept = default;
 
-		~MemManagerDummy() = default;
+		~MemManagerDummy() noexcept = default;
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
@@ -539,82 +521,7 @@ namespace internal
 	};
 
 	template<conceptMemManager TBaseMemManager>
-	class MemManagerPtr;
-
-	template<conceptMemManager TBaseMemManager>
-	requires (std::is_empty_v<TBaseMemManager> &&
-		std::is_nothrow_default_constructible_v<TBaseMemManager>)
-	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
-	{
-	public:
-		typedef TBaseMemManager BaseMemManager;
-
-	private:
-		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
-
-	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
-
-	public:
-		//explicit MemManagerPtr() noexcept
-		//{
-		//}
-
-		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
-		{
-		}
-
-		MemManagerPtr(MemManagerPtr&& /*memManager*/) noexcept
-			: BaseMemManager()
-		{
-		}
-
-		MemManagerPtr(const MemManagerPtr& /*memManager*/) noexcept
-			: BaseMemManager()
-		{
-		}
-
-		~MemManagerPtr() = default;
-
-		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
-
-		BaseMemManager& GetBaseMemManager() noexcept
-		{
-			return *this;
-		}
-
-		void* Allocate(size_t size)
-		{
-			return GetBaseMemManager().Allocate(size);
-		}
-
-		void Deallocate(void* ptr, size_t size) noexcept
-		{
-			GetBaseMemManager().Deallocate(ptr, size);
-		}
-
-		void* Reallocate(void* ptr, size_t size, size_t newSize)
-			requires BaseMemManagerProxy::canReallocate
-		{
-			return GetBaseMemManager().Reallocate(ptr, size, newSize);
-		}
-
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
-			requires BaseMemManagerProxy::canReallocateInplace
-		{
-			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
-		}
-
-		bool IsEqual(const MemManagerPtr& /*memManager*/) const noexcept
-		{
-			return true;
-		}
-	};
-
-	template<conceptMemManager TBaseMemManager>
-	requires (!std::is_empty_v<TBaseMemManager> ||
-		!std::is_nothrow_default_constructible_v<TBaseMemManager>)
-	class MemManagerPtr<TBaseMemManager>
+	class MemManagerPtr
 	{
 	public:
 		typedef TBaseMemManager BaseMemManager;
@@ -631,17 +538,11 @@ namespace internal
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& memManager) noexcept
-			: mBaseMemManager(memManager.mBaseMemManager)
-		{
-		}
+		MemManagerPtr(MemManagerPtr&&) noexcept = default;
 
-		MemManagerPtr(const MemManagerPtr& memManager) noexcept
-			: mBaseMemManager(memManager.mBaseMemManager)
-		{
-		}
+		MemManagerPtr(const MemManagerPtr&) noexcept = default;
 
-		~MemManagerPtr() = default;
+		~MemManagerPtr() noexcept = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
@@ -679,6 +580,69 @@ namespace internal
 
 	private:
 		BaseMemManager& mBaseMemManager;
+	};
+
+	template<conceptMemManager TBaseMemManager>
+	requires (std::is_empty_v<TBaseMemManager> &&
+		std::is_nothrow_default_constructible_v<TBaseMemManager>)
+	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
+	{
+	public:
+		typedef TBaseMemManager BaseMemManager;
+
+	private:
+		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
+
+	public:
+		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
+
+	public:
+		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
+		{
+		}
+
+		MemManagerPtr(MemManagerPtr&&) noexcept = default;
+
+		MemManagerPtr(const MemManagerPtr& /*memManager*/) noexcept
+			: BaseMemManager()
+		{
+		}
+
+		~MemManagerPtr() noexcept = default;
+
+		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
+
+		BaseMemManager& GetBaseMemManager() noexcept
+		{
+			return *this;
+		}
+
+		void* Allocate(size_t size)
+		{
+			return GetBaseMemManager().Allocate(size);
+		}
+
+		void Deallocate(void* ptr, size_t size) noexcept
+		{
+			GetBaseMemManager().Deallocate(ptr, size);
+		}
+
+		void* Reallocate(void* ptr, size_t size, size_t newSize)
+			requires BaseMemManagerProxy::canReallocate
+		{
+			return GetBaseMemManager().Reallocate(ptr, size, newSize);
+		}
+
+		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+			requires BaseMemManagerProxy::canReallocateInplace
+		{
+			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
+		}
+
+		bool IsEqual(const MemManagerPtr& /*memManager*/) const noexcept
+		{
+			return true;
+		}
 	};
 }
 
