@@ -239,7 +239,7 @@ namespace internal
 		}
 
 	private:
-		ObjectArg mObjectArg;
+		[[no_unique_address]] ObjectArg mObjectArg;
 	};
 
 	template<typename ObjectArg, size_t index>
