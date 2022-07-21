@@ -41,11 +41,11 @@ private:
 		{
 		}
 
-		~TemplItem() = default;
+		~TemplItem() noexcept = default;
 
-		TemplItem& operator=(TemplItem&& item) = default;
+		TemplItem& operator=(TemplItem&& item) noexcept = default;
 
-		TemplItem& operator=(const TemplItem& item) = default;
+		TemplItem& operator=(const TemplItem& item) noexcept = default;
 
 		bool operator==(const TemplItem& item) const noexcept
 		{

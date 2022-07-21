@@ -116,7 +116,7 @@ public:
 	{
 	}
 
-	~vector() = default;
+	~vector() noexcept = default;
 
 	vector& operator=(vector&& right)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

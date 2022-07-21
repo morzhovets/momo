@@ -265,7 +265,7 @@ public:
 	{
 	}
 
-	~MergeMap() = default;
+	~MergeMap() noexcept = default;
 
 	MergeMap& operator=(MergeMap&& mergeMap) noexcept
 	{

@@ -79,7 +79,7 @@ namespace internal
 
 		DataOperator(const DataOperator&) = delete;
 
-		~DataOperator() = default;
+		~DataOperator() noexcept = default;
 
 		DataOperator& operator=(const DataOperator&) = delete;
 
@@ -150,7 +150,7 @@ namespace internal
 
 		//DataColumn(const DataColumn&) = delete;
 
-		//~DataColumn() = default;
+		//~DataColumn() noexcept = default;
 
 		//DataColumn& operator=(const DataColumn&) = delete;
 
@@ -217,13 +217,13 @@ namespace internal
 		}
 
 	protected:
-		explicit DataColumn() = default;
+		explicit DataColumn() noexcept = default;
 
-		DataColumn(const DataColumn&) = default;
+		DataColumn(const DataColumn&) noexcept = default;
 
-		~DataColumn() = default;
+		~DataColumn() noexcept = default;
 
-		DataColumn& operator=(const DataColumn&) = default;
+		DataColumn& operator=(const DataColumn&) noexcept = default;
 	};
 
 	template<typename Struct>
@@ -541,7 +541,7 @@ private:
 
 		Graph(const Graph&) = delete;
 
-		~Graph() = default;
+		~Graph() noexcept = default;
 
 		Graph& operator=(const Graph&) = delete;
 
@@ -678,7 +678,7 @@ public:
 	{
 	}
 
-	~DataColumnList() = default;
+	~DataColumnList() noexcept = default;
 
 	DataColumnList& operator=(const DataColumnList&) = delete;
 
@@ -1098,7 +1098,7 @@ public:
 	{
 	}
 
-	~DataColumnListStatic() = default;
+	~DataColumnListStatic() noexcept = default;
 
 	DataColumnListStatic& operator=(const DataColumnListStatic&) = delete;
 

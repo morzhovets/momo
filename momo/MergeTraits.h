@@ -142,13 +142,13 @@ public:
 	static const bool isAlwaysEmpty = true;
 
 public:
-	explicit MergeBloomFilterEmpty() = default;
+	explicit MergeBloomFilterEmpty() noexcept = default;
 
-	MergeBloomFilterEmpty(MergeBloomFilterEmpty&&) = default;
+	MergeBloomFilterEmpty(MergeBloomFilterEmpty&&) noexcept = default;
 
 	MergeBloomFilterEmpty(const MergeBloomFilterEmpty&) = delete;
 
-	~MergeBloomFilterEmpty() = default;
+	~MergeBloomFilterEmpty() noexcept = default;
 
 	MergeBloomFilterEmpty& operator=(const MergeBloomFilterEmpty&) = delete;
 
@@ -198,7 +198,7 @@ public:
 	static const MergeTraitsFunc func = tFunc;
 
 public:
-	explicit MergeTraits() = default;
+	explicit MergeTraits() noexcept = default;
 
 	size_t GetHashCode(const Key& key) const
 		requires requires { { HashCoder<Key>()(key) } -> std::convertible_to<size_t>; }

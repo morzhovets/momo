@@ -201,7 +201,7 @@ public:
 	{
 	}
 
-	~unordered_set() = default;
+	~unordered_set() noexcept = default;
 
 	unordered_set& operator=(unordered_set&& right)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

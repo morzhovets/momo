@@ -81,11 +81,11 @@ namespace internal
 		typedef typename ArrayBucket::Params Params;
 
 	public:
-		explicit BucketUnlimP() = default;
+		explicit BucketUnlimP() noexcept = default;
 
 		BucketUnlimP(const BucketUnlimP&) = delete;
 
-		~BucketUnlimP() = default;
+		~BucketUnlimP() noexcept = default;
 
 		BucketUnlimP& operator=(const BucketUnlimP&) = delete;
 

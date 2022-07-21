@@ -38,7 +38,7 @@ namespace internal
 		typedef DataRawIterator ConstIterator;
 
 	public:
-		explicit DataRawIterator() = default;
+		explicit DataRawIterator() noexcept = default;
 
 		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
 			: ArrayIndexIterator(&raws, index)
@@ -496,7 +496,7 @@ namespace internal
 			}
 		}
 
-		~DataSelection() = default;
+		~DataSelection() noexcept = default;
 
 		DataSelection& operator=(DataSelection&& selection) noexcept
 		{

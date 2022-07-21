@@ -128,11 +128,11 @@ namespace internal
 		static const size_t alignment = tAlignment;
 
 	public:
-		explicit ObjectBuffer() = default;
+		explicit ObjectBuffer() noexcept = default;
 
 		ObjectBuffer(const ObjectBuffer&) = delete;
 
-		~ObjectBuffer() = default;
+		~ObjectBuffer() noexcept = default;
 
 		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
 
@@ -283,11 +283,11 @@ namespace internal
 		{
 		}
 
-		ObjectCreator(ObjectCreator&&) = default;
+		ObjectCreator(ObjectCreator&&) noexcept = default;
 
 		ObjectCreator(const ObjectCreator&) = delete;
 
-		~ObjectCreator() = default;
+		~ObjectCreator() noexcept = default;
 
 		ObjectCreator& operator=(const ObjectCreator&) = delete;
 

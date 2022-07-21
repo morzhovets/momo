@@ -217,7 +217,7 @@ public:
 	{
 	}
 
-	~unordered_multimap() = default;
+	~unordered_multimap() noexcept = default;
 
 	unordered_multimap& operator=(unordered_multimap&& right)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

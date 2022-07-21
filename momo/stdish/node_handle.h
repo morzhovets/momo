@@ -47,7 +47,7 @@ namespace internal
 		{
 		}
 
-		~set_node_handle() = default;
+		~set_node_handle() noexcept = default;
 
 		//set_node_handle& operator=(set_node_handle&&)
 
@@ -127,7 +127,7 @@ namespace internal
 		{
 		}
 
-		~map_node_handle() = default;
+		~map_node_handle() noexcept = default;
 
 		//map_node_handle& operator=(map_node_handle&&)
 

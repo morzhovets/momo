@@ -44,7 +44,7 @@ private:
 		{
 		}
 
-		~TemplItem() = default;
+		~TemplItem() noexcept = default;
 
 		//TemplItem& operator=(TemplItem&& item) = delete;
 

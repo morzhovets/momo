@@ -990,7 +990,7 @@ namespace internal
 		typedef typename KeyValuePair::Value Value;
 
 	public:
-		explicit MapExtractedPair() = default;
+		explicit MapExtractedPair() noexcept = default;
 
 		template<typename Map>
 		explicit MapExtractedPair(Map& map, typename Map::ConstIterator iter)
@@ -1006,7 +1006,7 @@ namespace internal
 
 		MapExtractedPair(const MapExtractedPair&) = delete;
 
-		~MapExtractedPair() = default;
+		~MapExtractedPair() noexcept = default;
 
 		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
 
@@ -1199,11 +1199,11 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(ValueReference&&) = default;
+			ValueReference(ValueReference&&) noexcept = default;
 
 			ValueReference(const ValueReference&) = delete;
 
-			~ValueReference() = default;
+			~ValueReference() noexcept = default;
 
 			Value& operator=(ValueReference&& valueRef) &&
 			{

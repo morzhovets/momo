@@ -74,7 +74,7 @@ namespace internal
 
 		BucketParamsOpen(const BucketParamsOpen&) = delete;
 
-		~BucketParamsOpen() = default;
+		~BucketParamsOpen() noexcept = default;
 
 		BucketParamsOpen& operator=(const BucketParamsOpen&) = delete;
 

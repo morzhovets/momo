@@ -150,7 +150,7 @@ namespace internal
 		{
 		}
 
-		~HashSetBuckets() = default;
+		~HashSetBuckets() noexcept = default;
 
 		Bucket* pvGetBuckets() noexcept
 		{

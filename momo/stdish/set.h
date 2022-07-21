@@ -161,7 +161,7 @@ public:
 	{
 	}
 
-	~set() = default;
+	~set() noexcept = default;
 
 	set& operator=(set&& right)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

@@ -180,7 +180,7 @@ namespace internal
 		{
 		}
 
-		~map_base() = default;
+		~map_base() noexcept = default;
 
 		map_base& operator=(map_base&& right)
 			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

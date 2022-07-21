@@ -292,7 +292,7 @@ public:
 	{
 	}
 
-	~TreeMap() = default;
+	~TreeMap() noexcept = default;
 
 	TreeMap& operator=(TreeMap&& treeMap) noexcept
 	{

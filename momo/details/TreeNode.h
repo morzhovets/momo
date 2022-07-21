@@ -99,7 +99,7 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() = default;
+			~Params() noexcept = default;
 
 			Params& operator=(const Params&) = delete;
 
@@ -304,7 +304,7 @@ namespace internal
 			}
 		}
 
-		~Node() = default;
+		~Node() noexcept = default;
 
 		static size_t pvGetLeafMemPoolIndex(Params& params, size_t count) noexcept
 		{

@@ -91,7 +91,7 @@ namespace internal
 		typedef MergeSetIterator ConstIterator;
 
 	public:
-		explicit MergeSetIterator() = default;
+		explicit MergeSetIterator() noexcept = default;
 
 		//operator ConstIterator() const noexcept
 
@@ -154,7 +154,7 @@ namespace internal
 
 		MergeSetNestedArrayMemManager(const MergeSetNestedArrayMemManager&) = delete;
 
-		~MergeSetNestedArrayMemManager() = default;
+		~MergeSetNestedArrayMemManager() noexcept = default;
 
 		MergeSetNestedArrayMemManager& operator=(const MergeSetNestedArrayMemManager&) = delete;
 

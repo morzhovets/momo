@@ -43,11 +43,11 @@ namespace internal
 		using typename BucketOpenN1::Params;
 
 	public:
-		explicit BucketOpen8() = default;
+		explicit BucketOpen8() noexcept = default;
 
 		BucketOpen8(const BucketOpen8&) = delete;
 
-		~BucketOpen8() = default;
+		~BucketOpen8() noexcept = default;
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 

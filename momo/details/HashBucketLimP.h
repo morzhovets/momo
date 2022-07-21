@@ -79,7 +79,7 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() = default;
+			~Params() noexcept = default;
 
 			Params& operator=(const Params&) = delete;
 
@@ -349,7 +349,7 @@ namespace internal
 
 			Params(const Params&) = delete;
 
-			~Params() = default;
+			~Params() noexcept = default;
 
 			Params& operator=(const Params&) = delete;
 

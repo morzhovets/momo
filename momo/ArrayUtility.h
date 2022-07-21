@@ -118,11 +118,11 @@ namespace internal
 		typedef typename ItemTraits::Item Item;
 
 	public:
-		explicit ArrayBuffer() = default;
+		explicit ArrayBuffer() noexcept = default;
 
 		ArrayBuffer(const ArrayBuffer&) = delete;
 
-		~ArrayBuffer() = default;
+		~ArrayBuffer() noexcept = default;
 
 		ArrayBuffer& operator=(const ArrayBuffer&) = delete;
 
@@ -152,11 +152,11 @@ namespace internal
 		//typedef typename ItemTraits::Item Item;
 
 	public:
-		explicit ArrayBuffer() = default;
+		explicit ArrayBuffer() noexcept = default;
 
 		ArrayBuffer(const ArrayBuffer&) = delete;
 
-		~ArrayBuffer() = default;
+		~ArrayBuffer() noexcept = default;
 
 		ArrayBuffer& operator=(const ArrayBuffer&) = delete;
 

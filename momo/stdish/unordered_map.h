@@ -234,7 +234,7 @@ public:
 	{
 	}
 
-	~unordered_map() = default;
+	~unordered_map() noexcept = default;
 
 	unordered_map& operator=(unordered_map&& right)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||

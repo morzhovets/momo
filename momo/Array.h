@@ -529,7 +529,7 @@ public:
 		return array;
 	}
 
-	~Array() = default;
+	~Array() noexcept = default;
 
 	Array& operator=(Array&& array) noexcept
 	{
