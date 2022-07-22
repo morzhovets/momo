@@ -1137,7 +1137,7 @@ private:
 		BucketIterator bucketIter = bucket->AddCrt(buckets.GetBucketParams(),
 			std::move(itemCreator), hashCode, buckets.GetLogCount(), probe);
 		startBucket.UpdateMaxProbe(probe);
-		if (incCount)
+		if constexpr (incCount)
 		{
 			++mCount;
 			mCrew.IncVersion();
