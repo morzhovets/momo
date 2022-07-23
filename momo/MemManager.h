@@ -92,11 +92,11 @@ namespace internal
 			{ alloc.deallocate(ptr, count) } -> std::same_as<void>;
 		};
 
-	template<typename Allocator, typename... Args>
+	template<typename Allocator, typename Object, typename... ObjectArgs>
 	concept conceptAllocatorWithConstruct = conceptAllocator<Allocator> &&
-		requires (Allocator& alloc, typename Allocator::value_type* ptr, Args&&... args)
+		requires (Allocator& alloc, Object* newObject, ObjectArgs&&... objectArgs)
 		{
-			{ alloc.construct(ptr, std::forward<Args>(args)...) };
+			{ alloc.construct(newObject, std::forward<ObjectArgs>(objectArgs)...) };
 		};
 }
 

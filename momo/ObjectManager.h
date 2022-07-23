@@ -26,6 +26,21 @@ template<typename Object>
 concept conceptObject = std::is_object_v<Object> &&
 	!std::is_const_v<Object> && !std::is_volatile_v<Object>;
 
+namespace internal
+{
+	template<conceptMemManager MemManager, conceptObject Object, typename... ObjectArgs>
+	struct HasCustomConstructor : public std::false_type
+	{
+	};
+
+	template<conceptObject Object, typename... ObjectArgs,
+		conceptAllocatorWithConstruct<Object, ObjectArgs...> Allocator>
+	struct HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>
+		: public std::true_type
+	{
+	};
+}
+
 template<conceptObject Object>
 struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELOCATABLE(Object)>
 {
@@ -33,13 +48,8 @@ struct IsTriviallyRelocatable : public std::bool_constant<MOMO_IS_TRIVIALLY_RELO
 
 template<conceptObject Object, conceptMemManager MemManager>
 struct IsNothrowMoveConstructible
-	: public std::is_nothrow_move_constructible<Object>
-{
-};
-
-template<conceptObject Object, internal::conceptAllocatorWithConstruct<Object&&> Allocator>
-struct IsNothrowMoveConstructible<Object, MemManagerStd<Allocator>>
-	: public std::false_type
+	: public std::bool_constant<std::is_nothrow_move_constructible_v<Object>
+		&& !internal::HasCustomConstructor<MemManager, Object, Object&&>::value>
 {
 };
 
@@ -150,20 +160,7 @@ namespace internal
 		alignas(alignment) std::byte mBuffer[sizeof(Object)];
 	};
 
-	template<conceptObject Object, conceptMemManager MemManager, typename... ObjectArgs>
-	struct IsConstructible
-		: public std::is_constructible<Object, ObjectArgs...>
-	{
-	};
-
-	template<conceptObject Object, typename... ObjectArgs,
-		conceptAllocatorWithConstruct<ObjectArgs...> Allocator>
-	struct IsConstructible<Object, MemManagerStd<Allocator>, ObjectArgs...>
-		: public std::true_type
-	{
-	};
-
-	template<conceptMemManager TMemManager>
+	template<conceptMemManager TMemManager, conceptObject Object, typename... ObjectArgs>
 	class ObjectCreatorAllocator : private std::allocator<std::byte>
 	{
 	public:
@@ -181,8 +178,9 @@ namespace internal
 		}
 	};
 
-	template<typename Allocator>
-	class ObjectCreatorAllocator<MemManagerStd<Allocator>>
+	template<conceptAllocator Allocator, conceptObject Object, typename... ObjectArgs>
+	requires HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>::value
+	class ObjectCreatorAllocator<MemManagerStd<Allocator>, Object, ObjectArgs...>
 		: private MemManagerPtr<MemManagerStd<Allocator>>
 	{
 	public:
@@ -258,9 +256,10 @@ namespace internal
 
 	template<conceptObject TObject, conceptMemManager TMemManager,
 		typename... ObjectArgs, size_t... indexes>
-	requires IsConstructible<TObject, TMemManager, ObjectArgs...>::value
+	requires (std::is_constructible_v<TObject, ObjectArgs...>
+		|| HasCustomConstructor<TMemManager, TObject, ObjectArgs...>::value)
 	class ObjectCreator<TObject, TMemManager, std::index_sequence<indexes...>, ObjectArgs...>
-		: private ObjectCreatorAllocator<TMemManager>,
+		: private ObjectCreatorAllocator<TMemManager, TObject, ObjectArgs...>,
 		private ObjectCreatorArg<ObjectArgs, indexes>...
 	{
 	public:
@@ -268,7 +267,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		typedef ObjectCreatorAllocator<MemManager> CreatorAllocator;
+		typedef ObjectCreatorAllocator<MemManager, Object, ObjectArgs...> CreatorAllocator;
 
 	public:
 		explicit ObjectCreator(MemManager& memManager, ObjectArgs&&... objectArgs) noexcept
@@ -298,6 +297,42 @@ namespace internal
 				std::forward<ObjectArgs>(
 					std::move(*static_cast<ObjectCreatorArg<ObjectArgs, indexes>*>(this)).Get())...);
 		}
+	};
+
+	template<conceptObject TObject, conceptMemManager TMemManager>
+	requires (std::is_trivially_copy_constructible_v<TObject> && sizeof(TObject) <= sizeof(void*)
+		&& !HasCustomConstructor<TMemManager, TObject, const TObject&>::value)
+	class ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
+	{
+	public:
+		typedef TObject Object;
+		typedef TMemManager MemManager;
+
+	public:
+		explicit ObjectCreator(MemManager& /*memManager*/, const Object& objectArg) noexcept
+			: mObjectArg(objectArg)
+		{
+		}
+
+		explicit ObjectCreator(MemManager& /*memManager*/,
+			std::tuple<const Object&>&& objectArg) noexcept
+			: mObjectArg(std::get<0>(objectArg))
+		{
+		}
+
+		ObjectCreator(const ObjectCreator&) noexcept = default;	//?
+
+		~ObjectCreator() noexcept = default;
+
+		ObjectCreator& operator=(const ObjectCreator&) = delete;
+
+		void operator()(Object* newObject) &&
+		{
+			std::construct_at(newObject, std::as_const(mObjectArg));
+		}
+
+	private:
+		Object mObjectArg;
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
@@ -334,9 +369,11 @@ namespace internal
 
 		static const bool isRelocatable = Relocator::isRelocatable;
 
-		static const bool isMoveConstructible = IsConstructible<Object, MemManager, Object&&>::value;
+		static const bool isMoveConstructible = std::is_move_constructible_v<Object>
+			|| HasCustomConstructor<MemManager, Object, Object&&>::value;
 
-		static const bool isCopyConstructible = IsConstructible<Object, MemManager, const Object&>::value;
+		static const bool isCopyConstructible = std::is_copy_constructible_v<Object>
+			|| HasCustomConstructor<MemManager, Object, const Object&>::value;
 
 		static const bool isAnywayAssignable = std::is_move_assignable_v<Object>
 			|| isNothrowSwappable || isNothrowRelocatable;
