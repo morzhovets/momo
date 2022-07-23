@@ -584,7 +584,9 @@ namespace internal
 
 	template<conceptMemManager TBaseMemManager>
 	requires (std::is_empty_v<TBaseMemManager> &&
-		std::is_nothrow_default_constructible_v<TBaseMemManager>)
+		std::is_nothrow_default_constructible_v<TBaseMemManager> &&
+		std::is_trivially_move_constructible_v<TBaseMemManager> &&
+		std::is_trivially_destructible_v<TBaseMemManager>)
 	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
 	{
 	public:

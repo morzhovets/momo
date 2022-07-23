@@ -179,7 +179,7 @@ namespace internal
 	};
 
 	template<conceptAllocator Allocator, conceptObject Object, typename... ObjectArgs>
-	requires HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>::value
+	requires (HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>::value)
 	class ObjectCreatorAllocator<MemManagerStd<Allocator>, Object, ObjectArgs...>
 		: private MemManagerPtr<MemManagerStd<Allocator>>
 	{
@@ -221,8 +221,9 @@ namespace internal
 	};
 
 	template<typename ObjectArg, size_t index>
-	requires (!std::is_reference_v<ObjectArg> && std::is_trivially_move_constructible_v<ObjectArg>
-		&& sizeof(ObjectArg) <= sizeof(void*))
+	requires (!std::is_reference_v<ObjectArg> &&
+		std::is_trivially_move_constructible_v<ObjectArg> &&
+		std::is_trivially_destructible_v<ObjectArg> && sizeof(ObjectArg) <= sizeof(void*))
 	class ObjectCreatorArg<ObjectArg, index>
 	{
 	public:
@@ -300,8 +301,9 @@ namespace internal
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
-	requires (std::is_trivially_copy_constructible_v<TObject> && sizeof(TObject) <= sizeof(void*)
-		&& !HasCustomConstructor<TMemManager, TObject, const TObject&>::value)
+	requires (!HasCustomConstructor<TMemManager, TObject, const TObject&>::value &&
+		std::is_trivially_copy_constructible_v<TObject> &&
+		std::is_trivially_destructible_v<TObject> && sizeof(TObject) <= sizeof(void*))
 	class ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
 	{
 	public:
