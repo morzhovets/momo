@@ -202,6 +202,13 @@ namespace internal
 		}
 	};
 
+	template<typename ObjectArg>
+	concept conceptPassingByValue =
+		std::is_trivially_destructible_v<ObjectArg> &&
+		std::is_trivially_move_constructible_v<ObjectArg> &&
+		std::is_trivially_copy_constructible_v<ObjectArg> &&
+		sizeof(ObjectArg) <= sizeof(void*);
+
 	template<typename ObjectArg, size_t index>
 	class ObjectCreatorArg
 	{
@@ -221,20 +228,18 @@ namespace internal
 	};
 
 	template<typename ObjectArg, size_t index>
-	requires (!std::is_reference_v<ObjectArg> &&
-		std::is_trivially_move_constructible_v<ObjectArg> &&
-		std::is_trivially_destructible_v<ObjectArg> && sizeof(ObjectArg) <= sizeof(void*))
+	requires (!std::is_reference_v<ObjectArg> && conceptPassingByValue<ObjectArg>)
 	class ObjectCreatorArg<ObjectArg, index>
 	{
 	public:
 		explicit ObjectCreatorArg(ObjectArg objectArg) noexcept
-			: mObjectArg(std::move(objectArg))
+			: mObjectArg(objectArg)
 		{
 		}
 
 		ObjectArg Get() && noexcept
 		{
-			return std::move(mObjectArg);
+			return mObjectArg;
 		}
 
 	private:
@@ -301,40 +306,28 @@ namespace internal
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
-	requires (!HasCustomConstructor<TMemManager, TObject, const TObject&>::value &&
-		std::is_trivially_copy_constructible_v<TObject> &&
-		std::is_trivially_destructible_v<TObject> && sizeof(TObject) <= sizeof(void*))
+	requires (conceptPassingByValue<TObject> &&
+		!HasCustomConstructor<TMemManager, TObject, const TObject&>::value)
 	class ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
+		: public ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject>
 	{
-	public:
-		typedef TObject Object;
-		typedef TMemManager MemManager;
-
-	public:
-		explicit ObjectCreator(MemManager& /*memManager*/, const Object& objectArg) noexcept
-			: mObjectArg(objectArg)
-		{
-		}
-
-		explicit ObjectCreator(MemManager& /*memManager*/,
-			std::tuple<const Object&>&& objectArg) noexcept
-			: mObjectArg(std::get<0>(objectArg))
-		{
-		}
-
-		ObjectCreator(const ObjectCreator&) noexcept = default;	//?
-
-		~ObjectCreator() noexcept = default;
-
-		ObjectCreator& operator=(const ObjectCreator&) = delete;
-
-		void operator()(Object* newObject) &&
-		{
-			std::construct_at(newObject, std::as_const(mObjectArg));
-		}
-
 	private:
-		Object mObjectArg;
+		typedef ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject> ObjectCreatorBase;
+
+	public:
+		using typename ObjectCreatorBase::Object;
+		using typename ObjectCreatorBase::MemManager;
+
+	public:
+		explicit ObjectCreator(MemManager& memManager, const Object& objectArg) noexcept
+			: ObjectCreatorBase(memManager, objectArg)
+		{
+		}
+
+		explicit ObjectCreator(MemManager& memManager, std::tuple<const Object&>&& objectArg) noexcept
+			: ObjectCreatorBase(memManager, std::get<0>(objectArg))
+		{
+		}
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
