@@ -740,11 +740,6 @@ public:
 			pvRelocateItems();
 	}
 
-	//void Shrink()
-	//{
-	//	HashSet(*this).Swap(*this);
-	//}
-
 	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
 		return pvFind(key);

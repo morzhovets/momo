@@ -560,11 +560,6 @@ public:
 		mHashSet.Reserve(capacity);
 	}
 
-	//void Shrink()
-	//{
-	//	mHashSet.Shrink();
-	//}
-
 	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
 		return ConstPositionProxy(mHashSet.Find(key));

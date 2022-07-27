@@ -892,11 +892,6 @@ public:
 		return mHashMap.GetCount();
 	}
 
-	//void Shrink()
-	//{
-	//	HashMultiMap(*this).Swap(*this);
-	//}
-
 	MOMO_FORCEINLINE ConstKeyIterator Find(const Key& key) const
 	{
 		return ConstKeyIteratorProxy(mHashMap.Find(key));
