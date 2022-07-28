@@ -638,9 +638,9 @@ public:
 
 	template<std::invocable<Item*> ItemCreator,
 		bool extraCheck = true>
-	InsertResult InsertCrt(const Key& key, ItemCreator&& itemCreator)
+	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
-		return pvInsert<extraCheck>(key, std::forward<ItemCreator>(itemCreator));
+		return pvInsert<extraCheck>(key, internal::FastMovableCreator(std::move(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -679,9 +679,9 @@ public:
 
 	template<std::invocable<Item*> ItemCreator,
 		bool extraCheck = true>
-	Position AddCrt(ConstPosition pos, ItemCreator&& itemCreator)
+	Position AddCrt(ConstPosition pos, ItemCreator itemCreator)
 	{
-		return pvAdd<extraCheck>(pos, std::forward<ItemCreator>(itemCreator));
+		return pvAdd<extraCheck>(pos, internal::FastMovableCreator(std::move(itemCreator)));
 	}
 
 	template<typename... ItemArgs>

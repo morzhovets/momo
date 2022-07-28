@@ -327,10 +327,10 @@ namespace internal
 		}
 
 		template<std::invocable<Item*> ItemCreator>
-		void Create(ItemCreator&& itemCreator)
+		void Create(ItemCreator itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::move(itemCreator)(&mItemBuffer);
 			mHasItem = true;
 		}
 

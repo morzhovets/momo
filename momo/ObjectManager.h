@@ -330,6 +330,66 @@ namespace internal
 		}
 	};
 
+	template<typename TBaseCreator>
+	class FastMovableCreator
+	{
+	public:
+		typedef TBaseCreator BaseCreator;
+
+	public:
+		explicit FastMovableCreator(BaseCreator&& baseCreator) noexcept
+			: mBaseCreator(std::move(baseCreator))
+		{
+		}
+
+		FastMovableCreator(FastMovableCreator&&) noexcept = default;
+
+		FastMovableCreator(const FastMovableCreator&) = delete;
+
+		~FastMovableCreator() noexcept = default;
+
+		FastMovableCreator& operator=(const FastMovableCreator&) = delete;
+
+		template<typename Object>
+		void operator()(Object* newObject) &&
+		{
+			std::move(mBaseCreator)(newObject);
+		}
+
+	private:
+		BaseCreator&& mBaseCreator;
+	};
+
+	template<typename TBaseCreator>
+	requires (std::is_trivially_destructible_v<TBaseCreator> &&
+		std::is_trivially_move_constructible_v<TBaseCreator> &&
+		sizeof(TBaseCreator) <= 3 * sizeof(void*))
+	class FastMovableCreator<TBaseCreator> : public TBaseCreator
+	{
+	public:
+		typedef TBaseCreator BaseCreator;
+
+	public:
+		explicit FastMovableCreator(BaseCreator&& baseCreator) noexcept
+			: BaseCreator(std::move(baseCreator))
+		{
+		}
+
+		FastMovableCreator(FastMovableCreator&&) noexcept = default;
+
+		FastMovableCreator(const FastMovableCreator&) = delete;
+
+		~FastMovableCreator() noexcept = default;
+
+		FastMovableCreator& operator=(const FastMovableCreator&) = delete;
+
+		template<typename Object>
+		void operator()(Object* newObject) &&
+		{
+			std::move(*static_cast<BaseCreator*>(this))(newObject);
+		}
+	};
+
 	template<conceptObject TObject, conceptMemManager TMemManager>
 	class ObjectManager
 	{

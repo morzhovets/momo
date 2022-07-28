@@ -462,9 +462,9 @@ public:
 	}
 
 	template<std::invocable<Value*> ValueCreator>
-	InsertResult InsertCrt(Key&& key, ValueCreator&& valueCreator)
+	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
-		return pvInsert(std::move(key), std::forward<ValueCreator>(valueCreator));
+		return pvInsert(std::move(key), internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -486,9 +486,9 @@ public:
 	}
 
 	template<std::invocable<Value*> ValueCreator>
-	InsertResult InsertCrt(const Key& key, ValueCreator&& valueCreator)
+	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
-		return pvInsert(key, std::forward<ValueCreator>(valueCreator));
+		return pvInsert(key, internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -589,9 +589,10 @@ public:
 
 	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator&& valueCreator)
+	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator valueCreator)
 	{
-		return pvAdd<extraCheck>(iter, std::move(key), std::forward<ValueCreator>(valueCreator));
+		return pvAdd<extraCheck>(iter, std::move(key),
+			internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -614,9 +615,9 @@ public:
 
 	template<std::invocable<Value*> ValueCreator,
 		bool extraCheck = true>
-	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator&& valueCreator)
+	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator valueCreator)
 	{
-		return pvAdd<extraCheck>(iter, key, std::forward<ValueCreator>(valueCreator));
+		return pvAdd<extraCheck>(iter, key, internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>

@@ -479,9 +479,9 @@ public:
 	}
 
 	template<std::invocable<Item*> ItemCreator>
-	void AddBackNogrowCrt(ItemCreator&& itemCreator)
+	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
-		pvAddBackNogrow(std::forward<ItemCreator>(itemCreator));
+		pvAddBackNogrow(internal::FastMovableCreator(std::move(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -503,9 +503,9 @@ public:
 	}
 
 	template<std::invocable<Item*> ItemCreator>
-	void AddBackCrt(ItemCreator&& itemCreator)
+	void AddBackCrt(ItemCreator itemCreator)
 	{
-		pvAddBack(std::forward<ItemCreator>(itemCreator));
+		pvAddBack(internal::FastMovableCreator(std::move(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -527,9 +527,9 @@ public:
 	}
 
 	template<std::invocable<Item*> ItemCreator>
-	void InsertCrt(size_t index, ItemCreator&& itemCreator)
+	void InsertCrt(size_t index, ItemCreator itemCreator)
 	{
-		pvInsert(index, std::forward<ItemCreator>(itemCreator));
+		pvInsert(index, internal::FastMovableCreator(std::move(itemCreator)));
 	}
 
 	template<typename... ItemArgs>

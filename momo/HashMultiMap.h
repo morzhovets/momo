@@ -942,9 +942,9 @@ public:
 	}
 
 	template<std::invocable<Value*> ValueCreator>
-	Iterator AddCrt(Key&& key, ValueCreator&& valueCreator)
+	Iterator AddCrt(Key&& key, ValueCreator valueCreator)
 	{
-		return pvAdd(std::move(key), std::forward<ValueCreator>(valueCreator));
+		return pvAdd(std::move(key), internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -966,9 +966,9 @@ public:
 	}
 
 	template<std::invocable<Value*> ValueCreator>
-	Iterator AddCrt(const Key& key, ValueCreator&& valueCreator)
+	Iterator AddCrt(const Key& key, ValueCreator valueCreator)
 	{
-		return pvAdd(key, std::forward<ValueCreator>(valueCreator));
+		return pvAdd(key, internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -990,9 +990,9 @@ public:
 	}
 
 	template<std::invocable<Value*> ValueCreator>
-	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator&& valueCreator)
+	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
-		return pvAdd(keyIter, std::forward<ValueCreator>(valueCreator));
+		return pvAdd(keyIter, internal::FastMovableCreator(std::move(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
