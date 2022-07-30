@@ -350,10 +350,10 @@ namespace internal
 
 		FastMovableCreator& operator=(const FastMovableCreator&) = delete;
 
-		template<typename Object>
-		void operator()(Object* newObject) &&
+		template<typename... Objects>
+		void operator()(Objects*... newObjects) &&
 		{
-			std::move(mBaseCreator)(newObject);
+			std::move(mBaseCreator)(newObjects...);
 		}
 
 	private:
@@ -383,10 +383,10 @@ namespace internal
 
 		FastMovableCreator& operator=(const FastMovableCreator&) = delete;
 
-		template<typename Object>
-		void operator()(Object* newObject) &&
+		template<typename... Objects>
+		void operator()(Objects*... newObjects) &&
 		{
-			std::move(*static_cast<BaseCreator*>(this))(newObject);
+			std::move(*static_cast<BaseCreator*>(this))(newObjects...);
 		}
 	};
 

@@ -594,9 +594,9 @@ public:
 
 	template<std::invocable<Key*, Value*> PairCreator,
 		bool extraCheck = true>
-	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
+	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{
-		return pvAdd<extraCheck>(pos, std::forward<PairCreator>(pairCreator));
+		return pvAdd<extraCheck>(pos, internal::FastMovableCreator(std::move(pairCreator)));
 	}
 
 	template<std::invocable<Value*> ValueCreator,
