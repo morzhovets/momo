@@ -1041,13 +1041,13 @@ namespace internal
 		}
 
 		template<std::invocable<Key&, Value&> PairRemover>
-		void Remove(PairRemover&& pairRemover)
+		void Remove(PairRemover pairRemover)
 		{
-			auto itemRemover = [&pairRemover] (KeyValuePair& item)
+			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
 			{
-				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+				std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
 			};
-			mSetExtractedItem.Remove(itemRemover);
+			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
 	protected:
@@ -1141,16 +1141,16 @@ namespace internal
 		}
 
 		template<std::invocable<Key&, Value&> PairRemover>
-		void Remove(PairRemover&& pairRemover)
+		void Remove(PairRemover pairRemover)
 		{
-			auto itemRemover = [this, &pairRemover] (KeyValuePair& item)
+			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
 			{
 				MOMO_ASSERT(mValueMemPool != nullptr);
 				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
-				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *valuePtr);
+				std::move(pairRemover)(*item.GetKeyPtr(), *valuePtr);
 				mValueMemPool->DeallocateLazy(valuePtr);
 			};
-			mSetExtractedItem.Remove(itemRemover);
+			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
 	protected:

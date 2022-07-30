@@ -335,10 +335,10 @@ namespace internal
 		}
 
 		template<std::invocable<Item&> ItemRemover>
-		void Remove(ItemRemover&& itemRemover)
+		void Remove(ItemRemover itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
-			std::forward<ItemRemover>(itemRemover)(*&mItemBuffer);
+			std::move(itemRemover)(*&mItemBuffer);
 			mHasItem = false;
 		}
 
