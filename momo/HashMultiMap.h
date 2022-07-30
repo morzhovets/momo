@@ -1040,10 +1040,10 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).position);
 	}
 
-	template<typename KeyCreator>
-	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator&& keyCreator)
+	template<std::invocable<Key*> KeyCreator>
+	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator keyCreator)
 	{
-		return pvAddKey(keyIter, std::forward<KeyCreator>(keyCreator));
+		return pvAddKey(keyIter, internal::FastMovableCreator(std::move(keyCreator)));
 	}
 
 	//KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)
