@@ -1040,20 +1040,27 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<std::invocable<Key&, Value&> PairRemover>
+		template<internal::conceptFunctor<Key&, Value&> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
-			{
-				std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
-			};
-			mSetExtractedItem.Remove(std::move(itemRemover));
+			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:
 		SetExtractedItem& ptGetSetExtractedItem() noexcept
 		{
 			return mSetExtractedItem;
+		}
+
+	private:
+		template<typename PairRemover>
+		void pvRemove(PairRemover pairRemover)
+		{
+			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
+			{
+				std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+			};
+			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
 	private:
@@ -1143,14 +1150,7 @@ namespace internal
 		template<std::invocable<Key&, Value&> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
-			{
-				MOMO_ASSERT(mValueMemPool != nullptr);
-				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
-				std::move(pairRemover)(*item.GetKeyPtr(), *valuePtr);
-				mValueMemPool->DeallocateLazy(valuePtr);
-			};
-			mSetExtractedItem.Remove(std::move(itemRemover));
+			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:
@@ -1162,6 +1162,20 @@ namespace internal
 		ValueMemPool*& ptGetValueMemPool() noexcept
 		{
 			return mValueMemPool;
+		}
+
+	private:
+		template<typename PairRemover>
+		void pvRemove(PairRemover pairRemover)
+		{
+			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
+			{
+				MOMO_ASSERT(mValueMemPool != nullptr);
+				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
+				std::move(pairRemover)(*item.GetKeyPtr(), *valuePtr);
+				mValueMemPool->DeallocateLazy(valuePtr);
+			};
+			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
 	private:

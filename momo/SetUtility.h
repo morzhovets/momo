@@ -326,19 +326,19 @@ namespace internal
 			return *&mItemBuffer;
 		}
 
-		template<std::invocable<Item*> ItemCreator>
+		template<internal::conceptFunctor<Item*> ItemCreator>
 		void Create(ItemCreator itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
-			std::move(itemCreator)(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
 			mHasItem = true;
 		}
 
-		template<std::invocable<Item&> ItemRemover>
+		template<internal::conceptFunctor<Item&> ItemRemover>
 		void Remove(ItemRemover itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
-			std::move(itemRemover)(*&mItemBuffer);
+			std::forward<ItemRemover>(itemRemover)(*&mItemBuffer);
 			mHasItem = false;
 		}
 
