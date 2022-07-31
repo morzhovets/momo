@@ -205,6 +205,12 @@ namespace internal
 	template<typename Creator, typename Object>
 	concept conceptCreator = conceptTriviallyMovableFunctor<Creator, Object*>;
 
+	template<typename Remover, typename Object>
+	concept conceptRemover = conceptTriviallyMovableFunctor<Remover, Object&>;
+
+	template<typename Replacer, typename Object>
+	concept conceptReplacer = conceptTriviallyMovableFunctor<Replacer, Object&, Object&>;
+
 	template<typename ObjectArg>
 	concept conceptPassingByValue =
 		std::is_trivially_destructible_v<ObjectArg> &&

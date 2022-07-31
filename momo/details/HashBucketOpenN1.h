@@ -139,7 +139,7 @@ namespace internal
 			return pvMakeIterator(newItem);
 		}
 
-		template<std::invocable<Item&, Item&> ItemReplacer>
+		template<conceptReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();

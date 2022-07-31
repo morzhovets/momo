@@ -256,7 +256,7 @@ namespace internal
 			++mCounter.count;
 		}
 
-		template<std::invocable<Item&> ItemRemover>
+		template<conceptRemover<Item> ItemRemover>
 		void Remove(Params& params, size_t index, ItemRemover itemRemover)
 		{
 			size_t count = GetCount();

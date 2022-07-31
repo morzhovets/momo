@@ -134,7 +134,7 @@ namespace internal
 			return GetBounds(params).GetEnd() - 1;
 		}
 
-		template<std::invocable<Item&, Item&> ItemReplacer>
+		template<conceptReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			Bounds bounds = GetBounds(params);
