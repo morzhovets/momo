@@ -498,10 +498,11 @@ public:
 		return mHashSet.ContainsKey(key);
 	}
 
-	template<std::invocable<Value*> ValueCreator>
+	template<internal::conceptFunctor<Value*> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
-		return pvInsert(std::move(key), internal::FastMovableCreator(std::move(valueCreator)));
+		return pvInsert(std::move(key),
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -522,10 +523,11 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<std::invocable<Value*> ValueCreator>
+	template<internal::conceptFunctor<Value*> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
-		return pvInsert(key, internal::FastMovableCreator(std::move(valueCreator)));
+		return pvInsert(key,
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -592,19 +594,20 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<std::invocable<Key*, Value*> PairCreator,
+	template<internal::conceptFunctor<Key*, Value*> PairCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{
-		return pvAdd<extraCheck>(pos, internal::FastMovableCreator(std::move(pairCreator)));
+		return pvAdd<extraCheck>(pos,
+			internal::FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
 	}
 
-	template<std::invocable<Value*> ValueCreator,
+	template<internal::conceptFunctor<Value*> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, std::move(key),
-			internal::FastMovableCreator(std::move(valueCreator)));
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -625,11 +628,12 @@ public:
 		return AddVar(pos, std::move(key), value);
 	}
 
-	template<std::invocable<Value*> ValueCreator,
+	template<internal::conceptFunctor<Value*> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator valueCreator)
 	{
-		return pvAdd<extraCheck>(pos, key, internal::FastMovableCreator(std::move(valueCreator)));
+		return pvAdd<extraCheck>(pos, key,
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>

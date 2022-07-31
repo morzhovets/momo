@@ -670,11 +670,12 @@ public:
 		return pvGetKeyCount(key);
 	}
 
-	template<std::invocable<Item*> ItemCreator,
+	template<internal::conceptFunctor<Item*> ItemCreator,
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
-		return pvInsert<extraCheck>(key, internal::FastMovableCreator(std::move(itemCreator)));
+		return pvInsert<extraCheck>(key,
+			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -747,11 +748,12 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<std::invocable<Item*> ItemCreator,
+	template<internal::conceptFunctor<Item*> ItemCreator,
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, ItemCreator itemCreator)
 	{
-		return pvAdd<extraCheck>(iter, internal::FastMovableCreator(std::move(itemCreator)));
+		return pvAdd<extraCheck>(iter,
+			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>

@@ -125,16 +125,56 @@ namespace internal
 	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
 		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
 
-	template<typename Func, typename... Args>
+	template<typename Functor, typename... Args>
 	concept conceptFunctor =
-		!std::is_reference_v<Func> &&
-		std::is_nothrow_destructible_v<Func> &&
-		requires (Func func, Args&&... args) { { std::move(func)(std::forward<Args>(args)...) }; };
+		std::is_nothrow_destructible_v<Functor> &&
+		requires (Functor func, Args&&... args)
+			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) }; };
 
-	template<typename Func, typename... Args>
-	concept conceptTriviallyMovableFunctor = conceptFunctor<Func, Args...> &&
-		std::is_trivially_destructible_v<Func> &&
-		std::is_trivially_move_constructible_v<Func>;
+	template<typename Functor, typename... Args>
+	concept conceptTriviallyMovableFunctor = conceptFunctor<Functor, Args...> &&
+		!std::is_reference_v<Functor> &&
+		std::is_trivially_destructible_v<Functor> &&
+		std::is_trivially_move_constructible_v<Functor>;
+
+	template<typename TBaseFunctor,
+		size_t tMaxSize = 3 * sizeof(void*)>
+	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	class FastMovableFunctor
+	{
+	public:
+		typedef TBaseFunctor BaseFunctor;
+
+		static const size_t maxSize = tMaxSize;
+
+	private:
+		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+			&& std::is_trivially_move_constructible_v<BaseFunctor>
+			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, BaseFunctor&&> BaseFunctorReference;
+
+	public:
+		explicit FastMovableFunctor(BaseFunctorReference baseFunctor) noexcept
+			: mBaseFunctor(std::forward<BaseFunctor>(baseFunctor))
+		{
+		}
+
+		FastMovableFunctor(FastMovableFunctor&&) noexcept = default;
+
+		FastMovableFunctor(const FastMovableFunctor&) = delete;
+
+		~FastMovableFunctor() noexcept = default;
+
+		FastMovableFunctor& operator=(const FastMovableFunctor&) = delete;
+
+		template<typename... Args>
+		void operator()(Args&&... args) &&
+		{
+			std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
+		}
+
+	private:
+		BaseFunctorReference mBaseFunctor;
+	};
 
 	template<size_t size>
 	struct UIntSelector;

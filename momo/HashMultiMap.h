@@ -941,10 +941,11 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<std::invocable<Value*> ValueCreator>
+	template<internal::conceptFunctor<Value*> ValueCreator>
 	Iterator AddCrt(Key&& key, ValueCreator valueCreator)
 	{
-		return pvAdd(std::move(key), internal::FastMovableCreator(std::move(valueCreator)));
+		return pvAdd(std::move(key),
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -965,10 +966,11 @@ public:
 		return AddVar(std::move(key), value);
 	}
 
-	template<std::invocable<Value*> ValueCreator>
+	template<internal::conceptFunctor<Value*> ValueCreator>
 	Iterator AddCrt(const Key& key, ValueCreator valueCreator)
 	{
-		return pvAdd(key, internal::FastMovableCreator(std::move(valueCreator)));
+		return pvAdd(key,
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -989,10 +991,11 @@ public:
 		return AddVar(key, value);
 	}
 
-	template<std::invocable<Value*> ValueCreator>
+	template<internal::conceptFunctor<Value*> ValueCreator>
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
-		return pvAdd(keyIter, internal::FastMovableCreator(std::move(valueCreator)));
+		return pvAdd(keyIter,
+			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -1040,10 +1043,11 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).position);
 	}
 
-	template<std::invocable<Key*> KeyCreator>
+	template<internal::conceptFunctor<Key*> KeyCreator>
 	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator keyCreator)
 	{
-		return pvAddKey(keyIter, internal::FastMovableCreator(std::move(keyCreator)));
+		return pvAddKey(keyIter,
+			internal::FastMovableFunctor<KeyCreator>(std::forward<KeyCreator>(keyCreator)));
 	}
 
 	//KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)

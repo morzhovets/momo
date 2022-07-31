@@ -452,10 +452,11 @@ public:
 		return pvGetItem(mCount - 1 - revIndex);
 	}
 
-	template<std::invocable<Item*> ItemCreator>
+	template<internal::conceptFunctor<Item*> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
-		pvAddBackNogrow(internal::FastMovableCreator(std::move(itemCreator)));
+		pvAddBackNogrow(
+			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -476,10 +477,10 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<std::invocable<Item*> ItemCreator>
+	template<internal::conceptFunctor<Item*> ItemCreator>
 	void AddBackCrt(ItemCreator itemCreator)
 	{
-		pvAddBack(internal::FastMovableCreator(std::move(itemCreator)));
+		pvAddBack(internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -500,10 +501,11 @@ public:
 		AddBackVar(item);
 	}
 
-	template<std::invocable<Item*> ItemCreator>
+	template<internal::conceptFunctor<Item*> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator itemCreator)
 	{
-		pvInsert(index, internal::FastMovableCreator(std::move(itemCreator)));
+		pvInsert(index,
+			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
