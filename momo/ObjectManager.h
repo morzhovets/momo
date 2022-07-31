@@ -160,48 +160,6 @@ namespace internal
 		alignas(alignment) std::byte mBuffer[sizeof(Object)];
 	};
 
-	template<conceptMemManager TMemManager, conceptObject Object, typename... ObjectArgs>
-	class ObjectCreatorAllocator : private std::allocator<std::byte>
-	{
-	public:
-		typedef TMemManager MemManager;
-		typedef std::allocator<std::byte> ByteAllocator;
-
-	public:
-		explicit ObjectCreatorAllocator(MemManager& /*memManager*/) noexcept
-		{
-		}
-
-		ByteAllocator& GetByteAllocator() noexcept
-		{
-			return *this;
-		}
-	};
-
-	template<conceptAllocator Allocator, conceptObject Object, typename... ObjectArgs>
-	requires (HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>::value)
-	class ObjectCreatorAllocator<MemManagerStd<Allocator>, Object, ObjectArgs...>
-		: private MemManagerPtr<MemManagerStd<Allocator>>
-	{
-	public:
-		typedef MemManagerStd<Allocator> MemManager;
-		typedef typename MemManager::ByteAllocator ByteAllocator;
-
-	private:
-		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-
-	public:
-		explicit ObjectCreatorAllocator(MemManager& memManager) noexcept
-			: MemManagerPtr(memManager)
-		{
-		}
-
-		ByteAllocator& GetByteAllocator() noexcept
-		{
-			return MemManagerPtr::GetBaseMemManager().GetByteAllocator();
-		}
-	};
-
 	template<typename Creator, typename Object>
 	concept conceptCreator = conceptTriviallyMovableFunctor<Creator, Object*>;
 
@@ -218,16 +176,60 @@ namespace internal
 		std::is_trivially_copy_constructible_v<ObjectArg> &&
 		sizeof(ObjectArg) <= sizeof(void*);
 
+	template<conceptMemManager TMemManager, conceptObject TObject, typename... ObjectArgs>
+	class ObjectCreatorBase
+	{
+	protected:
+		typedef TMemManager MemManager;
+		typedef TObject Object;
+
+	protected:
+		explicit ObjectCreatorBase(MemManager& /*memManager*/) noexcept
+		{
+		}
+
+		void ptCreate(Object* newObject, ObjectArgs&&... objectArgs)
+		{
+			std::construct_at(newObject, std::forward<ObjectArgs>(objectArgs)...);
+		}
+	};
+
+	template<conceptAllocator Allocator, conceptObject TObject, typename... ObjectArgs>
+	requires (HasCustomConstructor<MemManagerStd<Allocator>, TObject, ObjectArgs...>::value)
+	class ObjectCreatorBase<MemManagerStd<Allocator>, TObject, ObjectArgs...>
+		: private MemManagerPtr<MemManagerStd<Allocator>>
+	{
+	protected:
+		typedef MemManagerStd<Allocator> MemManager;
+		typedef TObject Object;
+
+	private:
+		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+	protected:
+		explicit ObjectCreatorBase(MemManager& memManager) noexcept
+			: MemManagerPtr(memManager)
+		{
+		}
+
+		void ptCreate(Object* newObject, ObjectArgs&&... objectArgs)
+		{
+			std::allocator_traits<typename MemManager::ByteAllocator>::construct(
+				MemManagerPtr::GetBaseMemManager().GetByteAllocator(), newObject,
+				std::forward<ObjectArgs>(objectArgs)...);
+		}
+	};
+
 	template<typename ObjectArg, size_t index>
 	class ObjectCreatorArg
 	{
-	public:
+	protected:
 		explicit ObjectCreatorArg(ObjectArg&& objectArg) noexcept
 			: mObjectArg(std::forward<ObjectArg>(objectArg))
 		{
 		}
 
-		ObjectArg&& Get() && noexcept
+		ObjectArg&& ptGet() noexcept
 		{
 			return std::forward<ObjectArg>(mObjectArg);
 		}
@@ -240,13 +242,13 @@ namespace internal
 	requires (!std::is_reference_v<ObjectArg> && conceptPassingByValue<ObjectArg>)
 	class ObjectCreatorArg<ObjectArg, index>
 	{
-	public:
+	protected:
 		explicit ObjectCreatorArg(ObjectArg objectArg) noexcept
 			: mObjectArg(objectArg)
 		{
 		}
 
-		ObjectArg Get() && noexcept
+		ObjectArg ptGet() noexcept
 		{
 			return mObjectArg;
 		}
@@ -274,19 +276,19 @@ namespace internal
 	requires (std::is_constructible_v<TObject, ObjectArgs...>
 		|| HasCustomConstructor<TMemManager, TObject, ObjectArgs...>::value)
 	class ObjectCreator<TObject, TMemManager, std::index_sequence<indexes...>, ObjectArgs...>
-		: private ObjectCreatorAllocator<TMemManager, TObject, ObjectArgs...>,
+		: private ObjectCreatorBase<TMemManager, TObject, ObjectArgs...>,
 		private ObjectCreatorArg<ObjectArgs, indexes>...
 	{
-	public:
-		typedef TObject Object;
-		typedef TMemManager MemManager;
-
 	private:
-		typedef ObjectCreatorAllocator<MemManager, Object, ObjectArgs...> CreatorAllocator;
+		typedef ObjectCreatorBase<TMemManager, TObject, ObjectArgs...> CreatorBase;
+
+	public:
+		using typename CreatorBase::Object;
+		using typename CreatorBase::MemManager;
 
 	public:
 		explicit ObjectCreator(MemManager& memManager, ObjectArgs&&... objectArgs) noexcept
-			: CreatorAllocator(memManager),
+			: CreatorBase(memManager),
 			ObjectCreatorArg<ObjectArgs, indexes>(std::forward<ObjectArgs>(objectArgs))...
 		{
 		}
@@ -307,10 +309,8 @@ namespace internal
 
 		void operator()(Object* newObject) &&
 		{
-			std::allocator_traits<typename CreatorAllocator::ByteAllocator>::construct(
-				CreatorAllocator::GetByteAllocator(), newObject,
-				std::forward<ObjectArgs>(
-					std::move(*static_cast<ObjectCreatorArg<ObjectArgs, indexes>*>(this)).Get())...);
+			CreatorBase::ptCreate(newObject,
+				std::forward<ObjectArgs>(ObjectCreatorArg<ObjectArgs, indexes>::ptGet())...);
 		}
 	};
 
@@ -321,20 +321,20 @@ namespace internal
 		: public ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject>
 	{
 	private:
-		typedef ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject> ObjectCreatorBase;
+		typedef ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject> Creator;
 
 	public:
-		using typename ObjectCreatorBase::Object;
-		using typename ObjectCreatorBase::MemManager;
+		using typename Creator::Object;
+		using typename Creator::MemManager;
 
 	public:
 		explicit ObjectCreator(MemManager& memManager, const Object& objectArg) noexcept
-			: ObjectCreatorBase(memManager, objectArg)
+			: Creator(memManager, objectArg)
 		{
 		}
 
 		explicit ObjectCreator(MemManager& memManager, std::tuple<const Object&>&& objectArg) noexcept
-			: ObjectCreatorBase(memManager, std::get<0>(objectArg))
+			: Creator(memManager, std::get<0>(objectArg))
 		{
 		}
 	};
