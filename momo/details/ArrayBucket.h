@@ -257,7 +257,7 @@ namespace internal
 			pvRemoveAll<true>(params);
 		}
 
-		template<std::invocable<Item*> ItemCreator>
+		template<conceptCreator<Item> ItemCreator>
 		void AddBackCrt(Params& params, ItemCreator itemCreator)
 		{
 			if (mPtr == nullptr)

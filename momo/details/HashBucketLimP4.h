@@ -304,7 +304,7 @@ namespace internal
 			pvSetEmpty(minMemPoolIndex);
 		}
 
-		template<std::invocable<Item*> ItemCreator>
+		template<conceptCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 		{

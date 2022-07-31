@@ -202,6 +202,9 @@ namespace internal
 		}
 	};
 
+	template<typename Creator, typename Object>
+	concept conceptCreator = conceptTriviallyMovableFunctor<Creator, Object*>;
+
 	template<typename ObjectArg>
 	concept conceptPassingByValue =
 		std::is_trivially_destructible_v<ObjectArg> &&
@@ -446,7 +449,7 @@ namespace internal
 			Creator<const Object&>(memManager, srcObject)(dstObject);
 		}
 
-		template<std::invocable Func>
+		template<conceptTriviallyMovableFunctor Func>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject, Func func)
 			requires isMoveConstructible && isNothrowDestructible
 		{
@@ -471,7 +474,7 @@ namespace internal
 			}
 		}
 
-		template<std::invocable Func>
+		template<conceptTriviallyMovableFunctor Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func func) requires isCopyConstructible && isNothrowDestructible
 		{
@@ -604,7 +607,7 @@ namespace internal
 
 		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
-			std::invocable<Object*> ObjectCreator>
+			conceptCreator<Object> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
@@ -616,7 +619,7 @@ namespace internal
 
 		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
-			std::invocable Func>
+			conceptTriviallyMovableFunctor Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func func)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)

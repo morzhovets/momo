@@ -125,6 +125,17 @@ namespace internal
 	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
 		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
 
+	template<typename Func, typename... Args>
+	concept conceptFunctor =
+		!std::is_reference_v<Func> &&
+		std::is_nothrow_destructible_v<Func> &&
+		requires (Func func, Args&&... args) { { std::move(func)(std::forward<Args>(args)...) }; };
+
+	template<typename Func, typename... Args>
+	concept conceptTriviallyMovableFunctor = conceptFunctor<Func, Args...> &&
+		std::is_trivially_destructible_v<Func> &&
+		std::is_trivially_move_constructible_v<Func>;
+
 	template<size_t size>
 	struct UIntSelector;
 
