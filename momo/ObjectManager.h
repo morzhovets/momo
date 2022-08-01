@@ -32,7 +32,8 @@ namespace internal
 
 	template<typename Allocator, typename Object>
 	struct HasCustomMoveConstructor<MemManagerStd<Allocator>, Object, Void<
-		decltype(std::declval<Allocator&>().construct(std::declval<Object*>(), std::declval<Object&&>())),
+		decltype(std::declval<typename MemManagerStd<Allocator>::ByteAllocator&>().construct(
+			std::declval<Object*>(), std::declval<Object&&>())),
 		EnableIf<!std::is_same<std::allocator<char>, typename MemManagerStd<Allocator>::ByteAllocator>::value>>>
 		: public std::true_type
 	{
