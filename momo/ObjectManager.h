@@ -34,8 +34,8 @@ namespace internal
 	};
 
 	template<conceptObject Object, typename... ObjectArgs,
-		conceptAllocatorWithConstruct<Object, ObjectArgs...> Allocator>
-	struct HasCustomConstructor<MemManagerStd<Allocator>, Object, ObjectArgs...>
+		conceptByteAllocatorWithConstruct<Object, ObjectArgs...> ByteAllocator>
+	struct HasCustomConstructor<MemManagerStdByte<ByteAllocator>, Object, ObjectArgs...>
 		: public std::true_type
 	{
 	};
@@ -194,13 +194,13 @@ namespace internal
 		}
 	};
 
-	template<conceptAllocator Allocator, conceptObject TObject, typename... ObjectArgs>
-	requires (HasCustomConstructor<MemManagerStd<Allocator>, TObject, ObjectArgs...>::value)
-	class ObjectCreatorBase<MemManagerStd<Allocator>, TObject, ObjectArgs...>
-		: private MemManagerPtr<MemManagerStd<Allocator>>
+	template<conceptByteAllocator ByteAllocator, conceptObject TObject, typename... ObjectArgs>
+	requires (HasCustomConstructor<MemManagerStdByte<ByteAllocator>, TObject, ObjectArgs...>::value)
+	class ObjectCreatorBase<MemManagerStdByte<ByteAllocator>, TObject, ObjectArgs...>
+		: private MemManagerPtr<MemManagerStdByte<ByteAllocator>>
 	{
 	protected:
-		typedef MemManagerStd<Allocator> MemManager;
+		typedef MemManagerStdByte<ByteAllocator> MemManager;
 		typedef TObject Object;
 
 	private:
@@ -214,8 +214,7 @@ namespace internal
 
 		void ptCreate(Object* newObject, ObjectArgs&&... objectArgs)
 		{
-			std::allocator_traits<typename MemManager::ByteAllocator>::construct(
-				MemManagerPtr::GetBaseMemManager().GetByteAllocator(), newObject,
+			MemManagerPtr::GetBaseMemManager().GetByteAllocator().construct(newObject,
 				std::forward<ObjectArgs>(objectArgs)...);
 		}
 	};

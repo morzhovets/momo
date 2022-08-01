@@ -11,6 +11,7 @@
     class MemManagerCpp
     class MemManagerC
     class MemManagerWin
+    class MemManagerStdByte
     class MemManagerStd
     class MemManagerDefault
 
@@ -92,8 +93,12 @@ namespace internal
 			{ alloc.deallocate(ptr, count) } -> std::same_as<void>;
 		};
 
+	template<typename Allocator>
+	concept conceptByteAllocator = conceptAllocator<Allocator> &&
+		std::is_same_v<typename Allocator::value_type, std::byte>;
+
 	template<typename Allocator, typename Object, typename... ObjectArgs>
-	concept conceptAllocatorWithConstruct = conceptAllocator<Allocator> &&
+	concept conceptByteAllocatorWithConstruct = conceptByteAllocator<Allocator> &&
 		requires (Allocator& alloc, Object* newObject, ObjectArgs&&... objectArgs)
 		{
 			{ alloc.construct(newObject, std::forward<ObjectArgs>(objectArgs)...) };
@@ -211,35 +216,33 @@ public:
 };
 #endif
 
-//! `MemManagerStd` uses `allocator<std::byte>::allocate` and `deallocate`
-template<internal::conceptAllocator TAllocator>
-class MemManagerStd : private std::allocator_traits<TAllocator>::template rebind_alloc<std::byte>
+//! `MemManagerStdByte` uses `ByteAllocator::allocate` and `deallocate`
+template<internal::conceptByteAllocator TByteAllocator>
+class MemManagerStdByte : private TByteAllocator
 {
 public:
-	typedef TAllocator Allocator;
-	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<std::byte> ByteAllocator;
-
-	//static_assert(std::is_nothrow_move_constructible_v<ByteAllocator>);
+	typedef TByteAllocator ByteAllocator;
 
 public:
-	explicit MemManagerStd() = default;
+	explicit MemManagerStdByte() = default;
 
-	explicit MemManagerStd(const Allocator& alloc) noexcept
+	template<internal::conceptAllocator Allocator>
+	explicit MemManagerStdByte(const Allocator& alloc) noexcept
 		: ByteAllocator(alloc)
 	{
 	}
 
-	MemManagerStd(MemManagerStd&&) noexcept = default;
+	MemManagerStdByte(MemManagerStdByte&&) noexcept = default;
 
-	MemManagerStd(const MemManagerStd& memManager)
+	MemManagerStdByte(const MemManagerStdByte& memManager)
 		: ByteAllocator(std::allocator_traits<ByteAllocator>
 			::select_on_container_copy_construction(memManager.GetByteAllocator()))
 	{
 	}
 
-	~MemManagerStd() noexcept = default;
+	~MemManagerStdByte() noexcept = default;
 
-	MemManagerStd& operator=(const MemManagerStd&) = delete;
+	MemManagerStdByte& operator=(const MemManagerStdByte&) = delete;
 
 	[[nodiscard]] void* Allocate(size_t size)
 	{
@@ -252,7 +255,7 @@ public:
 			static_cast<std::byte*>(ptr), size);
 	}
 
-	bool IsEqual(const MemManagerStd& memManager) const noexcept
+	bool IsEqual(const MemManagerStdByte& memManager) const noexcept
 	{
 		return GetByteAllocator() == memManager.GetByteAllocator();
 	}
@@ -268,46 +271,54 @@ public:
 	}
 };
 
+//! `MemManagerStd` uses `Allocator<std::byte>::allocate` and `deallocate`
+template<internal::conceptAllocator TAllocator>
+using MemManagerStd =
+	MemManagerStdByte<typename std::allocator_traits<TAllocator>::template rebind_alloc<std::byte>>;
+
 //! `MemManagerDefault` is defined in UserSettings.h
 typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 
 #ifdef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
-//! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
-template<typename Object>
-class MemManagerStd<std::allocator<Object>>
-	: private std::allocator<std::byte>, public MemManagerDefault
+//! `MemManagerStdByte<std::allocator<std::byte>>` is same as `MemManagerDefault`
+template<>
+class MemManagerStdByte<std::allocator<std::byte>> : public MemManagerDefault
 {
 public:
-	typedef std::allocator<Object> Allocator;
 	typedef std::allocator<std::byte> ByteAllocator;
 
 public:
-	explicit MemManagerStd() = default;
+	explicit MemManagerStdByte() = default;
 
-	explicit MemManagerStd(const Allocator& /*alloc*/) noexcept(noexcept(MemManagerDefault()))
+	template<typename Object>
+	explicit MemManagerStdByte(const std::allocator<Object>& /*alloc*/)
+		noexcept(noexcept(MemManagerDefault()))
 	{
 	}
 
-	MemManagerStd(MemManagerStd&&) noexcept = default;
+	MemManagerStdByte(MemManagerStdByte&&) noexcept = default;
 
-	MemManagerStd(const MemManagerStd& memManager)
-		: ByteAllocator(),
-		MemManagerDefault(memManager)
-	{
-	}
+	MemManagerStdByte(const MemManagerStdByte&) = default;
 
-	~MemManagerStd() noexcept = default;
+	~MemManagerStdByte() noexcept = default;
 
-	MemManagerStd& operator=(const MemManagerStd&) = delete;
+	MemManagerStdByte& operator=(const MemManagerStdByte&) = delete;
 
 	const ByteAllocator& GetByteAllocator() const noexcept
 	{
-		return *this;
+		return pvGetByteAllocator();
 	}
 
 	ByteAllocator& GetByteAllocator() noexcept
 	{
-		return *this;
+		return pvGetByteAllocator();
+	}
+
+private:
+	static ByteAllocator& pvGetByteAllocator() noexcept
+	{
+		static ByteAllocator byteAllocator;
+		return byteAllocator;
 	}
 };
 #endif
