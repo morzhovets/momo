@@ -223,10 +223,15 @@ class MemManagerStdByte : private TByteAllocator
 public:
 	typedef TByteAllocator ByteAllocator;
 
+private:
+	typedef std::allocator_traits<ByteAllocator> ByteAllocatorTraits;
+
 public:
 	explicit MemManagerStdByte() = default;
 
 	template<internal::conceptAllocator Allocator>
+	requires (std::is_same_v<Allocator,
+		typename ByteAllocatorTraits::template rebind_alloc<typename Allocator::value_type>>)
 	explicit MemManagerStdByte(const Allocator& alloc) noexcept
 		: ByteAllocator(alloc)
 	{
@@ -235,8 +240,8 @@ public:
 	MemManagerStdByte(MemManagerStdByte&&) noexcept = default;
 
 	MemManagerStdByte(const MemManagerStdByte& memManager)
-		: ByteAllocator(std::allocator_traits<ByteAllocator>
-			::select_on_container_copy_construction(memManager.GetByteAllocator()))
+		: ByteAllocator(ByteAllocatorTraits::select_on_container_copy_construction(
+			memManager.GetByteAllocator()))
 	{
 	}
 
@@ -246,13 +251,12 @@ public:
 
 	[[nodiscard]] void* Allocate(size_t size)
 	{
-		return std::allocator_traits<ByteAllocator>::allocate(GetByteAllocator(), size);
+		return ByteAllocatorTraits::allocate(GetByteAllocator(), size);
 	}
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		std::allocator_traits<ByteAllocator>::deallocate(GetByteAllocator(),
-			static_cast<std::byte*>(ptr), size);
+		ByteAllocatorTraits::deallocate(GetByteAllocator(), static_cast<std::byte*>(ptr), size);
 	}
 
 	bool IsEqual(const MemManagerStdByte& memManager) const noexcept
