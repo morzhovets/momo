@@ -160,14 +160,17 @@ namespace internal
 		alignas(alignment) std::byte mBuffer[sizeof(Object)];
 	};
 
-	template<typename Creator, typename Object>
-	concept conceptCreator = conceptTriviallyMovableFunctor<Creator, Object*>;
+	template<typename Creator, typename Object,
+		bool triviallyMovable = true>
+	concept conceptCreator = conceptFunctor<Creator, triviallyMovable, Object*>;
 
-	template<typename Remover, typename Object>
-	concept conceptRemover = conceptTriviallyMovableFunctor<Remover, Object&>;
+	template<typename Remover, typename Object,
+		bool triviallyMovable = true>
+	concept conceptRemover = conceptFunctor<Remover, triviallyMovable, Object&>;
 
-	template<typename Replacer, typename Object>
-	concept conceptReplacer = conceptTriviallyMovableFunctor<Replacer, Object&, Object&>;
+	template<typename Replacer, typename Object,
+		bool triviallyMovable = true>
+	concept conceptReplacer = conceptFunctor<Replacer, triviallyMovable, Object&, Object&>;
 
 	template<typename ObjectArg>
 	concept conceptPassingByValue =
@@ -394,7 +397,7 @@ namespace internal
 			Creator<const Object&>(memManager, srcObject)(dstObject);
 		}
 
-		template<conceptTriviallyMovableFunctor Func>
+		template<conceptFunctor<true> Func>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject, Func func)
 			requires isMoveConstructible && isNothrowDestructible
 		{
@@ -419,7 +422,7 @@ namespace internal
 			}
 		}
 
-		template<conceptTriviallyMovableFunctor Func>
+		template<conceptFunctor<true> Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func func) requires isCopyConstructible && isNothrowDestructible
 		{
@@ -552,7 +555,7 @@ namespace internal
 
 		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
-			conceptCreator<Object> ObjectCreator>
+			conceptCreator<Object, true> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
@@ -564,7 +567,7 @@ namespace internal
 
 		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
 			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
-			conceptTriviallyMovableFunctor Func>
+			conceptFunctor<true> Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func func)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)

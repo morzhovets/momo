@@ -734,7 +734,7 @@ public:
 		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
 	}
 
-	template<internal::conceptFunctor<Item*> ItemCreator>
+	template<internal::conceptCreator<Item, false> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
 		pvAddBackNogrow<true>(
@@ -759,7 +759,7 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<internal::conceptFunctor<Item*> ItemCreator>
+	template<internal::conceptCreator<Item, false> ItemCreator>
 	void AddBackCrt(ItemCreator itemCreator)
 	{
 		pvAddBack(internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
@@ -825,7 +825,7 @@ public:
 		}
 	}
 
-	template<internal::conceptFunctor<Item*> ItemCreator>
+	template<internal::conceptCreator<Item, false> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator itemCreator)
 	{
 		pvInsert(index,

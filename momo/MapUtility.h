@@ -1040,7 +1040,7 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<internal::conceptFunctor<Key&, Value&> PairRemover>
+		template<internal::conceptFunctor<false, Key&, Value&> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
 			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));

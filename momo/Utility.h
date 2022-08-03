@@ -126,17 +126,15 @@ namespace internal
 	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
 		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
 
-	template<typename Functor, typename... Args>
+	template<typename Functor, bool triviallyMovable, typename... Args>
 	concept conceptFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
-			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) }; };
-
-	template<typename Functor, typename... Args>
-	concept conceptTriviallyMovableFunctor = conceptFunctor<Functor, Args...> &&
-		!std::is_reference_v<Functor> &&
-		std::is_trivially_destructible_v<Functor> &&
-		std::is_trivially_move_constructible_v<Functor>;
+			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) }; } &&
+		(!triviallyMovable ||
+			(!std::is_reference_v<Functor> &&
+			std::is_trivially_destructible_v<Functor> &&
+			std::is_trivially_move_constructible_v<Functor>));
 
 	template<typename TBaseFunctor,
 		size_t tMaxSize = 3 * sizeof(void*)>

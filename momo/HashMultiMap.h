@@ -941,7 +941,7 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<internal::conceptFunctor<Value*> ValueCreator>
+	template<internal::conceptCreator<Value, false> ValueCreator>
 	Iterator AddCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd(std::move(key),
@@ -966,7 +966,7 @@ public:
 		return AddVar(std::move(key), value);
 	}
 
-	template<internal::conceptFunctor<Value*> ValueCreator>
+	template<internal::conceptCreator<Value, false> ValueCreator>
 	Iterator AddCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvAdd(key,
@@ -991,7 +991,7 @@ public:
 		return AddVar(key, value);
 	}
 
-	template<internal::conceptFunctor<Value*> ValueCreator>
+	template<internal::conceptCreator<Value, false> ValueCreator>
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		return pvAdd(keyIter,
@@ -1043,7 +1043,7 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).position);
 	}
 
-	template<internal::conceptFunctor<Key*> KeyCreator>
+	template<internal::conceptCreator<Key, false> KeyCreator>
 	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator keyCreator)
 	{
 		return pvAddKey(keyIter,
