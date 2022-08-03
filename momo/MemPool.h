@@ -803,54 +803,44 @@ namespace internal
 	public:
 		MemManagerPoolLazy(BaseMemManager&& baseMemManager) noexcept
 			: BaseMemManager(std::move(baseMemManager)),
-			mHasMemPool(false)
+			mMemPool(std::nullopt)
 		{
 		}
 
 		MemManagerPoolLazy(MemManagerPoolLazy&& memManager) noexcept
-			: BaseMemManager((memManager.pvDestroyMemPool(), std::move(memManager))),
-			mHasMemPool(false)
+			: BaseMemManager((memManager.mMemPool.reset(), std::move(memManager))),
+			mMemPool(std::nullopt)
 		{
 		}
 
 		MemManagerPoolLazy(const MemManagerPoolLazy& memManager)
 			: BaseMemManager(memManager),
-			mHasMemPool(false)
+			mMemPool(std::nullopt)
 		{
 		}
 
 		~MemManagerPoolLazy() noexcept
 		{
-			MOMO_ASSERT(!mHasMemPool);
+			MOMO_ASSERT(!mMemPool.has_value());
 		}
 
 		MemManagerPoolLazy& operator=(MemManagerPoolLazy&) = delete;
 
 		MemPool& GetMemPool()
 		{
-			if (!mHasMemPool) [[unlikely]]
+			if (!mMemPool.has_value()) [[unlikely]]
 				pvCreateMemPool();
-			return *&mMemPoolBuffer;
+			return mMemPool.value();
 		}
 
 	private:
-		void pvDestroyMemPool() noexcept
-		{
-			if (mHasMemPool)
-				std::destroy_at(&mMemPoolBuffer);
-			mHasMemPool = false;
-		}
-
 		MOMO_NOINLINE void pvCreateMemPool()
 		{
-			std::construct_at(&mMemPoolBuffer,
-				MemPoolParams(), MemManagerPtr<BaseMemManager>(*this));
-			mHasMemPool = true;
+			mMemPool.emplace(MemPoolParams(), MemManagerPtr<BaseMemManager>(*this));
 		}
 
 	private:
-		ObjectBuffer<MemPool, alignof(MemPool)> mMemPoolBuffer;
-		bool mHasMemPool;
+		std::optional<MemPool> mMemPool;
 	};
 
 	template<size_t blockCount>
