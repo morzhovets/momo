@@ -475,7 +475,7 @@ public:
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
 			if constexpr (internal::conceptIterator<ArgIterator, std::forward_iterator_tag>)
-				pvAddBackNogrow<false>(IterCreator(thisMemManager, *iter));
+				pvAddBackNogrow(IterCreator(thisMemManager, *iter));
 			else
 				pvAddBack(IterCreator(thisMemManager, *iter));
 		}
@@ -737,7 +737,8 @@ public:
 	template<internal::conceptCreator<Item, false> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
-		pvAddBackNogrow<true>(
+		MOMO_CHECK(GetCount() < GetCapacity());
+		pvAddBackNogrow(
 			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
@@ -745,7 +746,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		pvAddBackNogrow<true>(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -769,7 +770,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		pvAddBack(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -778,7 +779,7 @@ public:
 		size_t initCount = GetCount();
 		if (initCount < GetCapacity())
 		{
-			pvAddBackNogrow<false>(typename ItemTraits::template Creator<Item&&>(
+			pvAddBackNogrow(typename ItemTraits::template Creator<Item&&>(
 				GetMemManager(), std::move(item)));
 		}
 		else if constexpr (ItemTraits::isNothrowMoveConstructible)
@@ -804,7 +805,7 @@ public:
 		size_t initCount = GetCount();
 		if (initCount < GetCapacity())
 		{
-			pvAddBackNogrow<false>(typename ItemTraits::template Creator<const Item&>(
+			pvAddBackNogrow(typename ItemTraits::template Creator<const Item&>(
 				GetMemManager(), item));
 		}
 		else if constexpr (ItemTraits::isNothrowRelocatable)
@@ -836,7 +837,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		pvInsert(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -978,15 +979,14 @@ private:
 	void pvAddBack(ItemCreator itemCreator)
 	{
 		if (GetCount() < GetCapacity())
-			pvAddBackNogrow<false>(std::move(itemCreator));
+			pvAddBackNogrow(std::move(itemCreator));
 		else
 			pvAddBackGrow(std::move(itemCreator));
 	}
 
-	template<bool check, typename ItemCreator>
+	template<typename ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
-		MOMO_CHECK(!check || GetCount() < GetCapacity());
 		size_t count = GetCount();
 		std::move(itemCreator)(GetItems() + count);
 		mData.SetCount(count + 1);

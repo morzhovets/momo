@@ -763,19 +763,20 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	InsertResult InsertVar(const Key& key, ItemArgs&&... itemArgs)
 	{
-		return pvInsert<true>(key,
+		return InsertCrt(key,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 
 	InsertResult Insert(Item&& item)
 	{
 		const Key& key = ItemTraits::GetKey(std::as_const(item));
-		return pvInsert<false>(key, Creator<Item&&>(GetMemManager(), std::move(item)));
+		return InsertCrt<Creator<Item&&>, false>(key,
+			Creator<Item&&>(GetMemManager(), std::move(item)));
 	}
 
 	InsertResult Insert(const Item& item)
 	{
-		return pvInsert<false>(ItemTraits::GetKey(item),
+		return InsertCrt<Creator<const Item&>, false>(ItemTraits::GetKey(item),
 			Creator<const Item&>(GetMemManager(), item));
 	}
 
@@ -816,7 +817,7 @@ public:
 	requires requires { typename Creator<ItemArgs...>; }
 	Position AddVar(ConstPosition pos, ItemArgs&&... itemArgs)
 	{
-		return pvAdd<true>(pos,
+		return AddCrt(pos,
 			Creator<ItemArgs...>(GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 	}
 

@@ -952,7 +952,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(Key&& key, ValueArgs&&... valueArgs)
 	{
-		return pvAdd(std::move(key),
+		return AddCrt(std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -977,7 +977,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(const Key& key, ValueArgs&&... valueArgs)
 	{
-		return pvAdd(key,
+		return AddCrt(key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -1002,7 +1002,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstKeyIterator keyIter, ValueArgs&&... valueArgs)
 	{
-		return pvAdd(keyIter,
+		return AddCrt(keyIter,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 

@@ -472,7 +472,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(Key&& key, ValueArgs&&... valueArgs)
 	{
-		return pvInsert(std::move(key),
+		return InsertCrt(std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -497,7 +497,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	InsertResult InsertVar(const Key& key, ValueArgs&&... valueArgs)
 	{
-		return pvInsert(key,
+		return InsertCrt(key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -602,7 +602,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstIterator iter, Key&& key, ValueArgs&&... valueArgs)
 	{
-		return pvAdd<true>(iter, std::move(key),
+		return AddCrt(iter, std::move(key),
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 
@@ -628,7 +628,7 @@ public:
 	requires requires { typename ValueCreator<ValueArgs...>; }
 	Iterator AddVar(ConstIterator iter, const Key& key, ValueArgs&&... valueArgs)
 	{
-		return pvAdd<true>(iter, key,
+		return AddCrt(iter, key,
 			ValueCreator<ValueArgs...>(GetMemManager(), std::forward<ValueArgs>(valueArgs)...));
 	}
 

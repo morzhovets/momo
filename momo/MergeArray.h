@@ -481,6 +481,7 @@ public:
 	template<internal::conceptCreator<Item, false> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
+		MOMO_CHECK(mCount < mCapacity);
 		pvAddBackNogrow(
 			internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
@@ -489,7 +490,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackNogrowVar(ItemArgs&&... itemArgs)
 	{
-		pvAddBackNogrow(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -513,7 +514,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void AddBackVar(ItemArgs&&... itemArgs)
 	{
-		pvAddBack(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -538,7 +539,7 @@ public:
 	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 	void InsertVar(size_t index, ItemArgs&&... itemArgs)
 	{
-		pvInsert(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
+		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
 			std::forward<ItemArgs>(itemArgs)...));
 	}
 
@@ -740,7 +741,6 @@ private:
 	template<typename ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
-		MOMO_CHECK(mCount < mCapacity);
 		std::move(itemCreator)(pvGetItemPtr(mCount));
 		++mCount;
 	}
