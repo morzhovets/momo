@@ -290,10 +290,21 @@ namespace internal
 				Item::Create(dstItems + i);
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
-				MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
-				count, func);
+			try
+			{
+				KeyValueTraits::RelocateExec(memManager,
+					MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
+					MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
+					count, func);
+			}
+			catch (...)
+			{
+				for (size_t i = 0; i < count; ++i)
+					Item::Destroy(dstItems[i]);
+				throw;
+			}
+			for (size_t i = 0; i < count; ++i)
+				Item::Destroy(srcItems[i]);
 		}
 	};
 

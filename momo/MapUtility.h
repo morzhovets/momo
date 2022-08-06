@@ -533,8 +533,6 @@ namespace internal
 	public:
 		MapKeyValuePair(const MapKeyValuePair&) = delete;
 
-		~MapKeyValuePair() = default;
-
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
 		static void Create(MapKeyValuePair* newPair) noexcept
@@ -558,6 +556,11 @@ namespace internal
 					std::forward<ValueCreator>(valueCreator), newKey, newValue);
 			};
 			Create(newPair, pairCreator);
+		}
+
+		static void Destroy(MapKeyValuePair& pair) noexcept
+		{
+			pair.~MapKeyValuePair();
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -584,6 +587,8 @@ namespace internal
 			std::forward<PairCreator>(pairCreator)(GetKeyPtr(), GetValuePtr());
 		}
 
+		~MapKeyValuePair() = default;
+
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
 		mutable ObjectBuffer<Value, valueAlignment> mValueBuffer;
@@ -602,8 +607,6 @@ namespace internal
 
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
-
-		MOMO_STATIC_ASSERT(std::is_trivially_destructible<Item>::value);
 
 		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
 
@@ -644,6 +647,7 @@ namespace internal
 		static void Destroy(MemManager* memManager, Item& item) noexcept
 		{
 			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
+			Item::Destroy(item);
 		}
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
@@ -654,12 +658,14 @@ namespace internal
 					*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(), newKey, newValue);
 			};
 			Item::Create(dstItem, pairCreator);
+			Item::Destroy(srcItem);
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
 			KeyValueTraits::Replace(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
+			Item::Destroy(srcItem);
 		}
 
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
@@ -672,6 +678,7 @@ namespace internal
 					*midItem.GetKeyPtr(), *midItem.GetValuePtr(), newKey, newValue);
 			};
 			Item::Create(dstItem, pairCreator);
+			Item::Destroy(srcItem);
 		}
 
 		template<typename KeyArg>
@@ -914,6 +921,7 @@ namespace internal
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)
 			{
 				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+				KeyValuePair::Destroy(item);
 			};
 			mSetExtractedItem.Remove(itemRemover);
 		}

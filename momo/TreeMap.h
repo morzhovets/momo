@@ -130,10 +130,23 @@ namespace internal
 				Item::Create(dstIter.operator->());	//?
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
-				MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
-				count, func);
+			try
+			{
+				KeyValueTraits::RelocateExec(memManager,
+					MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
+					MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
+					count, func);
+			}
+			catch (...)
+			{
+				dstIter = dstBegin;
+				for (size_t i = 0; i < count; ++i, (void)++dstIter)
+					Item::Destroy(*dstIter);
+				throw;
+			}
+			Iterator srcIter = srcBegin;
+			for (size_t i = 0; i < count; ++i, (void)++srcIter)
+				Item::Destroy(*srcIter);
 		}
 
 		template<typename Iterator>
