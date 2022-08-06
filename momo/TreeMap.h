@@ -595,10 +595,7 @@ public:
 	Iterator AddCrt(ConstIterator iter, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-		{
-			KeyValuePair::Create(newItem);
-			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
-		};
+			{ KeyValuePair::Create(newItem, std::forward<PairCreator>(pairCreator)); };
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
@@ -755,10 +752,8 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
-			KeyValuePair::Create(newItem);
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
+			KeyValuePair::template Create<KeyValueTraits>(newItem, GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		};
 		typename TreeSet::InsertResult res = mTreeSet.template InsertCrt<decltype(itemCreator), false>(
 			static_cast<const Key&>(key), std::move(itemCreator));
@@ -770,10 +765,8 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
-			KeyValuePair::Create(newItem);
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
+			KeyValuePair::template Create<KeyValueTraits>(newItem, GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));

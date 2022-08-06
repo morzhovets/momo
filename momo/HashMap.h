@@ -679,10 +679,7 @@ public:
 	Position AddCrt(ConstPosition pos, PairCreator&& pairCreator)
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-		{
-			KeyValuePair::Create(newItem);
-			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
-		};
+			{ KeyValuePair::Create(newItem, std::forward<PairCreator>(pairCreator)); };
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
@@ -859,10 +856,8 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
-			KeyValuePair::Create(newItem);
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
+			KeyValuePair::template Create<KeyValueTraits>(newItem, GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		};
 		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
 			static_cast<const Key&>(key), std::move(itemCreator));
@@ -874,10 +869,8 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
-			KeyValuePair::Create(newItem);
-			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
-				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
-				newItem->GetValuePtr());
+			KeyValuePair::template Create<KeyValueTraits>(newItem, GetMemManager(),
+				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));

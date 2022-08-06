@@ -537,9 +537,27 @@ namespace internal
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
-		static void Create(MapKeyValuePair* pair) noexcept
+		static void Create(MapKeyValuePair* newPair) noexcept
 		{
-			::new(static_cast<void*>(pair)) MapKeyValuePair();
+			::new(static_cast<void*>(newPair)) MapKeyValuePair();
+		}
+
+		template<typename PairCreator>
+		static void Create(MapKeyValuePair* newPair, PairCreator&& pairCreator)
+		{
+			::new(static_cast<void*>(newPair)) MapKeyValuePair(std::forward<PairCreator>(pairCreator));
+		}
+
+		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		static void Create(MapKeyValuePair* newPair, MemManager& memManager,
+			RKey&& key, ValueCreator&& valueCreator)
+		{
+			auto pairCreator = [&memManager, &key, &valueCreator] (Key* newKey, Value* newValue)
+			{
+				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
+					std::forward<ValueCreator>(valueCreator), newKey, newValue);
+			};
+			Create(newPair, pairCreator);
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -559,6 +577,12 @@ namespace internal
 
 	private:
 		MapKeyValuePair() = default;
+		
+		template<typename PairCreator>
+		explicit MapKeyValuePair(PairCreator&& pairCreator)
+		{
+			std::forward<PairCreator>(pairCreator)(GetKeyPtr(), GetValuePtr());
+		}
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
@@ -600,11 +624,10 @@ namespace internal
 
 			void operator()(Item* newItem) &&
 			{
-				Item::Create(newItem);
 				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
 					mMemManager, *mItem.GetValuePtr());
-				KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator),
-					newItem->GetKeyPtr(), newItem->GetValuePtr());
+				Item::template Create<KeyValueTraits>(newItem, mMemManager,
+					*mItem.GetKeyPtr(), std::move(valueCreator));
 			}
 
 		private:
@@ -625,9 +648,12 @@ namespace internal
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
 		{
-			Item::Create(dstItem);
-			KeyValueTraits::Relocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
+			auto pairCreator = [memManager, &srcItem] (Key* newKey, Value* newValue)
+			{
+				KeyValueTraits::Relocate(memManager,
+					*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(), newKey, newValue);
+			};
+			Item::Create(dstItem, pairCreator);
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
@@ -639,10 +665,13 @@ namespace internal
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
-			Item::Create(dstItem);
-			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
-				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
+			auto pairCreator = [&memManager, &srcItem, &midItem] (Key* newKey, Value* newValue)
+			{
+				KeyValueTraits::ReplaceRelocate(memManager,
+					*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+					*midItem.GetKeyPtr(), *midItem.GetValuePtr(), newKey, newValue);
+			};
+			Item::Create(dstItem, pairCreator);
 		}
 
 		template<typename KeyArg>
@@ -875,11 +904,7 @@ namespace internal
 		void Create(PairCreator&& pairCreator)
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
-			{
-				KeyValuePair::Create(newItem);
-				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
-					newItem->GetValuePtr());
-			};
+				{ KeyValuePair::Create(newItem, std::forward<PairCreator>(pairCreator)); };
 			mSetExtractedItem.Create(itemCreator);
 		}
 
