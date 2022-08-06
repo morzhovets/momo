@@ -125,6 +125,9 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, (void)++dstIter)
+				Item::Create(dstIter.operator->());	//?
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
@@ -593,6 +596,7 @@ public:
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
 		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
@@ -751,6 +755,7 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
@@ -765,6 +770,7 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());

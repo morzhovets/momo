@@ -531,13 +531,16 @@ namespace internal
 		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Value>::Check(valueAlignment));
 
 	public:
-		MapKeyValuePair() = delete;
-
 		MapKeyValuePair(const MapKeyValuePair&) = delete;
 
-		~MapKeyValuePair() = delete;
+		~MapKeyValuePair() = default;
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
+
+		static void Create(MapKeyValuePair* pair) noexcept
+		{
+			::new(static_cast<void*>(pair)) MapKeyValuePair();
+		}
 
 		const Key* GetKeyPtr() const noexcept
 		{
@@ -553,6 +556,9 @@ namespace internal
 		{
 			return &mValueBuffer;
 		}
+
+	private:
+		MapKeyValuePair() = default;
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
@@ -573,6 +579,8 @@ namespace internal
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 
+		MOMO_STATIC_ASSERT(std::is_trivially_destructible<Item>::value);
+
 		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
 
 		static const bool isNothrowRelocatable =
@@ -592,6 +600,7 @@ namespace internal
 
 			void operator()(Item* newItem) &&
 			{
+				Item::Create(newItem);
 				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
 					mMemManager, *mItem.GetValuePtr());
 				KeyValueTraits::Create(mMemManager, *mItem.GetKeyPtr(), std::move(valueCreator),
@@ -616,6 +625,7 @@ namespace internal
 
 		static void Relocate(MemManager* memManager, Item& srcItem, Item* dstItem)
 		{
+			Item::Create(dstItem);
 			KeyValueTraits::Relocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
@@ -629,6 +639,7 @@ namespace internal
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
+			Item::Create(dstItem);
 			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
@@ -865,6 +876,7 @@ namespace internal
 		{
 			auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{
+				KeyValuePair::Create(newItem);
 				std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(),
 					newItem->GetValuePtr());
 			};

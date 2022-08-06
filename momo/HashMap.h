@@ -286,6 +286,8 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator&& itemCreator, Item* newItem)
 		{
+			for (size_t i = 0; i < count; ++i)
+				Item::Create(dstItems + i);
 			auto func = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
@@ -678,6 +680,7 @@ public:
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			std::forward<PairCreator>(pairCreator)(newItem->GetKeyPtr(), newItem->GetValuePtr());
 		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
@@ -856,6 +859,7 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
@@ -870,6 +874,7 @@ private:
 	{
 		auto itemCreator = [this, &key, &valueCreator] (KeyValuePair* newItem)
 		{
+			KeyValuePair::Create(newItem);
 			KeyValueTraits::Create(GetMemManager(), std::forward<RKey>(key),
 				std::forward<ValueCreator>(valueCreator), newItem->GetKeyPtr(),
 				newItem->GetValuePtr());
