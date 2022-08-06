@@ -145,7 +145,8 @@ namespace internal
 		}
 	};
 
-	template<typename TObject, size_t tAlignment>
+	template<typename TObject, size_t tAlignment,
+		typename = void>
 	class ObjectBuffer
 	{
 	public:
@@ -174,7 +175,54 @@ namespace internal
 		}
 
 	private:
-		MOMO_ALIGNED_STORAGE(sizeof(Object), alignment) mBuffer;
+		//? vs C2719 (_MSC_VER < 1920)
+		alignas(alignment) char mBuffer[sizeof(Object)];
+	};
+
+	template<typename TObject, size_t tAlignment>
+	class ObjectBuffer<TObject, tAlignment, EnableIf<tAlignment >= alignof(TObject)>>
+	{
+	public:
+		typedef TObject Object;
+
+		static const size_t alignment = tAlignment;
+		MOMO_STATIC_ASSERT(ObjectAlignmenter<Object>::Check(alignment));
+
+	private:
+		union Buffer
+		{
+			Buffer() noexcept
+			{
+			}
+
+			~Buffer() noexcept
+			{
+			}
+
+			alignas(alignment) Object mObject;
+		};
+
+	public:
+		ObjectBuffer() = default;
+
+		ObjectBuffer(const ObjectBuffer&) = delete;
+
+		~ObjectBuffer() = default;
+
+		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
+
+		const Object* operator&() const noexcept
+		{
+			return std::addressof(mBuffer.mObject);
+		}
+
+		Object* operator&() noexcept
+		{
+			return std::addressof(mBuffer.mObject);
+		}
+
+	private:
+		Buffer mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager>

@@ -119,12 +119,6 @@
 //#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1920	// C2719
-#define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type
-#else
-#define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<char, size>
-#endif
-
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR reinterpret_cast<uintptr_t>(static_cast<void*>(nullptr))
 #if defined(__clang__)
