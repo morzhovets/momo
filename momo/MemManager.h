@@ -560,10 +560,6 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
-		//explicit MemManagerPtr() noexcept
-		//{
-		//}
-
 		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
 		{
 		}
