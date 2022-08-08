@@ -66,8 +66,7 @@ public:
 	static void Destroy(MemManager* /*memManager*/, Object& object) noexcept
 		requires isNothrowDestructible
 	{
-		if constexpr (!std::is_trivially_destructible_v<Object>)
-			object.~Object();
+		object.~Object();
 	}
 };
 
