@@ -22,7 +22,7 @@ var searchData=
   ['memmanagerptr_3c_20tbasememmanager_2c_20false_20_3e_1277',['MemManagerPtr&lt; TBaseMemManager, false &gt;',['../classmomo_1_1internal_1_1_mem_manager_ptr_3_01_t_base_mem_manager_00_01false_01_4.html',1,'momo::internal']]],
   ['memmanagerptr_3c_20tbasememmanager_2c_20true_20_3e_1278',['MemManagerPtr&lt; TBaseMemManager, true &gt;',['../classmomo_1_1internal_1_1_mem_manager_ptr_3_01_t_base_mem_manager_00_01true_01_4.html',1,'momo::internal']]],
   ['memmanagerstd_1279',['MemManagerStd',['../classmomo_1_1_mem_manager_std.html',1,'momo']]],
-  ['memmanagerstd_3c_20std_3a_3aallocator_3c_20object_20_3e_2c_20true_20_3e_1280',['MemManagerStd&lt; std::allocator&lt; Object &gt;, true &gt;',['../classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_00_01true_01_4.html',1,'momo']]],
+  ['memmanagerstd_3c_20std_3a_3aallocator_3c_20object_20_3e_20_3e_1280',['MemManagerStd&lt; std::allocator&lt; Object &gt; &gt;',['../classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_01_4.html',1,'momo']]],
   ['memmanagerwrapper_1281',['MemManagerWrapper',['../classmomo_1_1internal_1_1_mem_manager_wrapper.html',1,'momo::internal']]],
   ['memmanagerwrapper_3c_20memmanagerdefault_20_3e_1282',['MemManagerWrapper&lt; MemManagerDefault &gt;',['../classmomo_1_1internal_1_1_mem_manager_wrapper.html',1,'momo::internal']]],
   ['memmanagerwrapper_3c_20memmanagerptr_20_3e_1283',['MemManagerWrapper&lt; MemManagerPtr &gt;',['../classmomo_1_1internal_1_1_mem_manager_wrapper.html',1,'momo::internal']]],

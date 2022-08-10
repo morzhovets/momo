@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.5</span>
+   &#160;<span id="projectnumber">3.6</span>
    </div>
   </td>
  </tr>
@@ -177,7 +177,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#a14dd98634097e4ceaf3cd3311401f5b8">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01false_01_4.html#a5e39b5aa9325db84f42d8e0adf523a2a">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, false &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4.html#a72332242419e245c110944b863ef7ee4">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, true &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#a1e795857fa278145207818f5459c53fa">momo::internal::BucketOne&lt; TItemTraits, tStateSize &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#ad8cc749a0fb6e5dd22277f934273ec43">momo::internal::BucketOne&lt; TItemTraits, tMinStateSize &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#ad717104314f789d126f056160c730de3">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#afc0defaca149582c92183493548ee367">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_unlim_p.html#aee3771f375d9f1085da234b83ff783b1">momo::internal::BucketUnlimP&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;</a>
@@ -214,8 +214,8 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 , <a class="el" href="classmomo_1_1internal_1_1_data_row.html#a9fc038dbea399b1daf079ed7a1f3f657">momo::internal::DataRow&lt; TColumnList &gt;</a>
 </li>
 <li>GetByteAllocator()
-: <a class="el" href="classmomo_1_1_mem_manager_std.html#a4fb9d83da3163eb401cdc8caa61cfd32">momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt;</a>
-, <a class="el" href="classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_00_01true_01_4.html#a8a44344b0bead296295788a3f947aa5b">momo::MemManagerStd&lt; std::allocator&lt; Object &gt;, true &gt;</a>
+: <a class="el" href="classmomo_1_1_mem_manager_std.html#a066ce593a08ba950f35a57070788b0a9">momo::MemManagerStd&lt; TAllocator &gt;</a>
+, <a class="el" href="classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_01_4.html#a1a6eeb3d97e68f55f8bac7a057860e46">momo::MemManagerStd&lt; std::allocator&lt; Object &gt; &gt;</a>
 </li>
 <li>GetCapacity()
 : <a class="el" href="classmomo_1_1_array.html#a2d21fbedd2893449190a77f87f6cb808">momo::Array&lt; TItem, TMemManager, TItemTraits, TSettings &gt;</a>
@@ -315,7 +315,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>GetHashCodePart()
 : <a class="el" href="classmomo_1_1internal_1_1_bucket_base.html#a5dfa5c8bc90ba2c2ca1e46d075ab5246">momo::internal::BucketBase</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#ada38f81dd83ef2a1480401cbe7a682b1">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#a5241b0d13220a9c14091fe329137e83b">momo::internal::BucketOne&lt; TItemTraits, tStateSize &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#ae401afb700d5df994984587ff01bc3b6">momo::internal::BucketOne&lt; TItemTraits, tMinStateSize &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#a61578af9324b13a150f2883318079e19">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
 </li>
 <li>GetHashFunc()
@@ -554,7 +554,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 : <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#ab0c9424314955291932271640060ce96">momo::internal::DataSelection&lt; TRowReference, TDataTraits &gt;</a>
 </li>
 <li>GrowCapacity()
-: <a class="el" href="classmomo_1_1_array_settings.html#a059990c6c98205fc3b8c284894036e94">momo::ArraySettings&lt; tInternalCapacity, tGrowOnReserve, tUsePtrIterator &gt;</a>
+: <a class="el" href="classmomo_1_1_array_settings.html#a3c82f58755d50f5bf557185be0cc8d38">momo::ArraySettings&lt; tInternalCapacity, tGrowOnReserve, tUsePtrIterator &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

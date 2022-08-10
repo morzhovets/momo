@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt; Class Template Reference</title>
+<title>momo: momo::MemManagerStd&lt; TAllocator &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.5</span>
+   &#160;<span id="projectnumber">3.6</span>
    </div>
   </td>
  </tr>
@@ -87,7 +87,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_mem_manager_std.html',''
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classmomo_1_1_mem_manager_std-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt; Class Template Reference</div>  </div>
+<div class="title">momo::MemManagerStd&lt; TAllocator &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_mem_manager_std.html',''
 
 <p><code>#include &lt;<a class="el" href="_mem_manager_8h_source.html">MemManager.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt;:</div>
+Inheritance diagram for momo::MemManagerStd&lt; TAllocator &gt;:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classmomo_1_1_mem_manager_std.png" alt=""/>
@@ -104,68 +104,68 @@ Inheritance diagram for momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefaul
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac0ed0b0c60688e43c192ded6e3806f6e"><td class="memItemLeft" align="right" valign="top">typedef TAllocator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a></td></tr>
-<tr class="separator:ac0ed0b0c60688e43c192ded6e3806f6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae731a63ab2840f0fb65dcc0dd4b7aee9"><td class="memItemLeft" align="right" valign="top">typedef std::allocator_traits&lt; <a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a> &gt;::template rebind_alloc&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a></td></tr>
-<tr class="separator:ae731a63ab2840f0fb65dcc0dd4b7aee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bd509ae06c3fc3deb57d351379f704b"><td class="memItemLeft" align="right" valign="top">typedef TAllocator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a></td></tr>
+<tr class="separator:a0bd509ae06c3fc3deb57d351379f704b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb5ae6b94557e7bd8248b28d66f74afe"><td class="memItemLeft" align="right" valign="top">typedef std::allocator_traits&lt; <a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a> &gt;::template rebind_alloc&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a></td></tr>
+<tr class="separator:afb5ae6b94557e7bd8248b28d66f74afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a51fb297672f56f27831f0f0172229534"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a51fb297672f56f27831f0f0172229534">MemManagerStd</a> () noexcept(noexcept(<a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a>()))</td></tr>
-<tr class="separator:a51fb297672f56f27831f0f0172229534"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae204fd9083d5171b7b4a6d23a09a1bc3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ae204fd9083d5171b7b4a6d23a09a1bc3">MemManagerStd</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a> &amp;alloc) noexcept</td></tr>
-<tr class="separator:ae204fd9083d5171b7b4a6d23a09a1bc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6762f21073197fac071f10dfbdc927f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ac6762f21073197fac071f10dfbdc927f">MemManagerStd</a> (<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;&amp;memManager) noexcept</td></tr>
-<tr class="separator:ac6762f21073197fac071f10dfbdc927f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62d12d00a6f104b5e0ad2f4f65047ca4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a62d12d00a6f104b5e0ad2f4f65047ca4">MemManagerStd</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;memManager)</td></tr>
-<tr class="separator:a62d12d00a6f104b5e0ad2f4f65047ca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2baddb1331f719ad69b3aa4ca666d4b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a2baddb1331f719ad69b3aa4ca666d4b8">~MemManagerStd</a> ()=default</td></tr>
-<tr class="separator:a2baddb1331f719ad69b3aa4ca666d4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf00f2b6d421bd05d28efa2afb5c4543"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#abf00f2b6d421bd05d28efa2afb5c4543">operator=</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;)=delete</td></tr>
-<tr class="separator:abf00f2b6d421bd05d28efa2afb5c4543"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a900701090af794cf0846275687c1babd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a900701090af794cf0846275687c1babd">Allocate</a> (size_t size)</td></tr>
-<tr class="separator:a900701090af794cf0846275687c1babd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addba3f0da6c0d107c91fc76ef0b54d0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#addba3f0da6c0d107c91fc76ef0b54d0a">Deallocate</a> (void *ptr, size_t size) noexcept</td></tr>
-<tr class="separator:addba3f0da6c0d107c91fc76ef0b54d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6f6579aff631dcf3d77363e51a5d0c5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ad6f6579aff631dcf3d77363e51a5d0c5">IsEqual</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;memManager) const noexcept</td></tr>
-<tr class="separator:ad6f6579aff631dcf3d77363e51a5d0c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fb9d83da3163eb401cdc8caa61cfd32"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a4fb9d83da3163eb401cdc8caa61cfd32">GetByteAllocator</a> () const noexcept</td></tr>
-<tr class="separator:a4fb9d83da3163eb401cdc8caa61cfd32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59f1eb6343a703f6e958c610c7328ff4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a59f1eb6343a703f6e958c610c7328ff4">GetByteAllocator</a> () noexcept</td></tr>
-<tr class="separator:a59f1eb6343a703f6e958c610c7328ff4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd013cf5416f4117c7b5a6688bdcd919"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#abd013cf5416f4117c7b5a6688bdcd919">MemManagerStd</a> () noexcept(noexcept(<a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a>()))</td></tr>
+<tr class="separator:abd013cf5416f4117c7b5a6688bdcd919"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a806ca84031e550bfc094b9d859fc5c6b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a806ca84031e550bfc094b9d859fc5c6b">MemManagerStd</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a> &amp;alloc) noexcept</td></tr>
+<tr class="separator:a806ca84031e550bfc094b9d859fc5c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02861c831196e7f8f76d4ad9b8988038"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a02861c831196e7f8f76d4ad9b8988038">MemManagerStd</a> (<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;&amp;memManager) noexcept</td></tr>
+<tr class="separator:a02861c831196e7f8f76d4ad9b8988038"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d1a7efd3f8b2cac42542e0897e23b29"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a0d1a7efd3f8b2cac42542e0897e23b29">MemManagerStd</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;memManager)</td></tr>
+<tr class="separator:a0d1a7efd3f8b2cac42542e0897e23b29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c1cd82dcc5a90306872f2a05480afb9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a4c1cd82dcc5a90306872f2a05480afb9">~MemManagerStd</a> ()=default</td></tr>
+<tr class="separator:a4c1cd82dcc5a90306872f2a05480afb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe4f4ae3c66eb16870b3592bf2c7d783"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#abe4f4ae3c66eb16870b3592bf2c7d783">operator=</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;)=delete</td></tr>
+<tr class="separator:abe4f4ae3c66eb16870b3592bf2c7d783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf767503e7911ecdac53a1aedf9f544d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#adf767503e7911ecdac53a1aedf9f544d">Allocate</a> (size_t size)</td></tr>
+<tr class="separator:adf767503e7911ecdac53a1aedf9f544d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cae4921d47f8d67302bb9c31091a309"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a9cae4921d47f8d67302bb9c31091a309">Deallocate</a> (void *ptr, size_t size) noexcept</td></tr>
+<tr class="separator:a9cae4921d47f8d67302bb9c31091a309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab68dc233d001b300b472fbae9908351b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#ab68dc233d001b300b472fbae9908351b">IsEqual</a> (const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> &amp;memManager) const noexcept</td></tr>
+<tr class="separator:ab68dc233d001b300b472fbae9908351b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a066ce593a08ba950f35a57070788b0a9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a066ce593a08ba950f35a57070788b0a9">GetByteAllocator</a> () const noexcept</td></tr>
+<tr class="separator:a066ce593a08ba950f35a57070788b0a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fcf0d867c2329fe096d5c6c9d48b17c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_manager_std.html#a2fcf0d867c2329fe096d5c6c9d48b17c">GetByteAllocator</a> () noexcept</td></tr>
+<tr class="separator:a2fcf0d867c2329fe096d5c6c9d48b17c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename TAllocator, bool tUseMemManagerDefault = true&gt;<br />
-class momo::MemManagerStd&lt; TAllocator, tUseMemManagerDefault &gt;</h3>
+<div class="textblock"><h3>template&lt;typename TAllocator&gt;<br />
+class momo::MemManagerStd&lt; TAllocator &gt;</h3>
 
 <p><code><a class="el" href="classmomo_1_1_mem_manager_std.html" title="MemManagerStd uses allocator&lt;char&gt;::allocate and deallocate">MemManagerStd</a></code> uses <code>allocator&lt;char&gt;::allocate</code> and <code>deallocate</code> </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="ac0ed0b0c60688e43c192ded6e3806f6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0ed0b0c60688e43c192ded6e3806f6e">&#9670;&nbsp;</a></span>Allocator</h2>
+<a id="a0bd509ae06c3fc3deb57d351379f704b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bd509ae06c3fc3deb57d351379f704b">&#9670;&nbsp;</a></span>Allocator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TAllocator <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a></td>
+          <td class="memname">typedef TAllocator <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae731a63ab2840f0fb65dcc0dd4b7aee9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae731a63ab2840f0fb65dcc0dd4b7aee9">&#9670;&nbsp;</a></span>ByteAllocator</h2>
+<a id="afb5ae6b94557e7bd8248b28d66f74afe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb5ae6b94557e7bd8248b28d66f74afe">&#9670;&nbsp;</a></span>ByteAllocator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::allocator_traits&lt;<a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a>&gt;::template rebind_alloc&lt;char&gt; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a></td>
+          <td class="memname">typedef std::allocator_traits&lt;<a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a>&gt;::template rebind_alloc&lt;char&gt; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -173,19 +173,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a51fb297672f56f27831f0f0172229534"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51fb297672f56f27831f0f0172229534">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[1/4]</span></h2>
+<a id="abd013cf5416f4117c7b5a6688bdcd919"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd013cf5416f4117c7b5a6688bdcd919">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -200,21 +200,21 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="ae204fd9083d5171b7b4a6d23a09a1bc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae204fd9083d5171b7b4a6d23a09a1bc3">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[2/4]</span></h2>
+<a id="a806ca84031e550bfc094b9d859fc5c6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a806ca84031e550bfc094b9d859fc5c6b">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html#ac0ed0b0c60688e43c192ded6e3806f6e">Allocator</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html#a0bd509ae06c3fc3deb57d351379f704b">Allocator</a> &amp;&#160;</td>
           <td class="paramname"><em>alloc</em></td><td>)</td>
           <td></td>
         </tr>
@@ -228,21 +228,21 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="ac6762f21073197fac071f10dfbdc927f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6762f21073197fac071f10dfbdc927f">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[3/4]</span></h2>
+<a id="a02861c831196e7f8f76d4ad9b8988038"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02861c831196e7f8f76d4ad9b8988038">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt; &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator &gt; &amp;&amp;&#160;</td>
           <td class="paramname"><em>memManager</em></td><td>)</td>
           <td></td>
         </tr>
@@ -256,21 +256,21 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="a62d12d00a6f104b5e0ad2f4f65047ca4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62d12d00a6f104b5e0ad2f4f65047ca4">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[4/4]</span></h2>
+<a id="a0d1a7efd3f8b2cac42542e0897e23b29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d1a7efd3f8b2cac42542e0897e23b29">&#9670;&nbsp;</a></span>MemManagerStd() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator &gt; &amp;&#160;</td>
           <td class="paramname"><em>memManager</em></td><td>)</td>
           <td></td>
         </tr>
@@ -284,19 +284,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="a2baddb1331f719ad69b3aa4ca666d4b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2baddb1331f719ad69b3aa4ca666d4b8">&#9670;&nbsp;</a></span>~MemManagerStd()</h2>
+<a id="a4c1cd82dcc5a90306872f2a05480afb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c1cd82dcc5a90306872f2a05480afb9">&#9670;&nbsp;</a></span>~MemManagerStd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::~<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::~<a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -312,19 +312,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a900701090af794cf0846275687c1babd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a900701090af794cf0846275687c1babd">&#9670;&nbsp;</a></span>Allocate()</h2>
+<a id="adf767503e7911ecdac53a1aedf9f544d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf767503e7911ecdac53a1aedf9f544d">&#9670;&nbsp;</a></span>Allocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a> void* <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::Allocate </td>
+          <td class="memname"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a> void* <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::Allocate </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>size</em></td><td>)</td>
@@ -340,19 +340,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="addba3f0da6c0d107c91fc76ef0b54d0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#addba3f0da6c0d107c91fc76ef0b54d0a">&#9670;&nbsp;</a></span>Deallocate()</h2>
+<a id="a9cae4921d47f8d67302bb9c31091a309"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cae4921d47f8d67302bb9c31091a309">&#9670;&nbsp;</a></span>Deallocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::Deallocate </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::Deallocate </td>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
@@ -378,19 +378,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="a4fb9d83da3163eb401cdc8caa61cfd32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fb9d83da3163eb401cdc8caa61cfd32">&#9670;&nbsp;</a></span>GetByteAllocator() <span class="overload">[1/2]</span></h2>
+<a id="a066ce593a08ba950f35a57070788b0a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a066ce593a08ba950f35a57070788b0a9">&#9670;&nbsp;</a></span>GetByteAllocator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::GetByteAllocator </td>
+          <td class="memname">const <a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::GetByteAllocator </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -405,19 +405,19 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="a59f1eb6343a703f6e958c610c7328ff4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59f1eb6343a703f6e958c610c7328ff4">&#9670;&nbsp;</a></span>GetByteAllocator() <span class="overload">[2/2]</span></h2>
+<a id="a2fcf0d867c2329fe096d5c6c9d48b17c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fcf0d867c2329fe096d5c6c9d48b17c">&#9670;&nbsp;</a></span>GetByteAllocator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html#ae731a63ab2840f0fb65dcc0dd4b7aee9">ByteAllocator</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::GetByteAllocator </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">ByteAllocator</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::GetByteAllocator </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -432,21 +432,21 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="ad6f6579aff631dcf3d77363e51a5d0c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6f6579aff631dcf3d77363e51a5d0c5">&#9670;&nbsp;</a></span>IsEqual()</h2>
+<a id="ab68dc233d001b300b472fbae9908351b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab68dc233d001b300b472fbae9908351b">&#9670;&nbsp;</a></span>IsEqual()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::IsEqual </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::IsEqual </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator &gt; &amp;&#160;</td>
           <td class="paramname"><em>memManager</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -460,21 +460,21 @@ template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
 
 </div>
 </div>
-<a id="abf00f2b6d421bd05d28efa2afb5c4543"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf00f2b6d421bd05d28efa2afb5c4543">&#9670;&nbsp;</a></span>operator=()</h2>
+<a id="abe4f4ae3c66eb16870b3592bf2c7d783"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe4f4ae3c66eb16870b3592bf2c7d783">&#9670;&nbsp;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TAllocator , bool tUseMemManagerDefault = true&gt; </div>
+template&lt;typename TAllocator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&amp; <a class="el" href="classmomo_1_1_mem_manager_std.html">momo::MemManagerStd</a>&lt; TAllocator &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator, tUseMemManagerDefault &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_mem_manager_std.html">MemManagerStd</a>&lt; TAllocator &gt; &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>

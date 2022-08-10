@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.5</span>
+   &#160;<span id="projectnumber">3.6</span>
    </div>
   </td>
  </tr>
@@ -140,7 +140,7 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a6b5ac6ef381c78c282b8c73dd30e3f18"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a6b5ac6ef381c78c282b8c73dd30e3f18">maxBucketCount</a></td></tr>
+<tr class="memitem:a6b5ac6ef381c78c282b8c73dd30e3f18"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a6b5ac6ef381c78c282b8c73dd30e3f18">maxBucketCount</a> = <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a82013e8c0ca3fa7fb5667cc6d1211a91">UIntConst::maxSize</a> / sizeof(<a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">Bucket</a>)</td></tr>
 <tr class="separator:a6b5ac6ef381c78c282b8c73dd30e3f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
@@ -617,7 +617,7 @@ template&lt;typename TBucket &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html">momo::internal::HashSetBuckets</a>&lt; TBucket &gt;::maxBucketCount</td>
+          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html">momo::internal::HashSetBuckets</a>&lt; TBucket &gt;::maxBucketCount = <a class="el" href="structmomo_1_1internal_1_1_u_int_const.html#a82013e8c0ca3fa7fb5667cc6d1211a91">UIntConst::maxSize</a> / sizeof(<a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">Bucket</a>)</td>
         </tr>
       </table>
   </td>
@@ -625,40 +625,6 @@ template&lt;typename TBucket &gt; </div>
 <span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">=</div>
-<div class="line">            (<a class="code" href="structmomo_1_1internal_1_1_u_int_const.html#a82013e8c0ca3fa7fb5667cc6d1211a91">UIntConst::maxSize</a> - <span class="keyword">sizeof</span>(size_t) - 2 * <span class="keyword">sizeof</span>(<span class="keywordtype">void</span>*)) / <span class="keyword">sizeof</span>(<a class="code" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">Bucket</a>)</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="ab2013d211051b275ad4260f561f4f214"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2013d211051b275ad4260f561f4f214">&#9670;&nbsp;</a></span>mBucketPadding</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TBucket &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::aligned_storage&lt;alignof(<a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">Bucket</a>), alignof(<a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">Bucket</a>)&gt;::type <a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html">momo::internal::HashSetBuckets</a>&lt; TBucket &gt;::mBucketPadding</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae6155680073bdae8be08f045646d87a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6155680073bdae8be08f045646d87a1">&#9670;&nbsp;</a></span>mBucketParams</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TBucket &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a9a3a11467786c63e524602dff4ec756d">BucketParams</a>* <a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html">momo::internal::HashSetBuckets</a>&lt; TBucket &gt;::mBucketParams</td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>
@@ -668,8 +634,6 @@ template&lt;typename TBucket &gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_const_html_a82013e8c0ca3fa7fb5667cc6d1211a91"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_const.html#a82013e8c0ca3fa7fb5667cc6d1211a91">momo::internal::UIntConst::maxSize</a></div><div class="ttdeci">static const size_t maxSize</div><div class="ttdef"><b>Definition:</b> Utility.h:377</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_hash_set_buckets_html_a27b77bb1e2e6fdc6b634f8b4690809cd"><div class="ttname"><a href="classmomo_1_1internal_1_1_hash_set_buckets.html#a27b77bb1e2e6fdc6b634f8b4690809cd">momo::internal::HashSetBuckets::Bucket</a></div><div class="ttdeci">TBucket Bucket</div><div class="ttdef"><b>Definition:</b> HashSet.h:32</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

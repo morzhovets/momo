@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.5</span>
+   &#160;<span id="projectnumber">3.6</span>
    </div>
   </td>
  </tr>
@@ -120,12 +120,16 @@ Macros</h2></td></tr>
 <tr class="separator:aceafdc91cd342cd90004912b7d7463ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a603cfabe60fde34513bcbf8a24564984"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a603cfabe60fde34513bcbf8a24564984">MOMO_IS_FAST_COMPARABLE</a>(Key)&#160;&#160;&#160;(std::is_arithmetic&lt;Key&gt;::value || std::is_pointer&lt;Key&gt;::value)</td></tr>
 <tr class="separator:a603cfabe60fde34513bcbf8a24564984"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac517ea0ff67f65250524e88b41d2f275"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ac517ea0ff67f65250524e88b41d2f275">MOMO_DEFAULT_MEM_MANAGER</a>&#160;&#160;&#160;MemManagerCpp</td></tr>
+<tr class="memitem:ac517ea0ff67f65250524e88b41d2f275"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ac517ea0ff67f65250524e88b41d2f275">MOMO_DEFAULT_MEM_MANAGER</a>&#160;&#160;&#160;MemManagerC</td></tr>
 <tr class="separator:ac517ea0ff67f65250524e88b41d2f275"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a465b4e68c7701a2a207206b4af6177cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a465b4e68c7701a2a207206b4af6177cd">MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD</a></td></tr>
+<tr class="separator:a465b4e68c7701a2a207206b4af6177cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a385418dc0e5a2df292e94ed0a9036559"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a>&#160;&#160;&#160;inline</td></tr>
 <tr class="separator:a385418dc0e5a2df292e94ed0a9036559"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af452a6b523eb6408184b712b0bafcd8c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#af452a6b523eb6408184b712b0bafcd8c">MOMO_NOINLINE</a></td></tr>
 <tr class="separator:af452a6b523eb6408184b712b0bafcd8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67be118c16f232780c09a69e7dc0e219"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a67be118c16f232780c09a69e7dc0e219">MOMO_OBJECT_BUFFER</a>(Object,  alignment,  ObjectUnion)</td></tr>
+<tr class="separator:a67be118c16f232780c09a69e7dc0e219"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5ffa282c329ed013e070d7552ca845"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a>&#160;&#160;&#160;reinterpret_cast&lt;uintptr_t&gt;(static_cast&lt;void*&gt;(nullptr))</td></tr>
 <tr class="separator:a8a5ffa282c329ed013e070d7552ca845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc3d49e50add6f931606ec489db2e7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a>&#160;&#160;&#160;(<a class="el" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a> + 1)</td></tr>
@@ -253,7 +257,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MOMO_DEFAULT_MEM_MANAGER&#160;&#160;&#160;MemManagerCpp</td>
+          <td class="memname">#define MOMO_DEFAULT_MEM_MANAGER&#160;&#160;&#160;MemManagerC</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -466,6 +470,56 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MOMO_NULL_UINTPTR&#160;&#160;&#160;reinterpret_cast&lt;uintptr_t&gt;(static_cast&lt;void*&gt;(nullptr))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a67be118c16f232780c09a69e7dc0e219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67be118c16f232780c09a69e7dc0e219">&#9670;&nbsp;</a></span>MOMO_OBJECT_BUFFER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_OBJECT_BUFFER</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">Object, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">alignment, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ObjectUnion&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">alignas</span>(alignment) <span class="keyword">typename</span> std::conditional&lt;(alignment &gt;= <span class="keyword">alignof</span>(Object)), \</div>
+<div class="line">        ObjectUnion, std::array&lt;<span class="keywordtype">char</span>, <span class="keyword">sizeof</span>(Object)&gt;&gt;::type</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a465b4e68c7701a2a207206b4af6177cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a465b4e68c7701a2a207206b4af6177cd">&#9670;&nbsp;</a></span>MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD</td>
         </tr>
       </table>
 </div><div class="memdoc">

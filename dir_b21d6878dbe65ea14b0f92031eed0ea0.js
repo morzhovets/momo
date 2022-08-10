@@ -75,10 +75,10 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "MemPoolUInt32", "classmomo_1_1internal_1_1_mem_pool_u_int32.html", "classmomo_1_1internal_1_1_mem_pool_u_int32" ]
     ] ],
     [ "ObjectManager.h", "_object_manager_8h.html", [
+      [ "HasCustomMoveConstructor", "structmomo_1_1internal_1_1_has_custom_move_constructor.html", null ],
+      [ "HasCustomMoveConstructor< MemManagerStd< Allocator >, Object, Void< decltype(std::declval< typename MemManagerStd< Allocator >::ByteAllocator & >().construct(std::declval< Object * >(), std::declval< Object && >())), EnableIf<!std::is_same< std::allocator< char >, typename MemManagerStd< Allocator >::ByteAllocator >::value > > >", "structmomo_1_1internal_1_1_has_custom_move_constructor_3_01_mem_manager_std_3_01_allocator_01_4_dd4ae2f20186f6c9186549863e3be8b8.html", null ],
       [ "IsTriviallyRelocatable", "structmomo_1_1_is_trivially_relocatable.html", null ],
       [ "IsNothrowMoveConstructible", "structmomo_1_1_is_nothrow_move_constructible.html", null ],
-      [ "IsNothrowMoveConstructible< Object, MemManagerStd< Allocator > >", "structmomo_1_1_is_nothrow_move_constructible_3_01_object_00_01_mem_manager_std_3_01_allocator_01_4_01_4.html", null ],
-      [ "IsNothrowMoveConstructible< Object, MemManagerStd< std::allocator< AllocObject > > >", "structmomo_1_1_is_nothrow_move_constructible_3_01_object_00_01_mem_manager_std_3_01std_1_1allocaac6e8c9a03f91eb5a393dac1b47dac15.html", null ],
       [ "ObjectDestroyer", "classmomo_1_1_object_destroyer.html", "classmomo_1_1_object_destroyer" ],
       [ "ObjectRelocator", "classmomo_1_1_object_relocator.html", "classmomo_1_1_object_relocator" ],
       [ "IsNothrowSwappable", "structmomo_1_1internal_1_1_is_nothrow_swappable.html", null ],

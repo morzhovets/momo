@@ -80,6 +80,9 @@ var classmomo_1_1_hash_map =
     [ "Remove", "classmomo_1_1_hash_map.html#aacebcd147ae66d0b540ba98ef81a6509", null ],
     [ "Remove", "classmomo_1_1_hash_map.html#a31ed5ac594036a12d53836c6778a7c28", null ],
     [ "Remove", "classmomo_1_1_hash_map.html#aab588a1dc304286f69e328ea22840dfb", null ],
+    [ "Remove", "classmomo_1_1_hash_map.html#a40f5a1f75681573b0f2d759d95b9ffae", null ],
+    [ "Remove", "classmomo_1_1_hash_map.html#a49c72cc78ee41b8726d13185a5e28803", null ],
+    [ "Remove", "classmomo_1_1_hash_map.html#a165922f9e1cc806f0818b31be50dc0d4", null ],
     [ "Reserve", "classmomo_1_1_hash_map.html#a7cc3439bcb5fbadf886d1ae4c9e76294", null ],
     [ "ResetKey", "classmomo_1_1_hash_map.html#a4f25325db9f5e8f26dba733413e60616", null ],
     [ "Swap", "classmomo_1_1_hash_map.html#ab50bab55b1754d7a1f17a76ab296070b", null ]

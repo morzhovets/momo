@@ -62,6 +62,7 @@ var classmomo_1_1_hash_set =
     [ "Remove", "classmomo_1_1_hash_set.html#acb6eac200cf913bfd9414d148acb4006", null ],
     [ "Remove", "classmomo_1_1_hash_set.html#ac8bacad37704511cb818c0fc90467152", null ],
     [ "Remove", "classmomo_1_1_hash_set.html#a7f03cecbbe64a77a612df2affaddb19a", null ],
+    [ "Remove", "classmomo_1_1_hash_set.html#aae8b5473a6c82f5b7bd766439e0d4e56", null ],
     [ "Reserve", "classmomo_1_1_hash_set.html#a9f08c30214c1405ebd94c9184ddb5e69", null ],
     [ "ResetKey", "classmomo_1_1_hash_set.html#a77f15a6ddfdaa32c9689a3e99f42cec4", null ],
     [ "Swap", "classmomo_1_1_hash_set.html#a1908c95fbf885202bbf51f7120d32e9b", null ]

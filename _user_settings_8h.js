@@ -21,5 +21,7 @@ var _user_settings_8h =
     [ "MOMO_MAX_ALIGNMENT", "_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de", null ],
     [ "MOMO_NODISCARD", "_user_settings_8h.html#ac91901db38c236c1614113e4759195ff", null ],
     [ "MOMO_NOINLINE", "_user_settings_8h.html#af452a6b523eb6408184b712b0bafcd8c", null ],
-    [ "MOMO_NULL_UINTPTR", "_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845", null ]
+    [ "MOMO_NULL_UINTPTR", "_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845", null ],
+    [ "MOMO_OBJECT_BUFFER", "_user_settings_8h.html#a67be118c16f232780c09a69e7dc0e219", null ],
+    [ "MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD", "_user_settings_8h.html#a465b4e68c7701a2a207206b4af6177cd", null ]
 ];

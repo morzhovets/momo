@@ -3,7 +3,6 @@ var classmomo_1_1_data_column_list_static =
     [ "Column", "classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265", null ],
     [ "ColumnInfo", "classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7", null ],
     [ "MemManager", "classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3", null ],
-    [ "QualifiedColumn", "classmomo_1_1_data_column_list_static.html#a89f0ee842e2c23bee2f99d9bc1d0f9dd", null ],
     [ "Raw", "classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7", null ],
     [ "Settings", "classmomo_1_1_data_column_list_static.html#a159f189ab7fd17aa70996f121a3ca8b3", null ],
     [ "Struct", "classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552", null ],

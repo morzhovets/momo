@@ -81,6 +81,7 @@ var classmomo_1_1_tree_map =
     [ "Remove", "classmomo_1_1_tree_map.html#a4b2bef1a0ece9769347abbb2ad796b11", null ],
     [ "Remove", "classmomo_1_1_tree_map.html#a272f89fcc7f1163f5dfba45ea221e6e3", null ],
     [ "Remove", "classmomo_1_1_tree_map.html#a219c633c1711f604b0a3fbbc57574172", null ],
+    [ "Remove", "classmomo_1_1_tree_map.html#a6147e777049dfd2779bee59ff6aae682", null ],
     [ "ResetKey", "classmomo_1_1_tree_map.html#aa11addaeec6eadc08a4c67987a226b89", null ],
     [ "Swap", "classmomo_1_1_tree_map.html#a495af66f555b06f66ca973f9a27417ad", null ]
 ];

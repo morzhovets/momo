@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.5</span>
+   &#160;<span id="projectnumber">3.6</span>
    </div>
   </td>
  </tr>
@@ -95,8 +95,8 @@ $(document).ready(function(){initNavTree('classmomo_1_1_array_settings.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a059990c6c98205fc3b8c284894036e94"><td class="memItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_settings.html#a059990c6c98205fc3b8c284894036e94">GrowCapacity</a> (size_t capacity, size_t minNewCapacity, <a class="el" href="namespacemomo.html#a5230cf0d0ececdc68033a5db750a2a49">ArrayGrowCause</a> growCause, bool realloc)</td></tr>
-<tr class="separator:a059990c6c98205fc3b8c284894036e94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c82f58755d50f5bf557185be0cc8d38"><td class="memItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_settings.html#a3c82f58755d50f5bf557185be0cc8d38">GrowCapacity</a> (size_t capacity, size_t minNewCapacity, <a class="el" href="namespacemomo.html#a5230cf0d0ececdc68033a5db750a2a49">ArrayGrowCause</a> growCause, bool linear) noexcept</td></tr>
+<tr class="separator:a3c82f58755d50f5bf557185be0cc8d38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -110,8 +110,8 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:ac0e49c797e1ac1a6622b02d0ab3ee545"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a059990c6c98205fc3b8c284894036e94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a059990c6c98205fc3b8c284894036e94">&#9670;&nbsp;</a></span>GrowCapacity()</h2>
+<a id="a3c82f58755d50f5bf557185be0cc8d38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c82f58755d50f5bf557185be0cc8d38">&#9670;&nbsp;</a></span>GrowCapacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -143,7 +143,7 @@ template&lt;size_t tInternalCapacity = 0, bool tGrowOnReserve = true, bool tUseP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>realloc</em>&#160;</td>
+          <td class="paramname"><em>linear</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,7 +153,7 @@ template&lt;size_t tInternalCapacity = 0, bool tGrowOnReserve = true, bool tUseP
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
