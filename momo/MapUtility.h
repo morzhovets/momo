@@ -600,25 +600,31 @@ namespace internal
 		static const size_t valueAlignment = tValueAlignment;
 
 	public:
-		MapKeyValuePair() = delete;
-
-		MapKeyValuePair(const MapKeyValuePair&) = delete;
-
-		~MapKeyValuePair() = delete;
-
-		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
+		MapKeyValuePair() = default;
 
 		template<typename MemManager, typename PairCreator>
-		void Create(MemManager& /*memManager*/, PairCreator pairCreator)
+		explicit MapKeyValuePair(MemManager& /*memManager*/, PairCreator pairCreator)
 		{
 			std::move(pairCreator)(GetKeyPtr(), GetValuePtr());
 		}
 
+		MapKeyValuePair(const MapKeyValuePair&) = delete;
+
+		~MapKeyValuePair() = default;
+
+		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
+
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
-		void Create(MemManager& memManager, RKey&& key, ValueCreator valueCreator)
+		static void Create(MapKeyValuePair* newPair, MemManager& memManager,
+			RKey&& key, ValueCreator valueCreator)
 		{
-			KeyValueTraits::Create(memManager, std::forward<RKey>(key),
-				std::move(valueCreator), GetKeyPtr(), GetValuePtr());
+			auto pairCreator = [&memManager, &key, valueCreator = std::move(valueCreator)]
+				(Key* newKey, Value* newValue) mutable
+			{
+				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
+					std::move(valueCreator), newKey, newValue);
+			};
+			std::construct_at(newPair, memManager, std::move(pairCreator));
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -652,16 +658,10 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 
 	public:
-		MapKeyValuePtrPair() = delete;
-
-		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;
-
-		~MapKeyValuePtrPair() = delete;
-
-		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
+		MapKeyValuePtrPair() = default;
 
 		template<typename MemManager, typename PairCreator>
-		void Create(MemManager& memManager, PairCreator pairCreator)
+		explicit MapKeyValuePtrPair(MemManager& memManager, PairCreator pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
 			try
@@ -675,8 +675,15 @@ namespace internal
 			}
 		}
 
+		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;
+
+		~MapKeyValuePtrPair() = default;
+
+		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
+
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
-		void Create(MemManager& memManager, RKey&& key, ValueCreator valueCreator)
+		static void Create(MapKeyValuePtrPair* newPair, MemManager& memManager,
+			RKey&& key, ValueCreator valueCreator)
 		{
 			auto pairCreator = [&memManager, &key, valueCreator = std::move(valueCreator)]
 				(Key* newKey, Value* newValue) mutable
@@ -684,15 +691,16 @@ namespace internal
 				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
 					std::move(valueCreator), newKey, newValue);
 			};
-			Create(memManager, std::move(pairCreator));
+			std::construct_at(newPair, memManager, std::move(pairCreator));
 		}
 
 		template<typename KeyValueTraits, typename MemManager>
-		void Relocate(MemManager& memManager, Key& srcKey, Value& dstValue)
+		static void CreateRelocate(MapKeyValuePtrPair* newPair, MemManager& memManager,
+			Key& srcKey, Value& dstValue)
 		{
 			auto pairCreator = [&memManager, &srcKey, &dstValue] (Key* newKey, Value* newValue)
 				{ KeyValueTraits::Relocate(&memManager, srcKey, dstValue, newKey, newValue); };
-			Create(memManager, std::move(pairCreator));
+			std::construct_at(newPair, memManager, std::move(pairCreator));
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -737,6 +745,7 @@ namespace internal
 
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
+		static_assert(std::is_trivially_destructible_v<Item>);
 
 		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
 
@@ -757,7 +766,7 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				newItem->template Create<KeyValueTraits>(mMemManager, *mItem.GetKeyPtr(),
+				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
 					ValueCreator(mMemManager, *mItem.GetValuePtr()));
 			}
 
@@ -781,6 +790,7 @@ namespace internal
 		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
 			Item& srcItem, Item* dstItem)
 		{
+			std::construct_at(dstItem);
 			KeyValueTraits::Relocate(dstMemManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
@@ -791,11 +801,11 @@ namespace internal
 				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
 		}
 
-		static void ReplaceRelocate(MemManager& srcMemManager, Item& srcItem, Item& midItem,
+		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
-			KeyValueTraits::ReplaceRelocate(srcMemManager,
-				*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+			std::construct_at(dstItem);
+			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
@@ -804,6 +814,9 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
+			DstIterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, (void)++dstIter)
+				std::construct_at(std::addressof(*dstIter));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
@@ -853,6 +866,7 @@ namespace internal
 			typename KeyValueTraits::ValueMemPoolParams> MemManager;
 
 		typedef MapKeyValuePtrPair<Key, Value, KeyValueTraits::keyAlignment> Item;
+		static_assert(std::is_trivially_destructible_v<Item>);
 
 		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
 
@@ -872,7 +886,7 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				newItem->template Create<KeyValueTraits>(mMemManager, *mItem.GetKeyPtr(),
+				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
 					ValueCreator(mMemManager, *mItem.GetValuePtr()));
 			}
 
@@ -903,12 +917,14 @@ namespace internal
 			Value* srcValuePtr = srcItem.GetValuePtr();
 			if (srcMemManager == dstMemManager || srcMemManager == nullptr || dstMemManager == nullptr)
 			{
+				std::construct_at(dstItem);
 				KeyValueTraits::RelocateKey(dstMemManager, *srcKeyPtr, dstItem->GetKeyPtr());
 				dstItem->GetValuePtr() = srcValuePtr;
 			}
 			else
 			{
-				dstItem->template Relocate<KeyValueTraits>(*dstMemManager, *srcKeyPtr, *srcValuePtr);
+				Item::template CreateRelocate<KeyValueTraits>(dstItem, *dstMemManager,
+					*srcKeyPtr, *srcValuePtr);
 				srcMemManager->GetMemPool().Deallocate(srcValuePtr);
 			}
 		}
@@ -922,9 +938,9 @@ namespace internal
 			dstValuePtr = srcItem.GetValuePtr();
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
-			Item* dstItem)
+		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
 		{
+			std::construct_at(dstItem);
 			KeyValueTraits::ReplaceRelocateKeys(memManager, *srcItem.GetKeyPtr(),
 				*midItem.GetKeyPtr(), dstItem->GetKeyPtr());
 			dstItem->GetValuePtr() = midItem.GetValuePtr();
@@ -935,6 +951,9 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
+			DstIterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, (void)++dstIter)
+				std::construct_at(std::addressof(*dstIter));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable

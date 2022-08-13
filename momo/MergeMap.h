@@ -518,7 +518,7 @@ private:
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
 		{
-			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
+			KeyValuePair::template Create<KeyValueTraits>(newItem, mMergeSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		typename MergeSet::InsertResult res = mMergeSet.template InsertCrt<decltype(itemCreator), false>(
@@ -530,7 +530,7 @@ private:
 	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
-			{ newItem->Create(mMergeSet.GetMemManager(), std::move(pairCreator)); };
+			{ std::construct_at(newItem, mMergeSet.GetMemManager(), std::move(pairCreator)); };
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
@@ -541,7 +541,7 @@ private:
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
 		{
-			newItem->template Create<KeyValueTraits>(mMergeSet.GetMemManager(),
+			KeyValuePair::template Create<KeyValueTraits>(newItem, mMergeSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(

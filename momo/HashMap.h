@@ -558,8 +558,8 @@ public:
 				{
 					auto pairRemover = [this, newItem] (Key& key, Value& value)
 					{
-						newItem->template Relocate<KeyValueTraits>(mHashSet.GetMemManager(),
-							key, value);
+						KeyValuePair::template CreateRelocate<KeyValueTraits>(
+							newItem, mHashSet.GetMemManager(), key, value);
 					};
 					extPair.Remove(pairRemover);
 				};
@@ -812,7 +812,7 @@ private:
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
 		{
-			newItem->template Create<KeyValueTraits>(mHashSet.GetMemManager(),
+			KeyValuePair::template Create<KeyValueTraits>(newItem, mHashSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
@@ -824,7 +824,7 @@ private:
 	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
-			{ newItem->Create(mHashSet.GetMemManager(), std::move(pairCreator)); };
+			{ std::construct_at(newItem, mHashSet.GetMemManager(), std::move(pairCreator)); };
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
@@ -835,7 +835,7 @@ private:
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
 		{
-			newItem->template Create<KeyValueTraits>(mHashSet.GetMemManager(),
+			KeyValuePair::template Create<KeyValueTraits>(newItem, mHashSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
