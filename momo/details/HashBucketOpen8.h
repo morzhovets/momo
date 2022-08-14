@@ -55,47 +55,51 @@ namespace internal
 		requires std::predicate<Predicate, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
-			static_assert(std::endian::native == std::endian::little);
-#ifdef MOMO_PREFETCH
-			if constexpr (first)
-				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
-#endif
-#ifdef MOMO_USE_SSE2
-			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
-			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
-				static_cast<int64_t>(BucketOpenN1::ptGetData()));
-			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
-			mask &= (1 << maxCount) - 1;
-			while (mask != 0)
-			{
-				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
-				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(std::as_const(*itemPtr))) [[likely]]
-					return itemPtr;
-				mask &= mask - 1;
-			}
-			return nullptr;
-#else
-			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
-			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ BucketOpenN1::ptGetData();
-			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0080808080808080ull;
-			while (mask != 0)
-			{
-				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
-				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(std::as_const(*itemPtr))) [[likely]]
-					return itemPtr;
-				mask &= mask - 1;
-			}
-			return nullptr;
-#endif
+			return pvFind<first>(pred, hashCode);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
 			size_t bucketCount, size_t probe) noexcept
 		{
 			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
+		}
+
+	private:
+		template<bool first, typename Predicate>
+		requires std::predicate<Predicate, const Item&>
+		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		{
+			static_assert(std::endian::native == std::endian::little);
+#ifdef MOMO_PREFETCH
+			if constexpr (first)
+				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
+#endif
+			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+#ifdef MOMO_USE_SSE2
+			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
+				static_cast<int64_t>(BucketOpenN1::ptGetData()));
+			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
+			mask &= (1 << maxCount) - 1;
+			for (; mask != 0; mask &= mask - 1)
+			{
+				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(std::as_const(*itemPtr))) [[likely]]
+					return itemPtr;
+			}
+#else
+			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ BucketOpenN1::ptGetData();
+			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0080808080808080ull;
+			for (; mask != 0; mask &= mask - 1)
+			{
+				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (pred(std::as_const(*itemPtr))) [[likely]]
+					return itemPtr;
+			}
+#endif
+			return nullptr;
 		}
 	};
 }

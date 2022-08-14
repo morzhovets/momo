@@ -97,16 +97,7 @@ namespace internal
 		requires std::predicate<Predicate, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
-			ShortHash shortHash = pvCalcShortHash(hashCode);
-			for (size_t i = 0; i < maxCount; ++i)
-			{
-				if (mHashData.shortHashes[i] == shortHash)
-				{
-					if (pred(std::as_const(*&mItems[i]))) [[likely]]
-						return Iterator(&mItems[i] + 1);
-				}
-			}
-			return Iterator();
+			return pvFind(pred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -146,37 +137,13 @@ namespace internal
 			size_t logBucketCount, size_t probe)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
-			size_t count = pvGetCount();
-			MOMO_ASSERT(count < maxCount);
-			Item* newItem = &mItems[maxCount - 1 - count];
-			std::move(itemCreator)(newItem);
-			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
-			if constexpr (useHashCodePartGetter)
-			{
-				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
-				size_t probeShift = pvGetProbeShift(logBucketCount);
-				if (probe < (size_t{1} << probeShift))
-					hashProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
-				else
-					hashProbe = emptyHashProbe;
-			}
-			++mState[1];
-			return Iterator(newItem + 1);
+			return pvAdd(std::move(itemCreator), hashCode, logBucketCount, probe);
 		}
 
 		template<conceptReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
-			size_t count = pvGetCount();
-			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
-			MOMO_ASSERT(index >= maxCount - count);
-			std::move(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
-			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
-			mHashData.shortHashes[maxCount - count] = emptyShortHash;
-			if constexpr (useHashCodePartGetter)
-				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
-			--mState[1];
-			return iter;
+			return pvRemove(iter, std::move(itemReplacer));
 		}
 
 		template<typename HashCodeFullGetter>
@@ -209,16 +176,62 @@ namespace internal
 		}
 
 	private:
-		size_t pvGetCount() const noexcept
-		{
-			return size_t{mState[1]} & 3;
-		}
-
 		void pvSetEmpty() noexcept
 		{
 			std::fill_n(mHashData.shortHashes, maxCount, ShortHash{emptyShortHash});
 			mState[0] = uint8_t{0};
 			mState[1] = uint8_t{0};
+		}
+
+		template<typename Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		{
+			ShortHash shortHash = pvCalcShortHash(hashCode);
+			for (size_t i = 0; i < maxCount; ++i)
+			{
+				if (mHashData.shortHashes[i] == shortHash)
+				{
+					if (pred(std::as_const(*&mItems[i]))) [[likely]]
+						return Iterator(&mItems[i] + 1);
+				}
+			}
+			return Iterator();
+		}
+
+		template<typename ItemCreator>
+		Iterator pvAdd(ItemCreator itemCreator, size_t hashCode, size_t logBucketCount, size_t probe)
+		{
+			size_t count = pvGetCount();
+			MOMO_ASSERT(count < maxCount);
+			Item* newItem = &mItems[maxCount - 1 - count];
+			std::move(itemCreator)(newItem);
+			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
+			if constexpr (useHashCodePartGetter)
+			{
+				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
+				size_t probeShift = pvGetProbeShift(logBucketCount);
+				if (probe < (size_t{1} << probeShift))
+					hashProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
+				else
+					hashProbe = emptyHashProbe;
+			}
+			++mState[1];
+			return Iterator(newItem + 1);
+		}
+
+		template<typename ItemReplacer>
+		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
+		{
+			size_t count = pvGetCount();
+			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
+			MOMO_ASSERT(index >= maxCount - count);
+			std::move(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
+			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
+			mHashData.shortHashes[maxCount - count] = emptyShortHash;
+			if constexpr (useHashCodePartGetter)
+				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
+			--mState[1];
+			return iter;
 		}
 
 		static ShortHash pvCalcShortHash(size_t hashCode) noexcept
@@ -229,6 +242,11 @@ namespace internal
 		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
 		{
 			return (logBucketCount + logBucketCountAddend + 1) % logBucketCountStep;
+		}
+
+		size_t pvGetCount() const noexcept
+		{
+			return size_t{mState[1]} & 3;
 		}
 
 		size_t pvGetMaxProbe() const noexcept

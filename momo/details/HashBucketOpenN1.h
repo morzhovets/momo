@@ -75,17 +75,7 @@ namespace internal
 		requires std::predicate<Predicate, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
-			Byte shortHash = ptCalcShortHash(hashCode);
-			const Byte* thisShortHashes = pvGetShortHashes();
-			for (size_t i = 0; i < maxCount; ++i)
-			{
-				if (thisShortHashes[i] == shortHash)
-				{
-					if (pred(std::as_const(*&mItems[i]))) [[likely]]
-						return pvMakeIterator(&mItems[i]);
-				}
-			}
-			return Iterator();
+			return pvFind(pred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -126,30 +116,13 @@ namespace internal
 			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
-			size_t count = pvGetCount();
-			MOMO_ASSERT(count < maxCount);
-			Item* newItem = ptGetItemPtr(count);
-			std::move(itemCreator)(newItem);
-			pvGetShortHash(count) = ptCalcShortHash(hashCode);
-			if (count + 1 < maxCount)
-				++pvGetState();
-			return pvMakeIterator(newItem);
+			return pvAdd(std::move(itemCreator), hashCode);
 		}
 
 		template<conceptReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
-			size_t count = pvGetCount();
-			size_t index = internal::UIntMath<>::Dist(pvMakeIterator(ptGetItemPtr(0)), iter);
-			MOMO_ASSERT(index < count);
-			std::move(itemReplacer)(*ptGetItemPtr(count - 1), *ptGetItemPtr(index));
-			pvGetShortHash(index) = pvGetShortHash(count - 1);
-			pvGetShortHash(count - 1) = emptyShortHash;
-			if (count < maxCount)
-				--pvGetState();
-			else
-				pvGetState() = emptyShortHash + static_cast<Byte>(maxCount) - 1;
-			return iter;
+			return pvRemove(iter, std::move(itemReplacer));
 		}
 
 	protected:
@@ -170,6 +143,58 @@ namespace internal
 		}
 
 	private:
+		void pvSetEmpty() noexcept
+		{
+			mData = Data();
+			std::fill_n(pvGetShortHashes(), maxCount, Byte{emptyShortHash});
+			pvGetMaxProbeExp() = Byte{0};
+		}
+
+		template<typename Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		{
+			Byte shortHash = ptCalcShortHash(hashCode);
+			const Byte* thisShortHashes = pvGetShortHashes();
+			for (size_t i = 0; i < maxCount; ++i)
+			{
+				if (thisShortHashes[i] == shortHash)
+				{
+					if (pred(std::as_const(*&mItems[i]))) [[likely]]
+						return pvMakeIterator(&mItems[i]);
+				}
+			}
+			return Iterator();
+		}
+
+		template<typename ItemCreator>
+		Iterator pvAdd(ItemCreator itemCreator, size_t hashCode)
+		{
+			size_t count = pvGetCount();
+			MOMO_ASSERT(count < maxCount);
+			Item* newItem = ptGetItemPtr(count);
+			std::move(itemCreator)(newItem);
+			pvGetShortHash(count) = ptCalcShortHash(hashCode);
+			if (count + 1 < maxCount)
+				++pvGetState();
+			return pvMakeIterator(newItem);
+		}
+
+		template<typename ItemReplacer>
+		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
+		{
+			size_t count = pvGetCount();
+			size_t index = internal::UIntMath<>::Dist(pvMakeIterator(ptGetItemPtr(0)), iter);
+			MOMO_ASSERT(index < count);
+			std::move(itemReplacer)(*ptGetItemPtr(count - 1), *ptGetItemPtr(index));
+			pvGetShortHash(index) = pvGetShortHash(count - 1);
+			pvGetShortHash(count - 1) = emptyShortHash;
+			if (count < maxCount)
+				--pvGetState();
+			else
+				pvGetState() = emptyShortHash + static_cast<Byte>(maxCount) - 1;
+			return iter;
+		}
+
 		Byte pvGetState() const noexcept
 		{
 			return *pvGetBytePtr(reverse ? 0 : maxCount - 1);
@@ -219,13 +244,6 @@ namespace internal
 		{
 			Byte state = pvGetState();
 			return (state >= emptyShortHash) ? size_t{state} - size_t{emptyShortHash} : maxCount;
-		}
-
-		void pvSetEmpty() noexcept
-		{
-			mData = Data();
-			std::fill_n(pvGetShortHashes(), maxCount, Byte{emptyShortHash});
-			pvGetMaxProbeExp() = Byte{0};
 		}
 
 		static size_t pvGetMaxProbe(Byte maxProbeExp) noexcept

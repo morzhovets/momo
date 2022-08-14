@@ -270,17 +270,7 @@ namespace internal
 		requires std::predicate<Predicate, const Item&>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
-			uint8_t shortHash = pvCalcShortHash(hashCode);
-			for (size_t i = 0; i < maxCount; ++i)
-			{
-				if (mShortHashes[i] == shortHash)
-				{
-					Item* items = mPtrState.GetPointer();
-					if (pred(std::as_const(items[i]))) [[likely]]
-						return items + i;
-				}
-			}
-			return nullptr;
+			return pvFind(pred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -418,6 +408,22 @@ namespace internal
 		{
 			std::fill_n(mShortHashes, hashCount, uint8_t{emptyHashProbe});
 			pvSetPtrState(nullptr, memPoolIndex);
+		}
+
+		template<typename Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		{
+			uint8_t shortHash = pvCalcShortHash(hashCode);
+			for (size_t i = 0; i < maxCount; ++i)
+			{
+				if (mShortHashes[i] == shortHash)
+				{
+					Item* items = mPtrState.GetPointer();
+					if (pred(std::as_const(items[i]))) [[likely]]
+						return items + i;
+				}
+			}
+			return nullptr;
 		}
 
 		void pvSetPtrState(Item* items, size_t memPoolIndex) noexcept
