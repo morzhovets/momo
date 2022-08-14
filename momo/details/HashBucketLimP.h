@@ -115,10 +115,7 @@ namespace internal
 
 		BucketLimP(const BucketLimP&) = delete;
 
-		~BucketLimP() noexcept
-		{
-			MOMO_ASSERT(pvIsEmpty());
-		}
+		~BucketLimP() noexcept = default;
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 
@@ -385,10 +382,7 @@ namespace internal
 
 		BucketLimP(const BucketLimP&) = delete;
 
-		~BucketLimP() noexcept
-		{
-			MOMO_ASSERT(pvIsEmpty());
-		}
+		~BucketLimP() noexcept = default;
 
 		BucketLimP& operator=(const BucketLimP&) = delete;
 

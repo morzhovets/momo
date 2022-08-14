@@ -224,10 +224,7 @@ namespace internal
 			}
 		}
 
-		~ArrayBucket() noexcept
-		{
-			MOMO_ASSERT(mPtr == nullptr);
-		}
+		~ArrayBucket() noexcept = default;
 
 		ArrayBucket& operator=(ArrayBucket&& bucket) noexcept
 		{

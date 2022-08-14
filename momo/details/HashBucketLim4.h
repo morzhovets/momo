@@ -120,10 +120,7 @@ namespace internal
 
 		BucketLim4(const BucketLim4&) = delete;
 
-		~BucketLim4() noexcept
-		{
-			MOMO_ASSERT(pvIsEmpty());
-		}
+		~BucketLim4() noexcept = default;
 
 		BucketLim4& operator=(const BucketLim4&) = delete;
 

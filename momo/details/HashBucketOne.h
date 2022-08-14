@@ -58,10 +58,7 @@ namespace internal
 
 		BucketOne(const BucketOne&) = delete;
 
-		~BucketOne() noexcept
-		{
-			MOMO_ASSERT(!IsFull());
-		}
+		~BucketOne() noexcept = default;
 
 		BucketOne& operator=(const BucketOne&) = delete;
 

@@ -112,10 +112,7 @@ namespace internal
 
 		BucketLimP1(const BucketLimP1&) = delete;
 
-		~BucketLimP1() noexcept
-		{
-			MOMO_ASSERT(pvGetItems() == nullptr);
-		}
+		~BucketLimP1() noexcept = default;
 
 		BucketLimP1& operator=(const BucketLimP1&) = delete;
 

@@ -26,6 +26,7 @@ namespace momo
 namespace internal
 {
 	template<typename TBucket>
+	requires (std::is_trivially_destructible_v<TBucket>)
 	class HashSetBuckets
 	{
 	public:
@@ -56,17 +57,15 @@ namespace internal
 				memManager, bufferSize);
 			::new(static_cast<void*>(resBuckets)) HashSetBuckets(logBucketCount);
 			Bucket* buckets = resBuckets->pvGetBuckets();
-			size_t bucketIndex = 0;
 			try
 			{
-				for (; bucketIndex < bucketCount; ++bucketIndex)
-					std::construct_at(buckets + bucketIndex);
+				for (size_t i = 0; i < bucketCount; ++i)
+					std::construct_at(buckets + i);
 				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
 					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
 			}
 			catch (...)
 			{
-				std::destroy_n(buckets, bucketIndex);
 				resBuckets->~HashSetBuckets();
 				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
 				throw;
@@ -77,9 +76,6 @@ namespace internal
 		void Destroy(MemManager& memManager, bool destroyBucketParams) noexcept
 		{
 			MOMO_ASSERT(mNextBuckets == nullptr);
-			size_t bucketCount = GetCount();
-			Bucket* buckets = pvGetBuckets();
-			std::destroy_n(buckets, bucketCount);
 			if (destroyBucketParams)
 			{
 				mBucketParams->Clear();

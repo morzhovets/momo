@@ -84,10 +84,7 @@ namespace internal
 
 		BucketOpen2N2(const BucketOpen2N2&) = delete;
 
-		~BucketOpen2N2() noexcept
-		{
-			MOMO_ASSERT(pvGetCount() == 0);
-		}
+		~BucketOpen2N2() noexcept = default;
 
 		BucketOpen2N2& operator=(const BucketOpen2N2&) = delete;
 

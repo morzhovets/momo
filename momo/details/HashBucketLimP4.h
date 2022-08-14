@@ -257,10 +257,7 @@ namespace internal
 
 		BucketLimP4(const BucketLimP4&) = delete;
 
-		~BucketLimP4() noexcept
-		{
-			MOMO_ASSERT(mPtrState.GetPointer() == nullptr);
-		}
+		~BucketLimP4() noexcept = default;
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
