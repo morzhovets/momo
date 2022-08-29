@@ -190,7 +190,8 @@ public:
 	{
 	}
 
-	unordered_set(unordered_set&& right, const allocator_type& alloc)
+	unordered_set(unordered_set&& right,
+		const momo::internal::EnableIf<true, allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
 		: mHashSet(pvCreateSet(std::move(right), alloc))
 	{
@@ -201,7 +202,8 @@ public:
 	{
 	}
 
-	unordered_set(const unordered_set& right, const allocator_type& alloc)
+	unordered_set(const unordered_set& right,
+		const momo::internal::EnableIf<true, allocator_type>& alloc)
 		: mHashSet(right.mHashSet, MemManager(alloc))
 	{
 	}

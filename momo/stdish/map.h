@@ -171,7 +171,7 @@ namespace internal
 		{
 		}
 
-		map_base(map_base&& right, const allocator_type& alloc)
+		map_base(map_base&& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
 			noexcept(std::is_empty<allocator_type>::value)
 			: mTreeMap(pvCreateMap(std::move(right), alloc))
 		{
@@ -182,7 +182,7 @@ namespace internal
 		{
 		}
 
-		map_base(const map_base& right, const allocator_type& alloc)
+		map_base(const map_base& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
 			: mTreeMap(right.mTreeMap, MemManager(alloc))
 		{
 		}

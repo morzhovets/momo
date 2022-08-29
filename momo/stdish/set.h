@@ -150,7 +150,7 @@ public:
 	{
 	}
 
-	set(set&& right, const allocator_type& alloc)
+	set(set&& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
 		: mTreeSet(pvCreateSet(std::move(right), alloc))
 	{
@@ -161,7 +161,7 @@ public:
 	{
 	}
 
-	set(const set& right, const allocator_type& alloc)
+	set(const set& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
 		: mTreeSet(right.mTreeSet, MemManager(alloc))
 	{
 	}
