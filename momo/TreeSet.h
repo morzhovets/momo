@@ -1091,18 +1091,20 @@ private:
 	template<typename Predicate>
 	size_t pvFindFirst(Node* node, const Predicate& pred) const
 	{
-		size_t leftIndex = 0;
-		size_t rightIndex = node->GetCount();
 		if (TreeTraits::useLinearSearch)
 		{
-			for (; leftIndex < rightIndex; ++leftIndex)
-			{
-				if (pred(*node->GetItemPtr(leftIndex)))
-					break;
-			}
+			size_t itemCount = node->GetCount();
+			if (itemCount == 0 || !pred(*node->GetItemPtr(itemCount - 1)))
+				return itemCount;
+			size_t index = 0;
+			while (!pred(*node->GetItemPtr(index)))
+				++index;
+			return index;
 		}
 		else
 		{
+			size_t leftIndex = 0;
+			size_t rightIndex = node->GetCount();
 			while (leftIndex < rightIndex)
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
@@ -1111,8 +1113,8 @@ private:
 				else
 					leftIndex = middleIndex + 1;
 			}
+			return leftIndex;
 		}
-		return leftIndex;
 	}
 
 	template<typename KeyArg>
