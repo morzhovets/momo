@@ -348,6 +348,15 @@ public:
 	template<typename ItemTraits>
 	using Node = internal::Node<ItemTraits, maxCapacity, capacityStep, MemPoolParams,
 		isContinuous && ItemTraits::isNothrowShiftable>;
+
+public:
+	static size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) noexcept
+	{
+		size_t splitItemIndex = itemCount / 2;
+		if (itemCount % 2 == 0 && splitItemIndex > newItemIndex)
+			--splitItemIndex;
+		return splitItemIndex;
+	}
 };
 
 } // namespace momo
