@@ -1045,7 +1045,7 @@ private:
 	}
 
 	template<typename Predicate>
-	Iterator pvFindFirst(const Predicate& pred) const
+	Iterator pvFindFirst(Predicate pred) const
 	{
 		if (mRootNode == nullptr)
 			return Iterator();
@@ -1064,7 +1064,7 @@ private:
 	}
 
 	template<typename Predicate>
-	size_t pvFindFirst(Node* node, const Predicate& pred) const
+	size_t pvFindFirst(Node* node, Predicate pred) const
 	{
 		if constexpr (TreeTraits::useLinearSearch)
 		{
