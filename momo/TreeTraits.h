@@ -66,6 +66,11 @@ public:
 public:
 	explicit TreeTraits() noexcept = default;
 
+	size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) const noexcept
+	{
+		return TreeNode::GetSplitItemIndex(itemCount, newItemIndex);
+	}
+
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 		requires requires { { key1 < key2 } -> std::convertible_to<bool>; }
@@ -98,6 +103,11 @@ public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
 		: mLessFunc(lessFunc)
 	{
+	}
+
+	size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) const noexcept
+	{
+		return TreeNode::GetSplitItemIndex(itemCount, newItemIndex);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>

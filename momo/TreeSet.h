@@ -377,9 +377,9 @@ private:
 			return newNode;
 		}
 
-		SplitResult SplitNode(Node* node, size_t newItemIndex)
+		SplitResult SplitNode(const TreeTraits& treeTraits, Node* node, size_t newItemIndex)
 		{
-			SplitResult splitRes = pvSplitNode(node, newItemIndex);
+			SplitResult splitRes = pvSplitNode(treeTraits, node, newItemIndex);
 			if (!node->IsLeaf())
 			{
 				size_t itemCount = node->GetCount();
@@ -431,12 +431,12 @@ private:
 			return res;
 		}
 
-		SplitResult pvSplitNode(Node* node, size_t newItemIndex)
+		SplitResult pvSplitNode(const TreeTraits& treeTraits, Node* node, size_t newItemIndex)
 		{
 			bool isLeaf = node->IsLeaf();
 			mOldNodes.AddBack(node);
 			size_t itemCount = node->GetCount();
-			size_t splitIndex = TreeNode::GetSplitItemIndex(itemCount, newItemIndex);
+			size_t splitIndex = treeTraits.GetSplitItemIndex(itemCount, newItemIndex);
 			MOMO_ASSERT(splitIndex < itemCount);
 			if (newItemIndex <= splitIndex)
 			{
@@ -1212,9 +1212,10 @@ private:
 	void pvAddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		ItemCreator itemCreator)
 	{
+		const TreeTraits& treeTraits = GetTreeTraits();
 		Node* node = leafNode;
 		size_t itemIndex = leafItemIndex;
-		typename Relocator::SplitResult splitRes = relocator.SplitNode(node, itemIndex);
+		typename Relocator::SplitResult splitRes = relocator.SplitNode(treeTraits, node, itemIndex);
 		leafNode = splitRes.newNode;
 		leafItemIndex = splitRes.newItemIndex;
 		while (true)
@@ -1238,7 +1239,7 @@ private:
 			}
 			Node* childNewNode1 = splitRes.newNode1;
 			Node* childNewNode2 = splitRes.newNode2;
-			splitRes = relocator.SplitNode(node, itemIndex);
+			splitRes = relocator.SplitNode(treeTraits, node, itemIndex);
 			relocator.AddSegment(childNode, childSplitIndex,
 				splitRes.newNode, splitRes.newItemIndex, 1);
 			splitRes.newNode->SetChild(splitRes.newItemIndex, childNewNode1);
