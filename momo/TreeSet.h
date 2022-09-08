@@ -269,7 +269,7 @@ private:
 
 	typedef typename Node::Params NodeParams;
 
-	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
+	static const size_t nodeMaxCapacity = Node::maxCapacity;
 	static_assert(nodeMaxCapacity > 0);
 
 public:

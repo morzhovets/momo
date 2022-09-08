@@ -33,12 +33,13 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCapacity = tMaxCapacity;
 		static const size_t capacityStep = tCapacityStep;
 
 		static const bool isContinuous = tIsContinuous;
 
 	public:
+		static const size_t maxCapacity = tMaxCapacity;
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
