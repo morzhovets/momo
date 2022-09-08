@@ -43,6 +43,7 @@ concept conceptTreeTraits =
 		typename std::bool_constant<TreeTraits::multiKey>;
 		typename std::bool_constant<TreeTraits::useLinearSearch>;
 		typename std::bool_constant<TreeTraits::template IsValidKeyArg<Key>::value>;
+		{ treeTraits.GetSplitItemIndex(size_t{}, size_t{}) } -> std::same_as<size_t>;
 		{ treeTraits.IsLess(key, key) } -> std::same_as<bool>;
 	};
 
