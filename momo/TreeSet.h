@@ -264,8 +264,7 @@ private:
 
 	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
-	typedef typename TreeTraits::TreeNode TreeNode;
-	typedef typename TreeNode::template Node<NodeItemTraits> Node;
+	typedef typename TreeTraits::template Node<NodeItemTraits> Node;
 
 	typedef typename Node::Params NodeParams;
 

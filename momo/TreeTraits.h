@@ -40,7 +40,6 @@ concept conceptTreeTraits =
 	std::copy_constructible<TreeTraits> &&
 	requires (const TreeTraits& treeTraits, const Key& key)
 	{
-		typename TreeTraits::TreeNode;
 		typename std::bool_constant<TreeTraits::multiKey>;
 		typename std::bool_constant<TreeTraits::useLinearSearch>;
 		typename std::bool_constant<TreeTraits::template IsValidKeyArg<Key>::value>;
@@ -59,6 +58,9 @@ public:
 
 	static const bool multiKey = tMultiKey;
 	static const bool useLinearSearch = tUseLinearSearch;
+
+	template<typename ItemTraits>
+	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::bool_constant<internal::conceptTreeTraitsValidKeyArg<Key, KeyArg>>;
@@ -95,6 +97,9 @@ public:
 
 	static const bool useLinearSearch = IsFastComparable<Key>::value
 		&& (std::is_same_v<LessFunc, std::less<Key>> || std::is_same_v<LessFunc, std::less<>>);
+
+	template<typename ItemTraits>
+	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessFunc>>;
