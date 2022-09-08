@@ -65,7 +65,6 @@ concept conceptHashTraits =
 	std::copy_constructible<HashTraits> &&
 	requires (const HashTraits& hashTraits, const Key& key)
 	{
-		typename HashTraits::HashBucket;
 		typename std::bool_constant<HashTraits::template IsValidKeyArg<Key>::value>;
 		typename std::bool_constant<HashTraits::isFastNothrowHashable>;
 		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::same_as<size_t>;
@@ -86,11 +85,14 @@ public:
 	typedef THashBucket HashBucket;
 	typedef TKeyArgBase KeyArgBase;
 
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
+
+	template<typename ItemTraits>
+	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+
 	template<typename KeyArg>
 	using IsValidKeyArg = std::conditional_t<std::is_same_v<KeyArgBase, Key>,
 		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>;	//?
-
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
 
 public:
 	explicit HashTraits() noexcept = default;
@@ -143,12 +145,15 @@ public:
 	typedef TEqualFunc EqualFunc;
 	typedef THashBucket HashBucket;
 
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value &&
+		(std::is_same_v<HashFunc, HashCoder<Key>> || std::is_same_v<HashFunc, std::hash<Key>>);
+
+	template<typename ItemTraits>
+	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+
 	template<typename KeyArg>
 	using IsValidKeyArg = std::bool_constant<
 		internal::conceptTransparent<HashFunc> && internal::conceptTransparent<EqualFunc>>;
-
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value &&
-		(std::is_same_v<HashFunc, HashCoder<Key>> || std::is_same_v<HashFunc, std::hash<Key>>);
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
