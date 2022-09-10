@@ -79,6 +79,11 @@ public:
 	{
 	}
 
+	size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) const noexcept
+	{
+		return TreeNode::GetSplitItemIndex(itemCount, newItemIndex);
+	}
+
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
@@ -115,6 +120,11 @@ public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
 		: LessFunc(lessFunc)
 	{
+	}
+
+	size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) const noexcept
+	{
+		return TreeNode::GetSplitItemIndex(itemCount, newItemIndex);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
