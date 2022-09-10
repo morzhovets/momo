@@ -314,7 +314,7 @@ private:
 
 	typedef typename Node::Params NodeParams;
 
-	static const size_t nodeMaxCapacity = TreeNode::maxCapacity;
+	static const size_t nodeMaxCapacity = Node::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
 public:

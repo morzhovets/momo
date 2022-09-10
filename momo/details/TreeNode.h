@@ -29,9 +29,6 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t maxCapacity = tMaxCapacity;
-		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
-
 		static const size_t capacityStep = tCapacityStep;
 		MOMO_STATIC_ASSERT(capacityStep > 0);
 
@@ -39,6 +36,9 @@ namespace internal
 		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
 
 	public:
+		static const size_t maxCapacity = tMaxCapacity;
+		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
+
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
