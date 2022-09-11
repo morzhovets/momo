@@ -289,6 +289,10 @@ public:
 					assert(map.Insert(Key(c), Value(c)).inserted);
 					assert(map.GetCount() == smap.size());
 					assert(std::equal(map.GetBegin(), map.GetEnd(), smap.begin(), isEqual));
+
+					TreeMap mapCopy = map;
+					assert(mapCopy.GetCount() == smap.size());
+					assert(std::equal(mapCopy.GetBegin(), mapCopy.GetEnd(), smap.begin(), isEqual));
 				}
 
 				if (t < 2)
