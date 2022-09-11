@@ -565,16 +565,21 @@ public:
 	explicit TreeSet(const TreeSet& treeSet, MemManager memManager)
 		: TreeSet(treeSet.GetTreeTraits(), std::move(memManager))
 	{
+		mCount = treeSet.mCount;
+		if (mCount == 0)
+			return;
+		mNodeParams = pvCreateNodeParams();
 		try
 		{
-			for (const Item& item : treeSet)
-				Add(GetEnd(), item);
+			mRootNode = pvCopy(treeSet.mRootNode);
 		}
 		catch (...)
 		{
 			pvDestroy();
 			throw;
 		}
+		if (!mRootNode->IsLeaf())
+			pvUpdateParents(mRootNode);
 	}
 
 	~TreeSet() noexcept
@@ -1025,6 +1030,83 @@ private:
 		}
 	}
 
+	void pvDestroy(Node* node) noexcept
+	{
+		MemManager& memManager = GetMemManager();
+		size_t itemCount = node->GetCount();
+		for (size_t i = 0; i < itemCount; ++i)
+			ItemTraits::Destroy(&memManager, *node->GetItemPtr(i));
+		if (!node->IsLeaf())
+		{
+			for (size_t i = 0; i <= itemCount; ++i)
+				pvDestroy(node->GetChild(i));
+		}
+		node->Destroy(*mNodeParams);
+	}
+
+	Node* pvCopy(Node* srcNode)
+	{
+		MemManager& memManager = GetMemManager();
+		size_t itemCount = srcNode->GetCount();
+		bool isLeaf = srcNode->IsLeaf();
+		Node* dstNode = Node::Create(*mNodeParams, isLeaf, itemCount);
+		size_t itemIndex = 0;
+		size_t childIndex = 0;
+		try
+		{
+			for (; itemIndex < itemCount; ++itemIndex)
+			{
+				Creator<const Item&>(memManager, *srcNode->GetItemPtr(itemIndex))(
+					dstNode->GetItemPtr(itemIndex));
+			}
+			if (!isLeaf)
+			{
+				for (; childIndex <= itemCount; ++childIndex)
+					dstNode->SetChild(childIndex, pvCopy(srcNode->GetChild(childIndex)));
+			}
+		}
+		catch (...)
+		{
+			for (size_t i = 0; i < itemIndex; ++i)
+				ItemTraits::Destroy(&memManager, *dstNode->GetItemPtr(i));
+			for (size_t i = 0; i < childIndex; ++i)
+				pvDestroy(dstNode->GetChild(i));
+			dstNode->Destroy(*mNodeParams);
+			throw;
+		}
+		return dstNode;
+	}
+
+	void pvUpdateParents(Node* node) noexcept
+	{
+		MOMO_ASSERT(!node->IsLeaf());
+		size_t itemCount = node->GetCount();
+		for (size_t i = 0; i <= itemCount; ++i)
+		{
+			Node* childNode = node->GetChild(i);
+			childNode->SetParent(node);
+			if (!childNode->IsLeaf())
+				pvUpdateParents(childNode);
+		}
+	}
+
+	NodeParams* pvCreateNodeParams()
+	{
+		MemManager& memManager = GetMemManager();
+		NodeParams* nodeParams = MemManagerProxy::template Allocate<NodeParams>(
+			memManager, sizeof(NodeParams));
+		try
+		{
+			::new(static_cast<void*>(nodeParams)) NodeParams(memManager);
+		}
+		catch (...)
+		{
+			MemManagerProxy::Deallocate(memManager, nodeParams, sizeof(NodeParams));
+			throw;
+		}
+		return nodeParams;
+	}
+
 	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
 	{
 		return ConstIteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
@@ -1150,19 +1232,6 @@ private:
 		return count;
 	}
 
-	void pvDestroy(Node* node) noexcept
-	{
-		size_t count = node->GetCount();
-		for (size_t i = 0; i < count; ++i)
-			ItemTraits::Destroy(&GetMemManager(), *node->GetItemPtr(i));
-		if (!node->IsLeaf())
-		{
-			for (size_t i = 0; i <= count; ++i)
-				pvDestroy(node->GetChild(i));
-		}
-		node->Destroy(*mNodeParams);
-	}
-
 	template<bool extraCheck, typename ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
@@ -1219,21 +1288,7 @@ private:
 		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)
-		{
-			MemManager& memManager = GetMemManager();
-			mNodeParams = MemManagerProxy::template Allocate<NodeParams>(memManager,
-				sizeof(NodeParams));
-			try
-			{
-				::new(static_cast<void*>(mNodeParams)) NodeParams(memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, mNodeParams, sizeof(NodeParams));
-				mNodeParams = nullptr;
-				throw;
-			}
-		}
+			mNodeParams = pvCreateNodeParams();
 		mRootNode = Node::Create(*mNodeParams, true, 0);
 		try
 		{
@@ -1307,18 +1362,6 @@ private:
 		node->SetChild(itemIndex, splitRes.newNode1);
 		node->SetChild(itemIndex + 1, splitRes.newNode2);
 		pvUpdateParents(node);	//?
-	}
-
-	void pvUpdateParents(Node* node) noexcept
-	{
-		size_t count = node->GetCount();
-		for (size_t i = 0; i <= count; ++i)
-		{
-			Node* childNode = node->GetChild(i);
-			childNode->SetParent(node);
-			if (!childNode->IsLeaf())
-				pvUpdateParents(childNode);
-		}
 	}
 
 	template<typename ItemReplacer1, typename ItemReplacer2>
