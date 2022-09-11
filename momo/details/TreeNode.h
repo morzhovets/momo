@@ -20,12 +20,12 @@ namespace momo
 
 namespace internal
 {
-	template<size_t maxCapacity, size_t capacityStep>
-	concept conceptNodeCapacity = (0 < maxCapacity && maxCapacity < 256 && capacityStep > 0);
+	template<size_t maxCapacity>
+	concept conceptNodeCapacity = (0 < maxCapacity && maxCapacity < 256);
 
 	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
 		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tIsContinuous>
-	requires conceptNodeCapacity<tMaxCapacity, tCapacityStep> &&
+	requires conceptNodeCapacity<tMaxCapacity> &&
 		(!tIsContinuous || TItemTraits::isNothrowShiftable)
 	class Node
 	{
@@ -33,7 +33,7 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t capacityStep = tCapacityStep;
+		static const size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
 
 		static const bool isContinuous = tIsContinuous;
 
@@ -336,7 +336,7 @@ template<size_t tMaxCapacity = 32,
 	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams
 		= MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
 	bool tIsContinuous = true>
-requires internal::conceptNodeCapacity<tMaxCapacity, tCapacityStep>
+requires internal::conceptNodeCapacity<tMaxCapacity>
 class TreeNode
 {
 public:

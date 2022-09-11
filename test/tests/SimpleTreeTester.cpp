@@ -224,7 +224,7 @@ public:
 		TestTemplTreeNode< 88,  31,   1, 3, 3>(mt);
 		TestTemplTreeNode<104,  33,   3, 3, 3>(mt);
 		TestTemplTreeNode<204, 100,   2, 3, 3>(mt);
-		TestTemplTreeNode<255, 127,   1, 3, 3>(mt);
+		TestTemplTreeNode<255,   0,   1, 3, 3>(mt);
 	}
 
 	template<size_t maxCapacity, size_t capacityStep, size_t memPoolBlockCount,
