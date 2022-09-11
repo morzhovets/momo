@@ -29,8 +29,7 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t capacityStep = tCapacityStep;
-		MOMO_STATIC_ASSERT(capacityStep > 0);
+		static const size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
 
 		static const bool isContinuous = tIsContinuous;
 		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
