@@ -20,15 +20,11 @@ jobs:
           build_type: 'Release'
           flags: '-Werror -msse2'
 
-        - clang_ver: '15'
-          build_type: 'Release'
-          flags: '-Werror -msse2'
-
-        - clang_ver: '15'
+        - clang_ver: '14'
           build_type: 'Release'
           flags: '-Werror -fsized-deallocation -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
 
-        - clang_ver: '15'
+        - clang_ver: '14'
           build_type: 'Debug'
           flags: '-Werror -msse2 -fsanitize=address,undefined'
 
