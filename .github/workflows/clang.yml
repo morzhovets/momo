@@ -10,23 +10,27 @@ jobs:
 
         - clang_ver: '12'
           build_type: 'Release'
-          flags: '-msse2'
+          flags: '-Werror -msse2'
 
         - clang_ver: '13'
           build_type: 'Release'
-          flags: '-msse2'
+          flags: '-Werror -msse2'
 
         - clang_ver: '14'
           build_type: 'Release'
-          flags: '-msse2'
+          flags: '-Werror -msse2'
 
-        - clang_ver: '14'
+        - clang_ver: '15'
           build_type: 'Release'
-          flags: '-fsized-deallocation -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+          flags: '-Werror -msse2'
 
-        - clang_ver: '14'
+        - clang_ver: '15'
+          build_type: 'Release'
+          flags: '-Werror -fsized-deallocation -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+
+        - clang_ver: '15'
           build_type: 'Debug'
-          flags: '-msse2 -fsanitize=address,undefined'
+          flags: '-Werror -msse2 -fsanitize=address,undefined'
 
     runs-on: ubuntu-22.04
 
