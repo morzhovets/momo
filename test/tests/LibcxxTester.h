@@ -35,6 +35,7 @@
 #include "libcxx/support/is_transparent.h"
 #include "libcxx/support/test_macros.h"
 #include "libcxx/support/test_transparent_unordered.h"
+#include "libcxx/support/test_comparisons.h"
 //#include "libcxx/support/min_allocator.h"
 
 struct LibcppIntHash

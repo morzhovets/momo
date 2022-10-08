@@ -12,7 +12,10 @@
 
 #define TEST_IS_CONSTANT_EVALUATED std::is_constant_evaluated()
 
-#define TEST_CONSTEXPR_CXX20 constexpr
+#define TEST_CONSTEXPR_CXX14 //constexpr
+#define TEST_CONSTEXPR_CXX20 //constexpr
+
+#define TEST_NODISCARD [[nodiscard]]
 
 #define TEST_IGNORE_NODISCARD (void)
 

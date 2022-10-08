@@ -20,6 +20,10 @@ LIBCXX_TEST_BEGIN(asan_throw)
 LIBCXX_TEST_END
 #endif
 
+LIBCXX_TEST_BEGIN(compare)
+#include "libcxx/vector/compare.pass.cpp"
+LIBCXX_TEST_END
+
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(contiguous)
 #include "libcxx/vector/contiguous.pass.cpp"
@@ -81,6 +85,10 @@ LIBCXX_TEST_BEGIN(db_iterators_8)
 LIBCXX_TEST_END
 
 #endif
+
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "libcxx/vector/get_allocator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "libcxx/vector/iterators.pass.cpp"
