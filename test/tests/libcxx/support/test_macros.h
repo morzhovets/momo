@@ -10,6 +10,12 @@
 #ifndef SUPPORT_TEST_MACROS_HPP
 #define SUPPORT_TEST_MACROS_HPP
 
+#define TEST_IS_CONSTANT_EVALUATED std::is_constant_evaluated()
+
+#define TEST_CONSTEXPR_CXX20 constexpr
+
+#define TEST_IGNORE_NODISCARD (void)
+
 namespace test_macros_detail {
 template <class T, class U>
 struct is_same { enum { value = 0};} ;
