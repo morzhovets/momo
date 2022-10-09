@@ -345,7 +345,7 @@ namespace std
 	};
 
 	template<typename A, typename I>
-	requires requires { { A().GetItems() }; }
+	requires requires (A& a) { { a.GetItems() }; }
 	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
 			random_access_iterator_tag, contiguous_iterator_tag>
