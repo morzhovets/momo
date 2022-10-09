@@ -40,14 +40,14 @@ template <class Vector>
 TEST_CONSTEXPR_CXX20 void test_get_basic(Vector& c, int start_value) {
     const int n = static_cast<int>(c.size());
     for (int i = 0; i < n; ++i)
-        assert(c[i] == start_value + i);
+        assert(c[static_cast<size_t>(i)] == start_value + i);
     for (int i = 0; i < n; ++i)
-        assert(c.at(i) == start_value + i);
+        assert(c.at(static_cast<size_t>(i)) == start_value + i);
 
 #ifndef TEST_HAS_NO_EXCEPTIONS
     if (!TEST_IS_CONSTANT_EVALUATED) {
         try {
-            TEST_IGNORE_NODISCARD c.at(n);
+            TEST_IGNORE_NODISCARD c.at(static_cast<size_t>(n));
             assert(false);
         } catch (const std::out_of_range&) {}
     }
@@ -73,14 +73,14 @@ TEST_CONSTEXPR_CXX20 void test_set() {
     Vector c = make<Vector>(n, start_value);
 
     for (int i = 0; i < n; ++i) {
-        assert(c[i] == start_value + i);
-        c[i] = start_value + i + 1;
-        assert(c[i] == start_value + i + 1);
+        assert(c[static_cast<size_t>(i)] == start_value + i);
+        c[static_cast<size_t>(i)] = start_value + i + 1;
+        assert(c[static_cast<size_t>(i)] == start_value + i + 1);
     }
     for (int i = 0; i < n; ++i) {
-        assert(c.at(i) == start_value + i + 1);
-        c.at(i) = start_value + i + 2;
-        assert(c.at(i) == start_value + i + 2);
+        assert(c.at(static_cast<size_t>(i)) == start_value + i + 1);
+        c.at(static_cast<size_t>(i)) = start_value + i + 2;
+        assert(c.at(static_cast<size_t>(i)) == start_value + i + 2);
     }
 
     assert(c.front() == start_value + 2);
