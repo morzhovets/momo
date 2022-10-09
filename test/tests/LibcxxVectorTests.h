@@ -153,7 +153,7 @@ LIBCXX_TEST_BEGIN(size)
 LIBCXX_TEST_END
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-LIBCXX_TEST_BEGIN(assign_copy_addressof)
+LIBCXX_TEST_BEGIN(cons_assign_copy_addressof)
 #include "libcxx/vector/vector.cons/assign_copy.addressof.compile.pass.cpp"
 LIBCXX_TEST_END
 #endif
@@ -164,6 +164,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_initializer_list)
 #include "libcxx/vector/vector.cons/assign_initializer_list.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cons_assign_move_addressof)
+#include "libcxx/vector/vector.cons/assign_move.addressof.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_move)
