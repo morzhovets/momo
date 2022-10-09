@@ -508,10 +508,12 @@ namespace internal
 		bool mInvoked;
 	};
 
-	template<typename Iterator, typename IteratorCategory>
+	template<typename Iterator, typename IteratorCategory,
+		typename IteratorConcept = IteratorCategory>
 	struct IteratorTraitsStd
 	{
 		typedef IteratorCategory iterator_category;
+		typedef IteratorConcept iterator_concept;
 		typedef ptrdiff_t difference_type;
 		typedef typename Iterator::Pointer pointer;
 		typedef typename Iterator::Reference reference;
