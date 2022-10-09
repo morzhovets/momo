@@ -90,25 +90,17 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "libcxx/vector/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(iterator_concept_conformance)
 #include "libcxx/vector/iterator_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
-#endif
-#endif
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "libcxx/vector/iterators.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(range_concept_conformance)
 #include "libcxx/vector/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
-#endif
-#endif
 
 LIBCXX_TEST_BEGIN(reverse_iterators)
 #include "libcxx/vector/reverse_iterators.pass.cpp"

@@ -20,7 +20,9 @@ using reverse_iterator = vector<int>::reverse_iterator;
 using const_reverse_iterator = vector<int>::const_reverse_iterator;
 using value_type = int;
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 static_assert( std::contiguous_iterator<iterator>);
+#endif
 static_assert( std::random_access_iterator<reverse_iterator>);
 static_assert(!std::contiguous_iterator<reverse_iterator>);
 static_assert( std::indirectly_writable<iterator, value_type>);
@@ -50,7 +52,9 @@ static_assert(!std::indirectly_copyable<iterator, const_reverse_iterator>);
 static_assert(!std::indirectly_copyable_storable<iterator, const_reverse_iterator>);
 static_assert(std::indirectly_swappable<iterator, iterator>);
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 static_assert( std::contiguous_iterator<const_iterator>);
+#endif
 static_assert( std::random_access_iterator<const_reverse_iterator>);
 static_assert(!std::contiguous_iterator<const_reverse_iterator>);
 static_assert(!std::indirectly_writable<const_iterator, value_type>);
