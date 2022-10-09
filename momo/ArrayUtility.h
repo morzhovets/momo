@@ -71,6 +71,13 @@ namespace internal
 			return std::addressof((*mArray)[mIndex]);
 		}
 
+		Pointer operator->() const
+			requires requires { { this->mArray->GetItems() } -> std::same_as<Item*>; }
+		{
+			MOMO_CHECK(mArray != nullptr);
+			return mArray->GetItems() + mIndex;
+		}
+
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
 		{
 			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
@@ -345,7 +352,7 @@ namespace std
 	};
 
 	template<typename A, typename I>
-	requires requires (A& a) { { a.GetItems() }; }
+	requires requires (A& a) { { a.GetItems() } -> std::same_as<I*>; }
 	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
 		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
 			random_access_iterator_tag, contiguous_iterator_tag>
