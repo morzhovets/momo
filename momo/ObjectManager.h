@@ -537,7 +537,7 @@ namespace internal
 				SrcIterator srcIter = srcBegin;
 				DstIterator dstIter = dstBegin;
 				for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
-					Relocate(memManager, *srcIter, std::addressof(*dstIter));
+					Relocate(memManager, *srcIter, std::to_address(dstIter));
 			}
 			else
 			{
@@ -584,7 +584,7 @@ namespace internal
 					SrcIterator srcIter = srcBegin;
 					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
-						Copy(memManager, *srcIter, std::addressof(*dstIter));
+						Copy(memManager, *srcIter, std::to_address(dstIter));
 					std::move(func)();
 				}
 				catch (...)
@@ -606,12 +606,12 @@ namespace internal
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
 				Iterator iter = begin;
-				Object* objectPtr = std::addressof(*iter);
+				Object* objectPtr = std::to_address(iter);
 				Relocate(memManager, *objectPtr, &objectBuffer);
 				for (size_t i = 0; i < shift; ++i)
 				{
 					++iter;
-					Object* nextObjectPtr = std::addressof(*iter);
+					Object* nextObjectPtr = std::to_address(iter);
 					Relocate(memManager, *nextObjectPtr, objectPtr);
 					objectPtr = nextObjectPtr;
 				}
@@ -620,11 +620,11 @@ namespace internal
 			else
 			{
 				Iterator iter = begin;
-				Object* objectPtr = std::addressof(*iter);
+				Object* objectPtr = std::to_address(iter);
 				for (size_t i = 0; i < shift; ++i)
 				{
 					++iter;
-					Object* nextObjectPtr = std::addressof(*iter);
+					Object* nextObjectPtr = std::to_address(iter);
 					std::iter_swap(objectPtr, nextObjectPtr);
 					objectPtr = nextObjectPtr;
 				}

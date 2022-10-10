@@ -152,7 +152,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
+			size_t index = UIntMath<>::Dist(&mItems[0], std::to_address(iter));
 			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
@@ -223,7 +223,7 @@ namespace internal
 		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = UIntMath<>::Dist(&mItems[0], std::addressof(*iter));
+			size_t index = UIntMath<>::Dist(&mItems[0], std::to_address(iter));
 			MOMO_ASSERT(index >= maxCount - count);
 			std::move(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
 			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];

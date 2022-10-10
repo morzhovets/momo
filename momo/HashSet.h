@@ -203,7 +203,7 @@ namespace internal
 		{
 			VersionKeeper::Check();
 			MOMO_CHECK(mBucketIterator != BucketIterator());
-			return std::addressof(*mBucketIterator);
+			return std::to_address(mBucketIterator);
 		}
 
 		friend bool operator==(HashSetPosition pos1, HashSetPosition pos2) noexcept

@@ -490,7 +490,7 @@ namespace internal
 			return *this;
 		}
 
-		Pointer operator->() noexcept
+		Pointer operator->() const noexcept
 		{
 			MOMO_ASSERT(!mInvoked);
 			Pointer ptr = mGenerator();
@@ -498,14 +498,14 @@ namespace internal
 			return ptr;
 		}
 
-		Reference operator*() noexcept
+		Reference operator*() const noexcept
 		{
 			return *operator->();
 		}
 
 	private:
-		Generator mGenerator;
-		bool mInvoked;
+		mutable Generator mGenerator;
+		mutable bool mInvoked;
 	};
 
 	template<typename Iterator, typename IteratorCategory,

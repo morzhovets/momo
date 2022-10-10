@@ -506,11 +506,11 @@ namespace internal
 					SrcKeyIterator srcKeyIter = srcKeyBegin;
 					DstKeyIterator dstKeyIter = dstKeyBegin;
 					for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
-						KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
+						KeyManager::Copy(memManager, *srcKeyIter, std::to_address(dstKeyIter));
 					SrcValueIterator srcValueIter = srcValueBegin;
 					DstValueIterator dstValueIter = dstValueBegin;
 					for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
-						ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
+						ValueManager::Copy(memManager, *srcValueIter, std::to_address(dstValueIter));
 					std::move(func)();
 				}
 				catch (...)
@@ -816,7 +816,7 @@ namespace internal
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, (void)++dstIter)
-				std::construct_at(std::addressof(*dstIter));
+				std::construct_at(std::to_address(dstIter));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
@@ -953,7 +953,7 @@ namespace internal
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, (void)++dstIter)
-				std::construct_at(std::addressof(*dstIter));
+				std::construct_at(std::to_address(dstIter));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable

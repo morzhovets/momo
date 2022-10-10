@@ -218,8 +218,8 @@ namespace internal
 		{
 			MOMO_ASSERT(std::has_single_bit(count) && count > initialItemCount);
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
-			Item* srcItems1 = std::addressof(*UIntMath<>::Next(srcBegin, count - initialItemCount));
-			Item* srcItems2 = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * initialItemCount));
+			Item* srcItems1 = std::to_address(UIntMath<>::Next(srcBegin, count - initialItemCount));
+			Item* srcItems2 = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * initialItemCount));
 			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 			{
 				ItemPtrHashes itemPtrHashes(count, memManager);
@@ -235,7 +235,7 @@ namespace internal
 				pvSortPtrs(&itemPtrHashes[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrHashes(mergeTraits, srcItems, &itemPtrHashes[count - 2 * index], index);
 				}
 				auto srcGen = [srcIter = itemPtrHashes.GetItems()] () mutable
@@ -255,7 +255,7 @@ namespace internal
 				pvSortRelocate(memManager, mergeTraits, dstBegin + count - 2 * initialItemCount);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergeRelocate(memManager, mergeTraits, srcItems,
 						dstBegin + count - 2 * index, index);
 				}
@@ -276,7 +276,7 @@ namespace internal
 				pvSortPtrs(&itemPtrs[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::addressof(*UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrs(mergeTraits, srcItems, &itemPtrs[count - 2 * index], index);
 				}
 				auto srcGen = [srcIter = itemPtrs.GetItems()] () mutable
