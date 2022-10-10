@@ -238,10 +238,10 @@ namespace internal
 					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrHashes(mergeTraits, srcItems, &itemPtrHashes[count - 2 * index], index);
 				}
-				auto srcGen = [srcIter = itemPtrHashes.GetItems()] () mutable
-					{ return (srcIter++)->ptr; };
+				IncIterator srcIter = [iter = itemPtrHashes.GetItems()] () mutable
+					{ return (iter++)->ptr; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					IncIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
+					srcIter, dstBegin, count, std::move(itemCreator), newItem);
 			}
 			else if constexpr (MergeTraits::func == MergeTraitsFunc::lessNothrow
 				&& MergeSetItemTraits::isNothrowRelocatable)
@@ -279,10 +279,9 @@ namespace internal
 					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrs(mergeTraits, srcItems, &itemPtrs[count - 2 * index], index);
 				}
-				auto srcGen = [srcIter = itemPtrs.GetItems()] () mutable
-					{ return *srcIter++; };
+				IncIterator srcIter = [iter = itemPtrs.GetItems()] () mutable { return *iter++; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					IncIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
+					srcIter, dstBegin, count, std::move(itemCreator), newItem);
 			}
 		}
 

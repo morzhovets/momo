@@ -817,34 +817,24 @@ namespace internal
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
 				std::construct_at(std::to_address(dstIter++));
-			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
-			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
-			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
-			auto dstValueGen = [dstIter = dstBegin] () mutable { return ptGenerateValuePtr(dstIter); };
+			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
+				{ return (srcIter++)->GetKeyPtr(); };
+			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
+				{ return (srcIter++)->GetValuePtr(); };
+			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable
+				{ return (dstIter++)->GetKeyPtr(); };
+			IncIterator dstValueIter = [dstIter = dstBegin] () mutable
+				{ return (dstIter++)->GetValuePtr(); };
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager,
-				IncIterator(srcKeyGen), IncIterator(srcValueGen),
-				IncIterator(dstKeyGen), IncIterator(dstValueGen), count, std::move(func));
+			KeyValueTraits::RelocateExec(memManager, srcKeyIter, srcValueIter,
+				dstKeyIter, dstValueIter, count, std::move(func));
 		}
 
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
 			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
-		}
-
-	protected:
-		template<typename Iterator>
-		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
-		{
-			return (iter++)->GetKeyPtr();
-		}
-
-		template<typename Iterator>
-		static Value* ptGenerateValuePtr(Iterator& iter) noexcept
-		{
-			return (iter++)->GetValuePtr();
 		}
 	};
 
@@ -950,37 +940,25 @@ namespace internal
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
 				std::construct_at(std::to_address(dstIter++));
-			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
-			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
+			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
+				{ return (srcIter++)->GetKeyPtr(); };
+			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable
+				{ return (dstIter++)->GetKeyPtr(); };
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExecKeys(memManager,
-				IncIterator(srcKeyGen), IncIterator(dstKeyGen), count, std::move(func));
-			auto srcValueGen = [srcIter = srcBegin] () mutable
-				{ return ptGenerateValuePtrPtr(srcIter); };
-			auto dstValueGen = [dstIter = dstBegin] () mutable
-				{ return ptGenerateValuePtrPtr(dstIter); };
-			ObjectManager<Value*, MemManager>::Relocate(memManager,
-				IncIterator(srcValueGen), IncIterator(dstValueGen), count);
+			KeyValueTraits::RelocateExecKeys(memManager, srcKeyIter, dstKeyIter,
+				count, std::move(func));
+			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
+				{ return &(srcIter++)->GetValuePtr(); };
+			IncIterator dstValueIter = [dstIter = dstBegin] () mutable
+				{ return &(dstIter++)->GetValuePtr(); };
+			ObjectManager<Value*, MemManager>::Relocate(memManager, srcValueIter, dstValueIter, count);
 		}
 
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
 			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
-		}
-
-	protected:
-		template<typename Iterator>
-		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
-		{
-			return (iter++)->GetKeyPtr();
-		}
-
-		template<typename Iterator>
-		static Value** ptGenerateValuePtrPtr(Iterator& iter) noexcept
-		{
-			return &(iter++)->GetValuePtr();
 		}
 	};
 

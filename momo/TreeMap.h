@@ -48,12 +48,10 @@ namespace internal
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			auto keyGen = [iter = begin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
-			KeyValueTraits::ShiftKeyNothrow(memManager, IncIterator(keyGen), shift);
-			auto valueGen = [iter = begin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
-			KeyValueTraits::ShiftValueNothrow(memManager, IncIterator(valueGen), shift);
+			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
+			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
+			IncIterator valueIter = [iter = begin] () mutable { return (iter++)->GetValuePtr(); };
+			KeyValueTraits::ShiftValueNothrow(memManager, valueIter, shift);
 		}
 	};
 
@@ -77,13 +75,10 @@ namespace internal
 		template<typename Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			auto keyGen = [iter = begin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
-			KeyValueTraits::ShiftKeyNothrow(memManager, IncIterator(keyGen), shift);
-			auto valueGen = [iter = begin] () mutable
-				{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(iter); };
-			ObjectManager<Value*, MemManager>::ShiftNothrow(memManager,
-				IncIterator(valueGen), shift);
+			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
+			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
+			IncIterator valueIter = [iter = begin] () mutable { return &(iter++)->GetValuePtr(); };
+			ObjectManager<Value*, MemManager>::ShiftNothrow(memManager, valueIter, shift);
 		}
 	};
 
