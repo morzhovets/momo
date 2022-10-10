@@ -110,6 +110,14 @@ public:
 
 namespace internal
 {
+	template<typename Iterator, typename Object>
+	concept conceptIncIterator =
+		requires (Iterator iter)
+		{
+			{ std::to_address(iter++) } -> std::same_as<Object*>;
+			{ *iter++ } -> std::same_as<Object&>;
+		};
+
 	template<conceptObject TObject>
 	class ObjectAlignmenter
 	{
@@ -443,13 +451,13 @@ namespace internal
 			Destroyer::Destroy(&memManager, object);
 		}
 
-		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> Iterator>
+		template<conceptIncIterator<Object> Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 			requires isNothrowDestructible
 		{
 			Iterator iter = begin;
-			for (size_t i = 0; i < count; ++i, (void)++iter)
-				Destroy(memManager, *iter);
+			for (size_t i = 0; i < count; ++i)
+				Destroy(memManager, *std::to_address(iter++));
 		}
 
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
@@ -525,35 +533,33 @@ namespace internal
 			}
 		}
 
-		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
-			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator>
+		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator>
 		static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count) noexcept(isNothrowRelocatable)
 			requires isNothrowRelocatable ||
 				(isCopyConstructible && isMoveConstructible && isNothrowDestructible)
 		{
+			SrcIterator srcIter = srcBegin;
+			DstIterator dstIter = dstBegin;
 			if constexpr (isNothrowRelocatable)
 			{
-				SrcIterator srcIter = srcBegin;
-				DstIterator dstIter = dstBegin;
-				for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
-					Relocate(memManager, *srcIter, std::to_address(dstIter));
+				for (size_t i = 0; i < count; ++i)
+					Relocate(memManager, *srcIter++, std::to_address(dstIter++));
 			}
 			else
 			{
 				if (count > 0)
 				{
-					Object& srcObject0 = *srcBegin;
-					Object& dstObject0 = *dstBegin;
-					RelocateCreate(memManager, std::next(srcBegin), std::next(dstBegin), count - 1,
+					Object& srcObject0 = *srcIter++;
+					Object& dstObject0 = *dstIter++;
+					RelocateCreate(memManager, srcIter, dstIter, count - 1,
 						Creator<Object&&>(memManager, std::move(srcObject0)), std::addressof(dstObject0));
 					Destroy(memManager, srcObject0);
 				}
 			}
 		}
 
-		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
-			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
+		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
 			conceptCreator<Object, true> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator objectCreator, Object* newObject)
@@ -564,8 +570,7 @@ namespace internal
 			RelocateExec(memManager, srcBegin, dstBegin, count, std::move(func));
 		}
 
-		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> SrcIterator,
-			conceptIteratorWithReference<std::input_iterator_tag, Object&> DstIterator,
+		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
 			conceptFunctor<true> Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func func)
@@ -583,8 +588,8 @@ namespace internal
 				{
 					SrcIterator srcIter = srcBegin;
 					DstIterator dstIter = dstBegin;
-					for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
-						Copy(memManager, *srcIter, std::to_address(dstIter));
+					for (; index < count; ++index)
+						Copy(memManager, *srcIter++, std::to_address(dstIter++));
 					std::move(func)();
 				}
 				catch (...)
@@ -596,22 +601,27 @@ namespace internal
 			}
 		}
 
-		template<conceptIteratorWithReference<std::input_iterator_tag, Object&> Iterator>
+		template<conceptIncIterator<Object> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 			requires isNothrowShiftable
 		{
-			if (shift == 0)
-				return;
+			if (shift > 0)
+				pvShiftNothrow(memManager, begin, shift);
+		}
+
+	private:
+		template<typename Iterator>
+		static void pvShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
+		{
+			Iterator iter = begin;
 			if constexpr (isNothrowRelocatable)
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
-				Iterator iter = begin;
-				Object* objectPtr = std::to_address(iter);
+				Object* objectPtr = std::to_address(iter++);
 				Relocate(memManager, *objectPtr, &objectBuffer);
 				for (size_t i = 0; i < shift; ++i)
 				{
-					++iter;
-					Object* nextObjectPtr = std::to_address(iter);
+					Object* nextObjectPtr = std::to_address(iter++);
 					Relocate(memManager, *nextObjectPtr, objectPtr);
 					objectPtr = nextObjectPtr;
 				}
@@ -619,12 +629,10 @@ namespace internal
 			}
 			else
 			{
-				Iterator iter = begin;
-				Object* objectPtr = std::to_address(iter);
+				Object* objectPtr = std::to_address(iter++);
 				for (size_t i = 0; i < shift; ++i)
 				{
-					++iter;
-					Object* nextObjectPtr = std::to_address(iter);
+					Object* nextObjectPtr = std::to_address(iter++);
 					std::iter_swap(objectPtr, nextObjectPtr);
 					objectPtr = nextObjectPtr;
 				}

@@ -409,7 +409,7 @@ private:
 			auto dstGen = [segPtr = mDstSegments.GetItems(), index = mDstSegments[0].beginIndex] () mutable
 				{ return pvGenerate(segPtr, index); };
 			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(),
-				internal::InputIterator(srcGen), internal::InputIterator(dstGen), mItemCount,
+				internal::IncIterator(srcGen), internal::IncIterator(dstGen), mItemCount,
 				std::move(itemCreator), newItem);
 			mSrcSegments.Clear();
 			mDstSegments.Clear();

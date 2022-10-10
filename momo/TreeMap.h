@@ -50,10 +50,10 @@ namespace internal
 		{
 			auto keyGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
-			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
+			KeyValueTraits::ShiftKeyNothrow(memManager, IncIterator(keyGen), shift);
 			auto valueGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateValuePtr(iter); };
-			KeyValueTraits::ShiftValueNothrow(memManager, InputIterator(valueGen), shift);
+			KeyValueTraits::ShiftValueNothrow(memManager, IncIterator(valueGen), shift);
 		}
 	};
 
@@ -79,11 +79,11 @@ namespace internal
 		{
 			auto keyGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateKeyPtr(iter); };
-			KeyValueTraits::ShiftKeyNothrow(memManager, InputIterator(keyGen), shift);
+			KeyValueTraits::ShiftKeyNothrow(memManager, IncIterator(keyGen), shift);
 			auto valueGen = [iter = begin] () mutable
 				{ return MapNestedSetItemTraits::ptGenerateValuePtrPtr(iter); };
 			ObjectManager<Value*, MemManager>::ShiftNothrow(memManager,
-				InputIterator(valueGen), shift);
+				IncIterator(valueGen), shift);
 		}
 	};
 

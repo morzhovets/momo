@@ -208,8 +208,8 @@ namespace internal
 		{
 			SetMemManager* setMemManager = &memManager.GetBaseMemManager();
 			Iterator iter = begin;
-			for (size_t i = 0; i < count; ++i, (void)++iter)
-				MergeSetItemTraits::Destroy(setMemManager, *iter);
+			for (size_t i = 0; i < count; ++i)
+				MergeSetItemTraits::Destroy(setMemManager, *iter++);
 		}
 
 		template<typename SrcIterator, typename ItemCreator>
@@ -241,7 +241,7 @@ namespace internal
 				auto srcGen = [srcIter = itemPtrHashes.GetItems()] () mutable
 					{ return (srcIter++)->ptr; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					InputIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
+					IncIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
 			}
 			else if constexpr (MergeTraits::func == MergeTraitsFunc::lessNothrow
 				&& MergeSetItemTraits::isNothrowRelocatable)
@@ -282,7 +282,7 @@ namespace internal
 				auto srcGen = [srcIter = itemPtrs.GetItems()] () mutable
 					{ return *srcIter++; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
-					InputIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
+					IncIterator(srcGen), dstBegin, count, std::move(itemCreator), newItem);
 			}
 		}
 

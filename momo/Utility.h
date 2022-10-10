@@ -122,10 +122,6 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
-	template<typename Iterator, typename IteratorCategory, typename Reference>
-	concept conceptIteratorWithReference = conceptIterator<Iterator, IteratorCategory> &&
-		std::is_same_v<Reference, std::iter_reference_t<Iterator>>;
-
 	template<typename Functor, bool triviallyMovable, typename... Args>
 	concept conceptFunctor =
 		std::is_nothrow_destructible_v<Functor> &&

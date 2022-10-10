@@ -505,26 +505,26 @@ namespace internal
 				{
 					SrcKeyIterator srcKeyIter = srcKeyBegin;
 					DstKeyIterator dstKeyIter = dstKeyBegin;
-					for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
-						KeyManager::Copy(memManager, *srcKeyIter, std::to_address(dstKeyIter));
+					for (; keyIndex < count; ++keyIndex)
+						KeyManager::Copy(memManager, *srcKeyIter++, std::to_address(dstKeyIter++));
 					SrcValueIterator srcValueIter = srcValueBegin;
 					DstValueIterator dstValueIter = dstValueBegin;
-					for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
-						ValueManager::Copy(memManager, *srcValueIter, std::to_address(dstValueIter));
+					for (; valueIndex < count; ++valueIndex)
+						ValueManager::Copy(memManager, *srcValueIter++, std::to_address(dstValueIter++));
 					std::move(func)();
 				}
 				catch (...)
 				{
-					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, (void)++itd)
-						KeyManager::Destroy(memManager, *itd);
-					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, (void)++itd)
-						ValueManager::Destroy(memManager, *itd);
+					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex)
+						KeyManager::Destroy(memManager, *itd++);
+					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex)
+						ValueManager::Destroy(memManager, *itd++);
 					throw;
 				}
-				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, (void)++its)
-					KeyManager::Destroy(memManager, *its);
-				for (SrcValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, (void)++its)
-					ValueManager::Destroy(memManager, *its);
+				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex)
+					KeyManager::Destroy(memManager, *its++);
+				for (SrcValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex)
+					ValueManager::Destroy(memManager, *its++);
 			}
 		}
 
@@ -815,8 +815,8 @@ namespace internal
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			DstIterator dstIter = dstBegin;
-			for (size_t i = 0; i < count; ++i, (void)++dstIter)
-				std::construct_at(std::to_address(dstIter));
+			for (size_t i = 0; i < count; ++i)
+				std::construct_at(std::to_address(dstIter++));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto srcValueGen = [srcIter = srcBegin] () mutable { return ptGenerateValuePtr(srcIter); };
@@ -824,8 +824,8 @@ namespace internal
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager,
-				InputIterator(srcKeyGen), InputIterator(srcValueGen),
-				InputIterator(dstKeyGen), InputIterator(dstValueGen), count, std::move(func));
+				IncIterator(srcKeyGen), IncIterator(srcValueGen),
+				IncIterator(dstKeyGen), IncIterator(dstValueGen), count, std::move(func));
 		}
 
 		template<typename KeyArg>
@@ -838,17 +838,13 @@ namespace internal
 		template<typename Iterator>
 		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
 		{
-			Key* keyPtr = iter->GetKeyPtr();
-			++iter;
-			return keyPtr;
+			return (iter++)->GetKeyPtr();
 		}
 
 		template<typename Iterator>
 		static Value* ptGenerateValuePtr(Iterator& iter) noexcept
 		{
-			Value* valuePtr = iter->GetValuePtr();
-			++iter;
-			return valuePtr;
+			return (iter++)->GetValuePtr();
 		}
 	};
 
@@ -952,20 +948,20 @@ namespace internal
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
 			DstIterator dstIter = dstBegin;
-			for (size_t i = 0; i < count; ++i, (void)++dstIter)
-				std::construct_at(std::to_address(dstIter));
+			for (size_t i = 0; i < count; ++i)
+				std::construct_at(std::to_address(dstIter++));
 			auto srcKeyGen = [srcIter = srcBegin] () mutable { return ptGenerateKeyPtr(srcIter); };
 			auto dstKeyGen = [dstIter = dstBegin] () mutable { return ptGenerateKeyPtr(dstIter); };
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExecKeys(memManager,
-				InputIterator(srcKeyGen), InputIterator(dstKeyGen), count, std::move(func));
+				IncIterator(srcKeyGen), IncIterator(dstKeyGen), count, std::move(func));
 			auto srcValueGen = [srcIter = srcBegin] () mutable
 				{ return ptGenerateValuePtrPtr(srcIter); };
 			auto dstValueGen = [dstIter = dstBegin] () mutable
 				{ return ptGenerateValuePtrPtr(dstIter); };
 			ObjectManager<Value*, MemManager>::Relocate(memManager,
-				InputIterator(srcValueGen), InputIterator(dstValueGen), count);
+				IncIterator(srcValueGen), IncIterator(dstValueGen), count);
 		}
 
 		template<typename KeyArg>
@@ -978,17 +974,13 @@ namespace internal
 		template<typename Iterator>
 		static Key* ptGenerateKeyPtr(Iterator& iter) noexcept
 		{
-			Key* keyPtr = iter->GetKeyPtr();
-			++iter;
-			return keyPtr;
+			return (iter++)->GetKeyPtr();
 		}
 
 		template<typename Iterator>
 		static Value** ptGenerateValuePtrPtr(Iterator& iter) noexcept
 		{
-			Value** valuePtrPtr = &iter->GetValuePtr();
-			++iter;
-			return valuePtrPtr;
+			return &(iter++)->GetValuePtr();
 		}
 	};
 
