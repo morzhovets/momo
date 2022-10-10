@@ -238,6 +238,7 @@ private:
 				if (!pvIsGrouped(SMath::Next(begin, prevIndex), i - prevIndex, equalFunc))
 					return false;
 				prevIndex = i;
+				prevHash = hash;
 			}
 		}
 		return pvIsGrouped(SMath::Next(begin, prevIndex), count - prevIndex, equalFunc);
