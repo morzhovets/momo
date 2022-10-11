@@ -457,7 +457,7 @@ namespace internal
 		{
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i)
-				Destroy(memManager, *std::to_address(iter++));
+				Destroy(memManager, *iter++);
 		}
 
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)

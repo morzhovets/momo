@@ -467,7 +467,8 @@ namespace internal
 	};
 
 	template<typename TPointerGenerator>
-	requires std::is_pointer_v<decltype(std::declval<TPointerGenerator>()())>
+	requires std::copy_constructible<TPointerGenerator> &&
+		std::is_pointer_v<decltype(std::declval<TPointerGenerator>()())>
 	class IncIterator
 	{
 	public:
@@ -476,12 +477,12 @@ namespace internal
 		typedef decltype(std::declval<PointerGenerator>()()) Pointer;
 
 	public:
-		IncIterator(PointerGenerator gen)	//?
+		IncIterator(PointerGenerator gen)
 			: mPointerGenerator(gen)
 		{
 		}
 
-		Pointer operator++(int)
+		[[nodiscard]] Pointer operator++(int)
 		{
 			return mPointerGenerator();
 		}
@@ -521,10 +522,10 @@ namespace std
 	{
 	};
 
-	//template<typename G>
-	//struct iterator_traits<momo::internal::IncIterator<G>>
-	//	: public momo::internal::IteratorTraitsStd<momo::internal::IncIterator<G>,
-	//		forward_iterator_tag>
-	//{
-	//};
+	template<typename G>
+	struct iterator_traits<momo::internal::IncIterator<G>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::IncIterator<G>,
+			forward_iterator_tag>	//?
+	{
+	};
 } // namespace std
