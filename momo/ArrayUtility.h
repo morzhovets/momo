@@ -69,7 +69,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mArray != nullptr);
-			return std::addressof((*mArray)[mIndex]);
+			return pvGetPointer(nullptr);
 		}
 
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
@@ -103,8 +103,33 @@ namespace internal
 		}
 
 	private:
+		Pointer pvGetPointer(void*) const
+		{
+			return std::addressof((*mArray)[mIndex]);
+		}
+
+		template<typename = decltype(std::declval<Array&>().GetItems())>
+		Pointer pvGetPointer(std::nullptr_t) const
+		{
+			return mArray->GetItems() + mIndex;
+		}
+
+	private:
 		Array* mArray;
 		size_t mIndex;
+	};
+
+	template<typename Array, typename Item,
+		typename = Item*>
+	struct ArrayIndexIteratorTraitsStd
+		: public IteratorTraitsStd<ArrayIndexIterator<Array, Item>, std::random_access_iterator_tag>
+	{
+	};
+
+	template<typename Array, typename Item>
+	struct ArrayIndexIteratorTraitsStd<Array, Item, decltype(std::declval<Array&>().GetItems())>
+		: public std::iterator_traits<Item*>
+	{
 	};
 
 	template<typename TItemTraits, size_t tCount>
@@ -318,8 +343,7 @@ namespace std
 {
 	template<typename A, typename I>
 	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
-			random_access_iterator_tag>
+		: public momo::internal::ArrayIndexIteratorTraitsStd<A, I>
 	{
 	};
 } // namespace std
