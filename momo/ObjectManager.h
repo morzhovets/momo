@@ -381,8 +381,11 @@ namespace internal
 			MOMO_STATIC_ASSERT(isNothrowShiftable);
 			MOMO_STATIC_ASSERT((std::is_same<Object&,
 				typename std::iterator_traits<Iterator>::reference>::value));
-			pvShiftNothrow(memManager, begin, shift, BoolConstant<isNothrowRelocatable>(),
-				BoolConstant<isNothrowSwappable>());
+			if (shift > 0)
+			{
+				pvShiftNothrow(memManager, begin, shift, BoolConstant<isNothrowRelocatable>(),
+					BoolConstant<isNothrowSwappable>());
+			}
 		}
 
 	private:
