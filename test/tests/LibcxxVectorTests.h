@@ -152,12 +152,6 @@ LIBCXX_TEST_BEGIN(size)
 #include "libcxx/vector/vector.capacity/size.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-LIBCXX_TEST_BEGIN(cons_assign_copy_addressof)
-#include "libcxx/vector/vector.cons/assign_copy.addressof.compile.pass.cpp"
-LIBCXX_TEST_END
-#endif
-
 LIBCXX_TEST_BEGIN(cons_assign_copy)
 #include "libcxx/vector/vector.cons/assign_copy.pass.cpp"
 LIBCXX_TEST_END
@@ -168,10 +162,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_iter_iter)
 #include "libcxx/vector/vector.cons/assign_iter_iter.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(cons_assign_move_addressof)
-#include "libcxx/vector/vector.cons/assign_move.addressof.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_move)
