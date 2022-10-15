@@ -12,6 +12,10 @@
 
 #define TEST_IS_CONSTANT_EVALUATED std::is_constant_evaluated()
 
+#define TEST_NOEXCEPT noexcept
+
+#define TEST_CONSTEXPR //constexpr
+
 #define TEST_CONSTEXPR_CXX14 //constexpr
 #define TEST_CONSTEXPR_CXX20 //constexpr
 

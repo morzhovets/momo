@@ -19,6 +19,8 @@
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 //#define LIBCPP_TEST_MIN_ALLOCATOR
 
+#define TEST_STD_VER 20
+
 #include "libcxx/support/MoveOnly.h"
 #include "libcxx/support/Copyable.h"
 #include "libcxx/support/NotConstructible.h"
@@ -38,6 +40,9 @@
 #include "libcxx/support/test_comparisons.h"
 #include "libcxx/support/operator_hijacker.h"
 //#include "libcxx/support/min_allocator.h"
+
+template<typename It>
+using input_iterator = cpp17_input_iterator<It>;
 
 struct LibcppIntHash
 {
