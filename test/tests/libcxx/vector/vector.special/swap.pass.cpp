@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -15,11 +14,12 @@
 //#include <vector>
 //#include <iterator>
 //#include <cassert>
+//#include "test_macros.h"
 //#include "test_allocator.h"
 //#include "min_allocator.h"
 //#include "asan_testing.h"
 
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
         int a1[] = {1, 3, 7, 9, 10};
@@ -77,8 +77,6 @@ void main()
         //assert(is_contiguous_container_asan_correct(c1));
         //assert(is_contiguous_container_asan_correct(c2));
     }
-#ifndef _LIBCPP_DEBUG_LEVEL
-// This test known to result in undefined behavior detected by _LIBCPP_DEBUG_LEVEL >= 1
     {
         int a1[] = {1, 3, 7, 9, 10};
         int a2[] = {0, 2, 4, 5, 6, 8, 11};
@@ -99,7 +97,6 @@ void main()
         assert(c2.get_allocator() == A(1));
 #endif
     }
-#endif
     {
         int a1[] = {1, 3, 7, 9, 10};
         int a2[] = {0, 2, 4, 5, 6, 8, 11};
@@ -116,7 +113,7 @@ void main()
         //assert(is_contiguous_container_asan_correct(c1));
         //assert(is_contiguous_container_asan_correct(c2));
     }
-//#if __cplusplus >= 201103L
+//#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         int a1[] = {1, 3, 7, 9, 10};
@@ -174,8 +171,6 @@ void main()
         //assert(is_contiguous_container_asan_correct(c1));
         //assert(is_contiguous_container_asan_correct(c2));
     }
-//#ifndef _LIBCPP_DEBUG_LEVEL
-// This test known to result in undefined behavior detected by _LIBCPP_DEBUG_LEVEL >= 1
     {
         int a1[] = {1, 3, 7, 9, 10};
         int a2[] = {0, 2, 4, 5, 6, 8, 11};
@@ -192,6 +187,15 @@ void main()
         //assert(is_contiguous_container_asan_correct(c1));
         //assert(is_contiguous_container_asan_correct(c2));
     }
-//#endif
 #endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }

@@ -370,6 +370,6 @@ LIBCXX_TEST_BEGIN(special_swap)
 #include "libcxx/vector/vector.special/swap.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(special_swap_noexcept)
-//#include "libcxx/vector/vector.special/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(special_swap_noexcept)
+#include "libcxx/vector/vector.special/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END
