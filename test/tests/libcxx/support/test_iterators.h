@@ -58,8 +58,10 @@ template <class It>
 cpp17_output_iterator(It) -> cpp17_output_iterator<It>;
 #endif
 
+#ifndef TEST_GCC
 #if TEST_STD_VER > 17
    static_assert(std::output_iterator<cpp17_output_iterator<int*>, int>);
+#endif
 #endif
 
 // This iterator meets C++20's Cpp17InputIterator requirements, as described
@@ -104,8 +106,10 @@ template <class It>
 cpp17_input_iterator(It) -> cpp17_input_iterator<It>;
 #endif
 
+#ifndef TEST_GCC
 #if TEST_STD_VER > 17
    static_assert(std::input_iterator<cpp17_input_iterator<int*>>);
+#endif
 #endif
 
 template <class It>
@@ -658,7 +662,9 @@ public:
 template <class It>
 cpp20_input_iterator(It) -> cpp20_input_iterator<It>;
 
+#ifndef TEST_GCC
 static_assert(std::input_iterator<cpp20_input_iterator<int*>>);
+#endif
 
 template<std::input_or_output_iterator>
 struct iter_value_or_void { using type = void; };
@@ -694,7 +700,9 @@ public:
 template <class It>
 cpp20_output_iterator(It) -> cpp20_output_iterator<It>;
 
+#ifndef TEST_GCC
 static_assert(std::output_iterator<cpp20_output_iterator<int*>, int>);
+#endif
 
 // Iterator adaptor that counts the number of times the iterator has had a successor/predecessor
 // operation called. Has two recorders:
