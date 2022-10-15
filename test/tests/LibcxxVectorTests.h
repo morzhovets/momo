@@ -166,6 +166,10 @@ LIBCXX_TEST_BEGIN(cons_assign_initializer_list)
 #include "libcxx/vector/vector.cons/assign_initializer_list.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(cons_assign_iter_iter)
+#include "libcxx/vector/vector.cons/assign_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cons_assign_move_addressof)
 #include "libcxx/vector/vector.cons/assign_move.addressof.compile.pass.cpp"
 LIBCXX_TEST_END

@@ -39,6 +39,7 @@
 #include "libcxx/support/test_transparent_unordered.h"
 #include "libcxx/support/test_comparisons.h"
 #include "libcxx/support/operator_hijacker.h"
+#include "libcxx/support/emplace_constructible.h"
 //#include "libcxx/support/min_allocator.h"
 
 template<typename It>
