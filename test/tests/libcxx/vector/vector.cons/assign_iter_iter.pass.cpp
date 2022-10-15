@@ -31,12 +31,12 @@ TEST_CONSTEXPR_CXX20 bool test() {
     using T = EmplaceConstructibleMoveableAndAssignable<int>;
     using It = forward_iterator<int*>;
     {
-      std::vector<T> v;
+      vector<T> v;
       v.assign(It(arr1), It(std::end(arr1)));
       assert(v[0].value == 42);
     }
     {
-      std::vector<T> v;
+      vector<T> v;
       v.assign(It(arr2), It(std::end(arr2)));
       assert(v[0].value == 1);
       assert(v[1].value == 101);
@@ -47,19 +47,23 @@ TEST_CONSTEXPR_CXX20 bool test() {
     using T = EmplaceConstructibleMoveableAndAssignable<int>;
     using It = cpp17_input_iterator<int*>;
     {
-      std::vector<T> v;
+      vector<T> v;
       v.assign(It(arr1), It(std::end(arr1)));
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
       assert(v[0].copied == 0);
+#endif
       assert(v[0].value == 42);
     }
     {
-      std::vector<T> v;
+      vector<T> v;
       v.assign(It(arr2), It(std::end(arr2)));
       //assert(v[0].copied == 0);
       assert(v[0].value == 1);
       //assert(v[1].copied == 0);
       assert(v[1].value == 101);
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
       assert(v[2].copied == 0);
+#endif
       assert(v[2].value == 42);
     }
   }
@@ -69,12 +73,16 @@ TEST_CONSTEXPR_CXX20 bool test() {
   {
     typedef forward_iterator<int*> It;
 
-    std::vector<int> dst(10);
+    vector<int> dst(10);
 
     size_t n = dst.capacity() * 2;
-    std::vector<int> src(n);
+    vector<int> src(n);
 
+#ifdef LIBCXX_TEST_SEGMENTED_ARRAY
+    dst.assign(forward_iterator(src.begin()), forward_iterator(src.end()));
+#else
     dst.assign(It(src.data()), It(src.data() + src.size()));
+#endif
     assert(dst == src);
   }
 
