@@ -18,13 +18,13 @@
 //#include "min_allocator.h"
 
 template <class C>
-void test_contiguous ( const C &c )
+TEST_CONSTEXPR_CXX20 void test_contiguous(const C &c)
 {
     for ( size_t i = 0; i < c.size(); ++i )
         assert ( *(c.begin() + static_cast<typename C::difference_type>(i)) == *(std::addressof(*c.begin()) + i));
 }
 
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
     typedef int T;
@@ -50,4 +50,14 @@ void main()
     test_contiguous(C(9, 11.0, A{}));
     }
 #endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }

@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -20,6 +19,7 @@
 //#include <cassert>
 //#include <iterator>
 
+//#include "test_macros.h"
 //#include "min_allocator.h"
 
 struct A
@@ -28,7 +28,7 @@ struct A
     int second;
 };
 
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
         typedef int T;
@@ -104,9 +104,10 @@ void main()
         typedef vector<T> C;
         C::iterator i;
         C::const_iterator j;
-		(void)i; (void)j;
+        (void) i;
+        (void) j;
     }
-//#if __cplusplus >= 201103L
+//#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int T;
@@ -154,6 +155,8 @@ void main()
         typedef vector<T, min_allocator<T>> C;
         C::iterator i;
         C::const_iterator j;
+        (void) i;
+        (void) j;
     }
     {
         typedef A T;
@@ -165,7 +168,7 @@ void main()
         assert(j->first == 3);
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
+#if TEST_STD_VER > 11
     { // N3644 testing
         typedef vector<int> C;
         C::iterator ii1{}, ii2{};
@@ -191,5 +194,15 @@ void main()
         assert (cii - ii1 == 0);
         assert (ii1 - cii == 0);
     }
+#endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
 //#endif
 }
