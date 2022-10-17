@@ -23,6 +23,8 @@
 
 #define TEST_IGNORE_NODISCARD (void)
 
+#define TEST_THROW(...) throw __VA_ARGS__
+
 namespace test_macros_detail {
 template <class T, class U>
 struct is_same { enum { value = 0};} ;
