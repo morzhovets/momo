@@ -66,8 +66,13 @@ class test_allocator {
   friend class test_allocator;
 
 public:
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   typedef unsigned size_type;
   typedef int difference_type;
+#else
+  typedef size_t size_type;
+  typedef ptrdiff_t difference_type;
+#endif
   typedef T value_type;
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
