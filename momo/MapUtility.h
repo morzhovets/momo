@@ -973,9 +973,9 @@ namespace internal
 	};
 
 	template<typename ArgIterator, typename Key,
-		typename KeyArg = decltype(std::declval<ArgIterator>()->first)>
+		typename KeyArg = decltype((*std::declval<ArgIterator>()).first)>
 	struct IsMapArgIteratorStd : public BoolConstant<((std::is_reference<KeyArg>::value
-		&& std::is_reference<decltype(std::declval<ArgIterator>()->second)>::value)
+		&& std::is_reference<decltype((*std::declval<ArgIterator>()).second)>::value)
 		|| std::is_reference<typename std::iterator_traits<ArgIterator>::reference>::value)
 		&& std::is_same<Key, typename std::decay<KeyArg>::type>::value>
 	{
