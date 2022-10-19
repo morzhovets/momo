@@ -91,7 +91,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
             assert(v.capacity() == previous_capacity);
             assert(v.data() == previous_data);
 
-            for (int i = 0; i < 10; ++i) {
+            for (size_t i = 0; i < 10; ++i) {
                 assert(v[i] == 42);
             }
         }
