@@ -25,6 +25,9 @@
 
 #define TEST_THROW(...) throw __VA_ARGS__
 
+#define ASSERT_NOEXCEPT(...) \
+    static_assert(noexcept(__VA_ARGS__), "Operation must be noexcept")
+
 namespace test_macros_detail {
 template <class T, class U>
 struct is_same { enum { value = 0};} ;

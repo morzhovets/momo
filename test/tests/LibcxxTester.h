@@ -21,6 +21,10 @@
 
 #define TEST_STD_VER 20
 
+#define LIBCPP_ASSERT(f) void()
+
+#include "libcxx/support/test_macros.h"
+
 #include "libcxx/support/MoveOnly.h"
 #include "libcxx/support/Copyable.h"
 #include "libcxx/support/NotConstructible.h"
@@ -35,7 +39,6 @@
 #include "libcxx/support/test_hash.h"
 #include "libcxx/support/private_constructor.h"
 #include "libcxx/support/is_transparent.h"
-#include "libcxx/support/test_macros.h"
 #include "libcxx/support/test_transparent_unordered.h"
 #include "libcxx/support/test_comparisons.h"
 #include "libcxx/support/emplace_constructible.h"

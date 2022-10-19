@@ -429,18 +429,18 @@ public:
   TEST_CONSTEXPR_CXX20 void deallocate(T* p, std::size_t n) { std::allocator<T>().deallocate(p, n); }
 };
 
-template <std::size_t MaxAllocs>
+template <std::size_t MaxAllocBytes>
 struct limited_alloc_handle {
   std::size_t outstanding_ = 0;
   void* last_alloc_ = nullptr;
 
   template <class T>
   TEST_CONSTEXPR_CXX20 T* allocate(std::size_t N) {
-    if (N + outstanding_ > MaxAllocs)
+    if (N * sizeof(T) + outstanding_ > MaxAllocBytes)
       TEST_THROW(std::bad_alloc());
     auto alloc = std::allocator<T>().allocate(N);
     last_alloc_ = alloc;
-    outstanding_ += N;
+    outstanding_ += N * sizeof(T);
     return alloc;
   }
 
@@ -448,8 +448,8 @@ struct limited_alloc_handle {
   TEST_CONSTEXPR_CXX20 void deallocate(T* ptr, std::size_t N) {
     if (ptr == last_alloc_) {
       last_alloc_ = nullptr;
-      assert(outstanding_ >= N);
-      outstanding_ -= N;
+      assert(outstanding_ >= N * sizeof(T));
+      outstanding_ -= N * sizeof(T);
     }
     std::allocator<T>().deallocate(ptr, N);
   }
@@ -542,7 +542,7 @@ public:
 
   TEST_CONSTEXPR_CXX20 pointer allocate(size_type n) { return handle_->template allocate<T>(n); }
   TEST_CONSTEXPR_CXX20 void deallocate(pointer p, size_type n) { handle_->template deallocate<T>(p, n); }
-  TEST_CONSTEXPR size_type max_size() const { return N; }
+  TEST_CONSTEXPR size_type max_size() const { return N / sizeof(T); }
   TEST_CONSTEXPR BuffT* getHandle() const { return handle_.get(); }
 };
 

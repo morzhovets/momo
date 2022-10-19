@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -19,12 +18,12 @@
 //#include "test_macros.h"
 //#include "min_allocator.h"
 
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
     typedef vector<int> C;
     C c;
-    //ASSERT_NOEXCEPT(c.size());
+    ASSERT_NOEXCEPT(c.size());
     assert(c.size() == 0);
     c.push_back(C::value_type(2));
     assert(c.size() == 1);
@@ -60,4 +59,14 @@ void main()
     assert(c.size() == 0);
     }
 #endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }

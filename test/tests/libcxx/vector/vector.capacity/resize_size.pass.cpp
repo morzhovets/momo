@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -13,39 +12,14 @@
 
 //#include <vector>
 //#include <cassert>
-//#include "../../../stack_allocator.h"
+
+//#include "test_macros.h"
+//#include "test_allocator.h"
 //#include "MoveOnly.h"
 //#include "min_allocator.h"
 //#include "asan_testing.h"
 
-void main()
-{
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-    {
-        vector<MoveOnly> v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        //assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
-    }
-#ifdef LIBCPP_TEST_STACK_ALLOCATOR
-    {
-        vector<MoveOnly, stack_allocator<MoveOnly, 300> > v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        //assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
-#else  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+TEST_CONSTEXPR_CXX20 bool tests() {
     {
         vector<int> v(100);
         v.resize(50);
@@ -57,9 +31,9 @@ void main()
         assert(v.capacity() >= 200);
         //assert(is_contiguous_container_asan_correct(v));
     }
-#ifdef LIBCPP_TEST_STACK_ALLOCATOR
     {
-        vector<int, stack_allocator<int, 300> > v(100);
+        // Add 1 for implementations that dynamically allocate a container proxy.
+        vector<int, limited_allocator<int, 300 * sizeof(int) + 1> > v(100);
         v.resize(50);
         assert(v.size() == 50);
         assert(v.capacity() == 100);
@@ -69,9 +43,30 @@ void main()
         assert(v.capacity() >= 200);
         //assert(is_contiguous_container_asan_correct(v));
     }
-#endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
+    {
+        vector<MoveOnly> v(100);
+        v.resize(50);
+        assert(v.size() == 50);
+        assert(v.capacity() == 100);
+        //assert(is_contiguous_container_asan_correct(v));
+        v.resize(200);
+        assert(v.size() == 200);
+        assert(v.capacity() >= 200);
+        //assert(is_contiguous_container_asan_correct(v));
+    }
+    {
+        // Add 1 for implementations that dynamically allocate a container proxy.
+        vector<MoveOnly, limited_allocator<MoveOnly, 300 * sizeof(int) + 1> > v(100);
+        v.resize(50);
+        assert(v.size() == 50);
+        assert(v.capacity() == 100);
+        //assert(is_contiguous_container_asan_correct(v));
+        v.resize(200);
+        assert(v.size() == 200);
+        assert(v.capacity() >= 200);
+        //assert(is_contiguous_container_asan_correct(v));
+    }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<MoveOnly, min_allocator<MoveOnly>> v(100);
@@ -85,4 +80,15 @@ void main()
         //assert(is_contiguous_container_asan_correct(v));
     }
 #endif
+#endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }
