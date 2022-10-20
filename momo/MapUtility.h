@@ -1334,17 +1334,18 @@ namespace internal
 
 	public:
 		template<typename ArgIterator,
-			typename KeyArg = decltype(std::declval<ArgIterator>()->key),
-			typename ValueArg = decltype(std::declval<ArgIterator>()->value)>
+			typename KeyArg = decltype((*std::declval<ArgIterator>()).key),
+			typename ValueArg = decltype((*std::declval<ArgIterator>()).value)>
 		requires std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>
-		static auto GetReferencePair(ArgIterator iter) noexcept requires allowKeyValue
+		static auto GetReferencePair(ArgIterator iter) noexcept
+			requires allowKeyValue
 		{
-			return std::pair<KeyArg, ValueArg>(iter->key, iter->value);
+			return std::pair<KeyArg, ValueArg>((*iter).key, (*iter).value);
 		}
 
 		template<typename ArgIterator,
-			typename KeyArg = decltype(std::declval<ArgIterator>()->first),
-			typename ValueArg = decltype(std::declval<ArgIterator>()->second)>
+			typename KeyArg = decltype((*std::declval<ArgIterator>()).first),
+			typename ValueArg = decltype((*std::declval<ArgIterator>()).second)>
 		requires std::is_reference_v<std::iter_reference_t<ArgIterator>> ||
 			(std::is_reference_v<KeyArg> && std::is_reference_v<ValueArg>)
 		static auto GetReferencePair(ArgIterator iter) noexcept
@@ -1354,6 +1355,7 @@ namespace internal
 
 	private:
 		template<typename KeyArg, typename ValueArg, typename Pair>
+		requires (!std::is_reference_v<Pair>)
 		static auto pvGetReferencePair(Pair&& pair) noexcept
 		{
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
