@@ -22,8 +22,6 @@
 #define _LIBCPP_DEBUG 1
 #define _LIBCPP_DEBUG_LEVEL 1
 
-//#define LIBCPP_TEST_STACK_ALLOCATOR
-
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
 namespace libcxx_test_array_0
@@ -42,8 +40,6 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 }
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_ARRAY
-
-//#undef LIBCPP_TEST_STACK_ALLOCATOR
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 

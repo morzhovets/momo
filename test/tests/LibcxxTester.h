@@ -21,8 +21,6 @@
 
 #define TEST_STD_VER 20
 
-#define LIBCPP_ASSERT(f) void()
-
 #include "libcxx/support/test_macros.h"
 
 #include "libcxx/support/MoveOnly.h"
@@ -56,6 +54,8 @@ struct LibcppIntHash
 		return static_cast<size_t>(key);
 	}
 };
+
+#define LIBCPP_ASSERT(f) void()
 
 #define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
 
