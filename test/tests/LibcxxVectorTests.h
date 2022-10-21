@@ -8,11 +8,9 @@
 
 \**********************************************************/
 
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(access)
 #include "libcxx/vector/access.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(asan_throw)
