@@ -310,14 +310,14 @@ public:
 	{
 		if (index >= size())
 			throw std::out_of_range("invalid vector subscript");
-		return data()[index];
+		return mArray[index];
 	}
 
 	reference at(size_type index)
 	{
 		if (index >= size())
 			throw std::out_of_range("invalid vector subscript");
-		return data()[index];
+		return mArray[index];
 	}
 
 	reference front()
