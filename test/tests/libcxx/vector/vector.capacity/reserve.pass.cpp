@@ -25,6 +25,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() >= 10);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         vector<int> v(100);
         assert(v.capacity() == 100);
@@ -33,7 +34,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == 100);
         v.reserve(150);
         assert(v.size() == 100);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCXX_TEST_ARRAY
         assert(v.capacity() == 150);
 #else
         assert(v.capacity() >= 150);
@@ -97,6 +98,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         }
     }
 #endif
+#endif
 //#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
@@ -117,6 +119,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         //assert(is_contiguous_container_asan_correct(v));
     }
 #endif
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 #ifndef TEST_HAS_NO_EXCEPTIONS
     if (!TEST_IS_CONSTANT_EVALUATED) {
         vector<int, limited_allocator<int, 100 * sizeof(int)> > v;
@@ -136,6 +139,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == 50);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
 #endif
 
     return true;

@@ -18,6 +18,16 @@
 //#include "asan_testing.h"
 
 TEST_CONSTEXPR_CXX20 bool tests() {
+#ifdef LIBCXX_TEST_SEGMENTED_ARRAY
+    {
+        vector<int> v(101);
+        v.reserve(200);
+        assert(v.capacity() >= 200);
+        v.shrink_to_fit();
+        assert(v.capacity() < 200);
+        assert(v.size() == 101);
+    }
+#else
     {
         vector<int> v(100);
         v.push_back(1);
@@ -46,6 +56,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.size() == 101);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
 #endif
 //#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

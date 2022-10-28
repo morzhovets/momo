@@ -19,11 +19,14 @@
 
 TEST_CONSTEXPR_CXX20 bool tests()
 {
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
         vector<int> v;
         assert(v.capacity() == 0);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         vector<int> v(100);
         assert(v.capacity() == 100);
@@ -31,6 +34,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(v.capacity() > 101);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
 //#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {

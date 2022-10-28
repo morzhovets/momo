@@ -30,7 +30,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
         vector<int> v;
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
         assert(v.data() == nullptr);
+#endif
         //assert(is_contiguous_container_asan_correct(v));
     }
     {
