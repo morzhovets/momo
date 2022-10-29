@@ -28,13 +28,13 @@ struct Nasty {
 
 TEST_CONSTEXPR_CXX20 bool tests()
 {
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
         const vector<int> v;
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
         assert(v.data() == nullptr);
-#endif
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
     {
         const vector<int> v(100);
         assert(v.data() == std::addressof(v.front()));

@@ -112,6 +112,14 @@ LIBCXX_TEST_BEGIN(capacity_capacity)
 #include "libcxx/vector/vector.capacity/capacity.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(capacity_empty)
+#include "libcxx/vector/vector.capacity/empty.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(capacity_max_size)
+#include "libcxx/vector/vector.capacity/max_size.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(capacity_reserve)
 #include "libcxx/vector/vector.capacity/reserve.pass.cpp"
 LIBCXX_TEST_END
@@ -128,20 +136,12 @@ LIBCXX_TEST_BEGIN(capacity_shrink_to_fit)
 #include "libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(capacity_swap)
-#include "libcxx/vector/vector.capacity/swap.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(capacity_empty)
-#include "libcxx/vector/vector.capacity/empty.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(capacity_max_size)
-#include "libcxx/vector/vector.capacity/max_size.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(capacity_size)
 #include "libcxx/vector/vector.capacity/size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(capacity_swap)
+#include "libcxx/vector/vector.capacity/swap.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_copy)
