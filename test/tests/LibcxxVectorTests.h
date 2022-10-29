@@ -88,13 +88,11 @@ LIBCXX_TEST_BEGIN(types)
 #include "libcxx/vector/types.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY	//?
 
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(capacity_capacity)
 #include "libcxx/vector/vector.capacity/capacity.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(capacity_reserve)
 #include "libcxx/vector/vector.capacity/reserve.pass.cpp"
@@ -158,11 +156,9 @@ LIBCXX_TEST_BEGIN(cons_construct_iter_iter_alloc)
 #include "libcxx/vector/vector.cons/construct_iter_iter_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(cons_construct_size)
 #include "libcxx/vector/vector.cons/construct_size.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(cons_construct_size_value)
 #include "libcxx/vector/vector.cons/construct_size_value.pass.cpp"
@@ -231,7 +227,6 @@ LIBCXX_TEST_BEGIN(cons_op_equal_initializer_list)
 LIBCXX_TEST_END
 
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 
 LIBCXX_TEST_BEGIN(data_data)
 #include "libcxx/vector/vector.data/data.pass.cpp"
@@ -241,7 +236,6 @@ LIBCXX_TEST_BEGIN(data_data_const)
 #include "libcxx/vector/vector.data/data_const.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
 #endif
 
 LIBCXX_TEST_BEGIN(erasure_erase)
@@ -328,11 +322,9 @@ LIBCXX_TEST_BEGIN(modifiers_push_back)
 #include "libcxx/vector/vector.modifiers/push_back.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(modifiers_push_back_exception_safety)
 #include "libcxx/vector/vector.modifiers/push_back_exception_safety.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(modifiers_push_back_rvalue)
 #include "libcxx/vector/vector.modifiers/push_back_rvalue.pass.cpp"

@@ -19,11 +19,13 @@
 
 void main()
 {
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
         vector<int> v;
         assert(v.capacity() == 0);
         //assert(is_contiguous_container_asan_correct(v));
     }
+#endif
     {
         vector<int> v(100);
         assert(v.capacity() == 100);
