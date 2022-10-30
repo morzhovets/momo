@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -15,10 +14,10 @@
 //#include <cassert>
 
 //#include "asan_testing.h"
+//#include "test_macros.h"
 
 // Flag that makes the copy constructor for CMyClass throw an exception
-static bool gCopyConstructorShouldThow = false;
-
+static bool gCopyConstructorShouldThrow = false;
 
 class CMyClass {
     public: CMyClass(int tag);
@@ -30,7 +29,7 @@ class CMyClass {
     private:
         int fMagicValue;
         int fTag;
-        
+
     private: static int kStartedConstructionMagicValue;
     private: static int kFinishedConstructionMagicValue;
 };
@@ -51,8 +50,8 @@ CMyClass::CMyClass(const CMyClass& iOther) :
     fMagicValue(kStartedConstructionMagicValue), fTag(iOther.fTag)
 {
     // If requested, throw an exception _before_ setting fMagicValue to kFinishedConstructionMagicValue
-    if (gCopyConstructorShouldThow) {
-        throw std::exception();
+    if (gCopyConstructorShouldThrow) {
+        TEST_THROW(std::exception());
     }
     // Signal that the constructor has finished running
     fMagicValue = kFinishedConstructionMagicValue;
@@ -75,12 +74,15 @@ void main()
     //assert(is_contiguous_container_asan_correct(vec)); 
     //assert(is_contiguous_container_asan_correct(vec2)); 
 
-    gCopyConstructorShouldThow = true;
+#ifndef TEST_HAS_NO_EXCEPTIONS
+    gCopyConstructorShouldThrow = true;
     try {
         vec.push_back(instance);
+        assert(false);
     }
     catch (...) {
         assert(vec==vec2);
-        //assert(is_contiguous_container_asan_correct(vec)); 
+        //assert(is_contiguous_container_asan_correct(vec));
     }
+#endif
 }

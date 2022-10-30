@@ -322,16 +322,16 @@ LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter_iter)
 #include "libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_iter_lvalue)
+#include "libcxx/vector/vector.modifiers/insert_iter_lvalue.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_rvalue)
 #include "libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_size_value)
 #include "libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_insert_iter_value)
-#include "libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_pop_back)

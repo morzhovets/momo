@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -11,22 +10,15 @@
 
 // void pop_back();
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <vector>
 //#include <cassert>
-//#include "../../../stack_allocator.h"
+
+//#include "test_macros.h"
+//#include "test_allocator.h"
 //#include "min_allocator.h"
 
-#if _LIBCPP_DEBUG >= 1
-//#include <cstdlib>
-//#include <exception>
 
-#endif
-
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
         vector<int> c;
@@ -39,7 +31,7 @@ void main()
         //assert(false);
 #endif
     }
-//#if __cplusplus >= 201103L
+//#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> c;
@@ -51,6 +43,27 @@ void main()
         c.pop_back();
         assert(false);
 #endif
-    }
 #endif
+
+    { // LWG 526
+        int arr[] = {0, 1, 2, 3, 4};
+        int sz = 5;
+        vector<int> c(arr, arr+sz);
+        while (c.size() < c.capacity())
+            c.push_back(sz++);
+        c.push_back(c.front());
+        assert(c.back() == 0);
+        for (int i = 0; i < sz; ++i)
+            assert(c[static_cast<size_t>(i)] == i);
+    }
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }

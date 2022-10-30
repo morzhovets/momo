@@ -1,27 +1,24 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03 && !stdlib=libc++
 
 // <vector>
 
 // template <class... Args> iterator emplace(const_iterator pos, Args&&... args);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <vector>
 //#include <cassert>
-//#include "../../../stack_allocator.h"
+
+//#include "test_macros.h"
+//#include "test_allocator.h"
 //#include "min_allocator.h"
 //#include "asan_testing.h"
-
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
 class A
 {
@@ -31,10 +28,10 @@ class A
     A(const A&);
     A& operator=(const A&);
 public:
-    A(int i, double d)
+    TEST_CONSTEXPR_CXX14 A(int i, double d)
         : i_(i), d_(d) {}
 
-    A(A&& a)
+    TEST_CONSTEXPR_CXX14 A(A&& a)
         : i_(a.i_),
           d_(a.d_)
     {
@@ -42,7 +39,7 @@ public:
         a.d_ = 0;
     }
 
-    A& operator=(A&& a)
+    TEST_CONSTEXPR_CXX14 A& operator=(A&& a)
     {
         i_ = a.i_;
         d_ = a.d_;
@@ -51,16 +48,12 @@ public:
         return *this;
     }
 
-    int geti() const {return i_;}
-    double getd() const {return d_;}
+    TEST_CONSTEXPR_CXX14 int geti() const {return i_;}
+    TEST_CONSTEXPR_CXX14 double getd() const {return d_;}
 };
 
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-
-void main()
+TEST_CONSTEXPR_CXX20 bool tests()
 {
-#ifndef _LIBCPP_HAS_NO_VARIADICS
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
         vector<A> c;
         vector<A>::iterator i = c.emplace(c.cbegin(), 2, 3.5);
@@ -88,10 +81,10 @@ void main()
         assert(c.back().getd() == 4.5);
         //assert(is_contiguous_container_asan_correct(c));
     }
-#ifdef LIBCPP_TEST_STACK_ALLOCATOR
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<A, stack_allocator<A, 7> > c;
-        vector<A, stack_allocator<A, 7> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+        vector<A, limited_allocator<A, 7 * sizeof(A)> > c;
+        vector<A, limited_allocator<A, 7 * sizeof(A)> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
         assert(i == c.begin());
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
@@ -127,7 +120,6 @@ void main()
     }
 #endif
 #endif
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<A, min_allocator<A>> c;
@@ -162,6 +154,14 @@ void main()
     }
 #endif
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#endif	// _LIBCPP_HAS_NO_VARIADICS
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }
