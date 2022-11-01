@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -14,9 +13,12 @@
 
 // This tests a conforming extension
 
+// UNSUPPORTED: c++03
+
 //#include <vector>
 //#include <cassert>
 
+//#include "test_macros.h"
 //#include "MoveOnly.h"
 //#include "test_allocator.h"
 
@@ -25,12 +27,12 @@ struct some_alloc
 {
     typedef T value_type;
     some_alloc(const some_alloc&);
+    T* allocate(size_t);
+    void deallocate(void*, size_t) {}
 };
 
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
     {
         typedef vector<MoveOnly> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
@@ -45,7 +47,11 @@ void main()
     }
     {
         typedef vector<MoveOnly, some_alloc<MoveOnly>> C;
+    //  In C++17, move constructors for allocators are not allowed to throw
+#if TEST_STD_VER > 14
+        static_assert( std::is_nothrow_move_constructible<C>::value, "");
+#else
         static_assert(!std::is_nothrow_move_constructible<C>::value, "");
-    }
 #endif
+    }
 }

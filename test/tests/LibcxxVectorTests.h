@@ -210,13 +210,13 @@ LIBCXX_TEST_BEGIN(cons_default_recursive)
 LIBCXX_TEST_END
 #endif
 
-//LIBCXX_TEST_BEGIN(cons_default_noexcept)
-//#include "libcxx/vector/vector.cons/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_default_noexcept)
+#include "libcxx/vector/vector.cons/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
-//#include "libcxx/vector/vector.cons/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
+#include "libcxx/vector/vector.cons/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "libcxx/vector/vector.cons/initializer_list.pass.cpp"
@@ -234,13 +234,13 @@ LIBCXX_TEST_BEGIN(cons_move_alloc)
 #include "libcxx/vector/vector.cons/move_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
-//#include "libcxx/vector/vector.cons/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
+#include "libcxx/vector/vector.cons/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_noexcept)
-//#include "libcxx/vector/vector.cons/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_noexcept)
+#include "libcxx/vector/vector.cons/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_op_equal_initializer_list)
 #include "libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp"
