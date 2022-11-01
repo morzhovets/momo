@@ -86,7 +86,6 @@ void test_emplace_back() {
 }
 
 void test_insert_range() {
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<X> v;
   v.reserve(4);
   v.push_back(X(1));
@@ -102,11 +101,9 @@ void test_insert_range() {
   }
   assert(v.size() == 3);
   //assert(is_contiguous_container_asan_correct(v));
-#endif
 }
 
 void test_insert() {
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<X> v;
   v.reserve(3);
   v.insert(v.end(), X(1));
@@ -120,31 +117,27 @@ void test_insert() {
   }
   assert(v.size() == 2);
   //assert(is_contiguous_container_asan_correct(v));
-#endif
 }
 
 void test_emplace() {
 #ifndef _LIBCPP_HAS_NO_VARIADICS
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<X> v;
   v.reserve(3);
   v.insert(v.end(), X(1));
   v.insert(v.begin(), X(2));
   assert(v.size() == 2);
   try {
-    v.emplace(v.end(), 42);
+    v.emplace(v.end(), char{42});
     assert(0);
   } catch (int) {
     assert(v.size() == 2);
   }
   assert(v.size() == 2);
   //assert(is_contiguous_container_asan_correct(v));
-#endif
 #endif // _LIBCPP_HAS_NO_VARIADICS
 }
 
 void test_insert_range2() {
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<X> v;
   v.reserve(4);
   v.insert(v.end(), X(1));
@@ -161,11 +154,9 @@ void test_insert_range2() {
     return;
   }
   assert(0);
-#endif
 }
 
 void test_insert_n() {
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<X> v;
   v.reserve(10);
   v.insert(v.end(), X(1));
@@ -180,12 +171,9 @@ void test_insert_n() {
     return;
   }
   assert(0);
-#endif
 }
 
-
 void test_insert_n2() {
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   vector<ThrowOnCopy> v(10);
   v.reserve(100);
   assert(v.size() == 10);
@@ -199,7 +187,6 @@ void test_insert_n2() {
     return;
   }
   assert(0);
-#endif
 }
 
 void test_resize() {
