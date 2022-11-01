@@ -50,6 +50,8 @@ public:
         }
     }
 
+    ThrowOnCopy& operator=(const ThrowOnCopy&) = default;
+
     bool should_throw;
 };
 
