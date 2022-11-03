@@ -24,7 +24,7 @@
 
 
 TEST_CONSTEXPR_CXX20 bool test() {
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
   int arr1[] = {42};
   int arr2[] = {1, 101, 42};
   {
@@ -67,7 +67,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
       assert(v[2].value == 42);
     }
   }
-//#endif
+#endif
 
   // Test with a number of elements in the source range that is greater than capacity
   {
