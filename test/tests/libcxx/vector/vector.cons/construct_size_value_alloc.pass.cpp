@@ -34,10 +34,11 @@ test(typename C::size_type n, const typename C::value_type& x,
 TEST_CONSTEXPR_CXX20 bool tests() {
     test<vector<int> >(0, 3, std::allocator<int>());
     test<vector<int> >(50, 3, std::allocator<int>());
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     test<vector<int, min_allocator<int>> >(0, 3, min_allocator<int>());
     test<vector<int, min_allocator<int>> >(50, 3, min_allocator<int>());
+#endif
 #endif
 
     return true;

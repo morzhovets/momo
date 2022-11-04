@@ -107,7 +107,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         (void) i;
         (void) j;
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int T;
@@ -167,6 +167,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         C::const_iterator j = i;
         assert(j->first == 3);
     }
+#endif
 #endif
 #if TEST_STD_VER > 11
     { // N3644 testing

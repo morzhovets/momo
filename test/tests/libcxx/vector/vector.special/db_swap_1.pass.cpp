@@ -43,7 +43,7 @@ void main()
     }
 #endif
 #endif
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         int a1[] = {1, 3, 7, 9, 10};
@@ -58,6 +58,7 @@ void main()
         c1.erase(i1);
         assert(false);
     }
+#endif
 #endif
 #endif
 }

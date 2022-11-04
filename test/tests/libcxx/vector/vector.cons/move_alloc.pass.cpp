@@ -83,7 +83,7 @@ void main()
         assert(l2.get_allocator() == other_allocator<MoveOnly>(4));
         //assert(is_contiguous_container_asan_correct(l2));
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<MoveOnly, min_allocator<MoveOnly> > l(min_allocator<MoveOnly>{});
@@ -103,6 +103,7 @@ void main()
         assert(l2.get_allocator() == min_allocator<MoveOnly>());
         //assert(is_contiguous_container_asan_correct(l2));
     }
+#endif
 #endif
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

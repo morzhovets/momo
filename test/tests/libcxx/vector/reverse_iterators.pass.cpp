@@ -69,9 +69,10 @@ TEST_CONSTEXPR_CXX20 void check_vector_reverse_iterators() {
 
 TEST_CONSTEXPR_CXX20 bool test() {
     check_vector_reverse_iterators<vector<int> >();
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     check_vector_reverse_iterators<vector<int, min_allocator<int> > >();
+#endif
 #endif
 
     return true;

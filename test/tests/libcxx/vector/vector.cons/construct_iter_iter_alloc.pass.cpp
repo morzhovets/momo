@@ -36,7 +36,7 @@ TEST_CONSTEXPR_CXX20 void test(Iterator first, Iterator last, const A& a) {
     assert(*i == *first);
 }
 
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
 
 template <class T>
@@ -48,6 +48,7 @@ struct implicit_conv_allocator : min_allocator<T> {
   TEST_CONSTEXPR implicit_conv_allocator(implicit_conv_allocator<U>) {}
 };
 
+#endif
 #endif
 
 TEST_CONSTEXPR_CXX20 void basic_tests() {
@@ -65,7 +66,7 @@ TEST_CONSTEXPR_CXX20 void basic_tests() {
                             random_access_iterator<const int*>(an), alloc);
     test<vector<int> >(a, an, alloc);
   }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
   {
     int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
@@ -85,6 +86,7 @@ TEST_CONSTEXPR_CXX20 void basic_tests() {
     test<vector<int, min_allocator<int> > >(a, an, alloc);
     test<vector<int, implicit_conv_allocator<int> > >(a, an, nullptr);
   }
+#endif
 #endif
 }
 

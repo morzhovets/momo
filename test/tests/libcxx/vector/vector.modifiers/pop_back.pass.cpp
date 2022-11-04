@@ -31,7 +31,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(false);
 #endif
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> c;
@@ -42,6 +42,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
 #if _LIBCPP_DEBUG >= 1
         c.pop_back();
         assert(false);
+#endif
 #endif
 #endif
 

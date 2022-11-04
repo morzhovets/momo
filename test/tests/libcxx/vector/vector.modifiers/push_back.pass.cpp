@@ -81,7 +81,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
             assert(c[j] == static_cast<int>(j));
     }
 #endif
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> c;
@@ -111,6 +111,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
     }
+#endif
 #endif
 
     return true;

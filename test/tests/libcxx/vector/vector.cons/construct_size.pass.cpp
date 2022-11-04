@@ -56,10 +56,11 @@ void test(typename C::size_type n,
 TEST_CONSTEXPR_CXX20 bool tests() {
     test<vector<int> >(0);
     test<vector<int> >(50);
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     test<vector<int, min_allocator<int>>>(0);
     test<vector<int, min_allocator<int>>>(50);
+#endif
 #endif
 
     return true;

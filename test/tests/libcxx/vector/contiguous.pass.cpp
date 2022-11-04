@@ -40,7 +40,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     test_contiguous(C(A(3)));
     test_contiguous(C(7, 9.0, A(5)));
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef double T;
@@ -49,6 +49,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     test_contiguous(C(A{}));
     test_contiguous(C(9, 11.0, A{}));
     }
+#endif
 #endif
 
     return true;

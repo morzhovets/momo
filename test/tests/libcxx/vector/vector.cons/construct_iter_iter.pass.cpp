@@ -71,7 +71,7 @@ TEST_CONSTEXPR_CXX20 void basic_test_cases() {
       random_access_iterator<const int*>(an));
   test<vector<int, limited_allocator<int, 18 + 1> > >(a, an);
 #endif
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
   test<vector<int, min_allocator<int> > >(cpp17_input_iterator<const int*>(a),
                                                cpp17_input_iterator<const int*>(an));
@@ -83,6 +83,7 @@ TEST_CONSTEXPR_CXX20 void basic_test_cases() {
   test<vector<int, min_allocator<int> > >(
       random_access_iterator<const int*>(a),
       random_access_iterator<const int*>(an));
+#endif
   test<vector<int> >(a, an);
 #endif
 }

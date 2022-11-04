@@ -75,7 +75,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(std::distance(l1.begin(), l1.end()) == 0);
     //assert(is_contiguous_container_asan_correct(l1));
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     int a1[] = {1, 2, 3};
@@ -102,6 +102,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(std::distance(l1.begin(), l1.end()) == 0);
     //assert(is_contiguous_container_asan_correct(l1));
     }
+#endif
 #endif
 
     return true;

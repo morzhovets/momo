@@ -28,7 +28,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     //LIBCPP_ASSERT(c.__invariants());
     //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     int a[] = {1, 2, 3};
@@ -39,6 +39,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     //LIBCPP_ASSERT(c.__invariants());
     //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     }
+#endif
 #endif
 
     return true;

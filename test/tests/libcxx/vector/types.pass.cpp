@@ -93,7 +93,7 @@ void main()
     test<Copyable, test_allocator<Copyable> >();
     static_assert((std::is_same<vector<char>::allocator_type,
                                 std::allocator<char> >::value), "");
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
 
@@ -112,5 +112,6 @@ void main()
 //     static_assert((std::is_same<typename C::difference_type,
 //         typename std::iterator_traits<typename C::const_iterator>::difference_type>::value), "");
     }
+#endif
 #endif
 }

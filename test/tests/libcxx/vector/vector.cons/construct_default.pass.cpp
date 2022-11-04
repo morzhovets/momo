@@ -34,8 +34,7 @@ TEST_CONSTEXPR_CXX20 void test0()
     assert(c.empty());
     assert(c.get_allocator() == typename C::allocator_type());
     //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     C c1 = {};
     //LIBCPP_ASSERT(c1.__invariants());
     assert(c1.empty());

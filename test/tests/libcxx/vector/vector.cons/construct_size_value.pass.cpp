@@ -39,10 +39,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     test<vector<int, limited_allocator<int, 50 + 1> > >(50, 5);
     test<vector<int, limited_allocator<int, 50 + 1> > >(50, 5);
 #endif
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     test<vector<int, min_allocator<int>> >(0, 3);
     test<vector<int, min_allocator<int>> >(50, 3);
+#endif
 #endif
 
     return true;

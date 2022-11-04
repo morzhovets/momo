@@ -151,9 +151,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(false);
     }
 #endif
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
-
     {
         typedef vector<int, min_allocator<int> > V;
         V v(100);
@@ -200,6 +199,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
                                         input_iterator<const int*>(a+N));
         assert(false);
     }
+#endif
 #endif
 #endif
 

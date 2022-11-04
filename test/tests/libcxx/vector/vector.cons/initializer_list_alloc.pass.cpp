@@ -31,7 +31,7 @@ void main()
     assert(d[2] == 5);
     assert(d[3] == 6);
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     vector<int, min_allocator<int>> d({3, 4, 5, 6}, min_allocator<int>());
@@ -43,6 +43,7 @@ void main()
     assert(d[2] == 5);
     assert(d[3] == 6);
     }
+#endif
 #endif
 #endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

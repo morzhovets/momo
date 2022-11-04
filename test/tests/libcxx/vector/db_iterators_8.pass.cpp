@@ -33,7 +33,7 @@ void main()
     LIBCPP_CATCH(*i);
     //assert(false);
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef int T;
@@ -43,6 +43,7 @@ void main()
     T j = *i;
     assert(false);
     }
+#endif
 #endif
 }
 

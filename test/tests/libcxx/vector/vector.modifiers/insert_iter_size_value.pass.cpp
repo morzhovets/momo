@@ -91,7 +91,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(false);
     }
 #endif
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> v(100);
@@ -128,6 +128,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<int, min_allocator<int>>::iterator i = c1.insert(c2.cbegin() + 10, 5, 1);
         assert(false);
     }
+#endif
 #endif
 #endif
 

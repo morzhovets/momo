@@ -87,7 +87,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(is_contiguous_container_asan_correct(outer[0]));
         //assert(is_contiguous_container_asan_correct(outer[1]));
     }
-//#if TEST_STD_VER >= 11
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> l1(a1, a1+3);
@@ -140,6 +140,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(is_contiguous_container_asan_correct(outer[0]));
         //assert(is_contiguous_container_asan_correct(outer[1]));
     }
+#endif
 #endif
 
     return true;

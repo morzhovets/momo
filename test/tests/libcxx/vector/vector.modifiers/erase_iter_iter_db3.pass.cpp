@@ -31,7 +31,7 @@ void main()
     LIBCPP_CATCH(l1.erase(l2.cbegin(), l2.cbegin()+1));
     //assert(false);
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     int a1[] = {1, 2, 3};
@@ -40,6 +40,7 @@ void main()
     vector<int, min_allocator<int>>::iterator i = l1.erase(l2.cbegin(), l2.cbegin()+1);
     assert(false);
     }
+#endif
 #endif
 }
 
