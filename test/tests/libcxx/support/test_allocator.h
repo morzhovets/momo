@@ -511,9 +511,9 @@ TEST_CONSTEXPR_CXX20 thread_unsafe_shared_ptr<T> make_thread_unsafe_shared(Args.
 } // namespace detail
 
 template <class T, std::size_t N>
-class limited_allocator {
+class limited_allocator_bytes {
   template <class U, std::size_t UN>
-  friend class limited_allocator;
+  friend class limited_allocator_bytes;
   typedef limited_alloc_handle<N> BuffT;
   detail::thread_unsafe_shared_ptr<BuffT> handle_;
 
@@ -528,17 +528,17 @@ public:
 
   template <class U>
   struct rebind {
-    typedef limited_allocator<U, N> other;
+    typedef limited_allocator_bytes<U, N> other;
   };
 
-  TEST_CONSTEXPR_CXX20 limited_allocator() : handle_(detail::make_thread_unsafe_shared<BuffT>()) {}
+  TEST_CONSTEXPR_CXX20 limited_allocator_bytes() : handle_(detail::make_thread_unsafe_shared<BuffT>()) {}
 
-  limited_allocator(limited_allocator const&) = default;
+  limited_allocator_bytes(limited_allocator_bytes const&) = default;
 
   template <class U>
-  TEST_CONSTEXPR explicit limited_allocator(limited_allocator<U, N> const& other) : handle_(other.handle_) {}
+  TEST_CONSTEXPR explicit limited_allocator_bytes(limited_allocator_bytes<U, N> const& other) : handle_(other.handle_) {}
 
-  limited_allocator& operator=(const limited_allocator&) = delete;
+  limited_allocator_bytes& operator=(const limited_allocator_bytes&) = delete;
 
   TEST_CONSTEXPR_CXX20 pointer allocate(size_type n) { return handle_->template allocate<T>(n); }
   TEST_CONSTEXPR_CXX20 void deallocate(pointer p, size_type n) { handle_->template deallocate<T>(p, n); }
@@ -547,13 +547,16 @@ public:
 };
 
 template <class T, class U, std::size_t N>
-TEST_CONSTEXPR inline bool operator==(limited_allocator<T, N> const& LHS, limited_allocator<U, N> const& RHS) {
+TEST_CONSTEXPR inline bool operator==(limited_allocator_bytes<T, N> const& LHS, limited_allocator_bytes<U, N> const& RHS) {
   return LHS.getHandle() == RHS.getHandle();
 }
 
 template <class T, class U, std::size_t N>
-TEST_CONSTEXPR inline bool operator!=(limited_allocator<T, N> const& LHS, limited_allocator<U, N> const& RHS) {
+TEST_CONSTEXPR inline bool operator!=(limited_allocator_bytes<T, N> const& LHS, limited_allocator_bytes<U, N> const& RHS) {
   return !(LHS == RHS);
 }
+
+template <class T, std::size_t N>
+using limited_allocator = limited_allocator_bytes<T, (N <= SIZE_MAX / sizeof(T)) ? N * sizeof(T) : SIZE_MAX>;
 
 #endif // TEST_ALLOCATOR_H

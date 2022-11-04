@@ -104,7 +104,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        typedef vector<int, limited_allocator<int, 308 * sizeof(int)> > V;
+        typedef vector<int, limited_allocator<int, 308> > V;
         V v(100);
         int a[] = {1, 2, 3, 4, 5};
         const int N = sizeof(a)/sizeof(a[0]);
@@ -122,7 +122,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
             assert(v[j] == 0);
     }
     {
-        typedef vector<int, limited_allocator<int, 300 * sizeof(int)> > V;
+        typedef vector<int, limited_allocator<int, 300> > V;
         V v(100);
         int a[] = {1, 2, 3, 4, 5};
         const int N = sizeof(a)/sizeof(a[0]);

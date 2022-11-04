@@ -43,7 +43,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
     {
         // Add 1 for implementations that dynamically allocate a container proxy.
-        vector<int, limited_allocator<int, 250 * sizeof(int) + 1> > v(100);
+        vector<int, limited_allocator<int, 250 + 1> > v(100);
         assert(v.capacity() == 100);
         v.reserve(50);
         assert(v.size() == 100);
@@ -122,7 +122,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 #ifndef TEST_HAS_NO_EXCEPTIONS
     if (!TEST_IS_CONSTANT_EVALUATED) {
-        vector<int, limited_allocator<int, 100 * sizeof(int)> > v;
+        vector<int, limited_allocator<int, 100> > v;
         v.reserve(50);
         assert(v.capacity() == 50);
         //assert(is_contiguous_container_asan_correct(v));

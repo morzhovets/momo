@@ -38,7 +38,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         //assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<int, limited_allocator<int, 401 * sizeof(int)> > v(100);
+        vector<int, limited_allocator<int, 401> > v(100);
         v.push_back(1);
         //assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();
@@ -48,7 +48,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #ifndef TEST_HAS_NO_EXCEPTIONS
     if (!TEST_IS_CONSTANT_EVALUATED) {
-        vector<int, limited_allocator<int, 400 * sizeof(int)> > v(100);
+        vector<int, limited_allocator<int, 400> > v(100);
         v.push_back(1);
         //assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();

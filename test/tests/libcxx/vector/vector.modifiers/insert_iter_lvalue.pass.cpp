@@ -87,9 +87,9 @@ TEST_CONSTEXPR_CXX20 bool test() {
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<int, limited_allocator<int, 300 * sizeof(int)> > v(100);
+        vector<int, limited_allocator<int, 300> > v(100);
         const int lvalue = 1;
-        vector<int, limited_allocator<int, 300 * sizeof(int)> >::iterator i = v.insert(v.cbegin() + 10, lvalue);
+        vector<int, limited_allocator<int, 300> >::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == 101);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);

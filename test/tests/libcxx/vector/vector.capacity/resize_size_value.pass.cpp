@@ -38,7 +38,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         // Add 1 for implementations that dynamically allocate a container proxy.
-        vector<int, limited_allocator<int, 300 * sizeof(int) + 1> > v(100);
+        vector<int, limited_allocator<int, 300 + 1> > v(100);
         v.resize(50, 1);
         assert(v.size() == 50);
         assert(v.capacity() == 100);

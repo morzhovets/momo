@@ -83,8 +83,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<A, limited_allocator<A, 7 * sizeof(A)> > c;
-        vector<A, limited_allocator<A, 7 * sizeof(A)> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+        vector<A, limited_allocator<A, 7> > c;
+        vector<A, limited_allocator<A, 7> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
         assert(i == c.begin());
         assert(c.size() == 1);
         assert(c.front().geti() == 2);

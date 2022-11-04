@@ -38,8 +38,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<MoveOnly, limited_allocator<MoveOnly, 300 * sizeof(MoveOnly)> > v(100);
-        vector<MoveOnly, limited_allocator<MoveOnly, 300 * sizeof(MoveOnly)> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
+        vector<MoveOnly, limited_allocator<MoveOnly, 300> > v(100);
+        vector<MoveOnly, limited_allocator<MoveOnly, 300> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
         //assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);

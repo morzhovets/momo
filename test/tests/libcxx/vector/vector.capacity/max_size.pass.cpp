@@ -21,7 +21,7 @@
 
 TEST_CONSTEXPR_CXX20 bool test() {
   {
-    typedef limited_allocator<int, 10 * sizeof(int)> A;
+    typedef limited_allocator<int, 10> A;
     typedef vector<int, A> C;
     C c;
     assert(c.max_size() <= 10);

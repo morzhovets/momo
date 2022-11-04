@@ -58,18 +58,18 @@ TEST_CONSTEXPR_CXX20 void basic_test_cases() {
   test<vector<int> >(a, an);
 
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
-  test<vector<int, limited_allocator<int, 63 * sizeof(int)> > >(
+  test<vector<int, limited_allocator<int, 63> > >(
       cpp17_input_iterator<const int*>(a), cpp17_input_iterator<const int*>(an));
   // Add 1 for implementations that dynamically allocate a container proxy.
-  test<vector<int, limited_allocator<int, 18 * sizeof(int) + 1> > >(
+  test<vector<int, limited_allocator<int, 18 + 1> > >(
       forward_iterator<const int*>(a), forward_iterator<const int*>(an));
-  test<vector<int, limited_allocator<int, 18 * sizeof(int) + 1> > >(
+  test<vector<int, limited_allocator<int, 18 + 1> > >(
       bidirectional_iterator<const int*>(a),
       bidirectional_iterator<const int*>(an));
-  test<vector<int, limited_allocator<int, 18 * sizeof(int) + 1> > >(
+  test<vector<int, limited_allocator<int, 18 + 1> > >(
       random_access_iterator<const int*>(a),
       random_access_iterator<const int*>(an));
-  test<vector<int, limited_allocator<int, 18 * sizeof(int) + 1> > >(a, an);
+  test<vector<int, limited_allocator<int, 18 + 1> > >(a, an);
 #endif
 //#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR

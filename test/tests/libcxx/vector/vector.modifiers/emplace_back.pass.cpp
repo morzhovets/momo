@@ -85,7 +85,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<A, limited_allocator<A, 4 * sizeof(A)> > c;
+        vector<A, limited_allocator<A, 4> > c;
 #if TEST_STD_VER > 14
         A& r1 = c.emplace_back(2, 3.5);
         assert(c.size() == 1);
