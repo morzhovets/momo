@@ -392,7 +392,9 @@ struct CopyInsertable {
   }
 
   ~CopyInsertable() {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(constructed_under_allocator == getConstructController()->isInAllocatorConstruct());
+#endif
   }
 
   void reset(int value) {
@@ -463,57 +465,57 @@ _LIBCPP_END_NAMESPACE_STD
 #endif
 
 // TCT - Test container type
-namespace TCT {
-
-template <class T = CopyInsertable<1>>
-using vector = std::vector<T, ContainerTestAllocator<T, T> >;
-template <class T = CopyInsertable<1>>
-using deque = std::deque<T, ContainerTestAllocator<T, T> >;
-template <class T = CopyInsertable<1>>
-using list = std::list<T, ContainerTestAllocator<T, T> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using unordered_map =
-      std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using map =
-      std::map<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using unordered_multimap =
-      std::unordered_multimap<Key, Value, std::hash<Key>, std::equal_to<Key>,
-                                   ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using multimap =
-      std::multimap<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Value = CopyInsertable<1> >
-using unordered_set =
-  std::unordered_set<Value, std::hash<Value>, std::equal_to<Value>,
-                               ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using set =
-    std::set<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using unordered_multiset =
-    std::unordered_multiset<Value, std::hash<Value>, std::equal_to<Value>,
-                                    ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using multiset =
-    std::multiset<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
-
-} // end namespace TCT
+//namespace TCT {
+//
+//template <class T = CopyInsertable<1>>
+//using vector = std::vector<T, ContainerTestAllocator<T, T> >;
+//template <class T = CopyInsertable<1>>
+//using deque = std::deque<T, ContainerTestAllocator<T, T> >;
+//template <class T = CopyInsertable<1>>
+//using list = std::list<T, ContainerTestAllocator<T, T> >;
+//
+//template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+//          class ValueTp = std::pair<const Key, Value> >
+//using unordered_map =
+//      std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>,
+//                              ContainerTestAllocator<ValueTp, ValueTp> >;
+//
+//template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+//          class ValueTp = std::pair<const Key, Value> >
+//using map =
+//      std::map<Key, Value, std::less<Key>,
+//                              ContainerTestAllocator<ValueTp, ValueTp> >;
+//
+//template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+//          class ValueTp = std::pair<const Key, Value> >
+//using unordered_multimap =
+//      std::unordered_multimap<Key, Value, std::hash<Key>, std::equal_to<Key>,
+//                                   ContainerTestAllocator<ValueTp, ValueTp> >;
+//
+//template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+//          class ValueTp = std::pair<const Key, Value> >
+//using multimap =
+//      std::multimap<Key, Value, std::less<Key>,
+//                              ContainerTestAllocator<ValueTp, ValueTp> >;
+//
+//template <class Value = CopyInsertable<1> >
+//using unordered_set =
+//  std::unordered_set<Value, std::hash<Value>, std::equal_to<Value>,
+//                               ContainerTestAllocator<Value, Value> >;
+//
+//template <class Value = CopyInsertable<1> >
+//using set =
+//    std::set<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
+//
+//template <class Value = CopyInsertable<1> >
+//using unordered_multiset =
+//    std::unordered_multiset<Value, std::hash<Value>, std::equal_to<Value>,
+//                                    ContainerTestAllocator<Value, Value> >;
+//
+//template <class Value = CopyInsertable<1> >
+//using multiset =
+//    std::multiset<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
+//
+//} // end namespace TCT
 
 #endif // SUPPORT_CONTAINER_TEST_TYPES_H

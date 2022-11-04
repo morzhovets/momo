@@ -24,6 +24,11 @@
 //#include "container_test_types.h"
 //#endif
 
+namespace TCT {
+template <class T = CopyInsertable<1>>
+using vector = vector<T, ContainerTestAllocator<T, T> >;
+}
+
 template <class C, class Iterator>
 TEST_CONSTEXPR_CXX20 void test(Iterator first, Iterator last) {
   {
@@ -129,6 +134,7 @@ TEST_CONSTEXPR_CXX20 void emplaceable_concept_tests() {
 
 void test_ctor_under_alloc() {
 #if TEST_STD_VER >= 11
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
   int arr1[] = {42};
   int arr2[] = {1, 101, 42};
   {
@@ -155,6 +161,7 @@ void test_ctor_under_alloc() {
       //C v(It(arr2), It(std::end(arr2)), a);
     }
   }
+#endif
 #endif
 }
 
