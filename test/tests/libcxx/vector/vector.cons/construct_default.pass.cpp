@@ -1,57 +1,65 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
 // <vector>
 
-// vector(const Alloc& = Alloc());
+// vector();
+// vector(const Alloc&);
 
 //#include <vector>
 //#include <cassert>
 
+//#include "test_macros.h"
 //#include "test_allocator.h"
 //#include "../../../NotConstructible.h"
-//#include "../../../stack_allocator.h"
+//#include "test_allocator.h"
 //#include "min_allocator.h"
 //#include "asan_testing.h"
 
 template <class C>
-void
-test0()
+TEST_CONSTEXPR_CXX20 void test0()
 {
+#if TEST_STD_VER > 14
+    static_assert((noexcept(C{})), "" );
+#elif TEST_STD_VER >= 11
+    static_assert((noexcept(C()) == noexcept(typename C::allocator_type())), "" );
+#endif
     C c;
-    //assert(c.__invariants());
+    //LIBCPP_ASSERT(c.__invariants());
     assert(c.empty());
     assert(c.get_allocator() == typename C::allocator_type());
-    //assert(is_contiguous_container_asan_correct(c));
-//#if __cplusplus >= 201103L
+    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+//#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     C c1 = {};
-    //assert(c1.__invariants());
+    //LIBCPP_ASSERT(c1.__invariants());
     assert(c1.empty());
     assert(c1.get_allocator() == typename C::allocator_type());
-    //assert(is_contiguous_container_asan_correct(c1));
+    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c1));
 #endif
 }
 
 template <class C>
-void
-test1(const typename C::allocator_type& a)
+TEST_CONSTEXPR_CXX20 void test1(const typename C::allocator_type& a)
 {
+#if TEST_STD_VER > 14
+    static_assert((noexcept(C{typename C::allocator_type{}})), "" );
+#elif TEST_STD_VER >= 11
+    static_assert((noexcept(C(typename C::allocator_type())) == std::is_nothrow_copy_constructible<typename C::allocator_type>::value), "" );
+#endif
     C c(a);
-    //assert(c.__invariants());
+    //LIBCPP_ASSERT(c.__invariants());
     assert(c.empty());
     assert(c.get_allocator() == a);
-    //assert(is_contiguous_container_asan_correct(c));
+    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
 }
 
-void main()
-{
+TEST_CONSTEXPR_CXX20 bool tests() {
     {
     test0<vector<int> >();
     test0<vector<NotConstructible> >();
@@ -59,13 +67,11 @@ void main()
     test1<vector<NotConstructible, test_allocator<NotConstructible> > >
         (test_allocator<NotConstructible>(5));
     }
-#ifdef LIBCPP_TEST_STACK_ALLOCATOR
     {
-        vector<int, stack_allocator<int, 10> > v;
+        vector<int, limited_allocator<int, 10> > v;
         assert(v.empty());
     }
-#endif
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     test0<vector<int, min_allocator<int>> >();
@@ -79,4 +85,27 @@ void main()
         assert(v.empty());
     }
 #endif
+
+    {
+    test0<vector<int, explicit_allocator<int>> >();
+    test0<vector<NotConstructible, explicit_allocator<NotConstructible>> >();
+    test1<vector<int, explicit_allocator<int> > >(explicit_allocator<int>{});
+    test1<vector<NotConstructible, explicit_allocator<NotConstructible> > >
+        (explicit_allocator<NotConstructible>{});
+    }
+    {
+        vector<int, explicit_allocator<int> > v;
+        assert(v.empty());
+    }
+#endif
+
+    return true;
+}
+
+void main()
+{
+    tests();
+//#if TEST_STD_VER > 17
+//    static_assert(tests());
+//#endif
 }

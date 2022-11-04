@@ -174,11 +174,9 @@ LIBCXX_TEST_BEGIN(cons_construct_iter_iter_alloc)
 #include "libcxx/vector/vector.cons/construct_iter_iter_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
 LIBCXX_TEST_BEGIN(cons_construct_size)
 #include "libcxx/vector/vector.cons/construct_size.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(cons_construct_size_value)
 #include "libcxx/vector/vector.cons/construct_size_value.pass.cpp"

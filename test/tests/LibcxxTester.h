@@ -40,7 +40,8 @@
 #include "libcxx/support/test_comparisons.h"
 #include "libcxx/support/emplace_constructible.h"
 #include "libcxx/support/allocators.h"
-//#include "libcxx/support/min_allocator.h"
+#include "libcxx/support/container_test_types.h"
+#include "libcxx/support/min_allocator.h"
 
 template<typename It>
 using input_iterator = cpp17_input_iterator<It>;
