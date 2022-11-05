@@ -41,6 +41,7 @@
 #include "libcxx/support/emplace_constructible.h"
 #include "libcxx/support/allocators.h"
 #include "libcxx/support/container_test_types.h"
+#include "libcxx/support/deduction_guides_sfinae_checks.h"
 #include "libcxx/support/min_allocator.h"
 
 template<typename It>
@@ -55,8 +56,6 @@ struct LibcppIntHash
 		return static_cast<size_t>(key);
 	}
 };
-
-#define LIBCPP_ASSERT(expr) void()
 
 #define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
 

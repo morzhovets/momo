@@ -28,6 +28,9 @@
 #define ASSERT_NOEXCEPT(...) \
     static_assert(noexcept(__VA_ARGS__), "Operation must be noexcept")
 
+#define LIBCPP_ASSERT(...) static_assert(true, "")
+#define LIBCPP_STATIC_ASSERT(...) static_assert(true, "")
+
 namespace test_macros_detail {
 template <class T, class U>
 struct is_same { enum { value = 0};} ;
