@@ -120,6 +120,16 @@ namespace internal
 			std::is_trivially_destructible_v<Functor> &&
 			std::is_trivially_move_constructible_v<Functor>));
 
+	template<typename Functor, bool triviallyCopyable, typename... Args>
+	concept conceptCopyableFunctor =
+		std::is_nothrow_destructible_v<Functor> &&
+		requires (Functor func, Args&&... args)
+			{ { std::as_const(func)(std::forward<Args>(args)...) }; } &&
+		(!triviallyCopyable ||
+			(!std::is_reference_v<Functor> &&
+			std::is_trivially_destructible_v<Functor> &&
+			std::is_trivially_copy_constructible_v<Functor>));
+
 	template<typename Creator, typename Object,
 		bool triviallyMovable = true>
 	concept conceptCreator = conceptMovableFunctor<Creator, triviallyMovable, Object*>;
@@ -131,6 +141,10 @@ namespace internal
 	template<typename Replacer, typename Object,
 		bool triviallyMovable = true>
 	concept conceptReplacer = conceptMovableFunctor<Replacer, triviallyMovable, Object&, Object&>;
+
+	template<typename Creator, typename Object,
+		bool triviallyCopyable = true>
+	concept conceptMultiCreator = conceptCopyableFunctor<Creator, triviallyCopyable, Object*>;
 
 	template<typename ObjectArg>
 	concept conceptPassingByValue =
@@ -180,6 +194,43 @@ namespace internal
 		void operator()(Args&&... args) &&
 		{
 			std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
+		}
+
+	private:
+		BaseFunctorReference mBaseFunctor;
+	};
+
+	template<typename TBaseFunctor,
+		size_t tMaxSize = 3 * sizeof(void*)>
+	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	class FastCopyableFunctor
+	{
+	public:
+		typedef TBaseFunctor BaseFunctor;
+
+		static const size_t maxSize = tMaxSize;
+
+	private:
+		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+			&& std::is_trivially_copy_constructible_v<BaseFunctor>
+			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, const BaseFunctor&> BaseFunctorReference;
+
+	public:
+		explicit FastCopyableFunctor(BaseFunctorReference baseFunctor) noexcept
+			: mBaseFunctor(baseFunctor)
+		{
+		}
+
+		FastCopyableFunctor(const FastCopyableFunctor&) = default;
+
+		~FastCopyableFunctor() noexcept = default;
+
+		FastCopyableFunctor& operator=(const FastCopyableFunctor&) = delete;
+
+		template<typename... Args>
+		void operator()(Args&&... args) const
+		{
+			mBaseFunctor(std::forward<Args>(args)...);
 		}
 
 	private:

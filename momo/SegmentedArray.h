@@ -282,13 +282,12 @@ public:
 		return array;
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	static SegmentedArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	static SegmentedArray CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
-		array.pvIncCount(count, multiItemCreator);
+		array.pvIncCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
 		return array;
 	}
 
@@ -355,32 +354,28 @@ public:
 		return mCount;
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
 	{
-		if (count < mCount)
-			pvDecCount(count);
-		else if (count > mCount)
-			pvIncCount(count, multiItemCreator);
+		pvSetCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
 	}
 
 	void SetCount(size_t count)
 	{
-		typedef typename ItemTraits::template Creator<> Creator;
+		typedef typename ItemTraits::template Creator<> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager] (Item* newItem)
-			{ (Creator(memManager))(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ (ItemCreator(memManager))(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		typedef typename ItemTraits::template Creator<const Item&> Creator;
+		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager, &item] (Item* newItem)
-			{ Creator(memManager, item)(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ ItemCreator(memManager, item)(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const noexcept
@@ -620,6 +615,15 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
+	template<typename MultiItemCreator>
+	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
+	{
+		if (count < mCount)
+			pvDecCount(count);
+		else if (count > mCount)
+			pvIncCount(count, multiItemCreator);
+	}
+
 	Item& pvGetItem(size_t index) const
 	{
 		MOMO_CHECK(index < mCount);
@@ -676,7 +680,7 @@ private:
 	}
 
 	template<typename MultiItemCreator>
-	void pvIncCount(size_t count, const MultiItemCreator& multiItemCreator)
+	void pvIncCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();

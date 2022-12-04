@@ -518,14 +518,14 @@ public:
 		return Array(Data(capacity, std::move(memManager)));
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	static Array CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	static Array CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
+		internal::FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
 		Array array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.AddBackNogrowCrt(multiItemCreator);
+			array.AddBackNogrowCrt(fastMultiItemCreator);	//?
 		return array;
 	}
 
@@ -603,70 +603,28 @@ public:
 		return mData.GetCount();
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
 	{
-		size_t newCount = count;
-		size_t initCount = GetCount();
-		if (newCount <= initCount)
-		{
-			pvRemoveBack(initCount - newCount);
-		}
-		else if (newCount <= GetCapacity())
-		{
-			Item* items = GetItems();
-			size_t index = initCount;
-			try
-			{
-				for (; index < newCount; ++index)
-					multiItemCreator(items + index);
-			}
-			catch (...)
-			{
-				ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount);
-				throw;
-			}
-			mData.SetCount(newCount);
-		}
-		else
-		{
-			size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::reserve, false);
-			auto itemsRelocator = [this, initCount, newCount, &multiItemCreator] (Item* newItems)
-			{
-				size_t index = initCount;
-				try
-				{
-					for (; index < newCount; ++index)
-						multiItemCreator(newItems + index);
-					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
-				}
-				catch (...)
-				{
-					ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount);
-					throw;
-				}
-			};
-			mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
-		}
+		pvSetCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
 	}
 
 	void SetCount(size_t count)
 	{
-		typedef typename ItemTraits::template Creator<> Creator;
+		typedef typename ItemTraits::template Creator<> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager] (Item* newItem)
-			{ (Creator(memManager))(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ (ItemCreator(memManager))(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		typedef typename ItemTraits::template Creator<const Item&> Creator;
+		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager, &item] (Item* newItem)
-			{ Creator(memManager, item)(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ ItemCreator(memManager, item)(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const noexcept
@@ -965,6 +923,53 @@ private:
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.template Reset<true>(newCapacityExp, count, itemsRelocator);
+		}
+	}
+
+	template<typename MultiItemCreator>
+	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
+	{
+		size_t newCount = count;
+		size_t initCount = GetCount();
+		if (newCount <= initCount)
+		{
+			pvRemoveBack(initCount - newCount);
+		}
+		else if (newCount <= GetCapacity())
+		{
+			Item* items = GetItems();
+			size_t index = initCount;
+			try
+			{
+				for (; index < newCount; ++index)
+					multiItemCreator(items + index);
+			}
+			catch (...)
+			{
+				ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount);
+				throw;
+			}
+			mData.SetCount(newCount);
+		}
+		else
+		{
+			size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::reserve, false);
+			auto itemsRelocator = [this, initCount, newCount, multiItemCreator] (Item* newItems)
+			{
+				size_t index = initCount;
+				try
+				{
+					for (; index < newCount; ++index)
+						multiItemCreator(newItems + index);
+					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
+				}
+				catch (...)
+				{
+					ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount);
+					throw;
+				}
+			};
+			mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
 		}
 	}
 

@@ -244,14 +244,14 @@ public:
 		return array;
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	static MergeArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	static MergeArray CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
+		internal::FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
 		MergeArray array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.AddBackNogrowCrt(multiItemCreator);
+			array.AddBackNogrowCrt(fastMultiItemCreator);	//?
 		return array;
 	}
 
@@ -318,47 +318,28 @@ public:
 		return mCount;
 	}
 
-	template<typename MultiItemCreator>
-	requires std::regular_invocable<const MultiItemCreator&, Item*>
-	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
+	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
 	{
-		if (count <= mCount)
-		{
-			pvRemoveBack(mCount - count);
-		}
-		else //if (count <= mCapacity)
-		{
-			Reserve(count);	//?
-			size_t initCount = mCount;
-			try
-			{
-				for (size_t i = initCount; i < count; ++i)
-					AddBackNogrowCrt(multiItemCreator);
-			}
-			catch (...)
-			{
-				pvRemoveBack(mCount - initCount);
-				throw;
-			}
-		}
+		pvSetCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
 	}
 
 	void SetCount(size_t count)
 	{
-		typedef typename ItemTraits::template Creator<> Creator;
+		typedef typename ItemTraits::template Creator<> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager] (Item* newItem)
-			{ (Creator(memManager))(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ (ItemCreator(memManager))(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
-		typedef typename ItemTraits::template Creator<const Item&> Creator;
+		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager, &item] (Item* newItem)
-			{ Creator(memManager, item)(newItem); };
-		SetCountCrt(count, multiItemCreator);
+			{ ItemCreator(memManager, item)(newItem); };
+		pvSetCount(count, multiItemCreator);
 	}
 
 	bool IsEmpty() const noexcept
@@ -723,6 +704,30 @@ private:
 	Iterator pvMakeIterator(size_t index) noexcept
 	{
 		return IteratorProxy(this, index);
+	}
+
+	template<typename MultiItemCreator>
+	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
+	{
+		if (count <= mCount)
+		{
+			pvRemoveBack(mCount - count);
+		}
+		else //if (count <= mCapacity)
+		{
+			Reserve(count);	//?
+			size_t initCount = mCount;
+			try
+			{
+				for (size_t i = initCount; i < count; ++i)
+					AddBackNogrowCrt(multiItemCreator);	//?
+			}
+			catch (...)
+			{
+				pvRemoveBack(mCount - initCount);
+				throw;
+			}
+		}
 	}
 
 	Item& pvGetItem(size_t index) const
