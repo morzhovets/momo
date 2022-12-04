@@ -594,7 +594,7 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<internal::conceptFunctor<false, Key*, Value*> PairCreator,
+	template<internal::conceptPairCreator<Key, Value, false> PairCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{

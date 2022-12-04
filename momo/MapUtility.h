@@ -38,6 +38,14 @@ concept conceptMapKeyValueTraits =
 
 namespace internal
 {
+	template<typename Creator, typename Key, typename Value,
+		bool triviallyMovable = true>
+	concept conceptPairCreator = conceptFunctor<Creator, triviallyMovable, Key*, Value*>;
+
+	template<typename Remover, typename Key, typename Value,
+		bool triviallyMovable = true>
+	concept conceptPairRemover = conceptFunctor<Remover, triviallyMovable, Key&, Value&>;
+
 	template<typename TSetReference,
 		bool tIsConst = false>
 	class MapReference
@@ -1029,7 +1037,7 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<internal::conceptFunctor<false, Key&, Value&> PairRemover>
+		template<conceptPairRemover<Key, Value, false> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
 			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
@@ -1136,7 +1144,7 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<std::invocable<Key&, Value&> PairRemover>
+		template<conceptPairRemover<Key, Value, false> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
 			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
