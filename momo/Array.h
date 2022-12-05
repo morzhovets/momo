@@ -525,7 +525,7 @@ public:
 		internal::FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
 		Array array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.AddBackNogrowCrt(fastMultiItemCreator);	//?
+			array.pvAddBackNogrow(fastMultiItemCreator);
 		return array;
 	}
 

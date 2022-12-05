@@ -212,6 +212,7 @@ namespace internal
 
 	private:
 		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+			&& std::is_trivially_move_constructible_v<BaseFunctor>
 			&& std::is_trivially_copy_constructible_v<BaseFunctor>
 			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, const BaseFunctor&> BaseFunctorReference;
 
@@ -221,7 +222,9 @@ namespace internal
 		{
 		}
 
-		FastCopyableFunctor(const FastCopyableFunctor&) = default;
+		FastCopyableFunctor(FastCopyableFunctor&&) noexcept = default;
+
+		FastCopyableFunctor(const FastCopyableFunctor&) noexcept = default;
 
 		~FastCopyableFunctor() noexcept = default;
 

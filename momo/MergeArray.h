@@ -251,7 +251,7 @@ public:
 		internal::FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
 		MergeArray array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.AddBackNogrowCrt(fastMultiItemCreator);	//?
+			array.pvAddBackNogrow(fastMultiItemCreator);
 		return array;
 	}
 
@@ -720,7 +720,7 @@ private:
 			try
 			{
 				for (size_t i = initCount; i < count; ++i)
-					AddBackNogrowCrt(multiItemCreator);	//?
+					pvAddBackNogrow(multiItemCreator);
 			}
 			catch (...)
 			{
