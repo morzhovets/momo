@@ -27,7 +27,9 @@
 #include "Array.h"
 #include "HashSet.h"
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 #include <typeinfo>
+#endif
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::internal::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
@@ -238,14 +240,20 @@ namespace internal
 		template<typename Item>
 		using Column = DataColumn<Item, Struct, Code>;
 
+#ifdef MOMO_DISABLE_TYPE_INFO
+		typedef std::tuple<> VisitableItems;
+#else
 		typedef typename DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
+#endif
 
 	public:
 		template<typename Item>
 		DataColumnInfo(const Column<Item>& column) noexcept
 			: mCode(column.GetCode()),
-			mName(column.GetName()),
-			mTypeInfo(typeid(Item))
+			mName(column.GetName())
+#ifndef MOMO_DISABLE_TYPE_INFO
+			, mTypeInfo(typeid(Item))
+#endif
 		{
 		}
 
@@ -259,10 +267,12 @@ namespace internal
 			return mName;
 		}
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& GetTypeInfo() const noexcept
 		{
 			return mTypeInfo;
 		}
+#endif
 
 		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
 		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
@@ -280,6 +290,7 @@ namespace internal
 		template<size_t index, typename Void, typename PtrVisitor>
 		void pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
 		{
+#ifndef MOMO_DISABLE_TYPE_INFO
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
 				typedef std::tuple_element_t<index, VisitableItems> Item;
@@ -290,6 +301,7 @@ namespace internal
 					pvVisitRec<index + 1>(item, ptrVisitor);
 			}
 			else
+#endif
 			{
 				return pvVisit(item, ptrVisitor);
 			}
@@ -307,7 +319,9 @@ namespace internal
 	private:
 		Code mCode;
 		const char* mName;
+#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& mTypeInfo;
+#endif
 	};
 }
 

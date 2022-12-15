@@ -149,23 +149,32 @@ public:
 		{
 			Row row = table.NewRow();
 
-			auto visitor = [i] (auto& item)
+			auto voidVisitor = [i, &intCol] (void* item, auto columnInfo)
 			{
-				if constexpr (std::is_same_v<decltype(item), int&>)
-					item = static_cast<int>(i);
+				if (columnInfo.GetCode() == intCol.GetCode())
+					*static_cast<int*>(item) = static_cast<int>(i);
 			};
-			row.VisitReferences(visitor);
+			row.VisitPointers(voidVisitor);
 
-			auto visitor2 = [i] (const auto& item)
+#ifndef MOMO_DISABLE_TYPE_INFO
+			auto refVisitor = [i] (auto& item)
 			{
 				typedef std::decay_t<decltype(item)> Item;
 				if constexpr (std::is_same_v<Item, int>)
 					assert(item == static_cast<int>(i));
-				if constexpr (std::is_same_v<Item, const int*>)
+			};
+			row.VisitReferences(refVisitor);
+			std::as_const(row).VisitReferences(refVisitor);
+
+			auto ptrVisitor = [i] (auto* item)
+			{
+				typedef decltype(item) Item;
+				if constexpr (std::is_same_v<Item, int*> || std::is_same_v<Item, const int*>)
 					assert(*item == static_cast<int>(i));
 			};
-			std::as_const(row).VisitReferences(visitor2);
-			std::as_const(row).VisitPointers(visitor2);
+			row.VisitPointers(ptrVisitor);
+			std::as_const(row).VisitPointers(ptrVisitor);
+#endif
 
 			Row row2 = table.NewRow();
 			row2 = std::move(row);
@@ -303,6 +312,7 @@ public:
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 		{
 			std::stringstream sstream;
 			auto visitor = [&sstream] (const auto& item, auto columnInfo)
@@ -313,6 +323,7 @@ public:
 			ctable[0].VisitReferences(visitor);
 			assert(sstream.str() == "00");
 		}
+#endif
 
 		{
 			Table table2(table);

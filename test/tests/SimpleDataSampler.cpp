@@ -107,6 +107,7 @@ namespace sample2
 			table.AddRow(std::move(row));
 		}
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 		for (auto row : table)
 		{
 			for (auto column : table.GetColumnList())
@@ -124,6 +125,7 @@ namespace sample2
 		}
 		// 1 1.5 b 
 		// 2 0.5 a 
+#endif
 
 		{
 			auto selection = table.Select(strCol == "a");	// fast select by index
