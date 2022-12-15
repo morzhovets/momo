@@ -9,9 +9,14 @@ jobs:
         include:
 
         # MinGW GNU 8.1.0 Release
-        - flags: '-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+        - win_ver: '2019'
+          flags: '-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-    runs-on: windows-2019
+        # MinGW GNU 11.2.0 Release
+        #- win_ver: '2022'
+        #  flags: '-std=c++23 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+    runs-on: windows-${{ matrix.win_ver }}
 
     steps:
     - name: Checkout
