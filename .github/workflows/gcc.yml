@@ -22,7 +22,7 @@ jobs:
 
         - gcc_ver: '12'
           build_type: 'Release'
-          flags: '-DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS'
+          flags: '-fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
         - gcc_ver: '12'
           build_type: 'Debug'
