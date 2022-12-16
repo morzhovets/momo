@@ -31,6 +31,9 @@
 // As a hint pass an iterator, returned after an unsuccessful search.
 //#define MOMO_USE_UNORDERED_HINT_ITERATORS
 
+// Disable use of `typeid` operator
+//#define MOMO_DISABLE_TYPE_INFO
+
 // If your program does not use exceptions, define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
 #define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible<Object>::value)

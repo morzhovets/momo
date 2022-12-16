@@ -125,6 +125,7 @@ public:
 		typedef typename Table::ConstSelection ConstSelection;
 		typedef typename Table::Selection Selection;
 		typedef typename Table::ConstIterator ConstIterator;
+		typedef typename Table::ColumnList::ColumnInfo ColumnInfo;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
@@ -147,26 +148,36 @@ public:
 		for (size_t i = count / 2; i < count; ++i)
 		{
 			Row row = table.NewRow();
-#if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
-			auto visitor = [i] (auto& item)
+
+			auto voidVisitor = [i, &intCol] (void* item, ColumnInfo columnInfo)
 			{
-				if constexpr (std::is_same<decltype(item), int&>::value)
-					item = static_cast<int>(i);
+				if (columnInfo.GetCode() == intCol.GetCode())
+					*static_cast<int*>(item) = static_cast<int>(i);
 			};
-			row.VisitReferences(visitor);
-			auto visitor2 = [i] (const auto& item)
+			row.VisitPointers(voidVisitor);
+
+#ifndef MOMO_DISABLE_TYPE_INFO
+#if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
+			auto refVisitor = [i] (auto& item)
 			{
 				typedef std::decay_t<decltype(item)> Item;
-				if constexpr (std::is_same<Item, int>::value)
+				if constexpr (std::is_same_v<Item, int>)
 					assert(item == static_cast<int>(i));
-				if constexpr (std::is_same<Item, const int*>::value)
+			};
+			row.VisitReferences(refVisitor);
+			std::as_const(row).VisitReferences(refVisitor);
+
+			auto ptrVisitor = [i] (auto* item)
+			{
+				typedef decltype(item) Item;
+				if constexpr (std::is_same_v<Item, int*> || std::is_same_v<Item, const int*>)
 					assert(*item == static_cast<int>(i));
 			};
-			static_cast<const Row&>(row).VisitReferences(visitor2);
-			static_cast<const Row&>(row).VisitPointers(visitor2);
-#else
-			row[intCol] = static_cast<int>(i);
+			row.VisitPointers(ptrVisitor);
+			std::as_const(row).VisitPointers(ptrVisitor);
 #endif
+#endif
+
 			Row row2 = table.NewRow();
 			row2 = std::move(row);
 			assert(static_cast<const Row&>(row2)[intCol] == static_cast<int>(i));
@@ -303,6 +314,7 @@ public:
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 #if defined(__cpp_generic_lambdas)
 		{
 			std::stringstream sstream;
@@ -314,6 +326,7 @@ public:
 			ctable[0].VisitReferences(visitor);
 			assert(sstream.str() == "00");
 		}
+#endif
 #endif
 
 		{
