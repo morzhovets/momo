@@ -267,7 +267,8 @@ namespace internal
 		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
 
 	public:
-		using typename ColumnInfoBase::Column;
+		template<typename Item>
+		using Column = typename ColumnInfoBase::template Column<Item>;
 
 		typedef std::tuple<> VisitableItems;
 
@@ -313,7 +314,9 @@ namespace internal
 
 	public:
 		using typename ColumnInfoBase::Struct;
-		using typename ColumnInfoBase::Column;
+
+		template<typename Item>
+		using Column = typename ColumnInfoBase::template Column<Item>;
 
 		typedef typename DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
 
