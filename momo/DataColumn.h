@@ -211,6 +211,86 @@ namespace internal
 		DataColumn& operator=(const DataColumn&) noexcept = default;
 	};
 
+	template<typename DataPtrVisitor, typename Void, typename ColumnInfo>
+	concept conceptDataPtrVisitor =
+		std::is_invocable_v<const DataPtrVisitor&, Void*> ||
+		std::is_invocable_v<const DataPtrVisitor&, Void*, ColumnInfo>;
+
+	template<typename TStruct, typename TCode>
+	class DataColumnInfoBase
+	{
+	public:
+		typedef TStruct Struct;
+		typedef TCode Code;
+
+		template<typename Item>
+		using Column = DataColumn<Item, Struct, Code>;
+
+	public:
+		Code GetCode() const noexcept
+		{
+			return mCode;
+		}
+
+		const char* GetName() const noexcept
+		{
+			return mName;
+		}
+
+	protected:
+		explicit DataColumnInfoBase(Code code, const char* name) noexcept
+			: mCode(code),
+			mName(name)
+		{
+		}
+
+		template<typename ColumnInfo, typename Item, typename PtrVisitor>
+		void ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		{
+			if constexpr (std::is_invocable_v<const PtrVisitor&, Item*, ColumnInfo>)
+				ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
+			else
+				ptrVisitor(item);
+		}
+
+	private:
+		Code mCode;
+		const char* mName;
+	};
+
+#ifdef MOMO_DISABLE_TYPE_INFO
+	template<typename TStruct,
+		typename TCode = uint64_t>
+	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
+	{
+	private:
+		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
+
+	public:
+		using typename ColumnInfoBase::Column;
+
+		typedef std::tuple<> VisitableItems;
+
+	public:
+		template<typename Item>
+		DataColumnInfo(const Column<Item>& column) noexcept
+			: ColumnInfoBase(column.GetCode(), column.GetName())
+		{
+		}
+
+		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
+		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+		{
+			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+		}
+
+		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
+		void Visit(void* item, const PtrVisitor& ptrVisitor) const
+		{
+			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+		}
+	};
+#else
 	template<typename Struct>
 	struct DataVisitableItemsGetter
 	{
@@ -224,55 +304,31 @@ namespace internal
 		typedef typename Struct::VisitableItems VisitableItems;
 	};
 
-	template<typename DataPtrVisitor, typename Void, typename ColumnInfo>
-	concept conceptDataPtrVisitor =
-		std::is_invocable_v<const DataPtrVisitor&, Void*> ||
-		std::is_invocable_v<const DataPtrVisitor&, Void*, ColumnInfo>;
-
 	template<typename TStruct,
 		typename TCode = uint64_t>
-	class DataColumnInfo
+	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
 	{
+	private:
+		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
+
 	public:
-		typedef TStruct Struct;
-		typedef TCode Code;
+		using typename ColumnInfoBase::Struct;
+		using typename ColumnInfoBase::Column;
 
-		template<typename Item>
-		using Column = DataColumn<Item, Struct, Code>;
-
-#ifdef MOMO_DISABLE_TYPE_INFO
-		typedef std::tuple<> VisitableItems;
-#else
 		typedef typename DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
-#endif
 
 	public:
 		template<typename Item>
 		DataColumnInfo(const Column<Item>& column) noexcept
-			: mCode(column.GetCode()),
-			mName(column.GetName())
-#ifndef MOMO_DISABLE_TYPE_INFO
-			, mTypeInfo(typeid(Item))
-#endif
+			: ColumnInfoBase(column.GetCode(), column.GetName()),
+			mTypeInfo(typeid(Item))
 		{
 		}
 
-		Code GetCode() const noexcept
-		{
-			return mCode;
-		}
-
-		const char* GetName() const noexcept
-		{
-			return mName;
-		}
-
-#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& GetTypeInfo() const noexcept
 		{
 			return mTypeInfo;
 		}
-#endif
 
 		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
 		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
@@ -290,39 +346,25 @@ namespace internal
 		template<size_t index, typename Void, typename PtrVisitor>
 		void pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
 		{
-#ifndef MOMO_DISABLE_TYPE_INFO
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
 				typedef std::tuple_element_t<index, VisitableItems> Item;
 				typedef std::conditional_t<std::is_const_v<Void>, const Item*, Item*> ItemPtr;
 				if (typeid(Item) == mTypeInfo)
-					pvVisit(static_cast<ItemPtr>(item), ptrVisitor);
+					ColumnInfoBase::template ptVisit<DataColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
 				else
 					pvVisitRec<index + 1>(item, ptrVisitor);
 			}
 			else
-#endif
 			{
-				return pvVisit(item, ptrVisitor);
+				return ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
 			}
 		}
 
-		template<typename Item, typename PtrVisitor>
-		void pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
-		{
-			if constexpr (std::is_invocable_v<const PtrVisitor&, Item*, DataColumnInfo>)
-				ptrVisitor(item, *this);
-			else
-				ptrVisitor(item);
-		}
-
 	private:
-		Code mCode;
-		const char* mName;
-#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& mTypeInfo;
-#endif
 	};
+#endif
 }
 
 template<typename DataColumnList,
