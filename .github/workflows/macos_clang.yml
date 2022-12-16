@@ -11,7 +11,7 @@ jobs:
         # Apple Clang 12.0.0
         - macos_ver: '10.15'
           build_type: 'Release'
-          flags: '-Werror -std=c++11 -msse2 -Wno-c++1z-extensions'
+          flags: '-Werror -std=c++11 -Wno-c++1z-extensions -msse2'
 
         # Apple Clang 13.0.0
         - macos_ver: '11'
