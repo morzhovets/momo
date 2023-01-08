@@ -1,7 +1,9 @@
 /**********************************************************\
 
-  This file is distributed under the MIT License.
-  See https://github.com/morzhovets/momo/blob/master/LICENSE
+  This file is part of the
+  https://github.com/morzhovets/momo
+  project, distributed under the MIT License. See
+  https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
   tests/LibcxxHashMultiMapTester.h
