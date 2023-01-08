@@ -341,6 +341,9 @@
     <ClInclude Include="..\..\..\momo\stdish\segmented_vector.h">
       <Filter>Header Files\momo\stdish</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\momo\Version.h">
+      <Filter>Header Files\momo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\..\..\debug\momo.natvis" />
