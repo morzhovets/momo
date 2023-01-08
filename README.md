@@ -8,7 +8,8 @@
 This project contains an implementation of the C++ containers, similar to the [standard](https://en.cppreference.com/w/cpp/container) `set/map` and `unordered_set/map`, but much more efficient in memory usage.
 As for the operation speed, these containers are also better than the standard ones in most cases ([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the standard C++20 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++23 **including exception safety guarantees**.
+Compiler must support C++20.
 
 #### Deviations from the standard
 
