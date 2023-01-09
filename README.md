@@ -9,7 +9,7 @@ This project contains an implementation of the C++ containers, similar to the [s
 As for the operation speed, these containers are also better than the standard ones in most cases ([benchmark of unordered containers](https://morzhovets.github.io/hash_gcc_ubuntu16), [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16), [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
 Classes are designed in close conformity with the standard C++23 **including exception safety guarantees**.
-Compiler must support C++20.
+Compiler must support C++20 (stable branch with C++11 support is [here](https://github.com/morzhovets/momo/tree/branch_cpp11)).
 
 #### Deviations from the standard
 
