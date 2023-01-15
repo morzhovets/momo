@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
+
 #ifndef SUPPORT_CONTAINER_TEST_TYPES_H
 #define SUPPORT_CONTAINER_TEST_TYPES_H
 

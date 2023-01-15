@@ -5,6 +5,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
 
 // <vector>
 

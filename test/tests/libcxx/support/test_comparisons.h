@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
+
 //  A set of routines for testing the comparison operators of a type
 //
 //      FooOrder<expected-ordering>  All seven comparison operators, requires C++20 or newer.
