@@ -6,6 +6,10 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
 
 #ifndef TRANSPARENT_H
 #define TRANSPARENT_H

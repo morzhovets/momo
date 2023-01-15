@@ -6,6 +6,10 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
 
 #ifndef __PRIVATE_CONSTRUCTOR__H
 #define __PRIVATE_CONSTRUCTOR__H
