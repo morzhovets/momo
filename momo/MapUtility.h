@@ -562,6 +562,7 @@ namespace internal
 
 		static void Destroy(MapKeyValuePair& pair) noexcept
 		{
+			(void)pair;	// vs warning
 			pair.~MapKeyValuePair();
 		}
 
