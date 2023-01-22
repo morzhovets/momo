@@ -7,6 +7,7 @@ var _data_column_8h =
     [ "DataMutable", "structmomo_1_1internal_1_1_data_mutable.html", null ],
     [ "DataColumn", "classmomo_1_1internal_1_1_data_column.html", "classmomo_1_1internal_1_1_data_column" ],
     [ "DataColumn< DataMutable< TItem >, TStruct, TCode >", "classmomo_1_1internal_1_1_data_column_3_01_data_mutable_3_01_t_item_01_4_00_01_t_struct_00_01_t_code_01_4.html", "classmomo_1_1internal_1_1_data_column_3_01_data_mutable_3_01_t_item_01_4_00_01_t_struct_00_01_t_code_01_4" ],
+    [ "DataColumnInfoBase", "classmomo_1_1internal_1_1_data_column_info_base.html", "classmomo_1_1internal_1_1_data_column_info_base" ],
     [ "DataVisitableItemsGetter", "structmomo_1_1internal_1_1_data_visitable_items_getter.html", "structmomo_1_1internal_1_1_data_visitable_items_getter" ],
     [ "DataVisitableItemsGetter< Struct, Void< typename Struct::VisitableItems > >", "structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d.html", "structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d" ],
     [ "DataColumnInfo", "classmomo_1_1internal_1_1_data_column_info.html", "classmomo_1_1internal_1_1_data_column_info" ],

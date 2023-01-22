@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.6</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
   </td>
  </tr>
@@ -108,6 +108,8 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aad2285c585c3028201775991dd7dc59f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits.html#aad2285c585c3028201775991dd7dc59f">TreeTraits</a> () noexcept</td></tr>
 <tr class="separator:aad2285c585c3028201775991dd7dc59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea18e6e41d7fbd2b81a6067c84695ba"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits.html#a0ea18e6e41d7fbd2b81a6067c84695ba">GetSplitItemIndex</a> (size_t itemCount, size_t newItemIndex) const noexcept</td></tr>
+<tr class="separator:a0ea18e6e41d7fbd2b81a6067c84695ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa34a42eb7b7451eab6f4d7b15ac872d1"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg1 , typename KeyArg2 &gt; </td></tr>
 <tr class="memitem:aa34a42eb7b7451eab6f4d7b15ac872d1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits.html#aa34a42eb7b7451eab6f4d7b15ac872d1">IsLess</a> (const KeyArg1 &amp;key1, const KeyArg2 &amp;key2) const</td></tr>
 <tr class="separator:aa34a42eb7b7451eab6f4d7b15ac872d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,6 +204,44 @@ template&lt;typename TKey , bool tMultiKey = false, typename TTreeNode  = TreeNo
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0ea18e6e41d7fbd2b81a6067c84695ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea18e6e41d7fbd2b81a6067c84695ba">&#9670;&nbsp;</a></span>GetSplitItemIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault, bool tUseLinearSearch = IsFastComparable&lt;TKey&gt;::value&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_tree_traits.html">momo::TreeTraits</a>&lt; TKey, tMultiKey, TTreeNode, tUseLinearSearch &gt;::GetSplitItemIndex </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>itemCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>newItemIndex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa34a42eb7b7451eab6f4d7b15ac872d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa34a42eb7b7451eab6f4d7b15ac872d1">&#9670;&nbsp;</a></span>IsLess() <span class="overload">[1/2]</span></h2>
 

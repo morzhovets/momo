@@ -6,5 +6,6 @@ var classmomo_1_1_tree_traits_std =
     [ "TreeNode", "classmomo_1_1_tree_traits_std.html#a31f0467b44c90c352293762cf71b571a", null ],
     [ "TreeTraitsStd", "classmomo_1_1_tree_traits_std.html#a263c4e50c598ba9647c5694322cd38bc", null ],
     [ "GetLessFunc", "classmomo_1_1_tree_traits_std.html#ad2845e17bc8aeb4caa46b62894ac9f8a", null ],
+    [ "GetSplitItemIndex", "classmomo_1_1_tree_traits_std.html#adc87bdaf5eda25ea821dad57e40ab99d", null ],
     [ "IsLess", "classmomo_1_1_tree_traits_std.html#ad8c48caee38a92e2b16ade470abe1913", null ]
 ];

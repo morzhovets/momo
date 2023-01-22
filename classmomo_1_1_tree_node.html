@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.6</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
   </td>
  </tr>
@@ -84,6 +84,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_tree_node.html',''); ini
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_tree_node-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -100,6 +101,11 @@ Public Types</h2></td></tr>
 <tr class="memitem:ad9c4c37ab942f685d02aca7cef143e7e"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
 <tr class="memitem:ad9c4c37ab942f685d02aca7cef143e7e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_node.html#ad9c4c37ab942f685d02aca7cef143e7e">Node</a> = <a class="el" href="classmomo_1_1internal_1_1_node.html">internal::Node</a>&lt; ItemTraits, <a class="el" href="classmomo_1_1_tree_node.html#aad35ad92a8ebfe3b8b1da2123dca20df">maxCapacity</a>, <a class="el" href="classmomo_1_1_tree_node.html#aa9126fe6d1a3ee69a542f08d38b9fcb2">capacityStep</a>, <a class="el" href="classmomo_1_1_tree_node.html#a84c7dcc025faab64b8019a7cb49047e7">MemPoolParams</a>, <a class="el" href="classmomo_1_1_tree_node.html#adb4423b30916032d265674a5b1db2617">isContinuous</a> &amp;&amp;ItemTraits::isNothrowShiftable &gt;</td></tr>
 <tr class="separator:ad9c4c37ab942f685d02aca7cef143e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:abd1ff597899d633d07c7973b0ff561f4"><td class="memItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_node.html#abd1ff597899d633d07c7973b0ff561f4">GetSplitItemIndex</a> (size_t itemCount, size_t newItemIndex) noexcept</td></tr>
+<tr class="separator:abd1ff597899d633d07c7973b0ff561f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -141,6 +147,45 @@ template&lt;typename ItemTraits &gt; </div>
           <td class="memname">using <a class="el" href="classmomo_1_1_tree_node.html">momo::TreeNode</a>&lt; tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;::<a class="el" href="classmomo_1_1_tree_node.html#ad9c4c37ab942f685d02aca7cef143e7e">Node</a> =  <a class="el" href="classmomo_1_1internal_1_1_node.html">internal::Node</a>&lt;ItemTraits, <a class="el" href="classmomo_1_1_tree_node.html#aad35ad92a8ebfe3b8b1da2123dca20df">maxCapacity</a>, <a class="el" href="classmomo_1_1_tree_node.html#aa9126fe6d1a3ee69a542f08d38b9fcb2">capacityStep</a>, <a class="el" href="classmomo_1_1_tree_node.html#a84c7dcc025faab64b8019a7cb49047e7">MemPoolParams</a>, <a class="el" href="classmomo_1_1_tree_node.html#adb4423b30916032d265674a5b1db2617">isContinuous</a> &amp;&amp; ItemTraits::isNothrowShiftable&gt;</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="abd1ff597899d633d07c7973b0ff561f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd1ff597899d633d07c7973b0ff561f4">&#9670;&nbsp;</a></span>GetSplitItemIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t tMaxCapacity = 32, size_t tCapacityStep = (tMaxCapacity &gt;= 16) ? tMaxCapacity / 8 : 2, typename TMemPoolParams  = MemPoolParams&lt;(tMaxCapacity &lt; 64) ? 8 : 1&gt;, bool tIsContinuous = true&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static size_t <a class="el" href="classmomo_1_1_tree_node.html">momo::TreeNode</a>&lt; tMaxCapacity, tCapacityStep, TMemPoolParams, tIsContinuous &gt;::GetSplitItemIndex </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>itemCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>newItemIndex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
