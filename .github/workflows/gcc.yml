@@ -11,22 +11,22 @@ jobs:
         - gcc_ver: '4.9'
           build_type: 'Release'
           flags: '-std=c++11 -msse2'
-          ubuntu_ver: '18.04'
+          ubuntu_ver: '20.04'
 
         - gcc_ver: '4.9'
           build_type: 'Release'
           flags: '-std=c++11 -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          ubuntu_ver: '18.04'
+          ubuntu_ver: '20.04'
 
         - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++14 -msse2'
-          ubuntu_ver: '18.04'
+          ubuntu_ver: '20.04'
 
         - gcc_ver: '6'
           build_type: 'Release'
           flags: '-std=c++17 -msse2'
-          ubuntu_ver: '18.04'
+          ubuntu_ver: '20.04'
 
         - gcc_ver: '7'
           build_type: 'Release'
@@ -74,7 +74,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Prepare Xenial
-      if: matrix.ubuntu_ver == '18.04'
+      if: matrix.ubuntu_ver == '20.04'
       run: |
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | sudo tee -a /etc/apt/sources.list
         sudo apt update

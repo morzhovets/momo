@@ -8,15 +8,10 @@ jobs:
       matrix:
         include:
 
-        # Apple Clang 12.0.0
-        - macos_ver: '10.15'
-          build_type: 'Release'
-          flags: '-Werror -std=c++11 -Wno-c++1z-extensions -msse2'
-
         # Apple Clang 13.0.0
         - macos_ver: '11'
           build_type: 'Release'
-          flags: '-Werror -std=c++17 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-Werror -std=c++11 -Wno-c++1z-extensions -msse2'
 
         # Apple Clang 14.0.0
         - macos_ver: '12'
