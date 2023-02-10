@@ -19,6 +19,9 @@
 #if __has_include(<version>)
 #include <version>	// feature macros
 #endif
+#if __has_include(<bit>)
+#include <bit>
+#endif
 #endif
 
 #include <cassert>
@@ -118,11 +121,17 @@
 #define MOMO_LITTLE_ENDIAN
 #endif
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__cpp_lib_bitops)
+#define MOMO_CTZ32(value) std::countr_zero(value)
+#define MOMO_CTZ64(value) std::countr_zero(value)
+#elif defined(__GNUC__) || defined(__clang__)
 #define MOMO_CTZ32(value) __builtin_ctz(value)
 #define MOMO_CTZ64(value) __builtin_ctzll(value)
-//#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 #endif
+
+//#if defined(__GNUC__) || defined(__clang__)
+//#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
+//#endif
 
 #define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
 	alignas(alignment) typename std::conditional<(alignment >= alignof(Object)), \
