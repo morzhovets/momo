@@ -682,7 +682,7 @@ public:
 	explicit DataColumnList(MemManager memManager)
 		: mCodeParam(0),
 		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
-		mAlignment(Settings::keepRowNumber ? internal::ObjectAlignmenter<size_t>::alignment : 1),
+		mAlignment(1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
 		mColumnRecords(MemManagerPtr(GetMemManager())),
 		mFuncRecords(MemManagerPtr(GetMemManager())),
@@ -828,13 +828,13 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		return *internal::PtrCaster::Shift<const size_t>(raw, 0);
+		return internal::MemCopyer::FromBuffer<size_t>(raw);
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		*internal::PtrCaster::Shift<size_t>(raw, 0) = number;
+		return internal::MemCopyer::ToBuffer(number, raw);
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1175,25 +1175,12 @@ public:
 
 	size_t GetTotalSize() const noexcept
 	{
-		size_t totalSize = sizeof(Struct);
-		if constexpr (Settings::keepRowNumber)
-		{
-			totalSize = internal::UIntMath<>::Ceil(totalSize,
-				internal::ObjectAlignmenter<size_t>::alignment);
-			totalSize += sizeof(size_t);
-		}
-		return totalSize;
+		return sizeof(Struct) + (Settings::keepRowNumber ? sizeof(size_t) : 0);
 	}
 
 	size_t GetAlignment() const noexcept
 	{
-		size_t alignment = RawManager::alignment;
-		if constexpr (Settings::keepRowNumber)
-		{
-			alignment = std::minmax(alignment,
-				size_t{internal::ObjectAlignmenter<size_t>::alignment}).second;
-		}
-		return alignment;
+		return RawManager::alignment;
 	}
 
 	void CreateRaw(MemManager& memManager, Raw* raw) const
@@ -1237,13 +1224,14 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		return *internal::PtrCaster::Shift<const size_t>(raw, pvGetNumberOffset());
+		return internal::MemCopyer::FromBuffer<size_t>(
+			internal::PtrCaster::Shift<const void>(raw, sizeof(Struct)));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		*internal::PtrCaster::Shift<size_t>(raw, pvGetNumberOffset()) = number;
+		internal::MemCopyer::ToBuffer(number, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1283,12 +1271,6 @@ private:
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
 	{
 		return static_cast<size_t>(columnInfo.GetCode());	//?
-	}
-
-	static size_t pvGetNumberOffset() noexcept
-	{
-		return internal::UIntMath<>::Ceil(sizeof(Struct),
-			internal::ObjectAlignmenter<size_t>::alignment);
 	}
 
 	template<typename Void, typename PtrVisitor>
