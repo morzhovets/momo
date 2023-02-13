@@ -116,8 +116,8 @@ namespace internal
 		typedef MemPool<ArrayMemPoolParams, MemManagerPtr,
 			NestedMemPoolSettings> ArrayMemPool;
 
-		typedef BucketMemory<FastMemPool, uint8_t*> FastMemory;
-		typedef BucketMemory<ArrayMemPool, uint8_t*> ArrayMemory;
+		typedef BucketMemory<FastMemPool, std::byte*> FastMemory;
+		typedef BucketMemory<ArrayMemPool, std::byte*> ArrayMemory;
 
 	public:
 		class Params
@@ -183,7 +183,7 @@ namespace internal
 		}
 
 		ArrayBucket(ArrayBucket&& bucket) noexcept
-			: mPtr(nullptr)
+			: ArrayBucket()
 		{
 			Swap(bucket);
 		}
@@ -220,7 +220,7 @@ namespace internal
 			else
 			{
 				ArrayMemory memory(params.GetArrayMemPool());
-				std::construct_at(&pvGetArray(memory.GetPointer()),
+				std::construct_at(pvGetArrayPtr(memory.GetPointer()),
 					bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
 				pvSet(memory.Extract(), uint8_t{0});
 			}
@@ -298,7 +298,7 @@ namespace internal
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::move(itemCreator), newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) {});
-							std::construct_at(&pvGetArray(memory.GetPointer()), std::move(array));
+							std::construct_at(pvGetArrayPtr(memory.GetPointer()), std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), uint8_t{0});
 						}
@@ -306,7 +306,7 @@ namespace internal
 					else
 					{
 						std::move(itemCreator)(pvGetFastItems() + count);
-						++*mPtr;
+						pvSetState(pvGetState() + uint8_t{1});
 					}
 				}
 				else
@@ -325,7 +325,7 @@ namespace internal
 			if (pvGetMemPoolIndex() > 0)
 			{
 				ItemTraits::Destroy(params.GetMemManager(), pvGetFastItems() + count - 1, 1);
-				--*mPtr;
+				pvSetState(pvGetState() - uint8_t{1});
 			}
 			else
 			{
@@ -351,11 +351,21 @@ namespace internal
 		}
 
 	private:
-		void pvSet(uint8_t* ptr, uint8_t state) noexcept
+		void pvSet(std::byte* ptr, uint8_t state) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
-			*mPtr = state;
+			pvSetState(state);
+		}
+
+		uint8_t pvGetState() const noexcept
+		{
+			return MemCopyer::FromBuffer<uint8_t>(mPtr);
+		}
+
+		void pvSetState(uint8_t state) noexcept
+		{
+			MemCopyer::ToBuffer(state, mPtr);
 		}
 
 		static uint8_t pvMakeState(size_t memPoolIndex, size_t count) noexcept
@@ -372,13 +382,13 @@ namespace internal
 		size_t pvGetMemPoolIndex() const noexcept
 		{
 			MOMO_ASSERT(mPtr != nullptr);
-			return size_t{*mPtr} >> 4;
+			return size_t{pvGetState()} >> 4;
 		}
 
 		size_t pvGetFastCount() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() > 0);
-			return size_t{*mPtr} & 15;
+			return size_t{pvGetState()} & 15;
 		}
 
 		Item* pvGetFastItems() const noexcept
@@ -387,7 +397,7 @@ namespace internal
 			return pvGetFastItems(mPtr);
 		}
 
-		static Item* pvGetFastItems(uint8_t* ptr) noexcept
+		static Item* pvGetFastItems(std::byte* ptr) noexcept
 		{
 			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
 		}
@@ -395,12 +405,12 @@ namespace internal
 		Array& pvGetArray() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() == 0);
-			return pvGetArray(mPtr);
+			return *pvGetArrayPtr(mPtr);
 		}
 
-		static Array& pvGetArray(uint8_t* ptr) noexcept
+		static Array* pvGetArrayPtr(std::byte* ptr) noexcept
 		{
-			return *PtrCaster::Shift<Array>(ptr, arrayAlignment);
+			return PtrCaster::Shift<Array>(ptr, arrayAlignment);
 		}
 
 		Bounds pvGetBounds() const noexcept
@@ -444,7 +454,7 @@ namespace internal
 		}
 
 	private:
-		uint8_t* mPtr;
+		std::byte* mPtr;
 	};
 }
 
