@@ -353,18 +353,19 @@ namespace internal
 	private:
 		void pvSet(std::byte* ptr, uint8_t state) noexcept
 		{
-			MOMO_ASSERT(ptr != nullptr);
 			mPtr = ptr;
 			pvSetState(state);
 		}
 
 		uint8_t pvGetState() const noexcept
 		{
+			MOMO_ASSERT(mPtr != nullptr);
 			return MemCopyer::FromBuffer<uint8_t>(mPtr);
 		}
 
 		void pvSetState(uint8_t state) noexcept
 		{
+			MOMO_ASSERT(mPtr != nullptr);
 			MemCopyer::ToBuffer(state, mPtr);
 		}
 
@@ -381,7 +382,6 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			MOMO_ASSERT(mPtr != nullptr);
 			return size_t{pvGetState()} >> 4;
 		}
 

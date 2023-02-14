@@ -57,7 +57,7 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, uint8_t*> Memory;
+		typedef BucketMemory<MemPool, std::byte*> Memory;
 
 		static const uintptr_t ptrNull = UIntConst::nullPtr;
 		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
@@ -207,7 +207,7 @@ namespace internal
 				{
 					Item* items = pvGetItems();
 					std::move(itemCreator)(items + count);
-					++*pvGetPtr();
+					pvSetState(pvGetState() + uint8_t{1});
 					return items + count;
 				}
 			}
@@ -232,7 +232,7 @@ namespace internal
 			{
 				MOMO_ASSERT(items <= iter && iter < items + count);
 				std::move(itemReplacer)(items[count - 1], *iter);
-				--*pvGetPtr();
+				pvSetState(pvGetState() - uint8_t{1});
 				return iter;
 			}
 		}
@@ -243,17 +243,27 @@ namespace internal
 			return mPtr == ptrNull || mPtr == ptrNullWasFull;
 		}
 
-		uint8_t* pvGetPtr() const noexcept
+		std::byte* pvGetPtr() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return PtrCaster::FromUInt<uint8_t>(mPtr);
+			return PtrCaster::FromUInt<std::byte>(mPtr);
 		}
 
-		void pvSet(uint8_t* ptr, size_t memPoolIndex, size_t count) noexcept
+		void pvSet(std::byte* ptr, size_t memPoolIndex, size_t count) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = PtrCaster::ToUInt(ptr);
-			*ptr = static_cast<uint8_t>((memPoolIndex << 4) | count);
+			pvSetState(static_cast<uint8_t>((memPoolIndex << 4) | count));
+		}
+
+		uint8_t pvGetState() const noexcept
+		{
+			return MemCopyer::FromBuffer<uint8_t>(pvGetPtr());
+		}
+
+		void pvSetState(uint8_t state) noexcept
+		{
+			MemCopyer::ToBuffer(state, pvGetPtr());
 		}
 
 		static size_t pvGetMemPoolIndex(size_t count) noexcept
@@ -264,12 +274,12 @@ namespace internal
 
 		size_t pvGetMemPoolIndex() const noexcept
 		{
-			return size_t{*pvGetPtr()} >> 4;
+			return size_t{pvGetState()} >> 4;
 		}
 
 		size_t pvGetCount() const noexcept
 		{
-			return size_t{*pvGetPtr()} & 15;
+			return size_t{pvGetState()} & 15;
 		}
 
 		Item* pvGetItems() const noexcept
@@ -277,7 +287,7 @@ namespace internal
 			return pvGetItems(pvGetPtr());
 		}
 
-		static Item* pvGetItems(uint8_t* ptr) noexcept
+		static Item* pvGetItems(std::byte* ptr) noexcept
 		{
 			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
 		}
