@@ -82,7 +82,7 @@ public:
 		size_t byteSize = pvGetByteSize(logMaxCount);
 		mData = internal::MemManagerProxy<MemManager>::template Allocate<uint8_t>(
 			memManager, byteSize);
-		std::fill_n(mData, byteSize, uint8_t{0});
+		std::uninitialized_fill_n(mData, byteSize, uint8_t{0});
 	}
 
 	template<conceptMemManager MemManager>
@@ -92,7 +92,7 @@ public:
 		size_t byteSize = pvGetByteSize(logMaxCount);
 		mData = internal::MemManagerProxy<MemManager>::template Allocate<uint8_t>(
 			memManager, byteSize);
-		std::copy_n(filter.mData, byteSize, mData);
+		std::uninitialized_copy_n(filter.mData, byteSize, mData);
 	}
 
 	template<conceptMemManager MemManager>
