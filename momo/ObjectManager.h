@@ -259,14 +259,16 @@ namespace internal
 		}
 	};
 
-	template<conceptObject TObject, size_t tAlignment>
-	requires (ObjectAlignmenter<TObject>::Check(tAlignment))
+	template<conceptObject TObject, size_t tAlignment,
+		size_t tCount = 1>
+	requires (ObjectAlignmenter<TObject>::Check(tAlignment) && tCount > 0)
 	class ObjectBuffer
 	{
 	public:
 		typedef TObject Object;
 
 		static const size_t alignment = tAlignment;
+		static const size_t count = tCount;
 
 	public:
 		explicit ObjectBuffer() noexcept = default;
@@ -288,7 +290,7 @@ namespace internal
 		}
 
 	private:
-		alignas(alignment) std::byte mBuffer[sizeof(Object)];
+		alignas(alignment) std::byte mBuffer[sizeof(Object) * count];
 	};
 
 	template<conceptMemManager TMemManager, conceptObject TObject, typename... ObjectArgs>

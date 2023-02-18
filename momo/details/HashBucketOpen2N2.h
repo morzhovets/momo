@@ -92,7 +92,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return Bounds(Iterator(&mItems[0] + maxCount), pvGetCount());
+			return Bounds(Iterator(&mItems + maxCount), pvGetCount());
 		}
 
 		template<bool first, typename Predicate>
@@ -154,7 +154,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(&mItems[0], std::to_address(iter));
+			size_t index = UIntMath<>::Dist(&mItems, std::to_address(iter));
 			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
@@ -193,8 +193,8 @@ namespace internal
 			{
 				if (mHashData.shortHashes[i] == shortHash)
 				{
-					if (pred(std::as_const(*&mItems[i]))) [[likely]]
-						return Iterator(&mItems[i] + 1);
+					if (pred(std::as_const((&mItems)[i]))) [[likely]]
+						return Iterator(&mItems + i + 1);
 				}
 			}
 			return Iterator();
@@ -205,7 +205,7 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* newItem = &mItems[maxCount - 1 - count];
+			Item* newItem = &mItems + maxCount - 1 - count;
 			std::move(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if constexpr (useHashCodePartGetter)
@@ -225,9 +225,9 @@ namespace internal
 		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = UIntMath<>::Dist(&mItems[0], std::to_address(iter));
+			size_t index = UIntMath<>::Dist(&mItems, std::to_address(iter));
 			MOMO_ASSERT(index >= maxCount - count);
-			std::move(itemReplacer)(*&mItems[maxCount - count], *&mItems[index]);
+			std::move(itemReplacer)((&mItems)[maxCount - count], (&mItems)[index]);
 			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
 			mHashData.shortHashes[maxCount - count] = emptyShortHash;
 			if constexpr (useHashCodePartGetter)
@@ -273,7 +273,7 @@ namespace internal
 	private:
 		uint8_t mState[2];
 		HashData<maxCount, useHashCodePartGetter> mHashData;
-		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
+		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }
 
