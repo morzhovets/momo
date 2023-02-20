@@ -253,17 +253,6 @@ namespace internal
 			data[bitIndex / bitSize] |= UInt{1} << static_cast<UInt>(bitIndex % bitSize);
 		}
 
-		static constexpr UInt GCD(UInt value1, UInt value2) noexcept
-		{
-			while (value2 != 0)
-			{
-				size_t value3 = value1 % value2;
-				value1 = value2;
-				value2 = value3;
-			}
-			return value1;
-		}
-
 		template<UInt mod>
 		static DivResult DivByConst(UInt value) noexcept
 		{
