@@ -59,7 +59,7 @@ public:
 
 	static constexpr bool CheckBlockAlignment(size_t blockAlignment) noexcept
 	{
-		return 0 < blockAlignment && blockAlignment <= 1024;
+		return 0 < blockAlignment && blockAlignment <= 256;
 	}
 };
 
@@ -315,7 +315,7 @@ public:
 			else if (pvGetAlignmentAddend() == 0)
 				block = MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize0());
 			else
-				block = internal::PtrCaster::FromUInt(pvNewBlock1());
+				block = pvNewBlock1();
 		}
 		++mAllocCount;
 		return static_cast<ResObject*>(block);
@@ -470,7 +470,7 @@ private:
 		else if (pvGetAlignmentAddend() == 0)
 			MemManagerProxy::Deallocate(GetMemManager(), block, pvGetBufferSize0());
 		else
-			pvDeleteBlock1(internal::PtrCaster::ToUInt(block));
+			pvDeleteBlock1(static_cast<std::byte*>(block));
 	}
 
 	size_t pvGetAlignmentAddend() const noexcept
@@ -490,32 +490,29 @@ private:
 		return std::minmax(Params::GetBlockSize(), Params::GetBlockAlignment()).second;
 	}
 
-	uintptr_t pvNewBlock1()
+	void* pvNewBlock1()
 	{
-		uintptr_t begin = internal::PtrCaster::ToUInt(
-			MemManagerProxy::Allocate(GetMemManager(), pvGetBufferSize1()));
-		uintptr_t block = PMath::Ceil(begin, uintptr_t{Params::GetBlockAlignment()});
-		pvGetBufferBegin1(block) = begin;
+		const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
+		std::byte* buffer = MemManagerProxy::template Allocate<std::byte>(
+			GetMemManager(), pvGetBufferSize1());
+		uintptr_t uipOffset = internal::PtrCaster::ToUInt(buffer) % uipBlockAlignment;
+		size_t offset = (uipOffset > 0) ? static_cast<size_t>(uipBlockAlignment - uipOffset) : 0;
+		MOMO_ASSERT(offset < 256);
+		std::byte* block = buffer + offset;
+		internal::MemCopyer::ToBuffer(static_cast<uint8_t>(offset), block + Params::GetBlockSize());
 		return block;
 	}
 
-	void pvDeleteBlock1(uintptr_t block) noexcept
+	void pvDeleteBlock1(std::byte* block) noexcept
 	{
-		uintptr_t begin = pvGetBufferBegin1(block);
-		MemManagerProxy::Deallocate(GetMemManager(), internal::PtrCaster::FromUInt(begin),
-			pvGetBufferSize1());
+		size_t offset = size_t{internal::MemCopyer::FromBuffer<uint8_t>(block + Params::GetBlockSize())};
+		std::byte* buffer = block - offset;
+		MemManagerProxy::Deallocate(GetMemManager(), buffer, pvGetBufferSize1());
 	}
 
 	size_t pvGetBufferSize1() const noexcept
 	{
-		size_t bufferUsefulSize = Params::GetBlockSize() + pvGetAlignmentAddend();
-		return SMath::Ceil(bufferUsefulSize, sizeof(void*)) + sizeof(void*);
-	}
-
-	uintptr_t& pvGetBufferBegin1(uintptr_t block) noexcept
-	{
-		return *internal::PtrCaster::FromUInt<uintptr_t>(
-			PMath::Ceil(block + uintptr_t{Params::GetBlockSize()}, uintptr_t{sizeof(void*)}));
+		return Params::GetBlockSize() + pvGetAlignmentAddend() + 1;
 	}
 
 	uintptr_t pvNewBlock()
