@@ -404,6 +404,8 @@ public:
 
 	static const bool keepRowNumber = tKeepRowNumber;
 
+	typedef size_t RowNumber;	//?
+
 	typedef ArraySettings<> TableRawsSettings;
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
 };
@@ -681,13 +683,15 @@ public:
 
 	explicit DataColumnList(MemManager memManager)
 		: mCodeParam(0),
-		mTotalSize(Settings::keepRowNumber ? sizeof(size_t) : 0),
+		mTotalSize(0),
 		mAlignment(1),
 		mColumnCodeSet(ColumnCodeHashTraits(), std::move(memManager)),
 		mColumnRecords(MemManagerPtr(GetMemManager())),
 		mFuncRecords(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
+		if constexpr (Settings::keepRowNumber)
+			mTotalSize += sizeof(typename Settings::RowNumber);
 		std::fill(mAddends.begin(), mAddends.end(), 0);
 	}
 
@@ -828,13 +832,15 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		return internal::MemCopyer::FromBuffer<size_t>(raw);
+		return size_t{internal::MemCopyer::FromBuffer<typename Settings::RowNumber>(raw)};
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		return internal::MemCopyer::ToBuffer(number, raw);
+		auto rowNumber = static_cast<typename Settings::RowNumber>(number);
+		MOMO_ASSERT(number == size_t{rowNumber});
+		return internal::MemCopyer::ToBuffer(rowNumber, raw);
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1175,7 +1181,10 @@ public:
 
 	size_t GetTotalSize() const noexcept
 	{
-		return sizeof(Struct) + (Settings::keepRowNumber ? sizeof(size_t) : 0);
+		size_t totalSize = sizeof(Struct);
+		if constexpr (Settings::keepRowNumber)
+			totalSize += sizeof(typename Settings::RowNumber);
+		return totalSize;
 	}
 
 	size_t GetAlignment() const noexcept
@@ -1224,14 +1233,16 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		return internal::MemCopyer::FromBuffer<size_t>(
-			internal::PtrCaster::Shift<const void>(raw, sizeof(Struct)));
+		return size_t{internal::MemCopyer::FromBuffer<typename Settings::RowNumber>(
+			internal::PtrCaster::Shift<const void>(raw, sizeof(Struct)))};
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 		requires (Settings::keepRowNumber)
 	{
-		internal::MemCopyer::ToBuffer(number, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
+		auto rowNumber = static_cast<typename Settings::RowNumber>(number);
+		MOMO_ASSERT(number == size_t{rowNumber});
+		internal::MemCopyer::ToBuffer(rowNumber, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
 	}
 
 	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
