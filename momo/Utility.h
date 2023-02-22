@@ -195,6 +195,26 @@ namespace internal
 		typedef uint64_t UInt;
 	};
 
+	class MemCopyer
+	{
+	public:
+		template<typename Object>
+		static void ToBuffer(Object object, void* buffer) noexcept
+		{
+			MOMO_STATIC_ASSERT(std::is_trivial<Object>::value);
+			std::memcpy(buffer, &object, sizeof(Object));
+		}
+
+		template<typename ResObject>
+		static ResObject FromBuffer(const void* buffer) noexcept
+		{
+			MOMO_STATIC_ASSERT(std::is_trivial<ResObject>::value);
+			ResObject object{};
+			std::memcpy(&object, buffer, sizeof(ResObject));
+			return object;
+		}
+	};
+
 	class PtrCaster
 	{
 	public:
@@ -213,15 +233,13 @@ namespace internal
 		template<typename Object>
 		static void ToBuffer(Object* ptr, void* ptrBuffer) noexcept
 		{
-			std::memcpy(ptrBuffer, &ptr, sizeof(ptr));
+			MemCopyer::ToBuffer(ptr, ptrBuffer);
 		}
 
 		template<typename ResObject = void>
 		static ResObject* FromBuffer(const void* ptrBuffer) noexcept
 		{
-			ResObject* ptr = nullptr;
-			std::memcpy(&ptr, ptrBuffer, sizeof(ptr));
-			return ptr;
+			return MemCopyer::FromBuffer<ResObject*>(ptrBuffer);
 		}
 
 		template<typename ResObject, typename Object, typename Offset>

@@ -749,14 +749,12 @@ namespace internal
 	private:
 		static uint32_t pvGetNextBlock(void* realPtr) noexcept
 		{
-			uint32_t nextBlock = 0;
-			std::memcpy(&nextBlock, realPtr, sizeof(uint32_t));
-			return nextBlock;
+			return internal::MemCopyer::FromBuffer<uint32_t>(realPtr);
 		}
 
 		static void pvSetNextBlock(uint32_t nextBlock, void* realPtr) noexcept
 		{
-			std::memcpy(realPtr, &nextBlock, sizeof(uint32_t));
+			internal::MemCopyer::ToBuffer(nextBlock, realPtr);
 		}
 
 		void pvNewBuffer()
