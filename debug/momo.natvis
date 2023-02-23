@@ -130,7 +130,10 @@
 <Type Name="momo::internal::ObjectBuffer&lt;*&gt;">
     <DisplayString>{{ {*(Object*)&amp;mBuffer} }}</DisplayString>
     <Expand>
-        <ExpandedItem>*(Object*)&amp;mBuffer</ExpandedItem>
+        <ArrayItems>
+            <Size>count</Size>
+            <ValuePointer>(Object*)&amp;mBuffer</ValuePointer>
+        </ArrayItems>
     </Expand>
 </Type>
 
@@ -207,24 +210,24 @@
 
 <Type Name="momo::internal::BucketOpen2N2&lt;*&gt;">
     <DisplayString Condition="(mState[1] &amp; 3) == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(mState[1] &amp; 3) != 0">{{ Count={(size_t)(mState[1] &amp; 3)} FirstItem={*(Item*)&amp;mItems[maxCount - 1]} }}</DisplayString>
+    <DisplayString Condition="(mState[1] &amp; 3) != 0">{{ Count={(size_t)(mState[1] &amp; 3)} FirstItem={((Item*)&amp;mItems)[maxCount - 1]} }}</DisplayString>
     <Expand>
         <Item Name="[Count]">(mState[1] &amp; 3)</Item>
         <ArrayItems>
             <Size>(mState[1] &amp; 3)</Size>
-            <ValuePointer>(Item*)&amp;mItems[maxCount - (mState[1] &amp; 3)]</ValuePointer>
+            <ValuePointer>((Item*)&amp;mItems) + maxCount - (mState[1] &amp; 3)</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
 
 <Type Name="momo::internal::BucketOpen8&lt;*&gt;">
     <DisplayString Condition="(uint8_t)mData[maxCount - 1] == emptyShortHash">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(uint8_t)mData[maxCount - 1] != emptyShortHash">{{ Count={((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems[0]} }}</DisplayString>
+    <DisplayString Condition="(uint8_t)mData[maxCount - 1] != emptyShortHash">{{ Count={((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems} }}</DisplayString>
     <Expand>
         <Item Name="[Count]">((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Item>
         <ArrayItems>
             <Size>((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
-            <ValuePointer>(Item*)&amp;mItems[0]</ValuePointer>
+            <ValuePointer>(Item*)&amp;mItems</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
