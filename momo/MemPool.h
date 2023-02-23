@@ -434,13 +434,9 @@ private:
 
 	size_t pvGetAlignmentAddend() const noexcept
 	{
-		static const size_t maxAllocAlignment = internal::UIntConst::maxAllocAlignment;
-		size_t addend = Params::blockAlignment;
-		if (SMath::HasSingleBit(Params::blockAlignment))
-			addend -= std::minmax(size_t{maxAllocAlignment}, size_t{Params::blockAlignment}).first;
-		else
-			addend -= SMath::GCD(maxAllocAlignment, Params::blockAlignment);
-		return addend;
+		const size_t blockAlignment = Params::blockAlignment;
+		return blockAlignment - std::minmax(size_t{internal::UIntConst::maxAllocAlignment},
+			blockAlignment & (~blockAlignment + 1)).first;
 	}
 
 	size_t pvGetBufferSize0() const noexcept

@@ -265,11 +265,6 @@ namespace internal
 		};
 
 	public:
-		static constexpr bool HasSingleBit(UInt value) noexcept
-		{
-			return value != 0 && (value & (value - 1)) == 0;
-		}
-
 		static constexpr UInt Ceil(UInt value, UInt mod) noexcept
 		{
 			return ((value + mod - 1) / mod) * mod;
@@ -285,17 +280,6 @@ namespace internal
 		static Iterator Next(Iterator iter, UInt dist)
 		{
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
-		}
-
-		static UInt GCD(UInt value1, UInt value2) noexcept
-		{
-			while (value2 != 0)
-			{
-				size_t value3 = value1 % value2;
-				value1 = value2;
-				value2 = value3;
-			}
-			return value1;
 		}
 
 		template<UInt mod>
@@ -385,7 +369,7 @@ namespace internal
 
 		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
 		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		MOMO_STATIC_ASSERT(UIntMath<>::HasSingleBit(maxAllocAlignment));
+		MOMO_STATIC_ASSERT(maxAllocAlignment != 0 && (maxAllocAlignment & (maxAllocAlignment - 1)) == 0);
 		MOMO_STATIC_ASSERT(maxAllocAlignment % maxAlignment == 0);
 
 		static const size_t maxSize = SIZE_MAX;
