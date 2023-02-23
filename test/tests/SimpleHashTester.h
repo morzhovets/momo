@@ -10,6 +10,8 @@
 
 \**********************************************************/
 
+#pragma once
+
 #include "../../momo/HashSet.h"
 #include "../../momo/HashMap.h"
 #include "../../momo/HashMultiMap.h"
