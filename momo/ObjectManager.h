@@ -147,7 +147,8 @@ namespace internal
 		}
 	};
 
-	template<typename TObject, size_t tAlignment>
+	template<typename TObject, size_t tAlignment,
+		size_t tCount = 1>
 	class ObjectBuffer
 	{
 	public:
@@ -155,6 +156,9 @@ namespace internal
 
 		static const size_t alignment = tAlignment;
 		MOMO_STATIC_ASSERT(ObjectAlignmenter<Object>::Check(alignment));
+
+		static const size_t count = tCount;
+		MOMO_STATIC_ASSERT(count > 0);
 
 	private:
 		union ObjectUnion
@@ -167,7 +171,7 @@ namespace internal
 			{
 			}
 
-			Object mObject;
+			Object mObject[count];
 		};
 
 	public:
@@ -190,7 +194,7 @@ namespace internal
 		}
 
 	private:
-		MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) mBuffer;
+		MOMO_OBJECT_BUFFER(Object[count], alignment, ObjectUnion) mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager>

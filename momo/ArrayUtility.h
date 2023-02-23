@@ -137,55 +137,6 @@ namespace internal
 		size_t mIndex;
 	};
 
-	template<typename TItemTraits, size_t tCount>
-	class ArrayBuffer
-	{
-	protected:
-		typedef TItemTraits ItemTraits;
-
-	public:
-		static const size_t count = tCount;
-
-		typedef typename ItemTraits::Item Item;
-
-	public:
-		const Item* operator&() const noexcept
-		{
-			return &*mItems;
-		}
-
-		Item* operator&() noexcept
-		{
-			return &*mItems;
-		}
-
-	private:
-		ObjectBuffer<Item, ItemTraits::alignment> mItems[count];
-	};
-
-	template<typename TItemTraits>
-	class ArrayBuffer<TItemTraits, 0>
-	{
-	protected:
-		typedef TItemTraits ItemTraits;
-
-	public:
-		static const size_t count = 0;
-
-		//typedef typename ItemTraits::Item Item;
-
-	public:
-		const void* operator&() const noexcept
-		{
-			return this;
-		}
-
-		void* operator&() noexcept
-		{
-			return this;
-		}
-	};
-
 	template<typename TItemTraits>
 	class ArrayItemHandler
 	{

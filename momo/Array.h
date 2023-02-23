@@ -27,6 +27,16 @@ namespace momo
 
 namespace internal
 {
+	template<typename ItemTraits, size_t count>
+	class ArrayBuffer : public ObjectBuffer<typename ItemTraits::Item, ItemTraits::alignment, count>
+	{
+	};
+
+	template<typename ItemTraits>
+	class ArrayBuffer<ItemTraits, 0>
+	{
+	};
+
 	template<typename Array,
 		bool usePtrIterator = Array::Settings::usePtrIterator>
 	class ArrayIteratorSelector;
@@ -392,9 +402,18 @@ private:
 				MemManagerProxy::Deallocate(GetMemManager(), mItems, mCapacity * sizeof(Item));
 		}
 
-		bool pvIsInternal() const noexcept
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<hasInternalCapacity,
+		bool> pvIsInternal() const noexcept
 		{
 			return mItems == &mInternalItems;
+		}
+
+		template<bool hasInternalCapacity = (internalCapacity > 0)>
+		internal::EnableIf<!hasInternalCapacity,
+		bool> pvIsInternal() const noexcept
+		{
+			return false;
 		}
 
 		bool pvReallocateInplace(size_t capacity, std::true_type /*canReallocateInplace*/)
