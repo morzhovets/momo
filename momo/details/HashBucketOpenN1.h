@@ -83,8 +83,8 @@ namespace internal
 			const Byte* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
-					return pvMakeIterator(&mItems[i]);
+				if (thisShortHashes[i] == shortHash && pred((&mItems)[i]))
+					return pvMakeIterator(&mItems + i);
 			}
 			return Iterator();
 		}
@@ -162,7 +162,7 @@ namespace internal
 
 		Item* ptGetItemPtr(size_t index) noexcept
 		{
-			return &mItems[reverse ? maxCount - 1 - index : index];
+			return &mItems + (reverse ? maxCount - 1 - index : index);
 		}
 
 		static Byte ptCalcShortHash(size_t hashCode) noexcept
@@ -251,7 +251,7 @@ namespace internal
 
 	private:
 		Data mData;
-		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
+		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }
 
