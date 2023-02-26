@@ -14,6 +14,8 @@
 
 #ifdef TEST_SIMPLE_TREE
 
+#include "LeakCheckMemManager.h"
+
 #include "../../momo/TreeSet.h"
 #include "../../momo/TreeMap.h"
 #include "../../momo/stdish/pool_allocator.h"
@@ -246,7 +248,8 @@ public:
 
 		if (maxCapacity > 1)
 		{
-			typedef momo::TreeSet<uint8_t, momo::TreeTraits<uint8_t, false, TreeNode>> TreeSet;
+			typedef momo::TreeTraits<uint8_t, false, TreeNode> TreeTraits;
+			typedef momo::TreeSet<uint8_t, TreeTraits, LeakCheckMemManager> TreeSet;
 
 			for (size_t i = 0; i <= count; ++i)
 			{
@@ -273,7 +276,7 @@ public:
 			typedef TemplItem<(valueTraits < 2), (valueTraits % 2 == 0)> Value;
 
 			typedef momo::TreeTraits<Key, false, TreeNode, true> TreeTraits;
-			typedef momo::TreeMap<Key, Value, TreeTraits> TreeMap;
+			typedef momo::TreeMap<Key, Value, TreeTraits, LeakCheckMemManager> TreeMap;
 
 			std::map<Key, Value, std::less<Key>,
 				momo::stdish::unsynchronized_pool_allocator<std::pair<const Key, Value>>> smap;

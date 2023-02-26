@@ -14,6 +14,8 @@
 
 #ifdef TEST_SIMPLE_MEM_POOL
 
+#include "LeakCheckMemManager.h"
+
 #include "../../momo/MemPool.h"
 #include "../../momo/Array.h"
 
@@ -22,46 +24,6 @@
 
 class SimpleMemPoolTester
 {
-private:
-	class MemManager
-	{
-	public:
-		explicit MemManager() noexcept
-			: mTotalSize(0)
-		{
-		}
-
-		MemManager(MemManager&& memManager) noexcept
-			: mTotalSize(std::exchange(memManager.mTotalSize, 0))
-		{
-		}
-
-		MemManager(const MemManager&) = delete;
-
-		~MemManager() noexcept
-		{
-			assert(mTotalSize == 0);
-		}
-
-		MemManager& operator=(const MemManager&) = delete;
-
-		[[nodiscard]] void* Allocate(size_t size)
-		{
-			void* res = momo::MemManagerDefault().Allocate(size);
-			mTotalSize += size;
-			return res;
-		}
-
-		void Deallocate(void* ptr, size_t size) noexcept
-		{
-			momo::MemManagerDefault().Deallocate(ptr, size);
-			mTotalSize -= size;
-		}
-
-	private:
-		size_t mTotalSize;
-	};
-
 public:
 	static void TestTemplAll()
 	{
@@ -88,7 +50,7 @@ public:
 	template<typename MemPoolParams>
 	static void TestMemPoolParams(std::mt19937& mt, const MemPoolParams& params)
 	{
-		momo::MemPool<MemPoolParams, MemManager> memPool(params);
+		momo::MemPool<MemPoolParams, LeakCheckMemManager> memPool(params);
 
 		static const size_t blockCount = 1024;
 		static const size_t testCount = 64;

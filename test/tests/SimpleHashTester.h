@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "LeakCheckMemManager.h"
+
 #include "../../momo/HashSet.h"
 #include "../../momo/HashMap.h"
 #include "../../momo/HashMultiMap.h"
@@ -238,7 +240,8 @@ public:
 		std::mt19937 mt;
 
 		typedef TemplItem<size, alignment> Item;
-		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>> HashSet;
+		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>,
+			LeakCheckMemManager> HashSet;
 		HashSet set;
 
 		std::shuffle(array, array + count, mt);

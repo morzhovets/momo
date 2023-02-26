@@ -394,6 +394,7 @@
     <ClInclude Include="..\..\..\momo\TreeTraits.h" />
     <ClInclude Include="..\..\..\momo\UserSettings.h" />
     <ClInclude Include="..\..\..\momo\Version.h" />
+    <ClInclude Include="..\..\tests\LeakCheckMemManager.h" />
     <ClInclude Include="..\..\tests\LibcxxHashMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashMultiMapTester.h" />
     <ClInclude Include="..\..\tests\LibcxxHashSetTester.h" />
