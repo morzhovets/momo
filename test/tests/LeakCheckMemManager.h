@@ -23,8 +23,9 @@ public:
 	}
 
 	LeakCheckMemManager(LeakCheckMemManager&& memManager) noexcept
-		: mTotalSize(std::exchange(memManager.mTotalSize, 0))
+		: mTotalSize(memManager.mTotalSize)
 	{
+		memManager.mTotalSize = 0;
 	}
 
 	LeakCheckMemManager(const LeakCheckMemManager& /*memManager*/) noexcept

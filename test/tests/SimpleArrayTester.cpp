@@ -204,7 +204,7 @@ public:
 	}
 
 	template<typename Array>
-	static Array TestTemplArray()
+	static void TestTemplArray()
 	{
 		typedef typename Array::Item Item;
 
@@ -219,8 +219,6 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 			assert(ar[i] == Item(i));
-
-		return Array(ar);
 	}
 };
 
