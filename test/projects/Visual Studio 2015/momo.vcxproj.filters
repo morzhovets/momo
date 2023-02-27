@@ -323,6 +323,9 @@
     <ClInclude Include="..\..\..\momo\Version.h">
       <Filter>Header Files\momo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\tests\LeakCheckMemManager.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\..\..\debug\momo.natvis" />

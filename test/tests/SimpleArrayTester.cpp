@@ -14,6 +14,8 @@
 
 #ifdef TEST_SIMPLE_ARRAY
 
+#include "LeakCheckMemManager.h"
+
 #include "../../momo/Array.h"
 #include "../../momo/SegmentedArray.h"
 
@@ -150,6 +152,10 @@ public:
 
 	static void TestTemplAll()
 	{
+		std::cout << "momo::Array<size_t>: " << std::flush;
+		TestTemplArray<momo::Array<size_t, LeakCheckMemManager>>();
+		std::cout << "ok" << std::endl;
+
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
 		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>>();
 		std::cout << "ok" << std::endl;
@@ -177,28 +183,28 @@ public:
 #endif
 
 		std::cout << "momo::ArrayIntCap<4, size_t>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<4, size_t>>();
+		TestTemplArray<momo::ArrayIntCap<4, size_t, LeakCheckMemManager>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<8, TemplItem<false>>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<8, TemplItem<false>>>();
+		TestTemplArray<momo::ArrayIntCap<8, TemplItem<false>, LeakCheckMemManager>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<1, TemplItem<true>>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<1, TemplItem<true>>>();
+		TestTemplArray<momo::ArrayIntCap<1, TemplItem<true>, LeakCheckMemManager>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArray<size_t>: " << std::flush;
-		TestTemplArray<momo::SegmentedArray<size_t>>();
+		TestTemplArray<momo::SegmentedArray<size_t, LeakCheckMemManager>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArraySqrt<size_t>: " << std::flush;
-		TestTemplArray<momo::SegmentedArraySqrt<size_t>>();
+		TestTemplArray<momo::SegmentedArraySqrt<size_t, LeakCheckMemManager>>();
 		std::cout << "ok" << std::endl;
 	}
 
 	template<typename Array>
-	static void TestTemplArray()
+	static Array TestTemplArray()
 	{
 		typedef typename Array::Item Item;
 
@@ -208,10 +214,13 @@ public:
 		for (size_t i = 0; i < count; ++i)
 			ar.AddBack(Item(i));
 
+		ar.Reserve(count * 3);
 		ar.Shrink();
 
 		for (size_t i = 0; i < count; ++i)
 			assert(ar[i] == Item(i));
+
+		return Array(ar);
 	}
 };
 
