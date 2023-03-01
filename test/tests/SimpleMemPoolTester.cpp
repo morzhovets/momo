@@ -28,21 +28,75 @@ public:
 	static void TestTemplAll()
 	{
 		std::mt19937 mt;
+		TestTemplMemPool0(mt);
+	}
 
-		TestTemplMemPool<1, 1, 1, 0>(mt);
+	static void TestTemplMemPool0(std::mt19937& mt)
+	{
+		TestTemplMemPool1<1>(mt);
+		TestTemplMemPool1<2>(mt);
+		TestTemplMemPool1<3>(mt);
+		TestTemplMemPool1<4>(mt);
+		TestTemplMemPool1<6>(mt);
+		TestTemplMemPool1<11>(mt);
+		TestTemplMemPool1<17>(mt);
+		TestTemplMemPool1<23>(mt);
+		TestTemplMemPool1<45>(mt);
+		TestTemplMemPool1<67>(mt);
+		TestTemplMemPool1<89>(mt);
+		TestTemplMemPool1<999>(mt);
+	}
+
+	template<size_t blockSize>
+	static void TestTemplMemPool1(std::mt19937& mt)
+	{
+		TestTemplMemPool2<blockSize, 1>(mt);
+		TestTemplMemPool2<blockSize, 2>(mt);
+		TestTemplMemPool2<blockSize, 4>(mt);
+		TestTemplMemPool2<blockSize, 8>(mt);
+		TestTemplMemPool2<blockSize, 16>(mt);
+		TestTemplMemPool2<blockSize, 256>(mt);
+		TestTemplMemPool2<blockSize, 3>(mt);
+		TestTemplMemPool2<blockSize, 6>(mt);
+		TestTemplMemPool2<blockSize, 100>(mt);
+	}
+
+	template<size_t blockSize, size_t blockAlignment>
+	static void TestTemplMemPool2(std::mt19937& mt)
+	{
+		TestTemplMemPool3<blockSize, blockAlignment, 1>(mt);
+		TestTemplMemPool3<blockSize, blockAlignment, 2>(mt);
+		TestTemplMemPool3<blockSize, blockAlignment, 3>(mt);
+		TestTemplMemPool3<blockSize, blockAlignment, 127>(mt);
+		TestTemplMemPool3<blockSize, blockAlignment,
+			momo::MemPoolConst::defaultBlockCount>(mt);
+	}
+
+	template<size_t blockSize, size_t blockAlignment, size_t blockCount>
+	static void TestTemplMemPool3(std::mt19937& mt)
+	{
+		static const size_t blockSize3 = blockSize % 3;
+		static const size_t cachedFreeBlockCount = (blockSize3 < 2) ? blockSize3
+			: momo::MemPoolConst::defaultCachedFreeBlockCount;
+		TestTemplMemPool4<blockSize, blockAlignment, blockCount, cachedFreeBlockCount>(mt);
 	}
 
 	template<size_t blockSize, size_t blockAlignment, size_t blockCount, size_t cachedFreeBlockCount>
-	static void TestTemplMemPool(std::mt19937& mt)
+	static void TestTemplMemPool4(std::mt19937& mt)
 	{
 		std::cout << "momo::MemPoolParamsStatic<" << blockSize << ", " << blockAlignment << ", "
 			<< blockCount << ", " << cachedFreeBlockCount << ">: " << std::flush;
 
-		TestMemPoolParams(mt,
-			momo::MemPoolParamsStatic<blockSize, blockAlignment, blockCount, cachedFreeBlockCount>());
-
-		TestMemPoolParams(mt,
-			momo::MemPoolParams<blockCount, cachedFreeBlockCount>(blockSize, blockAlignment));
+		if (mt() % 2 == 0)
+		{
+			TestMemPoolParams(mt,
+				momo::MemPoolParamsStatic<blockSize, blockAlignment, blockCount, cachedFreeBlockCount>());
+		}
+		else
+		{
+			TestMemPoolParams(mt,
+				momo::MemPoolParams<blockCount, cachedFreeBlockCount>(blockSize, blockAlignment));
+		}
 
 		std::cout << "ok" << std::endl;
 	}
@@ -53,7 +107,7 @@ public:
 		momo::MemPool<MemPoolParams, LeakCheckMemManager> memPool(params);
 
 		static const size_t blockCount = 1024;
-		static const size_t testCount = 64;
+		static const size_t testCount = 8;
 		momo::Array<void*> blocks = momo::Array<void*>::CreateCap(blockCount);
 
 		for (size_t k = 0; k < testCount; ++k)
