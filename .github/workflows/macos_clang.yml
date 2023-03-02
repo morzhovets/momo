@@ -11,12 +11,12 @@ jobs:
         # Apple Clang 13.0.0
         - macos_ver: '11'
           build_type: 'Release'
-          flags: '-Werror -std=c++11 -Wno-c++1z-extensions -msse2'
+          flags: '-std=c++11 -Werror -Wno-c++1z-extensions -msse2'
 
         # Apple Clang 14.0.0
         - macos_ver: '12'
           build_type: 'Release'
-          flags: '-Werror -std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
