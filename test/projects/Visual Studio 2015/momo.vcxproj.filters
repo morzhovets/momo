@@ -138,6 +138,9 @@
     <ClCompile Include="..\..\tests\SimpleDataSampler.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\SimpleMemPoolTester.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\momo\HashMap.h">
