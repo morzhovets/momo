@@ -539,7 +539,7 @@ namespace internal
 
 		static void Create(MapKeyValuePair* newPair) noexcept
 		{
-			::new(static_cast<void*>(newPair)) MapKeyValuePair();
+			::new(static_cast<void*>(newPair)) MapKeyValuePair;
 		}
 
 		template<typename PairCreator>
