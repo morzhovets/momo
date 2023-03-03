@@ -51,7 +51,7 @@ jobs:
         - gcc_ver: '11'
           build_type: 'Release'
           flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '12'
           build_type: 'Release'
@@ -65,7 +65,7 @@ jobs:
 
         - gcc_ver: '12'
           build_type: 'Debug'
-          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}

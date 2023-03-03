@@ -10,7 +10,7 @@ jobs:
 
         # MinGW GNU 8.1.0 Release
         - win_ver: '2019'
-          flags: '-std=c++17 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -O3 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
         # MinGW GNU 11.2.0 Release
         #- win_ver: '2022'
