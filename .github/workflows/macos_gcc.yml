@@ -11,12 +11,19 @@ jobs:
         - gcc_ver: '10'
           build_type: 'Release'
           flags: '-msse2'
+          macos_ver: '11'
 
         - gcc_ver: '11'
           build_type: 'Release'
           flags: '-msse2'
+          macos_ver: '12'
 
-    runs-on: macos-11
+        - gcc_ver: '12'
+          build_type: 'Release'
+          flags: '-msse2'
+          macos_ver: '12'
+
+    runs-on: macos-${{ matrix.macos_ver }}
 
     steps:
     - name: Checkout
