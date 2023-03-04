@@ -610,8 +610,6 @@ namespace internal
 		static const size_t valueAlignment = tValueAlignment;
 
 	public:
-		MapKeyValuePair() = default;
-
 		template<typename MemManager, typename PairCreator>
 		explicit MapKeyValuePair(MemManager& /*memManager*/, PairCreator pairCreator)
 		{
@@ -623,6 +621,11 @@ namespace internal
 		~MapKeyValuePair() = default;
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
+
+		static void Create(MapKeyValuePair* newPair) noexcept
+		{
+			::new(static_cast<void*>(newPair)) MapKeyValuePair;
+		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
 		static void Create(MapKeyValuePair* newPair, MemManager& memManager,
@@ -653,6 +656,9 @@ namespace internal
 		}
 
 	private:
+		MapKeyValuePair() = default;
+
+	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
 		mutable ObjectBuffer<Value, valueAlignment> mValueBuffer;
 	};
@@ -668,8 +674,6 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 
 	public:
-		MapKeyValuePtrPair() = default;
-
 		template<typename MemManager, typename PairCreator>
 		explicit MapKeyValuePtrPair(MemManager& memManager, PairCreator pairCreator)
 		{
@@ -690,6 +694,11 @@ namespace internal
 		~MapKeyValuePtrPair() = default;
 
 		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
+
+		static void Create(MapKeyValuePtrPair* newPair) noexcept
+		{
+			::new(static_cast<void*>(newPair)) MapKeyValuePtrPair;
+		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
 		static void Create(MapKeyValuePtrPair* newPair, MemManager& memManager,
@@ -732,6 +741,9 @@ namespace internal
 		{
 			return mValuePtr;
 		}
+
+	private:
+		MapKeyValuePtrPair() = default;
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
@@ -800,7 +812,7 @@ namespace internal
 		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
 			Item& srcItem, Item* dstItem)
 		{
-			std::construct_at(dstItem);
+			Item::Create(dstItem);
 			KeyValueTraits::Relocate(dstMemManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
@@ -814,7 +826,7 @@ namespace internal
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
-			std::construct_at(dstItem);
+			Item::Create(dstItem);
 			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
 				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
@@ -826,7 +838,7 @@ namespace internal
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
-				std::construct_at(std::to_address(dstIter++));
+				Item::Create(std::to_address(dstIter++));
 			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
 				{ return (srcIter++)->GetKeyPtr(); };
 			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
@@ -913,7 +925,7 @@ namespace internal
 			Value* srcValuePtr = srcItem.GetValuePtr();
 			if (srcMemManager == dstMemManager || srcMemManager == nullptr || dstMemManager == nullptr)
 			{
-				std::construct_at(dstItem);
+				Item::Create(dstItem);
 				KeyValueTraits::RelocateKey(dstMemManager, *srcKeyPtr, dstItem->GetKeyPtr());
 				dstItem->GetValuePtr() = srcValuePtr;
 			}
@@ -936,7 +948,7 @@ namespace internal
 
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
 		{
-			std::construct_at(dstItem);
+			Item::Create(dstItem);
 			KeyValueTraits::ReplaceRelocateKeys(memManager, *srcItem.GetKeyPtr(),
 				*midItem.GetKeyPtr(), dstItem->GetKeyPtr());
 			dstItem->GetValuePtr() = midItem.GetValuePtr();
@@ -949,7 +961,7 @@ namespace internal
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
-				std::construct_at(std::to_address(dstIter++));
+				Item::Create(std::to_address(dstIter++));
 			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
 				{ return (srcIter++)->GetKeyPtr(); };
 			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable

@@ -61,8 +61,7 @@ namespace internal
 			Bucket* buckets = resBuckets->pvGetBuckets();
 			try
 			{
-				for (size_t i = 0; i < bucketCount; ++i)
-					std::construct_at(buckets + i);
+				std::uninitialized_default_construct_n(buckets, bucketCount);
 				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
 					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
 			}
