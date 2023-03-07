@@ -62,7 +62,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -a ${{ matrix.arch }}
+        cmake -A ${{ matrix.arch }} ..
         cmake --build . --config ${{ matrix.build_type }}
     - name: Test
       run: test/build/${{ matrix.build_type }}/momo_test.exe
