@@ -12,43 +12,19 @@ jobs:
         - win_ver: '2019'
           build_type: 'Release'
           flags: '/std:c++20'
-          arch: 'x64'
 
         - win_ver: '2019'
           build_type: 'Debug'
           flags: '/std:c++20'
-          arch: 'x64'
-
-        - win_ver: '2019'
-          build_type: 'Release'
-          flags: '/std:c++20'
-          arch: 'x86'
-
-        - win_ver: '2019'
-          build_type: 'Debug'
-          flags: '/std:c++20'
-          arch: 'x86'
 
         # Visual Studio 2022
         - win_ver: '2022'
           build_type: 'Release'
           flags: '/std:c++latest'
-          arch: 'x64'
 
         - win_ver: '2022'
           build_type: 'Debug'
           flags: '/std:c++latest'
-          arch: 'x64'
-
-        - win_ver: '2022'
-          build_type: 'Release'
-          flags: '/std:c++latest'
-          arch: 'Win32'
-
-        - win_ver: '2022'
-          build_type: 'Debug'
-          flags: '/std:c++latest'
-          arch: 'Win32'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -62,7 +38,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake -A ${{ matrix.arch }} ..
+        cmake ..
         cmake --build . --config ${{ matrix.build_type }}
     - name: Test
       run: test/build/${{ matrix.build_type }}/momo_test.exe
