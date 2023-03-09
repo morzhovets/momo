@@ -13,14 +13,14 @@ jobs:
           build_type: 'Release'
           flags: '/std:c++20'
 
-        - win_ver: '2019'
-          build_type: 'Debug'
-          flags: '/std:c++20'
-
         # Visual Studio 2022
         - win_ver: '2022'
           build_type: 'Release'
           flags: '/std:c++latest'
+
+        - win_ver: '2022'
+          build_type: 'Release'
+          flags: '/std:c++latest /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
 
         - win_ver: '2022'
           build_type: 'Debug'
