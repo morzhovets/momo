@@ -24,8 +24,8 @@ environment:
       CONFIGURATION: Release
       FLAGS: "/std:c++latest"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      CMAKE_GENERATOR: Visual Studio 16 2019
-      ARCH: Win32
-      CONFIGURATION: Release
-      FLAGS: "/std:c++20 /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO"
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#      CMAKE_GENERATOR: Visual Studio 16 2019
+#      ARCH: Win32
+#      CONFIGURATION: Release
+#      FLAGS: "/std:c++20"

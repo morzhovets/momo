@@ -11,7 +11,7 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   target_compile_options(momo_test PRIVATE /W4 /bigobj /Zc:__cplusplus)
-else() #(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic
     -Wold-style-cast -Wsign-conversion -Wno-unused-local-typedefs)
 endif()
