@@ -11,16 +11,28 @@ jobs:
         # Visual Studio 2019
         - win_ver: '2019'
           build_type: 'Release'
+          flags: '/std:c++14 /WX'
 
         - win_ver: '2019'
-          build_type: 'Debug'
+          build_type: 'Release'
+          flags: '/std:c++14 /WX /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+
+        - win_ver: '2019'
+          build_type: 'Release'
+          flags: '/std:c++20 /WX'
 
         # Visual Studio 2022
         - win_ver: '2022'
           build_type: 'Release'
+          flags: '/std:c++latest /WX /DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+        - win_ver: '2022'
+          build_type: 'Release'
+          flags: '/std:c++latest /WX /DLIBCPP_TEST_DEDUCTION_GUIDES /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
 
         - win_ver: '2022'
           build_type: 'Debug'
+          flags: '/std:c++latest /WX /DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -28,6 +40,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Build
+      env:
+        CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
         mkdir build
