@@ -19,12 +19,13 @@
 #if __has_include(<version>)
 #include <version>	// feature macros
 #endif
-#if __has_include(<bit>)
-#include <bit>
-#endif
 #endif
 
 #include <cassert>
+
+#if defined(__cpp_lib_bitops)
+#include <bit>
+#endif
 
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
