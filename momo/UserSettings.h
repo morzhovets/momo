@@ -107,7 +107,7 @@
 
 // Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
-#if defined(_M_AMD64) || defined(_M_X64) //|| _M_IX86_FP == 2
+#if (defined(_M_X64) /*|| _M_IX86_FP == 2*/) && !defined(_M_CEE)
 #define MOMO_USE_SSE2
 #endif
 #else
@@ -136,7 +136,7 @@
 #define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
 	alignas(alignment) typename std::conditional<(alignment >= alignof(Object)), \
 		ObjectUnion, std::array<char, sizeof(Object)>>::type
-#if defined(_MSC_VER) && _MSC_VER < 1920	// C2719
+#if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))	// C2719, C2711
 #undef MOMO_OBJECT_BUFFER
 #define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
 	typename std::aligned_storage<sizeof(Object), alignment>::type
