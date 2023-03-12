@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 
 project(momo_test)
 
@@ -11,8 +11,10 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   target_compile_options(momo_test PRIVATE /W4 /bigobj)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+  target_compile_options(momo_test PRIVATE /W4 -Wno-unused-local-typedefs)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic
+  target_compile_options(momo_test PRIVATE -Wall -Wextra -Wpedantic
     -Wold-style-cast -Wsign-conversion -Wno-unused-local-typedefs)
 endif()
 

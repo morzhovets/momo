@@ -8,6 +8,11 @@ jobs:
       matrix:
         include:
 
+        - gcc_ver: '9'
+          build_type: 'Release'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          macos_ver: '11'
+
         - gcc_ver: '10'
           build_type: 'Release'
           flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
@@ -28,9 +33,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Install
+      run: |
+        brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
       env:
-        CXX: g++-${{ matrix.gcc_ver }}
+        CXX: /usr/local/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test

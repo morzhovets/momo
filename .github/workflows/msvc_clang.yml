@@ -1,4 +1,4 @@
-name: C++/CLI
+name: MSVC Clang
 
 on: [push, pull_request]
 
@@ -8,10 +8,15 @@ jobs:
       matrix:
         include:
 
-        # Visual Studio 2022
+        # Clang 12.0.0 with MSVC-like command-line
+        - win_ver: '2019'
+          build_type: 'Release'
+          flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+        # Clang 15.0.1 with MSVC-like command-line
         - win_ver: '2022'
           build_type: 'Release'
-          flags: '/clr /std:c++17 /WX /Zc:__cplusplus /DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -25,7 +30,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake ..
+        cmake -T ClangCL ..
         cmake --build . --config ${{ matrix.build_type }}
-#    - name: Test
-#      run: test/build/${{ matrix.build_type }}/momo_test.exe
+    - name: Test
+      run: test/build/${{ matrix.build_type }}/momo_test.exe
