@@ -70,7 +70,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mArray != nullptr);
-			typedef std::iterator_traits<ArrayIndexIterator>::iterator_concept IteratorConcept;
+			typedef typename std::iterator_traits<ArrayIndexIterator>::iterator_concept IteratorConcept;
 			if constexpr (std::is_base_of_v<std::contiguous_iterator_tag, IteratorConcept>)
 				return mArray->GetItems() + mIndex;
 			else
