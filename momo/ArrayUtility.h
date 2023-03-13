@@ -70,14 +70,11 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mArray != nullptr);
-			return std::addressof((*mArray)[mIndex]);
-		}
-
-		Pointer operator->() const
-			requires requires { { this->mArray->GetItems() } -> std::same_as<Item*>; }
-		{
-			MOMO_CHECK(mArray != nullptr);
-			return mArray->GetItems() + mIndex;
+			typedef std::iterator_traits<ArrayIndexIterator>::iterator_concept IteratorConcept;
+			if constexpr (std::is_base_of_v<std::contiguous_iterator_tag, IteratorConcept>)
+				return mArray->GetItems() + mIndex;
+			else
+				return std::addressof((*mArray)[mIndex]);
 		}
 
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
