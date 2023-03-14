@@ -632,7 +632,7 @@ private:
 	static size_t pvGetSegmentIndex(size_t index, size_t capacity) noexcept
 	{
 		MOMO_ASSERT(index < capacity);
-		return std::bit_width((index ^ (capacity - 1)) >> logInitialItemCount);
+		return static_cast<size_t>(std::bit_width((index ^ (capacity - 1)) >> logInitialItemCount));
 	}
 
 	static size_t pvCeilCapacity(size_t capacity) noexcept

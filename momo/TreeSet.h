@@ -969,7 +969,7 @@ public:
 				return;
 			}
 		}
-		if (count * std::bit_width(count + dstCount) < count + dstCount)	//?
+		if (count * static_cast<size_t>(std::bit_width(count + dstCount)) < count + dstCount)	//?
 			pvMergeTo(dstTreeSet);
 		else
 			pvMergeToLinear(dstTreeSet);

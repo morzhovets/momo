@@ -841,7 +841,7 @@ private:
 	{
 		size_t count = GetCount();
 		MOMO_ASSERT(count > 1);
-		return std::bit_width(count - 1) - 1;
+		return static_cast<size_t>(std::bit_width(count - 1) - 1);
 	}
 
 	void pvFilterClear() noexcept
@@ -868,7 +868,7 @@ private:
 			size_t count = GetCount() - 1;
 			if (count < 2 * initialItemCount)
 				return;
-			size_t logCount = std::bit_width(count) - 1;
+			size_t logCount = static_cast<size_t>(std::bit_width(count) - 1);
 			MemManager& memManager = GetMemManager();
 			if (count == size_t{1} << logCount)
 			{

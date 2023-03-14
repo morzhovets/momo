@@ -108,12 +108,12 @@ public:
 private:
 	static size_t pvIndexToLogSegmentItemCount(size_t index1) noexcept
 	{
-		return std::bit_width(index1) / 2;
+		return static_cast<size_t>(std::bit_width(index1) / 2);
 	}
 
 	static size_t pvSegmentIndexToLogSegmentItemCount(size_t segIndex) noexcept
 	{
-		return std::bit_width((segIndex * 2 + 4) / 3) - 1;
+		return static_cast<size_t>(std::bit_width((segIndex * 2 + 4) / 3) - 1);
 	}
 };
 
