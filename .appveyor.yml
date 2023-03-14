@@ -25,7 +25,7 @@ environment:
       FLAGS: "/WX"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+      CMAKE_GENERATOR: Visual Studio 14 2015
       CONFIGURATION: Release
       ARCH: x64
       FLAGS: "/WX"
