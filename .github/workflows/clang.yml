@@ -10,17 +10,17 @@ jobs:
 
         - clang_ver: '3.6'
           build_type: 'Release'
-          flags: '-std=c++11 -Werror -Wno-c++1z-extensions -msse2'
+          flags: '-std=c++11 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '3.6'
           build_type: 'Release'
-          flags: '-std=c++11 -Werror -Wno-c++1z-extensions -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++11 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '20.04'
 
         - clang_ver: '4.0'
           build_type: 'Release'
-          flags: '-std=c++14 -Werror -Wno-c++1z-extensions -msse2'
+          flags: '-std=c++14 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '5.0'
