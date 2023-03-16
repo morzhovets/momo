@@ -172,6 +172,9 @@
 #ifdef __has_cpp_attribute
 #if __has_cpp_attribute(nodiscard)
 #define MOMO_NODISCARD [[nodiscard]]
+#if defined(__clang__) && __cplusplus < 201703L
+#undef MOMO_NODISCARD
+#endif
 #endif
 #endif
 #ifndef MOMO_NODISCARD
