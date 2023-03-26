@@ -1,4 +1,4 @@
-name: Apple Clang
+name: AppleClang
 
 on: [push, pull_request]
 
