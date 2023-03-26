@@ -3,6 +3,7 @@
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Abranch_cpp11)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Abranch_cpp11)
 [![AppleClang](https://github.com/morzhovets/momo/actions/workflows/apple_clang.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/apple_clang.yml?query=branch%3Abranch_cpp11)
+[![IntelLLVM](https://github.com/morzhovets/momo/actions/workflows/intel.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/intel.yml?query=branch%3Abranch_cpp11)
 
 #### momo (Memory Optimization is the Main Objective)
 
@@ -64,3 +65,5 @@ Some documentation is [here](https://morzhovets.github.io/momo).
 - Clang (3.6+) with -std=c++11
 
 - Apple Clang (8.1+, Xcode 8.3+) with -std=c++11
+
+- Intel C++ with -std=c++11
