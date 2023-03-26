@@ -2,6 +2,7 @@
 [![MSVC](https://github.com/morzhovets/momo/actions/workflows/msvc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/msvc.yml?query=branch%3Amaster)
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Amaster)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Amaster)
+[![IntelLLVM](https://github.com/morzhovets/momo/actions/workflows/intel.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/intel.yml?query=branch%3Amaster)
 
 #### momo (Memory Optimization is the Main Objective)
 
@@ -59,3 +60,5 @@ Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, nam
 - GCC (10+) with -std=c++20
 
 - Clang (12+) with -std=c++20
+
+- Intel C++ (2023) with -std=c++20
