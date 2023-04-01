@@ -73,12 +73,17 @@ jobs:
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
 
-        - clang_ver: '14'
+        - clang_ver: '15'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
           build_type: 'Release'
           flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '22.04'
 
-        - clang_ver: '14'
+        - clang_ver: '15'
           build_type: 'Debug'
           flags: '-std=c++20 -Werror -fsanitize=address,undefined -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'

@@ -8,10 +8,10 @@ jobs:
       matrix:
         include:
 
-        - gcc_ver: '9'
-          build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-          macos_ver: '11'
+#        - gcc_ver: '9'
+#          build_type: 'Release'
+#          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+#          macos_ver: '11'
 
         - gcc_ver: '10'
           build_type: 'Release'
