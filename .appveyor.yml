@@ -6,9 +6,9 @@ build_script:
   - cmake -G"%CMAKE_GENERATOR%" -A %ARCH% ..
   - cmake --build . --config %CONFIGURATION%
 
-test_script: 
+test_script:
   - .\%CONFIGURATION%\momo_test.exe
-  
+
 environment:
   matrix:
 
