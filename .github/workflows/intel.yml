@@ -19,7 +19,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Install
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Intel
       run: |
         wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
@@ -37,7 +39,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-        make
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
     - name: Test
       run: test/build/momo_test

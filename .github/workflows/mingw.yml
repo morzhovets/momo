@@ -8,19 +8,22 @@ jobs:
       matrix:
         include:
 
-        # MinGW GNU 8.1.0 Release
+        # MinGW GNU 8.1.0
         - win_ver: '2019'
-          flags: '-std=c++17 -O3 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          build_type: 'Release'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-        # MinGW GNU 11.2.0 Release
-        #- win_ver: '2022'
-        #  flags: '-std=c++23 -O3 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+#        # MinGW GNU 11.2.0
+#        - win_ver: '2022'
+#          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: windows-${{ matrix.win_ver }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}
@@ -28,7 +31,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G"MinGW Makefiles"
-        cmake --build .
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

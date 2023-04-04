@@ -99,7 +99,9 @@ jobs:
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | sudo tee -a /etc/apt/sources.list
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ bionic main universe" | sudo tee -a /etc/apt/sources.list
         sudo apt update
-    - name: Install
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Clang
       run: sudo apt install clang-${{ matrix.clang_ver }}
     - name: Build
       env:
@@ -109,7 +111,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-        make
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
     - name: Test
       run: test/build/momo_test

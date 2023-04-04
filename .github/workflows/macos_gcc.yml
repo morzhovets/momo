@@ -33,7 +33,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Install
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install GCC
       run: |
         brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
@@ -44,7 +46,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-        make
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
     - name: Test
       run: test/build/momo_test
