@@ -1,0 +1,24 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "x64-Clang-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    }
+  ]
+}
