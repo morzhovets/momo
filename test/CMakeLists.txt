@@ -1,19 +1,21 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(momo_test)
+project(momo_test
+  LANGUAGES CXX)
 
-file(GLOB tests "tests/*.cpp")
-add_executable(momo_test ${tests})
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
+add_executable(momo_test ${TEST_SOURCES})
 
 if(NOT (${CMAKE_VERSION} VERSION_LESS "3.16"))
   target_precompile_headers(momo_test PRIVATE "tests/pch.h")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   target_compile_options(momo_test PRIVATE /W4 /bigobj /Zc:__cplusplus)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
   target_compile_options(momo_test PRIVATE /W4 -Wold-style-cast -Wsign-conversion
-    -Wno-unused-local-typedefs)
+    -Wno-unused-local-typedefs -Wno-unknown-attributes)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
