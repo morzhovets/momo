@@ -11,12 +11,12 @@ jobs:
         # Clang 12.0.0 with MSVC-like command-line
         - win_ver: '2019'
           build_type: 'Release'
-          flags: '/std:c++latest -msse2 -Wno-unknown-attributes'
+          flags: '/std:c++latest -msse2'
 
         # Clang 15.0.1 with MSVC-like command-line
         - win_ver: '2022'
           build_type: 'Release'
-          flags: '/std:c++latest -msse2 -Wno-unknown-attributes'
+          flags: '/std:c++latest -msse2'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -30,7 +30,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake -T ClangCL ..
-        cmake --build . --config ${{ matrix.build_type }} --parallel
+        cmake .. -T ClangCL
+        cmake --build . --config ${{ matrix.build_type }}
     - name: Test
       run: test/build/${{ matrix.build_type }}/momo_test.exe
