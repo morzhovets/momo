@@ -7,7 +7,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x86-Release",
@@ -16,7 +16,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x64-Debug",
@@ -25,7 +25,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x64-Release",
@@ -34,7 +34,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x64-Clang-Debug",
@@ -43,7 +43,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x64-Clang-Release",
@@ -52,7 +52,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "-v"
     },
     {
       "name": "x64-2019-Debug",
@@ -61,7 +61,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "",
+      "buildCommandArgs": ""
     },
     {
       "name": "x64-2019-Release",
@@ -70,7 +70,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "",
+      "buildCommandArgs": ""
     },
     {
       "name": "x64-2022-Debug",
@@ -79,7 +79,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "",
+      "buildCommandArgs": ""
     },
     {
       "name": "x64-2022-Release",
@@ -88,7 +88,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
-      "buildCommandArgs": "",
-    },
+      "buildCommandArgs": ""
+    }
   ]
 }
