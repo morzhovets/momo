@@ -40,6 +40,6 @@ jobs:
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-        make
+        cmake --build . --parallel
     - name: Test
       run: test/build/momo_test

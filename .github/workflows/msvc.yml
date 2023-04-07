@@ -39,6 +39,6 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        cmake --build . --config ${{ matrix.build_type }}
+        cmake --build . --config ${{ matrix.build_type }} --parallel
     - name: Test
       run: test/build/${{ matrix.build_type }}/momo_test.exe
