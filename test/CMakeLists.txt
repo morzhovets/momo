@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.14)
 project(momo_test
   LANGUAGES CXX)
 
-file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
-add_executable(momo_test ${TEST_SOURCES})
+file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
+add_executable(momo_test ${MOMO_TEST_SOURCES})
+
+target_compile_features(momo_test PRIVATE cxx_std_20)
 
 if(NOT (${CMAKE_VERSION} VERSION_LESS "3.16"))
   target_precompile_headers(momo_test PRIVATE "tests/pch.h")
@@ -22,5 +24,3 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic -Wold-style-cast -Wsign-conversion
     -Wno-unused-local-typedefs)
 endif()
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
