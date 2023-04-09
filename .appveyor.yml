@@ -12,16 +12,10 @@ test_script:
 environment:
   matrix:
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      CMAKE_GENERATOR: Visual Studio 15 2017
-      CONFIGURATION: Debug
-      ARCH: Win32
-      FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
-
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       CMAKE_GENERATOR: Visual Studio 14 2015
-      CONFIGURATION: Release
-      ARCH: Win32
+      CONFIGURATION: Debug
+      ARCH: x64
       FLAGS: "/WX"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -30,8 +24,20 @@ environment:
       ARCH: x64
       FLAGS: "/WX"
 
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      CONFIGURATION: Release
+      ARCH: Win32
+      FLAGS: "/WX"
+
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       CMAKE_GENERATOR: Visual Studio 15 2017
       CONFIGURATION: Release
-      ARCH: Win32
+      ARCH: x64
       FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
+
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#      CMAKE_GENERATOR: Visual Studio 15 2017
+#      CONFIGURATION: Release
+#      ARCH: Win32
+#      FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
