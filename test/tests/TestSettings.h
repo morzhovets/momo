@@ -42,10 +42,6 @@
 #undef TEST_LIBCXX_TREE_MAP
 #endif
 
-#if defined(__MINGW32__)
-#undef TEST_SIMPLE_MEM_POOL
-#endif
-
 #endif
 
 #define TEST_OLD_HASH_BUCKETS

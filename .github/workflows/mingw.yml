@@ -8,22 +8,33 @@ jobs:
       matrix:
         include:
 
-        # MinGW GNU 8.1.0
-        - win_ver: '2019'
+        - arch: 'x64'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
 
-#        # MinGW GNU 11.2.0
-#        - win_ver: '2022'
-#          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+        - arch: 'x64'
+          build_type: 'Release'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-    runs-on: windows-${{ matrix.win_ver }}
+        - arch: 'x86'
+          build_type: 'Release'
+          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
+
+        - arch: 'x86'
+          build_type: 'Release'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Setup Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Setup MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: ${{ matrix.arch }}
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}

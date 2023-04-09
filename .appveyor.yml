@@ -1,43 +1,44 @@
 build_script:
   - set CXXFLAGS=%FLAGS%
+  - call "%VCVARS_BAT%" %ARCH%
   - cd test
   - mkdir build
   - cd build
-  - cmake .. -G "%CMAKE_GENERATOR%" -A %ARCH%
-  - cmake --build . --config %CONFIGURATION%
+  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+  - cmake --build . -v
 
 test_script:
-  - .\%CONFIGURATION%\momo_test.exe
+  - momo_test.exe
 
 environment:
   matrix:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      CMAKE_GENERATOR: Visual Studio 14 2015
-      CONFIGURATION: Debug
       ARCH: x64
+      BUILD_TYPE: Debug
       FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      CMAKE_GENERATOR: Visual Studio 14 2015
-      CONFIGURATION: Release
       ARCH: x64
+      BUILD_TYPE: Release
       FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      CMAKE_GENERATOR: Visual Studio 14 2015
-      CONFIGURATION: Release
-      ARCH: Win32
+      ARCH: x86
+      BUILD_TYPE: Release
       FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      CMAKE_GENERATOR: Visual Studio 15 2017
-      CONFIGURATION: Release
       ARCH: x64
+      BUILD_TYPE: Release
       FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
 
 #    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-#      CMAKE_GENERATOR: Visual Studio 15 2017
-#      CONFIGURATION: Release
-#      ARCH: Win32
+#      ARCH: x86
+#      BUILD_TYPE: Release
 #      FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
+#      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
