@@ -12,10 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wcast-align" />
 					<Add option="-pedantic" />
-					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
@@ -33,10 +30,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wcast-align" />
 					<Add option="-pedantic" />
-					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
@@ -57,6 +51,7 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-pedantic" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-g" />
@@ -74,6 +69,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-pedantic" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
 					<Add option="-Wold-style-cast" />
@@ -92,10 +88,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wcast-align" />
 					<Add option="-pedantic" />
-					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -113,10 +106,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wcast-align" />
 					<Add option="-pedantic" />
-					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
@@ -137,6 +127,7 @@
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-pedantic" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
@@ -154,6 +145,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-pedantic" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-std=c++17" />
 					<Add option="-Wold-style-cast" />
