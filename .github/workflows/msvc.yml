@@ -10,45 +10,45 @@ jobs:
 
         # Visual Studio 2019
         - win_ver: '2019'
+          arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++20'
-          arch: 'x64'
 
         - win_ver: '2019'
+          arch: 'x86'
           build_type: 'Release'
           flags: '/std:c++20'
-          arch: 'x86'
 
         # Visual Studio 2022
         - win_ver: '2022'
+          arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++latest'
-          arch: 'x64'
 
         - win_ver: '2022'
+          arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++latest /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
-          arch: 'x64'
 
         - win_ver: '2022'
+          arch: 'x64'
           build_type: 'Debug'
           flags: '/std:c++latest'
-          arch: 'x64'
 
         - win_ver: '2022'
+          arch: 'x86'
           build_type: 'Release'
           flags: '/std:c++latest'
-          arch: 'x86'
 
         - win_ver: '2022'
+          arch: 'x86'
           build_type: 'Release'
           flags: '/std:c++latest /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
-          arch: 'x86'
 
         - win_ver: '2022'
+          arch: 'x86'
           build_type: 'Debug'
           flags: '/std:c++latest'
-          arch: 'x86'
 
     runs-on: windows-${{ matrix.win_ver }}
 

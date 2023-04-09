@@ -1,0 +1,42 @@
+name: MinGW
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+        - arch: 'x64'
+          build_type: 'Release'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2'
+          win_ver: '2022'
+
+        - arch: 'x86'
+          build_type: 'Release'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2'
+          win_ver: '2022'
+
+    runs-on: windows-${{ matrix.win_ver }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Setup MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: ${{ matrix.arch }}
+    - name: Build
+      env:
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test.exe
