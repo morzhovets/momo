@@ -34,11 +34,11 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARCH: x64
       BUILD_TYPE: Release
-      FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
+      FLAGS: "/std:c++17 /WX /permissive-"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
 
 #    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
 #      ARCH: x86
 #      BUILD_TYPE: Release
-#      FLAGS: "/std:c++17 /WX /permissive- /Zc:__cplusplus"
+#      FLAGS: "/std:c++17 /WX /permissive-"
 #      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"

@@ -11,7 +11,7 @@ jobs:
         # Visual Studio 2022
         - win_ver: '2022'
           build_type: 'Release'
-          flags: '/clr /std:c++17 /WX /Zc:__cplusplus /DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '/clr /std:c++17 /WX /DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: windows-${{ matrix.win_ver }}
 
