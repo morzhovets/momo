@@ -89,7 +89,7 @@ namespace internal
 		{
 			uint64_t intPtr = (uint64_t{mPtrState[2]} << 32) | (uint64_t{mPtrState[1]} << 16)
 				| uint64_t{mPtrState[0] & ~uint16_t{maskState}};
-			return PtrCaster::FromUInt<Item>(uintptr_t{intPtr});
+			return PtrCaster::FromUInt<Item>(static_cast<uintptr_t>(intPtr));
 		}
 
 		uint8_t GetState() const noexcept
@@ -127,7 +127,7 @@ namespace internal
 		{
 			uint64_t intPtr = (uint64_t{mPtrState[1]} << 32)
 				| uint64_t{mPtrState[0] & ~uint32_t{maskState}};
-			return PtrCaster::FromUInt<Item>(uintptr_t{intPtr});
+			return PtrCaster::FromUInt<Item>(static_cast<uintptr_t>(intPtr));
 		}
 
 		uint8_t GetState() const noexcept
