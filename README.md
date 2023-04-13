@@ -1,4 +1,3 @@
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/morzhovets/momo?branch=branch_cpp11&svg=true)](https://ci.appveyor.com/project/morzhovets/momo/branch/branch_cpp11)
 [![MSVC](https://github.com/morzhovets/momo/actions/workflows/msvc.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/msvc.yml?query=branch%3Abranch_cpp11)
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Abranch_cpp11)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=branch_cpp11)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Abranch_cpp11)
