@@ -25,8 +25,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Install Ninja
-      run: choco install ninja
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
     - name: Setup MinGW
       uses: egor-tensin/setup-mingw@v2
       with:
