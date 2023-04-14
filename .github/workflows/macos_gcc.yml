@@ -28,11 +28,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Ninja
+      run: brew install ninja
     - name: Install GCC
-      run: |
-        brew install gcc@${{ matrix.gcc_ver }}
+      run: brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: /usr/local/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}

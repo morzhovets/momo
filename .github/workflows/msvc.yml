@@ -9,58 +9,61 @@ jobs:
         include:
 
         # Visual Studio 2019
-        - win_ver: '2019'
+        - toolset: '14.2'
           arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++20'
-
-        - win_ver: '2019'
-          arch: 'x86'
-          build_type: 'Release'
-          flags: '/std:c++20'
+          win_ver: '2022'
 
         # Visual Studio 2022
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++latest'
+          win_ver: '2022'
 
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++latest /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          win_ver: '2022'
 
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x64'
           build_type: 'Debug'
           flags: '/std:c++latest'
+          win_ver: '2022'
 
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x86'
           build_type: 'Release'
           flags: '/std:c++latest'
+          win_ver: '2022'
 
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x86'
           build_type: 'Release'
-          flags: '/std:c++latest /GR- /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          win_ver: '2022'
 
-        - win_ver: '2022'
+        - toolset: '14.3'
           arch: 'x86'
           build_type: 'Debug'
           flags: '/std:c++latest'
+          win_ver: '2022'
 
     runs-on: windows-${{ matrix.win_ver }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Ninja
+      run: choco install ninja
     - name: Setup MSVC
-      uses: egor-tensin/vs-shell@v2
+      uses: TheMrMilchmann/setup-msvc-dev@v2
       with:
         arch: ${{ matrix.arch }}
+        toolset: ${{ matrix.toolset }}
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}
