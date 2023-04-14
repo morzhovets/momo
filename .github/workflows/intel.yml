@@ -19,8 +19,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Ninja
+      run: sudo apt-get install ninja-build
     - name: Install Intel
       run: |
         wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB

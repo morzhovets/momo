@@ -38,11 +38,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Ninja
+      run: brew install ninja
     - name: Install Clang
-      run: |
-        brew install llvm@${{ matrix.clang_ver }}
+      run: brew install llvm@${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: /usr/local/opt/llvm@${{ matrix.clang_ver }}/bin/clang++

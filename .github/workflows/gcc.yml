@@ -79,8 +79,8 @@ jobs:
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | sudo tee -a /etc/apt/sources.list
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ bionic main universe" | sudo tee -a /etc/apt/sources.list
         sudo apt update
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install Ninja
+      run: sudo apt-get install ninja-build
     - name: Install GCC
       run: sudo apt install g++-${{ matrix.gcc_ver }}
     - name: Build
