@@ -29,9 +29,9 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 
 #### Usage
 
-Just copy the folder `momo` in your source code. This folder contains only header files.
+Just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/master/include/momo) in your source code. This folder contains **only header files**.
 
-Classes `set/map` and `unordered_set/map` are located in subfolder `stdish`, namespace `momo::stdish`.
+Classes `set/map` and `unordered_set/map` are located in subfolder [stdish](https://github.com/morzhovets/momo/tree/master/include/momo/stdish), namespace `momo::stdish`.
 
 #### Other classes
 
