@@ -83,9 +83,9 @@
 				</Linker>
 			</Target>
 		</Build>
-		<UnitsGlob directory="../../../momo" recursive="1" wildcard="*.h" />
-		<UnitsGlob directory="../../tests" recursive="0" wildcard="*.h" />
-		<UnitsGlob directory="../../tests" recursive="0" wildcard="*.cpp" />
+		<UnitsGlob directory="../../../include/momo" recursive="1" wildcard="*.h" />
+		<UnitsGlob directory="../../sources" recursive="0" wildcard="*.h" />
+		<UnitsGlob directory="../../sources" recursive="0" wildcard="*.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
