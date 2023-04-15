@@ -135,7 +135,7 @@ namespace internal
 }
 
 template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
-	bool tUseValuePtr = false>
+	bool tUseValuePtr = false>	//?
 class MergeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
 {
 };

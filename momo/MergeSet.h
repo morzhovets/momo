@@ -201,7 +201,7 @@ namespace internal
 		};
 
 		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0, Item*, MemManagerPtr> ItemPtrs;
-		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0,
+		typedef NestedArrayIntCap<initialItemCount <= 16 ? 32 : 0,	//?
 			ItemPtrHash, MemManagerPtr> ItemPtrHashes;
 
 	public:

@@ -30,7 +30,7 @@ namespace internal
 			{ { hashFunc(key) } -> std::convertible_to<size_t>; };
 
 	template<typename EqualFunc, typename Key1,
-		typename Key2 = Key1>
+		typename Key2 = Key1>	//?
 	concept conceptEqualFunc = std::predicate<const EqualFunc&, const Key1&, const Key2&>;
 
 	template<typename LessFunc, typename Key>

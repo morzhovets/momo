@@ -31,7 +31,7 @@ concept conceptMapKeyValueTraits =
 	{
 		typename std::bool_constant<MapKeyValueTraits::useValuePtr>;
 		typename std::integral_constant<size_t, MapKeyValueTraits::keyAlignment>;
-		typename std::integral_constant<size_t, MapKeyValueTraits::valueAlignment>;
+		typename std::integral_constant<size_t, MapKeyValueTraits::valueAlignment>;	//?
 		{ MapKeyValueTraits::DestroyKey(&memManager, key) } noexcept;
 		{ MapKeyValueTraits::DestroyValue(&memManager, value) } noexcept;
 	} &&

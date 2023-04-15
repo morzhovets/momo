@@ -329,7 +329,7 @@ namespace internal
 		}
 
 		template<internal::conceptCreator<Item, false> ItemCreator>
-		void Create(ItemCreator itemCreator)
+		void Create(ItemCreator itemCreator)	//?
 		{
 			MOMO_CHECK(!mHasItem);
 			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);

@@ -442,7 +442,7 @@ private:
 		MOMO_CHECK(blockCount == 1 || blockSize % blockAlignment == 0);
 		MOMO_CHECK(blockCount == 1 || blockSize / blockAlignment >= 2);
 		const size_t maxBlockSize = (internal::UIntConst::maxSize
-			- 2 - 3 * sizeof(void*) - 4 * blockAlignment) / blockCount;
+			- 2 - 3 * sizeof(void*) - 4 * blockAlignment) / blockCount;	//?
 		if (blockSize > maxBlockSize)
 			throw std::length_error("Invalid block size");
 	}
@@ -815,7 +815,7 @@ namespace internal
 
 		~MemManagerPoolLazy() noexcept
 		{
-			MOMO_ASSERT(!mMemPool.has_value());
+			MOMO_ASSERT(!mMemPool.has_value());	//?
 		}
 
 		MemManagerPoolLazy& operator=(MemManagerPoolLazy&) = delete;
