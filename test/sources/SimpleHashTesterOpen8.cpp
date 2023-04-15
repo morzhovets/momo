@@ -16,7 +16,7 @@
 
 #include "SimpleHashTester.h"
 
-#include "../../momo/details/HashBucketOpen8.h"
+#include "../../include/momo/details/HashBucketOpen8.h"
 
 static int testSimpleHash = []
 {

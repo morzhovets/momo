@@ -16,7 +16,7 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/MergeMap.h"
+#include "../../include/momo/MergeMap.h"
 
 #include <iostream>
 #include <random>

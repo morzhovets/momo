@@ -15,7 +15,7 @@
 #ifdef TEST_LIBCXX_HASH_SET
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../momo/details/HashBucketUnlimP.h"
+#include "../../include/momo/details/HashBucketUnlimP.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketUnlimP<>
 #define LIBCXX_TEST_BUCKET_NAME "unlimp"

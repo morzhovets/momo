@@ -16,8 +16,8 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/vector.h"
-#include "../../momo/stdish/segmented_vector.h"
+#include "../../include/momo/stdish/vector.h"
+#include "../../include/momo/stdish/segmented_vector.h"
 
 #undef _LIBCPP_DEBUG
 #undef _LIBCPP_DEBUG_LEVEL

@@ -17,7 +17,7 @@
 
 #include "SimpleHashTester.h"
 
-#include "../../momo/details/HashBucketLimP1.h"
+#include "../../include/momo/details/HashBucketLimP1.h"
 
 #define BUCKET(maxCount, blockCount) \
 	momo::HashBucketLimP1<maxCount, momo::MemPoolParams<blockCount, (blockCount % 2) * 16>>

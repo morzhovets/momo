@@ -16,7 +16,7 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/set.h"
+#include "../../include/momo/stdish/set.h"
 
 namespace
 {

@@ -16,8 +16,8 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/MemPool.h"
-#include "../../momo/Array.h"
+#include "../../include/momo/MemPool.h"
+#include "../../include/momo/Array.h"
 
 #include <iostream>
 #include <random>

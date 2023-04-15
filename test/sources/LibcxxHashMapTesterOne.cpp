@@ -15,7 +15,7 @@
 #ifdef TEST_LIBCXX_HASH_MAP
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../momo/details/HashBucketOne.h"
+#include "../../include/momo/details/HashBucketOne.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketOne<>
 #define LIBCXX_TEST_BUCKET_NAME "one"

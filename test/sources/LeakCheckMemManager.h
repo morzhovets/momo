@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "../../momo/MemManager.h"
+#include "../../include/momo/MemManager.h"
 
 class LeakCheckMemManager
 {

@@ -16,7 +16,7 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/map.h"
+#include "../../include/momo/stdish/map.h"
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
 namespace libcxx_test_tree_multimap
