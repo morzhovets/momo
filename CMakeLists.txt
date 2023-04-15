@@ -2,14 +2,22 @@ cmake_minimum_required(VERSION 3.14)
 
 project(momo
   VERSION 4.0
+  HOMEPAGE_URL "https://github.com/morzhovets/momo/tree/master"
   LANGUAGES CXX)
 
 option(MOMO_TEST "Build momo tests" OFF)
 
-if(NOT "${CMAKE_CXX_STANDARD}")
-  set(CMAKE_CXX_STANDARD 20)
-endif()
+add_library(momo INTERFACE)
 
-if(MOMO_TEST)
+target_include_directories(momo INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_compile_features(momo INTERFACE cxx_std_20)
+
+install(DIRECTORY include/momo DESTINATION include)
+
+if(MOMO_TEST AND (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME))
   add_subdirectory(test)
 endif()
