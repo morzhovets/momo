@@ -1,0 +1,62 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+        
+        - comp: 'g++'
+          cc: 'momo_unordered_map'
+          py: 'bench.py'
+
+        - comp: 'g++'
+          cc: 'momo_unordered_map_open'
+          py: 'bench_open.py'
+
+        - comp: 'g++'
+          cc: 'momo_map'
+          py: 'bench_tree.py'
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout hash-table-shootout
+      uses: actions/checkout@v3
+      with:
+        repository: 'morzhovets/hash-table-shootout'
+        ref: 'regress'
+    - name: Checkout momo_v32
+      uses: actions/checkout@v3
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.2'
+        path: 'momo_v32'
+    - name: Checkout momo_v35
+      uses: actions/checkout@v3
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.5'
+        path: 'momo_v35'
+    - name: Checkout momo_v37
+      uses: actions/checkout@v3
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.7'
+        path: 'momo_v37'
+    - name: Checkout momo_cur
+      uses: actions/checkout@v3
+      with:
+        path: 'momo_cur'
+    - name: Build
+      run: |
+        mkdir build
+        ${{ matrix.comp }} -Imomo_v32 -O3 -DNDEBUG -march=native -std=c++17 -o build/${{ matrix.cc }}_v32 src/${{ matrix.cc }}.cc
+        ${{ matrix.comp }} -Imomo_v35 -O3 -DNDEBUG -march=native -std=c++17 -o build/${{ matrix.cc }}_v35 src/${{ matrix.cc }}.cc
+        ${{ matrix.comp }} -Imomo_v37 -O3 -DNDEBUG -march=native -std=c++17 -o build/${{ matrix.cc }}_v37 src/${{ matrix.cc }}.cc
+        ${{ matrix.comp }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++20 -o build/${{ matrix.cc }}_cur src/${{ matrix.cc }}.cc
+    - name: Test
+      run: |
+        sudo nice -n-20 ionice -c1 -n0 sudo -u $USER python3 ${{ matrix.py }}
