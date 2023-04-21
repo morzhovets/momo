@@ -1,4 +1,4 @@
-name: CI
+name: Perf GCC
 
 on: [push, pull_request]
 
@@ -10,15 +10,15 @@ jobs:
         
         - comp: 'g++'
           cc: 'momo_unordered_map'
-          py: 'bench.py'
+          py: 'bench'
 
         - comp: 'g++'
           cc: 'momo_unordered_map_open'
-          py: 'bench_open.py'
+          py: 'bench_open'
 
         - comp: 'g++'
           cc: 'momo_map'
-          py: 'bench_tree.py'
+          py: 'bench_tree'
 
     runs-on: ubuntu-22.04
 
@@ -59,4 +59,4 @@ jobs:
         ${{ matrix.comp }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++20 -o build/${{ matrix.cc }}_cur src/${{ matrix.cc }}.cc
     - name: Test
       run: |
-        sudo nice -n-20 ionice -c1 -n0 sudo -u $USER python3 ${{ matrix.py }}
+        sudo nice -n-20 ionice -c1 -n0 sudo -u $USER python3 ${{ matrix.py }}.py
