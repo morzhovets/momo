@@ -374,17 +374,16 @@ namespace internal
 		template<typename ResObject, typename... ResObjectArgs>
 		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
 		{
-			ResObject* resObjectPtr = Allocate<ResObject>(memManager, sizeof(ResObject));
+			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
 			try
 			{
-				std::construct_at(resObjectPtr, std::forward<ResObjectArgs>(resObjectArgs)...);
+				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
 			}
 			catch (...)
 			{
 				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
 				throw;
 			}
-			return resObjectPtr;
 		}
 
 		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
