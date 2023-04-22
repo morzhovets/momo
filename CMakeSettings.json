@@ -1,0 +1,148 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x86-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x86" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x86-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x86" ],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-Clang-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "clang_cl_x64" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-Clang-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "clang_cl_x64" ],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x86-Clang-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "clang_cl_x86" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x86-Clang-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "clang_cl_x86" ],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-2015-Debug",
+      "generator": "Visual Studio 14",
+      "inheritEnvironments": [],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=14",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2015-Release",
+      "generator": "Visual Studio 14",
+      "inheritEnvironments": [],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=14",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2017-Debug",
+      "generator": "Visual Studio 15",
+      "inheritEnvironments": [],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=17",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2017-Release",
+      "generator": "Visual Studio 15",
+      "inheritEnvironments": [],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=17",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2019-Debug",
+      "generator": "Visual Studio 16",
+      "inheritEnvironments": [],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2019-Release",
+      "generator": "Visual Studio 16",
+      "inheritEnvironments": [],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2022-Debug",
+      "generator": "Visual Studio 17",
+      "inheritEnvironments": [],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
+      "buildCommandArgs": ""
+    },
+    {
+      "name": "x64-2022-Release",
+      "generator": "Visual Studio 17",
+      "inheritEnvironments": [],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
+      "buildCommandArgs": ""
+    }
+  ]
+}
