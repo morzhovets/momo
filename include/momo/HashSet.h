@@ -55,9 +55,8 @@ namespace internal
 			if (bucketCount > maxBucketCount)
 				throw std::bad_array_new_length();
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
-			HashSetBuckets* resBuckets = MemManagerProxy::template Allocate<HashSetBuckets>(
-				memManager, bufferSize);
-			::new(static_cast<void*>(resBuckets)) HashSetBuckets(logBucketCount);
+			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
+			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
 			Bucket* buckets = resBuckets->pvGetBuckets();
 			try
 			{
@@ -67,8 +66,7 @@ namespace internal
 			}
 			catch (...)
 			{
-				resBuckets->~HashSetBuckets();
-				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
+				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
 				throw;
 			}
 			return resBuckets;
@@ -83,9 +81,7 @@ namespace internal
 				std::destroy_at(mBucketParams);
 				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
 			}
-			size_t bufferSize = pvGetBufferSize(GetLogCount());
-			this->~HashSetBuckets();
-			MemManagerProxy::Deallocate(memManager, this, bufferSize);
+			MemManagerProxy::Deallocate(memManager, this, pvGetBufferSize(GetLogCount()));
 		}
 
 		Bucket* GetBegin() noexcept
@@ -151,19 +147,24 @@ namespace internal
 
 		Bucket* pvGetBuckets() noexcept
 		{
-			return &mFirstBucket;
+			return PtrCaster::Shift<Bucket>(this, pvGetBucketOffset());
 		}
 
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept
 		{
-			return sizeof(HashSetBuckets) - sizeof(Bucket) + (sizeof(Bucket) << logBucketCount);
+			return pvGetBucketOffset() + (sizeof(Bucket) << logBucketCount);
+		}
+
+		static constexpr size_t pvGetBucketOffset() noexcept
+		{
+			return UIntMath<>::Ceil(sizeof(HashSetBuckets), alignof(Bucket));
 		}
 
 	private:
 		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
 		BucketParams* mBucketParams;
-		ObjectBuffer<Bucket, alignof(Bucket)> mFirstBucket;
+		//Bucket[]
 	};
 
 	template<typename TBucket, typename TSettings>
