@@ -28,12 +28,10 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits>
-	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false, uint64_t>
+	class BucketOpen8 : public BucketOpenN1<TItemTraits, 7, false>
 	{
 	private:
-		typedef internal::BucketOpenN1<TItemTraits, 7, false, uint64_t> BucketOpenN1;
-
-		using typename BucketOpenN1::Byte;
+		typedef internal::BucketOpenN1<TItemTraits, 7, false> BucketOpenN1;
 
 	public:
 		static const size_t maxCount = 7;
@@ -76,13 +74,14 @@ namespace internal
 			if constexpr (first)
 				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
 #endif
-			Byte shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 #ifdef MOMO_USE_SSE2
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
-				static_cast<int64_t>(BucketOpenN1::ptGetData()));
+			int64_t thisShortHashes64 = -1;
+			std::memcpy(&thisShortHashes64, BucketOpenN1::ptGetShortHashes(), 7);
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{-1}, thisShortHashes64);
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
-			mask &= (1 << maxCount) - 1;
+			//mask &= (1 << maxCount) - 1;
 			for (; mask != 0; mask &= mask - 1)
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
@@ -91,7 +90,9 @@ namespace internal
 					return itemPtr;
 			}
 #else
-			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ BucketOpenN1::ptGetData();
+			uint64_t thisShortHashes = 0;
+			std::memcpy(&thisShortHashes, BucketOpenN1::ptGetShortHashes(), 7);
+			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ thisShortHashes;
 			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0080808080808080ull;
 			for (; mask != 0; mask &= mask - 1)
 			{
