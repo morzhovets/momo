@@ -77,9 +77,8 @@ namespace internal
 			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
 #ifdef MOMO_USE_SSE2
 			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			int64_t thisShortHashes64 = 0;
-			std::memcpy(&thisShortHashes64, BucketOpenN1::ptGetShortHashes(), 8);
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0}, thisShortHashes64);
+			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
+				MemCopyer::FromBuffer<int64_t>(BucketOpenN1::ptGetData()));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
 			mask &= (1 << maxCount) - 1;
 			for (; mask != 0; mask &= mask - 1)
@@ -90,8 +89,7 @@ namespace internal
 					return itemPtr;
 			}
 #else
-			uint64_t thisShortHashes = 0;
-			std::memcpy(&thisShortHashes, BucketOpenN1::ptGetShortHashes(), 8);
+			uint64_t thisShortHashes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
 			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ thisShortHashes;
 			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0080808080808080ull;
 			for (; mask != 0; mask &= mask - 1)

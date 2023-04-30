@@ -88,16 +88,18 @@ namespace internal
 
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
-			if (mMaxProbeExp == infProbeExp)
+			uint8_t maxProbeExp = pvGetMaxProbeExp();
+			if (maxProbeExp == infProbeExp)
 				return (size_t{1} << logBucketCount) - 1;
-			return pvGetMaxProbe(mMaxProbeExp);
+			return pvGetMaxProbe(maxProbeExp);
 		}
 
 		void UpdateMaxProbe(size_t probe) noexcept
 		{
 			if (probe == 0)
 				return;
-			if (mMaxProbeExp == infProbeExp || probe <= pvGetMaxProbe(mMaxProbeExp))
+			uint8_t maxProbeExp = pvGetMaxProbeExp();
+			if (maxProbeExp == infProbeExp || probe <= pvGetMaxProbe(maxProbeExp))
 				return;
 			pvUpdateMaxProbe(probe);
 		}
@@ -122,9 +124,9 @@ namespace internal
 		}
 
 	protected:
-		const uint8_t* ptGetShortHashes() const noexcept
+		const void* ptGetData() const noexcept
 		{
-			return mShortHashes;
+			return mData;
 		}
 
 		Item* ptGetItemPtr(size_t index) noexcept
@@ -141,17 +143,18 @@ namespace internal
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(mShortHashes, maxCount, uint8_t{emptyShortHash});
-			mMaxProbeExp = uint8_t{0};
+			std::fill_n(pvGetShortHashes(), maxCount, uint8_t{emptyShortHash});
+			pvGetMaxProbeExp() = uint8_t{0};
 		}
 
 		template<typename Predicate>
 		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
 		{
 			uint8_t shortHash = ptCalcShortHash(hashCode);
+			const uint8_t* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mShortHashes[i] == shortHash)
+				if (thisShortHashes[i] == shortHash)
 				{
 					if (pred(std::as_const((&mItems)[i]))) [[likely]]
 						return pvMakeIterator(&mItems + i);
@@ -191,17 +194,32 @@ namespace internal
 
 		uint8_t pvGetState() const noexcept
 		{
-			return mShortHashes[reverse ? 0 : maxCount - 1];
+			return mData[reverse ? 0 : maxCount - 1];
 		}
 
 		uint8_t& pvGetState() noexcept
 		{
-			return mShortHashes[reverse ? 0 : maxCount - 1];
+			return mData[reverse ? 0 : maxCount - 1];
+		}
+
+		uint8_t pvGetMaxProbeExp() const noexcept
+		{
+			return mData[maxCount];
+		}
+
+		uint8_t& pvGetMaxProbeExp() noexcept
+		{
+			return mData[maxCount];
 		}
 
 		uint8_t& pvGetShortHash(size_t index) noexcept
 		{
-			return mShortHashes[reverse ? maxCount - 1 - index : index];
+			return mData[reverse ? maxCount - 1 - index : index];
+		}
+
+		uint8_t* pvGetShortHashes() noexcept
+		{
+			return mData;
 		}
 
 		static Iterator pvMakeIterator(Item* itemPtr) noexcept
@@ -229,14 +247,13 @@ namespace internal
 				maxProbe0 >>= 1;
 				++maxProbe1;
 			}
-			mMaxProbeExp = (maxProbe1 <= size_t{31})
+			pvGetMaxProbeExp() = (maxProbe1 <= size_t{31})
 				? static_cast<uint8_t>(maxProbe0 + 1) | static_cast<uint8_t>(maxProbe1 << 3)
 				: infProbeExp;
 		}
 
 	private:
-		uint8_t mShortHashes[maxCount];
-		uint8_t mMaxProbeExp;
+		uint8_t mData[maxCount + 1];
 		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }
