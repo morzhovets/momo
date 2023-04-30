@@ -152,7 +152,7 @@
         <Item Name="[NextBuckets]">mNextBuckets</Item>
         <ArrayItems>
             <Size>(size_t)1 &lt;&lt; mLogCount</Size>
-            <ValuePointer>(Bucket*)(this + 1)</ValuePointer>
+            <ValuePointer>(Bucket*)&amp;mFirstBucket</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
@@ -213,12 +213,12 @@
 </Type>
 
 <Type Name="momo::internal::BucketOpen8&lt;*&gt;">
-    <DisplayString Condition="(uint8_t)mData[maxCount - 1] == emptyShortHash">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(uint8_t)mData[maxCount - 1] != emptyShortHash">{{ Count={((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems} }}</DisplayString>
+    <DisplayString Condition="mData[maxCount - 1] == emptyShortHash">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="mData[maxCount - 1] != emptyShortHash">{{ Count={(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Item>
+        <Item Name="[Count]">(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount</Item>
         <ArrayItems>
-            <Size>((uint8_t)mData[maxCount - 1] >= emptyShortHash) ? (size_t)((uint8_t)mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
+            <Size>(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
             <ValuePointer>(Item*)&amp;mItems</ValuePointer>
         </ArrayItems>
     </Expand>
@@ -250,10 +250,11 @@
                 </ArrayItems>
             </Expand>
         </Synthetic>
-        <ArrayItems>
+        <IndexListItems>
             <Size>(size_t)mCounter.count</Size>
-            <ValuePointer>(Item*)&amp;mFirstItem</ValuePointer>
-        </ArrayItems>
+            <ValueNode Condition="isContinuous">((Item*)&amp;mFirstItem)[$i]</ValueNode>
+            <ValueNode Condition="!isContinuous">((Item*)&amp;mFirstItem)[((uint8_t*)&amp;mCounter.count)[$i + 1]]</ValueNode>
+        </IndexListItems>
     </Expand>
 </Type>
 
