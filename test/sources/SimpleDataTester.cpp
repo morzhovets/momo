@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/SimpleDataTester.cpp
+  test/sources/SimpleDataTester.cpp
 
 \**********************************************************/
 

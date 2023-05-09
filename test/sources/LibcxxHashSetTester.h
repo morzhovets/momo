@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashSetTester.h
+  test/sources/LibcxxHashSetTester.h
 
 \**********************************************************/
 

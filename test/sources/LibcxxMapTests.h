@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxMapTests.h
+  test/sources/LibcxxMapTests.h
 
 \**********************************************************/
 

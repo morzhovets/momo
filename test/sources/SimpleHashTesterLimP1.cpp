@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/SimpleHashTesterLimP1.cpp
+  test/sources/SimpleHashTesterLimP1.cpp
 
 \**********************************************************/
 

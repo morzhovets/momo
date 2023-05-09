@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/SimpleHashTesterOpen8.cpp
+  test/sources/SimpleHashTesterOpen8.cpp
 
 \**********************************************************/
 

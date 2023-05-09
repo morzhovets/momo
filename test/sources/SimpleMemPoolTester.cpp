@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/SimpleMemPoolTester.cpp
+  test/sources/SimpleMemPoolTester.cpp
 
 \**********************************************************/
 

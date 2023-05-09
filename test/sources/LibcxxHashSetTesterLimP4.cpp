@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashSetTesterLimP4.cpp
+  test/sources/LibcxxHashSetTesterLimP4.cpp
 
 \**********************************************************/
 

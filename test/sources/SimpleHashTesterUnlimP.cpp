@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/SimpleHashTesterUnlimP.cpp
+  test/sources/SimpleHashTesterUnlimP.cpp
 
 \**********************************************************/
 

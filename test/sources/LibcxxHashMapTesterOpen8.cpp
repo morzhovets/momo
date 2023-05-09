@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashMapTesterOpen8.cpp
+  test/sources/LibcxxHashMapTesterOpen8.cpp
 
 \**********************************************************/
 

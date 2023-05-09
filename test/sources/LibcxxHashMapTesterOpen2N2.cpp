@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  tests/LibcxxHashMapTesterOpen2N2.cpp
+  test/sources/LibcxxHashMapTesterOpen2N2.cpp
 
 \**********************************************************/
 
