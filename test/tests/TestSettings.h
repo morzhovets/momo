@@ -36,6 +36,8 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 
+//#define TEST_NATVIS
+
 #define TEST_OLD_HASH_BUCKETS
 
 #if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
