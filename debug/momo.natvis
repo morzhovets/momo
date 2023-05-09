@@ -160,16 +160,16 @@
 <Type Name="momo::internal::ArrayBucket&lt;*&gt;">
     <DisplayString Condition="mPtr == 0">{{ Count=0 }}</DisplayString>
     <DisplayString Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0">{{ Count={(size_t)(*mPtr &amp; 15)} }}</DisplayString>
-    <DisplayString Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">{{ Count={((Array*)(mPtr + sizeof(void*)))->mData.mCount} }}</DisplayString>
+    <DisplayString Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">{{ Count={((Array*)(mPtr + arrayAlignment))->mData.mCount} }}</DisplayString>
     <Expand>
         <Item Condition="mPtr == 0" Name="[Count]">0</Item>
         <Item Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0" Name="[Count]">(size_t)(*mPtr &amp; 15)</Item>
-        <Item Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0" Name="[Count]">((Array*)(mPtr + sizeof(void*)))->mData.mCount</Item>
+        <Item Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0" Name="[Count]">((Array*)(mPtr + arrayAlignment))->mData.mCount</Item>
         <ArrayItems>
-            <Size>mPtr == 0 ? 0 : (size_t)(*mPtr >> 4) != 0 ? (size_t)(*mPtr &amp; 15) : ((Array*)(mPtr + sizeof(void*)))->mData.mCount</Size>
+            <Size>mPtr == 0 ? 0 : (size_t)(*mPtr >> 4) != 0 ? (size_t)(*mPtr &amp; 15) : ((Array*)(mPtr + arrayAlignment))->mData.mCount</Size>
             <ValuePointer Condition="mPtr == 0">(Item*)0</ValuePointer>
             <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) != 0">(Item*)(mPtr + ItemTraits::alignment)</ValuePointer>
-            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">((Array*)(mPtr + sizeof(void*)))->mData.mItems</ValuePointer>
+            <ValuePointer Condition="mPtr != 0 &amp;&amp; (size_t)(*mPtr >> 4) == 0">((Array*)(mPtr + arrayAlignment))->mData.mItems</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
@@ -184,18 +184,6 @@
             <Size>4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7)</Size>
             <ValuePointer Condition="useHashCodePartGetter">(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)</ValuePointer>
             <ValuePointer Condition="!useHashCodePartGetter">*(Item**)&amp;mPtrState</ValuePointer>
-        </ArrayItems>
-    </Expand>
-</Type>
-
-<Type Name="momo::internal::BucketLimP1&lt;*&gt;">
-    <DisplayString Condition="(size_t)(mState &amp; 15) == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(size_t)(mState &amp; 15) != 0">{{ Count={(size_t)(mState &amp; 15)} FirstItem={**(Item**)&amp;mItemPtrBuffer} }}</DisplayString>
-    <Expand>
-        <Item Name="[Count]">(size_t)(mState &amp; 15)</Item>
-        <ArrayItems>
-            <Size>(size_t)(mState &amp; 15)</Size>
-            <ValuePointer>*(Item**)&amp;mItemPtrBuffer</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
@@ -220,18 +208,6 @@
         <ArrayItems>
             <Size>(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
             <ValuePointer>(Item*)&amp;mItems</ValuePointer>
-        </ArrayItems>
-    </Expand>
-</Type>
-
-<Type Name="momo::internal::BucketOne&lt;*&gt;">
-    <DisplayString Condition="(mHashState &amp; 1) == 0">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="(mHashState &amp; 1) != 0">{{ Count=1 FirstItem={*(Item*)&amp;mItemBuffer} }}</DisplayString>
-    <Expand>
-        <Item Name="[Count]">(mHashState &amp; 1) != 0 ? 1 : 0</Item>
-        <ArrayItems>
-            <Size>(mHashState &amp; 1) != 0 ? 1 : 0</Size>
-            <ValuePointer>(Item*)&amp;mItemBuffer</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
