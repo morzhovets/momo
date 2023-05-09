@@ -14,10 +14,6 @@
 
 #include "TestSettings.h"
 
-#ifndef TEST_SPEED_MAP
-#undef NDEBUG
-#endif
-
 #ifdef TEST_MSVC
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
