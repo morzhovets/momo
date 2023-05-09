@@ -42,3 +42,5 @@
 #endif
 
 #define TEST_OLD_HASH_BUCKETS
+
+//#define TEST_NATVIS
