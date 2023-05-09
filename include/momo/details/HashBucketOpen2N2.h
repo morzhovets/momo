@@ -95,8 +95,7 @@ namespace internal
 			return Bounds(Iterator(&mItems + maxCount), pvGetCount());
 		}
 
-		template<bool first, typename Predicate>
-		requires std::predicate<Predicate, const Item&>
+		template<bool first, std::predicate<const Item&> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			return pvFind(pred, hashCode);
