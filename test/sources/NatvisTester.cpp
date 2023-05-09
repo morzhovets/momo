@@ -21,8 +21,6 @@
 #include "../../include/momo/HashMultiMap.h"
 #include "../../include/momo/TreeSet.h"
 #include "../../include/momo/TreeMap.h"
-#include "../../include/momo/details/HashBucketLimP1.h"
-#include "../../include/momo/details/HashBucketOne.h"
 #include "../../include/momo/DataTable.h"
 
 #ifdef TEST_MSVC
@@ -36,9 +34,7 @@ static int testNatvis = []
 	momo::SegmentedArray<int> sar;
 	momo::HashSet<int> hset;
 	momo::HashSetOpen<int> hseto;
-	momo::HashSet<int, momo::HashTraits<int, momo::HashBucketLimP1<>>> hsetp1;
-	momo::HashSet<int, momo::HashTraits<int, momo::HashBucketOpen2N2<>>> hset2n2;
-	momo::HashSet<int, momo::HashTraits<int, momo::HashBucketOne<>>> hsetone;
+	momo::HashSet<int, momo::HashTraits<int, momo::HashBucketOpen2N2<>>> hseto2;
 	momo::HashMap<int, int> hmap;
 	momo::HashMultiMap<int, int> hmmap;
 	momo::TreeSet<int> tset;
@@ -53,23 +49,24 @@ static int testNatvis = []
 
 	for (int i = 0; i < 50; ++i)
 	{
-		ar.AddBack(i);
-		aric.AddBack(i);
-		sar.AddBack(i);
-		hset.Insert(i);
-		hseto.Insert(i);
-		hsetp1.Insert(i);
-		hset2n2.Insert(i);
-		hsetone.Insert(i);
-		hmap.Insert(i, i);
-		for (int j = 0; j < i; ++j)
-			hmmap.Add(i, j);
-		tset.Insert(i);
-		tsetc.Insert(i);
-		tmap.Insert(i, i);
-		tmapp.Insert(i, i);
-		dt.AddRow(intCol = i);
+		int key = 1055 + i * 1000;
+		ar.AddBack(key);
+		aric.AddBack(key);
+		sar.AddBack(key);
+		hset.Insert(key);
+		hseto.Insert(key);
+		hseto2.Insert(key);
+		hmap.Insert(key, i);
+		for (int j = 0; j <= i; ++j)
+			hmmap.Add(key, j);
+		tset.Insert(key);
+		tsetc.Insert(key);
+		tmap.Insert(key, i);
+		tmapp.Insert(key, i);
+		dt.AddRow(intCol = key);
 	}
+
+	momo::DataTable<>::Selection sel = dt.Select();
 
 	return 0;
 }();
