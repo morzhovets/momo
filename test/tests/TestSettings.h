@@ -12,6 +12,8 @@
 
 #pragma once
 
+#undef NDEBUG
+
 #if defined(__clang__)
 #define TEST_CLANG
 #elif defined(__GNUC__)	// && !defined(__clang__)
@@ -19,10 +21,6 @@
 #elif defined(_MSC_VER)	// && !defined(__clang__)
 #define TEST_MSVC
 #endif
-
-//#define TEST_SPEED_MAP
-
-#ifndef TEST_SPEED_MAP
 
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_HASH
@@ -38,10 +36,8 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 
+#define TEST_OLD_HASH_BUCKETS
+
 #if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
 #undef TEST_LIBCXX_TREE_MAP
 #endif
-
-#endif
-
-#define TEST_OLD_HASH_BUCKETS
