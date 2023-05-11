@@ -157,13 +157,13 @@ namespace internal
 
 		static constexpr size_t pvGetBucketOffset() noexcept
 		{
-			return UIntMath<>::Ceil(sizeof(HashSetBuckets), alignof(Bucket));
+			return sizeof(HashSetBuckets);
 		}
 
 	private:
 		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
-		BucketParams* mBucketParams;
+		alignas(Bucket) BucketParams* mBucketParams;
 		//Bucket[]
 	};
 
