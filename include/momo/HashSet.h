@@ -163,7 +163,11 @@ namespace internal
 	private:
 		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
-		alignas(Bucket) BucketParams* mBucketParams;
+		union
+		{
+			BucketParams* mBucketParams;
+			ObjectBuffer<std::byte[alignof(Bucket)], alignof(Bucket)> mAlignedBuffer;
+		};
 		//Bucket[]
 	};
 
