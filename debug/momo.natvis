@@ -230,14 +230,15 @@
             <Expand>
                 <ArrayItems>
                     <Size>(size_t)mCounter.count + 1</Size>
-                    <ValuePointer>&amp;mParent - maxCapacity - 1</ValuePointer>
+                    <ValuePointer>&amp;mParent - (ptrdiff_t)internalOffset / sizeof(void*)</ValuePointer>
                 </ArrayItems>
             </Expand>
         </Synthetic>
-        <ArrayItems>
+        <IndexListItems>
             <Size>(size_t)mCounter.count</Size>
-            <ValuePointer>(Item*)&amp;mFirstItem</ValuePointer>
-        </ArrayItems>
+            <ValueNode Condition="isContinuous">((Item*)((char*)this + ((char*)(this + 1) - (char*)this + ItemTraits::alignment - 1) / ItemTraits::alignment * ItemTraits::alignment))[$i]</ValueNode>
+            <ValueNode Condition="!isContinuous">((Item*)((char*)this + ((char*)(this + 1) - (char*)this + ItemTraits::alignment - 1) / ItemTraits::alignment * ItemTraits::alignment))[((uint8_t*)&amp;mCounter.count)[$i + 1]]</ValueNode>
+        </IndexListItems>
     </Expand>
 </Type>
 
