@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.14)
 project(momo_test
   LANGUAGES CXX)
 
-file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
+file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
 target_compile_features(momo_test PRIVATE cxx_std_11)
 
 if(NOT (${CMAKE_VERSION} VERSION_LESS "3.16"))
-  target_precompile_headers(momo_test PRIVATE "tests/pch.h")
+  target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")

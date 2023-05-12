@@ -53,7 +53,7 @@ Some documentation is [here](https://morzhovets.github.io/momo).
 
 #### DataTable
 
-`momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html), but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable). Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/test/tests/SimpleDataSampler.cpp).
+`momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html), but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable). Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/test/sources/SimpleDataSampler.cpp).
 
 #### Supported compilers
 
