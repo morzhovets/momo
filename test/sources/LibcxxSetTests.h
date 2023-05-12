@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  tests/LibcxxSetTests.h
+  test/sources/LibcxxSetTests.h
 
 \**********************************************************/
 

@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  tests/SimpleArrayTester.cpp
+  test/sources/SimpleArrayTester.cpp
 
 \**********************************************************/
 

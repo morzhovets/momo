@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  tests/SimpleTreeTester.cpp
+  test/sources/SimpleTreeTester.cpp
 
 \**********************************************************/
 

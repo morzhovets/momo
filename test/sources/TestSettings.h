@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  tests/TestSettings.h
+  test/sources/TestSettings.h
 
 \**********************************************************/
 

@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  tests/SimpleHashTesterOpenN1.cpp
+  test/sources/SimpleHashTesterOpenN1.cpp
 
 \**********************************************************/
 
