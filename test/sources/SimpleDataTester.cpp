@@ -16,7 +16,7 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/DataTable.h"
+#include "../../include/momo/DataTable.h"
 
 #include <string>
 #include <iostream>

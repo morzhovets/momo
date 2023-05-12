@@ -14,7 +14,7 @@
 
 #ifdef TEST_LIBCXX_HASH_MAP
 
-#include "../../momo/details/HashBucketOpen8.h"
+#include "../../include/momo/details/HashBucketOpen8.h"
 
 //#define LIBCXX_TEST_BUCKET momo::HashBucketOpen8
 //#define LIBCXX_TEST_BUCKET_NAME "open8"
@@ -23,7 +23,7 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/unordered_map.h"
+#include "../../include/momo/stdish/unordered_map.h"
 
 namespace
 {

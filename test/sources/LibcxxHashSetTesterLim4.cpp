@@ -15,7 +15,7 @@
 #ifdef TEST_LIBCXX_HASH_SET
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../momo/details/HashBucketLim4.h"
+#include "../../include/momo/details/HashBucketLim4.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLim4<>
 #define LIBCXX_TEST_BUCKET_NAME "lim4"

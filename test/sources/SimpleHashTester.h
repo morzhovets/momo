@@ -14,9 +14,9 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/HashSet.h"
-#include "../../momo/HashMap.h"
-#include "../../momo/HashMultiMap.h"
+#include "../../include/momo/HashSet.h"
+#include "../../include/momo/HashMap.h"
+#include "../../include/momo/HashMultiMap.h"
 
 #include <string>
 #include <iostream>

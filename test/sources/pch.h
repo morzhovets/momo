@@ -30,7 +30,7 @@
 #include <Windows.h>
 #endif
 
-#include "../../momo/Utility.h"
+#include "../../include/momo/Utility.h"
 
 #include <string>
 #include <iostream>

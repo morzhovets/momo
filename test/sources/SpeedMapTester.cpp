@@ -14,20 +14,20 @@
 
 #ifdef TEST_SPEED_MAP
 
-#include "../../momo/stdish/unordered_map.h"
-#include "../../momo/stdish/map.h"
+#include "../../include/momo/stdish/unordered_map.h"
+#include "../../include/momo/stdish/map.h"
 
-#include "../../momo/details/HashBucketLimP4.h"
-#include "../../momo/details/HashBucketOpen2N2.h"
-#include "../../momo/details/HashBucketOpen8.h"
+#include "../../include/momo/details/HashBucketLimP4.h"
+#include "../../include/momo/details/HashBucketOpen2N2.h"
+#include "../../include/momo/details/HashBucketOpen8.h"
 
 #ifdef TEST_OLD_HASH_BUCKETS
-#include "../../momo/details/HashBucketLim4.h"
-#include "../../momo/details/HashBucketLimP.h"
-#include "../../momo/details/HashBucketLimP1.h"
-#include "../../momo/details/HashBucketUnlimP.h"
-#include "../../momo/details/HashBucketOne.h"
-#include "../../momo/details/HashBucketOpenN1.h"
+#include "../../include/momo/details/HashBucketLim4.h"
+#include "../../include/momo/details/HashBucketLimP.h"
+#include "../../include/momo/details/HashBucketLimP1.h"
+#include "../../include/momo/details/HashBucketUnlimP.h"
+#include "../../include/momo/details/HashBucketOne.h"
+#include "../../include/momo/details/HashBucketOpenN1.h"
 #endif
 
 #include <string>

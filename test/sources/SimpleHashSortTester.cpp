@@ -14,8 +14,8 @@
 
 #ifdef TEST_SIMPLE_HASH_SORT
 
-#include "../../momo/HashSorter.h"
-#include "../../momo/Array.h"
+#include "../../include/momo/HashSorter.h"
+#include "../../include/momo/Array.h"
 
 #include <string>
 #include <iostream>

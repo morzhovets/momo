@@ -16,8 +16,8 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/Array.h"
-#include "../../momo/SegmentedArray.h"
+#include "../../include/momo/Array.h"
+#include "../../include/momo/SegmentedArray.h"
 
 #include <string>
 #include <iostream>

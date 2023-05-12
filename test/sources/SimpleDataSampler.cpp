@@ -14,7 +14,7 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "../../momo/DataTable.h"
+#include "../../include/momo/DataTable.h"
 
 #include <string>
 #include <iostream>

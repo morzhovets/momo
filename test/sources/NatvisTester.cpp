@@ -14,14 +14,14 @@
 
 #ifdef TEST_NATVIS
 
-#include "../../momo/Array.h"
-#include "../../momo/SegmentedArray.h"
-#include "../../momo/HashSet.h"
-#include "../../momo/HashMap.h"
-#include "../../momo/HashMultiMap.h"
-#include "../../momo/TreeSet.h"
-#include "../../momo/TreeMap.h"
-#include "../../momo/DataTable.h"
+#include "../../include/momo/Array.h"
+#include "../../include/momo/SegmentedArray.h"
+#include "../../include/momo/HashSet.h"
+#include "../../include/momo/HashMap.h"
+#include "../../include/momo/HashMultiMap.h"
+#include "../../include/momo/TreeSet.h"
+#include "../../include/momo/TreeMap.h"
+#include "../../include/momo/DataTable.h"
 
 #ifdef TEST_MSVC
 #pragma warning (disable: 4307)	// integral constant overflow

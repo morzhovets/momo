@@ -15,7 +15,7 @@
 #ifdef TEST_LIBCXX_HASH_SET
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../momo/details/HashBucketLimP.h"
+#include "../../include/momo/details/HashBucketLimP.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLimP<sizeof(void*), momo::MemPoolParams<>, false>
 #define LIBCXX_TEST_BUCKET_NAME "limp"

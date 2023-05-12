@@ -56,7 +56,7 @@ jobs:
         ${{ matrix.comp }} -Imomo_v32 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_v32 src/momo_${{ matrix.type }}.cc
         ${{ matrix.comp }} -Imomo_v35 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_v35 src/momo_${{ matrix.type }}.cc
         ${{ matrix.comp }} -Imomo_v37 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_v37 src/momo_${{ matrix.type }}.cc
-        ${{ matrix.comp }} -Imomo_cur -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_cur src/momo_${{ matrix.type }}.cc
+        ${{ matrix.comp }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_cur src/momo_${{ matrix.type }}.cc
     - name: Test
       run: |
         sudo nice -n-20 ionice -c1 -n0 sudo -u $USER python3 momo_${{ matrix.type }}.py

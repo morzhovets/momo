@@ -16,8 +16,8 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/vector.h"
-#include "../../momo/SegmentedArray.h"
+#include "../../include/momo/stdish/vector.h"
+#include "../../include/momo/SegmentedArray.h"
 
 template<typename TValue, typename TMemManager>
 class LibcxxSegmentedArrayItemTraits : public momo::SegmentedArrayItemTraits<TValue, TMemManager>

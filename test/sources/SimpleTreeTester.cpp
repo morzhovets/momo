@@ -16,9 +16,9 @@
 
 #include "LeakCheckMemManager.h"
 
-#include "../../momo/TreeSet.h"
-#include "../../momo/TreeMap.h"
-#include "../../momo/stdish/pool_allocator.h"
+#include "../../include/momo/TreeSet.h"
+#include "../../include/momo/TreeMap.h"
+#include "../../include/momo/stdish/pool_allocator.h"
 
 #include <string>
 #include <iostream>

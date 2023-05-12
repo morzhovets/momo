@@ -16,7 +16,7 @@
 
 #include "LibcxxTester.h"
 
-#include "../../momo/stdish/map.h"
+#include "../../include/momo/stdish/map.h"
 
 namespace
 {
