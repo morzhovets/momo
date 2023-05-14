@@ -73,6 +73,24 @@
       "buildCommandArgs": "-v"
     },
     {
+      "name": "x64-cpp14-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=14",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-cpp14-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=14",
+      "buildCommandArgs": "-v"
+    },
+    {
       "name": "x64-2015-Debug",
       "generator": "Visual Studio 14",
       "inheritEnvironments": [],
