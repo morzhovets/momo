@@ -695,8 +695,9 @@ private:
 
 	Byte* pvGetBlocksEndPosition(Byte* buffer) const noexcept
 	{
-		return buffer + Params::blockAlignment + Params::blockSize
-			* (Params::blockCount - static_cast<size_t>(-pvGetFirstBlockIndex(buffer)));
+		size_t blockIndex = Params::blockCount;
+		blockIndex -= static_cast<size_t>(-pvGetFirstBlockIndex(buffer));	// gcc
+		return buffer + Params::blockAlignment + Params::blockSize * blockIndex;
 	}
 
 	bool pvIsBufferBytesNear() const noexcept
