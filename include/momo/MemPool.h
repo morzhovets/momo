@@ -349,15 +349,17 @@ public:
 			return;
 		while (true)
 		{
-			if (Byte* prevBuffer = pvGetPrevBuffer(mFreeBufferHead); prevBuffer != nullptr)
-				pvDeleteBuffer(prevBuffer);
-			else if (Byte* nextBuffer = pvGetNextBuffer(mFreeBufferHead); nextBuffer != nullptr)
-				pvDeleteBuffer(nextBuffer);
-			else
+			Byte* prevBuffer = pvGetPrevBuffer(mFreeBufferHead);
+			if (prevBuffer == nullptr)
 				break;
+			pvDeleteBuffer(prevBuffer);
 		}
-		pvDeleteBuffer(mFreeBufferHead);
-		mFreeBufferHead = nullptr;
+		while (mFreeBufferHead != nullptr)
+		{
+			Byte* buffer = mFreeBufferHead;
+			mFreeBufferHead = pvGetNextBuffer(buffer);
+			pvDeleteBuffer(buffer);
+		}
 		mAllocCount = 0;
 		mCachedCount = 0;
 		mCacheHead = nullptr;
@@ -624,6 +626,7 @@ private:
 
 	MOMO_NOINLINE void pvDeleteBuffer(Byte* buffer) noexcept
 	{
+		MOMO_ASSERT(buffer != mFreeBufferHead);
 		Byte* prevBuffer = pvGetPrevBuffer(buffer);
 		Byte* nextBuffer = pvGetNextBuffer(buffer);
 		if (prevBuffer != nullptr)
