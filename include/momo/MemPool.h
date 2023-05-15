@@ -297,7 +297,7 @@ public:
 		if (pvUseCache() && mCachedCount > 0)
 		{
 			block = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(block);
+			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
 			--mCachedCount;
 		}
 		else
@@ -321,7 +321,7 @@ public:
 		{
 			if (mCachedCount >= Params::GetCachedFreeBlockCount())
 				pvFlushDeallocate();
-			internal::PtrCaster::ToBuffer(mCacheHead, block);
+			internal::MemCopyer::ToBuffer(mCacheHead, block);
 			mCacheHead = block;
 			++mCachedCount;
 		}
@@ -452,7 +452,7 @@ private:
 		for (size_t i = 0; i < mCachedCount; ++i)
 		{
 			void* block = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(block);
+			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
 			pvDeleteBlock(block);
 		}
 		mCachedCount = 0;
@@ -810,7 +810,7 @@ namespace internal
 				void* block = mLazyHead.exchange(nullptr);
 				if (block != nullptr)
 				{
-					pvFlushDeallocate(PtrCaster::FromBuffer(block));
+					pvFlushDeallocate(MemCopyer::FromBuffer<void*>(block));
 					return static_cast<ResObject*>(block);
 				}
 			}
@@ -829,7 +829,7 @@ namespace internal
 			while (true)
 			{
 				void* lazyHead = mLazyHead;
-				PtrCaster::ToBuffer(lazyHead, block);
+				MemCopyer::ToBuffer(lazyHead, block);
 				if (mLazyHead.compare_exchange_weak(lazyHead, block))
 					break;
 			}
@@ -840,7 +840,7 @@ namespace internal
 		{
 			while (block != nullptr)
 			{
-				void* nextBlock = PtrCaster::FromBuffer(block);
+				void* nextBlock = MemCopyer::FromBuffer<void*>(block);
 				mMemPool.Deallocate(block);
 				block = nextBlock;
 			}
