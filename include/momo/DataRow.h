@@ -96,7 +96,7 @@ namespace internal
 			while (true)
 			{
 				void* headRaw = *mFreeRaws;
-				PtrCaster::ToBuffer(headRaw, raw);
+				MemCopyer::ToBuffer(headRaw, raw);
 				if (mFreeRaws->compare_exchange_weak(headRaw, raw))
 					break;
 			}

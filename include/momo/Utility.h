@@ -230,18 +230,6 @@ namespace internal
 			return reinterpret_cast<ResObject*>(intPtr);
 		}
 
-		template<typename Object>
-		static void ToBuffer(Object* ptr, void* ptrBuffer) noexcept
-		{
-			MemCopyer::ToBuffer(ptr, ptrBuffer);
-		}
-
-		template<typename ResObject = void>
-		static ResObject* FromBuffer(const void* ptrBuffer) noexcept
-		{
-			return MemCopyer::FromBuffer<ResObject*>(ptrBuffer);
-		}
-
 		template<typename ResObject, typename Object, typename Offset>
 		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{

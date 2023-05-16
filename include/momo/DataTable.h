@@ -1001,7 +1001,7 @@ private:
 		void* headRaw = mCrew.GetFreeRaws().exchange(nullptr);
 		while (headRaw != nullptr)
 		{
-			void* nextRaw = internal::PtrCaster::FromBuffer(headRaw);
+			void* nextRaw = internal::MemCopyer::FromBuffer<void*>(headRaw);
 			mRawMemPool.Deallocate(headRaw);
 			headRaw = nextRaw;
 		}

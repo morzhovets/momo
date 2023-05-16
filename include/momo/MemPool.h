@@ -259,7 +259,7 @@ public:
 		if (pvUseCache() && mCachedCount > 0)
 		{
 			block = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(block);
+			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
 			--mCachedCount;
 		}
 		else
@@ -283,7 +283,7 @@ public:
 		{
 			if (mCachedCount >= Params::cachedFreeBlockCount)
 				pvFlushDeallocate();
-			internal::PtrCaster::ToBuffer(mCacheHead, block);
+			internal::MemCopyer::ToBuffer(mCacheHead, block);
 			mCacheHead = block;
 			++mCachedCount;
 		}
@@ -410,7 +410,7 @@ private:
 		for (size_t i = 0; i < mCachedCount; ++i)
 		{
 			void* block = mCacheHead;
-			mCacheHead = internal::PtrCaster::FromBuffer(block);
+			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
 			pvDeleteBlock(block);
 		}
 		mCachedCount = 0;
