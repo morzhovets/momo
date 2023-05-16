@@ -112,24 +112,23 @@ namespace internal
 		class Data
 		{
 		public:
-			explicit Data(const ContainerTraits& containerTraits, MemManager&& memManager)
+			explicit Data(const ContainerTraits& containerTraits)
 				: version(0),
-				containerTraits(containerTraits),
-				memManager(std::move(memManager))
+				containerTraits(containerTraits)
 			{
 			}
 
 		public:
 			size_t version;
 			ContainerTraits containerTraits;
-			MemManager memManager;
+			ObjectBuffer<MemManager, alignof(MemManager)> memManagerBuffer;
 		};
 
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
-			mData = MemManagerProxy::template AllocateCreate<Data>(memManager,
-				containerTraits, std::move(memManager));	//?
+			mData = MemManagerProxy::template AllocateCreate<Data>(memManager, containerTraits);
+			std::construct_at(&mData->memManagerBuffer, std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
@@ -145,6 +144,7 @@ namespace internal
 			if (!pvIsNull())
 			{
 				MemManager memManager = std::move(GetMemManager());
+				std::destroy_at(&mData->memManagerBuffer);
 				std::destroy_at(mData);
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
@@ -178,13 +178,13 @@ namespace internal
 		const MemManager& GetMemManager() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return mData->memManager;
+			return *&mData->memManagerBuffer;
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return mData->memManager;
+			return *&mData->memManagerBuffer;
 		}
 
 	private:
