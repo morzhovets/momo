@@ -824,7 +824,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		//MOMO_ASSERT(offset % ItemTraits::template GetAlignment<Item>() == 0);
-		return *internal::PtrCaster::Shift<Item>(raw, offset);
+		return *pvGetItemPtr<Item>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1021,7 +1021,7 @@ private:
 		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
 		size_t offset = columns->GetOffset();
-		Item* item = internal::PtrCaster::Shift<Item>(raw, offset);
+		Item* item = pvGetItemPtr<Item>(raw, offset);
 		const Item* srcItem = nullptr;
 		if (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
@@ -1030,8 +1030,7 @@ private:
 			if (srcColumnListPtr == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
 				|| srcColumnListPtr->Contains(*columns, &srcOffset))
 			{
-				srcItem = internal::PtrCaster::Shift<const Item>(
-					static_cast<const Raw*>(srcRaw), srcOffset);
+				srcItem = pvGetItemPtr<Item>(static_cast<const Raw*>(srcRaw), srcOffset);
 			}
 		}
 		if (srcItem == nullptr)
@@ -1060,7 +1059,7 @@ private:
 	static void pvDestroy(MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 	{
 		size_t offset = columns->GetOffset();
-		ItemTraits::Destroy(memManager, *internal::PtrCaster::Shift<Item>(raw, offset));
+		ItemTraits::Destroy(memManager, *pvGetItemPtr<Item>(raw, offset));
 		pvDestroy<void, Items...>(memManager, columns + 1, raw);
 	}
 
@@ -1095,14 +1094,26 @@ private:
 		}
 	}
 
-	template<typename Void, typename PtrVisitor>
-	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
+	template<typename Void, typename Raw, typename PtrVisitor>
+	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		for (const ColumnRecord& columnRec : mColumns)
 		{
-			Void* item = internal::PtrCaster::Shift<Void>(raw, columnRec.GetOffset());
+			Void* item = pvGetItemPtr<Void>(raw, columnRec.GetOffset());
 			columnRec.Visit(item, ptrVisitor);	//?
 		}
+	}
+
+	template<typename Item>
+	static const Item* pvGetItemPtr(const Raw* raw, size_t offset) noexcept
+	{
+		return internal::PtrCaster::Shift<const Item>(raw, offset);
+	}
+
+	template<typename Item>
+	static Item* pvGetItemPtr(Raw* raw, size_t offset) noexcept
+	{
+		return internal::PtrCaster::Shift<Item>(raw, offset);
 	}
 
 private:
@@ -1315,8 +1326,8 @@ private:
 	{
 	}
 
-	template<typename Void, typename PtrVisitor>
-	void pvVisitPointers(Void* raw, const PtrVisitor& ptrVisitor) const
+	template<typename Void, typename Raw, typename PtrVisitor>
+	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		if (mColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
