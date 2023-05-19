@@ -55,26 +55,23 @@ namespace internal
 			if (bucketCount > maxBucketCount)
 				throw std::length_error("Invalid bucket count");
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
-			HashSetBuckets* resBuckets = MemManagerProxy::template Allocate<HashSetBuckets>(
-				memManager, bufferSize);
-			::new(static_cast<void*>(resBuckets)) HashSetBuckets(logBucketCount);
+			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
+			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
 			Bucket* buckets = resBuckets->pvGetBuckets();
 			size_t bucketIndex = 0;
 			try
 			{
 				for (; bucketIndex < bucketCount; ++bucketIndex)
 					::new(static_cast<void*>(buckets + bucketIndex)) Bucket();
-				if (bucketParams == nullptr)
-					resBuckets->mBucketParams = pvCreateBucketParams(memManager);
-				else
-					resBuckets->mBucketParams = bucketParams;
+				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
+					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
 			}
 			catch (...)
 			{
 				for (size_t i = 0; i < bucketIndex; ++i)
 					buckets[i].~Bucket();
 				resBuckets->~HashSetBuckets();
-				MemManagerProxy::Deallocate(memManager, resBuckets, bufferSize);
+				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
 				throw;
 			}
 			return resBuckets;
@@ -161,24 +158,28 @@ namespace internal
 
 		Bucket* pvGetBuckets() noexcept
 		{
-			return &mFirstBucket;
+			return PtrCaster::Shift<Bucket>(this, pvGetBucketOffset());
 		}
 
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept
 		{
-			return sizeof(HashSetBuckets) - sizeof(Bucket) + (sizeof(Bucket) << logBucketCount);
+			return pvGetBucketOffset() + (sizeof(Bucket) << logBucketCount);
 		}
 
-		static BucketParams* pvCreateBucketParams(MemManager& memManager)
+		static constexpr size_t pvGetBucketOffset() noexcept
 		{
-			return MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
+			return sizeof(HashSetBuckets);
 		}
 
 	private:
 		size_t mLogCount;
 		HashSetBuckets* mNextBuckets;
-		BucketParams* mBucketParams;
-		ObjectBuffer<Bucket, alignof(Bucket)> mFirstBucket;
+		union
+		{
+			BucketParams* mBucketParams;
+			alignas(Bucket) char mAlignedBuffer[alignof(Bucket)];
+		};
+		//Bucket[]
 	};
 
 	template<typename TBucket, typename TSettings>
