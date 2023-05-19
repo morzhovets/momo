@@ -171,18 +171,7 @@ namespace internal
 
 		static BucketParams* pvCreateBucketParams(MemManager& memManager)
 		{
-			BucketParams* bucketParams = MemManagerProxy::template Allocate<BucketParams>(
-				memManager, sizeof(BucketParams));
-			try
-			{
-				::new(static_cast<void*>(bucketParams)) BucketParams(memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, bucketParams, sizeof(BucketParams));
-				throw;
-			}
-			return bucketParams;
+			return MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
 		}
 
 	private:

@@ -394,6 +394,21 @@ namespace internal
 			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
 		}
 
+		template<typename ResObject, typename... ResObjectArgs>
+		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
+		{
+			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
+			try
+			{
+				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
+			}
+			catch (...)
+			{
+				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
+				throw;
+			}
+		}
+
 	private:
 		template<size_t shift = ptrUsefulBitCount>
 		static EnableIf<(shift < sizeof(void*) * 8)>

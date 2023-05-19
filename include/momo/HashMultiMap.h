@@ -603,16 +603,7 @@ private:
 	public:
 		explicit ValueCrew(MemManager& memManager)
 		{
-			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
-			try
-			{
-				::new(static_cast<void*>(mData)) Data(memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
-				throw;
-			}
+			mData = MemManagerProxy::template AllocateCreate<Data>(memManager, memManager);
 		}
 
 		ValueCrew(ValueCrew&& crew) noexcept

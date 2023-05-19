@@ -1095,18 +1095,7 @@ private:
 	NodeParams* pvCreateNodeParams()
 	{
 		MemManager& memManager = GetMemManager();
-		NodeParams* nodeParams = MemManagerProxy::template Allocate<NodeParams>(
-			memManager, sizeof(NodeParams));
-		try
-		{
-			::new(static_cast<void*>(nodeParams)) NodeParams(memManager);
-		}
-		catch (...)
-		{
-			MemManagerProxy::Deallocate(memManager, nodeParams, sizeof(NodeParams));
-			throw;
-		}
-		return nodeParams;
+		return MemManagerProxy::template AllocateCreate<NodeParams>(memManager, memManager);
 	}
 
 	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept

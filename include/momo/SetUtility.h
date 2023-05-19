@@ -110,16 +110,7 @@ namespace internal
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
-			mData = MemManagerProxy::template Allocate<Data>(memManager, sizeof(Data));
-			try
-			{
-				::new(static_cast<void*>(mData)) Data(containerTraits);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
-				throw;
-			}
+			mData = MemManagerProxy::template AllocateCreate<Data>(memManager, containerTraits);
 			::new(static_cast<void*>(&mData->memManagerBuffer)) MemManager(std::move(memManager));
 		}
 
