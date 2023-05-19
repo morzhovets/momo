@@ -127,8 +127,8 @@ namespace internal
 			if (!pvIsNull())
 			{
 				MemManager memManager = std::move(GetMemManager());
-				mData->~Data();
 				(&mData->memManagerBuffer)->~MemManager();
+				mData->~Data();
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
 		}
