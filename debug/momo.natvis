@@ -152,7 +152,7 @@
         <Item Name="[NextBuckets]">mNextBuckets</Item>
         <ArrayItems>
             <Size>(size_t)1 &lt;&lt; mLogCount</Size>
-            <ValuePointer>(Bucket*)&amp;mFirstBucket</ValuePointer>
+            <ValuePointer>(Bucket*)(this + 1)</ValuePointer>
         </ArrayItems>
     </Expand>
 </Type>
