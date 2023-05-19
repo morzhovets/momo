@@ -135,8 +135,7 @@
 //#endif
 
 #define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
-	alignas(alignment) typename std::conditional<(alignment >= alignof(Object)), \
-		ObjectUnion, std::array<char, sizeof(Object)>>::type
+	alignas(alignment) std::array<char, sizeof(Object)>
 #if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))	// C2719, C2711
 #undef MOMO_OBJECT_BUFFER
 #define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
