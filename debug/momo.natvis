@@ -230,7 +230,7 @@
             <Expand>
                 <ArrayItems>
                     <Size>(size_t)mCounter.count + 1</Size>
-                    <ValuePointer>&amp;mParent - (ptrdiff_t)internalOffset / sizeof(void*)</ValuePointer>
+                    <ValuePointer>&amp;mParent - internalOffset / sizeof(void*)</ValuePointer>
                 </ArrayItems>
             </Expand>
         </Synthetic>
