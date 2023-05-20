@@ -62,8 +62,6 @@ namespace internal
 			uint8_t indexes[capacity];
 		};
 
-		typedef ObjectBuffer<Item, ItemTraits::alignment> ItemBuffer;
-
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 		static const size_t internalOffset = UIntMath<>::Ceil(sizeof(Node*) * (maxCapacity + 1),
@@ -75,8 +73,10 @@ namespace internal
 		class Params
 		{
 		private:
+			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
 			static const size_t internalNodeSize =
-				sizeof(Node) + sizeof(Item) * (maxCapacity - 1) + internalOffset;
+				internalOffset + itemOffset + sizeof(Item) * maxCapacity;
+
 			typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
 				MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
 
@@ -94,7 +94,7 @@ namespace internal
 				for (size_t i = 0; i < leafMemPoolCount; ++i)
 				{
 					size_t capacity = maxCapacity - i * capacityStep;
-					size_t leafNodeSize = sizeof(Node) + sizeof(Item) * (capacity - 1);
+					size_t leafNodeSize = itemOffset + sizeof(Item) * capacity;
 					mLeafMemPools.AddBackNogrow(LeafMemPool(MemPoolParams(leafNodeSize),
 						MemManagerPtr(memManager)));
 				}
@@ -143,20 +143,20 @@ namespace internal
 		static Node* Create(Params& params, bool isLeaf, size_t count)
 		{
 			MOMO_ASSERT(count <= maxCapacity);
-			Node* node;
 			if (isLeaf)
 			{
 				size_t leafMemPoolIndex = pvGetLeafMemPoolIndex(params, count);
-				node = params.GetLeafMemPool(leafMemPoolIndex).template Allocate<Node>();
-				::new(static_cast<void*>(node)) Node(leafMemPoolIndex, count);
+				void* nodeBuffer = params.GetLeafMemPool(leafMemPoolIndex).Allocate();
+				return ::new(nodeBuffer) Node(leafMemPoolIndex, count);
 			}
 			else
 			{
-				void* ptr = params.GetInternalMemPool().Allocate();
-				node = PtrCaster::Shift<Node>(ptr, internalOffset);
-				::new(static_cast<void*>(node)) Node(leafMemPoolCount, count);
+				void* internalBuffer = params.GetInternalMemPool().Allocate();
+				void* nodeBuffer = PtrCaster::Shift<void>(internalBuffer, internalOffset);
+				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
+				std::uninitialized_fill_n(node->pvGetChildren(), maxCapacity + 1, nullptr);
+				return node;
 			}
-			return node;
 		}
 
 		void Destroy(Params& params) noexcept
@@ -170,8 +170,7 @@ namespace internal
 			else
 			{
 				this->~Node();
-				params.GetInternalMemPool().Deallocate(
-					PtrCaster::Shift<void>(this, -static_cast<ptrdiff_t>(internalOffset)));
+				params.GetInternalMemPool().Deallocate(pvGetInternalBuffer<void>(this));
 			}
 		}
 
@@ -218,7 +217,7 @@ namespace internal
 		size_t GetChildIndex(const Node* child) const noexcept
 		{
 			size_t count = GetCount();
-			Node* const* children = &mParent - maxCapacity - 1;	//?
+			Node* const* children = pvGetChildren();
 			size_t index = UIntMath<>::Dist(children,
 				std::find(children, children + count + 1, child));
 			MOMO_ASSERT(index <= count);
@@ -227,7 +226,9 @@ namespace internal
 
 		Item* GetItemPtr(size_t index) noexcept
 		{
-			return pvGetItemPtr(index, IsContinuous());
+			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
+			Item* items = PtrCaster::Shift<Item>(this, itemOffset);
+			return pvGetItemPtr(items, index, IsContinuous());
 		}
 
 		void AcceptBackItem(Params& params, size_t index) noexcept
@@ -280,10 +281,16 @@ namespace internal
 			return leafMemPoolIndex;
 		}
 
+		Node* const* pvGetChildren() const noexcept
+		{
+			MOMO_ASSERT(!IsLeaf());
+			return pvGetInternalBuffer<Node* const>(this);
+		}
+
 		Node** pvGetChildren() noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return &mParent - maxCapacity - 1;
+			return pvGetInternalBuffer<Node*>(this);
 		}
 
 		void pvInitIndexes(std::true_type /*isContinuous*/) noexcept
@@ -296,14 +303,14 @@ namespace internal
 				mCounter.indexes[i] = static_cast<uint8_t>(i);
 		}
 
-		Item* pvGetItemPtr(size_t index, std::true_type /*isContinuous*/) noexcept
+		Item* pvGetItemPtr(Item* items, size_t index, std::true_type /*isContinuous*/) noexcept
 		{
-			return &mFirstItem + index;
+			return items + index;
 		}
 
-		Item* pvGetItemPtr(size_t index, std::false_type /*isContinuous*/) noexcept
+		Item* pvGetItemPtr(Item* items, size_t index, std::false_type /*isContinuous*/) noexcept
 		{
-			return &mFirstItem + mCounter.indexes[index];
+			return items + mCounter.indexes[index];
 		}
 
 		void pvAcceptBackItem(Params& params, size_t index, size_t count,
@@ -350,11 +357,18 @@ namespace internal
 			mCounter.indexes[count - 1] = realIndex;
 		}
 
+		template<typename Result, typename Node>
+		static Result* pvGetInternalBuffer(Node* node) noexcept
+		{
+			return PtrCaster::Shift<Result>(node, -static_cast<ptrdiff_t>(internalOffset));
+		}
+
 	private:
+		//Node*[maxCapacity + 1] // for internal nodes
 		Node* mParent;
 		uint8_t mMemPoolIndex;
 		Counter<maxCapacity, !isContinuous> mCounter;
-		ItemBuffer mFirstItem;
+		//Item[]
 	};
 }
 
