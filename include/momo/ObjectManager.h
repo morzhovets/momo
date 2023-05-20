@@ -160,20 +160,6 @@ namespace internal
 		static const size_t count = tCount;
 		MOMO_STATIC_ASSERT(count > 0);
 
-	private:
-		union ObjectUnion
-		{
-			ObjectUnion() noexcept
-			{
-			}
-
-			~ObjectUnion() noexcept
-			{
-			}
-
-			Object mObject[count];
-		};
-
 	public:
 		ObjectBuffer() = default;
 
@@ -194,7 +180,7 @@ namespace internal
 		}
 
 	private:
-		MOMO_OBJECT_BUFFER(Object[count], alignment, ObjectUnion) mBuffer;
+		MOMO_ALIGNED_STORAGE(sizeof(Object) * count, alignment) mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager>

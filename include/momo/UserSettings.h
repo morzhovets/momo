@@ -134,12 +134,10 @@
 //#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 //#endif
 
-#define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
-	alignas(alignment) std::array<char, sizeof(Object)>
+#define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<char, size>
 #if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))	// C2719, C2711
-#undef MOMO_OBJECT_BUFFER
-#define MOMO_OBJECT_BUFFER(Object, alignment, ObjectUnion) \
-	typename std::aligned_storage<sizeof(Object), alignment>::type
+#undef MOMO_ALIGNED_STORAGE
+#define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type
 #endif
 
 // `nullptr`, converted to the type `uintptr_t`
