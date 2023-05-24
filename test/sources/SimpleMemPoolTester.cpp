@@ -14,10 +14,9 @@
 
 #ifdef TEST_SIMPLE_MEM_POOL
 
-#include "LeakCheckMemManager.h"
-
 #include "../../include/momo/MemPool.h"
 #include "../../include/momo/Array.h"
+#include "../../include/momo/MemManagerDict.h"
 
 #include <iostream>
 #include <random>
@@ -104,7 +103,7 @@ public:
 	template<typename MemPoolParams>
 	static void TestMemPoolParams(std::mt19937& mt, const MemPoolParams& params)
 	{
-		momo::MemPool<MemPoolParams, LeakCheckMemManager> memPool(params);
+		momo::MemPool<MemPoolParams, momo::MemManagerDict<>> memPool(params);
 
 		static const size_t blockCount = 1024;
 		static const size_t testCount = 8;

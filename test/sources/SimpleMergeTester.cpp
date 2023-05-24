@@ -14,9 +14,8 @@
 
 #ifdef TEST_SIMPLE_MERGE
 
-#include "LeakCheckMemManager.h"
-
 #include "../../include/momo/MergeMap.h"
+#include "../../include/momo/MemManagerDict.h"
 
 #include <iostream>
 #include <random>
@@ -70,8 +69,8 @@ public:
 
 		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
 			momo::MergeArraySettings<logInitialItemCount>, MergeBloomFilter> MergeTraits;
-		typedef momo::MergeMap<size_t, size_t, MergeTraits, LeakCheckMemManager,
-			momo::MergeMapKeyValueTraits<size_t, size_t, LeakCheckMemManager, useValuePtr>> MergeMap;
+		typedef momo::MergeMap<size_t, size_t, MergeTraits, momo::MemManagerDict<>,
+			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDict<>, useValuePtr>> MergeMap;
 		MergeMap map;
 
 		std::shuffle(array, array + count, mt);
