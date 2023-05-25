@@ -123,11 +123,17 @@ public:
 			size_t lim = k * blockCount / testCount;
 			while (blocks.GetCount() > lim)
 			{
+				size_t bufferSize = 0;
+				assert(memPool.GetMemManager().FindBlock(blocks.GetBackItem(), &bufferSize));
+				assert(bufferSize >= params.GetBlockCount() * params.GetBlockSize());
+
 				memPool.Deallocate(blocks.GetBackItem());
 				blocks.RemoveBack();
 			}
 			assert(memPool.GetAllocateCount() == lim);
 		}
+
+		assert(memPool.GetMemManager().FindBlock(blocks.GetItems()) == nullptr);
 
 		if (memPool.CanDeallocateAll())
 		{

@@ -27,7 +27,7 @@ class MemManagerDictSettings
 public:
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 
-	typedef TreeNodeDefault DictTreeNode;
+	typedef TreeNodeDefault BlockDictTreeNode;
 };
 
 template<conceptMemManager TBaseMemManager = MemManagerDefault,
@@ -39,20 +39,20 @@ public:
 	typedef TSettings Settings;
 
 private:
-	typedef TreeTraits<void*, false, typename Settings::DictTreeNode> DictTreeTraits;
+	typedef TreeTraits<void*, false, typename Settings::BlockDictTreeNode> BlockDictTreeTraits;
 
-	typedef TreeMap<void*, size_t, DictTreeTraits, BaseMemManager,
+	typedef TreeMap<void*, size_t, BlockDictTreeTraits, BaseMemManager,
 		TreeMapKeyValueTraits<void*, size_t, BaseMemManager>,
-		internal::NestedTreeMapSettings> Dict;
+		internal::NestedTreeMapSettings> BlockDict;
 
 public:
 	explicit MemManagerDict(BaseMemManager baseMemManager = BaseMemManager())
-		: mDict(DictTreeTraits(), std::move(baseMemManager))
+		: mBlockDict(BlockDictTreeTraits(), std::move(baseMemManager))
 	{
 	}
 
 	MemManagerDict(MemManagerDict&& memManager) noexcept
-		: mDict(std::move(memManager.mDict))
+		: mBlockDict(std::move(memManager.mBlockDict))
 	{
 	}
 
@@ -63,19 +63,19 @@ public:
 
 	~MemManagerDict() noexcept
 	{
-		MOMO_EXTRA_CHECK(mDict.IsEmpty());
+		MOMO_EXTRA_CHECK(mBlockDict.IsEmpty());
 	}
 
 	MemManagerDict& operator=(const MemManagerDict&) = delete;
 
 	const BaseMemManager& GetBaseMemManager() const noexcept
 	{
-		return mDict.GetMemManager();
+		return mBlockDict.GetMemManager();
 	}
 
 	BaseMemManager& GetBaseMemManager() noexcept
 	{
-		return mDict.GetMemManager();
+		return mBlockDict.GetMemManager();
 	}
 
 	[[nodiscard]] void* Allocate(size_t size)
@@ -84,7 +84,7 @@ public:
 		void* ptr = baseMemManager.Allocate(size);
 		try
 		{
-			mDict.Insert(ptr, size);
+			mBlockDict.Insert(ptr, size);
 		}
 		catch (...)
 		{
@@ -96,15 +96,32 @@ public:
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		typename Dict::ConstIterator iter = mDict.Find(ptr);
-		MOMO_EXTRA_CHECK(iter != mDict.GetEnd());
+		auto iter = mBlockDict.Find(ptr);
+		MOMO_EXTRA_CHECK(iter != mBlockDict.GetEnd());
 		MOMO_EXTRA_CHECK(iter->value == size);
-		mDict.Remove(iter);
+		mBlockDict.Remove(iter);
 		GetBaseMemManager().Deallocate(ptr, size);
 	}
 
+	void* FindBlock(void* ptr, size_t* resSize = nullptr) const noexcept
+	{
+		auto iter = mBlockDict.GetUpperBound(ptr);
+		if (iter != mBlockDict.GetBegin())
+		{
+			auto [blockBegin, blockSize] = *std::prev(iter);
+			if (internal::PtrCaster::ToUInt(ptr) <
+				internal::PtrCaster::ToUInt(blockBegin) + uintptr_t{blockSize})
+			{
+				if (resSize != nullptr)
+					*resSize = blockSize;
+				return blockBegin;
+			}
+		}
+		return nullptr;
+	}
+
 private:
-	Dict mDict;
+	BlockDict mBlockDict;
 };
 
 } // namespace momo
