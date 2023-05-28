@@ -25,6 +25,7 @@ namespace momo
 class MemManagerDictSettings
 {
 public:
+	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 
 	typedef TreeNodeDefault BlockDictTreeNode;
@@ -37,6 +38,9 @@ class MemManagerDict
 public:
 	typedef TBaseMemManager BaseMemManager;
 	typedef TSettings Settings;
+
+	static const size_t ptrUsefulBitCount =
+		internal::MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
 
 private:
 	typedef TreeTraits<void*, false, typename Settings::BlockDictTreeNode> BlockDictTreeTraits;
@@ -80,6 +84,7 @@ public:
 
 	[[nodiscard]] void* Allocate(size_t size)
 	{
+		MOMO_CHECK(size > 0);
 		BaseMemManager& baseMemManager = GetBaseMemManager();
 		void* ptr = baseMemManager.Allocate(size);
 		try
