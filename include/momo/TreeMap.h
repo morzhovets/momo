@@ -794,6 +794,17 @@ private:
 template<typename TKey, typename TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
 
+namespace internal
+{
+	class NestedTreeMapSettings : public TreeMapSettings
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = false;
+	};
+}
+
 } // namespace momo
 
 namespace std

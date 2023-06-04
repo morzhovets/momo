@@ -12,11 +12,10 @@
 
 #pragma once
 
-#include "LeakCheckMemManager.h"
-
 #include "../../include/momo/HashSet.h"
 #include "../../include/momo/HashMap.h"
 #include "../../include/momo/HashMultiMap.h"
+#include "../../include/momo/MemManagerDict.h"
 
 #include <string>
 #include <iostream>
@@ -235,7 +234,7 @@ public:
 
 		typedef TemplItem<size, alignment> Item;
 		typedef momo::HashSet<Item, typename Item::template HashTraits<HashBucket>,
-			LeakCheckMemManager> HashSet;
+			momo::MemManagerDict<>> HashSet;
 		HashSet set;
 
 		std::shuffle(array, array + count, mt);

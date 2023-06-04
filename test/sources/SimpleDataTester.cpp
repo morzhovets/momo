@@ -14,9 +14,8 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "LeakCheckMemManager.h"
-
 #include "../../include/momo/DataTable.h"
+#include "../../include/momo/MemManagerDict.h"
 
 #include <string>
 #include <iostream>
@@ -65,7 +64,7 @@ public:
 	{
 		{
 			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, LeakCheckMemManager> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(dblStruct);
 			columnList.PrepareForVisitors(intStruct, dblStruct, strStruct);
@@ -76,7 +75,7 @@ public:
 
 		{
 			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, LeakCheckMemManager,
+			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>,
 				momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
@@ -91,7 +90,7 @@ public:
 		{
 			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
-				LeakCheckMemManager> DataColumnList;
+				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList = { dblStruct.Mutable(), intStruct };
 			columnList.Add(strStruct);
 			momo::DataTable<DataColumnList> table(std::move(columnList));
@@ -101,8 +100,8 @@ public:
 
 		{
 			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, LeakCheckMemManager,
-				momo::DataItemTraits<LeakCheckMemManager>, momo::DataSettings<true>> DataColumnList;
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
+				momo::DataItemTraits<momo::MemManagerDict<>>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.Add(dblString.Mutable());
 			columnList.Add(intString);
@@ -115,7 +114,7 @@ public:
 		{
 			std::cout << "momo::DataColumnList (string, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
-				LeakCheckMemManager> DataColumnList;
+				momo::MemManagerDict<>> DataColumnList;
 			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;

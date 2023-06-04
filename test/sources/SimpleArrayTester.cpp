@@ -14,10 +14,9 @@
 
 #ifdef TEST_SIMPLE_ARRAY
 
-#include "LeakCheckMemManager.h"
-
 #include "../../include/momo/Array.h"
 #include "../../include/momo/SegmentedArray.h"
+#include "../../include/momo/MemManagerDict.h"
 
 #include <string>
 #include <iostream>
@@ -153,7 +152,7 @@ public:
 	static void TestTemplAll()
 	{
 		std::cout << "momo::Array<size_t>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, LeakCheckMemManager>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
@@ -183,23 +182,23 @@ public:
 #endif
 
 		std::cout << "momo::ArrayIntCap<4, size_t>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<4, size_t, LeakCheckMemManager>>();
+		TestTemplArray<momo::ArrayIntCap<4, size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<8, TemplItem<false>>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<8, TemplItem<false>, LeakCheckMemManager>>();
+		TestTemplArray<momo::ArrayIntCap<8, TemplItem<false>, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<1, TemplItem<true>>: " << std::flush;
-		TestTemplArray<momo::ArrayIntCap<1, TemplItem<true>, LeakCheckMemManager>>();
+		TestTemplArray<momo::ArrayIntCap<1, TemplItem<true>, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArray<size_t>: " << std::flush;
-		TestTemplArray<momo::SegmentedArray<size_t, LeakCheckMemManager>>();
+		TestTemplArray<momo::SegmentedArray<size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArraySqrt<size_t>: " << std::flush;
-		TestTemplArray<momo::SegmentedArraySqrt<size_t, LeakCheckMemManager>>();
+		TestTemplArray<momo::SegmentedArraySqrt<size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 	}
 
