@@ -8,10 +8,10 @@ jobs:
       matrix:
         include:
 
-#        # Clang 12.0.0 with MSVC-like command-line
-#        - win_ver: '2019'
-#          build_type: 'Release'
-#          flags: '/std:c++latest -msse2'
+        # Clang 12.0.0 with MSVC-like command-line
+        - win_ver: '2019'
+          build_type: 'Release'
+          flags: '/std:c++latest -msse2'
 
         # Clang 15.0.1 with MSVC-like command-line
         - win_ver: '2022'
