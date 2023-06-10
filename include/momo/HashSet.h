@@ -155,7 +155,7 @@ namespace internal
 			return pvGetBucketOffset() + (sizeof(Bucket) << logBucketCount);
 		}
 
-		static consteval size_t pvGetBucketOffset() noexcept
+		static constexpr size_t pvGetBucketOffset() noexcept
 		{
 			return sizeof(HashSetBuckets);
 		}

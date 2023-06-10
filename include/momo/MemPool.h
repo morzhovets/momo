@@ -109,12 +109,12 @@ public:
 		return mBlockAlignment;
 	}
 
-	static consteval size_t GetBlockCount() noexcept
+	static constexpr size_t GetBlockCount() noexcept
 	{
 		return blockCount;
 	}
 
-	static consteval size_t GetCachedFreeBlockCount() noexcept
+	static constexpr size_t GetCachedFreeBlockCount() noexcept
 	{
 		return cachedFreeBlockCount;
 	}
@@ -145,22 +145,22 @@ public:
 public:
 	explicit MemPoolParamsStatic() noexcept = default;
 
-	static consteval size_t GetBlockSize() noexcept
+	static constexpr size_t GetBlockSize() noexcept
 	{
 		return blockSize;
 	}
 
-	static consteval size_t GetBlockAlignment() noexcept
+	static constexpr size_t GetBlockAlignment() noexcept
 	{
 		return blockAlignment;
 	}
 
-	static consteval size_t GetBlockCount() noexcept
+	static constexpr size_t GetBlockCount() noexcept
 	{
 		return blockCount;
 	}
 
-	static consteval size_t GetCachedFreeBlockCount() noexcept
+	static constexpr size_t GetCachedFreeBlockCount() noexcept
 	{
 		return cachedFreeBlockCount;
 	}

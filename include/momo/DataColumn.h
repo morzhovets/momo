@@ -482,13 +482,13 @@ private:
 
 public:
 	template<typename Item>
-	static consteval size_t GetSize() noexcept
+	static constexpr size_t GetSize() noexcept
 	{
 		return sizeof(Item);
 	}
 
 	template<typename Item>
-	static consteval size_t GetAlignment() noexcept
+	static constexpr size_t GetAlignment() noexcept
 	{
 		return ItemManager<Item>::alignment;
 	}

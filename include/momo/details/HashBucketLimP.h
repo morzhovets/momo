@@ -569,7 +569,7 @@ public:
 
 public:	// clang
 	template<typename ItemTraits>
-	static consteval bool CorrectUsePtrState() noexcept
+	static constexpr bool CorrectUsePtrState() noexcept
 	{
 		size_t size = sizeof(typename ItemTraits::Item);
 		size_t alignment = ItemTraits::alignment;
