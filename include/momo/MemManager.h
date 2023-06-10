@@ -371,21 +371,6 @@ namespace internal
 			return static_cast<ResObject*>(ptr);
 		}
 
-		template<typename ResObject, typename... ResObjectArgs>
-		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
-		{
-			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
-			try
-			{
-				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
-			}
-			catch (...)
-			{
-				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
-				throw;
-			}
-		}
-
 		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0);
@@ -420,6 +405,21 @@ namespace internal
 				return memManager1.IsEqual(memManager2);
 			else
 				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
+		}
+
+		template<typename ResObject, typename... ResObjectArgs>
+		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
+		{
+			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
+			try
+			{
+				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
+			}
+			catch (...)
+			{
+				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
+				throw;
+			}
 		}
 
 	private:
