@@ -188,6 +188,7 @@ private:
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
 	typedef internal::UIntMath<uintptr_t> PMath;
+	typedef internal::UIntMath<uint8_t> BMath;
 
 	struct BufferBytes
 	{
@@ -363,6 +364,33 @@ public:
 		mAllocCount = 0;
 		mCachedCount = 0;
 		mCacheHead = nullptr;
+	}
+
+	template<typename Predicate>
+	requires std::predicate<const Predicate&, void*>
+	void DeallocateSet(const Predicate& pred)
+	{
+		MOMO_EXTRA_CHECK(CanDeallocateAll());
+		if (pvUseCache())
+			pvFlushDeallocate();
+		if (mAllocCount == 0)
+			return;
+		Byte* buffer = mFreeBufferHead;
+		while (true)
+		{
+			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			if (nextBuffer == nullptr)
+				break;
+			buffer = nextBuffer;
+		}
+		buffer = pvGetPrevBuffer(mFreeBufferHead);
+		while (buffer != nullptr)
+		{
+			Byte* prevBuffer = pvGetPrevBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			buffer = prevBuffer;
+		}
 	}
 
 	void MergeFrom(MemPool& memPool)
@@ -666,6 +694,30 @@ private:
 			+ (2 + (blockSize / blockAlignment) % 2) * blockAlignment
 			+ (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes))
 			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
+	}
+
+	template<typename Predicate>
+	void pvDeleteBlocks(Byte* buffer, const Predicate& pred)
+	{
+		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
+		uint8_t freeBlockBits[16] = {};
+		BufferBytes bytes = pvGetBufferBytes(buffer);
+		int8_t blockIndex = bytes.firstFreeBlockIndex;
+		for (size_t i = 0; i < static_cast<size_t>(bytes.freeBlockCount); ++i)
+		{
+			BMath::SetBit(freeBlockBits, static_cast<size_t>(blockIndex - firstBlockIndex));
+			blockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, blockIndex));
+		}
+		for (size_t i = 0; i < Params::GetBlockCount(); ++i)
+		{
+			if (BMath::GetBit(freeBlockBits, i))
+				continue;
+			Byte* block = pvGetBlock(buffer, firstBlockIndex + static_cast<int8_t>(i));
+			if (!pred(static_cast<void*>(block)))
+				continue;
+			pvDeleteBlock(block);
+			--mAllocCount;
+		}
 	}
 
 	int8_t pvGetFirstBlockIndex(Byte* buffer) const noexcept

@@ -119,8 +119,8 @@ public:
 			assert(memPool.GetAllocateCount() == blockCount);
 
 			std::shuffle(blocks.GetBegin(), blocks.GetEnd(), mt);
-
 			size_t lim = k * blockCount / testCount;
+
 			while (blocks.GetCount() > lim)
 			{
 				size_t bufferSize = 0;
@@ -131,6 +131,36 @@ public:
 				blocks.RemoveBack();
 			}
 			assert(memPool.GetAllocateCount() == lim);
+		}
+
+		if (memPool.CanDeallocateAll())
+		{
+			for (size_t k = 0; k < testCount; ++k)
+			{
+				while (blocks.GetCount() < blockCount)
+				{
+					blocks.AddBack(memPool.Allocate());
+					std::memset(blocks.GetBackItem(), 0, memPool.GetBlockSize());
+				}
+				assert(memPool.GetAllocateCount() == blockCount);
+
+				std::shuffle(blocks.GetBegin(), blocks.GetEnd(), mt);
+				size_t lim = k * blockCount / testCount;
+
+				auto pred = [&blocks, lim] (void* block)
+				{
+					auto begin = blocks.GetBegin();
+					auto mid = begin + lim;
+					auto end = blocks.GetEnd();
+					if (mid - begin < end - mid)
+						return std::find(begin, mid, block) == mid;
+					else
+						return std::find(mid, end, block) != end;
+				};
+				memPool.DeallocateSet(pred);
+				blocks.SetCount(lim);
+				assert(memPool.GetAllocateCount() == lim);
+			}
 		}
 
 		assert(memPool.GetMemManager().FindBlock(blocks.GetItems()) == nullptr);
