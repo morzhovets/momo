@@ -368,7 +368,7 @@ public:
 
 	template<typename Predicate>
 	requires std::predicate<const Predicate&, void*>
-	void DeallocateSet(const Predicate& pred)
+	void DeallocateIf(const Predicate& pred)
 	{
 		MOMO_EXTRA_CHECK(CanDeallocateAll());
 		if (pvUseCache())
@@ -561,6 +561,11 @@ private:
 	{
 		Byte* buffer;
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
+		pvDeleteBlock(block, buffer, blockIndex);
+	}
+
+	void pvDeleteBlock(Byte* block, Byte* buffer, int8_t blockIndex) noexcept
+	{
 		BufferBytes bytes = pvGetBufferBytes(buffer);
 		pvSetNextFreeBlockIndex(block, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = blockIndex;
@@ -568,7 +573,7 @@ private:
 		pvSetBufferBytes(buffer, bytes);
 		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
 		if (freeBlockCount == 1)
-			pvMoveBuffer(buffer);
+			pvMoveBufferToHead(buffer);
 		if (freeBlockCount == Params::GetBlockCount())
 		{
 			bool del = true;
@@ -666,7 +671,7 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), begin, pvGetBufferSize());
 	}
 
-	void pvMoveBuffer(Byte* buffer) noexcept	//?
+	void pvMoveBufferToHead(Byte* buffer) noexcept
 	{
 		Byte* headPrevBuffer = pvGetPrevBuffer(mFreeBufferHead);
 		MOMO_ASSERT(headPrevBuffer != nullptr);
@@ -702,20 +707,21 @@ private:
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
 		uint8_t freeBlockBits[16] = {};
 		BufferBytes bytes = pvGetBufferBytes(buffer);
-		int8_t blockIndex = bytes.firstFreeBlockIndex;
-		for (size_t i = 0; i < static_cast<size_t>(bytes.freeBlockCount); ++i)
+		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
+		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
 		{
-			BMath::SetBit(freeBlockBits, static_cast<size_t>(blockIndex - firstBlockIndex));
-			blockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, blockIndex));
+			BMath::SetBit(freeBlockBits, static_cast<size_t>(freeBlockIndex - firstBlockIndex));
+			freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, freeBlockIndex));
 		}
 		for (size_t i = 0; i < Params::GetBlockCount(); ++i)
 		{
 			if (BMath::GetBit(freeBlockBits, i))
 				continue;
-			Byte* block = pvGetBlock(buffer, firstBlockIndex + static_cast<int8_t>(i));
+			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
+			Byte* block = pvGetBlock(buffer, blockIndex);
 			if (!pred(static_cast<void*>(block)))
 				continue;
-			pvDeleteBlock(block);
+			pvDeleteBlock(block, buffer, blockIndex);
 			--mAllocCount;
 		}
 	}

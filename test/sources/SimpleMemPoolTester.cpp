@@ -172,7 +172,7 @@ public:
 						std::memset(block, 2, blockSize);
 					return res;
 				};
-				memPool.DeallocateSet(pred);
+				memPool.DeallocateIf(pred);
 				blocks.SetCount(lim1);
 				assert(memPool.GetAllocateCount() == lim1);
 			}
