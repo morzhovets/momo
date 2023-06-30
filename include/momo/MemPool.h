@@ -187,9 +187,6 @@ private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
-	typedef internal::UIntMath<uintptr_t> PMath;
-	typedef internal::UIntMath<uint8_t> BMath;
-
 	struct BufferBytes
 	{
 		int8_t firstFreeBlockIndex;
@@ -514,7 +511,7 @@ private:
 		Byte* buffer = MemManagerProxy::template Allocate<Byte>(
 			GetMemManager(), pvGetBufferSize1());
 		uintptr_t uipBuffer = internal::PtrCaster::ToUInt(buffer);
-		uintptr_t uipBlock = PMath::Ceil(uipBuffer, uipBlockAlignment);
+		uintptr_t uipBlock = internal::UIntMath<uintptr_t>::Ceil(uipBuffer, uipBlockAlignment);
 		size_t offset = static_cast<size_t>(uipBlock - uipBuffer);
 		MOMO_ASSERT(offset < 256);
 		Byte* block = buffer + offset;
@@ -628,7 +625,7 @@ private:
 		Byte* begin = MemManagerProxy::template Allocate<Byte>(
 			GetMemManager(), pvGetBufferSize());
 		uintptr_t uipBegin = internal::PtrCaster::ToUInt(begin);
-		uintptr_t uipBlock = PMath::Ceil(uipBegin, uipBlockAlignment);
+		uintptr_t uipBlock = internal::UIntMath<uintptr_t>::Ceil(uipBegin, uipBlockAlignment);
 		uipBlock += (uipBlock % uipBlockSize) % (2 * uipBlockAlignment);
 		if ((uipBlock + uipBlockAlignment) % uipBlockSize == 0)
 			uipBlock += uipBlockAlignment;
@@ -710,12 +707,13 @@ private:
 		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
 		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
 		{
-			BMath::SetBit(freeBlockBits, static_cast<size_t>(freeBlockIndex - firstBlockIndex));
+			internal::UIntMath<uint8_t>::SetBit(freeBlockBits,
+				static_cast<size_t>(freeBlockIndex - firstBlockIndex));
 			freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, freeBlockIndex));
 		}
 		for (size_t i = 0; i < Params::GetBlockCount(); ++i)
 		{
-			if (BMath::GetBit(freeBlockBits, i))
+			if (internal::UIntMath<uint8_t>::GetBit(freeBlockBits, i))
 				continue;
 			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
 			Byte* block = pvGetBlock(buffer, blockIndex);
