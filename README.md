@@ -2,6 +2,9 @@
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Amaster)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Amaster)
 
+This is an experimental branch that requires a compiler with C++20 support.
+[Here](https://github.com/morzhovets/momo/tree/branch_cpp11) is a stable branch requiring only C++11.
+
 #### momo (Memory Optimization is the Main Objective)
 
 This project contains an implementation of the C++ containers, similar to the
@@ -13,7 +16,6 @@ As for the operation speed, these containers are also better than the standard o
 [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
 Classes are designed in close conformity with the standard C++23 **including exception safety guarantees**.
-Compiler must support C++20 (stable branch with C++11 support is [here](https://github.com/morzhovets/momo/tree/branch_cpp11)).
 
 #### Deviations from the standard
 
