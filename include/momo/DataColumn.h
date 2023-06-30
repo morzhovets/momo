@@ -779,7 +779,7 @@ public:
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
+		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.GetItems(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -999,7 +999,7 @@ private:
 		size_t offset = pvGetOffset(*columnCodes);
 		mColumns.AddBackNogrow(ColumnRecord(column, offset));
 		if (*columnMutables)
-			mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
+			internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.GetItems(), offset);
 		pvAddColumns(columnCodes + 1, columnMutables + 1, columns...);
 	}
 
@@ -1205,7 +1205,7 @@ public:
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		return (mMutableOffsets[offset / 8] & static_cast<uint8_t>(1 << (offset % 8))) != 0;
+		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.data(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1301,8 +1301,7 @@ private:
 	template<typename Item, typename... Items>
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		size_t offset = GetOffset(column);
-		mMutableOffsets[offset / 8] |= static_cast<uint8_t>(1 << (offset % 8));
+		internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.data(), GetOffset(column));
 		pvSetMutable(columns...);
 	}
 

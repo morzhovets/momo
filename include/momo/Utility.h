@@ -270,6 +270,18 @@ namespace internal
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
 		}
 
+		static bool GetBit(const UInt* data, size_t bitIndex)
+		{
+			static const size_t bitSize = sizeof(UInt) * 8;
+			return (data[bitIndex / bitSize] & (UInt{1} << static_cast<UInt>(bitIndex % bitSize))) != 0;
+		}
+
+		static void SetBit(UInt* data, size_t bitIndex)
+		{
+			static const size_t bitSize = sizeof(UInt) * 8;
+			data[bitIndex / bitSize] |= UInt{1} << static_cast<UInt>(bitIndex % bitSize);
+		}
+
 		template<UInt mod>
 		static DivResult DivByConst(UInt value) noexcept
 		{
