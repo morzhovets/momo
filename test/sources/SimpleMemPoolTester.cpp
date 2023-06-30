@@ -104,6 +104,7 @@ public:
 	static void TestMemPoolParams(std::mt19937& mt, const MemPoolParams& params)
 	{
 		momo::MemPool<MemPoolParams, momo::MemManagerDict<>> memPool(params);
+		size_t blockSize = memPool.GetBlockSize();
 
 		static const size_t blockCount = 1024;
 		static const size_t testCount = 8;
@@ -114,23 +115,67 @@ public:
 			while (blocks.GetCount() < blockCount)
 			{
 				blocks.AddBack(memPool.Allocate());
-				std::memset(blocks.GetBackItem(), 0, memPool.GetBlockSize());
+				std::memset(blocks.GetBackItem(), 1, blockSize);
 			}
 			assert(memPool.GetAllocateCount() == blockCount);
 
 			std::shuffle(blocks.GetBegin(), blocks.GetEnd(), mt);
-
 			size_t lim = k * blockCount / testCount;
+
 			while (blocks.GetCount() > lim)
 			{
 				size_t bufferSize = 0;
 				assert(memPool.GetMemManager().FindBlock(blocks.GetBackItem(), &bufferSize));
-				assert(bufferSize >= memPool.GetBlockCount() * memPool.GetBlockSize());
+				assert(bufferSize >= memPool.GetBlockCount() * blockSize);
 
-				memPool.Deallocate(blocks.GetBackItem());
+				void* block = blocks.GetBackItem();
+				std::memset(block, 2, blockSize);
+				memPool.Deallocate(block);
 				blocks.RemoveBack();
 			}
 			assert(memPool.GetAllocateCount() == lim);
+		}
+
+		if (memPool.CanDeallocateAll())
+		{
+			for (size_t k = 0; k < testCount; ++k)
+			{
+				while (blocks.GetCount() < blockCount)
+				{
+					blocks.AddBack(memPool.Allocate());
+					std::memset(blocks.GetBackItem(), 1, blockSize);
+				}
+				assert(memPool.GetAllocateCount() == blockCount);
+
+				std::shuffle(blocks.GetBegin(), blocks.GetEnd(), mt);
+				size_t lim1 = k * blockCount / testCount / 2;
+				size_t lim2 = blockCount - lim1;
+
+				while (blocks.GetCount() > lim2)
+				{
+					void* block = blocks.GetBackItem();
+					std::memset(block, 2, blockSize);
+					memPool.Deallocate(block);
+					blocks.RemoveBack();
+				}
+				assert(memPool.GetAllocateCount() == lim2);
+
+				auto pred = [&blocks, blockSize, lim1] (void* block)
+				{
+					auto begin = blocks.GetBegin();
+					auto mid = begin + lim1;
+					auto end = blocks.GetEnd();
+					bool res = (mid - begin < end - mid)
+						? std::find(begin, mid, block) == mid
+						: std::find(mid, end, block) != end;
+					if (res)
+						std::memset(block, 2, blockSize);
+					return res;
+				};
+				memPool.DeallocateIf(pred);
+				blocks.SetCount(lim1);
+				assert(memPool.GetAllocateCount() == lim1);
+			}
 		}
 
 		assert(memPool.GetMemManager().FindBlock(blocks.GetItems()) == nullptr);

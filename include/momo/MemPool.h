@@ -145,8 +145,6 @@ private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
 
-	typedef internal::UIntMath<uintptr_t> PMath;
-
 	struct BufferBytes
 	{
 		int8_t firstFreeBlockIndex;
@@ -327,6 +325,32 @@ public:
 		mCacheHead = nullptr;
 	}
 
+	template<typename Predicate>	// bool Predicate(void*)
+	void DeallocateIf(const Predicate& pred)
+	{
+		MOMO_EXTRA_CHECK(CanDeallocateAll());
+		if (pvUseCache())
+			pvFlushDeallocate();
+		if (mAllocCount == 0)
+			return;
+		Byte* buffer = mFreeBufferHead;
+		while (true)
+		{
+			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			if (nextBuffer == nullptr)
+				break;
+			buffer = nextBuffer;
+		}
+		buffer = pvGetPrevBuffer(mFreeBufferHead);
+		while (buffer != nullptr)
+		{
+			Byte* prevBuffer = pvGetPrevBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			buffer = prevBuffer;
+		}
+	}
+
 	void MergeFrom(MemPool& memPool)
 	{
 		if (this == &memPool)
@@ -443,7 +467,7 @@ private:
 		Byte* buffer = MemManagerProxy::template Allocate<Byte>(
 			GetMemManager(), pvGetBufferSize1());
 		uintptr_t uipBuffer = internal::PtrCaster::ToUInt(buffer);
-		uintptr_t uipBlock = PMath::Ceil(uipBuffer, uipBlockAlignment);
+		uintptr_t uipBlock = internal::UIntMath<uintptr_t>::Ceil(uipBuffer, uipBlockAlignment);
 		size_t offset = static_cast<size_t>(uipBlock - uipBuffer);
 		MOMO_ASSERT(offset < 256);
 		Byte* block = buffer + offset;
@@ -490,6 +514,11 @@ private:
 	{
 		Byte* buffer;
 		int8_t blockIndex = pvGetBlockIndex(block, buffer);
+		pvDeleteBlock(block, buffer, blockIndex);
+	}
+
+	void pvDeleteBlock(Byte* block, Byte* buffer, int8_t blockIndex) noexcept
+	{
 		BufferBytes bytes = pvGetBufferBytes(buffer);
 		pvSetNextFreeBlockIndex(block, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = blockIndex;
@@ -497,7 +526,7 @@ private:
 		pvSetBufferBytes(buffer, bytes);
 		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
 		if (freeBlockCount == 1)
-			pvMoveBuffer(buffer);
+			pvMoveBufferToHead(buffer);
 		if (freeBlockCount == Params::blockCount)
 		{
 			bool del = true;
@@ -552,7 +581,7 @@ private:
 		Byte* begin = MemManagerProxy::template Allocate<Byte>(
 			GetMemManager(), pvGetBufferSize());
 		uintptr_t uipBegin = internal::PtrCaster::ToUInt(begin);
-		uintptr_t uipBlock = PMath::Ceil(uipBegin, uipBlockAlignment);
+		uintptr_t uipBlock = internal::UIntMath<uintptr_t>::Ceil(uipBegin, uipBlockAlignment);
 		uipBlock += (uipBlock % uipBlockSize) % (2 * uipBlockAlignment);
 		if ((uipBlock + uipBlockAlignment) % uipBlockSize == 0)
 			uipBlock += uipBlockAlignment;
@@ -595,7 +624,7 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), begin, pvGetBufferSize());
 	}
 
-	void pvMoveBuffer(Byte* buffer) noexcept	//?
+	void pvMoveBufferToHead(Byte* buffer) noexcept
 	{
 		Byte* headPrevBuffer = pvGetPrevBuffer(mFreeBufferHead);
 		MOMO_ASSERT(headPrevBuffer != nullptr);
@@ -621,6 +650,32 @@ private:
 			+ (2 + (Params::blockSize / Params::blockAlignment) % 2) * Params::blockAlignment
 			+ (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes))
 			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
+	}
+
+	template<typename Predicate>
+	void pvDeleteBlocks(Byte* buffer, const Predicate& pred)
+	{
+		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
+		uint8_t freeBlockBits[16] = {};
+		BufferBytes bytes = pvGetBufferBytes(buffer);
+		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
+		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
+		{
+			internal::UIntMath<uint8_t>::SetBit(freeBlockBits,
+				static_cast<size_t>(freeBlockIndex - firstBlockIndex));
+			freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, freeBlockIndex));
+		}
+		for (size_t i = 0; i < Params::blockCount; ++i)
+		{
+			if (internal::UIntMath<uint8_t>::GetBit(freeBlockBits, i))
+				continue;
+			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
+			Byte* block = pvGetBlock(buffer, blockIndex);
+			if (!pred(static_cast<void*>(block)))
+				continue;
+			pvDeleteBlock(block, buffer, blockIndex);
+			--mAllocCount;
+		}
 	}
 
 	int8_t pvGetFirstBlockIndex(Byte* buffer) const noexcept
