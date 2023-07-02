@@ -78,8 +78,8 @@ namespace internal
 			const uint8_t* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash && pred((&mItems)[i]))
-					return pvMakeIterator(&mItems + i);
+				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
+					return pvMakeIterator(&mItems[i]);
 			}
 			return Iterator();
 		}
@@ -157,7 +157,7 @@ namespace internal
 
 		Item* ptGetItemPtr(size_t index) noexcept
 		{
-			return &mItems + (reverse ? maxCount - 1 - index : index);
+			return &mItems[reverse ? maxCount - 1 - index : index];
 		}
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
@@ -235,7 +235,8 @@ namespace internal
 
 	private:
 		uint8_t mData[maxCount + 1];
-		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
+		//ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;	// gcc perf
+		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
 	};
 }
 
