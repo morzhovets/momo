@@ -122,6 +122,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     test<vector<int, min_allocator<int> > >();
 #endif
+    test<vector<int, safe_allocator<int> > >();
 #endif
     return true;
 }
