@@ -65,7 +65,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         i = c.emplace(c.cend(), 3, 4.5);
         assert(i == c.end()-1);
         assert(c.size() == 2);
@@ -73,7 +73,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.front().getd() == 3.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         i = c.emplace(c.cbegin()+1, 4, 6.5);
         assert(i == c.begin()+1);
         assert(c.size() == 3);
@@ -83,7 +83,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c[1].getd() == 6.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
@@ -93,7 +93,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         i = c.emplace(c.cend(), 3, 4.5);
         assert(i == c.end()-1);
         assert(c.size() == 2);
@@ -101,7 +101,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.front().getd() == 3.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         i = c.emplace(c.cbegin()+1, 4, 6.5);
         assert(i == c.begin()+1);
         assert(c.size() == 3);
@@ -111,7 +111,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c[1].getd() == 6.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #endif
 #ifndef LIBCXX_TEST_ARRAY

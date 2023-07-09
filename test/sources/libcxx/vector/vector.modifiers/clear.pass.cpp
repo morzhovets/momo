@@ -30,7 +30,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     c.clear();
     assert(c.empty());
     //LIBCPP_ASSERT(c.__invariants());
-    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     }
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
@@ -41,7 +41,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     c.clear();
     assert(c.empty());
     //LIBCPP_ASSERT(c.__invariants());
-    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     }
 #endif
 #endif
