@@ -67,6 +67,23 @@ TEST_CONSTEXPR_CXX20 bool tests()
         //assert(is_contiguous_container_asan_correct(v));
     }
 #endif
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
+    {
+      vector<int, safe_allocator<int>> v;
+      assert(v.data() == nullptr);
+      //assert(is_contiguous_container_asan_correct(v));
+    }
+#endif
+    {
+      vector<int, safe_allocator<int>> v(100);
+      assert(v.data() == std::addressof(v.front()));
+      //assert(is_contiguous_container_asan_correct(v));
+    }
+    {
+      vector<Nasty, safe_allocator<Nasty>> v(100);
+      assert(v.data() == std::addressof(v.front()));
+      //assert(is_contiguous_container_asan_correct(v));
+    }
 #endif
 
     return true;
