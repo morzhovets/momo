@@ -45,4 +45,8 @@ struct is_same<T, T> { enum {value = 1}; };
     static_assert((test_macros_detail::is_same<__VA_ARGS__>::value), \
                  "Types differ unexpectedly")
 
+#define TEST_HAS_NO_INT128
+
+#define TEST_ALIGNOF(...) alignof(__VA_ARGS__)
+
 #endif // SUPPORT_TEST_MACROS_HPP
