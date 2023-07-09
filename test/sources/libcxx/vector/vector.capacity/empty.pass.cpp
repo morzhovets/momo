@@ -46,6 +46,16 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     assert(c.empty());
     }
 #endif
+    {
+      typedef vector<int, safe_allocator<int>> C;
+      C c;
+      ASSERT_NOEXCEPT(c.empty());
+      assert(c.empty());
+      c.push_back(C::value_type(1));
+      assert(!c.empty());
+      c.clear();
+      assert(c.empty());
+    }
 #endif
 
     return true;

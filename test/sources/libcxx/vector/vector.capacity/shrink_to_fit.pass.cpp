@@ -74,6 +74,17 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         //assert(is_contiguous_container_asan_correct(v));
     }
 #endif
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+    {
+      vector<int, safe_allocator<int>> v(100);
+      v.push_back(1);
+      //assert(is_contiguous_container_asan_correct(v));
+      v.shrink_to_fit();
+      assert(v.capacity() == 101);
+      assert(v.size() == 101);
+      //assert(is_contiguous_container_asan_correct(v));
+    }
+#endif
 #endif
 
     return true;
