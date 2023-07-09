@@ -264,9 +264,9 @@ struct PartialOrder {
   int value;
   constexpr PartialOrder(int v) : value(v) {}
   friend constexpr std::partial_ordering operator<=>(PartialOrder lhs, PartialOrder rhs) {
-    if (lhs.value == INT_MIN || rhs.value == INT_MIN)
+    if (lhs.value == std::numeric_limits<int>::min() || rhs.value == std::numeric_limits<int>::min())
       return std::partial_ordering::unordered;
-    if (lhs.value == INT_MAX || rhs.value == INT_MAX)
+    if (lhs.value == std::numeric_limits<int>::max() || rhs.value == std::numeric_limits<int>::max())
       return std::partial_ordering::unordered;
     return lhs.value <=> rhs.value;
   }
