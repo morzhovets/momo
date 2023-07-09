@@ -61,10 +61,29 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v[0] == 3);
         assert(is_contiguous_container_asan_correct(v));
     }
+#endif
+    {
+      vector<int, safe_allocator<int>> v;
+      v.reserve(3);
+      assert(is_contiguous_container_asan_correct(v));
+      v = {1, 2, 3};
+      v.emplace(v.begin(), v.back());
+      assert(v[0] == 3);
+      assert(is_contiguous_container_asan_correct(v));
+    }
+    {
+      vector<int, safe_allocator<int>> v;
+      v.reserve(4);
+      assert(is_contiguous_container_asan_correct(v));
+      v = {1, 2, 3};
+      v.emplace(v.begin(), v.back());
+      assert(v[0] == 3);
+      assert(is_contiguous_container_asan_correct(v));
+    }
     {
         vector<int> v;
         v.reserve(8);
-        size_t old_capacity = v.capacity();
+        std::size_t old_capacity = v.capacity();
         assert(old_capacity >= 8);
 
         v.resize(4); // keep the existing capacity
@@ -75,7 +94,6 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == old_capacity);
         assert(v[4] == 42);
     }
-#endif
 
     return true;
 }

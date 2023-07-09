@@ -145,6 +145,33 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(is_contiguous_container_asan_correct(c));
     }
 #endif
+    {
+      vector<A, safe_allocator<A> > c;
+#if TEST_STD_VER > 14
+      A& r1 = c.emplace_back(2, 3.5);
+      assert(c.size() == 1);
+      assert(&r1 == &c.back());
+      assert(c.front().geti() == 2);
+      assert(c.front().getd() == 3.5);
+      assert(is_contiguous_container_asan_correct(c));
+      A& r2 = c.emplace_back(3, 4.5);
+      assert(c.size() == 2);
+      assert(&r2 == &c.back());
+#else
+        c.emplace_back(2, 3.5);
+        assert(c.size() == 1);
+        assert(c.front().geti() == 2);
+        assert(c.front().getd() == 3.5);
+        assert(is_contiguous_container_asan_correct(c));
+        c.emplace_back(3, 4.5);
+        assert(c.size() == 2);
+#endif
+        assert(c.front().geti() == 2);
+        assert(c.front().getd() == 3.5);
+        assert(c.back().geti() == 3);
+        assert(c.back().getd() == 4.5);
+        assert(is_contiguous_container_asan_correct(c));
+    }
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         vector<Tag_X, TaggingAllocator<Tag_X> > c;

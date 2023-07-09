@@ -44,6 +44,15 @@ TEST_CONSTEXPR_CXX20 bool tests()
     LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     }
 #endif
+    {
+      int a[] = {1, 2, 3};
+      vector<int, safe_allocator<int>> c(a, a + 3);
+      ASSERT_NOEXCEPT(c.clear());
+      c.clear();
+      assert(c.empty());
+      //LIBCPP_ASSERT(c.__invariants());
+      LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+    }
 #endif
 
     return true;
