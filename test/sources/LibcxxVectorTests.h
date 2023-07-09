@@ -22,6 +22,14 @@ LIBCXX_TEST_BEGIN(compare)
 #include "libcxx/vector/compare.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(compare_three_way)
+#include "libcxx/vector/compare.three_way.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(constant_initialization)
+#include "libcxx/vector/constant_initialization.pass.cpp"
+LIBCXX_TEST_END
+
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(contiguous)
 #include "libcxx/vector/contiguous.pass.cpp"
