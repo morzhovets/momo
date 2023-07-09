@@ -30,7 +30,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         const int lvalue = 1;
         vector<int>::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -49,7 +49,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         vector<int>::iterator it = v.insert(v.cbegin() + n, lvalue);
 
         assert(v.size() == n + 1);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(it == v.begin() + n);
         for (size_t i = 0; i < n; ++i) {
             assert(v[i] == 0);
@@ -63,7 +63,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         const int lvalue = 1;
         vector<int>::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == sz + 1);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -80,7 +80,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         const int lvalue = 1;
         vector<int>::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == sz + 1);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -95,7 +95,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         const int lvalue = 1;
         vector<int, limited_allocator<int, 300> >::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -121,7 +121,7 @@ TEST_CONSTEXPR_CXX20 bool test() {
         const int lvalue = 1;
         vector<int, min_allocator<int>>::iterator i = v.insert(v.cbegin() + 10, lvalue);
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         int j;
         for (j = 0; j < 10; ++j)

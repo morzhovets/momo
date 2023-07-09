@@ -75,8 +75,8 @@ void main()
 
     vec.push_back(instance);
     vector<CMyClass> vec2(vec);
-    //assert(is_contiguous_container_asan_correct(vec)); 
-    //assert(is_contiguous_container_asan_correct(vec2)); 
+    assert(is_contiguous_container_asan_correct(vec)); 
+    assert(is_contiguous_container_asan_correct(vec2)); 
 
 #ifndef TEST_HAS_NO_EXCEPTIONS
     gCopyConstructorShouldThrow = true;
@@ -86,7 +86,7 @@ void main()
     }
     catch (...) {
         assert(vec==vec2);
-        //assert(is_contiguous_container_asan_correct(vec));
+        assert(is_contiguous_container_asan_correct(vec));
     }
 #endif
 }

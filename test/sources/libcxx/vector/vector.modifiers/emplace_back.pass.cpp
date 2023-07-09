@@ -68,7 +68,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(&r1 == &c.back());
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         A& r2 = c.emplace_back(3, 4.5);
         assert(c.size() == 2);
         assert(&r2 == &c.back());
@@ -77,7 +77,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         c.emplace_back(3, 4.5);
         assert(c.size() == 2);
 #endif
@@ -85,7 +85,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.front().getd() == 3.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
@@ -96,7 +96,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(&r1 == &c.back());
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         A& r2 = c.emplace_back(3, 4.5);
         assert(c.size() == 2);
         assert(&r2 == &c.back());
@@ -105,7 +105,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         c.emplace_back(3, 4.5);
         assert(c.size() == 2);
 #endif
@@ -113,7 +113,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.front().getd() == 3.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #endif
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
@@ -125,7 +125,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(&r1 == &c.back());
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         A& r2 = c.emplace_back(3, 4.5);
         assert(c.size() == 2);
         assert(&r2 == &c.back());
@@ -134,7 +134,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
         assert(c.front().getd() == 3.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         c.emplace_back(3, 4.5);
         assert(c.size() == 2);
 #endif
@@ -142,7 +142,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.front().getd() == 3.5);
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #endif
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -152,7 +152,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.size() == 1);
         c.emplace_back(1, 2, 3);
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
     }
 #endif
 

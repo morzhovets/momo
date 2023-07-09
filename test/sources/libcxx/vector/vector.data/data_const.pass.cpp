@@ -36,53 +36,53 @@ TEST_CONSTEXPR_CXX20 bool tests()
     {
         const vector<int> v;
         assert(v.data() == nullptr);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
         const vector<int> v(100);
         assert(v.data() == std::addressof(v.front()));
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<Nasty> v(100);
         assert(v.data() == std::addressof(v.front()));
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         const vector<int, min_allocator<int>> v;
         assert(v.data() == nullptr);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         const vector<int, min_allocator<int>> v(100);
         assert(v.data() == &v.front());
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<Nasty, min_allocator<Nasty>> v(100);
         assert(v.data() == std::addressof(v.front()));
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
       const vector<int, safe_allocator<int>> v;
       assert(v.data() == nullptr);
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
       const vector<int, safe_allocator<int>> v(100);
       assert(v.data() == &v.front());
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
     {
       vector<Nasty, safe_allocator<Nasty>> v(100);
       assert(v.data() == std::addressof(v.front()));
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 

@@ -27,39 +27,39 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     {
         vector<int> v;
         v.reserve(3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
         v.emplace(v.begin(), v.back());
         assert(v[0] == 3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<int> v;
         v.reserve(4);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
         v.emplace(v.begin(), v.back());
         assert(v[0] == 3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int>> v;
         v.reserve(3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
         v.emplace(v.begin(), v.back());
         assert(v[0] == 3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<int, min_allocator<int>> v;
         v.reserve(4);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
         v.emplace(v.begin(), v.back());
         assert(v[0] == 3);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<int> v;

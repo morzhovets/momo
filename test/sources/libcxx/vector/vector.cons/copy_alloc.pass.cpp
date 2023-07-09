@@ -31,7 +31,7 @@ test(const C& x, const typename C::allocator_type& a)
     //LIBCPP_ASSERT(c.__invariants());
     assert(c.size() == s);
     assert(c == x);
-    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
 }
 
 TEST_CONSTEXPR_CXX20 bool tests() {

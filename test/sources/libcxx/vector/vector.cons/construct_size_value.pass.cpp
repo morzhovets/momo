@@ -29,7 +29,7 @@ test(typename C::size_type n, const typename C::value_type& x)
     C c(n, x);
     //LIBCPP_ASSERT(c.__invariants());
     assert(c.size() == n);
-    //LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
+    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e; ++i)
         assert(*i == x);
 }

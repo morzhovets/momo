@@ -27,7 +27,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         vector<int> v;
         v.reserve(10);
         assert(v.capacity() >= 10);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
@@ -43,7 +43,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #else
         assert(v.capacity() >= 150);
 #endif
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         // Add 1 for implementations that dynamically allocate a container proxy.
@@ -56,7 +56,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.reserve(150);
         assert(v.size() == 100);
         assert(v.capacity() == 150);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
 #endif
     }
 #ifndef TEST_HAS_NO_EXCEPTIONS
@@ -109,7 +109,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         vector<int, min_allocator<int>> v;
         v.reserve(10);
         assert(v.capacity() >= 10);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<int, min_allocator<int>> v(100);
@@ -120,14 +120,14 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.reserve(150);
         assert(v.size() == 100);
         assert(v.capacity() == 150);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
       vector<int, safe_allocator<int>> v;
       v.reserve(10);
       assert(v.capacity() >= 10);
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
@@ -143,7 +143,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #else
         assert(v.capacity() >= 150);
 #endif
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #endif
@@ -153,7 +153,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         vector<int, limited_allocator<int, 100> > v;
         v.reserve(50);
         assert(v.capacity() == 50);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         try {
             v.reserve(101);
             assert(false);
@@ -165,7 +165,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
             // no-op
         }
         assert(v.capacity() == 50);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #endif

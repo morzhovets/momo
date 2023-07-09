@@ -40,7 +40,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, cpp17_input_iterator<const int*>(a),
                                  cpp17_input_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -58,7 +58,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                  forward_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -115,7 +115,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, cpp17_input_iterator<const int*>(a),
                                  cpp17_input_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -133,7 +133,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                  forward_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -165,7 +165,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, cpp17_input_iterator<const int*>(a),
                                  cpp17_input_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -183,7 +183,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         V::iterator i = v.insert(v.cbegin() + 10, forward_iterator<const int*>(a),
                                  forward_iterator<const int*>(a+N));
         assert(v.size() == 100 + N);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)

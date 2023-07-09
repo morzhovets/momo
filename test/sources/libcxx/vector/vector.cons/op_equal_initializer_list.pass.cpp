@@ -29,7 +29,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     vector<int> d;
     d = {3, 4, 5, 6};
     assert(d.size() == 4);
-    //assert(is_contiguous_container_asan_correct(d));
+    assert(is_contiguous_container_asan_correct(d));
     assert(d[0] == 3);
     assert(d[1] == 4);
     assert(d[2] == 5);
@@ -40,7 +40,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     vector<int, min_allocator<int>> d;
     d = {3, 4, 5, 6};
     assert(d.size() == 4);
-    //assert(is_contiguous_container_asan_correct(d));
+    assert(is_contiguous_container_asan_correct(d));
     assert(d[0] == 3);
     assert(d[1] == 4);
     assert(d[2] == 5);

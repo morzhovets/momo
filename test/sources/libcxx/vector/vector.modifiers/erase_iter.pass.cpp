@@ -43,7 +43,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     int a1[] = {1, 2, 3, 4, 5};
     vector<int> l1(a1, a1+5);
     l1.erase(l1.begin());
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     assert(l1 == vector<int>(a1+1, a1+5));
     }
     {
@@ -51,14 +51,14 @@ TEST_CONSTEXPR_CXX20 bool tests()
     int e1[] = {1, 3, 4, 5};
     vector<int> l1(a1, a1+5);
     l1.erase(l1.begin() + 1);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     assert(l1 == vector<int>(e1, e1+4));
     }
     {
     int a1[] = {1, 2, 3};
     vector<int> l1(a1, a1+3);
     vector<int>::const_iterator i = l1.begin();
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     ++i;
     vector<int>::iterator j = l1.erase(i);
     assert(l1.size() == 2);
@@ -66,18 +66,18 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(*j == 3);
     assert(*l1.begin() == 1);
     assert(*std::next(l1.begin()) == 3);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     j = l1.erase(j);
     assert(j == l1.end());
     assert(l1.size() == 1);
     assert(std::distance(l1.begin(), l1.end()) == 1);
     assert(*l1.begin() == 1);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     j = l1.erase(l1.begin());
     assert(j == l1.end());
     assert(l1.size() == 0);
     assert(std::distance(l1.begin(), l1.end()) == 0);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     }
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
@@ -85,7 +85,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     int a1[] = {1, 2, 3};
     vector<int, min_allocator<int>> l1(a1, a1+3);
     vector<int, min_allocator<int>>::const_iterator i = l1.begin();
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     ++i;
     vector<int, min_allocator<int>>::iterator j = l1.erase(i);
     assert(l1.size() == 2);
@@ -93,18 +93,18 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(*j == 3);
     assert(*l1.begin() == 1);
     assert(*std::next(l1.begin()) == 3);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     j = l1.erase(j);
     assert(j == l1.end());
     assert(l1.size() == 1);
     assert(std::distance(l1.begin(), l1.end()) == 1);
     assert(*l1.begin() == 1);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     j = l1.erase(l1.begin());
     assert(j == l1.end());
     assert(l1.size() == 0);
     assert(std::distance(l1.begin(), l1.end()) == 0);
-    //assert(is_contiguous_container_asan_correct(l1));
+    assert(is_contiguous_container_asan_correct(l1));
     }
 #endif
 #endif

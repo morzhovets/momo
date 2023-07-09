@@ -71,7 +71,7 @@ void test_push_back() {
     assert(v.size() == 1);
   }
   assert(v.size() == 1);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 }
 
 void test_emplace_back() {
@@ -87,7 +87,7 @@ void test_emplace_back() {
     assert(v.size() == 1);
   }
   assert(v.size() == 1);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 #endif // _LIBCPP_HAS_NO_VARIADICS
 }
 
@@ -106,7 +106,7 @@ void test_insert_range() {
     assert(v.size() == 3);
   }
   assert(v.size() == 3);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 }
 
 void test_insert() {
@@ -122,7 +122,7 @@ void test_insert() {
     assert(v.size() == 2);
   }
   assert(v.size() == 2);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 }
 
 void test_emplace() {
@@ -139,7 +139,7 @@ void test_emplace() {
     assert(v.size() == 2);
   }
   assert(v.size() == 2);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 #endif // _LIBCPP_HAS_NO_VARIADICS
 }
 
@@ -156,7 +156,7 @@ void test_insert_range2() {
     assert(0);
   } catch (int) {
     assert(v.size() <= 4);
-    //assert(is_contiguous_container_asan_correct(v));
+    assert(is_contiguous_container_asan_correct(v));
     return;
   }
   assert(0);
@@ -173,7 +173,7 @@ void test_insert_n() {
     assert(0);
   } catch (int) {
     assert(v.size() <= 3);
-    //assert(is_contiguous_container_asan_correct(v));
+    assert(is_contiguous_container_asan_correct(v));
     return;
   }
   assert(0);
@@ -189,7 +189,7 @@ void test_insert_n2() {
     assert(0);
   } catch (int) {
     assert(v.size() == 11);
-    //assert(is_contiguous_container_asan_correct(v));
+    assert(is_contiguous_container_asan_correct(v));
     return;
   }
   assert(0);
@@ -206,7 +206,7 @@ void test_resize() {
     assert(v.size() == 1);
   }
   assert(v.size() == 1);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 }
 
 void test_resize_param() {
@@ -220,7 +220,7 @@ void test_resize_param() {
     assert(v.size() == 1);
   }
   assert(v.size() == 1);
-  //assert(is_contiguous_container_asan_correct(v));
+  assert(is_contiguous_container_asan_correct(v));
 }
 
 void main() {

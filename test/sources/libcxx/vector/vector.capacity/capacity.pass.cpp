@@ -27,7 +27,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     {
         vector<int> v;
         assert(v.capacity() == 0);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -36,7 +36,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(v.capacity() == 100);
         v.push_back(0);
         assert(v.capacity() > 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #if TEST_STD_VER >= 11
@@ -44,14 +44,14 @@ TEST_CONSTEXPR_CXX20 bool tests()
     {
         vector<int, min_allocator<int>> v;
         assert(v.capacity() == 0);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
     {
         vector<int, min_allocator<int>> v(100);
         assert(v.capacity() == 100);
         v.push_back(0);
         assert(v.capacity() > 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #endif

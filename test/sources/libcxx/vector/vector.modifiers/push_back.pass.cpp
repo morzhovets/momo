@@ -28,27 +28,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<int> c;
         c.push_back(0);
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(1);
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(2);
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(3);
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(4);
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
     }
@@ -60,27 +60,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<int, limited_allocator<int, 17> > c;
         c.push_back(0);
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(1);
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(2);
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(3);
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(4);
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
     }
@@ -91,27 +91,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<int, min_allocator<int>> c;
         c.push_back(0);
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(1);
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(2);
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(3);
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
         c.push_back(4);
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == static_cast<int>(j));
     }

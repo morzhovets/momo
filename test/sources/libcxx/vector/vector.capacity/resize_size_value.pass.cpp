@@ -33,7 +33,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         for (unsigned i = 0; i < 50; ++i)
             assert(v[i] == 0);
         for (unsigned i = 50; i < 200; ++i)
@@ -49,7 +49,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #if TEST_STD_VER >= 11
@@ -59,12 +59,12 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.resize(50, 1);
         assert(v.size() == 50);
         assert(v.capacity() == 100);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert((v == vector<int, min_allocator<int>>(50)));
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         for (unsigned i = 0; i < 50; ++i)
             assert(v[i] == 0);
         for (unsigned i = 50; i < 200; ++i)
@@ -75,11 +75,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.resize(50, 1);
         assert(v.size() == 50);
         assert(v.capacity() == 100);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
@@ -89,12 +89,12 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
       assert(v.capacity() == 100);
 #endif
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
       assert((v == vector<int, safe_allocator<int>>(50)));
       v.resize(200, 1);
       assert(v.size() == 200);
       assert(v.capacity() >= 200);
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
       for (unsigned i = 0; i < 50; ++i)
         assert(v[i] == 0);
       for (unsigned i = 50; i < 200; ++i)
@@ -107,11 +107,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
       assert(v.capacity() == 100);
 #endif
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
       v.resize(200, 1);
       assert(v.size() == 200);
       assert(v.capacity() >= 200);
-      //assert(is_contiguous_container_asan_correct(v));
+      assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 

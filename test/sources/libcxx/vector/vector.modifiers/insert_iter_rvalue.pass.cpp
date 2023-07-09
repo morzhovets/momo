@@ -31,7 +31,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly> v(100);
         vector<MoveOnly>::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -45,7 +45,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly, limited_allocator<MoveOnly, 300> > v(100);
         vector<MoveOnly, limited_allocator<MoveOnly, 300> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)
@@ -69,7 +69,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly, min_allocator<MoveOnly> > v(100);
         vector<MoveOnly, min_allocator<MoveOnly> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
-        //assert(is_contiguous_container_asan_correct(v));
+        assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
         size_t j;
         for (j = 0; j < 10; ++j)

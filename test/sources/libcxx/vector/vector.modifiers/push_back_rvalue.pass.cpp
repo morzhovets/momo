@@ -31,27 +31,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly> c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(1));
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(2));
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(3));
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(4));
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
     }
@@ -63,27 +63,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly, limited_allocator<MoveOnly, 17> > c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(1));
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(2));
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(3));
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(4));
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
     }
@@ -93,27 +93,27 @@ TEST_CONSTEXPR_CXX20 bool tests()
         vector<MoveOnly, min_allocator<MoveOnly>> c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(1));
         assert(c.size() == 2);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(2));
         assert(c.size() == 3);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(3));
         assert(c.size() == 4);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
         c.push_back(MoveOnly(4));
         assert(c.size() == 5);
-        //assert(is_contiguous_container_asan_correct(c));
+        assert(is_contiguous_container_asan_correct(c));
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
     }
