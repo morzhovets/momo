@@ -40,6 +40,8 @@ var namespacemomo =
     [ "IsTriviallyRelocatable", "structmomo_1_1_is_trivially_relocatable.html", null ],
     [ "MemManagerC", "classmomo_1_1_mem_manager_c.html", "classmomo_1_1_mem_manager_c" ],
     [ "MemManagerCpp", "classmomo_1_1_mem_manager_cpp.html", "classmomo_1_1_mem_manager_cpp" ],
+    [ "MemManagerDict", "classmomo_1_1_mem_manager_dict.html", "classmomo_1_1_mem_manager_dict" ],
+    [ "MemManagerDictSettings", "classmomo_1_1_mem_manager_dict_settings.html", "classmomo_1_1_mem_manager_dict_settings" ],
     [ "MemManagerStd", "classmomo_1_1_mem_manager_std.html", "classmomo_1_1_mem_manager_std" ],
     [ "MemManagerStd< std::allocator< Object > >", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_01_4.html", "classmomo_1_1_mem_manager_std_3_01std_1_1allocator_3_01_object_01_4_01_4" ],
     [ "MemPool", "classmomo_1_1_mem_pool.html", "classmomo_1_1_mem_pool" ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -120,6 +120,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:ae98b8ca32a867f2296a45be153692445"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aeaf7518c8df0dedd89b22ffcd06a30da">IsEqual</a> (const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager1, const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager2) noexcept</td></tr>
 <tr class="separator:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename... ResObjectArgs&gt; </td></tr>
+<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aacbd74e64633db8d726870bf6b2f999f">AllocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, ResObjectArgs &amp;&amp;... resObjectArgs)</td></tr>
+<tr class="separator:aacbd74e64633db8d726870bf6b2f999f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -172,6 +175,46 @@ template&lt;typename ResObject  = void&gt; </div>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aacbd74e64633db8d726870bf6b2f999f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacbd74e64633db8d726870bf6b2f999f">&#9670;&nbsp;</a></span>AllocateCreate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;typename ResObject , typename... ResObjectArgs&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static ResObject* <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::AllocateCreate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>memManager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ResObjectArgs &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>resObjectArgs</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -466,7 +509,7 @@ template&lt;typename TMemManager &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>momo/<a class="el" href="_mem_manager_8h_source.html">MemManager.h</a></li>
+<li>include/momo/<a class="el" href="_mem_manager_8h_source.html">MemManager.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

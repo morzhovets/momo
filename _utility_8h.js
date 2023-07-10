@@ -10,6 +10,7 @@ var _utility_8h =
     [ "UIntSelector< 2, void >", "structmomo_1_1internal_1_1_u_int_selector_3_012_00_01void_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_012_00_01void_01_4" ],
     [ "UIntSelector< size, EnableIf<(2< size &&size<=4)> >", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_072_3_01size_01_6_6size_3_0a4_08_4_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_072_3_01size_01_6_6size_3_0a4_08_4_01_4" ],
     [ "UIntSelector< size, EnableIf<(4< size &&size<=8)> >", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_074_3_01size_01_6_6size_3_0a8_08_4_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_074_3_01size_01_6_6size_3_0a8_08_4_01_4" ],
+    [ "MemCopyer", "classmomo_1_1internal_1_1_mem_copyer.html", null ],
     [ "PtrCaster", "classmomo_1_1internal_1_1_ptr_caster.html", null ],
     [ "UIntMath", "classmomo_1_1internal_1_1_u_int_math.html", "classmomo_1_1internal_1_1_u_int_math" ],
     [ "DivResult", "structmomo_1_1internal_1_1_u_int_math_1_1_div_result.html", "structmomo_1_1internal_1_1_u_int_math_1_1_div_result" ],

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo/UserSettings.h File Reference</title>
+<title>momo: include/momo/UserSettings.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -128,8 +128,8 @@ Macros</h2></td></tr>
 <tr class="separator:a385418dc0e5a2df292e94ed0a9036559"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af452a6b523eb6408184b712b0bafcd8c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#af452a6b523eb6408184b712b0bafcd8c">MOMO_NOINLINE</a></td></tr>
 <tr class="separator:af452a6b523eb6408184b712b0bafcd8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67be118c16f232780c09a69e7dc0e219"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a67be118c16f232780c09a69e7dc0e219">MOMO_OBJECT_BUFFER</a>(Object,  alignment,  ObjectUnion)</td></tr>
-<tr class="separator:a67be118c16f232780c09a69e7dc0e219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf1fab8fc3baa0bb4ed7152f34a6ce76"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#acf1fab8fc3baa0bb4ed7152f34a6ce76">MOMO_ALIGNED_STORAGE</a>(size,  alignment)&#160;&#160;&#160;alignas(alignment) std::array&lt;char, size&gt;</td></tr>
+<tr class="separator:acf1fab8fc3baa0bb4ed7152f34a6ce76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5ffa282c329ed013e070d7552ca845"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a>&#160;&#160;&#160;reinterpret_cast&lt;uintptr_t&gt;(static_cast&lt;void*&gt;(nullptr))</td></tr>
 <tr class="separator:a8a5ffa282c329ed013e070d7552ca845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc3d49e50add6f931606ec489db2e7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a>&#160;&#160;&#160;(<a class="el" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a> + 1)</td></tr>
@@ -144,6 +144,34 @@ Macros</h2></td></tr>
 <tr class="separator:ae71c71f676413ffa3458f586599188b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="acf1fab8fc3baa0bb4ed7152f34a6ce76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf1fab8fc3baa0bb4ed7152f34a6ce76">&#9670;&nbsp;</a></span>MOMO_ALIGNED_STORAGE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_ALIGNED_STORAGE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">size, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">alignment&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;alignas(alignment) std::array&lt;char, size&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a21cff6113294cd25e6ca42966fdc465f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21cff6113294cd25e6ca42966fdc465f">&#9670;&nbsp;</a></span>MOMO_ASSERT</h2>
 
@@ -476,42 +504,6 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="a67be118c16f232780c09a69e7dc0e219"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67be118c16f232780c09a69e7dc0e219">&#9670;&nbsp;</a></span>MOMO_OBJECT_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MOMO_OBJECT_BUFFER</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">Object, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">alignment, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">ObjectUnion&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">alignas</span>(alignment) <span class="keyword">typename</span> std::conditional&lt;(alignment &gt;= <span class="keyword">alignof</span>(Object)), \</div>
-<div class="line">        ObjectUnion, std::array&lt;<span class="keywordtype">char</span>, <span class="keyword">sizeof</span>(Object)&gt;&gt;::type</div>
-</div><!-- fragment -->
-</div>
-</div>
 <a id="a465b4e68c7701a2a207206b4af6177cd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a465b4e68c7701a2a207206b4af6177cd">&#9670;&nbsp;</a></span>MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD</h2>
 
@@ -531,7 +523,7 @@ Macros</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_b21d6878dbe65ea14b0f92031eed0ea0.html">momo</a></li><li class="navelem"><a class="el" href="_user_settings_8h.html">UserSettings.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_f60e7dbcfd88bfb6ae5efd67bdf84475.html">momo</a></li><li class="navelem"><a class="el" href="_user_settings_8h.html">UserSettings.h</a></li>
     <li class="footer">Generated by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19 </li>
   </ul>
 </div>

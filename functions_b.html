@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -105,11 +105,12 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 <li>BaseMemManager
 : <a class="el" href="classmomo_1_1internal_1_1_mem_manager_ptr_3_01_t_base_mem_manager_00_01false_01_4.html#acb98d26bffdb7cd2f76fff61c4721e27">momo::internal::MemManagerPtr&lt; TBaseMemManager, false &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_mem_manager_ptr_3_01_t_base_mem_manager_00_01true_01_4.html#a8a49cc009c46646fe76fc683e5b32cf9">momo::internal::MemManagerPtr&lt; TBaseMemManager, true &gt;</a>
+, <a class="el" href="classmomo_1_1_mem_manager_dict.html#a6686f5c01c303a6289dfa561b5c3041f">momo::MemManagerDict&lt; TBaseMemManager, TSettings &gt;</a>
 </li>
 <li>begin()
 : <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html#ad7c8d988802bc3cea115b010224e48f5">momo::stdish::internal::map_base&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
 , <a class="el" href="classmomo_1_1stdish_1_1set.html#ac6f79971610a5062525fd8db2b9050cc">momo::stdish::set&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a51d9a4881797b287d71707a8075f01dd">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a1823cc869c86a9ce3d4873110c28a849">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
 , <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html#ac2a0916d796ac33afcb2cedb30061d54">momo::stdish::unordered_multimap&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;</a>
 , <a class="el" href="classmomo_1_1stdish_1_1unordered__set.html#a89627e0a15ff094942d1dcb3f60778d7">momo::stdish::unordered_set&lt; TKey, THashFunc, TEqualFunc, TAllocator, THashSet &gt;</a>
 , <a class="el" href="classmomo_1_1stdish_1_1vector.html#addad23d87250f5e5002b31a607c8cffe">momo::stdish::vector&lt; TValue, TAllocator, TArray &gt;</a>
@@ -131,6 +132,9 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 , <a class="el" href="classmomo_1_1_mem_pool_params.html#a94e7814d3af7b37b92a22dcdc3968706">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a>
 , <a class="el" href="classmomo_1_1_mem_pool_params_static.html#a9d1394f291d497b2dcbc6cf8903dd3b9">momo::MemPoolParamsStatic&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;</a>
 </li>
+<li>BlockDictTreeNode
+: <a class="el" href="classmomo_1_1_mem_manager_dict_settings.html#ab0456e8aa08ab72506cfab4a947377fa">momo::MemManagerDictSettings</a>
+</li>
 <li>blockSize
 : <a class="el" href="classmomo_1_1_mem_pool_params.html#a2ac56172dc68cfe1eca80481874cf921">momo::MemPoolParams&lt; tBlockCount, tCachedFreeBlockCount &gt;</a>
 , <a class="el" href="classmomo_1_1_mem_pool_params_static.html#a07853c7d97b4e268ab0e47622c1daeee">momo::MemPoolParamsStatic&lt; tBlockSize, tBlockAlignment, tBlockCount, tCachedFreeBlockCount &gt;</a>
@@ -145,7 +149,7 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4.html#a9cede2da7f0efac45a7c779314160a42">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, true &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#ac45496a01337ce9242f0a1a1c015a0c5">momo::internal::BucketOne&lt; TItemTraits, tMinStateSize &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#acad3a71fe2bb98cd6e1019d94a362dce">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a520f9b84affffb1bd713871567c3cfa6">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a40d19799ccf75e12ce5bc93f66f842cc">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_unlim_p.html#a0b9f116b10de63d62cd2a2dbc2201786">momo::internal::BucketUnlimP&lt; TItemTraits, tMaxFastCount, TMemPoolParams, TArraySettings &gt;</a>
 </li>
 <li>Bucket
@@ -188,10 +192,10 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 , <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p_3_01_t_item_traits_00_01t_max_count_00_01_t_mem_pool_params_00_01true_01_4.html#a4ec3f54568049b10a4fdbf8700441a3e">momo::internal::BucketLimP&lt; TItemTraits, tMaxCount, TMemPoolParams, true &gt;</a>
 </li>
 <li>BucketLimP1()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p1.html#aa2d1c1868c1c5ba857ef940641c0db25">momo::internal::BucketLimP1&lt; TItemTraits, tMaxCount, TMemPoolParams &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p1.html#ad1f3661f8d3fc6e256a9940db6d95de9">momo::internal::BucketLimP1&lt; TItemTraits, tMaxCount, TMemPoolParams &gt;</a>
 </li>
 <li>BucketLimP4()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#a3f970a2e5d391cb40a7d589553e7271c">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_lim_p4.html#a68ec25bdad2561dcc1857eef4d00579c">momo::internal::BucketLimP4&lt; TItemTraits, tMaxCount, TMemPoolParams, tUseHashCodePartGetter &gt;</a>
 </li>
 <li>bucketMaxItemCount
 : <a class="el" href="classmomo_1_1_hash_map.html#a4c23d8d2028adb9fbf17d1ed575b6f93">momo::HashMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
@@ -201,19 +205,19 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 : <a class="el" href="classmomo_1_1internal_1_1_bucket_memory.html#a8576c017309b8e04d3d8990555956841">momo::internal::BucketMemory&lt; TMemPool, TPointer, nullPtr &gt;</a>
 </li>
 <li>BucketOne()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#ae965f6dc955583d1b1579c7218be08f7">momo::internal::BucketOne&lt; TItemTraits, tMinStateSize &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_one.html#a3e1936c20a74c0941a2d91029c30a5ff">momo::internal::BucketOne&lt; TItemTraits, tMinStateSize &gt;</a>
 </li>
 <li>BucketOpen2N2()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#aaa30ec9636a9851978fb45acaeb9ef5e">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_open2_n2.html#ab8b460747a9e3567e0b6c07aa87a402b">momo::internal::BucketOpen2N2&lt; TItemTraits, tMaxCount, tUseHashCodePartGetter &gt;</a>
 </li>
 <li>BucketOpenN1()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a9289c9b9fa53236bbef0d40c0ab7a725">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ab8c6ceae5b99f8019c19becc2eae36c3">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse &gt;</a>
 </li>
 <li>BucketParams
 : <a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html#a9a3a11467786c63e524602dff4ec756d">momo::internal::HashSetBuckets&lt; TBucket &gt;</a>
 </li>
 <li>BucketParamsOpen()
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_params_open.html#a3618af6800d8f0746cb4bd37812464e8">momo::internal::BucketParamsOpen&lt; TMemManager &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_bucket_params_open.html#a4952748a4e0f7ef3b41349c94bc3c7cd">momo::internal::BucketParamsOpen&lt; TMemManager &gt;</a>
 </li>
 <li>Buckets
 : <a class="el" href="classmomo_1_1internal_1_1_hash_set_const_iterator.html#aece7d6562efc41ad461ec4c5f4c98d53">momo::internal::HashSetConstIterator&lt; TBucket, TSettings &gt;</a>
@@ -223,9 +227,6 @@ $(document).ready(function(){initNavTree('functions_b.html',''); initResizable()
 </li>
 <li>BucketUnlimPItemTraits
 : <a class="el" href="classmomo_1_1internal_1_1_bucket_unlim_p_array_bucket_item_traits.html#a99b3f090bb01f8b6f08dd7b8f36ff3fd">momo::internal::BucketUnlimPArrayBucketItemTraits&lt; TBucketUnlimPItemTraits &gt;</a>
-</li>
-<li>Byte
-: <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ab888f24710e9f7494cf0c53e8e7c42dc">momo::internal::BucketOpenN1&lt; TItemTraits, tMaxCount, tReverse, TData &gt;</a>
 </li>
 <li>ByteAllocator
 : <a class="el" href="classmomo_1_1_mem_manager_std.html#afb5ae6b94557e7bd8248b28d66f74afe">momo::MemManagerStd&lt; TAllocator &gt;</a>

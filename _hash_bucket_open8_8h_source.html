@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo/details/HashBucketOpen8.h Source File</title>
+<title>momo: include/momo/details/HashBucketOpen8.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -119,160 +119,154 @@ $(document).ready(function(){initNavTree('_hash_bucket_open8_8h_source.html','')
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">namespace </span>internal</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> TItemTraits&gt;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">class </span>BucketOpen8 : <span class="keyword">public</span> BucketOpenN1&lt;TItemTraits, 7, false, uint64_t&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">class </span>BucketOpen8 : <span class="keyword">public</span> BucketOpenN1&lt;TItemTraits, 7, false&gt;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">typedef</span> internal::BucketOpenN1&lt;TItemTraits, 7, false, uint64_t&gt; BucketOpenN1;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">typedef</span> internal::BucketOpenN1&lt;TItemTraits, 7, false&gt; BucketOpenN1;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ab888f24710e9f7494cf0c53e8e7c42dc">BucketOpenN1::Byte</a>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> maxCount = 7;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> maxCount = 7;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ada8266255bbe857607c66a2e2a972f1e">BucketOpenN1::Item</a>;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a6eda41ee6a7487922bbe0ef8c2788a0f">BucketOpenN1::Item</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a086fa17772b708b77aea056e3623f467">BucketOpenN1::Iterator</a>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#abca6fbb06ad4d8ba682c10c3f3e0524c">BucketOpenN1::Iterator</a>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8fef4506e5b3d0733f450597e0af745f">BucketOpenN1::Params</a>;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keyword">using</span> <span class="keyword">typename</span> <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#abb68b1f04dd94ac83cd7312a9c0fa2fc">BucketOpenN1::Params</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">explicit</span> BucketOpen8() noexcept</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keyword">explicit</span> BucketOpen8() noexcept</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        BucketOpen8(<span class="keyword">const</span> BucketOpen8&amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        BucketOpen8(<span class="keyword">const</span> BucketOpen8&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        ~BucketOpen8() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        ~BucketOpen8() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        BucketOpen8&amp; operator=(<span class="keyword">const</span> BucketOpen8&amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        BucketOpen8&amp; operator=(<span class="keyword">const</span> BucketOpen8&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> first, <span class="keyword">typename</span> Predicate&gt;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <a class="code" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> Iterator Find(Params&amp; <span class="comment">/*params*/</span>, <span class="keyword">const</span> Predicate&amp; pred, <span class="keywordtype">size_t</span> hashCode)</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#ifdef MOMO_PREFETCH</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">if</span> (first)</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                MOMO_PREFETCH(<a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#acc82f9a4683108adef160f231f6f3040">BucketOpenN1::ptGetItemPtr</a>(3));</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#ifdef MOMO_USE_SSE2</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            Byte shortHash = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#af8bcea6f8ee8f6a15fdedd9c314df06b">BucketOpenN1::ptCalcShortHash</a>(hashCode);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            __m128i shortHashes = _mm_set1_epi8(<span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(shortHash));</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            __m128i thisShortHashes = _mm_set_epi64x(int64_t{0},</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(<a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a0f83b0a42ad59d353d993872ecc73882">BucketOpenN1::ptGetData</a>()));</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordtype">int</span> mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            mask &amp;= (1 &lt;&lt; maxCount) - 1;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keywordflow">while</span> (mask != 0)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                <span class="keywordtype">size_t</span> index = pvCountTrailingZeros15(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(mask));</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                Item* itemPtr = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#acc82f9a4683108adef160f231f6f3040">BucketOpenN1::ptGetItemPtr</a>(index);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                <span class="keywordflow">if</span> (pred(*itemPtr))</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                    <span class="keywordflow">return</span> itemPtr;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                mask &amp;= mask - 1;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            Byte shortHash = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#af8bcea6f8ee8f6a15fdedd9c314df06b">BucketOpenN1::ptCalcShortHash</a>(hashCode);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a0f83b0a42ad59d353d993872ecc73882">BucketOpenN1::ptGetData</a>();</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            uint64_t mask = (xorHashes - 0x0101010101010101ull) &amp; ~xorHashes &amp; 0x0080808080808080ull;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">while</span> (mask != 0)</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <span class="keywordtype">size_t</span> index = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(MOMO_CTZ64(mask)) &gt;&gt; 3;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                Item* itemPtr = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#acc82f9a4683108adef160f231f6f3040">BucketOpenN1::ptGetItemPtr</a>(index);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                <span class="keywordflow">if</span> (pred(*itemPtr))</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                    <span class="keywordflow">return</span> itemPtr;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                mask &amp;= mask - 1;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">size_t</span> GetNextBucketIndex(<span class="keywordtype">size_t</span> bucketIndex, <span class="keywordtype">size_t</span> <span class="comment">/*hashCode*/</span>,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordtype">size_t</span> bucketCount, <span class="keywordtype">size_t</span> probe) noexcept</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">return</span> (bucketIndex + probe) &amp; (bucketCount - 1);   <span class="comment">// quadratic probing</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">size_t</span> pvCountTrailingZeros15(uint32_t mask) noexcept</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <a class="code" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(0 &lt; mask &amp;&amp; mask &lt; 128);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#ifdef MOMO_CTZ32</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(MOMO_CTZ32(mask));</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> uint8_t tab[127] =</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            };</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <span class="keywordflow">return</span> <span class="keywordtype">size_t</span>{tab[mask - 1]};</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        }</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    };</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">class </span><a class="code" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">HashBucketOpen8</a> : <span class="keyword">public</span> internal::HashBucketBase</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;{</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ItemTraits, <span class="keywordtype">bool</span> useHashCodePartGetter&gt;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">using</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#a064cdb3b177bba1a34dc6ab0db5149c9">Bucket</a> = <span class="keyword">typename</span> std::conditional&lt;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        (useHashCodePartGetter || <span class="keyword">sizeof</span>(<span class="keyword">typename</span> ItemTraits::Item) &gt; 32),  <span class="comment">//?</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        internal::BucketOpen2N2&lt;ItemTraits, 3, useHashCodePartGetter&gt;,</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        internal::BucketOpen8&lt;ItemTraits&gt;&gt;::type;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">size_t</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#aed9dc2d7fc15b075758ee4efb2b6875f">CalcCapacity</a>(<span class="keywordtype">size_t</span> bucketCount, <span class="keywordtype">size_t</span> bucketMaxItemCount) noexcept</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    {</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keywordtype">double</span> maxItemCount = <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(bucketCount * bucketMaxItemCount);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">if</span> (bucketMaxItemCount == 7)</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(maxItemCount / 14.0 * 13.0); <span class="comment">// BucketOpen8</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(maxItemCount / 12.0 * 11.0); <span class="comment">// BucketOpen2N2</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">size_t</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#ac22c927e12bc685c5e901feb4a57ce27">GetBucketCountShift</a>(<span class="keywordtype">size_t</span> <span class="comment">/*bucketCount*/</span>,</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="keywordtype">size_t</span> <span class="comment">/*bucketMaxItemCount*/</span>) noexcept</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    {</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    }</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;};</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
-<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">  158</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html">HashBucketOpen2N2&lt;3&gt;</a> <a class="code" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">HashBucketOpen8</a>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;} <span class="comment">// namespace momo</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN8</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> first, <span class="keyword">typename</span> Predicate&gt;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <a class="code" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> Iterator Find(Params&amp; <span class="comment">/*params*/</span>, <span class="keyword">const</span> Predicate&amp; pred, <span class="keywordtype">size_t</span> hashCode)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#ifdef MOMO_PREFETCH</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">if</span> (first)</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                MOMO_PREFETCH(<a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a774aec4c32852b6020c8a6942613855c">BucketOpenN1::ptGetItemPtr</a>(3));</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            uint8_t shortHash = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#ae7cc567060182dcbaa2121b7698bc251">BucketOpenN1::ptCalcShortHash</a>(hashCode);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#ifdef MOMO_USE_SSE2</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            __m128i shortHashes = _mm_set1_epi8(<span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(shortHash));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            __m128i thisShortHashes = _mm_set_epi64x(int64_t{0},</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                MemCopyer::FromBuffer&lt;int64_t&gt;(<a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a728691d65f90b6f8b80c7ab87531132f">BucketOpenN1::ptGetData</a>()));</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordtype">int</span> mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            mask &amp;= (1 &lt;&lt; maxCount) - 1;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">for</span> (; mask != 0; mask &amp;= mask - 1)</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                <span class="keywordtype">size_t</span> index = pvCountTrailingZeros15(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(mask));</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                Item* itemPtr = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a774aec4c32852b6020c8a6942613855c">BucketOpenN1::ptGetItemPtr</a>(index);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                <span class="keywordflow">if</span> (pred(*itemPtr))</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                    <span class="keywordflow">return</span> itemPtr;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            uint64_t thisShortHashes = MemCopyer::FromBuffer&lt;uint64_t&gt;(<a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a728691d65f90b6f8b80c7ab87531132f">BucketOpenN1::ptGetData</a>());</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ thisShortHashes;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            uint64_t mask = (xorHashes - 0x0101010101010101ull) &amp; ~xorHashes &amp; 0x0080808080808080ull;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">for</span> (; mask != 0; mask &amp;= mask - 1)</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                <span class="keywordtype">size_t</span> index = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(MOMO_CTZ64(mask)) &gt;&gt; 3;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                Item* itemPtr = <a class="code" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a774aec4c32852b6020c8a6942613855c">BucketOpenN1::ptGetItemPtr</a>(index);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="keywordflow">if</span> (pred(*itemPtr))</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    <span class="keywordflow">return</span> itemPtr;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">size_t</span> GetNextBucketIndex(<span class="keywordtype">size_t</span> bucketIndex, <span class="keywordtype">size_t</span> <span class="comment">/*hashCode*/</span>,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordtype">size_t</span> bucketCount, <span class="keywordtype">size_t</span> probe) noexcept</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">return</span> (bucketIndex + probe) &amp; (bucketCount - 1);   <span class="comment">// quadratic probing</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">size_t</span> pvCountTrailingZeros15(uint32_t mask) noexcept</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            <a class="code" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(0 &lt; mask &amp;&amp; mask &lt; 128);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#ifdef MOMO_CTZ32</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(MOMO_CTZ32(mask));</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> uint8_t tab[127] =</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            };</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <span class="keywordflow">return</span> <span class="keywordtype">size_t</span>{tab[mask - 1]};</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    };</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="keyword">class </span><a class="code" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">HashBucketOpen8</a> : <span class="keyword">public</span> internal::HashBucketBase</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;{</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ItemTraits, <span class="keywordtype">bool</span> useHashCodePartGetter&gt;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">using</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#a064cdb3b177bba1a34dc6ab0db5149c9">Bucket</a> = <span class="keyword">typename</span> std::conditional&lt;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        (useHashCodePartGetter || <span class="keyword">sizeof</span>(<span class="keyword">typename</span> ItemTraits::Item) &gt; 32),  <span class="comment">//?</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        internal::BucketOpen2N2&lt;ItemTraits, 3, useHashCodePartGetter&gt;,</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        internal::BucketOpen8&lt;ItemTraits&gt;&gt;::type;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">size_t</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#aed9dc2d7fc15b075758ee4efb2b6875f">CalcCapacity</a>(<span class="keywordtype">size_t</span> bucketCount, <span class="keywordtype">size_t</span> bucketMaxItemCount) noexcept</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordtype">double</span> maxItemCount = <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(bucketCount * bucketMaxItemCount);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">if</span> (bucketMaxItemCount == 7)</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(maxItemCount / 14.0 * 13.0); <span class="comment">// BucketOpen8</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(maxItemCount / 12.0 * 11.0); <span class="comment">// BucketOpen2N2</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">size_t</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html#ac22c927e12bc685c5e901feb4a57ce27">GetBucketCountShift</a>(<span class="keywordtype">size_t</span> <span class="comment">/*bucketCount*/</span>,</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordtype">size_t</span> <span class="comment">/*bucketMaxItemCount*/</span>) noexcept</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;};</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">  153</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="classmomo_1_1_hash_bucket_open2_n2.html">HashBucketOpen2N2&lt;3&gt;</a> <a class="code" href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">HashBucketOpen8</a>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;} <span class="comment">// namespace momo</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif // MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_OPEN8</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespacemomo_html_aab6ab1a0a8c76317d7d8c825b52b808e"><div class="ttname"><a href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">momo::HashBucketOpen8</a></div><div class="ttdeci">HashBucketOpen2N2&lt; 3 &gt; HashBucketOpen8</div><div class="ttdef"><b>Definition:</b> HashBucketOpen8.h:158</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_af8bcea6f8ee8f6a15fdedd9c314df06b"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#af8bcea6f8ee8f6a15fdedd9c314df06b">momo::internal::BucketOpenN1::ptCalcShortHash</a></div><div class="ttdeci">static Byte ptCalcShortHash(size_t hashCode) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:168</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_acc82f9a4683108adef160f231f6f3040"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#acc82f9a4683108adef160f231f6f3040">momo::internal::BucketOpenN1::ptGetItemPtr</a></div><div class="ttdeci">Item * ptGetItemPtr(size_t index) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:163</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a0f83b0a42ad59d353d993872ecc73882"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a0f83b0a42ad59d353d993872ecc73882">momo::internal::BucketOpenN1::ptGetData</a></div><div class="ttdeci">const Data &amp; ptGetData() const noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:158</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_ada8266255bbe857607c66a2e2a972f1e"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#ada8266255bbe857607c66a2e2a972f1e">momo::internal::BucketOpenN1::Item</a></div><div class="ttdeci">ItemTraits::Item Item</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:41</div></div>
+<div class="ttc" id="anamespacemomo_html_aab6ab1a0a8c76317d7d8c825b52b808e"><div class="ttname"><a href="namespacemomo.html#aab6ab1a0a8c76317d7d8c825b52b808e">momo::HashBucketOpen8</a></div><div class="ttdeci">HashBucketOpen2N2&lt; 3 &gt; HashBucketOpen8</div><div class="ttdef"><b>Definition:</b> HashBucketOpen8.h:153</div></div>
 <div class="ttc" id="aclassmomo_1_1_hash_bucket_open2_n2_html_aed9dc2d7fc15b075758ee4efb2b6875f"><div class="ttname"><a href="classmomo_1_1_hash_bucket_open2_n2.html#aed9dc2d7fc15b075758ee4efb2b6875f">momo::HashBucketOpen2N2::CalcCapacity</a></div><div class="ttdeci">static size_t CalcCapacity(size_t bucketCount, size_t) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpen2N2.h:269</div></div>
 <div class="ttc" id="a_hash_bucket_open2_n2_8h_html"><div class="ttname"><a href="_hash_bucket_open2_n2_8h.html">HashBucketOpen2N2.h</a></div></div>
 <div class="ttc" id="anamespacemomo_html"><div class="ttname"><a href="namespacemomo.html">momo</a></div><div class="ttdef"><b>Definition:</b> Array.h:26</div></div>
 <div class="ttc" id="aclassmomo_1_1_hash_bucket_open2_n2_html_a064cdb3b177bba1a34dc6ab0db5149c9"><div class="ttname"><a href="classmomo_1_1_hash_bucket_open2_n2.html#a064cdb3b177bba1a34dc6ab0db5149c9">momo::HashBucketOpen2N2::Bucket</a></div><div class="ttdeci">internal::BucketOpen2N2&lt; ItemTraits, maxCount, useHashCodePartGetter &gt; Bucket</div><div class="ttdef"><b>Definition:</b> HashBucketOpen2N2.h:266</div></div>
 <div class="ttc" id="a_hash_bucket_open_n1_8h_html"><div class="ttname"><a href="_hash_bucket_open_n1_8h.html">HashBucketOpenN1.h</a></div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_ae7cc567060182dcbaa2121b7698bc251"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#ae7cc567060182dcbaa2121b7698bc251">momo::internal::BucketOpenN1::ptCalcShortHash</a></div><div class="ttdeci">static uint8_t ptCalcShortHash(size_t hashCode) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:163</div></div>
 <div class="ttc" id="aclassmomo_1_1_hash_bucket_open2_n2_html_ac22c927e12bc685c5e901feb4a57ce27"><div class="ttname"><a href="classmomo_1_1_hash_bucket_open2_n2.html#ac22c927e12bc685c5e901feb4a57ce27">momo::HashBucketOpen2N2::GetBucketCountShift</a></div><div class="ttdeci">static size_t GetBucketCountShift(size_t, size_t) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpen2N2.h:274</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a6eda41ee6a7487922bbe0ef8c2788a0f"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a6eda41ee6a7487922bbe0ef8c2788a0f">momo::internal::BucketOpenN1::Item</a></div><div class="ttdeci">ItemTraits::Item Item</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:46</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_abb68b1f04dd94ac83cd7312a9c0fa2fc"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#abb68b1f04dd94ac83cd7312a9c0fa2fc">momo::internal::BucketOpenN1::Params</a></div><div class="ttdeci">BucketParamsOpen&lt; MemManager &gt; Params</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:53</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a728691d65f90b6f8b80c7ab87531132f"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a728691d65f90b6f8b80c7ab87531132f">momo::internal::BucketOpenN1::ptGetData</a></div><div class="ttdeci">const void * ptGetData() const noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:153</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a8fef4506e5b3d0733f450597e0af745f"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8fef4506e5b3d0733f450597e0af745f">momo::internal::BucketOpenN1::Params</a></div><div class="ttdeci">BucketParamsOpen&lt; MemManager &gt; Params</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:48</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a086fa17772b708b77aea056e3623f467"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a086fa17772b708b77aea056e3623f467">momo::internal::BucketOpenN1::Iterator</a></div><div class="ttdeci">std::conditional&lt; reverse, std::reverse_iterator&lt; Item * &gt;, Item * &gt;::type Iterator</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:45</div></div>
 <div class="ttc" id="aclassmomo_1_1_hash_bucket_open2_n2_html"><div class="ttname"><a href="classmomo_1_1_hash_bucket_open2_n2.html">momo::HashBucketOpen2N2</a></div><div class="ttdef"><b>Definition:</b> HashBucketOpen2N2.h:261</div></div>
-<div class="ttc" id="a_user_settings_8h_html_a385418dc0e5a2df292e94ed0a9036559"><div class="ttname"><a href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a></div><div class="ttdeci">#define MOMO_FORCEINLINE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:101</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_ab888f24710e9f7494cf0c53e8e7c42dc"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#ab888f24710e9f7494cf0c53e8e7c42dc">momo::internal::BucketOpenN1::Byte</a></div><div class="ttdeci">unsigned char Byte</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:37</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_abca6fbb06ad4d8ba682c10c3f3e0524c"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#abca6fbb06ad4d8ba682c10c3f3e0524c">momo::internal::BucketOpenN1::Iterator</a></div><div class="ttdeci">std::conditional&lt; reverse, std::reverse_iterator&lt; Item * &gt;, Item * &gt;::type Iterator</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:50</div></div>
-<div class="ttc" id="a_user_settings_8h_html_a21cff6113294cd25e6ca42966fdc465f"><div class="ttname"><a href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a></div><div class="ttdeci">#define MOMO_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:146</div></div>
+<div class="ttc" id="a_user_settings_8h_html_a385418dc0e5a2df292e94ed0a9036559"><div class="ttname"><a href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a></div><div class="ttdeci">#define MOMO_FORCEINLINE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:105</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_bucket_open_n1_html_a774aec4c32852b6020c8a6942613855c"><div class="ttname"><a href="classmomo_1_1internal_1_1_bucket_open_n1.html#a774aec4c32852b6020c8a6942613855c">momo::internal::BucketOpenN1::ptGetItemPtr</a></div><div class="ttdeci">Item * ptGetItemPtr(size_t index) noexcept</div><div class="ttdef"><b>Definition:</b> HashBucketOpenN1.h:158</div></div>
+<div class="ttc" id="a_user_settings_8h_html_a21cff6113294cd25e6ca42966fdc465f"><div class="ttname"><a href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a></div><div class="ttdeci">#define MOMO_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:153</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_b21d6878dbe65ea14b0f92031eed0ea0.html">momo</a></li><li class="navelem"><a class="el" href="dir_cfe55d362819de549107e0b2cf864d7e.html">details</a></li><li class="navelem"><a class="el" href="_hash_bucket_open8_8h.html">HashBucketOpen8.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_f60e7dbcfd88bfb6ae5efd67bdf84475.html">momo</a></li><li class="navelem"><a class="el" href="dir_241581ce5756d73da66ec0dd92114799.html">details</a></li><li class="navelem"><a class="el" href="_hash_bucket_open8_8h.html">HashBucketOpen8.h</a></li>
     <li class="footer">Generated by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19 </li>
   </ul>
 </div>

@@ -1,5 +1,6 @@
 var _user_settings_8h =
 [
+    [ "MOMO_ALIGNED_STORAGE", "_user_settings_8h.html#acf1fab8fc3baa0bb4ed7152f34a6ce76", null ],
     [ "MOMO_ASSERT", "_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f", null ],
     [ "MOMO_CHECK_EXCEPTION", "_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846", null ],
     [ "MOMO_CHECK_ITERATOR_VERSION", "_user_settings_8h.html#a4bde5f20e4a900321ff77b25d9cfebb4", null ],
@@ -22,6 +23,5 @@ var _user_settings_8h =
     [ "MOMO_NODISCARD", "_user_settings_8h.html#ac91901db38c236c1614113e4759195ff", null ],
     [ "MOMO_NOINLINE", "_user_settings_8h.html#af452a6b523eb6408184b712b0bafcd8c", null ],
     [ "MOMO_NULL_UINTPTR", "_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845", null ],
-    [ "MOMO_OBJECT_BUFFER", "_user_settings_8h.html#a67be118c16f232780c09a69e7dc0e219", null ],
     [ "MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD", "_user_settings_8h.html#a465b4e68c7701a2a207206b4af6177cd", null ]
 ];

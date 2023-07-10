@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo/DataRow.h Source File</title>
+<title>momo: include/momo/DataRow.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -184,7 +184,7 @@ $(document).ready(function(){initNavTree('_data_row_8h_source.html',''); initRes
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            {</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <span class="keywordtype">void</span>* headRaw = *mFreeRaws;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <a class="code" href="classmomo_1_1internal_1_1_ptr_caster.html#a477f7a8e9745b2a22389ea58be26261f">PtrCaster::ToBuffer</a>(headRaw, raw);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <a class="code" href="classmomo_1_1internal_1_1_mem_copyer.html#a328d01a6a8cbe106415bf5594b89b31d">MemCopyer::ToBuffer</a>(headRaw, raw);</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                <span class="keywordflow">if</span> (mFreeRaws-&gt;compare_exchange_weak(headRaw, raw))</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                    <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            }</div>
@@ -527,6 +527,7 @@ $(document).ready(function(){initNavTree('_data_row_8h_source.html',''); initRes
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_html_a25831039f6daacb4b42d9f6d698d6b7f"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row.html#a25831039f6daacb4b42d9f6d698d6b7f">momo::internal::DataRow::DataRow</a></div><div class="ttdeci">DataRow()=delete</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_html_aa0893036b68b746799625872a6d63685"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row.html#aa0893036b68b746799625872a6d63685">momo::internal::DataRow::Get</a></div><div class="ttdeci">MOMO_FORCEINLINE const Item &amp; Get(const Column&lt; Item &gt; &amp;column) const</div><div class="ttdef"><b>Definition:</b> DataRow.h:140</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_reference_html_a13bf88b60fb10b92769b12f2c4287a5e"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row_reference.html#a13bf88b60fb10b92769b12f2c4287a5e">momo::internal::DataRowReference::ColumnList</a></div><div class="ttdeci">TColumnList ColumnList</div><div class="ttdef"><b>Definition:</b> DataRow.h:327</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_mem_copyer_html_a328d01a6a8cbe106415bf5594b89b31d"><div class="ttname"><a href="classmomo_1_1internal_1_1_mem_copyer.html#a328d01a6a8cbe106415bf5594b89b31d">momo::internal::MemCopyer::ToBuffer</a></div><div class="ttdeci">static void ToBuffer(Object object, void *buffer) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:202</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_html_a48c1867d9b50fcee14737f6a028ee820"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row.html#a48c1867d9b50fcee14737f6a028ee820">momo::internal::DataRow::DataRow</a></div><div class="ttdeci">DataRow(const ColumnList *columnList, Raw *raw, FreeRaws *freeRaws) noexcept</div><div class="ttdef"><b>Definition:</b> DataRow.h:208</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_const_row_reference_html_a6117c3fa4f5ff28a55cd275703d64a69"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_const_row_reference.html#a6117c3fa4f5ff28a55cd275703d64a69">momo::internal::DataConstRowReference::Raw</a></div><div class="ttdeci">ColumnList::Raw Raw</div><div class="ttdef"><b>Definition:</b> DataRow.h:239</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_ptr_visitor_html_a9676256f1bb1f96d109f7df0810d97cc"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">momo::internal::DataPtrVisitor::RefVisitor</a></div><div class="ttdeci">TRefVisitor RefVisitor</div><div class="ttdef"><b>Definition:</b> DataRow.h:29</div></div>
@@ -565,9 +566,8 @@ $(document).ready(function(){initNavTree('_data_row_8h_source.html',''); initRes
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_const_row_reference_html_afab08f3c37e85ec83f8739512c045bd5"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_const_row_reference.html#afab08f3c37e85ec83f8739512c045bd5">momo::internal::DataConstRowReference&lt; ColumnList &gt;::Column</a></div><div class="ttdeci">typename ColumnList::template Column&lt; Item &gt; Column</div><div class="ttdef"><b>Definition:</b> DataRow.h:242</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_reference_html_aa47faa6d3515b43f11cb92f4d64b66cd"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row_reference.html#aa47faa6d3515b43f11cb92f4d64b66cd">momo::internal::DataRowReference::GetMutable</a></div><div class="ttdeci">Item &amp; GetMutable(const Column&lt; Item &gt; &amp;column) const</div><div class="ttdef"><b>Definition:</b> DataRow.h:348</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_const_row_reference_html_a90c5dbf8fb24f17aa9dbf96b50f16971"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_const_row_reference.html#a90c5dbf8fb24f17aa9dbf96b50f16971">momo::internal::DataConstRowReference::GetNumber</a></div><div class="ttdeci">size_t GetNumber() const</div><div class="ttdef"><b>Definition:</b> DataRow.h:276</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_a477f7a8e9745b2a22389ea58be26261f"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#a477f7a8e9745b2a22389ea58be26261f">momo::internal::PtrCaster::ToBuffer</a></div><div class="ttdeci">static void ToBuffer(Object *ptr, void *ptrBuffer) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:214</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_html_a0701df332611b89ae1cb67596e8dde4f"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row.html#a0701df332611b89ae1cb67596e8dde4f">momo::internal::DataRow::operator-&gt;</a></div><div class="ttdeci">Raw * operator-&gt;() noexcept</div><div class="ttdef"><b>Definition:</b> DataRow.h:202</div></div>
-<div class="ttc" id="a_user_settings_8h_html_a385418dc0e5a2df292e94ed0a9036559"><div class="ttname"><a href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a></div><div class="ttdeci">#define MOMO_FORCEINLINE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:101</div></div>
+<div class="ttc" id="a_user_settings_8h_html_a385418dc0e5a2df292e94ed0a9036559"><div class="ttname"><a href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a></div><div class="ttdeci">#define MOMO_FORCEINLINE</div><div class="ttdef"><b>Definition:</b> UserSettings.h:105</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_row_reference_html_a4e3eb44e4f231c54ce43d28fa08d12ae"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_row_reference.html#a4e3eb44e4f231c54ce43d28fa08d12ae">momo::internal::DataRowReference::ConstReference</a></div><div class="ttdeci">DataConstRowReference&lt; ColumnList &gt; ConstReference</div><div class="ttdef"><b>Definition:</b> DataRow.h:334</div></div>
 <div class="ttc" id="a_utility_8h_html_a61ba943cf82f91b4594bcc6021b291df"><div class="ttname"><a href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">MOMO_CHECK</a></div><div class="ttdeci">#define MOMO_CHECK(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:72</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_data_const_row_reference_html_a2b6f21610a0307e0d1e8e05db9bd03d1"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_const_row_reference.html#a2b6f21610a0307e0d1e8e05db9bd03d1">momo::internal::DataConstRowReference::VisitPointers</a></div><div class="ttdeci">void VisitPointers(const PtrVisitor &amp;ptrVisitor) const</div><div class="ttdef"><b>Definition:</b> DataRow.h:282</div></div>
@@ -590,7 +590,7 @@ $(document).ready(function(){initNavTree('_data_row_8h_source.html',''); initRes
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_b21d6878dbe65ea14b0f92031eed0ea0.html">momo</a></li><li class="navelem"><a class="el" href="_data_row_8h.html">DataRow.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_f60e7dbcfd88bfb6ae5efd67bdf84475.html">momo</a></li><li class="navelem"><a class="el" href="_data_row_8h.html">DataRow.h</a></li>
     <li class="footer">Generated by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19 </li>
   </ul>
 </div>

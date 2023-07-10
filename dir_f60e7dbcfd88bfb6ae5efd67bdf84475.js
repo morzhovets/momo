@@ -1,14 +1,12 @@
-var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
+var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
 [
-    [ "details", "dir_cfe55d362819de549107e0b2cf864d7e.html", "dir_cfe55d362819de549107e0b2cf864d7e" ],
-    [ "stdish", "dir_5b81f8d7d8dbbcc34647b258836d1173.html", "dir_5b81f8d7d8dbbcc34647b258836d1173" ],
+    [ "details", "dir_241581ce5756d73da66ec0dd92114799.html", "dir_241581ce5756d73da66ec0dd92114799" ],
+    [ "stdish", "dir_f35bdc44c6096817f5baccc572791ca4.html", "dir_f35bdc44c6096817f5baccc572791ca4" ],
     [ "Array.h", "_array_8h.html", "_array_8h" ],
     [ "ArrayUtility.h", "_array_utility_8h.html", [
       [ "ArrayIndexIteratorTraitsStd", "structmomo_1_1internal_1_1_array_index_iterator_traits_std.html", null ],
       [ "ArrayIndexIteratorTraitsStd< Array, Item, decltype(std::declval< Array & >().GetItems())>", "structmomo_1_1internal_1_1_array_index_iterator_traits_std_3_01_array_00_01_item_00_01decltype_021b4c25d5328fd95423d79d2b98b7a3a.html", null ],
       [ "ArrayIndexIterator", "classmomo_1_1internal_1_1_array_index_iterator.html", "classmomo_1_1internal_1_1_array_index_iterator" ],
-      [ "ArrayBuffer", "classmomo_1_1internal_1_1_array_buffer.html", "classmomo_1_1internal_1_1_array_buffer" ],
-      [ "ArrayBuffer< TItemTraits, 0 >", "classmomo_1_1internal_1_1_array_buffer_3_01_t_item_traits_00_010_01_4.html", "classmomo_1_1internal_1_1_array_buffer_3_01_t_item_traits_00_010_01_4" ],
       [ "ArrayItemHandler", "classmomo_1_1internal_1_1_array_item_handler.html", "classmomo_1_1internal_1_1_array_item_handler" ],
       [ "ArrayShifter", "classmomo_1_1internal_1_1_array_shifter.html", "classmomo_1_1internal_1_1_array_shifter" ],
       [ "iterator_traits< momo::internal::ArrayIndexIterator< A, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_array_index_iterator_3_01_a_00_01_i_01_4_01_4.html", null ]
@@ -67,6 +65,10 @@ var dir_b21d6878dbe65ea14b0f92031eed0ea0 =
       [ "iterator_traits< momo::internal::MapValueIterator< SI > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_map_value_iterator_3_01_s_i_01_4_01_4.html", null ]
     ] ],
     [ "MemManager.h", "_mem_manager_8h.html", "_mem_manager_8h" ],
+    [ "MemManagerDict.h", "_mem_manager_dict_8h.html", [
+      [ "MemManagerDictSettings", "classmomo_1_1_mem_manager_dict_settings.html", "classmomo_1_1_mem_manager_dict_settings" ],
+      [ "MemManagerDict", "classmomo_1_1_mem_manager_dict.html", "classmomo_1_1_mem_manager_dict" ]
+    ] ],
     [ "MemPool.h", "_mem_pool_8h.html", [
       [ "MemPoolConst", "classmomo_1_1_mem_pool_const.html", null ],
       [ "MemPoolParams", "classmomo_1_1_mem_pool_params.html", "classmomo_1_1_mem_pool_params" ],

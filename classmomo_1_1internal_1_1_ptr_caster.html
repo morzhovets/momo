@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.7</span>
+   &#160;<span id="projectnumber">3.8</span>
    </div>
   </td>
  </tr>
@@ -100,45 +100,11 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aead6e7bc342364da657e7fba9ebf8888"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
 <tr class="memitem:aead6e7bc342364da657e7fba9ebf8888"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">FromUInt</a> (uintptr_t intPtr) noexcept</td></tr>
 <tr class="separator:aead6e7bc342364da657e7fba9ebf8888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a477f7a8e9745b2a22389ea58be26261f"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
-<tr class="memitem:a477f7a8e9745b2a22389ea58be26261f"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#a477f7a8e9745b2a22389ea58be26261f">ToBuffer</a> (Object *ptr, void *ptrBuffer) noexcept</td></tr>
-<tr class="separator:a477f7a8e9745b2a22389ea58be26261f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64d9ad39579e60864384a2f857c8df0d"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
-<tr class="memitem:a64d9ad39579e60864384a2f857c8df0d"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#a64d9ad39579e60864384a2f857c8df0d">FromBuffer</a> (const void *ptrBuffer) noexcept</td></tr>
-<tr class="separator:a64d9ad39579e60864384a2f857c8df0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3805bcb0af35f5420dffbb477e120a0"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename Object , typename Offset &gt; </td></tr>
 <tr class="memitem:ab3805bcb0af35f5420dffbb477e120a0"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">Shift</a> (Object *ptr, Offset byteOffset) noexcept</td></tr>
 <tr class="separator:ab3805bcb0af35f5420dffbb477e120a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a64d9ad39579e60864384a2f857c8df0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64d9ad39579e60864384a2f857c8df0d">&#9670;&nbsp;</a></span>FromBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename ResObject  = void&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static ResObject* momo::internal::PtrCaster::FromBuffer </td>
-          <td>(</td>
-          <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>ptrBuffer</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aead6e7bc342364da657e7fba9ebf8888"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aead6e7bc342364da657e7fba9ebf8888">&#9670;&nbsp;</a></span>FromUInt()</h2>
 
@@ -205,44 +171,6 @@ template&lt;typename ResObject , typename Object , typename Offset &gt; </div>
 
 </div>
 </div>
-<a id="a477f7a8e9745b2a22389ea58be26261f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a477f7a8e9745b2a22389ea58be26261f">&#9670;&nbsp;</a></span>ToBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Object &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void momo::internal::PtrCaster::ToBuffer </td>
-          <td>(</td>
-          <td class="paramtype">Object *&#160;</td>
-          <td class="paramname"><em>ptr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>ptrBuffer</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ad6de9d89802d2d68dc09fe1c7e966ab5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad6de9d89802d2d68dc09fe1c7e966ab5">&#9670;&nbsp;</a></span>ToUInt()</h2>
 
@@ -272,7 +200,7 @@ template&lt;typename Object &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>momo/<a class="el" href="_utility_8h_source.html">Utility.h</a></li>
+<li>include/momo/<a class="el" href="_utility_8h_source.html">Utility.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
