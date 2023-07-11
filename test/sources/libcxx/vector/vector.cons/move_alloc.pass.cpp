@@ -108,6 +108,23 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(is_contiguous_container_asan_correct(l2));
     }
 #endif
+    {
+      vector<MoveOnly, safe_allocator<MoveOnly> > l((safe_allocator<MoveOnly>()));
+      vector<MoveOnly, safe_allocator<MoveOnly> > lo((safe_allocator<MoveOnly>()));
+      assert(is_contiguous_container_asan_correct(l));
+      assert(is_contiguous_container_asan_correct(lo));
+      for (int i = 1; i <= 3; ++i) {
+        l.push_back(i);
+        lo.push_back(i);
+      }
+      assert(is_contiguous_container_asan_correct(l));
+      assert(is_contiguous_container_asan_correct(lo));
+      vector<MoveOnly, safe_allocator<MoveOnly> > l2(std::move(l), safe_allocator<MoveOnly>());
+      assert(l2 == lo);
+      assert(l.empty());
+      assert(l2.get_allocator() == safe_allocator<MoveOnly>());
+      assert(is_contiguous_container_asan_correct(l2));
+    }
 
     return true;
 }

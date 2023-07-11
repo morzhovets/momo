@@ -61,12 +61,15 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(l2.empty());
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
         int* an = a + sizeof(a)/sizeof(a[0]);
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
         test(vector<int, min_allocator<int>>(a, an), min_allocator<int>());
+#endif
+        test(vector<int, safe_allocator<int>>(a, an), safe_allocator<int>());
     }
+#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         vector<int, min_allocator<int> > l(3, 2, min_allocator<int>());
         vector<int, min_allocator<int> > l2(l, min_allocator<int>());
@@ -74,6 +77,12 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(l2.get_allocator() == min_allocator<int>());
     }
 #endif
+    {
+      vector<int, safe_allocator<int> > l(3, 2, safe_allocator<int>());
+      vector<int, safe_allocator<int> > l2(l, safe_allocator<int>());
+      assert(l2 == l);
+      assert(l2.get_allocator() == safe_allocator<int>());
+    }
 #endif
 
     return true;

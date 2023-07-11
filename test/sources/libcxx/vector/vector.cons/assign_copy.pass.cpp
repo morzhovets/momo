@@ -88,6 +88,13 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(l2.get_allocator() == min_allocator<int>());
     }
 #endif
+    {
+      vector<int, safe_allocator<int> > l(3, 2, safe_allocator<int>());
+      vector<int, safe_allocator<int> > l2(l, safe_allocator<int>());
+      l2 = l;
+      assert(l2 == l);
+      assert(l2.get_allocator() == safe_allocator<int>());
+    }
 #endif
 
     return true;

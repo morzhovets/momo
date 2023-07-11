@@ -65,6 +65,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     test<vector<int, min_allocator<int>>>(0);
     test<vector<int, min_allocator<int>>>(50);
 #endif
+    test<vector<int, safe_allocator<int>>>(0);
+    test<vector<int, safe_allocator<int>>>(50);
 #endif
 
     return true;
@@ -84,6 +86,8 @@ void main() {
     test<vector<DefaultOnly, min_allocator<DefaultOnly>>>(0);
     test<vector<DefaultOnly, min_allocator<DefaultOnly>>>(500);
 #endif
+    test<vector<DefaultOnly, safe_allocator<DefaultOnly>>>(0);
+    test<vector<DefaultOnly, safe_allocator<DefaultOnly>>>(500);
     test<vector<DefaultOnly, test_allocator<DefaultOnly>>>(0, test_allocator<DefaultOnly>(23));
     test<vector<DefaultOnly, test_allocator<DefaultOnly>>>(100, test_allocator<DefaultOnly>(23));
     assert(DefaultOnly::count == 0);

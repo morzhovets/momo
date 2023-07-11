@@ -42,7 +42,7 @@ TEST_CONSTEXPR_CXX20 void test(Iterator first, Iterator last) {
     LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
     for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e;
       ++i, ++first)
-      assert(*i == *first);
+    assert(*i == *first);
   }
   // Test with an empty range
   {
@@ -94,6 +94,13 @@ TEST_CONSTEXPR_CXX20 void basic_test_cases() {
       random_access_iterator<const int*>(an));
 #endif
   test<vector<int> >(a, an);
+  test<vector<int, safe_allocator<int> > >(
+      cpp17_input_iterator<const int*>(a), cpp17_input_iterator<const int*>(an));
+  test<vector<int, safe_allocator<int> > >(forward_iterator<const int*>(a), forward_iterator<const int*>(an));
+  test<vector<int, safe_allocator<int> > >(
+      bidirectional_iterator<const int*>(a), bidirectional_iterator<const int*>(an));
+  test<vector<int, safe_allocator<int> > >(
+      random_access_iterator<const int*>(a), random_access_iterator<const int*>(an));
 #endif
 }
 

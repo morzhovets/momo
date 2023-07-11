@@ -96,6 +96,20 @@ TEST_CONSTEXPR_CXX20 void basic_tests() {
     test<vector<int, implicit_conv_allocator<int> > >(a, an, nullptr);
   }
 #endif
+  {
+    int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
+    int* an = a + sizeof(a) / sizeof(a[0]);
+    safe_allocator<int> alloc;
+    test<vector<int, safe_allocator<int> > >(
+        cpp17_input_iterator<const int*>(a), cpp17_input_iterator<const int*>(an), alloc);
+    test<vector<int, safe_allocator<int> > >(
+        forward_iterator<const int*>(a), forward_iterator<const int*>(an), alloc);
+    test<vector<int, safe_allocator<int> > >(
+        bidirectional_iterator<const int*>(a), bidirectional_iterator<const int*>(an), alloc);
+    test<vector<int, safe_allocator<int> > >(
+        random_access_iterator<const int*>(a), random_access_iterator<const int*>(an), alloc);
+    test<vector<int, safe_allocator<int> > >(a, an, alloc);
+  }
 #endif
 }
 

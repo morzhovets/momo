@@ -43,6 +43,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     test<vector<int, min_allocator<int>> >(0, 3, min_allocator<int>());
     test<vector<int, min_allocator<int>> >(50, 3, min_allocator<int>());
 #endif
+    test<vector<int, safe_allocator<int>> >(0, 3, safe_allocator<int>());
+    test<vector<int, safe_allocator<int>> >(50, 3, safe_allocator<int>());
 #endif
 
     return true;
