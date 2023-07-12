@@ -39,8 +39,10 @@ jobs:
       uses: actions/checkout@v3
     - name: Install Ninja
       run: sudo apt-get install ninja-build
-    - name: Install Clang
-      run: sudo apt install clang-${{ matrix.clang_ver }}
+    - name: Setup Clang
+      uses: egor-tensin/setup-clang@v1
+      with:
+        version: ${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: clang++-${{ matrix.clang_ver }}
