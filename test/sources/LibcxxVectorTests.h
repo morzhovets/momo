@@ -220,6 +220,10 @@ LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "libcxx/vector/vector.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(cons_exceptions)
+//#include "libcxx/vector/vector.cons/exceptions.pass.cpp"
+//LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "libcxx/vector/vector.cons/initializer_list.pass.cpp"
 LIBCXX_TEST_END
