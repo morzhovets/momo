@@ -102,7 +102,13 @@ jobs:
     - name: Install Ninja
       run: sudo apt-get install ninja-build
     - name: Install Clang
+      if: matrix.ubuntu_ver == '20.04'
       run: sudo apt install clang-${{ matrix.clang_ver }}
+    - name: Setup Clang
+      if: matrix.ubuntu_ver == '22.04'
+      uses: egor-tensin/setup-clang@v1
+      with:
+        version: ${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: clang++-${{ matrix.clang_ver }}
