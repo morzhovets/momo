@@ -81,11 +81,9 @@ constexpr bool test_sequence_container_spaceship() {
   // `LessAndEqComp` does not have `operator<=>`. Ordering is synthesized based on `operator<`
   test_sequence_container_spaceship_with_type<Container, LessAndEqComp, std::weak_ordering>();
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   // Thanks to SFINAE, the following is not a compiler error but returns `false`
   struct NonComparable {};
   static_assert(!std::three_way_comparable<Container<NonComparable>>);
-#endif
 
   return true;
 }

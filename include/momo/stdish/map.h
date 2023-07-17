@@ -677,6 +677,7 @@ namespace internal
 		}
 
 		auto operator<=>(const map_base& right) const
+			requires requires (const_reference ref) { ref <=> ref; }
 		{
 			return std::lexicographical_compare_three_way(begin(), end(),
 				right.begin(), right.end());

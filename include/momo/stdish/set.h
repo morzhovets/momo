@@ -554,6 +554,7 @@ public:
 	}
 
 	auto operator<=>(const set& right) const
+		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
 		auto comp = [] (const value_type& value1, const value_type& value2)
 			{ return std::tie(value1) <=> std::tie(value2); };
