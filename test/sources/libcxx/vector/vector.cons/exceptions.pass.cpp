@@ -23,24 +23,46 @@
 //#include "count_new.h"
 //#include "test_iterators.h"
 
+struct GlobalMemCounter
+{
+  inline static size_t size = 0;
+};
+
 template <class T>
-struct Allocator {
+struct AllocatorBase {
   using value_type      = T;
   using is_always_equal = std::false_type;
 
-  template <class U>
-  Allocator(const Allocator<U>&) {}
+  AllocatorBase() = default;
 
-  Allocator(bool should_throw = true) {
+  template <class U>
+  AllocatorBase(const AllocatorBase<U>&) {}
+
+  T* allocate(std::size_t n)
+  {
+    GlobalMemCounter::size += n * sizeof(T);
+    return std::allocator<T>().allocate(n);
+  }
+
+  void deallocate(T* ptr, std::size_t n)
+  {
+    GlobalMemCounter::size -= n * sizeof(T);
+    std::allocator<T>().deallocate(ptr, n);
+  }
+
+  template <class U>
+  friend bool operator==(const AllocatorBase&, const AllocatorBase<U>&) { return true; }
+};
+
+template <class T>
+struct AllocatorThrow : public AllocatorBase<T> {
+  template <class U>
+  AllocatorThrow(const AllocatorThrow<U>&) {}
+
+  AllocatorThrow(bool should_throw = true) {
     if (should_throw)
       throw 0;
   }
-
-  T* allocate(std::size_t n) { return std::allocator<T>().allocate(n); }
-  void deallocate(T* ptr, std::size_t n) { std::allocator<T>().deallocate(ptr, n); }
-
-  template <class U>
-  friend bool operator==(const Allocator&, const Allocator<U>&) { return true; }
 };
 
 struct ThrowingT {
@@ -100,22 +122,28 @@ struct Iterator {
 };
 
 void check_new_delete_called() {
+  assert(GlobalMemCounter::size == 0);
   //assert(globalMemCounter.new_called == globalMemCounter.delete_called);
   //assert(globalMemCounter.new_array_called == globalMemCounter.delete_array_called);
   //assert(globalMemCounter.aligned_new_called == globalMemCounter.aligned_delete_called);
   //assert(globalMemCounter.aligned_new_array_called == globalMemCounter.aligned_delete_array_called);
 }
 
+template<typename T>
+using AllocThrowVec = vector<T, AllocatorThrow<T>>;
+
+template<typename T>
+using AllocBaseVec = vector<T, AllocatorBase<T>>;
+
 void main() {
-  using AllocVec = vector<int, Allocator<int> >;
   try { // vector()
-    AllocVec vec;
+    AllocThrowVec<int> vec;
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(size_type) from type
-    vector<ThrowingT> get_alloc(1);
+    AllocBaseVec<ThrowingT> get_alloc(1);
   } catch (int) {
   }
   check_new_delete_called();
@@ -124,62 +152,62 @@ void main() {
   try { // Throw in vector(size_type, value_type) from type
     int throw_after = 1;
     ThrowingT v(throw_after);
-    vector<ThrowingT> get_alloc(1, v);
+    AllocBaseVec<ThrowingT> get_alloc(1, v);
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(size_type, const allocator_type&) from allocator
-    Allocator<int> alloc(false);
-    AllocVec get_alloc(0, alloc);
+    AllocatorThrow<int> alloc(false);
+    AllocThrowVec<int> get_alloc(0, alloc);
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(size_type, const allocator_type&) from the type
-    vector<ThrowingT> vec(1, std::allocator<ThrowingT>());
+    AllocBaseVec<ThrowingT> vec(1, AllocatorBase<ThrowingT>());
   } catch (int) {
   }
   check_new_delete_called();
 #endif  // TEST_STD_VER >= 14
 
   try { // Throw in vector(InputIterator, InputIterator) from input iterator
-    vector<int> vec((Iterator<std::input_iterator_tag>()), Iterator<std::input_iterator_tag>(2));
+    AllocBaseVec<int> vec((Iterator<std::input_iterator_tag>()), Iterator<std::input_iterator_tag>(2));
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(InputIterator, InputIterator) from forward iterator
-    vector<int> vec((Iterator<std::forward_iterator_tag>()), Iterator<std::forward_iterator_tag>(2));
+    AllocBaseVec<int> vec((Iterator<std::forward_iterator_tag>()), Iterator<std::forward_iterator_tag>(2));
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(InputIterator, InputIterator) from allocator
     int a[] = {1, 2};
-    AllocVec vec(cpp17_input_iterator<int*>(a), cpp17_input_iterator<int*>(a + 2));
+    AllocThrowVec<int> vec(cpp17_input_iterator<int*>(a), cpp17_input_iterator<int*>(a + 2));
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(InputIterator, InputIterator, const allocator_type&) from input iterator
-    std::allocator<int> alloc;
-    vector<int> vec(Iterator<std::input_iterator_tag>(), Iterator<std::input_iterator_tag>(2), alloc);
+    AllocatorBase<int> alloc;
+    AllocBaseVec<int> vec(Iterator<std::input_iterator_tag>(), Iterator<std::input_iterator_tag>(2), alloc);
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(InputIterator, InputIterator, const allocator_type&) from forward iterator
-    std::allocator<int> alloc;
-    vector<int> vec(Iterator<std::forward_iterator_tag>(), Iterator<std::forward_iterator_tag>(2), alloc);
+    AllocatorBase<int> alloc;
+    AllocBaseVec<int> vec(Iterator<std::forward_iterator_tag>(), Iterator<std::forward_iterator_tag>(2), alloc);
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(InputIterator, InputIterator, const allocator_type&) from allocator
     int a[] = {1, 2};
-    Allocator<int> alloc(false);
-    AllocVec vec(cpp17_input_iterator<int*>(a), cpp17_input_iterator<int*>(a + 2), alloc);
+    AllocatorThrow<int> alloc(false);
+    AllocThrowVec<int> vec(cpp17_input_iterator<int*>(a), cpp17_input_iterator<int*>(a + 2), alloc);
   } catch (int) {
     // FIXME: never called.
   }
@@ -187,15 +215,15 @@ void main() {
 
   try { // Throw in vector(InputIterator, InputIterator, const allocator_type&) from allocator
     int a[] = {1, 2};
-    Allocator<int> alloc(false);
-    AllocVec vec(forward_iterator<int*>(a), forward_iterator<int*>(a + 2), alloc);
+    AllocatorThrow<int> alloc(false);
+    AllocThrowVec<int> vec(forward_iterator<int*>(a), forward_iterator<int*>(a + 2), alloc);
   } catch (int) {
     // FIXME: never called.
   }
   check_new_delete_called();
 
   try { // Throw in vector(const vector&) from type
-    vector<ThrowingT> vec;
+    AllocBaseVec<ThrowingT> vec;
     int throw_after = 0;
     vec.emplace_back(throw_after);
     auto vec2 = vec;
@@ -204,20 +232,20 @@ void main() {
   check_new_delete_called();
 
   try { // Throw in vector(const vector&, const allocator_type&) from type
-    vector<ThrowingT> vec;
+    AllocBaseVec<ThrowingT> vec;
     int throw_after = 1;
     vec.emplace_back(throw_after);
-    vector<ThrowingT> vec2(vec, std::allocator<int>());
+    AllocBaseVec<ThrowingT> vec2(vec, AllocatorBase<int>());
   } catch (int) {
   }
   check_new_delete_called();
 
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
   try { // Throw in vector(vector&&, const allocator_type&) from type
-    vector<ThrowingT, Allocator<ThrowingT> > vec(Allocator<ThrowingT>(false));
+    AllocThrowVec<ThrowingT> vec(AllocatorThrow<ThrowingT>(false));
     int throw_after = 1;
     vec.emplace_back(throw_after);
-    vector<ThrowingT, Allocator<ThrowingT> > vec2(std::move(vec), Allocator<ThrowingT>(false));
+    AllocThrowVec<ThrowingT> vec2(std::move(vec), AllocatorThrow<ThrowingT>(false));
   } catch (int) {
   }
   check_new_delete_called();
@@ -226,14 +254,14 @@ void main() {
 #if TEST_STD_VER >= 11
   try { // Throw in vector(initializer_list<value_type>) from type
     int throw_after = 1;
-    vector<ThrowingT> vec({ThrowingT(throw_after)});
+    AllocBaseVec<ThrowingT> vec({ThrowingT(throw_after)});
   } catch (int) {
   }
   check_new_delete_called();
 
   try { // Throw in vector(initializer_list<value_type>, const allocator_type&) constructor from type
     int throw_after = 1;
-    vector<ThrowingT> vec({ThrowingT(throw_after)}, std::allocator<ThrowingT>());
+    AllocBaseVec<ThrowingT> vec({ThrowingT(throw_after)}, AllocatorBase<ThrowingT>());
   } catch (int) {
   }
   check_new_delete_called();
