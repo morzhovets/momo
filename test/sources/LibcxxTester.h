@@ -53,8 +53,6 @@ using input_iterator = cpp17_input_iterator<It>;
 
 struct LibcppIntHash
 {
-	typedef int argument_type;
-
 	size_t operator()(int key) const noexcept
 	{
 		return static_cast<size_t>(key);
@@ -65,13 +63,18 @@ struct LibcppIntHash
 
 #define LIBCXX_TEST_BEGIN(name) \
 	namespace name { \
-	void main(); \
-	static int testLibcxx = [] \
-	{ \
-		std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
-		main(); \
-		std::cout << "ok" << std::endl; \
-		return 0; \
-	}();
+		template<typename Main> \
+		int TestLibcxx(Main main) \
+		{ \
+			std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
+			if constexpr (std::is_same_v<Main, void (*)()>) \
+				main(); \
+			else \
+				main(0, nullptr); \
+			std::cout << "ok" << std::endl; \
+			return 0; \
+		}
 
-#define LIBCXX_TEST_END }
+#define LIBCXX_TEST_END \
+		static int testLibcxx = TestLibcxx(&main); \
+	}
