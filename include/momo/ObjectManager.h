@@ -93,15 +93,15 @@ public:
 			|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object));
 
 public:
-	static void Relocate(MemManager* memManager, Object& srcObject,
-		Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
+	static void Relocate(MemManager* srcMemManager, MemManager* /*dstMemManager*/,
+		Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 	{
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
 		if constexpr (!isTriviallyRelocatable ||
-			(std::is_nothrow_move_constructible_v<Object> && Destroyer::isNothrowDestructible))
+			(std::is_nothrow_move_constructible_v<Object> && Destroyer::isNothrowDestructible))	//?
 		{
 			std::construct_at(dstObject, std::move(srcObject));
-			Destroyer::Destroy(memManager, srcObject);
+			Destroyer::Destroy(srcMemManager, srcObject);
 		}
 		else
 		{
@@ -570,7 +570,7 @@ namespace internal
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
 			noexcept(isNothrowRelocatable) requires isRelocatable
 		{
-			Relocator::Relocate(&memManager, srcObject, dstObject);
+			Relocator::Relocate(&memManager, &memManager, srcObject, dstObject);
 		}
 
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)

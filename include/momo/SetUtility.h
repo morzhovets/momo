@@ -65,10 +65,10 @@ namespace internal
 			ItemManager::Destroyer::Destroy(memManager, item);
 		}
 
-		static void Relocate(MemManager* /*srcMemManager*/, MemManager* dstMemManager,
+		static void Relocate(MemManager* srcMemManager, MemManager* dstMemManager,
 			Item& srcItem, Item* dstItem) noexcept(isNothrowRelocatable)
 		{
-			ItemManager::Relocator::Relocate(dstMemManager, srcItem, dstItem);	//?
+			ItemManager::Relocator::Relocate(srcMemManager, dstMemManager, srcItem, dstItem);
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)

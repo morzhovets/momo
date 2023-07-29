@@ -561,7 +561,7 @@ public:
 					auto pairRemover = [this, newItem] (Key& key, Value& value)
 					{
 						KeyValuePair::template CreateRelocate<KeyValueTraits>(
-							newItem, mHashSet.GetMemManager(), key, value);
+							newItem, nullptr, mHashSet.GetMemManager(), key, value);
 					};
 					extPair.Remove(pairRemover);
 				};
@@ -665,7 +665,10 @@ public:
 				auto pairCreator = [this, &extPair] (Key* newKey, Value* newValue)
 				{
 					auto pairRemover = [this, newKey, newValue] (Key& key, Value& value)
-						{ KeyValueTraits::Relocate(&GetMemManager(), key, value, newKey, newValue); };
+					{
+						KeyValueTraits::Relocate(nullptr, &GetMemManager(),
+							key, value, newKey, newValue);
+					};
 					extPair.Remove(pairRemover);
 				};
 				return pvAdd<true>(pos, std::move(pairCreator));
