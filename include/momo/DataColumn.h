@@ -902,20 +902,11 @@ private:
 			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
 		{
 			if (srcRaw == nullptr)
-			{
-				pvCreate<std::nullptr_t, std::nullptr_t, Items...>(memManager, columns,
-					nullptr, nullptr, raw);
-			}
+				pvCreate<Items...>(memManager, columns, nullptr, nullptr, raw);
 			else if (srcColumnList == nullptr)
-			{
-				pvCreate<std::nullptr_t, const Raw*, Items...>(memManager, columns,
-					nullptr, srcRaw, raw);
-			}
+				pvCreate<Items...>(memManager, columns, nullptr, srcRaw, raw);
 			else
-			{
-				pvCreate<const DataColumnList*, const Raw*, Items...>(memManager, columns,
-					srcColumnList, srcRaw, raw);
-			}
+				pvCreate<Items...>(memManager, columns, srcColumnList, srcRaw, raw);
 		};
 		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
 			{ pvDestroy<void, Items...>(memManager, columns, raw); };
@@ -1016,7 +1007,7 @@ private:
 		return addend1 + addend2;
 	}
 
-	template<typename DataColumnListPtr, typename RawPtr, typename Item, typename... Items>
+	template<typename Item, typename... Items, typename DataColumnListPtr, typename RawPtr>
 	static void pvCreate(MemManager& memManager, const ColumnRecord* columns,
 		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
@@ -1039,8 +1030,7 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		try
 		{
-			pvCreate<DataColumnListPtr, RawPtr, Items...>(memManager, columns + 1,
-				srcColumnList, srcRaw, raw);
+			pvCreate<Items...>(memManager, columns + 1, srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
