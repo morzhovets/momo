@@ -397,22 +397,28 @@ namespace internal
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, std::move(func));
 		}
 
-		static void DestroyKey(MemManager* memManager, Key& key) noexcept
+		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
+		static void DestroyKey(MemManagerPtr memManager, Key& key) noexcept
 		{
-			MOMO_ASSERT(memManager != nullptr);
+			static_assert(!std::is_null_pointer_v<MemManagerPtr>);
 			HashMultiMapKeyValueTraits::DestroyKey(*memManager, key);
 		}
 
-		static void DestroyValue(MemManager* memManager, Value& value) noexcept
+		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
+		static void DestroyValue(MemManagerPtr memManager, Value& value) noexcept
 		{
-			MOMO_ASSERT(memManager != nullptr);
+			static_assert(!std::is_null_pointer_v<MemManagerPtr>);
 			ValueManager::Destroy(*memManager, value);
 		}
 
-		static void Relocate([[maybe_unused]] MemManager* srcMemManager, MemManager* dstMemManager,
-			Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
+		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
+			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
+		static void Relocate([[maybe_unused]] SrcMemManagerPtr srcMemManager,
+			DstMemManagerPtr dstMemManager, Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
 		{
-			MOMO_ASSERT(srcMemManager == dstMemManager && dstMemManager != nullptr);
+			static_assert(!std::is_null_pointer_v<SrcMemManagerPtr>
+				&& !std::is_null_pointer_v<DstMemManagerPtr>);
+			MOMO_ASSERT(srcMemManager == dstMemManager);
 			HashMultiMapKeyValueTraits::RelocateKey(*dstMemManager, srcKey, dstKey);
 			ValueManager::Relocate(*dstMemManager, srcValue, dstValue);
 		}

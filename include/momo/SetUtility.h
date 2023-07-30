@@ -60,12 +60,15 @@ namespace internal
 			return item;
 		}
 
-		static void Destroy(MemManager* memManager, Item& item) noexcept
+		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
+		static void Destroy(MemManagerPtr memManager, Item& item) noexcept
 		{
 			ItemManager::Destroyer::Destroy(memManager, item);
 		}
 
-		static void Relocate(MemManager* srcMemManager, MemManager* dstMemManager,
+		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
+			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
+		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
 			Item& srcItem, Item* dstItem) noexcept(isNothrowRelocatable)
 		{
 			ItemManager::Relocator::Relocate(srcMemManager, dstMemManager, srcItem, dstItem);

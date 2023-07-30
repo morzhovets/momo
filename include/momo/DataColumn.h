@@ -499,8 +499,8 @@ public:
 		(typename ItemManager<Item>::template Creator<>(memManager))(item);
 	}
 
-	template<typename Item>
-	static void Destroy(MemManager* memManager, Item& item) noexcept
+	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr, typename Item>
+	static void Destroy(MemManagerPtr memManager, Item& item) noexcept
 	{
 		ItemManager<Item>::Destroyer::Destroy(memManager, item);
 	}
@@ -793,10 +793,14 @@ public:
 		pvCreateRaw(memManager, nullptr, nullptr, raw);
 	}
 
-	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
+	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
+	void DestroyRaw(MemManagerPtr memManager, Raw* raw) const noexcept
 	{
 		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(memManager, &mColumnRecords[funcRec.columnIndex], raw);
+		{
+			funcRec.destroyFunc(static_cast<MemManager*>(memManager),
+				&mColumnRecords[funcRec.columnIndex], raw);
+		}
 	}
 
 	void ImportRaw(MemManager& memManager, const DataColumnList& srcColumnList,
@@ -919,8 +923,16 @@ private:
 			(MemManager* memManager, const ColumnRecord* columnRecords, Raw* raw) noexcept
 		{
 			const ColumnRecord* columnRecordPtr = columnRecords;
-			(ItemTraits::Destroy(memManager,
-				*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
+			if (memManager != nullptr)
+			{
+				(ItemTraits::Destroy(memManager,
+					*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
+			}
+			else
+			{
+				(ItemTraits::Destroy(nullptr,
+					*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
+			}
 		};
 		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
@@ -1209,7 +1221,8 @@ public:
 		(typename RawManager::template Creator<>(memManager))(raw);
 	}
 
-	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
+	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
+	void DestroyRaw(MemManagerPtr memManager, Raw* raw) const noexcept
 	{
 		RawManager::Destroyer::Destroy(memManager, *raw);
 	}
