@@ -904,35 +904,19 @@ private:
 			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
 		{
 			if (srcRaw == nullptr)
-			{
-				pvCreate<std::nullptr_t, std::nullptr_t, Items...>(memManager, columnRecords,
-					nullptr, nullptr, raw);
-			}
+				pvCreate<Items...>(memManager, columnRecords, nullptr, nullptr, raw);
 			else if (srcColumnList == nullptr)
-			{
-				pvCreate<std::nullptr_t, const Raw*, Items...>(memManager, columnRecords,
-					nullptr, srcRaw, raw);
-			}
+				pvCreate<Items...>(memManager, columnRecords, nullptr, srcRaw, raw);
 			else
-			{
-				pvCreate<const DataColumnList*, const Raw*, Items...>(memManager, columnRecords,
-					srcColumnList, srcRaw, raw);
-			}
+				pvCreate<Items...>(memManager, columnRecords, srcColumnList, srcRaw, raw);
 		};
 		funcRec.destroyFunc = []
 			(MemManager* memManager, const ColumnRecord* columnRecords, Raw* raw) noexcept
 		{
-			const ColumnRecord* columnRecordPtr = columnRecords;
 			if (memManager != nullptr)
-			{
-				(ItemTraits::Destroy(memManager,
-					*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
-			}
+				pvDestroy<Items...>(memManager, columnRecords, raw);
 			else
-			{
-				(ItemTraits::Destroy(nullptr,
-					*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
-			}
+				pvDestroy<Items...>(nullptr, columnRecords, raw);
 		};
 		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
@@ -1028,7 +1012,7 @@ private:
 		return addend1 + addend2;
 	}
 
-	template<typename DataColumnListPtr, typename RawPtr, typename Item, typename... Items>
+	template<typename Item, typename... Items, typename DataColumnListPtr, typename RawPtr>
 	static void pvCreate(MemManager& memManager, const ColumnRecord* columnRecordPtr,
 		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
 	{
@@ -1054,8 +1038,7 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		try
 		{
-			pvCreate<DataColumnListPtr, RawPtr, Items...>(memManager, columnRecordPtr + 1,
-				srcColumnList, srcRaw, raw);
+			pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
 		}
 		catch (...)
 		{
@@ -1068,6 +1051,14 @@ private:
 	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columnRecordPtr*/,
 		DataColumnListPtr /*srcColumnList*/, RawPtr /*srcRaw*/, Raw* /*raw*/) noexcept
 	{
+	}
+
+	template<typename... Items, internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
+	static void pvDestroy(MemManagerPtr memManager, const ColumnRecord* columnRecords, Raw* raw)
+	{
+		const ColumnRecord* columnRecordPtr = columnRecords;
+		(ItemTraits::Destroy(memManager,
+			*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
 	}
 
 	void pvCreateRaw(MemManager& memManager, const DataColumnList* srcColumnList,
