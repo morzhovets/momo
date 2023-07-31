@@ -508,7 +508,7 @@ public:
 	template<typename Item>
 	static void Copy(MemManager& memManager, const Item& srcItem, Item* dstItem)
 	{
-		ItemManager<Item>::Copy(memManager, srcItem, dstItem);
+		ItemManager<Item>::Copy(&memManager, srcItem, dstItem);
 	}
 
 	template<typename ItemArg, typename Item>
@@ -1221,7 +1221,7 @@ public:
 	void ImportRaw(MemManager& memManager, const DataColumnListStatic& /*srcColumnList*/,
 		const Raw* srcRaw, Raw* raw) const
 	{
-		RawManager::Copy(memManager, *srcRaw, raw);
+		RawManager::Copy(&memManager, *srcRaw, raw);
 	}
 
 	template<bool extraCheck = true>

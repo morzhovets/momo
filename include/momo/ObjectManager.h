@@ -509,16 +509,17 @@ namespace internal
 			|| isNothrowSwappable || isNothrowRelocatable;
 
 	public:
-		static void Move(MemManager& memManager, Object&& srcObject, Object* dstObject)
-			noexcept(isNothrowMoveConstructible) requires isMoveConstructible
-		{
-			Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
-		}
-
-		static void Copy(MemManager& memManager, const Object& srcObject, Object* dstObject)
+		static void Copy(MemManager* memManager, const Object& srcObject, Object* dstObject)
 			requires isCopyConstructible
 		{
-			Creator<const Object&>(memManager, srcObject)(dstObject);
+			MOMO_ASSERT(memManager != nullptr);
+			Creator<const Object&>(*memManager, srcObject)(dstObject);
+		}
+
+		static void Copy(std::nullptr_t /*memManager*/, const Object& srcObject, Object* dstObject)
+			requires std::is_copy_constructible_v<Object>	//?
+		{
+			std::construct_at(dstObject, srcObject);
 		}
 
 		template<conceptMovableFunctor<true> Func>
@@ -528,11 +529,11 @@ namespace internal
 			if constexpr (isNothrowMoveConstructible)
 			{
 				std::move(func)();
-				Move(memManager, std::move(srcObject), dstObject);
+				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 			}
 			else
 			{
-				Move(memManager, std::move(srcObject), dstObject);
+				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 				try
 				{
 					std::move(func)();
@@ -550,7 +551,7 @@ namespace internal
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func func) requires isCopyConstructible && isNothrowDestructible
 		{
-			Copy(memManager, srcObject, dstObject);
+			Copy(&memManager, srcObject, dstObject);
 			try
 			{
 				std::move(func)();
@@ -621,30 +622,30 @@ namespace internal
 		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
 			Object* dstObject) noexcept(isNothrowRelocatable)
 			requires isNothrowRelocatable ||
-				(isNothrowAnywayAssignable && isMoveConstructible && isNothrowDestructible) ||
-				(isAnywayAssignable && isCopyConstructible && isNothrowDestructible)
+				(isNothrowAnywayAssignable && isNothrowDestructible && std::is_move_constructible_v<Object>) ||
+				(isAnywayAssignable && isNothrowDestructible && std::is_copy_constructible_v<Object>)
 		{
 			MOMO_ASSERT(std::addressof(srcObject) != std::addressof(midObject));
 			if constexpr (isNothrowRelocatable)
 			{
-				Relocate(memManager, midObject, dstObject);
+				Relocator::Relocate(&memManager, nullptr, midObject, dstObject);
 				Relocate(memManager, srcObject, std::addressof(midObject));
 			}
 			else if constexpr (isNothrowAnywayAssignable)
 			{
-				Move(memManager, std::move(midObject), dstObject);
+				std::construct_at(dstObject, std::move(midObject));
 				Replace(memManager, srcObject, midObject);
 			}
 			else
 			{
-				Copy(memManager, midObject, dstObject);
+				Copy(nullptr, midObject, dstObject);
 				try
 				{
 					Replace(memManager, srcObject, midObject);
 				}
 				catch (...)
 				{
-					Destroy(memManager, *dstObject);
+					Destroyer::Destroy(nullptr, *dstObject);
 					throw;
 				}
 			}
@@ -706,7 +707,7 @@ namespace internal
 					SrcIterator srcIter = srcBegin;
 					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index)
-						Copy(memManager, *srcIter++, std::to_address(dstIter++));
+						Copy(&memManager, *srcIter++, std::to_address(dstIter++));
 					std::move(func)();
 				}
 				catch (...)

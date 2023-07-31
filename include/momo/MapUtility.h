@@ -353,10 +353,7 @@ namespace internal
 			}
 			else
 			{
-				if constexpr (std::is_null_pointer_v<DstMemManagerPtr>)
-					std::construct_at(dstKey, std::as_const(srcKey));
-				else
-					KeyManager::Copy(*dstMemManager, srcKey, dstKey);
+				KeyManager::Copy(dstMemManager, srcKey, dstKey);
 				try
 				{
 					ValueManager::Relocator::Relocate(srcMemManager, dstMemManager,
@@ -445,51 +442,51 @@ namespace internal
 			}
 			else if constexpr (KeyManager::isNothrowAnywayAssignable)
 			{
-				KeyManager::Copy(memManager, midKey, dstKey);
+				KeyManager::Copy(nullptr, midKey, dstKey);
 				try
 				{
 					ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
 				}
 				catch (...)
 				{
-					KeyManager::Destroy(memManager, *dstKey);
+					KeyManager::Destroyer::Destroy(nullptr, *dstKey);
 					throw;
 				}
 				KeyManager::Replace(memManager, srcKey, midKey);
 			}
 			else if constexpr (ValueManager::isNothrowAnywayAssignable)
 			{
-				ValueManager::Copy(memManager, midValue, dstValue);
+				ValueManager::Copy(nullptr, midValue, dstValue);
 				try
 				{
 					KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
 				}
 				catch (...)
 				{
-					ValueManager::Destroy(memManager, *dstValue);
+					ValueManager::Destroyer::Destroy(nullptr, *dstValue);
 					throw;
 				}
 				ValueManager::Replace(memManager, srcValue, midValue);
 			}
 			else
 			{
-				KeyManager::Copy(memManager, midKey, dstKey);
+				KeyManager::Copy(nullptr, midKey, dstKey);
 				try
 				{
-					ValueManager::Copy(memManager, midValue, dstValue);
+					ValueManager::Copy(nullptr, midValue, dstValue);
 					try
 					{
 						pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
 					}
 					catch (...)
 					{
-						ValueManager::Destroy(memManager, *dstValue);
+						ValueManager::Destroyer::Destroy(nullptr, *dstValue);
 						throw;
 					}
 				}
 				catch (...)
 				{
-					KeyManager::Destroy(memManager, *dstKey);
+					KeyManager::Destroyer::Destroy(nullptr, *dstKey);
 					throw;
 				}
 			}
@@ -521,11 +518,11 @@ namespace internal
 					SrcKeyIterator srcKeyIter = srcKeyBegin;
 					DstKeyIterator dstKeyIter = dstKeyBegin;
 					for (; keyIndex < count; ++keyIndex)
-						KeyManager::Copy(memManager, *srcKeyIter++, std::to_address(dstKeyIter++));
+						KeyManager::Copy(&memManager, *srcKeyIter++, std::to_address(dstKeyIter++));
 					SrcValueIterator srcValueIter = srcValueBegin;
 					DstValueIterator dstValueIter = dstValueBegin;
 					for (; valueIndex < count; ++valueIndex)
-						ValueManager::Copy(memManager, *srcValueIter++, std::to_address(dstValueIter++));
+						ValueManager::Copy(&memManager, *srcValueIter++, std::to_address(dstValueIter++));
 					std::move(func)();
 				}
 				catch (...)
