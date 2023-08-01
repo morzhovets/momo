@@ -472,9 +472,11 @@ namespace internal
 		typedef TObject Object;
 		typedef TMemManager MemManager;
 
+	private:
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 
+	public:
 		template<typename... Args>
 		using Creator = ObjectCreator<Object, MemManager, std::index_sequence_for<Args...>, Args...>;
 
@@ -541,7 +543,7 @@ namespace internal
 				catch (...)
 				{
 					// srcObject has been changed!
-					Destroy(memManager, *dstObject);
+					Destroy(&memManager, *dstObject);
 					throw;
 				}
 			}
@@ -558,15 +560,16 @@ namespace internal
 			}
 			catch (...)
 			{
-				Destroy(memManager, *dstObject);
+				Destroy(&memManager, *dstObject);
 				throw;
 			}
 		}
 
-		static void Destroy(MemManager& memManager, Object& object) noexcept
+		template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
+		static void Destroy(MemManagerPtr memManager, Object& object) noexcept
 			requires isNothrowDestructible
 		{
-			Destroyer::Destroy(&memManager, object);
+			Destroyer::Destroy(memManager, object);
 		}
 
 		template<conceptIncIterator<Object> Iterator>
@@ -575,13 +578,21 @@ namespace internal
 		{
 			Iterator iter = begin;
 			for (size_t i = 0; i < count; ++i)
-				Destroy(memManager, *iter++);
+				Destroy(&memManager, *iter++);
+		}
+
+		template<internal::conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
+			internal::conceptMemManagerPtr<MemManager> DstMemManagerPtr>
+		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
+			Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
+		{
+			Relocator::Relocate(srcMemManager, dstMemManager, srcObject, dstObject);
 		}
 
 		static void Relocate(MemManager& memManager, Object& srcObject, Object* dstObject)
 			noexcept(isNothrowRelocatable) requires isRelocatable
 		{
-			Relocator::Relocate(&memManager, &memManager, srcObject, dstObject);
+			Relocate(&memManager, &memManager, srcObject, dstObject);
 		}
 
 		static void AssignAnyway(MemManager& memManager, Object& srcObject, Object& dstObject)
@@ -616,7 +627,7 @@ namespace internal
 			requires isAnywayAssignable && isNothrowDestructible
 		{
 			AssignAnyway(memManager, srcObject, dstObject);
-			Destroy(memManager, srcObject);
+			Destroy(&memManager, srcObject);
 		}
 
 		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
@@ -628,7 +639,7 @@ namespace internal
 			MOMO_ASSERT(std::addressof(srcObject) != std::addressof(midObject));
 			if constexpr (isNothrowRelocatable)
 			{
-				Relocator::Relocate(&memManager, nullptr, midObject, dstObject);
+				Relocate(&memManager, nullptr, midObject, dstObject);
 				Relocate(memManager, srcObject, std::addressof(midObject));
 			}
 			else if constexpr (isNothrowAnywayAssignable)
@@ -645,7 +656,7 @@ namespace internal
 				}
 				catch (...)
 				{
-					Destroyer::Destroy(nullptr, *dstObject);
+					Destroy(nullptr, *dstObject);
 					throw;
 				}
 			}
@@ -672,7 +683,7 @@ namespace internal
 					Object& dstObject0 = *dstIter++;
 					RelocateCreate(memManager, srcIter, dstIter, count - 1,
 						Creator<Object&&>(memManager, std::move(srcObject0)), std::addressof(dstObject0));
-					Destroy(memManager, srcObject0);
+					Destroy(&memManager, srcObject0);
 				}
 			}
 		}

@@ -709,10 +709,10 @@ private:
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(memManager, *&keyBuffer);
+			KeyManager::Destroy(&memManager, *&keyBuffer);
 			throw;
 		}
-		KeyManager::Destroy(memManager, *&keyBuffer);
+		KeyManager::Destroy(&memManager, *&keyBuffer);
 		return resIter;
 	}
 

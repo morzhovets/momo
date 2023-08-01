@@ -408,7 +408,7 @@ namespace internal
 		static void DestroyValue(MemManagerPtr memManager, Value& value) noexcept
 		{
 			static_assert(!std::is_null_pointer_v<MemManagerPtr>);
-			ValueManager::Destroy(*memManager, value);
+			ValueManager::Destroy(memManager, value);
 		}
 
 		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
@@ -515,7 +515,7 @@ public:
 
 	static void DestroyKey(MemManager& memManager, Key& key) noexcept
 	{
-		KeyManager::Destroy(memManager, key);
+		KeyManager::Destroy(&memManager, key);
 	}
 
 	static void DestroyValues(MemManager& memManager, Value* values, size_t count) noexcept

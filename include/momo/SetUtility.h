@@ -63,7 +63,7 @@ namespace internal
 		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
 		static void Destroy(MemManagerPtr memManager, Item& item) noexcept
 		{
-			ItemManager::Destroyer::Destroy(memManager, item);
+			ItemManager::Destroy(memManager, item);
 		}
 
 		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
@@ -71,7 +71,7 @@ namespace internal
 		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
 			Item& srcItem, Item* dstItem) noexcept(isNothrowRelocatable)
 		{
-			ItemManager::Relocator::Relocate(srcMemManager, dstMemManager, srcItem, dstItem);
+			ItemManager::Relocate(srcMemManager, dstMemManager, srcItem, dstItem);
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)

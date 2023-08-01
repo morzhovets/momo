@@ -884,7 +884,7 @@ private:
 			typename HashMap::Position pos = mHashMap.Find(*&keyBuffer);
 			if (!!pos)
 			{
-				KeyManager::Destroy(memManager, *&keyBuffer);
+				KeyManager::Destroy(&memManager, *&keyBuffer);
 				keyDestroyed = true;
 				return { IteratorProxy(pos), false };
 			}
@@ -900,7 +900,7 @@ private:
 				}
 				catch (...)
 				{
-					KeyManager::Destroy(memManager, *newKey);
+					KeyManager::Destroy(&memManager, *newKey);
 					throw;
 				}
 			};
@@ -910,7 +910,7 @@ private:
 		catch (...)
 		{
 			if (!keyDestroyed)
-				KeyManager::Destroy(memManager, *&keyBuffer);
+				KeyManager::Destroy(&memManager, *&keyBuffer);
 			throw;
 		}
 	}
@@ -944,7 +944,7 @@ private:
 			}
 			catch (...)
 			{
-				KeyManager::Destroy(memManager, *newKey);
+				KeyManager::Destroy(&memManager, *newKey);
 				throw;
 			}
 		};

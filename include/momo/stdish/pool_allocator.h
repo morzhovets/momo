@@ -140,7 +140,7 @@ public:
 	template<class Value>
 	void destroy(Value* ptr) noexcept
 	{
-		momo::internal::ObjectManager<Value, MemManager>::Destroy(mMemPool->GetMemManager(), *ptr);
+		momo::internal::ObjectManager<Value, MemManager>::Destroy(&mMemPool->GetMemManager(), *ptr);
 	}
 
 	bool operator==(const unsynchronized_pool_allocator& alloc) const noexcept

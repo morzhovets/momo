@@ -327,13 +327,13 @@ namespace internal
 		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
 		static void DestroyKey(MemManagerPtr memManager, Key& key) noexcept
 		{
-			KeyManager::Destroyer::Destroy(memManager, key);
+			KeyManager::Destroy(memManager, key);
 		}
 
 		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
 		static void DestroyValue(MemManagerPtr memManager, Value& value) noexcept
 		{
-			ValueManager::Destroyer::Destroy(memManager, value);
+			ValueManager::Destroy(memManager, value);
 		}
 
 		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
@@ -343,28 +343,27 @@ namespace internal
 		{
 			if constexpr (isKeyNothrowRelocatable)
 			{
-				ValueManager::Relocator::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
-				KeyManager::Relocator::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
+				ValueManager::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
+				KeyManager::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
 			}
 			else if constexpr (isValueNothrowRelocatable)
 			{
-				KeyManager::Relocator::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
-				ValueManager::Relocator::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
+				KeyManager::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
+				ValueManager::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
 			}
 			else
 			{
 				KeyManager::Copy(dstMemManager, srcKey, dstKey);
 				try
 				{
-					ValueManager::Relocator::Relocate(srcMemManager, dstMemManager,
-						srcValue, dstValue);
+					ValueManager::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
 				}
 				catch (...)
 				{
-					KeyManager::Destroyer::Destroy(dstMemManager, *dstKey);
+					KeyManager::Destroy(dstMemManager, *dstKey);
 					throw;
 				}
-				KeyManager::Destroyer::Destroy(srcMemManager, srcKey);
+				KeyManager::Destroy(srcMemManager, srcKey);
 			}
 		}
 
@@ -449,7 +448,7 @@ namespace internal
 				}
 				catch (...)
 				{
-					KeyManager::Destroyer::Destroy(nullptr, *dstKey);
+					KeyManager::Destroy(nullptr, *dstKey);
 					throw;
 				}
 				KeyManager::Replace(memManager, srcKey, midKey);
@@ -463,7 +462,7 @@ namespace internal
 				}
 				catch (...)
 				{
-					ValueManager::Destroyer::Destroy(nullptr, *dstValue);
+					ValueManager::Destroy(nullptr, *dstValue);
 					throw;
 				}
 				ValueManager::Replace(memManager, srcValue, midValue);
@@ -480,13 +479,13 @@ namespace internal
 					}
 					catch (...)
 					{
-						ValueManager::Destroyer::Destroy(nullptr, *dstValue);
+						ValueManager::Destroy(nullptr, *dstValue);
 						throw;
 					}
 				}
 				catch (...)
 				{
-					KeyManager::Destroyer::Destroy(nullptr, *dstKey);
+					KeyManager::Destroy(nullptr, *dstKey);
 					throw;
 				}
 			}
@@ -528,15 +527,15 @@ namespace internal
 				catch (...)
 				{
 					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex)
-						KeyManager::Destroy(memManager, *itd++);
+						KeyManager::Destroy(&memManager, *itd++);
 					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex)
-						ValueManager::Destroy(memManager, *itd++);
+						ValueManager::Destroy(&memManager, *itd++);
 					throw;
 				}
 				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex)
-					KeyManager::Destroy(memManager, *its++);
+					KeyManager::Destroy(&memManager, *its++);
 				for (SrcValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex)
-					ValueManager::Destroy(memManager, *its++);
+					ValueManager::Destroy(&memManager, *its++);
 			}
 		}
 
@@ -547,8 +546,8 @@ namespace internal
 			// basic exception safety
 			dstValue = srcValue;	//?
 			dstKey = std::move(srcKey);
-			KeyManager::Destroy(memManager, srcKey);
-			ValueManager::Destroy(memManager, srcValue);
+			KeyManager::Destroy(&memManager, srcKey);
+			ValueManager::Destroy(&memManager, srcValue);
 		}
 	};
 
@@ -581,7 +580,7 @@ namespace internal
 		static void RelocateKey(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
 			Key& srcKey, Key* dstKey)
 		{
-			KeyManager::Relocator::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
+			KeyManager::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
 		}
 
 		static void ReplaceKey(MemManager& memManager, Key& srcKey, Key& dstKey)

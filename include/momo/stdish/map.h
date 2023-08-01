@@ -757,7 +757,7 @@ namespace internal
 				std::pair<iterator, bool> res = pvFind(hint, *&keyBuffer);
 				if (!res.second)
 				{
-					KeyManager::Destroy(memManager, *&keyBuffer);
+					KeyManager::Destroy(&memManager, *&keyBuffer);
 					keyDestroyed = true;
 					return res;
 				}
@@ -773,7 +773,7 @@ namespace internal
 					}
 					catch (...)
 					{
-						KeyManager::Destroy(memManager, *newKey);
+						KeyManager::Destroy(&memManager, *newKey);
 						throw;
 					}
 				};
@@ -784,7 +784,7 @@ namespace internal
 			catch (...)
 			{
 				if (!keyDestroyed)
-					KeyManager::Destroy(memManager, *&keyBuffer);
+					KeyManager::Destroy(&memManager, *&keyBuffer);
 				throw;
 			}
 		}

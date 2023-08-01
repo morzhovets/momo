@@ -502,7 +502,7 @@ public:
 	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr, typename Item>
 	static void Destroy(MemManagerPtr memManager, Item& item) noexcept
 	{
-		ItemManager<Item>::Destroyer::Destroy(memManager, item);
+		ItemManager<Item>::Destroy(memManager, item);
 	}
 
 	template<typename Item>
@@ -1215,7 +1215,7 @@ public:
 	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
 	void DestroyRaw(MemManagerPtr memManager, Raw* raw) const noexcept
 	{
-		RawManager::Destroyer::Destroy(memManager, *raw);
+		RawManager::Destroy(memManager, *raw);
 	}
 
 	void ImportRaw(MemManager& memManager, const DataColumnListStatic& /*srcColumnList*/,
