@@ -302,7 +302,7 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
-	class Relocator
+	class NodeRelocator
 	{
 	private:
 		struct Segment
@@ -328,7 +328,7 @@ private:
 		};
 
 	public:
-		explicit Relocator(NodeParams& nodeParams) noexcept
+		explicit NodeRelocator(NodeParams& nodeParams) noexcept
 			: mNodeParams(nodeParams),
 			mOldNodes(MemManagerPtr(nodeParams.GetMemManager())),
 			mNewNodes(MemManagerPtr(nodeParams.GetMemManager())),
@@ -338,15 +338,15 @@ private:
 		{
 		}
 
-		Relocator(const Relocator&) = delete;
+		NodeRelocator(const NodeRelocator&) = delete;
 
-		~Relocator() noexcept
+		~NodeRelocator() noexcept
 		{
 			for (Node* node : mNewNodes)
 				node->Destroy(mNodeParams);
 		}
 
-		Relocator& operator=(const Relocator&) = delete;
+		NodeRelocator& operator=(const NodeRelocator&) = delete;
 
 		Node* CreateNode(bool isLeaf, size_t count)
 		{
@@ -1214,7 +1214,7 @@ private:
 		}
 		else
 		{
-			Relocator relocator(*mNodeParams);
+			NodeRelocator relocator(*mNodeParams);
 			if (itemCount < nodeMaxCapacity)
 				pvAddGrow(relocator, node, itemIndex, std::move(itemCreator));
 			else
@@ -1251,7 +1251,7 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddGrow(Relocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
+	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
 		relocator.RelocateCreate(std::move(itemCreator), newNode->GetItemPtr(itemIndex));
@@ -1265,13 +1265,13 @@ private:
 	}
 
 	template<typename ItemCreator>
-	void pvAddSplit(Relocator& relocator, Node*& leafNode, size_t& leafItemIndex,
+	void pvAddSplit(NodeRelocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		ItemCreator itemCreator)
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
 		Node* node = leafNode;
 		size_t itemIndex = leafItemIndex;
-		typename Relocator::SplitResult splitRes = relocator.SplitNode(treeTraits, node, itemIndex);
+		typename NodeRelocator::SplitResult splitRes = relocator.SplitNode(treeTraits, node, itemIndex);
 		leafNode = splitRes.newNode;
 		leafItemIndex = splitRes.newItemIndex;
 		while (true)
@@ -1548,7 +1548,7 @@ private:
 		size_t itemCount2 = node2->GetCount();
 		if (itemCount1 + itemCount2 + 1 > node1->GetCapacity())
 			return false;
-		Relocator relocator(*mNodeParams);
+		NodeRelocator relocator(*mNodeParams);
 		relocator.AddSegment(node2, 0, node1, itemCount1 + 1, itemCount2);
 		auto itemRemover = [this, &relocator, node1, itemCount1] (Item& item)
 		{
