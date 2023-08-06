@@ -1333,14 +1333,14 @@ private:
 		return pvMakeIterator(node, itemIndex, true);
 	}
 
-	template<internal::conceptMemManagerPtr<MemManager> ExtMemManagerPtr>
-	Iterator pvExtract(ConstIterator iter, Item* extItem, ExtMemManagerPtr extMemManager)
+	template<internal::conceptMemManagerOrNullPtr<MemManager> ExtMemManagerOrNullPtr>
+	Iterator pvExtract(ConstIterator iter, Item* extItem, ExtMemManagerOrNullPtr extMemManager)
 	{
 		auto itemReplacer1 = [this, extItem, extMemManager] (Item& srcItem)
 			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, srcItem, extItem); };
 		auto itemReplacer2 = [this, extItem] (Item& srcItem, Item& dstItem)
 		{
-			MOMO_ASSERT(std::is_null_pointer_v<ExtMemManagerPtr>);
+			MOMO_ASSERT(std::is_null_pointer_v<ExtMemManagerOrNullPtr>);
 			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
 		};
 		return pvRemove(iter, itemReplacer1, itemReplacer2);

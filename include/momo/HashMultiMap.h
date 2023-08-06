@@ -397,27 +397,28 @@ namespace internal
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, std::move(func));
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void DestroyKey(MemManagerPtr memManager, Key& key) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void DestroyKey(MemManagerOrNullPtr memManager, Key& key) noexcept
 		{
-			static_assert(!std::is_null_pointer_v<MemManagerPtr>);
+			static_assert(!std::is_null_pointer_v<MemManagerOrNullPtr>);
 			HashMultiMapKeyValueTraits::DestroyKey(*memManager, key);
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void DestroyValue(MemManagerPtr memManager, Value& value) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void DestroyValue(MemManagerOrNullPtr memManager, Value& value) noexcept
 		{
-			static_assert(!std::is_null_pointer_v<MemManagerPtr>);
+			static_assert(!std::is_null_pointer_v<MemManagerOrNullPtr>);
 			ValueManager::Destroy(memManager, value);
 		}
 
-		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void Relocate([[maybe_unused]] SrcMemManagerPtr srcMemManager,
-			DstMemManagerPtr dstMemManager, Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
+		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void Relocate([[maybe_unused]] SrcMemManagerOrNullPtr srcMemManager,
+			DstMemManagerOrNullPtr dstMemManager, Key& srcKey, Value& srcValue,
+			Key* dstKey, Value* dstValue)
 		{
-			static_assert(!std::is_null_pointer_v<SrcMemManagerPtr>
-				&& !std::is_null_pointer_v<DstMemManagerPtr>);
+			static_assert(!std::is_null_pointer_v<SrcMemManagerOrNullPtr>
+				&& !std::is_null_pointer_v<DstMemManagerOrNullPtr>);
 			MOMO_ASSERT(srcMemManager == dstMemManager);
 			HashMultiMapKeyValueTraits::RelocateKey(*dstMemManager, srcKey, dstKey);
 			ValueManager::Relocate(*dstMemManager, srcValue, dstValue);

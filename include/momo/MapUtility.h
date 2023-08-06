@@ -328,21 +328,21 @@ namespace internal
 			KeyManager::CopyExec(memManager, key, newKey, std::move(func));
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void DestroyKey(MemManagerPtr memManager, Key& key) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void DestroyKey(MemManagerOrNullPtr memManager, Key& key) noexcept
 		{
 			KeyManager::Destroy(memManager, key);
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void DestroyValue(MemManagerPtr memManager, Value& value) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void DestroyValue(MemManagerOrNullPtr memManager, Value& value) noexcept
 		{
 			ValueManager::Destroy(memManager, value);
 		}
 
-		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
+		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void Relocate(SrcMemManagerOrNullPtr srcMemManager, DstMemManagerOrNullPtr dstMemManager,
 			Key& srcKey, Value& srcValue, Key* dstKey, Value* dstValue)
 		{
 			if constexpr (isKeyNothrowRelocatable)
@@ -579,10 +579,10 @@ namespace internal
 			MapKeyValueTraitsBase::valueAlignment> ValueMemPoolParams;
 
 	public:
-		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void RelocateKey(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
-			Key& srcKey, Key* dstKey)
+		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void RelocateKey(SrcMemManagerOrNullPtr srcMemManager,
+			DstMemManagerOrNullPtr dstMemManager, Key& srcKey, Key* dstKey)
 		{
 			KeyManager::Relocate(srcMemManager, dstMemManager, srcKey, dstKey);
 		}
@@ -722,9 +722,9 @@ namespace internal
 		}
 
 		template<typename KeyValueTraits, typename MemManager,
-			conceptMemManagerPtr<MemManager> SrcMemManagerPtr>
+			conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr>
 		static void CreateRelocate(MapKeyValuePtrPair* newPair,
-			SrcMemManagerPtr srcMemManager, MemManager& dstMemManager,
+			SrcMemManagerOrNullPtr srcMemManager, MemManager& dstMemManager,
 			Key& srcKey, Value& srcValue)
 		{
 			auto pairCreator = [srcMemManager, &dstMemManager, &srcKey, &srcValue]
@@ -817,17 +817,17 @@ namespace internal
 			return *item.GetKeyPtr();
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void Destroy(MemManagerPtr memManager, Item& item) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void Destroy(MemManagerOrNullPtr memManager, Item& item) noexcept
 		{
 			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
 			KeyValueTraits::DestroyValue(memManager, *item.GetValuePtr());
 		}
 
-		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
-			Item& srcItem, Item* dstItem)
+		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void Relocate(SrcMemManagerOrNullPtr srcMemManager,
+			DstMemManagerOrNullPtr dstMemManager, Item& srcItem, Item* dstItem)
 		{
 			Item::Create(dstItem);
 			KeyValueTraits::Relocate(srcMemManager, dstMemManager,
@@ -927,26 +927,26 @@ namespace internal
 			return *item.GetKeyPtr();
 		}
 
-		template<conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void Destroy(MemManagerPtr memManager, Item& item) noexcept
+		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void Destroy(MemManagerOrNullPtr memManager, Item& item) noexcept
 		{
 			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
 			Value* valuePtr = item.GetValuePtr();
 			KeyValueTraits::DestroyValue(memManager, *valuePtr);
-			if constexpr (!std::is_null_pointer_v<MemManagerPtr>)
+			if constexpr (!std::is_null_pointer_v<MemManagerOrNullPtr>)
 				memManager->GetMemPool().Deallocate(valuePtr);
 		}
 
-		template<conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
-			Item& srcItem, Item* dstItem)
+		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void Relocate(SrcMemManagerOrNullPtr srcMemManager,
+			DstMemManagerOrNullPtr dstMemManager, Item& srcItem, Item* dstItem)
 		{
 			Key* srcKeyPtr = srcItem.GetKeyPtr();
 			Value* srcValuePtr = srcItem.GetValuePtr();
 			bool done = false;
-			if constexpr (!std::is_null_pointer_v<SrcMemManagerPtr>
-				&& !std::is_null_pointer_v<DstMemManagerPtr>)
+			if constexpr (!std::is_null_pointer_v<SrcMemManagerOrNullPtr>
+				&& !std::is_null_pointer_v<DstMemManagerOrNullPtr>)
 			{
 				if (srcMemManager != dstMemManager)
 				{

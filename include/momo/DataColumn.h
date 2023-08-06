@@ -499,8 +499,8 @@ public:
 		(typename ItemManager<Item>::template Creator<>(memManager))(item);
 	}
 
-	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr, typename Item>
-	static void Destroy(MemManagerPtr memManager, Item& item) noexcept
+	template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr, typename Item>
+	static void Destroy(MemManagerOrNullPtr memManager, Item& item) noexcept
 	{
 		ItemManager<Item>::Destroy(memManager, item);
 	}
@@ -793,8 +793,8 @@ public:
 		pvCreateRaw(memManager, nullptr, nullptr, raw);
 	}
 
-	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
-	void DestroyRaw(MemManagerPtr memManager, Raw* raw) const noexcept
+	template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+	void DestroyRaw(MemManagerOrNullPtr memManager, Raw* raw) const noexcept
 	{
 		for (const FuncRecord& funcRec : mFuncRecords)
 		{
@@ -1053,8 +1053,8 @@ private:
 	{
 	}
 
-	template<typename... Items, internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
-	static void pvDestroy(MemManagerPtr memManager, const ColumnRecord* columnRecords, Raw* raw)
+	template<typename... Items, internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+	static void pvDestroy(MemManagerOrNullPtr memManager, const ColumnRecord* columnRecords, Raw* raw)
 	{
 		const ColumnRecord* columnRecordPtr = columnRecords;
 		(ItemTraits::Destroy(memManager,
@@ -1212,8 +1212,8 @@ public:
 		(typename RawManager::template Creator<>(memManager))(raw);
 	}
 
-	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
-	void DestroyRaw(MemManagerPtr memManager, Raw* raw) const noexcept
+	template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+	void DestroyRaw(MemManagerOrNullPtr memManager, Raw* raw) const noexcept
 	{
 		RawManager::Destroy(memManager, *raw);
 	}

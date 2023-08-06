@@ -30,9 +30,9 @@ concept conceptObject = std::is_object_v<Object> &&
 
 namespace internal
 {
-	template<typename MemManagerPtr, typename MemManager>
-	concept conceptMemManagerPtr = conceptMemManager<MemManager> &&
-		std::convertible_to<MemManagerPtr, MemManager*>;
+	template<typename MemManagerOrNullPtr, typename MemManager>
+	concept conceptMemManagerOrNullPtr = conceptMemManager<MemManager> &&
+		std::convertible_to<MemManagerOrNullPtr, MemManager*>;
 
 	template<conceptMemManager MemManager, conceptObject Object, typename... ObjectArgs>
 	struct HasCustomConstructor : public std::false_type
@@ -69,11 +69,11 @@ public:
 	static const bool isNothrowDestructible = std::is_nothrow_destructible_v<Object>;
 
 public:
-	template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
-	static void Destroy(MemManagerPtr /*memManager*/, Object& object) noexcept
+	template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+	static void Destroy(MemManagerOrNullPtr /*memManager*/, Object& object) noexcept
 		requires isNothrowDestructible
 	{
-		//MOMO_ASSERT(std::is_null_pointer_v<MemManagerPtr> || memManager != nullptr);
+		//MOMO_ASSERT(std::is_null_pointer_v<MemManagerOrNullPtr> || memManager != nullptr);
 		object.~Object();
 	}
 };
@@ -99,13 +99,13 @@ public:
 			|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object));
 
 public:
-	template<internal::conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-		internal::conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-	static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr /*dstMemManager*/,
+	template<internal::conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+		internal::conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+	static void Relocate(SrcMemManagerOrNullPtr srcMemManager, DstMemManagerOrNullPtr /*dstMemManager*/,
 		Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 	{
-		//MOMO_ASSERT(std::is_null_pointer_v<SrcMemManagerPtr> || srcMemManager != nullptr);
-		//MOMO_ASSERT(std::is_null_pointer_v<DstMemManagerPtr> || dstMemManager != nullptr);
+		//MOMO_ASSERT(std::is_null_pointer_v<SrcMemManagerOrNullPtr> || srcMemManager != nullptr);
+		//MOMO_ASSERT(std::is_null_pointer_v<DstMemManagerOrNullPtr> || dstMemManager != nullptr);
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
 		if constexpr (!isTriviallyRelocatable ||
 			(std::is_nothrow_move_constructible_v<Object> && Destroyer::isNothrowDestructible))	//?
@@ -471,8 +471,8 @@ namespace internal
 			}
 		}
 
-		template<internal::conceptMemManagerPtr<MemManager> MemManagerPtr>
-		static void Destroy(MemManagerPtr memManager, Object& object) noexcept
+		template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
+		static void Destroy(MemManagerOrNullPtr memManager, Object& object) noexcept
 			requires isNothrowDestructible
 		{
 			Destroyer::Destroy(memManager, object);
@@ -487,9 +487,9 @@ namespace internal
 				Destroy(&memManager, *iter++);
 		}
 
-		template<internal::conceptMemManagerPtr<MemManager> SrcMemManagerPtr,
-			internal::conceptMemManagerPtr<MemManager> DstMemManagerPtr>
-		static void Relocate(SrcMemManagerPtr srcMemManager, DstMemManagerPtr dstMemManager,
+		template<internal::conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
+			internal::conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void Relocate(SrcMemManagerOrNullPtr srcMemManager, DstMemManagerOrNullPtr dstMemManager,
 			Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 		{
 			Relocator::Relocate(srcMemManager, dstMemManager, srcObject, dstObject);
