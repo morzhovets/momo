@@ -168,7 +168,7 @@ namespace internal
 			mPtrState = stateNull;
 		}
 
-		template<conceptCreator<Item> ItemCreator>
+		template<conceptFastCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
@@ -216,7 +216,7 @@ namespace internal
 			}
 		}
 
-		template<conceptReplacer<Item> ItemReplacer>
+		template<conceptFastReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());

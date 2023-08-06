@@ -331,7 +331,7 @@ namespace internal
 			return *&mItemBuffer;
 		}
 
-		template<internal::conceptCreator<Item, false> ItemCreator>
+		template<internal::conceptCreator<Item> ItemCreator>
 		void Create(ItemCreator itemCreator)	//?
 		{
 			MOMO_CHECK(!mHasItem);
@@ -339,7 +339,7 @@ namespace internal
 			mHasItem = true;
 		}
 
-		template<internal::conceptRemover<Item, false> ItemRemover>
+		template<internal::conceptRemover<Item> ItemRemover>
 		void Remove(ItemRemover itemRemover)
 		{
 			MOMO_CHECK(mHasItem);

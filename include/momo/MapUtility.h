@@ -40,13 +40,17 @@ concept conceptMapKeyValueTraits =
 
 namespace internal
 {
-	template<typename Creator, typename Key, typename Value,
-		bool triviallyMovable = true>
-	concept conceptPairCreator = conceptMovableFunctor<Creator, triviallyMovable, void, Key*, Value*>;
+	template<typename Creator, typename Key, typename Value>
+	concept conceptPairCreator = conceptMovableFunctor<Creator, false, void, Key*, Value*>;
 
-	template<typename Remover, typename Key, typename Value,
-		bool triviallyMovable = true>
-	concept conceptPairRemover = conceptMovableFunctor<Remover, triviallyMovable, void, Key&, Value&>;
+	template<typename Remover, typename Key, typename Value>
+	concept conceptPairRemover = conceptMovableFunctor<Remover, false, void, Key&, Value&>;
+
+	template<typename Creator, typename Key, typename Value>
+	concept conceptFastPairCreator = conceptMovableFunctor<Creator, true, void, Key*, Value*>;
+
+	template<typename Remover, typename Key, typename Value>
+	concept conceptFastPairRemover = conceptMovableFunctor<Remover, true, void, Key&, Value&>;
 
 	template<typename TSetReference,
 		bool tIsConst = false>
@@ -1075,10 +1079,10 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<conceptPairRemover<Key, Value, false> PairRemover>
+		template<conceptPairRemover<Key, Value> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
+			pvRemove(FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:
@@ -1088,7 +1092,7 @@ namespace internal
 		}
 
 	private:
-		template<typename PairRemover>
+		template<conceptFastPairRemover<Key, Value> PairRemover>
 		void pvRemove(PairRemover pairRemover)
 		{
 			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
@@ -1182,10 +1186,10 @@ namespace internal
 			return *mSetExtractedItem.GetItem().GetValuePtr();
 		}
 
-		template<conceptPairRemover<Key, Value, false> PairRemover>
+		template<conceptPairRemover<Key, Value> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			pvRemove(internal::FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
+			pvRemove(FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:
@@ -1200,7 +1204,7 @@ namespace internal
 		}
 
 	private:
-		template<typename PairRemover>
+		template<conceptFastPairRemover<Key, Value> PairRemover>
 		void pvRemove(PairRemover pairRemover)
 		{
 			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable

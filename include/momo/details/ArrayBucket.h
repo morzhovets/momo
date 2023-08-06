@@ -256,7 +256,7 @@ namespace internal
 			pvRemoveAll<true>(params);
 		}
 
-		template<conceptCreator<Item> ItemCreator>
+		template<conceptFastCreator<Item> ItemCreator>
 		void AddBackCrt(Params& params, ItemCreator itemCreator)
 		{
 			if (mPtr == nullptr)

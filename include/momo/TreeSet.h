@@ -679,7 +679,7 @@ public:
 		return pvGetKeyCount(key);
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator,
+	template<internal::conceptCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
@@ -758,7 +758,7 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator,
+	template<internal::conceptCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, ItemCreator itemCreator)
 	{

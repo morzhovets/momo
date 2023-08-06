@@ -533,7 +533,7 @@ public:
 		return Array(Data(capacity, std::move(memManager)));
 	}
 
-	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	template<internal::conceptMultiCreator<Item> MultiItemCreator>
 	static Array CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
@@ -618,7 +618,7 @@ public:
 		return mData.GetCount();
 	}
 
-	template<internal::conceptMultiCreator<Item, false> MultiItemCreator>
+	template<internal::conceptMultiCreator<Item> MultiItemCreator>
 	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
 	{
 		pvSetCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
@@ -707,7 +707,7 @@ public:
 		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator>
+	template<internal::conceptCreator<Item> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
 		MOMO_CHECK(GetCount() < GetCapacity());
@@ -733,7 +733,7 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator>
+	template<internal::conceptCreator<Item> ItemCreator>
 	void AddBackCrt(ItemCreator itemCreator)
 	{
 		pvAddBack(internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
@@ -799,7 +799,7 @@ public:
 		}
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator>
+	template<internal::conceptCreator<Item> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator itemCreator)
 	{
 		pvInsert(index,

@@ -108,7 +108,7 @@ namespace internal
 			pvSetEmpty();
 		}
 
-		template<conceptCreator<Item> ItemCreator>
+		template<conceptFastCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
@@ -116,7 +116,7 @@ namespace internal
 			return pvAdd(std::move(itemCreator), hashCode);
 		}
 
-		template<conceptReplacer<Item> ItemReplacer>
+		template<conceptFastReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
 			return pvRemove(iter, std::move(itemReplacer));

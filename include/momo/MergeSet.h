@@ -637,7 +637,7 @@ public:
 		return pvFind(key) != Position();
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator,
+	template<internal::conceptCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
@@ -680,7 +680,7 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<internal::conceptCreator<Item, false> ItemCreator,
+	template<internal::conceptCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, ItemCreator itemCreator)
 	{

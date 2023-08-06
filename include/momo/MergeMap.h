@@ -355,7 +355,7 @@ public:
 		return mMergeSet.ContainsKey(key);
 	}
 
-	template<internal::conceptCreator<Value, false> ValueCreator>
+	template<internal::conceptCreator<Value> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvInsert(std::move(key),
@@ -380,7 +380,7 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value, false> ValueCreator>
+	template<internal::conceptCreator<Value> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvInsert(key,
@@ -425,7 +425,7 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<internal::conceptPairCreator<Key, Value, false> PairCreator,
+	template<internal::conceptPairCreator<Key, Value> PairCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{
@@ -433,7 +433,7 @@ public:
 			internal::FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
 	}
 
-	template<internal::conceptCreator<Value, false> ValueCreator,
+	template<internal::conceptCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator valueCreator)
 	{
@@ -459,7 +459,7 @@ public:
 		return AddVar(pos, std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value, false> ValueCreator,
+	template<internal::conceptCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator valueCreator)
 	{
@@ -528,7 +528,7 @@ private:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, typename PairCreator>
+	template<bool extraCheck, internal::conceptFastPairCreator<Key, Value> PairCreator>
 	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
