@@ -175,7 +175,7 @@ namespace internal
 			return pvMakeIterator(newItem);
 		}
 
-		template<typename ItemReplacer>
+		template<conceptFastReplacer<Item> ItemReplacer>
 		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();

@@ -1225,7 +1225,7 @@ private:
 		return pvMakeIterator(keyIter, valueIndex, true);
 	}
 
-	template<typename RKey, typename ValueCreator>
+	template<typename RKey, internal::conceptFastCreator<Value> ValueCreator>
 	requires std::is_same_v<Key, std::decay_t<RKey>>
 	Iterator pvAdd(RKey&& key, ValueCreator valueCreator)
 	{

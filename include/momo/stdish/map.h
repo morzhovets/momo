@@ -740,7 +740,8 @@ namespace internal
 				ConstIteratorProxy::GetBaseIterator(hint))), true };
 		}
 
-		template<typename Hint, typename... KeyArgs, typename MappedCreator>
+		template<typename Hint, typename... KeyArgs,
+			momo::internal::conceptFastCreator<mapped_type> MappedCreator>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 			MappedCreator mappedCreator)
 		{
@@ -789,7 +790,8 @@ namespace internal
 			}
 		}
 
-		template<typename Hint, typename RKey, typename MappedCreator,
+		template<typename Hint, typename RKey,
+			momo::internal::conceptFastCreator<mapped_type> MappedCreator,
 			typename Key = std::decay_t<RKey>>
 		requires std::is_same_v<key_type, Key>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,

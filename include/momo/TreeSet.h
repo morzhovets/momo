@@ -1460,7 +1460,7 @@ private:
 		return resNode;
 	}
 
-	template<typename ItemRemover>
+	template<internal::conceptFastRemover<Item> ItemRemover>
 	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());

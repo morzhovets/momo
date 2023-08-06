@@ -1184,7 +1184,7 @@ private:
 		return resPos;
 	}
 
-	template<typename ItemReplacer>
+	template<internal::conceptFastReplacer<Item> ItemReplacer>
 	Iterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
 	{
 		MOMO_CHECK(mBuckets != nullptr);
