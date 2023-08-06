@@ -162,7 +162,7 @@ namespace internal
 			return Iterator();
 		}
 
-		template<typename ItemCreator>
+		template<conceptFastCreator<Item> ItemCreator>
 		Iterator pvAdd(ItemCreator itemCreator, size_t hashCode)
 		{
 			size_t count = pvGetCount();

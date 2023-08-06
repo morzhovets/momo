@@ -125,14 +125,17 @@ namespace internal
 	template<typename Creator, typename Object>
 	concept conceptCreator = conceptMovableFunctor<Creator, false, void, Object*>;
 
+	template<typename Creator, typename Object>
+	concept conceptMultiCreator = conceptCopyableFunctor<Creator, false, void, Object*>;
+
 	template<typename Remover, typename Object>
 	concept conceptRemover = conceptMovableFunctor<Remover, false, void, Object&>;
 
 	template<typename Creator, typename Object>
-	concept conceptMultiCreator = conceptCopyableFunctor<Creator, false, void, Object*>;
+	concept conceptFastCreator = conceptMovableFunctor<Creator, true, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptFastCreator = conceptMovableFunctor<Creator, true, void, Object*>;
+	concept conceptFastMultiCreator = conceptCopyableFunctor<Creator, true, void, Object*>;
 
 	template<typename Remover, typename Object>
 	concept conceptFastRemover = conceptMovableFunctor<Remover, true, void, Object&>;

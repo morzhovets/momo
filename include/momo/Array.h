@@ -941,7 +941,7 @@ private:
 		}
 	}
 
-	template<typename MultiItemCreator>
+	template<internal::conceptFastMultiCreator<Item> MultiItemCreator>
 	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		size_t newCount = count;
@@ -995,7 +995,7 @@ private:
 		return items[index];
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBack(ItemCreator itemCreator)
 	{
 		if (GetCount() < GetCapacity())
@@ -1004,7 +1004,7 @@ private:
 			pvAddBackGrow(std::move(itemCreator));
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
 		size_t count = GetCount();
@@ -1012,7 +1012,7 @@ private:
 		mData.SetCount(count + 1);
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBackGrow(ItemCreator itemCreator)
 	{
 		size_t initCount = GetCount();
@@ -1027,7 +1027,7 @@ private:
 		mData.template Reset<true>(newCapacity, newCount, std::move(itemsRelocator));
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvInsert(size_t index, ItemCreator itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));

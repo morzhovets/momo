@@ -472,7 +472,7 @@ namespace internal
 				| static_cast<uint8_t>(probe) : emptyHashProbe;
 		}
 
-		template<size_t memPoolIndex, typename ItemCreator>
+		template<size_t memPoolIndex, conceptFastCreator<Item> ItemCreator>
 		Item* pvAdd0(Params& params, ItemCreator itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
@@ -483,7 +483,7 @@ namespace internal
 			return items;
 		}
 
-		template<size_t memPoolIndex, typename ItemCreator>
+		template<size_t memPoolIndex, conceptFastCreator<Item> ItemCreator>
 		Item* pvAdd(Params& params, ItemCreator itemCreator, size_t hashCode, Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;

@@ -1177,7 +1177,7 @@ private:
 		return count;
 	}
 
-	template<bool extraCheck, typename ItemCreator>
+	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Iterator iter = pvGetUpperBound(key);
@@ -1191,7 +1191,7 @@ private:
 		return { iter, true };
 	}
 
-	template<bool extraCheck, typename ItemCreator>
+	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
 	Iterator pvAdd(ConstIterator iter, ItemCreator itemCreator)
 	{
 		if (mRootNode == nullptr)
@@ -1227,7 +1227,7 @@ private:
 		return resIter;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(iter == ConstIterator());
@@ -1250,7 +1250,7 @@ private:
 		}
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
@@ -1264,7 +1264,7 @@ private:
 		node = newNode;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddSplit(NodeRelocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		ItemCreator itemCreator)
 	{

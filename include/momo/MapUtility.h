@@ -618,7 +618,7 @@ namespace internal
 		static const size_t valueAlignment = tValueAlignment;
 
 	public:
-		template<typename MemManager, typename PairCreator>
+		template<typename MemManager, conceptFastPairCreator<Key, Value> PairCreator>
 		explicit MapKeyValuePair(MemManager& /*memManager*/, PairCreator pairCreator)
 		{
 			std::move(pairCreator)(GetKeyPtr(), GetValuePtr());
@@ -682,7 +682,7 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 
 	public:
-		template<typename MemManager, typename PairCreator>
+		template<typename MemManager, conceptFastPairCreator<Key, Value> PairCreator>
 		explicit MapKeyValuePtrPair(MemManager& memManager, PairCreator pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();

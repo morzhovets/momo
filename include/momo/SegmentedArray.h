@@ -617,7 +617,7 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
-	template<typename MultiItemCreator>
+	template<internal::conceptFastMultiCreator<Item> MultiItemCreator>
 	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		if (count < mCount)
@@ -634,7 +634,7 @@ private:
 		return mSegments[segIndex][segItemIndex];
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
 		size_t segIndex, segItemIndex;
@@ -644,7 +644,7 @@ private:
 		++mCount;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBack(ItemCreator itemCreator)
 	{
 		size_t segIndex, segItemIndex;
@@ -673,7 +673,7 @@ private:
 		++mCount;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvInsert(size_t index, ItemCreator itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
@@ -681,7 +681,7 @@ private:
 		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
-	template<typename MultiItemCreator>
+	template<internal::conceptFastMultiCreator<Item> MultiItemCreator>
 	void pvIncCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);

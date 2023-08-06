@@ -708,7 +708,7 @@ private:
 		return IteratorProxy(this, index);
 	}
 
-	template<typename MultiItemCreator>
+	template<internal::conceptFastMultiCreator<Item> MultiItemCreator>
 	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		if (count <= mCount)
@@ -745,14 +745,14 @@ private:
 		return mSegments[segIndex] + segItemIndex;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
 		std::move(itemCreator)(pvGetItemPtr(mCount));
 		++mCount;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvAddBack(ItemCreator itemCreator)
 	{
 		if (mCount < mCapacity)
@@ -804,7 +804,7 @@ private:
 		++mCount;
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptFastCreator<Item> ItemCreator>
 	void pvInsert(size_t index, ItemCreator itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));

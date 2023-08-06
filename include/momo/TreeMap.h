@@ -776,7 +776,7 @@ private:
 		return iter == GetEnd() || GetTreeTraits().IsLess(key, iter->key);
 	}
 
-	template<typename RKey, typename ValueCreator>
+	template<typename RKey, internal::conceptFastCreator<Value> ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
@@ -799,7 +799,7 @@ private:
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, typename ValueCreator>
+	template<bool extraCheck, typename RKey, internal::conceptFastCreator<Value> ValueCreator>
 	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]

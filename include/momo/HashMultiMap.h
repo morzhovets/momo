@@ -1245,7 +1245,7 @@ private:
 		return pvMakeIterator(keyIter, 0, false);
 	}
 
-	template<typename ValueCreator>
+	template<internal::conceptFastCreator<Value> ValueCreator>
 	Iterator pvAdd(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
@@ -1269,7 +1269,7 @@ private:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(pairCreator)));
 	}
 
-	template<typename ValueCreator>
+	template<internal::conceptFastCreator<Value> ValueCreator>
 	void pvAddValue(ValueArray& valueArray, ValueCreator valueCreator)
 	{
 		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), std::move(valueCreator));
