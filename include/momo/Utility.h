@@ -124,6 +124,105 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
+	template<typename Functor, bool triviallyMovable, typename Result, typename... Args>
+	concept conceptMovableFunctor =
+		std::is_nothrow_destructible_v<Functor> &&
+		requires (Functor func, Args&&... args)
+			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; } &&
+		(!triviallyMovable ||
+			(!std::is_reference_v<Functor> &&
+			std::is_trivially_destructible_v<Functor> &&
+			std::is_trivially_move_constructible_v<Functor>));
+
+	template<typename Functor, bool triviallyCopyable, typename Result, typename... Args>
+	concept conceptCopyableFunctor =
+		std::is_nothrow_destructible_v<Functor> &&
+		requires (Functor func, Args&&... args)
+			{ { std::as_const(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; } &&
+		(!triviallyCopyable ||
+			(!std::is_reference_v<Functor> &&
+			std::is_trivially_destructible_v<Functor> &&
+			std::is_trivially_copy_constructible_v<Functor>));
+
+	template<typename TBaseFunctor,
+		size_t tMaxSize = 3 * sizeof(void*)>
+	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	class FastMovableFunctor
+	{
+	public:
+		typedef TBaseFunctor BaseFunctor;
+
+		static const size_t maxSize = tMaxSize;
+
+	private:
+		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+			&& std::is_trivially_move_constructible_v<BaseFunctor>
+			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, BaseFunctor&&> BaseFunctorReference;
+
+	public:
+		explicit FastMovableFunctor(BaseFunctorReference baseFunctor) noexcept
+			: mBaseFunctor(std::forward<BaseFunctor>(baseFunctor))
+		{
+		}
+
+		FastMovableFunctor(FastMovableFunctor&&) noexcept = default;
+
+		FastMovableFunctor(const FastMovableFunctor&) = delete;
+
+		~FastMovableFunctor() noexcept = default;
+
+		FastMovableFunctor& operator=(const FastMovableFunctor&) = delete;
+
+		template<typename... Args>
+		decltype(auto) operator()(Args&&... args) &&
+		{
+			return std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
+		}
+
+	private:
+		BaseFunctorReference mBaseFunctor;
+	};
+
+	template<typename TBaseFunctor,
+		size_t tMaxSize = 3 * sizeof(void*)>
+	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	class FastCopyableFunctor
+	{
+	public:
+		typedef TBaseFunctor BaseFunctor;
+
+		static const size_t maxSize = tMaxSize;
+
+	private:
+		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+			&& std::is_trivially_move_constructible_v<BaseFunctor>
+			&& std::is_trivially_copy_constructible_v<BaseFunctor>
+			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, const BaseFunctor&> BaseFunctorReference;
+
+	public:
+		explicit FastCopyableFunctor(BaseFunctorReference baseFunctor) noexcept
+			: mBaseFunctor(baseFunctor)
+		{
+		}
+
+		FastCopyableFunctor(FastCopyableFunctor&&) noexcept = default;
+
+		FastCopyableFunctor(const FastCopyableFunctor&) noexcept = default;
+
+		~FastCopyableFunctor() noexcept = default;
+
+		FastCopyableFunctor& operator=(const FastCopyableFunctor&) = delete;
+
+		template<typename... Args>
+		decltype(auto) operator()(Args&&... args) const
+		{
+			return mBaseFunctor(std::forward<Args>(args)...);
+		}
+
+	private:
+		BaseFunctorReference mBaseFunctor;
+	};
+
 	template<size_t size>
 	struct UIntSelector;
 

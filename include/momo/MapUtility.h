@@ -42,11 +42,11 @@ namespace internal
 {
 	template<typename Creator, typename Key, typename Value,
 		bool triviallyMovable = true>
-	concept conceptPairCreator = conceptMovableFunctor<Creator, triviallyMovable, Key*, Value*>;
+	concept conceptPairCreator = conceptMovableFunctor<Creator, triviallyMovable, void, Key*, Value*>;
 
 	template<typename Remover, typename Key, typename Value,
 		bool triviallyMovable = true>
-	concept conceptPairRemover = conceptMovableFunctor<Remover, triviallyMovable, Key&, Value&>;
+	concept conceptPairRemover = conceptMovableFunctor<Remover, triviallyMovable, void, Key&, Value&>;
 
 	template<typename TSetReference,
 		bool tIsConst = false>
