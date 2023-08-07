@@ -132,16 +132,16 @@ namespace internal
 	concept conceptRemover = conceptMovableFunctor<Remover, void, Object&>;
 
 	template<typename Creator, typename Object>
-	concept conceptFastCreator = conceptTriviallyMovableFunctor<Creator, void, Object*>;
+	concept conceptTrivialCreator = conceptTriviallyMovableFunctor<Creator, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptFastMultiCreator = conceptTriviallyCopyableFunctor<Creator, void, Object*>;
+	concept conceptTrivialMultiCreator = conceptTriviallyCopyableFunctor<Creator, void, Object*>;
 
 	template<typename Remover, typename Object>
-	concept conceptFastRemover = conceptTriviallyMovableFunctor<Remover, void, Object&>;
+	concept conceptTrivialRemover = conceptTriviallyMovableFunctor<Remover, void, Object&>;
 
 	template<typename Replacer, typename Object>
-	concept conceptFastReplacer = conceptTriviallyMovableFunctor<Replacer, void, Object&, Object&>;
+	concept conceptTrivialReplacer = conceptTriviallyMovableFunctor<Replacer, void, Object&, Object&>;
 
 	template<typename ObjectArg>
 	concept conceptPassingByValue =
@@ -595,7 +595,7 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptFastCreator<Object> ObjectCreator>
+			conceptTrivialCreator<Object> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)

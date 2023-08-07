@@ -47,10 +47,10 @@ namespace internal
 	concept conceptPairRemover = conceptMovableFunctor<Remover, void, Key&, Value&>;
 
 	template<typename Creator, typename Key, typename Value>
-	concept conceptFastPairCreator = conceptTriviallyMovableFunctor<Creator, void, Key*, Value*>;
+	concept conceptTrivialPairCreator = conceptTriviallyMovableFunctor<Creator, void, Key*, Value*>;
 
 	template<typename Remover, typename Key, typename Value>
-	concept conceptFastPairRemover = conceptTriviallyMovableFunctor<Remover, void, Key&, Value&>;
+	concept conceptTrivialPairRemover = conceptTriviallyMovableFunctor<Remover, void, Key&, Value&>;
 
 	template<typename TSetReference,
 		bool tIsConst = false>
@@ -618,7 +618,7 @@ namespace internal
 		static const size_t valueAlignment = tValueAlignment;
 
 	public:
-		template<typename MemManager, conceptFastPairCreator<Key, Value> PairCreator>
+		template<typename MemManager, conceptTrivialPairCreator<Key, Value> PairCreator>
 		explicit MapKeyValuePair(MemManager& /*memManager*/, PairCreator pairCreator)
 		{
 			std::move(pairCreator)(GetKeyPtr(), GetValuePtr());
@@ -682,7 +682,7 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 
 	public:
-		template<typename MemManager, conceptFastPairCreator<Key, Value> PairCreator>
+		template<typename MemManager, conceptTrivialPairCreator<Key, Value> PairCreator>
 		explicit MapKeyValuePtrPair(MemManager& memManager, PairCreator pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
@@ -1092,7 +1092,7 @@ namespace internal
 		}
 
 	private:
-		template<conceptFastPairRemover<Key, Value> PairRemover>
+		template<conceptTrivialPairRemover<Key, Value> PairRemover>
 		void pvRemove(PairRemover pairRemover)
 		{
 			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
@@ -1204,7 +1204,7 @@ namespace internal
 		}
 
 	private:
-		template<conceptFastPairRemover<Key, Value> PairRemover>
+		template<conceptTrivialPairRemover<Key, Value> PairRemover>
 		void pvRemove(PairRemover pairRemover)
 		{
 			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable

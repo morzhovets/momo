@@ -814,7 +814,7 @@ private:
 		}
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Position pos = pvFind(key);
@@ -824,7 +824,7 @@ private:
 		return { pos, true };
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(!pos);

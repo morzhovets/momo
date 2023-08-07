@@ -1177,7 +1177,7 @@ private:
 		return count;
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Iterator iter = pvGetUpperBound(key);
@@ -1191,7 +1191,7 @@ private:
 		return { iter, true };
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	Iterator pvAdd(ConstIterator iter, ItemCreator itemCreator)
 	{
 		if (mRootNode == nullptr)
@@ -1227,7 +1227,7 @@ private:
 		return resIter;
 	}
 
-	template<internal::conceptFastCreator<Item> ItemCreator>
+	template<internal::conceptTrivialCreator<Item> ItemCreator>
 	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(iter == ConstIterator());
@@ -1250,7 +1250,7 @@ private:
 		}
 	}
 
-	template<internal::conceptFastCreator<Item> ItemCreator>
+	template<internal::conceptTrivialCreator<Item> ItemCreator>
 	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
@@ -1264,7 +1264,7 @@ private:
 		node = newNode;
 	}
 
-	template<internal::conceptFastCreator<Item> ItemCreator>
+	template<internal::conceptTrivialCreator<Item> ItemCreator>
 	void pvAddSplit(NodeRelocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		ItemCreator itemCreator)
 	{
@@ -1460,7 +1460,7 @@ private:
 		return resNode;
 	}
 
-	template<internal::conceptFastRemover<Item> ItemRemover>
+	template<internal::conceptTrivialRemover<Item> ItemRemover>
 	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());

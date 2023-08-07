@@ -1225,7 +1225,7 @@ private:
 		return pvMakeIterator(keyIter, valueIndex, true);
 	}
 
-	template<typename RKey, internal::conceptFastCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
 	requires std::is_same_v<Key, std::decay_t<RKey>>
 	Iterator pvAdd(RKey&& key, ValueCreator valueCreator)
 	{
@@ -1245,7 +1245,7 @@ private:
 		return pvMakeIterator(keyIter, 0, false);
 	}
 
-	template<internal::conceptFastCreator<Value> ValueCreator>
+	template<internal::conceptTrivialCreator<Value> ValueCreator>
 	Iterator pvAdd(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
@@ -1269,7 +1269,7 @@ private:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(pairCreator)));
 	}
 
-	template<internal::conceptFastCreator<Value> ValueCreator>
+	template<internal::conceptTrivialCreator<Value> ValueCreator>
 	void pvAddValue(ValueArray& valueArray, ValueCreator valueCreator)
 	{
 		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), std::move(valueCreator));

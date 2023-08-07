@@ -158,7 +158,7 @@ namespace internal
 			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
 		}
 
-		template<conceptFastCreator<Item> ItemCreator>
+		template<conceptTrivialCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
@@ -200,7 +200,7 @@ namespace internal
 			}
 		}
 
-		template<conceptFastReplacer<Item> ItemReplacer>
+		template<conceptTrivialReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();

@@ -253,7 +253,7 @@ namespace internal
 			++mCounter.count;
 		}
 
-		template<conceptFastRemover<Item> ItemRemover>
+		template<conceptTrivialRemover<Item> ItemRemover>
 		void Remove(Params& params, size_t index, ItemRemover itemRemover)
 		{
 			size_t count = GetCount();

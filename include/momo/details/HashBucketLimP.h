@@ -170,7 +170,7 @@ namespace internal
 			mPtr = ptrNull;
 		}
 
-		template<conceptFastCreator<Item> ItemCreator>
+		template<conceptTrivialCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
@@ -212,7 +212,7 @@ namespace internal
 			}
 		}
 
-		template<conceptFastReplacer<Item> ItemReplacer>
+		template<conceptTrivialReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();
@@ -444,7 +444,7 @@ namespace internal
 			mPtrState = stateNull;
 		}
 
-		template<conceptFastCreator<Item> ItemCreator>
+		template<conceptTrivialCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
@@ -488,7 +488,7 @@ namespace internal
 			}
 		}
 
-		template<conceptFastReplacer<Item> ItemReplacer>
+		template<conceptTrivialReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());

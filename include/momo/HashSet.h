@@ -1093,7 +1093,7 @@ private:
 		return BucketIterator();
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Position pos = pvFind(key);
@@ -1103,7 +1103,7 @@ private:
 		return { pos, true };
 	}
 
-	template<bool extraCheck, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
 	Position pvAdd(ConstPosition pos, ItemCreator itemCreator)
 	{
 		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
@@ -1120,7 +1120,7 @@ private:
 		return resPos;
 	}
 
-	template<bool incCount, internal::conceptFastCreator<Item> ItemCreator>
+	template<bool incCount, internal::conceptTrivialCreator<Item> ItemCreator>
 	Position pvAddNogrow(Buckets& buckets, size_t hashCode, ItemCreator itemCreator)
 	{
 		size_t bucketCount = buckets.GetCount();
@@ -1147,7 +1147,7 @@ private:
 		return PositionProxy(bucketIndex, bucketIter, mCrew.GetVersion());
 	}
 
-	template<internal::conceptFastCreator<Item> ItemCreator>
+	template<internal::conceptTrivialCreator<Item> ItemCreator>
 	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, ItemCreator itemCreator)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
@@ -1184,7 +1184,7 @@ private:
 		return resPos;
 	}
 
-	template<internal::conceptFastReplacer<Item> ItemReplacer>
+	template<internal::conceptTrivialReplacer<Item> ItemReplacer>
 	Iterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
 	{
 		MOMO_CHECK(mBuckets != nullptr);

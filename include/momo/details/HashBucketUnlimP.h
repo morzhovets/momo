@@ -127,7 +127,7 @@ namespace internal
 			mArrayBucket.Clear(params);
 		}
 
-		template<conceptFastCreator<Item> ItemCreator>
+		template<conceptTrivialCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 		{
@@ -135,7 +135,7 @@ namespace internal
 			return GetBounds(params).GetEnd() - 1;
 		}
 
-		template<conceptFastReplacer<Item> ItemReplacer>
+		template<conceptTrivialReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			Bounds bounds = GetBounds(params);

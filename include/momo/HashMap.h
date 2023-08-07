@@ -811,7 +811,7 @@ public:
 	}
 
 private:
-	template<typename RKey, internal::conceptFastCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
@@ -825,7 +825,7 @@ private:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, internal::conceptFastPairCreator<Key, Value> PairCreator>
+	template<bool extraCheck, internal::conceptTrivialPairCreator<Key, Value> PairCreator>
 	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
@@ -834,7 +834,7 @@ private:
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, internal::conceptFastCreator<Value> ValueCreator>
+	template<bool extraCheck, typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
