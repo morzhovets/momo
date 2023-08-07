@@ -41,16 +41,16 @@ concept conceptMapKeyValueTraits =
 namespace internal
 {
 	template<typename Creator, typename Key, typename Value>
-	concept conceptPairCreator = conceptMovableFunctor<Creator, false, void, Key*, Value*>;
+	concept conceptPairCreator = conceptMovableFunctor<Creator, void, Key*, Value*>;
 
 	template<typename Remover, typename Key, typename Value>
-	concept conceptPairRemover = conceptMovableFunctor<Remover, false, void, Key&, Value&>;
+	concept conceptPairRemover = conceptMovableFunctor<Remover, void, Key&, Value&>;
 
 	template<typename Creator, typename Key, typename Value>
-	concept conceptFastPairCreator = conceptMovableFunctor<Creator, true, void, Key*, Value*>;
+	concept conceptFastPairCreator = conceptTriviallyMovableFunctor<Creator, void, Key*, Value*>;
 
 	template<typename Remover, typename Key, typename Value>
-	concept conceptFastPairRemover = conceptMovableFunctor<Remover, true, void, Key&, Value&>;
+	concept conceptFastPairRemover = conceptTriviallyMovableFunctor<Remover, void, Key&, Value&>;
 
 	template<typename TSetReference,
 		bool tIsConst = false>

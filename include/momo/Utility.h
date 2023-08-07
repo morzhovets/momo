@@ -124,25 +124,30 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
-	template<typename Functor, bool triviallyMovable, typename Result, typename... Args>
+	template<typename Functor, typename Result = void, typename... Args>
 	concept conceptMovableFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
-			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; } &&
-		(!triviallyMovable ||
-			(!std::is_reference_v<Functor> &&
-			std::is_trivially_destructible_v<Functor> &&
-			std::is_trivially_move_constructible_v<Functor>));
+			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) }
+				-> std::convertible_to<Result>; };
 
-	template<typename Functor, bool triviallyCopyable, typename Result, typename... Args>
+	template<typename Functor, typename Result = void, typename... Args>
+	concept conceptTriviallyMovableFunctor = conceptMovableFunctor<Functor, Result, Args...> &&
+		!std::is_reference_v<Functor> &&
+		std::is_trivially_destructible_v<Functor> &&
+		std::is_trivially_move_constructible_v<Functor>;
+
+	template<typename Functor, typename Result = void, typename... Args>
 	concept conceptCopyableFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
-			{ { std::as_const(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; } &&
-		(!triviallyCopyable ||
-			(!std::is_reference_v<Functor> &&
-			std::is_trivially_destructible_v<Functor> &&
-			std::is_trivially_copy_constructible_v<Functor>));
+			{ { std::as_const(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; };
+
+	template<typename Functor, typename Result = void, typename... Args>
+	concept conceptTriviallyCopyableFunctor = conceptCopyableFunctor<Functor, Result, Args...> &&
+		!std::is_reference_v<Functor> &&
+		std::is_trivially_destructible_v<Functor> &&
+		std::is_trivially_copy_constructible_v<Functor>;
 
 	template<typename TBaseFunctor,
 		size_t tMaxSize = 3 * sizeof(void*)>
