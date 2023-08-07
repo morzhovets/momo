@@ -51,7 +51,7 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
-		template<bool first, std::predicate<const Item&> Predicate>
+		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			return pvFind<first>(pred, hashCode);
@@ -64,7 +64,7 @@ namespace internal
 		}
 
 	private:
-		template<bool first, typename Predicate>
+		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
 		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
 		{
 			static_assert(std::endian::native == std::endian::little);

@@ -136,7 +136,7 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
-		template<bool first, std::predicate<const Item&> Predicate>
+		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& params, Predicate pred, size_t /*hashCode*/)
 		{
 			for (Item& item : GetBounds(params))

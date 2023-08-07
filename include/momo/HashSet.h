@@ -1063,7 +1063,7 @@ private:
 		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<typename Predicate>
+	template<internal::conceptTrivialPredicate<const Item&> Predicate>
 	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets, Predicate pred) const
 	{
 		size_t hashCode = indexCode;

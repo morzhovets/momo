@@ -1112,7 +1112,7 @@ private:
 		return pvFindFirst(pred);
 	}
 
-	template<typename Predicate>
+	template<internal::conceptTrivialPredicate<const Item&> Predicate>
 	Iterator pvFindFirst(Predicate pred) const
 	{
 		if (mRootNode == nullptr)
@@ -1131,7 +1131,7 @@ private:
 		return iter;
 	}
 
-	template<typename Predicate>
+	template<internal::conceptTrivialPredicate<const Item&> Predicate>
 	size_t pvFindFirst(Node* node, Predicate pred) const
 	{
 		if constexpr (TreeTraits::useLinearSearch)
