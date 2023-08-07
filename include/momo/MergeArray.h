@@ -576,11 +576,10 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const Item&>
-	size_t Remove(const Predicate& pred)
+	template<internal::conceptPredicate<const Item&> Predicate>
+	size_t Remove(Predicate pred)
 	{
-		return ArrayShifter::Remove(*this, pred);
+		return ArrayShifter::Remove(*this, internal::FastCopyableFunctor<Predicate>(pred));
 	}
 
 	size_t GetSegmentCount() const noexcept

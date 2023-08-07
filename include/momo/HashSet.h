@@ -881,15 +881,14 @@ public:
 		return true;
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const Item&>
-	size_t Remove(const Predicate& pred)
+	template<internal::conceptPredicate<const Item&> Predicate>
+	size_t Remove(Predicate pred)
 	{
 		size_t initCount = GetCount();
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			if (pred(*iter))
+			if (pred(*iter))	//?
 				iter = Remove(iter);
 			else
 				++iter;

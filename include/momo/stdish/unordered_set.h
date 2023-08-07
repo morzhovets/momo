@@ -536,11 +536,10 @@ public:
 		return 1;
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const_reference>
-	friend size_type erase_if(unordered_set& cont, const Predicate& pred)
+	template<momo::internal::conceptPredicate<const_reference> Predicate>
+	friend size_type erase_if(unordered_set& cont, Predicate pred)
 	{
-		return cont.mHashSet.Remove(pred);
+		return cont.mHashSet.Remove(momo::internal::FastCopyableFunctor<Predicate>(pred));
 	}
 
 	node_type extract(const_iterator where)
@@ -695,11 +694,11 @@ public:
 		left.swap(right);
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const_reference>
-	friend size_type erase_if(unordered_set_open& cont, const Predicate& pred)
+	template<momo::internal::conceptPredicate<const_reference> Predicate>
+	friend size_type erase_if(unordered_set_open& cont, Predicate pred)
 	{
-		return cont.get_nested_container().Remove(pred);
+		return cont.get_nested_container().Remove(
+			momo::internal::FastCopyableFunctor<Predicate>(pred));
 	}
 };
 

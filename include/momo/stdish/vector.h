@@ -428,11 +428,10 @@ public:
 		return cont.mArray.Remove(pred);
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const_reference>
-	friend size_type erase_if(vector& cont, const Predicate& pred)
+	template<momo::internal::conceptPredicate<const_reference> Predicate>
+	friend size_type erase_if(vector& cont, Predicate pred)
 	{
-		return cont.mArray.Remove(pred);
+		return cont.mArray.Remove(momo::internal::FastCopyableFunctor<Predicate>(pred));
 	}
 
 	void assign(size_type count, const value_type& value)

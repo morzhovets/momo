@@ -149,6 +149,12 @@ namespace internal
 		std::is_trivially_destructible_v<Functor> &&
 		std::is_trivially_copy_constructible_v<Functor>;
 
+	template<typename Predicate, typename... Args>
+	concept conceptPredicate = conceptCopyableFunctor<Predicate, bool, Args...>;
+
+	template<typename Predicate, typename... Args>
+	concept conceptTrivialPredicate = conceptTriviallyCopyableFunctor<Predicate, bool, Args...>;
+
 	template<typename TBaseFunctor,
 		size_t tMaxSize = 3 * sizeof(void*)>
 	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))

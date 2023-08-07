@@ -363,31 +363,14 @@ public:
 		mCacheHead = nullptr;
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, void*>
-	void DeallocateIf(const Predicate& pred)
+	template<internal::conceptPredicate<void*> Predicate>
+	void DeallocateIf(Predicate pred)
 	{
 		MOMO_EXTRA_CHECK(CanDeallocateAll());
 		if (pvUseCache())
 			pvFlushDeallocate();
-		if (mAllocCount == 0)
-			return;
-		Byte* buffer = mFreeBufferHead;
-		while (true)
-		{
-			Byte* nextBuffer = pvGetNextBuffer(buffer);
-			pvDeleteBlocks(buffer, pred);
-			if (nextBuffer == nullptr)
-				break;
-			buffer = nextBuffer;
-		}
-		buffer = pvGetPrevBuffer(mFreeBufferHead);
-		while (buffer != nullptr)
-		{
-			Byte* prevBuffer = pvGetPrevBuffer(buffer);
-			pvDeleteBlocks(buffer, pred);
-			buffer = prevBuffer;
-		}
+		if (mAllocCount > 0)
+			pvDeallocateIf(internal::FastCopyableFunctor<Predicate>(pred));
 	}
 
 	void MergeFrom(MemPool& memPool)
@@ -698,8 +681,29 @@ private:
 			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
 	}
 
-	template<typename Predicate>
-	void pvDeleteBlocks(Byte* buffer, const Predicate& pred)
+	template<internal::conceptTrivialPredicate<void*> Predicate>
+	void pvDeallocateIf(Predicate pred)
+	{
+		Byte* buffer = mFreeBufferHead;
+		while (true)
+		{
+			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			if (nextBuffer == nullptr)
+				break;
+			buffer = nextBuffer;
+		}
+		buffer = pvGetPrevBuffer(mFreeBufferHead);
+		while (buffer != nullptr)
+		{
+			Byte* prevBuffer = pvGetPrevBuffer(buffer);
+			pvDeleteBlocks(buffer, pred);
+			buffer = prevBuffer;
+		}
+	}
+
+	template<internal::conceptTrivialPredicate<void*> Predicate>
+	void pvDeleteBlocks(Byte* buffer, Predicate pred)
 	{
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
 		uint8_t freeBlockBits[16] = {};

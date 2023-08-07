@@ -609,12 +609,12 @@ public:
 		return count;
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const_reference>
-	friend size_type erase_if(unordered_multimap& cont, const Predicate& pred)
+	template<momo::internal::conceptPredicate<const_reference> Predicate>
+	friend size_type erase_if(unordered_multimap& cont, Predicate pred)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
+		momo::internal::FastCopyableFunctor<Predicate> fastPred(pred);
+		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
+			{ return fastPred(const_reference(key, mapped)); };
 		return cont.mHashMultiMap.Remove(pairPred);
 	}
 
@@ -772,12 +772,12 @@ public:
 		left.swap(right);
 	}
 
-	template<typename Predicate>
-	requires std::predicate<const Predicate&, const_reference>
-	friend size_type erase_if(unordered_multimap_open& cont, const Predicate& pred)
+	template<momo::internal::conceptPredicate<const_reference> Predicate>
+	friend size_type erase_if(unordered_multimap_open& cont, Predicate pred)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
+		momo::internal::FastCopyableFunctor<Predicate> fastPred(pred);
+		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
+			{ return fastPred(const_reference(key, mapped)); };
 		return cont.get_nested_container().Remove(pairPred);
 	}
 };

@@ -251,9 +251,8 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<typename Predicate>
-		requires std::predicate<const Predicate&, const Item&>
-		static size_t Remove(Array& array, const Predicate& pred)
+		template<conceptTrivialPredicate<const Item&> Predicate>
+		static size_t Remove(Array& array, Predicate pred)
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
