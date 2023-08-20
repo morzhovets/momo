@@ -725,12 +725,12 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	template<typename PairPredicate>
-	requires std::predicate<const PairPredicate&, const Key&, const Value&>
-	size_t Remove(const PairPredicate& pairPred)
+	template<internal::conceptPredicate<const Key&, const Value&> PairPredicate>
+	size_t Remove(PairPredicate pairPred)
 	{
-		auto itemPred = [&pairPred] (const KeyValuePair& item)
-			{ return pairPred(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
+		internal::FastCopyableFunctor<PairPredicate> fastPairPred(pairPred);
+		auto itemPred = [fastPairPred] (const KeyValuePair& item)
+			{ return fastPairPred(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
 		return mTreeSet.Remove(itemPred);
 	}
 

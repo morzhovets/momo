@@ -1085,9 +1085,8 @@ public:
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
-	template<typename PairPredicate>
-	requires std::predicate<const PairPredicate&, const Key&, const Value&>
-	size_t Remove(const PairPredicate& pairPred)
+	template<internal::conceptPredicate<const Key&, const Value&> PairPredicate>
+	size_t Remove(PairPredicate pairPred)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();
