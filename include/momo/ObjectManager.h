@@ -123,28 +123,28 @@ public:
 namespace internal
 {
 	template<typename Creator, typename Object>
-	concept conceptCreator = conceptMovableFunctor<Creator, void, Object*>;
+	concept conceptCreator = conceptMoveFunctor<Creator, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptMultiCreator = conceptCopyableFunctor<Creator, void, Object*>;
+	concept conceptMultiCreator = conceptConstFunctor<Creator, void, Object*>;
 
 	template<typename Remover, typename Object>
-	concept conceptRemover = conceptMovableFunctor<Remover, void, Object&>;
+	concept conceptRemover = conceptMoveFunctor<Remover, void, Object&>;
 
 	template<typename Predicate, typename Object>
 	concept conceptObjectPredicate = conceptPredicate<Predicate, const Object&>;
 
 	template<typename Creator, typename Object>
-	concept conceptTrivialCreator = conceptTriviallyMovableFunctor<Creator, void, Object*>;
+	concept conceptTrivialCreator = conceptTrivialMoveFunctor<Creator, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptTrivialMultiCreator = conceptTriviallyCopyableFunctor<Creator, void, Object*>;
+	concept conceptTrivialMultiCreator = conceptTrivialConstFunctor<Creator, void, Object*>;
 
 	template<typename Remover, typename Object>
-	concept conceptTrivialRemover = conceptTriviallyMovableFunctor<Remover, void, Object&>;
+	concept conceptTrivialRemover = conceptTrivialMoveFunctor<Remover, void, Object&>;
 
 	template<typename Replacer, typename Object>
-	concept conceptTrivialReplacer = conceptTriviallyMovableFunctor<Replacer, void, Object&, Object&>;
+	concept conceptTrivialReplacer = conceptTrivialMoveFunctor<Replacer, void, Object&, Object&>;
 
 	template<typename Predicate, typename Object>
 	concept conceptTrivialObjectPredicate = conceptTrivialPredicate<Predicate, const Object&>;
@@ -436,7 +436,7 @@ namespace internal
 			std::construct_at(dstObject, srcObject);
 		}
 
-		template<conceptTriviallyMovableFunctor Func>
+		template<conceptTrivialMoveFunctor Func>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject, Func func)
 			requires isMoveConstructible && isNothrowDestructible
 		{
@@ -461,7 +461,7 @@ namespace internal
 			}
 		}
 
-		template<conceptTriviallyMovableFunctor Func>
+		template<conceptTrivialMoveFunctor Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
 			Func func) requires isCopyConstructible && isNothrowDestructible
 		{
@@ -612,7 +612,7 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptTriviallyMovableFunctor Func>
+			conceptTrivialMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, Func func)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
