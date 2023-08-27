@@ -885,7 +885,7 @@ public:
 		return remCount;
 	}
 
-	template<internal::conceptPredicate<const Item&> Predicate>
+	template<internal::conceptObjectPredicate<Item> Predicate>
 	size_t Remove(Predicate pred)
 	{
 		size_t initCount = GetCount();
@@ -1112,7 +1112,7 @@ private:
 		return pvFindFirst(pred);
 	}
 
-	template<internal::conceptTrivialPredicate<const Item&> Predicate>
+	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
 	Iterator pvFindFirst(Predicate pred) const
 	{
 		if (mRootNode == nullptr)
@@ -1131,7 +1131,7 @@ private:
 		return iter;
 	}
 
-	template<internal::conceptTrivialPredicate<const Item&> Predicate>
+	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
 	size_t pvFindFirst(Node* node, Predicate pred) const
 	{
 		if constexpr (TreeTraits::useLinearSearch)

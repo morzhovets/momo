@@ -95,7 +95,7 @@ namespace internal
 			return Bounds(Iterator(&mItems + maxCount), pvGetCount());
 		}
 
-		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
+		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
 		{
 			return pvFind(pred, hashCode);
@@ -184,7 +184,7 @@ namespace internal
 			mState[1] = uint8_t{0};
 		}
 
-		template<conceptTrivialPredicate<const Item&> Predicate>
+		template<conceptTrivialObjectPredicate<Item> Predicate>
 		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
 		{
 			ShortHash shortHash = pvCalcShortHash(hashCode);

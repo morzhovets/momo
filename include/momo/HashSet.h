@@ -881,7 +881,7 @@ public:
 		return true;
 	}
 
-	template<internal::conceptPredicate<const Item&> Predicate>
+	template<internal::conceptObjectPredicate<Item> Predicate>
 	size_t Remove(Predicate pred)
 	{
 		size_t initCount = GetCount();
@@ -1063,7 +1063,7 @@ private:
 		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<internal::conceptTrivialPredicate<const Item&> Predicate>
+	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
 	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets, Predicate pred) const
 	{
 		size_t hashCode = indexCode;

@@ -740,7 +740,7 @@ public:
 		return mHashSet.Remove(key);
 	}
 
-	template<internal::conceptPredicate<const Key&, const Value&> PairPredicate>
+	template<internal::conceptPairPredicate<Key, Value> PairPredicate>
 	size_t Remove(PairPredicate pairPred)
 	{
 		internal::FastCopyableFunctor<PairPredicate> fastPairPred(pairPred);

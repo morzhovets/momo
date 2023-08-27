@@ -251,7 +251,7 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<conceptTrivialPredicate<const Item&> Predicate>
+		template<conceptTrivialObjectPredicate<Item> Predicate>
 		static size_t Remove(Array& array, Predicate pred)
 		{
 			size_t initCount = array.GetCount();

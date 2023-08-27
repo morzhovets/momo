@@ -576,7 +576,7 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<internal::conceptPredicate<const Item&> Predicate>
+	template<internal::conceptObjectPredicate<Item> Predicate>
 	size_t Remove(Predicate pred)
 	{
 		return ArrayShifter::Remove(*this, internal::FastCopyableFunctor<Predicate>(pred));

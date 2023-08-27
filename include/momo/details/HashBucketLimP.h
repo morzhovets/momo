@@ -128,7 +128,7 @@ namespace internal
 			return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
+		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
@@ -404,7 +404,7 @@ namespace internal
 			return pvGetBounds();
 		}
 
-		template<bool first, conceptTrivialPredicate<const Item&> Predicate>
+		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
