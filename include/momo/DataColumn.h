@@ -1014,7 +1014,7 @@ private:
 
 	template<typename Item, typename... Items, typename DataColumnListPtr, typename RawPtr>
 	static void pvCreate(MemManager& memManager, const ColumnRecord* columnRecordPtr,
-		DataColumnListPtr srcColumnList, RawPtr srcRaw, Raw* raw)
+		[[maybe_unused]] DataColumnListPtr srcColumnList, [[maybe_unused]] RawPtr srcRaw, Raw* raw)
 	{
 		size_t offset = columnRecordPtr->GetOffset();
 		Item* item = pvGetItemPtr<Item>(raw, offset);
