@@ -1036,21 +1036,18 @@ private:
 			ItemTraits::Create(memManager, item);
 		else
 			ItemTraits::Copy(memManager, *srcItem, item);
-		try
+		if constexpr (sizeof...(Items) > 0)
 		{
-			pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
+			try
+			{
+				pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
+			}
+			catch (...)
+			{
+				ItemTraits::Destroy(&memManager, *item);
+				throw;
+			}
 		}
-		catch (...)
-		{
-			ItemTraits::Destroy(&memManager, *item);
-			throw;
-		}
-	}
-
-	template<typename DataColumnListPtr, typename RawPtr>
-	static void pvCreate(MemManager& /*memManager*/, const ColumnRecord* /*columnRecordPtr*/,
-		DataColumnListPtr /*srcColumnList*/, RawPtr /*srcRaw*/, Raw* /*raw*/) noexcept
-	{
 	}
 
 	template<typename... Items, internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
