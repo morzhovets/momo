@@ -735,13 +735,13 @@ namespace internal
 		template<typename Item, typename... Items>
 		size_t GetLowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
-			return pvBinarySearch<-1>(equaler, equalers...);
+			return pvBinarySearch<true>(equaler, equalers...);
 		}
 
 		template<typename Item, typename... Items>
 		size_t GetUpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
-			return pvBinarySearch<0>(equaler, equalers...);
+			return pvBinarySearch<false>(equaler, equalers...);
 		}
 
 		template<typename RowPredicate>
@@ -785,21 +785,22 @@ namespace internal
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
-			{
-				int cmp = 0;
-				const size_t* offsetPtr = offsets.data();
-				((cmp = pvCompare<Items>(raw1, raw2, *offsetPtr++)) || ...);
-				return cmp < 0;
-			};
+				{ return pvCompare<Items...>(offsets.data(), raw1, raw2) < 0; };
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
 		}
 
-		template<typename Item>
-		static int pvCompare(Raw* raw1, Raw* raw2, size_t offset)
+		template<typename Item, typename... Items>
+		static std::weak_ordering pvCompare(const size_t* offsetPtr, Raw* raw1, Raw* raw2)
 		{
+			size_t offset = *offsetPtr;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
 			const Item& item2 = ColumnList::template GetByOffset<const Item>(raw2, offset);
-			return DataTraits::Compare(item1, item2);
+			if (std::weak_ordering cmp = DataTraits::Compare(item1, item2); cmp != 0)
+				return cmp;
+			if constexpr (sizeof...(Items) > 0)
+				return pvCompare<Items...>(offsetPtr + 1, raw1, raw2);
+			else
+				return std::weak_ordering::equivalent;
 		}
 
 		template<typename RowComparer>
@@ -860,7 +861,7 @@ namespace internal
 			return DataTraits::IsEqual(item1, item2);
 		}
 
-		template<int bound, typename... Items>
+		template<bool lower, typename... Items>
 		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
 		{
 			static const size_t columnCount = sizeof...(equalers);
@@ -868,20 +869,26 @@ namespace internal
 				{{ mColumnList->GetOffset(equalers.GetColumn())... }};
 			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 			{
-				int cmp = 0;
-				const size_t* offsetPtr = offsets.data();
-				((cmp = pvCompare<Items>(raw, equalers.GetItemArg(), *offsetPtr++)) || ...);
-				return cmp > bound;
+				std::weak_ordering cmp = pvCompare(offsets.data(), raw, equalers...);
+				return lower ? cmp >= 0 : cmp > 0;
 			};
 			return UIntMath<>::Dist(mRaws.GetBegin(),
 				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
 		}
 
-		template<typename Item>
-		static int pvCompare(Raw* raw1, const Item& item2, size_t offset)
+		template<typename Item, typename... Items>
+		static std::weak_ordering pvCompare(const size_t* offsetPtr, Raw* raw1,
+			const Equaler<Item>& equaler2, const Equaler<Items>&... equalers2)
 		{
+			size_t offset = *offsetPtr;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
-			return DataTraits::Compare(item1, item2);
+			const Item& item2 = equaler2.GetItemArg();
+			if (std::weak_ordering cmp = DataTraits::Compare(item1, item2); cmp != 0)
+				return cmp;
+			if constexpr (sizeof...(Items) > 0)
+				return pvCompare(offsetPtr + 1, raw1, equalers2...);
+			else
+				return std::weak_ordering::equivalent;
 		}
 
 	private:

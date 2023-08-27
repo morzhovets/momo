@@ -54,11 +54,9 @@ public:
 	}
 
 	template<typename Item>
-	static int Compare(const Item& item1, const Item& item2)
+	static std::weak_ordering Compare(const Item& item1, const Item& item2)
 	{
-		if (std::less<Item>()(item1, item2))
-			return -1;
-		return (item1 == item2) ? 0 : 1;
+		return std::compare_weak_order_fallback(item1, item2);
 	}
 
 	template<typename Iterator, typename Comparer, typename MemManager>
