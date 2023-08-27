@@ -24,17 +24,27 @@ namespace momo
 
 namespace internal
 {
-	template<typename HashFunc, typename Key>
-	concept conceptHashFunc =
-		requires (const HashFunc& hashFunc, const Key& key)
-			{ { hashFunc(key) } -> std::convertible_to<size_t>; };
-
-	template<typename EqualFunc, typename Key1,
-		typename Key2 = Key1>	//?
-	concept conceptEqualFunc = std::predicate<const EqualFunc&, const Key1&, const Key2&>;
+	template<typename EqualFunc, typename Key,
+		typename KeyArg = Key>
+	concept conceptEqualFunc = conceptPredicate<EqualFunc, const Key&, const KeyArg&>;
 
 	template<typename LessFunc, typename Key>
-	concept conceptLessFunc = std::strict_weak_order<const LessFunc&, const Key&, const Key&>;
+	concept conceptLessFunc = conceptPredicate<LessFunc, const Key&, const Key&>;
+
+	template<typename HashFunc, typename Key>
+	concept conceptHashFunc = conceptConstFunctor<HashFunc, size_t, const Key&>;
+
+	template<typename EqualFunc, typename Key>
+	concept conceptCopyableEqualFunc = conceptEqualFunc<EqualFunc, Key> &&
+		std::copy_constructible<EqualFunc>;
+
+	template<typename LessFunc, typename Key>
+	concept conceptCopyableLessFunc = conceptLessFunc<LessFunc, Key> &&
+		std::copy_constructible<LessFunc>;
+
+	template<typename HashFunc, typename Key>
+	concept conceptCopyableHashFunc = conceptHashFunc<HashFunc, Key> &&
+		std::copy_constructible<HashFunc>;
 
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };
