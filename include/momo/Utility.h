@@ -124,6 +124,14 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
+	template<typename Object,
+		size_t maxSize = sizeof(void*)>
+	concept conceptSmallAndTriviallyCopyable =
+		std::is_trivially_destructible_v<Object> &&
+		std::is_trivially_move_constructible_v<Object> &&
+		std::is_trivially_copy_constructible_v<Object> &&
+		sizeof(Object) <= maxSize;
+
 	template<typename Functor, typename Result = void, typename... Args>
 	concept conceptMoveFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
@@ -205,10 +213,8 @@ namespace internal
 		static const size_t maxSize = tMaxSize;
 
 	private:
-		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
-			&& std::is_trivially_move_constructible_v<BaseFunctor>
-			&& std::is_trivially_copy_constructible_v<BaseFunctor>
-			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, const BaseFunctor&> BaseFunctorReference;
+		typedef std::conditional_t<conceptSmallAndTriviallyCopyable<BaseFunctor, maxSize>,
+			BaseFunctor, const BaseFunctor&> BaseFunctorReference;
 
 	public:
 		explicit FastCopyableFunctor(BaseFunctorReference baseFunctor) noexcept

@@ -149,13 +149,6 @@ namespace internal
 	template<typename Predicate, typename Object>
 	concept conceptTrivialObjectPredicate = conceptTrivialPredicate<Predicate, const Object&>;
 
-	template<typename ObjectArg>
-	concept conceptPassingByValue =
-		std::is_trivially_destructible_v<ObjectArg> &&
-		std::is_trivially_move_constructible_v<ObjectArg> &&
-		std::is_trivially_copy_constructible_v<ObjectArg> &&
-		sizeof(ObjectArg) <= sizeof(void*);
-
 	template<typename Iterator, typename Object>
 	concept conceptIncIterator =
 		requires (Iterator iter)
@@ -277,7 +270,7 @@ namespace internal
 	};
 
 	template<typename ObjectArg, size_t index>
-	requires (!std::is_reference_v<ObjectArg> && conceptPassingByValue<ObjectArg>)
+	requires (!std::is_reference_v<ObjectArg> && conceptSmallAndTriviallyCopyable<ObjectArg>)
 	class ObjectCreatorArg<ObjectArg, index>
 	{
 	protected:
@@ -353,7 +346,7 @@ namespace internal
 	};
 
 	template<conceptObject TObject, conceptMemManager TMemManager>
-	requires (conceptPassingByValue<TObject> &&
+	requires (conceptSmallAndTriviallyCopyable<TObject> &&
 		!HasCustomConstructor<TMemManager, TObject, const TObject&>::value)
 	class ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
 		: public ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject>
