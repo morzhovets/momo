@@ -89,34 +89,38 @@ namespace internal
 			return ConstReference(RefPair::first, RefPair::second);
 		}
 
-		bool operator==(const MapReferenceStd& ref) const
+		friend bool operator==(const MapReferenceStd& ref1, const MapReferenceStd& ref2)
 		{
-			return RefPair::first == ref.first && RefPair::second == ref.second;
+			return pvIsEqual(ref1, ref2);
 		}
 
-		bool operator!=(const MapReferenceStd& ref) const
+		friend bool operator!=(const MapReferenceStd& ref1, const MapReferenceStd& ref2)
 		{
-			return !(*this == ref);
+			return !pvIsEqual(ref1, ref2);
 		}
 
-		bool operator==(const std::pair<const Key, Value>& pair) const
+		template<typename Pair2>
+		friend bool operator==(const MapReferenceStd& ref1, const Pair2& pair2)
 		{
-			return RefPair::first == pair.first && RefPair::second == pair.second;
+			return pvIsEqual(ref1, pair2);
 		}
 
-		bool operator!=(const std::pair<const Key, Value>& pair) const
+		template<typename Pair2>
+		friend bool operator!=(const MapReferenceStd& ref1, const Pair2& pair2)
 		{
-			return !(*this == pair);
+			return !pvIsEqual(ref1, pair2);
 		}
 
-		friend bool operator==(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
+		template<typename Pair1>
+		friend bool operator==(const Pair1& pair1, const MapReferenceStd& ref2)
 		{
-			return ref == pair;
+			return pvIsEqual(pair1, ref2);
 		}
 
-		friend bool operator!=(const std::pair<const Key, Value>& pair, const MapReferenceStd& ref)
+		template<typename Pair1>
+		friend bool operator!=(const Pair1& pair1, const MapReferenceStd& ref2)
 		{
-			return !(ref == pair);
+			return !pvIsEqual(pair1, ref2);
 		}
 
 		//? <, >, <=, >=
@@ -125,6 +129,13 @@ namespace internal
 		explicit MapReferenceStd(MapReference mapRef) noexcept
 			: RefPair(mapRef.key, mapRef.value)
 		{
+		}
+
+	private:
+		template<typename Pair1, typename Pair2>
+		static bool pvIsEqual(const Pair1& pair1, const Pair2& pair2)
+		{
+			return pair1.first == pair2.first && pair1.second == pair2.second;
 		}
 	};
 
