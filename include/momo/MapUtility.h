@@ -123,18 +123,6 @@ namespace internal
 			return ConstReference(RefPair::first, RefPair::second);
 		}
 
-		bool operator==(const MapReferenceStd& ref) const
-		{
-			return RefPair::first == ref.first && RefPair::second == ref.second;
-		}
-
-		bool operator==(const std::pair<const Key, Value>& pair) const
-		{
-			return RefPair::first == pair.first && RefPair::second == pair.second;
-		}
-
-		//operator<=>
-
 	protected:
 		explicit MapReferenceStd(MapReference mapRef) noexcept
 			: RefPair(mapRef.key, mapRef.value)
