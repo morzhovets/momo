@@ -129,11 +129,12 @@ namespace internal
 			return ref1.first == pair2.first && ref1.second == pair2.second;
 		}
 
-		//template<typename Pair2>
-		//friend bool operator<=>(const MapReferenceStd& ref1, const Pair2& pair2)
-		//{
-		//	return std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second);
-		//}
+		template<typename Pair2>
+		friend auto operator<=>(const MapReferenceStd& ref1, const Pair2& pair2)
+			requires requires { std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second); }
+		{
+			return std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second);
+		}
 
 	protected:
 		explicit MapReferenceStd(MapReference mapRef) noexcept
