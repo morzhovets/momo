@@ -1085,7 +1085,7 @@ public:
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
-	template<internal::conceptPairPredicate<Key, Value> PairPredicate>
+	template<internal::conceptMapPairPredicate<Key, Value> PairPredicate>
 	size_t Remove(PairPredicate pairPred)
 	{
 		size_t initValueCount = mValueCount;

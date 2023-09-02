@@ -425,7 +425,7 @@ public:
 		return Insert(pairs.begin(), pairs.end());
 	}
 
-	template<internal::conceptPairCreator<Key, Value> PairCreator,
+	template<internal::conceptMapPairCreator<Key, Value> PairCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{
@@ -528,7 +528,7 @@ private:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialPairCreator<Key, Value> PairCreator>
+	template<bool extraCheck, internal::conceptTrivialMapPairCreator<Key, Value> PairCreator>
 	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
