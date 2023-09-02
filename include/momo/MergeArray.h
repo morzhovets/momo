@@ -600,17 +600,18 @@ public:
 
 	template<typename ItemArg,
 		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
-	bool Contains(const ItemArg& itemArg, const EqualFunc& equalFunc = EqualFunc()) const
+	bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
 	{
+		internal::FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
 		return std::any_of(GetBegin(), GetEnd(),
-			[&itemArg, &equalFunc] (const Item& item) { return equalFunc(item, itemArg); });
+			[&itemArg, fastEqualFunc] (const Item& item) { return fastEqualFunc(item, itemArg); });
 	}
 
 	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	bool IsEqual(const MergeArray& array, const EqualFunc& equalFunc = EqualFunc()) const
+	bool IsEqual(const MergeArray& array, EqualFunc equalFunc = EqualFunc()) const
 	{
-		return GetCount() == array.GetCount() &&
-			std::equal(GetBegin(), GetEnd(), array.GetBegin(), equalFunc);
+		return std::equal(GetBegin(), GetEnd(), array.GetBegin(), array.GetEnd(),
+			internal::FastCopyableFunctor<EqualFunc>(equalFunc));
 	}
 
 private:
