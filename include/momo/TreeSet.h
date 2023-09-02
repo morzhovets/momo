@@ -679,7 +679,7 @@ public:
 		return pvGetKeyCount(key);
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator,
+	template<internal::conceptObjectCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
@@ -758,7 +758,7 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator,
+	template<internal::conceptObjectCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, ItemCreator itemCreator)
 	{
@@ -1176,7 +1176,7 @@ private:
 		return count;
 	}
 
-	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Iterator iter = pvGetUpperBound(key);
@@ -1190,7 +1190,7 @@ private:
 		return { iter, true };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	Iterator pvAdd(ConstIterator iter, ItemCreator itemCreator)
 	{
 		if (mRootNode == nullptr)
@@ -1226,7 +1226,7 @@ private:
 		return resIter;
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(iter == ConstIterator());
@@ -1249,7 +1249,7 @@ private:
 		}
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
@@ -1263,7 +1263,7 @@ private:
 		node = newNode;
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvAddSplit(NodeRelocator& relocator, Node*& leafNode, size_t& leafItemIndex,
 		ItemCreator itemCreator)
 	{
@@ -1459,7 +1459,7 @@ private:
 		return resNode;
 	}
 
-	template<internal::conceptTrivialRemover<Item> ItemRemover>
+	template<internal::conceptTrivialObjectRemover<Item> ItemRemover>
 	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());

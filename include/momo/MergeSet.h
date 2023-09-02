@@ -637,7 +637,7 @@ public:
 		return pvFind(key) != Position();
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator,
+	template<internal::conceptObjectCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
@@ -680,7 +680,7 @@ public:
 		return Insert(items.begin(), items.end());
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator,
+	template<internal::conceptObjectCreator<Item> ItemCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, ItemCreator itemCreator)
 	{
@@ -814,7 +814,7 @@ private:
 		}
 	}
 
-	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
 	{
 		Position pos = pvFind(key);
@@ -824,7 +824,7 @@ private:
 		return { pos, true };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialCreator<Item> ItemCreator>
+	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator itemCreator)
 	{
 		MOMO_CHECK(!pos);

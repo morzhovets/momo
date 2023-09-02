@@ -500,7 +500,7 @@ public:
 		return mHashSet.ContainsKey(key);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvInsert(std::move(key),
@@ -525,7 +525,7 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvInsert(key,
@@ -604,7 +604,7 @@ public:
 			internal::FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator,
+	template<internal::conceptObjectCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator valueCreator)
 	{
@@ -630,7 +630,7 @@ public:
 		return AddVar(pos, std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator,
+	template<internal::conceptObjectCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator valueCreator)
 	{
@@ -811,7 +811,7 @@ public:
 	}
 
 private:
-	template<typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
@@ -834,7 +834,7 @@ private:
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
+	template<bool extraCheck, typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]

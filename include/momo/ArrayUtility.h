@@ -123,7 +123,7 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
-		template<conceptTrivialCreator<Item> ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator itemCreator)
 			: mMemManager(&memManager)
 		{

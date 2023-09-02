@@ -292,7 +292,7 @@ namespace internal
 			pvSetEmpty(minMemPoolIndex);
 		}
 
-		template<conceptTrivialCreator<Item> ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 		{
@@ -342,7 +342,7 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialReplacer<Item> ItemReplacer>
+		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
 		{
 			Item* items = mPtrState.GetPointer();
@@ -472,7 +472,7 @@ namespace internal
 				| static_cast<uint8_t>(probe) : emptyHashProbe;
 		}
 
-		template<size_t memPoolIndex, conceptTrivialCreator<Item> ItemCreator>
+		template<size_t memPoolIndex, conceptTrivialObjectCreator<Item> ItemCreator>
 		Item* pvAdd0(Params& params, ItemCreator itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
@@ -483,7 +483,7 @@ namespace internal
 			return items;
 		}
 
-		template<size_t memPoolIndex, conceptTrivialCreator<Item> ItemCreator>
+		template<size_t memPoolIndex, conceptTrivialObjectCreator<Item> ItemCreator>
 		Item* pvAdd(Params& params, ItemCreator itemCreator, size_t hashCode, Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;

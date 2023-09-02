@@ -458,7 +458,7 @@ public:
 		return mTreeSet.GetKeyCount(key);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvInsert(std::move(key),
@@ -483,7 +483,7 @@ public:
 		return InsertVar(std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvInsert(key,
@@ -587,7 +587,7 @@ public:
 			internal::FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator,
+	template<internal::conceptObjectCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator valueCreator)
 	{
@@ -613,7 +613,7 @@ public:
 		return AddVar(iter, std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator,
+	template<internal::conceptObjectCreator<Value> ValueCreator,
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator valueCreator)
 	{
@@ -776,7 +776,7 @@ private:
 		return iter == GetEnd() || GetTreeTraits().IsLess(key, iter->key);
 	}
 
-	template<typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
@@ -799,7 +799,7 @@ private:
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
+	template<bool extraCheck, typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]

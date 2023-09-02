@@ -533,7 +533,7 @@ public:
 		return Array(Data(capacity, std::move(memManager)));
 	}
 
-	template<internal::conceptMultiCreator<Item> MultiItemCreator>
+	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
 	static Array CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
@@ -618,7 +618,7 @@ public:
 		return mData.GetCount();
 	}
 
-	template<internal::conceptMultiCreator<Item> MultiItemCreator>
+	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
 	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
 	{
 		pvSetCount(count, internal::FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
@@ -707,7 +707,7 @@ public:
 		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator>
+	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
 		MOMO_CHECK(GetCount() < GetCapacity());
@@ -733,7 +733,7 @@ public:
 		AddBackNogrowVar(item);
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator>
+	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackCrt(ItemCreator itemCreator)
 	{
 		pvAddBack(internal::FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
@@ -799,7 +799,7 @@ public:
 		}
 	}
 
-	template<internal::conceptCreator<Item> ItemCreator>
+	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void InsertCrt(size_t index, ItemCreator itemCreator)
 	{
 		pvInsert(index,
@@ -941,7 +941,7 @@ private:
 		}
 	}
 
-	template<internal::conceptTrivialMultiCreator<Item> MultiItemCreator>
+	template<internal::conceptTrivialObjectMultiCreator<Item> MultiItemCreator>
 	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
 	{
 		size_t newCount = count;
@@ -995,7 +995,7 @@ private:
 		return items[index];
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvAddBack(ItemCreator itemCreator)
 	{
 		if (GetCount() < GetCapacity())
@@ -1004,7 +1004,7 @@ private:
 			pvAddBackGrow(std::move(itemCreator));
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvAddBackNogrow(ItemCreator itemCreator)
 	{
 		size_t count = GetCount();
@@ -1012,7 +1012,7 @@ private:
 		mData.SetCount(count + 1);
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvAddBackGrow(ItemCreator itemCreator)
 	{
 		size_t initCount = GetCount();
@@ -1027,7 +1027,7 @@ private:
 		mData.template Reset<true>(newCapacity, newCount, std::move(itemsRelocator));
 	}
 
-	template<internal::conceptTrivialCreator<Item> ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	void pvInsert(size_t index, ItemCreator itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));

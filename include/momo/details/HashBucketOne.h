@@ -95,7 +95,7 @@ namespace internal
 			mHashState = HashState{0};
 		}
 
-		template<conceptTrivialCreator<Item> ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
@@ -106,7 +106,7 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		template<conceptTrivialReplacer<Item> ItemReplacer>
+		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter, ItemReplacer itemReplacer)
 		{
 			MOMO_ASSERT(iter == &mItemBuffer);

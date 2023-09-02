@@ -950,7 +950,7 @@ public:
 		return mHashMap.ContainsKey(key);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	Iterator AddCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd(std::move(key),
@@ -975,7 +975,7 @@ public:
 		return AddVar(std::move(key), value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	Iterator AddCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvAdd(key,
@@ -1000,7 +1000,7 @@ public:
 		return AddVar(key, value);
 	}
 
-	template<internal::conceptCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		return pvAdd(keyIter,
@@ -1052,7 +1052,7 @@ public:
 		return KeyIteratorProxy(mHashMap.Insert(key, ValueArray()).position);
 	}
 
-	template<internal::conceptCreator<Key> KeyCreator>
+	template<internal::conceptObjectCreator<Key> KeyCreator>
 	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator keyCreator)
 	{
 		return pvAddKey(keyIter,
@@ -1224,7 +1224,7 @@ private:
 		return pvMakeIterator(keyIter, valueIndex, true);
 	}
 
-	template<typename RKey, internal::conceptTrivialCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	requires std::is_same_v<Key, std::decay_t<RKey>>
 	Iterator pvAdd(RKey&& key, ValueCreator valueCreator)
 	{
@@ -1244,7 +1244,7 @@ private:
 		return pvMakeIterator(keyIter, 0, false);
 	}
 
-	template<internal::conceptTrivialCreator<Value> ValueCreator>
+	template<internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	Iterator pvAdd(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
@@ -1268,7 +1268,7 @@ private:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(pairCreator)));
 	}
 
-	template<internal::conceptTrivialCreator<Value> ValueCreator>
+	template<internal::conceptTrivialObjectCreator<Value> ValueCreator>
 	void pvAddValue(ValueArray& valueArray, ValueCreator valueCreator)
 	{
 		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), std::move(valueCreator));

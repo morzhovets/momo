@@ -108,7 +108,7 @@ namespace internal
 			pvSetEmpty();
 		}
 
-		template<conceptTrivialCreator<Item> ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
 			size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
@@ -116,7 +116,7 @@ namespace internal
 			return pvAdd(std::move(itemCreator), hashCode);
 		}
 
-		template<conceptTrivialReplacer<Item> ItemReplacer>
+		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
 		{
 			return pvRemove(iter, std::move(itemReplacer));
@@ -162,7 +162,7 @@ namespace internal
 			return Iterator();
 		}
 
-		template<conceptTrivialCreator<Item> ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		Iterator pvAdd(ItemCreator itemCreator, size_t hashCode)
 		{
 			size_t count = pvGetCount();
@@ -175,7 +175,7 @@ namespace internal
 			return pvMakeIterator(newItem);
 		}
 
-		template<conceptTrivialReplacer<Item> ItemReplacer>
+		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
 		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
 		{
 			size_t count = pvGetCount();

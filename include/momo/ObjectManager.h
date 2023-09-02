@@ -123,28 +123,28 @@ public:
 namespace internal
 {
 	template<typename Creator, typename Object>
-	concept conceptCreator = conceptMoveFunctor<Creator, void, Object*>;
+	concept conceptObjectCreator = conceptMoveFunctor<Creator, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptMultiCreator = conceptConstFunctor<Creator, void, Object*>;
+	concept conceptObjectMultiCreator = conceptConstFunctor<Creator, void, Object*>;
 
 	template<typename Remover, typename Object>
-	concept conceptRemover = conceptMoveFunctor<Remover, void, Object&>;
+	concept conceptObjectRemover = conceptMoveFunctor<Remover, void, Object&>;
 
 	template<typename Predicate, typename Object>
 	concept conceptObjectPredicate = conceptPredicate<Predicate, const Object&>;
 
 	template<typename Creator, typename Object>
-	concept conceptTrivialCreator = conceptTrivialMoveFunctor<Creator, void, Object*>;
+	concept conceptTrivialObjectCreator = conceptTrivialMoveFunctor<Creator, void, Object*>;
 
 	template<typename Creator, typename Object>
-	concept conceptTrivialMultiCreator = conceptTrivialConstFunctor<Creator, void, Object*>;
+	concept conceptTrivialObjectMultiCreator = conceptTrivialConstFunctor<Creator, void, Object*>;
 
 	template<typename Remover, typename Object>
-	concept conceptTrivialRemover = conceptTrivialMoveFunctor<Remover, void, Object&>;
+	concept conceptTrivialObjectRemover = conceptTrivialMoveFunctor<Remover, void, Object&>;
 
 	template<typename Replacer, typename Object>
-	concept conceptTrivialReplacer = conceptTrivialMoveFunctor<Replacer, void, Object&, Object&>;
+	concept conceptTrivialObjectReplacer = conceptTrivialMoveFunctor<Replacer, void, Object&, Object&>;
 
 	template<typename Predicate, typename Object>
 	concept conceptTrivialObjectPredicate = conceptTrivialPredicate<Predicate, const Object&>;
@@ -594,7 +594,7 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptTrivialCreator<Object> ObjectCreator>
+			conceptTrivialObjectCreator<Object> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ObjectCreator objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)

@@ -693,7 +693,7 @@ private:
 			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
-	template<typename... KeyArgs, momo::internal::conceptTrivialCreator<mapped_type> MappedCreator>
+	template<typename... KeyArgs, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator>
 	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, MappedCreator mappedCreator)
 	{
 		MemManager& memManager = mHashMultiMap.GetMemManager();
@@ -716,7 +716,7 @@ private:
 		return resIter;
 	}
 
-	template<typename RKey, momo::internal::conceptTrivialCreator<mapped_type> MappedCreator,
+	template<typename RKey, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator,
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
 	iterator pvInsert(std::tuple<RKey>&& key, MappedCreator mappedCreator)
