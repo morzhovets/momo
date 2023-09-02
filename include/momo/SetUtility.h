@@ -205,7 +205,7 @@ namespace internal
 		bool tKeepVersion>
 	requires (std::is_nothrow_move_constructible_v<TContainerTraits> &&
 		std::is_nothrow_move_assignable_v<TContainerTraits> &&
-		std::is_empty_v<MemManagerPtr<TMemManager>> && !tKeepVersion)
+		std::is_empty_v<MemManagerPtr<TMemManager>> && !tKeepVersion)	//?
 	class SetCrew<TContainerTraits, TMemManager, tKeepVersion>
 	{
 	public:

@@ -404,7 +404,7 @@ namespace internal
 			if constexpr (conceptMemManagerWithIsEqual<MemManager>)
 				return memManager1.IsEqual(memManager2);
 			else
-				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;
+				return &memManager1 == &memManager2 || std::is_empty_v<MemManager>;	//?
 		}
 
 		template<typename ResObject, typename... ResObjectArgs>
@@ -599,11 +599,7 @@ namespace internal
 	};
 
 	template<conceptMemManager TBaseMemManager>
-	requires (std::is_empty_v<TBaseMemManager> &&
-		std::is_nothrow_default_constructible_v<TBaseMemManager> &&
-		std::is_trivially_destructible_v<TBaseMemManager> &&
-		std::is_trivially_move_constructible_v<TBaseMemManager> &&
-		std::is_trivially_copy_constructible_v<TBaseMemManager>)
+	requires conceptSmallAndTriviallyCopyable<TBaseMemManager>
 	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
 	{
 	public:
@@ -616,7 +612,8 @@ namespace internal
 		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
-		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
+		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
+			: BaseMemManager(std::as_const(baseMemManager))
 		{
 		}
 
@@ -655,9 +652,9 @@ namespace internal
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
 		}
 
-		bool IsEqual(const MemManagerPtr& /*memManager*/) const noexcept
+		bool IsEqual(const MemManagerPtr& memManager) const noexcept
 		{
-			return true;
+			return BaseMemManagerProxy::IsEqual(*this, memManager);
 		}
 	};
 }
