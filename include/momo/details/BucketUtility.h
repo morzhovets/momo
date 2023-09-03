@@ -105,8 +105,8 @@ namespace internal
 		{
 		}
 
-		template<typename HashCodeFullGetter, typename Iterator>	//?
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator /*iter*/,
+		template<conceptTrivialConstFunctor<size_t> HashCodeFullGetter, typename Iterator>	//?
+		size_t GetHashCodePart(HashCodeFullGetter hashCodeFullGetter, Iterator /*iter*/,
 			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
 		{
 			return hashCodeFullGetter();

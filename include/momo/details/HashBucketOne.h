@@ -116,8 +116,8 @@ namespace internal
 			return nullptr;
 		}
 
-		template<typename HashCodeFullGetter>
-		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter,
+		template<conceptTrivialConstFunctor<size_t> HashCodeFullGetter>
+		size_t GetHashCodePart(HashCodeFullGetter hashCodeFullGetter,
 			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
 			size_t /*newLogBucketCount*/)
 		{
