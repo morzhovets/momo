@@ -188,7 +188,7 @@ namespace internal
 		static const size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
-		template<typename Iterator>
+		template<conceptIncIterator<Item> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			TreeSetItemTraits::ShiftNothrow(memManager, begin, shift);
@@ -213,7 +213,8 @@ public:
 	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 public:
-	template<typename SrcIterator, typename DstIterator,
+	template<internal::conceptIncIterator<Item> SrcIterator,
+		internal::conceptIncIterator<Item> DstIterator,
 		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)
@@ -222,7 +223,7 @@ public:
 			std::move(itemCreator), newItem);
 	}
 
-	template<typename Iterator>
+	template<internal::conceptIncIterator<Item> Iterator>
 	static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 	{
 		ItemManager::ShiftNothrow(memManager, begin, shift);

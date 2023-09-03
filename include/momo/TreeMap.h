@@ -41,13 +41,14 @@ namespace internal
 		using typename MapNestedSetItemTraits::Value;
 
 	public:
+		using typename MapNestedSetItemTraits::Item;
 		using typename MapNestedSetItemTraits::MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
 
 	public:
-		template<typename Iterator>
+		template<conceptIncIterator<Item> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
@@ -69,12 +70,13 @@ namespace internal
 		using typename MapNestedSetItemTraits::Value;
 
 	public:
+		using typename MapNestedSetItemTraits::Item;
 		using typename MapNestedSetItemTraits::MemManager;
 
 		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable;
 
 	public:
-		template<typename Iterator>
+		template<conceptIncIterator<Item> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
@@ -112,20 +114,22 @@ private:
 	using typename MapKeyValueTraits::ValueManager;
 
 public:
+	using typename MapKeyValueTraits::Key;
+	using typename MapKeyValueTraits::Value;
 	using typename MapKeyValueTraits::MemManager;
 
 	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
 	static const bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
 
 public:
-	template<typename KeyIterator>
+	template<internal::conceptIncIterator<Key> KeyIterator>
 	static void ShiftKeyNothrow(MemManager& memManager, KeyIterator keyBegin,
 		size_t shift) noexcept
 	{
 		KeyManager::ShiftNothrow(memManager, keyBegin, shift);
 	}
 
-	template<typename ValueIterator>
+	template<internal::conceptIncIterator<Value> ValueIterator>
 	static void ShiftValueNothrow(MemManager& memManager, ValueIterator valueBegin,
 		size_t shift) noexcept
 	{
@@ -143,12 +147,13 @@ private:
 	using typename MapKeyValueTraits::KeyManager;
 
 public:
+	using typename MapKeyValueTraits::Key;
 	using typename MapKeyValueTraits::MemManager;
 
 	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
 
 public:
-	template<typename KeyIterator>
+	template<internal::conceptIncIterator<Key> KeyIterator>
 	static void ShiftKeyNothrow(MemManager& memManager, KeyIterator keyBegin,
 		size_t shift) noexcept
 	{

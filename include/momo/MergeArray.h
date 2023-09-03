@@ -39,20 +39,22 @@ public:
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
 public:
-	template<typename Iterator>
+	template<internal::conceptIncIterator<Item> Iterator>
 	static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, begin, count);
 	}
 
-	template<typename SrcIterator, typename DstIterator>
+	template<internal::conceptIncIterator<Item> SrcIterator,
+		internal::conceptIncIterator<Item> DstIterator>
 	static void Relocate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count)
 	{
 		ItemManager::Relocate(memManager, srcBegin, dstBegin, count);
 	}
 
-	template<typename SrcIterator, typename DstIterator,
+	template<internal::conceptIncIterator<Item> SrcIterator,
+		internal::conceptIncIterator<Item> DstIterator,
 		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)

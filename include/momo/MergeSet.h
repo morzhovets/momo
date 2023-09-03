@@ -205,7 +205,7 @@ namespace internal
 			ItemPtrHash, MemManagerPtr> ItemPtrHashes;
 
 	public:
-		template<typename Iterator>
+		template<conceptIncIterator<Item> Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
 			SetMemManager* setMemManager = &memManager.GetBaseMemManager();
@@ -214,7 +214,7 @@ namespace internal
 				MergeSetItemTraits::Destroy(setMemManager, *iter++);
 		}
 
-		template<typename SrcIterator, conceptTrivialObjectCreator<Item> ItemCreator>
+		template<conceptIncIterator<Item> SrcIterator, conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
@@ -419,7 +419,8 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	template<typename SrcIterator, typename DstIterator,
+	template<internal::conceptIncIterator<Item> SrcIterator,
+		internal::conceptIncIterator<Item> DstIterator,
 		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)

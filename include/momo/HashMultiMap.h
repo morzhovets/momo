@@ -432,8 +432,9 @@ namespace internal
 			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
-		template<typename SrcKeyIterator, typename SrcValueIterator,
-			typename DstKeyIterator, typename DstValueIterator, conceptTrivialMoveFunctor Func>
+		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
+			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
+			conceptTrivialMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
 			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
@@ -530,7 +531,8 @@ public:
 		KeyManager::Relocate(memManager, srcKey, dstKey);
 	}
 
-	template<typename SrcKeyIterator, typename DstKeyIterator, internal::conceptTrivialMoveFunctor Func>
+	template<internal::conceptIncIterator<Key> SrcKeyIterator,
+		internal::conceptIncIterator<Key> DstKeyIterator, internal::conceptTrivialMoveFunctor Func>
 	static void RelocateExecKeys(MemManager& memManager, SrcKeyIterator srcKeyBegin,
 		DstKeyIterator dstKeyBegin, size_t count, Func func)
 	{

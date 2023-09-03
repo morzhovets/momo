@@ -499,8 +499,9 @@ namespace internal
 			}
 		}
 
-		template<typename SrcKeyIterator, typename SrcValueIterator,
-			typename DstKeyIterator, typename DstValueIterator, conceptTrivialMoveFunctor Func>
+		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
+			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
+			conceptTrivialMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
 			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
@@ -602,7 +603,8 @@ namespace internal
 			KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
 		}
 
-		template<typename SrcKeyIterator, typename DstKeyIterator, conceptTrivialMoveFunctor Func>
+		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Key> DstKeyIterator,
+			conceptTrivialMoveFunctor Func>
 		static void RelocateExecKeys(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func func)
 		{
@@ -856,7 +858,7 @@ namespace internal
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
-		template<typename SrcIterator, typename DstIterator,
+		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
 			conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
@@ -990,7 +992,7 @@ namespace internal
 			midItem.GetValuePtr() = srcItem.GetValuePtr();
 		}
 
-		template<typename SrcIterator, typename DstIterator,
+		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
 			conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)

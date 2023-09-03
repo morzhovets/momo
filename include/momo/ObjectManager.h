@@ -644,7 +644,7 @@ namespace internal
 		}
 
 	private:
-		template<typename Iterator>
+		template<conceptIncIterator<Object> Iterator>
 		static void pvShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			Iterator iter = begin;
