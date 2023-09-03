@@ -52,7 +52,8 @@ public:
 		ItemManager::Relocate(memManager, srcBegin, dstBegin, count);
 	}
 
-	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+	template<typename SrcIterator, typename DstIterator,
+		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)
 	{

@@ -393,7 +393,7 @@ namespace internal
 		static const size_t alignment = HashSetItemTraits::alignment;
 
 	public:
-		template<typename ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
@@ -417,7 +417,7 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	template<typename ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 		size_t count, ItemCreator itemCreator, Item* newItem)
 	{

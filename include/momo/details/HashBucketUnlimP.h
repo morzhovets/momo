@@ -41,7 +41,7 @@ namespace internal
 		{
 		}
 
-		template<typename ItemCreator>
+		template<conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{

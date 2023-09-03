@@ -214,7 +214,7 @@ namespace internal
 				MergeSetItemTraits::Destroy(setMemManager, *iter++);
 		}
 
-		template<typename SrcIterator, typename ItemCreator>
+		template<typename SrcIterator, conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
@@ -419,7 +419,8 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+	template<typename SrcIterator, typename DstIterator,
+		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)
 	{

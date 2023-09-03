@@ -314,7 +314,7 @@ namespace internal
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 	public:
-		template<typename ValueCreator>
+		template<conceptTrivialObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, Key&& key,
 			ValueCreator valueCreator, Key* newKey, Value* newValue)
 		{
@@ -323,7 +323,7 @@ namespace internal
 			KeyManager::MoveExec(memManager, std::move(key), newKey, std::move(func));
 		}
 
-		template<typename ValueCreator>
+		template<conceptTrivialObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
 			ValueCreator valueCreator, Key* newKey, Value* newValue)
 		{
@@ -500,7 +500,7 @@ namespace internal
 		}
 
 		template<typename SrcKeyIterator, typename SrcValueIterator,
-			typename DstKeyIterator, typename DstValueIterator, typename Func>
+			typename DstKeyIterator, typename DstValueIterator, conceptTrivialMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
 			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
@@ -602,7 +602,7 @@ namespace internal
 			KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
 		}
 
-		template<typename SrcKeyIterator, typename DstKeyIterator, typename Func>
+		template<typename SrcKeyIterator, typename DstKeyIterator, conceptTrivialMoveFunctor Func>
 		static void RelocateExecKeys(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func func)
 		{
@@ -639,7 +639,8 @@ namespace internal
 			::new(static_cast<void*>(newPair)) MapKeyValuePair;
 		}
 
-		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		template<typename KeyValueTraits, typename MemManager, typename RKey,
+			conceptTrivialObjectCreator<Value> ValueCreator>
 		static void Create(MapKeyValuePair* newPair, MemManager& memManager,
 			RKey&& key, ValueCreator valueCreator)
 		{
@@ -712,7 +713,8 @@ namespace internal
 			::new(static_cast<void*>(newPair)) MapKeyValuePtrPair;
 		}
 
-		template<typename KeyValueTraits, typename MemManager, typename RKey, typename ValueCreator>
+		template<typename KeyValueTraits, typename MemManager, typename RKey,
+			conceptTrivialObjectCreator<Value> ValueCreator>
 		static void Create(MapKeyValuePtrPair* newPair, MemManager& memManager,
 			RKey&& key, ValueCreator valueCreator)
 		{
@@ -854,7 +856,8 @@ namespace internal
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
-		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+		template<typename SrcIterator, typename DstIterator,
+			conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{
@@ -987,7 +990,8 @@ namespace internal
 			midItem.GetValuePtr() = srcItem.GetValuePtr();
 		}
 
-		template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+		template<typename SrcIterator, typename DstIterator,
+			conceptTrivialObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, ItemCreator itemCreator, Item* newItem)
 		{

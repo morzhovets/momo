@@ -213,7 +213,8 @@ public:
 	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 public:
-	template<typename SrcIterator, typename DstIterator, typename ItemCreator>
+	template<typename SrcIterator, typename DstIterator,
+		internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
@@ -401,7 +402,7 @@ private:
 			return splitRes;
 		}
 
-		template<typename ItemCreator>
+		template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 		void RelocateCreate(ItemCreator itemCreator, Item* newItem)
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });

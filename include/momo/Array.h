@@ -123,7 +123,7 @@ public:
 		ItemManager::Relocate(memManager, srcItems, dstItems, count);
 	}
 
-	template<typename ItemCreator>
+	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
 		size_t count, ItemCreator itemCreator, Item* newItem)
 	{
