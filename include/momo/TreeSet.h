@@ -1311,9 +1311,9 @@ private:
 		pvUpdateParents(node);	//?
 	}
 
-	template<typename ItemReplacer1, typename ItemReplacer2>
-	Iterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
-		ItemReplacer2 itemReplacer2)
+	template<internal::conceptTrivialObjectRemover<Item> ItemRemover,
+		internal::conceptTrivialObjectReplacer<Item> ItemReplacer>
+	Iterator pvRemove(ConstIterator iter, ItemRemover itemRemover, ItemReplacer itemReplacer)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		MOMO_CHECK(iter != GetEnd());
@@ -1321,12 +1321,12 @@ private:
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (node->IsLeaf())
 		{
-			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
+			node->Remove(*mNodeParams, itemIndex, itemRemover);
 			pvRebalance(node, node, true);
 		}
 		else
 		{
-			node = pvRemoveInternal(node, itemIndex, itemReplacer1, itemReplacer2);
+			node = pvRemoveInternal(node, itemIndex, itemRemover, itemReplacer);
 			itemIndex = 0;
 		}
 		--mCount;
@@ -1347,9 +1347,10 @@ private:
 		return pvRemove(iter, itemReplacer1, itemReplacer2);
 	}
 
-	template<typename ItemReplacer1, typename ItemReplacer2>
-	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemReplacer1 itemReplacer1,
-		ItemReplacer2 itemReplacer2)
+	template<internal::conceptTrivialObjectRemover<Item> ItemRemover,
+		internal::conceptTrivialObjectReplacer<Item> ItemReplacer>
+	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemRemover itemRemover,
+		ItemReplacer itemReplacer)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1360,18 +1361,18 @@ private:
 		if (childNode == node)
 		{
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			pvDestroyInternal(node, itemIndex, false, itemReplacer1);
+			pvDestroyInternal(node, itemIndex, false, itemRemover);
 			resNode = rightNode;
 		}
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemRemover = [node, itemIndex, &itemReplacer2] (Item& item)
-				{ itemReplacer2(item, *node->GetItemPtr(itemIndex)); };
+			auto itemRemover2 = [node, itemIndex, &itemReplacer] (Item& item)	//?
+				{ itemReplacer(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
-				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
+				childNode->Remove(*mNodeParams, childItemIndex, itemRemover2);
 			else
-				pvDestroyInternal(childNode, childItemIndex, true, itemRemover);
+				pvDestroyInternal(childNode, childItemIndex, true, itemRemover2);
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
