@@ -338,7 +338,7 @@ private:
 			}
 		}
 
-		template<bool grow, internal::conceptTrivialMoveFunctor<void, Item*> ItemsRelocator>
+		template<bool grow, typename ItemsRelocator>
 		void Reset(size_t capacity, size_t count, ItemsRelocator itemsRelocator)
 		{
 			MOMO_ASSERT(count <= capacity);
@@ -347,7 +347,7 @@ private:
 				Item* items = pvAllocate(capacity);
 				try
 				{
-					std::move(itemsRelocator)(items);
+					itemsRelocator(items);
 				}
 				catch (...)
 				{
@@ -371,7 +371,7 @@ private:
 			{
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
-				std::move(itemsRelocator)(&mInternalItems);
+				itemsRelocator(&mInternalItems);
 				pvDeallocate(mItems, initCapacity);
 				mItems = &mInternalItems;
 				mCount = count;
@@ -683,7 +683,7 @@ public:
 		{
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<false>(capacity, count, std::move(itemsRelocator));
+			mData.template Reset<false>(capacity, count, itemsRelocator);
 		}
 	}
 
@@ -937,7 +937,7 @@ private:
 			size_t count = GetCount();
 			auto itemsRelocator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<true>(newCapacityExp, count, std::move(itemsRelocator));
+			mData.template Reset<true>(newCapacityExp, count, itemsRelocator);
 		}
 	}
 
@@ -984,7 +984,7 @@ private:
 					throw;
 				}
 			};
-			mData.template Reset<true>(newCapacity, newCount, std::move(itemsRelocator));
+			mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
 		}
 	}
 
