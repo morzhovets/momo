@@ -1182,7 +1182,7 @@ private:
 	}
 
 	template<typename ItemReplacer>
-	ConstIterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
+	ConstIterator pvRemove(ConstIterator iter, ItemReplacer&& itemReplacer)
 	{
 		MOMO_CHECK(mBuckets != nullptr);
 		ConstPosition pos = iter;
@@ -1192,7 +1192,8 @@ private:
 		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
 		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
-		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, itemReplacer);
+		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter,
+			std::forward<ItemReplacer>(itemReplacer));
 		--mCount;
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))

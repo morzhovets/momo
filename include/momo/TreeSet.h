@@ -838,11 +838,11 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto itemReplacer1 = [this] (Item& srcItem)
-			{ ItemTraits::Destroy(&GetMemManager(), srcItem); };
-		auto itemReplacer2 = [this] (Item& srcItem, Item& dstItem)
+		auto itemRemover = [this] (Item& item)
+			{ ItemTraits::Destroy(&GetMemManager(), item); };
+		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, itemReplacer1, itemReplacer2);
+		return pvRemove(iter, itemRemover, itemReplacer);
 	}
 
 	ConstIterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -886,10 +886,10 @@ public:
 		size_t resItemIndex;
 		if (node1 == node2 && node1->IsLeaf())
 		{
-			auto itemDestroyer = [this] (Item& item)
+			auto itemRemover = [this] (Item& item)
 				{ ItemTraits::Destroy(&GetMemManager(), item); };
 			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
-				node1->Remove(*mNodeParams, i - 1, itemDestroyer);
+				node1->Remove(*mNodeParams, i - 1, itemRemover);
 			resNode = node1;
 			resItemIndex = itemIndex1;
 			pvRebalance(resNode, resNode, true);
@@ -1160,7 +1160,7 @@ private:
 	}
 
 	template<typename Predicate>
-	ConstIterator pvFindFirst(Predicate pred) const
+	ConstIterator pvFindFirst(const Predicate& pred) const
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -1179,7 +1179,7 @@ private:
 	}
 
 	template<typename Predicate>
-	size_t pvFindFirst(Node* node, Predicate pred) const
+	size_t pvFindFirst(Node* node, const Predicate& pred) const
 	{
 		if (TreeTraits::useLinearSearch)
 		{
@@ -1355,9 +1355,9 @@ private:
 		pvUpdateParents(node);	//?
 	}
 
-	template<typename ItemReplacer1, typename ItemReplacer2>
-	ConstIterator pvRemove(ConstIterator iter, ItemReplacer1 itemReplacer1,
-		ItemReplacer2 itemReplacer2)
+	template<typename ItemRemover, typename ItemReplacer>
+	ConstIterator pvRemove(ConstIterator iter, ItemRemover&& itemRemover,
+		ItemReplacer&& itemReplacer)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		MOMO_CHECK(iter != GetEnd());
@@ -1365,12 +1365,13 @@ private:
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (node->IsLeaf())
 		{
-			node->Remove(*mNodeParams, itemIndex, itemReplacer1);
+			node->Remove(*mNodeParams, itemIndex, std::forward<ItemRemover>(itemRemover));
 			pvRebalance(node, node, true);
 		}
 		else
 		{
-			node = pvRemoveInternal(node, itemIndex, itemReplacer1, itemReplacer2);
+			node = pvRemoveInternal(node, itemIndex, std::forward<ItemRemover>(itemRemover),
+				std::forward<ItemReplacer>(itemReplacer));
 			itemIndex = 0;
 		}
 		--mCount;
@@ -1380,16 +1381,16 @@ private:
 
 	ConstIterator pvExtract(ConstIterator iter, Item* extItem)
 	{
-		auto itemReplacer1 = [this, extItem] (Item& srcItem)
-			{ ItemTraits::Relocate(&GetMemManager(), srcItem, extItem); };
-		auto itemReplacer2 = [this, extItem] (Item& srcItem, Item& dstItem)
+		auto itemRemover = [this, extItem] (Item& item)
+			{ ItemTraits::Relocate(&GetMemManager(), item, extItem); };
+		auto itemReplacer = [this, extItem] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem); };
-		return pvRemove(iter, itemReplacer1, itemReplacer2);
+		return pvRemove(iter, itemRemover, itemReplacer);
 	}
 
-	template<typename ItemReplacer1, typename ItemReplacer2>
-	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemReplacer1 itemReplacer1,
-		ItemReplacer2 itemReplacer2)
+	template<typename ItemRemover, typename ItemReplacer>
+	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemRemover&& itemRemover,
+		ItemReplacer&& itemReplacer)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1400,18 +1401,18 @@ private:
 		if (childNode == node)
 		{
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			pvDestroyInternal(node, itemIndex, false, itemReplacer1);
+			pvDestroyInternal(node, itemIndex, false, std::forward<ItemRemover>(itemRemover));
 			resNode = rightNode;
 		}
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemRemover = [node, itemIndex, itemReplacer2] (Item& item)
-				{ itemReplacer2(item, *node->GetItemPtr(itemIndex)); };
+			auto itemRemover2 = [node, itemIndex, &itemReplacer] (Item& item)
+				{ std::forward<ItemReplacer>(itemReplacer)(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
-				childNode->Remove(*mNodeParams, childItemIndex, itemRemover);
+				childNode->Remove(*mNodeParams, childItemIndex, itemRemover2);
 			else
-				pvDestroyInternal(childNode, childItemIndex, true, itemRemover);
+				pvDestroyInternal(childNode, childItemIndex, true, itemRemover2);
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
@@ -1422,7 +1423,7 @@ private:
 
 	Node* pvRemoveRange(Node* node1, size_t itemIndex1, Node* node2, size_t itemIndex2)
 	{
-		auto itemDestroyer = [this] (Item& item)
+		auto itemRemover = [this] (Item& item)
 			{ ItemTraits::Destroy(&GetMemManager(), item); };
 		size_t comIndex1 = itemIndex1;
 		size_t comIndex2 = itemIndex2;
@@ -1451,7 +1452,7 @@ private:
 			{
 				node1->Remove(*mNodeParams, itemIndex1, itemReplacer);
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					node1->Remove(*mNodeParams, i - 1, itemDestroyer);
+					node1->Remove(*mNodeParams, i - 1, itemRemover);
 				pvToParent(node1, itemIndex1);
 			}
 			else
@@ -1461,7 +1462,7 @@ private:
 			while (node1 != comNode)
 			{
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					pvDestroyInternal(node1, i - 1, true, itemDestroyer);
+					pvDestroyInternal(node1, i - 1, true, itemRemover);
 				pvToParent(node1, itemIndex1);
 			}
 			++comIndex1;
@@ -1471,17 +1472,17 @@ private:
 			if (node2->IsLeaf())
 			{
 				for (size_t i = itemIndex2 + 1; i > 0; --i)
-					node2->Remove(*mNodeParams, i - 1, itemDestroyer);
+					node2->Remove(*mNodeParams, i - 1, itemRemover);
 				pvToParent(node2, itemIndex2);
 			}
 			else
 			{
-				pvDestroyInternal(node2, itemIndex2, false, itemDestroyer);
+				pvDestroyInternal(node2, itemIndex2, false, itemRemover);
 			}
 			while (node2 != comNode)
 			{
 				for (size_t i = itemIndex2; i > 0; --i)
-					pvDestroyInternal(node2, i - 1, false, itemDestroyer);
+					pvDestroyInternal(node2, i - 1, false, itemRemover);
 				pvToParent(node2, itemIndex2);
 			}
 		}
@@ -1490,7 +1491,7 @@ private:
 			++comIndex2;
 		}
 		for (size_t i = comIndex2; i > comIndex1; --i)
-			pvDestroyInternal(comNode, i - 1, false, itemDestroyer);
+			pvDestroyInternal(comNode, i - 1, false, itemRemover);
 		Node* resNode = comNode->GetChild(comIndex1);
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
@@ -1501,12 +1502,13 @@ private:
 	}
 
 	template<typename ItemRemover>
-	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
+	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight,
+		ItemRemover&& itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());
 		Node* leftNode = node->GetChild(itemIndex);
 		Node* rightNode = node->GetChild(itemIndex + 1);
-		node->Remove(*mNodeParams, itemIndex, itemRemover);
+		node->Remove(*mNodeParams, itemIndex, std::forward<ItemRemover>(itemRemover));
 		pvDestroy(destroyRight ? rightNode : leftNode);
 		node->SetChild(itemIndex, destroyRight ? leftNode : rightNode);
 	}
