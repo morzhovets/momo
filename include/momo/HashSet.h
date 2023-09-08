@@ -1284,12 +1284,12 @@ private:
 				--bucketIter;
 				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
 					buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, hashCode, &memManager] (Item& backItem, Item& item)
+				auto itemReplacer = [this, hashCode, &memManager] (Item& srcItem, Item& dstItem)
 				{
-					(void)backItem;
-					MOMO_ASSERT(std::addressof(backItem) == std::addressof(item));
-					auto itemCreator = [&memManager, &item] (Item* newItem)
-						{ ItemTraits::Relocate(&memManager, item, newItem); };
+					(void)srcItem;
+					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
+					auto itemCreator = [&memManager, &dstItem] (Item* newItem)
+						{ ItemTraits::Relocate(&memManager, dstItem, newItem); };
 					pvAddNogrow<false>(*mBuckets, hashCode, itemCreator);
 				};
 				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);

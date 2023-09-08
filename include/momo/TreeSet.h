@@ -1407,12 +1407,12 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemRemover2 = [node, itemIndex, &itemReplacer] (Item& item)
+			auto itemReplaceRemover = [node, itemIndex, &itemReplacer] (Item& item)
 				{ std::forward<ItemReplacer>(itemReplacer)(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
-				childNode->Remove(*mNodeParams, childItemIndex, itemRemover2);
+				childNode->Remove(*mNodeParams, childItemIndex, itemReplaceRemover);
 			else
-				pvDestroyInternal(childNode, childItemIndex, true, itemRemover2);
+				pvDestroyInternal(childNode, childItemIndex, true, itemReplaceRemover);
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
@@ -1446,18 +1446,18 @@ private:
 		if (node1 != comNode)
 		{
 			--itemIndex1;
-			auto itemReplacer = [this, comNode, comIndex1] (Item& item)
+			auto itemReplaceRemover = [this, comNode, comIndex1] (Item& item)
 				{ ItemTraits::Replace(GetMemManager(), item, *comNode->GetItemPtr(comIndex1)); };
 			if (node1->IsLeaf())
 			{
-				node1->Remove(*mNodeParams, itemIndex1, itemReplacer);
+				node1->Remove(*mNodeParams, itemIndex1, itemReplaceRemover);
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
 					node1->Remove(*mNodeParams, i - 1, itemRemover);
 				pvToParent(node1, itemIndex1);
 			}
 			else
 			{
-				pvDestroyInternal(node1, itemIndex1, true, itemReplacer);
+				pvDestroyInternal(node1, itemIndex1, true, itemReplaceRemover);
 			}
 			while (node1 != comNode)
 			{
