@@ -338,8 +338,8 @@ private:
 			}
 		}
 
-		template<bool grow, typename ItemsRelocator>
-		void Reset(size_t capacity, size_t count, ItemsRelocator itemsRelocator)
+		template<bool grow, typename ItemsCreator>
+		void Reset(size_t capacity, size_t count, ItemsCreator itemsCreator)
 		{
 			MOMO_ASSERT(count <= capacity);
 			if (grow || capacity > internalCapacity)
@@ -347,7 +347,7 @@ private:
 				Item* items = pvAllocate(capacity);
 				try
 				{
-					itemsRelocator(items);
+					itemsCreator(items);
 				}
 				catch (...)
 				{
@@ -371,7 +371,7 @@ private:
 			{
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
-				itemsRelocator(&mInternalItems);
+				itemsCreator(&mInternalItems);
 				pvDeallocate(mItems, initCapacity);
 				mItems = &mInternalItems;
 				mCount = count;
@@ -681,9 +681,9 @@ public:
 			capacity = count;
 		if (!mData.Reallocate(capacity, capacity))
 		{
-			auto itemsRelocator = [this, count] (Item* newItems)
+			auto itemsCreator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<false>(capacity, count, itemsRelocator);
+			mData.template Reset<false>(capacity, count, itemsCreator);
 		}
 	}
 
@@ -935,9 +935,9 @@ private:
 		if (!mData.Reallocate(newCapacityLin, newCapacityExp))
 		{
 			size_t count = GetCount();
-			auto itemsRelocator = [this, count] (Item* newItems)
+			auto itemsCreator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<true>(newCapacityExp, count, itemsRelocator);
+			mData.template Reset<true>(newCapacityExp, count, itemsCreator);
 		}
 	}
 
@@ -969,7 +969,7 @@ private:
 		else
 		{
 			size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::reserve, false);
-			auto itemsRelocator = [this, initCount, newCount, multiItemCreator] (Item* newItems)
+			auto itemsCreator = [this, initCount, newCount, multiItemCreator] (Item* newItems)
 			{
 				size_t index = initCount;
 				try
@@ -984,7 +984,7 @@ private:
 					throw;
 				}
 			};
-			mData.template Reset<true>(newCapacity, newCount, itemsRelocator);
+			mData.template Reset<true>(newCapacity, newCount, itemsCreator);
 		}
 	}
 
@@ -1018,13 +1018,13 @@ private:
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
 		size_t newCapacity = pvGrowCapacity(newCount, ArrayGrowCause::add, false);
-		auto itemsRelocator = [this, initCount, itemCreator = std::move(itemCreator)]
+		auto itemsCreator = [this, initCount, itemCreator = std::move(itemCreator)]
 			(Item* newItems) mutable
 		{
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				std::move(itemCreator), newItems + initCount);
 		};
-		mData.template Reset<true>(newCapacity, newCount, std::move(itemsRelocator));
+		mData.template Reset<true>(newCapacity, newCount, std::move(itemsCreator));
 	}
 
 	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>

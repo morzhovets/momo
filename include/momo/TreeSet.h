@@ -799,11 +799,11 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		auto itemReplacer1 = [this] (Item& srcItem)
-			{ ItemTraits::Destroy(&GetMemManager(), srcItem); };
-		auto itemReplacer2 = [this] (Item& srcItem, Item& dstItem)
+		auto itemRemover = [this] (Item& item)
+			{ ItemTraits::Destroy(&GetMemManager(), item); };
+		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, itemReplacer1, itemReplacer2);
+		return pvRemove(iter, itemRemover, itemReplacer);
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -848,10 +848,10 @@ public:
 		if (node1 == node2 && node1->IsLeaf())
 		{
 			MemManager& memManager = GetMemManager();
-			auto itemDestroyRemover = [&memManager] (Item& item)
+			auto itemRemover = [&memManager] (Item& item)
 				{ ItemTraits::Destroy(&memManager, item); };
 			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
-				node1->Remove(*mNodeParams, i - 1, itemDestroyRemover);
+				node1->Remove(*mNodeParams, i - 1, itemRemover);
 			resNode = node1;
 			resItemIndex = itemIndex1;
 			pvRebalance(resNode, resNode, true);
@@ -1337,14 +1337,14 @@ private:
 	template<internal::conceptMemManagerOrNullPtr<MemManager> ExtMemManagerOrNullPtr>
 	Iterator pvExtract(ConstIterator iter, Item* extItem, ExtMemManagerOrNullPtr extMemManager)
 	{
-		auto itemReplacer1 = [this, extItem, extMemManager] (Item& srcItem)
-			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, srcItem, extItem); };
-		auto itemReplacer2 = [this, extItem] (Item& srcItem, Item& dstItem)
+		auto itemRemover = [this, extItem, extMemManager] (Item& item)
+			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, item, extItem); };
+		auto itemReplacer = [this, extItem] (Item& srcItem, Item& dstItem)
 		{
 			MOMO_ASSERT(std::is_null_pointer_v<ExtMemManagerOrNullPtr>);
 			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
 		};
-		return pvRemove(iter, itemReplacer1, itemReplacer2);
+		return pvRemove(iter, itemRemover, itemReplacer);
 	}
 
 	template<internal::conceptTrivialObjectRemover<Item> ItemRemover,
@@ -1367,12 +1367,12 @@ private:
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemRemover2 = [node, itemIndex, &itemReplacer] (Item& item)	//?
+			auto itemReplaceRemover = [node, itemIndex, &itemReplacer] (Item& item)	//?
 				{ itemReplacer(item, *node->GetItemPtr(itemIndex)); };
 			if (childNode->IsLeaf())
-				childNode->Remove(*mNodeParams, childItemIndex, itemRemover2);
+				childNode->Remove(*mNodeParams, childItemIndex, itemReplaceRemover);
 			else
-				pvDestroyInternal(childNode, childItemIndex, true, itemRemover2);
+				pvDestroyInternal(childNode, childItemIndex, true, itemReplaceRemover);
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
@@ -1384,7 +1384,7 @@ private:
 	Node* pvRemoveRange(Node* node1, size_t itemIndex1, Node* node2, size_t itemIndex2)
 	{
 		MemManager& memManager = GetMemManager();
-		auto itemDestroyRemover = [&memManager] (Item& item)
+		auto itemRemover = [&memManager] (Item& item)
 			{ ItemTraits::Destroy(&memManager, item); };
 		size_t comIndex1 = itemIndex1;
 		size_t comIndex2 = itemIndex2;
@@ -1413,7 +1413,7 @@ private:
 			{
 				node1->Remove(*mNodeParams, itemIndex1, itemReplaceRemover);
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					node1->Remove(*mNodeParams, i - 1, itemDestroyRemover);
+					node1->Remove(*mNodeParams, i - 1, itemRemover);
 				pvToParent(node1, itemIndex1);
 			}
 			else
@@ -1423,7 +1423,7 @@ private:
 			while (node1 != comNode)
 			{
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					pvDestroyInternal(node1, i - 1, true, itemDestroyRemover);
+					pvDestroyInternal(node1, i - 1, true, itemRemover);
 				pvToParent(node1, itemIndex1);
 			}
 			++comIndex1;
@@ -1433,17 +1433,17 @@ private:
 			if (node2->IsLeaf())
 			{
 				for (size_t i = itemIndex2 + 1; i > 0; --i)
-					node2->Remove(*mNodeParams, i - 1, itemDestroyRemover);
+					node2->Remove(*mNodeParams, i - 1, itemRemover);
 				pvToParent(node2, itemIndex2);
 			}
 			else
 			{
-				pvDestroyInternal(node2, itemIndex2, false, itemDestroyRemover);
+				pvDestroyInternal(node2, itemIndex2, false, itemRemover);
 			}
 			while (node2 != comNode)
 			{
 				for (size_t i = itemIndex2; i > 0; --i)
-					pvDestroyInternal(node2, i - 1, false, itemDestroyRemover);
+					pvDestroyInternal(node2, i - 1, false, itemRemover);
 				pvToParent(node2, itemIndex2);
 			}
 		}
@@ -1452,7 +1452,7 @@ private:
 			++comIndex2;
 		}
 		for (size_t i = comIndex2; i > comIndex1; --i)
-			pvDestroyInternal(comNode, i - 1, false, itemDestroyRemover);
+			pvDestroyInternal(comNode, i - 1, false, itemRemover);
 		Node* resNode = comNode->GetChild(comIndex1);
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
