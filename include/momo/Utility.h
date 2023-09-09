@@ -116,6 +116,24 @@ enum class ExtraCheckMode
 
 namespace internal
 {
+	struct UIntConst
+	{
+		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
+		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
+		static_assert(nullPtr != invalidPtr);
+
+		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
+		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		static_assert(std::has_single_bit(maxAllocAlignment));
+		static_assert(maxAllocAlignment % maxAlignment == 0);
+
+		static const size_t maxFastFunctorSize = 2 * sizeof(void*);	//?
+
+		static const size_t maxSize = SIZE_MAX;
+
+		static const uint32_t max32 = UINT32_MAX;
+	};
+
 	template<typename Iterator, typename IteratorCategory>
 	concept conceptIterator =
 		std::is_base_of_v<IteratorCategory,
@@ -163,20 +181,17 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptTrivialPredicate = conceptTrivialConstFunctor<Predicate, bool, Args...>;
 
-	template<typename TBaseFunctor,
-		size_t tMaxSize = 3 * sizeof(void*)>
-	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	template<typename TBaseFunctor>
 	class FastMovableFunctor
 	{
 	public:
 		typedef TBaseFunctor BaseFunctor;
 
-		static const size_t maxSize = tMaxSize;
-
 	private:
 		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
 			&& std::is_trivially_move_constructible_v<BaseFunctor>
-			&& sizeof(BaseFunctor) <= maxSize), BaseFunctor, BaseFunctor&&> BaseFunctorReference;
+			&& sizeof(BaseFunctor) <= UIntConst::maxFastFunctorSize),
+			BaseFunctor, BaseFunctor&&> BaseFunctorReference;
 
 	public:
 		explicit FastMovableFunctor(BaseFunctorReference baseFunctor) noexcept
@@ -202,18 +217,15 @@ namespace internal
 		BaseFunctorReference mBaseFunctor;
 	};
 
-	template<typename TBaseFunctor,
-		size_t tMaxSize = 3 * sizeof(void*)>
-	requires (std::is_nothrow_destructible_v<TBaseFunctor> && tMaxSize >= sizeof(void*))
+	template<typename TBaseFunctor>
 	class FastCopyableFunctor
 	{
 	public:
 		typedef TBaseFunctor BaseFunctor;
 
-		static const size_t maxSize = tMaxSize;
-
 	private:
-		typedef std::conditional_t<conceptSmallAndTriviallyCopyable<BaseFunctor, maxSize>,
+		typedef std::conditional_t<
+			conceptSmallAndTriviallyCopyable<BaseFunctor, UIntConst::maxFastFunctorSize>,
 			BaseFunctor, const BaseFunctor&> BaseFunctorReference;
 
 	public:
@@ -384,22 +396,6 @@ namespace internal
 			result.remainder = value % mod;
 			return result;
 		}
-	};
-
-	struct UIntConst
-	{
-		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
-		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
-		static_assert(nullPtr != invalidPtr);
-
-		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
-		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		static_assert(std::has_single_bit(maxAllocAlignment));
-		static_assert(maxAllocAlignment % maxAlignment == 0);
-
-		static const size_t maxSize = SIZE_MAX;
-
-		static const uint32_t max32 = UINT32_MAX;
 	};
 }
 
