@@ -960,7 +960,7 @@ public:
 	template<momo::internal::conceptPredicate<const_reference> Predicate>
 	friend size_type erase_if(map& cont, Predicate pred)
 	{
-		momo::internal::FastCopyableFunctor<Predicate> fastPred(pred);
+		momo::FastCopyableFunctor<Predicate> fastPred(pred);
 		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
 			{ return fastPred(const_reference(key, mapped)); };
 		return cont.get_nested_container().Remove(pairPred);
@@ -1070,7 +1070,7 @@ public:
 	template<momo::internal::conceptPredicate<const_reference> Predicate>
 	friend size_type erase_if(multimap& cont, Predicate pred)
 	{
-		momo::internal::FastCopyableFunctor<Predicate> fastPred(pred);
+		momo::FastCopyableFunctor<Predicate> fastPred(pred);
 		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
 			{ return fastPred(const_reference(key, mapped)); };
 		return cont.get_nested_container().Remove(pairPred);

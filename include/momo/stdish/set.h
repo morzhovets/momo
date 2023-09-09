@@ -519,7 +519,7 @@ public:
 	template<momo::internal::conceptPredicate<const_reference> Predicate>
 	friend size_type erase_if(set& cont, Predicate pred)
 	{
-		return cont.mTreeSet.Remove(momo::internal::FastCopyableFunctor<Predicate>(pred));
+		return cont.mTreeSet.Remove(momo::FastCopyableFunctor<Predicate>(pred));
 	}
 
 	node_type extract(const_iterator where)
@@ -659,7 +659,7 @@ public:
 	friend size_type erase_if(multiset& cont, Predicate pred)
 	{
 		return cont.get_nested_container().Remove(
-			momo::internal::FastCopyableFunctor<Predicate>(pred));
+			momo::FastCopyableFunctor<Predicate>(pred));
 	}
 };
 

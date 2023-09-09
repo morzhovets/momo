@@ -956,7 +956,7 @@ public:
 	Iterator AddCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd(std::move(key),
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -981,7 +981,7 @@ public:
 	Iterator AddCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvAdd(key,
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -1006,7 +1006,7 @@ public:
 	Iterator AddCrt(ConstKeyIterator keyIter, ValueCreator valueCreator)
 	{
 		return pvAdd(keyIter,
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -1058,7 +1058,7 @@ public:
 	KeyIterator AddKeyCrt(ConstKeyIterator keyIter, KeyCreator keyCreator)
 	{
 		return pvAddKey(keyIter,
-			internal::FastMovableFunctor<KeyCreator>(std::forward<KeyCreator>(keyCreator)));
+			FastMovableFunctor<KeyCreator>(std::forward<KeyCreator>(keyCreator)));
 	}
 
 	//KeyIterator AddKey(ConstKeyIterator keyIter, Key&& key)

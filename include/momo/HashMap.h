@@ -504,7 +504,7 @@ public:
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
 		return pvInsert(std::move(key),
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -529,7 +529,7 @@ public:
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
 		return pvInsert(key,
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -601,7 +601,7 @@ public:
 	Position AddCrt(ConstPosition pos, PairCreator pairCreator)
 	{
 		return pvAdd<extraCheck>(pos,
-			internal::FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
+			FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
 	}
 
 	template<internal::conceptObjectCreator<Value> ValueCreator,
@@ -609,7 +609,7 @@ public:
 	Position AddCrt(ConstPosition pos, Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, std::move(key),
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -635,7 +635,7 @@ public:
 	Position AddCrt(ConstPosition pos, const Key& key, ValueCreator valueCreator)
 	{
 		return pvAdd<extraCheck>(pos, key,
-			internal::FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -743,7 +743,7 @@ public:
 	template<internal::conceptMapPairPredicate<Key, Value> PairPredicate>
 	size_t Remove(PairPredicate pairPred)
 	{
-		internal::FastCopyableFunctor<PairPredicate> fastPairPred(pairPred);
+		FastCopyableFunctor<PairPredicate> fastPairPred(pairPred);
 		auto itemPred = [fastPairPred] (const KeyValuePair& item)
 			{ return fastPairPred(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
 		return mHashSet.Remove(itemPred);

@@ -11,6 +11,8 @@
   namespace momo:
     enum class CheckMode
     enum class ExtraCheckMode
+    class FastMovableFunctor
+    class FastCopyableFunctor
 
 \**********************************************************/
 
@@ -100,40 +102,8 @@
 namespace momo
 {
 
-enum class CheckMode
-{
-	assertion = 1,
-	exception = 2,
-	bydefault = MOMO_DEFAULT_CHECK_MODE,
-};
-
-enum class ExtraCheckMode
-{
-	nothing = 0,
-	assertion = 1,
-	bydefault = MOMO_DEFAULT_EXTRA_CHECK_MODE,
-};
-
 namespace internal
 {
-	struct UIntConst
-	{
-		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
-		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
-		static_assert(nullPtr != invalidPtr);
-
-		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
-		static const size_t maxAllocAlignment = alignof(std::max_align_t);
-		static_assert(std::has_single_bit(maxAllocAlignment));
-		static_assert(maxAllocAlignment % maxAlignment == 0);
-
-		static const size_t maxFastFunctorSize = 2 * sizeof(void*);	//?
-
-		static const size_t maxSize = SIZE_MAX;
-
-		static const uint32_t max32 = UINT32_MAX;
-	};
-
 	template<typename Iterator, typename IteratorCategory>
 	concept conceptIterator =
 		std::is_base_of_v<IteratorCategory,
@@ -180,77 +150,6 @@ namespace internal
 
 	template<typename Predicate, typename... Args>
 	concept conceptTrivialPredicate = conceptTrivialConstFunctor<Predicate, bool, Args...>;
-
-	template<typename TBaseFunctor>
-	class FastMovableFunctor
-	{
-	public:
-		typedef TBaseFunctor BaseFunctor;
-
-	private:
-		typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
-			&& std::is_trivially_move_constructible_v<BaseFunctor>
-			&& sizeof(BaseFunctor) <= UIntConst::maxFastFunctorSize),
-			BaseFunctor, BaseFunctor&&> BaseFunctorReference;
-
-	public:
-		explicit FastMovableFunctor(BaseFunctor&& baseFunctor) noexcept
-			: mBaseFunctor(std::forward<BaseFunctor>(baseFunctor))
-		{
-		}
-
-		FastMovableFunctor(FastMovableFunctor&&) noexcept = default;
-
-		FastMovableFunctor(const FastMovableFunctor&) = delete;
-
-		~FastMovableFunctor() noexcept = default;
-
-		FastMovableFunctor& operator=(const FastMovableFunctor&) = delete;
-
-		template<typename... Args>
-		decltype(auto) operator()(Args&&... args) &&
-		{
-			return std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
-		}
-
-	private:
-		BaseFunctorReference mBaseFunctor;
-	};
-
-	template<typename TBaseFunctor>
-	class FastCopyableFunctor
-	{
-	public:
-		typedef TBaseFunctor BaseFunctor;
-
-	private:
-		typedef std::conditional_t<
-			conceptSmallAndTriviallyCopyable<BaseFunctor, UIntConst::maxFastFunctorSize>,
-			BaseFunctor, const BaseFunctor&> BaseFunctorReference;
-
-	public:
-		explicit FastCopyableFunctor(const BaseFunctor& baseFunctor) noexcept
-			: mBaseFunctor(baseFunctor)
-		{
-		}
-
-		FastCopyableFunctor(FastCopyableFunctor&&) noexcept = default;
-
-		FastCopyableFunctor(const FastCopyableFunctor&) noexcept = default;
-
-		~FastCopyableFunctor() noexcept = default;
-
-		FastCopyableFunctor& operator=(const FastCopyableFunctor&) = delete;
-
-		template<typename... Args>
-		decltype(auto) operator()(Args&&... args) const
-		{
-			return mBaseFunctor(std::forward<Args>(args)...);
-		}
-
-	private:
-		BaseFunctorReference mBaseFunctor;
-	};
 
 	template<size_t size>
 	struct UIntSelector;
@@ -397,6 +296,109 @@ namespace internal
 			return result;
 		}
 	};
+
+	struct UIntConst
+	{
+		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
+		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
+		static_assert(nullPtr != invalidPtr);
+
+		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
+		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		static_assert(std::has_single_bit(maxAllocAlignment));
+		static_assert(maxAllocAlignment % maxAlignment == 0);
+
+		static const size_t maxFastFunctorSize = 2 * sizeof(void*);	//?
+
+		static const size_t maxSize = SIZE_MAX;
+
+		static const uint32_t max32 = UINT32_MAX;
+	};
 }
+
+enum class CheckMode
+{
+	assertion = 1,
+	exception = 2,
+	bydefault = MOMO_DEFAULT_CHECK_MODE,
+};
+
+enum class ExtraCheckMode
+{
+	nothing = 0,
+	assertion = 1,
+	bydefault = MOMO_DEFAULT_EXTRA_CHECK_MODE,
+};
+
+template<typename TBaseFunctor>
+class FastMovableFunctor
+{
+public:
+	typedef TBaseFunctor BaseFunctor;
+
+private:
+	typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
+		&& std::is_trivially_move_constructible_v<BaseFunctor>
+		&& sizeof(BaseFunctor) <= internal::UIntConst::maxFastFunctorSize),
+		BaseFunctor, BaseFunctor&&> BaseFunctorReference;
+
+public:
+	explicit FastMovableFunctor(BaseFunctor&& baseFunctor) noexcept
+		: mBaseFunctor(std::forward<BaseFunctor>(baseFunctor))
+	{
+	}
+
+	FastMovableFunctor(FastMovableFunctor&&) noexcept = default;
+
+	FastMovableFunctor(const FastMovableFunctor&) = delete;
+
+	~FastMovableFunctor() noexcept = default;
+
+	FastMovableFunctor& operator=(const FastMovableFunctor&) = delete;
+
+	template<typename... Args>
+	decltype(auto) operator()(Args&&... args) &&
+	{
+		return std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
+	}
+
+private:
+	BaseFunctorReference mBaseFunctor;
+};
+
+template<typename TBaseFunctor>
+class FastCopyableFunctor
+{
+public:
+	typedef TBaseFunctor BaseFunctor;
+
+private:
+	typedef std::conditional_t<
+		internal::conceptSmallAndTriviallyCopyable<BaseFunctor, internal::UIntConst::maxFastFunctorSize>,	//?
+		BaseFunctor, const BaseFunctor&> BaseFunctorReference;
+
+public:
+	explicit FastCopyableFunctor(const BaseFunctor& baseFunctor) noexcept
+		: mBaseFunctor(baseFunctor)
+	{
+	}
+
+	FastCopyableFunctor(FastCopyableFunctor&&) noexcept = default;
+
+	FastCopyableFunctor(const FastCopyableFunctor&) noexcept = default;
+
+	~FastCopyableFunctor() noexcept = default;
+
+	FastCopyableFunctor& operator=(const FastCopyableFunctor&) = delete;
+
+	template<typename... Args>
+	decltype(auto) operator()(Args&&... args) const
+	{
+		return mBaseFunctor(std::forward<Args>(args)...);
+	}
+
+private:
+	BaseFunctorReference mBaseFunctor;
+};
 
 } // namespace momo

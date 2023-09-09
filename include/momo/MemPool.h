@@ -370,7 +370,7 @@ public:
 		if (pvUseCache())
 			pvFlushDeallocate();
 		if (mAllocCount > 0)
-			pvDeallocateIf(internal::FastCopyableFunctor<Predicate>(pred));
+			pvDeallocateIf(FastCopyableFunctor<Predicate>(pred));
 	}
 
 	void MergeFrom(MemPool& memPool)
