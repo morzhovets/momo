@@ -223,8 +223,9 @@ public:
 		{
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
+			MemManager& thisMemManager = GetMemManager();
 			for (ArgIterator iter = begin; iter != end; ++iter)
-				pvAddBack(IterCreator(GetMemManager(), *iter));
+				pvAddBack(internal::FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 		}
 		catch (...)
 		{
@@ -368,7 +369,7 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager] (Item* newItem)
 			{ (ItemCreator(memManager))(newItem); };
-		pvSetCount(count, multiItemCreator);
+		pvSetCount(count, internal::FastCopyableFunctor(multiItemCreator));
 	}
 
 	void SetCount(size_t count, const Item& item)
@@ -377,7 +378,7 @@ public:
 		MemManager& memManager = GetMemManager();
 		auto multiItemCreator = [&memManager, &item] (Item* newItem)
 			{ ItemCreator(memManager, item)(newItem); };
-		pvSetCount(count, multiItemCreator);
+		pvSetCount(count, internal::FastCopyableFunctor(multiItemCreator));
 	}
 
 	bool IsEmpty() const noexcept
@@ -525,9 +526,10 @@ public:
 
 	void Insert(size_t index, size_t count, const Item& item)
 	{
+		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 		MemManager& memManager = GetMemManager();
 		ItemHandler itemHandler(memManager,
-			typename ItemTraits::template Creator<const Item&>(memManager, item));
+			internal::FastMovableFunctor(ItemCreator(memManager, item)));
 		Reserve(mCount + count);
 		ArrayShifter::Insert(*this, index, count, *&itemHandler);
 	}
@@ -617,8 +619,8 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
-	template<internal::conceptTrivialObjectMultiCreator<Item> MultiItemCreator>
-	void pvSetCount(size_t count, MultiItemCreator multiItemCreator)
+	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
+	void pvSetCount(size_t count, internal::FastCopyableFunctor<MultiItemCreator> multiItemCreator)
 	{
 		if (count < mCount)
 			pvDecCount(count);
@@ -634,8 +636,8 @@ private:
 		return mSegments[segIndex][segItemIndex];
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	void pvAddBackNogrow(ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	void pvAddBackNogrow(internal::FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		size_t segIndex, segItemIndex;
 		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
@@ -644,8 +646,8 @@ private:
 		++mCount;
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	void pvAddBack(ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	void pvAddBack(internal::FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		size_t segIndex, segItemIndex;
 		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
@@ -673,16 +675,16 @@ private:
 		++mCount;
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	void pvInsert(size_t index, ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	void pvInsert(size_t index, internal::FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
 		Reserve(mCount + 1);
 		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
-	template<internal::conceptTrivialObjectMultiCreator<Item> MultiItemCreator>
-	void pvIncCount(size_t count, MultiItemCreator multiItemCreator)
+	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
+	void pvIncCount(size_t count, internal::FastCopyableFunctor<MultiItemCreator> multiItemCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();

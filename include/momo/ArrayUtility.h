@@ -123,8 +123,8 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	public:
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		explicit ArrayItemHandler(MemManager& memManager, ItemCreator itemCreator)
+		template<conceptObjectCreator<Item> ItemCreator>
+		explicit ArrayItemHandler(MemManager& memManager, FastMovableFunctor<ItemCreator> itemCreator)
 			: mMemManager(&memManager)
 		{
 			std::move(itemCreator)(&mItemBuffer);
@@ -251,8 +251,8 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<conceptTrivialObjectPredicate<Item> Predicate>
-		static size_t Remove(Array& array, Predicate pred)
+		template<conceptObjectPredicate<Item> Predicate>
+		static size_t Remove(Array& array, FastCopyableFunctor<Predicate> pred)
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
