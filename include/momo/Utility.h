@@ -194,7 +194,7 @@ namespace internal
 			BaseFunctor, BaseFunctor&&> BaseFunctorReference;
 
 	public:
-		explicit FastMovableFunctor(BaseFunctorReference baseFunctor) noexcept
+		explicit FastMovableFunctor(BaseFunctor&& baseFunctor) noexcept
 			: mBaseFunctor(std::forward<BaseFunctor>(baseFunctor))
 		{
 		}
@@ -229,7 +229,7 @@ namespace internal
 			BaseFunctor, const BaseFunctor&> BaseFunctorReference;
 
 	public:
-		explicit FastCopyableFunctor(BaseFunctorReference baseFunctor) noexcept
+		explicit FastCopyableFunctor(const BaseFunctor& baseFunctor) noexcept
 			: mBaseFunctor(baseFunctor)
 		{
 		}

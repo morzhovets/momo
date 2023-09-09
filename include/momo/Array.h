@@ -338,8 +338,9 @@ private:
 			}
 		}
 
-		template<bool grow, typename ItemsCreator>
-		void Reset(size_t capacity, size_t count, ItemsCreator itemsCreator)
+		template<bool grow, internal::conceptMoveFunctor<void, Item*> ItemsCreator>
+		void Reset(size_t capacity, size_t count,
+			internal::FastMovableFunctor<ItemsCreator> itemsCreator)
 		{
 			MOMO_ASSERT(count <= capacity);
 			if (grow || capacity > internalCapacity)
@@ -347,7 +348,7 @@ private:
 				Item* items = pvAllocate(capacity);
 				try
 				{
-					itemsCreator(items);
+					std::move(itemsCreator)(items);
 				}
 				catch (...)
 				{
@@ -371,7 +372,7 @@ private:
 			{
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
-				itemsCreator(&mInternalItems);
+				std::move(itemsCreator)(&mInternalItems);
 				pvDeallocate(mItems, initCapacity);
 				mItems = &mInternalItems;
 				mCount = count;
@@ -683,7 +684,8 @@ public:
 		{
 			auto itemsCreator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<false>(capacity, count, itemsCreator);
+			mData.template Reset<false>(capacity, count,
+				internal::FastMovableFunctor(std::move(itemsCreator)));
 		}
 	}
 
@@ -937,7 +939,8 @@ private:
 			size_t count = GetCount();
 			auto itemsCreator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
-			mData.template Reset<true>(newCapacityExp, count, itemsCreator);
+			mData.template Reset<true>(newCapacityExp, count,
+				internal::FastMovableFunctor(std::move(itemsCreator)));
 		}
 	}
 
@@ -984,7 +987,8 @@ private:
 					throw;
 				}
 			};
-			mData.template Reset<true>(newCapacity, newCount, itemsCreator);
+			mData.template Reset<true>(newCapacity, newCount,
+				internal::FastMovableFunctor(std::move(itemsCreator)));
 		}
 	}
 
@@ -1024,7 +1028,8 @@ private:
 			ItemTraits::RelocateCreate(GetMemManager(), GetItems(), newItems, initCount,
 				std::move(itemCreator), newItems + initCount);
 		};
-		mData.template Reset<true>(newCapacity, newCount, std::move(itemsCreator));
+		mData.template Reset<true>(newCapacity, newCount,
+			internal::FastMovableFunctor(std::move(itemsCreator)));
 	}
 
 	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
