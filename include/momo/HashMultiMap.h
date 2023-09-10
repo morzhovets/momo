@@ -328,9 +328,9 @@ namespace internal
 			HashMultiMapKeyValueTraits::DestroyValues(memManager, items, count);
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
+		template<conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			HashMultiMapKeyValueTraits::RelocateCreateValues(memManager, srcItems, dstItems,
 				count, std::move(itemCreator), newItem);
@@ -378,23 +378,24 @@ namespace internal
 		};
 
 	public:
-		template<conceptTrivialObjectCreator<Value> ValueCreator>
-		static void Create(MemManager& memManager, Key&& key, ValueCreator valueCreator,
-			Key* newKey, Value* newValue)
+		template<conceptObjectCreator<Value> ValueCreator>
+		static void Create(MemManager& memManager, Key&& key,
+			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
 			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey,
-				std::move(func));
+				FastMovableFunctor(std::move(func)));
 		}
 
-		template<conceptTrivialObjectCreator<Value> ValueCreator>
-		static void Create(MemManager& memManager, const Key& key, ValueCreator valueCreator,
-			Key* newKey, Value* newValue)
+		template<conceptObjectCreator<Value> ValueCreator>
+		static void Create(MemManager& memManager, const Key& key,
+			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
-			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, std::move(func));
+			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey,
+				FastMovableFunctor(std::move(func)));
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
@@ -434,10 +435,11 @@ namespace internal
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
 			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
-			conceptTrivialMoveFunctor Func>
+			conceptMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
-			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
+			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin,
+			size_t count, FastMovableFunctor<Func> func)
 		{
 			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
 				count, std::move(func));
@@ -503,14 +505,16 @@ public:
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 public:
-	template<internal::conceptTrivialMoveFunctor Func>
-	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey, Func func)
+	template<internal::conceptMoveFunctor Func>
+	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey,
+		FastMovableFunctor<Func> func)
 	{
 		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::move(func));
 	}
 
-	template<internal::conceptTrivialMoveFunctor Func>
-	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey, Func func)
+	template<internal::conceptMoveFunctor Func>
+	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey,
+		FastMovableFunctor<Func> func)
 	{
 		KeyManager::CopyExec(memManager, srcKey, dstKey, std::move(func));
 	}
@@ -532,16 +536,16 @@ public:
 	}
 
 	template<internal::conceptIncIterator<Key> SrcKeyIterator,
-		internal::conceptIncIterator<Key> DstKeyIterator, internal::conceptTrivialMoveFunctor Func>
+		internal::conceptIncIterator<Key> DstKeyIterator, internal::conceptMoveFunctor Func>
 	static void RelocateExecKeys(MemManager& memManager, SrcKeyIterator srcKeyBegin,
-		DstKeyIterator dstKeyBegin, size_t count, Func func)
+		DstKeyIterator dstKeyBegin, size_t count, FastMovableFunctor<Func> func)
 	{
 		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
 	}
 
-	template<internal::conceptTrivialObjectCreator<Value> ValueCreator>
+	template<internal::conceptObjectCreator<Value> ValueCreator>
 	static void RelocateCreateValues(MemManager& memManager, Value* srcValues, Value* dstValues,
-		size_t count, ValueCreator valueCreator, Value* newValue)
+		size_t count, FastMovableFunctor<ValueCreator> valueCreator, Value* newValue)
 	{
 		ValueManager::RelocateCreate(memManager, srcValues, dstValues, count,
 			std::move(valueCreator), newValue);

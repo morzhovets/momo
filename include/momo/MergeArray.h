@@ -55,9 +55,9 @@ public:
 
 	template<internal::conceptIncIterator<Item> SrcIterator,
 		internal::conceptIncIterator<Item> DstIterator,
-		internal::conceptTrivialObjectCreator<Item> ItemCreator>
+		internal::conceptObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-		size_t count, ItemCreator itemCreator, Item* newItem)
+		size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
 			std::move(itemCreator), newItem);

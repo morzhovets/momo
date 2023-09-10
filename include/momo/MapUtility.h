@@ -308,22 +308,23 @@ namespace internal
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 	public:
-		template<conceptTrivialObjectCreator<Value> ValueCreator>
+		template<conceptObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, Key&& key,
-			ValueCreator valueCreator, Key* newKey, Value* newValue)
+			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
-			KeyManager::MoveExec(memManager, std::move(key), newKey, std::move(func));
+			KeyManager::MoveExec(memManager, std::move(key), newKey,
+				FastMovableFunctor(std::move(func)));
 		}
 
-		template<conceptTrivialObjectCreator<Value> ValueCreator>
+		template<conceptObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
-			ValueCreator valueCreator, Key* newKey, Value* newValue)
+			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
 			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, std::move(func));
+			KeyManager::CopyExec(memManager, key, newKey, FastMovableFunctor(std::move(func)));
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
@@ -495,10 +496,11 @@ namespace internal
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
 			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
-			conceptTrivialMoveFunctor Func>
+			conceptMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
-			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin, size_t count, Func func)
+			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin,
+			size_t count, FastMovableFunctor<Func> func)
 		{
 			if constexpr (isKeyNothrowRelocatable)
 			{
@@ -598,9 +600,10 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Key> DstKeyIterator,
-			conceptTrivialMoveFunctor Func>
+			conceptMoveFunctor Func>
 		static void RelocateExecKeys(MemManager& memManager,
-			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin, size_t count, Func func)
+			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin,
+			size_t count, FastMovableFunctor<Func> func)
 		{
 			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
 		}
@@ -855,9 +858,9 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
-			conceptTrivialObjectCreator<Item> ItemCreator>
+			conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
@@ -873,7 +876,7 @@ namespace internal
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExec(memManager, srcKeyIter, srcValueIter,
-				dstKeyIter, dstValueIter, count, std::move(func));
+				dstKeyIter, dstValueIter, count, FastMovableFunctor(std::move(func)));
 		}
 
 		template<typename KeyArg>
@@ -989,9 +992,9 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
-			conceptTrivialObjectCreator<Item> ItemCreator>
+			conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
@@ -1003,7 +1006,7 @@ namespace internal
 			auto func = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExecKeys(memManager, srcKeyIter, dstKeyIter,
-				count, std::move(func));
+				count, FastMovableFunctor(std::move(func)));
 			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
 				{ return &(srcIter++)->GetValuePtr(); };
 			IncIterator dstValueIter = [dstIter = dstBegin] () mutable

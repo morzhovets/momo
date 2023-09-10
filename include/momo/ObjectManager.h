@@ -137,21 +137,6 @@ namespace internal
 	template<typename Predicate, typename Object>
 	concept conceptObjectPredicate = conceptPredicate<Predicate, const Object&>;
 
-	template<typename Creator, typename Object>
-	concept conceptTrivialObjectCreator = conceptTrivialMoveFunctor<Creator, void, Object*>;
-
-	template<typename Creator, typename Object>
-	concept conceptTrivialObjectMultiCreator = conceptTrivialConstFunctor<Creator, void, Object*>;
-
-	template<typename Remover, typename Object>
-	concept conceptTrivialObjectRemover = conceptTrivialMoveFunctor<Remover, void, Object&>;
-
-	template<typename Replacer, typename Object>
-	concept conceptTrivialObjectReplacer = conceptTrivialMoveFunctor<Replacer, void, Object&, Object&>;
-
-	template<typename Predicate, typename Object>
-	concept conceptTrivialObjectPredicate = conceptTrivialPredicate<Predicate, const Object&>;
-
 	template<typename Iterator, typename Object>
 	concept conceptIncIterator =
 		requires (Iterator iter)
@@ -432,9 +417,9 @@ namespace internal
 			std::construct_at(dstObject, srcObject);
 		}
 
-		template<conceptTrivialMoveFunctor Func>
-		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject, Func func)
-			requires isMoveConstructible && isNothrowDestructible
+		template<conceptMoveFunctor Func>
+		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
+			FastMovableFunctor<Func> func) requires isMoveConstructible && isNothrowDestructible
 		{
 			if constexpr (isNothrowMoveConstructible)
 			{
@@ -457,9 +442,9 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialMoveFunctor Func>
+		template<conceptMoveFunctor Func>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
-			Func func) requires isCopyConstructible && isNothrowDestructible
+			FastMovableFunctor<Func> func) requires isCopyConstructible && isNothrowDestructible
 		{
 			Copy(&memManager, srcObject, dstObject);
 			try
@@ -590,27 +575,28 @@ namespace internal
 					Object& srcObject0 = *srcIter++;
 					Object& dstObject0 = *dstIter++;
 					RelocateCreate(memManager, srcIter, dstIter, count - 1,
-						Creator<Object&&>(memManager, std::move(srcObject0)), std::addressof(dstObject0));
+						FastMovableFunctor(Creator<Object&&>(memManager, std::move(srcObject0))),
+						std::addressof(dstObject0));
 					Destroy(&memManager, srcObject0);
 				}
 			}
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptTrivialObjectCreator<Object> ObjectCreator>
+			conceptObjectCreator<Object> ObjectCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, ObjectCreator objectCreator, Object* newObject)
+			size_t count, FastMovableFunctor<ObjectCreator> objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
 			auto func = [objectCreator = std::move(objectCreator), newObject] () mutable
 				{ std::move(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, std::move(func));
+			RelocateExec(memManager, srcBegin, dstBegin, count, FastMovableFunctor(std::move(func)));
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptTrivialMoveFunctor Func>
+			conceptMoveFunctor Func>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, Func func)
+			size_t count, FastMovableFunctor<Func> func)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
 			if constexpr (isNothrowRelocatable)

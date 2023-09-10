@@ -128,28 +128,13 @@ namespace internal
 				-> std::convertible_to<Result>; };
 
 	template<typename Functor, typename Result = void, typename... Args>
-	concept conceptTrivialMoveFunctor = conceptMoveFunctor<Functor, Result, Args...> &&
-		!std::is_reference_v<Functor> &&
-		std::is_trivially_destructible_v<Functor> &&
-		std::is_trivially_move_constructible_v<Functor>;
-
-	template<typename Functor, typename Result = void, typename... Args>
 	concept conceptConstFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
 			{ { std::as_const(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; };
 
-	template<typename Functor, typename Result = void, typename... Args>
-	concept conceptTrivialConstFunctor = conceptConstFunctor<Functor, Result, Args...> &&
-		!std::is_reference_v<Functor> &&
-		std::is_trivially_destructible_v<Functor> &&
-		std::is_trivially_copy_constructible_v<Functor>;
-
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
-
-	template<typename Predicate, typename... Args>
-	concept conceptTrivialPredicate = conceptTrivialConstFunctor<Predicate, bool, Args...>;
 
 	template<size_t size>
 	struct UIntSelector;

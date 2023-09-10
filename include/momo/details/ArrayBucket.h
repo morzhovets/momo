@@ -66,12 +66,12 @@ namespace internal
 		static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		{
 			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
-				dstItems, count, [] (Item*) {}, nullptr);
+				dstItems, count, FastMovableFunctor([] (Item*) {}), nullptr);
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
+		template<conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
 				dstItems, count, std::move(itemCreator), newItem);

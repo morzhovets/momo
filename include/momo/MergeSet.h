@@ -214,9 +214,9 @@ namespace internal
 				MergeSetItemTraits::Destroy(setMemManager, *iter++);
 		}
 
-		template<conceptIncIterator<Item> SrcIterator, conceptTrivialObjectCreator<Item> ItemCreator>
+		template<conceptIncIterator<Item> SrcIterator, conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			MOMO_ASSERT(std::has_single_bit(count) && count > initialItemCount);
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
@@ -421,9 +421,9 @@ private:
 public:
 	template<internal::conceptIncIterator<Item> SrcIterator,
 		internal::conceptIncIterator<Item> DstIterator,
-		internal::conceptTrivialObjectCreator<Item> ItemCreator>
+		internal::conceptObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-		size_t count, ItemCreator itemCreator, Item* newItem)
+		size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcBegin, dstBegin, count,
 			std::move(itemCreator), newItem);

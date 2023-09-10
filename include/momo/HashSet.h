@@ -393,9 +393,9 @@ namespace internal
 		static const size_t alignment = HashSetItemTraits::alignment;
 
 	public:
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
+		template<conceptObjectCreator<Item> ItemCreator>
 		static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-			size_t count, ItemCreator itemCreator, Item* newItem)
+			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			HashSetItemTraits::RelocateCreate(memManager, srcItems, dstItems, count,
 				std::move(itemCreator), newItem);
@@ -417,9 +417,9 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
+	template<internal::conceptObjectCreator<Item> ItemCreator>
 	static void RelocateCreate(MemManager& memManager, Item* srcItems, Item* dstItems,
-		size_t count, ItemCreator itemCreator, Item* newItem)
+		size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 	{
 		ItemManager::RelocateCreate(memManager, srcItems, dstItems, count,
 			std::move(itemCreator), newItem);
