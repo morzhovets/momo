@@ -293,7 +293,8 @@ namespace internal
 		static_assert(std::has_single_bit(maxAllocAlignment));
 		static_assert(maxAllocAlignment % maxAlignment == 0);
 
-		static const size_t maxFastFunctorSize = 2 * sizeof(void*);	//?
+		static const size_t maxFastFunctorSize = MOMO_MAX_FAST_FUNCTOR_SIZE;
+		//static_assert(maxFastFunctorSize >= sizeof(void*));
 
 		static const size_t maxSize = SIZE_MAX;
 
