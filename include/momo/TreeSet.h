@@ -403,8 +403,8 @@ private:
 			return splitRes;
 		}
 
-		template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-		void RelocateCreate(ItemCreator itemCreator, Item* newItem)
+		template<internal::conceptObjectCreator<Item> ItemCreator>
+		void RelocateCreate(FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
@@ -718,7 +718,8 @@ public:
 				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
+		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()),
+			FastMovableFunctor(std::move(itemCreator)));
 	}
 
 	template<internal::conceptSetArgIterator<Item> ArgIterator>
@@ -743,7 +744,7 @@ public:
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
 				res.position = pvAdd<false>(std::next(res.position),
-					Creator<decltype(*iter)>(memManager, *iter));
+					FastMovableFunctor(Creator<decltype(*iter)>(memManager, *iter)));
 				res.inserted = true;
 			}
 			else
@@ -794,7 +795,7 @@ public:
 				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return pvAdd<true>(iter, itemCreator);
+		return pvAdd<true>(iter, FastMovableFunctor(std::move(itemCreator)));
 	}
 
 	Iterator Remove(ConstIterator iter)
@@ -803,7 +804,8 @@ public:
 			{ ItemTraits::Destroy(&GetMemManager(), item); };
 		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, itemRemover, itemReplacer);
+		return pvRemove(iter, FastMovableFunctor(std::move(itemRemover)),
+			FastMovableFunctor(std::move(itemReplacer)));
 	}
 
 	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
@@ -851,7 +853,7 @@ public:
 			auto itemRemover = [&memManager] (Item& item)
 				{ ItemTraits::Destroy(&memManager, item); };
 			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
-				node1->Remove(*mNodeParams, i - 1, itemRemover);
+				node1->Remove(*mNodeParams, i - 1, FastMovableFunctor(std::move(itemRemover)));
 			resNode = node1;
 			resItemIndex = itemIndex1;
 			pvRebalance(resNode, resNode, true);
@@ -1102,7 +1104,7 @@ private:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		auto pred = [&treeTraits, &key] (const Item& item)
 			{ return !treeTraits.IsLess(ItemTraits::GetKey(item), key); };
-		return pvFindFirst(pred);
+		return pvFindFirst(FastCopyableFunctor(pred));
 	}
 
 	template<typename KeyArg>
@@ -1111,11 +1113,11 @@ private:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		auto pred = [&treeTraits, &key] (const Item& item)
 			{ return treeTraits.IsLess(key, ItemTraits::GetKey(item)); };
-		return pvFindFirst(pred);
+		return pvFindFirst(FastCopyableFunctor(pred));
 	}
 
-	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
-	Iterator pvFindFirst(Predicate pred) const
+	template<internal::conceptObjectPredicate<Item> Predicate>
+	Iterator pvFindFirst(FastCopyableFunctor<Predicate> pred) const
 	{
 		if (mRootNode == nullptr)
 			return Iterator();
@@ -1133,8 +1135,8 @@ private:
 		return iter;
 	}
 
-	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
-	size_t pvFindFirst(Node* node, Predicate pred) const
+	template<internal::conceptObjectPredicate<Item> Predicate>
+	size_t pvFindFirst(Node* node, FastCopyableFunctor<Predicate> pred) const
 	{
 		if constexpr (TreeTraits::useLinearSearch)
 		{
@@ -1178,8 +1180,8 @@ private:
 		return count;
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	InsertResult pvInsert(const Key& key, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		Iterator iter = pvGetUpperBound(key);
 		if (!TreeTraits::multiKey && iter != GetBegin())
@@ -1192,8 +1194,8 @@ private:
 		return { iter, true };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	Iterator pvAdd(ConstIterator iter, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	Iterator pvAdd(ConstIterator iter, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		if (mRootNode == nullptr)
 			return pvAddFirst(iter, std::move(itemCreator));
@@ -1228,8 +1230,9 @@ private:
 		return resIter;
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter, ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter,
+		FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)
@@ -1251,8 +1254,9 @@ private:
 		}
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex, ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	void pvAddGrow(NodeRelocator& relocator, Node*& node, size_t itemIndex,
+		FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		Node* newNode = relocator.GrowLeafNode(node, itemIndex);
 		relocator.RelocateCreate(std::move(itemCreator), newNode->GetItemPtr(itemIndex));
@@ -1265,9 +1269,9 @@ private:
 		node = newNode;
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
+	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void pvAddSplit(NodeRelocator& relocator, Node*& leafNode, size_t& leafItemIndex,
-		ItemCreator itemCreator)
+		FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
 		Node* node = leafNode;
@@ -1311,9 +1315,10 @@ private:
 		pvUpdateParents(node);	//?
 	}
 
-	template<internal::conceptTrivialObjectRemover<Item> ItemRemover,
-		internal::conceptTrivialObjectReplacer<Item> ItemReplacer>
-	Iterator pvRemove(ConstIterator iter, ItemRemover itemRemover, ItemReplacer itemReplacer)
+	template<internal::conceptObjectRemover<Item> ItemRemover,
+		internal::conceptObjectReplacer<Item> ItemReplacer>
+	Iterator pvRemove(ConstIterator iter, FastMovableFunctor<ItemRemover> itemRemover,
+		FastMovableFunctor<ItemReplacer> itemReplacer)
 	{
 		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), false);
 		MOMO_CHECK(iter != GetEnd());
@@ -1321,12 +1326,13 @@ private:
 		size_t itemIndex = ConstIteratorProxy::GetItemIndex(iter);
 		if (node->IsLeaf())
 		{
-			node->Remove(*mNodeParams, itemIndex, itemRemover);
+			node->Remove(*mNodeParams, itemIndex, std::move(itemRemover));
 			pvRebalance(node, node, true);
 		}
 		else
 		{
-			node = pvRemoveInternal(node, itemIndex, itemRemover, itemReplacer);
+			node = pvRemoveInternal(node, itemIndex,
+				std::move(itemRemover), std::move(itemReplacer));
 			itemIndex = 0;
 		}
 		--mCount;
@@ -1344,13 +1350,14 @@ private:
 			MOMO_ASSERT(std::is_null_pointer_v<ExtMemManagerOrNullPtr>);
 			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
 		};
-		return pvRemove(iter, itemRemover, itemReplacer);
+		return pvRemove(iter, FastMovableFunctor(std::move(itemRemover)),
+			FastMovableFunctor(std::move(itemReplacer)));
 	}
 
-	template<internal::conceptTrivialObjectRemover<Item> ItemRemover,
-		internal::conceptTrivialObjectReplacer<Item> ItemReplacer>
-	Node* pvRemoveInternal(Node* node, size_t itemIndex, ItemRemover itemRemover,
-		ItemReplacer itemReplacer)
+	template<internal::conceptObjectRemover<Item> ItemRemover,
+		internal::conceptObjectReplacer<Item> ItemReplacer>
+	Node* pvRemoveInternal(Node* node, size_t itemIndex,
+		FastMovableFunctor<ItemRemover> itemRemover, FastMovableFunctor<ItemReplacer> itemReplacer)
 	{
 		Node* childNode = node->GetChild(itemIndex);
 		while (!childNode->IsLeaf())
@@ -1361,18 +1368,27 @@ private:
 		if (childNode == node)
 		{
 			Node* rightNode = node->GetChild(itemIndex + 1);
-			pvDestroyInternal(node, itemIndex, false, itemRemover);
+			pvDestroyInternal(node, itemIndex, false, std::move(itemRemover));
 			resNode = rightNode;
 		}
 		else
 		{
 			size_t childItemIndex = childNode->GetCount() - 1;
-			auto itemReplaceRemover = [node, itemIndex, &itemReplacer] (Item& item)	//?
-				{ itemReplacer(item, *node->GetItemPtr(itemIndex)); };
+			auto itemReplaceRemover = [node, itemIndex, itemReplacer = std::move(itemReplacer)]
+				(Item& item) mutable
+			{
+				std::move(itemReplacer)(item, *node->GetItemPtr(itemIndex));
+			};
 			if (childNode->IsLeaf())
-				childNode->Remove(*mNodeParams, childItemIndex, itemReplaceRemover);
+			{
+				childNode->Remove(*mNodeParams, childItemIndex,
+					FastMovableFunctor(std::move(itemReplaceRemover)));
+			}
 			else
-				pvDestroyInternal(childNode, childItemIndex, true, itemReplaceRemover);
+			{
+				pvDestroyInternal(childNode, childItemIndex, true,
+					FastMovableFunctor(std::move(itemReplaceRemover)));
+			}
 			resNode = node->GetChild(itemIndex + 1);
 		}
 		while (!resNode->IsLeaf())
@@ -1386,6 +1402,7 @@ private:
 		MemManager& memManager = GetMemManager();
 		auto itemRemover = [&memManager] (Item& item)
 			{ ItemTraits::Destroy(&memManager, item); };
+		typedef decltype(itemRemover) ItemRemover;
 		size_t comIndex1 = itemIndex1;
 		size_t comIndex2 = itemIndex2;
 		Node* comNode = pvGetCommonParent(node1, node2, comIndex1, comIndex2);
@@ -1411,19 +1428,21 @@ private:
 				{ ItemTraits::Replace(memManager, item, *comNode->GetItemPtr(comIndex1)); };
 			if (node1->IsLeaf())
 			{
-				node1->Remove(*mNodeParams, itemIndex1, itemReplaceRemover);
+				node1->Remove(*mNodeParams, itemIndex1,
+					FastMovableFunctor(std::move(itemReplaceRemover)));
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					node1->Remove(*mNodeParams, i - 1, itemRemover);
+					node1->Remove(*mNodeParams, i - 1, FastMovableFunctor(ItemRemover(itemRemover)));
 				pvToParent(node1, itemIndex1);
 			}
 			else
 			{
-				pvDestroyInternal(node1, itemIndex1, true, itemReplaceRemover);
+				pvDestroyInternal(node1, itemIndex1, true,
+					FastMovableFunctor(std::move(itemReplaceRemover)));
 			}
 			while (node1 != comNode)
 			{
 				for (size_t i = node1->GetCount(); i > itemIndex1; --i)
-					pvDestroyInternal(node1, i - 1, true, itemRemover);
+					pvDestroyInternal(node1, i - 1, true, FastMovableFunctor(ItemRemover(itemRemover)));
 				pvToParent(node1, itemIndex1);
 			}
 			++comIndex1;
@@ -1433,17 +1452,18 @@ private:
 			if (node2->IsLeaf())
 			{
 				for (size_t i = itemIndex2 + 1; i > 0; --i)
-					node2->Remove(*mNodeParams, i - 1, itemRemover);
+					node2->Remove(*mNodeParams, i - 1, FastMovableFunctor(ItemRemover(itemRemover)));
 				pvToParent(node2, itemIndex2);
 			}
 			else
 			{
-				pvDestroyInternal(node2, itemIndex2, false, itemRemover);
+				pvDestroyInternal(node2, itemIndex2, false,
+					FastMovableFunctor(ItemRemover(itemRemover)));
 			}
 			while (node2 != comNode)
 			{
 				for (size_t i = itemIndex2; i > 0; --i)
-					pvDestroyInternal(node2, i - 1, false, itemRemover);
+					pvDestroyInternal(node2, i - 1, false, FastMovableFunctor(ItemRemover(itemRemover)));
 				pvToParent(node2, itemIndex2);
 			}
 		}
@@ -1452,7 +1472,7 @@ private:
 			++comIndex2;
 		}
 		for (size_t i = comIndex2; i > comIndex1; --i)
-			pvDestroyInternal(comNode, i - 1, false, itemRemover);
+			pvDestroyInternal(comNode, i - 1, false, FastMovableFunctor(ItemRemover(itemRemover)));
 		Node* resNode = comNode->GetChild(comIndex1);
 		while (!resNode->IsLeaf())
 			resNode = resNode->GetChild(0);
@@ -1462,13 +1482,14 @@ private:
 		return resNode;
 	}
 
-	template<internal::conceptTrivialObjectRemover<Item> ItemRemover>
-	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight, ItemRemover itemRemover)
+	template<internal::conceptObjectRemover<Item> ItemRemover>
+	void pvDestroyInternal(Node* node, size_t itemIndex, bool destroyRight,
+		FastMovableFunctor<ItemRemover> itemRemover)
 	{
 		MOMO_ASSERT(!node->IsLeaf());
 		Node* leftNode = node->GetChild(itemIndex);
 		Node* rightNode = node->GetChild(itemIndex + 1);
-		node->Remove(*mNodeParams, itemIndex, itemRemover);
+		node->Remove(*mNodeParams, itemIndex, std::move(itemRemover));
 		pvDestroy(destroyRight ? rightNode : leftNode);
 		node->SetChild(itemIndex, destroyRight ? leftNode : rightNode);
 	}
@@ -1557,9 +1578,10 @@ private:
 			MemManager& memManager = GetMemManager();
 			auto itemCreator = [&memManager, &item] (Item* newItem)
 				{ ItemTraits::Relocate(&memManager, &memManager, item, newItem); };
-			relocator.RelocateCreate(itemCreator, node1->GetItemPtr(itemCount1));
+			relocator.RelocateCreate(FastMovableFunctor(std::move(itemCreator)),
+				node1->GetItemPtr(itemCount1));
 		};
-		parentNode->Remove(*mNodeParams, index, itemRemover);
+		parentNode->Remove(*mNodeParams, index, FastMovableFunctor(std::move(itemRemover)));
 		parentNode->SetChild(index, node1);
 		Node* lastChildNode = node1->IsLeaf() ? nullptr : node1->GetChild(itemCount1);
 		for (size_t i = 0; i <= itemCount2; ++i)
@@ -1605,7 +1627,8 @@ private:
 			{
 				auto itemCreator = [this, &dstMemManager, &iter] (Item* newItem)
 					{ iter = pvExtract(iter, newItem, &dstMemManager); };
-				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
+				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter,
+					FastMovableFunctor(std::move(itemCreator))));
 			}
 			else
 			{
@@ -1659,14 +1682,14 @@ private:
 			if (node1->IsLeaf())
 			{
 				node1->Remove(*treeSetPtr1->mNodeParams,
-					swap ? 0 : node1->GetCount() - 1, itemRemover);
+					swap ? 0 : node1->GetCount() - 1, FastMovableFunctor(std::move(itemRemover)));
 			}
 			else
 			{
 				Node* node10 = node1->GetChild(swap ? 0 : node1->GetCount());
 				Node* node11 = node1->GetChild(swap ? 1 : node1->GetCount() - 1);
 				node1->Remove(*treeSetPtr1->mNodeParams,
-					swap ? 0 : node1->GetCount() - 1, itemRemover);
+					swap ? 0 : node1->GetCount() - 1, FastMovableFunctor(std::move(itemRemover)));
 				treeSetPtr1->pvDestroy(node10);
 				node1->SetChild(swap ? 0 : node1->GetCount(), node11);
 			}

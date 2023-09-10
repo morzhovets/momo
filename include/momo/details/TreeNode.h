@@ -253,8 +253,8 @@ namespace internal
 			++mCounter.count;
 		}
 
-		template<conceptTrivialObjectRemover<Item> ItemRemover>
-		void Remove(Params& params, size_t index, ItemRemover itemRemover)
+		template<conceptObjectRemover<Item> ItemRemover>
+		void Remove(Params& params, size_t index, FastMovableFunctor<ItemRemover> itemRemover)
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
