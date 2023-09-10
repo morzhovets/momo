@@ -123,8 +123,9 @@ namespace internal
 			return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t /*hashCode*/)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			FastCopyableFunctor<Predicate> pred, size_t /*hashCode*/)
 		{
 			size_t count = pvGetCount();
 			Item* items = pvGetItems();
@@ -158,9 +159,9 @@ namespace internal
 			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
-			size_t /*logBucketCount*/, size_t /*probe*/)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator AddCrt(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t /*hashCode*/, size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			Item* items = pvGetItems();
 			if (items == nullptr)
@@ -200,8 +201,8 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator Remove(Params& params, Iterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count > 0);

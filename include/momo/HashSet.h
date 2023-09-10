@@ -593,7 +593,7 @@ public:
 			{
 				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
 				pvAddNogrow<false>(*mBuckets, hashCode,
-					Creator<const Item&>(GetMemManager(), item));
+					FastMovableFunctor(Creator<const Item&>(GetMemManager(), item)));
 			}
 		}
 		catch (...)
@@ -787,7 +787,8 @@ public:
 				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
+		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()),
+			FastMovableFunctor(std::move(itemCreator)));
 	}
 
 	template<internal::conceptSetArgIterator<Item> ArgIterator>
@@ -838,14 +839,14 @@ public:
 				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
 			extItem.Remove(itemRemover);
 		};
-		return pvAdd<true>(pos, std::move(itemCreator));
+		return pvAdd<true>(pos, FastMovableFunctor(std::move(itemCreator)));
 	}
 
 	Iterator Remove(ConstIterator iter)
 	{
 		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
-		return pvRemove(iter, itemReplacer);
+		return pvRemove(iter, FastMovableFunctor(std::move(itemReplacer)));
 	}
 
 	void Remove(ConstPosition pos)
@@ -866,7 +867,7 @@ public:
 				else
 					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
 			};
-			resIter = pvRemove(iter, itemReplacer);
+			resIter = pvRemove(iter, FastMovableFunctor(std::move(itemReplacer)));
 		};
 		extItem.Create(itemCreator);
 		return resIter;
@@ -1052,7 +1053,7 @@ private:
 			Buckets* buckets = mBuckets;
 			while (true)
 			{
-				bucketIter = pvFind(indexCode, *buckets, pred);
+				bucketIter = pvFind(indexCode, *buckets, FastCopyableFunctor(pred));
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();
@@ -1063,8 +1064,9 @@ private:
 		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<internal::conceptTrivialObjectPredicate<Item> Predicate>
-	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets, Predicate pred) const
+	template<internal::conceptObjectPredicate<Item> Predicate>
+	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
+		FastCopyableFunctor<Predicate> pred) const
 	{
 		size_t hashCode = indexCode;
 		BucketParams& bucketParams = buckets.GetBucketParams();
@@ -1092,8 +1094,8 @@ private:
 		return BucketIterator();
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	InsertResult pvInsert(const Key& key, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		Position pos = pvFind(key);
 		if (!!pos)
@@ -1102,8 +1104,8 @@ private:
 		return { pos, true };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	Position pvAdd(ConstPosition pos, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	Position pvAdd(ConstPosition pos, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		ConstPositionProxy::Check(pos, mCrew.GetVersion(), false);
 		MOMO_CHECK(ConstPositionProxy::GetBucketIterator(pos) == BucketIterator());
@@ -1119,8 +1121,9 @@ private:
 		return resPos;
 	}
 
-	template<bool incCount, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	Position pvAddNogrow(Buckets& buckets, size_t hashCode, ItemCreator itemCreator)
+	template<bool incCount, internal::conceptObjectCreator<Item> ItemCreator>
+	Position pvAddNogrow(Buckets& buckets, size_t hashCode,
+		FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
@@ -1146,8 +1149,8 @@ private:
 		return PositionProxy(bucketIndex, bucketIter, mCrew.GetVersion());
 	}
 
-	template<internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, ItemCreator itemCreator)
+	template<internal::conceptObjectCreator<Item> ItemCreator>
+	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
@@ -1183,8 +1186,8 @@ private:
 		return resPos;
 	}
 
-	template<internal::conceptTrivialObjectReplacer<Item> ItemReplacer>
-	Iterator pvRemove(ConstIterator iter, ItemReplacer itemReplacer)
+	template<internal::conceptObjectReplacer<Item> ItemReplacer>
+	Iterator pvRemove(ConstIterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 	{
 		MOMO_CHECK(mBuckets != nullptr);
 		Position pos = iter;
@@ -1194,7 +1197,7 @@ private:
 		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
 		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
-		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, itemReplacer);
+		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, std::move(itemReplacer));
 		--mCount;
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
@@ -1270,17 +1273,18 @@ private:
 			for (size_t c = bucketBounds.GetCount(); c > 0; --c)
 			{
 				--bucketIter;
-				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
-					buckets->GetLogCount(), mBuckets->GetLogCount());
+				size_t hashCode = bucket.GetHashCodePart(FastCopyableFunctor(hashCodeFullGetter),
+					bucketIter, i, buckets->GetLogCount(), mBuckets->GetLogCount());
 				auto itemReplacer = [this, &memManager, hashCode]
 					([[maybe_unused]] Item& srcItem, Item& dstItem)
 				{
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
 					auto itemCreator = [&memManager, &dstItem] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, &memManager, dstItem, newItem); };
-					pvAddNogrow<false>(*mBuckets, hashCode, itemCreator);
+					pvAddNogrow<false>(*mBuckets, hashCode, FastMovableFunctor(std::move(itemCreator)));
 				};
-				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
+				bucketIter = bucket.Remove(bucketParams, bucketIter,
+					FastMovableFunctor(std::move(itemReplacer)));
 			}
 		}
 		buckets->Destroy(memManager, false);
@@ -1302,7 +1306,7 @@ private:
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
 					ItemTraits::Relocate(&memManager, &dstMemManager, dstItem, newItem);
 				};
-				iter = pvRemove(iter, itemReplacer);
+				iter = pvRemove(iter, FastMovableFunctor(std::move(itemReplacer)));
 			};
 			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), std::move(itemCreator)).inserted)
 				++iter;

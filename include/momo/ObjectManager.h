@@ -131,6 +131,9 @@ namespace internal
 	template<typename Remover, typename Object>
 	concept conceptObjectRemover = conceptMoveFunctor<Remover, void, Object&>;
 
+	template<typename Replacer, typename Object>
+	concept conceptObjectReplacer = conceptMoveFunctor<Replacer, void, Object&, Object&>;
+
 	template<typename Predicate, typename Object>
 	concept conceptObjectPredicate = conceptPredicate<Predicate, const Object&>;
 

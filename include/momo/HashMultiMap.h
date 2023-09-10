@@ -1226,9 +1226,9 @@ private:
 		return pvMakeIterator(keyIter, valueIndex, true);
 	}
 
-	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
+	template<typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
 	requires std::is_same_v<Key, std::decay_t<RKey>>
-	Iterator pvAdd(RKey&& key, ValueCreator valueCreator)
+	Iterator pvAdd(RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		KeyIterator keyIter = Find(std::as_const(key));
 		if (!!keyIter)
@@ -1246,8 +1246,8 @@ private:
 		return pvMakeIterator(keyIter, 0, false);
 	}
 
-	template<internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	Iterator pvAdd(ConstKeyIterator keyIter, ValueCreator valueCreator)
+	template<internal::conceptObjectCreator<Value> ValueCreator>
+	Iterator pvAdd(ConstKeyIterator keyIter, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
@@ -1257,8 +1257,8 @@ private:
 			valueArray.GetBounds().GetCount() - 1, false);
 	}
 
-	template<internal::conceptTrivialObjectCreator<Key> KeyCreator>
-	KeyIterator pvAddKey(ConstKeyIterator keyIter, KeyCreator keyCreator)
+	template<internal::conceptObjectCreator<Key> KeyCreator>
+	KeyIterator pvAddKey(ConstKeyIterator keyIter, FastMovableFunctor<KeyCreator> keyCreator)
 	{
 		auto pairCreator = [keyCreator = std::move(keyCreator)]
 			(Key* newKey, ValueArray* newValueArray) mutable
@@ -1270,8 +1270,8 @@ private:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter), std::move(pairCreator)));
 	}
 
-	template<internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	void pvAddValue(ValueArray& valueArray, ValueCreator valueCreator)
+	template<internal::conceptObjectCreator<Value> ValueCreator>
+	void pvAddValue(ValueArray& valueArray, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		valueArray.AddBackCrt(mValueCrew.GetValueArrayParams(), std::move(valueCreator));
 		++mValueCount;

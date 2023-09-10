@@ -95,8 +95,9 @@ namespace internal
 			return Bounds(Iterator(&mItems + maxCount), pvGetCount());
 		}
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			return pvFind(pred, hashCode);
 		}
@@ -133,23 +134,24 @@ namespace internal
 			pvSetEmpty();
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
-			size_t logBucketCount, size_t probe)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator AddCrt(Params& /*params*/, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t logBucketCount, size_t probe)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			return pvAdd(std::move(itemCreator), hashCode, logBucketCount, probe);
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator Remove(Params& /*params*/, Iterator iter,
+			FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			return pvRemove(iter, std::move(itemReplacer));
 		}
 
-		template<conceptTrivialConstFunctor<size_t> HashCodeFullGetter>
-		size_t GetHashCodePart(HashCodeFullGetter hashCodeFullGetter, Iterator iter,
-			size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
+		template<conceptConstFunctor<size_t> HashCodeFullGetter>
+		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
+			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
@@ -184,8 +186,8 @@ namespace internal
 			mState[1] = uint8_t{0};
 		}
 
-		template<conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		template<conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			ShortHash shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
@@ -199,8 +201,9 @@ namespace internal
 			return Iterator();
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator pvAdd(ItemCreator itemCreator, size_t hashCode, size_t logBucketCount, size_t probe)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator pvAdd(FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t logBucketCount, size_t probe)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
@@ -220,8 +223,8 @@ namespace internal
 			return Iterator(newItem + 1);
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator pvRemove(Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator pvRemove(Iterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			size_t count = pvGetCount();
 			size_t index = UIntMath<>::Dist(&mItems, std::to_address(iter));

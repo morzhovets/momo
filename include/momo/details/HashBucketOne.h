@@ -69,8 +69,9 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			if (mHashState == pvGetHashState(hashCode))
 			{
@@ -95,9 +96,9 @@ namespace internal
 			mHashState = HashState{0};
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator AddCrt(Params& /*params*/, ItemCreator itemCreator, size_t hashCode,
-			size_t /*logBucketCount*/, size_t /*probe*/)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator AddCrt(Params& /*params*/, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t /*logBucketCount*/, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			MOMO_ASSERT(!IsFull());
@@ -106,8 +107,9 @@ namespace internal
 			return &mItemBuffer;
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter,
+			FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
@@ -116,8 +118,8 @@ namespace internal
 			return nullptr;
 		}
 
-		template<conceptTrivialConstFunctor<size_t> HashCodeFullGetter>
-		size_t GetHashCodePart(HashCodeFullGetter hashCodeFullGetter,
+		template<conceptConstFunctor<size_t> HashCodeFullGetter>
+		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
 			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
 			size_t /*newLogBucketCount*/)
 		{

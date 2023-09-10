@@ -268,8 +268,9 @@ namespace internal
 			return Bounds(mPtrState.GetPointer(), pvGetCount());
 		}
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			return pvFind(pred, hashCode);
 		}
@@ -292,9 +293,9 @@ namespace internal
 			pvSetEmpty(minMemPoolIndex);
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t hashCode,
-			size_t logBucketCount, size_t probe)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator AddCrt(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t logBucketCount, size_t probe)
 		{
 			Item* items = mPtrState.GetPointer();
 			size_t memPoolIndex = pvGetMemPoolIndex();
@@ -342,8 +343,8 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator Remove(Params& params, Iterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			Item* items = mPtrState.GetPointer();
 			MOMO_ASSERT(items != nullptr);
@@ -376,9 +377,9 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialConstFunctor<size_t> HashCodeFullGetter>
-		size_t GetHashCodePart(HashCodeFullGetter hashCodeFullGetter, Iterator iter,
-			size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
+		template<conceptConstFunctor<size_t> HashCodeFullGetter>
+		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
+			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
@@ -411,8 +412,8 @@ namespace internal
 			pvSetPtrState(nullptr, memPoolIndex);
 		}
 
-		template<conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		template<conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			uint8_t shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
@@ -472,8 +473,8 @@ namespace internal
 				| static_cast<uint8_t>(probe) : emptyHashProbe;
 		}
 
-		template<size_t memPoolIndex, conceptTrivialObjectCreator<Item> ItemCreator>
-		Item* pvAdd0(Params& params, ItemCreator itemCreator, size_t hashCode)
+		template<size_t memPoolIndex, conceptObjectCreator<Item> ItemCreator>
+		Item* pvAdd0(Params& params, FastMovableFunctor<ItemCreator> itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.GetPointer();
@@ -483,8 +484,9 @@ namespace internal
 			return items;
 		}
 
-		template<size_t memPoolIndex, conceptTrivialObjectCreator<Item> ItemCreator>
-		Item* pvAdd(Params& params, ItemCreator itemCreator, size_t hashCode, Item* items)
+		template<size_t memPoolIndex, conceptObjectCreator<Item> ItemCreator>
+		Item* pvAdd(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, Item* items)
 		{
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;

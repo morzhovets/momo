@@ -51,8 +51,9 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, Predicate pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			return pvFind<first>(pred, hashCode);
 		}
@@ -64,8 +65,8 @@ namespace internal
 		}
 
 	private:
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator pvFind(Predicate pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<Predicate> pred, size_t hashCode)
 		{
 			static_assert(std::endian::native == std::endian::little);
 #ifdef MOMO_PREFETCH

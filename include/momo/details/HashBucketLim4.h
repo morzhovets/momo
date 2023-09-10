@@ -136,8 +136,9 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
-		template<bool first, conceptTrivialObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& params, Predicate pred, size_t /*hashCode*/)
+		template<bool first, conceptObjectPredicate<Item> Predicate>
+		MOMO_FORCEINLINE Iterator Find(Params& params,
+			FastCopyableFunctor<Predicate> pred, size_t /*hashCode*/)
 		{
 			for (Item& item : GetBounds(params))
 			{
@@ -168,9 +169,9 @@ namespace internal
 			mPtrState = stateNull;
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		Iterator AddCrt(Params& params, ItemCreator itemCreator, size_t /*hashCode*/,
-			size_t /*logBucketCount*/, size_t /*probe*/)
+		template<conceptObjectCreator<Item> ItemCreator>
+		Iterator AddCrt(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t /*hashCode*/, size_t /*logBucketCount*/, size_t /*probe*/)
 		{
 			if (pvIsEmpty())
 			{
@@ -216,8 +217,8 @@ namespace internal
 			}
 		}
 
-		template<conceptTrivialObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& params, Iterator iter, ItemReplacer itemReplacer)
+		template<conceptObjectReplacer<Item> ItemReplacer>
+		Iterator Remove(Params& params, Iterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			MOMO_ASSERT(!pvIsEmpty());
 			Data data = pvGetData();
