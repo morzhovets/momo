@@ -681,8 +681,8 @@ private:
 			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
 	}
 
-	template<internal::conceptTrivialPredicate<void*> Predicate>
-	void pvDeallocateIf(Predicate pred)
+	template<internal::conceptPredicate<void*> Predicate>
+	void pvDeallocateIf(FastCopyableFunctor<Predicate> pred)
 	{
 		Byte* buffer = mFreeBufferHead;
 		while (true)
@@ -702,8 +702,8 @@ private:
 		}
 	}
 
-	template<internal::conceptTrivialPredicate<void*> Predicate>
-	void pvDeleteBlocks(Byte* buffer, Predicate pred)
+	template<internal::conceptPredicate<void*> Predicate>
+	void pvDeleteBlocks(Byte* buffer, FastCopyableFunctor<Predicate> pred)
 	{
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
 		uint8_t freeBlockBits[16] = {};

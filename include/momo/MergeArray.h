@@ -253,12 +253,10 @@ public:
 	static MergeArray CreateCrt(size_t count, MultiItemCreator multiItemCreator,
 		MemManager memManager = MemManager())
 	{
+		FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
 		MergeArray array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-		{
-			array.pvAddBackNogrow(FastMovableFunctor(
-				FastCopyableFunctor<MultiItemCreator>(multiItemCreator)));
-		}
+			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(fastMultiItemCreator)));
 		return array;
 	}
 

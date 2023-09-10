@@ -698,7 +698,7 @@ namespace internal
 			typedef typename TreeMap::KeyValueTraits
 				::template ValueCreator<MappedArgs...> MappedCreator;
 			return pvInsert(hint, std::move(keyArgs),
-				MappedCreator(mTreeMap.GetMemManager(), std::move(mappedArgs)));
+				FastMovableFunctor(MappedCreator(mTreeMap.GetMemManager(), std::move(mappedArgs))));
 		}
 
 	private:
@@ -741,9 +741,9 @@ namespace internal
 		}
 
 		template<typename Hint, typename... KeyArgs,
-			momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator>
+			momo::internal::conceptObjectCreator<mapped_type> MappedCreator>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
-			MappedCreator mappedCreator)
+			FastMovableFunctor<MappedCreator> mappedCreator)
 		{
 			MemManager& memManager = mTreeMap.GetMemManager();
 			typedef momo::internal::ObjectBuffer<key_type,
@@ -791,11 +791,11 @@ namespace internal
 		}
 
 		template<typename Hint, typename RKey,
-			momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator,
+			momo::internal::conceptObjectCreator<mapped_type> MappedCreator,
 			typename Key = std::decay_t<RKey>>
 		requires std::is_same_v<key_type, Key>
 		std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
-			MappedCreator mappedCreator)
+			FastMovableFunctor<MappedCreator> mappedCreator)
 		{
 			std::pair<iterator, bool> res = pvFind(hint, std::as_const(std::get<0>(key)));
 			if (!res.second)

@@ -690,11 +690,11 @@ private:
 		typedef typename HashMultiMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
 		return pvInsert(std::move(keyArgs),
-			MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs)));
+			FastMovableFunctor(MappedCreator(mHashMultiMap.GetMemManager(), std::move(mappedArgs))));
 	}
 
-	template<typename... KeyArgs, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator>
-	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, MappedCreator mappedCreator)
+	template<typename... KeyArgs, momo::internal::conceptObjectCreator<mapped_type> MappedCreator>
+	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		MemManager& memManager = mHashMultiMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -716,10 +716,10 @@ private:
 		return resIter;
 	}
 
-	template<typename RKey, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator,
+	template<typename RKey, momo::internal::conceptObjectCreator<mapped_type> MappedCreator,
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
-	iterator pvInsert(std::tuple<RKey>&& key, MappedCreator mappedCreator)
+	iterator pvInsert(std::tuple<RKey>&& key, FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator)));

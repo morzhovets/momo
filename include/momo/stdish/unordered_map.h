@@ -865,13 +865,13 @@ private:
 		typedef typename HashMap::KeyValueTraits
 			::template ValueCreator<MappedArgs...> MappedCreator;
 		return pvInsert(hint, std::move(keyArgs),
-			MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs)));
+			FastMovableFunctor(MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs))));
 	}
 
 	template<typename Hint, typename... KeyArgs,
-		momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator>
+		momo::internal::conceptObjectCreator<mapped_type> MappedCreator>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
-		MappedCreator mappedCreator)
+		FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
@@ -917,11 +917,11 @@ private:
 	}
 
 	template<typename Hint, typename RKey,
-		momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator,
+		momo::internal::conceptObjectCreator<mapped_type> MappedCreator,
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
 	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
-		MappedCreator mappedCreator)
+		FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
 			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
@@ -929,9 +929,9 @@ private:
 	}
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-	template<typename... KeyArgs, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator>
+	template<typename... KeyArgs, momo::internal::conceptObjectCreator<mapped_type> MappedCreator>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
-		MappedCreator mappedCreator)
+		FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
@@ -955,11 +955,11 @@ private:
 		return { IteratorProxy(resPos), true };
 	}
 
-	template<typename RKey, momo::internal::conceptTrivialObjectCreator<mapped_type> MappedCreator,
+	template<typename RKey, momo::internal::conceptObjectCreator<mapped_type> MappedCreator,
 		typename Key = std::decay_t<RKey>>
 	requires std::is_same_v<key_type, Key>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
-		MappedCreator mappedCreator)
+		FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));

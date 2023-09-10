@@ -816,8 +816,8 @@ private:
 		}
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	InsertResult pvInsert(const Key& key, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	InsertResult pvInsert(const Key& key, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		Position pos = pvFind(key);
 		if (!!pos)
@@ -826,8 +826,8 @@ private:
 		return { pos, true };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialObjectCreator<Item> ItemCreator>
-	Position pvAdd([[maybe_unused]] ConstPosition pos, ItemCreator itemCreator)
+	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
+	Position pvAdd([[maybe_unused]] ConstPosition pos, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		MOMO_CHECK(!pos);
 		mMergeArray.AddBackCrt(std::move(itemCreator));
