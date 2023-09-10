@@ -566,7 +566,8 @@ public:
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
 				res.position = pvAdd<false>(std::next(res.position), std::forward<KeyArg>(pair.first),
-					ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(pair.second)));
+					FastMovableFunctor(ValueCreator<ValueArg>(memManager,
+						std::forward<ValueArg>(pair.second))));
 				res.inserted = true;
 			}
 			else
@@ -659,7 +660,7 @@ public:
 					};
 					extPair.Remove(pairRemover);
 				};
-				return pvAdd<true>(iter, std::move(pairCreator));
+				return pvAdd<true>(iter, FastMovableFunctor(std::move(pairCreator)));
 			}
 		}
 		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetSetIterator(iter),
@@ -781,8 +782,8 @@ private:
 		return iter == GetEnd() || GetTreeTraits().IsLess(key, iter->key);
 	}
 
-	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
+	template<typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
+	InsertResult pvInsert(RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
@@ -795,8 +796,8 @@ private:
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialMapPairCreator<Key, Value> PairCreator>
-	Iterator pvAdd(ConstIterator iter, PairCreator pairCreator)
+	template<bool extraCheck, internal::conceptMapPairCreator<Key, Value> PairCreator>
+	Iterator pvAdd(ConstIterator iter, FastMovableFunctor<PairCreator> pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mTreeSet.GetMemManager(), std::move(pairCreator)); };
@@ -804,8 +805,8 @@ private:
 			ConstIteratorProxy::GetSetIterator(iter), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	Iterator pvAdd(ConstIterator iter, RKey&& key, ValueCreator valueCreator)
+	template<bool extraCheck, typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
+	Iterator pvAdd(ConstIterator iter, RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
@@ -822,7 +823,7 @@ private:
 	{
 		MemManager& memManager = GetMemManager();
 		InsertResult res = pvInsert(std::forward<RKey>(key),
-			ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(valueArg)));
+			FastMovableFunctor(ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(valueArg))));
 		if (!res.inserted)
 			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), res.position->value);
 		return res;

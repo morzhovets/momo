@@ -49,12 +49,6 @@ namespace internal
 	template<typename Predicate, typename Key, typename Value>
 	concept conceptMapPairPredicate = conceptPredicate<Predicate, const Key&, const Value&>;
 
-	template<typename Creator, typename Key, typename Value>
-	concept conceptTrivialMapPairCreator = conceptTrivialMoveFunctor<Creator, void, Key*, Value*>;
-
-	template<typename Remover, typename Key, typename Value>
-	concept conceptTrivialMapPairRemover = conceptTrivialMoveFunctor<Remover, void, Key&, Value&>;
-
 	template<typename TSetReference,
 		bool tIsConst = false>
 	class MapReference
@@ -624,8 +618,9 @@ namespace internal
 		static const size_t valueAlignment = tValueAlignment;
 
 	public:
-		template<typename MemManager, conceptTrivialMapPairCreator<Key, Value> PairCreator>
-		explicit MapKeyValuePair(MemManager& /*memManager*/, PairCreator pairCreator)
+		template<typename MemManager, conceptMapPairCreator<Key, Value> PairCreator>
+		explicit MapKeyValuePair(MemManager& /*memManager*/,
+			FastMovableFunctor<PairCreator> pairCreator)
 		{
 			std::move(pairCreator)(GetKeyPtr(), GetValuePtr());
 		}
@@ -642,9 +637,9 @@ namespace internal
 		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey,
-			conceptTrivialObjectCreator<Value> ValueCreator>
+			conceptObjectCreator<Value> ValueCreator>
 		static void Create(MapKeyValuePair* newPair, MemManager& memManager,
-			RKey&& key, ValueCreator valueCreator)
+			RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 		{
 			auto pairCreator = [&memManager, &key, valueCreator = std::move(valueCreator)]
 				(Key* newKey, Value* newValue) mutable
@@ -652,7 +647,7 @@ namespace internal
 				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
 					std::move(valueCreator), newKey, newValue);
 			};
-			std::construct_at(newPair, memManager, std::move(pairCreator));
+			std::construct_at(newPair, memManager, FastMovableFunctor(std::move(pairCreator)));
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -689,8 +684,9 @@ namespace internal
 		static const size_t keyAlignment = tKeyAlignment;
 
 	public:
-		template<typename MemManager, conceptTrivialMapPairCreator<Key, Value> PairCreator>
-		explicit MapKeyValuePtrPair(MemManager& memManager, PairCreator pairCreator)
+		template<typename MemManager, conceptMapPairCreator<Key, Value> PairCreator>
+		explicit MapKeyValuePtrPair(MemManager& memManager,
+			FastMovableFunctor<PairCreator> pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
 			try
@@ -716,9 +712,9 @@ namespace internal
 		}
 
 		template<typename KeyValueTraits, typename MemManager, typename RKey,
-			conceptTrivialObjectCreator<Value> ValueCreator>
+			conceptObjectCreator<Value> ValueCreator>
 		static void Create(MapKeyValuePtrPair* newPair, MemManager& memManager,
-			RKey&& key, ValueCreator valueCreator)
+			RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 		{
 			auto pairCreator = [&memManager, &key, valueCreator = std::move(valueCreator)]
 				(Key* newKey, Value* newValue) mutable
@@ -726,7 +722,7 @@ namespace internal
 				KeyValueTraits::Create(memManager, std::forward<RKey>(key),
 					std::move(valueCreator), newKey, newValue);
 			};
-			std::construct_at(newPair, memManager, std::move(pairCreator));
+			std::construct_at(newPair, memManager, FastMovableFunctor(std::move(pairCreator)));
 		}
 
 		template<typename KeyValueTraits, typename MemManager,
@@ -741,7 +737,7 @@ namespace internal
 				KeyValueTraits::Relocate(srcMemManager, &dstMemManager,
 					srcKey, srcValue, newKey, newValue);
 			};
-			std::construct_at(newPair, dstMemManager, std::move(pairCreator));
+			std::construct_at(newPair, dstMemManager, FastMovableFunctor(std::move(pairCreator)));
 		}
 
 		const Key* GetKeyPtr() const noexcept
@@ -811,7 +807,7 @@ namespace internal
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
 				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
-					ValueCreator(mMemManager, *mItem.GetValuePtr()));
+					FastMovableFunctor(ValueCreator(mMemManager, *mItem.GetValuePtr())));
 			}
 
 		private:
@@ -922,7 +918,7 @@ namespace internal
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
 				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
-					ValueCreator(mMemManager, *mItem.GetValuePtr()));
+					FastMovableFunctor(ValueCreator(mMemManager, *mItem.GetValuePtr())));
 			}
 
 		private:
@@ -1102,13 +1098,11 @@ namespace internal
 		}
 
 	private:
-		template<conceptTrivialMapPairRemover<Key, Value> PairRemover>
-		void pvRemove(PairRemover pairRemover)
+		template<conceptMapPairRemover<Key, Value> PairRemover>
+		void pvRemove(FastMovableFunctor<PairRemover> pairRemover)
 		{
 			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
-			{
-				std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
-			};
+				{ std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr()); };
 			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
@@ -1214,10 +1208,11 @@ namespace internal
 		}
 
 	private:
-		template<conceptTrivialMapPairRemover<Key, Value> PairRemover>
-		void pvRemove(PairRemover pairRemover)
+		template<conceptMapPairRemover<Key, Value> PairRemover>
+		void pvRemove(FastMovableFunctor<PairRemover> pairRemover)
 		{
-			auto itemRemover = [this, pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
+			auto itemRemover = [this, pairRemover = std::move(pairRemover)]
+				(KeyValuePair& item) mutable
 			{
 				MOMO_ASSERT(mValueMemPool != nullptr);
 				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();

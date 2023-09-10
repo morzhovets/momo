@@ -514,8 +514,8 @@ public:
 	}
 
 private:
-	template<typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	InsertResult pvInsert(RKey&& key, ValueCreator valueCreator)
+	template<typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
+	InsertResult pvInsert(RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
@@ -528,8 +528,8 @@ private:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<bool extraCheck, internal::conceptTrivialMapPairCreator<Key, Value> PairCreator>
-	Position pvAdd(ConstPosition pos, PairCreator pairCreator)
+	template<bool extraCheck, internal::conceptMapPairCreator<Key, Value> PairCreator>
+	Position pvAdd(ConstPosition pos, FastMovableFunctor<PairCreator> pairCreator)
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mMergeSet.GetMemManager(), std::move(pairCreator)); };
@@ -537,8 +537,8 @@ private:
 			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
 	}
 
-	template<bool extraCheck, typename RKey, internal::conceptTrivialObjectCreator<Value> ValueCreator>
-	Position pvAdd(ConstPosition pos, RKey&& key, ValueCreator valueCreator)
+	template<bool extraCheck, typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
+	Position pvAdd(ConstPosition pos, RKey&& key, FastMovableFunctor<ValueCreator> valueCreator)
 	{
 		auto itemCreator = [this, &key, valueCreator = std::move(valueCreator)]
 			(KeyValuePair* newItem) mutable
@@ -555,7 +555,7 @@ private:
 	{
 		MemManager& memManager = GetMemManager();
 		InsertResult res = pvInsert(std::forward<RKey>(key),
-			ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(valueArg)));
+			FastMovableFunctor(ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(valueArg))));
 		if (!res.inserted)
 			KeyValueTraits::AssignValue(memManager, std::forward<ValueArg>(valueArg), res.position->value);
 		return res;

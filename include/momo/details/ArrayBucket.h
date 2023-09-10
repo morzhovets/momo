@@ -256,8 +256,8 @@ namespace internal
 			pvRemoveAll<true>(params);
 		}
 
-		template<conceptTrivialObjectCreator<Item> ItemCreator>
-		void AddBackCrt(Params& params, ItemCreator itemCreator)
+		template<conceptObjectCreator<Item> ItemCreator>
+		void AddBackCrt(Params& params, FastMovableFunctor<ItemCreator> itemCreator)
 		{
 			if (mPtr == nullptr)
 			{
