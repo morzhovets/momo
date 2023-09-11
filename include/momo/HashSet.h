@@ -524,6 +524,46 @@ private:
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
+	template<typename KeyArg>
+	class ItemEqualPredicate
+	{
+	public:
+		explicit ItemEqualPredicate(const KeyArg& key, const HashTraits& hashTraits) noexcept
+			: mKey(key),
+			mHashTraits(hashTraits)
+		{
+		}
+
+		bool operator()(const Item& item) const
+		{
+			return mHashTraits.IsEqual(mKey, ItemTraits::GetKey(item));
+		}
+
+	private:
+		const KeyArg& mKey;
+		const HashTraits& mHashTraits;
+	};
+
+	template<typename KeyArg>
+	requires requires (const KeyArg& key1, const Key& key2)
+		{ { HashTraits::IsEqual(key1, key2) } -> std::convertible_to<bool>; }
+	class ItemEqualPredicate<KeyArg>
+	{
+	public:
+		explicit ItemEqualPredicate(const KeyArg& key, const HashTraits& /*hashTraits*/) noexcept
+			: mKey(key)
+		{
+		}
+
+		bool operator()(const Item& item) const
+		{
+			return HashTraits::IsEqual(mKey, ItemTraits::GetKey(item));
+		}
+
+	private:
+		const KeyArg& mKey;
+	};
+
 public:
 	HashSet()
 		: HashSet(HashTraits())
@@ -1048,12 +1088,11 @@ private:
 		BucketIterator bucketIter = BucketIterator();
 		if (mCount != 0) [[likely]]
 		{
-			auto pred = [&key, &hashTraits] (const Item& item)
-				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
 			Buckets* buckets = mBuckets;
 			while (true)
 			{
-				bucketIter = pvFind(indexCode, *buckets, FastCopyableFunctor(pred));
+				bucketIter = pvFind(indexCode, *buckets,
+					FastCopyableFunctor(ItemEqualPredicate<KeyArg>(key, hashTraits)));
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();
