@@ -203,14 +203,14 @@ public:
 
 	template<typename KeyArg1, typename KeyArg2>
 	static bool IsEqual(const KeyArg1& key1, const KeyArg2& key2)
-		requires std::is_empty_v<EqualFunc> && std::is_trivially_default_constructible_v<EqualFunc>
+		requires (std::is_empty_v<EqualFunc> && std::is_trivially_default_constructible_v<EqualFunc>)
 	{
 		return EqualFunc()(key1, key2);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
-		requires !std::is_empty_v<EqualFunc> || !std::is_trivially_default_constructible_v<EqualFunc>
+		requires (!std::is_empty_v<EqualFunc> || !std::is_trivially_default_constructible_v<EqualFunc>)
 	{
 		return mEqualFunc(key1, key2);
 	}
