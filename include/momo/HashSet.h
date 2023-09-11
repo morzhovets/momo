@@ -1104,8 +1104,8 @@ private:
 	}
 
 	template<internal::conceptObjectPredicate<Item> Predicate>
-	MOMO_FORCEINLINE BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
-		FastCopyableFunctor<Predicate> pred) const
+	MOMO_FORCEINLINE static BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
+		FastCopyableFunctor<Predicate> pred)
 	{
 		size_t hashCode = indexCode;
 		BucketParams& bucketParams = buckets.GetBucketParams();
