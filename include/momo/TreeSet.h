@@ -472,6 +472,55 @@ private:
 		size_t mItemCount;
 	};
 
+	template<typename KeyArg, bool includeEqual>
+	class ItemFindPredicate
+	{
+	public:
+		explicit ItemFindPredicate(const KeyArg& key, const TreeTraits& treeTraits) noexcept
+			: mKey(key),
+			mTreeTraits(treeTraits)
+		{
+		}
+
+		bool operator()(const Item& item) const
+		{
+			if constexpr (includeEqual)
+				return !mTreeTraits.IsLess(ItemTraits::GetKey(item), mKey);
+			else
+				return mTreeTraits.IsLess(mKey, ItemTraits::GetKey(item));
+		}
+
+	private:
+		const KeyArg& mKey;
+		const TreeTraits& mTreeTraits;
+	};
+
+	template<typename KeyArg, bool includeEqual>
+	requires requires (const KeyArg& key1, const Key& key2)
+	{
+		{ TreeTraits::IsEqual(key1, key2) } -> std::convertible_to<bool>;
+		{ TreeTraits::IsEqual(key2, key1) } -> std::convertible_to<bool>;
+	}
+	class ItemFindPredicate<KeyArg, includeEqual>
+	{
+	public:
+		explicit ItemFindPredicate(const KeyArg& key, const TreeTraits& /*treeTraits*/) noexcept
+			: mKey(key)
+		{
+		}
+
+		bool operator()(const Item& item) const
+		{
+			if constexpr (includeEqual)
+				return !TreeTraits::IsLess(ItemTraits::GetKey(item), mKey);
+			else
+				return TreeTraits::IsLess(mKey, ItemTraits::GetKey(item));
+		}
+
+	private:
+		const KeyArg& mKey;
+	};
+
 public:
 	TreeSet()
 		: TreeSet(TreeTraits())
@@ -1101,19 +1150,15 @@ private:
 	template<typename KeyArg>
 	Iterator pvGetLowerBound(const KeyArg& key) const
 	{
-		const TreeTraits& treeTraits = GetTreeTraits();
-		auto pred = [&treeTraits, &key] (const Item& item)
-			{ return !treeTraits.IsLess(ItemTraits::GetKey(item), key); };
-		return pvFindFirst(FastCopyableFunctor(pred));
+		return pvFindFirst(FastCopyableFunctor(
+			ItemFindPredicate<KeyArg, true>(key, GetTreeTraits())));
 	}
 
 	template<typename KeyArg>
 	Iterator pvGetUpperBound(const KeyArg& key) const
 	{
-		const TreeTraits& treeTraits = GetTreeTraits();
-		auto pred = [&treeTraits, &key] (const Item& item)
-			{ return treeTraits.IsLess(key, ItemTraits::GetKey(item)); };
-		return pvFindFirst(FastCopyableFunctor(pred));
+		return pvFindFirst(FastCopyableFunctor(
+			ItemFindPredicate<KeyArg, false>(key, GetTreeTraits())));
 	}
 
 	template<internal::conceptObjectPredicate<Item> Predicate>

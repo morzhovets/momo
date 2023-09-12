@@ -77,7 +77,7 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
+	static bool IsLess(const KeyArg1& key1, const KeyArg2& key2)
 		requires requires { { key1 < key2 } -> std::convertible_to<bool>; }
 	{
 		return std::less<>()(key1, key2);
@@ -106,6 +106,10 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessFunc>>;
 
+private:
+	static const bool staticIsLess = std::is_empty_v<LessFunc> &&
+		std::is_trivially_default_constructible_v<LessFunc>;
+
 public:
 	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
 		: mLessFunc(lessFunc)
@@ -118,7 +122,15 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
+	static bool IsLess(const KeyArg1& key1, const KeyArg2& key2)
+		requires (staticIsLess)
+	{
+		return LessFunc()(key1, key2);
+	}
+
+	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
+		requires (!staticIsLess)
 	{
 		return mLessFunc(key1, key2);
 	}
