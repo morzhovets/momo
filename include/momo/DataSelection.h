@@ -861,7 +861,7 @@ namespace internal
 			return DataTraits::IsEqual(item1, item2);
 		}
 
-		template<bool lower, typename... Items>
+		template<bool includeEqual, typename... Items>
 		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
 		{
 			static const size_t columnCount = sizeof...(equalers);
@@ -870,7 +870,7 @@ namespace internal
 			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 			{
 				std::weak_ordering cmp = pvCompare(offsets.data(), raw, equalers...);
-				return lower ? cmp >= 0 : cmp > 0;
+				return includeEqual ? cmp >= 0 : cmp > 0;
 			};
 			return UIntMath<>::Dist(mRaws.GetBegin(),
 				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
