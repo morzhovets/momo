@@ -525,10 +525,10 @@ private:
 	};
 
 	template<typename KeyArg>
-	class ItemEqualPredicate
+	class ItemFindPredicate
 	{
 	public:
-		explicit ItemEqualPredicate(const KeyArg& key, const HashTraits& hashTraits) noexcept
+		explicit ItemFindPredicate(const KeyArg& key, const HashTraits& hashTraits) noexcept
 			: mKey(key),
 			mHashTraits(hashTraits)
 		{
@@ -547,10 +547,10 @@ private:
 	template<typename KeyArg>
 	requires requires (const KeyArg& key1, const Key& key2)
 		{ { HashTraits::IsEqual(key1, key2) } -> std::convertible_to<bool>; }
-	class ItemEqualPredicate<KeyArg>
+	class ItemFindPredicate<KeyArg>
 	{
 	public:
-		explicit ItemEqualPredicate(const KeyArg& key, const HashTraits& /*hashTraits*/) noexcept
+		explicit ItemFindPredicate(const KeyArg& key, const HashTraits& /*hashTraits*/) noexcept
 			: mKey(key)
 		{
 		}
@@ -1092,7 +1092,7 @@ private:
 			while (true)
 			{
 				bucketIter = pvFind(indexCode, *buckets,
-					FastCopyableFunctor(ItemEqualPredicate<KeyArg>(key, hashTraits)));
+					FastCopyableFunctor(ItemFindPredicate<KeyArg>(key, hashTraits)));
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();

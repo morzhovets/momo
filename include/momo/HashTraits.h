@@ -156,6 +156,10 @@ public:
 	using IsValidKeyArg = std::bool_constant<
 		internal::conceptTransparent<HashFunc> && internal::conceptTransparent<EqualFunc>>;
 
+private:
+	static const bool staticIsEqual = std::is_empty_v<EqualFunc> &&
+		std::is_trivially_default_constructible_v<EqualFunc>;
+
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
 		const HashFunc& hashFunc = HashFunc(),
@@ -203,14 +207,14 @@ public:
 
 	template<typename KeyArg1, typename KeyArg2>
 	static bool IsEqual(const KeyArg1& key1, const KeyArg2& key2)
-		requires (std::is_empty_v<EqualFunc> && std::is_trivially_default_constructible_v<EqualFunc>)
+		requires (staticIsEqual)
 	{
 		return EqualFunc()(key1, key2);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
-		requires (!std::is_empty_v<EqualFunc> || !std::is_trivially_default_constructible_v<EqualFunc>)
+		requires (!staticIsEqual)
 	{
 		return mEqualFunc(key1, key2);
 	}
