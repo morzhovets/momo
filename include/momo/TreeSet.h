@@ -498,8 +498,8 @@ private:
 	template<typename KeyArg, bool includeEqual>
 	requires requires (const KeyArg& key1, const Key& key2)
 	{
-		{ TreeTraits::IsEqual(key1, key2) } -> std::convertible_to<bool>;
-		{ TreeTraits::IsEqual(key2, key1) } -> std::convertible_to<bool>;
+		{ TreeTraits::IsLess(key1, key2) } -> std::convertible_to<bool>;
+		{ TreeTraits::IsLess(key2, key1) } -> std::convertible_to<bool>;
 	}
 	class ItemFindPredicate<KeyArg, includeEqual>
 	{
