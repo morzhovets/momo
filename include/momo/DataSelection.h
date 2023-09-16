@@ -702,19 +702,19 @@ namespace internal
 			return *this;
 		}
 
-		template<typename RowComparer>
-		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
-		DataSelection&& Sort(const RowComparer& rowComp) &&
+		template<typename RowLessFunc>
+		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
+		DataSelection&& Sort(const RowLessFunc& rowLessFunc) &&
 		{
-			pvSort(rowComp);
+			pvSort(rowLessFunc);
 			return std::move(*this);
 		}
 
-		template<typename RowComparer>
-		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
-		DataSelection& Sort(const RowComparer& rowComp) &
+		template<typename RowLessFunc>
+		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
+		DataSelection& Sort(const RowLessFunc& rowLessFunc) &
 		{
-			pvSort(rowComp);
+			pvSort(rowLessFunc);
 			return *this;
 		}
 
@@ -784,32 +784,32 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
-				{ return pvCompare<Items...>(offsets.data(), raw1, raw2) < 0; };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
+			auto rawLessFunc = [&offsets] (Raw* raw1, Raw* raw2)
+				{ return pvIsLess<Items...>(offsets.data(), raw1, raw2); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
 		}
 
 		template<typename Item, typename... Items>
-		static std::weak_ordering pvCompare(const size_t* offsetPtr, Raw* raw1, Raw* raw2)
+		static bool pvIsLess(const size_t* offsetPtr, Raw* raw1, Raw* raw2)
 		{
 			size_t offset = *offsetPtr;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
 			const Item& item2 = ColumnList::template GetByOffset<const Item>(raw2, offset);
 			if (std::weak_ordering cmp = DataTraits::Compare(item1, item2); cmp != 0)
-				return cmp;
+				return cmp < 0;
 			if constexpr (sizeof...(Items) > 0)
-				return pvCompare<Items...>(offsetPtr + 1, raw1, raw2);
+				return pvIsLess<Items...>(offsetPtr + 1, raw1, raw2);
 			else
-				return std::weak_ordering::equivalent;
+				return false;
 		}
 
-		template<typename RowComparer>
-		requires std::strict_weak_order<const RowComparer&, ConstRowReference, ConstRowReference>
-		void pvSort(const RowComparer& rowComp)
+		template<typename RowLessFunc>
+		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
+		void pvSort(const RowLessFunc& rowLessFunc)
 		{
-			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
-				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
+			auto rawLessFunc = [this, &rowLessFunc] (Raw* raw1, Raw* raw2)
+				{ return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
 		}
 
 		template<typename... Items>
