@@ -938,14 +938,14 @@ public:
 		return remCount;
 	}
 
-	template<internal::conceptObjectPredicate<Item> Predicate>
-	size_t Remove(Predicate pred)
+	template<internal::conceptObjectPredicate<Item> ItemFilter>
+	size_t Remove(ItemFilter itemFilter)
 	{
 		size_t initCount = GetCount();
 		Iterator iter = GetBegin();
 		while (iter != GetEnd())
 		{
-			if (pred(*iter))	//?
+			if (itemFilter(*iter))	//?
 				iter = Remove(iter);
 			else
 				++iter;

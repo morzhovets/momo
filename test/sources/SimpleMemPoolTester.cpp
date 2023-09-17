@@ -160,7 +160,7 @@ public:
 				}
 				assert(memPool.GetAllocateCount() == lim2);
 
-				auto pred = [&blocks, blockSize, lim1] (void* block)
+				auto blockFilter = [&blocks, blockSize, lim1] (void* block)
 				{
 					auto begin = blocks.GetBegin();
 					auto mid = begin + lim1;
@@ -172,7 +172,7 @@ public:
 						std::memset(block, 2, blockSize);
 					return res;
 				};
-				memPool.DeallocateIf(pred);
+				memPool.DeallocateIf(blockFilter);
 				blocks.SetCount(lim1);
 				assert(memPool.GetAllocateCount() == lim1);
 			}

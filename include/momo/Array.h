@@ -883,10 +883,10 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<internal::conceptObjectPredicate<Item> Predicate>
-	size_t Remove(Predicate pred)
+	template<internal::conceptObjectPredicate<Item> ItemFilter>
+	size_t Remove(ItemFilter itemFilter)
 	{
-		return ArrayShifter::Remove(*this, FastCopyableFunctor<Predicate>(pred));
+		return ArrayShifter::Remove(*this, FastCopyableFunctor<ItemFilter>(itemFilter));
 	}
 
 	template<typename ItemArg,

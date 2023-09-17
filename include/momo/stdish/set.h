@@ -516,10 +516,10 @@ public:
 		return count;
 	}
 
-	template<momo::internal::conceptPredicate<const_reference> Predicate>
-	friend size_type erase_if(set& cont, Predicate pred)
+	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
+	friend size_type erase_if(set& cont, ValueFilter valueFilter)
 	{
-		return cont.mTreeSet.Remove(momo::FastCopyableFunctor<Predicate>(pred));
+		return cont.mTreeSet.Remove(momo::FastCopyableFunctor<ValueFilter>(valueFilter));
 	}
 
 	node_type extract(const_iterator where)
@@ -655,11 +655,11 @@ public:
 		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
-	template<momo::internal::conceptPredicate<const_reference> Predicate>
-	friend size_type erase_if(multiset& cont, Predicate pred)
+	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
+	friend size_type erase_if(multiset& cont, ValueFilter valueFilter)
 	{
 		return cont.get_nested_container().Remove(
-			momo::FastCopyableFunctor<Predicate>(pred));
+			momo::FastCopyableFunctor<ValueFilter>(valueFilter));
 	}
 };
 

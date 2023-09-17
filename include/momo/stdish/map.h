@@ -957,13 +957,13 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg));
 	}
 
-	template<momo::internal::conceptPredicate<const_reference> Predicate>
-	friend size_type erase_if(map& cont, Predicate pred)
+	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
+	friend size_type erase_if(map& cont, ValueFilter valueFilter)
 	{
-		momo::FastCopyableFunctor<Predicate> fastPred(pred);
-		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
-			{ return fastPred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		momo::FastCopyableFunctor<ValueFilter> fastValueFilter(valueFilter);
+		auto pairFilter = [fastValueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return fastValueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 
 private:
@@ -1067,13 +1067,13 @@ public:
 		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
-	template<momo::internal::conceptPredicate<const_reference> Predicate>
-	friend size_type erase_if(multimap& cont, Predicate pred)
+	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
+	friend size_type erase_if(multimap& cont, ValueFilter valueFilter)
 	{
-		momo::FastCopyableFunctor<Predicate> fastPred(pred);
-		auto pairPred = [fastPred] (const key_type& key, const mapped_type& mapped)
-			{ return fastPred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		momo::FastCopyableFunctor<ValueFilter> fastValueFilter(valueFilter);
+		auto pairFilter = [fastValueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return fastValueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 

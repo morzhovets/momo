@@ -740,13 +740,13 @@ public:
 		return mHashSet.Remove(key);
 	}
 
-	template<internal::conceptMapPairPredicate<Key, Value> PairPredicate>
-	size_t Remove(PairPredicate pairPred)
+	template<internal::conceptMapPairPredicate<Key, Value> PairFilter>
+	size_t Remove(PairFilter pairFilter)
 	{
-		FastCopyableFunctor<PairPredicate> fastPairPred(pairPred);
-		auto itemPred = [fastPairPred] (const KeyValuePair& item)
-			{ return fastPairPred(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
-		return mHashSet.Remove(itemPred);
+		FastCopyableFunctor<PairFilter> fastPairFilter(pairFilter);
+		auto itemFilter = [fastPairFilter] (const KeyValuePair& item)
+			{ return fastPairFilter(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
+		return mHashSet.Remove(itemFilter);
 	}
 
 	ExtractedPair Extract(ConstPosition pos)

@@ -1091,14 +1091,14 @@ public:
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
-	template<internal::conceptMapPairPredicate<Key, Value> PairPredicate>
-	size_t Remove(PairPredicate pairPred)
+	template<internal::conceptMapPairPredicate<Key, Value> PairFilter>
+	size_t Remove(PairFilter pairFilter)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			if (pairPred(iter->key, std::as_const(iter->value)))
+			if (pairFilter(iter->key, std::as_const(iter->value)))
 				iter = Remove(iter);
 			else
 				++iter;

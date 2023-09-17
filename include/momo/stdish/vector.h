@@ -423,15 +423,15 @@ public:
 	template<typename ValueArg>
 	friend size_type erase(vector& cont, const ValueArg& valueArg)
 	{
-		auto pred = [&valueArg] (const value_type& value)
+		auto valueFilter = [&valueArg] (const value_type& value)
 			{ return value == valueArg; };
-		return cont.mArray.Remove(pred);
+		return cont.mArray.Remove(valueFilter);
 	}
 
-	template<momo::internal::conceptPredicate<const_reference> Predicate>
-	friend size_type erase_if(vector& cont, Predicate pred)
+	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
+	friend size_type erase_if(vector& cont, ValueFilter valueFilter)
 	{
-		return cont.mArray.Remove(momo::FastCopyableFunctor<Predicate>(pred));
+		return cont.mArray.Remove(momo::FastCopyableFunctor<ValueFilter>(valueFilter));
 	}
 
 	void assign(size_type count, const value_type& value)

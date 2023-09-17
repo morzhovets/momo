@@ -251,17 +251,17 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<conceptObjectPredicate<Item> Predicate>
-		static size_t Remove(Array& array, FastCopyableFunctor<Predicate> pred)
+		template<conceptObjectPredicate<Item> ItemFilter>
+		static size_t Remove(Array& array, FastCopyableFunctor<ItemFilter> itemFilter)
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
-			while (newCount < initCount && !pred(std::as_const(array[newCount])))
+			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
 				++newCount;
 			MemManager& memManager = array.GetMemManager();
 			for (size_t i = newCount + 1; i < initCount; ++i)
 			{
-				if (pred(std::as_const(array[i])))
+				if (itemFilter(std::as_const(array[i])))
 					continue;
 				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
 				++newCount;
