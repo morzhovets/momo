@@ -496,21 +496,21 @@ namespace internal
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
 			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
-			conceptMoveFunctor Func>
+			conceptExecutor Executor>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
 			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin,
-			size_t count, FastMovableFunctor<Func> func)
+			size_t count, FastMovableFunctor<Executor> exec)
 		{
 			if constexpr (isKeyNothrowRelocatable)
 			{
 				ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin,
-					count, std::move(func));
+					count, std::move(exec));
 				KeyManager::Relocate(memManager, srcKeyBegin, dstKeyBegin, count);
 			}
 			else if constexpr (isValueNothrowRelocatable)
 			{
-				KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
+				KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(exec));
 				ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 			}
 			else
@@ -527,7 +527,7 @@ namespace internal
 					DstValueIterator dstValueIter = dstValueBegin;
 					for (; valueIndex < count; ++valueIndex)
 						ValueManager::Copy(&memManager, *srcValueIter++, std::to_address(dstValueIter++));
-					std::move(func)();
+					std::move(exec)();
 				}
 				catch (...)
 				{
@@ -600,12 +600,12 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Key> DstKeyIterator,
-			conceptMoveFunctor Func>
+			conceptExecutor Executor>
 		static void RelocateExecKeys(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, DstKeyIterator dstKeyBegin,
-			size_t count, FastMovableFunctor<Func> func)
+			size_t count, FastMovableFunctor<Executor> exec)
 		{
-			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
+			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(exec));
 		}
 	};
 

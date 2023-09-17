@@ -435,14 +435,14 @@ namespace internal
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Value> SrcValueIterator,
 			conceptIncIterator<Key> DstKeyIterator, conceptIncIterator<Value> DstValueIterator,
-			conceptMoveFunctor Func>
+			conceptExecutor Executor>
 		static void RelocateExec(MemManager& memManager,
 			SrcKeyIterator srcKeyBegin, SrcValueIterator srcValueBegin,
 			DstKeyIterator dstKeyBegin, DstValueIterator dstValueBegin,
-			size_t count, FastMovableFunctor<Func> func)
+			size_t count, FastMovableFunctor<Executor> exec)
 		{
 			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
-				count, std::move(func));
+				count, std::move(exec));
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
@@ -505,18 +505,18 @@ public:
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 public:
-	template<internal::conceptMoveFunctor Func>
+	template<internal::conceptExecutor Executor>
 	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey,
-		FastMovableFunctor<Func> func)
+		FastMovableFunctor<Executor> exec)
 	{
-		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::move(func));
+		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::move(exec));
 	}
 
-	template<internal::conceptMoveFunctor Func>
+	template<internal::conceptExecutor Executor>
 	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey,
-		FastMovableFunctor<Func> func)
+		FastMovableFunctor<Executor> exec)
 	{
-		KeyManager::CopyExec(memManager, srcKey, dstKey, std::move(func));
+		KeyManager::CopyExec(memManager, srcKey, dstKey, std::move(exec));
 	}
 
 	static void DestroyKey(MemManager& memManager, Key& key) noexcept
@@ -536,11 +536,11 @@ public:
 	}
 
 	template<internal::conceptIncIterator<Key> SrcKeyIterator,
-		internal::conceptIncIterator<Key> DstKeyIterator, internal::conceptMoveFunctor Func>
+		internal::conceptIncIterator<Key> DstKeyIterator, internal::conceptExecutor Executor>
 	static void RelocateExecKeys(MemManager& memManager, SrcKeyIterator srcKeyBegin,
-		DstKeyIterator dstKeyBegin, size_t count, FastMovableFunctor<Func> func)
+		DstKeyIterator dstKeyBegin, size_t count, FastMovableFunctor<Executor> exec)
 	{
-		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(func));
+		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count, std::move(exec));
 	}
 
 	template<internal::conceptObjectCreator<Value> ValueCreator>

@@ -417,13 +417,13 @@ namespace internal
 			std::construct_at(dstObject, srcObject);
 		}
 
-		template<conceptMoveFunctor Func>
+		template<conceptExecutor Executor>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			FastMovableFunctor<Func> func) requires isMoveConstructible && isNothrowDestructible
+			FastMovableFunctor<Executor> exec) requires isMoveConstructible && isNothrowDestructible
 		{
 			if constexpr (isNothrowMoveConstructible)
 			{
-				std::move(func)();
+				std::move(exec)();
 				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 			}
 			else
@@ -431,7 +431,7 @@ namespace internal
 				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
 				try
 				{
-					std::move(func)();
+					std::move(exec)();
 				}
 				catch (...)
 				{
@@ -442,14 +442,14 @@ namespace internal
 			}
 		}
 
-		template<conceptMoveFunctor Func>
+		template<conceptExecutor Executor>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
-			FastMovableFunctor<Func> func) requires isCopyConstructible && isNothrowDestructible
+			FastMovableFunctor<Executor> exec) requires isCopyConstructible && isNothrowDestructible
 		{
 			Copy(&memManager, srcObject, dstObject);
 			try
 			{
-				std::move(func)();
+				std::move(exec)();
 			}
 			catch (...)
 			{
@@ -594,14 +594,14 @@ namespace internal
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
-			conceptMoveFunctor Func>
+			conceptExecutor Executor>
 		static void RelocateExec(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
-			size_t count, FastMovableFunctor<Func> func)
+			size_t count, FastMovableFunctor<Executor> exec)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
 			if constexpr (isNothrowRelocatable)
 			{
-				std::move(func)();
+				std::move(exec)();
 				Relocate(memManager, srcBegin, dstBegin, count);
 			}
 			else
@@ -613,7 +613,7 @@ namespace internal
 					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index)
 						Copy(&memManager, *srcIter++, std::to_address(dstIter++));
-					std::move(func)();
+					std::move(exec)();
 				}
 				catch (...)
 				{
