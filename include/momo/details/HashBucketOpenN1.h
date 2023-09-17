@@ -69,11 +69,11 @@ namespace internal
 			return Bounds(pvMakeIterator(ptGetItemPtr(0)), pvGetCount());
 		}
 
-		template<bool first, conceptObjectPredicate<Item> Predicate>
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<Predicate> pred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
 		{
-			return pvFind(pred, hashCode);
+			return pvFind(itemPred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -148,8 +148,9 @@ namespace internal
 			pvGetMaxProbeExp() = uint8_t{0};
 		}
 
-		template<conceptObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<Predicate> pred, size_t hashCode)
+		template<conceptObjectPredicate<Item> ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
+			size_t hashCode)
 		{
 			uint8_t shortHash = ptCalcShortHash(hashCode);
 			const uint8_t* thisShortHashes = pvGetShortHashes();
@@ -157,7 +158,7 @@ namespace internal
 			{
 				if (thisShortHashes[i] == shortHash)
 				{
-					if (pred(std::as_const((&mItems)[i]))) [[likely]]
+					if (itemPred(std::as_const((&mItems)[i]))) [[likely]]
 						return pvMakeIterator(&mItems + i);
 				}
 			}

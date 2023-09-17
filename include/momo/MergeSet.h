@@ -743,7 +743,7 @@ private:
 		size_t hashCode = 0;
 		if constexpr (MergeTraits::func == MergeTraitsFunc::hash || !BloomFilter::isAlwaysEmpty)
 			hashCode = mergeTraits.GetHashCode(key);
-		auto pred = [&mergeTraits, &key] (const Item& item)
+		auto itemPred = [&mergeTraits, &key] (const Item& item)
 			{ return mergeTraits.IsEqual(ItemTraits::GetKey(item), key); };
 		switch (size_t segCount = mMergeArray.GetSegmentCount(); segCount)
 		{
@@ -777,7 +777,7 @@ private:
 							{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 						const Item* itemPtr = std::lower_bound(segItems,
 							segItems + segItemCount - 1, key, lessFunc);
-						if (pred(*itemPtr))
+						if (itemPred(*itemPtr))
 							return pvMakePosition(*itemPtr);
 					}
 					if (segIndex == segCount - 1 && !pvFilterTest(hashCode))
@@ -797,7 +797,7 @@ private:
 		case 2:
 			if (const Item* segItems = mMergeArray.GetSegmentItems(1); segItems != nullptr)
 			{
-				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount, pred);
+				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount, itemPred);
 				if (itemPtr != segItems + initialItemCount)
 					return pvMakePosition(*itemPtr);
 			}
@@ -806,7 +806,7 @@ private:
 			{
 				const Item* segItems = mMergeArray.GetSegmentItems(0);
 				size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
-				const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, pred);
+				const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, itemPred);
 				if (itemPtr != segItems + segItemCount)
 					return pvMakePosition(*itemPtr);
 			}

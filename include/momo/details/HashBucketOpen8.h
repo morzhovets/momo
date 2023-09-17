@@ -51,11 +51,11 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
-		template<bool first, conceptObjectPredicate<Item> Predicate>
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<Predicate> pred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
 		{
-			return pvFind<first>(pred, hashCode);
+			return pvFind<first>(itemPred, hashCode);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -65,8 +65,9 @@ namespace internal
 		}
 
 	private:
-		template<bool first, conceptObjectPredicate<Item> Predicate>
-		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<Predicate> pred, size_t hashCode)
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
+			size_t hashCode)
 		{
 			static_assert(std::endian::native == std::endian::little);
 #ifdef MOMO_PREFETCH
@@ -84,7 +85,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(std::as_const(*itemPtr))) [[likely]]
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 			}
 #else
@@ -95,7 +96,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(std::as_const(*itemPtr))) [[likely]]
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 			}
 #endif

@@ -69,13 +69,13 @@ namespace internal
 			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
 		}
 
-		template<bool first, conceptObjectPredicate<Item> Predicate>
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<Predicate> pred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
 		{
 			if (mHashState == pvGetHashState(hashCode))
 			{
-				if (pred(std::as_const(*&mItemBuffer))) [[likely]]
+				if (itemPred(std::as_const(*&mItemBuffer))) [[likely]]
 					return &mItemBuffer;
 			}
 			return nullptr;

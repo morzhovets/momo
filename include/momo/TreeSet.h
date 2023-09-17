@@ -1161,8 +1161,8 @@ private:
 			ItemFindPredicate<KeyArg, false>(key, GetTreeTraits())));
 	}
 
-	template<internal::conceptObjectPredicate<Item> Predicate>
-	Iterator pvFindFirst(FastCopyableFunctor<Predicate> pred) const
+	template<internal::conceptObjectPredicate<Item> ItemPredicate>
+	Iterator pvFindFirst(FastCopyableFunctor<ItemPredicate> itemPred) const
 	{
 		if (mRootNode == nullptr)
 			return Iterator();
@@ -1170,7 +1170,7 @@ private:
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t index = pvFindFirst(node, pred);
+			size_t index = pvFindFirst(node, itemPred);
 			if (index < node->GetCount())
 				iter = pvMakeIterator(node, index, false);
 			if (node->IsLeaf())
@@ -1180,16 +1180,16 @@ private:
 		return iter;
 	}
 
-	template<internal::conceptObjectPredicate<Item> Predicate>
-	size_t pvFindFirst(Node* node, FastCopyableFunctor<Predicate> pred) const
+	template<internal::conceptObjectPredicate<Item> ItemPredicate>
+	size_t pvFindFirst(Node* node, FastCopyableFunctor<ItemPredicate> itemPred) const
 	{
 		if constexpr (TreeTraits::useLinearSearch)
 		{
 			size_t itemCount = node->GetCount();
-			if (itemCount == 0 || !pred(*node->GetItemPtr(itemCount - 1)))
+			if (itemCount == 0 || !itemPred(*node->GetItemPtr(itemCount - 1)))
 				return itemCount;
 			size_t index = 0;
-			while (!pred(*node->GetItemPtr(index)))
+			while (!itemPred(*node->GetItemPtr(index)))
 				++index;
 			return index;
 		}
@@ -1200,7 +1200,7 @@ private:
 			while (leftIndex < rightIndex)
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
-				if (pred(*node->GetItemPtr(middleIndex)))
+				if (itemPred(*node->GetItemPtr(middleIndex)))
 					rightIndex = middleIndex;
 				else
 					leftIndex = middleIndex + 1;

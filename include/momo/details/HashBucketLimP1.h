@@ -123,15 +123,15 @@ namespace internal
 			return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		template<bool first, conceptObjectPredicate<Item> Predicate>
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<Predicate> pred, size_t /*hashCode*/)
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t /*hashCode*/)
 		{
 			size_t count = pvGetCount();
 			Item* items = pvGetItems();
 			for (size_t i = 0; i < count; ++i)
 			{
-				if (pred(std::as_const(items[i])))
+				if (itemPred(std::as_const(items[i])))
 					return items + i;
 			}
 			return nullptr;

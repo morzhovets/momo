@@ -96,13 +96,13 @@ namespace internal
 			return mArrayBucket.GetBounds();
 		}
 
-		template<bool first, conceptObjectPredicate<Item> Predicate>
+		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& params,
-			FastCopyableFunctor<Predicate> pred, size_t /*hashCode*/)
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t /*hashCode*/)
 		{
 			for (Item& item : GetBounds(params))
 			{
-				if (pred(std::as_const(item)))
+				if (itemPred(std::as_const(item)))
 					return std::addressof(item);
 			}
 			return nullptr;

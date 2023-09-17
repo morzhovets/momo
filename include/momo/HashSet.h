@@ -1103,16 +1103,16 @@ private:
 		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<internal::conceptObjectPredicate<Item> Predicate>
+	template<internal::conceptObjectPredicate<Item> ItemPredicate>
 	MOMO_FORCEINLINE static BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
-		FastCopyableFunctor<Predicate> pred)
+		FastCopyableFunctor<ItemPredicate> itemPred)
 	{
 		size_t hashCode = indexCode;
 		BucketParams& bucketParams = buckets.GetBucketParams();
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
 		Bucket* bucket = &buckets[bucketIndex];
-		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, pred, hashCode);
+		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, itemPred, hashCode);
 		if (bucketIter != BucketIterator())
 		{
 			indexCode = bucketIndex;
@@ -1123,7 +1123,7 @@ private:
 		{
 			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
 			bucket = &buckets[bucketIndex];
-			bucketIter = bucket->template Find<false>(bucketParams, pred, hashCode);
+			bucketIter = bucket->template Find<false>(bucketParams, itemPred, hashCode);
 			if (bucketIter != BucketIterator())
 			{
 				indexCode = bucketIndex;
