@@ -593,12 +593,12 @@ public:
 		return mHashMultiMap.RemoveKey(key);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_multimap& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_multimap& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.mHashMultiMap.Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.mHashMultiMap.Remove(pairFilter);
 	}
 
 	//iterator insert(node_type&& node)
@@ -776,12 +776,12 @@ public:
 		left.swap(right);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_multimap_open& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_multimap_open& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 

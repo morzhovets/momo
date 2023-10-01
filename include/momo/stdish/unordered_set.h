@@ -529,10 +529,10 @@ public:
 		return mHashSet.Remove(key) ? 1 : 0;
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_set& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_set& cont, const ValueFilter& valueFilter)
 	{
-		return cont.mHashSet.Remove(pred);
+		return cont.mHashSet.Remove(valueFilter);
 	}
 
 	node_type extract(const_iterator where)
@@ -698,10 +698,10 @@ public:
 		left.swap(right);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_set_open& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_set_open& cont, const ValueFilter& valueFilter)
 	{
-		return cont.get_nested_container().Remove(pred);
+		return cont.get_nested_container().Remove(valueFilter);
 	}
 };
 

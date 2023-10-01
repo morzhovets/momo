@@ -1063,15 +1063,15 @@ public:
 		return pvMakeIterator(KeyIteratorProxy(hashMapIter), valueIndex, true);
 	}
 
-	template<typename PairPredicate>
-	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
-	size_t> Remove(const PairPredicate& pairPred)
+	template<typename PairFilter>
+	internal::EnableIf<internal::IsInvocable<const PairFilter&, bool, const Key&, const Value&>::value,
+	size_t> Remove(const PairFilter& pairFilter)
 	{
 		size_t initValueCount = mValueCount;
 		Iterator iter = GetBegin();
 		while (!!iter)
 		{
-			if (pairPred(iter->key, static_cast<const Value&>(iter->value)))
+			if (pairFilter(iter->key, static_cast<const Value&>(iter->value)))
 				iter = Remove(iter);
 			else
 				++iter;

@@ -650,12 +650,12 @@ public:
 		return mHashMap.Remove(key) ? 1 : 0;
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_map& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_map& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.mHashMap.Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.mHashMap.Remove(pairFilter);
 	}
 
 	MOMO_FORCEINLINE typename HashMap::ValueReferenceRKey operator[](key_type&& key)
@@ -1022,12 +1022,12 @@ public:
 		left.swap(right);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(unordered_map_open& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(unordered_map_open& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 

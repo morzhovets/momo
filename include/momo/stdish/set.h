@@ -503,10 +503,10 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(set& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(set& cont, const ValueFilter& valueFilter)
 	{
-		return cont.mTreeSet.Remove(pred);
+		return cont.mTreeSet.Remove(valueFilter);
 	}
 
 	node_type extract(const_iterator where)
@@ -662,10 +662,10 @@ public:
 		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(multiset& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(multiset& cont, const ValueFilter& valueFilter)
 	{
-		return cont.get_nested_container().Remove(pred);
+		return cont.get_nested_container().Remove(valueFilter);
 	}
 };
 

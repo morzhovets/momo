@@ -925,15 +925,15 @@ public:
 		return remCount;
 	}
 
-	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value,
-	size_t> Remove(const Predicate& pred)
+	template<typename ItemFilter>
+	internal::EnableIf<internal::IsInvocable<const ItemFilter&, bool, const Item&>::value,
+	size_t> Remove(const ItemFilter& itemFilter)
 	{
 		size_t initCount = GetCount();
 		ConstIterator iter = GetBegin();
 		while (iter != GetEnd())
 		{
-			if (pred(*iter))
+			if (itemFilter(*iter))
 				iter = Remove(iter);
 			else
 				++iter;

@@ -958,12 +958,12 @@ public:
 		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(map& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(map& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 
 private:
@@ -1094,12 +1094,12 @@ public:
 		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(multimap& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(multimap& cont, const ValueFilter& valueFilter)
 	{
-		auto pairPred = [&pred] (const key_type& key, const mapped_type& mapped)
-			{ return pred(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairPred);
+		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+			{ return valueFilter(const_reference(key, mapped)); };
+		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 

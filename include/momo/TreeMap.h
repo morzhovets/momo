@@ -712,13 +712,13 @@ public:
 		return mTreeSet.Remove(key);
 	}
 
-	template<typename PairPredicate>
-	internal::EnableIf<internal::IsInvocable<const PairPredicate&, bool, const Key&, const Value&>::value,
-	size_t> Remove(const PairPredicate& pairPred)
+	template<typename PairFilter>
+	internal::EnableIf<internal::IsInvocable<const PairFilter&, bool, const Key&, const Value&>::value,
+	size_t> Remove(const PairFilter& pairFilter)
 	{
-		auto itemPred = [&pairPred] (const KeyValuePair& item)
-			{ return pairPred(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
-		return mTreeSet.Remove(itemPred);
+		auto itemFilter = [&pairFilter] (const KeyValuePair& item)
+			{ return pairFilter(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
+		return mTreeSet.Remove(itemFilter);
 	}
 
 	ExtractedPair Extract(ConstIterator iter)
