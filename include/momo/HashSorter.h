@@ -332,21 +332,21 @@ private:
 	static Iterator pvFindOther(Iterator begin, size_t count, const EqualFunc& equalFunc)
 	{
 		MOMO_ASSERT(count > 0);
-		auto pred = [begin, &equalFunc] (Iterator iter)
+		auto compareFunc = [begin, &equalFunc] (Iterator iter)
 			{ return equalFunc(*begin, *iter) ? -1 : 1; };
-		return pvExponentialSearch(begin + 1, count - 1, pred).iterator;
+		return pvExponentialSearch(begin + 1, count - 1, compareFunc).iterator;
 	}
 
 	template<typename Iterator, typename HashFuncIter>
 	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
 		HashFuncResult itemHash, const HashFuncIter& hashFuncIter)
 	{
-		auto pred = [itemHash, &hashFuncIter] (Iterator iter)
+		auto compareFunc = [itemHash, &hashFuncIter] (Iterator iter)
 			{ return pvCompare(hashFuncIter(iter), itemHash); };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		size_t middleIndex = pvMultShift(itemHash, count);
-		size_t step = (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
+		size_t step = pvGetStepCount(count);
 		while (true)
 		{
 			HashFuncResult middleHash = hashFuncIter(SMath::Next(begin, middleIndex));
@@ -354,7 +354,10 @@ private:
 			{
 				leftIndex = middleIndex + 1;
 				if (step == 0)
-					return pvExponentialSearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, pred);
+				{
+					return pvExponentialSearch(SMath::Next(begin, leftIndex),
+						rightIndex - leftIndex, compareFunc);
+				}
 				middleIndex += pvMultShift(itemHash - middleHash, count);
 				if (middleIndex >= rightIndex)
 					break;
@@ -365,10 +368,10 @@ private:
 				if (step == 0)
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
-					auto revPred = [itemHash, &hashFuncIter] (ReverseIterator iter)
+					auto revCompareFunc = [itemHash, &hashFuncIter] (ReverseIterator iter)
 						{ return -pvCompare(hashFuncIter(iter), itemHash); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
-						rightIndex - leftIndex, revPred);
+						rightIndex - leftIndex, revCompareFunc);
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
 				size_t diff = pvMultShift(middleHash - itemHash, count);
@@ -382,42 +385,49 @@ private:
 			}
 			--step;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, pred);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, compareFunc);
 	}
 
-	template<typename Iterator, typename Predicate>
-	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count, Predicate pred)
+	template<typename Iterator, typename CompareFunc>
+	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count,
+		const CompareFunc& compareFunc)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
 		{
-			int cmp = pred(SMath::Next(begin, i));
-			if (cmp == 1)
-				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, pred);
+			int cmp = compareFunc(SMath::Next(begin, i));
+			if (cmp > 0)
+				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, compareFunc);
 			else if (cmp == 0)
 				return { SMath::Next(begin, i), true };
 			leftIndex = i + 1;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, pred);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, compareFunc);
 	}
 
-	template<typename Iterator, typename Predicate>
-	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count, Predicate pred)
+	template<typename Iterator, typename CompareFunc>
+	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count,
+		const CompareFunc& compareFunc)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		while (leftIndex < rightIndex)
 		{
 			size_t middleIndex = (leftIndex + rightIndex) / 2;
-			int cmp = pred(SMath::Next(begin, middleIndex));
-			if (cmp == -1)
+			int cmp = compareFunc(SMath::Next(begin, middleIndex));
+			if (cmp < 0)
 				leftIndex = middleIndex + 1;
-			else if (cmp == 1)
+			else if (cmp > 0)
 				rightIndex = middleIndex;
 			else
 				return { SMath::Next(begin, middleIndex), true };
 		}
 		return { SMath::Next(begin, leftIndex), false };
+	}
+
+	static size_t pvGetStepCount(size_t count) noexcept
+	{
+		return (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 	}
 
 	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
