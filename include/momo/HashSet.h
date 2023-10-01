@@ -1040,12 +1040,12 @@ private:
 		BucketIterator bucketIter = BucketIterator();
 		if (mCount != 0)
 		{
-			auto pred = [&key, &hashTraits] (const Item& item)
+			auto itemPred = [&key, &hashTraits] (const Item& item)
 				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
 			Buckets* buckets = mBuckets;
 			while (true)
 			{
-				bucketIter = pvFind(indexCode, *buckets, pred);
+				bucketIter = pvFind(indexCode, *buckets, itemPred);
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();
@@ -1056,16 +1056,16 @@ private:
 		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
-	template<typename Predicate>
+	template<typename ItemPredicate>
 	MOMO_FORCEINLINE static BucketIterator pvFind(size_t& indexCode, Buckets& buckets,
-		const Predicate& pred)
+		const ItemPredicate& itemPred)
 	{
 		size_t hashCode = indexCode;
 		BucketParams& bucketParams = buckets.GetBucketParams();
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
 		Bucket* bucket = &buckets[bucketIndex];
-		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, pred, hashCode);
+		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, itemPred, hashCode);
 		if (bucketIter != BucketIterator())
 		{
 			indexCode = bucketIndex;
@@ -1076,7 +1076,7 @@ private:
 		{
 			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
 			bucket = &buckets[bucketIndex];
-			bucketIter = bucket->template Find<false>(bucketParams, pred, hashCode);
+			bucketIter = bucket->template Find<false>(bucketParams, itemPred, hashCode);
 			if (bucketIter != BucketIterator())
 			{
 				indexCode = bucketIndex;

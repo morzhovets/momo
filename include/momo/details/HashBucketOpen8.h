@@ -56,8 +56,9 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			const ItemPredicate& itemPred, size_t hashCode)
 		{
 #ifdef MOMO_PREFETCH
 			if (first)
@@ -74,7 +75,7 @@ namespace internal
 			{
 				size_t index = pvCountTrailingZeros15(static_cast<uint32_t>(mask));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*itemPtr))
+				if (itemPred(*itemPtr))
 					return itemPtr;
 			}
 #else
@@ -85,7 +86,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(MOMO_CTZ64(mask)) >> 3;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (pred(*itemPtr))
+				if (itemPred(*itemPtr))
 					return itemPtr;
 			}
 #endif

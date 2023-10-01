@@ -127,8 +127,9 @@ namespace internal
 			return Bounds(pvGetItems(), pvGetCount());
 		}
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;
@@ -136,7 +137,7 @@ namespace internal
 			Item* items = pvGetItems();
 			for (size_t i = 0; i < count; ++i)
 			{
-				if (pred(items[i]))
+				if (itemPred(items[i]))
 					return items + i;
 			}
 			return nullptr;
@@ -406,14 +407,15 @@ namespace internal
 			return pvGetBounds();
 		}
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t /*hashCode*/)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
 			if (pvIsEmpty())
 				return nullptr;
 			for (Item& item : pvGetBounds())
 			{
-				if (pred(item))
+				if (itemPred(item))
 					return std::addressof(item);
 			}
 			return nullptr;

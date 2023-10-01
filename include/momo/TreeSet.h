@@ -1145,22 +1145,22 @@ private:
 	ConstIterator pvGetLowerBound(const KeyArg& key) const
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
-		auto pred = [&treeTraits, &key] (const Item& item)
+		auto itemPred = [&treeTraits, &key] (const Item& item)
 			{ return !treeTraits.IsLess(ItemTraits::GetKey(item), key); };
-		return pvFindFirst(pred);
+		return pvFindFirst(itemPred);
 	}
 
 	template<typename KeyArg>
 	ConstIterator pvGetUpperBound(const KeyArg& key) const
 	{
 		const TreeTraits& treeTraits = GetTreeTraits();
-		auto pred = [&treeTraits, &key] (const Item& item)
+		auto itemPred = [&treeTraits, &key] (const Item& item)
 			{ return treeTraits.IsLess(key, ItemTraits::GetKey(item)); };
-		return pvFindFirst(pred);
+		return pvFindFirst(itemPred);
 	}
 
-	template<typename Predicate>
-	ConstIterator pvFindFirst(const Predicate& pred) const
+	template<typename ItemPredicate>
+	ConstIterator pvFindFirst(const ItemPredicate& itemPred) const
 	{
 		if (mRootNode == nullptr)
 			return ConstIterator();
@@ -1168,7 +1168,7 @@ private:
 		Node* node = mRootNode;
 		while (true)
 		{
-			size_t index = pvFindFirst(node, pred);
+			size_t index = pvFindFirst(node, itemPred);
 			if (index < node->GetCount())
 				iter = pvMakeIterator(node, index, false);
 			if (node->IsLeaf())
@@ -1178,16 +1178,16 @@ private:
 		return iter;
 	}
 
-	template<typename Predicate>
-	size_t pvFindFirst(Node* node, const Predicate& pred) const
+	template<typename ItemPredicate>
+	size_t pvFindFirst(Node* node, const ItemPredicate& itemPred) const
 	{
 		if (TreeTraits::useLinearSearch)
 		{
 			size_t itemCount = node->GetCount();
-			if (itemCount == 0 || !pred(*node->GetItemPtr(itemCount - 1)))
+			if (itemCount == 0 || !itemPred(*node->GetItemPtr(itemCount - 1)))
 				return itemCount;
 			size_t index = 0;
-			while (!pred(*node->GetItemPtr(index)))
+			while (!itemPred(*node->GetItemPtr(index)))
 				++index;
 			return index;
 		}
@@ -1198,7 +1198,7 @@ private:
 			while (leftIndex < rightIndex)
 			{
 				size_t middleIndex = (leftIndex + rightIndex) / 2;
-				if (pred(*node->GetItemPtr(middleIndex)))
+				if (itemPred(*node->GetItemPtr(middleIndex)))
 					rightIndex = middleIndex;
 				else
 					leftIndex = middleIndex + 1;

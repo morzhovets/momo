@@ -71,14 +71,15 @@ namespace internal
 			return Bounds(pvMakeIterator(ptGetItemPtr(0)), pvGetCount());
 		}
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			const ItemPredicate& itemPred, size_t hashCode)
 		{
 			uint8_t shortHash = ptCalcShortHash(hashCode);
 			const uint8_t* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash && pred(*&mItems[i]))
+				if (thisShortHashes[i] == shortHash && itemPred(*&mItems[i]))
 					return pvMakeIterator(&mItems[i]);
 			}
 			return Iterator();

@@ -270,8 +270,9 @@ namespace internal
 			return Bounds(mPtrState.GetPointer(), pvGetCount());
 		}
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& /*params*/, const Predicate& pred, size_t hashCode)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
+			const ItemPredicate& itemPred, size_t hashCode)
 		{
 			uint8_t shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
@@ -279,7 +280,7 @@ namespace internal
 				if (mShortHashes[i] == shortHash)
 				{
 					Item* items = mPtrState.GetPointer();
-					if (pred(items[i]))
+					if (itemPred(items[i]))
 						return items + i;
 				}
 			}

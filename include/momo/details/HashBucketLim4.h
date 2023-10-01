@@ -137,12 +137,13 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
-		template<bool first, typename Predicate>
-		MOMO_FORCEINLINE Iterator Find(Params& params, const Predicate& pred, size_t /*hashCode*/)
+		template<bool first, typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator Find(Params& params,
+			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
 			for (Item& item : GetBounds(params))
 			{
-				if (pred(item))
+				if (itemPred(item))
 					return std::addressof(item);
 			}
 			return nullptr;
