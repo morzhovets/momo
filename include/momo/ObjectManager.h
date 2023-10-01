@@ -272,22 +272,22 @@ namespace internal
 			Creator<const Object&>(memManager, srcObject)(dstObject);
 		}
 
-		template<typename Func>
+		template<typename Executor>
 		static void MoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			Func&& func)
+			Executor&& exec)
 		{
-			pvMoveExec(memManager, std::move(srcObject), dstObject, std::forward<Func>(func),
+			pvMoveExec(memManager, std::move(srcObject), dstObject, std::forward<Executor>(exec),
 				BoolConstant<isNothrowMoveConstructible>());
 		}
 
-		template<typename Func>
+		template<typename Executor>
 		static void CopyExec(MemManager& memManager, const Object& srcObject, Object* dstObject,
-			Func&& func)
+			Executor&& exec)
 		{
 			Copy(memManager, srcObject, dstObject);
 			try
 			{
-				std::forward<Func>(func)();
+				std::forward<Executor>(exec)();
 			}
 			catch (...)
 			{
@@ -352,18 +352,18 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
-			auto func = [&objectCreator, newObject] ()
+			auto exec = [&objectCreator, newObject] ()
 				{ std::forward<ObjectCreator>(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, func);
+			RelocateExec(memManager, srcBegin, dstBegin, count, exec);
 		}
 
-		template<typename Iterator, typename Func>
+		template<typename Iterator, typename Executor>
 		static void RelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, Func&& func)
+			size_t count, Executor&& exec)
 		{
 			MOMO_STATIC_ASSERT((std::is_same<Object&,
 				typename std::iterator_traits<Iterator>::reference>::value));
-			pvRelocateExec(memManager, srcBegin, dstBegin, count, std::forward<Func>(func),
+			pvRelocateExec(memManager, srcBegin, dstBegin, count, std::forward<Executor>(exec),
 				BoolConstant<isNothrowRelocatable>());
 		}
 
@@ -381,22 +381,22 @@ namespace internal
 		}
 
 	private:
-		template<typename Func>
+		template<typename Executor>
 		static void pvMoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			Func&& func, std::true_type /*isNothrowMoveConstructible*/)
+			Executor&& exec, std::true_type /*isNothrowMoveConstructible*/)
 		{
-			std::forward<Func>(func)();
+			std::forward<Executor>(exec)();
 			Move(memManager, std::move(srcObject), dstObject);
 		}
 
-		template<typename Func>
+		template<typename Executor>
 		static void pvMoveExec(MemManager& memManager, Object&& srcObject, Object* dstObject,
-			Func&& func, std::false_type /*isNothrowMoveConstructible*/)
+			Executor&& exec, std::false_type /*isNothrowMoveConstructible*/)
 		{
 			Move(memManager, std::move(srcObject), dstObject);
 			try
 			{
-				std::forward<Func>(func)();
+				std::forward<Executor>(exec)();
 			}
 			catch (...)
 			{
@@ -497,17 +497,17 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator, typename Func>
+		template<typename Iterator, typename Executor>
 		static void pvRelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, Func&& func, std::true_type /*isNothrowRelocatable*/)
+			size_t count, Executor&& exec, std::true_type /*isNothrowRelocatable*/)
 		{
-			std::forward<Func>(func)();
+			std::forward<Executor>(exec)();
 			Relocate(memManager, srcBegin, dstBegin, count);
 		}
 
-		template<typename Iterator, typename Func>
+		template<typename Iterator, typename Executor>
 		static void pvRelocateExec(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, Func&& func, std::false_type /*isNothrowRelocatable*/)
+			size_t count, Executor&& exec, std::false_type /*isNothrowRelocatable*/)
 		{
 			size_t index = 0;
 			try
@@ -516,7 +516,7 @@ namespace internal
 				Iterator dstIter = dstBegin;
 				for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
 					Copy(memManager, *srcIter, std::addressof(*dstIter));
-				std::forward<Func>(func)();
+				std::forward<Executor>(exec)();
 			}
 			catch (...)
 			{

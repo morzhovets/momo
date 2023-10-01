@@ -290,14 +290,14 @@ namespace internal
 		{
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(dstItems + i);
-			auto func = [&itemCreator, newItem] ()
+			auto exec = [&itemCreator, newItem] ()
 				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			try
 			{
 				KeyValueTraits::RelocateExec(memManager,
 					MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
 					MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
-					count, func);
+					count, exec);
 			}
 			catch (...)
 			{

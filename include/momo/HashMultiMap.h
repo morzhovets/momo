@@ -381,18 +381,18 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
+			auto exec = [&valueCreator, newValue] ()
 				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, func);
+			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, exec);
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
+			auto exec = [&valueCreator, newValue] ()
 				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, func);
+			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, exec);
 		}
 
 		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
@@ -418,13 +418,13 @@ namespace internal
 			ValueManager::Replace(memManager, srcValue, dstValue);
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
+		template<typename KeyIterator, typename ValueIterator, typename Executor>
 		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func)
+			size_t count, Executor&& exec)
 		{
 			HashMultiMapKeyValueTraits::RelocateExecKeys(memManager, srcKeyBegin, dstKeyBegin,
-				count, std::forward<Func>(func));
+				count, std::forward<Executor>(exec));
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
@@ -472,16 +472,16 @@ public:
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
 public:
-	template<typename Func>
-	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey, Func&& func)
+	template<typename Executor>
+	static void MoveExecKey(MemManager& memManager, Key&& srcKey, Key* dstKey, Executor&& exec)
 	{
-		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::forward<Func>(func));
+		KeyManager::MoveExec(memManager, std::move(srcKey), dstKey, std::forward<Executor>(exec));
 	}
 
-	template<typename Func>
-	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey, Func&& func)
+	template<typename Executor>
+	static void CopyExecKey(MemManager& memManager, const Key& srcKey, Key* dstKey, Executor&& exec)
 	{
-		KeyManager::CopyExec(memManager, srcKey, dstKey, std::forward<Func>(func));
+		KeyManager::CopyExec(memManager, srcKey, dstKey, std::forward<Executor>(exec));
 	}
 
 	static void DestroyKey(MemManager& memManager, Key& key) noexcept
@@ -500,12 +500,12 @@ public:
 		KeyManager::Relocate(memManager, srcKey, dstKey);
 	}
 
-	template<typename KeyIterator, typename Func>
+	template<typename KeyIterator, typename Executor>
 	static void RelocateExecKeys(MemManager& memManager, KeyIterator srcKeyBegin,
-		KeyIterator dstKeyBegin, size_t count, Func&& func)
+		KeyIterator dstKeyBegin, size_t count, Executor&& exec)
 	{
 		KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
-			std::forward<Func>(func));
+			std::forward<Executor>(exec));
 	}
 
 	template<typename ValueCreator>

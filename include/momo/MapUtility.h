@@ -236,18 +236,18 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key,
 			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
+			auto exec = [&valueCreator, newValue] ()
 				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::MoveExec(memManager, std::move(key), newKey, func);
+			KeyManager::MoveExec(memManager, std::move(key), newKey, exec);
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
 			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [&valueCreator, newValue] ()
+			auto exec = [&valueCreator, newValue] ()
 				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, func);
+			KeyManager::CopyExec(memManager, key, newKey, exec);
 		}
 
 		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
@@ -283,13 +283,13 @@ namespace internal
 				BoolConstant<ValueManager::isNothrowAnywayAssignable>());
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
+		template<typename KeyIterator, typename ValueIterator, typename Executor>
 		static void RelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func)
+			size_t count, Executor&& exec)
 		{
 			pvRelocateExec(memManager, srcKeyBegin, srcValueBegin, dstKeyBegin, dstValueBegin,
-				count, std::forward<Func>(func), BoolConstant<isKeyNothrowRelocatable>(),
+				count, std::forward<Executor>(exec), BoolConstant<isKeyNothrowRelocatable>(),
 				BoolConstant<isValueNothrowRelocatable>());
 		}
 
@@ -470,33 +470,33 @@ namespace internal
 			}
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func,
+		template<typename KeyIterator, typename ValueIterator, typename Executor,
 			bool isValueNothrowRelocatable>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func, std::true_type /*isKeyNothrowRelocatable*/,
+			size_t count, Executor&& exec, std::true_type /*isKeyNothrowRelocatable*/,
 			BoolConstant<isValueNothrowRelocatable>)
 		{
 			ValueManager::RelocateExec(memManager, srcValueBegin, dstValueBegin, count,
-				std::forward<Func>(func));
+				std::forward<Executor>(exec));
 			KeyManager::Relocate(memManager, srcKeyBegin, dstKeyBegin, count);
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
+		template<typename KeyIterator, typename ValueIterator, typename Executor>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func, std::false_type /*isKeyNothrowRelocatable*/,
+			size_t count, Executor&& exec, std::false_type /*isKeyNothrowRelocatable*/,
 			std::true_type /*isValueNothrowRelocatable*/)
 		{
 			KeyManager::RelocateExec(memManager, srcKeyBegin, dstKeyBegin, count,
-				std::forward<Func>(func));
+				std::forward<Executor>(exec));
 			ValueManager::Relocate(memManager, srcValueBegin, dstValueBegin, count);
 		}
 
-		template<typename KeyIterator, typename ValueIterator, typename Func>
+		template<typename KeyIterator, typename ValueIterator, typename Executor>
 		static void pvRelocateExec(MemManager& memManager, KeyIterator srcKeyBegin,
 			ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin,
-			size_t count, Func&& func, std::false_type /*isKeyNothrowRelocatable*/,
+			size_t count, Executor&& exec, std::false_type /*isKeyNothrowRelocatable*/,
 			std::false_type /*isValueNothrowRelocatable*/)
 		{
 			size_t keyIndex = 0;
@@ -511,7 +511,7 @@ namespace internal
 				ValueIterator dstValueIter = dstValueBegin;
 				for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
 					ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
-				std::forward<Func>(func)();
+				std::forward<Executor>(exec)();
 			}
 			catch (...)
 			{
