@@ -701,19 +701,19 @@ namespace internal
 			return *this;
 		}
 
-		template<typename RowComparer>
-		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
-		DataSelection&&> Sort(const RowComparer& rowComp) &&
+		template<typename RowLessFunc>
+		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value,
+		DataSelection&&> Sort(const RowLessFunc& rowLessFunc) &&
 		{
-			pvSort(rowComp);
+			pvSort(rowLessFunc);
 			return std::move(*this);
 		}
 
-		template<typename RowComparer>
-		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value,
-		DataSelection&> Sort(const RowComparer& rowComp) &
+		template<typename RowLessFunc>
+		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value,
+		DataSelection&> Sort(const RowLessFunc& rowLessFunc) &
 		{
-			pvSort(rowComp);
+			pvSort(rowLessFunc);
 			return *this;
 		}
 
@@ -734,13 +734,13 @@ namespace internal
 		template<typename Item, typename... Items>
 		size_t GetLowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
-			return pvBinarySearch<-1>(equaler, equalers...);
+			return pvBinarySearch<true>(equaler, equalers...);
 		}
 
 		template<typename Item, typename... Items>
 		size_t GetUpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
 		{
-			return pvBinarySearch<0>(equaler, equalers...);
+			return pvBinarySearch<false>(equaler, equalers...);
 		}
 
 		template<typename RowPredicate>
@@ -782,35 +782,35 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto rawComp = [&offsets] (Raw* raw1, Raw* raw2)
-				{ return pvCompare<void, Items...>(raw1, raw2, offsets.data()) < 0; };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
+			auto rawLessFunc = [&offsets] (Raw* raw1, Raw* raw2)
+				{ return pvIsLess<void, Items...>(raw1, raw2, offsets.data()); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		static int pvCompare(Raw* raw1, Raw* raw2, const size_t* offsets)
+		static bool pvIsLess(Raw* raw1, Raw* raw2, const size_t* offsets)
 		{
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, *offsets);
 			const Item& item2 = ColumnList::template GetByOffset<const Item>(raw2, *offsets);
 			int cmp = DataTraits::Compare(item1, item2);
 			if (cmp != 0)
-				return cmp;
-			return pvCompare<void, Items...>(raw1, raw2, offsets + 1);
+				return cmp < 0;
+			return pvIsLess<void, Items...>(raw1, raw2, offsets + 1);
 		}
 
 		template<typename Void>
-		static int pvCompare(Raw* /*raw1*/, Raw* /*raw2*/, const size_t* /*offsets*/) noexcept
+		static bool pvIsLess(Raw* /*raw1*/, Raw* /*raw2*/, const size_t* /*offsets*/) noexcept
 		{
-			return 0;
+			return false;
 		}
 
-		template<typename RowComparer>
-		EnableIf<IsInvocable<const RowComparer&, bool, ConstRowReference, ConstRowReference>::value>
-		pvSort(const RowComparer& rowComp)
+		template<typename RowLessFunc>
+		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value>
+		pvSort(const RowLessFunc& rowLessFunc)
 		{
-			auto rawComp = [this, &rowComp] (Raw* raw1, Raw* raw2)
-				{ return rowComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawComp, GetMemManager());
+			auto rawLessFunc = [this, &rowLessFunc] (Raw* raw1, Raw* raw2)
+				{ return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
 		}
 
 		template<typename... Items>
@@ -871,11 +871,13 @@ namespace internal
 			return true;
 		}
 
-		template<int bound, typename... Items>
+		template<bool includeEqual, typename... Items>
 		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
 		{
+			static const int bound = includeEqual ? -1 : 0;
 			static const size_t columnCount = sizeof...(equalers);
-			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(equalers.GetColumn())... }};
+			std::array<size_t, columnCount> offsets =
+				{{ mColumnList->GetOffset(equalers.GetColumn())... }};
 			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
 				{ return pvCompare<void>(raw, offsets.data(), equalers...) > bound; };
 			return UIntMath<>::Dist(mRaws.GetBegin(),

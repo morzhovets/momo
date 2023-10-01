@@ -57,11 +57,11 @@ public:
 		return (item1 == item2) ? 0 : 1;
 	}
 
-	template<typename Iterator, typename Comparer, typename MemManager>
-	static void Sort(Iterator begin, size_t count, const Comparer& comparer,
+	template<typename Iterator, typename LessFunc, typename MemManager>
+	static void Sort(Iterator begin, size_t count, const LessFunc& lessFunc,
 		MemManager& /*memManager*/)
 	{
-		std::sort(begin, internal::UIntMath<>::Next(begin, count), comparer);	//?
+		std::sort(begin, internal::UIntMath<>::Next(begin, count), lessFunc);	//?
 	}
 };
 
