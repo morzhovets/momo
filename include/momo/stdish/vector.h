@@ -425,15 +425,15 @@ public:
 	template<typename ValueArg>
 	friend size_type erase(vector& cont, const ValueArg& valueArg)
 	{
-		auto pred = [&valueArg] (const value_type& value)
+		auto valueFilter = [&valueArg] (const value_type& value)
 			{ return value == valueArg; };
-		return cont.mArray.Remove(pred);
+		return cont.mArray.Remove(valueFilter);
 	}
 
-	template<typename Predicate>
-	friend size_type erase_if(vector& cont, const Predicate& pred)
+	template<typename ValueFilter>
+	friend size_type erase_if(vector& cont, const ValueFilter& valueFilter)
 	{
-		return cont.mArray.Remove(pred);
+		return cont.mArray.Remove(valueFilter);
 	}
 
 	void assign(size_type count, const value_type& value)

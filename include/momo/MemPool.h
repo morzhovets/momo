@@ -325,8 +325,8 @@ public:
 		mCacheHead = nullptr;
 	}
 
-	template<typename Predicate>	// bool Predicate(void*)
-	void DeallocateIf(const Predicate& pred)
+	template<typename BlockFilter>	// bool BlockFilter(void*)
+	void DeallocateIf(const BlockFilter& blockFilter)
 	{
 		MOMO_EXTRA_CHECK(CanDeallocateAll());
 		if (pvUseCache())
@@ -337,7 +337,7 @@ public:
 		while (true)
 		{
 			Byte* nextBuffer = pvGetNextBuffer(buffer);
-			pvDeleteBlocks(buffer, pred);
+			pvDeleteBlocks(buffer, blockFilter);
 			if (nextBuffer == nullptr)
 				break;
 			buffer = nextBuffer;
@@ -346,7 +346,7 @@ public:
 		while (buffer != nullptr)
 		{
 			Byte* prevBuffer = pvGetPrevBuffer(buffer);
-			pvDeleteBlocks(buffer, pred);
+			pvDeleteBlocks(buffer, blockFilter);
 			buffer = prevBuffer;
 		}
 	}
@@ -652,8 +652,8 @@ private:
 			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
 	}
 
-	template<typename Predicate>
-	void pvDeleteBlocks(Byte* buffer, const Predicate& pred)
+	template<typename BlockFilter>
+	void pvDeleteBlocks(Byte* buffer, const BlockFilter& blockFilter)
 	{
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
 		uint8_t freeBlockBits[16] = {};
@@ -671,7 +671,7 @@ private:
 				continue;
 			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
 			Byte* block = pvGetBlock(buffer, blockIndex);
-			if (!pred(static_cast<void*>(block)))
+			if (!blockFilter(static_cast<void*>(block)))
 				continue;
 			pvDeleteBlock(block, buffer, blockIndex);
 			--mAllocCount;

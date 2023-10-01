@@ -934,11 +934,11 @@ public:
 		ArrayShifter::Remove(*this, index, count);
 	}
 
-	template<typename Predicate>
-	internal::EnableIf<internal::IsInvocable<const Predicate&, bool, const Item&>::value,
-	size_t> Remove(const Predicate& pred)
+	template<typename ItemFilter>
+	internal::EnableIf<internal::IsInvocable<const ItemFilter&, bool, const Item&>::value,
+	size_t> Remove(const ItemFilter& itemFilter)
 	{
-		return ArrayShifter::Remove(*this, pred);
+		return ArrayShifter::Remove(*this, itemFilter);
 	}
 
 	template<typename EqualFunc = std::equal_to<Item>>

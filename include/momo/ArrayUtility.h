@@ -271,17 +271,17 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<typename Predicate>
-		static size_t Remove(Array& array, const Predicate& pred)
+		template<typename ItemFilter>
+		static size_t Remove(Array& array, const ItemFilter& itemFilter)
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
-			while (newCount < initCount && !pred(static_cast<const Item&>(array[newCount])))
+			while (newCount < initCount && !itemFilter(static_cast<const Item&>(array[newCount])))
 				++newCount;
 			MemManager& memManager = array.GetMemManager();
 			for (size_t i = newCount + 1; i < initCount; ++i)
 			{
-				if (pred(static_cast<const Item&>(array[i])))
+				if (itemFilter(static_cast<const Item&>(array[i])))
 					continue;
 				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
 				++newCount;
