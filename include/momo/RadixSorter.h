@@ -61,48 +61,47 @@ namespace internal
 		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>>
 		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter = CodeGetter())
 		{
-			auto swapFunc = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
-			auto groupFunc = [] (Iterator, size_t) {};
-			Sort(begin, count, codeGetter, swapFunc, groupFunc);
+			auto iterSwapper = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
+			auto itemsGrouper = [] (Iterator, size_t) {};
+			Sort(begin, count, codeGetter, iterSwapper, itemsGrouper);
 		}
 
-		template<conceptIterator<std::random_access_iterator_tag> Iterator,
-			typename CodeGetter, typename SwapFunc, typename GroupFunc>
-		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>> &&
-			std::invocable<const SwapFunc&, Iterator, Iterator> &&
-			std::invocable<const GroupFunc&, Iterator, size_t>
+		template<conceptIterator<std::random_access_iterator_tag> Iterator, typename CodeGetter,
+			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
+			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
+		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>>
 		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const SwapFunc& swapFunc, const GroupFunc& groupFunc)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
 		{
 			typedef decltype(codeGetter(begin)) Code;
-			pvSort<Code>(begin, count, codeGetter, swapFunc, groupFunc,
+			pvSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper,
 				8 * sizeof(Code) - radixSize);
 		}
 
 	private:
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename SwapFunc, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const SwapFunc& swapFunc, const GroupFunc& groupFunc, size_t shift)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
 		{
 			if (count < 2)
 				return;
 			if (count == 2)
 			{
 				if (codeGetter(begin) > codeGetter(begin + 1))
-					swapFunc(begin, begin + 1);
+					iterSwapper(begin, begin + 1);
 				return;
 			}
 			if (count <= selectionSortMaxCount)
-				pvSelectionSort<Code>(begin, count, codeGetter, swapFunc, groupFunc);
+				pvSelectionSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper);
 			else
-				pvRadixSort<Code>(begin, count, codeGetter, swapFunc, groupFunc, shift);
+				pvRadixSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper, shift);
 		}
 
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename SwapFunc, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvSelectionSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const SwapFunc& swapFunc, const GroupFunc& groupFunc)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<Code, selectionSortMaxCount> codes;	//?
@@ -114,7 +113,7 @@ namespace internal
 					std::min_element(codes.data() + i + 1, codes.data() + count));
 				if (codes[minIndex] < codes[i])
 				{
-					swapFunc(UIntMath<>::Next(begin, i), UIntMath<>::Next(begin, minIndex));
+					iterSwapper(UIntMath<>::Next(begin, i), UIntMath<>::Next(begin, minIndex));
 					std::swap(codes[i], codes[minIndex]);
 				}
 			}
@@ -123,17 +122,17 @@ namespace internal
 			{
 				if (codes[i] != codes[prevIndex])
 				{
-					groupFunc(UIntMath<>::Next(begin, prevIndex), i - prevIndex);
+					itemsGrouper(UIntMath<>::Next(begin, prevIndex), i - prevIndex);
 					prevIndex = i;
 				}
 			}
-			groupFunc(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
+			itemsGrouper(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
 		}
 
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename SwapFunc, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvRadixSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const SwapFunc& swapFunc, const GroupFunc& groupFunc, size_t shift)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<size_t, radixCount> endIndexes;
@@ -152,23 +151,24 @@ namespace internal
 				singleRadix &= (radix == radix0);
 			}
 			if (singleCode)
-				return groupFunc(begin, count);
+				return itemsGrouper(begin, count);
 			size_t nextShift = (shift > radixSize) ? shift - radixSize : 0;
 			if (singleRadix)
 			{
 				MOMO_ASSERT(shift > 0);
-				return pvRadixSort<Code>(begin, count, codeGetter, swapFunc, groupFunc, nextShift);
+				return pvRadixSort<Code>(begin, count,
+					codeGetter, iterSwapper, itemsGrouper, nextShift);
 			}
 			for (size_t r = 1; r < radixCount; ++r)
 				endIndexes[r] += endIndexes[r - 1];
-			pvRadixSort<Code>(begin, codeGetter, swapFunc, shift, endIndexes);
+			pvRadixSort<Code>(begin, codeGetter, iterSwapper, shift, endIndexes);
 			size_t beginIndex = 0;
 			if (shift > 0)
 			{
 				for (size_t e : endIndexes)
 				{
 					pvSort<Code>(UIntMath<>::Next(begin, beginIndex), e - beginIndex, codeGetter,
-						swapFunc, groupFunc, nextShift);
+						iterSwapper, itemsGrouper, nextShift);
 					beginIndex = e;
 				}
 			}
@@ -176,15 +176,16 @@ namespace internal
 			{
 				for (size_t e : endIndexes)
 				{
-					groupFunc(UIntMath<>::Next(begin, beginIndex), e - beginIndex);
+					itemsGrouper(UIntMath<>::Next(begin, beginIndex), e - beginIndex);
 					beginIndex = e;
 				}
 			}
 		}
 
-		template<typename Code, typename Iterator, typename CodeGetter, typename SwapFunc>
-		static void pvRadixSort(Iterator begin, const CodeGetter& codeGetter, const SwapFunc& swapFunc,
-			size_t shift, const std::array<size_t, radixCount>& endIndexes)
+		template<typename Code, typename Iterator, typename CodeGetter, typename IterSwapper>
+		static void pvRadixSort(Iterator begin, const CodeGetter& codeGetter,
+			const IterSwapper& iterSwapper, size_t shift,
+			const std::array<size_t, radixCount>& endIndexes)
 		{
 			std::array<size_t, radixCount> beginIndexes;
 			beginIndexes[0] = 0;
@@ -199,7 +200,7 @@ namespace internal
 					size_t radix = pvGetRadix<Code>(codeGetter(UIntMath<>::Next(begin, beginIndex)), shift);
 					if (radix != r)
 					{
-						swapFunc(UIntMath<>::Next(begin, beginIndex),
+						iterSwapper(UIntMath<>::Next(begin, beginIndex),
 							UIntMath<>::Next(begin, beginIndexes[radix]));
 					}
 					++beginIndexes[radix];
