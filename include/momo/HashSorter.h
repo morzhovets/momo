@@ -232,7 +232,8 @@ private:
 			if (count > 2)
 				pvGroup(begin, count, equalFunc, iterSwapper);
 		};
-		internal::RadixSorter<>::Sort(begin, count, iterHashFunc, iterSwapper, itemsGrouper);
+		internal::RadixSorter<>::Sort(begin, count, iterHashFunc, iterSwapper,
+			FastCopyableFunctor(itemsGrouper));
 	}
 
 	template<typename Iterator, typename EqualFunc, typename IterSwapper>

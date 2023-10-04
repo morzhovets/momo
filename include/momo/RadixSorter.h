@@ -56,22 +56,23 @@ namespace internal
 		static const size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
 
 	public:
-		template<conceptIterator<std::random_access_iterator_tag> Iterator,
-			typename CodeGetter = RadixSorterCodeGetter<Iterator>>
-		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>>
-		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter = CodeGetter())
+		template<conceptIterator<std::random_access_iterator_tag> Iterator>
+		static void Sort(Iterator begin, size_t count)
 		{
-			auto iterSwapper = [] (Iterator iter1, Iterator iter2) { std::iter_swap(iter1, iter2); };
+			auto iterSwapper = [] (Iterator iter1, Iterator iter2)
+				{ std::iter_swap(iter1, iter2); };
 			auto itemsGrouper = [] (Iterator, size_t) {};
-			Sort(begin, count, codeGetter, iterSwapper, itemsGrouper);
+			Sort(begin, count, FastCopyableFunctor(RadixSorterCodeGetter<Iterator>()),	//?
+				FastCopyableFunctor(iterSwapper), FastCopyableFunctor(itemsGrouper));
 		}
 
-		template<conceptIterator<std::random_access_iterator_tag> Iterator, typename CodeGetter,
+		template<conceptIterator<std::random_access_iterator_tag> Iterator,
+			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
 			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
-		requires std::unsigned_integral<std::invoke_result_t<const CodeGetter&, Iterator>>
-		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
+		static void Sort(Iterator begin, size_t count, FastCopyableFunctor<CodeGetter> codeGetter,
+			FastCopyableFunctor<IterSwapper> iterSwapper,
+			FastCopyableFunctor<ItemsGrouper> itemsGrouper)
 		{
 			typedef decltype(codeGetter(begin)) Code;
 			pvSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper,
@@ -79,10 +80,15 @@ namespace internal
 		}
 
 	private:
-		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename ItemsGrouper>
-		static void pvSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
+		template<std::unsigned_integral Code,
+			conceptIterator<std::random_access_iterator_tag> Iterator,
+			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
+			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
+			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
+		static void pvSort(Iterator begin, size_t count,
+			FastCopyableFunctor<CodeGetter> codeGetter,
+			FastCopyableFunctor<IterSwapper> iterSwapper,
+			FastCopyableFunctor<ItemsGrouper> itemsGrouper, size_t shift)
 		{
 			if (count < 2)
 				return;
@@ -98,10 +104,15 @@ namespace internal
 				pvRadixSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper, shift);
 		}
 
-		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename ItemsGrouper>
-		static void pvSelectionSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
+		template<std::unsigned_integral Code,
+			conceptIterator<std::random_access_iterator_tag> Iterator,
+			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
+			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
+			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
+		static void pvSelectionSort(Iterator begin, size_t count,
+			FastCopyableFunctor<CodeGetter> codeGetter,
+			FastCopyableFunctor<IterSwapper> iterSwapper,
+			FastCopyableFunctor<ItemsGrouper> itemsGrouper)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<Code, selectionSortMaxCount> codes;	//?
@@ -129,10 +140,15 @@ namespace internal
 			itemsGrouper(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
 		}
 
-		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename ItemsGrouper>
-		static void pvRadixSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
+		template<std::unsigned_integral Code,
+			conceptIterator<std::random_access_iterator_tag> Iterator,
+			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
+			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
+			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
+		static void pvRadixSort(Iterator begin, size_t count,
+			FastCopyableFunctor<CodeGetter> codeGetter,
+			FastCopyableFunctor<IterSwapper> iterSwapper,
+			FastCopyableFunctor<ItemsGrouper> itemsGrouper, size_t shift)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<size_t, radixCount> endIndexes;
@@ -182,9 +198,12 @@ namespace internal
 			}
 		}
 
-		template<typename Code, typename Iterator, typename CodeGetter, typename IterSwapper>
-		static void pvRadixSort(Iterator begin, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, size_t shift,
+		template<std::unsigned_integral Code,
+			conceptIterator<std::random_access_iterator_tag> Iterator,
+			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
+			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper>
+		static void pvRadixSort(Iterator begin, FastCopyableFunctor<CodeGetter> codeGetter,
+			FastCopyableFunctor<IterSwapper> iterSwapper, size_t shift,
 			const std::array<size_t, radixCount>& endIndexes)
 		{
 			std::array<size_t, radixCount> beginIndexes;
@@ -208,7 +227,7 @@ namespace internal
 			}
 		}
 
-		template<typename Code>
+		template<std::unsigned_integral Code>
 		static size_t pvGetRadix(Code code, size_t shift) noexcept
 		{
 			return static_cast<size_t>(code >> shift) & ((size_t{1} << radixSize) - 1);
