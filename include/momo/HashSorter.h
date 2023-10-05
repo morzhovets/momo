@@ -223,7 +223,10 @@ public:
 	}
 
 private:
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc, typename IterSwapper>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>> EqualFunc,
+		internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper>
 	static void pvSort(Iterator begin, size_t count, FastCopyableFunctor<IterHashFunc> iterHashFunc,
 		FastCopyableFunctor<EqualFunc> equalFunc, FastCopyableFunctor<IterSwapper> iterSwapper)
 	{
@@ -236,7 +239,9 @@ private:
 			FastCopyableFunctor(itemsGrouper));
 	}
 
-	template<typename Iterator, typename EqualFunc, typename IterSwapper>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>> EqualFunc,
+		internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper>
 	static void pvGroup(Iterator begin, size_t count, FastCopyableFunctor<EqualFunc> equalFunc,
 		FastCopyableFunctor<IterSwapper> iterSwapper)
 	{
@@ -255,7 +260,9 @@ private:
 		}
 	}
 
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>> EqualFunc>
 	static bool pvIsSorted(Iterator begin, size_t count,
 		FastCopyableFunctor<IterHashFunc> iterHashFunc, FastCopyableFunctor<EqualFunc> equalFunc)
 	{
@@ -277,7 +284,8 @@ private:
 		return pvIsGrouped(SMath::Next(begin, prevIndex), count - prevIndex, equalFunc);
 	}
 
-	template<typename Iterator, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>> EqualFunc>
 	static bool pvIsGrouped(Iterator begin, size_t count, FastCopyableFunctor<EqualFunc> equalFunc)
 	{
 		for (size_t i = 1; i < count; ++i)
@@ -293,7 +301,9 @@ private:
 		return true;
 	}
 
-	template<typename Iterator, typename ItemArg, typename IterHashFunc, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>, ItemArg> EqualFunc>
 	static FindResult<Iterator> pvFind(Iterator begin, size_t count, const ItemArg& itemArg,
 		HashFuncResult itemHash, FastCopyableFunctor<IterHashFunc> iterHashFunc,
 		FastCopyableFunctor<EqualFunc> equalFunc)
@@ -311,7 +321,9 @@ private:
 			itemArg, itemHash, iterHashFunc, equalFunc);
 	}
 
-	template<typename Iterator, typename ItemArg, typename IterHashFunc, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>, ItemArg> EqualFunc>
 	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count, const ItemArg& itemArg,
 		HashFuncResult itemHash, FastCopyableFunctor<IterHashFunc> iterHashFunc,
 		FastCopyableFunctor<EqualFunc> equalFunc)
@@ -342,7 +354,9 @@ private:
 			pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc));
 	}
 
-	template<typename Iterator, typename ItemArg, typename IterHashFunc, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator, typename ItemArg,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>, ItemArg> EqualFunc>
 	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count, const ItemArg& itemArg,
 		HashFuncResult itemHash, FastCopyableFunctor<IterHashFunc> iterHashFunc,
 		FastCopyableFunctor<EqualFunc> equalFunc)
@@ -359,7 +373,8 @@ private:
 		return { iter, false };
 	}
 
-	template<typename Iterator, typename EqualFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptEqualFunc<std::iter_value_t<Iterator>> EqualFunc>
 	static Iterator pvFindOther(Iterator begin, size_t count,
 		FastCopyableFunctor<EqualFunc> equalFunc)
 	{
@@ -372,7 +387,8 @@ private:
 		return pvExponentialSearch(begin + 1, count - 1, compareFunc).iterator;
 	}
 
-	template<typename Iterator, typename IterHashFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptConstFunctor<size_t, Iterator> IterHashFunc>
 	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
 		HashFuncResult itemHash, FastCopyableFunctor<IterHashFunc> iterHashFunc)
 	{
@@ -423,7 +439,8 @@ private:
 		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, compareFunc);
 	}
 
-	template<typename Iterator, typename CompareFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptConstFunctor<std::strong_ordering, Iterator> CompareFunc>
 	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count,
 		CompareFunc compareFunc)
 	{
@@ -440,7 +457,8 @@ private:
 		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, compareFunc);
 	}
 
-	template<typename Iterator, typename CompareFunc>
+	template<internal::conceptIterator<std::random_access_iterator_tag> Iterator,
+		internal::conceptConstFunctor<std::strong_ordering, Iterator> CompareFunc>
 	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count,
 		CompareFunc compareFunc)
 	{
