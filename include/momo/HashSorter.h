@@ -61,7 +61,8 @@ public:
 	};
 
 private:
-	template<typename HashFunc>
+	template<internal::conceptRandomIterator Iterator,
+		internal::conceptHashFunc<std::iter_value_t<Iterator>> HashFunc>
 	class IterHashFunc
 	{
 	public:
@@ -70,8 +71,12 @@ private:
 		{
 		}
 
-		template<typename Iterator>
-		HashFuncResult operator()(Iterator iter) const
+		auto operator()(Iterator iter) const
+		{
+			return mHashFunc(*iter);
+		}
+
+		auto operator()(std::reverse_iterator<Iterator> iter) const
 		{
 			return mHashFunc(*iter);
 		}
@@ -80,7 +85,8 @@ private:
 		FastCopyableFunctor<HashFunc> mHashFunc;
 	};
 
-	template<typename Iterator, typename HashIterator>
+	template<internal::conceptRandomIterator Iterator,
+		internal::conceptRandomIterator HashIterator>
 	class IterPrehashFunc
 	{
 	public:
@@ -90,12 +96,12 @@ private:
 		{
 		}
 
-		HashFuncResult operator()(Iterator iter) const
+		auto operator()(Iterator iter) const
 		{
 			return mHashBegin[iter - mBegin];
 		}
 
-		HashFuncResult operator()(std::reverse_iterator<Iterator> iter) const
+		auto operator()(std::reverse_iterator<Iterator> iter) const
 		{
 			return mHashBegin[iter.base() - 1 - mBegin];
 		}
@@ -116,7 +122,7 @@ public:
 	static void Sort(Iterator begin, size_t count, HashFunc hashFunc = HashFunc(),
 		EqualFunc equalFunc = EqualFunc(), IterSwapper iterSwapper = IterSwapper())
 	{
-		IterHashFunc<HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
+		IterHashFunc<Iterator, HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
 		pvSort(begin, count, FastCopyableFunctor(iterHashFunc),
 			FastCopyableFunctor<EqualFunc>(equalFunc),
 			FastCopyableFunctor<IterSwapper>(iterSwapper));
@@ -148,7 +154,7 @@ public:
 	static bool IsSorted(Iterator begin, size_t count, HashFunc hashFunc = HashFunc(),
 		EqualFunc equalFunc = EqualFunc())
 	{
-		IterHashFunc<HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
+		IterHashFunc<Iterator, HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
 		return pvIsSorted(begin, count, FastCopyableFunctor(iterHashFunc),
 			FastCopyableFunctor<EqualFunc>(equalFunc));
 	}
@@ -175,7 +181,7 @@ public:
 		const ItemArg& itemArg, HashFuncResult argHash,
 		HashFunc hashFunc = HashFunc(), EqualFunc equalFunc = EqualFunc())
 	{
-		IterHashFunc<HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
+		IterHashFunc<Iterator, HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
 		return pvFind(begin, count, itemArg, argHash, FastCopyableFunctor(iterHashFunc),
 			FastCopyableFunctor<EqualFunc>(equalFunc));
 	}
@@ -203,7 +209,7 @@ public:
 		const ItemArg& itemArg, HashFuncResult argHash,
 		HashFunc hashFunc = HashFunc(), EqualFunc equalFunc = EqualFunc())
 	{
-		IterHashFunc<HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
+		IterHashFunc<Iterator, HashFunc> iterHashFunc((FastCopyableFunctor<HashFunc>(hashFunc)));
 		return pvGetBounds(begin, count, itemArg, argHash,
 			FastCopyableFunctor(iterHashFunc), FastCopyableFunctor<EqualFunc>(equalFunc));
 	}
