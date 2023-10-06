@@ -254,7 +254,7 @@ namespace internal
 		Reference mReference;
 	};
 
-	template<conceptIterator<std::random_access_iterator_tag> TIterator>
+	template<conceptRandomIterator TIterator>
 	class ArrayBoundsBase
 	{
 	public:
@@ -301,7 +301,7 @@ namespace internal
 		size_t mCount;
 	};
 
-	template<conceptIterator<std::random_access_iterator_tag> TIterator>
+	template<conceptRandomIterator TIterator>
 	class ArrayBounds : public ArrayBoundsBase<TIterator>
 	{
 	private:

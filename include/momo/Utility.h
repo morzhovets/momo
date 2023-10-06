@@ -112,6 +112,9 @@ namespace internal
 	template<typename Iterator>
 	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
 
+	template<typename Iterator>
+	concept conceptRandomIterator = conceptIterator<Iterator, std::random_access_iterator_tag>;
+
 	template<typename Object,
 		size_t maxSize = sizeof(void*)>
 	concept conceptSmallAndTriviallyCopyable =
