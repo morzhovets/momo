@@ -25,8 +25,9 @@ namespace momo
 namespace internal
 {
 	template<typename EqualFunc, typename Key,
-		typename KeyArg = Key>
-	concept conceptEqualFunc = conceptPredicate<EqualFunc, const Key&, const KeyArg&>;
+		typename KeyArg = Key, typename... KeyArgs>
+	concept conceptEqualFunc = conceptPredicate<EqualFunc, const Key&, const KeyArg&> &&
+		(conceptPredicate<EqualFunc, const Key&, const KeyArgs&> && ...);
 
 	template<typename LessFunc, typename Key>
 	concept conceptLessFunc = conceptPredicate<LessFunc, const Key&, const Key&>;
