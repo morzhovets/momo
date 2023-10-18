@@ -550,8 +550,8 @@ namespace internal
 				mPositionRemove = Position();
 			}
 
-			template<typename RawFilter>
-			void FilterRaws(RawFilter rawFilter) noexcept
+			template<internal::conceptPredicate<Raw*> RawFilter>
+			void FilterRaws(FastCopyableFunctor<RawFilter> rawFilter) noexcept
 			{
 				mHashSet.Remove([rawFilter] (Raw* raw) { return !rawFilter(raw); });
 			}
@@ -746,8 +746,8 @@ namespace internal
 				mKeyIteratorRemove = KeyIterator();
 			}
 
-			template<typename RawFilter>
-			void FilterRaws(RawFilter rawFilter) noexcept
+			template<internal::conceptPredicate<Raw*> RawFilter>
+			void FilterRaws(FastCopyableFunctor<RawFilter> rawFilter) noexcept
 			{
 				KeyIterator keyIter = mHashMultiMap.GetKeyBounds().GetBegin();
 				while (!!keyIter)
@@ -1153,8 +1153,8 @@ namespace internal
 			return { nullptr, UniqueHashIndex::empty };
 		}
 
-		template<typename RawFilter>
-		void FilterRaws(RawFilter rawFilter) noexcept
+		template<internal::conceptPredicate<Raw*> RawFilter>
+		void FilterRaws(FastCopyableFunctor<RawFilter> rawFilter) noexcept
 		{
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.FilterRaws(rawFilter);

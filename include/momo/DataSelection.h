@@ -484,9 +484,8 @@ namespace internal
 		{
 		}
 
-		template<typename RowFilter>
-		requires std::predicate<const RowFilter&, ConstRowReference>
-		explicit DataSelection(const DataSelection& selection, const RowFilter& rowFilter)
+		template<internal::conceptPredicate<ConstRowReference> RowFilter>
+		explicit DataSelection(const DataSelection& selection, RowFilter rowFilter)
 			: VersionKeeper(selection),
 			mColumnList(selection.mColumnList),
 			mRaws(MemManager(selection.GetMemManager()))
@@ -659,9 +658,8 @@ namespace internal
 			mRaws.Remove(index, count);
 		}
 
-		template<typename RowFilter>
-		requires std::predicate<const RowFilter&, ConstRowReference>
-		size_t Remove(const RowFilter& rowFilter)
+		template<internal::conceptPredicate<ConstRowReference> RowFilter>
+		size_t Remove(RowFilter rowFilter)
 		{
 			size_t newCount = 0;
 			for (Raw*& raw : mRaws)
@@ -702,19 +700,17 @@ namespace internal
 			return *this;
 		}
 
-		template<typename RowLessFunc>
-		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
-		DataSelection&& Sort(const RowLessFunc& rowLessFunc) &&
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
+		DataSelection&& Sort(RowLessFunc rowLessFunc) &&
 		{
-			pvSort(rowLessFunc);
+			pvSort(FastCopyableFunctor<RowLessFunc>(rowLessFunc));
 			return std::move(*this);
 		}
 
-		template<typename RowLessFunc>
-		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
-		DataSelection& Sort(const RowLessFunc& rowLessFunc) &
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
+		DataSelection& Sort(RowLessFunc rowLessFunc) &
 		{
-			pvSort(rowLessFunc);
+			pvSort(FastCopyableFunctor<RowLessFunc>(rowLessFunc));
 			return *this;
 		}
 
@@ -744,12 +740,12 @@ namespace internal
 			return pvBinarySearch<false>(equaler, equalers...);
 		}
 
-		template<typename RowPredicate>
-		requires std::predicate<const RowPredicate&, ConstRowReference>
-		size_t BinarySearch(const RowPredicate& rowPred) const
+		template<internal::conceptPredicate<ConstRowReference> RowPredicate>
+		size_t BinarySearch(RowPredicate rowPred) const
 		{
-			auto rawPred = [this, &rowPred] (Raw*, Raw* raw)
-				{ return rowPred(pvMakeConstRowReference(raw)); };
+			FastCopyableFunctor<RowPredicate> fastRowPred(rowPred);
+			auto rawPred = [this, fastRowPred] (Raw*, Raw* raw)
+				{ return fastRowPred(pvMakeConstRowReference(raw)); };
 			return UIntMath<>::Dist(mRaws.GetBegin(),
 				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
 		}
@@ -803,12 +799,13 @@ namespace internal
 				return false;
 		}
 
-		template<typename RowLessFunc>
-		requires std::strict_weak_order<const RowLessFunc&, ConstRowReference, ConstRowReference>
-		void pvSort(const RowLessFunc& rowLessFunc)
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
+		void pvSort(FastCopyableFunctor<RowLessFunc> rowLessFunc)
 		{
-			auto rawLessFunc = [this, &rowLessFunc] (Raw* raw1, Raw* raw2)
-				{ return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
+			auto rawLessFunc = [this, rowLessFunc] (Raw* raw1, Raw* raw2)
+			{
+				return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2));
+			};
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
 		}
 
