@@ -356,26 +356,25 @@ public:
 	{
 	}
 
-	template<typename RowFilter>
-	requires std::predicate<const RowFilter&, ConstRowReference>
-	explicit DataTable(const DataTable& table, const RowFilter& rowFilter, bool copyIndexes = true)
+	template<internal::conceptPredicate<ConstRowReference> RowFilter>
+	explicit DataTable(const DataTable& table, RowFilter rowFilter, bool copyIndexes = true)
 		: DataTable(ColumnList(table.GetColumnList()))
 	{
 		if (copyIndexes)
 			mIndexes.Assign(table.mIndexes);
-		pvFill(table, rowFilter);
+		pvFill(table, FastCopyableFunctor<RowFilter>(rowFilter));
 	}
 
 	explicit DataTable(const ConstSelection& selection)
 		: DataTable(ColumnList(selection.GetColumnList()))
 	{
-		pvFill(selection, EmptyRowFilter());
+		pvFill(selection, FastCopyableFunctor(EmptyRowFilter()));
 	}
 
 	explicit DataTable(const Selection& selection)
 		: DataTable(ColumnList(selection.GetColumnList()))
 	{
-		pvFill(selection, EmptyRowFilter());
+		pvFill(selection, FastCopyableFunctor(EmptyRowFilter()));
 	}
 
 	~DataTable() noexcept
@@ -673,12 +672,11 @@ public:
 		pvRemoveRows(begin, end);
 	}
 
-	template<typename RowFilter>
-	requires std::predicate<const RowFilter&, ConstRowReference>
-	size_t RemoveRows(const RowFilter& rowFilter)
+	template<internal::conceptPredicate<ConstRowReference> RowFilter>
+	size_t RemoveRows(RowFilter rowFilter)
 	{
 		size_t initCount = GetCount();
-		pvRemoveRows(rowFilter);
+		pvRemoveRows(FastCopyableFunctor<RowFilter>(rowFilter));
 		return initCount - GetCount();
 	}
 
@@ -814,30 +812,35 @@ public:
 	DataTable Project(ColumnList&& resColumnList, const Column<Item>& column,
 		const Column<Items>&... columns) const
 	{
-		return pvProject<false>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
+		return pvProject<false>(std::move(resColumnList),
+			FastCopyableFunctor(EmptyRowFilter()), column, columns...);
 	}
 
-	template<typename RowFilter, typename Item, typename... Items>
+	template<internal::conceptPredicate<ConstRowReference> RowFilter,
+		typename Item, typename... Items>
 	requires std::predicate<const RowFilter&, ConstRowReference>
-	DataTable Project(ColumnList&& resColumnList, const RowFilter& rowFilter,
+	DataTable Project(ColumnList&& resColumnList, RowFilter rowFilter,
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return pvProject<false>(std::move(resColumnList), rowFilter, column, columns...);
+		return pvProject<false>(std::move(resColumnList),
+			FastCopyableFunctor<RowFilter>(rowFilter), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
 	DataTable ProjectDistinct(ColumnList&& resColumnList, const Column<Item>& column,
 		const Column<Items>&... columns) const
 	{
-		return pvProject<true>(std::move(resColumnList), EmptyRowFilter(), column, columns...);
+		return pvProject<true>(std::move(resColumnList),
+			FastCopyableFunctor(EmptyRowFilter()), column, columns...);
 	}
 
-	template<typename RowFilter, typename Item, typename... Items>
-	requires std::predicate<const RowFilter&, ConstRowReference>
+	template<internal::conceptPredicate<ConstRowReference> RowFilter,
+		typename Item, typename... Items>
 	DataTable ProjectDistinct(ColumnList&& resColumnList, const RowFilter& rowFilter,
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
-		return pvProject<true>(std::move(resColumnList), rowFilter, column, columns...);
+		return pvProject<true>(std::move(resColumnList),
+			FastCopyableFunctor<RowFilter>(rowFilter), column, columns...);
 	}
 
 	RowReference MakeMutableReference(ConstRowReference rowRef)
@@ -849,8 +852,8 @@ public:
 	}
 
 private:
-	template<typename Rows, typename RowFilter>
-	void pvFill(const Rows& rows, const RowFilter& rowFilter)
+	template<typename Rows, internal::conceptPredicate<ConstRowReference> RowFilter>
+	void pvFill(const Rows& rows, FastCopyableFunctor<RowFilter> rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
 		if constexpr (std::is_same_v<RowFilter, EmptyRowFilter>)
@@ -1040,7 +1043,7 @@ private:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void pvAssignRows(RowIterator begin, RowIterator end)
 		requires (Settings::keepRowNumber)
 	{
@@ -1080,7 +1083,7 @@ private:
 		}
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void pvAssignRows(RowIterator begin, RowIterator end)
 		requires (!Settings::keepRowNumber)
 	{
@@ -1098,7 +1101,7 @@ private:
 				++count;
 		}
 		auto rawFilter = [&rawMap] (Raw* raw) { return rawMap.ContainsKey(raw); };
-		pvFilterRaws(rawFilter);
+		pvFilterRaws(FastCopyableFunctor(rawFilter));
 		for (size_t i = 0; i < count; ++i)
 		{
 			Raw*& raw = mRaws[i];
@@ -1112,7 +1115,7 @@ private:
 		}
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void pvRemoveRows(RowIterator begin, RowIterator end)
 		requires (Settings::keepRowNumber)
 	{
@@ -1135,7 +1138,7 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename RowIterator>
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
 	void pvRemoveRows(RowIterator begin, RowIterator end)
 		requires (!Settings::keepRowNumber)
 	{
@@ -1149,11 +1152,11 @@ private:
 			rawSet.Insert(ConstRowReferenceProxy::GetRaw(rowRef));
 		}
 		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
-		pvFilterRaws(rawFilter);
+		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
 
-	template<typename RowFilter>
-	void pvRemoveRows(const RowFilter& rowFilter)
+	template<internal::conceptPredicate<ConstRowReference> RowFilter>
+	void pvRemoveRows(FastCopyableFunctor<RowFilter> rowFilter)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
@@ -1174,8 +1177,8 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename RowFilter>
-	void pvRemoveRows(const RowFilter& rowFilter)
+	template<internal::conceptPredicate<ConstRowReference> RowFilter>
+	void pvRemoveRows(FastCopyableFunctor<RowFilter> rowFilter)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
@@ -1187,7 +1190,7 @@ private:
 				rawSet.Insert(raw);
 		}
 		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
-		pvFilterRaws(rawFilter);
+		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
 
 	void pvRemoveInvalidRaws() noexcept
@@ -1195,11 +1198,11 @@ private:
 		const ColumnList& columnList = GetColumnList();
 		auto rawFilter = [&columnList] (Raw* raw)
 			{ return columnList.GetNumber(raw) != invalidNumber; };
-		pvFilterRaws(rawFilter);
+		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
 
-	template<typename RawFilter>
-	void pvFilterRaws(RawFilter rawFilter) noexcept
+	template<internal::conceptPredicate<Raw*> RawFilter>
+	void pvFilterRaws(FastCopyableFunctor<RawFilter> rawFilter) noexcept
 	{
 		mIndexes.FilterRaws(rawFilter);
 		size_t count = 0;
@@ -1397,8 +1400,9 @@ private:
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	template<bool distinct, typename RowFilter, typename... Items>
-	DataTable pvProject(ColumnList&& resColumnList, const RowFilter& rowFilter,
+	template<bool distinct, internal::conceptPredicate<ConstRowReference> RowFilter,
+		typename... Items>
+	DataTable pvProject(ColumnList&& resColumnList, FastCopyableFunctor<RowFilter> rowFilter,
 		const Column<Items>&... columns) const
 	{
 		DataTable resTable(std::move(resColumnList));
