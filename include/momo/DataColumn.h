@@ -213,10 +213,10 @@ namespace internal
 		DataColumn& operator=(const DataColumn&) noexcept = default;
 	};
 
-	template<typename DataPtrVisitor, typename Void, typename ColumnInfo>
+	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
 	concept conceptDataPtrVisitor =
-		std::is_invocable_v<const DataPtrVisitor&, Void*> ||
-		std::is_invocable_v<const DataPtrVisitor&, Void*, ColumnInfo>;
+		conceptConstFunctor<DataPtrVisitor, void, Item*> ||
+		conceptConstFunctor<DataPtrVisitor, void, Item*, ColumnInfo>;
 
 	template<typename TStruct, typename TCode>
 	class DataColumnInfoBase
@@ -246,10 +246,11 @@ namespace internal
 		{
 		}
 
-		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		void ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		template<typename ColumnInfo, typename Item,
+			conceptDataPtrVisitor<Item, ColumnInfo> PtrVisitor>
+		void ptVisit(Item* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
-			if constexpr (std::is_invocable_v<const PtrVisitor&, Item*, ColumnInfo>)
+			if constexpr (conceptConstFunctor<PtrVisitor, void, Item*, ColumnInfo>)
 				ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
 			else
 				ptrVisitor(item);
@@ -282,13 +283,13 @@ namespace internal
 		}
 
 		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
-		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+		void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
 		}
 
 		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
-		void Visit(void* item, const PtrVisitor& ptrVisitor) const
+		void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
 		}
@@ -336,20 +337,21 @@ namespace internal
 		}
 
 		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
-		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+		void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			pvVisitRec<0>(item, ptrVisitor);
 		}
 
 		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
-		void Visit(void* item, const PtrVisitor& ptrVisitor) const
+		void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			pvVisitRec<0>(item, ptrVisitor);
 		}
 
 	private:
-		template<size_t index, typename Void, typename PtrVisitor>
-		void pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
+		template<size_t index, typename Void,
+			conceptDataPtrVisitor<Void, DataColumnInfo> PtrVisitor>
+		void pvVisitRec(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
@@ -863,13 +865,13 @@ public:
 	}
 
 	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
-	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(const Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		pvVisitPointers<const void>(raw, ptrVisitor);
 	}
 
 	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
-	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		pvVisitPointers<void>(raw, ptrVisitor);
 	}
@@ -1083,8 +1085,9 @@ private:
 		}
 	}
 
-	template<typename Void, typename Raw, typename PtrVisitor>
-	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	template<typename Void, typename Raw,
+		internal::conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		for (const ColumnRecord& columnRec : mColumnRecords)
 		{
@@ -1275,13 +1278,13 @@ public:
 	}
 
 	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
-	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(const Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		pvVisitPointers<const void>(raw, ptrVisitor);
 	}
 
 	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
-	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	void VisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		pvVisitPointers<void>(raw, ptrVisitor);
 	}
@@ -1297,8 +1300,9 @@ private:
 		return static_cast<size_t>(columnInfo.GetCode());	//?
 	}
 
-	template<typename Void, typename Raw, typename PtrVisitor>
-	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	template<typename Void, typename Raw,
+		internal::conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		if (mVisitableColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
