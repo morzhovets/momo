@@ -123,18 +123,23 @@ namespace internal
 		std::is_trivially_copy_constructible_v<Object> &&
 		sizeof(Object) <= maxSize;
 
+	template<typename Result, typename BaseResult>
+	concept conceptFunctorResult =
+		std::is_void_v<BaseResult> || std::convertible_to<Result, BaseResult>;
+
 	template<typename Functor, typename Result, typename... Args>
 	concept conceptMoveFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
 			{ { std::forward<Functor>(func)(std::forward<Args>(args)...) }
-				-> std::convertible_to<Result>; };
+				-> conceptFunctorResult<Result>; };
 
 	template<typename Functor, typename Result, typename... Args>
 	concept conceptConstFunctor =
 		std::is_nothrow_destructible_v<Functor> &&
 		requires (Functor func, Args&&... args)
-			{ { std::as_const(func)(std::forward<Args>(args)...) } -> std::convertible_to<Result>; };
+			{ { std::as_const(func)(std::forward<Args>(args)...) }
+				-> conceptFunctorResult<Result>; };
 
 	template<typename Executor>
 	concept conceptExecutor = conceptMoveFunctor<Executor, void>;
