@@ -1112,12 +1112,12 @@ namespace internal
 			return { nullptr, UniqueHashIndex::empty };
 		}
 
-		template<typename Item, typename Assigner>
-		Result UpdateRaw(Raw* raw, size_t offset, const Item& item, Assigner assigner)
+		template<typename Item, typename ItemAssigner>
+		Result UpdateRaw(Raw* raw, size_t offset, const Item& item, ItemAssigner&& itemAssigner)
 		{
 			if (DataTraits::IsEqual(item, ColumnList::template GetByOffset<const Item>(raw, offset)))
 			{
-				assigner();
+				std::forward<ItemAssigner>(itemAssigner)(raw, offset);
 				return { nullptr, UniqueHashIndex::empty };
 			}
 			auto rejector = [this] ()
@@ -1155,7 +1155,7 @@ namespace internal
 					multiHash.Add(hashMixedKey);
 					multiHash.PrepareRemove(raw);
 				}
-				assigner();
+				std::forward<ItemAssigner>(itemAssigner)(raw, offset);
 			}
 			catch (...)
 			{
@@ -1292,7 +1292,7 @@ namespace internal
 			size_t columnCount = sizeof...(Items),
 			typename Index = typename Hash::Index>
 		static Index pvAddHashIndex(Hashes<Hash>& hashes, const Raws& raws,
-			const std::array<size_t, columnCount>& offsets, RawAdder rawAdder)
+			const std::array<size_t, columnCount>& offsets, const RawAdder& rawAdder)
 		{
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			Index index = pvGetHashIndex(hashes, sortedOffsets);
