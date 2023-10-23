@@ -885,7 +885,7 @@ namespace internal
 				return true;
 			};
 			UniqueHashIndex uniqueHashIndex = pvAddHashIndex<Items...>(mUniqueHashes,
-				raws, offsets, rawAdder);
+				raws, offsets, FastCopyableFunctor(rawAdder));
 			MOMO_ASSERT((uniqueHashIndex == UniqueHashIndex::empty) == (resRaw != nullptr));
 			return { resRaw, uniqueHashIndex };
 		}
@@ -900,7 +900,8 @@ namespace internal
 				multiHash.Add(raw);
 				return true;
 			};
-			return pvAddHashIndex<Items...>(mMultiHashes, raws, offsets, rawAdder);
+			return pvAddHashIndex<Items...>(mMultiHashes,
+				raws, offsets, FastCopyableFunctor(rawAdder));
 		}
 
 		void RemoveUniqueHashIndexes() noexcept
@@ -1090,12 +1091,13 @@ namespace internal
 			return { nullptr, UniqueHashIndex::empty };
 		}
 
-		template<typename Item, typename Assigner>
-		Result UpdateRaw(Raw* raw, size_t offset, const Item& item, Assigner assigner)
+		template<typename Item, conceptMoveFunctor<void, Raw*, size_t> ItemAssigner>
+		Result UpdateRaw(Raw* raw, size_t offset, const Item& item,
+			FastMovableFunctor<ItemAssigner> itemAssigner)
 		{
 			if (DataTraits::IsEqual(item, ColumnList::template GetByOffset<const Item>(raw, offset)))
 			{
-				assigner();
+				std::move(itemAssigner)(raw, offset);
 				return { nullptr, UniqueHashIndex::empty };
 			}
 			auto rejector = [this] ()
@@ -1133,7 +1135,7 @@ namespace internal
 					multiHash.Add(hashMixedKey);
 					multiHash.PrepareRemove(raw);
 				}
-				assigner();
+				std::move(itemAssigner)(raw, offset);
 			}
 			catch (...)
 			{
@@ -1266,11 +1268,12 @@ namespace internal
 			return Index::empty;
 		}
 
-		template<typename... Items, typename Hash, typename Raws, typename RawAdder,
+		template<typename... Items, typename Hash, typename Raws,
+			conceptConstFunctor<void, Hash&, Raw*> RawAdder,
 			size_t columnCount = sizeof...(Items),
 			typename Index = typename Hash::Index>
 		static Index pvAddHashIndex(Hashes<Hash>& hashes, const Raws& raws,
-			const std::array<size_t, columnCount>& offsets, RawAdder rawAdder)
+			const std::array<size_t, columnCount>& offsets, FastCopyableFunctor<RawAdder> rawAdder)
 		{
 			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
 			Index index = pvGetHashIndex(hashes, sortedOffsets);

@@ -1030,9 +1030,10 @@ private:
 		rowRef.GetRaw();	// check
 		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 		size_t offset = GetColumnList().GetOffset(column);
-		auto assigner = [&columnList, raw, offset, &newItem] ()
+		auto itemAssigner = [&columnList, &newItem] (Raw* raw, size_t offset)
 			{ columnList.template Assign<Item>(raw, offset, std::forward<RItem>(newItem)); };
-		auto res = mIndexes.UpdateRaw(raw, offset, std::as_const(newItem), assigner);
+		auto res = mIndexes.UpdateRaw(raw, offset, std::as_const(newItem),
+			FastMovableFunctor(std::move(itemAssigner)));
 		if (res.raw != nullptr)
 			return { pvMakeRowReference(res.raw), res.uniqueHashIndex };
 		++mCrew.GetChangeVersion();
