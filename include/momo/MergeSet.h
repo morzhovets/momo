@@ -776,7 +776,7 @@ private:
 						auto lessFunc = [&mergeTraits] (const Item& item1, const Key& key2)
 							{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 						const Item* itemPtr = std::lower_bound(segItems,
-							segItems + segItemCount - 1, key, lessFunc);
+							segItems + segItemCount - 1, key, FastCopyableFunctor(lessFunc));
 						if (itemPred(*itemPtr))
 							return pvMakePosition(*itemPtr);
 					}
@@ -797,7 +797,8 @@ private:
 		case 2:
 			if (const Item* segItems = mMergeArray.GetSegmentItems(1); segItems != nullptr)
 			{
-				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount, itemPred);
+				const Item* itemPtr = std::find_if(segItems, segItems + initialItemCount,
+					FastCopyableFunctor(itemPred));
 				if (itemPtr != segItems + initialItemCount)
 					return pvMakePosition(*itemPtr);
 			}
@@ -806,7 +807,8 @@ private:
 			{
 				const Item* segItems = mMergeArray.GetSegmentItems(0);
 				size_t segItemCount = ((GetCount() - 1) & (initialItemCount - 1)) + 1;
-				const Item* itemPtr = std::find_if(segItems, segItems + segItemCount, itemPred);
+				const Item* itemPtr = std::find_if(segItems, segItems + segItemCount,
+					FastCopyableFunctor(itemPred));
 				if (itemPtr != segItems + segItemCount)
 					return pvMakePosition(*itemPtr);
 			}

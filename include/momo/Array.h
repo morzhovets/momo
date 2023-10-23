@@ -894,8 +894,9 @@ public:
 	bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
 	{
 		FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
-		return std::any_of(GetBegin(), GetEnd(),
-			[&itemArg, fastEqualFunc] (const Item& item) { return fastEqualFunc(item, itemArg); });
+		auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
+			{ return fastEqualFunc(item, itemArg); };
+		return std::any_of(GetBegin(), GetEnd(), FastCopyableFunctor(itemPred));
 	}
 
 	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>

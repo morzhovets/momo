@@ -747,7 +747,8 @@ namespace internal
 			auto rawPred = [this, fastRowPred] (Raw*, Raw* raw)
 				{ return fastRowPred(pvMakeConstRowReference(raw)); };
 			return UIntMath<>::Dist(mRaws.GetBegin(),
-				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
+				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(),
+					nullptr, FastCopyableFunctor(rawPred)));
 		}
 
 	protected:
@@ -782,7 +783,8 @@ namespace internal
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawLessFunc = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsLess<Items...>(offsets.data(), raw1, raw2); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(),
+				FastCopyableFunctor(rawLessFunc), GetMemManager());
 		}
 
 		template<typename Item, typename... Items>
@@ -806,7 +808,8 @@ namespace internal
 			{
 				return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2));
 			};
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(),
+				FastCopyableFunctor(rawLessFunc), GetMemManager());
 		}
 
 		template<typename... Items>
@@ -870,7 +873,8 @@ namespace internal
 				return includeEqual ? cmp >= 0 : cmp > 0;
 			};
 			return UIntMath<>::Dist(mRaws.GetBegin(),
-				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
+				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(),
+					nullptr, FastCopyableFunctor(rawPred)));
 		}
 
 		template<typename Item, typename... Items>

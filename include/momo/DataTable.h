@@ -60,7 +60,7 @@ public:
 	}
 
 	template<typename Iterator, typename LessFunc, typename MemManager>
-	static void Sort(Iterator begin, size_t count, LessFunc lessFunc,
+	static void Sort(Iterator begin, size_t count, FastCopyableFunctor<LessFunc> lessFunc,
 		MemManager& /*memManager*/)
 	{
 		std::sort(begin, internal::UIntMath<>::Next(begin, count), lessFunc);	//?
