@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,20 +10,17 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03
+
 // <set>
 
 // class set
 
 // set(initializer_list<value_type> il, const key_compare& comp = key_compare());
 
-//#include <set>
-//#include <cassert>
-//#include "../../../test_compare.h"
-
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
-    typedef test_compare<std::less<int> > Cmp;
+    typedef test_less<int> Cmp;
     typedef set<int, Cmp> C;
     typedef C::value_type V;
     C m({1, 2, 3, 4, 5, 6}, Cmp(10));
@@ -38,5 +34,4 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     assert(m.key_comp() == Cmp(10));
-#endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

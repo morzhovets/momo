@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -15,18 +14,14 @@
 
 // class set
 
-// explicit set(const value_compare& comp);
-
-//#include <set>
-//#include <cassert>
-
-//#include "../../../test_compare.h"
+// explicit set(const key_compare& comp) const;
 
 void main()
 {
-    typedef test_compare<std::less<int> > C;
-    set<int, C> m(C(3));
+    typedef test_less<int> C;
+    const set<int, C> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));
+    assert(m.value_comp() == C(3));
 }

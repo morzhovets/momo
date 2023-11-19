@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -23,16 +22,9 @@
 //     set(InputIterator first, InputIterator last,
 //         const allocator_type& a);
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_iterators.h"
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
-
 void main()
 {
-	{
+    {
     typedef int V;
     V ar[] =
     {
@@ -46,10 +38,10 @@ void main()
         3,
         3
     };
-    typedef test_compare<std::less<V> > C;
+    typedef test_less<V> C;
     typedef test_allocator<V> A;
-    set<V, C, A> m(input_iterator<const V*>(ar),
-                        input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])),
+    set<V, C, A> m(cpp17_input_iterator<const V*>(ar),
+                        cpp17_input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])),
                         C(5), A(7));
     assert(m.value_comp() == C(5));
     assert(m.get_allocator() == A(7));
@@ -58,8 +50,8 @@ void main()
     assert(*m.begin() == 1);
     assert(*std::next(m.begin()) == 2);
     assert(*std::next(m.begin(), 2) == 3);
-	}
-//#if _LIBCPP_STD_VER > 11
+    }
+#if TEST_STD_VER > 11
     {
     typedef int V;
     V ar[] =
@@ -75,7 +67,7 @@ void main()
         3
     };
     typedef test_allocator<V> A;
-    typedef test_compare<std::less<int> > C;
+    typedef test_less<int> C;
     A a(7);
     set<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
 
@@ -86,5 +78,5 @@ void main()
     assert(*std::next(m.begin(), 2) == 3);
     assert(m.get_allocator() == a);
     }
-//#endif
+#endif
 }

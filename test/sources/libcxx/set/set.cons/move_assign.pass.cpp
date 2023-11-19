@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,26 +10,19 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03
+
 // <set>
 
 // class set
 
 // set& operator=(set&& s);
 
-//#include <set>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
         typedef MoveOnly V;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef test_allocator<V> A;
         typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
@@ -69,7 +61,7 @@ void main()
     }
     {
         typedef MoveOnly V;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef test_allocator<V> A;
         typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
@@ -104,11 +96,11 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A(5));
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
     {
         typedef MoveOnly V;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef other_allocator<V> A;
         typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
@@ -145,11 +137,10 @@ void main()
         assert(m3.key_comp() == C(5));
         assert(m1.empty());
     }
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef MoveOnly V;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef min_allocator<V> A;
         typedef set<MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
@@ -187,5 +178,4 @@ void main()
         assert(m1.empty());
     }
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

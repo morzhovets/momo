@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,23 +18,19 @@
 
 // This tests a conforming extension
 
-//#include <set>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
+// UNSUPPORTED: c++03
 
 template <class T>
 struct some_comp
 {
     typedef T value_type;
     some_comp(const some_comp&);
+    bool operator()(const T&, const T&) const { return false; }
 };
 
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
+#if defined(_LIBCPP_VERSION)
     {
         typedef set<MoveOnly> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
@@ -48,9 +43,9 @@ void main()
         typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
     }
+#endif // _LIBCPP_VERSION
     {
         typedef set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_constructible<C>::value, "");
     }
-#endif
 }

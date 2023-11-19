@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -16,12 +15,6 @@
 // class set
 
 // set(const set& m);
-
-//#include <set>
-//#include <cassert>
-
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
 
 void main()
 {
@@ -39,7 +32,7 @@ void main()
             3,
             3
         };
-        typedef test_compare<std::less<int> > C;
+        typedef test_less<int> C;
         typedef test_allocator<V> A;
         set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
         set<int, C, A> m = mo;
@@ -59,7 +52,7 @@ void main()
         assert(*std::next(mo.begin()) == 2);
         assert(*std::next(mo.begin(), 2) == 3);
     }
-#ifndef _LIBCPP_HAS_NO_ADVANCED_SFINAE
+#if TEST_STD_VER >= 11
     {
         typedef int V;
         V ar[] =
@@ -74,7 +67,7 @@ void main()
             3,
             3
         };
-        typedef test_compare<std::less<int> > C;
+        typedef test_less<int> C;
         typedef other_allocator<V> A;
         set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
         set<int, C, A> m = mo;
@@ -94,5 +87,5 @@ void main()
         assert(*std::next(mo.begin()) == 2);
         assert(*std::next(mo.begin(), 2) == 3);
     }
-#endif  // _LIBCPP_HAS_NO_ADVANCED_SFINAE
+#endif
 }

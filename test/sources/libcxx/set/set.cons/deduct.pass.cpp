@@ -10,10 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03, c++11, c++14
+
 // <set>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
-// UNSUPPORTED: apple-clang-9.1
 
 // template<class InputIterator,
 //          class Compare = less<iter-value-type<InputIterator>>,
@@ -33,20 +32,11 @@
 // set(initializer_list<Key>, Allocator)
 //   -> set<Key, less<Key>, Allocator>;
 
-//#include <algorithm> // std::equal
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <functional>
-//#include <set>
-//#include <type_traits>
-//
-//#include "test_allocator.h"
-
 struct NotAnAllocator {
   friend bool operator<(NotAnAllocator, NotAnAllocator) { return false; }
 };
 
-void main() {
+int main(int, char **) {
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
     momo::stdish::set s(std::begin(arr), std::end(arr));
@@ -188,4 +178,8 @@ void main() {
     ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int *>);
     assert(s.size() == 2);
   }
+
+  AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::set, momo::stdish::set<int>>();
+
+  return 0;
 }

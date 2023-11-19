@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,25 +10,19 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03
+
 // <set>
 
 // class set
 
 // set(set&& s);
 
-//#include <set>
-//#include <cassert>
-
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
         typedef int V;
-        typedef test_compare<std::less<int> > C;
+        typedef test_less<int> C;
         typedef test_allocator<V> A;
         set<int, C, A> mo(C(5), A(7));
         set<int, C, A> m = std::move(mo);
@@ -39,7 +32,7 @@ void main()
         assert(std::distance(m.begin(), m.end()) == 0);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(mo.get_allocator() == A(7));
+        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
         assert(mo.key_comp() == C(5));
 #endif
         assert(mo.size() == 0);
@@ -59,7 +52,7 @@ void main()
             3,
             3
         };
-        typedef test_compare<std::less<int> > C;
+        typedef test_less<int> C;
         typedef test_allocator<V> A;
         set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
         set<int, C, A> m = std::move(mo);
@@ -72,13 +65,12 @@ void main()
         assert(*std::next(m.begin(), 2) == 3);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(mo.get_allocator() == A(7));
+        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
         assert(mo.key_comp() == C(5));
 #endif
         assert(mo.size() == 0);
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
@@ -94,7 +86,7 @@ void main()
             3,
             3
         };
-        typedef test_compare<std::less<int> > C;
+        typedef test_less<int> C;
         typedef min_allocator<V> A;
         set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A());
         set<int, C, A> m = std::move(mo);
@@ -112,5 +104,4 @@ void main()
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

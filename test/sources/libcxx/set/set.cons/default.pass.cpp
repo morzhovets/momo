@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,11 +16,6 @@
 
 // set();
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {
@@ -29,7 +23,7 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     set<int, std::less<int>, min_allocator<int>> m;
@@ -37,10 +31,25 @@ void main()
     assert(m.begin() == m.end());
     }
 #endif
+
+    {
+    typedef explicit_allocator<int> A;
+        {
+        set<int, std::less<int>, A> m;
+        assert(m.empty());
+        assert(m.begin() == m.end());
+        }
+        {
+        A a;
+        set<int, std::less<int>, A> m(a);
+        assert(m.empty());
+        assert(m.begin() == m.end());
+        }
+    }
     {
     set<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-//#endif
+#endif
 }
