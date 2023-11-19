@@ -18,12 +18,6 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
 void main()
 {
     {

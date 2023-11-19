@@ -17,11 +17,6 @@
 
 // void clear();
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

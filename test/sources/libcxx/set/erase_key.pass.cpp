@@ -17,11 +17,6 @@
 
 // size_type erase(const key_type& k);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

@@ -16,8 +16,6 @@
 // Check that set and its iterators can be instantiated with an incomplete
 // type.
 
-//#include <set>
-
 struct A {
     typedef set<A> Set;
     int data;

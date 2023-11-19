@@ -18,12 +18,6 @@
 //       iterator upper_bound(const key_type& k);
 // const_iterator upper_bound(const key_type& k) const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
 void main()
 {
     {

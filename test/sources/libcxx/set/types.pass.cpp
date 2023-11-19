@@ -33,11 +33,6 @@
 //     ...
 // };
 
-//#include <set>
-//#include <type_traits>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

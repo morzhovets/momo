@@ -24,14 +24,6 @@
 
 // This tests a conforming extension
 
-//#include <set>
-//#include <utility>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
-
 template <class T>
 struct some_comp
 {

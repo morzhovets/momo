@@ -18,12 +18,6 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_iterators.h"
-//#include "min_allocator.h"
-
 void main()
 {
     {

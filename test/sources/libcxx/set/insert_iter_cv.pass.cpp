@@ -17,11 +17,6 @@
 
 // iterator insert(const_iterator position, const value_type& v);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

@@ -16,12 +16,6 @@
 
 // void swap(set& m);
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-
 void main()
 {
     {

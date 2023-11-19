@@ -17,11 +17,6 @@
 
 // iterator erase(const_iterator first, const_iterator last);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

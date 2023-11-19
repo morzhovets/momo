@@ -30,11 +30,6 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
     {

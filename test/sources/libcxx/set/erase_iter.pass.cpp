@@ -17,11 +17,6 @@
 
 // iterator erase(const_iterator position);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 struct TemplateConstructor
 {
     template<typename T>

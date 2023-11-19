@@ -17,11 +17,6 @@
 
 // void insert(initializer_list<value_type> il);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 void main()
 {
 #ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS

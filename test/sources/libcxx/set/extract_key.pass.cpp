@@ -19,10 +19,6 @@
 
 // node_type extract(key_type const&);
 
-//#include <set>
-//#include "min_allocator.h"
-//#include "Counter.h"
-
 template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
 {

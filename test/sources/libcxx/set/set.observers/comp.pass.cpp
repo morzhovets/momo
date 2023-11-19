@@ -15,9 +15,6 @@
 // key_compare key_comp() const;
 // value_compare value_comp() const;
 
-//#include <set>
-//#include <cassert>
-
 int main(int, char**) {
     typedef set<int> set_type;
 

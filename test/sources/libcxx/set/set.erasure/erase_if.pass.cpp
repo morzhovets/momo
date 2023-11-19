@@ -18,12 +18,6 @@
 //   typename set<T, Compare, Allocator>::size_type
 //   erase_if(set<T, Compare, Allocator>& c, Predicate pred);
 
-//#include <set>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 template <class S, class Pred>
 void test0(S s, Pred p, S expected, std::size_t expected_erased_count) {
   ASSERT_SAME_TYPE(typename S::size_type, decltype(erase_if(s, p)));

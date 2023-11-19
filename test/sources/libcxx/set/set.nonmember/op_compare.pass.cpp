@@ -36,12 +36,6 @@
 // bool operator>=(const std::set<Key, Compare, Alloc>& lhs,
 //                 const std::set<Key, Compare, Alloc>& rhs);
 
-//#include <set>
-//#include <cassert>
-//#include <string>
-
-//#include "test_comparisons.h"
-
 int main(int, char**) {
     {
         set<int> s1, s2;

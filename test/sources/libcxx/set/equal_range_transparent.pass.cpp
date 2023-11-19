@@ -24,14 +24,6 @@
 //     pair<const_iterator,const_iterator> equal_range(const K& x) const;  //
 //     C++14
 
-//#include <cassert>
-//#include <set>
-//#include <utility>
-
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-//#include "test_macros.h"
-
 struct Comp {
   using is_transparent = void;
 

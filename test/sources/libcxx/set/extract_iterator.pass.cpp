@@ -19,10 +19,6 @@
 
 // node_type extract(const_iterator);
 
-//#include <set>
-//#include "min_allocator.h"
-//#include "Counter.h"
-
 template <class Container>
 void test(Container& c)
 {

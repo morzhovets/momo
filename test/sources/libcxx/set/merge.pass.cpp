@@ -26,10 +26,6 @@
 // template <class C2>
 //   void merge(multiset<key_type, C2, allocator_type>&& source);
 
-//#include <set>
-//#include "test_macros.h"
-//#include "Counter.h"
-
 using momo::stdish::multiset;
 
 template <class Set>
