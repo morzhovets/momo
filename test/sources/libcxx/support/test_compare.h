@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -14,29 +13,28 @@
 #ifndef TEST_COMPARE_H
 #define TEST_COMPARE_H
 
-#include <cstddef>
-#include <type_traits>
-#include <cstdlib>
-#include <new>
-#include <climits>
-
-template <class C>
-class test_compare
-    : private C
+template <class T>
+struct test_equal_to
 {
     int data_;
-public:
-    explicit test_compare(int data = 0) : data_(data) {}
-
-    template<typename T>
-    bool operator()(const T& x, const T& y) const
-    //typename C::result_type
-    //operator()(typename std::add_lvalue_reference<const typename C::first_argument_type>::type x,
-    //           typename std::add_lvalue_reference<const typename C::second_argument_type>::type y) const
-        {return C::operator()(x, y);}
-
-    bool operator==(const test_compare& c) const
-        {return data_ == c.data_;}
+    explicit test_equal_to() : data_(0) {}
+    explicit test_equal_to(int data) : data_(data) {}
+    bool operator()(const T& a, const T& b) const
+        { return a == b; }
+    friend bool operator==(const test_equal_to& a, const test_equal_to& b)
+        { return a.data_ == b.data_; }
 };
 
-#endif  // TEST_COMPARE_H
+template <class T>
+struct test_less
+{
+    int data_;
+    explicit test_less() : data_(0) {}
+    explicit test_less(int data) : data_(data) {}
+    bool operator()(const T& a, const T& b) const
+        { return a < b; }
+    friend bool operator==(const test_less& a, const test_less& b)
+        { return a.data_ == b.data_; }
+};
+
+#endif // TEST_COMPARE_H

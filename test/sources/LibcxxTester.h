@@ -35,6 +35,7 @@
 #include "libcxx/support/test_allocator.h"
 #include "libcxx/support/test_iterators.h"
 #include "libcxx/support/test_compare.h"
+#include "libcxx/support/old_test_compare.h"
 #include "libcxx/support/test_hash.h"
 #include "libcxx/support/private_constructor.h"
 #include "libcxx/support/is_transparent.h"
