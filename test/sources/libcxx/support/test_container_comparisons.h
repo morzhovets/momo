@@ -392,9 +392,11 @@ constexpr void test_ordered_set_spaceship_with_type(Compare comp) {
 // Tests the `operator<=>` on ordered set containers
 template <template <typename...> typename Container>
 constexpr bool test_ordered_set_container_spaceship() {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   // Thanks to SFINAE, the following is not a compiler error but returns `false`
   struct NonComparable {};
   static_assert(!std::three_way_comparable<Container<NonComparable>>);
+#endif
 
   // The container should fulfill `std::three_way_comparable`
   static_assert(std::three_way_comparable<Container<int>>);

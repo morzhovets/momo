@@ -226,6 +226,18 @@ LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/set/set.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(nonmember_compare_three_way)
+#include "libcxx/set/set.nonmember/compare.three_way.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(nonmember_op_compare)
+#include "libcxx/set/set.nonmember/op_compare.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(observers_comp)
+#include "libcxx/set/set.observers/comp.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(special_member_swap)
 #include "libcxx/set/set.special/member_swap.pass.cpp"
 LIBCXX_TEST_END
