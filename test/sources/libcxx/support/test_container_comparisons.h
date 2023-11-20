@@ -15,7 +15,6 @@
 #define TEST_CONTAINER_COMPARISONS
 
 #include <functional>
-#include <set>
 
 #include "test_comparisons.h"
 
@@ -352,7 +351,8 @@ constexpr void test_ordered_set_spaceship_with_type(Compare comp) {
     assert(testOrder(l1, l2, Order::greater));
   }
   // Unordered
-  if constexpr (std::is_same_v< Container<Elem>, std::multiset<PartialOrder>>) {
+  //if constexpr (std::is_same_v< Container<Elem>, std::multiset<PartialOrder>>) {
+  if constexpr (Container<Elem>::nested_container_type::TreeTraits::multiKey) {
     if constexpr (std::is_same_v<Elem, PartialOrder> && std::is_same_v<Compare, decltype(std::less{})>) {
       Container<Elem, Compare> l1{{1, std::numeric_limits<int>::min()}, comp};
       Container<Elem, Compare> l2{{1, 2}, comp};
@@ -364,7 +364,8 @@ constexpr void test_ordered_set_spaceship_with_type(Compare comp) {
       assert(testOrder(l1, l2, Order::unordered));
     }
   }
-  if constexpr (std::is_same_v< Container<Elem>, std::set<PartialOrder>>) {
+  //if constexpr (std::is_same_v< Container<Elem>, std::set<PartialOrder>>) {
+  if constexpr (!Container<Elem>::nested_container_type::TreeTraits::multiKey) {
     // Unodered values are not supported for `set`
     if constexpr (std::is_same_v<Elem, PartialOrder> && std::is_same_v<Compare, decltype(std::less{})>) {
       Container<Elem, Compare> l1{{1, std::numeric_limits<int>::min()}, comp};
