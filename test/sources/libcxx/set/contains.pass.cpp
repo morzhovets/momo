@@ -29,12 +29,12 @@ void test(B bad, Vals... args) {
 
 struct E { int a = 1; double b = 1; char c = 1; };
 
-void main()
+int main(int, char**)
 {
     {
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
-        test<set<int, std::less<>>, int>(int8_t{14}, 10, 11, 12, 13);
-#endif
+        test<set<int>, int>(14, 10, 11, 12, 13);
         test<set<char>, char>('e', 'a', 'b', 'c', 'd');
     }
+
+    return 0;
 }

@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -20,7 +21,6 @@
 
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef set<DefaultOnly> M;
@@ -50,11 +50,11 @@ void main()
         assert(m.size() == 1);
         assert(*m.begin() == Emplaceable());
         r = m.emplace_hint(m.cend(), 2, 3.5);
-        assert(r == next(m.begin()));
+        assert(r == std::next(m.begin()));
         assert(m.size() == 2);
         assert(*r == Emplaceable(2, 3.5));
         r = m.emplace_hint(m.cbegin(), 2, 3.5);
-        assert(r == next(m.begin()));
+        assert(r == std::next(m.begin()));
         assert(m.size() == 2);
         assert(*r == Emplaceable(2, 3.5));
     }
@@ -67,7 +67,6 @@ void main()
         assert(m.size() == 1);
         assert(*r == 2);
     }
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef set<int, std::less<int>, min_allocator<int>> M;
@@ -79,5 +78,4 @@ void main()
         assert(*r == 2);
     }
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

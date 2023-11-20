@@ -18,6 +18,10 @@ LIBCXX_TEST_BEGIN(contains)
 #include "libcxx/set/contains.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains_transparent)
+#include "libcxx/set/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(count)
 #include "libcxx/set/count.pass.cpp"
 LIBCXX_TEST_END

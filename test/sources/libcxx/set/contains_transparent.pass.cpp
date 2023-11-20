@@ -10,37 +10,41 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++03, c++11
+// UNSUPPORTED: c++03, c++11, c++14, c++17
 
 // <set>
 
 // class set
 
-//    template<typename K>
-//        size_type count(const K& x) const;        // C++14
+// template<typename K> bool contains(const K& x) const; // C++20
 
 struct Comp {
   using is_transparent = void;
 
-  bool operator()(const std::pair<int, int> &lhs,
-                  const std::pair<int, int> &rhs) const {
+  bool operator()(const std::pair<int, int>& lhs,
+                  const std::pair<int, int>& rhs) const {
     return lhs < rhs;
   }
 
-  bool operator()(const std::pair<int, int> &lhs, int rhs) const {
+  bool operator()(const std::pair<int, int>& lhs, int rhs) const {
     return lhs.first < rhs;
   }
 
-  bool operator()(int lhs, const std::pair<int, int> &rhs) const {
+  bool operator()(int lhs, const std::pair<int, int>& rhs) const {
     return lhs < rhs.first;
   }
 };
 
-int main(int, char**) {
-  set<std::pair<int, int>, Comp> s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
+template <typename Container>
+void test() {
+  Container s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
 
-  auto cnt = s.count(1);
-  assert(cnt == 3);
+  assert(s.contains(1));
+  assert(!s.contains(-1));
+}
+
+int main(int, char**) {
+  test<set<std::pair<int, int>, Comp> >();
 
   return 0;
 }
