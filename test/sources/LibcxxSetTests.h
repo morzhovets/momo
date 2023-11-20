@@ -62,9 +62,9 @@ LIBCXX_TEST_BEGIN(erase_key)
 #include "libcxx/set/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(extract_iterator)
-//#include "libcxx/set/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(extract_iterator)
+#include "libcxx/set/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(extract_key)
 #include "libcxx/set/extract_key.pass.cpp"

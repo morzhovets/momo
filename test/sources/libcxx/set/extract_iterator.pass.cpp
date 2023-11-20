@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <set>
 
@@ -22,19 +21,28 @@
 template <class Container>
 void test(Container& c)
 {
-    size_t sz = c.size();
+    std::size_t sz = c.size();
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     for (auto first = c.cbegin(); first != c.cend();)
     {
         auto key_value = *first;
         typename Container::node_type t = c.extract(first++);
         --sz;
         assert(t.value() == key_value);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(t.get_allocator() == c.get_allocator());
-#endif
         assert(sz == c.size());
     }
+#else
+    for (auto first = c.cbegin(); first != c.cend(); first = c.cbegin())
+    {
+        auto key_value = *first;
+        typename Container::node_type t = c.extract(first);
+        --sz;
+        assert(t.value() == key_value);
+        assert(sz == c.size());
+    }
+#endif
 
     assert(c.size() == 0);
 }
