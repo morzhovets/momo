@@ -12,19 +12,20 @@
 
 // <set>
 
-// Check that std::set and its iterators can be instantiated with an incomplete
-// type.
+// class set
 
-struct A {
-    typedef set<A> Set;
-    int data;
-    Set m;
-    Set::iterator it;
-    Set::const_iterator cit;
-};
+// allocator_type get_allocator() const
 
-inline bool operator==(A const& L, A const& R) { return &L == &R; }
-inline bool operator<(A const& L, A const& R)  { return L.data < R.data; }
-void main() {
-    A a;
+int main(int, char**) {
+    {
+        std::allocator<int> alloc;
+        const set<int> s(alloc);
+        assert(s.get_allocator() == alloc);
+    }
+    {
+        other_allocator<int> alloc(1);
+        const set<int, std::less<int>, other_allocator<int> > s(alloc);
+        assert(s.get_allocator() == alloc);
+    }
+    return 0;
 }

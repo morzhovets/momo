@@ -74,9 +74,15 @@ LIBCXX_TEST_BEGIN(find)
 #include "libcxx/set/find.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(incomplete_type)
-//#include "libcxx/set/incomplete_type.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "libcxx/set/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete_type)
+#include "libcxx/set/incomplete_type.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/set/insert_cv.pass.cpp"
