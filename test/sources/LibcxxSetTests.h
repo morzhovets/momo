@@ -88,6 +88,10 @@ LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/set/insert_cv.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(insert_and_emplace_allocator_requirements)
+//#include "libcxx/set/insert_and_emplace_allocator_requirements.pass.cpp"
+//LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(insert_initializer_list)
 #include "libcxx/set/insert_initializer_list.pass.cpp"
 LIBCXX_TEST_END
@@ -120,6 +124,10 @@ LIBCXX_TEST_BEGIN(iterator)
 #include "libcxx/set/iterator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "libcxx/set/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(lower_bound)
 #include "libcxx/set/lower_bound.pass.cpp"
 LIBCXX_TEST_END
@@ -130,6 +138,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(merge)
 #include "libcxx/set/merge.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "libcxx/set/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
