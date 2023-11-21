@@ -18,6 +18,10 @@ LIBCXX_TEST_BEGIN(contains)
 #include "libcxx/multiset/contains.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains_transparent)
+#include "libcxx/multiset/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(count)
 #include "libcxx/multiset/count.pass.cpp"
 LIBCXX_TEST_END
