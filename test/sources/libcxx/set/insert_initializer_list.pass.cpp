@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -19,14 +20,13 @@
 
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
     typedef set<int> C;
     typedef C::value_type V;
     C m = {10, 8};
     m.insert({1, 2, 3, 4, 5, 6});
     assert(m.size() == 8);
-    assert(momo::internal::UIntMath<>::Dist(m.begin(), m.end()) == m.size());
+    assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
     C::const_iterator i = m.cbegin();
     assert(*i == V(1));
     assert(*++i == V(2));
@@ -37,7 +37,6 @@ void main()
     assert(*++i == V(8));
     assert(*++i == V(10));
     }
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef set<int, std::less<int>, min_allocator<int>> C;
@@ -45,7 +44,7 @@ void main()
     C m = {10, 8};
     m.insert({1, 2, 3, 4, 5, 6});
     assert(m.size() == 8);
-    assert(std::distance(m.begin(), m.end()) == m.size());
+    assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
     C::const_iterator i = m.cbegin();
     assert(*i == V(1));
     assert(*++i == V(2));
@@ -57,5 +56,4 @@ void main()
     assert(*++i == V(10));
     }
 #endif
-#endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
 }

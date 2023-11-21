@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -62,14 +61,20 @@ void main()
             8
         };
         set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(momo::internal::UIntMath<>::Dist(m.begin(), m.end()) == m.size());
-        assert(momo::internal::UIntMath<>::Dist(m.rbegin(), m.rend()) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         set<int>::iterator i;
         i = m.begin();
         set<int>::const_iterator k = i;
         assert(i == k);
-        for (size_t j = 1; j <= m.size(); ++j, ++i)
-            assert(*i == static_cast<int>(j));
+        for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
+            assert(*i == j);
+        assert(i == m.end());
+        for (int j = static_cast<int>(m.size()); j >= 1; --j) {
+            --i;
+            assert(*i == j);
+        }
+        assert(i == m.begin());
     }
     {
         typedef int V;
@@ -101,16 +106,22 @@ void main()
             8
         };
         const set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(momo::internal::UIntMath<>::Dist(m.begin(), m.end()) == m.size());
-        assert(momo::internal::UIntMath<>::Dist(m.cbegin(), m.cend()) == m.size());
-        assert(momo::internal::UIntMath<>::Dist(m.rbegin(), m.rend()) == m.size());
-        assert(momo::internal::UIntMath<>::Dist(m.crbegin(), m.crend()) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
         set<int>::const_iterator i;
         i = m.begin();
-        for (size_t j = 1; j <= m.size(); ++j, ++i)
-            assert(*i == static_cast<int>(j));
+        for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
+            assert(*i == j);
+        assert(i == m.end());
+        for (int j = static_cast<int>(m.size()); j >= 1; --j) {
+            --i;
+            assert(*i == j);
+        }
+        assert(i == m.begin());
     }
-//#if __cplusplus >= 201103L
+#if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
@@ -142,14 +153,20 @@ void main()
             8
         };
         set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(std::distance(m.begin(), m.end()) == m.size());
-        assert(std::distance(m.rbegin(), m.rend()) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         set<int, std::less<int>, min_allocator<int>>::iterator i;
         i = m.begin();
         set<int, std::less<int>, min_allocator<int>>::const_iterator k = i;
         assert(i == k);
-        for (int j = 1; j <= m.size(); ++j, ++i)
+        for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
+        assert(i == m.end());
+        for (int j = static_cast<int>(m.size()); j >= 1; --j) {
+            --i;
+            assert(*i == j);
+        }
+        assert(i == m.begin());
     }
     {
         typedef int V;
@@ -181,17 +198,24 @@ void main()
             8
         };
         const set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        assert(std::distance(m.begin(), m.end()) == m.size());
-        assert(std::distance(m.cbegin(), m.cend()) == m.size());
-        assert(std::distance(m.rbegin(), m.rend()) == m.size());
-        assert(std::distance(m.crbegin(), m.crend()) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
+        assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
         set<int, std::less<int>, min_allocator<int>>::const_iterator i;
         i = m.begin();
-        for (int j = 1; j <= m.size(); ++j, ++i)
+        for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
+        assert(i == m.end());
+        for (int j = static_cast<int>(m.size()); j >= 1; --j) {
+            --i;
+            assert(*i == j);
+        }
+        assert(i == m.begin());
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
+#endif
+#if TEST_STD_VER > 11
     { // N3644 testing
         typedef set<int> C;
         C::iterator ii1{}, ii2{};
@@ -207,5 +231,5 @@ void main()
         assert (!(ii1 != cii ));
         assert (!(cii != ii1 ));
     }
-//#endif
+#endif
 }

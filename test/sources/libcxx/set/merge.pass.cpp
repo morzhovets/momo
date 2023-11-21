@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <set>
 
@@ -27,20 +26,10 @@
 //   void merge(multiset<key_type, C2, allocator_type>&& source);
 
 using momo::stdish::multiset;
-
 template <class Set>
 bool set_equal(const Set& set, Set other)
 {
-    if (set == other)
-    {
-        assert(!(set != other));
-        assert(!(set < other));
-        assert(!(set > other));
-        assert(set <= other);
-        assert(set >= other);
-        return true;
-    }
-    return false;
+    return set == other;
 }
 
 #ifndef TEST_HAS_NO_EXCEPTIONS
@@ -60,7 +49,7 @@ struct throw_comparator
 };
 #endif
 
-void main()
+int main(int, char**)
 {
     {
         set<int> src{1, 3, 5};
@@ -156,4 +145,5 @@ void main()
             first.merge(std::move(second));
         }
     }
+    return 0;
 }

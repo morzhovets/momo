@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -19,7 +20,6 @@
 
 void main()
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
         typedef set<MoveOnly> M;
         typedef std::pair<M::iterator, bool> R;
@@ -38,17 +38,16 @@ void main()
 
         r = m.insert(M::value_type(3));
         assert(r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r.first == 3);
 
         r = m.insert(M::value_type(3));
         assert(!r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r.first == 3);
     }
-//#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef set<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
@@ -68,16 +67,15 @@ void main()
 
         r = m.insert(M::value_type(3));
         assert(r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r.first == 3);
 
         r = m.insert(M::value_type(3));
         assert(!r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r.first == 3);
     }
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }
