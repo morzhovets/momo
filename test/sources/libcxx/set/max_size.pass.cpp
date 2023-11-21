@@ -26,7 +26,7 @@ void main()
       LIBCPP_ASSERT(c.max_size() == 10);
     }
     {
-      typedef limited_allocator<int, (std::size_t)-1> A;
+      typedef limited_allocator<int, static_cast<std::size_t>(-1)> A;
       typedef set<int, std::less<int>, A> C;
       const C::size_type max_dist =
           static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
@@ -36,10 +36,10 @@ void main()
     }
     {
       typedef set<char> C;
-      const C::size_type max_dist =
-          static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
       C c;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+      const C::size_type max_dist =
+          static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
       assert(c.max_size() <= max_dist);
 #endif
       assert(c.max_size() <= alloc_max_size(c.get_allocator()));

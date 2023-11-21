@@ -22,7 +22,7 @@ template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
 {
     std::size_t sz = c.size();
-    assert((std::size_t)std::distance(first, last) == sz);
+    assert(static_cast<std::size_t>(std::distance(first, last)) == sz);
 
     for (KeyTypeIter copy = first; copy != last; ++copy)
     {
