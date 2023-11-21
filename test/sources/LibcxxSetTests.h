@@ -180,13 +180,13 @@ LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/set/set.cons/default.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_default_noexcept)
-//#include "libcxx/set/set.cons/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_default_noexcept)
+#include "libcxx/set/set.cons/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
-//#include "libcxx/set/set.cons/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
+#include "libcxx/set/set.cons/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "libcxx/set/set.cons/initializer_list.pass.cpp"
@@ -224,13 +224,13 @@ LIBCXX_TEST_BEGIN(cons_move_assign)
 #include "libcxx/set/set.cons/move_assign.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
-//#include "libcxx/set/set.cons/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
+#include "libcxx/set/set.cons/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_noexcept)
-//#include "libcxx/set/set.cons/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_noexcept)
+#include "libcxx/set/set.cons/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/set/set.erasure/erase_if.pass.cpp"
