@@ -48,13 +48,13 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
 void main()
 {
     {
-        set<int> m = {1, 2, 3, 4, 5, 6};
+        std::set<int> m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
 
     {
-        set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
+        std::set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
         {
             Counter<int> keys[] = {1, 2, 3, 4, 5, 6};
             assert(Counter_base::gConstructed == 6+6);
@@ -64,7 +64,7 @@ void main()
     }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        using min_alloc_set = set<int, std::less<int>, min_allocator<int>>;
+        using min_alloc_set = std::set<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));

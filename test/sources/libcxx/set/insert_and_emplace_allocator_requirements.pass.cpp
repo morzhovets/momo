@@ -23,7 +23,7 @@
 namespace TCT {
 template <class Value = CopyInsertable<1> >
 using set =
-    set<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
+    std::set<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
 }
 
 int main(int, char**)

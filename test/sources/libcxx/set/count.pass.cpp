@@ -20,7 +20,7 @@ void main()
 {
     {
         typedef int V;
-        typedef set<int> M;
+        typedef std::set<int> M;
         typedef M::size_type R;
         V ar[] =
         {
@@ -57,7 +57,7 @@ void main()
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
-        typedef set<int, std::less<int>, min_allocator<int>> M;
+        typedef std::set<int, std::less<int>, min_allocator<int>> M;
         typedef M::size_type R;
         V ar[] =
         {
@@ -95,7 +95,7 @@ void main()
 #if TEST_STD_VER > 11
     {
         typedef int V;
-        typedef set<int, std::less<>> M;
+        typedef std::set<int, std::less<>> M;
         typedef M::size_type R;
         V ar[] =
         {
@@ -130,7 +130,7 @@ void main()
     }
     {
     typedef PrivateConstructor V;
-    typedef set<V, std::less<>> M;
+    typedef std::set<V, std::less<>> M;
         typedef M::size_type R;
 
     M m;

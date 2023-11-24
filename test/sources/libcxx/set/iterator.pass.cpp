@@ -60,12 +60,12 @@ void main()
             8,
             8
         };
-        set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        std::set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
-        set<int>::iterator i;
+        std::set<int>::iterator i;
         i = m.begin();
-        set<int>::const_iterator k = i;
+        std::set<int>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
@@ -105,12 +105,12 @@ void main()
             8,
             8
         };
-        const set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const std::set<int> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
-        set<int>::const_iterator i;
+        std::set<int>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
@@ -152,12 +152,12 @@ void main()
             8,
             8
         };
-        set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        std::set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
-        set<int, std::less<int>, min_allocator<int>>::iterator i;
+        std::set<int, std::less<int>, min_allocator<int>>::iterator i;
         i = m.begin();
-        set<int, std::less<int>, min_allocator<int>>::const_iterator k = i;
+        std::set<int, std::less<int>, min_allocator<int>>::const_iterator k = i;
         assert(i == k);
         for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
@@ -197,12 +197,12 @@ void main()
             8,
             8
         };
-        const set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const std::set<int, std::less<int>, min_allocator<int>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(static_cast<std::size_t>(std::distance(m.begin(), m.end())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.cbegin(), m.cend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.rbegin(), m.rend())) == m.size());
         assert(static_cast<std::size_t>(std::distance(m.crbegin(), m.crend())) == m.size());
-        set<int, std::less<int>, min_allocator<int>>::const_iterator i;
+        std::set<int, std::less<int>, min_allocator<int>>::const_iterator i;
         i = m.begin();
         for (int j = 1; j <= static_cast<int>(m.size()); ++j, ++i)
             assert(*i == j);
@@ -217,7 +217,7 @@ void main()
 #endif
 #if TEST_STD_VER > 11
     { // N3644 testing
-        typedef set<int> C;
+        typedef std::set<int> C;
         C::iterator ii1{}, ii2{};
         C::iterator ii4 = ii1;
         C::const_iterator cii{};

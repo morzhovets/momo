@@ -23,20 +23,20 @@ struct some_comp
 void main()
 {
     {
-        typedef set<MoveOnly> C;
+        typedef std::set<MoveOnly> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
 #if defined(_LIBCPP_VERSION)
     {
-        typedef set<MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_destructible<C>::value, "");
     }
 #endif // _LIBCPP_VERSION

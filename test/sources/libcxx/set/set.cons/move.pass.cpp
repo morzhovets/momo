@@ -24,8 +24,8 @@ void main()
         typedef int V;
         typedef test_less<int> C;
         typedef test_allocator<V> A;
-        set<int, C, A> mo(C(5), A(7));
-        set<int, C, A> m = std::move(mo);
+        std::set<int, C, A> mo(C(5), A(7));
+        std::set<int, C, A> m = std::move(mo);
         assert(m.get_allocator() == A(7));
         assert(m.key_comp() == C(5));
         assert(m.size() == 0);
@@ -54,8 +54,8 @@ void main()
         };
         typedef test_less<int> C;
         typedef test_allocator<V> A;
-        set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
-        set<int, C, A> m = std::move(mo);
+        std::set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
+        std::set<int, C, A> m = std::move(mo);
         assert(m.get_allocator() == A(7));
         assert(m.key_comp() == C(5));
         assert(m.size() == 3);
@@ -88,8 +88,8 @@ void main()
         };
         typedef test_less<int> C;
         typedef min_allocator<V> A;
-        set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A());
-        set<int, C, A> m = std::move(mo);
+        std::set<int, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A());
+        std::set<int, C, A> m = std::move(mo);
         assert(m.get_allocator() == A());
         assert(m.key_comp() == C(5));
         assert(m.size() == 3);

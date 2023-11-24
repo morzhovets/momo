@@ -20,7 +20,7 @@
 
 void basic_test() {
   {
-    typedef set<int> C;
+    typedef std::set<int> C;
     typedef C::value_type V;
     C m = {10, 8};
     m = {1, 2, 3, 4, 5, 6};
@@ -36,7 +36,7 @@ void basic_test() {
   }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
   {
-    typedef set<int, std::less<int>, min_allocator<int> > C;
+    typedef std::set<int, std::less<int>, min_allocator<int> > C;
     typedef C::value_type V;
     C m = {10, 8};
     m = {1, 2, 3, 4, 5, 6};
@@ -55,7 +55,7 @@ void basic_test() {
 
 void duplicate_keys_test() {
   test_allocator_statistics alloc_stats;
-  typedef set<int, std::less<int>, test_allocator<int> > Set;
+  typedef std::set<int, std::less<int>, test_allocator<int> > Set;
   {
     LIBCPP_ASSERT(alloc_stats.alloc_count == 0);
     Set s({1, 2, 3}, std::less<int>(), test_allocator<int>(&alloc_stats));

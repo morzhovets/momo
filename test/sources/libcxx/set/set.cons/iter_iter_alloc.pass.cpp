@@ -40,7 +40,7 @@ void main()
     };
     typedef test_less<V> C;
     typedef test_allocator<V> A;
-    set<V, C, A> m(cpp17_input_iterator<const V*>(ar),
+    std::set<V, C, A> m(cpp17_input_iterator<const V*>(ar),
                         cpp17_input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])),
                         C(5), A(7));
     assert(m.value_comp() == C(5));
@@ -69,7 +69,7 @@ void main()
     typedef test_allocator<V> A;
     typedef test_less<int> C;
     A a(7);
-    set<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
+    std::set<V, C, A> m(ar, ar+sizeof(ar)/sizeof(ar[0]), a);
 
     assert(m.size() == 3);
     assert(std::distance(m.begin(), m.end()) == 3);

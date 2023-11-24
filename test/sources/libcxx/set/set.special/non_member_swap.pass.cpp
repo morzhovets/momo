@@ -20,7 +20,7 @@ void main()
 {
     typedef int V;
     {
-    typedef set<int> M;
+    typedef std::set<int> M;
     {
         M m1;
         M m2;
@@ -97,7 +97,7 @@ void main()
     {
         typedef test_allocator<V> A;
         typedef test_less<int> C;
-        typedef set<int, C, A> M;
+        typedef std::set<int, C, A> M;
         V ar1[] =
         {
             1,
@@ -139,7 +139,7 @@ void main()
     {
         typedef other_allocator<V> A;
         typedef test_less<int> C;
-        typedef set<int, C, A> M;
+        typedef std::set<int, C, A> M;
         V ar1[] =
         {
             1,

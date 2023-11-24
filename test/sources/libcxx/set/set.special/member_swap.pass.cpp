@@ -20,7 +20,7 @@ void main()
 {
     {
     typedef int V;
-    typedef set<int> M;
+    typedef std::set<int> M;
     {
         M m1;
         M m2;
@@ -98,7 +98,7 @@ void main()
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef int V;
-    typedef set<int, std::less<int>, min_allocator<int>> M;
+    typedef std::set<int, std::less<int>, min_allocator<int>> M;
     {
         M m1;
         M m2;

@@ -35,7 +35,7 @@
 void main()
 {
     {
-    typedef set<int> C;
+    typedef std::set<int> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
@@ -51,7 +51,7 @@ void main()
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef set<int, std::less<int>, min_allocator<int>> C;
+    typedef std::set<int, std::less<int>, min_allocator<int>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");

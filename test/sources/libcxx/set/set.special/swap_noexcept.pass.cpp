@@ -92,22 +92,22 @@ struct some_alloc3
 void main()
 {
     {
-        typedef set<MoveOnly> C;
+        typedef std::set<MoveOnly> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
-        typedef set<MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif
@@ -115,25 +115,25 @@ void main()
 #if TEST_STD_VER >= 14
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     { // POCS allocator, throwable swap for comp
-    typedef set<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef std::set<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, throwable swap for comp
-    typedef set<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef std::set<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif
     { // POCS allocator, nothrow swap for comp
-    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, nothrow swap for comp
-    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     { // NOT always equal allocator, nothrow swap for comp
-    typedef set<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
+    typedef std::set<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION

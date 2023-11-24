@@ -19,14 +19,14 @@
 void main()
 {
     {
-    set<int> m;
+    std::set<int> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    set<int, std::less<int>, min_allocator<int>> m;
+    std::set<int, std::less<int>, min_allocator<int>> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
@@ -35,19 +35,19 @@ void main()
     {
     typedef explicit_allocator<int> A;
         {
-        set<int, std::less<int>, A> m;
+        std::set<int, std::less<int>, A> m;
         assert(m.empty());
         assert(m.begin() == m.end());
         }
         {
         A a;
-        set<int, std::less<int>, A> m(a);
+        std::set<int, std::less<int>, A> m(a);
         assert(m.empty());
         assert(m.begin() == m.end());
         }
     }
     {
-    set<int> m = {};
+    std::set<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }

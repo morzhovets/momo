@@ -32,8 +32,8 @@ struct E { int a = 1; double b = 1; char c = 1; };
 int main(int, char**)
 {
     {
-        test<set<int>, int>(14, 10, 11, 12, 13);
-        test<set<char>, char>('e', 'a', 'b', 'c', 'd');
+        test<std::set<int>, int>(14, 10, 11, 12, 13);
+        test<std::set<char>, char>('e', 'a', 'b', 'c', 'd');
     }
 
     return 0;

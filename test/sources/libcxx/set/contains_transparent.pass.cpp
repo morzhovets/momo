@@ -44,7 +44,7 @@ void test() {
 }
 
 int main(int, char**) {
-  test<set<std::pair<int, int>, Comp> >();
+  test<std::set<std::pair<int, int>, Comp> >();
 
   return 0;
 }

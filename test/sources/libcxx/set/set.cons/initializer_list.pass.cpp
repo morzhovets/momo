@@ -21,7 +21,7 @@
 void main()
 {
     {
-    typedef set<int> C;
+    typedef std::set<int> C;
     typedef C::value_type V;
     C m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);
@@ -36,7 +36,7 @@ void main()
     }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef set<int, std::less<int>, min_allocator<int>> C;
+    typedef std::set<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;
     C m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);

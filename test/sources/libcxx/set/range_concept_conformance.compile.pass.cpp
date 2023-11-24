@@ -14,7 +14,7 @@
 
 // set
 
-using range = set<int>;
+using range = std::set<int>;
 
 static_assert(std::same_as<std::ranges::iterator_t<range>, range::iterator>);
 static_assert(std::ranges::bidirectional_range<range>);

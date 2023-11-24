@@ -21,7 +21,7 @@
 void main()
 {
     {
-        typedef set<MoveOnly> M;
+        typedef std::set<MoveOnly> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));
@@ -46,7 +46,7 @@ void main()
     }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));

@@ -19,7 +19,7 @@
 void main()
 {
     {
-        typedef set<int> M;
+        typedef std::set<int> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));
@@ -45,7 +45,7 @@ void main()
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef set<int, std::less<int>, min_allocator<int>> M;
+        typedef std::set<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), M::value_type(2));

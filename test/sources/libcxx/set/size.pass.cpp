@@ -19,7 +19,7 @@
 void main()
 {
     {
-    typedef set<int> M;
+    typedef std::set<int> M;
     M m;
     assert(m.size() == 0);
     m.insert(M::value_type(2));
@@ -38,7 +38,7 @@ void main()
 #if TEST_STD_VER >= 11
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef set<int, std::less<int>, min_allocator<int>> M;
+    typedef std::set<int, std::less<int>, min_allocator<int>> M;
     M m;
     assert(m.size() == 0);
     m.insert(M::value_type(2));

@@ -14,10 +14,10 @@
 
 // iterator, const_iterator, reverse_iterator, const_reverse_iterator
 
-using iterator = set<int>::iterator;
-using const_iterator = set<int>::const_iterator;
-using reverse_iterator = set<int>::reverse_iterator;
-using const_reverse_iterator = set<int>::const_reverse_iterator;
+using iterator = std::set<int>::iterator;
+using const_iterator = std::set<int>::const_iterator;
+using reverse_iterator = std::set<int>::reverse_iterator;
+using const_reverse_iterator = std::set<int>::const_reverse_iterator;
 using value_type = int;
 
 static_assert(std::bidirectional_iterator<iterator>);

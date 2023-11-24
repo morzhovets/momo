@@ -34,20 +34,20 @@ void main()
 {
 #if defined(_LIBCPP_VERSION)
     {
-        typedef set<MoveOnly> C;
+        typedef std::set<MoveOnly> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
 #endif // _LIBCPP_VERSION
     {
-        typedef set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef set<MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
 }

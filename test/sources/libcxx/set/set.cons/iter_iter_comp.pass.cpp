@@ -33,7 +33,7 @@ void main()
         3
     };
     typedef test_less<V> C;
-    set<V, C> m(cpp17_input_iterator<const V*>(ar),
+    std::set<V, C> m(cpp17_input_iterator<const V*>(ar),
                      cpp17_input_iterator<const V*>(ar+sizeof(ar)/sizeof(ar[0])), C(5));
     assert(m.value_comp() == C(5));
     assert(m.size() == 3);

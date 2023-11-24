@@ -41,7 +41,7 @@ struct Comp {
 };
 
 int main(int, char**) {
-  set<std::pair<int, int>, Comp> s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
+  std::set<std::pair<int, int>, Comp> s{{2, 1}, {1, 2}, {1, 3}, {1, 4}, {2, 2}};
 
   auto er = s.equal_range(1);
   long nels = 0;

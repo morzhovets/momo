@@ -19,7 +19,7 @@
 void main()
 {
     typedef test_less<int> C;
-    const set<int, C> m(C(3));
+    const std::set<int, C> m(C(3));
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));

@@ -24,7 +24,7 @@ void main()
     {
     typedef test_less<int> Cmp;
     typedef test_allocator<int> A;
-    typedef set<int, Cmp, A> C;
+    typedef std::set<int, Cmp, A> C;
     typedef C::value_type V;
     C m({1, 2, 3, 4, 5, 6}, Cmp(10), A(4));
     assert(m.size() == 6);
@@ -42,7 +42,7 @@ void main()
     {
     typedef test_less<int> Cmp;
     typedef test_allocator<int> A;
-    typedef set<int, Cmp, A> C;
+    typedef std::set<int, Cmp, A> C;
     typedef C::value_type V;
     C m({1, 2, 3, 4, 5, 6}, A(4));
     assert(m.size() == 6);

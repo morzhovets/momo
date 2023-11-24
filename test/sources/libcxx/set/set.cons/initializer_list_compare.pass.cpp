@@ -21,7 +21,7 @@
 void main()
 {
     typedef test_less<int> Cmp;
-    typedef set<int, Cmp> C;
+    typedef std::set<int, Cmp> C;
     typedef C::value_type V;
     C m({1, 2, 3, 4, 5, 6}, Cmp(10));
     assert(m.size() == 6);

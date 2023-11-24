@@ -26,6 +26,7 @@
 //   void merge(multiset<key_type, C2, allocator_type>&& source);
 
 using momo::stdish::multiset;
+
 template <class Set>
 bool set_equal(const Set& set, Set other)
 {
@@ -52,8 +53,8 @@ struct throw_comparator
 int main(int, char**)
 {
     {
-        set<int> src{1, 3, 5};
-        set<int> dst{2, 4, 5};
+        std::set<int> src{1, 3, 5};
+        std::set<int> dst{2, 4, 5};
         dst.merge(src);
         assert(set_equal(src, {5}));
         assert(set_equal(dst, {1, 2, 3, 4, 5}));
@@ -62,7 +63,7 @@ int main(int, char**)
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef set<Counter<int>, throw_comparator> set_type;
+        typedef std::set<Counter<int>, throw_comparator> set_type;
         set_type src({1, 3, 5}, throw_comparator(do_throw));
         set_type dst({2, 4, 5}, throw_comparator(do_throw));
 
@@ -93,8 +94,8 @@ int main(int, char**)
         }
     };
     {
-        typedef set<Counter<int>, std::less<Counter<int>>> first_set_type;
-        typedef set<Counter<int>, comparator> second_set_type;
+        typedef std::set<Counter<int>, std::less<Counter<int>>> first_set_type;
+        typedef std::set<Counter<int>, comparator> second_set_type;
         typedef multiset<Counter<int>, comparator> third_set_type;
 
         {
@@ -133,9 +134,9 @@ int main(int, char**)
         assert(Counter_base::gConstructed == 0);
     }
     {
-        set<int> first;
+        std::set<int> first;
         {
-            set<int> second;
+            std::set<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }

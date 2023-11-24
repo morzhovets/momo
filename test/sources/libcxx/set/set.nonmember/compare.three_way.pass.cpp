@@ -20,7 +20,7 @@
 //                                           const set<Key, Compare, Allocator>& y);
 
 int main(int, char**) {
-  assert((test_ordered_set_container_spaceship<set>()));
+  assert((test_ordered_set_container_spaceship<std::set>()));
   // `std::set` is not constexpr, so no `static_assert` test here.
   return 0;
 }

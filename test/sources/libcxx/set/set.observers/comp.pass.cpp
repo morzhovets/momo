@@ -16,7 +16,7 @@
 // value_compare value_comp() const;
 
 int main(int, char**) {
-    typedef set<int> set_type;
+    typedef std::set<int> set_type;
 
     set_type s;
     std::pair<set_type::iterator, bool> p1 = s.insert(1);

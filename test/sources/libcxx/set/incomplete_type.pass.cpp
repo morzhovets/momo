@@ -16,7 +16,7 @@
 // type.
 
 struct A {
-    typedef set<A> Set;
+    typedef std::set<A> Set;
     int data;
     Set m;
     Set::iterator it;
