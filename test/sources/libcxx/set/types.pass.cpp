@@ -49,7 +49,6 @@ void main()
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef std::set<int, std::less<int>, min_allocator<int>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
@@ -65,6 +64,5 @@ void main()
     static_assert((std::is_same<C::size_type, std::make_unsigned<C::difference_type>::type>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
-#endif
 #endif
 }

@@ -48,7 +48,6 @@ void main()
         assert(m.size() == 3);
         assert(*r.first == 3);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::set<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
         typedef std::pair<M::iterator, bool> R;
@@ -77,5 +76,4 @@ void main()
         assert(m.size() == 3);
         assert(*r.first == 3);
     }
-#endif
 }

@@ -34,7 +34,6 @@ void basic_test() {
     assert(*++i == V(5));
     assert(*++i == V(6));
   }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
   {
     typedef std::set<int, std::less<int>, min_allocator<int> > C;
     typedef C::value_type V;
@@ -50,7 +49,6 @@ void basic_test() {
     assert(*++i == V(5));
     assert(*++i == V(6));
   }
-#endif
 }
 
 void duplicate_keys_test() {

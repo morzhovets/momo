@@ -54,7 +54,6 @@ void main()
         assert(r == 0);
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         typedef std::set<int, std::less<int>, min_allocator<int>> M;
@@ -90,7 +89,6 @@ void main()
         r = m.count(4);
         assert(r == 0);
     }
-#endif
 #endif
 #if TEST_STD_VER > 11
     {

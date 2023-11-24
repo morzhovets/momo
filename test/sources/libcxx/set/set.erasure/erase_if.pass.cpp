@@ -56,9 +56,7 @@ void test()
 void main()
 {
     test<std::set<int>>();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     test<std::set<int, std::less<int>, min_allocator<int>>> ();
-#endif
     test<std::set<int, std::less<int>, test_allocator<int>>> ();
 
     test<std::set<long>>();

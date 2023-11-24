@@ -42,7 +42,6 @@ void main()
     assert(*std::next(m.begin(), 2) == 3);
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef int V;
     V ar[] =
@@ -65,6 +64,5 @@ void main()
     assert(*std::next(m.begin()) == 2);
     assert(*std::next(m.begin(), 2) == 3);
     }
-#endif
 #endif
 }

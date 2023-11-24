@@ -122,7 +122,6 @@ void main()
         assert(i == m.begin());
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int V;
         V ar[] =
@@ -213,7 +212,6 @@ void main()
         }
         assert(i == m.begin());
     }
-#endif
 #endif
 #if TEST_STD_VER > 11
     { // N3644 testing

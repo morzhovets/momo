@@ -43,7 +43,6 @@ void main()
         assert(*r == 3);
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::set<int, std::less<int>, min_allocator<int>> M;
         typedef M::iterator R;
@@ -68,6 +67,5 @@ void main()
         assert(m.size() == 3);
         assert(*r == 3);
     }
-#endif
 #endif
 }
