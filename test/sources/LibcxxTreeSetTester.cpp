@@ -18,7 +18,7 @@
 
 #include "../../include/momo/stdish/set.h"
 
-namespace
+namespace libcxx_test_tree_set
 {
 
 namespace std
@@ -40,6 +40,6 @@ namespace std
 #include "LibcxxSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace
+}
 
 #endif // TEST_LIBCXX_TREE_SET
