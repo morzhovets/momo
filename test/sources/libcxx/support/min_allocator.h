@@ -198,6 +198,8 @@ struct cpp03_overload_allocator : bare_allocator<T>
 };
 template <class T> bool cpp03_overload_allocator<T>::construct_called = false;
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+
 template <class T, class = std::integral_constant<std::size_t, 0> > class min_pointer;
 template <class T, class ID> class min_pointer<const T, ID>;
 template <class ID> class min_pointer<void, ID>;
@@ -387,6 +389,13 @@ public:
     template <class U, class XID> friend class min_pointer;
 };
 
+#else
+
+template<typename T>
+using min_pointer = T*;
+
+#endif
+
 template <class T>
 class min_allocator
 {
@@ -405,7 +414,11 @@ public:
 
     TEST_CONSTEXPR_CXX20 void deallocate(pointer p, std::ptrdiff_t n)
     {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         std::allocator<T>().deallocate(p.ptr_, n);
+#else
+        std::allocator<T>().deallocate(p, n);
+#endif
     }
 
     TEST_CONSTEXPR_CXX20 friend bool operator==(min_allocator, min_allocator) {return true;}
