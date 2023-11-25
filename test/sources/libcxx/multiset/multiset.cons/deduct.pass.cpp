@@ -189,7 +189,9 @@ int main(int, char **) {
   }
 #endif
 
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930)
   AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
+#endif
 
   return 0;
 }

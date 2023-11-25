@@ -74,6 +74,10 @@ LIBCXX_TEST_BEGIN(find)
 #include "libcxx/multiset/find.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "libcxx/multiset/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete_type)
 #include "libcxx/multiset/incomplete_type.pass.cpp"
