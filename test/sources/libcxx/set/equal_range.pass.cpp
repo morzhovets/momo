@@ -17,7 +17,7 @@
 // pair<iterator,iterator>             equal_range(const key_type& k);
 // pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
 
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
@@ -364,4 +364,6 @@ void main()
     assert(r.second == std::next(m.begin(), 8));
     }
 #endif
+
+  return 0;
 }

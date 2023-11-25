@@ -28,7 +28,7 @@ struct some_comp
     bool operator()(const T&, const T&) const { return false; }
 };
 
-void main()
+int main(int, char**)
 {
 #if defined(_LIBCPP_VERSION)
     {
@@ -50,4 +50,6 @@ void main()
         static_assert(!std::is_nothrow_move_constructible<C>::value, "");
     }
 #endif
+
+  return 0;
 }

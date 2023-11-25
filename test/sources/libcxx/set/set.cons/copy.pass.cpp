@@ -16,7 +16,7 @@
 
 // set(const set& m);
 
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
@@ -88,4 +88,6 @@ void main()
         assert(*std::next(mo.begin(), 2) == 3);
     }
 #endif
+
+  return 0;
 }

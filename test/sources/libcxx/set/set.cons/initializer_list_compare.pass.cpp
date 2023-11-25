@@ -18,7 +18,7 @@
 
 // set(initializer_list<value_type> il, const key_compare& comp = key_compare());
 
-void main()
+int main(int, char**)
 {
     typedef test_less<int> Cmp;
     typedef std::set<int, Cmp> C;
@@ -34,4 +34,6 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     assert(m.key_comp() == Cmp(10));
+
+  return 0;
 }

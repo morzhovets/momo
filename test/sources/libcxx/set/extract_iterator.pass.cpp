@@ -47,7 +47,7 @@ void test(Container& c)
     assert(c.size() == 0);
 }
 
-void main()
+int main(int, char**)
 {
     {
         using set_type = std::set<int>;
@@ -61,9 +61,12 @@ void main()
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
+
     {
         using min_alloc_set = std::set<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
+
+  return 0;
 }

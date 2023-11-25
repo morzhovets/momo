@@ -29,7 +29,7 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
@@ -230,4 +230,6 @@ void main()
         assert (!(cii != ii1 ));
     }
 #endif
+
+  return 0;
 }

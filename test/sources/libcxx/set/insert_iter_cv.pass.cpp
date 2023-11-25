@@ -16,7 +16,7 @@
 
 // iterator insert(const_iterator position, const value_type& v);
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -68,4 +68,6 @@ void main()
         assert(*r == 3);
     }
 #endif
+
+  return 0;
 }

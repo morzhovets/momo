@@ -16,7 +16,7 @@
 
 // explicit set(const key_compare& comp) const;
 
-void main()
+int main(int, char**)
 {
     typedef test_less<int> C;
     const std::set<int, C> m(C(3));
@@ -24,4 +24,6 @@ void main()
     assert(m.begin() == m.end());
     assert(m.key_comp() == C(3));
     assert(m.value_comp() == C(3));
+
+  return 0;
 }

@@ -18,7 +18,7 @@
 
 // set(set&& s, const allocator_type& a);
 
-void main()
+int main(int, char**)
 {
     {
         typedef MoveOnly V;
@@ -182,4 +182,7 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
+
+
+  return 0;
 }

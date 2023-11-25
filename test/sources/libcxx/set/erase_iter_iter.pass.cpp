@@ -16,7 +16,7 @@
 
 // iterator erase(const_iterator first, const_iterator last);
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -136,4 +136,6 @@ void main()
         assert(i == m.end());
     }
 #endif
+
+  return 0;
 }

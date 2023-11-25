@@ -19,7 +19,7 @@
 // template <class... Args>
 //   iterator emplace_hint(const_iterator position, Args&&... args);
 
-void main()
+int main(int, char**)
 {
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
@@ -76,4 +76,6 @@ void main()
         assert(m.size() == 1);
         assert(*r == 2);
     }
+
+  return 0;
 }

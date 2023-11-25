@@ -17,7 +17,7 @@
 // template <class InputIterator>
 //     set(InputIterator first, InputIterator last, const value_compare& comp);
 
-void main()
+int main(int, char**)
 {
     typedef int V;
     V ar[] =
@@ -41,4 +41,6 @@ void main()
     assert(*m.begin() == 1);
     assert(*std::next(m.begin()) == 2);
     assert(*std::next(m.begin(), 2) == 3);
+
+  return 0;
 }

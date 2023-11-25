@@ -19,7 +19,7 @@
 // set(initializer_list<value_type> il, const key_compare& comp, const allocator_type& a);
 // set(initializer_list<value_type> il, const allocator_type& a);
 
-void main()
+int main(int, char**)
 {
     {
     typedef test_less<int> Cmp;
@@ -56,4 +56,6 @@ void main()
     assert(*++i == V(6));
     assert(m.get_allocator() == A(4));
     }
+
+  return 0;
 }

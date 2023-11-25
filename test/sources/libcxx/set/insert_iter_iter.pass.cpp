@@ -17,7 +17,7 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -67,4 +67,6 @@ void main()
         assert(*std::next(m.begin(), 2) == 3);
     }
 #endif
+
+  return 0;
 }

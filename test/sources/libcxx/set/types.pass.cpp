@@ -32,7 +32,7 @@
 //     ...
 // };
 
-void main()
+int main(int, char**)
 {
     {
     typedef std::set<int> C;
@@ -65,4 +65,6 @@ void main()
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif
+
+  return 0;
 }

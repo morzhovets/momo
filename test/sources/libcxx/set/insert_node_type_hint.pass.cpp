@@ -52,10 +52,12 @@ void test(Container& c)
     }
 }
 
-void main()
+int main(int, char**)
 {
     std::set<int> m;
     test(m);
     std::set<int, std::less<int>, min_allocator<int>> m2;
     test(m2);
+
+  return 0;
 }

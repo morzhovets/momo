@@ -16,7 +16,7 @@
 
 // set& operator=(const set& s);
 
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
@@ -103,4 +103,6 @@ void main()
         assert(*std::next(mo.begin()) == 2);
         assert(*std::next(mo.begin(), 2) == 3);
     }
+
+  return 0;
 }

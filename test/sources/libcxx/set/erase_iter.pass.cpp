@@ -24,7 +24,7 @@ struct TemplateConstructor
 
 bool operator<(const TemplateConstructor&, const TemplateConstructor&) { return false; }
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -198,4 +198,6 @@ void main()
             c.erase(it);
     }
 #endif
+
+  return 0;
 }

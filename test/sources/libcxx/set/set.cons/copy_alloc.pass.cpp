@@ -16,7 +16,7 @@
 
 // set(const set& m, const allocator_type& a);
 
-void main()
+int main(int, char**)
 {
     typedef int V;
     V ar[] =
@@ -50,4 +50,6 @@ void main()
     assert(*mo.begin() == 1);
     assert(*std::next(mo.begin()) == 2);
     assert(*std::next(mo.begin(), 2) == 3);
+
+  return 0;
 }

@@ -18,7 +18,7 @@
 
 // iterator insert(const_iterator position, value_type&& v);
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<MoveOnly> M;
@@ -68,4 +68,6 @@ void main()
         assert(m.size() == 3);
         assert(*r == 3);
     }
+
+  return 0;
 }

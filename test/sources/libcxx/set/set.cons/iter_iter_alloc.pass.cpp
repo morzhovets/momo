@@ -22,7 +22,7 @@
 //     set(InputIterator first, InputIterator last,
 //         const allocator_type& a);
 
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
@@ -79,4 +79,6 @@ void main()
     assert(m.get_allocator() == a);
     }
 #endif
+
+  return 0;
 }

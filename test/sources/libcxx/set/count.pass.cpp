@@ -16,7 +16,7 @@
 
 // size_type count(const key_type& k) const;
 
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
@@ -163,4 +163,7 @@ void main()
     assert(r == 0);
     }
 #endif
+
+
+  return 0;
 }

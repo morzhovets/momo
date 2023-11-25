@@ -16,7 +16,7 @@
 
 // void swap(set& m);
 
-void main()
+int main(int, char**)
 {
     typedef int V;
     {
@@ -170,4 +170,6 @@ void main()
         assert(m2.key_comp() == C(1));
         assert(m2.get_allocator() == A(1));
     }
+
+  return 0;
 }

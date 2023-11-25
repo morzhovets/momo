@@ -45,7 +45,7 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
     }
 }
 
-void main()
+int main(int, char**)
 {
     {
         std::set<int> m = {1, 2, 3, 4, 5, 6};
@@ -62,10 +62,13 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
+
     {
         using min_alloc_set = std::set<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
+
+  return 0;
 }

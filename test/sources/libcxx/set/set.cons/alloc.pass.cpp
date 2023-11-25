@@ -16,7 +16,7 @@
 
 // set(const allocator_type& a);
 
-void main()
+int main(int, char**)
 {
     typedef std::less<int> C;
     typedef test_allocator<int> A;
@@ -24,4 +24,6 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     assert(m.get_allocator() == A(5));
+
+  return 0;
 }

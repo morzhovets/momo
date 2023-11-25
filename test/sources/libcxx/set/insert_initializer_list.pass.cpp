@@ -18,7 +18,7 @@
 
 // void insert(initializer_list<value_type> il);
 
-void main()
+int main(int, char**)
 {
     {
     typedef std::set<int> C;
@@ -54,4 +54,6 @@ void main()
     assert(*++i == V(8));
     assert(*++i == V(10));
     }
+
+  return 0;
 }

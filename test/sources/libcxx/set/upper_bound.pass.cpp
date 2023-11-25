@@ -17,7 +17,7 @@
 //       iterator upper_bound(const key_type& k);
 // const_iterator upper_bound(const key_type& k) const;
 
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
@@ -330,4 +330,6 @@ void main()
     assert(r == std::next(m.begin(), 8));
     }
 #endif
+
+  return 0;
 }

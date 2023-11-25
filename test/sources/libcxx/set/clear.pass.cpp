@@ -16,7 +16,7 @@
 
 // void clear() noexcept;
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -60,4 +60,6 @@ void main()
         assert(m.size() == 0);
     }
 #endif
+
+  return 0;
 }

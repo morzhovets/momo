@@ -53,7 +53,7 @@ void test()
     test0(S({1, 2, 3}), False, S({1, 2, 3}), 0);
 }
 
-void main()
+int main(int, char**)
 {
     test<std::set<int>>();
     test<std::set<int, std::less<int>, min_allocator<int>>> ();
@@ -61,4 +61,6 @@ void main()
 
     test<std::set<long>>();
     test<std::set<double>>();
+
+  return 0;
 }

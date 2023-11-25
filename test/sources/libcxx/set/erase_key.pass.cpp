@@ -16,7 +16,7 @@
 
 // size_type erase(const key_type& k);
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<int> M;
@@ -198,4 +198,6 @@ void main()
         assert(i == 1);
     }
 #endif
+
+  return 0;
 }

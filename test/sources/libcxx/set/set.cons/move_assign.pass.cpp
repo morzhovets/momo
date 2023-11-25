@@ -18,7 +18,7 @@
 
 // set& operator=(set&& s);
 
-void main()
+int main(int, char**)
 {
     {
         typedef MoveOnly V;
@@ -176,4 +176,6 @@ void main()
         assert(m3.key_comp() == C(5));
         assert(m1.empty());
     }
+
+  return 0;
 }

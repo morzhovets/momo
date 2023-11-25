@@ -16,7 +16,7 @@
 
 // set();
 
-void main()
+int main(int, char**)
 {
     {
     std::set<int> m;
@@ -29,7 +29,6 @@ void main()
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-
     {
     typedef explicit_allocator<int> A;
         {
@@ -50,4 +49,6 @@ void main()
     assert(m.begin() == m.end());
     }
 #endif
+
+  return 0;
 }

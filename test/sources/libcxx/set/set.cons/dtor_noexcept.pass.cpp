@@ -20,7 +20,7 @@ struct some_comp
     bool operator()(const T&, const T&) const { return false; }
 };
 
-void main()
+int main(int, char**)
 {
     {
         typedef std::set<MoveOnly> C;
@@ -40,4 +40,6 @@ void main()
         static_assert(!std::is_nothrow_destructible<C>::value, "");
     }
 #endif // _LIBCPP_VERSION
+
+  return 0;
 }

@@ -19,7 +19,7 @@
 // template <class... Args>
 //   pair<iterator, bool> emplace(Args&&... args);
 
-void main()
+int main(int, char**)
 {
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
@@ -83,4 +83,6 @@ void main()
         assert(m.size() == 1);
         assert(*r.first == 2);
     }
+
+  return 0;
 }

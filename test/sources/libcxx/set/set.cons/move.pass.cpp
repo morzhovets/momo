@@ -18,7 +18,7 @@
 
 // set(set&& s);
 
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
@@ -104,4 +104,6 @@ void main()
         assert(mo.size() == 0);
         assert(std::distance(mo.begin(), mo.end()) == 0);
     }
+
+  return 0;
 }

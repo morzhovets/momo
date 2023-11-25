@@ -16,7 +16,7 @@
 
 // void swap(set& m);
 
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
@@ -172,4 +172,6 @@ void main()
     }
     }
 #endif
+
+  return 0;
 }
