@@ -36,8 +36,6 @@ namespace std
 			momo::TreeSetSettings>>;
 }
 
-using std::multiset;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
 #include "LibcxxMultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX

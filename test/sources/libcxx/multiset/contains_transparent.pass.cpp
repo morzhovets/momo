@@ -44,7 +44,7 @@ void test() {
 }
 
 int main(int, char**) {
-  test<multiset<std::pair<int, int>, Comp> >();
+  test<std::multiset<std::pair<int, int>, Comp> >();
 
   return 0;
 }

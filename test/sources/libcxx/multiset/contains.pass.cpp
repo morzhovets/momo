@@ -32,8 +32,8 @@ struct E { int a = 1; double b = 1; char c = 1; };
 int main(int, char**)
 {
     {
-        test<multiset<int>, int>(14, 10, 11, 12, 13);
-        test<multiset<char>, char>('e', 'a', 'b', 'c', 'd');
+        test<std::multiset<int>, int>(14, 10, 11, 12, 13);
+        test<std::multiset<char>, char>('e', 'a', 'b', 'c', 'd');
     }
 
     return 0;
