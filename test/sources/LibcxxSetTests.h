@@ -128,6 +128,10 @@ LIBCXX_TEST_BEGIN(iterator_concept_conformance)
 #include "libcxx/set/iterator_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(iterator_types)
+#include "libcxx/set/iterator_types.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(lower_bound)
 #include "libcxx/set/lower_bound.pass.cpp"
 LIBCXX_TEST_END
