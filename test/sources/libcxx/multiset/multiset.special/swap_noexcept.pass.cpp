@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -24,14 +23,6 @@
 //              noexcept(swap(declval<Compare&>(), declval<Compare&>())));
 
 // This tests a conforming extension
-
-//#include <set>
-//#include <utility>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
 
 template <class T>
 struct some_comp
@@ -53,10 +44,10 @@ struct some_comp2
     bool operator()(const T&, const T&) const { return false; }
 };
 
-//#if TEST_STD_VER >= 14
+#if TEST_STD_VER >= 14
 template <typename T>
 void swap(some_comp2<T>&, some_comp2<T>&) noexcept {}
-//#endif
+#endif
 
 template <class T>
 struct some_alloc
@@ -96,49 +87,51 @@ struct some_alloc3
     typedef std::false_type is_always_equal;
 };
 
-void main()
+int main(int, char**)
 {
     {
-        typedef multiset<MoveOnly> C;
+        typedef std::multiset<MoveOnly> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     {
-        typedef multiset<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
+        typedef std::multiset<MoveOnly, std::less<MoveOnly>, test_allocator<MoveOnly>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     {
-        typedef multiset<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
+        typedef std::multiset<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
     {
-        typedef multiset<MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::multiset<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 
-//#if TEST_STD_VER >= 14
+#if TEST_STD_VER >= 14
     { // POCS allocator, throwable swap for comp
-    typedef multiset<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef std::multiset<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, throwable swap for comp
-    typedef multiset<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef std::multiset<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // POCS allocator, nothrow swap for comp
-    typedef multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
+    typedef std::multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, nothrow swap for comp
-    typedef multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
+    typedef std::multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     { // NOT always equal allocator, nothrow swap for comp
-    typedef multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
+    typedef std::multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
-//#endif
+#endif
+
+  return 0;
 }

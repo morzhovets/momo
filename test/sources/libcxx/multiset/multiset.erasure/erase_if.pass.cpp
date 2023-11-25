@@ -18,14 +18,8 @@
 //   typename multiset<T, Compare, Allocator>::size_type
 //   erase_if(multiset<T, Compare, Allocator>& c, Predicate pred);
 
-//#include <set>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 template <class S, class Pred>
-void test0(S s, Pred p, S expected, size_t expected_erased_count) {
+void test0(S s, Pred p, S expected, std::size_t expected_erased_count) {
   ASSERT_SAME_TYPE(typename S::size_type, decltype(erase_if(s, p)));
   assert(expected_erased_count == erase_if(s, p));
   assert(s == expected);
@@ -34,13 +28,12 @@ void test0(S s, Pred p, S expected, size_t expected_erased_count) {
 template <typename S>
 void test()
 {
-    using V = typename S::value_type;
-    auto is1 = [](V v) { return v == 1;};
-    auto is2 = [](V v) { return v == 2;};
-    auto is3 = [](V v) { return v == 3;};
-    auto is4 = [](V v) { return v == 4;};
-    auto True  = [](V) { return true; };
-    auto False = [](V) { return false; };
+    auto is1 = [](auto v) { return v == 1;};
+    auto is2 = [](auto v) { return v == 2;};
+    auto is3 = [](auto v) { return v == 3;};
+    auto is4 = [](auto v) { return v == 4;};
+    auto True  = [](auto) { return true; };
+    auto False = [](auto) { return false; };
 
     test0(S(), is1, S(), 0);
 
@@ -71,14 +64,14 @@ void test()
     test0(S({1, 2, 3}), False, S({1, 2, 3}), 0);
 }
 
-void main()
+int main(int, char**)
 {
-    test<multiset<int>>();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<multiset<int, std::less<int>, min_allocator<int>>> ();
-#endif
-    test<multiset<int, std::less<int>, test_allocator<int>>> ();
+    test<std::multiset<int>>();
+    test<std::multiset<int, std::less<int>, min_allocator<int>>> ();
+    test<std::multiset<int, std::less<int>, test_allocator<int>>> ();
 
-    test<multiset<long>>();
-    test<multiset<double>>();
+    test<std::multiset<long>>();
+    test<std::multiset<double>>();
+
+  return 0;
 }

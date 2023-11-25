@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,16 +16,11 @@
 
 // void swap(multiset& m);
 
-//#include <set>
-//#include <cassert>
-//#include "test_allocator.h"
-//#include "../../../test_compare.h"
-
-void main()
+int main(int, char**)
 {
     typedef int V;
     {
-    typedef multiset<int> M;
+    typedef std::multiset<int> M;
     {
         M m1;
         M m2;
@@ -102,8 +96,8 @@ void main()
     }
     {
         typedef test_allocator<V> A;
-        typedef test_compare<std::less<int> > C;
-        typedef multiset<int, C, A> M;
+        typedef test_less<int> C;
+        typedef std::multiset<int, C, A> M;
         V ar1[] =
         {
             1,
@@ -144,8 +138,8 @@ void main()
     }
     {
         typedef other_allocator<V> A;
-        typedef test_compare<std::less<int> > C;
-        typedef multiset<int, C, A> M;
+        typedef test_less<int> C;
+        typedef std::multiset<int, C, A> M;
         V ar1[] =
         {
             1,
@@ -176,4 +170,6 @@ void main()
         assert(m2.key_comp() == C(1));
         assert(m2.get_allocator() == A(1));
     }
+
+  return 0;
 }
