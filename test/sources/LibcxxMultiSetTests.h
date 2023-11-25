@@ -148,6 +148,10 @@ LIBCXX_TEST_BEGIN(range_concept_conformance)
 #include "libcxx/multiset/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(scary)
+#include "libcxx/multiset/scary.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(size)
 #include "libcxx/multiset/size.pass.cpp"
 LIBCXX_TEST_END
