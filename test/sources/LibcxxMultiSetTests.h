@@ -62,9 +62,9 @@ LIBCXX_TEST_BEGIN(erase_key)
 #include "libcxx/multiset/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(extract_iterator)
-//#include "libcxx/multiset/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(extract_iterator)
+#include "libcxx/multiset/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(extract_key)
 #include "libcxx/multiset/extract_key.pass.cpp"
@@ -74,9 +74,11 @@ LIBCXX_TEST_BEGIN(find)
 #include "libcxx/multiset/find.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(incomplete_type)
-//#include "libcxx/multiset/incomplete_type.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete_type)
+#include "libcxx/multiset/incomplete_type.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/multiset/insert_cv.pass.cpp"
@@ -122,9 +124,9 @@ LIBCXX_TEST_BEGIN(lower_bound)
 #include "libcxx/multiset/lower_bound.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(max_size)
-//#include "libcxx/multiset/max_size.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(max_size)
+#include "libcxx/multiset/max_size.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(merge)
 #include "libcxx/multiset/merge.pass.cpp"

@@ -36,10 +36,14 @@ int main(int, char**)
     }
     {
       typedef std::multiset<char> C;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       const C::size_type max_dist =
           static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
+#endif
       C c;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       assert(c.max_size() <= max_dist);
+#endif
       assert(c.max_size() <= alloc_max_size(c.get_allocator()));
     }
 
