@@ -178,13 +178,13 @@ LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/multiset/multiset.cons/default.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_default_noexcept)
-//#include "libcxx/multiset/multiset.cons/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_default_noexcept)
+#include "libcxx/multiset/multiset.cons/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
-//#include "libcxx/multiset/multiset.cons/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
+#include "libcxx/multiset/multiset.cons/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "libcxx/multiset/multiset.cons/initializer_list.pass.cpp"
@@ -222,13 +222,13 @@ LIBCXX_TEST_BEGIN(cons_move_assign)
 #include "libcxx/multiset/multiset.cons/move_assign.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
-//#include "libcxx/multiset/multiset.cons/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
+#include "libcxx/multiset/multiset.cons/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_noexcept)
-//#include "libcxx/multiset/multiset.cons/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_noexcept)
+#include "libcxx/multiset/multiset.cons/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/multiset/multiset.erasure/erase_if.pass.cpp"
@@ -242,6 +242,6 @@ LIBCXX_TEST_BEGIN(special_non_member_swap)
 #include "libcxx/multiset/multiset.special/non_member_swap.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(special_swap_noexcept)
-//#include "libcxx/multiset/multiset.special/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(special_swap_noexcept)
+#include "libcxx/multiset/multiset.special/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END

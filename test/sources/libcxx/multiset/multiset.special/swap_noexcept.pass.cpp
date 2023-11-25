@@ -56,6 +56,7 @@ struct some_alloc
 
     some_alloc() {}
     some_alloc(const some_alloc&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::true_type propagate_on_container_swap;
@@ -68,6 +69,7 @@ struct some_alloc2
 
     some_alloc2() {}
     some_alloc2(const some_alloc2&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::false_type propagate_on_container_swap;
@@ -81,6 +83,7 @@ struct some_alloc3
 
     some_alloc3() {}
     some_alloc3(const some_alloc3&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::false_type propagate_on_container_swap;
@@ -103,12 +106,15 @@ int main(int, char**)
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::multiset<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
+#endif
 
 #if TEST_STD_VER >= 14
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     { // POCS allocator, throwable swap for comp
     typedef std::multiset<MoveOnly, some_comp <MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
@@ -117,6 +123,7 @@ int main(int, char**)
     typedef std::multiset<MoveOnly, some_comp <MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
+#endif
     { // POCS allocator, nothrow swap for comp
     typedef std::multiset<MoveOnly, some_comp2<MoveOnly>, some_alloc <MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
