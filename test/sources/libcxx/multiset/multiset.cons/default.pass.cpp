@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,44 +16,39 @@
 
 // multiset();
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    multiset<int> m;
+    std::multiset<int> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    multiset<int, std::less<int>, min_allocator<int>> m;
+    std::multiset<int, std::less<int>, min_allocator<int>> m;
     assert(m.empty());
     assert(m.begin() == m.end());
     }
     {
     typedef explicit_allocator<int> A;
         {
-        multiset<int, std::less<int>, A> m;
+        std::multiset<int, std::less<int>, A> m;
         assert(m.empty());
         assert(m.begin() == m.end());
         }
         {
         A a;
-        multiset<int, std::less<int>, A> m(a);
+        std::multiset<int, std::less<int>, A> m(a);
         assert(m.empty());
         assert(m.begin() == m.end());
         }
     }
-#endif
     {
-    multiset<int> m = {};
+    std::multiset<int> m = {};
     assert(m.empty());
     assert(m.begin() == m.end());
     }
-//#endif
+#endif
+
+  return 0;
 }

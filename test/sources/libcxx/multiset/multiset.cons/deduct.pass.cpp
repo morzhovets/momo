@@ -10,10 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03, c++11, c++14
+
 // <set>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
-// UNSUPPORTED: apple-clang-9.1
 
 // template<class InputIterator,
 //          class Compare = less<iter-value-type<InputIterator>>,
@@ -33,20 +32,11 @@
 // multiset(initializer_list<Key>, Allocator)
 //   -> multiset<Key, less<Key>, Allocator>;
 
-//#include <algorithm> // std::equal
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <functional>
-//#include <set>
-//#include <type_traits>
-//
-//#include "test_allocator.h"
-
 struct NotAnAllocator {
   friend bool operator<(NotAnAllocator, NotAnAllocator) { return false; }
 };
 
-void main() {
+int main(int, char **) {
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
     momo::stdish::multiset s(std::begin(arr), std::end(arr));
@@ -198,4 +188,8 @@ void main() {
     assert(s.size() == 2);
   }
 #endif
+
+  AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
+
+  return 0;
 }

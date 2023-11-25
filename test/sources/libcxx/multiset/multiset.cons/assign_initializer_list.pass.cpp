@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -19,20 +18,15 @@
 
 // multiset& operator=(initializer_list<value_type> il);
 
-//#include <set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef multiset<int> C;
+    typedef std::multiset<int> C;
     typedef C::value_type V;
     C m = {10, 8};
     m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);
-    assert(distance(m.begin(), m.end()) == 6);
+    assert(std::distance(m.begin(), m.end()) == 6);
     C::const_iterator i = m.cbegin();
     assert(*i == V(1));
     assert(*++i == V(2));
@@ -41,14 +35,13 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef multiset<int, std::less<int>, min_allocator<int>> C;
+    typedef std::multiset<int, std::less<int>, min_allocator<int>> C;
     typedef C::value_type V;
     C m = {10, 8};
     m = {1, 2, 3, 4, 5, 6};
     assert(m.size() == 6);
-    assert(distance(m.begin(), m.end()) == 6);
+    assert(std::distance(m.begin(), m.end()) == 6);
     C::const_iterator i = m.cbegin();
     assert(*i == V(1));
     assert(*++i == V(2));
@@ -57,5 +50,6 @@ void main()
     assert(*++i == V(5));
     assert(*++i == V(6));
     }
-#endif
+
+  return 0;
 }
