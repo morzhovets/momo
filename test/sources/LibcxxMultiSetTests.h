@@ -256,6 +256,18 @@ LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/multiset/multiset.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(nonmember_compare_three_way)
+#include "libcxx/multiset/multiset.nonmember/compare.three_way.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(nonmember_op_compare)
+#include "libcxx/multiset/multiset.nonmember/op_compare.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(observers_comp)
+#include "libcxx/multiset/multiset.observers/comp.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(special_member_swap)
 #include "libcxx/multiset/multiset.special/member_swap.pass.cpp"
 LIBCXX_TEST_END
