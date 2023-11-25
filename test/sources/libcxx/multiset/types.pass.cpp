@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -33,15 +32,10 @@
 //     ...
 // };
 
-//#include <set>
-//#include <type_traits>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef multiset<int> C;
+    typedef std::multiset<int> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
@@ -54,10 +48,9 @@ void main()
     static_assert((std::is_same<C::size_type, std::size_t>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef multiset<int, std::less<int>, min_allocator<int>> C;
+    typedef std::multiset<int, std::less<int>, min_allocator<int>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
@@ -72,4 +65,6 @@ void main()
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif
+
+  return 0;
 }

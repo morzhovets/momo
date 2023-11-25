@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,18 +17,11 @@
 // pair<iterator,iterator>             equal_range(const key_type& k);
 // pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
-    typedef multiset<int> M;
+    typedef std::multiset<int> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -46,26 +38,26 @@ void main()
         };
         M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         R r = m.equal_range(4);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 0));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 0));
         r = m.equal_range(5);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(6);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(7);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(8);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(9);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 9));
         r = m.equal_range(10);
-        assert(r.first  == next(m.begin(), 9));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 9));
+        assert(r.second == std::next(m.begin(), 9));
     }
     {
         typedef std::pair<M::const_iterator, M::const_iterator> R;
@@ -83,33 +75,32 @@ void main()
         };
         const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         R r = m.equal_range(4);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 0));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 0));
         r = m.equal_range(5);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(6);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(7);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(8);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(9);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 9));
         r = m.equal_range(10);
-        assert(r.first  == next(m.begin(), 9));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 9));
+        assert(r.second == std::next(m.begin(), 9));
     }
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
     typedef int V;
-    typedef multiset<int, std::less<int>, min_allocator<int>> M;
+    typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
     {
         typedef std::pair<M::iterator, M::iterator> R;
         V ar[] =
@@ -126,26 +117,26 @@ void main()
         };
         M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         R r = m.equal_range(4);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 0));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 0));
         r = m.equal_range(5);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(6);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(7);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(8);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(9);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 9));
         r = m.equal_range(10);
-        assert(r.first  == next(m.begin(), 9));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 9));
+        assert(r.second == std::next(m.begin(), 9));
     }
     {
         typedef std::pair<M::const_iterator, M::const_iterator> R;
@@ -163,34 +154,33 @@ void main()
         };
         const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         R r = m.equal_range(4);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 0));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 0));
         r = m.equal_range(5);
-        assert(r.first  == next(m.begin(), 0));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 0));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(6);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 3));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 3));
         r = m.equal_range(7);
-        assert(r.first  == next(m.begin(), 3));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 3));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(8);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 6));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 6));
         r = m.equal_range(9);
-        assert(r.first  == next(m.begin(), 6));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 6));
+        assert(r.second == std::next(m.begin(), 9));
         r = m.equal_range(10);
-        assert(r.first  == next(m.begin(), 9));
-        assert(r.second == next(m.begin(), 9));
+        assert(r.first  == std::next(m.begin(), 9));
+        assert(r.second == std::next(m.begin(), 9));
     }
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+#if TEST_STD_VER > 11
     {
     typedef int V;
-    typedef multiset<V, std::less<>> M;
+    typedef std::multiset<V, std::less<>> M;
     typedef std::pair<M::iterator, M::iterator> R;
     V ar[] =
     {
@@ -206,31 +196,31 @@ void main()
     };
     M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     R r = m.equal_range(4);
-    assert(r.first  == next(m.begin(), 0));
-    assert(r.second == next(m.begin(), 0));
+    assert(r.first  == std::next(m.begin(), 0));
+    assert(r.second == std::next(m.begin(), 0));
     r = m.equal_range(5);
-    assert(r.first  == next(m.begin(), 0));
-    assert(r.second == next(m.begin(), 3));
+    assert(r.first  == std::next(m.begin(), 0));
+    assert(r.second == std::next(m.begin(), 3));
     r = m.equal_range(6);
-    assert(r.first  == next(m.begin(), 3));
-    assert(r.second == next(m.begin(), 3));
+    assert(r.first  == std::next(m.begin(), 3));
+    assert(r.second == std::next(m.begin(), 3));
     r = m.equal_range(7);
-    assert(r.first  == next(m.begin(), 3));
-    assert(r.second == next(m.begin(), 6));
+    assert(r.first  == std::next(m.begin(), 3));
+    assert(r.second == std::next(m.begin(), 6));
     r = m.equal_range(8);
-    assert(r.first  == next(m.begin(), 6));
-    assert(r.second == next(m.begin(), 6));
+    assert(r.first  == std::next(m.begin(), 6));
+    assert(r.second == std::next(m.begin(), 6));
     r = m.equal_range(9);
-    assert(r.first  == next(m.begin(), 6));
-    assert(r.second == next(m.begin(), 9));
+    assert(r.first  == std::next(m.begin(), 6));
+    assert(r.second == std::next(m.begin(), 9));
     r = m.equal_range(10);
-    assert(r.first  == next(m.begin(), 9));
-    assert(r.second == next(m.begin(), 9));
+    assert(r.first  == std::next(m.begin(), 9));
+    assert(r.second == std::next(m.begin(), 9));
     }
 
     {
     typedef PrivateConstructor V;
-    typedef multiset<V, std::less<>> M;
+    typedef std::multiset<V, std::less<>> M;
     typedef std::pair<M::iterator, M::iterator> R;
 
     M m;
@@ -245,26 +235,28 @@ void main()
     m.insert ( V::make ( 9 ));
 
     R r = m.equal_range(4);
-    assert(r.first  == next(m.begin(), 0));
-    assert(r.second == next(m.begin(), 0));
+    assert(r.first  == std::next(m.begin(), 0));
+    assert(r.second == std::next(m.begin(), 0));
     r = m.equal_range(5);
-    assert(r.first  == next(m.begin(), 0));
-    assert(r.second == next(m.begin(), 3));
+    assert(r.first  == std::next(m.begin(), 0));
+    assert(r.second == std::next(m.begin(), 3));
     r = m.equal_range(6);
-    assert(r.first  == next(m.begin(), 3));
-    assert(r.second == next(m.begin(), 3));
+    assert(r.first  == std::next(m.begin(), 3));
+    assert(r.second == std::next(m.begin(), 3));
     r = m.equal_range(7);
-    assert(r.first  == next(m.begin(), 3));
-    assert(r.second == next(m.begin(), 6));
+    assert(r.first  == std::next(m.begin(), 3));
+    assert(r.second == std::next(m.begin(), 6));
     r = m.equal_range(8);
-    assert(r.first  == next(m.begin(), 6));
-    assert(r.second == next(m.begin(), 6));
+    assert(r.first  == std::next(m.begin(), 6));
+    assert(r.second == std::next(m.begin(), 6));
     r = m.equal_range(9);
-    assert(r.first  == next(m.begin(), 6));
-    assert(r.second == next(m.begin(), 9));
+    assert(r.first  == std::next(m.begin(), 6));
+    assert(r.second == std::next(m.begin(), 9));
     r = m.equal_range(10);
-    assert(r.first  == next(m.begin(), 9));
-    assert(r.second == next(m.begin(), 9));
+    assert(r.first  == std::next(m.begin(), 9));
+    assert(r.second == std::next(m.begin(), 9));
     }
 #endif
+
+  return 0;
 }

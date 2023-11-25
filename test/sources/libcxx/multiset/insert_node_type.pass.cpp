@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,17 +10,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <set>
 
 // class multiset
 
 // iterator insert(node_type&&);
-
-//#include <set>
-//#include <type_traits>
-//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -72,12 +67,12 @@ void test(Container& c)
     }
 }
 
-void main()
+int main(int, char**)
 {
-    multiset<int> m;
+    std::multiset<int> m;
     test(m);
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    multiset<int, std::less<int>, min_allocator<int>> m2;
+    std::multiset<int, std::less<int>, min_allocator<int>> m2;
     test(m2);
-#endif
+
+  return 0;
 }

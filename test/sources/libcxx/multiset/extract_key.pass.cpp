@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <set>
 
@@ -19,15 +18,11 @@
 
 // node_type extract(key_type const&);
 
-//#include <set>
-//#include "min_allocator.h"
-//#include "Counter.h"
-
 template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
 {
-    size_t sz = c.size();
-    assert(momo::internal::UIntMath<>::Dist(first, last) == sz);
+    std::size_t sz = c.size();
+    assert(static_cast<std::size_t>(std::distance(first, last)) == sz);
 
     for (KeyTypeIter copy = first; copy != last; ++copy)
     {
@@ -50,16 +45,16 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
     }
 }
 
-void main()
+int main(int, char**)
 {
     {
-        multiset<int> m = {1, 2, 3, 4, 5, 6};
+        std::multiset<int> m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
 
     {
-        multiset<Counter<int>> m = {1, 2, 3, 4, 5, 6};
+        std::multiset<Counter<int>> m = {1, 2, 3, 4, 5, 6};
         {
             Counter<int> keys[] = {1, 2, 3, 4, 5, 6};
             assert(Counter_base::gConstructed == 6+6);
@@ -67,12 +62,13 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+
     {
-        using min_alloc_set = multiset<int, std::less<int>, min_allocator<int>>;
+        using min_alloc_set = std::multiset<int, std::less<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
-#endif
+
+  return 0;
 }

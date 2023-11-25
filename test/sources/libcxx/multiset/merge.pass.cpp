@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <set>
 
@@ -25,12 +24,6 @@
 //   void merge(multiset<Key, C2, Allocator>& source);
 // template <class C2>
 //   void merge(multiset<Key, C2, Allocator>&& source);
-
-//#include <set>
-//#include "test_macros.h"
-//#include "Counter.h"
-
-using momo::stdish::set;
 
 template <class Set>
 bool set_equal(const Set& set, Set other)
@@ -55,11 +48,11 @@ struct throw_comparator
 };
 #endif
 
-void main()
+int main(int, char**)
 {
     {
-        multiset<int> src{1, 3, 5};
-        multiset<int> dst{2, 4, 5};
+        std::multiset<int> src{1, 3, 5};
+        std::multiset<int> dst{2, 4, 5};
         dst.merge(src);
         assert(set_equal(src, {}));
         assert(set_equal(dst, {1, 2, 3, 4, 5, 5}));
@@ -68,7 +61,7 @@ void main()
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef multiset<Counter<int>, throw_comparator> set_type;
+        typedef std::multiset<Counter<int>, throw_comparator> set_type;
         set_type src({1, 3, 5}, throw_comparator(do_throw));
         set_type dst({2, 4, 5}, throw_comparator(do_throw));
 
@@ -99,9 +92,9 @@ void main()
         }
     };
     {
-        typedef multiset<Counter<int>, std::less<Counter<int>>> first_set_type;
-        typedef multiset<Counter<int>, comparator> second_set_type;
-        typedef set<Counter<int>, comparator> third_set_type;
+        typedef std::multiset<Counter<int>, std::less<Counter<int>>> first_set_type;
+        typedef std::multiset<Counter<int>, comparator> second_set_type;
+        typedef momo::stdish::set<Counter<int>, comparator> third_set_type;
 
         {
             first_set_type first{1, 2, 3};
@@ -139,16 +132,17 @@ void main()
         assert(Counter_base::gConstructed == 0);
     }
     {
-        multiset<int> first;
+        std::multiset<int> first;
         {
-            multiset<int> second;
+            std::multiset<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
         {
-            set<int> second;
+            momo::stdish::set<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
     }
+    return 0;
 }

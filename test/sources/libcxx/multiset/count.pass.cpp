@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,18 +16,11 @@
 
 // size_type count(const key_type& k) const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
-void main()
+int main(int, char**)
 {
     {
     typedef int V;
-    typedef multiset<int> M;
+    typedef std::multiset<int> M;
     {
         typedef M::size_type R;
         V ar[] =
@@ -60,11 +52,10 @@ void main()
         assert(r == 0);
     }
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
     typedef int V;
-    typedef multiset<int, std::less<int>, min_allocator<int>> M;
+    typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
     {
         typedef M::size_type R;
         V ar[] =
@@ -97,11 +88,10 @@ void main()
     }
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+#if TEST_STD_VER > 11
     {
     typedef int V;
-    typedef multiset<int, std::less<>> M;
+    typedef std::multiset<int, std::less<>> M;
     typedef M::size_type R;
     V ar[] =
     {
@@ -134,7 +124,7 @@ void main()
 
     {
     typedef PrivateConstructor V;
-    typedef multiset<V, std::less<>> M;
+    typedef std::multiset<V, std::less<>> M;
     typedef M::size_type R;
 
     M m;
@@ -164,4 +154,6 @@ void main()
     assert(r == 0);
     }
 #endif
+
+  return 0;
 }

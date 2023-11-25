@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <set>
 
@@ -19,16 +18,10 @@
 
 // iterator insert(value_type&& v);
 
-//#include <set>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef multiset<MoveOnly> M;
+        typedef std::multiset<MoveOnly> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(M::value_type(2));
@@ -42,18 +35,17 @@ void main()
         assert(*r == 1);
 
         r = m.insert(M::value_type(3));
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r == 3);
 
         r = m.insert(M::value_type(3));
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 4);
         assert(*r == 3);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef multiset<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
+        typedef std::multiset<MoveOnly, std::less<MoveOnly>, min_allocator<MoveOnly>> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(M::value_type(2));
@@ -67,14 +59,15 @@ void main()
         assert(*r == 1);
 
         r = m.insert(M::value_type(3));
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 3);
         assert(*r == 3);
 
         r = m.insert(M::value_type(3));
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 4);
         assert(*r == 3);
     }
-#endif
+
+  return 0;
 }

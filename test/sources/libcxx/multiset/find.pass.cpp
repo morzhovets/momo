@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,18 +17,11 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
-//#include <set>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
-void main()
+int main(int, char**)
 {
     {
         typedef int V;
-        typedef multiset<int> M;
+        typedef std::multiset<int> M;
         {
             typedef M::iterator R;
             V ar[] =
@@ -47,21 +39,21 @@ void main()
             R r = m.find(5);
             assert(r == m.begin());
             r = m.find(6);
-            assert(r == next(m.begin()));
+            assert(r == std::next(m.begin()));
             r = m.find(7);
-            assert(r == next(m.begin(), 2));
+            assert(r == std::next(m.begin(), 2));
             r = m.find(8);
-            assert(r == next(m.begin(), 3));
+            assert(r == std::next(m.begin(), 3));
             r = m.find(9);
-            assert(r == next(m.begin(), 4));
+            assert(r == std::next(m.begin(), 4));
             r = m.find(10);
-            assert(r == next(m.begin(), 5));
+            assert(r == std::next(m.begin(), 5));
             r = m.find(11);
-            assert(r == next(m.begin(), 6));
+            assert(r == std::next(m.begin(), 6));
             r = m.find(12);
-            assert(r == next(m.begin(), 7));
+            assert(r == std::next(m.begin(), 7));
             r = m.find(4);
-            assert(r == next(m.begin(), 8));
+            assert(r == std::next(m.begin(), 8));
         }
         {
             typedef M::const_iterator R;
@@ -80,28 +72,27 @@ void main()
             R r = m.find(5);
             assert(r == m.begin());
             r = m.find(6);
-            assert(r == next(m.begin()));
+            assert(r == std::next(m.begin()));
             r = m.find(7);
-            assert(r == next(m.begin(), 2));
+            assert(r == std::next(m.begin(), 2));
             r = m.find(8);
-            assert(r == next(m.begin(), 3));
+            assert(r == std::next(m.begin(), 3));
             r = m.find(9);
-            assert(r == next(m.begin(), 4));
+            assert(r == std::next(m.begin(), 4));
             r = m.find(10);
-            assert(r == next(m.begin(), 5));
+            assert(r == std::next(m.begin(), 5));
             r = m.find(11);
-            assert(r == next(m.begin(), 6));
+            assert(r == std::next(m.begin(), 6));
             r = m.find(12);
-            assert(r == next(m.begin(), 7));
+            assert(r == std::next(m.begin(), 7));
             r = m.find(4);
-            assert(r == next(m.begin(), 8));
+            assert(r == std::next(m.begin(), 8));
         }
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
         typedef int V;
-        typedef multiset<int, std::less<int>, min_allocator<int>> M;
+        typedef std::multiset<int, std::less<int>, min_allocator<int>> M;
         {
             typedef M::iterator R;
             V ar[] =
@@ -119,21 +110,21 @@ void main()
             R r = m.find(5);
             assert(r == m.begin());
             r = m.find(6);
-            assert(r == next(m.begin()));
+            assert(r == std::next(m.begin()));
             r = m.find(7);
-            assert(r == next(m.begin(), 2));
+            assert(r == std::next(m.begin(), 2));
             r = m.find(8);
-            assert(r == next(m.begin(), 3));
+            assert(r == std::next(m.begin(), 3));
             r = m.find(9);
-            assert(r == next(m.begin(), 4));
+            assert(r == std::next(m.begin(), 4));
             r = m.find(10);
-            assert(r == next(m.begin(), 5));
+            assert(r == std::next(m.begin(), 5));
             r = m.find(11);
-            assert(r == next(m.begin(), 6));
+            assert(r == std::next(m.begin(), 6));
             r = m.find(12);
-            assert(r == next(m.begin(), 7));
+            assert(r == std::next(m.begin(), 7));
             r = m.find(4);
-            assert(r == next(m.begin(), 8));
+            assert(r == std::next(m.begin(), 8));
         }
         {
             typedef M::const_iterator R;
@@ -152,29 +143,28 @@ void main()
             R r = m.find(5);
             assert(r == m.begin());
             r = m.find(6);
-            assert(r == next(m.begin()));
+            assert(r == std::next(m.begin()));
             r = m.find(7);
-            assert(r == next(m.begin(), 2));
+            assert(r == std::next(m.begin(), 2));
             r = m.find(8);
-            assert(r == next(m.begin(), 3));
+            assert(r == std::next(m.begin(), 3));
             r = m.find(9);
-            assert(r == next(m.begin(), 4));
+            assert(r == std::next(m.begin(), 4));
             r = m.find(10);
-            assert(r == next(m.begin(), 5));
+            assert(r == std::next(m.begin(), 5));
             r = m.find(11);
-            assert(r == next(m.begin(), 6));
+            assert(r == std::next(m.begin(), 6));
             r = m.find(12);
-            assert(r == next(m.begin(), 7));
+            assert(r == std::next(m.begin(), 7));
             r = m.find(4);
-            assert(r == next(m.begin(), 8));
+            assert(r == std::next(m.begin(), 8));
         }
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+#if TEST_STD_VER > 11
     {
     typedef int V;
-    typedef multiset<V, std::less<>> M;
+    typedef std::multiset<V, std::less<>> M;
     typedef M::iterator R;
 
     V ar[] =
@@ -192,26 +182,26 @@ void main()
     R r = m.find(5);
     assert(r == m.begin());
     r = m.find(6);
-    assert(r == next(m.begin()));
+    assert(r == std::next(m.begin()));
     r = m.find(7);
-    assert(r == next(m.begin(), 2));
+    assert(r == std::next(m.begin(), 2));
     r = m.find(8);
-    assert(r == next(m.begin(), 3));
+    assert(r == std::next(m.begin(), 3));
     r = m.find(9);
-    assert(r == next(m.begin(), 4));
+    assert(r == std::next(m.begin(), 4));
     r = m.find(10);
-    assert(r == next(m.begin(), 5));
+    assert(r == std::next(m.begin(), 5));
     r = m.find(11);
-    assert(r == next(m.begin(), 6));
+    assert(r == std::next(m.begin(), 6));
     r = m.find(12);
-    assert(r == next(m.begin(), 7));
+    assert(r == std::next(m.begin(), 7));
     r = m.find(4);
-    assert(r == next(m.begin(), 8));
+    assert(r == std::next(m.begin(), 8));
     }
 
     {
     typedef PrivateConstructor V;
-    typedef multiset<V, std::less<>> M;
+    typedef std::multiset<V, std::less<>> M;
     typedef M::iterator R;
 
     M m;
@@ -227,21 +217,23 @@ void main()
     R r = m.find(5);
     assert(r == m.begin());
     r = m.find(6);
-    assert(r == next(m.begin()));
+    assert(r == std::next(m.begin()));
     r = m.find(7);
-    assert(r == next(m.begin(), 2));
+    assert(r == std::next(m.begin(), 2));
     r = m.find(8);
-    assert(r == next(m.begin(), 3));
+    assert(r == std::next(m.begin(), 3));
     r = m.find(9);
-    assert(r == next(m.begin(), 4));
+    assert(r == std::next(m.begin(), 4));
     r = m.find(10);
-    assert(r == next(m.begin(), 5));
+    assert(r == std::next(m.begin(), 5));
     r = m.find(11);
-    assert(r == next(m.begin(), 6));
+    assert(r == std::next(m.begin(), 6));
     r = m.find(12);
-    assert(r == next(m.begin(), 7));
+    assert(r == std::next(m.begin(), 7));
     r = m.find(4);
-    assert(r == next(m.begin(), 8));
+    assert(r == std::next(m.begin(), 8));
     }
 #endif
+
+  return 0;
 }
