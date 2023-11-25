@@ -88,6 +88,10 @@ LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/multiset/insert_cv.pass.cpp"
 LIBCXX_TEST_END
 
+//LIBCXX_TEST_BEGIN(insert_emplace_allocator_requirements)
+//#include "libcxx/multiset/insert_emplace_allocator_requirements.pass.cpp"
+//LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(insert_initializer_list)
 #include "libcxx/multiset/insert_initializer_list.pass.cpp"
 LIBCXX_TEST_END
@@ -120,6 +124,10 @@ LIBCXX_TEST_BEGIN(iterator)
 #include "libcxx/multiset/iterator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "libcxx/multiset/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(iterator_types)
 #include "libcxx/multiset/iterator_types.pass.cpp"
 LIBCXX_TEST_END
@@ -134,6 +142,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(merge)
 #include "libcxx/multiset/merge.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "libcxx/multiset/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
