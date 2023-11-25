@@ -25,8 +25,6 @@
 // template <class C2>
 //   void merge(multiset<key_type, C2, allocator_type>&& source);
 
-using momo::stdish::multiset;
-
 template <class Set>
 bool set_equal(const Set& set, Set other)
 {
@@ -96,7 +94,7 @@ int main(int, char**)
     {
         typedef std::set<Counter<int>, std::less<Counter<int>>> first_set_type;
         typedef std::set<Counter<int>, comparator> second_set_type;
-        typedef multiset<Counter<int>, comparator> third_set_type;
+        typedef momo::stdish::multiset<Counter<int>, comparator> third_set_type;
 
         {
             first_set_type first{1, 2, 3};
@@ -141,7 +139,7 @@ int main(int, char**)
             first.merge(std::move(second));
         }
         {
-            multiset<int> second;
+            momo::stdish::multiset<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
