@@ -10,9 +10,11 @@
 
 \**********************************************************/
 
-//LIBCXX_TEST_BEGIN(incomplete_type)
-//#include "libcxx/map/incomplete_type.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete_type)
+#include "libcxx/map/incomplete_type.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(types)
 #include "libcxx/map/types.pass.cpp"

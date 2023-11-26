@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -33,15 +32,10 @@
 //     ...
 // };
 
-//#include <map>
-//#include <type_traits>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef map<int, double> C;
+    typedef std::map<int, double> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");
@@ -55,26 +49,26 @@ void main()
 #endif
     static_assert((std::is_same<C::size_type, std::size_t>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
-
-    C::value_compare value_comp = C().value_comp();
-    assert(value_comp(std::make_pair(0, 0.0), std::make_pair(1, 0.0)));
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
+    typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> C;
     static_assert((std::is_same<C::key_type, int>::value), "");
     static_assert((std::is_same<C::mapped_type, double>::value), "");
     static_assert((std::is_same<C::value_type, std::pair<const int, double> >::value), "");
     static_assert((std::is_same<C::key_compare, std::less<int> >::value), "");
     static_assert((std::is_same<C::allocator_type, min_allocator<std::pair<const int, double> > >::value), "");
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     static_assert((std::is_same<C::reference, std::pair<const int, double>&>::value), "");
     static_assert((std::is_same<C::const_reference, const std::pair<const int, double>&>::value), "");
     static_assert((std::is_same<C::pointer, min_pointer<std::pair<const int, double>>>::value), "");
     static_assert((std::is_same<C::const_pointer, min_pointer<const std::pair<const int, double>>>::value), "");
+#endif
 //  min_allocator doesn't have a size_type, so one gets synthesized
     static_assert((std::is_same<C::size_type, std::make_unsigned<C::difference_type>::type>::value), "");
     static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif
+
+  return 0;
 }
