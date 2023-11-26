@@ -96,25 +96,29 @@ LIBCXX_TEST_BEGIN(cons_deduct)
 #include "libcxx/map/map.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_deduct_const)
-//#include "libcxx/map/map.cons/deduct_const.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(cons_deduct_const)
+#include "libcxx/map/map.cons/deduct_const.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "libcxx/map/map.cons/default.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_default_noexcept)
-//#include "libcxx/map/map.cons/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_default_noexcept)
+#include "libcxx/map/map.cons/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_default_recursive)
-//#include "libcxx/map/map.cons/default_recursive.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(cons_default_recursive)
+#include "libcxx/map/map.cons/default_recursive.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
-//LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
-//#include "libcxx/map/map.cons/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
+#include "libcxx/map/map.cons/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "libcxx/map/map.cons/initializer_list.pass.cpp"
@@ -152,13 +156,13 @@ LIBCXX_TEST_BEGIN(cons_move_assign)
 #include "libcxx/map/map.cons/move_assign.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
-//#include "libcxx/map/map.cons/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
+#include "libcxx/map/map.cons/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cons_move_noexcept)
-//#include "libcxx/map/map.cons/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cons_move_noexcept)
+#include "libcxx/map/map.cons/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "libcxx/map/map.erasure/erase_if.pass.cpp"

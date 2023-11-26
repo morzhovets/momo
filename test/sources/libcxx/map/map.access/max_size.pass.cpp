@@ -27,7 +27,7 @@ int main(int, char**)
     LIBCPP_ASSERT(c.max_size() == 10);
   }
   {
-    typedef limited_allocator<KV, (std::size_t)-1> A;
+    typedef limited_allocator<KV, static_cast<std::size_t>(-1)> A;
     typedef std::map<int, int, std::less<int>, A> C;
     const C::size_type max_dist =
         static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
