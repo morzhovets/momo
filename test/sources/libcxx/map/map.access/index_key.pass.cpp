@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,13 +16,15 @@
 
 // mapped_type& operator[](const key_type& k);
 
-//#include <map>
-//#include <cassert>
+namespace TCT {
+template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+          class ValueTp = std::pair<const Key, Value> >
+using map =
+      std::map<Key, Value, std::less<Key>,
+                              ContainerTestAllocator<ValueTp, ValueTp> >;
+}
 
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-
-void main()
+int main(int, char**)
 {
     {
     typedef std::pair<const int, double> V;
@@ -37,7 +38,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    std::map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 7);
     assert(m[1] == 1.5);
     assert(m.size() == 7);
@@ -52,8 +53,7 @@ void main()
     assert(m[6] == 6.5);
     assert(m.size() == 8);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
     typedef std::pair<const int, double> V;
     V ar[] =
@@ -66,7 +66,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    std::map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
     assert(m.size() == 7);
     assert(m[1] == 1.5);
     assert(m.size() == 7);
@@ -80,9 +80,43 @@ void main()
     assert(m[6] == 6.5);
     assert(m.size() == 8);
     }
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    {
+        // Use "container_test_types.h" to check what arguments get passed
+        // to the allocator for operator[]
+        using Container = TCT::map<>;
+        using Key = Container::key_type;
+        using MappedType = Container::mapped_type;
+        ConstructController* cc = getConstructController();
+        cc->reset();
+        {
+            Container c;
+            const Key k(1);
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key const&>&&, std::tuple<>&&>();
+            MappedType& mref = c[k];
+            assert(!cc->unchecked());
+            {
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[k];
+                assert(&mref == &mref2);
+            }
+        }
+        {
+            Container c;
+            Key k(1);
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key const&>&&, std::tuple<>&&>();
+            MappedType& mref = c[k];
+            assert(!cc->unchecked());
+            {
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[k];
+                assert(&mref == &mref2);
+            }
+        }
+    }
 #endif
-//#if _LIBCPP_STD_VER > 11
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+#endif
+#if TEST_STD_VER > 11
     {
     typedef std::pair<const int, double> V;
     V ar[] =
@@ -95,7 +129,7 @@ void main()
         V(7, 7.5),
         V(8, 8.5),
     };
-    map<int, double, std::less<>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+    std::map<int, double, std::less<>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
 
     assert(m.size() == 7);
     assert(m[1] == 1.5);
@@ -103,13 +137,13 @@ void main()
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
-#endif
     m[6] = 6.5;
     assert(m[6] == 6.5);
     assert(m.size() == 8);
     }
 #endif
+
+  return 0;
 }

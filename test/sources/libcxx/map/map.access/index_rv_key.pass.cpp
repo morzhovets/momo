@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,24 +10,26 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03
+
 // <map>
 
 // class map
 
 // mapped_type& operator[](key_type&& k);
 
-//#include <map>
-//#include <cassert>
+namespace TCT {
+template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+          class ValueTp = std::pair<const Key, Value> >
+using map =
+      std::map<Key, Value, std::less<Key>,
+                              ContainerTestAllocator<ValueTp, ValueTp> >;
+}
 
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-//#if TEST_STD_VER >= 11
     {
-    map<MoveOnly, double> m;
+    std::map<MoveOnly, double> m;
     assert(m.size() == 0);
 #ifndef MOMO_USE_SAFE_MAP_BRACKETS
     assert(m[1] == 0.0);
@@ -45,10 +46,9 @@ void main()
     assert(m[6] == 6.5);
     assert(m.size() == 2);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     typedef std::pair<const MoveOnly, double> V;
-    map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;
+    std::map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;
     assert(m.size() == 0);
     assert(m[1] == 0.0);
     assert(m.size() == 1);
@@ -61,5 +61,30 @@ void main()
     assert(m[6] == 6.5);
     assert(m.size() == 2);
     }
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    {
+        // Use "container_test_types.h" to check what arguments get passed
+        // to the allocator for operator[]
+        using Container = TCT::map<>;
+        using Key = Container::key_type;
+        using MappedType = Container::mapped_type;
+        ConstructController* cc = getConstructController();
+        cc->reset();
+        {
+            Container c;
+            Key k(1);
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key &&>&&, std::tuple<>&&>();
+            MappedType& mref = c[std::move(k)];
+            assert(!cc->unchecked());
+            {
+                Key k2(1);
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[std::move(k2)];
+                assert(&mref == &mref2);
+            }
+        }
+    }
 #endif
+
+  return 0;
 }

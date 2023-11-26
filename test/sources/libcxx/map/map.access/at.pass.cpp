@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-// XFAIL: libcpp-no-exceptions
 // <map>
 
 // class map
@@ -19,12 +17,7 @@
 //       mapped_type& at(const key_type& k);
 // const mapped_type& at(const key_type& k) const;
 
-//#include <map>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
         typedef std::pair<const int, double> V;
@@ -38,7 +31,7 @@ void main()
             V(7, 7.5),
             V(8, 8.5),
         };
-        map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        std::map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(m.size() == 7);
         assert(m.at(1) == 1.5);
         m.at(1) = -1.5;
@@ -47,14 +40,16 @@ void main()
         assert(m.at(3) == 3.5);
         assert(m.at(4) == 4.5);
         assert(m.at(5) == 5.5);
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
-            m.at(6);
+            TEST_IGNORE_NODISCARD m.at(6);
             assert(false);
         }
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(m.at(7) == 7.5);
         assert(m.at(8) == 8.5);
         assert(m.size() == 7);
@@ -71,27 +66,28 @@ void main()
             V(7, 7.5),
             V(8, 8.5),
         };
-        const map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const std::map<int, double> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(m.size() == 7);
         assert(m.at(1) == 1.5);
         assert(m.at(2) == 2.5);
         assert(m.at(3) == 3.5);
         assert(m.at(4) == 4.5);
         assert(m.at(5) == 5.5);
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
-            m.at(6);
+            TEST_IGNORE_NODISCARD m.at(6);
             assert(false);
         }
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(m.at(7) == 7.5);
         assert(m.at(8) == 8.5);
         assert(m.size() == 7);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
         typedef std::pair<const int, double> V;
         V ar[] =
@@ -104,7 +100,7 @@ void main()
             V(7, 7.5),
             V(8, 8.5),
         };
-        map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        std::map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(m.size() == 7);
         assert(m.at(1) == 1.5);
         m.at(1) = -1.5;
@@ -113,14 +109,16 @@ void main()
         assert(m.at(3) == 3.5);
         assert(m.at(4) == 4.5);
         assert(m.at(5) == 5.5);
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
-            m.at(6);
+            TEST_IGNORE_NODISCARD m.at(6);
             assert(false);
         }
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(m.at(7) == 7.5);
         assert(m.at(8) == 8.5);
         assert(m.size() == 7);
@@ -137,24 +135,28 @@ void main()
             V(7, 7.5),
             V(8, 8.5),
         };
-        const map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
+        const std::map<int, double, std::less<int>, min_allocator<V>> m(ar, ar+sizeof(ar)/sizeof(ar[0]));
         assert(m.size() == 7);
         assert(m.at(1) == 1.5);
         assert(m.at(2) == 2.5);
         assert(m.at(3) == 3.5);
         assert(m.at(4) == 4.5);
         assert(m.at(5) == 5.5);
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
-            m.at(6);
+            TEST_IGNORE_NODISCARD m.at(6);
             assert(false);
         }
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(m.at(7) == 7.5);
         assert(m.at(8) == 8.5);
         assert(m.size() == 7);
     }
 #endif
+
+  return 0;
 }
