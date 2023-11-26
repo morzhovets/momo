@@ -131,20 +131,18 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 45);
     }
 
+#if !defined(TEST_GCC)
     {
     // Examples from LWG3025
-#if !defined(TEST_GCC)
     momo::stdish::map m{std::pair{1, 1}, {2, 2}, {3, 3}};
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::map<int, int>);
-#else
-    momo::stdish::map<int, int> m;
-#endif
 
-#if !defined(TEST_MSVC) && !defined(TEST_CLANG)
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     momo::stdish::map m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::map<int, int>);
 #endif
     }
+#endif
 
     {
     // Examples from LWG3531
