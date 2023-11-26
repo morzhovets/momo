@@ -10,11 +10,27 @@
 
 \**********************************************************/
 
+LIBCXX_TEST_BEGIN(compare)
+#include "libcxx/map/compare.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "libcxx/map/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete_type)
 #include "libcxx/map/incomplete_type.pass.cpp"
 LIBCXX_TEST_END
 #endif
+
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "libcxx/map/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "libcxx/map/range_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(types)
 #include "libcxx/map/types.pass.cpp"
