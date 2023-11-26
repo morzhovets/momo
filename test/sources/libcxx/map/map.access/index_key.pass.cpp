@@ -16,14 +16,6 @@
 
 // mapped_type& operator[](const key_type& k);
 
-namespace TCT {
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using map =
-      std::map<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-}
-
 int main(int, char**)
 {
     {
