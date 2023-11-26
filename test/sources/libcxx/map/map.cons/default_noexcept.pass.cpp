@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -21,39 +20,37 @@
 
 // This tests a conforming extension
 
-//#include <map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
+// UNSUPPORTED: c++03
 
 template <class T>
 struct some_comp
 {
     typedef T value_type;
     some_comp();
+    bool operator()(const T&, const T&) const { return false; }
 };
 
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
     typedef std::pair<const MoveOnly, MoveOnly> V;
+#if defined(_LIBCPP_VERSION)
     {
-        typedef map<MoveOnly, MoveOnly> C;
+        typedef std::map<MoveOnly, MoveOnly> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef map<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
+        typedef std::map<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
+#endif // _LIBCPP_VERSION
     {
-        typedef map<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
+        typedef std::map<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef map<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::map<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
-#endif
+
+  return 0;
 }

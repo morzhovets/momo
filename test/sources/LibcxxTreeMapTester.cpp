@@ -18,6 +18,8 @@
 
 #include "../../include/momo/stdish/map.h"
 
+#include "../../include/momo/stdish/vector.h"
+
 namespace libcxx_test_tree_map
 {
 
