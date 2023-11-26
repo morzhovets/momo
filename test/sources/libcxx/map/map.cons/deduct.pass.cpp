@@ -136,6 +136,8 @@ int main(int, char**)
 #if !defined(TEST_GCC)
     momo::stdish::map m{std::pair{1, 1}, {2, 2}, {3, 3}};
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::map<int, int>);
+#else
+    momo::stdish::map<int, int> m;
 #endif
 
 #if !defined(TEST_MSVC) && !defined(TEST_CLANG)
