@@ -192,13 +192,17 @@ LIBCXX_TEST_BEGIN(modifiers_erase_key)
 #include "libcxx/map/map.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
-//#include "libcxx/map/map.modifiers/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
+#include "libcxx/map/map.modifiers/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_extract_key)
 #include "libcxx/map/map.modifiers/extract_key.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(modifiers_insert_and_emplace_allocator_requirements)
+//#include "libcxx/map/map.modifiers/insert_and_emplace_allocator_requirements.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_cv)
 #include "libcxx/map/map.modifiers/insert_cv.pass.cpp"

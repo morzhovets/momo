@@ -25,6 +25,7 @@ void test(Container& c)
 
     auto some_key = c.cbegin()->first;
 
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     for (auto first = c.cbegin(); first != c.cend();)
     {
         auto key_value = first->first;
@@ -36,6 +37,18 @@ void test(Container& c)
         assert(t.get_allocator() == c.get_allocator());
         assert(sz == c.size());
     }
+#else
+    for (auto first = c.cbegin(); first != c.cend(); first = c.cbegin())
+    {
+        auto key_value = first->first;
+        typename Container::node_type t = c.extract(first);
+        --sz;
+        assert(t.key() == key_value);
+        t.key() = some_key;
+        assert(t.key() == some_key);
+        assert(sz == c.size());
+    }
+#endif
 
     assert(c.size() == 0);
 }
