@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -27,18 +26,39 @@
 // template <class... Args>
 //  iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);      // C++17
 
-//#include <__config>
-//#include <map>
-//#include <cassert>
-//#include <tuple>
-
-void main()
+class Moveable
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#ifndef _LIBCPP_HAS_NO_VARIADICS
+    Moveable(const Moveable&);
+    Moveable& operator=(const Moveable&);
 
+    int int_;
+    double double_;
+public:
+    Moveable() : int_(0), double_(0) {}
+    Moveable(int i, double d) : int_(i), double_(d) {}
+    Moveable(Moveable&& x)
+        : int_(x.int_), double_(x.double_)
+            {x.int_ = -1; x.double_ = -1;}
+    Moveable& operator=(Moveable&& x)
+        {int_ = x.int_; x.int_ = -1;
+         double_ = x.double_; x.double_ = -1;
+         return *this;
+        }
+
+    bool operator==(const Moveable& x) const
+        {return int_ == x.int_ && double_ == x.double_;}
+    bool operator<(const Moveable& x) const
+        {return int_ < x.int_ || (int_ == x.int_ && double_ < x.double_);}
+
+    int get() const {return int_;}
+    bool moved() const {return int_ == -1;}
+};
+
+
+int main(int, char**)
+{
     { // pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
-        typedef map<int, Moveable> M;
+        typedef std::map<int, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -81,7 +101,7 @@ void main()
     }
 
     {  // pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
-        typedef map<Moveable, Moveable> M;
+        typedef std::map<Moveable, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -109,7 +129,7 @@ void main()
     }
 
     {  // iterator try_emplace(const_iterator hint, const key_type& k, Args&&... args);
-        typedef map<int, Moveable> M;
+        typedef std::map<int, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
@@ -135,7 +155,7 @@ void main()
     }
 
     {  // iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
-        typedef map<Moveable, Moveable> M;
+        typedef std::map<Moveable, Moveable> M;
         M m;
         M::iterator r;
         for ( int i = 0; i < 20; i += 2 )
@@ -160,6 +180,5 @@ void main()
         assert(r->second.get() == 4); // value
     }
 
-#endif  // _LIBCPP_HAS_NO_VARIADICS
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+  return 0;
 }

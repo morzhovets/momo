@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,88 +10,96 @@
 //
 //===----------------------------------------------------------------------===//
 
+// UNSUPPORTED: c++03
+
 // <map>
 
 // class map
 
+// pair<iterator, bool> insert( value_type&& v);  // C++17 and later
 // template <class P>
 //   pair<iterator, bool> insert(P&& p);
 
-//#include <map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-
-void main()
+template <class Container, class Pair>
+void do_insert_rv_test()
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+    typedef Container M;
+    typedef Pair P;
+    typedef std::pair<typename M::iterator, bool> R;
+    M m;
+    R r = m.insert(P(2, 2));
+    assert(r.second);
+    assert(r.first == m.begin());
+    assert(m.size() == 1);
+    assert(r.first->first == 2);
+    assert(r.first->second == 2);
+
+    r = m.insert(P(1, 1));
+    assert(r.second);
+    assert(r.first == m.begin());
+    assert(m.size() == 2);
+    assert(r.first->first == 1);
+    assert(r.first->second == 1);
+
+    r = m.insert(P(3, 3));
+    assert(r.second);
+    assert(r.first == std::prev(m.end()));
+    assert(m.size() == 3);
+    assert(r.first->first == 3);
+    assert(r.first->second == 3);
+
+    r = m.insert(P(3, 3));
+    assert(!r.second);
+    assert(r.first == std::prev(m.end()));
+    assert(m.size() == 3);
+    assert(r.first->first == 3);
+    assert(r.first->second == 3);
+}
+
+int main(int, char**)
+{
+    do_insert_rv_test<std::map<int, MoveOnly>, std::pair<int, MoveOnly>>();
+    do_insert_rv_test<std::map<int, MoveOnly>, std::pair<const int, MoveOnly>>();
+
     {
-        typedef map<int, MoveOnly> M;
+        typedef std::map<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
+        typedef std::pair<int, MoveOnly> P;
+        typedef std::pair<const int, MoveOnly> CP;
+        do_insert_rv_test<M, P>();
+        do_insert_rv_test<M, CP>();
+    }
+    {
+        typedef std::map<int, MoveOnly> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
-        R r = m.insert(M::value_type(2, 2));
+        R r = m.insert({2, MoveOnly(2)});
         assert(r.second);
         assert(r.first == m.begin());
         assert(m.size() == 1);
         assert(r.first->first == 2);
         assert(r.first->second == 2);
 
-        r = m.insert(M::value_type(1, 1));
+        r = m.insert({1, MoveOnly(1)});
         assert(r.second);
         assert(r.first == m.begin());
         assert(m.size() == 2);
         assert(r.first->first == 1);
         assert(r.first->second == 1);
 
-        r = m.insert(M::value_type(3, 3));
+        r = m.insert({3, MoveOnly(3)});
         assert(r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(r.first->first == 3);
         assert(r.first->second == 3);
 
-        r = m.insert(M::value_type(3, 3));
+        r = m.insert({3, MoveOnly(3)});
         assert(!r.second);
-        assert(r.first == prev(m.end()));
+        assert(r.first == std::prev(m.end()));
         assert(m.size() == 3);
         assert(r.first->first == 3);
         assert(r.first->second == 3);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    {
-        typedef map<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        R r = m.insert(M::value_type(2, 2));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(r.first->first == 2);
-        assert(r.first->second == 2);
 
-        r = m.insert(M::value_type(1, 1));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 2);
-        assert(r.first->first == 1);
-        assert(r.first->second == 1);
-
-        r = m.insert(M::value_type(3, 3));
-        assert(r.second);
-        assert(r.first == prev(m.end()));
-        assert(m.size() == 3);
-        assert(r.first->first == 3);
-        assert(r.first->second == 3);
-
-        r = m.insert(M::value_type(3, 3));
-        assert(!r.second);
-        assert(r.first == prev(m.end()));
-        assert(m.size() == 3);
-        assert(r.first->first == 3);
-        assert(r.first->second == 3);
-    }
-#endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+  return 0;
 }

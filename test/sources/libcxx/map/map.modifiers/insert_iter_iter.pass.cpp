@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,16 +17,10 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
-//#include <map>
-//#include <cassert>
-
-//#include "test_iterators.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef map<int, double> M;
+        typedef std::map<int, double> M;
         typedef std::pair<int, double> P;
         P ar[] =
         {
@@ -42,19 +35,18 @@ void main()
             P(3, 2),
         };
         M m;
-        m.insert(input_iterator<P*>(ar), input_iterator<P*>(ar + sizeof(ar)/sizeof(ar[0])));
+        m.insert(cpp17_input_iterator<P*>(ar), cpp17_input_iterator<P*>(ar + sizeof(ar)/sizeof(ar[0])));
         assert(m.size() == 3);
         assert(m.begin()->first == 1);
         assert(m.begin()->second == 1);
-        assert(next(m.begin())->first == 2);
-        assert(next(m.begin())->second == 1);
-        assert(next(m.begin(), 2)->first == 3);
-        assert(next(m.begin(), 2)->second == 1);
+        assert(std::next(m.begin())->first == 2);
+        assert(std::next(m.begin())->second == 1);
+        assert(std::next(m.begin(), 2)->first == 3);
+        assert(std::next(m.begin(), 2)->second == 1);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+        typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
         typedef std::pair<int, double> P;
         P ar[] =
         {
@@ -69,14 +61,16 @@ void main()
             P(3, 2),
         };
         M m;
-        m.insert(input_iterator<P*>(ar), input_iterator<P*>(ar + sizeof(ar)/sizeof(ar[0])));
+        m.insert(cpp17_input_iterator<P*>(ar), cpp17_input_iterator<P*>(ar + sizeof(ar)/sizeof(ar[0])));
         assert(m.size() == 3);
         assert(m.begin()->first == 1);
         assert(m.begin()->second == 1);
-        assert(next(m.begin())->first == 2);
-        assert(next(m.begin())->second == 1);
-        assert(next(m.begin(), 2)->first == 3);
-        assert(next(m.begin(), 2)->second == 1);
+        assert(std::next(m.begin())->first == 2);
+        assert(std::next(m.begin())->second == 1);
+        assert(std::next(m.begin(), 2)->first == 3);
+        assert(std::next(m.begin(), 2)->second == 1);
     }
 #endif
+
+  return 0;
 }
