@@ -83,6 +83,7 @@ struct some_alloc3
 
     some_alloc3() {}
     some_alloc3(const some_alloc3&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::false_type propagate_on_container_swap;
