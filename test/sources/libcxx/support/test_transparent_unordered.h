@@ -14,7 +14,7 @@
 #define TEST_TRANSPARENT_UNORDERED_H
 
 #include "test_macros.h"
-#include "is_transparent.h"
+#include "old_is_transparent.h"
 
 #include <cassert>
 
