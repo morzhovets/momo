@@ -252,12 +252,20 @@ LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/map/map.ops/contains.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_contains_transparent)
+#include "libcxx/map/map.ops/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_count)
 #include "libcxx/map/map.ops/count.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_count_transparent)
 #include "libcxx/map/map.ops/count_transparent.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_count0)
+#include "libcxx/map/map.ops/count0.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_equal_range)
@@ -268,16 +276,32 @@ LIBCXX_TEST_BEGIN(ops_equal_range_transparent)
 #include "libcxx/map/map.ops/equal_range_transparent.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_equal_range0)
+#include "libcxx/map/map.ops/equal_range0.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_find)
 #include "libcxx/map/map.ops/find.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_find0)
+#include "libcxx/map/map.ops/find0.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_lower_bound)
 #include "libcxx/map/map.ops/lower_bound.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_lower_bound0)
+#include "libcxx/map/map.ops/lower_bound0.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_upper_bound)
 #include "libcxx/map/map.ops/upper_bound.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_upper_bound0)
+#include "libcxx/map/map.ops/upper_bound0.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_member_swap)
