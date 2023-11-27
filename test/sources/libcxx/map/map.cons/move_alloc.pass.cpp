@@ -144,9 +144,9 @@ int main(int, char**)
         typedef test_allocator<VC> A;
         typedef std::less<int> C;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        typedef map<const int, T, C, A> M;
+        typedef std::map<const int, T, C, A> M;
 #else
-        typedef map<int, T, C, A> M;
+        typedef std::map<int, T, C, A> M;
 #endif
         typedef V* I;
         Counter_base::gConstructed = 0;

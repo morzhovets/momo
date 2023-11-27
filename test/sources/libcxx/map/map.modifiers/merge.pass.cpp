@@ -32,7 +32,7 @@ template<typename TKey, typename TMapped,
 using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
 	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, true>,
 		momo::MemManagerStd<TAllocator>,
-		typename map<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
+		typename std::map<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
