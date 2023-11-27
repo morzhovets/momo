@@ -284,6 +284,6 @@ LIBCXX_TEST_BEGIN(special_non_member_swap)
 #include "libcxx/map/map.special/non_member_swap.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(special_swap_noexcept)
-//#include "libcxx/set/set.special/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(special_swap_noexcept)
+#include "libcxx/map/map.special/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END

@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,16 +16,11 @@
 
 // void swap(map& m);
 
-//#include <map>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     typedef std::pair<const int, double> V;
     {
-    typedef map<int, double> M;
+    typedef std::map<int, double> M;
     {
         M m1;
         M m2;
@@ -100,10 +94,9 @@ void main()
         assert(m2 == m1_save);
     }
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef map<int, double, std::less<int>, min_allocator<V>> M;
+    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
     {
         M m1;
         M m2;
@@ -178,4 +171,6 @@ void main()
     }
     }
 #endif
+
+  return 0;
 }
