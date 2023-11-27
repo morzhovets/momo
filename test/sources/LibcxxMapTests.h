@@ -256,6 +256,14 @@ LIBCXX_TEST_BEGIN(nonmember_op_compare)
 #include "libcxx/map/map.nonmember/op_compare.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(observers_key_comp)
+#include "libcxx/map/map.observers/key_comp.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(observers_value_comp)
+#include "libcxx/map/map.observers/value_comp.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/map/map.ops/contains.pass.cpp"
 LIBCXX_TEST_END
@@ -322,4 +330,8 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_swap_noexcept)
 #include "libcxx/map/map.special/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(value_compare_invoke)
+#include "libcxx/map/map.value_compare/invoke.pass.cpp"
 LIBCXX_TEST_END
