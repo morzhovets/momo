@@ -248,6 +248,14 @@ LIBCXX_TEST_BEGIN(modifiers_try_emplace)
 #include "libcxx/map/map.modifiers/try.emplace.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(nonmember_compare_three_way)
+#include "libcxx/map/map.nonmember/compare.three_way.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(nonmember_op_compare)
+#include "libcxx/map/map.nonmember/op_compare.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/map/map.ops/contains.pass.cpp"
 LIBCXX_TEST_END
