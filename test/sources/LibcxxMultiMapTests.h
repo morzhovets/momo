@@ -22,6 +22,10 @@ LIBCXX_TEST_BEGIN(iterator)
 #include "libcxx/multimap/iterator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(iterator_types)
+#include "libcxx/multimap/iterator_types.pass.cpp"
+LIBCXX_TEST_END
+
 //LIBCXX_TEST_BEGIN(max_size)
 //#include "libcxx/multimap/max_size.pass.cpp"
 //LIBCXX_TEST_END
@@ -204,6 +208,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/multimap/multimap.ops/contains.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_contains_transparent)
+#include "libcxx/multimap/multimap.ops/contains_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_count)
