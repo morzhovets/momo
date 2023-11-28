@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,15 +16,10 @@
 
 // bool empty() const;
 
-//#include <map>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef multimap<int, double> M;
+    typedef std::multimap<int, double> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1, 1.5));
@@ -33,10 +27,9 @@ void main()
     m.clear();
     assert(m.empty());
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     M m;
     assert(m.empty());
     m.insert(M::value_type(1, 1.5));
@@ -45,4 +38,6 @@ void main()
     assert(m.empty());
     }
 #endif
+
+  return 0;
 }
