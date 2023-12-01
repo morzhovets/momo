@@ -232,6 +232,14 @@ LIBCXX_TEST_BEGIN(nonmember_op_compare)
 #include "libcxx/multimap/multimap.nonmember/op_compare.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(observers_key_comp)
+#include "libcxx/multimap/multimap.observers/key_comp.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(observers_value_comp)
+#include "libcxx/multimap/multimap.observers/value_comp.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_contains)
 #include "libcxx/multimap/multimap.ops/contains.pass.cpp"
 LIBCXX_TEST_END
@@ -279,3 +287,7 @@ LIBCXX_TEST_END
 //LIBCXX_TEST_BEGIN(special_swap_noexcept)
 //#include "libcxx/set/set.special/swap_noexcept.pass.cpp"
 //LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(value_compare_invoke)
+#include "libcxx/multimap/multimap.value_compare/invoke.pass.cpp"
+LIBCXX_TEST_END
