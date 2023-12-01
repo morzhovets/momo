@@ -152,6 +152,10 @@ LIBCXX_TEST_END
 //#include "libcxx/multimap/multimap.cons/move_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(erasure_erase_if)
+#include "libcxx/multimap/multimap.erasure/erase_if.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "libcxx/multimap/multimap.modifiers/clear.pass.cpp"
 LIBCXX_TEST_END
@@ -220,8 +224,12 @@ LIBCXX_TEST_BEGIN(modifiers_merge)
 #include "libcxx/multimap/multimap.modifiers/merge.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(erasure_erase_if)
-#include "libcxx/multimap/multimap.erasure/erase_if.pass.cpp"
+LIBCXX_TEST_BEGIN(nonmember_compare_three_way)
+#include "libcxx/multimap/multimap.nonmember/compare.three_way.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(nonmember_op_compare)
+#include "libcxx/multimap/multimap.nonmember/op_compare.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_contains)
