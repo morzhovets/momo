@@ -184,13 +184,17 @@ LIBCXX_TEST_BEGIN(modifiers_erase_key)
 #include "libcxx/multimap/multimap.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
-//#include "libcxx/multimap/multimap.modifiers/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
+#include "libcxx/multimap/multimap.modifiers/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_extract_key)
 #include "libcxx/multimap/multimap.modifiers/extract_key.pass.cpp"
 LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(modifiers_insert_allocator_requirements)
+//#include "libcxx/multimap/multimap.modifiers/insert_allocator_requirements.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_cv)
 #include "libcxx/multimap/multimap.modifiers/insert_cv.pass.cpp"
