@@ -180,6 +180,10 @@ LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "libcxx/map/map.modifiers/emplace.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_emplace_ext)
+#include "libcxx/map/map.modifiers/emplace_ext.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
 #include "libcxx/map/map.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
