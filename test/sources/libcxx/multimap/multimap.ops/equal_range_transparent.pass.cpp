@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11
+// UNSUPPORTED: c++03, c++11
 
 // <map>
 
@@ -22,14 +21,6 @@
 // template<typename K>
 //         pair<const_iterator,const_iterator> equal_range(const K& x) const;
 //         // C++14
-
-//#include <cassert>
-//#include <map>
-//#include <utility>
-
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-//#include "test_macros.h"
 
 struct Comp {
   using is_transparent = void;
@@ -48,8 +39,8 @@ struct Comp {
   }
 };
 
-void main() {
-  multimap<std::pair<int, int>, int, Comp> s{
+int main(int, char**) {
+  std::multimap<std::pair<int, int>, int, Comp> s{
       {{2, 1}, 1}, {{1, 1}, 2}, {{1, 1}, 3}, {{1, 1}, 4}, {{2, 2}, 5}};
 
   auto er = s.equal_range(1);
@@ -61,4 +52,6 @@ void main() {
   }
 
   assert(nels == 3);
+
+  return 0;
 }

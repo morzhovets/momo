@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,19 +17,11 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
-//#include <map>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "private_constructor.hpp"
-//#include "is_transparent.h"
-
-void main()
+int main(int, char**)
 {
     typedef std::pair<const int, double> V;
     {
-    typedef multimap<int, double> M;
+    typedef std::multimap<int, double> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -51,11 +42,11 @@ void main()
         r = m.find(6);
         assert(r == m.end());
         r = m.find(7);
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(8);
         assert(r == m.end());
         r = m.find(9);
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(10);
         assert(r == m.end());
     }
@@ -79,19 +70,18 @@ void main()
         r = m.find(6);
         assert(r == m.end());
         r = m.find(7);
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(8);
         assert(r == m.end());
         r = m.find(9);
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(10);
         assert(r == m.end());
     }
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef std::multimap<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
     {
         typedef M::iterator R;
         V ar[] =
@@ -112,11 +102,11 @@ void main()
         r = m.find(6);
         assert(r == m.end());
         r = m.find(7);
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(8);
         assert(r == m.end());
         r = m.find(9);
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(10);
         assert(r == m.end());
     }
@@ -140,20 +130,19 @@ void main()
         r = m.find(6);
         assert(r == m.end());
         r = m.find(7);
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(8);
         assert(r == m.end());
         r = m.find(9);
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(10);
         assert(r == m.end());
     }
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
-#ifndef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+#if TEST_STD_VER > 11
     {
-    typedef multimap<int, double, std::less<>> M;
+    typedef std::multimap<int, double, std::less<>> M;
     typedef M::iterator R;
 
         V ar[] =
@@ -174,11 +163,11 @@ void main()
         r = m.find(6);
         assert(r == m.end());
         r = m.find(7);
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(8);
         assert(r == m.end());
         r = m.find(9);
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(10);
         assert(r == m.end());
 
@@ -187,18 +176,18 @@ void main()
         r = m.find(C2Int(6));
         assert(r == m.end());
         r = m.find(C2Int(7));
-        assert(r == next(m.begin(), 3));
+        assert(r == std::next(m.begin(), 3));
         r = m.find(C2Int(8));
         assert(r == m.end());
         r = m.find(C2Int(9));
-        assert(r == next(m.begin(), 6));
+        assert(r == std::next(m.begin(), 6));
         r = m.find(C2Int(10));
         assert(r == m.end());
     }
 
     {
     typedef PrivateConstructor PC;
-    typedef multimap<PC, double, std::less<>> M;
+    typedef std::multimap<PC, double, std::less<>> M;
     typedef M::iterator R;
 
     M m;
@@ -217,13 +206,15 @@ void main()
     r = m.find(6);
     assert(r == m.end());
     r = m.find(7);
-    assert(r == next(m.begin(), 3));
+    assert(r == std::next(m.begin(), 3));
     r = m.find(8);
     assert(r == m.end());
     r = m.find(9);
-    assert(r == next(m.begin(), 6));
+    assert(r == std::next(m.begin(), 6));
     r = m.find(10);
     assert(r == m.end());
     }
 #endif
+
+  return 0;
 }
