@@ -47,10 +47,12 @@ int main(int, char**)
         static_assert(std::is_nothrow_move_assignable<C>::value, "");
     }
 #endif // _LIBCPP_VERSION
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::multimap<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_assignable<C>::value, "");
     }
+#endif
 
   return 0;
 }
