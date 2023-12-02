@@ -256,6 +256,10 @@ LIBCXX_TEST_BEGIN(ops_count_transparent)
 #include "libcxx/multimap/multimap.ops/count_transparent.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_count0)
+#include "libcxx/multimap/multimap.ops/count0.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_equal_range)
 #include "libcxx/multimap/multimap.ops/equal_range.pass.cpp"
 LIBCXX_TEST_END
@@ -264,16 +268,32 @@ LIBCXX_TEST_BEGIN(ops_equal_range_transparent)
 #include "libcxx/multimap/multimap.ops/equal_range_transparent.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_equal_range0)
+#include "libcxx/multimap/multimap.ops/equal_range0.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_find)
 #include "libcxx/multimap/multimap.ops/find.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_find0)
+#include "libcxx/multimap/multimap.ops/find0.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_lower_bound)
 #include "libcxx/multimap/multimap.ops/lower_bound.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(ops_lower_bound0)
+#include "libcxx/multimap/multimap.ops/lower_bound0.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(ops_upper_bound)
 #include "libcxx/multimap/multimap.ops/upper_bound.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(ops_upper_bound0)
+#include "libcxx/multimap/multimap.ops/upper_bound0.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_member_swap)
