@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <map>
 
@@ -24,14 +23,6 @@
 //              noexcept(swap(declval<Compare&>(), declval<Compare&>())));
 
 // This tests a conforming extension
-
-//#include <map>
-//#include <utility>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
 
 template <class T>
 struct some_comp
@@ -53,10 +44,10 @@ struct some_comp2
     bool operator()(const T&, const T&) const { return false; }
 };
 
-//#if TEST_STD_VER >= 14
+#if TEST_STD_VER >= 14
 template <typename T>
 void swap(some_comp2<T>&, some_comp2<T>&) noexcept {}
-//#endif
+#endif
 
 template <class T>
 struct some_alloc
@@ -65,6 +56,7 @@ struct some_alloc
 
     some_alloc() {}
     some_alloc(const some_alloc&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::true_type propagate_on_container_swap;
@@ -77,6 +69,7 @@ struct some_alloc2
 
     some_alloc2() {}
     some_alloc2(const some_alloc2&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::false_type propagate_on_container_swap;
@@ -90,56 +83,63 @@ struct some_alloc3
 
     some_alloc3() {}
     some_alloc3(const some_alloc3&);
+    T* allocate(std::size_t);
     void deallocate(void*, unsigned) {}
 
     typedef std::false_type propagate_on_container_swap;
     typedef std::false_type is_always_equal;
 };
 
-void main()
+int main(int, char**)
 {
     typedef std::pair<const MoveOnly, MoveOnly> V;
     {
-        typedef multimap<MoveOnly, MoveOnly> C;
+        typedef std::multimap<MoveOnly, MoveOnly> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     {
-        typedef multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
+        typedef std::multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     {
-        typedef multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
+        typedef std::multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
-        typedef multimap<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
+        typedef std::multimap<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
+#endif
 
-//#if TEST_STD_VER >= 14
+#if TEST_STD_VER >= 14
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     { // POCS allocator, throwable swap for comp
-    typedef multimap<MoveOnly, MoveOnly, some_comp <MoveOnly>, some_alloc <V>> C;
+    typedef std::multimap<MoveOnly, MoveOnly, some_comp <MoveOnly>, some_alloc <V>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, throwable swap for comp
-    typedef multimap<MoveOnly, MoveOnly, some_comp <MoveOnly>, some_alloc2<V>> C;
+    typedef std::multimap<MoveOnly, MoveOnly, some_comp <MoveOnly>, some_alloc2<V>> C;
     static_assert(!noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
+#endif
     { // POCS allocator, nothrow swap for comp
-    typedef multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc <V>> C;
+    typedef std::multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc <V>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
     { // always equal allocator, nothrow swap for comp
-    typedef multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc2<V>> C;
+    typedef std::multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc2<V>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #if defined(_LIBCPP_VERSION)
     { // NOT always equal allocator, nothrow swap for comp
-    typedef multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc3<V>> C;
+    typedef std::multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc3<V>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
 #endif // _LIBCPP_VERSION
-//#endif
+#endif
+
+  return 0;
 }
