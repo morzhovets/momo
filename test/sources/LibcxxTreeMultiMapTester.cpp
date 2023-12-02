@@ -36,8 +36,6 @@ namespace std
 			momo::TreeMapSettings>>;
 }
 
-using std::multimap;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
 #include "LibcxxMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
@@ -60,8 +58,6 @@ namespace std
 			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 			momo::TreeMapSettings>>;
 }
-
-using std::multimap;
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap_vp"
 #include "LibcxxMultiMapTests.h"

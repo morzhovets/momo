@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <map>
 
@@ -26,10 +25,6 @@
 // template <class C2>
 //   void merge(multimap<key_type, value_type, C2, allocator_type>&& source);
 
-//#include <map>
-//#include "test_macros.h"
-//#include "Counter.h"
-
 //using momo::stdish::map;
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
@@ -37,7 +32,7 @@ template<typename TKey, typename TMapped,
 using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
 	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false>,
 		momo::MemManagerStd<TAllocator>,
-		typename multimap<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
+		typename std::multimap<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
@@ -62,11 +57,11 @@ struct throw_comparator
 };
 #endif
 
-void main()
+int main(int, char**)
 {
     {
-        multimap<int, int> src{{1, 0}, {3, 0}, {5, 0}};
-        multimap<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
+        std::multimap<int, int> src{{1, 0}, {3, 0}, {5, 0}};
+        std::multimap<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
         dst.merge(src);
         assert(map_equal(src, {}));
         assert(map_equal(dst, {{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {5, 0}}));
@@ -75,7 +70,7 @@ void main()
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef multimap<Counter<int>, int, throw_comparator> map_type;
+        typedef std::multimap<Counter<int>, int, throw_comparator> map_type;
         map_type src({{1, 0}, {3, 0}, {5, 0}}, throw_comparator(do_throw));
         map_type dst({{2, 0}, {4, 0}, {5, 0}}, throw_comparator(do_throw));
 
@@ -106,8 +101,8 @@ void main()
         }
     };
     {
-        typedef multimap<Counter<int>, int, std::less<Counter<int>>> first_map_type;
-        typedef multimap<Counter<int>, int, comparator> second_map_type;
+        typedef std::multimap<Counter<int>, int, std::less<Counter<int>>> first_map_type;
+        typedef std::multimap<Counter<int>, int, comparator> second_map_type;
         typedef map<Counter<int>, int, comparator> third_map_type;
 
         {
@@ -147,16 +142,17 @@ void main()
     }
     assert(Counter_base::gConstructed == 0);
     {
-        multimap<int, int> first;
+        std::multimap<int, int> first;
         {
-            multimap<int, int> second;
+            std::multimap<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
         {
-            multimap<int, int> second;
+            map<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
     }
+    return 0;
 }

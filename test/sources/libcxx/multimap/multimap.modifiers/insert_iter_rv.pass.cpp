@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <map>
 
@@ -19,13 +18,6 @@
 
 // template <class P>
 //     iterator insert(const_iterator position, P&& p);
-
-//#include <map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-//#include "test_macros.h"
 
 template <class Container, class Pair>
 void do_insert_rv_test()
@@ -47,34 +39,33 @@ void do_insert_rv_test()
     assert(r->second == 1);
 
     r = m.insert(m.cend(), P(3, 3));
-    assert(r == prev(m.end()));
+    assert(r == std::prev(m.end()));
     assert(m.size() == 3);
     assert(r->first == 3);
     assert(r->second == 3);
 
     r = m.insert(m.cend(), P(3, 2));
-    assert(r == prev(m.end()));
+    assert(r == std::prev(m.end()));
     assert(m.size() == 4);
     assert(r->first == 3);
     assert(r->second == 2);
 }
 
-void main()
+int main(int, char**)
 {
-    do_insert_rv_test<multimap<int, MoveOnly>, std::pair<int, MoveOnly> >();
-    do_insert_rv_test<multimap<int, MoveOnly>, std::pair<const int, MoveOnly> >();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+    do_insert_rv_test<std::multimap<int, MoveOnly>, std::pair<int, MoveOnly> >();
+    do_insert_rv_test<std::multimap<int, MoveOnly>, std::pair<const int, MoveOnly> >();
+
     {
-        typedef multimap<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
+        typedef std::multimap<int, MoveOnly, std::less<int>, min_allocator<std::pair<const int, MoveOnly>>> M;
         typedef std::pair<int, MoveOnly> P;
         typedef std::pair<const int, MoveOnly> CP;
         do_insert_rv_test<M, P>();
         do_insert_rv_test<M, CP>();
 
     }
-#endif
     {
-        typedef multimap<int, MoveOnly> M;
+        typedef std::multimap<int, MoveOnly> M;
         typedef M::iterator R;
         M m;
         R r = m.insert(m.cend(), {2, MoveOnly(2)});
@@ -90,15 +81,17 @@ void main()
         assert(r->second == 1);
 
         r = m.insert(m.cend(), {3, MoveOnly(3)});
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 3);
         assert(r->first == 3);
         assert(r->second == 3);
 
         r = m.insert(m.cend(), {3, MoveOnly(2)});
-        assert(r == prev(m.end()));
+        assert(r == std::prev(m.end()));
         assert(m.size() == 4);
         assert(r->first == 3);
         assert(r->second == 2);
     }
+
+  return 0;
 }
