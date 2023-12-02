@@ -18,12 +18,6 @@
 //   typename multimap<Key, T, Compare, Allocator>::size_type
 //   erase_if(multimap<Key, T, Compare, Allocator>& c, Predicate pred);
 
-//#include <map>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 using Init = std::initializer_list<int>;
 template <typename M>
 M make (Init vals)
@@ -35,7 +29,7 @@ M make (Init vals)
 }
 
 template <typename M, typename Pred>
-void test0(Init vals, Pred p, Init expected, size_t expected_erased_count) {
+void test0(Init vals, Pred p, Init expected, std::size_t expected_erased_count) {
   M s = make<M>(vals);
   ASSERT_SAME_TYPE(typename M::size_type, decltype(erase_if(s, p)));
   assert(expected_erased_count == erase_if(s, p));
@@ -81,14 +75,14 @@ void test()
     test0<S>({1, 2, 3}, False, {1, 2, 3}, 0);
 }
 
-void main()
+int main(int, char**)
 {
-    test<multimap<int, int>>();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<multimap<int, int, std::less<int>, min_allocator<std::pair<const int, int>>>> ();
-#endif
-    test<multimap<int, int, std::less<int>, test_allocator<std::pair<const int, int>>>> ();
+    test<std::multimap<int, int>>();
+    test<std::multimap<int, int, std::less<int>, min_allocator<std::pair<const int, int>>>> ();
+    test<std::multimap<int, int, std::less<int>, test_allocator<std::pair<const int, int>>>> ();
 
-    test<multimap<long, short>>();
-    test<multimap<short, double>>();
+    test<std::multimap<long, short>>();
+    test<std::multimap<short, double>>();
+
+  return 0;
 }
