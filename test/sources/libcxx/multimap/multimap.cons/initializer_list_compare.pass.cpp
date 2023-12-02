@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <map>
 
@@ -19,16 +18,11 @@
 
 // multimap(initializer_list<value_type> il, const key_compare& comp = key_compare());
 
-//#include <map>
-//#include <cassert>
-//#include "../../../test_compare.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef test_compare<std::less<int> > Cmp;
-    typedef multimap<int, double, Cmp> C;
+    typedef test_less<int> Cmp;
+    typedef std::multimap<int, double, Cmp> C;
     typedef C::value_type V;
     C m(
            {
@@ -58,10 +52,9 @@ void main()
     assert(*++i == V(3, 2));
     assert(m.key_comp() == Cmp(4));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef test_compare<std::less<int> > Cmp;
-    typedef multimap<int, double, Cmp, min_allocator<std::pair<const int, double>>> C;
+    typedef test_less<int> Cmp;
+    typedef std::multimap<int, double, Cmp, min_allocator<std::pair<const int, double>>> C;
     typedef C::value_type V;
     C m(
            {
@@ -91,5 +84,6 @@ void main()
     assert(*++i == V(3, 2));
     assert(m.key_comp() == Cmp(4));
     }
-#endif
+
+  return 0;
 }

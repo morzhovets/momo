@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <map>
 
@@ -19,18 +18,12 @@
 
 // multimap(initializer_list<value_type> il, const key_compare& comp, const allocator_type& a);
 
-//#include <map>
-//#include <cassert>
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef test_compare<std::less<int> > Cmp;
+    typedef test_less<int> Cmp;
     typedef test_allocator<std::pair<const int, double> > A;
-    typedef multimap<int, double, Cmp, A> C;
+    typedef std::multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {
@@ -61,11 +54,10 @@ void main()
     assert(m.key_comp() == Cmp(4));
     assert(m.get_allocator() == A(5));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef test_compare<std::less<int> > Cmp;
+    typedef test_less<int> Cmp;
     typedef min_allocator<std::pair<const int, double> > A;
-    typedef multimap<int, double, Cmp, A> C;
+    typedef std::multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {
@@ -97,10 +89,10 @@ void main()
     assert(m.get_allocator() == A());
     }
     {
-    typedef test_compare<std::less<int> > C;
+    typedef test_less<int> C;
     typedef std::pair<const int, double> V;
     typedef min_allocator<V> A;
-    typedef multimap<int, double, C, A> M;
+    typedef std::multimap<int, double, C, A> M;
     A a;
     M m ({ {1, 1},
            {1, 1.5},
@@ -128,9 +120,9 @@ void main()
     assert(m.get_allocator() == a);
     }
     {
-    typedef test_compare<std::less<int> > Cmp;
+    typedef test_less<int> Cmp;
     typedef explicit_allocator<std::pair<const int, double> > A;
-    typedef multimap<int, double, Cmp, A> C;
+    typedef std::multimap<int, double, Cmp, A> C;
     typedef C::value_type V;
     C m(
            {
@@ -161,5 +153,6 @@ void main()
     assert(m.key_comp() == Cmp(4));
     assert(m.get_allocator() == A{});
     }
-#endif
+
+  return 0;
 }

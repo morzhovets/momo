@@ -11,8 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 // <map>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
+// UNSUPPORTED: c++03, c++11, c++14
 
 // template<class InputIterator,
 //          class Compare = less<iter-value-type<InputIterator>>,
@@ -30,20 +29,11 @@
 // multimap(initializer_list<Key>, Allocator)
 //   -> multimap<Key, less<Key>, Allocator>;
 
-//#include <algorithm> // std::equal
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <functional>
-//#include <map>
-//#include <type_traits>
-//
-//#include "test_allocator.h"
-
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
 using PCC = std::pair<const int, const long>;
 
-void main()
+int main(int, char**)
 {
     {
     const PCC arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
@@ -106,4 +96,6 @@ void main()
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);
     }
+
+    return 0;
 }

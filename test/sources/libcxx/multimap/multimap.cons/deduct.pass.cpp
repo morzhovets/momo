@@ -11,8 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 // <map>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
+// UNSUPPORTED: c++03, c++11, c++14
 
 // template<class InputIterator,
 //          class Compare = less<iter-value-type<InputIterator>>,
@@ -30,19 +29,10 @@
 // multimap(initializer_list<Key>, Allocator)
 //   -> multimap<Key, less<Key>, Allocator>;
 
-//#include <algorithm> // std::equal
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <functional>
-//#include <map>
-//#include <type_traits>
-//
-//#include "test_allocator.h"
-
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
 
-void main()
+int main(int, char**)
 {
     {
     const P arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
@@ -140,4 +130,33 @@ void main()
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);
     }
+
+#if !defined(TEST_GCC)
+    {
+    // Examples from LWG3025
+    momo::stdish::multimap m{std::pair{1, 1}, {2, 2}, {3, 3}};
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, int>);
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    momo::stdish::multimap m2{m.begin(), m.end()};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::multimap<int, int>);
+#endif
+    }
+#endif
+
+    {
+    // Examples from LWG3531
+    momo::stdish::multimap m1{{std::pair{1, 2}, {3, 4}}, std::less<int>()};
+    ASSERT_SAME_TYPE(decltype(m1), momo::stdish::multimap<int, int>);
+
+#if !defined(TEST_GCC) && !defined(TEST_CLANG)
+    using value_type = std::pair<const int, int>;
+    momo::stdish::multimap m2{{value_type{1, 2}, {3, 4}}, std::less<int>()};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::multimap<int, int>);
+#endif
+    }
+
+    AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::multimap, momo::stdish::multimap<int, long>>();
+
+    return 0;
 }

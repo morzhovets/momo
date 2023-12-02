@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03
+// UNSUPPORTED: c++03
 
 // <map>
 
@@ -19,23 +18,14 @@
 
 // multimap(multimap&& m, const allocator_type& a);
 
-//#include <map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "../../../test_compare.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "Counter.h"
-
-void main()
+int main(int, char**)
 {
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef test_allocator<VC> A;
-        typedef multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -67,14 +57,14 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A(7));
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef test_allocator<VC> A;
-        typedef multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -106,14 +96,14 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A(5));
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef other_allocator<VC> A;
-        typedef multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -145,7 +135,7 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A(5));
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
     {
         typedef Counter<int> T;
@@ -154,9 +144,9 @@ void main()
         typedef test_allocator<VC> A;
         typedef std::less<int> C;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        typedef multimap<const int, T, C, A> M;
+        typedef std::multimap<const int, T, C, A> M;
 #else
-        typedef multimap<int, T, C, A> M;
+        typedef std::multimap<int, T, C, A> M;
 #endif
         typedef V* I;
         Counter_base::gConstructed = 0;
@@ -173,7 +163,7 @@ void main()
                 V(3, 2),
                 V(3, 3)
             };
-            const int num = sizeof(a1)/sizeof(a1[0]);
+            const std::size_t num = sizeof(a1)/sizeof(a1[0]);
             assert(Counter_base::gConstructed == num);
 
             M m1(I(a1), I(a1+num), C(), A());
@@ -185,26 +175,28 @@ void main()
 
             M m3(std::move(m1), A());
             assert(m3 == m2);
-            assert(m1.empty());
-            assert(Counter_base::gConstructed == 3*num);
+            LIBCPP_ASSERT(m1.empty());
+            assert(Counter_base::gConstructed >= static_cast<int>(3*num));
+            assert(Counter_base::gConstructed <= static_cast<int>(4*num));
 
             {
             M m4(std::move(m2), A(5));
-            assert(Counter_base::gConstructed == 3*num);
+            assert(Counter_base::gConstructed >= static_cast<int>(3*num));
+            assert(Counter_base::gConstructed <= static_cast<int>(5*num));
             assert(m4 == m3);
-            assert(m2.empty());
+            LIBCPP_ASSERT(m2.empty());
             }
-            assert(Counter_base::gConstructed == 2*num);
+            assert(Counter_base::gConstructed >= static_cast<int>(2*num));
+            assert(Counter_base::gConstructed <= static_cast<int>(4*num));
         }
         assert(Counter_base::gConstructed == 0);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef min_allocator<VC> A;
-        typedef multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -236,14 +228,14 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A());
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
         typedef std::pair<const MoveOnly, MoveOnly> VC;
-        typedef test_compare<std::less<MoveOnly> > C;
+        typedef test_less<MoveOnly> C;
         typedef explicit_allocator<VC> A;
-        typedef multimap<MoveOnly, MoveOnly, C, A> M;
+        typedef std::multimap<MoveOnly, MoveOnly, C, A> M;
         typedef std::move_iterator<V*> I;
         V a1[] =
         {
@@ -275,7 +267,8 @@ void main()
         assert(m3 == m2);
         assert(m3.get_allocator() == A{});
         assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        LIBCPP_ASSERT(m1.empty());
     }
-#endif
+
+  return 0;
 }
