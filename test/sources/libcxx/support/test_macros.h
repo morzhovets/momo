@@ -24,6 +24,8 @@
 
 #define TEST_NODISCARD [[nodiscard]]
 
+#define TEST_NORETURN [[noreturn]]
+
 #define TEST_IGNORE_NODISCARD (void)
 
 #define TEST_THROW(...) throw __VA_ARGS__
