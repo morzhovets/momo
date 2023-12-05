@@ -477,6 +477,15 @@ public:
 		return { res.position, res.inserted };
 	}
 
+	template<typename ValueArg>
+	requires std::is_same_v<key_type, std::decay_t<ValueArg>>
+	std::pair<iterator, bool> emplace(ValueArg&& valueArg)
+	{
+		typename TreeSet::InsertResult res = mTreeSet.InsertVar(
+			std::as_const(valueArg), std::forward<ValueArg>(valueArg));
+		return { res.position, res.inserted };
+	}
+
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
@@ -487,6 +496,15 @@ public:
 		if (!pvCheckHint(hint, extItem.GetItem()))
 			return mTreeSet.Insert(std::move(extItem)).position;
 		return mTreeSet.Add(hint, std::move(extItem));
+	}
+
+	template<typename ValueArg>
+	requires std::is_same_v<key_type, std::decay_t<ValueArg>>
+	iterator emplace_hint(const_iterator hint, ValueArg&& valueArg)
+	{
+		if (!pvCheckHint(hint, std::as_const(valueArg)))
+			return emplace(std::forward<ValueArg>(valueArg)).first;
+		return mTreeSet.AddVar(hint, std::forward<ValueArg>(valueArg));
 	}
 
 	iterator erase(const_iterator where)
