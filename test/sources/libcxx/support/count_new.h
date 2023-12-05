@@ -49,7 +49,12 @@ private:
 
 public:
     // All checks return true when disable_checking is enabled.
-    static const bool disable_checking;
+    //static const bool disable_checking;
+#ifdef DISABLE_NEW_COUNT
+    static const bool disable_checking = true;
+#else
+    static const bool disable_checking = false;
+#endif
 
     // Disallow any allocations from occurring. Useful for testing that
     // code doesn't perform any allocations.
@@ -359,11 +364,11 @@ public:
     }
 };
 
-#ifdef DISABLE_NEW_COUNT
-  const bool MemCounter::disable_checking = true;
-#else
-  const bool MemCounter::disable_checking = false;
-#endif
+//#ifdef DISABLE_NEW_COUNT
+//  const bool MemCounter::disable_checking = true;
+//#else
+//  const bool MemCounter::disable_checking = false;
+//#endif
 
 TEST_DIAGNOSTIC_PUSH
 TEST_MSVC_DIAGNOSTIC_IGNORED(4640) // '%s' construction of local static object is not thread safe (/Zc:threadSafeInit-)
