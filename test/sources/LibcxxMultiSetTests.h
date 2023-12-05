@@ -88,9 +88,9 @@ LIBCXX_TEST_BEGIN(insert_cv)
 #include "libcxx/multiset/insert_cv.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(insert_emplace_allocator_requirements)
-//#include "libcxx/multiset/insert_emplace_allocator_requirements.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(insert_emplace_allocator_requirements)
+#include "libcxx/multiset/insert_emplace_allocator_requirements.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_initializer_list)
 #include "libcxx/multiset/insert_initializer_list.pass.cpp"
