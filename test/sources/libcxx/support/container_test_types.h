@@ -258,6 +258,36 @@ struct ExpectConstructGuard {
 };
 
 //===----------------------------------------------------------------------===//
+//                       DisableAllocationGuard
+//===----------------------------------------------------------------------===//
+
+struct DisableAllocationGuard {
+    static bool g_disable_allocations;
+
+    explicit DisableAllocationGuard(bool disable = true) : m_disabled(disable)
+    {
+        // Don't re-disable if already disabled.
+        if (g_disable_allocations) m_disabled = false;
+        if (m_disabled) g_disable_allocations = true;
+    }
+
+    void release() {
+        if (m_disabled) g_disable_allocations = false;
+        m_disabled = false;
+    }
+
+    ~DisableAllocationGuard() {
+        release();
+    }
+
+private:
+    bool m_disabled;
+
+    DisableAllocationGuard(DisableAllocationGuard const&);
+    DisableAllocationGuard& operator=(DisableAllocationGuard const&);
+};
+
+//===----------------------------------------------------------------------===//
 //                       ContainerTestAllocator
 //===----------------------------------------------------------------------===//
 
@@ -303,11 +333,13 @@ public:
 
     T* allocate(std::size_t n)
     {
+        assert(!DisableAllocationGuard::g_disable_allocations);
         return static_cast<T*>(::operator new(n*sizeof(T)));
     }
 
     void deallocate(T* p, std::size_t)
     {
+        assert(!DisableAllocationGuard::g_disable_allocations);
         return ::operator delete(static_cast<void*>(p));
     }
 
@@ -335,6 +367,10 @@ public:
     friend bool operator==(ContainerTestAllocator, ContainerTestAllocator) {return true;}
     friend bool operator!=(ContainerTestAllocator x, ContainerTestAllocator y) {return !(x == y);}
 };
+
+//===----------------------------------------------------------------------===//
+//                       ContainerTestAllocatorForMap
+//===----------------------------------------------------------------------===//
 
 template <class T, class Key, class Value>
 class ContainerTestAllocatorForMap
@@ -373,11 +409,13 @@ public:
 
     T* allocate(std::size_t n)
     {
+        assert(!DisableAllocationGuard::g_disable_allocations);
         return static_cast<T*>(::operator new(n*sizeof(T)));
     }
 
     void deallocate(T* p, std::size_t)
     {
+        assert(!DisableAllocationGuard::g_disable_allocations);
         return ::operator delete(static_cast<void*>(p));
     }
 

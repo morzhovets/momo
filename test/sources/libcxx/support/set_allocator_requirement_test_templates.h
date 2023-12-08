@@ -28,7 +28,6 @@
 #include <iterator>
 
 #include "test_macros.h"
-#include "count_new.h"
 #include "container_test_types.h"
 
 template <class Container>
