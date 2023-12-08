@@ -47,6 +47,7 @@
 #include "libcxx/support/deduction_guides_sfinae_checks.h"
 #include "libcxx/support/test_container_comparisons.h"
 #include "libcxx/support/set_allocator_requirement_test_templates.h"
+#include "libcxx/support/map_allocator_requirement_test_templates.h"
 #include "libcxx/support/asan_testing.h"
 #include "libcxx/support/min_allocator.h"
 

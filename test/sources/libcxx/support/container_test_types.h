@@ -228,9 +228,10 @@ struct AllocatorConstructController {
     m_expected_count = -1;
   }
 
+  AllocatorConstructController()  { reset(); }
+
 private:
   friend AllocatorConstructController* getConstructController();
-  AllocatorConstructController()  { reset(); }
   AllocatorConstructController(AllocatorConstructController const&);
   AllocatorConstructController& operator=(AllocatorConstructController const&);
 };
@@ -286,8 +287,6 @@ class ContainerTestAllocator
 public:
     typedef T value_type;
 
-    int construct_called;
-    int destroy_called;
     ConstructController* controller;
 
     ContainerTestAllocator() TEST_NOEXCEPT
@@ -337,6 +336,74 @@ public:
     friend bool operator!=(ContainerTestAllocator x, ContainerTestAllocator y) {return !(x == y);}
 };
 
+template <class T, class Key, class Value>
+class ContainerTestAllocatorForMap
+{
+  struct InAllocatorConstructGuard {
+    ConstructController *m_cc;
+    bool m_old;
+    InAllocatorConstructGuard(ConstructController* cc) : m_cc(cc) {
+      if (m_cc) {
+        m_old = m_cc->isInAllocatorConstruct();
+        m_cc->inAllocatorConstruct(true);
+      }
+    }
+    ~InAllocatorConstructGuard() {
+      if (m_cc) m_cc->inAllocatorConstruct(m_old);
+    }
+  private:
+    InAllocatorConstructGuard(InAllocatorConstructGuard const&);
+    InAllocatorConstructGuard& operator=(InAllocatorConstructGuard const&);
+  };
+
+public:
+    typedef T value_type;
+
+    ConstructController* controller1;
+    ConstructController* controller2;
+
+    explicit ContainerTestAllocatorForMap(ConstructController* c1, ConstructController* c2)
+       : controller1(c1), controller2(c2)
+    {}
+
+    template <class U>
+    ContainerTestAllocatorForMap(ContainerTestAllocatorForMap<U, Key, Value> other) TEST_NOEXCEPT
+      : controller1(other.controller1), controller2(other.controller2)
+    {}
+
+    T* allocate(std::size_t n)
+    {
+        return static_cast<T*>(::operator new(n*sizeof(T)));
+    }
+
+    void deallocate(T* p, std::size_t)
+    {
+        return ::operator delete(static_cast<void*>(p));
+    }
+
+    template <class Up, class ...Args>
+    void construct(Up* p, Args&&... args) {
+      static_assert(std::is_same_v<Up, Key> || std::is_same_v<Up, Value>);
+      assert((std::is_same_v<Up, Key> && controller1->check<Args&&...>())
+        || (std::is_same_v<Up, Value> && controller2->check<Args&&...>()));
+      {
+        InAllocatorConstructGuard g(getConstructController());
+        ::new (static_cast<void*>(p)) Up(std::forward<Args>(args)...);
+      }
+    }
+
+    template <class Up>
+    void destroy(Up* p) {
+      static_assert(std::is_same_v<Up, Key> || std::is_same_v<Up, Value>);
+      {
+        InAllocatorConstructGuard g(getConstructController());
+        p->~Up();
+      }
+    }
+
+    friend bool operator==(ContainerTestAllocatorForMap, ContainerTestAllocatorForMap) {return true;}
+    friend bool operator!=(ContainerTestAllocatorForMap x, ContainerTestAllocatorForMap y) {return !(x == y);}
+};
 
 namespace test_detail {
 typedef ContainerTestAllocator<int, int> A1;
