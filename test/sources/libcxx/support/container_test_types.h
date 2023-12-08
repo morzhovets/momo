@@ -532,11 +532,7 @@ bool operator <(CopyInsertable<ID> const& L, CopyInsertable<ID> const& R) {
 }
 
 
-#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
-_LIBCPP_BEGIN_NAMESPACE_STD
-#else
 namespace std {
-#endif
   template <int ID>
   struct hash< ::CopyInsertable<ID> > {
     typedef ::CopyInsertable<ID> argument_type;
@@ -546,91 +542,6 @@ namespace std {
       return arg.data;
     }
   };
-  template <class T, class Alloc>
-  class vector;
-  template <class T, class Alloc>
-  class deque;
-  template <class T, class Alloc>
-  class list;
-  template <class _Key, class _Value, class _Less, class _Alloc>
-  class map;
-  template <class _Key, class _Value, class _Less, class _Alloc>
-  class multimap;
-  template <class _Value, class _Less, class _Alloc>
-  class set;
-  template <class _Value, class _Less, class _Alloc>
-  class multiset;
-  template <class _Key, class _Value, class _Hash, class _Equals, class _Alloc>
-  class unordered_map;
-  template <class _Key, class _Value, class _Hash, class _Equals, class _Alloc>
-  class unordered_multimap;
-  template <class _Value, class _Hash, class _Equals, class _Alloc>
-  class unordered_set;
-  template <class _Value, class _Hash, class _Equals, class _Alloc>
-  class unordered_multiset;
-
-#ifdef _LIBCPP_END_NAMESPACE_STD
-_LIBCPP_END_NAMESPACE_STD
-#else
 } // end namespace std
-#endif
-
-#if 0
-
-// TCT - Test container type
-namespace TCT {
-
-template <class T = CopyInsertable<1>>
-using vector = std::vector<T, ContainerTestAllocator<T, T> >;
-template <class T = CopyInsertable<1>>
-using deque = std::deque<T, ContainerTestAllocator<T, T> >;
-template <class T = CopyInsertable<1>>
-using list = std::list<T, ContainerTestAllocator<T, T> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using unordered_map =
-      std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using map =
-      std::map<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using unordered_multimap =
-      std::unordered_multimap<Key, Value, std::hash<Key>, std::equal_to<Key>,
-                                   ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
-          class ValueTp = std::pair<const Key, Value> >
-using multimap =
-      std::multimap<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
-
-template <class Value = CopyInsertable<1> >
-using unordered_set =
-  std::unordered_set<Value, std::hash<Value>, std::equal_to<Value>,
-                               ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using set =
-    std::set<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using unordered_multiset =
-    std::unordered_multiset<Value, std::hash<Value>, std::equal_to<Value>,
-                                    ContainerTestAllocator<Value, Value> >;
-
-template <class Value = CopyInsertable<1> >
-using multiset =
-    std::multiset<Value, std::less<Value>, ContainerTestAllocator<Value, Value> >;
-
-} // end namespace TCT
-
-#endif
 
 #endif // SUPPORT_CONTAINER_TEST_TYPES_H
