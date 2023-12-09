@@ -717,22 +717,39 @@ void testMapEmplace()
       assert(c.emplace(std::move(k2), std::move(m2)).second == false);
     }
   }
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   {
     // Testing C::emplace(ConvertibleToKey&&, ConvertibleToMapped&&)
     Container c(alloc);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<int&&, int&&>();
+#else
+    cc1.expect<int&&>();
+    cc2.expect<int&&>();
+#endif
     assert(c.emplace(42, 1).second);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
     {
       // test that emplacing a duplicate item allocates. We cannot optimize
       // this case because int&& does not match the type of key exactly.
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       cc->expect<int&&, int&&>();
+#else
+      cc1.expect<int&&>();
+#endif
       assert(c.emplace(42, 1).second == false);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       assert(!cc->unchecked());
+#else
+      assert(!cc1.unchecked());
+      assert(!cc2.unchecked());
+#endif
     }
   }
-#endif
 }
 
 
@@ -1036,24 +1053,45 @@ void testMapEmplaceHint()
       assert(c.size() == 1);
     }
   }
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   {
     // Testing C::emplace_hint(p, ConvertibleToKey&&, ConvertibleToMapped&&)
     Container c(alloc);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<int&&, int&&>();
+#else
+    cc1.expect<int&&>();
+    cc2.expect<int&&>();
+#endif
     It ret = c.emplace_hint(c.end(), 42, 1);
     assert(ret != c.end());
     assert(c.size() == 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
     {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       cc->expect<int&&, int&&>();
+#else
+      cc1.expect<int&&>();
+#endif
       It ret2 = c.emplace_hint(c.begin(), 42, 2);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       assert(&(*ret2) == &(*ret));
+#else
+      assert(&(*ret2).first == &(*ret).first);
+#endif
       assert(c.size() == 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       assert(!cc->unchecked());
+#else
+      assert(!cc1.unchecked());
+      assert(!cc2.unchecked());
+#endif
     }
   }
-#endif
 
 }
 
