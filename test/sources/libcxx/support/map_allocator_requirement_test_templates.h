@@ -1062,71 +1062,160 @@ template <class Container>
 void testMultimapInsert()
 {
   typedef typename Container::value_type ValueTp;
+  typedef typename Container::key_type Key;
+  typedef typename Container::mapped_type Mapped;
   ConstructController* cc = getConstructController();
   cc->reset();
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+  typename Container::allocator_type alloc;
+#else
+  ConstructController cc1, cc2;
+  typename Container::allocator_type alloc(&cc1, &cc2);
+#endif
   {
     // Testing C::insert(const value_type&)
-    Container c;
+    Container c(alloc);
     const ValueTp v(42, 1);
     cc->expect<const ValueTp&>();
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    cc->expect<const ValueTp&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<const Mapped&>();
+#endif
     c.insert(v);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(value_type&)
-    Container c;
+    Container c(alloc);
     ValueTp v(42, 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<const Mapped&>();
+#endif
     c.insert(v);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(value_type&&)
-    Container c;
+    Container c(alloc);
     ValueTp v(42, 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<Mapped&&>();
+#endif
     c.insert(std::move(v));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert({key, value})
-    Container c;
+    Container c(alloc);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&&>();
+#else
+    cc1.expect<Key&&>();
+    cc2.expect<Mapped&&>();
+#endif
     c.insert({42, 1});
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(std::initializer_list<ValueTp>)
-    Container c;
+    Container c(alloc);
     std::initializer_list<ValueTp> il = { ValueTp(1, 1), ValueTp(2, 1) };
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp const&>(2);
+#else
+    cc1.expect<const Key&>(2);
+    cc2.expect<const Mapped&>(2);
+#endif
     c.insert(il);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(Iter, Iter) for *Iter = value_type const&
-    Container c;
+    Container c(alloc);
     const ValueTp ValueList[] = { ValueTp(1, 1), ValueTp(2, 1), ValueTp(3, 1) };
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp const&>(3);
+#else
+    cc1.expect<const Key&>(3);
+    cc2.expect<const Mapped&>(3);
+#endif
     c.insert(std::begin(ValueList), std::end(ValueList));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(Iter, Iter) for *Iter = value_type&&
-    Container c;
+    Container c(alloc);
     ValueTp ValueList[] = { ValueTp(1, 1), ValueTp(2, 1) , ValueTp(3, 1) };
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&&>(3);
+#else
+    cc1.expect<const Key&>(3);
+    cc2.expect<Mapped&&>(3);
+#endif
     c.insert(std::move_iterator<ValueTp*>(std::begin(ValueList)),
              std::move_iterator<ValueTp*>(std::end(ValueList)));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(Iter, Iter) for *Iter = value_type&
-    Container c;
+    Container c(alloc);
     ValueTp ValueList[] = { ValueTp(1, 1), ValueTp(2, 1) , ValueTp(3, 1) };
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&>(3);
+#else
+    cc1.expect<const Key&>(3);
+    cc2.expect<const Mapped&>(3);
+#endif
     c.insert(std::begin(ValueList), std::end(ValueList));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
 }
 
@@ -1135,38 +1224,86 @@ template <class Container>
 void testMultimapInsertHint()
 {
   typedef typename Container::value_type ValueTp;
+  typedef typename Container::key_type Key;
+  typedef typename Container::mapped_type Mapped;
   ConstructController* cc = getConstructController();
   cc->reset();
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+  typename Container::allocator_type alloc;
+#else
+  ConstructController cc1, cc2;
+  typename Container::allocator_type alloc(&cc1, &cc2);
+#endif
   {
     // Testing C::insert(p, const value_type&)
-    Container c;
+    Container c(alloc);
     const ValueTp v(42, 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<const ValueTp&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<const Mapped&>();
+#endif
     c.insert(c.begin(), v);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(p, value_type&)
-    Container c;
+    Container c(alloc);
     ValueTp v(42, 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<const Mapped&>();
+#endif
     c.insert(c.begin(), v);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(p, value_type&&)
-    Container c;
+    Container c(alloc);
     ValueTp v(42, 1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&&>();
+#else
+    cc1.expect<const Key&>();
+    cc2.expect<Mapped&&>();
+#endif
     c.insert(c.begin(), std::move(v));
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
   {
     // Testing C::insert(p, {key, value})
-    Container c;
+    Container c(alloc);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     cc->expect<ValueTp&&>();
+#else
+    cc1.expect<Key&&>();
+    cc2.expect<Mapped&&>();
+#endif
     c.insert(c.begin(), {42, 1});
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(!cc->unchecked());
+#else
+    assert(!cc1.unchecked());
+    assert(!cc2.unchecked());
+#endif
   }
 }
 

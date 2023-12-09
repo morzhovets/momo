@@ -23,7 +23,12 @@ template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
           class ValueTp = std::pair<const Key, Value> >
 using multimap =
       std::multimap<Key, Value, std::less<Key>,
-                              ContainerTestAllocator<ValueTp, ValueTp> >;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+                              ContainerTestAllocator<ValueTp, ValueTp>
+#else
+                              ContainerTestAllocatorForMap<ValueTp, Key, Value>
+#endif
+      >;
 }
 
 int main(int, char**)
