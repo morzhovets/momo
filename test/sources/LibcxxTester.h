@@ -51,6 +51,33 @@
 #include "libcxx/support/asan_testing.h"
 #include "libcxx/support/min_allocator.h"
 
+#include "../../include/momo/ObjectManager.h"
+
+namespace momo
+{
+	template<int Dummy, conceptMemManager TMemManager>
+	class ObjectRelocator<CopyInsertable<Dummy>, TMemManager>
+	{
+	public:
+		typedef CopyInsertable<Dummy> Object;
+		typedef TMemManager MemManager;
+
+		static const bool isTriviallyRelocatable = false;
+		static const bool isRelocatable = true;
+		static const bool isNothrowRelocatable = true;
+
+	public:
+		static void Relocate(MemManager* /*srcMemManager*/, MemManager* /*dstMemManager*/,
+			Object& srcObject, Object* dstObject) noexcept
+		{
+			std::construct_at(dstObject, srcObject.data);
+			dstObject->copied_once = srcObject.copied_once;
+			dstObject->constructed_under_allocator = srcObject.constructed_under_allocator;
+			std::destroy_at(&srcObject);
+		}
+	};
+}
+
 template<typename It>
 using input_iterator = cpp17_input_iterator<It>;
 
@@ -65,7 +92,8 @@ struct LibcppIntHash
 #define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
 
 #define LIBCXX_TEST_BEGIN(name) \
-	namespace name { \
+	namespace name \
+	{ \
 		template<typename Main> \
 		int TestLibcxx(Main main) \
 		{ \
