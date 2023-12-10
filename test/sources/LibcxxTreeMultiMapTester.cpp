@@ -31,7 +31,7 @@ using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		momo::TreeMapSettings>>;
-#include "LibcxxMultiMapTests.h"
+#include "libcxx/MultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace

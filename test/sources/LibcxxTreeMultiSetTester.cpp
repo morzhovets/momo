@@ -31,7 +31,7 @@ using multiset = momo::stdish::multiset<TKey, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
-#include "LibcxxMultiSetTests.h"
+#include "libcxx/MultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace

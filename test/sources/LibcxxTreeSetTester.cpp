@@ -31,7 +31,7 @@ using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
-#include "LibcxxSetTests.h"
+#include "libcxx/SetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace
