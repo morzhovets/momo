@@ -37,7 +37,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
-#include "LibcxxMultiMapTests.h"
+#include "libcxx/MultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 }
 
@@ -60,7 +60,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap_vp"
-#include "LibcxxMultiMapTests.h"
+#include "libcxx/MultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 }
 

@@ -39,7 +39,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
-#include "LibcxxMapTests.h"
+#include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 }
@@ -63,7 +63,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map_vp"
-#include "LibcxxMapTests.h"
+#include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 }

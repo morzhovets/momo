@@ -37,7 +37,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
-#include "LibcxxMultiSetTests.h"
+#include "libcxx/MultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 }
