@@ -287,6 +287,8 @@ private:
     DisableAllocationGuard& operator=(DisableAllocationGuard const&);
 };
 
+inline bool DisableAllocationGuard::g_disable_allocations = false;
+
 //===----------------------------------------------------------------------===//
 //                       ContainerTestAllocator
 //===----------------------------------------------------------------------===//

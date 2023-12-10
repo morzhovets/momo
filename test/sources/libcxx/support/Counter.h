@@ -42,7 +42,7 @@ private:
     T data_;
 };
 
-//int Counter_base::gConstructed = 0;
+inline int Counter_base::gConstructed = 0;
 
 namespace std {
 
