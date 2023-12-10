@@ -78,6 +78,10 @@ void main()
         assert(r == m.begin());
         assert(m.size() == 1);
         assert(*r == 2);
+        r = m.emplace_hint(m.cend(), M::value_type(1));
+        assert(r == m.begin());
+        assert(m.size() == 2);
+        assert(*r == 1);
     }
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
