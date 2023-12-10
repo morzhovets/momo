@@ -770,21 +770,25 @@ public:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		ArgIterator iter = begin;
-		InsertResult res = Insert(*iter);
+		typedef decltype(*iter) ItemArg;	//?
+		ItemArg&& ref0 = *iter;
+		InsertResult res = InsertVar(ItemTraits::GetKey(static_cast<const Item&>(ref0)),
+			std::forward<ItemArg>(ref0));
 		size_t count = res.inserted ? 1 : 0;
 		++iter;
 		for (; iter != end; ++iter)
 		{
-			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(*iter));
+			ItemArg&& ref = *iter;
+			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(ref));
 			const Key& prevKey = ItemTraits::GetKey(*res.position);
 			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))
 			{
-				res = Insert(*iter);
+				res = InsertVar(key, std::forward<ItemArg>(ref));
 			}
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
 			{
 				res.position = pvAdd<false>(std::next(res.position),
-					Creator<decltype(*iter)>(memManager, *iter));
+					Creator<ItemArg>(memManager, std::forward<ItemArg>(ref)));
 				res.inserted = true;
 			}
 			else
