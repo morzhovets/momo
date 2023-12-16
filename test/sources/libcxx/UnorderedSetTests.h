@@ -90,9 +90,9 @@ LIBCXX_TEST_BEGIN(erase_range)
 #include "unord.set/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(extract_iterator)
-//#include "unord.set/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(extract_iterator)
+#include "unord.set/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
@@ -114,9 +114,11 @@ LIBCXX_TEST_BEGIN(find_non_const_transparent)
 #include "unord.set/find_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(incomplete)
-//#include "unord.set/incomplete.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete)
+#include "unord.set/incomplete.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(insert_const_lvalue)
 #include "unord.set/insert_const_lvalue.pass.cpp"
