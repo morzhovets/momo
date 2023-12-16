@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -15,11 +14,33 @@
 #define TEST_HASH_H
 
 #include <cstddef>
-#include <type_traits>
+#include <utility>
 
-template <class C>
+template <class T>
 class test_hash
-    : private C
+{
+    int data_;
+public:
+    explicit test_hash(int data = 0) : data_(data) {}
+
+    std::size_t operator()(const T& x) const
+        {return std::hash<T>()(x);}
+
+    bool operator==(const test_hash& c) const
+        {return data_ == c.data_;}
+};
+
+template <class T>
+class test_hash<std::hash<T>> : public test_hash<T>
+{
+public:
+    explicit test_hash(int data = 0) : test_hash<T>(data) {}
+};
+
+struct LibcppIntHash;
+
+template <>
+class test_hash<LibcppIntHash>
 {
     int data_;
 public:
@@ -27,8 +48,7 @@ public:
 
     template<typename T>
     std::size_t operator()(const T& x) const
-    //operator()(typename std::add_lvalue_reference<const typename C::argument_type>::type x) const
-        {return C::operator()(x);}
+        {return LibcppIntHash().operator()(x);}
 
     bool operator==(const test_hash& c) const
         {return data_ == c.data_;}
