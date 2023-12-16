@@ -36,9 +36,11 @@ int main(int, char**)
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         r = c.emplace_hint(r, 5, 6);
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
+#endif
     }
     {
         typedef std::unordered_set<Emplaceable, std::hash<Emplaceable>,
@@ -53,9 +55,11 @@ int main(int, char**)
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         r = c.emplace_hint(r, 5, 6);
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
+#endif
     }
 
   return 0;

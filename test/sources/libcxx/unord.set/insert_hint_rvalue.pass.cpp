@@ -80,9 +80,11 @@ int main(int, char**)
         assert(c.size() == 1);
         assert(*r == 3.5);
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         r = c.insert(r, P(3.5));
         assert(c.size() == 1);
         assert(*r == 3.5);
+#endif
 
         r = c.insert(/*c.end()*/c.find(4.5), P(4.5));
         assert(c.size() == 2);
@@ -103,9 +105,11 @@ int main(int, char**)
         assert(c.size() == 1);
         assert(*r == 3);
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
         r = c.insert(r, P(3));
         assert(c.size() == 1);
         assert(*r == 3);
+#endif
 
         r = c.insert(/*c.end()*/c.find(4), P(4));
         assert(c.size() == 2);

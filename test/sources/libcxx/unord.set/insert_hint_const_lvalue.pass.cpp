@@ -25,23 +25,25 @@ void do_insert_hint_const_lvalue_test()
     typedef typename C::iterator R;
     typedef typename C::value_type VT;
     C c;
-    typename C::const_iterator e = c.end();
+    //typename C::const_iterator e = c.end();
     const VT v1(3.5);
-    R r = c.insert(e, v1);
+    R r = c.insert(/*e*/c.find(v1), v1);
     assert(c.size() == 1);
     assert(*r == 3.5);
 
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
     r = c.insert(r, v1);
     assert(c.size() == 1);
     assert(*r == 3.5);
+#endif
 
     const VT v2(4.5);
-    r = c.insert(c.end(), v2);
+    r = c.insert(/*c.end()*/c.find(v2), v2);
     assert(c.size() == 2);
     assert(*r == 4.5);
 
     const VT v3(5.5);
-    r = c.insert(c.end(), v3);
+    r = c.insert(/*c.end()*/c.find(v3), v3);
     assert(c.size() == 3);
     assert(*r == 5.5);
 }
