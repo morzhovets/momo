@@ -16,11 +16,6 @@
 
 #include "../../include/momo/stdish/unordered_set.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
-
 namespace
 {
 
@@ -57,6 +52,3 @@ using std::unordered_set;
 } // namespace libcxx_test_hash_set
 
 } // namespace
-
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL

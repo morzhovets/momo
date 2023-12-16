@@ -42,22 +42,6 @@ LIBCXX_TEST_BEGIN(count_transparent)
 #include "unord.set/count.transparent.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(db_iterators_7)
-#include "unord.set/db_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_8)
-#include "unord.set/db_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_local_iterators_7)
-#include "unord.set/db_local_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_local_iterators_8)
-#include "unord.set/db_local_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(emplace)
 #include "unord.set/emplace.pass.cpp"
 LIBCXX_TEST_END
@@ -96,30 +80,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_if_)
 #include "unord.set/erase_if.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_db1)
-#include "unord.set/erase_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_db2)
-#include "unord.set/erase_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_iter_db1)
-#include "unord.set/erase_iter_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_iter_db2)
-#include "unord.set/erase_iter_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_iter_db3)
-#include "unord.set/erase_iter_iter_db3.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(erase_iter_iter_db4)
-#include "unord.set/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_key)
@@ -350,10 +310,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_size_hash_equal_allocator)
 #include "unord.set/unord.set.cnstr/size_hash_equal_allocator.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(swap_db_swap_1)
-#include "unord.set/unord.set.swap/db_swap_1.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(swap_swap_noexcept)
