@@ -114,6 +114,10 @@ LIBCXX_TEST_BEGIN(find_non_const_transparent)
 #include "unord.set/find_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "unord.set/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete)
 #include "unord.set/incomplete.pass.cpp"
@@ -152,6 +156,10 @@ LIBCXX_TEST_BEGIN(insert_rvalue)
 #include "unord.set/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "unord.set/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.set/iterators.pass.cpp"
 LIBCXX_TEST_END
@@ -178,6 +186,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(merge)
 #include "unord.set/merge.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "unord.set/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(rehash)
