@@ -18,13 +18,6 @@
 //   typename unordered_set<T, Hash, Compare, Allocator>::size_type
 //   erase_if(unordered_set<T, Hash, Compare, Allocator>& c, Predicate pred);
 
-//#include <unordered_set>
-//#include <algorithm>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 using Init = std::initializer_list<int>;
 
 template <typename M>
@@ -37,7 +30,7 @@ M make (Init vals)
 }
 
 template <typename M, typename Pred>
-void test0(Init vals, Pred p, Init expected, size_t expected_erased_count) {
+void test0(Init vals, Pred p, Init expected, std::size_t expected_erased_count) {
   M s = make<M>(vals);
   ASSERT_SAME_TYPE(typename M::size_type, decltype(erase_if(s, p)));
   assert(expected_erased_count == erase_if(s, p));
@@ -73,14 +66,14 @@ void test()
     test0<S>({1, 2, 3}, False, {1, 2, 3}, 0);
 }
 
-void main()
+int main(int, char**)
 {
-    test<unordered_set<int>>();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>> ();
-#endif
-    test<unordered_set<int, std::hash<int>, std::equal_to<int>, test_allocator<int>>> ();
+    test<std::unordered_set<int>>();
+    test<std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>> ();
+    test<std::unordered_set<int, std::hash<int>, std::equal_to<int>, test_allocator<int>>> ();
 
-    test<unordered_set<long>>();
-    test<unordered_set<double>>();
+    test<std::unordered_set<long>>();
+    test<std::unordered_set<double>>();
+
+  return 0;
 }

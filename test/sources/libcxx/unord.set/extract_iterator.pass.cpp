@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_set>
 
@@ -19,14 +18,10 @@
 
 // node_type extract(const_iterator);
 
-//#include <unordered_set>
-//#include "min_allocator.h"
-//#include "Counter.h"
-
 template <class Container>
 void test(Container& c)
 {
-    size_t sz = c.size();
+    std::size_t sz = c.size();
 
     for (auto first = c.cbegin(); first != c.cend();)
     {
@@ -43,25 +38,26 @@ void test(Container& c)
     assert(c.size() == 0);
 }
 
-void main()
+int main(int, char**)
 {
     {
-        using set_type = unordered_set<int>;
+        using set_type = std::unordered_set<int>;
         set_type m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
 
     {
-        unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
+        std::unordered_set<Counter<int>> m = {1, 2, 3, 4, 5, 6};
         assert(Counter_base::gConstructed == 6);
         test(m);
         assert(Counter_base::gConstructed == 0);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+
     {
-        using min_alloc_set = unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
+        using min_alloc_set = std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>>;
         min_alloc_set m = {1, 2, 3, 4, 5, 6};
         test(m);
     }
-#endif
+
+  return 0;
 }

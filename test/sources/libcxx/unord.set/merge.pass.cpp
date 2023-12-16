@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_set>
 
@@ -25,12 +24,6 @@
 //   void merge(unordered_multiset<key_type, H2, P2, allocator_type>& source);
 // template <class H2, class P2>
 //   void merge(unordered_multiset<key_type, H2, P2, allocator_type>&& source);
-
-//#include <unordered_set>
-//#include "test_macros.h"
-//#include "Counter.h"
-
-#define unordered_multiset momo::stdish::unordered_set
 
 template <class Set>
 bool set_equal(const Set& set, Set other)
@@ -46,10 +39,7 @@ struct throw_hasher
 
     throw_hasher(bool& should_throw) : should_throw_(should_throw) {}
 
-    typedef size_t result_type;
-    typedef T argument_type;
-
-    size_t operator()(const T& p) const
+    std::size_t operator()(const T& p) const
     {
         if (should_throw_)
             throw 0;
@@ -58,11 +48,11 @@ struct throw_hasher
 };
 #endif
 
-void main()
+int main(int, char**)
 {
     {
-        unordered_set<int> src{1, 3, 5};
-        unordered_set<int> dst{2, 4, 5};
+        std::unordered_set<int> src{1, 3, 5};
+        std::unordered_set<int> dst{2, 4, 5};
         dst.merge(src);
         assert(set_equal(src, {5}));
         assert(set_equal(dst, {1, 2, 3, 4, 5}));
@@ -71,7 +61,7 @@ void main()
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef unordered_set<Counter<int>, throw_hasher<Counter<int>>> set_type;
+        typedef std::unordered_set<Counter<int>, throw_hasher<Counter<int>>> set_type;
         set_type src({1, 3, 5}, 0, throw_hasher<Counter<int>>(do_throw));
         set_type dst({2, 4, 5}, 0, throw_hasher<Counter<int>>(do_throw));
 
@@ -104,14 +94,12 @@ void main()
     struct hasher
     {
         hasher() = default;
-        typedef Counter<int> argument_type;
-        typedef size_t result_type;
-        size_t operator()(const Counter<int>& p) const { return std::hash<Counter<int>>()(p); }
+        std::size_t operator()(const Counter<int>& p) const { return std::hash<Counter<int>>()(p); }
     };
     {
-        typedef unordered_set<Counter<int>, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_set_type;
-        typedef unordered_set<Counter<int>, hasher, equal> second_set_type;
-        typedef unordered_multiset<Counter<int>, hasher, equal> third_set_type;
+        typedef std::unordered_set<Counter<int>, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_set_type;
+        typedef std::unordered_set<Counter<int>, hasher, equal> second_set_type;
+        typedef momo::stdish::unordered_set<Counter<int>, hasher, equal> third_set_type;
 
         {
             first_set_type first{1, 2, 3};
@@ -149,18 +137,17 @@ void main()
         assert(Counter_base::gConstructed == 0);
     }
     {
-        unordered_set<int> first;
+        std::unordered_set<int> first;
         {
-            unordered_set<int> second;
+            std::unordered_set<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
         {
-            unordered_multiset<int> second;
+            momo::stdish::unordered_set<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
     }
+    return 0;
 }
-
-#undef unordered_multiset

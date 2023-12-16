@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,16 +10,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_set>
 
 // class unordered_set
 
 // iterator insert(const_iterator hint, node_type&&);
-
-//#include <unordered_set>
-//#include "min_allocator.h"
 
 template <class Container>
 typename Container::node_type
@@ -41,7 +37,7 @@ void test(Container& c)
     {
         typename Container::node_type node = nf(i);
         assert(!node.empty());
-        size_t prev = c.size();
+        std::size_t prev = c.size();
         auto it = c.insert(/*c.end()*/c.find(i), std::move(node));
         assert(node.empty());
         assert(prev + 1 == c.size());
@@ -56,12 +52,12 @@ void test(Container& c)
     }
 }
 
-void main()
+int main(int, char**)
 {
-    unordered_set<int> m;
+    std::unordered_set<int> m;
     test(m);
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> m2;
+    std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> m2;
     test(m2);
-#endif
+
+  return 0;
 }

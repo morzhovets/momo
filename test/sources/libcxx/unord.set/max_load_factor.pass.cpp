@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -20,28 +19,17 @@
 // float max_load_factor() const;
 // void max_load_factor(float mlf);
 
-#ifdef _LIBCPP_DEBUG
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_set<int> C;
-        typedef int P;
+        typedef std::unordered_set<int> C;
         const C c;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
 #endif
     }
     {
-        typedef unordered_set<int> C;
-        typedef int P;
+        typedef std::unordered_set<int> C;
         C c;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
@@ -52,31 +40,29 @@ void main()
         assert(c.max_load_factor() == 0.5);
 #endif
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
-        typedef int P;
         const C c;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
     }
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
-        typedef int P;
         C c;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
         c.max_load_factor(2.5);
         assert(c.max_load_factor() == 2.5);
+#else
+        c.max_load_factor(0.5);
+        assert(c.max_load_factor() == 0.5);
+#endif
     }
 #endif
-#if _LIBCPP_DEBUG_LEVEL >= 1
-    {
-        typedef unordered_set<int> C;
-        C c;
-        LIBCPP_CATCH(c.max_load_factor(-0.5f));
-        //assert(false);
-    }
-#endif
+
+    return 0;
 }

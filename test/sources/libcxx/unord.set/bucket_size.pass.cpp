@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,19 +18,10 @@
 
 // size_type bucket_size(size_type n) const
 
-#ifdef _LIBCPP_DEBUG
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_set<int, LibcppIntHash> C;
+        typedef std::unordered_set<int> C;
         typedef int P;
         P a[] =
         {
@@ -44,16 +34,15 @@ void main()
         };
         const C c(std::begin(a), std::end(a));
         assert(c.bucket_count() >= 5);
-        assert(c.bucket_size(0) == 0);
-        assert(c.bucket_size(1) == 1);
-        assert(c.bucket_size(2) == 1);
-        assert(c.bucket_size(3) == 1);
-        assert(c.bucket_size(4) == 1);
+        LIBCPP_ASSERT(c.bucket_size(0) == 0);
+        LIBCPP_ASSERT(c.bucket_size(1) == 1);
+        LIBCPP_ASSERT(c.bucket_size(2) == 1);
+        LIBCPP_ASSERT(c.bucket_size(3) == 1);
+        LIBCPP_ASSERT(c.bucket_size(4) == 1);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> C;
+        typedef std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         P a[] =
         {
@@ -66,19 +55,13 @@ void main()
         };
         const C c(std::begin(a), std::end(a));
         assert(c.bucket_count() >= 5);
-        assert(c.bucket_size(0) == 0);
-        assert(c.bucket_size(1) == 1);
-        assert(c.bucket_size(2) == 1);
-        assert(c.bucket_size(3) == 1);
-        assert(c.bucket_size(4) == 1);
+        LIBCPP_ASSERT(c.bucket_size(0) == 0);
+        LIBCPP_ASSERT(c.bucket_size(1) == 1);
+        LIBCPP_ASSERT(c.bucket_size(2) == 1);
+        LIBCPP_ASSERT(c.bucket_size(3) == 1);
+        LIBCPP_ASSERT(c.bucket_size(4) == 1);
     }
 #endif
-#if _LIBCPP_DEBUG_LEVEL >= 1
-    {
-        typedef unordered_set<int> C;
-        C c;
-        LIBCPP_CATCH(c.bucket_size(3));
-        //assert(false);
-    }
-#endif
+
+    return 0;
 }

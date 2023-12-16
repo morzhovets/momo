@@ -12,9 +12,6 @@
 
 // UNSUPPORTED: c++03, c++11, c++14, c++17
 
-//#include <cassert>
-//#include <unordered_set>
-
 // <unordered_set>
 
 // bool contains(const key_type& x) const;
@@ -32,10 +29,12 @@ void test(B bad, Vals... args) {
 
 struct E { int a = 1; double b = 1; char c = 1; };
 
-void main()
+int main(int, char**)
 {
     {
-        test<unordered_set<int>, int>(14, 10, 11, 12, 13);
-        test<unordered_set<char>, char>('e', 'a', 'b', 'c', 'd');
+        test<std::unordered_set<int>, int>(14, 10, 11, 12, 13);
+        test<std::unordered_set<char>, char>('e', 'a', 'b', 'c', 'd');
     }
+
+    return 0;
 }

@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -24,15 +23,10 @@
 // const_iterator cbegin() const {return __table_.begin();}
 // const_iterator cend()   const {return __table_.end();}
 
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_set<int> C;
+        typedef std::unordered_set<int> C;
         typedef int P;
         P a[] =
         {
@@ -46,12 +40,12 @@ void main()
         C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         C::iterator i;
     }
     {
-        typedef unordered_set<int> C;
+        typedef std::unordered_set<int> C;
         typedef int P;
         P a[] =
         {
@@ -65,14 +59,13 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         C::const_iterator i;
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         P a[] =
@@ -87,12 +80,12 @@ void main()
         C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         C::iterator i;
     }
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         P a[] =
@@ -107,14 +100,14 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.bucket_count() >= 5);
         assert(c.size() == 4);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         C::const_iterator i;
     }
 #endif
-//#if _LIBCPP_STD_VER > 11
+#if TEST_STD_VER > 11
     { // N3644 testing
-        typedef unordered_set<int> C;
+        typedef std::unordered_set<int> C;
         C::iterator ii1{}, ii2{};
         C::iterator ii4 = ii1;
         C::const_iterator cii{};
@@ -128,5 +121,7 @@ void main()
         assert (!(ii1 != cii ));
         assert (!(cii != ii1 ));
     }
-//#endif
+#endif
+
+  return 0;
 }

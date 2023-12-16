@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <unordered_set>
 
@@ -19,17 +20,10 @@
 
 // void insert(initializer_list<value_type> il);
 
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "test_iterators.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
-        typedef unordered_set<int> C;
+        typedef std::unordered_set<int> C;
         typedef int P;
         C c;
         c.insert(
@@ -48,10 +42,8 @@ void main()
         assert(c.count(3) == 1);
         assert(c.count(4) == 1);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         C c;
@@ -71,6 +63,6 @@ void main()
         assert(c.count(3) == 1);
         assert(c.count(4) == 1);
     }
-#endif
-#endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
+
+  return 0;
 }

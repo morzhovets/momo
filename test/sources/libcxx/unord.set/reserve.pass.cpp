@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,11 +18,6 @@
 
 // void reserve(size_type n);
 
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
 template <class C>
 void test(const C& c)
 {
@@ -34,10 +28,25 @@ void test(const C& c)
     assert(c.count(4) == 1);
 }
 
-void main()
+void reserve_invariant(std::size_t n) // LWG #2156
+{
+    for (std::size_t i = 0; i < n; ++i)
+    {
+        std::unordered_set<std::size_t> c;
+        c.reserve(n);
+        std::size_t buckets = c.bucket_count();
+        for (std::size_t j = 0; j < i; ++j)
+        {
+            c.insert(i);
+            assert(buckets == c.bucket_count());
+        }
+    }
+}
+
+int main(int, char**)
 {
     {
-        typedef unordered_set<int> C;
+        typedef std::unordered_set<int> C;
         typedef int P;
         P a[] =
         {
@@ -52,9 +61,7 @@ void main()
         test(c);
         assert(c.bucket_count() >= 5);
         c.reserve(3);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(c.bucket_count() == 5);
-#endif
+        LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
@@ -68,10 +75,9 @@ void main()
         assert(c.bucket_count() >= 16);
         test(c);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, std::hash<int>,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         P a[] =
@@ -87,7 +93,7 @@ void main()
         test(c);
         assert(c.bucket_count() >= 5);
         c.reserve(3);
-        assert(c.bucket_count() == 5);
+        LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
         c.max_load_factor(2);
         c.reserve(3);
@@ -98,4 +104,7 @@ void main()
         test(c);
     }
 #endif
+    reserve_invariant(20);
+
+  return 0;
 }
