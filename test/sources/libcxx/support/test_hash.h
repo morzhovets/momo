@@ -46,9 +46,8 @@ class test_hash<LibcppIntHash>
 public:
     explicit test_hash(int data = 0) : data_(data) {}
 
-    template<typename T>
-    std::size_t operator()(const T& x) const
-        {return LibcppIntHash().operator()(x);}
+    std::size_t operator()(int x) const
+        {return static_cast<std::size_t>(x);}
 
     bool operator==(const test_hash& c) const
         {return data_ == c.data_;}
