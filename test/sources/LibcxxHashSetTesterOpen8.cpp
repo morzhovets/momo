@@ -28,14 +28,27 @@
 namespace
 {
 
+namespace libcxx_test_hash_set
+{
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TKey,
+		typename THashFunc = std::hash<TKey>,
+		typename TEqualFunc = std::equal_to<TKey>,
+		typename TAllocator = std::allocator<TKey>>
+	using unordered_set = momo::stdish::unordered_set_open<TKey, THashFunc, TEqualFunc, TAllocator>;
+}
+
+using std::unordered_set;
+
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"
-template<typename TKey,
-	typename THashFunc = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<TKey>>
-using unordered_set = momo::stdish::unordered_set_open<TKey, THashFunc, TEqualFunc, TAllocator>;
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
+
+} // namespace libcxx_test_hash_set
 
 } // namespace
 

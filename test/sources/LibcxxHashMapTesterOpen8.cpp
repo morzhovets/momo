@@ -28,15 +28,28 @@
 namespace
 {
 
+namespace libcxx_test_hash_map
+{
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TKey, typename TMapped,
+		typename THashFunc = std::hash<TKey>,
+		typename TEqualFunc = std::equal_to<TKey>,
+		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+	using unordered_map = momo::stdish::unordered_map_open<TKey, TMapped,
+		THashFunc, TEqualFunc, TAllocator>;
+}
+
+using std::unordered_map;
+
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_open"
-template<typename TKey, typename TMapped,
-	typename THashFunc = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_map = momo::stdish::unordered_map_open<TKey, TMapped,
-	THashFunc, TEqualFunc, TAllocator>;
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
+
+} // namespace libcxx_test_hash_map
 
 } // namespace
 
