@@ -330,9 +330,9 @@ LIBCXX_TEST_BEGIN(cnstr_size_hash_equal_allocator)
 #include "unord.set/unord.set.cnstr/size_hash_equal_allocator.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
-//#include "unord.set/unord.set.swap/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(swap_swap_noexcept)
+#include "unord.set/unord.set.swap/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(swap_swap_non_member)
 #include "unord.set/unord.set.swap/swap_non_member.pass.cpp"
