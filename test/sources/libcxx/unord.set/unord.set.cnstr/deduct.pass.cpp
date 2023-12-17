@@ -188,7 +188,9 @@ int main(int, char**)
     assert(s.get_allocator().get_id() == 42);
     }
 
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
     UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_set, std::unordered_set<int>>();
+#endif
 
     return 0;
 }
