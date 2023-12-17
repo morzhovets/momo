@@ -62,6 +62,10 @@ LIBCXX_TEST_BEGIN(eq)
 #include "unord.multimap/eq.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(equal_range_transparent)
+#include "unord.multimap/equal_range.transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(equal_range_const)
 #include "unord.multimap/equal_range_const.pass.cpp"
 LIBCXX_TEST_END
@@ -72,6 +76,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_if_)
 #include "unord.multimap/erase_if.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(find_transparent)
+#include "unord.multimap/find.transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(find_const)

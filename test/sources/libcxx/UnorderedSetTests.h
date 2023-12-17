@@ -58,6 +58,10 @@ LIBCXX_TEST_BEGIN(eq)
 #include "unord.set/eq.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(equal_range_transparent)
+#include "unord.set/equal_range.transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(equal_range_const)
 #include "unord.set/equal_range_const.pass.cpp"
 LIBCXX_TEST_END
@@ -88,6 +92,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(find_transparent)
+#include "unord.set/find.transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(find_const)
