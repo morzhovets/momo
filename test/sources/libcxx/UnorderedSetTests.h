@@ -124,6 +124,10 @@ LIBCXX_TEST_BEGIN(incomplete)
 LIBCXX_TEST_END
 #endif
 
+LIBCXX_TEST_BEGIN(insert_and_emplace_allocator_requirements)
+#include "unord.set/insert_and_emplace_allocator_requirements.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(insert_const_lvalue)
 #include "unord.set/insert_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
