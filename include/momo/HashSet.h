@@ -834,10 +834,13 @@ public:
 	template<internal::conceptSetArgIterator<Item> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		size_t count = 0;
+		size_t initCount = GetCount();
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			count += Insert(*iter).inserted ? size_t{1} : size_t{0};
-		return count;
+		{
+			auto&& ref = *iter;
+			InsertVar(ItemTraits::GetKey(std::as_const(ref)), std::forward<decltype(ref)>(ref));
+		}
+		return GetCount() - initCount;
 	}
 
 	size_t Insert(std::initializer_list<Item> items)
