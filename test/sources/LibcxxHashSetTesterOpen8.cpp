@@ -42,8 +42,6 @@ namespace std
 	using unordered_set = momo::stdish::unordered_set_open<TKey, THashFunc, TEqualFunc, TAllocator>;
 }
 
-using std::unordered_set;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX

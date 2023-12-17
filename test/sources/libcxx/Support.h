@@ -60,3 +60,5 @@ struct LibcppIntHash
 };
 
 #define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
+
+#define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}

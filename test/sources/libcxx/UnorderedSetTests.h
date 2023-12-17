@@ -346,6 +346,56 @@ LIBCXX_TEST_BEGIN(cnstr_size_hash_equal_allocator)
 #include "unord.set/unord.set.cnstr/size_hash_equal_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCXX_TEST_DEBUG
+
+LIBCXX_TEST_BEGIN(db_assert_bucket)
+#include "unord.set/unord.set.db/assert.bucket.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_assert_bucket_size)
+#include "unord.set/unord.set.db/assert.bucket_size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_assert_max_load_factor)
+#include "unord.set/unord.set.db/assert.max_load_factor.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_erase_iter)
+#include "unord.set/unord.set.db/debug.erase.iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_erase_iter_iter)
+#include "unord.set/unord.set.db/debug.erase.iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_insert_hint_const_lvalue)
+#include "unord.set/unord.set.db/debug.insert.hint_const_lvalue.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_iterator_dereference)
+#include "unord.set/unord.set.db/debug.iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_iterator_increment)
+#include "unord.set/unord.set.db/debug.iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(db_debug_local_iterator_dereference)
+#include "unord.set/unord.set.db/debug.local_iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+LIBCXX_TEST_BEGIN(db_debug_local_iterator_increment)
+#include "unord.set/unord.set.db/debug.local_iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(db_debug_swap)
+#include "unord.set/unord.set.db/debug.swap.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 LIBCXX_TEST_BEGIN(swap_swap_noexcept)
 #include "unord.set/unord.set.swap/swap_noexcept.pass.cpp"
 LIBCXX_TEST_END
