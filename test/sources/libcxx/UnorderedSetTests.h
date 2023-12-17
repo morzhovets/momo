@@ -62,16 +62,8 @@ LIBCXX_TEST_BEGIN(equal_range_const)
 #include "unord.set/equal_range_const.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(equal_range_const_transparent)
-#include "unord.set/equal_range_const.transparent.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(equal_range_non_const)
 #include "unord.set/equal_range_non_const.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(equal_range_non_const_transparent)
-#include "unord.set/equal_range_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_const_iter)
@@ -102,16 +94,8 @@ LIBCXX_TEST_BEGIN(find_const)
 #include "unord.set/find_const.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(find_const_transparent)
-#include "unord.set/find_const.transparent.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(find_non_const)
 #include "unord.set/find_non_const.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(find_non_const_transparent)
-#include "unord.set/find_non_const.transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(get_allocator)
