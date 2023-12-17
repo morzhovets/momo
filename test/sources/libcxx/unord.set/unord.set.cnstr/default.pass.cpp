@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,27 +18,18 @@
 
 // unordered_set();
 
-//#include <unordered_set>
-//#include <cassert>
-
-//#include "../../../NotConstructible.h"
-//#include "../../../test_compare.h"
-//#include "../../../test_hash.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_set<NotConstructible,
-                                   test_hash<std::hash<NotConstructible> >,
-                                   test_compare<std::equal_to<NotConstructible> >,
+        typedef std::unordered_set<NotConstructible,
+                                   test_hash<NotConstructible>,
+                                   test_equal_to<NotConstructible>,
                                    test_allocator<NotConstructible>
                                    > C;
         C c;
-        assert(c.bucket_count() == 0);
-        assert(c.hash_function() == test_hash<std::hash<NotConstructible> >());
-        assert(c.key_eq() == test_compare<std::equal_to<NotConstructible> >());
+        LIBCPP_ASSERT(c.bucket_count() == 0);
+        assert(c.hash_function() == test_hash<NotConstructible>());
+        assert(c.key_eq() == test_equal_to<NotConstructible>());
         assert(c.get_allocator() == (test_allocator<NotConstructible>()));
         assert(c.size() == 0);
         assert(c.empty());
@@ -49,30 +39,18 @@ void main()
         assert(c.max_load_factor() == 1);
 #endif
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_set<NotConstructible,
-                                   test_hash<std::hash<NotConstructible> >,
-                                   test_compare<std::equal_to<NotConstructible> >,
+        typedef std::unordered_set<NotConstructible,
+                                   test_hash<NotConstructible>,
+                                   test_equal_to<NotConstructible>,
                                    min_allocator<NotConstructible>
                                    > C;
         C c;
-        assert(c.bucket_count() == 0);
-        assert(c.hash_function() == test_hash<std::hash<NotConstructible> >());
-        assert(c.key_eq() == test_compare<std::equal_to<NotConstructible> >());
+        LIBCPP_ASSERT(c.bucket_count() == 0);
+        assert(c.hash_function() == test_hash<NotConstructible>());
+        assert(c.key_eq() == test_equal_to<NotConstructible>());
         assert(c.get_allocator() == (min_allocator<NotConstructible>()));
-        assert(c.size() == 0);
-        assert(c.empty());
-        assert(std::distance(c.begin(), c.end()) == 0);
-        assert(c.load_factor() == 0);
-        assert(c.max_load_factor() == 1);
-    }
-#endif
-//#if _LIBCPP_STD_VER > 11
-    {
-        unordered_set<int> c = {};
-        assert(c.bucket_count() == 0);
         assert(c.size() == 0);
         assert(c.empty());
         assert(std::distance(c.begin(), c.end()) == 0);
@@ -81,5 +59,55 @@ void main()
         assert(c.max_load_factor() == 1);
 #endif
     }
-//#endif
+    {
+        typedef explicit_allocator<NotConstructible> A;
+        typedef std::unordered_set<NotConstructible,
+                                   test_hash<NotConstructible>,
+                                   test_equal_to<NotConstructible>,
+                                   A
+                                   > C;
+        {
+        C c;
+        LIBCPP_ASSERT(c.bucket_count() == 0);
+        assert(c.hash_function() == test_hash<NotConstructible>());
+        assert(c.key_eq() == test_equal_to<NotConstructible>());
+        assert(c.get_allocator() == A());
+        assert(c.size() == 0);
+        assert(c.empty());
+        assert(std::distance(c.begin(), c.end()) == 0);
+        assert(c.load_factor() == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        assert(c.max_load_factor() == 1);
+#endif
+        }
+        {
+        A a;
+        C c(a);
+        LIBCPP_ASSERT(c.bucket_count() == 0);
+        assert(c.hash_function() == test_hash<NotConstructible>());
+        assert(c.key_eq() == test_equal_to<NotConstructible>());
+        assert(c.get_allocator() == a);
+        assert(c.size() == 0);
+        assert(c.empty());
+        assert(std::distance(c.begin(), c.end()) == 0);
+        assert(c.load_factor() == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        assert(c.max_load_factor() == 1);
+#endif
+        }
+    }
+    {
+        std::unordered_set<int> c = {};
+        LIBCPP_ASSERT(c.bucket_count() == 0);
+        assert(c.size() == 0);
+        assert(c.empty());
+        assert(std::distance(c.begin(), c.end()) == 0);
+        assert(c.load_factor() == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        assert(c.max_load_factor() == 1);
+#endif
+    }
+#endif
+
+  return 0;
 }
