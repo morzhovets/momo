@@ -489,6 +489,15 @@ public:
 		return { res.position, res.inserted };
 	}
 
+	template<typename ValueArg>
+	requires std::is_same_v<key_type, std::decay_t<ValueArg>>
+	std::pair<iterator, bool> emplace(ValueArg&& valueArg)
+	{
+		typename HashSet::InsertResult res = mHashSet.InsertVar(
+			std::as_const(valueArg), std::forward<ValueArg>(valueArg));
+		return { res.position, res.inserted };
+	}
+
 	template<typename... ValueArgs>
 	iterator emplace_hint([[maybe_unused]] const_iterator hint, ValueArgs&&... valueArgs)
 	{
