@@ -492,6 +492,15 @@ public:
 		return { res.position, res.inserted };
 	}
 
+	template<typename ValueArg>
+	momo::internal::EnableIf<std::is_same<key_type, typename std::decay<ValueArg>::type>::value,
+	std::pair<iterator, bool>> emplace(ValueArg&& valueArg)
+	{
+		typename HashSet::InsertResult res = mHashSet.InsertVar(
+			static_cast<const key_type&>(valueArg), std::forward<ValueArg>(valueArg));
+		return { res.position, res.inserted };
+	}
+
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
