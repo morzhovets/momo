@@ -31,7 +31,7 @@ jobs:
       uses: egor-tensin/setup-mingw@v2
       with:
         platform: ${{ matrix.arch }}
-        version: 11
+        version: 11.4.0
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}
