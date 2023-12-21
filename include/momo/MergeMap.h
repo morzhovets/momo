@@ -408,15 +408,14 @@ public:
 	template<internal::conceptMapArgIterator<Key> ArgIterator>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		size_t count = 0;
+		size_t initCount = GetCount();
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
 			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
-			InsertResult res = InsertVar(std::forward<decltype(pair.first)>(pair.first),
+			InsertVar(std::forward<decltype(pair.first)>(pair.first),
 				std::forward<decltype(pair.second)>(pair.second));
-			count += res.inserted ? 1 : 0;
 		}
-		return count;
+		return GetCount() - initCount;
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
