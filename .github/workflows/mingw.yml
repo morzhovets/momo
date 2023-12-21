@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    if: ${{ false }}
     strategy:
       matrix:
         include:
@@ -32,6 +31,7 @@ jobs:
       uses: egor-tensin/setup-mingw@v2
       with:
         platform: ${{ matrix.arch }}
+        version: 12.2.0
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}
