@@ -58,12 +58,17 @@ jobs:
           flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
 
-        - gcc_ver: '12'
+        - gcc_ver: '13'
+          build_type: 'Release'
+          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '22.04'
+
+        - gcc_ver: '13'
           build_type: 'Release'
           flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '22.04'
 
-        - gcc_ver: '12'
+        - gcc_ver: '13'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
