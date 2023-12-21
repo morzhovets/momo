@@ -668,18 +668,16 @@ public:
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
 	size_t Insert(ArgIterator begin, ArgIterator end)
 	{
-		size_t count = 0;
+		size_t initCount = GetCount();
 		for (ArgIterator iter = begin; iter != end; ++iter)
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
 			MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
-			InsertResult res = InsertVar(std::forward<KeyArg>(pair.first),
-				std::forward<ValueArg>(pair.second));
-			count += res.inserted ? 1 : 0;
+			InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 		}
-		return count;
+		return GetCount() - initCount;
 	}
 
 	template<typename Pair = std::pair<Key, Value>>

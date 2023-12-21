@@ -769,35 +769,22 @@ public:
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
-		ArgIterator iter = begin;
-		typedef decltype(*iter) ItemArg;	//?
-		ItemArg&& ref0 = *iter;
-		InsertResult res = InsertVar(ItemTraits::GetKey(static_cast<const Item&>(ref0)),
-			std::forward<ItemArg>(ref0));
-		size_t count = res.inserted ? 1 : 0;
-		++iter;
-		for (; iter != end; ++iter)
+		size_t initCount = GetCount();
+		auto&& ref0 = *begin;
+		typedef decltype(ref0) ItemArg;
+		Iterator pos = InsertVar(ItemTraits::GetKey(static_cast<const Item&>(ref0)),
+			std::forward<ItemArg>(ref0)).position;
+		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
 		{
 			ItemArg&& ref = *iter;
 			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(ref));
-			const Key& prevKey = ItemTraits::GetKey(*res.position);
-			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))
-			{
-				res = InsertVar(key, std::forward<ItemArg>(ref));
-			}
+			const Key& prevKey = ItemTraits::GetKey(*pos);
+			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(pos), key))
+				pos = InsertVar(key, std::forward<ItemArg>(ref)).position;
 			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
-			{
-				res.position = pvAdd<false>(std::next(res.position),
-					Creator<ItemArg>(memManager, std::forward<ItemArg>(ref)));
-				res.inserted = true;
-			}
-			else
-			{
-				res.inserted = false;
-			}
-			count += res.inserted ? 1 : 0;
+				pos = pvAdd<false>(std::next(pos), Creator<ItemArg>(memManager, std::forward<ItemArg>(ref)));
 		}
-		return count;
+		return GetCount() - initCount;
 	}
 
 	size_t Insert(std::initializer_list<Item> items)

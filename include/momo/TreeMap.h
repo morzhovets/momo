@@ -567,37 +567,29 @@ public:
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
-		ArgIterator iter = begin;
-		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
+		size_t initCount = GetCount();
+		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*begin);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
-		InsertResult res = InsertVar(std::forward<KeyArg>(pair0.first),
-			std::forward<ValueArg>(pair0.second));
-		size_t count = res.inserted ? 1 : 0;
-		++iter;
-		for (; iter != end; ++iter)
+		Iterator pos = InsertVar(std::forward<KeyArg>(pair0.first),
+			std::forward<ValueArg>(pair0.second)).position;
+		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			const Key& key = pair.first;
-			const Key& prevKey = res.position->key;
-			if (treeTraits.IsLess(key, prevKey) || !pvIsGreater(std::next(res.position), key))
+			if (treeTraits.IsLess(key, pos->key) || !pvIsGreater(std::next(pos), key))
 			{
-				res = InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
+				pos = InsertVar(std::forward<KeyArg>(pair.first),
+					std::forward<ValueArg>(pair.second)).position;
 			}
-			else if (TreeTraits::multiKey || treeTraits.IsLess(prevKey, key))
+			else if (TreeTraits::multiKey || treeTraits.IsLess(pos->key, key))
 			{
-				res.position = pvAdd<false>(std::next(res.position), std::forward<KeyArg>(pair.first),
+				pos = pvAdd<false>(std::next(pos), std::forward<KeyArg>(pair.first),
 					ValueCreator<ValueArg>(memManager, std::forward<ValueArg>(pair.second)));
-				res.inserted = true;
 			}
-			else
-			{
-				res.inserted = false;
-			}
-			count += res.inserted ? 1 : 0;
 		}
-		return count;
+		return GetCount() - initCount;
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
