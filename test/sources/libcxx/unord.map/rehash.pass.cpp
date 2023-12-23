@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,11 +18,11 @@
 
 // void rehash(size_type n);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-
-//#include "min_allocator.h"
+template <class C>
+void rehash_postcondition(const C& c, std::size_t n)
+{
+    assert(c.bucket_count() >= c.size() / c.max_load_factor() && c.bucket_count() >= n);
+}
 
 template <class C>
 void test(const C& c)
@@ -35,10 +34,10 @@ void test(const C& c)
     assert(c.at(4) == "four");
 }
 
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -53,32 +52,22 @@ void main()
         test(c);
         assert(c.bucket_count() >= 5);
         c.rehash(3);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(c.bucket_count() == 5);
-#endif
+        rehash_postcondition(c, 3);
+        LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
-#else
-        c.max_load_factor(0.5);
-#endif
         c.rehash(3);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(c.bucket_count() == 3);
-#endif
+        rehash_postcondition(c, 3);
+        LIBCPP_ASSERT(c.bucket_count() == 3);
         test(c);
         c.rehash(31);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(c.bucket_count() == 31);
-#else
-        assert(c.bucket_count() >= 31);
-#endif
+        rehash_postcondition(c, 31);
+        LIBCPP_ASSERT(c.bucket_count() == 31);
         test(c);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -94,15 +83,20 @@ void main()
         test(c);
         assert(c.bucket_count() >= 5);
         c.rehash(3);
-        assert(c.bucket_count() == 5);
+        rehash_postcondition(c, 3);
+        LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
         c.max_load_factor(2);
         c.rehash(3);
-        assert(c.bucket_count() == 3);
+        rehash_postcondition(c, 3);
+        LIBCPP_ASSERT(c.bucket_count() == 3);
         test(c);
         c.rehash(31);
-        assert(c.bucket_count() == 31);
+        rehash_postcondition(c, 31);
+        LIBCPP_ASSERT(c.bucket_count() == 31);
         test(c);
     }
 #endif
+
+  return 0;
 }

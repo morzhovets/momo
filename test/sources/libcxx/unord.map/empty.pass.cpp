@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -17,28 +16,21 @@
 
 // bool empty() const noexcept;
 
-//#include <unordered_map>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-    typedef unordered_map<int, double> M;
+    typedef std::unordered_map<int, double> M;
     M m;
-    //ASSERT_NOEXCEPT(m.empty());
+    ASSERT_NOEXCEPT(m.empty());
     assert(m.empty());
     m.insert(M::value_type(1, 1.5));
     assert(!m.empty());
     m.clear();
     assert(m.empty());
     }
-//#if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-    typedef unordered_map<int, double, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, double>>> M;
+    typedef std::unordered_map<int, double, std::hash<int>, std::equal_to<int>, min_allocator<std::pair<const int, double>>> M;
     M m;
     ASSERT_NOEXCEPT(m.empty());
     assert(m.empty());
@@ -48,4 +40,6 @@ void main()
     assert(m.empty());
     }
 #endif
+
+  return 0;
 }

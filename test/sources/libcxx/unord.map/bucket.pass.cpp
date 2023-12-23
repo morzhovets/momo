@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,20 +18,10 @@
 
 // size_type bucket(const key_type& __k) const;
 
-#ifdef _LIBCPP_DEBUG
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_map<int, std::string, LibcppIntHash> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -44,15 +33,14 @@ void main()
             P(2, "four"),
         };
         const C c(std::begin(a), std::end(a));
-        size_t bc = c.bucket_count();
+        std::size_t bc = c.bucket_count();
         assert(bc >= 5);
-        for (size_t i = 0; i < 13; ++i)
-            assert(c.bucket(static_cast<int>(i)) == i % bc);
+        for (std::size_t i = 0; i < 13; ++i)
+            LIBCPP_ASSERT(c.bucket(i) == i % bc);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -65,18 +53,12 @@ void main()
             P(2, "four"),
         };
         const C c(std::begin(a), std::end(a));
-        size_t bc = c.bucket_count();
+        std::size_t bc = c.bucket_count();
         assert(bc >= 5);
-        for (size_t i = 0; i < 13; ++i)
-            assert(c.bucket(i) == i % bc);
+        for (std::size_t i = 0; i < 13; ++i)
+            LIBCPP_ASSERT(c.bucket(i) == i % bc);
     }
 #endif
-#if _LIBCPP_DEBUG_LEVEL >= 1
-    {
-        typedef unordered_map<int, std::string> C;
-        C c;
-        LIBCPP_CATCH(c.bucket(3));
-        //assert(false);
-    }
-#endif
+
+    return 0;
 }

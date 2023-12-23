@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -13,29 +12,39 @@
 
 // <unordered_map>
 
-// template <class Key, class T, class Hash = hash<Key>, class Pred = equal_to<Key>,
-//           class Alloc = allocator<pair<const Key, T>>>
 // class unordered_map
 
 // size_type max_size() const;
 
-//#include <unordered_map>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-    {
-        unordered_map<int, int> u;
-        assert(u.max_size() > 0);
+  typedef std::pair<const int, int> KV;
+  {
+    typedef limited_allocator<KV, 10> A;
+    typedef std::unordered_map<int, int, std::hash<int>, std::equal_to<int>, A>
+        C;
+    C c;
+    assert(c.max_size() <= 10);
+    LIBCPP_ASSERT(c.max_size() == 10);
+  }
+  {
+    typedef limited_allocator<KV, static_cast<std::size_t>(-1)> A;
+    typedef std::unordered_map<int, int, std::hash<int>, std::equal_to<int>, A>
+        C;
+    const C::size_type max_dist =
+        static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
+    C c;
+    assert(c.max_size() <= max_dist);
+    LIBCPP_ASSERT(c.max_size() == max_dist);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        unordered_map<int, int, std::hash<int>, std::equal_to<int>,
-                                    min_allocator<std::pair<const int, int>>> u;
-        assert(u.max_size() > 0);
+      typedef std::unordered_map<char, int> C;
+    const C::size_type max_dist =
+        static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
+      C c;
+      assert(c.max_size() <= max_dist);
+      assert(c.max_size() <= alloc_max_size(c.get_allocator()));
     }
-#endif
+
+  return 0;
 }

@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -24,16 +23,10 @@
 // const_local_iterator cbegin(size_type n) const;
 // const_local_iterator cend  (size_type n) const;
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         typedef C::local_iterator I;
         P a[] =
@@ -81,7 +74,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -129,7 +122,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -177,7 +170,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -224,10 +217,9 @@ void main()
         assert(i->first == 4);
         assert(i->second == "four");
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::local_iterator I;
@@ -276,7 +268,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
@@ -325,7 +317,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
@@ -374,7 +366,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
@@ -423,4 +415,6 @@ void main()
         assert(i->second == "four");
     }
 #endif
+
+  return 0;
 }
