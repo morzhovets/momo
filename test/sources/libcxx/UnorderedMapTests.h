@@ -22,6 +22,10 @@ LIBCXX_TEST_BEGIN(bucket_size)
 #include "unord.map/bucket_size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(compare)
+#include "unord.map/compare.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(contains)
 #include "unord.map/contains.pass.cpp"
 LIBCXX_TEST_END
@@ -74,9 +78,19 @@ LIBCXX_TEST_BEGIN(find_non_const)
 #include "unord.map/find_non_const.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(incomplete_type)
-//#include "unord.map/incomplete_type.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "unord.map/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete_type)
+#include "unord.map/incomplete_type.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "unord.map/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.map/iterators.pass.cpp"
@@ -100,6 +114,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(max_size)
 #include "unord.map/max_size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "unord.map/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(rehash)
