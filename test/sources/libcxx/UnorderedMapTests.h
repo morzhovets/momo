@@ -38,22 +38,6 @@ LIBCXX_TEST_BEGIN(count_transparent)
 #include "unord.map/count.transparent.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(db_iterators_7)
-#include "unord.map/db_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_8)
-#include "unord.map/db_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_local_iterators_7)
-#include "unord.map/db_local_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_local_iterators_8)
-#include "unord.map/db_local_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(empty)
 #include "unord.map/empty.pass.cpp"
 LIBCXX_TEST_END
@@ -264,10 +248,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(elem_index)
 #include "unord.map/unord.map.elem/index.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(swap_db_swap_1)
-#include "unord.map/unord.map.swap/db_swap_1.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(swap_swap_noexcept)
