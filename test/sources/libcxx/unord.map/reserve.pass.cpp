@@ -63,7 +63,11 @@ int main(int, char**)
         c.reserve(3);
         LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
+#else
+        c.max_load_factor(0.5);
+#endif
         c.reserve(3);
         assert(c.bucket_count() >= 2);
         test(c);
@@ -91,7 +95,11 @@ int main(int, char**)
         c.reserve(3);
         LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
+#else
+        c.max_load_factor(0.5);
+#endif
         c.reserve(3);
         assert(c.bucket_count() >= 2);
         test(c);

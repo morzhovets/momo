@@ -55,7 +55,11 @@ int main(int, char**)
         rehash_postcondition(c, 3);
         LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
+#else
+        c.max_load_factor(0.5);
+#endif
         c.rehash(3);
         rehash_postcondition(c, 3);
         LIBCPP_ASSERT(c.bucket_count() == 3);
@@ -86,7 +90,11 @@ int main(int, char**)
         rehash_postcondition(c, 3);
         LIBCPP_ASSERT(c.bucket_count() == 5);
         test(c);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         c.max_load_factor(2);
+#else
+        c.max_load_factor(0.5);
+#endif
         c.rehash(3);
         rehash_postcondition(c, 3);
         LIBCPP_ASSERT(c.bucket_count() == 3);
