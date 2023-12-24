@@ -196,8 +196,16 @@ LIBCXX_TEST_BEGIN(cnstr_init_size)
 #include "unord.map/unord.map.cnstr/init_size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(cnstr_init_size_allocator)
+#include "unord.map/unord.map.cnstr/init_size_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cnstr_init_size_hash)
 #include "unord.map/unord.map.cnstr/init_size_hash.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_init_size_hash_allocator)
+#include "unord.map/unord.map.cnstr/init_size_hash_allocator.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_init_size_hash_equal)
@@ -206,6 +214,34 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_init_size_hash_equal_allocator)
 #include "unord.map/unord.map.cnstr/init_size_hash_equal_allocator.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter)
+#include "unord.map/unord.map.cnstr/iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size)
+#include "unord.map/unord.map.cnstr/iter_iter_size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size_allocator)
+#include "unord.map/unord.map.cnstr/iter_iter_size_allocator.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size_hash)
+#include "unord.map/unord.map.cnstr/iter_iter_size_hash.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size_hash_allocator)
+#include "unord.map/unord.map.cnstr/iter_iter_size_hash_allocator.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size_hash_equal)
+#include "unord.map/unord.map.cnstr/iter_iter_size_hash_equal.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_iter_iter_size_hash_equal_allocator)
+#include "unord.map/unord.map.cnstr/iter_iter_size_hash_equal_allocator.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_move)
@@ -228,8 +264,16 @@ LIBCXX_TEST_BEGIN(cnstr_size)
 #include "unord.map/unord.map.cnstr/size.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(cnstr_size_allocator)
+#include "unord.map/unord.map.cnstr/size_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cnstr_size_hash)
 #include "unord.map/unord.map.cnstr/size_hash.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(cnstr_size_hash_allocator)
+#include "unord.map/unord.map.cnstr/size_hash_allocator.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_size_hash_equal)
