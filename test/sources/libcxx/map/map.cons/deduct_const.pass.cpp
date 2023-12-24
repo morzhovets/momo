@@ -35,6 +35,7 @@ using PCC = std::pair<const int, const long>;
 
 int main(int, char**)
 {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
     const PCC arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
     momo::stdish::map m(std::begin(arr), std::end(arr));
@@ -62,7 +63,9 @@ int main(int, char**)
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 42);
     }
+#endif
 
+#if !defined(TEST_CLANG)
     {
     momo::stdish::map m{ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
 
@@ -96,6 +99,7 @@ int main(int, char**)
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);
     }
+#endif
 
     return 0;
 }

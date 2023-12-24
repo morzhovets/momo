@@ -100,11 +100,9 @@ LIBCXX_TEST_BEGIN(cons_deduct)
 #include "map/map.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(cons_deduct_const)
 #include "map/map.cons/deduct_const.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "map/map.cons/default.pass.cpp"
