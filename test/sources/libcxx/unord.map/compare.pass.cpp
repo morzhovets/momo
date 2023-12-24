@@ -24,9 +24,14 @@ struct Key {
   bool operator== (const Key&) const { return true; }
 };
 
+struct Hasher
+{
+    std::size_t operator()(const Key&) const { return 0; }
+};
+
 int main(int, char**)
 {
-    typedef std::unordered_map<Key, int, decltype([] (const Key&) {return size_t{0};})> MapT;
+    typedef std::unordered_map<Key, int, Hasher> MapT;
     typedef MapT::iterator Iter;
     MapT map;
     Iter it = map.find(Key(0));
