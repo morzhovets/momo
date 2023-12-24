@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <unordered_map>
 
@@ -20,18 +21,10 @@
 // template <class... Args>
 //     pair<iterator, bool> emplace(Args&&... args);
 
-//#include <unordered_map>
-//#include <cassert>
-
-//#include "../../../Emplaceable.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_VARIADICS
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-        typedef unordered_map<int, Emplaceable> C;
+        typedef std::unordered_map<int, Emplaceable> C;
         typedef std::pair<C::iterator, bool> R;
         C c;
         R r = c.emplace(std::piecewise_construct, std::forward_as_tuple(3),
@@ -47,22 +40,15 @@ void main()
         assert(r.first->first == 4);
         assert(r.first->second == Emplaceable(5, 6));
 
-        r = c.emplace(5, Emplaceable(6, 7));
+        r = c.emplace(std::piecewise_construct, std::forward_as_tuple(5),
+                                               std::forward_as_tuple(6, 7));
         assert(r.second);
         assert(c.size() == 3);
         assert(r.first->first == 5);
         assert(r.first->second == Emplaceable(6, 7));
-
-        r = c.emplace();
-        assert(r.second);
-        assert(c.size() == 4);
-        assert(r.first->first == 0);
-        assert(r.first->second == Emplaceable());
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef unordered_map<int, Emplaceable, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, Emplaceable, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, Emplaceable>>> C;
         typedef std::pair<C::iterator, bool> R;
         C c;
@@ -86,7 +72,6 @@ void main()
         assert(r.first->first == 5);
         assert(r.first->second == Emplaceable(6, 7));
     }
-#endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#endif  // _LIBCPP_HAS_NO_VARIADICS
+
+  return 0;
 }

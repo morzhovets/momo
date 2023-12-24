@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,14 +18,7 @@
 
 // size_type erase(const key_type& k);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
 template <typename Unordered>
 bool only_deletions ( const Unordered &whole, const Unordered &part ) {
     typename Unordered::const_iterator w = whole.begin();
@@ -43,10 +35,10 @@ bool only_deletions ( const Unordered &whole, const Unordered &part ) {
 #endif
 
 
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -101,10 +93,9 @@ void main()
         assert(c.erase(3) == 0);
         assert(c.size() == 0);
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -161,7 +152,7 @@ void main()
         assert(c.size() == 0);
     }
     {
-    typedef unordered_map<int, int> C;
+    typedef std::unordered_map<int, int> C;
     C m, m2;
     for ( int i = 0; i < 10; ++i ) {
         m[i] = i;
@@ -172,7 +163,11 @@ void main()
     int ctr = 0;
     while (i != m2.end()) {
         if (ctr++ % 2 == 0)
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
             m2.erase(i++);
+#else
+            i = m2.erase(i);
+#endif
         else
             ++i;
         }
@@ -180,4 +175,6 @@ void main()
     assert (only_deletions (m, m2));
     }
 #endif
+
+  return 0;
 }

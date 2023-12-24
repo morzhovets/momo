@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_map>
 
@@ -19,15 +18,11 @@
 
 // node_type extract(key_type const&);
 
-//#include <unordered_map>
-//#include "min_allocator.h"
-//#include "Counter.h"
-
 template <class Container, class KeyTypeIter>
 void test(Container& c, KeyTypeIter first, KeyTypeIter last)
 {
-    size_t sz = c.size();
-    assert(momo::internal::UIntMath<>::Dist(first, last) == sz);
+    std::size_t sz = c.size();
+    assert(static_cast<std::size_t>(std::distance(first, last)) == sz);
 
     for (KeyTypeIter copy = first; copy != last; ++copy)
     {
@@ -52,16 +47,16 @@ void test(Container& c, KeyTypeIter first, KeyTypeIter last)
     }
 }
 
-void main()
+int main(int, char**)
 {
     {
-        unordered_map<int, int> m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
+        std::unordered_map<int, int> m = {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
 
     {
-        unordered_map<Counter<int>, Counter<int>> m =
+        std::unordered_map<Counter<int>, Counter<int>> m =
             {{1,1}, {2,2}, {3,3}, {4,4}, {5,5}, {6,6}};
         {
             Counter<int> keys[] = {1, 2, 3, 4, 5, 6};
@@ -70,14 +65,15 @@ void main()
         }
         assert(Counter_base::gConstructed == 0);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+
     {
         using min_alloc_map =
-            unordered_map<int, int, std::hash<int>, std::equal_to<int>,
+            std::unordered_map<int, int, std::hash<int>, std::equal_to<int>,
                                min_allocator<std::pair<const int, int>>>;
         min_alloc_map m = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}};
         int keys[] = {1, 2, 3, 4, 5, 6};
         test(m, std::begin(keys), std::end(keys));
     }
-#endif
+
+  return 0;
 }
