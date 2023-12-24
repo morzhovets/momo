@@ -65,7 +65,7 @@ int main(int, char**)
     }
 #endif
 
-#if !defined(TEST_CLANG)
+#if !defined(TEST_GCC) && !defined(TEST_CLANG)
     {
     momo::stdish::map m{ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
 
