@@ -292,14 +292,6 @@ LIBCXX_TEST_BEGIN(elem_index)
 #include "unord.map/unord.map.elem/index.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
-//#include "unord.map/unord.map.swap/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(swap_swap_non_member)
-#include "unord.map/unord.map.swap/swap_non_member.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "unord.map/unord.map.modifiers/clear.pass.cpp"
 LIBCXX_TEST_END
@@ -314,30 +306,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_const_iter)
 #include "unord.map/unord.map.modifiers/erase_const_iter.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db1)
-#include "unord.map/unord.map.modifiers/erase_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db2)
-#include "unord.map/unord.map.modifiers/erase_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db1)
-#include "unord.map/unord.map.modifiers/erase_iter_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db2)
-#include "unord.map/unord.map.modifiers/erase_iter_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db3)
-#include "unord.map/unord.map.modifiers/erase_iter_iter_db3.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db4)
-#include "unord.map/unord.map.modifiers/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_key)
@@ -398,4 +366,12 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_try_emplace)
 #include "unord.map/unord.map.modifiers/try.emplace.pass.cpp"
+LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
+//#include "unord.map/unord.map.swap/swap_noexcept.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(swap_swap_non_member)
+#include "unord.map/unord.map.swap/swap_non_member.pass.cpp"
 LIBCXX_TEST_END
