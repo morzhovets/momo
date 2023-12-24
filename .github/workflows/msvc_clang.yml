@@ -13,7 +13,6 @@ jobs:
           build_type: 'Release'
           flags: '/std:c++latest -msse2'
 
-        # Clang 15.0.1 with MSVC-like command-line
         - win_ver: '2022'
           build_type: 'Release'
           flags: '/std:c++latest -msse2'
