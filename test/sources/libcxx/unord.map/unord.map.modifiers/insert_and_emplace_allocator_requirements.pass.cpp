@@ -35,9 +35,13 @@ using unordered_map =
 int main(int, char**)
 {
   testMapInsert<TCT::unordered_map<> >();
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
   testMapInsertHint<TCT::unordered_map<> >();
+#endif
   testMapEmplace<TCT::unordered_map<> >();
+#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
   testMapEmplaceHint<TCT::unordered_map<> >();
+#endif
 
   return 0;
 }

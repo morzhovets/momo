@@ -16,11 +16,6 @@
 
 #include "../../include/momo/stdish/unordered_map.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
-
 namespace
 {
 
@@ -48,8 +43,6 @@ namespace std
 			LibcxxHashMapSettings>>;
 }
 
-using std::unordered_map;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
@@ -76,8 +69,6 @@ namespace std
 			LibcxxHashMapSettings>>;
 }
 
-using std::unordered_map;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_vp_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
@@ -87,6 +78,3 @@ using std::unordered_map;
 #endif
 
 } // namespace
-
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL

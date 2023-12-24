@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -12,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 //
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_map>
 
@@ -27,15 +26,46 @@
 // template <class M>
 //  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);        // C++17
 
-//#include <unordered_map>
-//#include <cassert>
-//#include <tuple>
 
-void main()
+class Moveable
+{
+    Moveable(const Moveable&);
+    Moveable& operator=(const Moveable&);
+
+    int int_;
+    double double_;
+public:
+    Moveable() : int_(0), double_(0) {}
+    Moveable(int i, double d) : int_(i), double_(d) {}
+    Moveable(Moveable&& x)
+        : int_(x.int_), double_(x.double_)
+            {x.int_ = -1; x.double_ = -1;}
+    Moveable& operator=(Moveable&& x)
+        {int_ = x.int_; x.int_ = -1;
+         double_ = x.double_; x.double_ = -1;
+         return *this;
+        }
+
+    bool operator==(const Moveable& x) const
+        {return int_ == x.int_ && double_ == x.double_;}
+    bool operator<(const Moveable& x) const
+        {return int_ < x.int_ || (int_ == x.int_ && double_ < x.double_);}
+    std::size_t hash () const { return std::hash<int>()(int_) + std::hash<double>()(double_); }
+
+    int get() const {return int_;}
+    bool moved() const {return int_ == -1;}
+};
+
+struct Hasher
+{
+    std::size_t operator () (const Moveable &m) const { return m.hash(); }
+};
+
+int main(int, char**)
 {
 
     { // pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
-        typedef unordered_map<int, Moveable> M;
+        typedef std::unordered_map<int, Moveable> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -79,7 +109,7 @@ void main()
         assert(r.first->second.get() == -1);  // value
     }
     { // pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
-        typedef unordered_map<Moveable, Moveable> M;
+        typedef std::unordered_map<Moveable, Moveable, Hasher> M;
         typedef std::pair<M::iterator, bool> R;
         M m;
         R r;
@@ -108,34 +138,32 @@ void main()
         assert(r.first->second.get() == 5); // value
     }
     { // iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
-        typedef unordered_map<int, Moveable> M;
+        typedef std::unordered_map<int, Moveable> M;
         M m;
         M::iterator r;
         for (int i = 0; i < 20; i += 2)
             m.emplace ( i, Moveable(i, static_cast<double>(i)));
         assert(m.size() == 10);
 #ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
-        int k2 = 2;
-        M::const_iterator it = m.find(k2);
+        M::const_iterator it = m.find(2);
 
         Moveable mv1(3, 3.0);
-        r = m.insert_or_assign(it, k2, std::move(mv1));
+        r = m.insert_or_assign(it, 2, std::move(mv1));
         assert(m.size() == 10);
         assert(mv1.moved());           // was moved from
-        assert(r->first        == k2); // key
+        assert(r->first        == 2);  // key
         assert(r->second.get() == 3);  // value
 #endif
 
         Moveable mv2(5, 5.0);
-        int k3 = 3;
-        r = m.insert_or_assign(/*it*/m.find(k3), k3, std::move(mv2));
+        r = m.insert_or_assign(/*it*/m.find(3), 3, std::move(mv2));
         assert(m.size() == 11);
         assert(mv2.moved());           // was moved from
-        assert(r->first        == k3); // key
+        assert(r->first        == 3);  // key
         assert(r->second.get() == 5);  // value
     }
     { // iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
-        typedef unordered_map<Moveable, Moveable> M;
+        typedef std::unordered_map<Moveable, Moveable, Hasher> M;
         M m;
         M::iterator r;
         for (int i = 0; i < 20; i += 2)
@@ -164,4 +192,6 @@ void main()
         assert(r->second.get() == 5);  // value
     }
 
+
+  return 0;
 }
