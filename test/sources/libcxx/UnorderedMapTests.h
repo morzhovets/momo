@@ -328,6 +328,10 @@ LIBCXX_TEST_BEGIN(modifiers_extract_key)
 #include "unord.map/unord.map.modifiers/extract_key.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_and_emplace_allocator_requirements)
+#include "unord.map/unord.map.modifiers/insert_and_emplace_allocator_requirements.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_const_lvalue)
 #include "unord.map/unord.map.modifiers/insert_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
