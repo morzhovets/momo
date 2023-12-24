@@ -180,13 +180,13 @@ LIBCXX_TEST_BEGIN(cnstr_default)
 #include "unord.map/unord.map.cnstr/default.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_default_noexcept)
-//#include "unord.map/unord.map.cnstr/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_default_noexcept)
+#include "unord.map/unord.map.cnstr/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
-//#include "unord.map/unord.map.cnstr/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
+#include "unord.map/unord.map.cnstr/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.map/unord.map.cnstr/init.pass.cpp"
@@ -216,13 +216,13 @@ LIBCXX_TEST_BEGIN(cnstr_move_alloc)
 #include "unord.map/unord.map.cnstr/move_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_move_assign_noexcept)
-//#include "unord.map/unord.map.cnstr/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_move_assign_noexcept)
+#include "unord.map/unord.map.cnstr/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_move_noexcept)
-//#include "unord.map/unord.map.cnstr/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_move_noexcept)
+#include "unord.map/unord.map.cnstr/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_size)
 #include "unord.map/unord.map.cnstr/size.pass.cpp"

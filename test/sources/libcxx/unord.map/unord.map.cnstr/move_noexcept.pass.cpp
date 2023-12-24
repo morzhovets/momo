@@ -56,6 +56,7 @@ int main(int, char**)
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
     }
 #endif // _LIBCPP_VERSION
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::unordered_map<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_constructible<C>::value, "");
@@ -65,6 +66,7 @@ int main(int, char**)
                                                          some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_constructible<C>::value, "");
     }
+#endif
 
   return 0;
 }
