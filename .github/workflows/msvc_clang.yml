@@ -13,10 +13,9 @@ jobs:
           build_type: 'Release'
           flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
 
-#        # Clang 15.0.1 with MSVC-like command-line
-#        - win_ver: '2022'
-#          build_type: 'Release'
-#          flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
+        - win_ver: '2022'
+          build_type: 'Release'
+          flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
 
     runs-on: windows-${{ matrix.win_ver }}
 
