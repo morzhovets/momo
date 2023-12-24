@@ -300,6 +300,10 @@ LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "unord.map/unord.map.modifiers/emplace.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_emplace_ext)
+#include "unord.map/unord.map.modifiers/emplace_ext.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
 #include "unord.map/unord.map.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
