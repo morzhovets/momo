@@ -320,9 +320,9 @@ LIBCXX_TEST_BEGIN(modifiers_erase_range)
 #include "unord.map/unord.map.modifiers/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
-//#include "unord.map/unord.map.modifiers/extract_iterator.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
+#include "unord.map/unord.map.modifiers/extract_iterator.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_extract_key)
 #include "unord.map/unord.map.modifiers/extract_key.pass.cpp"
