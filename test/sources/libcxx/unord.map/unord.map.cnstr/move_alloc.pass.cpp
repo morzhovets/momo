@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <unordered_map>
 
@@ -19,25 +20,14 @@
 
 // unordered_map(unordered_map&& u, const allocator_type& a);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-//#include <cfloat>
-
-//#include "../../../test_compare.h"
-//#include "../../../test_hash.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
         typedef std::pair<int, std::string> P;
         typedef test_allocator<std::pair<const int, std::string>> A;
-        typedef unordered_map<int, std::string,
-                                   test_hash<std::hash<int> >,
-                                   test_compare<std::equal_to<int> >,
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
                                    A
                                    > C;
         P a[] =
@@ -51,8 +41,8 @@ void main()
         };
         C c0(a, a + sizeof(a)/sizeof(a[0]),
             7,
-            test_hash<std::hash<int> >(8),
-            test_compare<std::equal_to<int> >(9),
+            test_hash<int>(8),
+            test_equal_to<int>(9),
             A(10)
            );
         C c(std::move(c0), A(12));
@@ -62,13 +52,13 @@ void main()
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert(c.hash_function() == test_hash<std::hash<int> >(8));
-        assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
+        assert(c.hash_function() == test_hash<int>(8));
+        assert(c.key_eq() == test_equal_to<int>(9));
         assert(c.get_allocator() == A(12));
         assert(!c.empty());
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
+        assert(std::fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
 #endif
@@ -78,9 +68,9 @@ void main()
     {
         typedef std::pair<int, std::string> P;
         typedef test_allocator<std::pair<const int, std::string>> A;
-        typedef unordered_map<int, std::string,
-                                   test_hash<std::hash<int> >,
-                                   test_compare<std::equal_to<int> >,
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
                                    A
                                    > C;
         P a[] =
@@ -94,42 +84,36 @@ void main()
         };
         C c0(a, a + sizeof(a)/sizeof(a[0]),
             7,
-            test_hash<std::hash<int> >(8),
-            test_compare<std::equal_to<int> >(9),
+            test_hash<int>(8),
+            test_equal_to<int>(9),
             A(10)
            );
         C c(std::move(c0), A(10));
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(c.bucket_count() == 7);
-#else
-        assert(c.bucket_count() >= 7);
-#endif
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 4);
         assert(c.at(1) == "one");
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert(c.hash_function() == test_hash<std::hash<int> >(8));
-        assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
+        assert(c.hash_function() == test_hash<int>(8));
+        assert(c.key_eq() == test_equal_to<int>(9));
         assert(c.get_allocator() == A(10));
         assert(!c.empty());
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
+        assert(std::fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
 #endif
 
         assert(c0.empty());
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef std::pair<int, std::string> P;
         typedef min_allocator<std::pair<const int, std::string>> A;
-        typedef unordered_map<int, std::string,
-                                   test_hash<std::hash<int> >,
-                                   test_compare<std::equal_to<int> >,
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
                                    A
                                    > C;
         P a[] =
@@ -143,28 +127,73 @@ void main()
         };
         C c0(a, a + sizeof(a)/sizeof(a[0]),
             7,
-            test_hash<std::hash<int> >(8),
-            test_compare<std::equal_to<int> >(9),
+            test_hash<int>(8),
+            test_equal_to<int>(9),
             A()
            );
         C c(std::move(c0), A());
-        assert(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 4);
         assert(c.at(1) == "one");
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert(c.hash_function() == test_hash<std::hash<int> >(8));
-        assert(c.key_eq() == test_compare<std::equal_to<int> >(9));
+        assert(c.hash_function() == test_hash<int>(8));
+        assert(c.key_eq() == test_equal_to<int>(9));
         assert(c.get_allocator() == A());
         assert(!c.empty());
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
-        assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
+        assert(std::fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
+#endif
 
         assert(c0.empty());
     }
+    {
+        typedef std::pair<int, std::string> P;
+        typedef explicit_allocator<std::pair<const int, std::string>> A;
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
+                                   A
+                                   > C;
+        P a[] =
+        {
+            P(1, "one"),
+            P(2, "two"),
+            P(3, "three"),
+            P(4, "four"),
+            P(1, "four"),
+            P(2, "four"),
+        };
+        C c0(a, a + sizeof(a)/sizeof(a[0]),
+            7,
+            test_hash<int>(8),
+            test_equal_to<int>(9),
+            A{}
+           );
+        C c(std::move(c0), A{});
+        LIBCPP_ASSERT(c.bucket_count() == 7);
+        assert(c.size() == 4);
+        assert(c.at(1) == "one");
+        assert(c.at(2) == "two");
+        assert(c.at(3) == "three");
+        assert(c.at(4) == "four");
+        assert(c.hash_function() == test_hash<int>(8));
+        assert(c.key_eq() == test_equal_to<int>(9));
+        assert(c.get_allocator() == A{});
+        assert(!c.empty());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
+        assert(std::fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        assert(c.max_load_factor() == 1);
 #endif
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+
+        assert(c0.empty());
+    }
+
+  return 0;
 }

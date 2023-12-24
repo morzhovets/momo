@@ -1,15 +1,16 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
 // Modified for https://github.com/morzhovets/momo project.
 //
 //===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
 
 // <unordered_map>
 
@@ -19,23 +20,13 @@
 
 // unordered_map& operator=(initializer_list<value_type> il);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-//#include <cfloat>
-
-//#include "../../../test_compare.h"
-//#include "../../../test_hash.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
     {
         typedef std::allocator<std::pair<const int, std::string> > A;
-        typedef unordered_map<int, std::string,
-                                   test_hash<std::hash<int> >,
-                                   test_compare<std::equal_to<int> >,
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
                                    A
                                    > C;
         typedef std::pair<int, std::string> P;
@@ -58,20 +49,18 @@ void main()
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
 #endif
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef min_allocator<std::pair<const int, std::string> > A;
-        typedef unordered_map<int, std::string,
-                                   test_hash<std::hash<int> >,
-                                   test_compare<std::equal_to<int> >,
+        typedef std::unordered_map<int, std::string,
+                                   test_hash<int>,
+                                   test_equal_to<int>,
                                    A
                                    > C;
         typedef std::pair<int, std::string> P;
@@ -94,11 +83,13 @@ void main()
         assert(c.at(2) == "two");
         assert(c.at(3) == "three");
         assert(c.at(4) == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
         assert(fabs(c.load_factor() - static_cast<float>(c.size())/c.bucket_count()) < FLT_EPSILON);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(c.max_load_factor() == 1);
-    }
 #endif
-#endif  // _LIBCPP_HAS_NO_GENERALIZED_INITIALIZERS
+    }
+
+  return 0;
 }

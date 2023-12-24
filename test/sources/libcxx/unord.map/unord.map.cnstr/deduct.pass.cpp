@@ -11,8 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 // <unordered_map>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
+// UNSUPPORTED: c++03, c++11, c++14
 
 // template<class InputIterator,
 //          class Hash = hash<iter-key-type<InputIterator>>,
@@ -60,18 +59,10 @@
 //               Allocator)
 //   -> unordered_map<Key, T, Hash, equal_to<Key>, Allocator>;
 
-//#include <algorithm> // is_permutation
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <type_traits>
-//#include <unordered_map>
-//
-//#include "test_allocator.h"
-
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
 
-void main()
+int main(int, char**)
 {
     const PC expected_m[] = { {1,1}, {2,2}, {3,1}, {INT_MAX,1} };
 
@@ -91,22 +82,22 @@ void main()
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<int>>);
+    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>>);
+    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<PC>(0, 41));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>>);
+    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 41));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 41);
     }
@@ -126,7 +117,7 @@ void main()
     }
 
     {
-    momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>> source;
+    momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 42);
     momo::stdish::unordered_map m(source, a);
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
@@ -135,7 +126,7 @@ void main()
     }
 
     {
-    momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>> source;
+    momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 43);
     momo::stdish::unordered_map m{source, a};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
@@ -156,20 +147,20 @@ void main()
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>>);
+    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>>);
+    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<PC>(0, 44));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>>);
+    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 44));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 44);
     }
@@ -184,8 +175,8 @@ void main()
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<PC>(0, 46));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<int>, test_allocator<PC>>);
+    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<PC>(0, 46));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 46);
     }
@@ -198,9 +189,36 @@ void main()
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), test_allocator<PC>(0, 48));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<int64_t>, std::equal_to<int>, test_allocator<PC>>);
+    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), test_allocator<PC>(0, 48));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
+
+#if !defined(TEST_GCC)
+    {
+    // Examples from LWG3025
+    momo::stdish::unordered_map m{std::pair{1, 1}, {2, 2}, {3, 3}};
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, int>);
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    momo::stdish::unordered_map m2{m.begin(), m.end()};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
+#endif
+    }
+#endif
+
+    {
+    // Examples from LWG3531
+    momo::stdish::unordered_map m1{{std::pair{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m1), momo::stdish::unordered_map<int, int>);
+
+    using value_type = std::pair<const int, int>;
+    momo::stdish::unordered_map m2{{value_type{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
+    }
+
+    UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_map, momo::stdish::unordered_map<int, long>>();
+
+    return 0;
 }

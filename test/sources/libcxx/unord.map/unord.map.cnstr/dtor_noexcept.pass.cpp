@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -15,20 +14,14 @@
 
 // ~unordered_map() // implied noexcept;
 
-//#include <unordered_map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
-
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
+// UNSUPPORTED: c++03
 
 template <class T>
 struct some_comp
 {
     typedef T value_type;
     ~some_comp() noexcept(false);
+    bool operator()(const T&, const T&) const { return false; }
 };
 
 template <class T>
@@ -38,36 +31,37 @@ struct some_hash
     some_hash();
     some_hash(const some_hash&);
     ~some_hash() noexcept(false);
+
+    std::size_t operator()(T const&) const;
 };
 
-#endif
-
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
     {
-        typedef unordered_map<MoveOnly, MoveOnly> C;
+        typedef std::unordered_map<MoveOnly, MoveOnly> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
     {
-        typedef unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                            std::equal_to<MoveOnly>, test_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
     {
-        typedef unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                           std::equal_to<MoveOnly>, other_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
+#if defined(_LIBCPP_VERSION)
     {
-        typedef unordered_map<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;
+        typedef std::unordered_map<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;
         static_assert(!std::is_nothrow_destructible<C>::value, "");
     }
     {
-        typedef unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_map<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                                                          some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_destructible<C>::value, "");
     }
-#endif
+#endif // _LIBCPP_VERSION
+
+  return 0;
 }
