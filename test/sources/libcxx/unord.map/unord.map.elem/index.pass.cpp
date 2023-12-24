@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,18 +17,25 @@
 // class unordered_map
 
 // mapped_type& operator[](const key_type& k);
+// mapped_type& operator[](key_type&& k);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
+namespace TCT {
+template <class Key = CopyInsertable<1>, class Value = CopyInsertable<2>,
+          class ValueTp = std::pair<const Key, Value> >
+using unordered_map =
+      std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>,
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+                              ContainerTestAllocator<ValueTp, ValueTp>
+#else
+                              ContainerTestAllocatorForMap<ValueTp, Key, Value>
+#endif
+      >;
+}
 
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_map<int, std::string> C;
+        typedef std::unordered_map<int, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -48,9 +54,9 @@ void main()
         assert(c.size() == 5);
         assert(c.at(11) == "eleven");
     }
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_map<MoveOnly, std::string> C;
+        typedef std::unordered_map<MoveOnly, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -69,11 +75,8 @@ void main()
         assert(c.size() == 5);
         assert(c.at(11) == "eleven");
     }
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -93,9 +96,9 @@ void main()
         assert(c.size() == 5);
         assert(c.at(11) == "eleven");
     }
-#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+
     {
-        typedef unordered_map<MoveOnly, std::string, std::hash<MoveOnly>, std::equal_to<MoveOnly>,
+        typedef std::unordered_map<MoveOnly, std::string, std::hash<MoveOnly>, std::equal_to<MoveOnly>,
                             min_allocator<std::pair<const MoveOnly, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -115,6 +118,89 @@ void main()
         assert(c.size() == 5);
         assert(c.at(11) == "eleven");
     }
-#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+    {
+        using Container = TCT::unordered_map<>;
+        using Key = Container::key_type;
+        using MappedType = Container::mapped_type;
+        ConstructController* cc = getConstructController();
+        cc->reset();
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+        typename Container::allocator_type alloc;
+#else
+        ConstructController cc1, cc2;
+        typename Container::allocator_type alloc(&cc1, &cc2);
 #endif
+        {
+            Container c(alloc);
+            const Key k(1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key const&>&&, std::tuple<>&&>();
+#else
+            cc1.expect<const Key&>();
+            cc2.expect<>();
+#endif
+            MappedType& mref = c[k];
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            assert(!cc->unchecked());
+#else
+            assert(!cc1.unchecked());
+            assert(!cc2.unchecked());
+#endif
+            {
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[k];
+                assert(&mref == &mref2);
+            }
+        }
+        {
+            Container c(alloc);
+            Key k(1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key const&>&&, std::tuple<>&&>();
+#else
+            cc1.expect<const Key&>();
+            cc2.expect<>();
+#endif
+            MappedType& mref = c[k];
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            assert(!cc->unchecked());
+#else
+            assert(!cc1.unchecked());
+            assert(!cc2.unchecked());
+#endif
+            {
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[k];
+                assert(&mref == &mref2);
+            }
+        }
+        {
+            Container c(alloc);
+            Key k(1);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            cc->expect<std::piecewise_construct_t const&, std::tuple<Key &&>&&, std::tuple<>&&>();
+#else
+            cc1.expect<Key&&>();
+            cc2.expect<>();
+#endif
+            MappedType& mref = c[std::move(k)];
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+            assert(!cc->unchecked());
+#else
+            assert(!cc1.unchecked());
+            assert(!cc2.unchecked());
+#endif
+            {
+                Key k2(1);
+                DisableAllocationGuard g;
+                MappedType& mref2 = c[std::move(k2)];
+                assert(&mref == &mref2);
+            }
+        }
+    }
+#endif
+#endif
+
+  return 0;
 }
