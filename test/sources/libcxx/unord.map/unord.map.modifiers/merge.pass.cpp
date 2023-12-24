@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -11,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// UNSUPPORTED: c++98, c++03, c++11, c++14
+// UNSUPPORTED: c++03, c++11, c++14
 
 // <unordered_map>
 
@@ -26,11 +25,14 @@
 // template <class H2, class P2>
 //   void merge(unordered_multimap<key_type, value_type, H2, P2, allocator_type>&& source);
 
-//#include <unordered_map>
-//#include "test_macros.h"
-//#include "Counter.h"
-
-#define unordered_multimap unordered_map
+template<typename TKey, typename TMapped,
+	typename THashFunc = momo::HashCoder<TKey>,
+	typename TEqualFunc = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+using unordered_map2 = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
+	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+		momo::MemManagerStd<TAllocator>,
+		typename std::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)
@@ -46,10 +48,7 @@ struct throw_hasher
 
     throw_hasher(bool& should_throw) : should_throw_(should_throw) {}
 
-    typedef size_t result_type;
-    typedef T argument_type;
-
-    size_t operator()(const T& p) const
+    std::size_t operator()(const T& p) const
     {
         if (should_throw_)
             throw 0;
@@ -58,11 +57,11 @@ struct throw_hasher
 };
 #endif
 
-void main()
+int main(int, char**)
 {
     {
-        unordered_map<int, int> src{{1, 0}, {3, 0}, {5, 0}};
-        unordered_map<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
+        std::unordered_map<int, int> src{{1, 0}, {3, 0}, {5, 0}};
+        std::unordered_map<int, int> dst{{2, 0}, {4, 0}, {5, 0}};
         dst.merge(src);
         assert(map_equal(src, {{5,0}}));
         assert(map_equal(dst, {{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}}));
@@ -71,7 +70,7 @@ void main()
 #ifndef TEST_HAS_NO_EXCEPTIONS
     {
         bool do_throw = false;
-        typedef unordered_map<Counter<int>, int, throw_hasher<Counter<int>>> map_type;
+        typedef std::unordered_map<Counter<int>, int, throw_hasher<Counter<int>>> map_type;
         map_type src({{1, 0}, {3, 0}, {5, 0}}, 0, throw_hasher<Counter<int>>(do_throw));
         map_type dst({{2, 0}, {4, 0}, {5, 0}}, 0, throw_hasher<Counter<int>>(do_throw));
 
@@ -104,17 +103,15 @@ void main()
     struct hasher
     {
         hasher() = default;
-        typedef Counter<int> argument_type;
-        typedef size_t result_type;
-        size_t operator()(const Counter<int>& p) const
+        std::size_t operator()(const Counter<int>& p) const
         {
             return std::hash<Counter<int>>()(p);
         }
     };
     {
-        typedef unordered_map<Counter<int>, int, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_map_type;
-        typedef unordered_map<Counter<int>, int, hasher, equal> second_map_type;
-        typedef unordered_multimap<Counter<int>, int, hasher, equal> third_map_type;
+        typedef std::unordered_map<Counter<int>, int, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_map_type;
+        typedef std::unordered_map<Counter<int>, int, hasher, equal> second_map_type;
+        typedef unordered_map2<Counter<int>, int, hasher, equal> third_map_type;
 
         {
             first_map_type first{{1, 0}, {2, 0}, {3, 0}};
@@ -152,18 +149,17 @@ void main()
         assert(Counter_base::gConstructed == 0);
     }
     {
-        unordered_map<int, int> first;
+        std::unordered_map<int, int> first;
         {
-            unordered_map<int, int> second;
+            std::unordered_map<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
         {
-            unordered_multimap<int, int> second;
+            unordered_map2<int, int> second;
             first.merge(second);
             first.merge(std::move(second));
         }
     }
+    return 0;
 }
-
-#undef unordered_multimap
