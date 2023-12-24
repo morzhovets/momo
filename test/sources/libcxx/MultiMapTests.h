@@ -88,11 +88,9 @@ LIBCXX_TEST_BEGIN(cons_deduct)
 #include "multimap/multimap.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(cons_deduct_const)
 #include "multimap/multimap.cons/deduct_const.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "multimap/multimap.cons/default.pass.cpp"
