@@ -43,8 +43,6 @@ namespace std
 		THashFunc, TEqualFunc, TAllocator>;
 }
 
-using std::unordered_map;
-
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_open"
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX

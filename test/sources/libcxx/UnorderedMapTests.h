@@ -140,6 +140,68 @@ LIBCXX_TEST_BEGIN(types)
 #include "unord.map/types.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCXX_TEST_FAILURE
+
+LIBCXX_TEST_BEGIN(fail_assert_bucket)
+#include "unord.map/fail/assert.bucket.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_assert_bucket_size)
+#include "unord.map/fail/assert.bucket_size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_assert_max_load_factor)
+#include "unord.map/fail/assert.max_load_factor.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_at_abort)
+#include "unord.map/fail/at.abort.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_at_const_abort)
+#include "unord.map/fail/at.const.abort.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_erase_iter)
+#include "unord.map/fail/debug.erase.iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_erase_iter_iter)
+#include "unord.map/fail/debug.erase.iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_insert_hint_const_lvalue)
+#include "unord.map/fail/debug.insert.hint_const_lvalue.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_insert_hint_rvalue)
+#include "unord.map/fail/debug.insert.hint_rvalue.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_iterator_dereference)
+#include "unord.map/fail/debug.iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_iterator_increment)
+#include "unord.map/fail/debug.iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(fail_debug_local_iterator_dereference)
+#include "unord.map/fail/debug.local_iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+LIBCXX_TEST_BEGIN(fail_debug_local_iterator_increment)
+#include "unord.map/fail/debug.local_iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(fail_debug_swap)
+#include "unord.map/fail/debug.swap.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 LIBCXX_TEST_BEGIN(cnstr_allocator)
 #include "unord.map/unord.map.cnstr/allocator.pass.cpp"
 LIBCXX_TEST_END
