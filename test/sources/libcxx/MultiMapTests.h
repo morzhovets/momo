@@ -52,6 +52,14 @@ LIBCXX_TEST_BEGIN(types)
 #include "multimap/types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(common_contains)
+#include "multimap/common/contains.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_contains_transparent)
+#include "multimap/common/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(common_iterator_types)
 #include "multimap/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
@@ -244,14 +252,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(observers_value_comp)
 #include "multimap/multimap.observers/value_comp.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(ops_contains)
-#include "multimap/multimap.ops/contains.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(ops_contains_transparent)
-#include "multimap/multimap.ops/contains_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_count)

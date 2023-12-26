@@ -36,6 +36,14 @@ LIBCXX_TEST_BEGIN(types)
 #include "map/types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(common_contains)
+#include "map/common/contains.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_contains_transparent)
+#include "map/common/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(common_iterator_types)
 #include "map/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
@@ -268,14 +276,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(observers_value_comp)
 #include "map/map.observers/value_comp.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(ops_contains)
-#include "map/map.ops/contains.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(ops_contains_transparent)
-#include "map/map.ops/contains_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(ops_count)

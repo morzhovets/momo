@@ -14,14 +14,6 @@ LIBCXX_TEST_BEGIN(clear)
 #include "multiset/clear.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(contains)
-#include "multiset/contains.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(contains_transparent)
-#include "multiset/contains_transparent.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(count)
 #include "multiset/count.pass.cpp"
 LIBCXX_TEST_END
@@ -158,6 +150,14 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(upper_bound)
 #include "multiset/upper_bound.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_contains)
+#include "multiset/common/contains.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_contains_transparent)
+#include "multiset/common/contains_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(common_iterator_types)
