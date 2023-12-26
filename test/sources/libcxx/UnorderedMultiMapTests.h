@@ -10,18 +10,6 @@
 
 \**********************************************************/
 
-//LIBCXX_TEST_BEGIN(bucket)
-//#include "unord.multimap/bucket.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(bucket_count)
-//#include "unord.multimap/bucket_count.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(bucket_size)
-//#include "unord.multimap/bucket_size.pass.cpp"
-//LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(contains)
 #include "unord.multimap/contains.pass.cpp"
 LIBCXX_TEST_END
@@ -49,14 +37,6 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(db_iterators_8)
 #include "unord.multimap/db_iterators_8.pass.cpp"
 LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(db_local_iterators_7)
-//#include "unord.multimap/db_local_iterators_7.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(db_local_iterators_8)
-//#include "unord.multimap/db_local_iterators_8.pass.cpp"
-//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(empty)
 #include "unord.multimap/empty.pass.cpp"
@@ -120,33 +100,9 @@ LIBCXX_TEST_BEGIN(iterators)
 #include "unord.multimap/iterators.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(load_factor)
-//#include "unord.multimap/load_factor.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(local_iterators)
-//#include "unord.multimap/local_iterators.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(max_bucket_count)
-//#include "unord.multimap/max_bucket_count.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(max_load_factor)
-//#include "unord.multimap/max_load_factor.pass.cpp"
-//LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(max_size)
 #include "unord.multimap/max_size.pass.cpp"
 LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(rehash)
-//#include "unord.multimap/rehash.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(reserve)
-//#include "unord.multimap/reserve.pass.cpp"
-//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
 #include "unord.multimap/size.pass.cpp"
