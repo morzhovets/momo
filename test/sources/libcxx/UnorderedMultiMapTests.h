@@ -62,9 +62,11 @@ LIBCXX_TEST_BEGIN(find_non_const)
 #include "unord.multimap/find_non_const.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(incomplete)
-//#include "unord.multimap/incomplete.pass.cpp"
-//LIBCXX_TEST_END
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(incomplete)
+#include "unord.multimap/incomplete.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.multimap/iterators.pass.cpp"

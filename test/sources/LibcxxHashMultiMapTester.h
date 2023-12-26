@@ -16,10 +16,7 @@
 
 #include "../../include/momo/stdish/unordered_multimap.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
+#include "../../include/momo/stdish/set.h"
 
 namespace
 {
@@ -57,6 +54,3 @@ using std::unordered_multimap;
 } // namespace libcxx_test_hash_multimap
 
 } // namespace
-
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL

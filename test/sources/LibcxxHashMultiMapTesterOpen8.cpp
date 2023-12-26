@@ -25,6 +25,8 @@
 
 #include "../../include/momo/stdish/unordered_multimap.h"
 
+#include "../../include/momo/stdish/set.h"
+
 namespace
 {
 
