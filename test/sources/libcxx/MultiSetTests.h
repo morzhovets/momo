@@ -128,10 +128,6 @@ LIBCXX_TEST_BEGIN(iterator_concept_conformance)
 #include "multiset/iterator_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(iterator_types)
-#include "multiset/iterator_types.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(lower_bound)
 #include "multiset/lower_bound.pass.cpp"
 LIBCXX_TEST_END
@@ -162,6 +158,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(upper_bound)
 #include "multiset/upper_bound.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_iterator_types)
+#include "multiset/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_alloc)

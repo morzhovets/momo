@@ -32,10 +32,6 @@ LIBCXX_TEST_BEGIN(iterator_concept_conformance)
 #include "multimap/iterator_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(iterator_types)
-#include "multimap/iterator_types.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(max_size)
 #include "multimap/max_size.pass.cpp"
 LIBCXX_TEST_END
@@ -54,6 +50,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(types)
 #include "multimap/types.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_iterator_types)
+#include "multimap/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_alloc)

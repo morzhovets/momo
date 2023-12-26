@@ -28,16 +28,16 @@ LIBCXX_TEST_BEGIN(iterator_concept_conformance)
 #include "map/iterator_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(iterator_types)
-#include "map/iterator_types.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(range_concept_conformance)
 #include "map/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(types)
 #include "map/types.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_iterator_types)
+#include "map/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(access_at)
