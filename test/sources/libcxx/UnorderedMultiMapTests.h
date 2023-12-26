@@ -58,11 +58,19 @@ LIBCXX_TEST_BEGIN(find_non_const)
 #include "unord.multimap/find_non_const.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(get_allocator)
+#include "unord.multimap/get_allocator.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete)
 #include "unord.multimap/incomplete.pass.cpp"
 LIBCXX_TEST_END
 #endif
+
+LIBCXX_TEST_BEGIN(iterator_concept_conformance)
+#include "unord.multimap/iterator_concept_conformance.compile.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.multimap/iterators.pass.cpp"
@@ -70,6 +78,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(max_size)
 #include "unord.multimap/max_size.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(range_concept_conformance)
+#include "unord.multimap/range_concept_conformance.compile.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
