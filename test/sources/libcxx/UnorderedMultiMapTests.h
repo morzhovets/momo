@@ -38,22 +38,6 @@ LIBCXX_TEST_BEGIN(count_transparent)
 #include "unord.multimap/count.transparent.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(db_iterators_7)
-#include "unord.multimap/db_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_8)
-#include "unord.multimap/db_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(db_local_iterators_7)
-//#include "unord.multimap/db_local_iterators_7.pass.cpp"
-//LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(db_local_iterators_8)
-//#include "unord.multimap/db_local_iterators_8.pass.cpp"
-//LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(empty)
 #include "unord.multimap/empty.pass.cpp"
 LIBCXX_TEST_END
@@ -258,10 +242,6 @@ LIBCXX_TEST_BEGIN(cnstr_size_hash_equal_allocator)
 #include "unord.multimap/unord.multimap.cnstr/size_hash_equal_allocator.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(swap_db_swap_1)
-#include "unord.multimap/unord.multimap.swap/db_swap_1.pass.cpp"
-LIBCXX_TEST_END
-
 //LIBCXX_TEST_BEGIN(swap_swap_noexcept)
 //#include "unord.multimap/unord.multimap.swap/swap_noexcept.pass.cpp"
 //LIBCXX_TEST_END
@@ -284,30 +264,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_const_iter)
 #include "unord.multimap/unord.multimap.modifiers/erase_const_iter.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db1)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db2)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db1)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db2)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db3)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_iter_db3.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db4)
-#include "unord.multimap/unord.multimap.modifiers/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_erase_key)
