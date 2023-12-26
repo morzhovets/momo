@@ -10,10 +10,6 @@
 
 \**********************************************************/
 
-LIBCXX_TEST_BEGIN(contains)
-#include "unord.multimap/contains.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "unord.multimap/contains.transparent.pass.cpp"
 LIBCXX_TEST_END
@@ -86,6 +82,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(types)
 #include "unord.multimap/types.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(common_contains)
+#include "unord.multimap/common/contains.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_allocator)

@@ -14,6 +14,14 @@ LIBCXX_TEST_BEGIN(clear)
 #include "set/clear.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(contains)
+#include "set/contains.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(contains_transparent)
+#include "set/contains_transparent.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(count)
 #include "set/count.pass.cpp"
 LIBCXX_TEST_END
@@ -146,14 +154,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(upper_bound)
 #include "set/upper_bound.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(common_contains)
-#include "set/common/contains.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(common_contains_transparent)
-#include "set/common/contains_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(common_iterator_types)
