@@ -140,13 +140,13 @@ LIBCXX_TEST_BEGIN(cnstr_default)
 #include "unord.multimap/unord.multimap.cnstr/default.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_default_noexcept)
-//#include "unord.multimap/unord.multimap.cnstr/default_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_default_noexcept)
+#include "unord.multimap/unord.multimap.cnstr/default_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
-//#include "unord.multimap/unord.multimap.cnstr/dtor_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
+#include "unord.multimap/unord.multimap.cnstr/dtor_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.multimap/unord.multimap.cnstr/init.pass.cpp"
@@ -176,13 +176,13 @@ LIBCXX_TEST_BEGIN(cnstr_move_alloc)
 #include "unord.multimap/unord.multimap.cnstr/move_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_move_assign_noexcept)
-//#include "unord.multimap/unord.multimap.cnstr/move_assign_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_move_assign_noexcept)
+#include "unord.multimap/unord.multimap.cnstr/move_assign_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_move_noexcept)
-//#include "unord.multimap/unord.multimap.cnstr/move_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_move_noexcept)
+#include "unord.multimap/unord.multimap.cnstr/move_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_size)
 #include "unord.multimap/unord.multimap.cnstr/size.pass.cpp"
@@ -198,14 +198,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cnstr_size_hash_equal_allocator)
 #include "unord.multimap/unord.multimap.cnstr/size_hash_equal_allocator.pass.cpp"
-LIBCXX_TEST_END
-
-//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
-//#include "unord.multimap/unord.multimap.swap/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(swap_swap_non_member)
-#include "unord.multimap/unord.multimap.swap/swap_non_member.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_clear)
@@ -254,4 +246,12 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "unord.multimap/unord.multimap.modifiers/insert_rvalue.pass.cpp"
+LIBCXX_TEST_END
+
+//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
+//#include "unord.multimap/unord.multimap.swap/swap_noexcept.pass.cpp"
+//LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(swap_swap_non_member)
+#include "unord.multimap/unord.multimap.swap/swap_non_member.pass.cpp"
 LIBCXX_TEST_END
