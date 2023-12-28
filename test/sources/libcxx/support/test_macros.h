@@ -34,15 +34,8 @@
 #define LIBCPP_ASSERT(...) static_assert(true, "")
 #define LIBCPP_STATIC_ASSERT(...) static_assert(true, "")
 
-namespace test_macros_detail {
-template <class T, class U>
-struct is_same { enum { value = 0};} ;
-template <class T>
-struct is_same<T, T> { enum {value = 1}; };
-} // namespace test_macros_detail
-
 #define ASSERT_SAME_TYPE(...) \
-    static_assert((test_macros_detail::is_same<__VA_ARGS__>::value), \
+    static_assert((std::is_same_v<__VA_ARGS__>), \
                  "Types differ unexpectedly")
 
 #define TEST_HAS_NO_INT128

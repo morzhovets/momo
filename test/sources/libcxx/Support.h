@@ -50,14 +50,6 @@
 template<typename It>
 using input_iterator = cpp17_input_iterator<It>;
 
-struct LibcppIntHash
-{
-	size_t operator()(int key) const noexcept
-	{
-		return static_cast<size_t>(key);
-	}
-};
-
 #define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
 
 #define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}
