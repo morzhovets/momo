@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -19,14 +18,7 @@
 
 // size_type erase(const key_type& k);
 
-//#include <unordered_map>
-//#include <string>
-//#include <cassert>
-
-//#include "min_allocator.h"
-
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
 template <typename Unordered>
 bool only_deletions ( const Unordered &whole, const Unordered &part ) {
     typename Unordered::const_iterator w = whole.begin();
@@ -42,10 +34,10 @@ bool only_deletions ( const Unordered &whole, const Unordered &part ) {
 }
 #endif
 
-void main()
+int main(int, char**)
 {
     {
-        typedef unordered_multimap<int, std::string> C;
+        typedef std::unordered_multimap<int, std::string> C;
         typedef std::pair<int, std::string> P;
         P a[] =
         {
@@ -62,23 +54,18 @@ void main()
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        C::const_iterator k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        std::multiset<std::string> s;
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(2);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 2);
-        assert(k->second == "two");
-        ++k;
-        assert(k->first == 2);
-        assert(k->second == "four");
+        s.insert("two");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(2), c.end(), 2, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
-        k = eq.first;
+        C::const_iterator k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
         eq = c.equal_range(4);
@@ -86,19 +73,16 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(2) == 2);
         assert(c.size() == 4);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
@@ -109,19 +93,16 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(2) == 0);
         assert(c.size() == 4);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
@@ -132,44 +113,38 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(4) == 1);
         assert(c.size() == 3);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(4) == 0);
         assert(c.size() == 3);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(1) == 2);
         assert(c.size() == 1);
@@ -178,8 +153,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(1) == 0);
         assert(c.size() == 1);
@@ -188,27 +163,26 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(3) == 1);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(3) == 0);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
     }
-//#if __cplusplus >= 201103L
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#if TEST_STD_VER >= 11
     {
-        typedef unordered_multimap<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef std::unordered_multimap<int, std::string, std::hash<int>, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         P a[] =
@@ -226,23 +200,18 @@ void main()
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        C::const_iterator k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        std::multiset<std::string> s;
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(2);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 2);
-        assert(k->second == "two");
-        ++k;
-        assert(k->first == 2);
-        assert(k->second == "four");
+        s.insert("two");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(2), c.end(), 2, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
-        k = eq.first;
+        C::const_iterator k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
         eq = c.equal_range(4);
@@ -250,19 +219,16 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(2) == 2);
         assert(c.size() == 4);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
@@ -273,19 +239,16 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(2) == 0);
         assert(c.size() == 4);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
@@ -296,44 +259,38 @@ void main()
         k = eq.first;
         assert(k->first == 4);
         assert(k->second == "four");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(4) == 1);
         assert(c.size() == 3);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(4) == 0);
         assert(c.size() == 3);
         eq = c.equal_range(1);
         assert(std::distance(eq.first, eq.second) == 2);
-        k = eq.first;
-        assert(k->first == 1);
-        assert(k->second == "one");
-        ++k;
-        assert(k->first == 1);
-        assert(k->second == "four");
+        s.insert("one");
+        s.insert("four");
+        CheckConsecutiveKeys<C::const_iterator>(c.find(1), c.end(), 1, s);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 1);
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(1) == 2);
         assert(c.size() == 1);
@@ -342,8 +299,8 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(1) == 0);
         assert(c.size() == 1);
@@ -352,25 +309,25 @@ void main()
         k = eq.first;
         assert(k->first == 3);
         assert(k->second == "three");
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(3) == 1);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
 
         assert(c.erase(3) == 0);
         assert(c.size() == 0);
         eq = c.equal_range(3);
         assert(std::distance(eq.first, eq.second) == 0);
-        assert(momo::internal::UIntMath<>::Dist(c.begin(), c.end()) == c.size());
-        assert(momo::internal::UIntMath<>::Dist(c.cbegin(), c.cend()) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.begin(), c.end())) == c.size());
+        assert(static_cast<std::size_t>(std::distance(c.cbegin(), c.cend())) == c.size());
     }
     {
-    typedef unordered_multimap<int, int> C;
+    typedef std::unordered_multimap<int, int> C;
     C m, m2;
     for ( int i = 0; i < 10; ++i ) {
         for (int j = 0; j < 2; ++j ) {
@@ -383,7 +340,11 @@ void main()
     int ctr = 0;
     while (i != m2.end()) {
         if (ctr++ % 2 == 0)
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
             m2.erase(i++);
+#else
+            i = m2.erase(i);
+#endif
         else
             ++i;
         }
@@ -391,4 +352,6 @@ void main()
     assert (only_deletions (m, m2));
     }
 #endif
+
+  return 0;
 }
