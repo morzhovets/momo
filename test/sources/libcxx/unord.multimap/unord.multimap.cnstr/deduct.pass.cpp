@@ -11,8 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 // <unordered_map>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
+// UNSUPPORTED: c++03, c++11, c++14
 
 // template<class InputIterator,
 //          class Hash = hash<iter-key-type<InputIterator>>,
@@ -60,18 +59,10 @@
 //                    Allocator)
 //   -> unordered_multimap<Key, T, Hash, equal_to<Key>, Allocator>;
 
-//#include <algorithm> // is_permutation
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <type_traits>
-//#include <unordered_map>
-//
-//#include "test_allocator.h"
-
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
 
-void main()
+int main(int, char**)
 {
     const PC expected_m[] = { {1,1}, {1,1}, {2,2}, {3,1}, {INT_MAX,1} };
 
@@ -203,4 +194,31 @@ void main()
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
+
+#if !defined(TEST_GCC)
+    {
+    // Examples from LWG3025
+    momo::stdish::unordered_multimap m{std::pair{1, 1}, {2, 2}, {3, 3}};
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, int>);
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    momo::stdish::unordered_multimap m2{m.begin(), m.end()};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_multimap<int, int>);
+#endif
+    }
+#endif
+
+    {
+    // Examples from LWG3531
+    momo::stdish::unordered_multimap m1{{std::pair{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m1), momo::stdish::unordered_multimap<int, int>);
+
+    using value_type = std::pair<const int, int>;
+    momo::stdish::unordered_multimap m2{{value_type{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_multimap<int, int>);
+    }
+
+    UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_multimap, momo::stdish::unordered_multimap<int, long>>();
+
+    return 0;
 }

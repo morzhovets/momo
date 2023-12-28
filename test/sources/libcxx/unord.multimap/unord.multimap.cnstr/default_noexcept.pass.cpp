@@ -1,9 +1,8 @@
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -21,12 +20,7 @@
 
 // This tests a conforming extension
 
-//#include <unordered_map>
-//#include <cassert>
-
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
-//#include "../../../test_hash.h"
+// UNSUPPORTED: c++03
 
 template <class T>
 struct some_comp
@@ -34,6 +28,7 @@ struct some_comp
     typedef T value_type;
     some_comp();
     some_comp(const some_comp&);
+    bool operator()(const T&, const T&) const { return false; }
 };
 
 template <class T>
@@ -42,34 +37,36 @@ struct some_hash
     typedef T value_type;
     some_hash();
     some_hash(const some_hash&);
+    std::size_t operator()(T const&) const;
 };
 
-void main()
+int main(int, char**)
 {
-#ifndef _LIBCPP_HAS_NO_NOEXCEPT
-//#if __has_feature(cxx_noexcept)
+#if defined(_LIBCPP_VERSION)
     {
-        typedef unordered_multimap<MoveOnly, MoveOnly> C;
+        typedef std::unordered_multimap<MoveOnly, MoveOnly> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                            std::equal_to<MoveOnly>, test_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
+#endif // _LIBCPP_VERSION
     {
-        typedef unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                           std::equal_to<MoveOnly>, other_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef unordered_multimap<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;
+        typedef std::unordered_multimap<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
     {
-        typedef unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
+        typedef std::unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                                                          some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_default_constructible<C>::value, "");
     }
-#endif
+
+  return 0;
 }

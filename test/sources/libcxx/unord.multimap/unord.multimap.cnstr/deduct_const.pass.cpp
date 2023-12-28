@@ -11,8 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 // <unordered_map>
-// UNSUPPORTED: c++98, c++03, c++11, c++14
-// UNSUPPORTED: libcpp-no-deduction-guides
+// UNSUPPORTED: c++03, c++11, c++14
 
 // template<class InputIterator,
 //          class Hash = hash<iter-key-type<InputIterator>>,
@@ -60,19 +59,10 @@
 //                    Allocator)
 //   -> unordered_multimap<Key, T, Hash, equal_to<Key>, Allocator>;
 
-//#include <algorithm> // is_permutation
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <functional>
-//#include <type_traits>
-//#include <unordered_map>
-//
-//#include "test_allocator.h"
-
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
 
-void main()
+int main(int, char**)
 {
     const PC expected_m[] = { {1,1}, {1,1}, {2,2}, {3,1}, {INT_MAX,1} };
 
@@ -172,4 +162,6 @@ void main()
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
+
+    return 0;
 }

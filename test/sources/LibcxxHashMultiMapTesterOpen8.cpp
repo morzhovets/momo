@@ -43,6 +43,9 @@ namespace std
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 	using unordered_multimap = momo::stdish::unordered_multimap_open<TKey, TMapped,
 		THashFunc, TEqualFunc, TAllocator>;
+
+	template<typename TKey>
+	using multiset = momo::stdish::multiset<TKey>;
 }
 
 using std::unordered_multimap;

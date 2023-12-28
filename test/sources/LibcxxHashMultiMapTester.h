@@ -43,6 +43,9 @@ namespace std
 			momo::MemManagerStd<TAllocator>,
 			momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 			LibcxxHashMultiMapSettings>>;
+
+	template<typename TKey>
+	using multiset = momo::stdish::multiset<TKey>;
 }
 
 using std::unordered_multimap;
