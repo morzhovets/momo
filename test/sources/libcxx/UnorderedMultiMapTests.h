@@ -300,9 +300,9 @@ LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "unord.multimap/unord.multimap.modifiers/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(swap_swap_noexcept)
-//#include "unord.multimap/unord.multimap.swap/swap_noexcept.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(swap_swap_noexcept)
+#include "unord.multimap/unord.multimap.swap/swap_noexcept.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(swap_swap_non_member)
 #include "unord.multimap/unord.multimap.swap/swap_non_member.pass.cpp"
