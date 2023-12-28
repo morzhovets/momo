@@ -43,6 +43,7 @@
 #include "support/container_test_types.h"
 #include "support/deduction_guides_sfinae_checks.h"
 #include "support/test_container_comparisons.h"
+#include "support/check_consecutive.h"
 #include "support/set_allocator_requirement_test_templates.h"
 #include "support/map_allocator_requirement_test_templates.h"
 #include "support/asan_testing.h"
