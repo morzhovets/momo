@@ -268,6 +268,10 @@ LIBCXX_TEST_BEGIN(modifiers_erase_range)
 #include "unord.multimap/unord.multimap.modifiers/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_allocator_requirements)
+#include "unord.multimap/unord.multimap.modifiers/insert_allocator_requirements.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_const_lvalue)
 #include "unord.multimap/unord.multimap.modifiers/insert_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
