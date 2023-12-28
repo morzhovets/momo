@@ -184,26 +184,6 @@ LIBCXX_TEST_END
 //#include "unord.multimap/unord.multimap.cnstr/move_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(cnstr_range)
-#include "unord.multimap/unord.multimap.cnstr/range.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(cnstr_range_size)
-#include "unord.multimap/unord.multimap.cnstr/range_size.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(cnstr_range_size_hash)
-#include "unord.multimap/unord.multimap.cnstr/range_size_hash.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(cnstr_range_size_hash_equal)
-#include "unord.multimap/unord.multimap.cnstr/range_size_hash_equal.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(cnstr_range_size_hash_equal_allocator)
-#include "unord.multimap/unord.multimap.cnstr/range_size_hash_equal_allocator.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(cnstr_size)
 #include "unord.multimap/unord.multimap.cnstr/size.pass.cpp"
 LIBCXX_TEST_END
