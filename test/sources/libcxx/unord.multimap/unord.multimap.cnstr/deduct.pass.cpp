@@ -82,22 +82,22 @@ int main(int, char**)
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<int>>);
+    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<int>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>>);
+    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<PC>(0, 41));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>>);
+    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 41));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 41);
     }
@@ -117,7 +117,7 @@ int main(int, char**)
     }
 
     {
-    momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>> source;
+    momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 42);
     momo::stdish::unordered_multimap m(source, a);
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
@@ -126,7 +126,7 @@ int main(int, char**)
     }
 
     {
-    momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>> source;
+    momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 43);
     momo::stdish::unordered_multimap m{source, a};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
@@ -147,20 +147,20 @@ int main(int, char**)
     }
 
     {
-    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>>);
+    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>>);
+    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<PC>(0, 44));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<>, test_allocator<PC>>);
+    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 44));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 44);
     }
@@ -175,8 +175,8 @@ int main(int, char**)
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<PC>(0, 46));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<int>, test_allocator<PC>>);
+    momo::stdish::unordered_multimap m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<PC>(0, 46));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 46);
     }
@@ -189,8 +189,8 @@ int main(int, char**)
     }
 
     {
-    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<int64_t>(), test_allocator<PC>(0, 48));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<int64_t>, std::equal_to<int>, test_allocator<PC>>);
+    momo::stdish::unordered_multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), test_allocator<PC>(0, 48));
+    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_multimap<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
