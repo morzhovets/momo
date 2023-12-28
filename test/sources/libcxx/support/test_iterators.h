@@ -63,7 +63,7 @@ template <class It>
 cpp17_output_iterator(It) -> cpp17_output_iterator<It>;
 #endif
 
-#ifndef TEST_GCC
+#if !defined(TEST_GCC)
 #if TEST_STD_VER > 17
    static_assert(std::output_iterator<cpp17_output_iterator<int*>, int>);
 #endif
@@ -111,7 +111,7 @@ template <class It>
 cpp17_input_iterator(It) -> cpp17_input_iterator<It>;
 #endif
 
-#ifndef TEST_GCC
+#if !defined(TEST_GCC)
 #if TEST_STD_VER > 17
    static_assert(std::input_iterator<cpp17_input_iterator<int*>>);
 #endif
@@ -667,7 +667,7 @@ public:
 template <class It>
 cpp20_input_iterator(It) -> cpp20_input_iterator<It>;
 
-#ifndef TEST_GCC
+#if !defined(TEST_GCC)
 static_assert(std::input_iterator<cpp20_input_iterator<int*>>);
 #endif
 
@@ -705,7 +705,7 @@ public:
 template <class It>
 cpp20_output_iterator(It) -> cpp20_output_iterator<It>;
 
-#ifndef TEST_GCC
+#if !defined(TEST_GCC)
 static_assert(std::output_iterator<cpp20_output_iterator<int*>, int>);
 #endif
 

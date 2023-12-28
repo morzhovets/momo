@@ -30,27 +30,4 @@ public:
         {return data_ == c.data_;}
 };
 
-template <class T>
-class test_hash<std::hash<T>> : public test_hash<T>
-{
-public:
-    explicit test_hash(int data = 0) : test_hash<T>(data) {}
-};
-
-struct LibcppIntHash;
-
-template <>
-class test_hash<LibcppIntHash>
-{
-    int data_;
-public:
-    explicit test_hash(int data = 0) : data_(data) {}
-
-    std::size_t operator()(int x) const
-        {return static_cast<std::size_t>(x);}
-
-    bool operator==(const test_hash& c) const
-        {return data_ == c.data_;}
-};
-
-#endif  // TEST_HASH_H
+#endif // TEST_HASH_H

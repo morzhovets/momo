@@ -13,24 +13,10 @@
 #ifndef CHECK_CONSECUTIVE_H
 #define CHECK_CONSECUTIVE_H
 
-// <unordered_multiset>
 // <unordered_multimap>
 
 #include <cassert>
 #include <stddef.h>
-
-// Check consecutive equal values in an unordered_multiset iterator
-template <typename Iter>
-void CheckConsecutiveValues(Iter pos, Iter end, typename Iter::value_type value, std::size_t count)
-{
-    for ( std::size_t i = 0; i < count; ++i )
-    {
-        assert(pos != end);
-        assert(*pos == value);
-        ++pos;
-    }
-    assert(pos == end || *pos != value);
-}
 
 // Check consecutive equal keys in an unordered_multimap iterator
 template <typename Iter, typename Key, typename Multiset>
