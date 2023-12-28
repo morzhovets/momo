@@ -28,7 +28,7 @@ int main(int, char**)
                                                                   NotConstructible> >
                                    > C;
         C c(test_allocator<std::pair<const NotConstructible, NotConstructible> >(10));
-        //LIBCPP_ASSERT(c.bucket_count() == 0);
+        LIBCPP_ASSERT(c.bucket_count() == 0);
         assert(c.hash_function() == test_hash<NotConstructible>());
         assert(c.key_eq() == test_equal_to<NotConstructible>());
         assert(c.get_allocator() ==
@@ -48,7 +48,7 @@ int main(int, char**)
                                                                   NotConstructible> >
                                    > C;
         C c(min_allocator<std::pair<const NotConstructible, NotConstructible> >{});
-        //LIBCPP_ASSERT(c.bucket_count() == 0);
+        LIBCPP_ASSERT(c.bucket_count() == 0);
         assert(c.hash_function() == test_hash<NotConstructible>());
         assert(c.key_eq() == test_equal_to<NotConstructible>());
         assert(c.get_allocator() ==
@@ -67,7 +67,7 @@ int main(int, char**)
                                    A
                                    > C;
         C c(A{});
-        //LIBCPP_ASSERT(c.bucket_count() == 0);
+        LIBCPP_ASSERT(c.bucket_count() == 0);
         assert(c.hash_function() == test_hash<NotConstructible>());
         assert(c.key_eq() == test_equal_to<NotConstructible>());
         assert(c.get_allocator() == A{});
@@ -87,7 +87,7 @@ int main(int, char**)
 
         A a(10);
         C c(2, a);
-        //LIBCPP_ASSERT(c.bucket_count() == 2);
+        LIBCPP_ASSERT(c.bucket_count() == 2);
         assert(c.hash_function() == HF());
         assert(c.key_eq() == Comp());
         assert(c.get_allocator() == a);
@@ -107,7 +107,7 @@ int main(int, char**)
         A a(10);
         HF hf(12);
         C c(2, hf, a);
-        //LIBCPP_ASSERT(c.bucket_count() == 2);
+        LIBCPP_ASSERT(c.bucket_count() == 2);
         assert(c.hash_function() == hf);
         assert(!(c.hash_function() == HF()));
         assert(c.key_eq() == Comp());

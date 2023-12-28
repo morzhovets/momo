@@ -40,7 +40,7 @@ void test(const Allocator& alloc)
         7,
         alloc);
 
-    //LIBCPP_ASSERT(c.bucket_count() == 7);
+    LIBCPP_ASSERT(c.bucket_count() == 7);
     assert(c.size() == 6);
 
     typedef std::pair<typename C::const_iterator, typename C::const_iterator> Eq;

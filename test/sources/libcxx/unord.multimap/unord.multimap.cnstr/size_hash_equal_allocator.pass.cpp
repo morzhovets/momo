@@ -32,7 +32,7 @@ int main(int, char**)
             test_equal_to<NotConstructible>(9),
             test_allocator<std::pair<const NotConstructible, NotConstructible> >(10)
            );
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.hash_function() == test_hash<NotConstructible>(8));
         assert(c.key_eq() == test_equal_to<NotConstructible>(9));
         assert(c.get_allocator() ==
@@ -56,7 +56,7 @@ int main(int, char**)
             test_equal_to<NotConstructible>(9),
             min_allocator<std::pair<const NotConstructible, NotConstructible> >()
            );
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.hash_function() == test_hash<NotConstructible>(8));
         assert(c.key_eq() == test_equal_to<NotConstructible>(9));
         assert(c.get_allocator() ==
@@ -79,7 +79,7 @@ int main(int, char**)
             test_equal_to<NotConstructible>(9),
             A{}
            );
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.hash_function() == test_hash<NotConstructible>(8));
         assert(c.key_eq() == test_equal_to<NotConstructible>(9));
         assert(c.get_allocator() == A{});

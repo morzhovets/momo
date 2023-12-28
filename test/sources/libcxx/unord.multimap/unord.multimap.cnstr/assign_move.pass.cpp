@@ -52,7 +52,7 @@ int main(int, char**)
             A(4)
            );
         c = std::move(c0);
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 6);
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
@@ -114,7 +114,7 @@ int main(int, char**)
         C::iterator it0 = c0.begin();
         c = std::move(c0);
         assert(it0 == c.begin()); // Iterators remain valid
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 6);
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
@@ -176,7 +176,7 @@ int main(int, char**)
         C::iterator it0 = c0.begin();
         c = std::move(c0);
         assert(it0 == c.begin()); // Iterators remain valid
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 6);
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
@@ -238,7 +238,7 @@ int main(int, char**)
         C::iterator it0 = c0.begin();
         c = std::move(c0);
         assert(it0 == c.begin()); // Iterators remain valid
-        //LIBCPP_ASSERT(c.bucket_count() == 7);
+        LIBCPP_ASSERT(c.bucket_count() == 7);
         assert(c.size() == 6);
         typedef std::pair<C::const_iterator, C::const_iterator> Eq;
         Eq eq = c.equal_range(1);
