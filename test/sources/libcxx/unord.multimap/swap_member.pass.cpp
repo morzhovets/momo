@@ -148,7 +148,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -156,7 +156,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());
@@ -231,7 +231,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -239,7 +239,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());
@@ -368,7 +368,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -376,7 +376,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());
@@ -443,7 +443,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -451,7 +451,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());
@@ -576,7 +576,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -584,7 +584,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());
@@ -651,7 +651,7 @@ int main(int, char**)
         //assert(c2.bucket_count() >= 6);
         assert(c2.size() == 6);
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("one");
             s.insert("four");
             assert(s.find(c2.find(1)->second) != s.end());
@@ -659,7 +659,7 @@ int main(int, char**)
             assert(s.find(std::next(c2.find(1))->second) != s.end());
         }
         {
-            momo::stdish::set<std::string> s;
+            std::set<std::string> s;
             s.insert("two");
             s.insert("four");
             assert(s.find(c2.find(2)->second) != s.end());

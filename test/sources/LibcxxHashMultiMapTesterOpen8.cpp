@@ -45,6 +45,9 @@ namespace std
 		THashFunc, TEqualFunc, TAllocator>;
 
 	template<typename TKey>
+	using set = momo::stdish::set<TKey>;
+
+	template<typename TKey>
 	using multiset = momo::stdish::multiset<TKey>;
 }
 

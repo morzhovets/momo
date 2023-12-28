@@ -45,7 +45,7 @@ int main(int, char**)
         r = c.equal_range(5);
         assert(std::distance(r.first, r.second) == 0);
         r = c.equal_range(50);
-        momo::stdish::set<std::string> s;
+        std::set<std::string> s;
         s.insert("fifty");
         s.insert("fiftyA");
         s.insert("fiftyB");
@@ -84,7 +84,7 @@ int main(int, char**)
         r = c.equal_range(5);
         assert(std::distance(r.first, r.second) == 0);
         r = c.equal_range(50);
-        momo::stdish::set<std::string> s;
+        std::set<std::string> s;
         s.insert("fifty");
         s.insert("fiftyA");
         s.insert("fiftyB");
