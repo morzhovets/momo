@@ -100,6 +100,43 @@ LIBCXX_TEST_BEGIN(common_contains)
 #include "unord.multimap/common/contains.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCXX_TEST_SPECIFIC
+
+LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
+#include "unord.multimap/spec/debug.erase.iter.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_erase_iter_iter)
+#include "unord.multimap/spec/debug.erase.iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(spec_debug_insert_hint_const_lvalue)
+#include "unord.multimap/spec/debug.insert.hint_const_lvalue.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+LIBCXX_TEST_BEGIN(spec_debug_insert_hint_rvalue)
+#include "unord.multimap/spec/debug.insert.hint_rvalue.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_dereference)
+#include "unord.multimap/spec/debug.iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_increment)
+#include "unord.multimap/spec/debug.iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_swap)
+#include "unord.multimap/spec/debug.swap.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
+
 LIBCXX_TEST_BEGIN(cnstr_allocator)
 #include "unord.multimap/unord.multimap.cnstr/allocator.pass.cpp"
 LIBCXX_TEST_END

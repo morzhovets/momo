@@ -51,9 +51,13 @@ namespace std
 	using multiset = momo::stdish::multiset<TKey>;
 }
 
+#define LIBCXX_TEST_SPECIFIC
+
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
+
+#undef LIBCXX_TEST_SPECIFIC
 
 } // namespace libcxx_test_hash_multimap
 
