@@ -208,52 +208,52 @@ LIBCXX_TEST_BEGIN(types)
 #include "unord.set/types.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_FAILURE
+#ifdef LIBCXX_TEST_SPECIFIC
 
-LIBCXX_TEST_BEGIN(fail_assert_bucket)
-#include "unord.set/fail/assert.bucket.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_assert_bucket)
+#include "unord.set/spec/assert.bucket.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_assert_bucket_size)
-#include "unord.set/fail/assert.bucket_size.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_assert_bucket_size)
+#include "unord.set/spec/assert.bucket_size.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_assert_max_load_factor)
-#include "unord.set/fail/assert.max_load_factor.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_assert_max_load_factor)
+#include "unord.set/spec/assert.max_load_factor.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_erase_iter)
-#include "unord.set/fail/debug.erase.iter.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
+#include "unord.set/spec/debug.erase.iter.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_erase_iter_iter)
-#include "unord.set/fail/debug.erase.iter_iter.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_erase_iter_iter)
+#include "unord.set/spec/debug.erase.iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_insert_hint_const_lvalue)
-#include "unord.set/fail/debug.insert.hint_const_lvalue.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_insert_hint_const_lvalue)
+#include "unord.set/spec/debug.insert.hint_const_lvalue.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_iterator_dereference)
-#include "unord.set/fail/debug.iterator.dereference.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_iterator_dereference)
+#include "unord.set/spec/debug.iterator.dereference.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_iterator_increment)
-#include "unord.set/fail/debug.iterator.increment.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_iterator_increment)
+#include "unord.set/spec/debug.iterator.increment.pass.cpp"
 LIBCXX_TEST_END
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-LIBCXX_TEST_BEGIN(fail_debug_local_iterator_dereference)
-#include "unord.set/fail/debug.local_iterator.dereference.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_local_iterator_dereference)
+#include "unord.set/spec/debug.local_iterator.dereference.pass.cpp"
 LIBCXX_TEST_END
 #endif
 
-LIBCXX_TEST_BEGIN(fail_debug_local_iterator_increment)
-#include "unord.set/fail/debug.local_iterator.increment.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_local_iterator_increment)
+#include "unord.set/spec/debug.local_iterator.increment.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(fail_debug_swap)
-#include "unord.set/fail/debug.swap.pass.cpp"
+LIBCXX_TEST_BEGIN(spec_debug_swap)
+#include "unord.set/spec/debug.swap.pass.cpp"
 LIBCXX_TEST_END
 
 #endif
