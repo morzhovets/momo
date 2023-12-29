@@ -140,6 +140,10 @@ LIBCXX_TEST_BEGIN(types)
 #include "unord.map/types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(common_iterator_difference_type)
+#include "unord.map/common/iterator_difference_type.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCXX_TEST_SPECIFIC
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)

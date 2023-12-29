@@ -100,6 +100,10 @@ LIBCXX_TEST_BEGIN(common_contains)
 #include "unord.multimap/common/contains.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(common_iterator_difference_type)
+#include "unord.multimap/common/iterator_difference_type.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCXX_TEST_SPECIFIC
 
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
