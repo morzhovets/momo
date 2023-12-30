@@ -394,7 +394,7 @@ private:
 			return equalFunc(*begin, *iter)
 				? std::strong_ordering::less : std::strong_ordering::greater;
 		};
-		return pvExponentialSearch(begin + 1, count - 1, iterComparer).iterator;
+		return pvExponentialSearch(begin + 1, count - 1, FastCopyableFunctor(iterComparer)).iterator;
 	}
 
 	template<internal::conceptRandomIterator Iterator,
@@ -417,7 +417,7 @@ private:
 				if (step == 0)
 				{
 					return pvExponentialSearch(SMath::Next(begin, leftIndex),
-						rightIndex - leftIndex, iterComparer);
+						rightIndex - leftIndex, FastCopyableFunctor(iterComparer));
 				}
 				middleIndex += pvMultShift(argHash - middleHash, count);
 				if (middleIndex >= rightIndex)
@@ -432,7 +432,7 @@ private:
 					auto revIterComparer = [argHash, iterHashFunc] (ReverseIterator iter)
 						{ return argHash <=> iterHashFunc(iter); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
-						rightIndex - leftIndex, revIterComparer);
+						rightIndex - leftIndex, FastCopyableFunctor(revIterComparer));
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
 				size_t diff = pvMultShift(middleHash - argHash, count);
@@ -446,13 +446,14 @@ private:
 			}
 			--step;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, iterComparer);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex,
+			FastCopyableFunctor(iterComparer));
 	}
 
 	template<internal::conceptRandomIterator Iterator,
 		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterComparer>
 	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count,
-		IterComparer iterComparer)
+		FastCopyableFunctor<IterComparer> iterComparer)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
@@ -470,7 +471,7 @@ private:
 	template<internal::conceptRandomIterator Iterator,
 		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterComparer>
 	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count,
-		IterComparer iterComparer)
+		FastCopyableFunctor<IterComparer> iterComparer)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
