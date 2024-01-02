@@ -112,6 +112,42 @@ LIBCXX_TEST_BEGIN(types)
 #include "vector/types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(spec_asan_throw)
+#include "vector/spec/asan_throw.pass.cpp"
+LIBCXX_TEST_END
+
+#ifdef LIBCXX_TEST_FAILURE
+
+LIBCXX_TEST_BEGIN(spec_assert_back_empty)
+#include "vector/spec/assert.back.empty.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_cback_empty)
+#include "vector/spec/assert.cback.empty.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_cfront_empty)
+#include "vector/spec/assert.cfront.empty.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_cindex_oob)
+#include "vector/spec/assert.cindex.oob.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_front_empty)
+#include "vector/spec/assert.front.empty.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_index_oob)
+#include "vector/spec/assert.index.oob.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_assert_pop_back_empty)
+#include "vector/spec/assert.pop_back.empty.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 LIBCXX_TEST_BEGIN(capacity_capacity)
 #include "vector/vector.capacity/capacity.pass.cpp"
 LIBCXX_TEST_END

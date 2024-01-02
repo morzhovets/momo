@@ -47,11 +47,13 @@ namespace std
 
 using std::vector;
 
+#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_segmented_array_sqrt_0
 
@@ -79,11 +81,13 @@ namespace std
 
 using std::vector;
 
+#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_segmented_array_cnst_0
 

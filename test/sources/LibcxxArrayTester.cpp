@@ -45,11 +45,13 @@ namespace std
 
 using std::vector;
 
+#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_ARRAY
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_array_0
 
