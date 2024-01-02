@@ -212,7 +212,7 @@ LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.set/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_SPECIFIC
+#ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
 #include "unord.set/spec/assert.bucket.pass.cpp"

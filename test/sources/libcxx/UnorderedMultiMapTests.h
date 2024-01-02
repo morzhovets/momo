@@ -104,7 +104,7 @@ LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.multimap/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_SPECIFIC
+#ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
 #include "unord.multimap/spec/debug.erase.iter.pass.cpp"

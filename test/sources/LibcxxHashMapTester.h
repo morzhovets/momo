@@ -43,13 +43,11 @@ namespace std
 			LibcxxHashMapSettings>>;
 }
 
-#define LIBCXX_TEST_SPECIFIC
-
+#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
-
-#undef LIBCXX_TEST_SPECIFIC
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_hash_map
 
@@ -73,13 +71,11 @@ namespace std
 			LibcxxHashMapSettings>>;
 }
 
-#define LIBCXX_TEST_SPECIFIC
-
+#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_vp_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
-
-#undef LIBCXX_TEST_SPECIFIC
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_hash_map_vp
 
