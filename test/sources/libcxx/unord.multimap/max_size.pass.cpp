@@ -31,7 +31,7 @@ int main(int, char**)
   }
 #endif
   {
-    typedef limited_allocator<KV, (std::size_t)-1> A;
+    typedef limited_allocator<KV, static_cast<std::size_t>(-1)> A;
     typedef std::unordered_multimap<int, int, std::hash<int>,
                                     std::equal_to<int>, A>
         C;
