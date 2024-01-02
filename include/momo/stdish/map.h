@@ -660,6 +660,14 @@ namespace internal
 			return !(*this == right);
 		}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		auto operator<=>(const map_base& right) const
+			requires requires (const_reference ref) { ref <=> ref; }
+		{
+			return std::lexicographical_compare_three_way(begin(), end(),
+				right.begin(), right.end());
+		}
+#else
 		bool operator<(const map_base& right) const
 		{
 			return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
@@ -679,6 +687,7 @@ namespace internal
 		{
 			return right <= *this;
 		}
+#endif
 
 	protected:	//?
 		void ptAssign(std::initializer_list<value_type> values)

@@ -123,7 +123,14 @@ namespace internal
 			return !pvIsEqual(pair1, ref2);
 		}
 
-		//? <, >, <=, >=
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		template<typename Pair2>
+		friend auto operator<=>(const MapReferenceStd& ref1, const Pair2& pair2)
+			requires requires { std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second); }
+		{
+			return std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second);
+		}
+#endif
 
 	protected:
 		explicit MapReferenceStd(MapReference mapRef) noexcept

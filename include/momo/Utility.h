@@ -36,6 +36,10 @@
 #include <tuple>
 #include <initializer_list>
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+#include <compare>
+#endif
+
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
 		noexcept(noexcept(object1.Swap(object2))) \

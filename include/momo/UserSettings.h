@@ -166,6 +166,11 @@
 #endif
 #endif
 
+#if defined(__cpp_impl_three_way_comparison) && defined(__cpp_lib_three_way_comparison) \
+	&& defined (__cpp_concepts)
+#define MOMO_HAS_THREE_WAY_COMPARISON
+#endif
+
 #ifdef __has_cpp_attribute
 #if __has_cpp_attribute(nodiscard)
 #define MOMO_NODISCARD [[nodiscard]]

@@ -554,6 +554,16 @@ public:
 		return !(*this == right);
 	}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+	auto operator<=>(const set& right) const
+		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
+	{
+		auto comp = [] (const value_type& value1, const value_type& value2)
+			{ return std::tie(value1) <=> std::tie(value2); };
+		return std::lexicographical_compare_three_way(begin(), end(),
+			right.begin(), right.end(), comp);
+	}
+#else
 	bool operator<(const set& right) const
 	{
 		return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
@@ -573,6 +583,7 @@ public:
 	{
 		return right <= *this;
 	}
+#endif
 
 private:
 	static TreeSet pvCreateSet(set&& right, const allocator_type& alloc)
