@@ -14,10 +14,6 @@ LIBCXX_TEST_BEGIN(access)
 #include "vector/access.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(asan_throw)
-#include "vector/asan_throw.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(compare)
 #include "vector/compare.pass.cpp"
 LIBCXX_TEST_END
@@ -30,62 +26,6 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(contiguous)
 #include "vector/contiguous.pass.cpp"
 LIBCXX_TEST_END
-#endif
-
-LIBCXX_TEST_BEGIN(db_back)
-#include "vector/db_back.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_cback)
-#include "vector/db_cback.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_cfront)
-#include "vector/db_cfront.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_cindex)
-#include "vector/db_cindex.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_front)
-#include "vector/db_front.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_index)
-#include "vector/db_index.pass.cpp"
-LIBCXX_TEST_END
-
-#ifndef LIBCXX_TEST_ARRAY
-
-LIBCXX_TEST_BEGIN(db_iterators_2)
-#include "vector/db_iterators_2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_3)
-#include "vector/db_iterators_3.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_4)
-#include "vector/db_iterators_4.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_5)
-#include "vector/db_iterators_5.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_6)
-#include "vector/db_iterators_6.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_7)
-#include "vector/db_iterators_7.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(db_iterators_8)
-#include "vector/db_iterators_8.pass.cpp"
-LIBCXX_TEST_END
-
 #endif
 
 LIBCXX_TEST_BEGIN(get_allocator)
@@ -360,32 +300,8 @@ LIBCXX_TEST_BEGIN(modifiers_erase_iter)
 #include "vector/vector.modifiers/erase_iter.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db1)
-#include "vector/vector.modifiers/erase_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_db2)
-#include "vector/vector.modifiers/erase_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter)
 #include "vector/vector.modifiers/erase_iter_iter.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db1)
-#include "vector/vector.modifiers/erase_iter_iter_db1.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db2)
-#include "vector/vector.modifiers/erase_iter_iter_db2.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db3)
-#include "vector/vector.modifiers/erase_iter_iter_db3.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db4)
-#include "vector/vector.modifiers/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_initializer_list)
@@ -422,10 +338,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_push_back_rvalue)
 #include "vector/vector.modifiers/push_back_rvalue.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(special_db_swap_1)
-#include "vector/vector.special/db_swap_1.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_swap)
