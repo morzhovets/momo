@@ -146,6 +146,38 @@ LIBCXX_TEST_BEGIN(spec_assert_pop_back_empty)
 #include "vector/spec/assert.pop_back.empty.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCXX_TEST_ARRAY
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_add)
+#include "vector/spec/debug.iterator.add.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_compare)
+#include "vector/spec/debug.iterator.compare.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_decrement)
+#include "vector/spec/debug.iterator.decrement.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_dereference)
+#include "vector/spec/debug.iterator.dereference.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_increment)
+#include "vector/spec/debug.iterator.increment.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_index)
+#include "vector/spec/debug.iterator.index.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(spec_debug_iterator_subtract)
+#include "vector/spec/debug.iterator.subtract.pass.cpp"
+LIBCXX_TEST_END
+
+#endif
+
 #endif
 
 LIBCXX_TEST_BEGIN(capacity_capacity)
