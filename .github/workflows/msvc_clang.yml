@@ -15,7 +15,7 @@ jobs:
 
         - win_ver: '2022'
           build_type: 'Release'
-          flags: '/std:c++latest /WX -msse2 /DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '/std:c++latest /WX -msse2 /DTEST_LIBCXX_NEW'
 
     runs-on: windows-${{ matrix.win_ver }}
 

@@ -12,12 +12,21 @@ jobs:
         - build_type: 'Release'
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
+        - build_type: 'Release'
+          flags: '-std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW'
+
         # x86
         - build_type: 'Release'
           flags: '-m32 -std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
         - build_type: 'Release'
           flags: '-m32 -std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
+        - build_type: 'Release'
+          flags: '-m32 -std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW'
+
+        - build_type: 'Release'
+          flags: '-m32 -std=c++20 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
     runs-on: windows-2022
 
