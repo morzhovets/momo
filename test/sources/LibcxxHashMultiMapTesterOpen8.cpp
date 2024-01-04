@@ -25,6 +25,10 @@
 
 #include "../../include/momo/stdish/unordered_multimap.h"
 
+#ifdef TEST_LIBCXX_NEW
+#include "../../include/momo/stdish/set.h"
+#endif
+
 namespace
 {
 
@@ -32,12 +36,21 @@ namespace libcxx_test_hash_multimap
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
+
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap = momo::stdish::unordered_multimap_open<TKey, TMapped,
 	THashFunc, TEqualFunc, TAllocator>;
+
+#ifdef TEST_LIBCXX_NEW
+template<typename TKey>
+using set = momo::stdish::set<TKey>;
+template<typename TKey>
+using multiset = momo::stdish::multiset<TKey>;
+#endif
+
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_open"

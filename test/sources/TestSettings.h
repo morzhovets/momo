@@ -42,6 +42,8 @@
 #undef TEST_LIBCXX_TREE_MAP
 #endif
 
+//#define TEST_LIBCXX_NEW
+
 //#define TEST_NATVIS
 
 #define TEST_OLD_HASH_BUCKETS

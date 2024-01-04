@@ -14,6 +14,8 @@
 
 #include "LibcxxTester.h"
 
+#ifndef TEST_LIBCXX_NEW
+
 int DefaultOnly::count = 0;
 
 int Counter_base::gConstructed = 0;
@@ -25,3 +27,5 @@ int test_alloc_base::throw_after = INT_MAX;
 int test_alloc_base::copied = 0;
 int test_alloc_base::moved = 0;
 int test_alloc_base::converted = 0;
+
+#endif // TEST_LIBCXX_NEW
