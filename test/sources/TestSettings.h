@@ -22,6 +22,8 @@
 #define TEST_MSVC
 #endif
 
+#ifndef TEST_DISABLE_ALL
+
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_HASH
 #define TEST_SIMPLE_TREE
@@ -36,10 +38,12 @@
 #define TEST_LIBCXX_TREE_SET
 #define TEST_LIBCXX_TREE_MAP
 
+#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
+#undef TEST_LIBCXX_TREE_MAP
+#endif
+
 //#define TEST_NATVIS
 
 #define TEST_OLD_HASH_BUCKETS
 
-#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
-#undef TEST_LIBCXX_TREE_MAP
-#endif
+#endif // TEST_DISABLE_ALL
