@@ -16,7 +16,7 @@
 
 namespace TCT {
 template <class T = CopyInsertable<1>>
-using vector = vector<T, ContainerTestAllocator<T, T> >;
+using vector = std::vector<T, ContainerTestAllocator<T, T> >;
 }
 
 template <class C, class Iterator>

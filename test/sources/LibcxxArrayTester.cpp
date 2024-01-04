@@ -18,11 +18,6 @@
 
 #include "../../include/momo/stdish/vector.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
-
 namespace libcxx_test_array_0
 {
 
@@ -43,8 +38,6 @@ namespace std
 			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
 }
 
-using std::vector;
-
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
@@ -54,9 +47,6 @@ using std::vector;
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_array_0
-
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
 
 namespace libcxx_test_array_5
 {
@@ -69,8 +59,6 @@ namespace std
 		typename TAllocator = std::allocator<TValue>>
 	using vector = momo::stdish::vector_intcap<5, TValue, TAllocator>;
 }
-
-using std::vector;
 
 #define LIBCXX_TEST_INTCAP_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_5"

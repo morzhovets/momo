@@ -18,11 +18,6 @@
 
 #include "../../include/momo/stdish/segmented_vector.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
-
 namespace libcxx_test_segmented_array_sqrt_0
 {
 
@@ -44,8 +39,6 @@ namespace std
 			momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 			LibcxxSegmentedArraySettings>>;
 }
-
-using std::vector;
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
@@ -79,8 +72,6 @@ namespace std
 			LibcxxSegmentedArraySettings>>;
 }
 
-using std::vector;
-
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst_0"
@@ -90,9 +81,6 @@ using std::vector;
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_segmented_array_cnst_0
-
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
 
 namespace libcxx_test_segmented_array_cnst
 {
@@ -105,8 +93,6 @@ namespace std
 		typename TAllocator = std::allocator<TValue>>
 	using vector = momo::stdish::segmented_vector<TValue, TAllocator>;
 }
-
-using std::vector;
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
@@ -127,8 +113,6 @@ namespace std
 		typename TAllocator = std::allocator<TValue>>
 	using vector = momo::stdish::segmented_vector_sqrt<TValue, TAllocator>;
 }
-
-using std::vector;
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
