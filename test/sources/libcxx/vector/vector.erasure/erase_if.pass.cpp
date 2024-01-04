@@ -18,12 +18,6 @@
 //   typename vector<T, Allocator>::size_type
 //   erase_if(vector<T, Allocator>& c, Predicate pred);
 
-//#include <vector>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-
 template <class S, class Pred>
 TEST_CONSTEXPR_CXX20 void test0(S s, Pred p, S expected, std::size_t expected_erased_count) {
   ASSERT_SAME_TYPE(typename S::size_type, decltype(erase_if(s, p)));
@@ -72,23 +66,22 @@ TEST_CONSTEXPR_CXX20 void test()
 
 TEST_CONSTEXPR_CXX20 bool tests()
 {
-    test<vector<int>>();
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<vector<int, min_allocator<int>>> ();
-#endif
-    test<vector<int, test_allocator<int>>> ();
-    test<vector<int, safe_allocator<int>>>();
+    test<std::vector<int>>();
+    test<std::vector<int, min_allocator<int>>> ();
+    test<std::vector<int, test_allocator<int>>> ();
+    test<std::vector<int, safe_allocator<int>>>();
 
-    test<vector<long>>();
-    test<vector<double>>();
+    test<std::vector<long>>();
+    test<std::vector<double>>();
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }
