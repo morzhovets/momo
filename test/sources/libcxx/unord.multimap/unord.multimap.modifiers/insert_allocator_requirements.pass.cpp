@@ -33,8 +33,10 @@ using unordered_multimap =
 
 int main(int, char**)
 {
+#if MOMO_VERSION_MAJOR > 3
   testMultimapInsert<TCT::unordered_multimap<> >();
   testMultimapInsertHint<TCT::unordered_multimap<> >();
+#endif
 
   return 0;
 }
