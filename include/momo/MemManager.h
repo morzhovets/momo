@@ -180,7 +180,7 @@ public:
 	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ByteAllocator>::value);
 
 public:
-	explicit MemManagerStd() noexcept(noexcept(ByteAllocator()))
+	explicit MemManagerStd() noexcept(std::is_nothrow_default_constructible<ByteAllocator>::value)
 	{
 	}
 
