@@ -42,7 +42,7 @@ namespace std
 #include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-}
+} // namespace libcxx_test_tree_map
 
 namespace libcxx_test_tree_map_vp
 {
@@ -66,6 +66,6 @@ namespace std
 #include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-}
+} // namespace libcxx_test_tree_map_vp
 
 #endif // TEST_LIBCXX_TREE_MAP

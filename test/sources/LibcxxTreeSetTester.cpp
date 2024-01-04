@@ -40,6 +40,6 @@ namespace std
 #include "libcxx/SetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-}
+} // namespace libcxx_test_tree_set
 
 #endif // TEST_LIBCXX_TREE_SET
