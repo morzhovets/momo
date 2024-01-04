@@ -14,13 +14,6 @@
 
 // const_pointer data() const;
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 struct Nasty {
     TEST_CONSTEXPR Nasty() : i_(0) {}
     TEST_CONSTEXPR Nasty(int i) : i_(i) {}
@@ -34,53 +27,53 @@ TEST_CONSTEXPR_CXX20 bool tests()
 {
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
-        const vector<int> v;
+        const std::vector<int> v;
         assert(v.data() == nullptr);
         assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
-        const vector<int> v(100);
+        const std::vector<int> v(100);
         assert(v.data() == std::addressof(v.front()));
         assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<Nasty> v(100);
+        std::vector<Nasty> v(100);
         assert(v.data() == std::addressof(v.front()));
         assert(is_contiguous_container_asan_correct(v));
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
-        const vector<int, min_allocator<int>> v;
+        const std::vector<int, min_allocator<int>> v;
         assert(v.data() == nullptr);
         assert(is_contiguous_container_asan_correct(v));
     }
+#endif
     {
-        const vector<int, min_allocator<int>> v(100);
+        const std::vector<int, min_allocator<int>> v(100);
         assert(v.data() == &v.front());
         assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<Nasty, min_allocator<Nasty>> v(100);
+        std::vector<Nasty, min_allocator<Nasty>> v(100);
         assert(v.data() == std::addressof(v.front()));
         assert(is_contiguous_container_asan_correct(v));
     }
-#endif
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
-      const vector<int, safe_allocator<int>> v;
+      const std::vector<int, safe_allocator<int>> v;
       assert(v.data() == nullptr);
       assert(is_contiguous_container_asan_correct(v));
     }
 #endif
     {
-      const vector<int, safe_allocator<int>> v(100);
+      const std::vector<int, safe_allocator<int>> v(100);
       assert(v.data() == &v.front());
       assert(is_contiguous_container_asan_correct(v));
     }
     {
-      vector<Nasty, safe_allocator<Nasty>> v(100);
+      std::vector<Nasty, safe_allocator<Nasty>> v(100);
       assert(v.data() == std::addressof(v.front()));
       assert(is_contiguous_container_asan_correct(v));
     }
@@ -89,10 +82,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }
