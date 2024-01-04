@@ -1,0 +1,45 @@
+//===----------------------------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
+
+// <unordered_set>
+
+// class unordered_set
+
+// bool empty() const noexcept;
+
+int main(int, char**)
+{
+    {
+    typedef std::unordered_set<int> M;
+    M m;
+    ASSERT_NOEXCEPT(m.empty());
+    assert(m.empty());
+    m.insert(M::value_type(1));
+    assert(!m.empty());
+    m.clear();
+    assert(m.empty());
+    }
+#if TEST_STD_VER >= 11
+    {
+    typedef std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> M;
+    M m;
+    ASSERT_NOEXCEPT(m.empty());
+    assert(m.empty());
+    m.insert(M::value_type(1));
+    assert(!m.empty());
+    m.clear();
+    assert(m.empty());
+    }
+#endif
+
+  return 0;
+}
