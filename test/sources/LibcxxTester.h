@@ -35,7 +35,9 @@
 #endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+
 //#define LIBCPP_TEST_MIN_ALLOCATOR
+//#define LIBCPP_TEST_STACK_ALLOCATOR
 
 #include "libcxx/support/MoveOnly.h"
 #include "libcxx/support/Copyable.h"
@@ -44,7 +46,6 @@
 #include "libcxx/support/Emplaceable.h"
 #include "libcxx/support/Counter.h"
 #include "libcxx/support/Moveable.h"
-#include "libcxx/support/stack_allocator.h"
 #include "libcxx/support/test_allocator.h"
 #include "libcxx/support/test_iterators.h"
 #include "libcxx/support/test_compare.h"
@@ -54,6 +55,7 @@
 #include "libcxx/support/test_macros.h"
 #include "libcxx/support/test_transparent_unordered.h"
 //#include "libcxx/support/min_allocator.h"
+//#include "libcxx/support/stack_allocator.h"
 
 struct LibcppIntHash
 {
