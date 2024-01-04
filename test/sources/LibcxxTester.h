@@ -13,7 +13,7 @@
 #pragma once
 
 #define LIBCXX_TO_STR(expr) #expr
-#define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx/header)
+#define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx11/header)
 
 #include LIBCXX_HEADER(Support.h)
 

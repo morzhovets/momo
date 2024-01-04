@@ -6,236 +6,236 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  test/sources/libcxx/SetTests.h
+  test/sources/libcxx11/MultiSetTests.h
 
 \**********************************************************/
 
 LIBCXX_TEST_BEGIN(clear)
-#include "set/clear.pass.cpp"
+#include "multiset/clear.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(contains)
-#include "set/contains.pass.cpp"
+#include "multiset/contains.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(count)
-#include "set/count.pass.cpp"
+#include "multiset/count.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(count_transparent)
-#include "set/count_transparent.pass.cpp"
+#include "multiset/count_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(emplace)
-#include "set/emplace.pass.cpp"
+#include "multiset/emplace.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(emplace_hint)
-#include "set/emplace_hint.pass.cpp"
+#include "multiset/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(empty)
-#include "set/empty.pass.cpp"
+#include "multiset/empty.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(equal_range)
-#include "set/equal_range.pass.cpp"
+#include "multiset/equal_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(equal_range_transparent)
-#include "set/equal_range_transparent.pass.cpp"
+#include "multiset/equal_range_transparent.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_iter)
-#include "set/erase_iter.pass.cpp"
+#include "multiset/erase_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_iter_iter)
-#include "set/erase_iter_iter.pass.cpp"
+#include "multiset/erase_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erase_key)
-#include "set/erase_key.pass.cpp"
+#include "multiset/erase_key.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(extract_iterator)
-//#include "set/extract_iterator.pass.cpp"
+//#include "multiset/extract_iterator.pass.cpp"
 //LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(extract_key)
-#include "set/extract_key.pass.cpp"
+#include "multiset/extract_key.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(find)
-#include "set/find.pass.cpp"
+#include "multiset/find.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(incomplete_type)
-//#include "set/incomplete_type.pass.cpp"
+//#include "multiset/incomplete_type.pass.cpp"
 //LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_cv)
-#include "set/insert_cv.pass.cpp"
+#include "multiset/insert_cv.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_initializer_list)
-#include "set/insert_initializer_list.pass.cpp"
+#include "multiset/insert_initializer_list.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_iter_cv)
-#include "set/insert_iter_cv.pass.cpp"
+#include "multiset/insert_iter_cv.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_iter_iter)
-#include "set/insert_iter_iter.pass.cpp"
+#include "multiset/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_iter_rv)
-#include "set/insert_iter_rv.pass.cpp"
+#include "multiset/insert_iter_rv.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_node_type)
-#include "set/insert_node_type.pass.cpp"
+#include "multiset/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_node_type_hint)
-#include "set/insert_node_type_hint.pass.cpp"
+#include "multiset/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_rv)
-#include "set/insert_rv.pass.cpp"
+#include "multiset/insert_rv.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterator)
-#include "set/iterator.pass.cpp"
+#include "multiset/iterator.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(lower_bound)
-#include "set/lower_bound.pass.cpp"
+#include "multiset/lower_bound.pass.cpp"
 LIBCXX_TEST_END
 
-LIBCXX_TEST_BEGIN(max_size)
-#include "set/max_size.pass.cpp"
-LIBCXX_TEST_END
+//LIBCXX_TEST_BEGIN(max_size)
+//#include "multiset/max_size.pass.cpp"
+//LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(merge)
-#include "set/merge.pass.cpp"
+#include "multiset/merge.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(size)
-#include "set/size.pass.cpp"
+#include "multiset/size.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(types)
-#include "set/types.pass.cpp"
+#include "multiset/types.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(upper_bound)
-#include "set/upper_bound.pass.cpp"
+#include "multiset/upper_bound.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_alloc)
-#include "set/set.cons/alloc.pass.cpp"
+#include "multiset/multiset.cons/alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_assign_initializer_list)
-#include "set/set.cons/assign_initializer_list.pass.cpp"
+#include "multiset/multiset.cons/assign_initializer_list.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_compare)
-#include "set/set.cons/compare.pass.cpp"
+#include "multiset/multiset.cons/compare.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_compare_alloc)
-#include "set/set.cons/compare_alloc.pass.cpp"
+#include "multiset/multiset.cons/compare_alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_copy)
-#include "set/set.cons/copy.pass.cpp"
+#include "multiset/multiset.cons/copy.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_copy_alloc)
-#include "set/set.cons/copy_alloc.pass.cpp"
+#include "multiset/multiset.cons/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_copy_assign)
-#include "set/set.cons/copy_assign.pass.cpp"
+#include "multiset/multiset.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
 #ifdef LIBCPP_TEST_DEDUCTION_GUIDES
 LIBCXX_TEST_BEGIN(cons_deduct)
-#include "set/set.cons/deduct.pass.cpp"
+#include "multiset/multiset.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
 #endif
 
 LIBCXX_TEST_BEGIN(cons_default)
-#include "set/set.cons/default.pass.cpp"
+#include "multiset/multiset.cons/default.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(cons_default_noexcept)
-//#include "set/set.cons/default_noexcept.pass.cpp"
+//#include "multiset/multiset.cons/default_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
-//#include "set/set.cons/dtor_noexcept.pass.cpp"
+//#include "multiset/multiset.cons/dtor_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
-#include "set/set.cons/initializer_list.pass.cpp"
+#include "multiset/multiset.cons/initializer_list.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list_compare)
-#include "set/set.cons/initializer_list_compare.pass.cpp"
+#include "multiset/multiset.cons/initializer_list_compare.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_initializer_list_compare_alloc)
-#include "set/set.cons/initializer_list_compare_alloc.pass.cpp"
+#include "multiset/multiset.cons/initializer_list_compare_alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_iter_iter)
-#include "set/set.cons/iter_iter.pass.cpp"
+#include "multiset/multiset.cons/iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_iter_iter_alloc)
-#include "set/set.cons/iter_iter_alloc.pass.cpp"
+#include "multiset/multiset.cons/iter_iter_alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_iter_iter_comp)
-#include "set/set.cons/iter_iter_comp.pass.cpp"
+#include "multiset/multiset.cons/iter_iter_comp.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_move)
-#include "set/set.cons/move.pass.cpp"
+#include "multiset/multiset.cons/move.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_move_alloc)
-#include "set/set.cons/move_alloc.pass.cpp"
+#include "multiset/multiset.cons/move_alloc.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(cons_move_assign)
-#include "set/set.cons/move_assign.pass.cpp"
+#include "multiset/multiset.cons/move_assign.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(cons_move_assign_noexcept)
-//#include "set/set.cons/move_assign_noexcept.pass.cpp"
+//#include "multiset/multiset.cons/move_assign_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(cons_move_noexcept)
-//#include "set/set.cons/move_noexcept.pass.cpp"
+//#include "multiset/multiset.cons/move_noexcept.pass.cpp"
 //LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(erasure_erase_if)
-#include "set/set.erasure/erase_if.pass.cpp"
+#include "multiset/multiset.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_member_swap)
-#include "set/set.special/member_swap.pass.cpp"
+#include "multiset/multiset.special/member_swap.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_non_member_swap)
-#include "set/set.special/non_member_swap.pass.cpp"
+#include "multiset/multiset.special/non_member_swap.pass.cpp"
 LIBCXX_TEST_END
 
 //LIBCXX_TEST_BEGIN(special_swap_noexcept)
-//#include "set/set.special/swap_noexcept.pass.cpp"
+//#include "multiset/multiset.special/swap_noexcept.pass.cpp"
 //LIBCXX_TEST_END

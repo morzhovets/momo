@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  test/sources/libcxx/Support.h
+  test/sources/libcxx11/Support.h
 
 \**********************************************************/
 
