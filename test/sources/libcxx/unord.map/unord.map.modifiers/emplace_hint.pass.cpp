@@ -20,10 +20,6 @@
 // template <class... Args>
 //     iterator emplace_hint(const_iterator p, Args&&... args);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <unordered_map>
 //#include <cassert>
 
@@ -86,7 +82,7 @@ void main()
         assert(r->second == Emplaceable(6, 7));
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef unordered_map<int, Emplaceable> C;

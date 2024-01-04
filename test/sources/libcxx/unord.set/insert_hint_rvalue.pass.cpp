@@ -19,10 +19,6 @@
 
 // iterator insert(const_iterator p, value_type&& x);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <unordered_set>
 //#include <cassert>
 
@@ -132,7 +128,7 @@ void main()
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef unordered_set<double> C;

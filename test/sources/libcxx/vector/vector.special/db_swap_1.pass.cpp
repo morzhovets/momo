@@ -16,10 +16,6 @@
 // template <class T, class Alloc>
 //   void swap(vector<T,Alloc>& x, vector<T,Alloc>& y);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <vector>
 //#include <cassert>
 
@@ -27,7 +23,7 @@
 
 void main()
 {
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {

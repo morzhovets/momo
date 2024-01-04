@@ -19,10 +19,7 @@
 namespace
 {
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
+#define LIBCXX_TEST_FAILURE
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_BUCKET_NAME
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
@@ -42,7 +39,6 @@ using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THash
 #include "libcxx/UnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
+#undef LIBCXX_TEST_FAILURE
 
 } // namespace

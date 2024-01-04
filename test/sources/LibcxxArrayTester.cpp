@@ -18,10 +18,7 @@
 
 #include "../../include/momo/stdish/vector.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
+#define LIBCXX_TEST_FAILURE
 
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
@@ -42,8 +39,7 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_ARRAY
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
+#undef LIBCXX_TEST_FAILURE
 
 #define LIBCXX_TEST_INTCAP_ARRAY
 #define LIBCXX_TEST_PREFIX "libcxx_test_array_5"

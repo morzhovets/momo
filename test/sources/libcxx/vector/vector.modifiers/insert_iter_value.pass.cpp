@@ -15,10 +15,6 @@
 
 // iterator insert(const_iterator position, const value_type& x);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <vector>
 //#include <cassert>
 //#include "../../../stack_allocator.h"
@@ -89,7 +85,7 @@ void main()
             assert(v[j] == 0);
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         vector<int> v1(3);
         vector<int> v2(3);
@@ -113,7 +109,7 @@ void main()
         for (++j; j < 101; ++j)
             assert(v[j] == 0);
     }
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         vector<int, min_allocator<int>> v1(3);
         vector<int, min_allocator<int>> v2(3);

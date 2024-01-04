@@ -232,7 +232,7 @@ void main()
         assert(c.max_load_factor() == 1);
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         unordered_set<int> s1 = {1, 2, 3};
         unordered_set<int>::iterator i = s1.begin();

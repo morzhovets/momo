@@ -19,10 +19,6 @@
 
 // size_type bucket_size(size_type n) const
 
-#ifdef _LIBCPP_DEBUG
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <unordered_map>
 //#include <string>
 //#include <cassert>
@@ -75,7 +71,7 @@ void main()
         assert(c.bucket_size(4) == 1);
     }
 #endif
-#if _LIBCPP_DEBUG_LEVEL >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         typedef unordered_map<int, std::string> C;
         C c;

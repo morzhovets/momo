@@ -236,7 +236,7 @@ void main()
         assert(c0.size() == 0);
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         unordered_map<int, int> s1 = {{1, 1}, {2, 2}, {3, 3}};
         unordered_map<int, int>::iterator i = s1.begin();

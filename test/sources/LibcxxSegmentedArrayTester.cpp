@@ -19,10 +19,7 @@
 #include "../../include/momo/stdish/vector.h"
 #include "../../include/momo/SegmentedArray.h"
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
-#define _LIBCPP_DEBUG 1
-#define _LIBCPP_DEBUG_LEVEL 1
+#define LIBCXX_TEST_FAILURE
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 
@@ -66,7 +63,6 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 
-#undef _LIBCPP_DEBUG
-#undef _LIBCPP_DEBUG_LEVEL
+#undef LIBCXX_TEST_FAILURE
 
 #endif // TEST_LIBCXX_ARRAY

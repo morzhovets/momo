@@ -19,16 +19,12 @@
 
 // void swap(unordered_set& x, unordered_set& y);
 
-#if _LIBCPP_DEBUG >= 1
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
-
 //#include <unordered_set>
 //#include <cassert>
 
 void main()
 {
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         int a1[] = {1, 3, 7, 9, 10};
         int a2[] = {0, 2, 4, 5, 6, 8, 11};

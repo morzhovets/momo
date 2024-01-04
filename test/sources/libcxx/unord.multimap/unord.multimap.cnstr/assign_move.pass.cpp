@@ -295,7 +295,7 @@ void main()
         assert(c.max_load_factor() == 1);
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
+#ifdef LIBCXX_TEST_FAILURE
     {
         unordered_multimap<int, int> s1 = {{1, 1}, {2, 2}, {3, 3}};
         unordered_multimap<int, int>::iterator i = s1.begin();

@@ -15,9 +15,7 @@
 
 // Add to iterator out of bounds.
 
-#if _LIBCPP_DEBUG >= 1
-
-//#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
+#ifdef LIBCXX_TEST_FAILURE
 
 //#include <vector>
 //#include <cassert>
