@@ -16,20 +16,11 @@
 
 // iterator insert(const_iterator position, value_type&& x);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "MoveOnly.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-        vector<MoveOnly> v(100);
-        vector<MoveOnly>::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
+        std::vector<MoveOnly> v(100);
+        std::vector<MoveOnly>::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
         assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -42,8 +33,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<MoveOnly, limited_allocator<MoveOnly, 300> > v(100);
-        vector<MoveOnly, limited_allocator<MoveOnly, 300> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
+        std::vector<MoveOnly, limited_allocator<MoveOnly, 300> > v(100);
+        std::vector<MoveOnly, limited_allocator<MoveOnly, 300> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
         assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -55,19 +46,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
             assert(v[j] == MoveOnly());
     }
 #endif
-#if _LIBCPP_DEBUG >= 1
     {
-        vector<int> v1(3);
-        vector<int> v2(3);
-        LIBCPP_CATCH(v1.insert(v2.begin(), 4));
-        //assert(false);
-    }
-#endif
-
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    {
-        vector<MoveOnly, min_allocator<MoveOnly> > v(100);
-        vector<MoveOnly, min_allocator<MoveOnly> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
+        std::vector<MoveOnly, min_allocator<MoveOnly> > v(100);
+        std::vector<MoveOnly, min_allocator<MoveOnly> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
         assert(v.size() == 101);
         assert(is_contiguous_container_asan_correct(v));
         assert(i == v.begin() + 10);
@@ -78,18 +59,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
         for (++j; j < 101; ++j)
             assert(v[j] == MoveOnly());
     }
-#if _LIBCPP_DEBUG >= 1
     {
-        vector<int, min_allocator<int>> v1(3);
-        vector<int, min_allocator<int>> v2(3);
-        v1.insert(v2.begin(), 4);
-        assert(false);
-    }
-#endif
-#endif
-    {
-      vector<MoveOnly, safe_allocator<MoveOnly> > v(100);
-      vector<MoveOnly, safe_allocator<MoveOnly> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
+      std::vector<MoveOnly, safe_allocator<MoveOnly> > v(100);
+      std::vector<MoveOnly, safe_allocator<MoveOnly> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
       assert(v.size() == 101);
       assert(is_contiguous_container_asan_correct(v));
       assert(i == v.begin() + 10);
@@ -104,10 +76,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

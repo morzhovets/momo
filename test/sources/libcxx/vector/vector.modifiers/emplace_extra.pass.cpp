@@ -16,16 +16,9 @@
 
 // template <class... Args> iterator emplace(const_iterator pos, Args&&... args);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests() {
     {
-        vector<int> v;
+        std::vector<int> v;
         v.reserve(3);
         assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
@@ -34,7 +27,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<int> v;
+        std::vector<int> v;
         v.reserve(4);
         assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
@@ -42,9 +35,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v[0] == 3);
         assert(is_contiguous_container_asan_correct(v));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        vector<int, min_allocator<int>> v;
+        std::vector<int, min_allocator<int>> v;
         v.reserve(3);
         assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
@@ -53,7 +45,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<int, min_allocator<int>> v;
+        std::vector<int, min_allocator<int>> v;
         v.reserve(4);
         assert(is_contiguous_container_asan_correct(v));
         v = { 1, 2, 3 };
@@ -61,9 +53,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v[0] == 3);
         assert(is_contiguous_container_asan_correct(v));
     }
-#endif
     {
-      vector<int, safe_allocator<int>> v;
+      std::vector<int, safe_allocator<int>> v;
       v.reserve(3);
       assert(is_contiguous_container_asan_correct(v));
       v = {1, 2, 3};
@@ -72,7 +63,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
       assert(is_contiguous_container_asan_correct(v));
     }
     {
-      vector<int, safe_allocator<int>> v;
+      std::vector<int, safe_allocator<int>> v;
       v.reserve(4);
       assert(is_contiguous_container_asan_correct(v));
       v = {1, 2, 3};
@@ -81,7 +72,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
       assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<int> v;
+        std::vector<int> v;
         v.reserve(8);
         std::size_t old_capacity = v.capacity();
         assert(old_capacity >= 8);
@@ -98,9 +89,10 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     return true;
 }
 
-void main() {
+int main(int, char**) {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

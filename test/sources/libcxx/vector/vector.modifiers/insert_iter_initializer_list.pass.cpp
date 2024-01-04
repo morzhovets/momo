@@ -16,13 +16,6 @@
 
 // iterator insert(const_iterator p, initializer_list<value_type> il);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 #ifndef TEST_HAS_NO_EXCEPTIONS
 int throw_if_zero     = 2;
 int constructed_count = 0;
@@ -44,7 +37,7 @@ struct ThrowSometimes {
 };
 
 void test_throwing() {
-  vector<ThrowSometimes> v;
+  std::vector<ThrowSometimes> v;
   v.reserve(4);
   v.emplace_back();
   v.emplace_back();
@@ -66,8 +59,8 @@ void test_throwing() {
 TEST_CONSTEXPR_CXX20 bool tests()
 {
   {
-    vector<int> d(10, 1);
-    vector<int>::iterator i = d.insert(d.cbegin() + 2, {3, 4, 5, 6});
+    std::vector<int> d(10, 1);
+    std::vector<int>::iterator i = d.insert(d.cbegin() + 2, {3, 4, 5, 6});
     assert(d.size() == 14);
     assert(is_contiguous_container_asan_correct(d));
     assert(i == d.begin() + 2);
@@ -86,10 +79,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(d[12] == 1);
     assert(d[13] == 1);
   }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
   {
-    vector<int, min_allocator<int>> d(10, 1);
-    vector<int, min_allocator<int>>::iterator i = d.insert(d.cbegin() + 2, {3, 4, 5, 6});
+    std::vector<int, min_allocator<int>> d(10, 1);
+    std::vector<int, min_allocator<int>>::iterator i = d.insert(d.cbegin() + 2, {3, 4, 5, 6});
     assert(d.size() == 14);
     assert(is_contiguous_container_asan_correct(d));
     assert(i == d.begin() + 2);
@@ -108,17 +100,17 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(d[12] == 1);
     assert(d[13] == 1);
   }
-#endif
 
     return true;
 }
 
-void main() {
+int main(int, char**) {
 #ifndef TEST_HAS_NO_EXCEPTIONS
   test_throwing();
 #endif
   tests();
-//#if TEST_STD_VER > 17
-//  static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+  //static_assert(tests());
+#endif
+  return 0;
 }

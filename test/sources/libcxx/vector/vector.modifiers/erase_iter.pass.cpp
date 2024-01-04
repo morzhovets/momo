@@ -14,14 +14,6 @@
 
 // iterator erase(const_iterator position);
 
-//#include <vector>
-//#include <iterator>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 #ifndef TEST_HAS_NO_EXCEPTIONS
 struct Throws {
     Throws() : v_(0) {}
@@ -41,26 +33,26 @@ TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
     int a1[] = {1, 2, 3, 4, 5};
-    vector<int> l1(a1, a1+5);
+    std::vector<int> l1(a1, a1+5);
     l1.erase(l1.begin());
     assert(is_contiguous_container_asan_correct(l1));
-    assert(l1 == vector<int>(a1+1, a1+5));
+    assert(l1 == std::vector<int>(a1+1, a1+5));
     }
     {
     int a1[] = {1, 2, 3, 4, 5};
     int e1[] = {1, 3, 4, 5};
-    vector<int> l1(a1, a1+5);
+    std::vector<int> l1(a1, a1+5);
     l1.erase(l1.begin() + 1);
     assert(is_contiguous_container_asan_correct(l1));
-    assert(l1 == vector<int>(e1, e1+4));
+    assert(l1 == std::vector<int>(e1, e1+4));
     }
     {
     int a1[] = {1, 2, 3};
-    vector<int> l1(a1, a1+3);
-    vector<int>::const_iterator i = l1.begin();
+    std::vector<int> l1(a1, a1+3);
+    std::vector<int>::const_iterator i = l1.begin();
     assert(is_contiguous_container_asan_correct(l1));
     ++i;
-    vector<int>::iterator j = l1.erase(i);
+    std::vector<int>::iterator j = l1.erase(i);
     assert(l1.size() == 2);
     assert(std::distance(l1.begin(), l1.end()) == 2);
     assert(*j == 3);
@@ -80,14 +72,13 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(is_contiguous_container_asan_correct(l1));
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
     int a1[] = {1, 2, 3};
-    vector<int, min_allocator<int>> l1(a1, a1+3);
-    vector<int, min_allocator<int>>::const_iterator i = l1.begin();
+    std::vector<int, min_allocator<int>> l1(a1, a1+3);
+    std::vector<int, min_allocator<int>>::const_iterator i = l1.begin();
     assert(is_contiguous_container_asan_correct(l1));
     ++i;
-    vector<int, min_allocator<int>>::iterator j = l1.erase(i);
+    std::vector<int, min_allocator<int>>::iterator j = l1.erase(i);
     assert(l1.size() == 2);
     assert(std::distance(l1.begin(), l1.end()) == 2);
     assert(*j == 3);
@@ -107,24 +98,23 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(is_contiguous_container_asan_correct(l1));
     }
 #endif
-#endif
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
 
 #ifndef TEST_HAS_NO_EXCEPTIONS
 // Test for LWG2853:
 // Throws: Nothing unless an exception is thrown by the assignment operator or move assignment operator of T.
     {
         Throws arr[] = {1, 2, 3};
-        vector<Throws> v(arr, arr+3);
+        std::vector<Throws> v(arr, arr+3);
         Throws::sThrows = true;
         v.erase(v.begin());
 #ifdef LIBCXX_TEST_ARRAY
@@ -136,4 +126,6 @@ void main()
         assert(v.size() == 0);
     }
 #endif
+
+    return 0;
 }

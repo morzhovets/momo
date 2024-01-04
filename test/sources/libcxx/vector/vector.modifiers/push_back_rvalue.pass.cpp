@@ -16,19 +16,10 @@
 
 // void push_back(value_type&& x);
 
-//#include <vector>
-//#include <cassert>
-//#include <cstddef>
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-        vector<MoveOnly> c;
+        std::vector<MoveOnly> c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
         assert(is_contiguous_container_asan_correct(c));
@@ -60,7 +51,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         // libc++ needs 15 because it grows by 2x (1 + 2 + 4 + 8).
         // Use 17 for implementations that dynamically allocate a container proxy
         // and grow by 1.5x (1 for proxy + 1 + 2 + 3 + 4 + 6).
-        vector<MoveOnly, limited_allocator<MoveOnly, 17> > c;
+        std::vector<MoveOnly, limited_allocator<MoveOnly, 17> > c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
         assert(is_contiguous_container_asan_correct(c));
@@ -88,9 +79,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
             assert(c[j] == MoveOnly(static_cast<int>(j)));
     }
 #endif
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        vector<MoveOnly, min_allocator<MoveOnly>> c;
+        std::vector<MoveOnly, min_allocator<MoveOnly> > c;
         c.push_back(MoveOnly(0));
         assert(c.size() == 1);
         assert(is_contiguous_container_asan_correct(c));
@@ -117,15 +107,15 @@ TEST_CONSTEXPR_CXX20 bool tests()
         for (size_t j = 0; j < c.size(); ++j)
             assert(c[j] == MoveOnly(static_cast<int>(j)));
     }
-#endif
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

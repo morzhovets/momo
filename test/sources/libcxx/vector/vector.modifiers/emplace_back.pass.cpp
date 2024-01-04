@@ -17,14 +17,6 @@
 // template <class... Args> reference emplace_back(Args&&... args);
 // return type is 'reference' in C++17; 'void' before
 
-//#include <vector>
-//#include <cassert>
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "test_allocator.h"
-//#include "asan_testing.h"
-
 class A
 {
     int i_;
@@ -61,7 +53,7 @@ public:
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-        vector<A> c;
+        std::vector<A> c;
 #if TEST_STD_VER > 14
         A& r1 = c.emplace_back(2, 3.5);
         assert(c.size() == 1);
@@ -89,36 +81,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<A, limited_allocator<A, 4> > c;
-#if TEST_STD_VER > 14
-        A& r1 = c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(&r1 == &c.back());
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        A& r2 = c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-        assert(&r2 == &c.back());
-#else
-        c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-#endif
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(c.back().geti() == 3);
-        assert(c.back().getd() == 4.5);
-        assert(is_contiguous_container_asan_correct(c));
-    }
-#endif
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    {
-        vector<A, min_allocator<A>> c;
+        std::vector<A, limited_allocator<A, 4> > c;
 #if TEST_STD_VER > 14
         A& r1 = c.emplace_back(2, 3.5);
         assert(c.size() == 1);
@@ -146,7 +109,34 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #endif
     {
-      vector<A, safe_allocator<A> > c;
+        std::vector<A, min_allocator<A> > c;
+#if TEST_STD_VER > 14
+        A& r1 = c.emplace_back(2, 3.5);
+        assert(c.size() == 1);
+        assert(&r1 == &c.back());
+        assert(c.front().geti() == 2);
+        assert(c.front().getd() == 3.5);
+        assert(is_contiguous_container_asan_correct(c));
+        A& r2 = c.emplace_back(3, 4.5);
+        assert(c.size() == 2);
+        assert(&r2 == &c.back());
+#else
+        c.emplace_back(2, 3.5);
+        assert(c.size() == 1);
+        assert(c.front().geti() == 2);
+        assert(c.front().getd() == 3.5);
+        assert(is_contiguous_container_asan_correct(c));
+        c.emplace_back(3, 4.5);
+        assert(c.size() == 2);
+#endif
+        assert(c.front().geti() == 2);
+        assert(c.front().getd() == 3.5);
+        assert(c.back().geti() == 3);
+        assert(c.back().getd() == 4.5);
+        assert(is_contiguous_container_asan_correct(c));
+    }
+    {
+      std::vector<A, safe_allocator<A> > c;
 #if TEST_STD_VER > 14
       A& r1 = c.emplace_back(2, 3.5);
       assert(c.size() == 1);
@@ -174,7 +164,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
-        vector<Tag_X, TaggingAllocator<Tag_X> > c;
+        std::vector<Tag_X, TaggingAllocator<Tag_X> > c;
         c.emplace_back();
         assert(c.size() == 1);
         c.emplace_back(1, 2, 3);
@@ -186,7 +176,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     { // LWG 2164
         int arr[] = {0, 1, 2, 3, 4};
         int sz = 5;
-        vector<int> c(arr, arr+sz);
+        std::vector<int> c(arr, arr+sz);
         while (c.size() < c.capacity())
             c.push_back(sz++);
         c.emplace_back(c.front());
@@ -197,10 +187,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

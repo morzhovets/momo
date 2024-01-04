@@ -14,12 +14,6 @@
 
 // void push_back(const value_type& x);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "asan_testing.h"
-//#include "test_macros.h"
-
 // Flag that makes the copy constructor for CMyClass throw an exception
 static bool gCopyConstructorShouldThrow = false;
 
@@ -68,13 +62,13 @@ CMyClass::~CMyClass() {
 
 bool operator==(const CMyClass &lhs, const CMyClass &rhs) { return lhs.equal(rhs); }
 
-void main()
+int main(int, char**)
 {
     CMyClass instance(42);
-    vector<CMyClass> vec;
+    std::vector<CMyClass> vec;
 
     vec.push_back(instance);
-    vector<CMyClass> vec2(vec);
+    std::vector<CMyClass> vec2(vec);
     assert(is_contiguous_container_asan_correct(vec));
     assert(is_contiguous_container_asan_correct(vec2));
 
@@ -89,4 +83,6 @@ void main()
         assert(is_contiguous_container_asan_correct(vec));
     }
 #endif
+
+  return 0;
 }

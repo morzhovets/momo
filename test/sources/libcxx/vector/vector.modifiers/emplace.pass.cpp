@@ -16,14 +16,6 @@
 
 // template <class... Args> iterator emplace(const_iterator pos, Args&&... args);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 class A
 {
     int i_;
@@ -59,8 +51,8 @@ public:
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-        vector<A> c;
-        vector<A>::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+        std::vector<A> c;
+        std::vector<A>::iterator i = c.emplace(c.cbegin(), 2, 3.5);
         assert(i == c.begin());
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
@@ -87,8 +79,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<A, limited_allocator<A, 7> > c;
-        vector<A, limited_allocator<A, 7> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+        std::vector<A, limited_allocator<A, 7> > c;
+        std::vector<A, limited_allocator<A, 7> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
         assert(i == c.begin());
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
@@ -114,20 +106,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(is_contiguous_container_asan_correct(c));
     }
 #endif
-#ifndef LIBCXX_TEST_ARRAY
-#if _LIBCPP_DEBUG >= 1
     {
-        vector<A> c1;
-        vector<A> c2;
-        LIBCPP_CATCH(c1.emplace(c2.cbegin(), 2, 3.5));
-        //assert(false);
-    }
-#endif
-#endif
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    {
-        vector<A, min_allocator<A>> c;
-        vector<A, min_allocator<A>>::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+        std::vector<A, min_allocator<A> > c;
+        std::vector<A, min_allocator<A> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
         assert(i == c.begin());
         assert(c.size() == 1);
         assert(c.front().geti() == 2);
@@ -149,18 +130,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(c.back().geti() == 3);
         assert(c.back().getd() == 4.5);
     }
-#if _LIBCPP_DEBUG >= 1
     {
-        vector<A, min_allocator<A>> c1;
-        vector<A, min_allocator<A>> c2;
-        vector<A, min_allocator<A>>::iterator i = c1.emplace(c2.cbegin(), 2, 3.5);
-        assert(false);
-    }
-#endif
-#endif
-    {
-      vector<A, safe_allocator<A> > c;
-      vector<A, safe_allocator<A> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
+      std::vector<A, safe_allocator<A> > c;
+      std::vector<A, safe_allocator<A> >::iterator i = c.emplace(c.cbegin(), 2, 3.5);
       assert(i == c.begin());
       assert(c.size() == 1);
       assert(c.front().geti() == 2);
@@ -186,10 +158,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }
