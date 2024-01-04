@@ -47,9 +47,4 @@
 #include "support/asan_testing.h"
 #include "support/min_allocator.h"
 
-template<typename It>
-using input_iterator = cpp17_input_iterator<It>;
-
-#define LIBCPP_CATCH(expr) try { (void)(expr); assert(false); } catch (...) {}
-
 #define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}
