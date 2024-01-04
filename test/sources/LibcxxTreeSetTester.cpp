@@ -18,10 +18,9 @@
 
 #include "../../include/momo/stdish/set.h"
 
-namespace
+namespace libcxx_test_tree_set
 {
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_set"
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
@@ -31,9 +30,11 @@ using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
+
+#define LIBCXX_TEST_PREFIX "libcxx_test_tree_set"
 #include "libcxx/SetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace
+} // namespace libcxx_test_tree_set
 
 #endif // TEST_LIBCXX_TREE_SET

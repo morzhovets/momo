@@ -19,14 +19,15 @@
 namespace
 {
 
-#define LIBCXX_TEST_FAILURE
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_BUCKET_NAME
 class LibcxxHashSetSettings : public momo::HashSetSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
+
+namespace libcxx_test_hash_set
+{
+
 template<typename TKey,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -36,9 +37,13 @@ using unordered_set = momo::stdish::unordered_set<TKey, THashFunc, TEqualFunc, T
 		momo::MemManagerStd<TAllocator>,
 		momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashSetSettings>>;
+
+#define LIBCXX_TEST_FAILURE
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
-
 #undef LIBCXX_TEST_FAILURE
+
+} // namespace libcxx_test_hash_set
 
 } // namespace

@@ -18,10 +18,9 @@
 
 #include "../../include/momo/stdish/map.h"
 
-namespace
+namespace libcxx_test_tree_map
 {
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
@@ -31,9 +30,11 @@ using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		momo::TreeMapSettings>>;
+
+#define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
 #include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace
+} // namespace libcxx_test_tree_map
 
 #endif // TEST_LIBCXX_TREE_MAP

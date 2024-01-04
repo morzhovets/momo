@@ -19,50 +19,58 @@
 #include "../../include/momo/stdish/vector.h"
 #include "../../include/momo/SegmentedArray.h"
 
-#define LIBCXX_TEST_FAILURE
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
 namespace libcxx_test_segmented_array_sqrt
 {
+
 class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 3>
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
+
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
 		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
-#include "libcxx/VectorTests.h"
-}
-#undef LIBCXX_TEST_PREFIX
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
+#define LIBCXX_TEST_FAILURE
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
+#include "libcxx/VectorTests.h"
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+#undef LIBCXX_TEST_FAILURE
+
+} // namespace libcxx_test_segmented_array_sqrt
+
 namespace libcxx_test_segmented_array_cnst
 {
+
 class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0>
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
+
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
 		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
+
+#define LIBCXX_TEST_FAILURE
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
 #include "libcxx/VectorTests.h"
-}
 #undef LIBCXX_TEST_PREFIX
-
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
-
 #undef LIBCXX_TEST_FAILURE
+
+} // namespace libcxx_test_segmented_array_cnst
 
 #endif // TEST_LIBCXX_ARRAY

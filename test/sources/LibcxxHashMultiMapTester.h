@@ -19,14 +19,15 @@
 namespace
 {
 
-#define LIBCXX_TEST_FAILURE
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_BUCKET_NAME
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
+
+namespace libcxx_test_hash_multimap
+{
+
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -36,9 +37,13 @@ using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THash
 		momo::MemManagerStd<TAllocator>,
 		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashMultiMapSettings>>;
+
+#define LIBCXX_TEST_FAILURE
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_BUCKET_NAME
 #include "libcxx/UnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
-
 #undef LIBCXX_TEST_FAILURE
+
+} // namespace libcxx_test_hash_multimap
 
 } // namespace
