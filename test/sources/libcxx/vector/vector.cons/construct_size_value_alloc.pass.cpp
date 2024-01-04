@@ -14,20 +14,13 @@
 
 // vector(size_type n, const value_type& x, const allocator_type& a);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 template <class C>
 TEST_CONSTEXPR_CXX20 void
 test(typename C::size_type n, const typename C::value_type& x,
      const typename C::allocator_type& a)
 {
     C c(n, x, a);
-    //LIBCPP_ASSERT(c.__invariants());
+    LIBCPP_ASSERT(c.__invariants());
     assert(a == c.get_allocator());
     assert(c.size() == n);
     LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
@@ -36,24 +29,23 @@ test(typename C::size_type n, const typename C::value_type& x,
 }
 
 TEST_CONSTEXPR_CXX20 bool tests() {
-    test<vector<int> >(0, 3, std::allocator<int>());
-    test<vector<int> >(50, 3, std::allocator<int>());
+    test<std::vector<int> >(0, 3, std::allocator<int>());
+    test<std::vector<int> >(50, 3, std::allocator<int>());
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<vector<int, min_allocator<int>> >(0, 3, min_allocator<int>());
-    test<vector<int, min_allocator<int>> >(50, 3, min_allocator<int>());
-#endif
-    test<vector<int, safe_allocator<int>> >(0, 3, safe_allocator<int>());
-    test<vector<int, safe_allocator<int>> >(50, 3, safe_allocator<int>());
+    test<std::vector<int, min_allocator<int>> >(0, 3, min_allocator<int>());
+    test<std::vector<int, min_allocator<int>> >(50, 3, min_allocator<int>());
+    test<std::vector<int, safe_allocator<int>> >(0, 3, safe_allocator<int>());
+    test<std::vector<int, safe_allocator<int>> >(50, 3, safe_allocator<int>());
 #endif
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

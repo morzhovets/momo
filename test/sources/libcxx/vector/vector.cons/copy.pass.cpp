@@ -14,21 +14,13 @@
 
 // vector(const vector& v);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 template <class C>
 TEST_CONSTEXPR_CXX20 void
 test(const C& x)
 {
     typename C::size_type s = x.size();
     C c(x);
-    //LIBCPP_ASSERT(c.__invariants());
+    LIBCPP_ASSERT(c.__invariants());
     assert(c.size() == s);
     assert(c == x);
     LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
@@ -38,11 +30,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     {
         int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
         int* an = a + sizeof(a)/sizeof(a[0]);
-        test(vector<int>(a, an));
+        test(std::vector<int>(a, an));
     }
     {
-        vector<int, test_allocator<int> > v(3, 2, test_allocator<int>(5));
-        vector<int, test_allocator<int> > v2 = v;
+        std::vector<int, test_allocator<int> > v(3, 2, test_allocator<int>(5));
+        std::vector<int, test_allocator<int> > v2 = v;
         assert(is_contiguous_container_asan_correct(v));
         assert(is_contiguous_container_asan_correct(v2));
         assert(v2 == v);
@@ -52,8 +44,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
     {
         // Test copy ctor with empty source
-        vector<int, test_allocator<int> > v(test_allocator<int>(5));
-        vector<int, test_allocator<int> > v2 = v;
+        std::vector<int, test_allocator<int> > v(test_allocator<int>(5));
+        std::vector<int, test_allocator<int> > v2 = v;
         assert(is_contiguous_container_asan_correct(v));
         assert(is_contiguous_container_asan_correct(v2));
         assert(v2 == v);
@@ -64,8 +56,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #if TEST_STD_VER >= 11
     {
-        vector<int, other_allocator<int> > v(3, 2, other_allocator<int>(5));
-        vector<int, other_allocator<int> > v2 = v;
+        std::vector<int, other_allocator<int> > v(3, 2, other_allocator<int>(5));
+        std::vector<int, other_allocator<int> > v2 = v;
         assert(is_contiguous_container_asan_correct(v));
         assert(is_contiguous_container_asan_correct(v2));
         assert(v2 == v);
@@ -76,15 +68,12 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     {
         int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
         int* an = a + sizeof(a)/sizeof(a[0]);
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-        test(vector<int, min_allocator<int>>(a, an));
-#endif
-        test(vector<int, safe_allocator<int>>(a, an));
+        test(std::vector<int, min_allocator<int>>(a, an));
+        test(std::vector<int, safe_allocator<int>>(a, an));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        vector<int, min_allocator<int> > v(3, 2, min_allocator<int>());
-        vector<int, min_allocator<int> > v2 = v;
+        std::vector<int, min_allocator<int> > v(3, 2, min_allocator<int>());
+        std::vector<int, min_allocator<int> > v2 = v;
         assert(is_contiguous_container_asan_correct(v));
         assert(is_contiguous_container_asan_correct(v2));
         assert(v2 == v);
@@ -92,10 +81,9 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(is_contiguous_container_asan_correct(v));
         assert(is_contiguous_container_asan_correct(v2));
     }
-#endif
     {
-      vector<int, safe_allocator<int> > v(3, 2, safe_allocator<int>());
-      vector<int, safe_allocator<int> > v2 = v;
+      std::vector<int, safe_allocator<int> > v(3, 2, safe_allocator<int>());
+      std::vector<int, safe_allocator<int> > v2 = v;
       assert(is_contiguous_container_asan_correct(v));
       assert(is_contiguous_container_asan_correct(v2));
       assert(v2 == v);
@@ -110,16 +98,18 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 
 void test_copy_from_volatile_src() {
     volatile int src[] = {1, 2, 3};
-    vector<int> v(src, src + 3);
+    std::vector<int> v(src, src + 3);
     assert(v[0] == 1);
     assert(v[1] == 2);
     assert(v[2] == 3);
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    test_copy_from_volatile_src();
+    return 0;
 }

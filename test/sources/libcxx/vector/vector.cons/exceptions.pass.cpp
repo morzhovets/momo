@@ -15,14 +15,6 @@
 // (bug report: https://llvm.org/PR58392)
 // Check that vector constructors don't leak memory when an operation inside the constructor throws an exception
 
-//#include <cstddef>
-//#include <memory>
-//#include <type_traits>
-//#include <vector>
-
-//#include "count_new.h"
-//#include "test_iterators.h"
-
 struct GlobalMemCounter
 {
   inline static size_t size = 0;
@@ -130,12 +122,12 @@ void check_new_delete_called() {
 }
 
 template<typename T>
-using AllocThrowVec = vector<T, AllocatorThrow<T>>;
+using AllocThrowVec = std::vector<T, AllocatorThrow<T>>;
 
 template<typename T>
-using AllocBaseVec = vector<T, AllocatorBase<T>>;
+using AllocBaseVec = std::vector<T, AllocatorBase<T>>;
 
-void main() {
+int main(int, char**) {
   try { // vector()
     AllocThrowVec<int> vec;
   } catch (int) {
@@ -266,4 +258,6 @@ void main() {
   }
   check_new_delete_called();
 #endif // TEST_STD_VER >= 11
+
+  return 0;
 }

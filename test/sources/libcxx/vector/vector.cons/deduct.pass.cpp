@@ -21,20 +21,6 @@
 //   vector(from_range_t, R&&, Allocator = Allocator())
 //     -> vector<ranges::range_value_t<R>, Allocator>; // C++23
 
-//#include <algorithm>
-//#include <array>
-//#include <cassert>
-//#include <climits> // INT_MAX
-//#include <cstddef>
-//#include <iterator>
-//#include <type_traits>
-//#include <vector>
-
-//#include "deduction_guides_sfinae_checks.h"
-//#include "test_macros.h"
-//#include "test_iterators.h"
-//#include "test_allocator.h"
-
 struct A {};
 
 TEST_CONSTEXPR_CXX20 bool tests() {
@@ -168,9 +154,10 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     return true;
 }
 
-void main() {
+int main(int, char**) {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

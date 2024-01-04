@@ -15,20 +15,6 @@
 // template <class InputIter> vector(InputIter first, InputIter last,
 //                                   const allocator_type& a);
 
-//#include <vector>
-//#include <cassert>
-//#include <cstddef>
-
-//#include "test_macros.h"
-//#include "test_iterators.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-//#if TEST_STD_VER >= 11
-//#include "emplace_constructible.h"
-//#include "container_test_types.h"
-//#endif
-
 namespace TCT {
 template <class T = CopyInsertable<1>>
 using vector = vector<T, ContainerTestAllocator<T, T> >;
@@ -37,7 +23,7 @@ using vector = vector<T, ContainerTestAllocator<T, T> >;
 template <class C, class Iterator, class A>
 TEST_CONSTEXPR_CXX20 void test(Iterator first, Iterator last, const A& a) {
   C c(first, last, a);
-  //LIBCPP_ASSERT(c.__invariants());
+  LIBCPP_ASSERT(c.__invariants());
   assert(c.size() == static_cast<std::size_t>(std::distance(first, last)));
   LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
   for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e;
@@ -46,7 +32,6 @@ TEST_CONSTEXPR_CXX20 void test(Iterator first, Iterator last, const A& a) {
 }
 
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
 
 template <class T>
 struct implicit_conv_allocator : min_allocator<T> {
@@ -58,57 +43,54 @@ struct implicit_conv_allocator : min_allocator<T> {
 };
 
 #endif
-#endif
 
 TEST_CONSTEXPR_CXX20 void basic_tests() {
   {
     int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
     int* an = a + sizeof(a) / sizeof(a[0]);
     std::allocator<int> alloc;
-    test<vector<int> >(cpp17_input_iterator<const int*>(a),
+    test<std::vector<int> >(cpp17_input_iterator<const int*>(a),
                             cpp17_input_iterator<const int*>(an), alloc);
-    test<vector<int> >(forward_iterator<const int*>(a),
+    test<std::vector<int> >(forward_iterator<const int*>(a),
                             forward_iterator<const int*>(an), alloc);
-    test<vector<int> >(bidirectional_iterator<const int*>(a),
+    test<std::vector<int> >(bidirectional_iterator<const int*>(a),
                             bidirectional_iterator<const int*>(an), alloc);
-    test<vector<int> >(random_access_iterator<const int*>(a),
+    test<std::vector<int> >(random_access_iterator<const int*>(a),
                             random_access_iterator<const int*>(an), alloc);
-    test<vector<int> >(a, an, alloc);
+    test<std::vector<int> >(a, an, alloc);
   }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
   {
     int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
     int* an = a + sizeof(a) / sizeof(a[0]);
     min_allocator<int> alloc;
-    test<vector<int, min_allocator<int> > >(
+    test<std::vector<int, min_allocator<int> > >(
         cpp17_input_iterator<const int*>(a), cpp17_input_iterator<const int*>(an), alloc);
-    test<vector<int, min_allocator<int> > >(
+    test<std::vector<int, min_allocator<int> > >(
         forward_iterator<const int*>(a), forward_iterator<const int*>(an),
         alloc);
-    test<vector<int, min_allocator<int> > >(
+    test<std::vector<int, min_allocator<int> > >(
         bidirectional_iterator<const int*>(a),
         bidirectional_iterator<const int*>(an), alloc);
-    test<vector<int, min_allocator<int> > >(
+    test<std::vector<int, min_allocator<int> > >(
         random_access_iterator<const int*>(a),
         random_access_iterator<const int*>(an), alloc);
-    test<vector<int, min_allocator<int> > >(a, an, alloc);
-    test<vector<int, implicit_conv_allocator<int> > >(a, an, nullptr);
+    test<std::vector<int, min_allocator<int> > >(a, an, alloc);
+    test<std::vector<int, implicit_conv_allocator<int> > >(a, an, nullptr);
   }
-#endif
   {
     int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
     int* an = a + sizeof(a) / sizeof(a[0]);
     safe_allocator<int> alloc;
-    test<vector<int, safe_allocator<int> > >(
+    test<std::vector<int, safe_allocator<int> > >(
         cpp17_input_iterator<const int*>(a), cpp17_input_iterator<const int*>(an), alloc);
-    test<vector<int, safe_allocator<int> > >(
+    test<std::vector<int, safe_allocator<int> > >(
         forward_iterator<const int*>(a), forward_iterator<const int*>(an), alloc);
-    test<vector<int, safe_allocator<int> > >(
+    test<std::vector<int, safe_allocator<int> > >(
         bidirectional_iterator<const int*>(a), bidirectional_iterator<const int*>(an), alloc);
-    test<vector<int, safe_allocator<int> > >(
+    test<std::vector<int, safe_allocator<int> > >(
         random_access_iterator<const int*>(a), random_access_iterator<const int*>(an), alloc);
-    test<vector<int, safe_allocator<int> > >(a, an, alloc);
+    test<std::vector<int, safe_allocator<int> > >(a, an, alloc);
   }
 #endif
 }
@@ -123,11 +105,11 @@ TEST_CONSTEXPR_CXX20 void emplaceable_concept_tests() {
     using Alloc = std::allocator<T>;
     Alloc a;
     {
-      vector<T> v(It(arr1), It(std::end(arr1)), a);
+      std::vector<T> v(It(arr1), It(std::end(arr1)), a);
       assert(v[0].value == 42);
     }
     {
-      vector<T> v(It(arr2), It(std::end(arr2)), a);
+      std::vector<T> v(It(arr2), It(std::end(arr2)), a);
       assert(v[0].value == 1);
       assert(v[1].value == 101);
       assert(v[2].value == 42);
@@ -139,12 +121,12 @@ TEST_CONSTEXPR_CXX20 void emplaceable_concept_tests() {
     using Alloc = std::allocator<T>;
     Alloc a;
     {
-      vector<T> v(It(arr1), It(std::end(arr1)), a);
+      std::vector<T> v(It(arr1), It(std::end(arr1)), a);
       assert(v[0].copied == 0);
       assert(v[0].value == 42);
     }
     {
-      vector<T> v(It(arr2), It(std::end(arr2)), a);
+      std::vector<T> v(It(arr2), It(std::end(arr2)), a);
       assert(v[0].value == 1);
       assert(v[1].value == 101);
       assert(v[2].copied == 0);
@@ -198,10 +180,12 @@ TEST_CONSTEXPR_CXX20 bool test() {
   return true;
 }
 
-void main() {
+int main(int, char**) {
   test();
-//#if TEST_STD_VER > 17
-//  static_assert(test());
-//#endif
+#if TEST_STD_VER > 17
+  //static_assert(test());
+#endif
   test_ctor_under_alloc();
+
+  return 0;
 }

@@ -14,15 +14,13 @@
 // class vector
 // vector();
 
-//#include <vector>
-
-//#include "test_macros.h"
-
 struct X
 {
-    vector<X> q;
+    std::vector<X> q;
 };
 
-void main()
+int main(int, char**)
 {
+
+    return 0;
 }

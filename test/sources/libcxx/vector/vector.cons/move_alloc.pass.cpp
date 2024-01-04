@@ -16,19 +16,11 @@
 
 // vector(vector&& c, const allocator_type& a);
 
-//#include <vector>
-//#include <cassert>
-//#include "test_macros.h"
-//#include "MoveOnly.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-        vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
-        vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
         for (int i = 1; i <= 3; ++i)
@@ -38,7 +30,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         }
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
-        vector<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(6));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(6));
         assert(l2 == lo);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(!l.empty());
@@ -49,8 +41,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(is_contiguous_container_asan_correct(l2));
     }
     {
-        vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
-        vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
         for (int i = 1; i <= 3; ++i)
@@ -60,15 +52,15 @@ TEST_CONSTEXPR_CXX20 bool tests()
         }
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
-        vector<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(5));
         assert(l2 == lo);
         assert(l.empty());
         assert(l2.get_allocator() == test_allocator<MoveOnly>(5));
         assert(is_contiguous_container_asan_correct(l2));
     }
     {
-        vector<MoveOnly, other_allocator<MoveOnly> > l(other_allocator<MoveOnly>(5));
-        vector<MoveOnly, other_allocator<MoveOnly> > lo(other_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, other_allocator<MoveOnly> > l(other_allocator<MoveOnly>(5));
+        std::vector<MoveOnly, other_allocator<MoveOnly> > lo(other_allocator<MoveOnly>(5));
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
         for (int i = 1; i <= 3; ++i)
@@ -78,7 +70,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
         }
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
-        vector<MoveOnly, other_allocator<MoveOnly> > l2(std::move(l), other_allocator<MoveOnly>(4));
+        std::vector<MoveOnly, other_allocator<MoveOnly> > l2(std::move(l), other_allocator<MoveOnly>(4));
         assert(l2 == lo);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(!l.empty());
@@ -88,10 +80,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(l2.get_allocator() == other_allocator<MoveOnly>(4));
         assert(is_contiguous_container_asan_correct(l2));
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        vector<MoveOnly, min_allocator<MoveOnly> > l((min_allocator<MoveOnly>()));
-        vector<MoveOnly, min_allocator<MoveOnly> > lo((min_allocator<MoveOnly>()));
+        std::vector<MoveOnly, min_allocator<MoveOnly> > l((min_allocator<MoveOnly>()));
+        std::vector<MoveOnly, min_allocator<MoveOnly> > lo((min_allocator<MoveOnly>()));
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
         for (int i = 1; i <= 3; ++i)
@@ -101,16 +92,15 @@ TEST_CONSTEXPR_CXX20 bool tests()
         }
         assert(is_contiguous_container_asan_correct(l));
         assert(is_contiguous_container_asan_correct(lo));
-        vector<MoveOnly, min_allocator<MoveOnly> > l2(std::move(l), min_allocator<MoveOnly>());
+        std::vector<MoveOnly, min_allocator<MoveOnly> > l2(std::move(l), min_allocator<MoveOnly>());
         assert(l2 == lo);
         assert(l.empty());
         assert(l2.get_allocator() == min_allocator<MoveOnly>());
         assert(is_contiguous_container_asan_correct(l2));
     }
-#endif
     {
-      vector<MoveOnly, safe_allocator<MoveOnly> > l((safe_allocator<MoveOnly>()));
-      vector<MoveOnly, safe_allocator<MoveOnly> > lo((safe_allocator<MoveOnly>()));
+      std::vector<MoveOnly, safe_allocator<MoveOnly> > l((safe_allocator<MoveOnly>()));
+      std::vector<MoveOnly, safe_allocator<MoveOnly> > lo((safe_allocator<MoveOnly>()));
       assert(is_contiguous_container_asan_correct(l));
       assert(is_contiguous_container_asan_correct(lo));
       for (int i = 1; i <= 3; ++i) {
@@ -119,7 +109,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
       }
       assert(is_contiguous_container_asan_correct(l));
       assert(is_contiguous_container_asan_correct(lo));
-      vector<MoveOnly, safe_allocator<MoveOnly> > l2(std::move(l), safe_allocator<MoveOnly>());
+      std::vector<MoveOnly, safe_allocator<MoveOnly> > l2(std::move(l), safe_allocator<MoveOnly>());
       assert(l2 == lo);
       assert(l.empty());
       assert(l2.get_allocator() == safe_allocator<MoveOnly>());
@@ -129,10 +119,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

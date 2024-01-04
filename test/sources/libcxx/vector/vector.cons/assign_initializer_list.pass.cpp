@@ -16,13 +16,6 @@
 
 // void assign(initializer_list<value_type> il);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 template <typename Vec>
 TEST_CONSTEXPR_CXX20 void test(Vec &v)
 {
@@ -37,31 +30,30 @@ TEST_CONSTEXPR_CXX20 void test(Vec &v)
 
 TEST_CONSTEXPR_CXX20 bool tests() {
     {
-    typedef vector<int> V;
+    typedef std::vector<int> V;
     V d1;
     V d2;
     d2.reserve(10);  // no reallocation during assign.
     test(d1);
     test(d2);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    typedef vector<int, min_allocator<int>> V;
+    typedef std::vector<int, min_allocator<int>> V;
     V d1;
     V d2;
     d2.reserve(10);  // no reallocation during assign.
     test(d1);
     test(d2);
     }
-#endif
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

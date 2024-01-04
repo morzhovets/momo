@@ -16,17 +16,10 @@
 
 // vector& operator=(initializer_list<value_type> il);
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
-    vector<int> d;
+    std::vector<int> d;
     d = {3, 4, 5, 6};
     assert(d.size() == 4);
     assert(is_contiguous_container_asan_correct(d));
@@ -35,9 +28,8 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(d[2] == 5);
     assert(d[3] == 6);
     }
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-    vector<int, min_allocator<int>> d;
+    std::vector<int, min_allocator<int>> d;
     d = {3, 4, 5, 6};
     assert(d.size() == 4);
     assert(is_contiguous_container_asan_correct(d));
@@ -46,15 +38,15 @@ TEST_CONSTEXPR_CXX20 bool tests()
     assert(d[2] == 5);
     assert(d[3] == 6);
     }
-#endif
 
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }
