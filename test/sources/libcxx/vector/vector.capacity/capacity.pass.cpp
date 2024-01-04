@@ -14,25 +14,18 @@
 
 // size_type capacity() const;
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests()
 {
 #ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
-        vector<int> v;
+        std::vector<int> v;
         assert(v.capacity() == 0);
         assert(is_contiguous_container_asan_correct(v));
     }
 #endif
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<int> v(100);
+        std::vector<int> v(100);
         assert(v.capacity() == 100);
         v.push_back(0);
         assert(v.capacity() > 101);
@@ -40,14 +33,16 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
 #endif
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
     {
-        vector<int, min_allocator<int>> v;
+        std::vector<int, min_allocator<int>> v;
         assert(v.capacity() == 0);
         assert(is_contiguous_container_asan_correct(v));
     }
+#endif
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<int, min_allocator<int>> v(100);
+        std::vector<int, min_allocator<int>> v(100);
         assert(v.capacity() == 100);
         v.push_back(0);
         assert(v.capacity() > 101);
@@ -59,10 +54,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

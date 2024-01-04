@@ -14,17 +14,10 @@
 
 // void shrink_to_fit();
 
-//#include <vector>
-//#include <cassert>
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests() {
 #ifdef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<int> v(101);
+        std::vector<int> v(101);
         v.reserve(200);
         assert(v.capacity() >= 200);
         v.shrink_to_fit();
@@ -33,7 +26,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #else
     {
-        vector<int> v(100);
+        std::vector<int> v(100);
         v.push_back(1);
         assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();
@@ -42,7 +35,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(is_contiguous_container_asan_correct(v));
     }
     {
-        vector<int, limited_allocator<int, 401> > v(100);
+        std::vector<int, limited_allocator<int, 401> > v(100);
         v.push_back(1);
         assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();
@@ -52,7 +45,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #ifndef TEST_HAS_NO_EXCEPTIONS
     if (!TEST_IS_CONSTANT_EVALUATED) {
-        vector<int, limited_allocator<int, 400> > v(100);
+        std::vector<int, limited_allocator<int, 400> > v(100);
         v.push_back(1);
         assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();
@@ -63,9 +56,9 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #endif
 #endif
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-        vector<int, min_allocator<int>> v(100);
+        std::vector<int, min_allocator<int>> v(100);
         v.push_back(1);
         assert(is_contiguous_container_asan_correct(v));
         v.shrink_to_fit();
@@ -73,10 +66,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.size() == 101);
         assert(is_contiguous_container_asan_correct(v));
     }
-#endif
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
-      vector<int, safe_allocator<int>> v(100);
+      std::vector<int, safe_allocator<int>> v(100);
       v.push_back(1);
       assert(is_contiguous_container_asan_correct(v));
       v.shrink_to_fit();
@@ -90,10 +81,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

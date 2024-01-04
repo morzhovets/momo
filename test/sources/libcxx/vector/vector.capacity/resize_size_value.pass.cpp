@@ -14,22 +14,15 @@
 
 // void resize(size_type sz, const value_type& x);
 
-//#include <vector>
-//#include <cassert>
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "min_allocator.h"
-//#include "asan_testing.h"
-
 TEST_CONSTEXPR_CXX20 bool tests() {
     {
-        vector<int> v(100);
+        std::vector<int> v(100);
         v.resize(50, 1);
         assert(v.size() == 50);
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
         assert(v.capacity() == 100);
 #endif
-        assert(v == vector<int>(50));
+        assert(v == std::vector<int>(50));
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
@@ -42,7 +35,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
         // Add 1 for implementations that dynamically allocate a container proxy.
-        vector<int, limited_allocator<int, 300 + 1> > v(100);
+        std::vector<int, limited_allocator<int, 300 + 1> > v(100);
         v.resize(50, 1);
         assert(v.size() == 50);
         assert(v.capacity() == 100);
@@ -53,14 +46,15 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #endif
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        vector<int, min_allocator<int>> v(100);
+        std::vector<int, min_allocator<int>> v(100);
         v.resize(50, 1);
         assert(v.size() == 50);
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
         assert(v.capacity() == 100);
+#endif
         assert(is_contiguous_container_asan_correct(v));
-        assert((v == vector<int, min_allocator<int>>(50)));
+        assert((v == std::vector<int, min_allocator<int>>(50)));
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
@@ -71,26 +65,27 @@ TEST_CONSTEXPR_CXX20 bool tests() {
             assert(v[i] == 1);
     }
     {
-        vector<int, min_allocator<int>> v(100);
+        std::vector<int, min_allocator<int>> v(100);
         v.resize(50, 1);
         assert(v.size() == 50);
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
         assert(v.capacity() == 100);
+#endif
         assert(is_contiguous_container_asan_correct(v));
         v.resize(200, 1);
         assert(v.size() == 200);
         assert(v.capacity() >= 200);
         assert(is_contiguous_container_asan_correct(v));
     }
-#endif
     {
-      vector<int, safe_allocator<int>> v(100);
+      std::vector<int, safe_allocator<int>> v(100);
       v.resize(50, 1);
       assert(v.size() == 50);
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
       assert(v.capacity() == 100);
 #endif
       assert(is_contiguous_container_asan_correct(v));
-      assert((v == vector<int, safe_allocator<int>>(50)));
+      assert((v == std::vector<int, safe_allocator<int>>(50)));
       v.resize(200, 1);
       assert(v.size() == 200);
       assert(v.capacity() >= 200);
@@ -101,7 +96,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v[i] == 1);
     }
     {
-      vector<int, safe_allocator<int>> v(100);
+      std::vector<int, safe_allocator<int>> v(100);
       v.resize(50, 1);
       assert(v.size() == 50);
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -118,10 +113,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }
