@@ -35,22 +35,15 @@
 // ADDITIONAL_COMPILE_FLAGS: -D_LIBCPP_ENABLE_CXX20_REMOVED_ALLOCATOR_MEMBERS
 // ADDITIONAL_COMPILE_FLAGS: -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS
 
-//#include <vector>
-//#include <iterator>
-//#include <type_traits>
-
-//#include "test_macros.h"
-//#include "test_allocator.h"
-//#include "../../Copyable.h"
-//#include "min_allocator.h"
-
-//struct A { vector<A> v; }; // incomplete type support
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
+struct A { std::vector<A> v; }; // incomplete type support
+#endif
 
 template <class T, class Allocator>
 void
 test()
 {
-    typedef vector<T, Allocator> C;
+    typedef std::vector<T, Allocator> C;
 
 //  TODO: These tests should use allocator_traits to get stuff, rather than
 //  blindly pulling typedefs out of the allocator. This is why we can't call
@@ -58,14 +51,12 @@ test()
     static_assert((std::is_same<typename C::value_type, T>::value), "");
     static_assert((std::is_same<typename C::value_type, typename Allocator::value_type>::value), "");
     static_assert((std::is_same<typename C::allocator_type, Allocator>::value), "");
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     static_assert((std::is_same<typename C::size_type, typename Allocator::size_type>::value), "");
     static_assert((std::is_same<typename C::difference_type, typename Allocator::difference_type>::value), "");
-    static_assert((std::is_same<typename C::reference, typename Allocator::reference>::value), "");
-    static_assert((std::is_same<typename C::const_reference, typename Allocator::const_reference>::value), "");
-    static_assert((std::is_same<typename C::pointer, typename Allocator::pointer>::value), "");
-    static_assert((std::is_same<typename C::const_pointer, typename Allocator::const_pointer>::value), "");
-#endif
+    //static_assert((std::is_same<typename C::reference, typename Allocator::reference>::value), "");
+    //static_assert((std::is_same<typename C::const_reference, typename Allocator::const_reference>::value), "");
+    //static_assert((std::is_same<typename C::pointer, typename Allocator::pointer>::value), "");
+    //static_assert((std::is_same<typename C::const_pointer, typename Allocator::const_pointer>::value), "");
     static_assert((std::is_same<typename C::pointer, typename std::allocator_traits<Allocator>::pointer>::value), "");
     static_assert((std::is_same<typename C::const_pointer, typename std::allocator_traits<Allocator>::const_pointer>::value), "");
 
@@ -90,18 +81,17 @@ test()
         std::reverse_iterator<typename C::const_iterator> >::value), "");
 }
 
-void main()
+int main(int, char**)
 {
     test<int, test_allocator<int> >();
     test<int*, std::allocator<int*> >();
     test<Copyable, test_allocator<Copyable> >();
-    static_assert((std::is_same<vector<char>::allocator_type,
+    static_assert((std::is_same<std::vector<char>::allocator_type,
                                 std::allocator<char> >::value), "");
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
 
-    typedef vector<int, min_allocator<int> > C;
+    typedef std::vector<int, min_allocator<int> > C;
     static_assert((std::is_same<C::value_type, int>::value), "");
     static_assert((std::is_same<C::allocator_type, min_allocator<int> >::value), "");
     static_assert((std::is_same<C::reference, int&>::value), "");
@@ -117,5 +107,6 @@ void main()
 //         typename std::iterator_traits<typename C::const_iterator>::difference_type>::value), "");
     }
 #endif
-#endif
+
+  return 0;
 }

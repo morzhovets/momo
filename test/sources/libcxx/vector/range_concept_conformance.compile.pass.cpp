@@ -14,12 +14,8 @@
 
 // vector
 
-//#include <vector>
+using range = std::vector<int>;
 
-//#include <concepts>
-//#include <ranges>
-
-using range = vector<int>;
 
 static_assert(std::same_as<std::ranges::iterator_t<range>, range::iterator>);
 static_assert(std::ranges::common_range<range>);

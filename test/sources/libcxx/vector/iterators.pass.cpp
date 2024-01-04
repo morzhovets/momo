@@ -19,13 +19,6 @@
 // const_iterator cbegin() const;
 // const_iterator cend()   const;
 
-//#include <vector>
-//#include <cassert>
-//#include <iterator>
-
-//#include "test_macros.h"
-//#include "min_allocator.h"
-
 struct A
 {
     int first;
@@ -36,7 +29,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
 {
     {
         typedef int T;
-        typedef vector<T> C;
+        typedef std::vector<T> C;
         C c;
         C::iterator i = c.begin();
         C::iterator j = c.end();
@@ -45,7 +38,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T> C;
+        typedef std::vector<T> C;
         const C c;
         C::const_iterator i = c.begin();
         C::const_iterator j = c.end();
@@ -54,7 +47,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T> C;
+        typedef std::vector<T> C;
         C c;
         C::const_iterator i = c.cbegin();
         C::const_iterator j = c.cend();
@@ -64,35 +57,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T> C;
-        C c;
-        C::reverse_iterator i = c.rbegin();
-        C::reverse_iterator j = c.rend();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef vector<T> C;
-        const C c;
-        C::const_reverse_iterator i = c.rbegin();
-        C::const_reverse_iterator j = c.rend();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef vector<T> C;
-        C c;
-        C::const_reverse_iterator i = c.crbegin();
-        C::const_reverse_iterator j = c.crend();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-        assert(i == c.rend());
-    }
-    {
-        typedef int T;
-        typedef vector<T> C;
+        typedef std::vector<T> C;
         const T t[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         C c(std::begin(t), std::end(t));
         C::iterator i = c.begin();
@@ -105,17 +70,16 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T> C;
+        typedef std::vector<T> C;
         C::iterator i;
         C::const_iterator j;
         (void) i;
         (void) j;
     }
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
         typedef int T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         C c;
         C::iterator i = c.begin();
         C::iterator j = c.end();
@@ -124,7 +88,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         const C c;
         C::const_iterator i = c.begin();
         C::const_iterator j = c.end();
@@ -133,7 +97,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         C c;
         C::const_iterator i = c.cbegin();
         C::const_iterator j = c.cend();
@@ -143,7 +107,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         const T t[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         C c(std::begin(t), std::end(t));
         C::iterator i = c.begin();
@@ -156,7 +120,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef int T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         C::iterator i;
         C::const_iterator j;
         (void) i;
@@ -164,7 +128,7 @@ TEST_CONSTEXPR_CXX20 bool tests()
     }
     {
         typedef A T;
-        typedef vector<T, min_allocator<T>> C;
+        typedef std::vector<T, min_allocator<T>> C;
         C c = {A{1, 2}};
         C::iterator i = c.begin();
         i->first = 3;
@@ -172,10 +136,9 @@ TEST_CONSTEXPR_CXX20 bool tests()
         assert(j->first == 3);
     }
 #endif
-#endif
 #if TEST_STD_VER > 11
     { // N3644 testing
-        typedef vector<int> C;
+        typedef std::vector<int> C;
         C::iterator ii1{}, ii2{};
         C::iterator ii4 = ii1;
         C::const_iterator cii{};
@@ -204,10 +167,11 @@ TEST_CONSTEXPR_CXX20 bool tests()
     return true;
 }
 
-void main()
+int main(int, char**)
 {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

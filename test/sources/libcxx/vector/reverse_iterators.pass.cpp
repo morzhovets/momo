@@ -19,12 +19,6 @@
 // const_reverse_iterator crbegin() const;
 // const_reverse_iterator crend()   const;
 
-//#include <vector>
-//#include <cassert>
-//#include <iterator>
-
-//#include "min_allocator.h"
-
 template <class Vector>
 TEST_CONSTEXPR_CXX20 void check_vector_reverse_iterators() {
     {
@@ -72,19 +66,19 @@ TEST_CONSTEXPR_CXX20 void check_vector_reverse_iterators() {
 }
 
 TEST_CONSTEXPR_CXX20 bool test() {
-    check_vector_reverse_iterators<vector<int> >();
+    check_vector_reverse_iterators<std::vector<int> >();
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    check_vector_reverse_iterators<vector<int, min_allocator<int> > >();
-#endif
+    check_vector_reverse_iterators<std::vector<int, min_allocator<int> > >();
 #endif
 
     return true;
 }
 
-void main() {
+int main(int, char**) {
     test();
-//#if TEST_STD_VER > 17
-//    static_assert(test());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(test());
+#endif
+
+    return 0;
 }

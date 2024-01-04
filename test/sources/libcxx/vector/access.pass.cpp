@@ -25,13 +25,6 @@
 // const_reference back() const;
 // libc++ marks these as 'noexcept' (except 'at')
 
-//#include <vector>
-//#include <cassert>
-//#include <stdexcept>
-
-//#include "min_allocator.h"
-//#include "test_macros.h"
-
 template <class C>
 TEST_CONSTEXPR_CXX20 C make(int size, int start) {
     C c;
@@ -117,19 +110,18 @@ TEST_CONSTEXPR_CXX20 void test() {
 }
 
 TEST_CONSTEXPR_CXX20 bool tests() {
-    test<vector<int> >();
+    test<std::vector<int> >();
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_TEST_MIN_ALLOCATOR
-    test<vector<int, min_allocator<int> > >();
-#endif
-    test<vector<int, safe_allocator<int> > >();
+    test<std::vector<int, min_allocator<int> > >();
+    test<std::vector<int, safe_allocator<int> > >();
 #endif
     return true;
 }
 
-void main() {
+int main(int, char**) {
     tests();
-//#if TEST_STD_VER > 17
-//    static_assert(tests());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(tests());
+#endif
+    return 0;
 }

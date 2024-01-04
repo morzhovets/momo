@@ -19,12 +19,8 @@
 //   constexpr synth-three-way-result<T> operator<=>(const vector<T, Allocator>& x,
 //                                                   const vector<T, Allocator>& y);
 
-//#include <cassert>
-//#include <vector>
-
-//#include "test_container_comparisons.h"
-
-void main() {
-  assert(test_sequence_container_spaceship<vector>());
-  //static_assert(test_sequence_container_spaceship<vector>());
+int main(int, char**) {
+  assert(test_sequence_container_spaceship<std::vector>());
+  //static_assert(test_sequence_container_spaceship<std::vector>());
+  return 0;
 }

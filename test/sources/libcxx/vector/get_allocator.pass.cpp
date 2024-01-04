@@ -16,30 +16,26 @@
 
 // allocator_type get_allocator() const
 
-//#include <vector>
-//#include <cassert>
-
-//#include "test_allocator.h"
-//#include "test_macros.h"
-
 TEST_CONSTEXPR_CXX20 bool test() {
     {
         std::allocator<int> alloc;
-        const vector<int> v(alloc);
+        const std::vector<int> v(alloc);
         assert(v.get_allocator() == alloc);
     }
     {
         other_allocator<int> alloc(1);
-        const vector<int, other_allocator<int> > v(alloc);
+        const std::vector<int, other_allocator<int> > v(alloc);
         assert(v.get_allocator() == alloc);
     }
 
     return true;
 }
 
-void main() {
+int main(int, char**) {
     test();
-//#if TEST_STD_VER > 17
-//    static_assert(test());
-//#endif
+#if TEST_STD_VER > 17
+    //static_assert(test());
+#endif
+
+    return 0;
 }

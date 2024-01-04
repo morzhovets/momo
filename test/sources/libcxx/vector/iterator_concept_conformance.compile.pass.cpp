@@ -14,14 +14,10 @@
 
 // iterator, const_iterator, reverse_iterator, const_reverse_iterator
 
-//#include <vector>
-
-//#include <iterator>
-
-using iterator = vector<int>::iterator;
-using const_iterator = vector<int>::const_iterator;
-using reverse_iterator = vector<int>::reverse_iterator;
-using const_reverse_iterator = vector<int>::const_reverse_iterator;
+using iterator = std::vector<int>::iterator;
+using const_iterator = std::vector<int>::const_iterator;
+using reverse_iterator = std::vector<int>::reverse_iterator;
+using const_reverse_iterator = std::vector<int>::const_reverse_iterator;
 using value_type = int;
 
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
