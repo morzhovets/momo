@@ -22,6 +22,8 @@
 #define TEST_MSVC
 #endif
 
+#ifndef TEST_DISABLE_ALL
+
 #define TEST_SIMPLE_ARRAY
 #define TEST_SIMPLE_HASH
 #define TEST_SIMPLE_TREE
@@ -40,3 +42,5 @@
 //#define TEST_NATVIS
 
 #define TEST_OLD_HASH_BUCKETS
+
+#endif // TEST_DISABLE_ALL
