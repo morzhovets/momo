@@ -21,6 +21,7 @@
 namespace libcxx_test_tree_multimap
 {
 
+LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
@@ -30,9 +31,10 @@ using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		momo::TreeMapSettings>>;
+LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
-#include "libcxx/MultiMapTests.h"
+#include LIBCXX_HEADER(MultiMapTests.h)
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_test_tree_multimap

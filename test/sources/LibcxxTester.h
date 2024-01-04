@@ -12,9 +12,16 @@
 
 #pragma once
 
-#include "libcxx/Support.h"
+#define LIBCXX_TO_STR(expr) #expr
+#define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx/header)
+
+#include LIBCXX_HEADER(Support.h)
 
 #include <iostream>
+
+#define LIBCXX_NAMESPACE_STD_BEGIN
+
+#define LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_BEGIN(name) \
 	namespace name { \

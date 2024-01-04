@@ -28,6 +28,7 @@ public:
 namespace libcxx_test_hash_map
 {
 
+LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey, typename TMapped,
 	typename THashFunc = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
@@ -37,10 +38,11 @@ using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqu
 		momo::MemManagerStd<TAllocator>,
 		momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashMapSettings>>;
+LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_BUCKET_NAME
-#include "libcxx/UnorderedMapTests.h"
+#include LIBCXX_HEADER(UnorderedMapTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_FAILURE
 

@@ -21,6 +21,7 @@
 namespace libcxx_test_tree_multiset
 {
 
+LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
@@ -30,9 +31,10 @@ using multiset = momo::stdish::multiset<TKey, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;
+LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
-#include "libcxx/MultiSetTests.h"
+#include LIBCXX_HEADER(MultiSetTests.h)
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_test_tree_multiset
