@@ -1,0 +1,41 @@
+name: Windows Clang
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+        # x64
+        - build_type: 'Release'
+          flags: '-std=c++20 -msse2'
+
+        # x86
+        - build_type: 'Release'
+          flags: '-m32 -std=c++20 -msse2'
+
+        - build_type: 'Release'
+          flags: '-m32 -std=c++20 -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Setup Clang
+      uses: egor-tensin/setup-clang@v1
+    - name: Build
+      env:
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test.exe
