@@ -1207,7 +1207,7 @@ private:
 	{
 		KeyIterator keyIter = Find(static_cast<const Key&>(key));
 		if (!!keyIter)
-			return AddCrt(keyIter, std::forward<ValueCreator>(valueCreator));
+			return AddCrt(static_cast<ConstKeyIterator>(keyIter), std::forward<ValueCreator>(valueCreator));
 		auto valuesCreator = [this, &valueCreator] (ValueArray* newValueArray)
 		{
 			ValueArray valueArray;
