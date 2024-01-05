@@ -690,22 +690,24 @@ public:
 
 	const Item& operator[](size_t index) const
 	{
-		return pvGetItem(GetItems(), index);
+		MOMO_CHECK(index < GetCount());
+		return GetItems()[index];
 	}
 
 	Item& operator[](size_t index)
 	{
-		return pvGetItem(GetItems(), index);
+		MOMO_CHECK(index < GetCount());
+		return GetItems()[index];
 	}
 
 	const Item& GetBackItem(size_t revIndex = 0) const
 	{
-		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
+		return operator[](GetCount() - 1 - revIndex);
 	}
 
 	Item& GetBackItem(size_t revIndex = 0)
 	{
-		return pvGetItem(GetItems(), GetCount() - 1 - revIndex);
+		return operator[](GetCount() - 1 - revIndex);
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
@@ -987,13 +989,6 @@ private:
 			mData.template Reset<true>(newCapacity, newCount,
 				FastMovableFunctor(std::move(itemsCreator)));
 		}
-	}
-
-	template<typename Item>
-	Item& pvGetItem(Item* items, size_t index) const
-	{
-		MOMO_CHECK(index < GetCount());
-		return items[index];
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
