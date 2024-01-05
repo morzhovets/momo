@@ -14,6 +14,7 @@
 
 #include "libcxx/Support.h"
 
+#include "../../include/momo/Version.h"
 #include "../../include/momo/ObjectManager.h"
 
 #include <iostream>

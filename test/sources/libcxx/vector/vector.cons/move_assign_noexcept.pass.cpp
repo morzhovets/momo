@@ -88,10 +88,12 @@ int main(int, char**)
         typedef std::vector<MoveOnly, some_alloc2<MoveOnly>> C;
         static_assert( std::is_nothrow_move_assignable<C>::value, "");
     }
+#if MOMO_VERSION_MAJOR > 3
     {  // POCMA false, is_always_equal false
         typedef std::vector<MoveOnly, some_alloc3<MoveOnly>> C;
         static_assert(!std::is_nothrow_move_assignable<C>::value, "");
     }
+#endif
 #endif
 
     return 0;

@@ -179,7 +179,9 @@ int main(int, char **) {
     assert(s.size() == 2);
   }
 
+#if MOMO_VERSION_MAJOR > 3
   AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::set, momo::stdish::set<int>>();
+#endif
 
   return 0;
 }

@@ -218,7 +218,9 @@ int main(int, char**)
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
     }
 
+#if MOMO_VERSION_MAJOR > 3
     UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_map, momo::stdish::unordered_map<int, long>>();
+#endif
 
     return 0;
 }

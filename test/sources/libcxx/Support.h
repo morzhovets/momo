@@ -15,10 +15,13 @@
 #include <cfloat>
 #include <string>
 #include <cmath>
+#include <optional>
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
 #define TEST_STD_VER 20
+
+#undef _LIBCPP_VERSION	//?
 
 #include "support/test_macros.h"
 

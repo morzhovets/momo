@@ -150,13 +150,17 @@ int main(int, char**)
     ASSERT_SAME_TYPE(decltype(m1), momo::stdish::map<int, int>);
 
 #if !defined(TEST_GCC) && !defined(TEST_CLANG)
+#if MOMO_VERSION_MAJOR > 3
     using value_type = std::pair<const int, int>;
     momo::stdish::map m2{{value_type{1, 2}, {3, 4}}, std::less<int>()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::map<int, int>);
 #endif
+#endif
     }
 
+#if MOMO_VERSION_MAJOR > 3
     AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::map, momo::stdish::map<int, long>>();
+#endif
 
     return 0;
 }
