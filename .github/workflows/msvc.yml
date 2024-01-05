@@ -81,13 +81,13 @@ jobs:
         - toolset: '14.3'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW'
+          flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW'
           win_ver: '2022'
 
         - toolset: '14.3'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
 
         - toolset: '14.3'
@@ -99,13 +99,13 @@ jobs:
         - toolset: '14.3'
           arch: 'x86'
           build_type: 'Release'
-          flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW'
+          flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW'
           win_ver: '2022'
 
         - toolset: '14.3'
           arch: 'x86'
           build_type: 'Release'
-          flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
 
         - toolset: '14.3'
