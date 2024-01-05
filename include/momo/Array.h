@@ -761,22 +761,24 @@ public:
 
 	const Item& operator[](size_t index) const
 	{
-		return pvGetItem(GetItems(), index);
+		MOMO_CHECK(index < GetCount());
+		return GetItems()[index];
 	}
 
 	Item& operator[](size_t index)
 	{
-		return pvGetItem(GetItems(), index);
+		MOMO_CHECK(index < GetCount());
+		return GetItems()[index];
 	}
 
 	const Item& GetBackItem() const
 	{
-		return pvGetItem(GetItems(), GetCount() - 1);
+		return operator[](GetCount() - 1);
 	}
 
 	Item& GetBackItem()
 	{
-		return pvGetItem(GetItems(), GetCount() - 1);
+		return operator[](GetCount() - 1);
 	}
 
 	template<typename ItemCreator>
@@ -1010,13 +1012,6 @@ private:
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.Reset(newCapacityExp, count, itemsCreator);
 		}
-	}
-
-	template<typename Item>
-	Item& pvGetItem(Item* items, size_t index) const
-	{
-		MOMO_CHECK(index < GetCount());
-		return items[index];
 	}
 
 	template<typename ItemCreator>
