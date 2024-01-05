@@ -51,13 +51,13 @@ int main(int, char**)
                            std::equal_to<MoveOnly>, test_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(!std::is_nothrow_move_assignable<C>::value, "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     {
         typedef std::unordered_multimap<MoveOnly, MoveOnly, std::hash<MoveOnly>,
                           std::equal_to<MoveOnly>, other_allocator<std::pair<const MoveOnly, MoveOnly>>> C;
         static_assert(std::is_nothrow_move_assignable<C>::value, "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::unordered_multimap<MoveOnly, MoveOnly, some_hash<MoveOnly>> C;

@@ -76,9 +76,9 @@ constexpr void SequenceContainerDeductionGuidesSfinaeAway() {
   // containers because they have constructors of the form `(size_type count,
   // const value_type& value)`. These constructors would be used when passing
   // two integral types and would deduce `value_type` to be an integral type.
-#ifdef _LIBCPP_VERSION
+#ifdef LIBCPP_SPECIFIC
   using OutputIter = std::insert_iterator<InstantiatedContainer>;
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 
   // (iter, iter)
   //
@@ -179,9 +179,9 @@ constexpr void AssociativeContainerDeductionGuidesSfinaeAway() {
   // The only requirement in the Standard is that integral types cannot be
   // considered input iterators, beyond that it is unspecified.
   using BadIter = int;
-#ifdef _LIBCPP_VERSION
+#ifdef LIBCPP_SPECIFIC
   using OutputIter = std::insert_iterator<InstantiatedContainer>;
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
   using AllocAsComp = Alloc;
 
   // (iter, iter)
@@ -252,9 +252,9 @@ constexpr void UnorderedContainerDeductionGuidesSfinaeAway() {
   // The only requirement in the Standard is that integral types cannot be
   // considered input iterators, beyond that it is unspecified.
   using BadIter = int;
-#ifdef _LIBCPP_VERSION
+#ifdef LIBCPP_SPECIFIC
   using OutputIter = std::insert_iterator<InstantiatedContainer>;
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
   using AllocAsHash = Alloc;
   using AllocAsPred = Alloc;
 

@@ -97,7 +97,7 @@ int main(int, char**)
         typedef std::multimap<MoveOnly, MoveOnly> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     {
         typedef std::multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, test_allocator<V>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
@@ -106,7 +106,7 @@ int main(int, char**)
         typedef std::multimap<MoveOnly, MoveOnly, std::less<MoveOnly>, other_allocator<V>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::multimap<MoveOnly, MoveOnly, some_comp<MoveOnly>> C;
@@ -133,12 +133,12 @@ int main(int, char**)
     typedef std::multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc2<V>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     { // NOT always equal allocator, nothrow swap for comp
     typedef std::multimap<MoveOnly, MoveOnly, some_comp2<MoveOnly>, some_alloc3<V>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #endif
 
   return 0;

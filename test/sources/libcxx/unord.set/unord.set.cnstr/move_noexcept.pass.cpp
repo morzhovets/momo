@@ -39,7 +39,7 @@ struct some_hash
 
 int main(int, char**)
 {
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     {
         typedef std::unordered_set<MoveOnly> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
@@ -54,7 +54,7 @@ int main(int, char**)
                           std::equal_to<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_move_constructible<C>::value, "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::unordered_set<MoveOnly, some_hash<MoveOnly>> C;

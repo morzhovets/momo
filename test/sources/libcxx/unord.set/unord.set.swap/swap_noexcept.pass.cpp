@@ -123,7 +123,7 @@ int main(int, char**)
         typedef std::unordered_set<MoveOnly> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     {
         typedef std::unordered_set<MoveOnly, std::hash<MoveOnly>,
                            std::equal_to<MoveOnly>, test_allocator<MoveOnly>> C;
@@ -134,7 +134,7 @@ int main(int, char**)
                           std::equal_to<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
         typedef std::unordered_set<MoveOnly, some_hash<MoveOnly>> C;
@@ -182,12 +182,12 @@ int main(int, char**)
     typedef std::unordered_set<MoveOnly, some_hash2<MoveOnly>, some_comp2<MoveOnly>, some_alloc2<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     { // NOT always equal allocator, nothrow swap for hash, nothrow swap for comp
     typedef std::unordered_set<MoveOnly, some_hash2<MoveOnly>, some_comp2<MoveOnly>, some_alloc3<MoveOnly>> C;
     static_assert( noexcept(swap(std::declval<C&>(), std::declval<C&>())), "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 #endif
 
   return 0;
