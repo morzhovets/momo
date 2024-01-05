@@ -38,12 +38,12 @@ int main(int, char**)
         typedef std::set<MoveOnly, std::less<MoveOnly>, other_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_destructible<C>::value, "");
     }
-#if defined(_LIBCPP_VERSION)
+#if defined(LIBCPP_SPECIFIC)
     {
         typedef std::set<MoveOnly, some_comp<MoveOnly>> C;
         static_assert(!std::is_nothrow_destructible<C>::value, "");
     }
-#endif // _LIBCPP_VERSION
+#endif // LIBCPP_SPECIFIC
 
   return 0;
 }
