@@ -101,4 +101,26 @@ void main()
         assert(r->first == 3);
         assert(r->second == 2);
     }
+    {
+        typedef multimap<int, MoveOnly> M;
+        typedef M::iterator R;
+        M m;
+        R r = m.insert(m.cend(), {2, MoveOnly(2)});
+        assert(r == m.begin());
+        assert(m.size() == 1);
+        assert(r->first == 2);
+        assert(r->second == 2);
+
+        r = m.insert(m.cend(), {1, MoveOnly(1)});
+        assert(r == m.begin());
+        assert(m.size() == 2);
+        assert(r->first == 1);
+        assert(r->second == 1);
+
+        r = m.insert(m.cbegin(), {2, MoveOnly(3)});
+        assert(r == std::next(m.begin()));
+        assert(m.size() == 3);
+        assert(r->first == 2);
+        assert(r->second == 3);
+    }
 }

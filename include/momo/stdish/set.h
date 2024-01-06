@@ -602,12 +602,16 @@ private:
 			: treeTraits.IsLess(key1, key2);
 	}
 
-	bool pvCheckHint(const_iterator hint, const key_type& key) const
+	bool pvCheckHint(const_iterator& hint, const key_type& key) const
 	{
 		if (hint != begin() && !pvIsOrdered(*std::prev(hint), key))
 			return false;
 		if (hint != end() && !pvIsOrdered(key, *hint))
-			return false;
+		{
+			if (TreeTraits::multiKey)
+				hint = lower_bound(key);
+			return TreeTraits::multiKey;
+		}
 		return true;
 	}
 
