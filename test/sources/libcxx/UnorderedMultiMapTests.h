@@ -104,6 +104,10 @@ LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.multimap/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(extra_emplace_ext)
+#include "unord.multimap/extra/emplace_ext.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
@@ -291,10 +295,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "unord.multimap/unord.multimap.modifiers/emplace.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_emplace_ext)
-#include "unord.multimap/unord.multimap.modifiers/emplace_ext.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
