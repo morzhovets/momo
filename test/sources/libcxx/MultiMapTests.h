@@ -64,6 +64,10 @@ LIBCXX_TEST_BEGIN(common_iterator_types)
 #include "multimap/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(extra_insert_iter_rv_ext)
+#include "multimap/extra/insert_iter_rv_ext.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cons_alloc)
 #include "multimap/multimap.cons/alloc.pass.cpp"
 LIBCXX_TEST_END

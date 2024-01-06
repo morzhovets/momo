@@ -735,7 +735,12 @@ namespace internal
 			if (hint != begin() && !pvIsOrdered(std::prev(hint)->first, key))
 				return pvFind(nullptr, key);
 			if (hint != end() && !pvIsOrdered(key, hint->first))
-				return pvFind(nullptr, key);
+			{
+				if constexpr (TreeTraits::multiKey)
+					return { lower_bound(key), true };
+				else
+					return pvFind(nullptr, key);
+			}
 			return { IteratorProxy(mTreeMap.MakeMutableIterator(
 				ConstIteratorProxy::GetBaseIterator(hint))), true };
 		}
