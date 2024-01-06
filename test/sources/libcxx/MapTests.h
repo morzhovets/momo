@@ -40,6 +40,10 @@ LIBCXX_TEST_BEGIN(common_iterator_types)
 #include "map/common/iterator_types.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(extra_emplace_ext)
+#include "map/extra/emplace_ext.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(access_at)
 #include "map/map.access/at.pass.cpp"
 LIBCXX_TEST_END
@@ -176,10 +180,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "map/map.modifiers/emplace.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_emplace_ext)
-#include "map/map.modifiers/emplace_ext.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)

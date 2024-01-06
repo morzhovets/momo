@@ -144,6 +144,10 @@ LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.map/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(extra_emplace_ext)
+#include "unord.map/extra/emplace_ext.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
@@ -364,10 +368,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
 #include "unord.map/unord.map.modifiers/emplace.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_emplace_ext)
-#include "unord.map/unord.map.modifiers/emplace_ext.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
