@@ -209,7 +209,7 @@ private:
 		explicit Data(MemManager&& memManager) noexcept
 			: MemManager(std::move(memManager))
 		{
-			pvCreate();
+			pvInit();
 		}
 
 		explicit Data(size_t capacity, MemManager&& memManager)
@@ -223,35 +223,14 @@ private:
 			}
 			else
 			{
-				pvCreate();
+				pvInit();
 			}
 		}
 
 		Data(Data&& data) noexcept
 			: MemManager(std::move(data.GetMemManager()))
 		{
-			if constexpr (internalCapacity == 0)
-			{
-				mItems = data.mItems;
-				mCount = data.mCount;
-				mCapacity = data.mCapacity;
-			}
-			else
-			{
-				static_assert(ItemTraits::isNothrowRelocatable);
-				if (data.pvIsInternal())
-				{
-					mItems = &mInternalItems;
-					ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
-				}
-				else
-				{
-					mItems = data.mItems;
-					mCapacity = data.mCapacity;
-				}
-				mCount = data.mCount;
-			}
-			data.pvCreate();
+			pvInit(std::move(data));
 		}
 
 		Data(const Data&) = delete;
@@ -259,6 +238,15 @@ private:
 		~Data() noexcept
 		{
 			pvDestroy();
+		}
+
+		Data& operator=(Data&& data) noexcept
+		{
+			MOMO_ASSERT(this != &data);
+			pvDestroy();
+			MemManagerProxy::Assign(std::move(data.GetMemManager()), GetMemManager());
+			pvInit(std::move(data));
+			return *this;
 		}
 
 		Data& operator=(const Data&) = delete;
@@ -302,7 +290,7 @@ private:
 		void Clear() noexcept
 		{
 			pvDestroy();
-			pvCreate();
+			pvInit();
 		}
 
 		bool Reallocate(size_t capacityLin, size_t capacityExp)
@@ -365,7 +353,7 @@ private:
 				MOMO_ASSERT(count == 0);
 				MOMO_ASSERT(mCapacity > 0);
 				pvDeallocate(mItems, mCapacity);
-				pvCreate();
+				pvInit();
 			}
 			else
 			{
@@ -398,7 +386,7 @@ private:
 			MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
 		}
 
-		void pvCreate() noexcept
+		void pvInit() noexcept
 		{
 			if constexpr (internalCapacity == 0)
 			{
@@ -410,6 +398,28 @@ private:
 				mItems = &mInternalItems;
 			}
 			mCount = 0;
+		}
+
+		void pvInit(Data&& data) noexcept
+		{
+			bool inited = false;
+			if constexpr (internalCapacity > 0)
+			{
+				static_assert(ItemTraits::isNothrowRelocatable);
+				if (data.pvIsInternal())
+				{
+					mItems = &mInternalItems;
+					ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
+					inited = true;
+				}
+			}
+			if (!inited)
+			{
+				mItems = data.mItems;
+				mCapacity = data.mCapacity;
+			}
+			mCount = data.mCount;
+			data.pvInit();
 		}
 
 		void pvDestroy() noexcept
@@ -549,14 +559,14 @@ public:
 	Array& operator=(Array&& array) noexcept
 	{
 		if (this != &array)
-			pvAssign(std::move(array));
+			mData = std::move(array.mData);
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			pvAssign(Array(array));
+			mData = std::move(Array(array).mData);
 		return *this;
 	}
 
@@ -564,9 +574,9 @@ public:
 	{
 		if (this != &array)
 		{
-			Array tempArray(std::move(array));
-			array.pvAssign(std::move(*this));
-			pvAssign(std::move(tempArray));
+			Data data(std::move(mData));
+			mData = std::move(array.mData);
+			array.mData = std::move(data);
 		}
 	}
 
@@ -912,13 +922,6 @@ private:
 	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
 	{
-	}
-
-	void pvAssign(Array&& array) noexcept
-	{
-		MOMO_ASSERT(this != &array);
-		std::destroy_at(&mData);	//?
-		std::construct_at(&mData, std::move(array.mData));
 	}
 
 	size_t pvGrowCapacity(size_t minNewCapacity, ArrayGrowCause growCause, bool linear) const
