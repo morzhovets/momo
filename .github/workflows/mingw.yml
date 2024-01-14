@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    if: ${{ false }}
     strategy:
       matrix:
         include:
@@ -21,29 +20,29 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
 
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
-
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++11 -Wa,-mbig-obj -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
-
-        - arch: 'x86'
-          build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
+#
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++11 -Wa,-mbig-obj -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+#
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Wa,-mbig-obj -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+#
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
     runs-on: windows-2022
 
@@ -53,7 +52,8 @@ jobs:
     - name: Setup Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
     - name: Setup MinGW
-      uses: egor-tensin/setup-mingw@v2
+      uses: e-t-l/setup-mingw@patch-1
+#      uses: egor-tensin/setup-mingw@v2
       with:
         platform: ${{ matrix.arch }}
     - name: Build
