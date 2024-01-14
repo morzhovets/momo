@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    if: ${{ false }}
     strategy:
       matrix:
         include:
@@ -29,7 +28,8 @@ jobs:
     - name: Setup Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
     - name: Setup MinGW
-      uses: egor-tensin/setup-mingw@v2
+      uses: e-t-l/setup-mingw@patch-1
+#      uses: egor-tensin/setup-mingw@v2
       with:
         platform: ${{ matrix.arch }}
     - name: Build
