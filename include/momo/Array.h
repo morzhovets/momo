@@ -242,10 +242,12 @@ private:
 
 		Data& operator=(Data&& data) noexcept
 		{
-			MOMO_ASSERT(this != &data);
-			pvDestroy();
-			MemManagerProxy::Assign(std::move(data.GetMemManager()), GetMemManager());
-			pvInit(std::move(data));
+			if (this != &data)
+			{
+				pvDestroy();
+				MemManagerProxy::Assign(std::move(data.GetMemManager()), GetMemManager());
+				pvInit(std::move(data));
+			}
 			return *this;
 		}
 
@@ -558,26 +560,21 @@ public:
 
 	Array& operator=(Array&& array) noexcept
 	{
-		if (this != &array)
-			mData = std::move(array.mData);
+		mData = std::move(array.mData);
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			mData = std::move(Array(array).mData);
+			*this = Array(array);
 		return *this;
 	}
 
 	void Swap(Array& array) noexcept
 	{
 		if (this != &array)
-		{
-			Data data(std::move(mData));
-			mData = std::move(array.mData);
-			array.mData = std::move(data);
-		}
+			std::swap(mData, array.mData);
 	}
 
 	ConstIterator GetBegin() const noexcept
