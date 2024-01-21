@@ -209,7 +209,7 @@ private:
 		explicit Data(MemManager&& memManager) noexcept
 			: MemManager(std::move(memManager))
 		{
-			pvCreate();
+			pvInit();
 		}
 
 		explicit Data(size_t capacity, MemManager&& memManager)
@@ -224,14 +224,14 @@ private:
 			}
 			else
 			{
-				pvCreate();
+				pvInit();
 			}
 		}
 
 		Data(Data&& data) noexcept
 			: MemManager(std::move(data.GetMemManager()))
 		{
-			pvCreateMove(std::move(data));
+			pvInit(std::move(data));
 		}
 
 		Data(const Data&) = delete;
@@ -239,6 +239,17 @@ private:
 		~Data() noexcept
 		{
 			pvDestroy();
+		}
+
+		Data& operator=(Data&& data) noexcept
+		{
+			if (this != &data)
+			{
+				pvDestroy();
+				MemManagerProxy::Assign(std::move(data.GetMemManager()), GetMemManager());
+				pvInit(std::move(data));
+			}
+			return *this;
 		}
 
 		Data& operator=(const Data&) = delete;
@@ -282,7 +293,7 @@ private:
 		void Clear() noexcept
 		{
 			pvDestroy();
-			pvCreate();
+			pvInit();
 		}
 
 		bool Reallocate(size_t capacityLin, size_t capacityExp)
@@ -346,7 +357,7 @@ private:
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
 		internal::EnableIf<hasInternalCapacity>
-		pvCreate() noexcept
+		pvInit() noexcept
 		{
 			mItems = &mInternalItems;
 			mCount = 0;
@@ -354,7 +365,7 @@ private:
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
 		internal::EnableIf<!hasInternalCapacity>
-		pvCreate() noexcept
+		pvInit() noexcept
 		{
 			mItems = nullptr;
 			mCount = 0;
@@ -363,7 +374,7 @@ private:
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
 		internal::EnableIf<hasInternalCapacity>
-		pvCreateMove(Data&& data) noexcept
+		pvInit(Data&& data) noexcept
 		{
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
@@ -377,17 +388,17 @@ private:
 				mCapacity = data.mCapacity;
 			}
 			mCount = data.mCount;
-			data.pvCreate();
+			data.pvInit();
 		}
 
 		template<bool hasInternalCapacity = (internalCapacity > 0)>
 		internal::EnableIf<!hasInternalCapacity>
-		pvCreateMove(Data&& data) noexcept
+		pvInit(Data&& data) noexcept
 		{
 			mItems = data.mItems;
 			mCount = data.mCount;
 			mCapacity = data.mCapacity;
-			data.pvCreate();
+			data.pvInit();
 		}
 
 		void pvDestroy() noexcept
@@ -469,7 +480,7 @@ private:
 			(void)count;
 			MOMO_ASSERT(count == 0);
 			pvDeallocate();
-			pvCreate();
+			pvInit();
 		}
 
 	private:
@@ -576,26 +587,21 @@ public:
 
 	Array& operator=(Array&& array) noexcept
 	{
-		if (this != &array)
-			pvAssign(std::move(array));
+		mData = std::move(array.mData);
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			pvAssign(Array(array));
+			*this = Array(array);
 		return *this;
 	}
 
 	void Swap(Array& array) noexcept
 	{
 		if (this != &array)
-		{
-			Array tempArray(std::move(array));
-			array.pvAssign(std::move(*this));
-			pvAssign(std::move(tempArray));
-		}
+			std::swap(mData, array.mData);
 	}
 
 	ConstIterator GetBegin() const noexcept
@@ -961,13 +967,6 @@ private:
 	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
 	{
-	}
-
-	void pvAssign(Array&& array) noexcept
-	{
-		MOMO_ASSERT(this != &array);
-		mData.~Data();	//?
-		::new(static_cast<void*>(&mData)) Data(std::move(array.mData));
 	}
 
 	template<typename ArgIterator>

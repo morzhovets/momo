@@ -362,6 +362,21 @@ namespace internal
 			return static_cast<ResObject*>(ptr);
 		}
 
+		template<typename ResObject, typename... ResObjectArgs>
+		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
+		{
+			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
+			try
+			{
+				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
+			}
+			catch (...)
+			{
+				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
+				throw;
+			}
+		}
+
 		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0);
@@ -391,22 +406,17 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
+			if (&memManager1 == &memManager2)
+				return true;
 			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
 		}
 
-		template<typename ResObject, typename... ResObjectArgs>
-		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
+		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
-			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
-			try
-			{
-				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
-			}
-			catch (...)
-			{
-				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
-				throw;
-			}
+			if (IsEqual(srcMemManager, dstMemManager))
+				return;
+			pvAssign(std::move(srcMemManager), dstMemManager,
+				std::is_nothrow_move_assignable<MemManager>());
 		}
 
 	private:
@@ -430,10 +440,23 @@ namespace internal
 			return memManager1.IsEqual(memManager2);
 		}
 
-		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
+		static bool pvIsEqual(const MemManager& /*memManager1*/, const MemManager& /*memManager2*/,
 			std::false_type /*hasIsEqual*/) noexcept
 		{
-			return &memManager1 == &memManager2 || std::is_empty<MemManager>::value;
+			return std::is_empty<MemManager>::value;
+		}
+
+		static void pvAssign(MemManager&& srcMemManager, MemManager& dstMemManager,
+			std::true_type /*isNothrowMoveAssignable*/) noexcept
+		{
+			dstMemManager = std::move(srcMemManager);	//?
+		}
+
+		static void pvAssign(MemManager&& srcMemManager, MemManager& dstMemManager,
+			std::false_type /*isNothrowMoveAssignable*/) noexcept
+		{
+			dstMemManager.~MemManager();
+			::new(static_cast<void*>(&dstMemManager)) MemManager(std::move(srcMemManager));
 		}
 	};
 
