@@ -1,0 +1,36 @@
+name: macOS Clang
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+
+        - clang_ver: '17'
+          build_type: 'Release'
+          flags: '-std=c++23 -msse2'
+          macos_ver: '12'
+
+    runs-on: macos-${{ matrix.macos_ver }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install Ninja
+      run: brew install ninja
+    - name: Install Clang
+      run: brew install llvm@${{ matrix.clang_ver }}
+    - name: Build
+      env:
+        CXX: /usr/local/opt/llvm@${{ matrix.clang_ver }}/bin/clang++
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test
