@@ -205,6 +205,13 @@ private:
 
 		~Data() noexcept = default;
 
+		Data& operator=(Data&& data) noexcept
+		{
+			MemManagerProxy::Assign(std::move(static_cast<MemManager&>(data)), *this);
+			allocCount = std::exchange(data.allocCount, 0);
+			return *this;
+		}
+
 		Data& operator=(const Data&) = delete;
 
 	public:
@@ -262,27 +269,26 @@ public:
 
 	MemPool& operator=(MemPool&& memPool) noexcept
 	{
-		if (this != &memPool)
-		{
-			pvGetParams() = std::move(memPool.pvGetParams());
-			MemManagerProxy::Assign(std::move(memPool.GetMemManager()), GetMemManager());
-			mData.allocCount = std::exchange(memPool.mData.allocCount, 0);
-			mFreeBufferHead = std::exchange(memPool.mFreeBufferHead, nullptr);
-			mCachedCount = std::exchange(memPool.mCachedCount, 0);
-			mCacheHead = std::exchange(memPool.mCacheHead, nullptr);
-		}
+		pvGetParams() = std::move(memPool.pvGetParams());
+		mData = std::move(memPool.mData);
+		mFreeBufferHead = std::exchange(memPool.mFreeBufferHead, nullptr);
+		mCachedCount = std::exchange(memPool.mCachedCount, 0);
+		mCacheHead = std::exchange(memPool.mCacheHead, nullptr);
 		return *this;
 	}
 
 	MemPool& operator=(const MemPool&) = delete;
 
-	void Swap(MemPool& memPool) noexcept
-	{
-		if (this != &memPool)
-			std::swap(*this, memPool);
-	}
+	//void Swap(MemPool& memPool) noexcept
+	//{
+	//	std::swap(pvGetParams(), memPool.pvGetParams());
+	//	std::swap(mData, memPool.mData);
+	//	std::swap(mFreeBufferHead, memPool.mFreeBufferHead);
+	//	std::swap(mCachedCount, memPool.mCachedCount);
+	//	std::swap(mCacheHead, memPool.mCacheHead);
+	//}
 
-	MOMO_FRIEND_SWAP(MemPool)
+	//MOMO_FRIEND_SWAP(MemPool)
 
 	size_t GetBlockSize() const noexcept
 	{
