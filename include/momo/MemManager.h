@@ -249,6 +249,29 @@ public:
 
 	~MemManagerStdByte() noexcept = default;
 
+	MemManagerStdByte& operator=(MemManagerStdByte&& memManager) noexcept
+		requires (std::is_nothrow_move_assignable_v<ByteAllocator>
+			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value
+			|| ByteAllocatorTraits::propagate_on_container_copy_assignment::value
+			|| ByteAllocatorTraits::propagate_on_container_swap::value
+			|| ByteAllocatorTraits::is_always_equal::value)
+	{
+		if constexpr (std::is_nothrow_move_assignable_v<ByteAllocator>
+			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value)
+		{
+			GetByteAllocator() = std::move(memManager.GetByteAllocator());
+		}
+		else if constexpr (ByteAllocatorTraits::propagate_on_container_copy_assignment::value)
+		{
+			GetByteAllocator() = std::as_const(memManager.GetByteAllocator());
+		}
+		else if constexpr (ByteAllocatorTraits::propagate_on_container_swap::value)
+		{
+			std::iter_swap(&GetByteAllocator(), &memManager.GetByteAllocator());
+		}
+		return *this;
+	}
+
 	MemManagerStdByte& operator=(const MemManagerStdByte&) = delete;
 
 	[[nodiscard]] void* Allocate(size_t size)
@@ -430,7 +453,7 @@ namespace internal
 				return;
 			if constexpr (std::is_nothrow_move_assignable_v<MemManager>)
 			{
-				dstMemManager = std::move(srcMemManager);	//?
+				dstMemManager = std::move(srcMemManager);
 			}
 			else
 			{
@@ -486,7 +509,7 @@ namespace internal
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
-			: mBaseMemManager(baseMemManager)
+			: mBaseMemManager(&baseMemManager)
 		{
 		}
 
@@ -496,46 +519,48 @@ namespace internal
 
 		~MemManagerPtr() noexcept = default;
 
+		MemManagerPtr& operator=(MemManagerPtr&&) noexcept = default;
+
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
 		BaseMemManager& GetBaseMemManager() noexcept
 		{
-			return mBaseMemManager;
+			return *mBaseMemManager;
 		}
 
 		void* Allocate(size_t size)
 		{
-			return mBaseMemManager.Allocate(size);
+			return mBaseMemManager->Allocate(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) noexcept
 		{
-			mBaseMemManager.Deallocate(ptr, size);
+			mBaseMemManager->Deallocate(ptr, size);
 		}
 
 		void* Reallocate(void* ptr, size_t size, size_t newSize)
 			requires BaseMemManagerProxy::canReallocate
 		{
-			return mBaseMemManager.Reallocate(ptr, size, newSize);
+			return mBaseMemManager->Reallocate(ptr, size, newSize);
 		}
 
 		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 			requires BaseMemManagerProxy::canReallocateInplace
 		{
-			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
+			return mBaseMemManager->ReallocateInplace(ptr, size, newSize);
 		}
 
 		bool IsEqual(const MemManagerPtr& memManager) const noexcept
 		{
-			return BaseMemManagerProxy::IsEqual(mBaseMemManager, memManager.mBaseMemManager);
+			return BaseMemManagerProxy::IsEqual(*mBaseMemManager, *memManager.mBaseMemManager);
 		}
 
 	private:
-		BaseMemManager& mBaseMemManager;
+		BaseMemManager* mBaseMemManager;
 	};
 
 	template<conceptMemManager TBaseMemManager>
-	requires conceptSmallAndTriviallyCopyable<TBaseMemManager>
+	requires conceptSmallAndTriviallyCopyable<TBaseMemManager>	//?
 	class MemManagerPtr<TBaseMemManager> : private TBaseMemManager
 	{
 	public:
@@ -558,6 +583,8 @@ namespace internal
 		MemManagerPtr(const MemManagerPtr&) noexcept = default;
 
 		~MemManagerPtr() noexcept = default;
+
+		MemManagerPtr& operator=(MemManagerPtr&&) noexcept = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 

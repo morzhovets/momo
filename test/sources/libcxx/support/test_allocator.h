@@ -94,6 +94,13 @@ public:
 
 #ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   typedef std::true_type propagate_on_container_swap;
+
+  friend void swap(test_allocator& alloc1, test_allocator& alloc2) noexcept
+  {
+    std::swap(alloc1.data_, alloc2.data_);
+    std::swap(alloc1.id_, alloc2.id_);
+    std::swap(alloc1.stats_, alloc2.stats_);
+  }
 #endif
 
   TEST_CONSTEXPR test_allocator() TEST_NOEXCEPT = default;
