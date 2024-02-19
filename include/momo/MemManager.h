@@ -177,8 +177,6 @@ public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> ByteAllocator;
 
-	//MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<ByteAllocator>::value);
-
 public:
 	explicit MemManagerStd() noexcept(std::is_nothrow_default_constructible<ByteAllocator>::value)
 	{
@@ -449,7 +447,7 @@ namespace internal
 		static void pvAssign(MemManager&& srcMemManager, MemManager& dstMemManager,
 			std::true_type /*isNothrowMoveAssignable*/) noexcept
 		{
-			dstMemManager = std::move(srcMemManager);	//?
+			dstMemManager = std::move(srcMemManager);
 		}
 
 		static void pvAssign(MemManager&& srcMemManager, MemManager& dstMemManager,
@@ -665,58 +663,54 @@ namespace internal
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
-			: mBaseMemManager(baseMemManager)
+			: mBaseMemManager(&baseMemManager)
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&& memManager) noexcept
-			: mBaseMemManager(memManager.mBaseMemManager)
-		{
-		}
+		MemManagerPtr(MemManagerPtr&&) = default;
 
-		MemManagerPtr(const MemManagerPtr& memManager) noexcept
-			: mBaseMemManager(memManager.mBaseMemManager)
-		{
-		}
+		MemManagerPtr(const MemManagerPtr&) = default;
 
 		~MemManagerPtr() = default;
+
+		MemManagerPtr& operator=(MemManagerPtr&&) = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
 		BaseMemManager& GetBaseMemManager() noexcept
 		{
-			return mBaseMemManager;
+			return *mBaseMemManager;
 		}
 
 		void* Allocate(size_t size)
 		{
-			return mBaseMemManager.Allocate(size);
+			return mBaseMemManager->Allocate(size);
 		}
 
 		void Deallocate(void* ptr, size_t size) noexcept
 		{
-			mBaseMemManager.Deallocate(ptr, size);
+			mBaseMemManager->Deallocate(ptr, size);
 		}
 
 		typename std::conditional<BaseMemManagerProxy::canReallocate, void*, void>::type
 		Reallocate(void* ptr, size_t size, size_t newSize)
 		{
-			return mBaseMemManager.Reallocate(ptr, size, newSize);
+			return mBaseMemManager->Reallocate(ptr, size, newSize);
 		}
 
 		typename std::conditional<BaseMemManagerProxy::canReallocateInplace, bool, void>::type
 		ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 		{
-			return mBaseMemManager.ReallocateInplace(ptr, size, newSize);
+			return mBaseMemManager->ReallocateInplace(ptr, size, newSize);
 		}
 
 		bool IsEqual(const MemManagerPtr& memManager) const noexcept
 		{
-			return BaseMemManagerProxy::IsEqual(mBaseMemManager, memManager.mBaseMemManager);
+			return BaseMemManagerProxy::IsEqual(*mBaseMemManager, *memManager.mBaseMemManager);
 		}
 
 	private:
-		BaseMemManager& mBaseMemManager;
+		BaseMemManager* mBaseMemManager;
 	};
 }
 
