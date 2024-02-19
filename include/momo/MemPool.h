@@ -131,7 +131,7 @@ public:
 template<typename TParams = MemPoolParams<>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private TParams, private internal::MemManagerWrapper<TMemManager>
+class MemPool : private TParams
 {
 public:
 	typedef TParams Params;
@@ -143,7 +143,43 @@ public:
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-	typedef internal::MemManagerWrapper<MemManager> MemManagerWrapper;
+
+	class Data : public MemManager
+	{
+	public:
+		explicit Data(MemManager&& memManager) noexcept
+			: MemManager(std::move(memManager)),
+			allocCount(0)
+		{
+		}
+
+		Data(Data&& data) noexcept
+			: MemManager(std::move(static_cast<MemManager&>(data))),
+			allocCount(data.allocCount)
+		{
+			data.allocCount = 0;
+		}
+
+		Data(const Data&) = delete;
+
+		~Data() noexcept = default;
+
+		void Swap(Data& data) noexcept
+		{
+			if (!MemManagerProxy::IsEqual(*this, data))
+			{
+				MemManager memManager(std::move(static_cast<MemManager&>(*this)));
+				MemManagerProxy::Assign(std::move(static_cast<MemManager&>(data)), *this);
+				MemManagerProxy::Assign(std::move(memManager), data);
+			}
+			std::swap(allocCount, data.allocCount);
+		}
+
+		Data& operator=(const Data&) = delete;
+
+	public:
+		size_t allocCount;
+	};
 
 	struct BufferBytes
 	{
@@ -166,9 +202,8 @@ public:
 
 	explicit MemPool(const Params& params, MemManager memManager = MemManager())
 		: Params(params),
-		MemManagerWrapper(std::move(memManager)),
+		mData(std::move(memManager)),
 		mFreeBufferHead(nullptr),
-		mAllocCount(0),
 		mCachedCount(0),
 		mCacheHead(nullptr)
 	{
@@ -177,14 +212,12 @@ public:
 
 	MemPool(MemPool&& memPool) noexcept
 		: Params(std::move(memPool.pvGetParams())),
-		MemManagerWrapper(std::move(memPool.pvGetMemManagerWrapper())),
+		mData(std::move(memPool.mData)),
 		mFreeBufferHead(memPool.mFreeBufferHead),
-		mAllocCount(memPool.mAllocCount),
 		mCachedCount(memPool.mCachedCount),
 		mCacheHead(memPool.mCacheHead)
 	{
 		memPool.mFreeBufferHead = nullptr;
-		memPool.mAllocCount = 0;
 		memPool.mCachedCount = 0;
 		memPool.mCacheHead = nullptr;
 	}
@@ -193,7 +226,7 @@ public:
 
 	~MemPool() noexcept
 	{
-		MOMO_EXTRA_CHECK(mAllocCount == 0);
+		MOMO_EXTRA_CHECK(mData.allocCount == 0);
 		if (CanDeallocateAll())
 			DeallocateAll();
 		else if (pvUseCache())
@@ -211,9 +244,8 @@ public:
 	void Swap(MemPool& memPool) noexcept
 	{
 		std::swap(pvGetParams(), memPool.pvGetParams());
-		std::swap(pvGetMemManagerWrapper(), memPool.pvGetMemManagerWrapper());
+		mData.Swap(memPool.mData);
 		std::swap(mFreeBufferHead, memPool.mFreeBufferHead);
-		std::swap(mAllocCount, memPool.mAllocCount);
 		std::swap(mCachedCount, memPool.mCachedCount);
 		std::swap(mCacheHead, memPool.mCacheHead);
 	}
@@ -242,12 +274,12 @@ public:
 
 	const MemManager& GetMemManager() const noexcept
 	{
-		return static_cast<const MemManagerWrapper&>(*this).GetMemManager();
+		return mData;
 	}
 
 	MemManager& GetMemManager() noexcept
 	{
-		return pvGetMemManagerWrapper().GetMemManager();
+		return mData;
 	}
 
 	template<typename ResObject = void>
@@ -269,14 +301,14 @@ public:
 			else
 				block = pvNewBlock1();
 		}
-		++mAllocCount;
+		++mData.allocCount;
 		return static_cast<ResObject*>(block);
 	}
 
 	void Deallocate(void* block) noexcept
 	{
 		MOMO_ASSERT(block != nullptr);
-		MOMO_ASSERT(mAllocCount > 0);
+		MOMO_ASSERT(mData.allocCount > 0);
 		if (pvUseCache())
 		{
 			if (mCachedCount >= Params::cachedFreeBlockCount)
@@ -289,12 +321,12 @@ public:
 		{
 			pvDeleteBlock(block);
 		}
-		--mAllocCount;
+		--mData.allocCount;
 	}
 
 	size_t GetAllocateCount() const noexcept
 	{
-		return mAllocCount;
+		return mData.allocCount;
 	}
 
 	bool CanDeallocateAll() const noexcept
@@ -320,7 +352,7 @@ public:
 			mFreeBufferHead = pvGetNextBuffer(buffer);
 			pvDeleteBuffer(buffer);
 		}
-		mAllocCount = 0;
+		mData.allocCount = 0;
 		mCachedCount = 0;
 		mCacheHead = nullptr;
 	}
@@ -331,7 +363,7 @@ public:
 		MOMO_EXTRA_CHECK(CanDeallocateAll());
 		if (pvUseCache())
 			pvFlushDeallocate();
-		if (mAllocCount == 0)
+		if (mData.allocCount == 0)
 			return;
 		Byte* buffer = mFreeBufferHead;
 		while (true)
@@ -361,8 +393,8 @@ public:
 		MOMO_CHECK(MemManagerProxy::IsEqual(GetMemManager(), memPool.GetMemManager()));
 		if (memPool.pvUseCache())
 			memPool.pvFlushDeallocate();
-		mAllocCount += memPool.mAllocCount;
-		memPool.mAllocCount = 0;
+		mData.allocCount += memPool.mData.allocCount;
+		memPool.mData.allocCount = 0;
 		if (memPool.mFreeBufferHead == nullptr)
 			return;
 		if (mFreeBufferHead == nullptr)
@@ -404,11 +436,6 @@ public:
 
 private:
 	Params& pvGetParams() noexcept
-	{
-		return *this;
-	}
-
-	MemManagerWrapper& pvGetMemManagerWrapper() noexcept
 	{
 		return *this;
 	}
@@ -674,7 +701,7 @@ private:
 			if (!blockFilter(static_cast<void*>(block)))
 				continue;
 			pvDeleteBlock(block, buffer, blockIndex);
-			--mAllocCount;
+			--mData.allocCount;
 		}
 	}
 
@@ -761,8 +788,8 @@ private:
 	}
 
 private:
+	Data mData;
 	Byte* mFreeBufferHead;
-	size_t mAllocCount;
 	size_t mCachedCount;
 	void* mCacheHead;
 };
