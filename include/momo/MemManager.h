@@ -177,6 +177,9 @@ public:
 	typedef TAllocator Allocator;
 	typedef typename std::allocator_traits<Allocator>::template rebind_alloc<char> ByteAllocator;
 
+private:
+	typedef std::allocator_traits<ByteAllocator> ByteAllocatorTraits;
+
 public:
 	explicit MemManagerStd() noexcept(std::is_nothrow_default_constructible<ByteAllocator>::value)
 	{
@@ -193,24 +196,39 @@ public:
 	}
 
 	MemManagerStd(const MemManagerStd& memManager)
-		: ByteAllocator(std::allocator_traits<ByteAllocator>
-			::select_on_container_copy_construction(memManager.GetByteAllocator()))
+		: ByteAllocator(ByteAllocatorTraits::select_on_container_copy_construction(
+			memManager.GetByteAllocator()))
 	{
 	}
 
 	~MemManagerStd() = default;
 
+	template<bool enabled = std::is_nothrow_move_assignable<ByteAllocator>::value
+		|| ByteAllocatorTraits::propagate_on_container_move_assignment::value
+		|| ByteAllocatorTraits::propagate_on_container_copy_assignment::value
+		|| ByteAllocatorTraits::propagate_on_container_swap::value>
+	internal::EnableIf<enabled, MemManagerStd&> operator=(MemManagerStd&& memManager) noexcept
+	{
+		static const bool isNothrowMoveAssignable =
+			std::is_nothrow_move_assignable<ByteAllocator>::value
+			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value;
+		pvAssign(memManager.GetByteAllocator(), GetByteAllocator(),
+			internal::BoolConstant<isNothrowMoveAssignable>(),
+			ByteAllocatorTraits::propagate_on_container_copy_assignment(),
+			ByteAllocatorTraits::propagate_on_container_swap());
+		return *this;
+	}
+
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
 	MOMO_NODISCARD void* Allocate(size_t size)
 	{
-		return std::allocator_traits<ByteAllocator>::allocate(GetByteAllocator(), size);
+		return ByteAllocatorTraits::allocate(GetByteAllocator(), size);
 	}
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		std::allocator_traits<ByteAllocator>::deallocate(GetByteAllocator(),
-			static_cast<char*>(ptr), size);
+		ByteAllocatorTraits::deallocate(GetByteAllocator(), static_cast<char*>(ptr), size);
 	}
 
 	bool IsEqual(const MemManagerStd& memManager) const noexcept
@@ -226,6 +244,30 @@ public:
 	ByteAllocator& GetByteAllocator() noexcept
 	{
 		return *this;
+	}
+
+private:
+	template<bool isNothrowCopyAssignable, bool isNothrowSwappable>
+	static void pvAssign(ByteAllocator& srcAlloc, ByteAllocator& dstAlloc,
+		std::true_type /*isNothrowMoveAssignable*/, internal::BoolConstant<isNothrowCopyAssignable>,
+		internal::BoolConstant<isNothrowSwappable>) noexcept
+	{
+		dstAlloc = std::move(srcAlloc);
+	}
+
+	template<bool isNothrowSwappable>
+	static void pvAssign(ByteAllocator& srcAlloc, ByteAllocator& dstAlloc,
+		std::false_type /*isNothrowMoveAssignable*/, std::true_type /*isNothrowCopyAssignable*/,
+		internal::BoolConstant<isNothrowSwappable>) noexcept
+	{
+		dstAlloc = static_cast<const ByteAllocator&>(srcAlloc);
+	}
+
+	static void pvAssign(ByteAllocator& srcAlloc, ByteAllocator& dstAlloc,
+		std::false_type /*isNothrowMoveAssignable*/, std::false_type /*isNothrowCopyAssignable*/,
+		std::true_type /*isNothrowSwappable*/) noexcept
+	{
+		std::iter_swap(&dstAlloc, &srcAlloc);
 	}
 };
 

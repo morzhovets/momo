@@ -92,7 +92,13 @@ public:
     template <class U> struct rebind {typedef test_allocator<U> other;};
 
 #ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-	typedef std::true_type propagate_on_container_swap;
+    typedef std::true_type propagate_on_container_swap;
+
+    friend void swap(test_allocator& alloc1, test_allocator& alloc2) noexcept
+    {
+      std::swap(alloc1.data_, alloc2.data_);
+      std::swap(alloc1.id_, alloc2.id_);
+    }
 #endif
 
     test_allocator() noexcept : data_(0), id_(0) {++count;}
