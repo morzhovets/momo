@@ -214,8 +214,8 @@ public:
 			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value;
 		pvAssign(memManager.GetByteAllocator(), GetByteAllocator(),
 			internal::BoolConstant<isNothrowMoveAssignable>(),
-			ByteAllocatorTraits::propagate_on_container_copy_assignment(),
-			ByteAllocatorTraits::propagate_on_container_swap());
+			typename ByteAllocatorTraits::propagate_on_container_copy_assignment(),
+			typename ByteAllocatorTraits::propagate_on_container_swap());
 		return *this;
 	}
 
