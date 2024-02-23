@@ -95,14 +95,7 @@ namespace internal
 
 	template<std::copy_constructible TContainerTraits, conceptMemManager TMemManager,
 		bool tKeepVersion>
-	class SetCrew;
-
-	template<std::copy_constructible TContainerTraits, conceptMemManager TMemManager,
-		bool tKeepVersion>
-	requires (!std::is_nothrow_move_constructible_v<TContainerTraits> ||
-		!std::is_nothrow_move_assignable_v<TContainerTraits> ||
-		!std::is_empty_v<MemManagerPtr<TMemManager>> || tKeepVersion)
-	class SetCrew<TContainerTraits, TMemManager, tKeepVersion>
+	class SetCrew
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;

@@ -253,22 +253,18 @@ public:
 		requires (std::is_nothrow_move_assignable_v<ByteAllocator>
 			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value
 			|| ByteAllocatorTraits::propagate_on_container_copy_assignment::value
-			|| ByteAllocatorTraits::propagate_on_container_swap::value
-			|| ByteAllocatorTraits::is_always_equal::value)
+			|| ByteAllocatorTraits::propagate_on_container_swap::value)
 	{
-		if constexpr (std::is_nothrow_move_assignable_v<ByteAllocator>
-			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value)
-		{
-			GetByteAllocator() = std::move(memManager.GetByteAllocator());
-		}
+		ByteAllocator& thisAlloc = GetByteAllocator();
+		ByteAllocator& alloc = memManager.GetByteAllocator();
+		static const bool isNothrowMoveAssignable = std::is_nothrow_move_assignable_v<ByteAllocator>
+			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value;
+		if constexpr (isNothrowMoveAssignable)
+			thisAlloc = std::move(alloc);
 		else if constexpr (ByteAllocatorTraits::propagate_on_container_copy_assignment::value)
-		{
-			GetByteAllocator() = std::as_const(memManager.GetByteAllocator());
-		}
-		else if constexpr (ByteAllocatorTraits::propagate_on_container_swap::value)
-		{
-			std::iter_swap(&GetByteAllocator(), &memManager.GetByteAllocator());
-		}
+			thisAlloc = std::as_const(alloc);
+		else //if constexpr (ByteAllocatorTraits::propagate_on_container_swap::value)
+			std::iter_swap(&thisAlloc, &alloc);
 		return *this;
 	}
 
