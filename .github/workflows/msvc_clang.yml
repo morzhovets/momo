@@ -11,7 +11,7 @@ jobs:
         # Clang 12.0.0 with MSVC-like command-line
         - win_ver: '2019'
           build_type: 'Release'
-          flags: '/std:c++latest -msse2'
+          flags: '/std:c++20 -msse2'
 
         - win_ver: '2022'
           build_type: 'Release'

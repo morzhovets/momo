@@ -1,4 +1,4 @@
-name: macOS Clang
+name: AppleClang
 
 on: [push, pull_request]
 
@@ -8,15 +8,10 @@ jobs:
       matrix:
         include:
 
-        - clang_ver: '17'
+        # Apple Clang 15.0.0
+        - macos_ver: '13'
           build_type: 'Release'
-          flags: '-std=c++23 -msse2'
-          macos_ver: '13'
-
-        - clang_ver: '17'
-          build_type: 'Release'
-          flags: '-std=c++23'
-          macos_ver: '14'
+          flags: '-std=c++20 -msse2'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
@@ -25,11 +20,9 @@ jobs:
       uses: actions/checkout@v4
     - name: Install Ninja
       run: brew install ninja
-    - name: Install Clang
-      run: brew install llvm@${{ matrix.clang_ver }}
     - name: Build
       env:
-        CXX: /usr/local/opt/llvm@${{ matrix.clang_ver }}/bin/clang++
+        CXX: clang++
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
