@@ -24,30 +24,30 @@ jobs:
 
     steps:
     - name: Checkout hash-table-shootout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: 'morzhovets/hash-table-shootout'
         ref: 'regress'
     - name: Checkout momo_v32
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.2'
         path: 'momo_v32'
     - name: Checkout momo_v35
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.5'
         path: 'momo_v35'
     - name: Checkout momo_v38
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.8'
         path: 'momo_v38'
     - name: Checkout momo_cur
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: 'momo_cur'
     - name: Install GCC
