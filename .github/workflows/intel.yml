@@ -15,7 +15,7 @@ jobs:
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
         - build_type: 'Release'
-          flags: '-std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
 
     runs-on: ubuntu-22.04
 

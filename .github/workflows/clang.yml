@@ -73,30 +73,44 @@ jobs:
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
 
-        - clang_ver: '14'
+        - clang_ver: '15'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          ubuntu_ver: '22.04'
-
-        - clang_ver: '14'
-          build_type: 'Debug'
-          # -fsanitize=address,undefined
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '22.04'
 
         - clang_ver: '15'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW'
-          ubuntu_ver: '22.04'
-
-        - clang_ver: '15'
-          build_type: 'Release'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '22.04'
 
         - clang_ver: '15'
           build_type: 'Debug'
-          flags: '-std=c++20 -Werror -fsanitize=address,undefined -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+          ubuntu_ver: '22.04'
+
+        - clang_ver: '15'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '22.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}

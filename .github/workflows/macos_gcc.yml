@@ -30,7 +30,12 @@ jobs:
 
         - gcc_ver: '13'
           build_type: 'Release'
-          flags: '-std=c++23 -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          macos_ver: '12'
+
+        - gcc_ver: '13'
+          build_type: 'Release'
+          flags: '-std=c++23 -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
           macos_ver: '12'
 
     runs-on: macos-${{ matrix.macos_ver }}
