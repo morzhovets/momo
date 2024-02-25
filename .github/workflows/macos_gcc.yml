@@ -11,12 +11,12 @@ jobs:
 #        - gcc_ver: '9'
 #          build_type: 'Release'
 #          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-#          macos_ver: '11'
+#          macos_ver: '12'
 
         - gcc_ver: '10'
           build_type: 'Release'
           flags: '-std=c++20 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-          macos_ver: '11'
+          macos_ver: '12'
 
         - gcc_ver: '11'
           build_type: 'Release'

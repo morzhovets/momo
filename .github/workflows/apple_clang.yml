@@ -22,6 +22,17 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
+        # Apple Clang 15.0.0
+        - macos_ver: '13'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+        # macOS-14-arm64
+        # Apple Clang 15.0.0
+        - macos_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
         # -DTEST_LIBCXX_NEW
 
     runs-on: macos-${{ matrix.macos_ver }}
