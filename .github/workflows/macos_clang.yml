@@ -8,14 +8,24 @@ jobs:
       matrix:
         include:
 
-#        - clang_ver: '17'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -msse2'
-#          macos_ver: '13'
-
         - clang_ver: '17'
           build_type: 'Release'
           flags: '-std=c++23 -msse2'
+          path_prefix: '/usr/local'
+          macos_ver: '13'
+
+        # macOS-13-arm64
+        - clang_ver: '17'
+          build_type: 'Release'
+          flags: '-std=c++23'
+          path_prefix: '/usr/local'
+          macos_ver: '13-xlarge'
+
+        # macOS-14-arm64
+        - clang_ver: '17'
+          build_type: 'Release'
+          flags: '-std=c++23'
+          path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
     runs-on: macos-${{ matrix.macos_ver }}
@@ -29,8 +39,7 @@ jobs:
       run: brew install llvm@${{ matrix.clang_ver }}
     - name: Build
       env:
-#        CXX: /usr/local/opt/llvm@${{ matrix.clang_ver }}/bin/clang++
-        CXX: /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++
+        CXX: ${{ matrix.path_prefix }}/opt/llvm@${{ matrix.clang_ver }}/bin/clang++
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test

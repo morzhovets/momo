@@ -11,27 +11,33 @@ jobs:
         - gcc_ver: '10'
           build_type: 'Release'
           flags: '-std=c++20 -msse2'
-          macos_ver: '13'
+          path_prefix: '/usr/local'
+          macos_ver: '12'
 
         - gcc_ver: '11'
           build_type: 'Release'
           flags: '-std=c++23 -msse2'
-          macos_ver: '13'
+          path_prefix: '/usr/local'
+          macos_ver: '12'
 
         - gcc_ver: '12'
           build_type: 'Release'
           flags: '-std=c++23 -msse2'
-          macos_ver: '13'
+          path_prefix: '/usr/local'
+          macos_ver: '12'
 
         - gcc_ver: '13'
           build_type: 'Release'
           flags: '-std=c++23 -msse2'
+          path_prefix: '/usr/local'
           macos_ver: '13'
 
-#        - gcc_ver: '13'
-#          build_type: 'Release'
-#          flags: '-std=c++23'
-#          macos_ver: '14'
+        # macOS-14-arm64
+        - gcc_ver: '13'
+          build_type: 'Release'
+          flags: '-std=c++23'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
@@ -44,7 +50,7 @@ jobs:
       run: brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
       env:
-        CXX: /usr/local/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}
+        CXX: ${{ matrix.path_prefix }}/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
