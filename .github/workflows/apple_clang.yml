@@ -33,6 +33,18 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
 
+        - macos_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
+        - macos_ver: '14'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES'
+
+        - macos_ver: '14'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
         # -DTEST_LIBCXX_NEW
 
     runs-on: macos-${{ matrix.macos_ver }}
