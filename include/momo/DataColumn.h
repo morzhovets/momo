@@ -1132,11 +1132,6 @@ public:
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
 
-#ifdef MOMO_ENABLE_DEPRECATED_DATA_TABLE_CONSTRUCTOR
-	template<typename Item>
-	using QualifiedColumn = Column<Item>;
-#endif
-
 	typedef Struct Raw;
 
 	MOMO_STATIC_ASSERT(std::is_class<Struct>::value);
