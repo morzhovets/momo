@@ -14,25 +14,17 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "../../include/momo/DataTable.h"
+#include "SimpleDataSampler.h"
 
 #include <string>
 #include <iostream>
 
-#ifdef TEST_MSVC
-#pragma warning (disable: 4307)	// integral constant overflow
-#endif
-
-namespace sample1
+namespace data1
 {
-	MOMO_DATA_COLUMN_STRING(int, intCol);
-	MOMO_DATA_COLUMN_STRING(double, dblCol);
-	MOMO_DATA_COLUMN_STRING(std::string, strCol);
-
-	void Test()
+	void Sample()
 	{
 		// construct empty table with 3 columns
-		momo::DataTable<> table({ intCol, dblCol, strCol });
+		Table table({ intCol, dblCol, strCol });
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);
@@ -74,21 +66,9 @@ namespace sample1
 	}
 }
 
-namespace sample2
+namespace data2
 {
-	using Table = momo::DataTable<>;
-	using ConstRowReference = Table::ConstRowReference;
-
-	template<typename Item>
-	using Column = Table::Column<Item>;
-
-	// unique column codes: 0, 1, 2
-	// column names are optional
-	constexpr Column<int> intCol(uint64_t{0}, "intCol");
-	constexpr Column<double> dblCol(uint64_t{1}, "dblCol");
-	constexpr Column<std::string> strCol(uint64_t{2}, "strCol");
-
-	void Test()
+	void Sample()
 	{
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
@@ -143,26 +123,18 @@ namespace sample2
 		}
 
 		{
-			auto selection = table.Select([] (ConstRowReference row) { return row[dblCol] > 0.0; });	// slow select
+			auto selection = table.Select([] (auto row) { return row[dblCol] > 0.0; });	// slow select
 			std::cout << selection.GetCount() << std::endl;	// 1
 		}
 
-		table.RemoveRows([] (ConstRowReference row) { return row[dblCol] > 1.0; });
+		table.RemoveRows([] (auto row) { return row[dblCol] > 1.0; });
 		std::cout << table.GetCount() << std::endl;	// 0
 	}
 }
 
-namespace sample3
+namespace data3
 {
-	using Struct = momo::DataStructDefault<int, double, std::string>;
-	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
-	using Table = momo::DataTable<ColumnList>;
-
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, int, intCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, double, dblCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, std::string, strCol);
-
-	void Test()
+	void Sample()
 	{
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
@@ -193,23 +165,9 @@ namespace sample3
 	}
 }
 
-namespace sample4
+namespace data4
 {
-	struct Struct
-	{
-		int intCol;
-		double dblCol;
-		std::string strCol;
-	};
-
-	using ColumnList = momo::DataColumnListStatic<Struct>;
-	using Table = momo::DataTable<ColumnList>;
-
-	MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
-
-	void Test()
+	void Sample()
 	{
 		// construct empty table with 3 columns
 		Table table;
@@ -246,5 +204,10 @@ namespace sample4
 		}
 	}
 }
+
+//static int sampleData1 = (data1::Sample(), 0);
+//static int sampleData2 = (data2::Sample(), 0);
+//static int sampleData3 = (data3::Sample(), 0);
+//static int sampleData4 = (data4::Sample(), 0);
 
 #endif // TEST_SIMPLE_DATA
