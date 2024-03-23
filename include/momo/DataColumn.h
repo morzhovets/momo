@@ -35,10 +35,10 @@
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
 	constexpr momo::internal::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
-		name(uint64_t{offsetof(Struct, name)}, #name)
+		name{uint64_t{offsetof(Struct, name)}, #name}
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	constexpr momo::internal::DataColumn<Type, Tag> name(#name)
+	constexpr momo::internal::DataColumn<Type, Tag> name{#name}
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault<>, Type, name)
