@@ -14,25 +14,33 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "../../include/momo/DataTable.h"
+#include "SimpleDataSampler.h"
 
-#include <string>
 #include <iostream>
 
-#ifdef TEST_MSVC
-#pragma warning (disable: 4307)	// integral constant overflow
+namespace sample_data1
+{
+// Declarations in SimpleDataSampler.h
+/*
+	using Table = momo::DataTable<>;
+
+	template<typename Item>
+	using Column = Table::Column<Item>;
+
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
+	void Sample()
+	{
+#if !defined(__cpp_inline_variables)	// C++11/14
+		static const auto& intCol = Cols::intCol;
+		static const auto& dblCol = Cols::dblCol;
+		static const auto& strCol = Cols::strCol;
 #endif
 
-namespace sample1
-{
-	MOMO_DATA_COLUMN_STRING(int, intCol);
-	MOMO_DATA_COLUMN_STRING(double, dblCol);
-	MOMO_DATA_COLUMN_STRING(std::string, strCol);
-
-	void Test()
-	{
 		// construct empty table with 3 columns
-		momo::DataTable<> table({ intCol, dblCol, strCol });
+		Table table({ intCol, dblCol, strCol });
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);
@@ -74,22 +82,28 @@ namespace sample1
 	}
 }
 
-namespace sample2
+namespace sample_data2
 {
+// Declarations in SimpleDataSampler.h
+/*
 	using Table = momo::DataTable<>;
 	using ConstRowReference = Table::ConstRowReference;
 
 	template<typename Item>
 	using Column = Table::Column<Item>;
 
-	// unique column codes: 0, 1, 2
-	// column names are optional
-	constexpr Column<int> intCol(uint64_t{0}, "intCol");
-	constexpr Column<double> dblCol(uint64_t{1}, "dblCol");
-	constexpr Column<std::string> strCol(uint64_t{2}, "strCol");
-
-	void Test()
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
+	void Sample()
 	{
+#if !defined(__cpp_inline_variables)	// C++11/14
+		static const auto& intCol = Cols::intCol;
+		static const auto& dblCol = Cols::dblCol;
+		static const auto& strCol = Cols::strCol;
+#endif
+
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
@@ -152,18 +166,29 @@ namespace sample2
 	}
 }
 
-namespace sample3
+namespace sample_data3
 {
+// Declarations in SimpleDataSampler.h
+/*
 	using Struct = momo::DataStructDefault<int, double, std::string>;
 	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
 	using Table = momo::DataTable<ColumnList>;
 
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, int, intCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, double, dblCol);
-	MOMO_DATA_COLUMN_STRING_TAG(Struct, std::string, strCol);
+	template<typename Item>
+	using Column = Table::Column<Item>;
 
-	void Test()
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
+	void Sample()
 	{
+#if !defined(__cpp_inline_variables)	// C++11/14
+		static const auto& intCol = Cols::intCol;
+		static const auto& dblCol = Cols::dblCol;
+		static const auto& strCol = Cols::strCol;
+#endif
+
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
@@ -195,8 +220,10 @@ namespace sample3
 	}
 }
 
-namespace sample4
+namespace sample_data4
 {
+// Declarations in SimpleDataSampler.h
+/*
 	struct Struct
 	{
 		int intCol;
@@ -207,12 +234,18 @@ namespace sample4
 	using ColumnList = momo::DataColumnListStatic<Struct>;
 	using Table = momo::DataTable<ColumnList>;
 
-	MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
-
-	void Test()
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
+*/
+	void Sample()
 	{
+#if !defined(__cpp_inline_variables)	// C++11/14
+		static const auto& intCol = Cols::intCol;
+		static const auto& dblCol = Cols::dblCol;
+		static const auto& strCol = Cols::strCol;
+#endif
+
 		// construct empty table with 3 columns
 		Table table;
 
@@ -248,5 +281,10 @@ namespace sample4
 		}
 	}
 }
+
+//static int sampleData1 = (sample_data1::Sample(), 0);
+//static int sampleData2 = (sample_data2::Sample(), 0);
+//static int sampleData3 = (sample_data3::Sample(), 0);
+//static int sampleData4 = (sample_data4::Sample(), 0);
 
 #endif // TEST_SIMPLE_DATA
