@@ -16,11 +16,21 @@
 
 #include "SimpleDataSampler.h"
 
-#include <string>
 #include <iostream>
 
-namespace data1
+namespace sample_data1
 {
+// Declarations in SimpleDataSampler.h
+/*
+	using Table = momo::DataTable<>;
+
+	template<typename Item>
+	using Column = Table::Column<Item>;
+
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
 	void Sample()
 	{
 		// construct empty table with 3 columns
@@ -66,8 +76,19 @@ namespace data1
 	}
 }
 
-namespace data2
+namespace sample_data2
 {
+// Declarations in SimpleDataSampler.h
+/*
+	using Table = momo::DataTable<>;
+
+	template<typename Item>
+	using Column = Table::Column<Item>;
+
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
 	void Sample()
 	{
 		// construct empty table with 3 columns
@@ -132,8 +153,21 @@ namespace data2
 	}
 }
 
-namespace data3
+namespace sample_data3
 {
+// Declarations in SimpleDataSampler.h
+/*
+	using Struct = momo::DataStructDefault<int, double, std::string>;
+	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
+	using Table = momo::DataTable<ColumnList>;
+
+	template<typename Item>
+	using Column = Table::Column<Item>;
+
+	inline constexpr Column<int> intCol("intCol");
+	inline constexpr Column<double> dblCol("dblCol");
+	inline constexpr Column<std::string> strCol("strCol");
+*/
 	void Sample()
 	{
 		// construct empty table with 3 columns
@@ -165,8 +199,24 @@ namespace data3
 	}
 }
 
-namespace data4
+namespace sample_data4
 {
+// Declarations in SimpleDataSampler.h
+/*
+	struct Struct
+	{
+		int intCol;
+		double dblCol;
+		std::string strCol;
+	};
+
+	using ColumnList = momo::DataColumnListStatic<Struct>;
+	using Table = momo::DataTable<ColumnList>;
+
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
+	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
+*/
 	void Sample()
 	{
 		// construct empty table with 3 columns
@@ -205,9 +255,9 @@ namespace data4
 	}
 }
 
-//static int sampleData1 = (data1::Sample(), 0);
-//static int sampleData2 = (data2::Sample(), 0);
-//static int sampleData3 = (data3::Sample(), 0);
-//static int sampleData4 = (data4::Sample(), 0);
+//static int sampleData1 = (sample_data1::Sample(), 0);
+//static int sampleData2 = (sample_data2::Sample(), 0);
+//static int sampleData3 = (sample_data3::Sample(), 0);
+//static int sampleData4 = (sample_data4::Sample(), 0);
 
 #endif // TEST_SIMPLE_DATA

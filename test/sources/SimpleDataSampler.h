@@ -14,7 +14,9 @@
 
 #include "../../include/momo/DataTable.h"
 
-namespace data1
+#include <string>
+
+namespace sample_data1
 {
 	using Table = momo::DataTable<>;
 
@@ -26,7 +28,7 @@ namespace data1
 	inline constexpr Column<std::string> strCol("strCol");
 }
 
-namespace data2
+namespace sample_data2
 {
 	using Table = momo::DataTable<>;
 
@@ -38,7 +40,7 @@ namespace data2
 	inline constexpr Column<std::string> strCol("strCol");
 }
 
-namespace data3
+namespace sample_data3
 {
 	using Struct = momo::DataStructDefault<int, double, std::string>;
 	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
@@ -52,7 +54,7 @@ namespace data3
 	inline constexpr Column<std::string> strCol("strCol");
 }
 
-namespace data4
+namespace sample_data4
 {
 	struct Struct
 	{
