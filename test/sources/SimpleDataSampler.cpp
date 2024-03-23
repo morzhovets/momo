@@ -14,6 +14,10 @@
 
 #ifdef TEST_SIMPLE_DATA
 
+#if defined(TEST_MSVC) && _MSC_VER < 1939
+#pragma warning (disable: 4307)	// integral constant overflow
+#endif
+
 #include "SimpleDataSampler.h"
 
 #include <iostream>
@@ -33,12 +37,6 @@ namespace sample_data1
 */
 	void Sample()
 	{
-#if !defined(__cpp_inline_variables)	// C++11/14
-		static const auto& intCol = Cols::intCol;
-		static const auto& dblCol = Cols::dblCol;
-		static const auto& strCol = Cols::strCol;
-#endif
-
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
@@ -98,12 +96,6 @@ namespace sample_data2
 */
 	void Sample()
 	{
-#if !defined(__cpp_inline_variables)	// C++11/14
-		static const auto& intCol = Cols::intCol;
-		static const auto& dblCol = Cols::dblCol;
-		static const auto& strCol = Cols::strCol;
-#endif
-
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
@@ -183,12 +175,6 @@ namespace sample_data3
 */
 	void Sample()
 	{
-#if !defined(__cpp_inline_variables)	// C++11/14
-		static const auto& intCol = Cols::intCol;
-		static const auto& dblCol = Cols::dblCol;
-		static const auto& strCol = Cols::strCol;
-#endif
-
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
@@ -240,12 +226,6 @@ namespace sample_data4
 */
 	void Sample()
 	{
-#if !defined(__cpp_inline_variables)	// C++11/14
-		static const auto& intCol = Cols::intCol;
-		static const auto& dblCol = Cols::dblCol;
-		static const auto& strCol = Cols::strCol;
-#endif
-
 		// construct empty table with 3 columns
 		Table table;
 

@@ -28,12 +28,16 @@ namespace sample_data1
 	inline constexpr Column<double> dblCol("dblCol");
 	inline constexpr Column<std::string> strCol("strCol");
 #else
-	struct Cols	// inlined constants in C++11/14
-	{
-		static constexpr Column<int> intCol{"intCol"};
-		static constexpr Column<double> dblCol{"dblCol"};
-		static constexpr Column<std::string> strCol{"strCol"};
-	};
+	constexpr Column<int> intCol("intCol");
+	constexpr Column<double> dblCol("dblCol");
+	constexpr Column<std::string> strCol("strCol");
+
+	//struct Cols	// inlined constants in C++11/14
+	//{
+	//	static constexpr Column<int> intCol{"intCol"};
+	//	static constexpr Column<double> dblCol{"dblCol"};
+	//	static constexpr Column<std::string> strCol{"strCol"};
+	//};
 #endif
 }
 
@@ -50,12 +54,9 @@ namespace sample_data2
 	inline constexpr Column<double> dblCol("dblCol");
 	inline constexpr Column<std::string> strCol("strCol");
 #else
-	struct Cols	// inlined constants in C++11/14
-	{
-		static constexpr Column<int> intCol{"intCol"};
-		static constexpr Column<double> dblCol{"dblCol"};
-		static constexpr Column<std::string> strCol{"strCol"};
-	};
+	constexpr Column<int> intCol("intCol");
+	constexpr Column<double> dblCol("dblCol");
+	constexpr Column<std::string> strCol("strCol");
 #endif
 }
 
@@ -73,12 +74,9 @@ namespace sample_data3
 	inline constexpr Column<double> dblCol("dblCol");
 	inline constexpr Column<std::string> strCol("strCol");
 #else
-	struct Cols	// inlined constants in C++11/14
-	{
-		static constexpr Column<int> intCol{"intCol"};
-		static constexpr Column<double> dblCol{"dblCol"};
-		static constexpr Column<std::string> strCol{"strCol"};
-	};
+	constexpr Column<int> intCol("intCol");
+	constexpr Column<double> dblCol("dblCol");
+	constexpr Column<std::string> strCol("strCol");
 #endif
 }
 
@@ -99,11 +97,8 @@ namespace sample_data4
 	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
 	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
 #else
-	struct Cols	// inlined constants in C++11/14
-	{
-		static MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-		static MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-		static MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
-	};
+	MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
+	MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
+	MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
 #endif
 }
