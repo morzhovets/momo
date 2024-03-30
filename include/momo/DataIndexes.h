@@ -299,9 +299,6 @@ namespace internal
 		typedef typename ColumnList::Settings Settings;
 		typedef typename ColumnList::Raw Raw;
 
-		template<typename Item>
-		using Column = typename ColumnList::template Column<Item>;
-
 		typedef DataUniqueHashIndex UniqueHashIndex;
 		typedef DataMultiHashIndex MultiHashIndex;
 
