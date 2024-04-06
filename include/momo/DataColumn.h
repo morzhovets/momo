@@ -264,6 +264,12 @@ namespace internal
 			return mName;
 		}
 
+		template<typename Item>
+		static Code GetCode(const Column<Item>& column) noexcept
+		{
+			return column.GetCode();
+		}
+
 	protected:
 		explicit DataColumnInfoBase(Code code, const char* name) noexcept
 			: mCode(code),
@@ -272,7 +278,7 @@ namespace internal
 		}
 
 		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, ColumnInfo>::value>
+		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
 		ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
@@ -280,7 +286,7 @@ namespace internal
 
 		template<typename ColumnInfo, typename Item, typename PtrVisitor>
 		EnableIf<IsInvocable<const PtrVisitor&, void, Item*>::value &&
-			!IsInvocable<const PtrVisitor&, void, Item*, ColumnInfo>::value>
+			!IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
 		ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item);
@@ -451,11 +457,11 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode code,
+	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode columnCode,
 		size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(code + (code >> 32));
+		size_t shortCode = static_cast<size_t>(columnCode + (columnCode >> 32));
 		shortCode += shortCode >> 16;
 		if (logVertexCount < 8)
 			shortCode += shortCode >> 8;
@@ -552,7 +558,7 @@ public:
 	class ColumnRecord : public ColumnInfo
 	{
 	public:
-		explicit ColumnRecord(ColumnInfo columnInfo, size_t offset) noexcept	//?
+		explicit ColumnRecord(const ColumnInfo& columnInfo, size_t offset) noexcept	//?
 			: ColumnInfo(columnInfo),
 			mOffset(offset)
 		{
@@ -813,12 +819,13 @@ public:
 		pvCreateRaw(memManager, (&srcColumnList != this) ? &srcColumnList : nullptr, srcRaw, raw);
 	}
 
-	template<bool extraCheck = true>
-	MOMO_FORCEINLINE size_t GetOffset(ColumnInfo columnInfo) const
+	template<bool extraCheck = true,
+		typename Item>
+	MOMO_FORCEINLINE size_t GetOffset(const Column<Item>& column) const
 	{
-		ColumnCode code = columnInfo.GetCode();
-		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(code));
-		size_t offset = pvGetOffset(code);
+		ColumnCode columnCode = ColumnInfo::GetCode(column);
+		MOMO_EXTRA_CHECK(!extraCheck || mColumnCodeSet.ContainsKey(columnCode));
+		size_t offset = pvGetOffset(columnCode);
 		MOMO_ASSERT(offset < mTotalSize);
 		return offset;
 	}
@@ -849,15 +856,15 @@ public:
 		return internal::MemCopyer::ToBuffer(number, raw);
 	}
 
-	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
+	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
-		ColumnCode code = columnInfo.GetCode();
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		ColumnCode columnCode = columnInfo.GetCode();
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		if (addend1 == 0 || addend2 == 0)
 			return false;
-		if (!mColumnCodeSet.ContainsKey(code))
+		if (!mColumnCodeSet.ContainsKey(columnCode))
 			return false;
 		if (resOffset != nullptr)
 			*resOffset = addend1 + addend2;
@@ -884,7 +891,7 @@ private:
 		size_t initColumnCount = GetCount();
 		if (columnCount + initColumnCount > maxColumnCount)
 			throw std::logic_error("Too many columns");
-		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo(columns).GetCode()... }};
+		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo::GetCode(columns)... }};
 		Addends addends;
 		size_t offset;
 		size_t maxAlignment;
@@ -923,8 +930,8 @@ private:
 		}
 		catch (...)
 		{
-			for (ColumnCode code : columnCodes)
-				mColumnCodeSet.Remove(code);	// no throw
+			for (ColumnCode columnCode : columnCodes)
+				mColumnCodeSet.Remove(columnCode);	// no throw
 			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
 			throw;
 		}
@@ -1002,9 +1009,9 @@ private:
 	{
 	}
 
-	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode code) const noexcept
+	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
 	{
-		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(code, mCodeParam);
+		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
 		size_t addend1 = mAddends[vertices.first];
 		size_t addend2 = mAddends[vertices.second];
 		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
@@ -1147,6 +1154,8 @@ private:
 
 	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
 
+	typedef typename ColumnInfo::Code ColumnCode;
+
 public:
 	explicit DataColumnListStatic(MemManager memManager = MemManager())
 		: mColumns(std::move(memManager))
@@ -1223,12 +1232,11 @@ public:
 		RawManager::Copy(memManager, *srcRaw, raw);
 	}
 
-	template<bool extraCheck = true>
-	MOMO_FORCEINLINE size_t GetOffset(ColumnInfo columnInfo) const noexcept
+	template<bool extraCheck = true,
+		typename Item>
+	MOMO_FORCEINLINE size_t GetOffset(const Column<Item>& column) const noexcept
 	{
-		size_t offset = pvGetOffset(columnInfo);
-		MOMO_ASSERT(offset < sizeof(Struct));
-		return offset;
+		return pvGetOffset(ColumnInfo::GetCode(column));
 	}
 
 	template<typename Item>
@@ -1258,10 +1266,10 @@ public:
 		internal::MemCopyer::ToBuffer(number, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
 	}
 
-	bool Contains(ColumnInfo columnInfo, size_t* resOffset = nullptr) const noexcept
+	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
 	{
 		if (resOffset != nullptr)
-			*resOffset = pvGetOffset(columnInfo);
+			*resOffset = pvGetOffset(columnInfo.GetCode());
 		return true;
 	}
 
@@ -1298,9 +1306,11 @@ private:
 	{
 	}
 
-	MOMO_FORCEINLINE size_t pvGetOffset(ColumnInfo columnInfo) const noexcept
+	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
 	{
-		return static_cast<size_t>(columnInfo.GetCode());	//?
+		size_t offset = static_cast<size_t>(columnCode);	//?
+		MOMO_ASSERT(offset < sizeof(Struct));
+		return offset;
 	}
 
 	template<typename Item, typename... Items>
@@ -1321,7 +1331,7 @@ private:
 			throw std::logic_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mColumns)
 		{
-			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo));
+			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo.GetCode()));
 			columnInfo.Visit(item, ptrVisitor);
 		}
 	}
