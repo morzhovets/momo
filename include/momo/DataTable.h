@@ -504,6 +504,16 @@ public:
 		return pvNewRow(assigner, assigners...);
 	}
 
+	template<typename RawArg = Raw>
+	Row NewRow(RawArg&& rawArg)
+		requires requires (ColumnList& columnList, MemManager& memManager, Raw* raw)
+			{ columnList.CreateRaw(memManager, std::forward<RawArg>(rawArg), raw); }
+	{
+		auto rawCreator = [this, &rawArg] (Raw* raw)
+			{ GetColumnList().CreateRaw(GetMemManager(), std::forward<RawArg>(rawArg), raw); };
+		return pvMakeRow(pvCreateRaw(FastMovableFunctor(std::move(rawCreator))));
+	}
+
 	Row NewRow(const Row& row)
 	{
 		return pvMakeRow(pvImportRaw(row.GetColumnList(), row.GetRaw()));
@@ -899,12 +909,13 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	Raw* pvCreateRaw()
+	template<internal::conceptMoveFunctor<void, Raw*> RawCreator>
+	Raw* pvCreateRaw(FastMovableFunctor<RawCreator> rawCreator)
 	{
 		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
 		try
 		{
-			GetColumnList().CreateRaw(GetMemManager(), raw);
+			std::move(rawCreator)(raw);
 		}
 		catch (...)
 		{
@@ -914,19 +925,17 @@ private:
 		return raw;
 	}
 
+	Raw* pvCreateRaw()
+	{
+		auto rawCreator = [this] (Raw* raw) { GetColumnList().CreateRaw(GetMemManager(), raw); };
+		return pvCreateRaw(FastMovableFunctor(std::move(rawCreator)));
+	}
+
 	Raw* pvImportRaw(const ColumnList& srcColumnList, const Raw* srcRaw)
 	{
-		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
-		try
-		{
-			GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw);
-		}
-		catch (...)
-		{
-			mCrew.GetRawMemPool().Deallocate(raw);
-			throw;
-		}
-		return raw;
+		auto rawCreator = [this, &srcColumnList, srcRaw] (Raw* raw)
+			{ GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw); };
+		return pvCreateRaw(FastMovableFunctor(std::move(rawCreator)));
 	}
 
 	void pvDestroyRaws() noexcept

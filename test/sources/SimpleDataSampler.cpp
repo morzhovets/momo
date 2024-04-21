@@ -222,16 +222,13 @@ namespace sample_data4
 		// construct empty table with 3 columns
 		Table table;
 
+		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
+
 		{
 			auto row = table.NewRow();
-			row->intCol = 1;
-			row->dblCol = 1.5;
+			row->intCol = 2;
+			row->dblCol = 0.5;
 			row->strCol = "a";
-			table.AddRow(std::move(row));
-		}
-		{
-			auto row = table.NewRow(intCol = 2, strCol = "a");
-			row[dblCol] = 0.5;
 			table.AddRow(std::move(row));
 		}
 
