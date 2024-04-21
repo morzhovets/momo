@@ -420,7 +420,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 		template<typename Item>
-		using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
+		using Equaler = internal::DataEqualer<Column<Item>, Item>;
 
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;

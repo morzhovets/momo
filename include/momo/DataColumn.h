@@ -83,11 +83,11 @@ namespace internal
 		ItemArg&& mItemArg;
 	};
 
-	template<typename TColumn, typename TItemArg>
-	class DataEqualer : public DataOperator<TColumn, TItemArg>
+	template<typename TColumn, typename TItem>
+	class DataEqualer : public DataOperator<TColumn, const TItem&>
 	{
 	private:
-		typedef DataOperator<TColumn, TItemArg> Operator;
+		typedef DataOperator<TColumn, const TItem&> Operator;
 
 	public:
 		using Operator::Operator;
@@ -121,7 +121,7 @@ namespace internal
 
 		typedef DataColumn<DataMutable<Item>, Struct, Code> MutableColumn;
 
-		typedef DataEqualer<DataColumn, const Item&> Equaler;
+		typedef DataEqualer<DataColumn, Item> Equaler;
 
 		template<typename ItemArg>
 		using Assigner = DataAssigner<DataColumn, ItemArg>;

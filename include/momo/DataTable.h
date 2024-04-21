@@ -87,7 +87,7 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
+	using Equaler = internal::DataEqualer<Column<Item>, Item>;
 
 	template<typename Item, typename ItemArg>
 	using Assigner = internal::DataAssigner<Column<Item>, ItemArg>;
