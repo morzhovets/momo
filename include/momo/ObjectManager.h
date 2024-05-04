@@ -588,9 +588,9 @@ namespace internal
 			size_t count, FastMovableFunctor<ObjectCreator> objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
-			auto func = [objectCreator = std::move(objectCreator), newObject] () mutable
+			auto exec = [objectCreator = std::move(objectCreator), newObject] () mutable
 				{ std::move(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, FastMovableFunctor(std::move(func)));
+			RelocateExec(memManager, srcBegin, dstBegin, count, FastMovableFunctor(std::move(exec)));
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,

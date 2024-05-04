@@ -382,20 +382,20 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key,
 			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
+			auto exec = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
 			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey,
-				FastMovableFunctor(std::move(func)));
+				FastMovableFunctor(std::move(exec)));
 		}
 
 		template<conceptObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
 			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
-			auto func = [valueCreator = std::move(valueCreator), newValue] () mutable
+			auto exec = [valueCreator = std::move(valueCreator), newValue] () mutable
 				{ std::move(valueCreator)(newValue); };
 			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey,
-				FastMovableFunctor(std::move(func)));
+				FastMovableFunctor(std::move(exec)));
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
