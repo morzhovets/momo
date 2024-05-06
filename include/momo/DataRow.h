@@ -150,6 +150,18 @@ namespace internal
 			return Get(column);
 		}
 
+		template<typename Item>
+		MOMO_FORCEINLINE const Item& operator->*(const Column<Item>& column) const
+		{
+			return Get(column);
+		}
+
+		template<typename Item>
+		MOMO_FORCEINLINE Item& operator->*(const Column<Item>& column)
+		{
+			return Get(column);
+		}
+
 		template<typename PtrVisitor>	// ptrVisitor(const auto* item [, const ColumnInfo& columnInfo])
 		void VisitPointers(PtrVisitor ptrVisitor) const
 		{
@@ -259,6 +271,12 @@ namespace internal
 
 		template<typename Item>
 		MOMO_FORCEINLINE const Item& operator[](const Column<Item>& column) const
+		{
+			return Get(column);
+		}
+
+		template<typename Item>
+		MOMO_FORCEINLINE const Item& operator->*(const Column<Item>& column) const
 		{
 			return Get(column);
 		}
