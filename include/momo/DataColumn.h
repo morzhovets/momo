@@ -15,6 +15,7 @@
 
   namespace momo:
     concept conceptDataColumnList
+    class DataColumnInfo
     class DataSettings
     struct DataStructDefault
     class DataColumnTraits
@@ -229,8 +230,24 @@ namespace internal
 		typedef TStruct Struct;
 		typedef TCode Code;
 
-		template<typename Item>
-		using Column = DataColumn<Item, Struct, Code>;
+	private:
+		template<typename Struct>
+		struct VisitableItemsSelector
+		{
+			typedef std::tuple<> VisitableItems;
+		};
+
+#ifndef MOMO_DISABLE_TYPE_INFO
+		template<typename Struct>
+		requires requires { typename Struct::VisitableItems; }
+		struct VisitableItemsSelector<Struct>
+		{
+			typedef typename Struct::VisitableItems VisitableItems;
+		};
+#endif
+
+	public:
+		typedef typename VisitableItemsSelector<Struct>::VisitableItems VisitableItems;
 
 	public:
 		Code GetCode() const noexcept
@@ -238,27 +255,55 @@ namespace internal
 			return mCode;
 		}
 
-		const char* GetName() const noexcept
+#ifndef MOMO_DISABLE_TYPE_INFO
+		const std::type_info& GetTypeInfo() const noexcept
 		{
-			return mName;
+			return mTypeInfo;
 		}
-
-		template<typename Item>
-		static Code GetCode(const Column<Item>& column) noexcept
-		{
-			return column.GetCode();
-		}
+#endif
 
 	protected:
-		explicit DataColumnInfoBase(Code code, const char* name) noexcept
-			: mCode(code),
-			mName(name)
+		template<typename Item>
+		explicit DataColumnInfoBase(Code code, Item*) noexcept
+#ifndef MOMO_DISABLE_TYPE_INFO
+			: mTypeInfo(typeid(Item))
+#endif
 		{
+			mCode = code;
+		}
+
+		template<typename ColumnInfo, typename Void,
+			conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+		void ptVisit(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		{
+			pvVisitRec<ColumnInfo, 0>(item, ptrVisitor);
+		}
+
+	private:
+		template<typename ColumnInfo, size_t index, typename Void,
+			conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+		void pvVisitRec(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		{
+#ifndef MOMO_DISABLE_TYPE_INFO
+			if constexpr (index < std::tuple_size_v<VisitableItems>)
+			{
+				typedef std::tuple_element_t<index, VisitableItems> Item;
+				typedef std::conditional_t<std::is_const_v<Void>, const Item*, Item*> ItemPtr;
+				if (typeid(Item) == mTypeInfo)
+					pvVisit<ColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
+				else
+					pvVisitRec<ColumnInfo, index + 1>(item, ptrVisitor);
+			}
+			else
+#endif
+			{
+				return pvVisit<ColumnInfo>(item, ptrVisitor);
+			}
 		}
 
 		template<typename ColumnInfo, typename Item,
 			conceptDataPtrVisitor<Item, ColumnInfo> PtrVisitor>
-		void ptVisit(Item* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		void pvVisit(Item* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			if constexpr (conceptConstFunctor<PtrVisitor, void, Item*, const ColumnInfo&>)
 				ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
@@ -268,120 +313,10 @@ namespace internal
 
 	private:
 		Code mCode;
-		const char* mName;
-	};
-
-#ifdef MOMO_DISABLE_TYPE_INFO
-	template<typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
-	{
-	private:
-		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
-
-	public:
-		template<typename Item>
-		using Column = typename ColumnInfoBase::template Column<Item>;
-
-		typedef std::tuple<> VisitableItems;
-
-	public:
-		template<typename Item>
-		DataColumnInfo(const Column<Item>& column) noexcept
-			: ColumnInfoBase(column.GetCode(), column.GetName())
-		{
-		}
-
-		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
-		void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
-		{
-			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
-		}
-
-		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
-		void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
-		{
-			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
-		}
-	};
-#else
-	template<typename Struct>
-	struct DataVisitableItemsGetter
-	{
-		typedef std::tuple<> VisitableItems;
-	};
-
-	template<typename Struct>
-	requires requires { typename Struct::VisitableItems; }
-	struct DataVisitableItemsGetter<Struct>
-	{
-		typedef typename Struct::VisitableItems VisitableItems;
-	};
-
-	template<typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
-	{
-	private:
-		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
-
-	public:
-		using typename ColumnInfoBase::Struct;
-
-		template<typename Item>
-		using Column = typename ColumnInfoBase::template Column<Item>;
-
-		typedef typename DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
-
-	public:
-		template<typename Item>
-		DataColumnInfo(const Column<Item>& column) noexcept
-			: ColumnInfoBase(column.GetCode(), column.GetName()),
-			mTypeInfo(typeid(Item))
-		{
-		}
-
-		const std::type_info& GetTypeInfo() const noexcept
-		{
-			return mTypeInfo;
-		}
-
-		template<conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
-		void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
-		{
-			pvVisitRec<0>(item, ptrVisitor);
-		}
-
-		template<conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
-		void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
-		{
-			pvVisitRec<0>(item, ptrVisitor);
-		}
-
-	private:
-		template<size_t index, typename Void,
-			conceptDataPtrVisitor<Void, DataColumnInfo> PtrVisitor>
-		void pvVisitRec(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
-		{
-			if constexpr (index < std::tuple_size_v<VisitableItems>)
-			{
-				typedef std::tuple_element_t<index, VisitableItems> Item;
-				typedef std::conditional_t<std::is_const_v<Void>, const Item*, Item*> ItemPtr;
-				if (typeid(Item) == mTypeInfo)
-					ColumnInfoBase::template ptVisit<DataColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
-				else
-					pvVisitRec<index + 1>(item, ptrVisitor);
-			}
-			else
-			{
-				return ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
-			}
-		}
-
-	private:
+#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& mTypeInfo;
-	};
 #endif
+	};
 }
 
 template<typename DataColumnList,
@@ -405,6 +340,57 @@ concept conceptDataColumnList =
 		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
 			-> std::same_as<TestItem&>;
 	};
+
+template<typename TStruct,
+	typename TCode = uint64_t>
+class DataColumnInfo : public internal::DataColumnInfoBase<TStruct, TCode>
+{
+private:
+	typedef internal::DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
+
+public:
+	using typename ColumnInfoBase::Struct;
+	using typename ColumnInfoBase::Code;
+
+	template<typename Item>
+	using Column = internal::DataColumn<Item, Struct, Code>;
+
+public:
+	template<typename Item>
+	DataColumnInfo(const Column<Item>& column) noexcept
+		: ColumnInfoBase(GetCode(column), static_cast<Item*>(nullptr)),
+		mName(column.GetName())
+	{
+	}
+
+	using ColumnInfoBase::GetCode;
+
+	template<typename Item>
+	static Code GetCode(const Column<Item>& column) noexcept
+	{
+		return column.GetCode();
+	}
+
+	const char* GetName() const noexcept
+	{
+		return mName;
+	}
+
+	template<internal::conceptDataPtrVisitor<const void, DataColumnInfo> PtrVisitor>
+	void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+	}
+
+	template<internal::conceptDataPtrVisitor<void, DataColumnInfo> PtrVisitor>
+	void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+	}
+
+private:
+	const char* mName;
+};
 
 template<bool tKeepRowNumber = false>
 class DataSettings
@@ -441,7 +427,7 @@ public:
 	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
 	static const size_t maxCodeParam = 255;
 
-	typedef internal::DataColumnInfo<Struct> ColumnInfo;
+	typedef DataColumnInfo<Struct> ColumnInfo;
 
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
@@ -1131,6 +1117,7 @@ private:
 };
 
 template<typename TStruct,
+	typename TColumnInfo = DataColumnInfo<TStruct>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = DataSettings<>>
 requires std::is_class_v<TStruct>
@@ -1138,10 +1125,9 @@ class DataColumnListStatic
 {
 public:
 	typedef TStruct Struct;
+	typedef TColumnInfo ColumnInfo;
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
-
-	typedef internal::DataColumnInfo<Struct> ColumnInfo;
 
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;

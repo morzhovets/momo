@@ -55,7 +55,8 @@ public:
 	{
 		{
 			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
+				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(dblStruct);
 			columnList.PrepareForVisitors(intStruct, dblStruct, strStruct);
@@ -66,8 +67,8 @@ public:
 
 		{
 			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>,
-				momo::DataSettings<true>> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
+				momo::MemManagerDict<>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
