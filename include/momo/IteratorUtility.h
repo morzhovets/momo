@@ -150,6 +150,10 @@ namespace internal
 	struct InsertResult
 	{
 	public:
+		InsertResult() noexcept
+		{
+		}
+
 		InsertResult(Position pos, bool inserted) noexcept
 			: position(pos),
 			inserted(inserted)

@@ -101,7 +101,11 @@ public:
 		std::string s3 = "s3";
 
 		HashSet set;
-		set.InsertVar(s1, "s1");
+
+		typename HashSet::InsertResult insRes;
+		insRes = set.InsertVar(s1, "s1");
+		assert(insRes.inserted);
+
 		set.Add(set.Find("s2"), s2);
 		set.Add(set.Find(s3), "s3");
 
