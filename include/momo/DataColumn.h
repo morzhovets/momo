@@ -59,24 +59,24 @@ namespace internal
 	};
 
 	template<typename TColumn, typename TItemArg>
-	class DataOperator
+	class DataTermBase
 	{
 	public:
 		typedef TColumn Column;
 		typedef TItemArg ItemArg;
 
 	public:
-		explicit DataOperator(const Column& column, ItemArg&& itemArg) noexcept
+		explicit DataTermBase(const Column& column, ItemArg&& itemArg) noexcept
 			: mColumn(column),
 			mItemArg(std::forward<ItemArg>(itemArg))
 		{
 		}
 
-		DataOperator(const DataOperator&) = delete;
+		DataTermBase(const DataTermBase&) = delete;
 
-		~DataOperator() noexcept = default;
+		~DataTermBase() noexcept = default;
 
-		DataOperator& operator=(const DataOperator&) = delete;
+		DataTermBase& operator=(const DataTermBase&) = delete;
 
 		const Column& GetColumn() const noexcept
 		{
@@ -94,23 +94,23 @@ namespace internal
 	};
 
 	template<typename TColumn, typename TItem>
-	class DataEqualer : public DataOperator<TColumn, const TItem&>
+	class DataEqualTerm : public DataTermBase<TColumn, const TItem&>
 	{
 	private:
-		typedef DataOperator<TColumn, const TItem&> Operator;
+		typedef DataTermBase<TColumn, const TItem&> TermBase;
 
 	public:
-		using Operator::Operator;
+		using TermBase::TermBase;
 	};
 
 	template<typename TColumn, typename TItemArg>
-	class DataAssigner : public DataOperator<TColumn, TItemArg>
+	class DataAssignTerm : public DataTermBase<TColumn, TItemArg>
 	{
 	private:
-		typedef DataOperator<TColumn, TItemArg> Operator;
+		typedef DataTermBase<TColumn, TItemArg> TermBase;
 
 	public:
-		using Operator::Operator;
+		using TermBase::TermBase;
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
@@ -276,10 +276,10 @@ public:
 
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
-	typedef internal::DataEqualer<DataColumn, Item> Equaler;
+	typedef internal::DataEqualTerm<DataColumn, Item> EqualTerm;
 
 	template<typename ItemArg>
-	using Assigner = internal::DataAssigner<DataColumn, ItemArg>;
+	using AssignTerm = internal::DataAssignTerm<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(const char* name) noexcept
@@ -326,15 +326,15 @@ public:
 		return false;
 	}
 
-	Equaler operator==(const Item& item) const noexcept
+	EqualTerm operator==(const Item& item) const noexcept
 	{
-		return Equaler(*this, item);
+		return EqualTerm(*this, item);
 	}
 
 	template<typename ItemArg>
-	Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	AssignTerm<ItemArg> operator=(ItemArg&& itemArg) const noexcept
 	{
-		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+		return AssignTerm<ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
 
 private:

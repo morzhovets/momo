@@ -38,7 +38,7 @@ public:
 
 	typedef HashBucketOpenDefault HashBucket;
 
-	static const size_t selectEqualerMaxCount = 6;
+	static const size_t selectEqualTermMaxCount = 6;
 
 public:
 	template<typename Item>
@@ -87,10 +87,10 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equaler = internal::DataEqualer<Column<Item>, Item>;
+	using EqualTerm = internal::DataEqualTerm<Column<Item>, Item>;
 
 	template<typename Item, typename ItemArg>
-	using Assigner = internal::DataAssigner<Column<Item>, ItemArg>;
+	using AssignTerm = internal::DataAssignTerm<Column<Item>, ItemArg>;
 
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;
@@ -499,9 +499,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	Row NewRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
+	Row NewRow(AssignTerm<Item, ItemArg> assignTerm, AssignTerm<Items, ItemArgs>... assignTerms)
 	{
-		return pvNewRow(assigner, assigners...);
+		return pvNewRow(assignTerm, assignTerms...);
 	}
 
 	template<typename RawArg = Raw>
@@ -533,9 +533,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	RowReference AddRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
+	RowReference AddRow(AssignTerm<Item, ItemArg> assignTerm, AssignTerm<Items, ItemArgs>... assignTerms)
 	{
-		return AddRow(pvNewRow(assigner, assigners...));
+		return AddRow(pvNewRow(assignTerm, assignTerms...));
 	}
 
 	TryResult TryAddRow(Row&& row)
@@ -553,9 +553,9 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	TryResult TryAddRow(Assigner<Item, ItemArg> assigner, Assigner<Items, ItemArgs>... assigners)
+	TryResult TryAddRow(AssignTerm<Item, ItemArg> assignTerm, AssignTerm<Items, ItemArgs>... assignTerms)
 	{
-		return TryAddRow(pvNewRow(assigner, assigners...));
+		return TryAddRow(pvNewRow(assignTerm, assignTerms...));
 	}
 
 	RowReference InsertRow(size_t rowNumber, Row&& row)
@@ -567,10 +567,10 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	RowReference InsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
-		Assigner<Items, ItemArgs>... assigners)
+	RowReference InsertRow(size_t rowNumber, AssignTerm<Item, ItemArg> assignTerm,
+		AssignTerm<Items, ItemArgs>... assignTerms)
 	{
-		return InsertRow(rowNumber, pvNewRow(assigner, assigners...));
+		return InsertRow(rowNumber, pvNewRow(assignTerm, assignTerms...));
 	}
 
 	TryResult TryInsertRow(size_t rowNumber, Row&& row)
@@ -587,10 +587,10 @@ public:
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
-	TryResult TryInsertRow(size_t rowNumber, Assigner<Item, ItemArg> assigner,
-		Assigner<Items, ItemArgs>... assigners)
+	TryResult TryInsertRow(size_t rowNumber, AssignTerm<Item, ItemArg> assignTerm,
+		AssignTerm<Items, ItemArgs>... assignTerms)
 	{
-		return TryInsertRow(rowNumber, pvNewRow(assigner, assigners...));
+		return TryInsertRow(rowNumber, pvNewRow(assignTerm, assignTerms...));
 	}
 
 	void RemoveRow(ConstRowReference rowRef)
@@ -746,39 +746,39 @@ public:
 	}
 
 	template<typename... Items>
-	ConstSelection Select(Equaler<Items>... equalers) const
+	ConstSelection Select(EqualTerm<Items>... equalTerms) const
 	{
-		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equalers...);
+		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equalTerms...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	ConstSelection Select(RowFilter rowFilter, Equaler<Items>... equalers) const
+	ConstSelection Select(RowFilter rowFilter, EqualTerm<Items>... equalTerms) const
 	{
-		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equalers...);
+		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equalTerms...);
 	}
 
 	template<typename... Items>
-	Selection Select(Equaler<Items>... equalers)
+	Selection Select(EqualTerm<Items>... equalTerms)
 	{
-		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equalers...);
+		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equalTerms...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	Selection Select(RowFilter rowFilter, Equaler<Items>... equalers)
+	Selection Select(RowFilter rowFilter, EqualTerm<Items>... equalTerms)
 	{
-		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equalers...);
+		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equalTerms...);
 	}
 
 	template<typename... Items>
-	size_t SelectCount(Equaler<Items>... equalers) const
+	size_t SelectCount(EqualTerm<Items>... equalTerms) const
 	{
-		return pvSelect<size_t>(FastCopyableFunctor(EmptyRowFilter()), equalers...);
+		return pvSelect<size_t>(FastCopyableFunctor(EmptyRowFilter()), equalTerms...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	size_t SelectCount(RowFilter rowFilter, Equaler<Items>... equalers) const
+	size_t SelectCount(RowFilter rowFilter, EqualTerm<Items>... equalTerms) const
 	{
-		return pvSelect<size_t>(FastCopyableFunctor<RowFilter>(rowFilter), equalers...);
+		return pvSelect<size_t>(FastCopyableFunctor<RowFilter>(rowFilter), equalTerms...);
 	}
 
 	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
@@ -792,31 +792,31 @@ public:
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equaler<Item> equaler,
-		Equaler<Items>... equalers) const
+	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, EqualTerm<Item> equalTerm,
+		EqualTerm<Items>... equalTerms) const
 	{
-		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equaler, equalers...);
+		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equalTerm, equalTerms...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equaler<Item> equaler,
-		Equaler<Items>... equalers)
+	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, EqualTerm<Item> equalTerm,
+		EqualTerm<Items>... equalTerms)
 	{
-		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equaler, equalers...);
+		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equalTerm, equalTerms...);
 	}
 
 	template<typename Item, typename... Items>
-	ConstRowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equaler<Item> equaler,
-		Equaler<Items>... equalers) const
+	ConstRowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, EqualTerm<Item> equalTerm,
+		EqualTerm<Items>... equalTerms) const
 	{
-		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equaler, equalers...);
+		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equalTerm, equalTerms...);
 	}
 
 	template<typename Item, typename... Items>
-	RowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equaler<Item> equaler,
-		Equaler<Items>... equalers)
+	RowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, EqualTerm<Item> equalTerm,
+		EqualTerm<Items>... equalTerms)
 	{
-		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equaler, equalers...);
+		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equalTerm, equalTerms...);
 	}
 
 	template<typename Item, typename... Items>
@@ -962,12 +962,12 @@ private:
 	}
 
 	template<typename... Items, typename... ItemArgs>
-	Row pvNewRow(const Assigner<Items, ItemArgs>&... assigners)
+	Row pvNewRow(const AssignTerm<Items, ItemArgs>&... assignTerms)
 	{
 		Raw* raw = pvCreateRaw();
 		try
 		{
-			(pvFillRaw(raw, assigners), ...);
+			(pvFillRaw(raw, assignTerms), ...);
 		}
 		catch (...)
 		{
@@ -978,11 +978,11 @@ private:
 	}
 
 	template<typename Item, typename ItemArg>
-	void pvFillRaw(Raw* raw, const Assigner<Item, ItemArg>& assigner) const
+	void pvFillRaw(Raw* raw, const AssignTerm<Item, ItemArg>& assignTerm) const
 	{
 		const ColumnList& columnList = GetColumnList();
-		size_t offset = columnList.GetOffset(assigner.GetColumn());
-		columnList.template Assign<Item>(raw, offset, std::forward<ItemArg>(assigner.GetItemArg()));
+		size_t offset = columnList.GetOffset(assignTerm.GetColumn());
+		columnList.template Assign<Item>(raw, offset, std::forward<ItemArg>(assignTerm.GetItemArg()));
 	}
 
 	void pvSetNumbers(size_t beginNumber = 0) noexcept
@@ -1241,9 +1241,9 @@ private:
 
 	template<typename... Items,
 		size_t columnCount = sizeof...(Items)>
-	std::array<size_t, columnCount> pvGetOffsets(const Equaler<Items>&... equalers) const
+	std::array<size_t, columnCount> pvGetOffsets(const EqualTerm<Items>&... equalTerms) const
 	{
-		return pvGetOffsets(equalers.GetColumn()...);
+		return pvGetOffsets(equalTerms.GetColumn()...);
 	}
 
 	template<size_t columnCount>
@@ -1262,45 +1262,45 @@ private:
 
 	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter,
 		typename Item, typename... Items, size_t columnCount = 1 + sizeof...(Items)>
-	requires (columnCount > DataTraits::selectEqualerMaxCount)
-	Result pvSelect(FastCopyableFunctor<RowFilter> rowFilter, const Equaler<Item>& equaler,
-		const Equaler<Items>&... equalers) const
+	requires (columnCount > DataTraits::selectEqualTermMaxCount)
+	Result pvSelect(FastCopyableFunctor<RowFilter> rowFilter, const EqualTerm<Item>& equalTerm,
+		const EqualTerm<Items>&... equalTerms) const
 	{
-		auto newRowFilter = [rowFilter, &equaler] (ConstRowReference rowRef)
+		auto newRowFilter = [rowFilter, &equalTerm] (ConstRowReference rowRef)
 		{
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-			size_t offset = rowRef.GetColumnList().GetOffset(equaler.GetColumn());
+			size_t offset = rowRef.GetColumnList().GetOffset(equalTerm.GetColumn());
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
+			return DataTraits::IsEqual(item, equalTerm.GetItemArg()) && rowFilter(rowRef);
 		};
-		return pvSelect<Result>(FastCopyableFunctor(newRowFilter), equalers...);
+		return pvSelect<Result>(FastCopyableFunctor(newRowFilter), equalTerms...);
 	}
 
 	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter,
 		typename... Items, size_t columnCount = sizeof...(Items)>
-	requires (0 < columnCount && columnCount <= DataTraits::selectEqualerMaxCount)
+	requires (0 < columnCount && columnCount <= DataTraits::selectEqualTermMaxCount)
 	Result pvSelect(FastCopyableFunctor<RowFilter> rowFilter,
-		const Equaler<Items>&... equalers) const
+		const EqualTerm<Items>&... equalTerms) const
 	{
-		auto offsets = pvGetOffsets(equalers...);
+		auto offsets = pvGetOffsets(equalTerms...);
 		auto sortedOffsets = Indexes::GetSortedOffsets(offsets);
 		UniqueHashIndex uniqueHashIndex = mIndexes.GetFitUniqueHashIndex(sortedOffsets);
 		if (uniqueHashIndex != UniqueHashIndex::empty)
 		{
 			return pvSelectRec<Result>(uniqueHashIndex, offsets.data(), rowFilter,
-				OffsetItemTuple<>(), equalers...);
+				OffsetItemTuple<>(), equalTerms...);
 		}
 		MultiHashIndex multiHashIndex = mIndexes.GetFitMultiHashIndex(sortedOffsets);
 		if (multiHashIndex != MultiHashIndex::empty)
 		{
 			return pvSelectRec<Result>(multiHashIndex, offsets.data(), rowFilter,
-				OffsetItemTuple<>(), equalers...);
+				OffsetItemTuple<>(), equalTerms...);
 		}
-		auto newRowFilter = [rowFilter, &offsets, &equalers...] (ConstRowReference rowRef)
+		auto newRowFilter = [rowFilter, &offsets, &equalTerms...] (ConstRowReference rowRef)
 		{
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 			const size_t* offsetPtr = offsets.data();
-			return (pvIsSatisfied(raw, equalers, *offsetPtr++) && ...) && rowFilter(rowRef);
+			return (pvIsSatisfied(raw, equalTerms, *offsetPtr++) && ...) && rowFilter(rowRef);
 		};
 		return pvMakeSelection(mRaws, FastCopyableFunctor(newRowFilter),
 			static_cast<Result*>(nullptr));
@@ -1313,10 +1313,10 @@ private:
 	}
 
 	template<typename Item>
-	static bool pvIsSatisfied(Raw* raw, const Equaler<Item>& equaler, size_t offset)
+	static bool pvIsSatisfied(Raw* raw, const EqualTerm<Item>& equalTerm, size_t offset)
 	{
 		const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-		return DataTraits::IsEqual(item, equaler.GetItemArg());
+		return DataTraits::IsEqual(item, equalTerm.GetItemArg());
 	}
 
 	template<typename Result, typename Index,
@@ -1324,26 +1324,26 @@ private:
 		typename Tuple, typename Item, typename... Items>
 	Result pvSelectRec(Index index, const size_t* offsetPtr,
 		FastCopyableFunctor<RowFilter> rowFilter, Tuple&& tuple,
-		const Equaler<Item>& equaler, const Equaler<Items>&... equalers) const
+		const EqualTerm<Item>& equalTerm, const EqualTerm<Items>&... equalTerms) const
 	{
 		size_t offset = *offsetPtr;
 		if (mIndexes.ContainsOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(std::move(tuple),
-				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
+				std::make_tuple(std::pair<size_t, const Item&>(offset, equalTerm.GetItemArg())));
 			return pvSelectRec<Result>(index, offsetPtr + 1, rowFilter,
-				std::move(newTuple), equalers...);
+				std::move(newTuple), equalTerms...);
 		}
 		else
 		{
-			auto newRowFilter = [rowFilter, offset, &equaler] (ConstRowReference rowRef)
+			auto newRowFilter = [rowFilter, offset, &equalTerm] (ConstRowReference rowRef)
 			{
 				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-				return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
+				return DataTraits::IsEqual(item, equalTerm.GetItemArg()) && rowFilter(rowRef);
 			};
 			return pvSelectRec<Result>(index, offsetPtr + 1, FastCopyableFunctor(newRowFilter),
-				std::move(tuple), equalers...);
+				std::move(tuple), equalTerms...);
 		}
 	}
 
@@ -1408,11 +1408,11 @@ private:
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>
-	RowBoundsProxy pvFindByHash(Index index, const Equaler<Items>&... equalers) const
+	RowBoundsProxy pvFindByHash(Index index, const EqualTerm<Items>&... equalTerms) const
 	{
-		auto offsets = pvGetOffsets(equalers...);
+		auto offsets = pvGetOffsets(equalTerms...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
-		OffsetItemTuple<Items...> tuple = { { 0, equalers.GetItemArg() }... };
+		OffsetItemTuple<Items...> tuple = { { 0, equalTerms.GetItemArg() }... };
 		const size_t* offsetPtr = offsets.data();
 		std::apply([&offsetPtr] (auto&... pairs) { ((pairs.first = *offsetPtr++), ...); }, tuple);
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));

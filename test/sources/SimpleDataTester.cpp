@@ -47,7 +47,7 @@ private:
 	class DataTraits1 : public momo::DataTraits
 	{
 	public:
-		static const size_t selectEqualerMaxCount = 1;
+		static const size_t selectEqualTermMaxCount = 1;
 	};
 
 public:

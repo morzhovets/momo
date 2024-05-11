@@ -420,7 +420,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 		template<typename Item>
-		using Equaler = internal::DataEqualer<Column<Item>, Item>;
+		using EqualTerm = internal::DataEqualTerm<Column<Item>, Item>;
 
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
@@ -729,15 +729,15 @@ namespace internal
 		}
 
 		template<typename Item, typename... Items>
-		size_t GetLowerBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		size_t GetLowerBound(EqualTerm<Item> equalTerm, EqualTerm<Items>... equalTerms) const
 		{
-			return pvBinarySearch<true>(equaler, equalers...);
+			return pvBinarySearch<true>(equalTerm, equalTerms...);
 		}
 
 		template<typename Item, typename... Items>
-		size_t GetUpperBound(Equaler<Item> equaler, Equaler<Items>... equalers) const
+		size_t GetUpperBound(EqualTerm<Item> equalTerm, EqualTerm<Items>... equalTerms) const
 		{
-			return pvBinarySearch<false>(equaler, equalers...);
+			return pvBinarySearch<false>(equalTerm, equalTerms...);
 		}
 
 		template<internal::conceptPredicate<ConstRowReference> RowPredicate>
@@ -862,14 +862,14 @@ namespace internal
 		}
 
 		template<bool includeEqual, typename... Items>
-		size_t pvBinarySearch(const Equaler<Items>&... equalers) const
+		size_t pvBinarySearch(const EqualTerm<Items>&... equalTerms) const
 		{
-			static const size_t columnCount = sizeof...(equalers);
+			static const size_t columnCount = sizeof...(equalTerms);
 			std::array<size_t, columnCount> offsets =
-				{{ mColumnList->GetOffset(equalers.GetColumn())... }};
-			auto rawPred = [&offsets, &equalers...] (Raw*, Raw* raw)
+				{{ mColumnList->GetOffset(equalTerms.GetColumn())... }};
+			auto rawPred = [&offsets, &equalTerms...] (Raw*, Raw* raw)
 			{
-				std::weak_ordering cmp = pvCompare(offsets.data(), raw, equalers...);
+				std::weak_ordering cmp = pvCompare(offsets.data(), raw, equalTerms...);
 				return includeEqual ? cmp >= 0 : cmp > 0;
 			};
 			return UIntMath<>::Dist(mRaws.GetBegin(),
@@ -879,15 +879,15 @@ namespace internal
 
 		template<typename Item, typename... Items>
 		static std::weak_ordering pvCompare(const size_t* offsetPtr, Raw* raw1,
-			const Equaler<Item>& equaler2, const Equaler<Items>&... equalers2)
+			const EqualTerm<Item>& equalTerm2, const EqualTerm<Items>&... equalTerms2)
 		{
 			size_t offset = *offsetPtr;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
-			const Item& item2 = equaler2.GetItemArg();
+			const Item& item2 = equalTerm2.GetItemArg();
 			if (std::weak_ordering cmp = DataTraits::Compare(item1, item2); cmp != 0)
 				return cmp;
 			if constexpr (sizeof...(Items) > 0)
-				return pvCompare(offsetPtr + 1, raw1, equalers2...);
+				return pvCompare(offsetPtr + 1, raw1, equalTerms2...);
 			else
 				return std::weak_ordering::equivalent;
 		}
