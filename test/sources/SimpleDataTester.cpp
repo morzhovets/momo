@@ -207,7 +207,7 @@ public:
 		}
 
 		for (size_t i = 0; i < count; i += 2)
-			table.UpdateRow(table[i], strCol, std::string("0"));
+			table.UpdateRow(table[i], strCol, "0");
 
 		for (size_t i = 1; i < count; i += 2)
 		{

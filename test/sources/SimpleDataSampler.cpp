@@ -41,11 +41,12 @@ namespace sample_data1
 
 		std::cout << table.GetCount() << std::endl;	// 2
 
-		// table[0][dblCol] = 1.5;
-		table.UpdateRow(table[0], dblCol, 1.5);
+		// table[0][dblCol] returns `const double&`
+		std::cout << table[0][dblCol] << std::endl;	// 0.5
 
-		// table[1][strCol] = "a";
-		table.UpdateRow(table[1], strCol, std::string("a"));
+		// after adding the row can be modified by function `UpdateRow`
+		table.UpdateRow(table[0], dblCol, 1.5);
+		table.UpdateRow(table[1], strCol, "a");
 
 		for (auto row : table)
 			std::cout << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
