@@ -96,7 +96,10 @@ public:
 		std::string s2 = "s2";
 
 		TreeSet set = { s2, "s3" };
-		set.InsertVar(s1, "s1");
+
+		TreeSet::InsertResult insRes;
+		insRes = set.InsertVar(s1, "s1");
+		assert(insRes.inserted);
 
 		assert(set.GetCount() == 3);
 		assert(set.ContainsKey(s1));

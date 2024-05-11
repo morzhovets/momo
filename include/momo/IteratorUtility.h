@@ -150,7 +150,7 @@ namespace internal
 	struct InsertResult
 	{
 	public:
-		InsertResult() noexcept
+		explicit InsertResult() noexcept
 		{
 		}
 
