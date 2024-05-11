@@ -22,19 +22,14 @@ namespace sample_data1
 {
 // Declarations in SimpleDataSampler.h
 /*
-	using Table = momo::DataTable<>;
-
-	template<typename Item>
-	using Column = Table::Column<Item>;
-
-	inline constexpr Column<int> intCol("intCol");
-	inline constexpr Column<double> dblCol("dblCol");
-	inline constexpr Column<std::string> strCol("strCol");
+	inline constexpr momo::DataColumn<int> intCol("intCol");
+	inline constexpr momo::DataColumn<double> dblCol("dblCol");
+	inline constexpr momo::DataColumn<std::string> strCol("strCol");
 */
 	void Sample()
 	{
 		// construct empty table with 3 columns
-		Table table({ intCol, dblCol, strCol });
+		momo::DataTable<> table({ intCol, dblCol, strCol });
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);

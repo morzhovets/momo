@@ -18,14 +18,9 @@
 
 namespace sample_data1
 {
-	using Table = momo::DataTable<>;
-
-	template<typename Item>
-	using Column = Table::Column<Item>;
-
-	inline constexpr Column<int> intCol("intCol");
-	inline constexpr Column<double> dblCol("dblCol");
-	inline constexpr Column<std::string> strCol("strCol");
+	inline constexpr momo::DataColumn<int> intCol("intCol");
+	inline constexpr momo::DataColumn<double> dblCol("dblCol");
+	inline constexpr momo::DataColumn<std::string> strCol("strCol");
 }
 
 namespace sample_data2

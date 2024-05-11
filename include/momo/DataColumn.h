@@ -15,9 +15,13 @@
 
   namespace momo:
     concept conceptDataColumnList
+    concept conceptDataStructWithMembers
+    struct DataStructDefault
+    enum class DataColumnCodeOffset
+    struct DataColumnCodeSelector
+    class DataColumn
     class DataColumnInfo
     class DataSettings
-    struct DataStructDefault
     class DataColumnTraits
     class DataItemTraits
     class DataColumnList
@@ -35,11 +39,11 @@
 #endif
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
-	constexpr momo::internal::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
-		name{uint64_t{offsetof(Struct, name)}, #Struct "." #name}
+	constexpr momo::DataColumn<decltype(std::declval<Struct>().name), Struct, momo::DataColumnCodeOffset> \
+		name{momo::DataColumnCodeOffset{offsetof(Struct, name)}, #Struct "." #name}
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	constexpr momo::internal::DataColumn<Type, Tag> name{#name}
+	constexpr momo::DataColumn<Type, Tag, uint64_t> name{#name}
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault<>, Type, name)
@@ -49,6 +53,11 @@ namespace momo
 
 namespace internal
 {
+	template<typename Item>
+	struct DataMutable
+	{
+	};
+
 	template<typename TColumn, typename TItemArg>
 	class DataOperator
 	{
@@ -102,120 +111,6 @@ namespace internal
 
 	public:
 		using Operator::Operator;
-	};
-
-	template<typename Item>
-	struct DataMutable
-	{
-	};
-
-	template<typename TItem, typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumn : public DataColumn<DataMutable<TItem>, TStruct, TCode>
-	{
-	public:
-		typedef TItem Item;
-		typedef TStruct Struct;
-		typedef TCode Code;
-
-		typedef DataColumn BaseColumn;
-
-		typedef DataColumn<DataMutable<Item>, Struct, Code> MutableColumn;
-
-		typedef DataEqualer<DataColumn, Item> Equaler;
-
-		template<typename ItemArg>
-		using Assigner = DataAssigner<DataColumn, ItemArg>;
-
-	public:
-		constexpr explicit DataColumn(const char* name) noexcept
-			: mCode(static_cast<Code>(StrHasher::GetHashCode64(name))),
-			mName(name)
-		{
-		}
-
-		constexpr explicit DataColumn(Code code, const char* name = "") noexcept
-			: mCode(code),
-			mName(name)
-		{
-		}
-
-		//DataColumn(const DataColumn&) = delete;
-
-		//~DataColumn() noexcept = default;
-
-		//DataColumn& operator=(const DataColumn&) = delete;
-
-		const BaseColumn& GetBaseColumn() const noexcept
-		{
-			return *this;
-		}
-
-		constexpr Code GetCode() const noexcept
-		{
-			return mCode;
-		}
-
-		constexpr const char* GetName() const noexcept
-		{
-			return mName;
-		}
-
-		constexpr const MutableColumn& Mutable() const noexcept
-		{
-			return *this;
-		}
-
-		constexpr bool IsMutable() const noexcept
-		{
-			return false;
-		}
-
-		Equaler operator==(const Item& item) const noexcept
-		{
-			return Equaler(*this, item);
-		}
-
-		template<typename ItemArg>
-		Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
-		{
-			return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
-		}
-
-	private:
-		Code mCode;
-		const char* mName;
-	};
-
-	template<typename TItem, typename TStruct, typename TCode>
-	class DataColumn<DataMutable<TItem>, TStruct, TCode>
-	{
-	public:
-		typedef TItem Item;
-		typedef TStruct Struct;
-		typedef TCode Code;
-
-		typedef DataColumn<Item, Struct, Code> BaseColumn;
-
-	public:
-		const BaseColumn& GetBaseColumn() const noexcept
-		{
-			return static_cast<const BaseColumn&>(*this);
-		}
-
-		constexpr bool IsMutable() const noexcept
-		{
-			return true;
-		}
-
-	protected:
-		explicit DataColumn() noexcept = default;
-
-		DataColumn(const DataColumn&) noexcept = default;
-
-		~DataColumn() noexcept = default;
-
-		DataColumn& operator=(const DataColumn&) noexcept = default;
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
@@ -341,8 +236,145 @@ concept conceptDataColumnList =
 			-> std::same_as<TestItem&>;
 	};
 
-template<typename TStruct,
-	typename TCode = uint64_t>
+template<typename DataStruct>
+concept conceptDataStructWithMembers =
+	std::is_class_v<DataStruct> && !std::is_empty_v<DataStruct>;
+
+template<typename... TVisitableItems>
+struct DataStructDefault
+{
+	typedef std::tuple<TVisitableItems...> VisitableItems;
+};
+
+enum class DataColumnCodeOffset : size_t
+{
+};
+
+template<typename Struct>
+struct DataColumnCodeSelector
+{
+	typedef uint64_t Code;
+};
+
+template<conceptDataStructWithMembers Struct>
+struct DataColumnCodeSelector<Struct>
+{
+	typedef DataColumnCodeOffset Code;
+};
+
+template<typename TItem,
+	typename TStruct = DataStructDefault<>,
+	typename TCode = typename DataColumnCodeSelector<TStruct>::Code>
+class DataColumn : public DataColumn<internal::DataMutable<TItem>, TStruct, TCode>
+{
+public:
+	typedef TItem Item;
+	typedef TStruct Struct;
+	typedef TCode Code;
+
+	typedef DataColumn BaseColumn;
+
+	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
+
+	typedef internal::DataEqualer<DataColumn, Item> Equaler;
+
+	template<typename ItemArg>
+	using Assigner = internal::DataAssigner<DataColumn, ItemArg>;
+
+public:
+	constexpr explicit DataColumn(const char* name) noexcept
+		requires std::is_same_v<Code, uint64_t>
+		: mCode(internal::StrHasher::GetHashCode64(name)),
+		mName(name)
+	{
+	}
+
+	constexpr explicit DataColumn(Code code, const char* name = "") noexcept
+		: mCode(code),
+		mName(name)
+	{
+	}
+
+	//DataColumn(const DataColumn&) = delete;
+
+	//~DataColumn() noexcept = default;
+
+	//DataColumn& operator=(const DataColumn&) = delete;
+
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return *this;
+	}
+
+	constexpr Code GetCode() const noexcept
+	{
+		return mCode;
+	}
+
+	constexpr const char* GetName() const noexcept
+	{
+		return mName;
+	}
+
+	constexpr const MutableColumn& Mutable() const noexcept
+	{
+		return *this;
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return false;
+	}
+
+	Equaler operator==(const Item& item) const noexcept
+	{
+		return Equaler(*this, item);
+	}
+
+	template<typename ItemArg>
+	Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	{
+		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+	}
+
+private:
+	Code mCode;
+	const char* mName;
+};
+
+template<typename TItem, typename TStruct, typename TCode>
+class DataColumn<internal::DataMutable<TItem>, TStruct, TCode>
+{
+public:
+	typedef TItem Item;
+	typedef TStruct Struct;
+	typedef TCode Code;
+
+	typedef DataColumn<Item, Struct, Code> BaseColumn;
+
+public:
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return static_cast<const BaseColumn&>(*this);
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return true;
+	}
+
+protected:
+	explicit DataColumn() noexcept = default;
+
+	DataColumn(const DataColumn&) noexcept = default;
+
+	~DataColumn() noexcept = default;
+
+	DataColumn& operator=(const DataColumn&) noexcept = default;
+};
+
+template<typename TStruct = DataStructDefault<>,	//?
+	typename TCode = typename DataColumnCodeSelector<TStruct>::Code>
 class DataColumnInfo : public internal::DataColumnInfoBase<TStruct, TCode>
 {
 private:
@@ -353,7 +385,7 @@ public:
 	using typename ColumnInfoBase::Code;
 
 	template<typename Item>
-	using Column = internal::DataColumn<Item, Struct, Code>;
+	using Column = DataColumn<Item, Struct, Code>;
 
 public:
 	template<typename Item>
@@ -408,12 +440,6 @@ public:
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
 };
 
-template<typename... TVisitableItems>
-struct DataStructDefault
-{
-	typedef std::tuple<TVisitableItems...> VisitableItems;
-};
-
 template<typename TStruct = DataStructDefault<>,
 	size_t tLogVertexCount = 8>
 requires (4 <= tLogVertexCount && tLogVertexCount < 16)
@@ -440,11 +466,13 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode columnCode,
-		size_t codeParam) noexcept
+	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(
+		ColumnCode columnCode, size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(columnCode + (columnCode >> 32));
+		size_t shortCode = static_cast<size_t>(columnCode);
+		if constexpr (sizeof(ColumnCode) > 4)
+			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
 		shortCode += shortCode >> 16;
 		if constexpr (logVertexCount < 8)
 			shortCode += shortCode >> 8;
@@ -1116,11 +1144,11 @@ private:
 	MutableOffsets mMutableOffsets;
 };
 
-template<typename TStruct,
+template<conceptDataStructWithMembers TStruct,
 	typename TColumnInfo = DataColumnInfo<TStruct>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = DataSettings<>>
-requires std::is_class_v<TStruct>
+requires std::is_same_v<DataColumnCodeOffset, typename TColumnInfo::Code>
 class DataColumnListStatic
 {
 public:
@@ -1300,7 +1328,7 @@ private:
 
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
 	{
-		size_t offset = static_cast<size_t>(columnCode);	//?
+		size_t offset = static_cast<size_t>(columnCode);
 		MOMO_ASSERT(offset < sizeof(Struct));
 		return offset;
 	}
