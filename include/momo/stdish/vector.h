@@ -107,7 +107,7 @@ public:
 	{
 	}
 
-	vector(vector&& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
+	vector(vector&& right, const momo::internal::Identity<allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
 		: mArray(pvCreateArray(std::move(right), alloc))
 	{
@@ -118,7 +118,7 @@ public:
 	{
 	}
 
-	vector(const vector& right, const momo::internal::EnableIf<true, allocator_type>& alloc)
+	vector(const vector& right, const momo::internal::Identity<allocator_type>& alloc)
 		: mArray(right.mArray, MemManager(alloc))
 	{
 	}

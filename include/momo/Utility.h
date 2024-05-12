@@ -144,18 +144,6 @@ namespace internal
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 
-	//template<typename...>
-	//using Void = void;
-
-	template<typename... Types>
-	struct VoidMaker
-	{
-		typedef void Void;
-	};
-
-	template<typename... Types>
-	using Void = typename VoidMaker<Types...>::Void;
-
 	template<typename Func, typename Result, typename... Args>
 	struct IsInvocable : public std::false_type
 	{
@@ -170,6 +158,12 @@ namespace internal
 	template<bool value,
 		typename Type = void>
 	using EnableIf = typename std::enable_if<value, Type>::type;
+
+	template<typename Type>
+	using Identity = EnableIf<true, Type>;
+
+	template<typename... Types>
+	using Void = EnableIf<true>;
 
 	template<size_t size,
 		typename = void>

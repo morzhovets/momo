@@ -226,8 +226,7 @@ public:
 	{
 	}
 
-	unordered_map(unordered_map&& right,
-		const momo::internal::EnableIf<true, allocator_type>& alloc)
+	unordered_map(unordered_map&& right, const momo::internal::Identity<allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
 		: mHashMap(pvCreateMap(std::move(right), alloc))
 	{
@@ -238,8 +237,7 @@ public:
 	{
 	}
 
-	unordered_map(const unordered_map& right,
-		const momo::internal::EnableIf<true, allocator_type>& alloc)
+	unordered_map(const unordered_map& right, const momo::internal::Identity<allocator_type>& alloc)
 		: mHashMap(right.mHashMap, MemManager(alloc))
 	{
 	}

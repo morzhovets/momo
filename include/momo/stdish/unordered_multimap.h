@@ -207,7 +207,7 @@ public:
 	}
 
 	unordered_multimap(unordered_multimap&& right,
-		const momo::internal::EnableIf<true, allocator_type>& alloc)
+		const momo::internal::Identity<allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
 		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
 	{
@@ -219,7 +219,7 @@ public:
 	}
 
 	unordered_multimap(const unordered_multimap& right,
-		const momo::internal::EnableIf<true, allocator_type>& alloc)
+		const momo::internal::Identity<allocator_type>& alloc)
 		: mHashMultiMap(right.mHashMultiMap, MemManager(alloc))
 	{
 	}
