@@ -44,22 +44,23 @@ namespace sample_data1
 		table.AddUniqueHashIndex(strCol, intCol);
 
 		table.AddRow(strCol = "b", intCol = 1, dblCol = 0.5);
-		table.AddRow(intCol = 2, dblCol = 0.5);	// strCol = ""
+		table.AddRow(intCol = 2, dblCol = 2.5);	// strCol = ""
 
 		table.TryAddRow(intCol = 2);	// not added because of unique index
 
 		std::cout << table.GetCount() << std::endl;	// 2
 
-		// table[0][dblCol] = 1.5;
-		table.UpdateRow(table[0], dblCol, 1.5);
+		// table[0][dblCol] returns `const double&`
+		std::cout << table[0][dblCol] << std::endl;	// 0.5
 
-		// table[1][strCol] = "a";
-		table.UpdateRow(table[1], strCol, std::string("a"));
+		// after adding the row can be modified by function `UpdateRow`
+		table.UpdateRow(table[0], dblCol, 1.5);
+		table.UpdateRow(table[1], strCol, "a");
 
 		for (auto row : table)
 			std::cout << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
 		// 1 1.5 b
-		// 2 0.5 a
+		// 2 2.5 a
 
 		{
 			// select by condition

@@ -608,7 +608,8 @@ public:
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
+	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		internal::Identity<Item>&& newItem)
 	{
 		TryResult res = pvTryUpdateRow(rowRef, column, std::move(newItem));
 		if (res.uniqueHashIndex != UniqueHashIndex::empty)
@@ -617,7 +618,8 @@ public:
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column, const Item& newItem)
+	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		const internal::Identity<Item>& newItem)
 	{
 		TryResult res = pvTryUpdateRow(rowRef, column, newItem);
 		if (res.uniqueHashIndex != UniqueHashIndex::empty)
@@ -641,13 +643,15 @@ public:
 	}
 
 	template<typename Item>
-	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, Item&& newItem)
+	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		internal::Identity<Item>&& newItem)
 	{
 		return pvTryUpdateRow(rowRef, column, std::move(newItem));
 	}
 
 	template<typename Item>
-	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, const Item& newItem)
+	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		const internal::Identity<Item>& newItem)
 	{
 		return pvTryUpdateRow(rowRef, column, newItem);
 	}
