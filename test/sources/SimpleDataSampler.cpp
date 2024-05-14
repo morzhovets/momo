@@ -35,7 +35,7 @@ namespace sample_data1
 		table.AddUniqueHashIndex(strCol, intCol);
 
 		table.AddRow(strCol = "b", intCol = 1, dblCol = 0.5);
-		table.AddRow(intCol = 2, dblCol = 0.5);	// strCol = ""
+		table.AddRow(intCol = 2, dblCol = 2.5);	// strCol = ""
 
 		table.TryAddRow(intCol = 2);	// not added because of unique index
 
@@ -51,7 +51,7 @@ namespace sample_data1
 		for (auto row : table)
 			std::cout << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
 		// 1 1.5 b
-		// 2 0.5 a
+		// 2 2.5 a
 
 		{
 			// select by condition

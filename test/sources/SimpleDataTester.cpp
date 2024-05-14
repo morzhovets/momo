@@ -280,6 +280,11 @@ public:
 
 		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
 		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
+		if constexpr (!dynamic)
+		{
+			assert((*table.FindByUniqueHash(keyIndex,
+				table.NewRow(Struct{ .intStruct = 0, .strStruct = "1" })))[intCol] == 0);
+		}
 
 		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
 		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
