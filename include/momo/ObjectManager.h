@@ -36,7 +36,7 @@ namespace internal
 	struct HasCustomMoveConstructor<MemManagerStd<Allocator>, Object, Void<
 		decltype(std::declval<typename MemManagerStd<Allocator>::ByteAllocator&>().construct(
 			std::declval<Object*>(), std::declval<Object&&>())),
-		EnableIf<!std::is_same<std::allocator<char>, typename MemManagerStd<Allocator>::ByteAllocator>::value>>>
+		EnableIf<!std::is_same<std::allocator<Byte>, typename MemManagerStd<Allocator>::ByteAllocator>::value>>>
 		: public std::true_type
 	{
 	};
@@ -250,7 +250,7 @@ namespace internal
 			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
 				Sequence<sequence...>)
 			{
-				std::allocator_traits<Allocator>::template rebind_traits<char>::construct(
+				std::allocator_traits<Allocator>::template rebind_traits<Byte>::construct(
 					memManager.GetByteAllocator(), newObject,
 					std::forward<Args>(std::get<sequence>(mArgs))...);
 			}

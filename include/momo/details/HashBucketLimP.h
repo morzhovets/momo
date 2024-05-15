@@ -53,7 +53,7 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, char*> Memory;
+		typedef BucketMemory<MemPool, Byte*> Memory;
 
 		static const uintptr_t ptrNull = UIntConst::nullPtr;
 		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
@@ -242,13 +242,13 @@ namespace internal
 			return mPtr == ptrNull || mPtr == ptrNullWasFull;
 		}
 
-		char* pvGetPtr() const noexcept
+		Byte* pvGetPtr() const noexcept
 		{
 			MOMO_ASSERT(!pvIsEmpty());
-			return PtrCaster::FromUInt<char>(mPtr);
+			return PtrCaster::FromUInt<Byte>(mPtr);
 		}
 
-		void pvSet(char* ptr, size_t memPoolIndex, size_t count) noexcept
+		void pvSet(Byte* ptr, size_t memPoolIndex, size_t count) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr);
 			mPtr = PtrCaster::ToUInt(ptr);
@@ -286,7 +286,7 @@ namespace internal
 			return pvGetItems(pvGetPtr());
 		}
 
-		static Item* pvGetItems(char* ptr) noexcept
+		static Item* pvGetItems(Byte* ptr) noexcept
 		{
 			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
 		}

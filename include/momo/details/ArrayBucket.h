@@ -115,8 +115,8 @@ namespace internal
 		typedef MemPool<ArrayMemPoolParams, MemManagerPtr,
 			NestedMemPoolSettings> ArrayMemPool;
 
-		typedef BucketMemory<FastMemPool, char*> FastMemory;
-		typedef BucketMemory<ArrayMemPool, char*> ArrayMemory;
+		typedef BucketMemory<FastMemPool, Byte*> FastMemory;
+		typedef BucketMemory<ArrayMemPool, Byte*> ArrayMemory;
 
 	public:
 		class Params
@@ -354,7 +354,7 @@ namespace internal
 		}
 
 	private:
-		void pvSet(char* ptr, uint8_t state) noexcept
+		void pvSet(Byte* ptr, uint8_t state) noexcept
 		{
 			mPtr = ptr;
 			pvSetState(state);
@@ -401,7 +401,7 @@ namespace internal
 			return pvGetFastItems(mPtr);
 		}
 
-		static Item* pvGetFastItems(char* ptr) noexcept
+		static Item* pvGetFastItems(Byte* ptr) noexcept
 		{
 			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
 		}
@@ -412,7 +412,7 @@ namespace internal
 			return *pvGetArrayPtr(mPtr);
 		}
 
-		static Array* pvGetArrayPtr(char* ptr) noexcept
+		static Array* pvGetArrayPtr(Byte* ptr) noexcept
 		{
 			return PtrCaster::Shift<Array>(ptr, arrayAlignment);
 		}
@@ -458,7 +458,7 @@ namespace internal
 		}
 
 	private:
-		char* mPtr;
+		Byte* mPtr;
 	};
 }
 

@@ -121,6 +121,8 @@ enum class ExtraCheckMode
 
 namespace internal
 {
+	typedef unsigned char Byte;
+
 	template<typename Iterator>
 	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
 		typename std::iterator_traits<Iterator>::iterator_category>;
@@ -241,8 +243,8 @@ namespace internal
 		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
 		{
 			typedef typename std::conditional<std::is_const<Object>::value,
-				const char, char>::type Byte;
-			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
+				const Byte, Byte>::type CByte;
+			return reinterpret_cast<ResObject*>(reinterpret_cast<CByte*>(ptr)
 				+ static_cast<ptrdiff_t>(byteOffset));
 		}
 	};

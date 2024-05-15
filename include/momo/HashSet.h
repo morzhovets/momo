@@ -177,7 +177,7 @@ namespace internal
 		union
 		{
 			BucketParams* mBucketParams;
-			ObjectBuffer<char[alignof(Bucket)], alignof(Bucket)> mAlignedBuffer;
+			ObjectBuffer<Byte[alignof(Bucket)], alignof(Bucket)> mAlignedBuffer;
 		};
 		//Bucket[]
 	};

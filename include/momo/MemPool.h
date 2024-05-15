@@ -187,7 +187,7 @@ private:
 		int8_t freeBlockCount;
 	};
 
-	typedef char Byte;
+	typedef internal::Byte Byte;
 
 public:
 	explicit MemPool()	// vs clang
@@ -817,7 +817,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		typedef Array<char*, MemManager, ArrayItemTraits<char*, MemManager>,
+		typedef Array<Byte*, MemManager, ArrayItemTraits<Byte*, MemManager>,
 			NestedArraySettings<>> Buffers;
 
 	public:
@@ -857,7 +857,7 @@ namespace internal
 		ResObject* GetRealPointer(uint32_t block) noexcept
 		{
 			MOMO_ASSERT(block != nullPtr);
-			char* buffer = mBuffers[block / blockCount];
+			Byte* buffer = mBuffers[block / blockCount];
 			void* realPtr = buffer + (size_t{block} % blockCount) * mBlockSize;
 			return static_cast<ResObject*>(realPtr);
 		}
@@ -906,7 +906,7 @@ namespace internal
 			if (bufferCount >= mMaxBufferCount)
 				throw std::length_error("Invalid buffer count");
 			mBuffers.Reserve(bufferCount + 1);
-			char* buffer = MemManagerProxy::template Allocate<char>(GetMemManager(),
+			Byte* buffer = MemManagerProxy::template Allocate<Byte>(GetMemManager(),
 				pvGetBufferSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
@@ -922,7 +922,7 @@ namespace internal
 		{
 			MemManager& memManager = GetMemManager();
 			size_t bufferSize = pvGetBufferSize();
-			for (char* buffer : mBuffers)
+			for (Byte* buffer : mBuffers)
 				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
 			mBlockHead = nullPtr;
 			mBuffers.Clear(true);

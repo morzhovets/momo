@@ -134,7 +134,7 @@
 //#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 //#endif
 
-#define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<char, size>
+#define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<unsigned char, size>
 #if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))	// C2719, C2711
 #undef MOMO_ALIGNED_STORAGE
 #define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type

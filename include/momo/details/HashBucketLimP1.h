@@ -258,7 +258,7 @@ namespace internal
 		}
 
 	private:
-		char mItemPtrBuffer[sizeof(Item*)];
+		Byte mItemPtrBuffer[sizeof(Item*)];
 		uint8_t mState;
 	};
 }
