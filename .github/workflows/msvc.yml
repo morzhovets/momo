@@ -38,7 +38,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           flags: '/std:c++17 /WX /permissive-'
-          win_ver: '2022'
+          win_ver: '2019'
 
         # Visual Studio 2019
         - toolset: '14.2'
