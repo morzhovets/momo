@@ -280,11 +280,6 @@ public:
 
 		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
 		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
-		if constexpr (!dynamic)
-		{
-			assert((*table.FindByUniqueHash(keyIndex,
-				table.NewRow(Struct{ .intStruct = 0, .strStruct = "1" })))[intCol] == 0);
-		}
 
 		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
 		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
@@ -460,6 +455,14 @@ public:
 			assert(rowRef[intCol] == 511 - static_cast<int>(i));
 			assert(rowRef[dblCol] == 511.5 - static_cast<double>(i));
 			assert(rowRef[strCol] == "1");
+		}
+
+		if constexpr (!dynamic)
+		{
+			Row row = table.NewRow(Struct{ .intStruct = 1, .dblStruct = 3.5, .strStruct = "2" });
+			assert(row[intCol] == 1);
+			assert(row[dblCol] == 3.5);
+			assert(row[strCol] == "2");
 		}
 	}
 };
