@@ -87,7 +87,7 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using EqualTerm = internal::DataEqualTerm<Column<Item>, Item>;
+	using EqualTerm = internal::DataEqualTerm<Column<Item>>;
 
 	template<typename Item, typename ItemArg>
 	using AssignTerm = internal::DataAssignTerm<Column<Item>, ItemArg>;

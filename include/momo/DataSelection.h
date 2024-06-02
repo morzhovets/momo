@@ -420,7 +420,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 		template<typename Item>
-		using EqualTerm = internal::DataEqualTerm<Column<Item>, Item>;
+		using EqualTerm = internal::DataEqualTerm<Column<Item>>;
 
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;

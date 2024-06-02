@@ -58,6 +58,12 @@ namespace internal
 	{
 	};
 
+	template<typename Column>
+	struct DataColumnItemSelector
+	{
+		typedef typename Column::Item Item;
+	};
+
 	template<typename TColumn, typename TItemArg>
 	class DataTermBase
 	{
@@ -66,7 +72,7 @@ namespace internal
 		typedef TItemArg ItemArg;
 
 	public:
-		explicit DataTermBase(const Column& column, ItemArg&& itemArg) noexcept
+		DataTermBase(const Column& column, ItemArg&& itemArg) noexcept
 			: mColumn(column),
 			mItemArg(std::forward<ItemArg>(itemArg))
 		{
@@ -93,14 +99,19 @@ namespace internal
 		ItemArg&& mItemArg;
 	};
 
-	template<typename TColumn, typename TItem>
-	class DataEqualTerm : public DataTermBase<TColumn, const TItem&>
+	template<typename TColumn>
+	class DataEqualTerm
+		: public DataTermBase<TColumn, const typename DataColumnItemSelector<TColumn>::Item&>
 	{
-	private:
-		typedef DataTermBase<TColumn, const TItem&> TermBase;
+	public:
+		typedef TColumn Column;
+		typedef const typename DataColumnItemSelector<TColumn>::Item& ItemArg;
 
 	public:
-		using TermBase::TermBase;
+		DataEqualTerm(const Column& column, ItemArg&& itemArg) noexcept
+			: DataTermBase<Column, ItemArg>(column, std::forward<ItemArg>(itemArg))
+		{
+		}
 	};
 
 	template<typename TColumn, typename TItemArg>
@@ -276,7 +287,7 @@ public:
 
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
-	typedef internal::DataEqualTerm<DataColumn, Item> EqualTerm;
+	typedef internal::DataEqualTerm<DataColumn> EqualTerm;
 
 	template<typename ItemArg>
 	using AssignTerm = internal::DataAssignTerm<DataColumn, ItemArg>;
