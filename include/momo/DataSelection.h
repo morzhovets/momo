@@ -883,7 +883,7 @@ namespace internal
 		{
 			size_t offset = *offsetPtr;
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw1, offset);
-			const Item& item2 = equalTerm2.GetItemArg();
+			const Item& item2 = equalTerm2.GetItem();
 			if (std::weak_ordering cmp = DataTraits::Compare(item1, item2); cmp != 0)
 				return cmp;
 			if constexpr (sizeof...(Items) > 0)

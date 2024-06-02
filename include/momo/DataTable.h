@@ -1271,7 +1271,7 @@ private:
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 			size_t offset = rowRef.GetColumnList().GetOffset(equalTerm.GetColumn());
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			return DataTraits::IsEqual(item, equalTerm.GetItemArg()) && rowFilter(rowRef);
+			return DataTraits::IsEqual(item, equalTerm.GetItem()) && rowFilter(rowRef);
 		};
 		return pvSelect<Result>(FastCopyableFunctor(newRowFilter), equalTerms...);
 	}
@@ -1316,7 +1316,7 @@ private:
 	static bool pvIsSatisfied(Raw* raw, const EqualTerm<Item>& equalTerm, size_t offset)
 	{
 		const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-		return DataTraits::IsEqual(item, equalTerm.GetItemArg());
+		return DataTraits::IsEqual(item, equalTerm.GetItem());
 	}
 
 	template<typename Result, typename Index,
@@ -1330,7 +1330,7 @@ private:
 		if (mIndexes.ContainsOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(std::move(tuple),
-				std::make_tuple(std::pair<size_t, const Item&>(offset, equalTerm.GetItemArg())));
+				std::make_tuple(std::pair<size_t, const Item&>(offset, equalTerm.GetItem())));
 			return pvSelectRec<Result>(index, offsetPtr + 1, rowFilter,
 				std::move(newTuple), equalTerms...);
 		}
@@ -1340,7 +1340,7 @@ private:
 			{
 				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-				return DataTraits::IsEqual(item, equalTerm.GetItemArg()) && rowFilter(rowRef);
+				return DataTraits::IsEqual(item, equalTerm.GetItem()) && rowFilter(rowRef);
 			};
 			return pvSelectRec<Result>(index, offsetPtr + 1, FastCopyableFunctor(newRowFilter),
 				std::move(tuple), equalTerms...);
@@ -1412,7 +1412,7 @@ private:
 	{
 		auto offsets = pvGetOffsets(equalTerms...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
-		OffsetItemTuple<Items...> tuple = { { 0, equalTerms.GetItemArg() }... };
+		OffsetItemTuple<Items...> tuple = { { 0, equalTerms.GetItem() }... };
 		const size_t* offsetPtr = offsets.data();
 		std::apply([&offsetPtr] (auto&... pairs) { ((pairs.first = *offsetPtr++), ...); }, tuple);
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));

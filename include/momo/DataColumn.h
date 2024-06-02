@@ -64,25 +64,60 @@ namespace internal
 		typedef typename Column::Item Item;
 	};
 
+	template<typename TColumn>
+	class DataEqualTerm
+	{
+	public:
+		typedef TColumn Column;
+		typedef typename DataColumnItemSelector<TColumn>::Item Item;
+
+	public:
+		DataEqualTerm(const Column& column, const Item& item) noexcept
+			: mColumn(column),
+			mItem(item)
+		{
+		}
+
+		DataEqualTerm(const DataEqualTerm&) = delete;
+
+		~DataEqualTerm() noexcept = default;
+
+		DataEqualTerm& operator=(const DataEqualTerm&) = delete;
+
+		const Column& GetColumn() const noexcept
+		{
+			return mColumn;
+		}
+
+		const Item& GetItem() const noexcept
+		{
+			return mItem;
+		}
+
+	private:
+		const Column& mColumn;
+		const Item& mItem;
+	};
+
 	template<typename TColumn, typename TItemArg>
-	class DataTermBase
+	class DataAssignTerm
 	{
 	public:
 		typedef TColumn Column;
 		typedef TItemArg ItemArg;
 
 	public:
-		DataTermBase(const Column& column, ItemArg&& itemArg) noexcept
+		DataAssignTerm(const Column& column, ItemArg&& itemArg) noexcept
 			: mColumn(column),
 			mItemArg(std::forward<ItemArg>(itemArg))
 		{
 		}
 
-		DataTermBase(const DataTermBase&) = delete;
+		DataAssignTerm(const DataAssignTerm&) = delete;
 
-		~DataTermBase() noexcept = default;
+		~DataAssignTerm() noexcept = default;
 
-		DataTermBase& operator=(const DataTermBase&) = delete;
+		DataAssignTerm& operator=(const DataAssignTerm&) = delete;
 
 		const Column& GetColumn() const noexcept
 		{
@@ -97,31 +132,6 @@ namespace internal
 	private:
 		const Column& mColumn;
 		ItemArg&& mItemArg;
-	};
-
-	template<typename TColumn>
-	class DataEqualTerm
-		: public DataTermBase<TColumn, const typename DataColumnItemSelector<TColumn>::Item&>
-	{
-	public:
-		typedef TColumn Column;
-		typedef const typename DataColumnItemSelector<TColumn>::Item& ItemArg;
-
-	public:
-		DataEqualTerm(const Column& column, ItemArg&& itemArg) noexcept
-			: DataTermBase<Column, ItemArg>(column, std::forward<ItemArg>(itemArg))
-		{
-		}
-	};
-
-	template<typename TColumn, typename TItemArg>
-	class DataAssignTerm : public DataTermBase<TColumn, TItemArg>
-	{
-	private:
-		typedef DataTermBase<TColumn, TItemArg> TermBase;
-
-	public:
-		using TermBase::TermBase;
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
