@@ -64,17 +64,19 @@ namespace internal
 		typedef typename Column::Item Item;
 	};
 
-	template<typename TColumn>
+	template<typename... Columns>
 	class DataEquality
 	{
 	public:
-		typedef TColumn Column;
-		typedef typename DataColumnItemSelector<TColumn>::Item Item;
+		typedef std::tuple<std::pair<const Columns&,
+			const typename DataColumnItemSelector<Columns>::Item&>...> Tuple;
 
 	public:
-		DataEquality(const Column& column, const Item& item) noexcept
-			: mColumn(column),
-			mItem(item)
+		DataEquality() noexcept
+			requires (sizeof...(Columns) == 0) = default;
+
+		explicit DataEquality(Tuple&& tuple) noexcept
+			: mTuple(std::move(tuple))
 		{
 		}
 
@@ -84,19 +86,29 @@ namespace internal
 
 		DataEquality& operator=(const DataEquality&) = delete;
 
-		const Column& GetColumn() const noexcept
+		template<size_t index = 0>
+		decltype(auto) GetColumn() const noexcept
 		{
-			return mColumn;
+			return std::get<index>(mTuple).first;
 		}
 
-		const Item& GetItem() const noexcept
+		template<size_t index = 0>
+		decltype(auto) GetItem() const noexcept
 		{
-			return mItem;
+			return std::get<index>(mTuple).second;
+		}
+
+		template<typename Column>
+		DataEquality<Columns..., Column> And(const Column& column,
+			const typename DataColumnItemSelector<Column>::Item& item) && noexcept
+		{
+			typedef typename DataColumnItemSelector<Column>::Item Item;
+			return DataEquality<Columns..., Column>(std::tuple_cat(std::move(mTuple),
+				std::make_tuple(std::pair<const Column&, const Item&>(column, item))));
 		}
 
 	private:
-		const Column& mColumn;
-		const Item& mItem;
+		Tuple mTuple;
 	};
 
 	template<typename TColumn, typename TItemArg>
@@ -349,7 +361,7 @@ public:
 
 	Equality operator==(const Item& item) const noexcept
 	{
-		return Equality(*this, item);
+		return internal::DataEquality().And(*this, item);
 	}
 
 	template<typename ItemArg>
