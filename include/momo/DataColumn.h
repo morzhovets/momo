@@ -65,24 +65,24 @@ namespace internal
 	};
 
 	template<typename TColumn>
-	class DataEqualTerm
+	class DataEquality
 	{
 	public:
 		typedef TColumn Column;
 		typedef typename DataColumnItemSelector<TColumn>::Item Item;
 
 	public:
-		DataEqualTerm(const Column& column, const Item& item) noexcept
+		DataEquality(const Column& column, const Item& item) noexcept
 			: mColumn(column),
 			mItem(item)
 		{
 		}
 
-		DataEqualTerm(const DataEqualTerm&) = delete;
+		DataEquality(const DataEquality&) = delete;
 
-		~DataEqualTerm() noexcept = default;
+		~DataEquality() noexcept = default;
 
-		DataEqualTerm& operator=(const DataEqualTerm&) = delete;
+		DataEquality& operator=(const DataEquality&) = delete;
 
 		const Column& GetColumn() const noexcept
 		{
@@ -100,24 +100,24 @@ namespace internal
 	};
 
 	template<typename TColumn, typename TItemArg>
-	class DataAssignTerm
+	class DataAssignment
 	{
 	public:
 		typedef TColumn Column;
 		typedef TItemArg ItemArg;
 
 	public:
-		DataAssignTerm(const Column& column, ItemArg&& itemArg) noexcept
+		DataAssignment(const Column& column, ItemArg&& itemArg) noexcept
 			: mColumn(column),
 			mItemArg(std::forward<ItemArg>(itemArg))
 		{
 		}
 
-		DataAssignTerm(const DataAssignTerm&) = delete;
+		DataAssignment(const DataAssignment&) = delete;
 
-		~DataAssignTerm() noexcept = default;
+		~DataAssignment() noexcept = default;
 
-		DataAssignTerm& operator=(const DataAssignTerm&) = delete;
+		DataAssignment& operator=(const DataAssignment&) = delete;
 
 		const Column& GetColumn() const noexcept
 		{
@@ -297,10 +297,10 @@ public:
 
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
-	typedef internal::DataEqualTerm<DataColumn> EqualTerm;
+	typedef internal::DataEquality<DataColumn> Equality;
 
 	template<typename ItemArg>
-	using AssignTerm = internal::DataAssignTerm<DataColumn, ItemArg>;
+	using Assignment = internal::DataAssignment<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(const char* name) noexcept
@@ -347,15 +347,15 @@ public:
 		return false;
 	}
 
-	EqualTerm operator==(const Item& item) const noexcept
+	Equality operator==(const Item& item) const noexcept
 	{
-		return EqualTerm(*this, item);
+		return Equality(*this, item);
 	}
 
 	template<typename ItemArg>
-	AssignTerm<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	Assignment<ItemArg> operator=(ItemArg&& itemArg) const noexcept
 	{
-		return AssignTerm<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+		return Assignment<ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
 
 private:
