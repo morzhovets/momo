@@ -26,11 +26,11 @@ jobs:
           path_prefix: '/usr/local'
           macos_ver: '12'
 
-        - gcc_ver: '13'
-          build_type: 'Release'
-          flags: '-std=c++23 -msse2'
-          path_prefix: '/usr/local'
-          macos_ver: '12'
+#        - gcc_ver: '13'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -msse2'
+#          path_prefix: '/usr/local'
+#          macos_ver: '12'
 
 #        # macOS-14-arm64
 #        - gcc_ver: '13'
