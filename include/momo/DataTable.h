@@ -89,6 +89,9 @@ public:
 	template<typename Item>
 	using Equality = internal::DataEquality<Column<Item>>;
 
+	template<typename... Items>
+	using Equalities = internal::DataEquality<Column<Items>...>;
+
 	template<typename Item, typename ItemArg>
 	using Assignment = internal::DataAssignment<Column<Item>, ItemArg>;
 
@@ -746,39 +749,66 @@ public:
 	}
 
 	template<typename... Items>
+	requires (sizeof...(Items) > 1)
 	ConstSelection Select(Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equals...);
 	}
 
-	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	ConstSelection Select(RowFilter rowFilter, Equality<Items>... equals) const
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	ConstSelection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
 	}
 
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	ConstSelection Select(Equalities<Items...> equals, RowFilter rowFilter = RowFilter()) const
+	{
+		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
+	}
+
 	template<typename... Items>
+	requires (sizeof...(Items) > 1)
 	Selection Select(Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equals...);
 	}
 
-	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	Selection Select(RowFilter rowFilter, Equality<Items>... equals)
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	Selection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
 	}
 
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	Selection Select(Equalities<Items...> equals, RowFilter rowFilter = RowFilter())
+	{
+		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
+	}
+
 	template<typename... Items>
+	requires (sizeof...(Items) > 1)
 	size_t SelectCount(Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(FastCopyableFunctor(EmptyRowFilter()), equals...);
 	}
 
-	template<internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
-	size_t SelectCount(RowFilter rowFilter, Equality<Items>... equals) const
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	size_t SelectCount(RowFilter rowFilter = RowFilter(), Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
+	}
+
+	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
+		typename... Items>
+	size_t SelectCount(Equalities<Items...> equals, RowFilter rowFilter = RowFilter()) const
+	{
+		return pvSelect<size_t>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
 	}
 
 	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
@@ -806,6 +836,20 @@ public:
 	}
 
 	template<typename Item, typename... Items>
+	ConstRowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty) const
+	{
+		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
+	}
+
+	template<typename Item, typename... Items>
+	RowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty)
+	{
+		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
+	}
+
+	template<typename Item, typename... Items>
 	ConstRowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equality<Item> equal,
 		Equality<Items>... equals) const
 	{
@@ -817,6 +861,20 @@ public:
 		Equality<Items>... equals)
 	{
 		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equal, equals...);
+	}
+
+	template<typename Item, typename... Items>
+	ConstRowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+		MultiHashIndex multiHashIndex = MultiHashIndex::empty) const
+	{
+		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
+	}
+
+	template<typename Item, typename... Items>
+	RowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+		MultiHashIndex multiHashIndex = MultiHashIndex::empty)
+	{
+		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
 	}
 
 	template<typename Item, typename... Items>
@@ -1260,6 +1318,20 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+	template<typename Result, typename... Items, internal::conceptPredicate<ConstRowReference> RowFilter>
+	Result pvSelect(const Equalities<Items...>& equals, FastCopyableFunctor<RowFilter> rowFilter) const
+	{
+		return pvSelect<Result>(equals, rowFilter, std::index_sequence_for<Items...>());
+	}
+
+	template<typename Result, typename... Items, internal::conceptPredicate<ConstRowReference> RowFilter,
+		size_t... sequence>
+	Result pvSelect(const Equalities<Items...>& equals, FastCopyableFunctor<RowFilter> rowFilter,
+		std::index_sequence<sequence...>) const
+	{
+		return pvSelect<Result>(rowFilter, equals.template Get<sequence>()...);
+	}
+
 	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter,
 		typename Item, typename... Items, size_t columnCount = 1 + sizeof...(Items)>
 	requires (columnCount > DataTraits::selectEqualityMaxCount)
@@ -1405,6 +1477,19 @@ private:
 		auto raws = mIndexes.FindRaws(uniqueHashIndex, RowProxy::GetRaw(row),
 			VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
+	}
+
+	template<typename RowBoundsProxy, typename... Items, typename Index>
+	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index) const
+	{
+		return pvFindByHash<RowBoundsProxy>(equals, index, std::index_sequence_for<Items...>());
+	}
+
+	template<typename RowBoundsProxy, typename... Items, typename Index, size_t... sequence>
+	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index,
+		std::index_sequence<sequence...>) const
+	{
+		return pvFindByHash<RowBoundsProxy>(index, equals.template Get<sequence>()...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items>

@@ -266,6 +266,10 @@ public:
 		assert(table.Select(intCol == 0, strCol == "1").GetCount() == 1);
 		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
 
+		assert(table.SelectCount(strCol == "0" && intCol == 1 && dblCol == 1.0) == 1);
+		assert(table.Select(intCol == 0 && dblCol == 0.5 && strCol == "1").GetCount() == 1);
+		assert(ctable.Select(strCol == "1" && dblCol == 0.5 && intCol == 0).GetCount() == 1);
+
 		assert(table.SelectCount(emptyFilter, strCol == "0") == count / 2);
 		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
 		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
@@ -278,21 +282,31 @@ public:
 		assert(table.Select(strCol == "0", dblCol == 1.0).GetCount() == 1);
 		assert(ctable.Select(dblCol == 1.0, strCol == "1").GetCount() == 0);
 
+		assert(table.SelectCount(dblCol == 0.0 && strCol == "0", emptyFilter) == 1);
+		assert(table.Select(strCol == "0" && dblCol == 1.0, emptyFilter).GetCount() == 1);
+		assert(ctable.Select(dblCol == 1.0 && strCol == "1", emptyFilter).GetCount() == 0);
+
 		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
 		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
 
 		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
 		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
 
+		assert(table.FindByUniqueHash(intCol == 0 && strCol == "1", keyIndex)->Get(strCol) == "1");
+		assert((*ctable.FindByUniqueHash(strCol == "1" && intCol == 0, keyIndex))[strCol] == "1");
+
 		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
 			strCol == "1").GetCount() == count / 2);
 		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
 			strCol == "1").GetCount() == count / 2);
 
+		assert(table.FindByMultiHash(strCol == "1").GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(strCol == "1").GetCount() == count / 2);
+
 		{
 			typename Table::RowHashPointer hashPointer;
 			typename Table::RowHashPointer::Iterator begin;
-			hashPointer = table.FindByUniqueHash(keyIndex, strCol == "0", intCol == 0);
+			hashPointer = table.FindByUniqueHash(strCol == "0" && intCol == 0, keyIndex);
 			assert(static_cast<bool>(hashPointer));
 			begin = hashPointer.GetBegin();
 			assert(begin < hashPointer.GetEnd());
@@ -301,7 +315,7 @@ public:
 		{
 			typename Table::RowHashBounds hashBounds;
 			typename Table::RowHashBounds::Iterator begin;
-			hashBounds = table.FindByMultiHash(momo::DataMultiHashIndex::empty, strCol == "0");
+			hashBounds = table.FindByMultiHash(strCol == "0");
 			begin = hashBounds.GetBegin();
 			assert(begin < hashBounds.GetEnd());
 			assert(hashBounds[0][strCol] == "0");

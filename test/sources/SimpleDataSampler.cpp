@@ -135,7 +135,7 @@ namespace sample_data2
 		}
 
 		{
-			size_t count = table.SelectCount(intCol == 2, dblCol == 0.5);	// slow select (takes linear time)
+			size_t count = table.SelectCount(intCol == 2 && dblCol == 0.5);	// slow select (takes linear time)
 			std::cout << count << std::endl;	// 0
 		}
 
@@ -237,12 +237,12 @@ namespace sample_data4
 		auto multiIndex = table.AddMultiHashIndex(strCol);
 
 		{
-			auto prow = table.FindByUniqueHash(uniqueIndex, intCol == 1, strCol == "a");	// fastest search
+			auto prow = table.FindByUniqueHash(intCol == 1 && strCol == "a", uniqueIndex);	// fastest search
 			std::cout << (*prow)[dblCol] << std::endl;	// 1.5
 		}
 
 		{
-			auto rows = table.FindByMultiHash(multiIndex, strCol == "a");	// fastest search
+			auto rows = table.FindByMultiHash(strCol == "a", multiIndex);	// fastest search
 			std::cout << rows.GetCount() << std::endl;	// 2
 		}
 	}
