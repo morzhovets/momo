@@ -68,11 +68,9 @@ namespace internal
 	class DataEquality
 	{
 	public:
-		typedef std::tuple<DataEquality<Columns>...> Tuple;
-
-	public:
-		explicit DataEquality(Tuple&& tuple) noexcept
-			: mTuple(std::move(tuple))
+		DataEquality(std::pair<const Columns&,
+			const typename DataColumnItemSelector<Columns>::Item&>... pairs) noexcept
+			: mTuple(pairs...)
 		{
 		}
 
@@ -90,17 +88,28 @@ namespace internal
 			return std::get<index>(mTuple);
 		}
 
-		template<typename ExtColumn>
-		DataEquality<Columns..., ExtColumn> And(const ExtColumn& extColumn,
-			const typename DataColumnItemSelector<ExtColumn>::Item& extItem) && noexcept
+		template<typename RightColumn>
+		DataEquality<Columns..., RightColumn> And(const RightColumn& rightColumn,
+			const typename DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
 		{
-			typedef typename DataColumnItemSelector<ExtColumn>::Item Item;
-			return DataEquality<Columns..., ExtColumn>(std::tuple_cat(std::move(mTuple),
-				std::make_tuple(DataEquality<ExtColumn>(extColumn, extItem))));
+			return pvAnd(rightColumn, rightItem, std::index_sequence_for<Columns...>());
 		}
 
 	private:
-		Tuple mTuple;
+		template<typename RightColumn,
+			typename RightItem = typename DataColumnItemSelector<RightColumn>::Item,
+			size_t... sequence>
+		DataEquality<Columns..., RightColumn> pvAnd(const RightColumn& rightColumn,
+			const RightItem& rightItem, std::index_sequence<sequence...>) const noexcept
+		{
+			return DataEquality<Columns..., RightColumn>(
+				std::pair<const Columns&, const typename DataColumnItemSelector<Columns>::Item&>(
+					Get<sequence>().GetColumn(), Get<sequence>().GetItem())...,
+				std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+		}
+
+	private:
+		std::tuple<DataEquality<Columns>...> mTuple;
 	};
 
 	template<typename Column>
@@ -113,6 +122,11 @@ namespace internal
 		DataEquality(const Column& column, const Item& item) noexcept
 			: mColumn(column),
 			mItem(item)
+		{
+		}
+
+		DataEquality(std::pair<const Column&, const Item&> pair) noexcept
+			: DataEquality(pair.first, pair.second)
 		{
 		}
 
@@ -141,20 +155,21 @@ namespace internal
 			return *this;
 		}
 
-		template<typename ExtColumn>
-		DataEquality<Column, ExtColumn> And(const ExtColumn& extColumn,
-			const typename DataColumnItemSelector<ExtColumn>::Item& extItem) && noexcept
+		template<typename RightColumn>
+		DataEquality<Column, RightColumn> And(const RightColumn& rightColumn,
+			const typename DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
 		{
-			typedef typename DataColumnItemSelector<ExtColumn>::Item ExtItem;
-			return DataEquality<Column, ExtColumn>(std::make_tuple(
-				DataEquality(mColumn, mItem), DataEquality<ExtColumn>(extColumn, extItem)));
+			typedef typename DataColumnItemSelector<RightColumn>::Item RightItem;
+			return DataEquality<Column, RightColumn>(
+				std::pair<const Column&, const Item&>(mColumn, mItem),
+				std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
 		}
 
-		template<typename... Columns>
-		friend DataEquality<Columns..., Column> operator&&(
-			DataEquality<Columns...> equals, DataEquality<Column> equal) noexcept
+		template<typename... LeftColumns>
+		friend DataEquality<LeftColumns..., Column> operator&&(
+			DataEquality<LeftColumns...> leftEquals, DataEquality<Column> equal) noexcept
 		{
-			return std::move(equals).And(equal.GetColumn(), equal.GetItem());
+			return std::move(leftEquals).And(equal.GetColumn(), equal.GetItem());
 		}
 
 	private:
@@ -162,27 +177,9 @@ namespace internal
 		const Item& mItem;
 	};
 
-	template<>
-	class DataEquality<>
-	{
-	public:
-		DataEquality() noexcept = default;
-
-		DataEquality(DataEquality&&) = default;
-
-		DataEquality(const DataEquality&) = delete;
-
-		~DataEquality() noexcept = default;
-
-		DataEquality& operator=(const DataEquality&) = delete;
-
-		template<typename Column>
-		DataEquality<Column> And(const Column& column,
-			const typename DataColumnItemSelector<Column>::Item& item) && noexcept
-		{
-			return DataEquality<Column>(column, item);
-		}
-	};
+	template<typename Column,
+		typename Item = typename DataColumnItemSelector<Column>::Item>
+	DataEquality(Column, Item) -> DataEquality<Column>;
 
 	template<typename TColumn, typename TItemArg>
 	class DataAssignment
