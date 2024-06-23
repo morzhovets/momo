@@ -87,13 +87,13 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equality = internal::DataEquality<Column<Item>>;
+	using Equality = DataEquality<Column<Item>>;
 
 	template<typename... Items>
-	using Equalities = internal::DataEquality<Column<Items>...>;
+	using Equalities = DataEquality<Column<Items>...>;
 
 	template<typename Item, typename ItemArg>
-	using Assignment = internal::DataAssignment<Column<Item>, ItemArg>;
+	using Assignment = DataAssignment<Column<Item>, ItemArg>;
 
 	typedef internal::DataRowReference<ColumnList> RowReference;
 	typedef typename RowReference::ConstReference ConstRowReference;

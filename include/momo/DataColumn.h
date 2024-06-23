@@ -16,6 +16,8 @@
   namespace momo:
     concept conceptDataColumnList
     concept conceptDataStructWithMembers
+    class DataEquality
+    class DataAssignment
     struct DataStructDefault
     enum class DataColumnCodeOffset
     struct DataColumnCodeSelector
@@ -62,158 +64,6 @@ namespace internal
 	struct DataColumnItemSelector
 	{
 		typedef typename Column::Item Item;
-	};
-
-	template<typename... Columns>
-	class DataEquality
-	{
-	public:
-		DataEquality(std::pair<const Columns&,
-			const typename DataColumnItemSelector<Columns>::Item&>... pairs) noexcept
-			: mTuple(pairs...)
-		{
-		}
-
-		DataEquality(DataEquality&&) = default;
-
-		DataEquality(const DataEquality&) = delete;
-
-		~DataEquality() noexcept = default;
-
-		DataEquality& operator=(const DataEquality&) = delete;
-
-		template<size_t index>
-		decltype(auto) Get() const noexcept
-		{
-			return std::get<index>(mTuple);
-		}
-
-		template<typename RightColumn>
-		DataEquality<Columns..., RightColumn> And(const RightColumn& rightColumn,
-			const typename DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
-		{
-			return pvAnd(rightColumn, rightItem, std::index_sequence_for<Columns...>());
-		}
-
-	private:
-		template<typename RightColumn,
-			typename RightItem = typename DataColumnItemSelector<RightColumn>::Item,
-			size_t... sequence>
-		DataEquality<Columns..., RightColumn> pvAnd(const RightColumn& rightColumn,
-			const RightItem& rightItem, std::index_sequence<sequence...>) const noexcept
-		{
-			return DataEquality<Columns..., RightColumn>(
-				std::pair<const Columns&, const typename DataColumnItemSelector<Columns>::Item&>(
-					Get<sequence>().GetColumn(), Get<sequence>().GetItem())...,
-				std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
-		}
-
-	private:
-		std::tuple<DataEquality<Columns>...> mTuple;
-	};
-
-	template<typename Column>
-	class DataEquality<Column>
-	{
-	public:
-		typedef typename DataColumnItemSelector<Column>::Item Item;
-
-	public:
-		DataEquality(const Column& column, const Item& item) noexcept
-			: mColumn(column),
-			mItem(item)
-		{
-		}
-
-		DataEquality(std::pair<const Column&, const Item&> pair) noexcept
-			: DataEquality(pair.first, pair.second)
-		{
-		}
-
-		DataEquality(DataEquality&&) = default;
-
-		DataEquality(const DataEquality&) = delete;
-
-		~DataEquality() noexcept = default;
-
-		DataEquality& operator=(const DataEquality&) = delete;
-
-		const Column& GetColumn() const noexcept
-		{
-			return mColumn;
-		}
-
-		const Item& GetItem() const noexcept
-		{
-			return mItem;
-		}
-
-		template<size_t index>
-		requires (index == 0)
-		const DataEquality& Get() const noexcept
-		{
-			return *this;
-		}
-
-		template<typename RightColumn>
-		DataEquality<Column, RightColumn> And(const RightColumn& rightColumn,
-			const typename DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
-		{
-			typedef typename DataColumnItemSelector<RightColumn>::Item RightItem;
-			return DataEquality<Column, RightColumn>(
-				std::pair<const Column&, const Item&>(mColumn, mItem),
-				std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
-		}
-
-		template<typename... LeftColumns>
-		friend DataEquality<LeftColumns..., Column> operator&&(
-			DataEquality<LeftColumns...> leftEquals, DataEquality<Column> equal) noexcept
-		{
-			return std::move(leftEquals).And(equal.GetColumn(), equal.GetItem());
-		}
-
-	private:
-		const Column& mColumn;
-		const Item& mItem;
-	};
-
-	template<typename Column,
-		typename Item = typename DataColumnItemSelector<Column>::Item>
-	DataEquality(Column, Item) -> DataEquality<Column>;
-
-	template<typename TColumn, typename TItemArg>
-	class DataAssignment
-	{
-	public:
-		typedef TColumn Column;
-		typedef TItemArg ItemArg;
-
-	public:
-		DataAssignment(const Column& column, ItemArg&& itemArg) noexcept
-			: mColumn(column),
-			mItemArg(std::forward<ItemArg>(itemArg))
-		{
-		}
-
-		DataAssignment(const DataAssignment&) = delete;
-
-		~DataAssignment() noexcept = default;
-
-		DataAssignment& operator=(const DataAssignment&) = delete;
-
-		const Column& GetColumn() const noexcept
-		{
-			return mColumn;
-		}
-
-		ItemArg&& GetItemArg() const noexcept
-		{
-			return std::forward<ItemArg>(mItemArg);
-		}
-
-	private:
-		const Column& mColumn;
-		ItemArg&& mItemArg;
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
@@ -343,6 +193,158 @@ template<typename DataStruct>
 concept conceptDataStructWithMembers =
 	std::is_class_v<DataStruct> && !std::is_empty_v<DataStruct>;
 
+template<typename... Columns>
+class DataEquality
+{
+public:
+	DataEquality(std::pair<const Columns&,
+		const typename internal::DataColumnItemSelector<Columns>::Item&>... pairs) noexcept
+		: mTuple(pairs...)
+	{
+	}
+
+	DataEquality(DataEquality&&) = default;
+
+	DataEquality(const DataEquality&) = delete;
+
+	~DataEquality() noexcept = default;
+
+	DataEquality& operator=(const DataEquality&) = delete;
+
+	template<size_t index>
+	decltype(auto) Get() const noexcept
+	{
+		return std::get<index>(mTuple);
+	}
+
+	template<typename RightColumn>
+	DataEquality<Columns..., RightColumn> And(const RightColumn& rightColumn,
+		const typename internal::DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
+	{
+		return pvAnd(rightColumn, rightItem, std::index_sequence_for<Columns...>());
+	}
+
+private:
+	template<typename RightColumn,
+		typename RightItem = typename internal::DataColumnItemSelector<RightColumn>::Item,
+		size_t... sequence>
+	DataEquality<Columns..., RightColumn> pvAnd(const RightColumn& rightColumn,
+		const RightItem& rightItem, std::index_sequence<sequence...>) const noexcept
+	{
+		return DataEquality<Columns..., RightColumn>(
+			std::pair<const Columns&, const typename internal::DataColumnItemSelector<Columns>::Item&>(
+				Get<sequence>().GetColumn(), Get<sequence>().GetItem())...,
+			std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+	}
+
+private:
+	std::tuple<DataEquality<Columns>...> mTuple;
+};
+
+template<typename Column>
+class DataEquality<Column>
+{
+public:
+	typedef typename internal::DataColumnItemSelector<Column>::Item Item;
+
+public:
+	DataEquality(const Column& column, const Item& item) noexcept
+		: mColumn(column),
+		mItem(item)
+	{
+	}
+
+	DataEquality(std::pair<const Column&, const Item&> pair) noexcept
+		: DataEquality(pair.first, pair.second)
+	{
+	}
+
+	DataEquality(DataEquality&&) = default;
+
+	DataEquality(const DataEquality&) = delete;
+
+	~DataEquality() noexcept = default;
+
+	DataEquality& operator=(const DataEquality&) = delete;
+
+	const Column& GetColumn() const noexcept
+	{
+		return mColumn;
+	}
+
+	const Item& GetItem() const noexcept
+	{
+		return mItem;
+	}
+
+	template<size_t index>
+	requires (index == 0)
+	const DataEquality& Get() const noexcept
+	{
+		return *this;
+	}
+
+	template<typename RightColumn>
+	DataEquality<Column, RightColumn> And(const RightColumn& rightColumn,
+		const typename internal::DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
+	{
+		typedef typename internal::DataColumnItemSelector<RightColumn>::Item RightItem;
+		return DataEquality<Column, RightColumn>(
+			std::pair<const Column&, const Item&>(mColumn, mItem),
+			std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+	}
+
+	template<typename... LeftColumns>
+	friend DataEquality<LeftColumns..., Column> operator&&(
+		DataEquality<LeftColumns...> leftEquals, DataEquality<Column> equal) noexcept
+	{
+		return std::move(leftEquals).And(equal.GetColumn(), equal.GetItem());
+	}
+
+private:
+	const Column& mColumn;
+	const Item& mItem;
+};
+
+template<typename Column,
+	typename Item = typename internal::DataColumnItemSelector<Column>::Item>
+DataEquality(Column, Item) -> DataEquality<Column>;
+
+template<typename TColumn, typename TItemArg>
+class DataAssignment
+{
+public:
+	typedef TColumn Column;
+	typedef TItemArg ItemArg;
+
+public:
+	DataAssignment(const Column& column, ItemArg&& itemArg) noexcept
+		: mColumn(column),
+		mItemArg(std::forward<ItemArg>(itemArg))
+	{
+	}
+
+	DataAssignment(const DataAssignment&) = delete;
+
+	~DataAssignment() noexcept = default;
+
+	DataAssignment& operator=(const DataAssignment&) = delete;
+
+	const Column& GetColumn() const noexcept
+	{
+		return mColumn;
+	}
+
+	ItemArg&& GetItemArg() const noexcept
+	{
+		return std::forward<ItemArg>(mItemArg);
+	}
+
+private:
+	const Column& mColumn;
+	ItemArg&& mItemArg;
+};
+
 template<typename... TVisitableItems>
 struct DataStructDefault
 {
@@ -379,10 +381,10 @@ public:
 
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
-	typedef internal::DataEquality<DataColumn> Equality;
+	typedef DataEquality<DataColumn> Equality;
 
 	template<typename ItemArg>
-	using Assignment = internal::DataAssignment<DataColumn, ItemArg>;
+	using Assignment = DataAssignment<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(const char* name) noexcept
