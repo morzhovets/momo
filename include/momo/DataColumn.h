@@ -23,11 +23,13 @@
     struct DataColumnCodeSelector
     class DataColumn
     class DataColumnInfo
+    class DataColumnInfoNative
     class DataSettings
     class DataColumnTraits
     class DataItemTraits
     class DataColumnList
     class DataColumnListStatic
+    class DataColumnListNative
 
 \**********************************************************/
 
@@ -60,10 +62,16 @@ namespace internal
 	{
 	};
 
-	template<typename Column>
+	template<typename TColumn>
 	struct DataColumnItemSelector
 	{
-		typedef typename Column::Item Item;
+		typedef typename TColumn::Item Item;
+	};
+
+	template<typename TItem, typename TStruct>
+	struct DataColumnItemSelector<TItem TStruct::*>
+	{
+		typedef TItem Item;
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
@@ -527,6 +535,50 @@ public:
 
 private:
 	const char* mName;
+};
+
+template<conceptDataStructWithMembers TStruct>
+class DataColumnInfoNative : public internal::DataColumnInfoBase<TStruct, DataColumnCodeOffset>
+{
+private:
+	typedef internal::DataColumnInfoBase<TStruct, DataColumnCodeOffset> ColumnInfoBase;
+
+public:
+	using typename ColumnInfoBase::Struct;
+	using typename ColumnInfoBase::Code;
+
+	template<typename Item>
+	using Column = Item Struct::*;
+
+public:
+	template<typename Item>
+	DataColumnInfoNative(const Column<Item>& column) noexcept
+		: ColumnInfoBase(GetCode(column), static_cast<Item*>(nullptr))
+	{
+	}
+
+	using ColumnInfoBase::GetCode;
+
+	template<typename Item>
+	static Code GetCode(const Column<Item>& column) noexcept
+	{
+		static Struct staticStruct;	//?
+		return static_cast<Code>(
+			reinterpret_cast<const std::byte*>(std::addressof(staticStruct.*column))
+			- reinterpret_cast<const std::byte*>(std::addressof(staticStruct)));
+	}
+
+	template<internal::conceptDataPtrVisitor<const void, DataColumnInfoNative> PtrVisitor>
+	void Visit(const void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfoNative>(item, ptrVisitor);
+	}
+
+	template<internal::conceptDataPtrVisitor<void, DataColumnInfoNative> PtrVisitor>
+	void Visit(void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfoNative>(item, ptrVisitor);
+	}
 };
 
 template<bool tKeepRowNumber = false>
@@ -1455,5 +1507,11 @@ private:
 	VisitableColumns mVisitableColumns;
 	MutableOffsets mMutableOffsets;
 };
+
+template<conceptDataStructWithMembers TStruct,
+	conceptMemManager TMemManager = MemManagerDefault,
+	typename TSettings = DataSettings<>>
+using DataColumnListNative = DataColumnListStatic<TStruct,
+	DataColumnInfoNative<TStruct>, TMemManager, TSettings>;
 
 } // namespace momo
