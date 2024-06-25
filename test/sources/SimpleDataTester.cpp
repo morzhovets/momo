@@ -54,6 +54,17 @@ public:
 	static void TestAll()
 	{
 		{
+			std::cout << "momo::DataColumnListNative (-RowNumber): " << std::flush;
+			typedef momo::DataColumnListNative<Struct, momo::MemManagerDict<>> DataColumnList;
+			DataColumnList columnList;
+			columnList.SetMutable(&Struct::dblStruct);
+			columnList.PrepareForVisitors(&Struct::intStruct, &Struct::dblStruct, &Struct::strStruct);
+			momo::DataTable<DataColumnList> table(std::move(columnList));
+			TestData<false, true>(table, &Struct::intStruct, &Struct::dblStruct, &Struct::strStruct);
+			std::cout << "ok" << std::endl;
+		}
+
+		{
 			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
@@ -113,7 +124,8 @@ public:
 		}
 	}
 
-	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	template<bool dynamic, bool native = false,
+		typename Table, typename IntCol, typename DblCol, typename StrCol>
 	static void TestData(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
@@ -136,9 +148,9 @@ public:
 
 		for (size_t i = 0; i < count / 2; ++i)
 		{
-			if (i % 2 == 0)
-				table.AddRow(intCol = static_cast<int>(i));
-			else
+			if (native || i % 2 == 0)
+				table.AddRow(momo::DataAssignment(intCol, static_cast<int>(i)));
+			else if constexpr (!native)
 				table.TryAddRow(intCol = static_cast<int>(i));
 		}
 
@@ -148,7 +160,7 @@ public:
 
 			auto voidVisitor = [i, &intCol] (void* item, auto columnInfo)
 			{
-				if (columnInfo.GetCode() == intCol.GetCode())
+				if (columnInfo.GetCode() == ColumnList::ColumnInfo::GetCode(intCol))
 					*static_cast<int*>(item) = static_cast<int>(i);
 			};
 			row.VisitPointers(voidVisitor);
@@ -233,9 +245,9 @@ public:
 
 		for (size_t i = 0; i < count2; ++i)
 		{
-			if (i % 2 == 0)
-				table.InsertRow(count, intCol = static_cast<int>(count + i));
-			else
+			if (native || i % 2 == 0)
+				table.InsertRow(count, momo::DataAssignment(intCol, static_cast<int>(count + i)));
+			else if constexpr (!native)
 				table.TryInsertRow(count, intCol = static_cast<int>(count + i));
 		}
 		assert(table.GetCount() == count + count2);
@@ -262,51 +274,68 @@ public:
 		assert(table.Select().GetCount() == count);
 		assert(ctable.Select().GetCount() == count);
 
-		assert(table.SelectCount(strCol == "0", intCol == 1) == 1);
-		assert(table.Select(intCol == 0, strCol == "1").GetCount() == 1);
-		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
+		assert(table.SelectCount(momo::DataEquality(dblCol, 0.0)) == 1);
+		assert(table.Select(momo::DataEquality(dblCol, 1.0)).GetCount() == 1);
+		assert(ctable.Select(momo::DataEquality(dblCol, 1.0)).GetCount() == 1);
 
-		assert(table.SelectCount(strCol == "0" && intCol == 1 && dblCol == 1.0) == 1);
-		assert(table.Select(intCol == 0 && dblCol == 0.5 && strCol == "1").GetCount() == 1);
-		assert(ctable.Select(strCol == "1" && dblCol == 0.5 && intCol == 0).GetCount() == 1);
+		assert(table.SelectCount(
+			momo::DataEquality(strCol, "0"), momo::DataEquality(intCol, 1)) == 1);
+		assert(table.Select(
+			momo::DataEquality(intCol, 0), momo::DataEquality(strCol, "1")).GetCount() == 1);
+		assert(ctable.Select(
+			momo::DataEquality(strCol, "1"), momo::DataEquality(intCol, 0)).GetCount() == 1);
 
-		assert(table.SelectCount(emptyFilter, strCol == "0") == count / 2);
-		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
-		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
+		assert(table.SelectCount(
+			momo::DataEquality(strCol, "0").And(intCol, 1).And(dblCol, 1.0)) == 1);
+		assert(table.Select(
+			momo::DataEquality(intCol, 0).And(dblCol, 0.5).And(strCol, "1")).GetCount() == 1);
+		assert(ctable.Select(
+			momo::DataEquality(strCol, "1").And(dblCol, 0.5).And(intCol, 0)).GetCount() == 1);
 
-		assert(table.SelectCount(dblCol == 0.0) == 1);
-		assert(table.Select(dblCol == 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
+		if constexpr (!native)
+		{
+			assert(table.SelectCount(strCol == "0" && intCol == 1 && dblCol == 1.0) == 1);
+			assert(table.Select(intCol == 0 && dblCol == 0.5 && strCol == "1").GetCount() == 1);
+			assert(ctable.Select(strCol == "1" && dblCol == 0.5 && intCol == 0).GetCount() == 1);
+		}
 
-		assert(table.SelectCount(dblCol == 0.0, strCol == "0") == 1);
-		assert(table.Select(strCol == "0", dblCol == 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0, strCol == "1").GetCount() == 0);
+		assert(table.SelectCount(emptyFilter, momo::DataEquality(strCol, "0")) == count / 2);
+		assert(table.Select(emptyFilter, momo::DataEquality(strCol, "1")).GetCount() == count / 2);
+		assert(ctable.Select(emptyFilter, momo::DataEquality(strCol, "1")).GetCount() == count / 2);
 
-		assert(table.SelectCount(dblCol == 0.0 && strCol == "0", emptyFilter) == 1);
-		assert(table.Select(strCol == "0" && dblCol == 1.0, emptyFilter).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0 && strCol == "1", emptyFilter).GetCount() == 0);
+		assert(table.SelectCount(momo::DataEquality(dblCol, 0.0).And(strCol, "0"), emptyFilter) == 1);
+		assert(table.Select(momo::DataEquality(strCol, "0").And(dblCol, 1.0), emptyFilter).GetCount() == 1);
+		assert(ctable.Select(momo::DataEquality(dblCol, 1.0).And(strCol, "1"), emptyFilter).GetCount() == 0);
 
-		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
-		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
+		if constexpr (!native)
+		{
+			assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
+			assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
+		}
 
-		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
-		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
+		assert(table.FindByUniqueHash(keyIndex,
+			momo::DataEquality(intCol, 0), momo::DataEquality(strCol, "1"))->Get(strCol) == "1");
+		assert((*ctable.FindByUniqueHash(keyIndex,
+			momo::DataEquality(strCol, "1"), momo::DataEquality(intCol, 0)))[strCol] == "1");
 
-		assert(table.FindByUniqueHash(intCol == 0 && strCol == "1", keyIndex)->Get(strCol) == "1");
-		assert((*ctable.FindByUniqueHash(strCol == "1" && intCol == 0, keyIndex))[strCol] == "1");
+		assert(table.FindByUniqueHash(
+			momo::DataEquality(intCol, 0).And(strCol, "1"), keyIndex)->Get(strCol) == "1");
+		assert((*ctable.FindByUniqueHash(
+			momo::DataEquality(strCol, "1").And(intCol, 0), keyIndex))[strCol] == "1");
 
 		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
+			momo::DataEquality(strCol, "1")).GetCount() == count / 2);
 		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
+			momo::DataEquality(strCol, "1")).GetCount() == count / 2);
 
-		assert(table.FindByMultiHash(strCol == "1").GetCount() == count / 2);
-		assert(ctable.FindByMultiHash(strCol == "1").GetCount() == count / 2);
+		assert(table.FindByMultiHash(momo::DataEquality(strCol, "1")).GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(momo::DataEquality(strCol, "1")).GetCount() == count / 2);
 
 		{
 			typename Table::RowHashPointer hashPointer;
 			typename Table::RowHashPointer::Iterator begin;
-			hashPointer = table.FindByUniqueHash(strCol == "0" && intCol == 0, keyIndex);
+			hashPointer = table.FindByUniqueHash(
+				momo::DataEquality(strCol, "0").And(intCol, 0), keyIndex);
 			assert(static_cast<bool>(hashPointer));
 			begin = hashPointer.GetBegin();
 			assert(begin < hashPointer.GetEnd());
@@ -315,7 +344,7 @@ public:
 		{
 			typename Table::RowHashBounds hashBounds;
 			typename Table::RowHashBounds::Iterator begin;
-			hashBounds = table.FindByMultiHash(strCol == "0");
+			hashBounds = table.FindByMultiHash(momo::DataEquality(strCol, "0"));
 			begin = hashBounds.GetBegin();
 			assert(begin < hashBounds.GetEnd());
 			assert(hashBounds[0][strCol] == "0");
@@ -362,7 +391,7 @@ public:
 		}
 
 		{
-			Selection selection = table.Select(strCol == "1");
+			Selection selection = table.Select(momo::DataEquality(strCol, "1"));
 			assert(selection.GetCount() == count / 2);
 			for (auto row : selection)
 				assert(row[strCol] == "1");
@@ -384,14 +413,14 @@ public:
 		{
 			Selection selection = table.Select().Sort(strCol);
 
-			assert(selection.GetLowerBound(strCol == "") == 0);
-			assert(selection.GetUpperBound(strCol == "") == 0);
-			assert(selection.GetLowerBound(strCol == "0") == 0);
-			assert(selection.GetUpperBound(strCol == "0") == count / 2);
-			assert(selection.GetLowerBound(strCol == "1") == count / 2);
-			assert(selection.GetUpperBound(strCol == "1") == count);
-			assert(selection.GetLowerBound(strCol == "2") == count);
-			assert(selection.GetUpperBound(strCol == "2") == count);
+			assert(selection.GetLowerBound(momo::DataEquality(strCol, "")) == 0);
+			assert(selection.GetUpperBound(momo::DataEquality(strCol, "")) == 0);
+			assert(selection.GetLowerBound(momo::DataEquality(strCol, "0")) == 0);
+			assert(selection.GetUpperBound(momo::DataEquality(strCol, "0")) == count / 2);
+			assert(selection.GetLowerBound(momo::DataEquality(strCol, "1")) == count / 2);
+			assert(selection.GetUpperBound(momo::DataEquality(strCol, "1")) == count);
+			assert(selection.GetLowerBound(momo::DataEquality(strCol, "2")) == count);
+			assert(selection.GetUpperBound(momo::DataEquality(strCol, "2")) == count);
 
 			selection.Reserve(selection.GetCount() * 2);
 			selection.Assign(selection.GetBegin(), selection.GetEnd());
