@@ -25,6 +25,19 @@ namespace sample_data1
 
 namespace sample_data2
 {
+	struct Struct
+	{
+		int intCol;
+		double dblCol;
+		std::string strCol;
+	};
+
+	using ColumnList = momo::DataColumnListNative<Struct>;
+	using Table = momo::DataTable<ColumnList>;
+}
+
+namespace sample_data3
+{
 	using Table = momo::DataTable<>;
 
 	template<typename Item>
@@ -35,7 +48,7 @@ namespace sample_data2
 	inline constexpr Column<std::string> strCol("strCol");
 }
 
-namespace sample_data3
+namespace sample_data4
 {
 	using Struct = momo::DataStructDefault<int, double, std::string>;
 	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
@@ -49,7 +62,7 @@ namespace sample_data3
 	inline constexpr Column<std::string> strCol("strCol");
 }
 
-namespace sample_data4
+namespace sample_data5
 {
 	struct Struct
 	{
@@ -58,10 +71,6 @@ namespace sample_data4
 		std::string strCol;
 	};
 
-	using ColumnList = momo::DataColumnListStatic<Struct>;
+	using ColumnList = momo::DataColumnListNative<Struct>;
 	using Table = momo::DataTable<ColumnList>;
-
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
 }

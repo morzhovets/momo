@@ -28,8 +28,8 @@ namespace sample_data1
 */
 	void Sample()
 	{
-		// construct empty table with 3 columns
-		momo::DataTable<> table({ intCol, dblCol, strCol });
+		// in this sample the list of columns is specified when constructing the DataTable
+		momo::DataTable<> table({ intCol, dblCol, strCol });	// construct empty table with 3 columns
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(strCol, intCol);
@@ -41,7 +41,7 @@ namespace sample_data1
 
 		std::cout << table.GetCount() << std::endl;	// 2
 
-		// table[0][dblCol] returns `const double&`
+		// `table[0][dblCol]` returns `const double&`
 		std::cout << table[0][dblCol] << std::endl;	// 0.5
 
 		// after adding the row can be modified by function `UpdateRow`
@@ -54,8 +54,8 @@ namespace sample_data1
 		// 2 2.5 a
 
 		{
-			// select by condition
-			auto selection = table.Select(intCol == 1);
+			// select by conditions
+			auto selection = table.Select(intCol == 1 && strCol == "b");
 			std::cout << selection.GetCount() << std::endl; // 1
 			std::cout << selection[0][dblCol] << std::endl;	// 1.5
 		}
@@ -73,6 +73,73 @@ namespace sample_data1
 }
 
 namespace sample_data2
+{
+// Declarations in SimpleDataSampler.h
+/*
+	struct Struct
+	{
+		int intCol;
+		double dblCol;
+		std::string strCol;
+	};
+
+	using ColumnList = momo::DataColumnListNative<Struct>;
+	using Table = momo::DataTable<ColumnList>;
+*/
+	void Sample()
+	{
+		// in this sample the list of columns is specified in accordance with the `Struct` struct
+		Table table;	// construct empty table with 3 columns
+
+		// unique index (primary key)
+		table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
+
+		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 0.5, .strCol = "b" }));
+
+		{
+			auto row = table.NewRow();
+			row->intCol = 2;
+			row->dblCol = 2.5;
+			table.TryAddRow(std::move(row));	// strCol = ""
+		}
+
+		table.TryAddRow(table.NewRow(Struct{ .intCol = 2 }));	// not added because of unique index
+
+		std::cout << table.GetCount() << std::endl;	// 2
+
+		// `table[0]->dblCol` has type `const double&`
+		std::cout << table[0]->dblCol << std::endl;	// 0.5
+
+		// after adding the row can be modified by function `UpdateRow`
+		table.UpdateRow(table[0], &Struct::dblCol, 1.5);
+		table.UpdateRow(table[1], &Struct::strCol, "a");
+
+		for (auto row : table)
+			std::cout << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
+		// 1 1.5 b
+		// 2 2.5 a
+
+		{
+			// select by conditions
+			auto selection = table.Select(
+				momo::DataEquality(&Struct::intCol, 1).And(&Struct::strCol, "b"));
+			std::cout << selection.GetCount() << std::endl; // 1
+			std::cout << selection[0]->dblCol << std::endl;	// 1.5
+		}
+
+		{
+			// select all and sort
+			auto selection = table.Select().Sort(&Struct::strCol);
+
+			for (const std::string& str : selection.GetColumnItems(&Struct::strCol))
+				std::cout << str << std::endl;
+			// a
+			// b
+		}
+	}
+}
+
+namespace sample_data3
 {
 // Declarations in SimpleDataSampler.h
 /*
@@ -149,7 +216,7 @@ namespace sample_data2
 	}
 }
 
-namespace sample_data3
+namespace sample_data4
 {
 // Declarations in SimpleDataSampler.h
 /*
@@ -195,7 +262,7 @@ namespace sample_data3
 	}
 }
 
-namespace sample_data4
+namespace sample_data5
 {
 // Declarations in SimpleDataSampler.h
 /*
@@ -208,10 +275,6 @@ namespace sample_data4
 
 	using ColumnList = momo::DataColumnListStatic<Struct>;
 	using Table = momo::DataTable<ColumnList>;
-
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
 */
 	void Sample()
 	{
@@ -221,10 +284,9 @@ namespace sample_data4
 		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
 
 		{
-			auto row = table.NewRow();
+			auto row = table.NewRow(table[0]);
 			row->intCol = 2;
 			row->dblCol = 0.5;
-			row->strCol = "a";
 			table.AddRow(std::move(row));
 		}
 
@@ -233,24 +295,27 @@ namespace sample_data4
 		// 1 1.5 a
 		// 2 0.5 a
 
-		auto uniqueIndex = table.AddUniqueHashIndex(strCol, intCol);
-		auto multiIndex = table.AddMultiHashIndex(strCol);
+		auto uniqueIndex = table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
+		auto multiIndex = table.AddMultiHashIndex(&Struct::strCol);
 
 		{
-			auto prow = table.FindByUniqueHash(intCol == 1 && strCol == "a", uniqueIndex);	// fastest search
-			std::cout << (*prow)[dblCol] << std::endl;	// 1.5
+			auto prow = table.FindByUniqueHash(
+				momo::DataEquality(&Struct::intCol, 1).And(&Struct::strCol, "a"), uniqueIndex);	// fastest search
+			std::cout << (*prow)->dblCol << std::endl;	// 1.5
 		}
 
 		{
-			auto rows = table.FindByMultiHash(strCol == "a", multiIndex);	// fastest search
+			auto rows = table.FindByMultiHash(
+				momo::DataEquality(&Struct::strCol, "a"), multiIndex);	// fastest search
 			std::cout << rows.GetCount() << std::endl;	// 2
 		}
 	}
 }
 
-//static int sampleData1 = (sample_data1::Sample(), 0);
-//static int sampleData2 = (sample_data2::Sample(), 0);
-//static int sampleData3 = (sample_data3::Sample(), 0);
-//static int sampleData4 = (sample_data4::Sample(), 0);
+static int sampleData1 = (sample_data1::Sample(), 0);
+static int sampleData2 = (sample_data2::Sample(), 0);
+static int sampleData3 = (sample_data3::Sample(), 0);
+static int sampleData4 = (sample_data4::Sample(), 0);
+static int sampleData5 = (sample_data5::Sample(), 0);
 
 #endif // TEST_SIMPLE_DATA
