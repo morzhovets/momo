@@ -17,6 +17,7 @@
 #include "SimpleDataSampler.h"
 
 #include <iostream>
+#include <sstream>
 
 namespace sample_data1
 {
@@ -26,7 +27,7 @@ namespace sample_data1
 	inline constexpr momo::DataColumn<double> dblCol("dblCol");
 	inline constexpr momo::DataColumn<std::string> strCol("strCol");
 */
-	void Sample()
+	void Sample(std::ostream& output)
 	{
 		// in this sample the list of columns is specified when constructing the DataTable
 		momo::DataTable<> table({ intCol, dblCol, strCol });	// construct empty table with 3 columns
@@ -39,25 +40,25 @@ namespace sample_data1
 
 		table.TryAddRow(intCol = 2);	// not added because of unique index
 
-		std::cout << table.GetCount() << std::endl;	// 2
+		output << table.GetCount() << std::endl;	// 2
 
 		// `table[0][dblCol]` returns `const double&`
-		std::cout << table[0][dblCol] << std::endl;	// 0.5
+		output << table[0][dblCol] << std::endl;	// 0.5
 
 		// after adding the row can be modified by function `UpdateRow`
 		table.UpdateRow(table[0], dblCol, 1.5);
 		table.UpdateRow(table[1], strCol, "a");
 
 		for (auto row : table)
-			std::cout << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
+			output << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
 		// 1 1.5 b
 		// 2 2.5 a
 
 		{
 			// select by conditions
-			auto selection = table.Select(intCol == 1 && strCol == "b");
-			std::cout << selection.GetCount() << std::endl; // 1
-			std::cout << selection[0][dblCol] << std::endl;	// 1.5
+			auto selection = table.Select(intCol == 1 && dblCol == 1.5);
+			output << selection.GetCount() << std::endl;	// 1
+			output << selection[0][strCol] << std::endl;	// b
 		}
 
 		{
@@ -65,7 +66,7 @@ namespace sample_data1
 			auto selection = table.Select().Sort(strCol);
 
 			for (const std::string& str : selection.GetColumnItems(strCol))
-				std::cout << str << std::endl;
+				output << str << std::endl;
 			// a
 			// b
 		}
@@ -86,7 +87,7 @@ namespace sample_data2
 	using ColumnList = momo::DataColumnListNative<Struct>;
 	using Table = momo::DataTable<ColumnList>;
 */
-	void Sample()
+	void Sample(std::ostream& output)
 	{
 		// in this sample the list of columns is specified in accordance with the `Struct` struct
 		Table table;	// construct empty table with 3 columns
@@ -105,26 +106,26 @@ namespace sample_data2
 
 		table.TryAddRow(table.NewRow(Struct{ .intCol = 2 }));	// not added because of unique index
 
-		std::cout << table.GetCount() << std::endl;	// 2
+		output << table.GetCount() << std::endl;	// 2
 
 		// `table[0]->dblCol` has type `const double&`
-		std::cout << table[0]->dblCol << std::endl;	// 0.5
+		output << table[0]->dblCol << std::endl;	// 0.5
 
 		// after adding the row can be modified by function `UpdateRow`
 		table.UpdateRow(table[0], &Struct::dblCol, 1.5);
 		table.UpdateRow(table[1], &Struct::strCol, "a");
 
 		for (auto row : table)
-			std::cout << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
+			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
 		// 1 1.5 b
 		// 2 2.5 a
 
 		{
 			// select by conditions
 			auto selection = table.Select(
-				momo::DataEquality(&Struct::intCol, 1).And(&Struct::strCol, "b"));
-			std::cout << selection.GetCount() << std::endl; // 1
-			std::cout << selection[0]->dblCol << std::endl;	// 1.5
+				momo::DataEquality(&Struct::intCol, 1).And(&Struct::dblCol, 1.5));
+			output << selection.GetCount() << std::endl;	// 1
+			output << selection[0]->strCol << std::endl;	// b
 		}
 
 		{
@@ -132,7 +133,7 @@ namespace sample_data2
 			auto selection = table.Select().Sort(&Struct::strCol);
 
 			for (const std::string& str : selection.GetColumnItems(&Struct::strCol))
-				std::cout << str << std::endl;
+				output << str << std::endl;
 			// a
 			// b
 		}
@@ -152,7 +153,7 @@ namespace sample_data3
 	inline constexpr Column<double> dblCol("dblCol");
 	inline constexpr Column<std::string> strCol("strCol");
 */
-	void Sample()
+	void Sample(std::ostream& output)
 	{
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
@@ -181,13 +182,13 @@ namespace sample_data3
 				const std::type_info& typeInfo = column.GetTypeInfo();
 				size_t offset = column.GetOffset();
 				if (typeInfo == typeid(int))
-					std::cout << row.GetByOffset<int>(offset) << " ";
+					output << row.GetByOffset<int>(offset) << " ";
 				else if (typeInfo == typeid(double))
-					std::cout << row.GetByOffset<double>(offset) << " ";
+					output << row.GetByOffset<double>(offset) << " ";
 				else if (typeInfo == typeid(std::string))
-					std::cout << row.GetByOffset<std::string>(offset) << " ";
+					output << row.GetByOffset<std::string>(offset) << " ";
 			}
-			std::cout << std::endl;
+			output << std::endl;
 		}
 		// 1 1.5 b 
 		// 2 0.5 a 
@@ -195,24 +196,24 @@ namespace sample_data3
 
 		{
 			auto selection = table.Select(strCol == "a");	// fast select by index
-			std::cout << selection.GetCount() << std::endl;	// 1
+			output << selection.GetCount() << std::endl;	// 1
 
 			table.RemoveRows(selection.GetBegin(), selection.GetEnd());
-			std::cout << table.GetCount() << std::endl;	// 1
+			output << table.GetCount() << std::endl;	// 1
 		}
 
 		{
 			size_t count = table.SelectCount(intCol == 2 && dblCol == 0.5);	// slow select (takes linear time)
-			std::cout << count << std::endl;	// 0
+			output << count << std::endl;	// 0
 		}
 
 		{
 			auto selection = table.Select([] (auto row) { return row[dblCol] > 0.0; });	// slow select
-			std::cout << selection.GetCount() << std::endl;	// 1
+			output << selection.GetCount() << std::endl;	// 1
 		}
 
 		table.RemoveRows([] (auto row) { return row[dblCol] > 1.0; });
-		std::cout << table.GetCount() << std::endl;	// 0
+		output << table.GetCount() << std::endl;	// 0
 	}
 }
 
@@ -231,7 +232,7 @@ namespace sample_data4
 	inline constexpr Column<double> dblCol("dblCol");
 	inline constexpr Column<std::string> strCol("strCol");
 */
-	void Sample()
+	void Sample(std::ostream& output)
 	{
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
@@ -239,26 +240,28 @@ namespace sample_data4
 		table.AddRow(intCol = 2, dblCol = 0.5, strCol = "a");
 		table.InsertRow(0, intCol = 1, dblCol = 1.5, strCol = "b");	// at position 0
 
+#ifndef MOMO_DISABLE_TYPE_INFO
 		for (auto row : table)
 		{
-			row.VisitReferences([] (auto& item) { std::cout << item << " "; });
-			std::cout << std::endl;
+			row.VisitReferences([&output] (auto& item) { output << item << " "; });
+			output << std::endl;
 		}
 		// 1 1.5 b 
 		// 2 0.5 a 
 
 		for (auto row : table)
 		{
-			auto visitor = [] (auto& item, auto column)
-				{ std::cout << column.GetName() << "=" << item << " "; };
+			auto visitor = [&output] (auto& item, auto column)
+				{ output << column.GetName() << "=" << item << " "; };
 			row.VisitReferences(visitor);
-			std::cout << std::endl;
+			output << std::endl;
 		}
 		// intCol=1 dblCol=1.5 strCol=b 
 		// intCol=2 dblCol=0.5 strCol=a 
+#endif
 
 		table.RemoveRow(table[0]);
-		std::cout << table[0][dblCol] << std::endl;	// 0.5
+		output << table[0][dblCol] << std::endl;	// 0.5
 	}
 }
 
@@ -273,10 +276,10 @@ namespace sample_data5
 		std::string strCol;
 	};
 
-	using ColumnList = momo::DataColumnListStatic<Struct>;
+	using ColumnList = momo::DataColumnListNative<Struct>;
 	using Table = momo::DataTable<ColumnList>;
 */
-	void Sample()
+	void Sample(std::ostream& output)
 	{
 		// construct empty table with 3 columns
 		Table table;
@@ -291,7 +294,7 @@ namespace sample_data5
 		}
 
 		for (auto row : table)
-			std::cout << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
+			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
 		// 1 1.5 a
 		// 2 0.5 a
 
@@ -301,21 +304,42 @@ namespace sample_data5
 		{
 			auto prow = table.FindByUniqueHash(
 				momo::DataEquality(&Struct::intCol, 1).And(&Struct::strCol, "a"), uniqueIndex);	// fastest search
-			std::cout << (*prow)->dblCol << std::endl;	// 1.5
+			output << (*prow)->dblCol << std::endl;	// 1.5
 		}
 
 		{
 			auto rows = table.FindByMultiHash(
 				momo::DataEquality(&Struct::strCol, "a"), multiIndex);	// fastest search
-			std::cout << rows.GetCount() << std::endl;	// 2
+			output << rows.GetCount() << std::endl;	// 2
 		}
 	}
 }
 
-static int sampleData1 = (sample_data1::Sample(), 0);
-static int sampleData2 = (sample_data2::Sample(), 0);
-static int sampleData3 = (sample_data3::Sample(), 0);
-static int sampleData4 = (sample_data4::Sample(), 0);
-static int sampleData5 = (sample_data5::Sample(), 0);
+static int sampleData = []
+{
+	std::cout << "momo::DataTable samples: " << std::flush;
+
+	std::stringstream resStream;
+	sample_data1::Sample(resStream);
+	sample_data2::Sample(resStream);
+	sample_data3::Sample(resStream);
+	sample_data4::Sample(resStream);
+	sample_data5::Sample(resStream);
+
+	std::string res1 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
+	std::string res2 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
+	std::string res3 = "1\n1\n0\n1\n0\n";
+	std::string res4 = "0.5\n";
+	std::string res5 = "1 1.5 a\n2 0.5 a\n1.5\n2\n";
+#ifndef MOMO_DISABLE_TYPE_INFO
+	res3 = "1 1.5 b \n2 0.5 a \n" + res3;
+	res4 = "1 1.5 b \n2 0.5 a \nintCol=1 dblCol=1.5 strCol=b \nintCol=2 dblCol=0.5 strCol=a \n" + res4;
+#endif
+
+	assert(resStream.str() == res1 + res2 + res3 + res4 + res5);
+
+	std::cout << "ok" << std::endl;
+	return 0;
+}();
 
 #endif // TEST_SIMPLE_DATA
