@@ -38,7 +38,8 @@ namespace sample_data1
 		table.AddRow(strCol = "b", intCol = 1, dblCol = 0.5);
 		table.AddRow(intCol = 2, dblCol = 2.5);	// strCol = ""
 
-		table.TryAddRow(intCol = 2);	// not added because of unique index
+		table.TryAddRow(intCol = 1, dblCol = 3.5, strCol = "b");
+		// not added because of unique index
 
 		output << table.GetCount() << std::endl;	// 2
 
@@ -104,7 +105,8 @@ namespace sample_data2
 			table.TryAddRow(std::move(row));	// strCol = ""
 		}
 
-		table.TryAddRow(table.NewRow(Struct{ .intCol = 2 }));	// not added because of unique index
+		table.TryAddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 3.5, .strCol = "b" }));
+		// not added because of unique index
 
 		output << table.GetCount() << std::endl;	// 2
 
@@ -158,20 +160,19 @@ namespace sample_data3
 		// construct empty table with 3 columns
 		Table table({ intCol, dblCol, strCol });
 
-		// for fast select
+		// non-unique index for fast select
 		table.AddMultiHashIndex(strCol);
 
 		{
-			auto row = table.NewRow(intCol = 1, strCol = "b");
+			auto row = table.NewRow(intCol = 1, strCol = "a");
 			row[dblCol] = 1.5;
 			table.AddRow(std::move(row));
 		}
 		{
-			auto row = table.NewRow();
+			auto row = table.NewRow(table[0]);	// copy previous row
 			row[intCol] = 2;
-			row[dblCol] = 0.5;
-			row[strCol] = "a";
-			table.AddRow(std::move(row));
+			row[dblCol] = 2.5;
+			table.AddRow(std::move(row));	// strCol = "a"
 		}
 
 #ifndef MOMO_DISABLE_TYPE_INFO
@@ -190,26 +191,26 @@ namespace sample_data3
 			}
 			output << std::endl;
 		}
-		// 1 1.5 b 
-		// 2 0.5 a 
+		// 1 1.5 a 
+		// 2 2.5 a 
 #endif
 
 		{
-			auto selection = table.Select(strCol == "a");	// fast select by index
+			size_t count = table.SelectCount(strCol == "a");	// fast select by index
+			output << count << std::endl;	// 2
+		}
+
+		{
+			auto selection = table.Select(intCol == 1 && dblCol == 1.5);	// slow select (takes linear time)
+			output << selection.GetCount() << std::endl;	// 1
+		}
+
+		{
+			auto selection = table.Select([] (auto row) { return row[dblCol] > 2.0; });	// slow select
 			output << selection.GetCount() << std::endl;	// 1
 
 			table.RemoveRows(selection.GetBegin(), selection.GetEnd());
 			output << table.GetCount() << std::endl;	// 1
-		}
-
-		{
-			size_t count = table.SelectCount(intCol == 2 && dblCol == 0.5);	// slow select (takes linear time)
-			output << count << std::endl;	// 0
-		}
-
-		{
-			auto selection = table.Select([] (auto row) { return row[dblCol] > 0.0; });	// slow select
-			output << selection.GetCount() << std::endl;	// 1
 		}
 
 		table.RemoveRows([] (auto row) { return row[dblCol] > 1.0; });
@@ -271,9 +272,10 @@ namespace sample_data5
 /*
 	struct Struct
 	{
-		int intCol;
-		double dblCol;
-		std::string strCol;
+		// initialize fields to avoid Wmissing-field-initializers
+		int intCol{};
+		double dblCol{};
+		std::string strCol{};
 	};
 
 	using ColumnList = momo::DataColumnListNative<Struct>;
@@ -285,18 +287,12 @@ namespace sample_data5
 		Table table;
 
 		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
-
-		{
-			auto row = table.NewRow(table[0]);
-			row->intCol = 2;
-			row->dblCol = 0.5;
-			table.AddRow(std::move(row));
-		}
+		table.AddRow(table.NewRow(Struct{ .intCol = 2, .strCol = "a" }));
 
 		for (auto row : table)
 			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
 		// 1 1.5 a
-		// 2 0.5 a
+		// 2 0 a
 
 		auto uniqueIndex = table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
 		auto multiIndex = table.AddMultiHashIndex(&Struct::strCol);
@@ -328,11 +324,11 @@ static int sampleData = []
 
 	std::string res1 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
 	std::string res2 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
-	std::string res3 = "1\n1\n0\n1\n0\n";
+	std::string res3 = "2\n1\n1\n1\n0\n";
 	std::string res4 = "0.5\n";
-	std::string res5 = "1 1.5 a\n2 0.5 a\n1.5\n2\n";
+	std::string res5 = "1 1.5 a\n2 0 a\n1.5\n2\n";
 #ifndef MOMO_DISABLE_TYPE_INFO
-	res3 = "1 1.5 b \n2 0.5 a \n" + res3;
+	res3 = "1 1.5 a \n2 2.5 a \n" + res3;
 	res4 = "1 1.5 b \n2 0.5 a \nintCol=1 dblCol=1.5 strCol=b \nintCol=2 dblCol=0.5 strCol=a \n" + res4;
 #endif
 

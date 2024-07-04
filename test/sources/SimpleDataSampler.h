@@ -66,9 +66,10 @@ namespace sample_data5
 {
 	struct Struct
 	{
-		int intCol;
-		double dblCol;
-		std::string strCol;
+		// initialize fields to avoid Wmissing-field-initializers
+		int intCol{};
+		double dblCol{};
+		std::string strCol{};
 	};
 
 	using ColumnList = momo::DataColumnListNative<Struct>;
