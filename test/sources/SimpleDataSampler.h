@@ -31,9 +31,6 @@ namespace sample_data2
 		double dblCol;
 		std::string strCol;
 	};
-
-	using ColumnList = momo::DataColumnListNative<Struct>;
-	using Table = momo::DataTable<ColumnList>;
 }
 
 namespace sample_data3
@@ -72,6 +69,5 @@ namespace sample_data5
 		std::string strCol{};
 	};
 
-	using ColumnList = momo::DataColumnListNative<Struct>;
-	using Table = momo::DataTable<ColumnList>;
+	using Table = momo::DataTableNative<Struct>;
 }

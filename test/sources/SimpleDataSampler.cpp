@@ -84,14 +84,11 @@ namespace sample_data2
 		double dblCol;
 		std::string strCol;
 	};
-
-	using ColumnList = momo::DataColumnListNative<Struct>;
-	using Table = momo::DataTable<ColumnList>;
 */
 	void Sample(std::ostream& output)
 	{
 		// in this sample the list of columns is specified in accordance with the `Struct` struct
-		Table table;	// construct empty table with 3 columns
+		momo::DataTableNative<Struct> table;	// construct empty table with 3 columns
 
 		// unique index (primary key)
 		table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
@@ -278,8 +275,7 @@ namespace sample_data5
 		std::string strCol{};
 	};
 
-	using ColumnList = momo::DataColumnListNative<Struct>;
-	using Table = momo::DataTable<ColumnList>;
+	using Table = momo::DataTableNative<Struct>;
 */
 	void Sample(std::ostream& output)
 	{

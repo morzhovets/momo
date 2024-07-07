@@ -12,6 +12,7 @@
     concept conceptDataTraits
     class DataTraits
     class DataTable
+    class DataTableNative
 
 \**********************************************************/
 
@@ -1548,5 +1549,9 @@ private:
 	Raws mRaws;
 	Indexes mIndexes;
 };
+
+template<conceptDataStructWithMembers TStruct,
+	conceptDataTraits TDataTraits = DataTraits>
+using DataTableNative = DataTable<DataColumnListNative<TStruct>, TDataTraits>;
 
 } // namespace momo

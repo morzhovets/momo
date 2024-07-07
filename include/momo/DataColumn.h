@@ -1508,10 +1508,7 @@ private:
 	MutableOffsets mMutableOffsets;
 };
 
-template<conceptDataStructWithMembers TStruct,
-	conceptMemManager TMemManager = MemManagerDefault,
-	typename TSettings = DataSettings<>>
-using DataColumnListNative = DataColumnListStatic<TStruct,
-	DataColumnInfoNative<TStruct>, TMemManager, TSettings>;
+template<conceptDataStructWithMembers TStruct>
+using DataColumnListNative = DataColumnListStatic<TStruct, DataColumnInfoNative<TStruct>>;
 
 } // namespace momo

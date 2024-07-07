@@ -55,7 +55,8 @@ public:
 	{
 		{
 			std::cout << "momo::DataColumnListNative (-RowNumber): " << std::flush;
-			typedef momo::DataColumnListNative<Struct, momo::MemManagerDict<>> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfoNative<Struct>,
+				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(&Struct::dblStruct);
 			columnList.PrepareForVisitors(&Struct::intStruct, &Struct::dblStruct, &Struct::strStruct);
@@ -503,9 +504,9 @@ public:
 		if constexpr (!dynamic)
 		{
 			Row row = table.NewRow(Struct{ .intStruct = 1, .dblStruct = 3.5, .strStruct = "2" });
-			assert(row[intCol] == 1);
-			assert(row[dblCol] == 3.5);
-			assert(row[strCol] == "2");
+			assert(row->intStruct == 1);
+			assert(row->dblStruct == 3.5);
+			assert(row->strStruct == "2");
 		}
 	}
 };
