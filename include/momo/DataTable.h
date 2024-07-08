@@ -508,13 +508,13 @@ public:
 		return pvNewRow(assign, assigns...);
 	}
 
-	template<typename RawArg = Raw>
-	Row NewRow(RawArg&& rawArg)
-		requires requires (ColumnList& columnList, MemManager& memManager, Raw* raw)
-			{ columnList.CreateRaw(memManager, std::forward<RawArg>(rawArg), raw); }
+	Row NewRow(std::conditional_t<std::is_void_v<Raw>, void*, Raw>&& srcRaw)	//?
+		requires (!std::is_void_v<Raw>) &&
+			requires (ColumnList& columnList, MemManager& memManager, Raw* raw)
+				{ columnList.CreateRaw(memManager, std::move(srcRaw), raw); }
 	{
-		auto rawCreator = [this, &rawArg] (Raw* raw)
-			{ GetColumnList().CreateRaw(GetMemManager(), std::forward<RawArg>(rawArg), raw); };
+		auto rawCreator = [this, &srcRaw] (Raw* raw)
+			{ GetColumnList().CreateRaw(GetMemManager(), std::move(srcRaw), raw); };
 		return pvMakeRow(pvCreateRaw(FastMovableFunctor(std::move(rawCreator))));
 	}
 

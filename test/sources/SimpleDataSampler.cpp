@@ -93,7 +93,7 @@ namespace sample_data2
 		// unique index (primary key)
 		table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
 
-		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 0.5, .strCol = "b" }));
+		table.AddRow(table.NewRow({ .intCol = 1, .dblCol = 0.5, .strCol = "b" }));
 
 		{
 			auto row = table.NewRow();
@@ -102,7 +102,7 @@ namespace sample_data2
 			table.TryAddRow(std::move(row));	// strCol = ""
 		}
 
-		table.TryAddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 3.5, .strCol = "b" }));
+		table.TryAddRow(table.NewRow({ .intCol = 1, .dblCol = 3.5, .strCol = "b" }));
 		// not added because of unique index
 
 		output << table.GetCount() << std::endl;	// 2
@@ -282,8 +282,8 @@ namespace sample_data5
 		// construct empty table with 3 columns
 		Table table;
 
-		table.AddRow(table.NewRow(Struct{ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
-		table.AddRow(table.NewRow(Struct{ .intCol = 2, .strCol = "a" }));
+		table.AddRow(table.NewRow({ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
+		table.AddRow(table.NewRow({ .intCol = 2, .strCol = "a" }));
 
 		for (auto row : table)
 			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;

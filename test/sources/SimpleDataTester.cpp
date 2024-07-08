@@ -503,7 +503,7 @@ public:
 
 		if constexpr (!dynamic)
 		{
-			Row row = table.NewRow(Struct{ .intStruct = 1, .dblStruct = 3.5, .strStruct = "2" });
+			Row row = table.NewRow({ .intStruct = 1, .dblStruct = 3.5, .strStruct = "2" });
 			assert(row->intStruct == 1);
 			assert(row->dblStruct == 3.5);
 			assert(row->strStruct == "2");
