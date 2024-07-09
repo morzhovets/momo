@@ -38,8 +38,11 @@ namespace sample_data1
 		table.AddRow(strCol = "b", intCol = 1, dblCol = 0.5);
 		table.AddRow(intCol = 2, dblCol = 2.5);	// strCol = ""
 
-		table.TryAddRow(intCol = 1, dblCol = 3.5, strCol = "b");
-		// not added because of unique index
+		if (!table.TryAddRow(intCol = 1, dblCol = 3.5, strCol = "b"))
+		{
+			// not added because of unique index
+			output << "!" << std::endl;	// !
+		}
 
 		output << table.GetCount() << std::endl;	// 2
 
@@ -102,8 +105,11 @@ namespace sample_data2
 			table.TryAddRow(std::move(row));	// strCol = ""
 		}
 
-		table.TryAddRow(table.NewRow({ .intCol = 1, .dblCol = 3.5, .strCol = "b" }));
-		// not added because of unique index
+		if (!table.TryAddRow(table.NewRow({ .intCol = 1, .dblCol = 3.5, .strCol = "b" })))
+		{
+			// not added because of unique index
+			output << "!" << std::endl;	// !
+		}
 
 		output << table.GetCount() << std::endl;	// 2
 
@@ -318,8 +324,8 @@ static int sampleData = []
 	sample_data4::Sample(resStream);
 	sample_data5::Sample(resStream);
 
-	std::string res1 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
-	std::string res2 = "2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
+	std::string res1 = "!\n2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
+	std::string res2 = "!\n2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
 	std::string res3 = "2\n1\n1\n1\n0\n";
 	std::string res4 = "0.5\n";
 	std::string res5 = "1 1.5 a\n2 0 a\n1.5\n2\n";

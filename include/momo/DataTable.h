@@ -137,8 +137,15 @@ public:
 	typedef typename Indexes::UniqueHashIndex UniqueHashIndex;
 	typedef typename Indexes::MultiHashIndex MultiHashIndex;
 
-	struct TryResult
+	class TryResult
 	{
+	public:
+		explicit operator bool() const noexcept
+		{
+			return uniqueHashIndex == UniqueHashIndex::empty;
+		}
+
+	public:
 		RowReference rowReference;
 		UniqueHashIndex uniqueHashIndex;
 	};
@@ -146,7 +153,7 @@ public:
 	class UniqueIndexViolation : public std::runtime_error, public TryResult
 	{
 	public:
-		explicit UniqueIndexViolation(TryResult tryResult)
+		explicit UniqueIndexViolation(const TryResult& tryResult)
 			: std::runtime_error("Unique index violation"),
 			TryResult(tryResult)
 		{
@@ -531,7 +538,7 @@ public:
 	RowReference AddRow(Row&& row)
 	{
 		TryResult res = TryAddRow(std::move(row));
-		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
@@ -565,7 +572,7 @@ public:
 	RowReference InsertRow(size_t rowNumber, Row&& row)
 	{
 		TryResult res = TryInsertRow(rowNumber, std::move(row));
-		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
@@ -581,7 +588,7 @@ public:
 	{
 		MOMO_CHECK(rowNumber <= GetCount());
 		TryResult res = TryAddRow(std::move(row));
-		if (res.uniqueHashIndex == UniqueHashIndex::empty)
+		if (res)
 		{
 			std::rotate(internal::UIntMath<>::Next(mRaws.GetBegin(), rowNumber),
 				std::prev(mRaws.GetEnd()), mRaws.GetEnd());
@@ -624,7 +631,7 @@ public:
 	RowReference UpdateRow(size_t rowNumber, Row&& row)
 	{
 		TryResult res = TryUpdateRow(rowNumber, std::move(row));
-		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
@@ -634,7 +641,7 @@ public:
 		std::type_identity_t<Item>&& newItem)
 	{
 		TryResult res = pvTryUpdateRow(rowRef, column, std::move(newItem));
-		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
@@ -644,7 +651,7 @@ public:
 		const std::type_identity_t<Item>& newItem)
 	{
 		TryResult res = pvTryUpdateRow(rowRef, column, newItem);
-		if (res.uniqueHashIndex != UniqueHashIndex::empty)
+		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
