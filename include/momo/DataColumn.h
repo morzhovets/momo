@@ -329,9 +329,9 @@ private:
 	const Item& mItem;
 };
 
-template<typename Column,
-	typename Item = typename internal::DataColumnItemSelector<Column>::Item>
-DataEquality(Column, Item) -> DataEquality<Column>;
+template<typename Column>
+DataEquality(Column, typename internal::DataColumnItemSelector<Column>::Item)
+	-> DataEquality<Column>;
 
 template<typename TColumn, typename TItemArg>
 class DataAssignment
@@ -367,6 +367,10 @@ private:
 	const Column& mColumn;
 	ItemArg&& mItemArg;
 };
+
+template<typename Column, typename ItemArg>
+DataAssignment(Column, ItemArg&)
+	-> DataAssignment<Column, ItemArg&>;
 
 template<typename... TVisitableItems>
 struct DataStructDefault

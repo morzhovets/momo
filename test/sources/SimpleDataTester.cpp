@@ -246,10 +246,11 @@ public:
 
 		for (size_t i = 0; i < count2; ++i)
 		{
+			int v = static_cast<int>(count + i);
 			if (native || i % 2 == 0)
-				table.InsertRow(count, momo::DataAssignment(intCol, static_cast<int>(count + i)));
+				table.InsertRow(count, momo::DataAssignment(intCol, v));
 			else if constexpr (!native)
-				table.TryInsertRow(count, intCol = static_cast<int>(count + i));
+				table.TryInsertRow(count, intCol = v);
 		}
 		assert(table.GetCount() == count + count2);
 

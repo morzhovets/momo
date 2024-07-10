@@ -38,9 +38,9 @@ namespace sample_data1
 		table.AddRow(strCol = "b", intCol = 1, dblCol = 0.5);
 		table.AddRow(intCol = 2, dblCol = 2.5);	// strCol = ""
 
-		if (!table.TryAddRow(intCol = 1, dblCol = 3.5, strCol = "b"))
+		if (!table.TryAddRow(intCol = 2))
 		{
-			// not added because of unique index
+			// not added because of unique index (intCol == 2, strCol == "")
 			output << "!" << std::endl;	// !
 		}
 
@@ -105,9 +105,9 @@ namespace sample_data2
 			table.TryAddRow(std::move(row));	// strCol = ""
 		}
 
-		if (!table.TryAddRow(table.NewRow({ .intCol = 1, .dblCol = 3.5, .strCol = "b" })))
+		if (!table.TryAddRow(momo::DataAssignment(&Struct::intCol, 2)))
 		{
-			// not added because of unique index
+			// not added because of unique index (intCol == 2, strCol == "")
 			output << "!" << std::endl;	// !
 		}
 
