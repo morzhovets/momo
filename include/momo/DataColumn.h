@@ -16,11 +16,10 @@
   namespace momo:
     concept conceptDataColumnList
     concept conceptDataStructWithMembers
+    enum class DataColumnCodeOffset
     class DataEquality
     class DataAssignment
     struct DataStructDefault
-    enum class DataColumnCodeOffset
-    struct DataColumnCodeSelector
     class DataColumn
     class DataColumnInfo
     class DataColumnInfoNative
@@ -55,11 +54,53 @@
 namespace momo
 {
 
+template<typename DataColumnList,
+	typename TestItem = void*>
+concept conceptDataColumnList =
+	std::is_nothrow_destructible_v<DataColumnList> &&
+	std::is_nothrow_move_constructible_v<DataColumnList> &&
+	conceptMemManager<typename DataColumnList::MemManager> &&
+	requires (DataColumnList& columnList, typename DataColumnList::Raw* raw,
+		typename DataColumnList::MemManager& memManager,
+		const typename DataColumnList::template Column<TestItem>& column)
+	{
+		typename DataColumnList::Settings;
+		{ columnList.GetMemManager() } noexcept
+			-> std::same_as<typename DataColumnList::MemManager&>;
+		{ std::as_const(columnList).GetTotalSize() } noexcept -> std::same_as<size_t>;
+		{ std::as_const(columnList).GetAlignment() } noexcept -> std::same_as<size_t>;
+		{ std::as_const(columnList).CreateRaw(memManager, raw) } -> std::same_as<void>;
+		{ std::as_const(columnList).DestroyRaw(&memManager, raw) } noexcept -> std::same_as<void>;
+		{ std::as_const(columnList).GetOffset(column) } -> std::same_as<size_t>;
+		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
+			-> std::same_as<TestItem&>;
+	};
+
+template<typename DataStruct>
+concept conceptDataStructWithMembers =
+	std::is_class_v<DataStruct> && !std::is_empty_v<DataStruct>;
+
+enum class DataColumnCodeOffset : size_t
+{
+};
+
 namespace internal
 {
 	template<typename Item>
 	struct DataMutable
 	{
+	};
+
+	template<typename Struct>
+	struct DataColumnCodeSelector
+	{
+		typedef uint64_t Code;
+	};
+
+	template<conceptDataStructWithMembers Struct>
+	struct DataColumnCodeSelector<Struct>
+	{
+		typedef DataColumnCodeOffset Code;
 	};
 
 	template<typename TColumn>
@@ -71,7 +112,7 @@ namespace internal
 	template<typename TItem, typename TStruct>
 	struct DataColumnItemSelector<TItem TStruct::*>
 	{
-		typedef TItem Item;
+		typedef TItem Item;	//?
 	};
 
 	template<typename DataPtrVisitor, typename Item, typename ColumnInfo>
@@ -174,32 +215,6 @@ namespace internal
 #endif
 	};
 }
-
-template<typename DataColumnList,
-	typename TestItem = void*>
-concept conceptDataColumnList =
-	std::is_nothrow_destructible_v<DataColumnList> &&
-	std::is_nothrow_move_constructible_v<DataColumnList> &&
-	conceptMemManager<typename DataColumnList::MemManager> &&
-	requires (DataColumnList& columnList, typename DataColumnList::Raw* raw,
-		typename DataColumnList::MemManager& memManager,
-		const typename DataColumnList::template Column<TestItem>& column)
-	{
-		typename DataColumnList::Settings;
-		{ columnList.GetMemManager() } noexcept
-			-> std::same_as<typename DataColumnList::MemManager&>;
-		{ std::as_const(columnList).GetTotalSize() } noexcept -> std::same_as<size_t>;
-		{ std::as_const(columnList).GetAlignment() } noexcept -> std::same_as<size_t>;
-		{ std::as_const(columnList).CreateRaw(memManager, raw) } -> std::same_as<void>;
-		{ std::as_const(columnList).DestroyRaw(&memManager, raw) } noexcept -> std::same_as<void>;
-		{ std::as_const(columnList).GetOffset(column) } -> std::same_as<size_t>;
-		{ DataColumnList::template GetByOffset<TestItem>(raw, size_t{}) } noexcept
-			-> std::same_as<TestItem&>;
-	};
-
-template<typename DataStruct>
-concept conceptDataStructWithMembers =
-	std::is_class_v<DataStruct> && !std::is_empty_v<DataStruct>;
 
 template<typename... Columns>
 class DataEquality
@@ -359,25 +374,9 @@ struct DataStructDefault
 	typedef std::tuple<TVisitableItems...> VisitableItems;
 };
 
-enum class DataColumnCodeOffset : size_t
-{
-};
-
-template<typename Struct>
-struct DataColumnCodeSelector
-{
-	typedef uint64_t Code;
-};
-
-template<conceptDataStructWithMembers Struct>
-struct DataColumnCodeSelector<Struct>
-{
-	typedef DataColumnCodeOffset Code;
-};
-
 template<typename TItem,
 	typename TStruct = DataStructDefault<>,
-	typename TCode = typename DataColumnCodeSelector<TStruct>::Code>
+	typename TCode = typename internal::DataColumnCodeSelector<TStruct>::Code>
 class DataColumn : public DataColumn<internal::DataMutable<TItem>, TStruct, TCode>
 {
 public:
@@ -487,7 +486,7 @@ protected:
 };
 
 template<typename TStruct = DataStructDefault<>,	//?
-	typename TCode = typename DataColumnCodeSelector<TStruct>::Code>
+	typename TCode = typename internal::DataColumnCodeSelector<TStruct>::Code>
 class DataColumnInfo : public internal::DataColumnInfoBase<TStruct, TCode>
 {
 private:
