@@ -515,7 +515,7 @@ public:
 		return pvNewRow(assign, assigns...);
 	}
 
-	Row NewRow(std::conditional_t<std::is_void_v<Raw>, void*, Raw>&& srcRaw)	//?
+	Row NewRow(std::conditional_t<std::is_void_v<Raw>, std::nullptr_t, Raw>&& srcRaw)
 		requires (!std::is_void_v<Raw>) &&
 			requires (ColumnList& columnList, MemManager& memManager, Raw* raw)
 				{ columnList.CreateRaw(memManager, std::move(srcRaw), raw); }
