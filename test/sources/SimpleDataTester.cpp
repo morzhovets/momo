@@ -237,12 +237,10 @@ public:
 		assert(table.TryAddRow(table.NewRow(table[0])).uniqueHashIndex == keyIndex);
 
 		assert(table.TryUpdateRow(0, table.NewRow(table[1])).uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(0, table.NewRow(table[0])).uniqueHashIndex
-			== momo::DataUniqueHashIndex::empty);
+		assert(table.TryUpdateRow(0, table.NewRow(table[0])));
 
-		assert(table.TryUpdateRow(table[0], strCol, std::string("1")).uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(table[0], strCol,
-			static_cast<const std::string&>(std::string("0"))).uniqueHashIndex == momo::DataUniqueHashIndex::empty);
+		assert(table.TryUpdateRow(table[0], strCol, "1").uniqueHashIndex == keyIndex);
+		assert(table.TryUpdateRow(table[0], strCol, static_cast<const std::string&>(std::string("0"))));
 
 		for (size_t i = 0; i < count2; ++i)
 		{
