@@ -219,14 +219,15 @@ namespace internal
 template<typename... Columns>
 class DataEquality
 {
+private:
+	typedef std::tuple<DataEquality<Columns>...> Tuple;
+
 public:
 	DataEquality(std::pair<const Columns&,
 		const typename internal::DataColumnItemSelector<Columns>::Item&>... pairs) noexcept
 		: mTuple(pairs...)
 	{
 	}
-
-	DataEquality(DataEquality&&) = default;
 
 	DataEquality(const DataEquality&) = delete;
 
@@ -235,7 +236,7 @@ public:
 	DataEquality& operator=(const DataEquality&) = delete;
 
 	template<size_t index>
-	decltype(auto) Get() const noexcept
+	const std::tuple_element_t<index, Tuple>& Get() const noexcept
 	{
 		return std::get<index>(mTuple);
 	}
@@ -261,7 +262,7 @@ private:
 	}
 
 private:
-	std::tuple<DataEquality<Columns>...> mTuple;
+	Tuple mTuple;
 };
 
 template<typename Column>
@@ -281,8 +282,6 @@ public:
 		: DataEquality(pair.first, pair.second)
 	{
 	}
-
-	DataEquality(DataEquality&&) = default;
 
 	DataEquality(const DataEquality&) = delete;
 
