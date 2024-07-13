@@ -85,10 +85,10 @@ public:
 	using Column = typename ColumnList::template Column<Item>;
 
 	template<typename Item>
-	using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
+	using Equaler = DataEquality<Column<Item>>;
 
 	template<typename Item, typename ItemArg>
-	using Assigner = internal::DataAssigner<Column<Item>, ItemArg>;
+	using Assigner = DataAssignment<Column<Item>, ItemArg>;
 
 	typedef internal::DataRow<ColumnList> Row;
 	typedef internal::DataRowReference<ColumnList> RowReference;
@@ -1303,7 +1303,7 @@ private:
 			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 			size_t offset = rowRef.GetColumnList().GetOffset(equaler.GetColumn());
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
+			return DataTraits::IsEqual(item, equaler.GetItem()) && rowFilter(rowRef);
 		};
 		return pvSelect<Result>(newRowFilter, equalers...);
 	}
@@ -1344,7 +1344,7 @@ private:
 	{
 		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 		const Item& item = ColumnList::template GetByOffset<const Item>(raw, *offsets);
-		return DataTraits::IsEqual(item, equaler.GetItemArg())
+		return DataTraits::IsEqual(item, equaler.GetItem())
 			&& pvIsSatisfied(rowRef, offsets + 1, equalers...);
 	}
 
@@ -1362,7 +1362,7 @@ private:
 		if (mIndexes.ContainsOffset(index, offset))
 		{
 			auto newTuple = std::tuple_cat(std::move(tuple),
-				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItemArg())));
+				std::make_tuple(std::pair<size_t, const Item&>(offset, equaler.GetItem())));
 			return pvSelectRec<Result>(index, offsets + 1, rowFilter, std::move(newTuple),
 				equalers...);
 		}
@@ -1372,7 +1372,7 @@ private:
 			{
 				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 				const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-				return DataTraits::IsEqual(item, equaler.GetItemArg()) && rowFilter(rowRef);
+				return DataTraits::IsEqual(item, equaler.GetItem()) && rowFilter(rowRef);
 			};
 			return pvSelectRec<Result>(index, offsets + 1, newRowFilter, std::move(tuple),
 				equalers...);
@@ -1450,14 +1450,14 @@ private:
 			typename internal::SequenceMaker<columnCount>::Sequence(), equalers...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, size_t... sequence, typename... Items>
+	template<typename RowBoundsProxy, typename Index, typename... Items, size_t... sequence>
 	RowBoundsProxy pvFindByHash(Index index, internal::Sequence<sequence...>,
 		const Equaler<Items>&... equalers) const
 	{
 		auto offsets = pvGetOffsets(equalers...);
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
 		OffsetItemTuple<Items...> tuple{
-			std::pair<size_t, const Items&>(offsets[sequence], equalers.GetItemArg())... };
+			std::pair<size_t, const Items&>(offsets[sequence], equalers.GetItem())... };
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}

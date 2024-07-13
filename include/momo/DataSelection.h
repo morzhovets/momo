@@ -419,7 +419,7 @@ namespace internal
 		using Column = typename ColumnList::template Column<Item>;
 
 		template<typename Item>
-		using Equaler = internal::DataEqualer<Column<Item>, const Item&>;
+		using Equaler = DataEquality<Column<Item>>;
 
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
@@ -889,7 +889,7 @@ namespace internal
 			const Equaler<Items>&... equalers)
 		{
 			const Item& item1 = ColumnList::template GetByOffset<const Item>(raw, *offsets);
-			const Item& item2 = equaler.GetItemArg();
+			const Item& item2 = equaler.GetItem();
 			int cmp = DataTraits::Compare(item1, item2);
 			if (cmp != 0)
 				return cmp;

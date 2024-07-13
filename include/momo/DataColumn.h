@@ -14,8 +14,12 @@
     MOMO_DATA_COLUMN_STRING
 
   namespace momo:
-    class DataSettings
+    class DataEquality
+    class DataAssignment
     struct DataStructDefault
+    class DataColumn
+    class DataColumnInfo
+    class DataSettings
     class DataColumnTraits
     class DataItemTraits
     class DataColumnList
@@ -34,11 +38,11 @@
 #endif
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
-	constexpr momo::internal::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
+	constexpr momo::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
 		name{uint64_t{offsetof(Struct, name)}, #Struct "." #name}
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	constexpr momo::internal::DataColumn<Type, Tag> name{#name}
+	constexpr momo::DataColumn<Type, Tag> name{#name}
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault<>, Type, name)
@@ -63,184 +67,21 @@ namespace internal
 		}
 	};
 
-	template<typename TColumn, typename TItemArg>
-	class DataOperator
-	{
-	public:
-		typedef TColumn Column;
-		typedef TItemArg ItemArg;
-
-	public:
-		explicit DataOperator(const Column& column, ItemArg&& itemArg) noexcept
-			: mColumn(column),
-			mItemArg(std::forward<ItemArg>(itemArg))
-		{
-		}
-
-#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-		DataOperator(DataOperator&& oper) noexcept
-			: mColumn(oper.mColumn),
-			mItemArg(std::forward<ItemArg>(oper.mItemArg))
-		{
-			//MOMO_ASSERT(false);
-		}
-#endif
-
-		DataOperator(const DataOperator&) = delete;
-
-		~DataOperator() = default;
-
-		DataOperator& operator=(const DataOperator&) = delete;
-
-		const Column& GetColumn() const noexcept
-		{
-			return mColumn;
-		}
-
-		ItemArg&& GetItemArg() const noexcept
-		{
-			return std::forward<ItemArg>(mItemArg);
-		}
-
-	private:
-		const Column& mColumn;
-		ItemArg&& mItemArg;
-	};
-
-	template<typename TColumn, typename TItemArg>
-	class DataEqualer : public DataOperator<TColumn, TItemArg>
-	{
-	private:
-		typedef DataOperator<TColumn, TItemArg> Operator;
-
-	public:
-		using Operator::Operator;
-	};
-
-	template<typename TColumn, typename TItemArg>
-	class DataAssigner : public DataOperator<TColumn, TItemArg>
-	{
-	private:
-		typedef DataOperator<TColumn, TItemArg> Operator;
-
-	public:
-		using Operator::Operator;
-	};
-
 	template<typename Item>
 	struct DataMutable
 	{
 	};
 
-	template<typename TItem, typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumn : public DataColumn<DataMutable<TItem>, TStruct, TCode>
+	template<typename Struct>
+	struct DataColumnCodeSelector
 	{
-	public:
-		typedef TItem Item;
-		typedef TStruct Struct;
-		typedef TCode Code;
-
-		typedef DataColumn BaseColumn;
-
-		typedef DataColumn<DataMutable<Item>, Struct, Code> MutableColumn;
-
-		typedef DataEqualer<DataColumn, const Item&> Equaler;
-
-		template<typename ItemArg>
-		using Assigner = DataAssigner<DataColumn, ItemArg>;
-
-	public:
-		constexpr explicit DataColumn(const char* name) noexcept
-			: mCode(static_cast<Code>(StrHasher::GetHashCode64(name))),
-			mName(name)
-		{
-		}
-
-		constexpr explicit DataColumn(Code code, const char* name = "") noexcept
-			: mCode(code),
-			mName(name)
-		{
-		}
-
-		//DataColumn(const DataColumn&) = delete;
-
-		//~DataColumn() = default;
-
-		//DataColumn& operator=(const DataColumn&) = delete;
-
-		const BaseColumn& GetBaseColumn() const noexcept
-		{
-			return *this;
-		}
-
-		constexpr Code GetCode() const noexcept
-		{
-			return mCode;
-		}
-
-		constexpr const char* GetName() const noexcept
-		{
-			return mName;
-		}
-
-		constexpr const MutableColumn& Mutable() const noexcept
-		{
-			return *this;
-		}
-
-		constexpr bool IsMutable() const noexcept
-		{
-			return false;
-		}
-
-		Equaler operator==(const Item& item) const noexcept
-		{
-			return Equaler(*this, item);
-		}
-
-		template<typename ItemArg>
-		Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
-		{
-			return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
-		}
-
-	private:
-		Code mCode;
-		const char* mName;
+		typedef uint64_t Code;
 	};
 
-	template<typename TItem, typename TStruct, typename TCode>
-	class DataColumn<DataMutable<TItem>, TStruct, TCode>
+	template<typename TColumn>
+	struct DataColumnItemSelector
 	{
-	public:
-		typedef TItem Item;
-		typedef TStruct Struct;
-		typedef TCode Code;
-
-		typedef DataColumn<Item, Struct, Code> BaseColumn;
-
-	public:
-		const BaseColumn& GetBaseColumn() const noexcept
-		{
-			return static_cast<const BaseColumn&>(*this);
-		}
-
-		constexpr bool IsMutable() const noexcept
-		{
-			return true;
-		}
-
-	protected:
-		constexpr explicit DataColumn() noexcept
-		{
-		}
-
-		DataColumn(const DataColumn&) = default;
-
-		~DataColumn() = default;
-
-		DataColumn& operator=(const DataColumn&) = default;
+		typedef typename TColumn::Item Item;
 	};
 
 	template<typename TStruct, typename TCode>
@@ -250,8 +91,24 @@ namespace internal
 		typedef TStruct Struct;
 		typedef TCode Code;
 
-		template<typename Item>
-		using Column = DataColumn<Item, Struct, Code>;
+	private:
+		template<typename Struct,
+			typename = void>
+		struct VisitableItemsSelector
+		{
+			typedef std::tuple<> VisitableItems;
+		};
+
+#ifndef MOMO_DISABLE_TYPE_INFO
+		template<typename Struct>
+		struct VisitableItemsSelector<Struct, Void<typename Struct::VisitableItems>>
+		{
+			typedef typename Struct::VisitableItems VisitableItems;
+		};
+#endif
+
+	public:
+		typedef typename VisitableItemsSelector<Struct>::VisitableItems VisitableItems;
 
 	public:
 		Code GetCode() const noexcept
@@ -259,133 +116,36 @@ namespace internal
 			return mCode;
 		}
 
-		const char* GetName() const noexcept
-		{
-			return mName;
-		}
-
-		template<typename Item>
-		static Code GetCode(const Column<Item>& column) noexcept
-		{
-			return column.GetCode();
-		}
-
-	protected:
-		explicit DataColumnInfoBase(Code code, const char* name) noexcept
-			: mCode(code),
-			mName(name)
-		{
-		}
-
-		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
-		ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
-		{
-			ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
-		}
-
-		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*>::value &&
-			!IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
-		ptVisit(Item* item, const PtrVisitor& ptrVisitor) const
-		{
-			ptrVisitor(item);
-		}
-
-	private:
-		Code mCode;
-		const char* mName;
-	};
-
-#ifdef MOMO_DISABLE_TYPE_INFO
-	template<typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
-	{
-	private:
-		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
-
-	public:
-		template<typename Item>
-		using Column = typename ColumnInfoBase::template Column<Item>;
-
-		typedef std::tuple<> VisitableItems;
-
-	public:
-		template<typename Item>
-		DataColumnInfo(const Column<Item>& column) noexcept
-			: ColumnInfoBase(column.GetCode(), column.GetName())
-		{
-		}
-
-		template<typename PtrVisitor>
-		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
-		{
-			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
-		}
-
-		template<typename PtrVisitor>
-		void Visit(void* item, const PtrVisitor& ptrVisitor) const
-		{
-			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
-		}
-	};
-#else
-	template<typename Struct,
-		typename = void>
-	struct DataVisitableItemsGetter
-	{
-		typedef std::tuple<> VisitableItems;
-	};
-
-	template<typename Struct>
-	struct DataVisitableItemsGetter<Struct, Void<typename Struct::VisitableItems>>
-	{
-		typedef typename Struct::VisitableItems VisitableItems;
-	};
-
-	template<typename TStruct,
-		typename TCode = uint64_t>
-	class DataColumnInfo : public DataColumnInfoBase<TStruct, TCode>
-	{
-	private:
-		typedef DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
-
-	public:
-		using typename ColumnInfoBase::Struct;
-
-		template<typename Item>
-		using Column = typename ColumnInfoBase::template Column<Item>;
-
-		typedef typename DataVisitableItemsGetter<Struct>::VisitableItems VisitableItems;
-
-	public:
-		template<typename Item>
-		DataColumnInfo(const Column<Item>& column) noexcept
-			: ColumnInfoBase(column.GetCode(), column.GetName()),
-			mTypeInfo(typeid(Item))
-		{
-		}
-
+#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& GetTypeInfo() const noexcept
 		{
 			return mTypeInfo;
 		}
+#endif
 
-		template<typename PtrVisitor>
-		void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+	protected:
+		template<typename Item>
+		explicit DataColumnInfoBase(Code code, Item*) noexcept
+#ifndef MOMO_DISABLE_TYPE_INFO
+			: mTypeInfo(typeid(Item))
+#endif
 		{
-			pvVisitRec<0>(item, ptrVisitor);
+			mCode = code;
 		}
 
-		template<typename PtrVisitor>
-		void Visit(void* item, const PtrVisitor& ptrVisitor) const
+		template<typename ColumnInfo, typename Void, typename PtrVisitor>
+		void ptVisit(Void* item, const PtrVisitor& ptrVisitor) const
 		{
-			pvVisitRec<0>(item, ptrVisitor);
+#ifndef MOMO_DISABLE_TYPE_INFO
+			pvVisitRec<ColumnInfo, 0>(item, ptrVisitor);
+#else
+			pvVisit<ColumnInfo>(item, ptrVisitor);
+#endif
 		}
 
 	private:
-		template<size_t index, typename Void, typename PtrVisitor>
+#ifndef MOMO_DISABLE_TYPE_INFO
+		template<typename ColumnInfo, size_t index, typename Void, typename PtrVisitor>
 		EnableIf<(index < std::tuple_size<VisitableItems>::value)>
 		pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
 		{
@@ -393,23 +153,383 @@ namespace internal
 			typedef typename std::conditional<std::is_const<Void>::value,
 				const Item*, Item*>::type ItemPtr;
 			if (typeid(Item) == mTypeInfo)
-				ColumnInfoBase::template ptVisit<DataColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
+				pvVisit<ColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
 			else
-				pvVisitRec<index + 1>(item, ptrVisitor);
+				pvVisitRec<ColumnInfo, index + 1>(item, ptrVisitor);
 		}
 
-		template<size_t index, typename Void, typename PtrVisitor>
+		template<typename ColumnInfo, size_t index, typename Void, typename PtrVisitor>
 		EnableIf<(index == std::tuple_size<VisitableItems>::value)>
 		pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
 		{
-			ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+			pvVisit<ColumnInfo>(item, ptrVisitor);
+		}
+#endif
+
+		template<typename ColumnInfo, typename Item, typename PtrVisitor>
+		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
+		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		{
+			ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
+		}
+
+		template<typename ColumnInfo, typename Item, typename PtrVisitor>
+		EnableIf<IsInvocable<const PtrVisitor&, void, Item*>::value &&
+			!IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
+		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		{
+			ptrVisitor(item);
 		}
 
 	private:
+		Code mCode;
+#ifndef MOMO_DISABLE_TYPE_INFO
 		const std::type_info& mTypeInfo;
-	};
 #endif
+	};
 }
+
+template<typename... Columns>
+class DataEquality
+{
+private:
+	typedef std::tuple<DataEquality<Columns>...> Tuple;
+
+public:
+	DataEquality(std::pair<const Columns&,
+		const typename internal::DataColumnItemSelector<Columns>::Item&>... pairs) noexcept
+		: mTuple(pairs...)
+	{
+	}
+
+#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
+	DataEquality(DataEquality&&) = default;
+#endif
+
+	DataEquality(const DataEquality&) = delete;
+
+	~DataEquality() = default;
+
+	DataEquality& operator=(const DataEquality&) = delete;
+
+	template<size_t index>
+	const typename std::tuple_element<index, Tuple>::type& Get() const noexcept
+	{
+		return std::get<index>(mTuple);
+	}
+
+	template<typename RightColumn>
+	DataEquality<Columns..., RightColumn> And(const RightColumn& rightColumn,
+		const typename internal::DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
+	{
+		return pvAnd(rightColumn, rightItem,
+			typename internal::SequenceMaker<sizeof...(Columns)>::Sequence());
+	}
+
+private:
+	template<typename RightColumn,
+		typename RightItem = typename internal::DataColumnItemSelector<RightColumn>::Item,
+		size_t... sequence>
+	DataEquality<Columns..., RightColumn> pvAnd(const RightColumn& rightColumn,
+		const RightItem& rightItem, internal::Sequence<sequence...>) const noexcept
+	{
+		return DataEquality<Columns..., RightColumn>(
+			std::pair<const Columns&, const typename internal::DataColumnItemSelector<Columns>::Item&>(
+				Get<sequence>().GetColumn(), Get<sequence>().GetItem())...,
+			std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+	}
+
+private:
+	Tuple mTuple;
+};
+
+template<typename Column>
+class DataEquality<Column>
+{
+public:
+	typedef typename internal::DataColumnItemSelector<Column>::Item Item;
+
+public:
+	DataEquality(const Column& column, const Item& item) noexcept
+		: mColumn(column),
+		mItem(item)
+	{
+	}
+
+	DataEquality(std::pair<const Column&, const Item&> pair) noexcept
+		: DataEquality(pair.first, pair.second)
+	{
+	}
+
+#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
+	DataEquality(DataEquality&&) = default;
+#endif
+
+	DataEquality(const DataEquality&) = delete;
+
+	~DataEquality() = default;
+
+	DataEquality& operator=(const DataEquality&) = delete;
+
+	const Column& GetColumn() const noexcept
+	{
+		return mColumn;
+	}
+
+	const Item& GetItem() const noexcept
+	{
+		return mItem;
+	}
+
+	template<size_t index>
+	const DataEquality& Get() const noexcept
+	{
+		static_assert(index == 0);
+		return *this;
+	}
+
+	template<typename RightColumn>
+	DataEquality<Column, RightColumn> And(const RightColumn& rightColumn,
+		const typename internal::DataColumnItemSelector<RightColumn>::Item& rightItem) && noexcept
+	{
+		typedef typename internal::DataColumnItemSelector<RightColumn>::Item RightItem;
+		return DataEquality<Column, RightColumn>(
+			std::pair<const Column&, const Item&>(mColumn, mItem),
+			std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+	}
+
+	template<typename... LeftColumns>
+	friend DataEquality<LeftColumns..., Column> operator&&(
+		DataEquality<LeftColumns...> leftEquals, DataEquality<Column> equal) noexcept
+	{
+		return std::move(leftEquals).And(equal.GetColumn(), equal.GetItem());
+	}
+
+private:
+	const Column& mColumn;
+	const Item& mItem;
+};
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+template<typename Column>
+DataEquality(Column, typename internal::DataColumnItemSelector<Column>::Item)
+	-> DataEquality<Column>;
+#endif
+
+template<typename TColumn, typename TItemArg>
+class DataAssignment
+{
+public:
+	typedef TColumn Column;
+	typedef TItemArg ItemArg;
+
+public:
+	DataAssignment(const Column& column, ItemArg&& itemArg) noexcept
+		: mColumn(column),
+		mItemArg(std::forward<ItemArg>(itemArg))
+	{
+	}
+
+#ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
+	DataAssignment(DataAssignment&&) = default;
+#endif
+
+	DataAssignment(const DataAssignment&) = delete;
+
+	~DataAssignment() = default;
+
+	DataAssignment& operator=(const DataAssignment&) = delete;
+
+	const Column& GetColumn() const noexcept
+	{
+		return mColumn;
+	}
+
+	ItemArg&& GetItemArg() const noexcept
+	{
+		return std::forward<ItemArg>(mItemArg);
+	}
+
+private:
+	const Column& mColumn;
+	ItemArg&& mItemArg;
+};
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+template<typename Column, typename ItemArg>
+DataAssignment(Column, ItemArg&)
+	-> DataAssignment<Column, ItemArg&>;
+#endif
+
+template<typename... TVisitableItems>
+struct DataStructDefault
+{
+	typedef std::tuple<TVisitableItems...> VisitableItems;
+};
+
+template<typename TItem,
+	typename TStruct = DataStructDefault<>,
+	typename TCode = typename internal::DataColumnCodeSelector<TStruct>::Code>
+class DataColumn : public DataColumn<internal::DataMutable<TItem>, TStruct, TCode>
+{
+public:
+	typedef TItem Item;
+	typedef TStruct Struct;
+	typedef TCode Code;
+
+	typedef DataColumn BaseColumn;
+
+	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
+
+	typedef DataEquality<DataColumn> Equaler;
+
+	template<typename ItemArg>
+	using Assigner = DataAssignment<DataColumn, ItemArg>;
+
+public:
+	constexpr explicit DataColumn(const char* name) noexcept
+		: mCode(internal::StrHasher::GetHashCode64(name)),
+		mName(name)
+	{
+		static_assert(std::is_same<Code, uint64_t>::value);
+	}
+
+	constexpr explicit DataColumn(Code code, const char* name = "") noexcept
+		: mCode(code),
+		mName(name)
+	{
+	}
+
+	//DataColumn(const DataColumn&) = delete;
+
+	//~DataColumn() = default;
+
+	//DataColumn& operator=(const DataColumn&) = delete;
+
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return *this;
+	}
+
+	constexpr Code GetCode() const noexcept
+	{
+		return mCode;
+	}
+
+	constexpr const char* GetName() const noexcept
+	{
+		return mName;
+	}
+
+	constexpr const MutableColumn& Mutable() const noexcept
+	{
+		return *this;
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return false;
+	}
+
+	Equaler operator==(const Item& item) const noexcept
+	{
+		return Equaler(*this, item);
+	}
+
+	template<typename ItemArg>
+	Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	{
+		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+	}
+
+private:
+	Code mCode;
+	const char* mName;
+};
+
+template<typename TItem, typename TStruct, typename TCode>
+class DataColumn<internal::DataMutable<TItem>, TStruct, TCode>
+{
+public:
+	typedef TItem Item;
+	typedef TStruct Struct;
+	typedef TCode Code;
+
+	typedef DataColumn<Item, Struct, Code> BaseColumn;
+
+public:
+	const BaseColumn& GetBaseColumn() const noexcept
+	{
+		return static_cast<const BaseColumn&>(*this);
+	}
+
+	constexpr bool IsMutable() const noexcept
+	{
+		return true;
+	}
+
+protected:
+	constexpr explicit DataColumn() noexcept
+	{
+	}
+
+	DataColumn(const DataColumn&) = default;
+
+	~DataColumn() = default;
+
+	DataColumn& operator=(const DataColumn&) = default;
+};
+
+template<typename TStruct = DataStructDefault<>,	//?
+	typename TCode = typename internal::DataColumnCodeSelector<TStruct>::Code>
+class DataColumnInfo : public internal::DataColumnInfoBase<TStruct, TCode>
+{
+private:
+	typedef internal::DataColumnInfoBase<TStruct, TCode> ColumnInfoBase;
+
+public:
+	using typename ColumnInfoBase::Struct;
+	using typename ColumnInfoBase::Code;
+
+	template<typename Item>
+	using Column = DataColumn<Item, Struct, Code>;
+
+public:
+	template<typename Item>
+	DataColumnInfo(const Column<Item>& column) noexcept
+		: ColumnInfoBase(GetCode(column), static_cast<Item*>(nullptr)),
+		mName(column.GetName())
+	{
+	}
+
+	using ColumnInfoBase::GetCode;
+
+	template<typename Item>
+	static Code GetCode(const Column<Item>& column) noexcept
+	{
+		return column.GetCode();
+	}
+
+	const char* GetName() const noexcept
+	{
+		return mName;
+	}
+
+	template<typename PtrVisitor>
+	void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+	}
+
+	template<typename PtrVisitor>
+	void Visit(void* item, const PtrVisitor& ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
+	}
+
+private:
+	const char* mName;
+};
 
 template<bool tKeepRowNumber = false>
 class DataSettings
@@ -425,12 +545,6 @@ public:
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
 };
 
-template<typename... TVisitableItems>
-struct DataStructDefault
-{
-	typedef std::tuple<TVisitableItems...> VisitableItems;
-};
-
 template<typename TStruct = DataStructDefault<>,
 	size_t tLogVertexCount = 8>
 class DataColumnTraits
@@ -444,7 +558,7 @@ public:
 	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
 	static const size_t maxCodeParam = 255;
 
-	typedef internal::DataColumnInfo<Struct> ColumnInfo;
+	typedef DataColumnInfo<Struct> ColumnInfo;
 
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
@@ -1138,7 +1252,7 @@ public:
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
 
-	typedef internal::DataColumnInfo<Struct> ColumnInfo;
+	typedef DataColumnInfo<Struct> ColumnInfo;
 
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
