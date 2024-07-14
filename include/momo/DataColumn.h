@@ -14,16 +14,19 @@
     MOMO_DATA_COLUMN_STRING
 
   namespace momo:
+    enum class DataColumnCodeOffset
     class DataEquality
     class DataAssignment
     struct DataStructDefault
     class DataColumn
     class DataColumnInfo
+    class DataColumnInfoNative
     class DataSettings
     class DataColumnTraits
     class DataItemTraits
     class DataColumnList
     class DataColumnListStatic
+    class DataColumnListNative
 
 \**********************************************************/
 
@@ -38,17 +41,21 @@
 #endif
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \
-	constexpr momo::DataColumn<decltype(std::declval<Struct&>().name), Struct> \
-		name{uint64_t{offsetof(Struct, name)}, #Struct "." #name}
+	constexpr momo::DataColumn<decltype(std::declval<Struct>().name), Struct, momo::DataColumnCodeOffset> \
+		name{momo::DataColumnCodeOffset(offsetof(Struct, name)), #Struct "." #name}
 
 #define MOMO_DATA_COLUMN_STRING_TAG(Tag, Type, name) \
-	constexpr momo::DataColumn<Type, Tag> name{#name}
+	constexpr momo::DataColumn<Type, Tag, uint64_t> name{#name}
 
 #define MOMO_DATA_COLUMN_STRING(Type, name) \
 	MOMO_DATA_COLUMN_STRING_TAG(momo::DataStructDefault<>, Type, name)
 
 namespace momo
 {
+
+enum class DataColumnCodeOffset : size_t
+{
+};
 
 namespace internal
 {
@@ -72,10 +79,17 @@ namespace internal
 	{
 	};
 
-	template<typename Struct>
+	template<typename Struct,
+		bool isStructWithMembers = std::is_class<Struct>::value && !std::is_empty<Struct>::value>
 	struct DataColumnCodeSelector
 	{
 		typedef uint64_t Code;
+	};
+
+	template<typename Struct>
+	struct DataColumnCodeSelector<Struct, true>
+	{
+		typedef DataColumnCodeOffset Code;
 	};
 
 	template<typename TColumn>
@@ -531,6 +545,50 @@ private:
 	const char* mName;
 };
 
+template<typename TStruct>
+class DataColumnInfoNative : public internal::DataColumnInfoBase<TStruct, DataColumnCodeOffset>
+{
+private:
+	typedef internal::DataColumnInfoBase<TStruct, DataColumnCodeOffset> ColumnInfoBase;
+
+public:
+	using typename ColumnInfoBase::Struct;
+	using typename ColumnInfoBase::Code;
+
+	template<typename Item>
+	using Column = Item Struct::*;
+
+public:
+	template<typename Item>
+	DataColumnInfoNative(const Column<Item>& column) noexcept
+		: ColumnInfoBase(GetCode(column), static_cast<Item*>(nullptr))
+	{
+	}
+
+	using ColumnInfoBase::GetCode;
+
+	template<typename Item>
+	static Code GetCode(const Column<Item>& column) noexcept
+	{
+		static Struct staticStruct;	//?
+		return static_cast<Code>(
+			reinterpret_cast<const std::byte*>(std::addressof(staticStruct.*column))
+			- reinterpret_cast<const std::byte*>(std::addressof(staticStruct)));
+	}
+
+	template<typename PtrVisitor>
+	void Visit(const void* item, const PtrVisitor& ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfoNative>(item, ptrVisitor);
+	}
+
+	template<typename PtrVisitor>
+	void Visit(void* item, const PtrVisitor& ptrVisitor) const
+	{
+		ColumnInfoBase::template ptVisit<DataColumnInfoNative>(item, ptrVisitor);
+	}
+};
+
 template<bool tKeepRowNumber = false>
 class DataSettings
 {
@@ -571,11 +629,13 @@ public:
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
 public:
-	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(ColumnCode columnCode,
-		size_t codeParam) noexcept
+	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(
+		ColumnCode columnCode, size_t codeParam) noexcept
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(columnCode + (columnCode >> 32));
+		size_t shortCode = static_cast<size_t>(columnCode);
+		if (sizeof(ColumnCode) > 4)
+			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
 		shortCode += shortCode >> 16;
 		if (logVertexCount < 8)
 			shortCode += shortCode >> 8;
@@ -1243,23 +1303,23 @@ private:
 };
 
 template<typename TStruct,
+	typename TColumnInfo = DataColumnInfo<TStruct>,
 	typename TMemManager = MemManagerDefault,
 	typename TSettings = DataSettings<>>
 class DataColumnListStatic
 {
 public:
 	typedef TStruct Struct;
+	typedef TColumnInfo ColumnInfo;
 	typedef TMemManager MemManager;
 	typedef TSettings Settings;
-
-	typedef DataColumnInfo<Struct> ColumnInfo;
 
 	template<typename Item>
 	using Column = typename ColumnInfo::template Column<Item>;
 
 	typedef Struct Raw;
 
-	MOMO_STATIC_ASSERT(std::is_class<Struct>::value);
+	MOMO_STATIC_ASSERT(std::is_class<Struct>::value && !std::is_empty<Struct>::value);
 
 private:
 	typedef internal::ObjectManager<Raw, MemManager> RawManager;
@@ -1269,6 +1329,7 @@ private:
 	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
 
 	typedef typename ColumnInfo::Code ColumnCode;
+	MOMO_STATIC_ASSERT((std::is_same<DataColumnCodeOffset, ColumnCode>::value));
 
 public:
 	explicit DataColumnListStatic(MemManager memManager = MemManager())
@@ -1454,6 +1515,9 @@ private:
 	Columns mColumns;
 	MutableOffsets mMutableOffsets;
 };
+
+template<typename TStruct>
+using DataColumnListNative = DataColumnListStatic<TStruct, DataColumnInfoNative<TStruct>>;
 
 } // namespace momo
 

@@ -64,7 +64,8 @@ public:
 	{
 		{
 			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
+				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(dblStruct);
 			columnList.PrepareForVisitors(intStruct, dblStruct, strStruct);
@@ -75,8 +76,8 @@ public:
 
 		{
 			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
-			typedef momo::DataColumnListStatic<Struct, momo::MemManagerDict<>,
-				momo::DataSettings<true>> DataColumnList;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
+				momo::MemManagerDict<>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
@@ -424,7 +425,7 @@ public:
 			assert(selection.GetCount() == count / 2);
 		}
 
-		pvTestDataDynamic<dynamic>(ctable, intCol, dblCol, strCol);
+		pvTestData<dynamic>(ctable, intCol, dblCol, strCol);
 
 		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
 			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
@@ -447,7 +448,7 @@ public:
 
 private:
 	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(const Table& ctable,
+	static typename std::enable_if<dynamic, void>::type pvTestData(const Table& ctable,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename Table::ColumnList ColumnList;
@@ -467,7 +468,7 @@ private:
 	}
 
 	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(const Table& ctable,
+	static typename std::enable_if<!dynamic, void>::type pvTestData(const Table& ctable,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename Table::ColumnList ColumnList;
