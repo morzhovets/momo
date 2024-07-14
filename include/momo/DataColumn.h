@@ -395,10 +395,10 @@ public:
 
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
-	typedef DataEquality<DataColumn> Equaler;
+	typedef DataEquality<DataColumn> Equality;
 
 	template<typename ItemArg>
-	using Assigner = DataAssignment<DataColumn, ItemArg>;
+	using Assignment = DataAssignment<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(const char* name) noexcept
@@ -445,15 +445,15 @@ public:
 		return false;
 	}
 
-	Equaler operator==(const Item& item) const noexcept
+	Equality operator==(const Item& item) const noexcept
 	{
-		return Equaler(*this, item);
+		return Equality(*this, item);
 	}
 
 	template<typename ItemArg>
-	Assigner<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	Assignment<ItemArg> operator=(ItemArg&& itemArg) const noexcept
 	{
-		return Assigner<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+		return Assignment<ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
 
 private:
