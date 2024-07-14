@@ -572,8 +572,8 @@ public:
 	{
 		static Struct staticStruct;	//?
 		return static_cast<Code>(
-			reinterpret_cast<const std::byte*>(std::addressof(staticStruct.*column))
-			- reinterpret_cast<const std::byte*>(std::addressof(staticStruct)));
+			reinterpret_cast<const internal::Byte*>(std::addressof(staticStruct.*column))
+			- reinterpret_cast<const internal::Byte*>(std::addressof(staticStruct)));
 	}
 
 	template<typename PtrVisitor>
