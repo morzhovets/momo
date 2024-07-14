@@ -284,7 +284,7 @@ public:
 	template<size_t index>
 	const DataEquality& Get() const noexcept
 	{
-		static_assert(index == 0);
+		MOMO_STATIC_ASSERT(index == 0);
 		return *this;
 	}
 
@@ -391,7 +391,7 @@ public:
 		: mCode(internal::StrHasher::GetHashCode64(name)),
 		mName(name)
 	{
-		static_assert(std::is_same<Code, uint64_t>::value);
+		MOMO_STATIC_ASSERT((std::is_same<Code, uint64_t>::value));
 	}
 
 	constexpr explicit DataColumn(Code code, const char* name = "") noexcept
