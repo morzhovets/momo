@@ -496,6 +496,15 @@ public:
 		return pvNewRow(assign, assigns...);
 	}
 
+	Row NewRow(typename std::conditional<std::is_void<Raw>::value,
+		std::piecewise_construct_t, Raw>::type&& srcRaw)
+	{
+		MOMO_STATIC_ASSERT(!std::is_void<Raw>::value);
+		auto rawCreator = [this, &srcRaw] (Raw* raw)
+			{ GetColumnList().CreateRaw(GetMemManager(), std::move(srcRaw), raw); };
+		return pvMakeRow(pvCreateRaw(rawCreator));
+	}
+
 	Row NewRow(const Row& row)
 	{
 		return pvMakeRow(pvImportRaw(row.GetColumnList(), row.GetRaw()));
@@ -902,12 +911,13 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	Raw* pvCreateRaw()
+	template<typename RawCreator>
+	Raw* pvCreateRaw(RawCreator&& rawCreator)
 	{
 		Raw* raw = pvAllocateRaw();
 		try
 		{
-			GetColumnList().CreateRaw(GetMemManager(), raw);
+			std::forward<RawCreator>(rawCreator)(raw);
 		}
 		catch (...)
 		{
@@ -917,19 +927,17 @@ private:
 		return raw;
 	}
 
+	Raw* pvCreateRaw()
+	{
+		auto rawCreator = [this] (Raw* raw) { GetColumnList().CreateRaw(GetMemManager(), raw); };
+		return pvCreateRaw(rawCreator);
+	}
+
 	Raw* pvImportRaw(const ColumnList& srcColumnList, const Raw* srcRaw)
 	{
-		Raw* raw = pvAllocateRaw();
-		try
-		{
-			GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw);
-		}
-		catch (...)
-		{
-			mRawMemPool.Deallocate(raw);
-			throw;
-		}
-		return raw;
+		auto rawCreator = [this, &srcColumnList, srcRaw] (Raw* raw)
+			{ GetColumnList().ImportRaw(GetMemManager(), srcColumnList, srcRaw, raw); };
+		return pvCreateRaw(rawCreator);
 	}
 
 	Raw* pvAllocateRaw()

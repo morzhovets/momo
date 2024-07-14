@@ -1396,6 +1396,11 @@ public:
 		(typename RawManager::template Creator<>(memManager))(raw);
 	}
 
+	void CreateRaw(MemManager& memManager, Raw&& srcRaw, Raw* raw) const
+	{
+		(typename RawManager::template Creator<Raw&&>(memManager, std::move(srcRaw)))(raw);
+	}
+
 	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
 	{
 		RawManager::Destroyer::Destroy(memManager, *raw);
