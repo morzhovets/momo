@@ -57,6 +57,15 @@ enum class DataColumnCodeOffset : size_t
 {
 };
 
+template<>
+struct HashCoder<DataColumnCodeOffset, size_t>	// c++11
+{
+	size_t operator()(const DataColumnCodeOffset& key) const noexcept
+	{
+		return HashCoder<size_t>()(static_cast<size_t>(key));
+	}
+};
+
 namespace internal
 {
 	class StrHasher
