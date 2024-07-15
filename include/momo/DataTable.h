@@ -11,6 +11,7 @@
   namespace momo:
     class DataTraits
     class DataTable
+    class DataTableNative
 
 \**********************************************************/
 
@@ -86,6 +87,9 @@ public:
 
 	template<typename Item>
 	using Equality = DataEquality<Column<Item>>;
+
+	template<typename... Items>
+	using Equalities = DataEquality<Column<Items>...>;
 
 	template<typename Item, typename ItemArg>
 	using Assignment = DataAssignment<Column<Item>, ItemArg>;
@@ -744,42 +748,75 @@ public:
 	}
 
 	template<typename... Items>
-	ConstSelection Select(Equality<Items>... equals) const
+	internal::EnableIf<(sizeof...(Items) > 1),
+	ConstSelection> Select(Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	ConstSelection> Select(const RowFilter& rowFilter, Equality<Items>... equals) const
+	ConstSelection> Select(const RowFilter& rowFilter = RowFilter(),
+		Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(rowFilter, equals...);
 	}
 
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	ConstSelection> Select(Equalities<Items...> equals,
+		const RowFilter& rowFilter = RowFilter()) const
+	{
+		return pvSelect<Selection>(equals, rowFilter);
+	}
+
 	template<typename... Items>
-	Selection Select(Equality<Items>... equals)
+	internal::EnableIf<(sizeof...(Items) > 1),
+	Selection> Select(Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	Selection> Select(const RowFilter& rowFilter, Equality<Items>... equals)
+	Selection> Select(const RowFilter& rowFilter = RowFilter(), Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(rowFilter, equals...);
 	}
 
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	Selection> Select(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter())
+	{
+		return pvSelect<Selection>(equals, rowFilter);
+	}
+
 	template<typename... Items>
-	size_t SelectCount(Equality<Items>... equals) const
+	internal::EnableIf<(sizeof...(Items) > 1),
+	size_t> SelectCount(Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	size_t> SelectCount(const RowFilter& rowFilter, Equality<Items>... equals) const
+	size_t> SelectCount(const RowFilter& rowFilter = RowFilter(), Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(rowFilter, equals...);
+	}
+
+	template<typename RowFilter = EmptyRowFilter,
+		typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	size_t> SelectCount(Equalities<Items...> equals,
+		const RowFilter& rowFilter = RowFilter()) const
+	{
+		return pvSelect<size_t>(equals, rowFilter);
 	}
 
 	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
@@ -790,6 +827,20 @@ public:
 	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row)
 	{
 		return pvFindByUniqueHash(uniqueHashIndex, row);
+	}
+
+	template<typename Item, typename... Items>
+	ConstRowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty) const
+	{
+		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
+	}
+
+	template<typename Item, typename... Items>
+	RowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty)
+	{
+		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
 	}
 
 	template<typename Item, typename... Items>
@@ -804,6 +855,20 @@ public:
 		Equality<Items>... equals)
 	{
 		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equal, equals...);
+	}
+
+	template<typename Item, typename... Items>
+	ConstRowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+		MultiHashIndex multiHashIndex = MultiHashIndex::empty) const
+	{
+		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
+	}
+
+	template<typename Item, typename... Items>
+	RowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+		MultiHashIndex multiHashIndex = MultiHashIndex::empty)
+	{
+		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
 	}
 
 	template<typename Item, typename... Items>
@@ -1307,6 +1372,20 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+	template<typename Result, typename... Items, typename RowFilter>
+	Result pvSelect(const Equalities<Items...>& equals, const RowFilter& rowFilter) const
+	{
+		return pvSelect<Result>(equals, rowFilter,
+			typename internal::SequenceMaker<sizeof...(Items)>::Sequence());
+	}
+
+	template<typename Result, typename... Items, typename RowFilter, size_t... sequence>
+	Result pvSelect(const Equalities<Items...>& equals, const RowFilter& rowFilter,
+		internal::Sequence<sequence...>) const
+	{
+		return pvSelect<Result>(rowFilter, equals.template Get<sequence>()...);
+	}
+
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
 		size_t columnCount = 1 + sizeof...(Items)>
 	internal::EnableIf<(columnCount > DataTraits::selectEqualityMaxCount),
@@ -1457,6 +1536,20 @@ private:
 		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+	template<typename RowBoundsProxy, typename... Items, typename Index>
+	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index) const
+	{
+		return pvFindByHash<RowBoundsProxy>(equals, index,
+			typename internal::SequenceMaker<sizeof...(Items)>::Sequence());
+	}
+
+	template<typename RowBoundsProxy, typename... Items, typename Index, size_t... sequence>
+	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index,
+		internal::Sequence<sequence...>) const
+	{
+		return pvFindByHash<RowBoundsProxy>(index, equals.template Get<sequence>()...);
+	}
+
 	template<typename RowBoundsProxy, typename Index, typename... Items,
 		size_t columnCount = sizeof...(Items)>
 	RowBoundsProxy pvFindByHash(Index index, const Equality<Items>&... equals) const
@@ -1526,6 +1619,10 @@ private:
 	RawMemPool mRawMemPool;
 	Indexes mIndexes;
 };
+
+template<typename TStruct,
+	typename TDataTraits = DataTraits>
+using DataTableNative = DataTable<DataColumnListNative<TStruct>, TDataTraits>;
 
 } // namespace momo
 
