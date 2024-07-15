@@ -58,7 +58,7 @@ enum class DataColumnCodeOffset : size_t
 };
 
 template<>
-struct HashCoder<DataColumnCodeOffset, size_t>	// c++11
+struct HashCoder<DataColumnCodeOffset, size_t>	// gcc 4.9, clang 3.6
 {
 	size_t operator()(const DataColumnCodeOffset& key) const noexcept
 	{
@@ -105,6 +105,12 @@ namespace internal
 	struct DataColumnItemSelector
 	{
 		typedef typename TColumn::Item Item;
+	};
+
+	template<typename TItem, typename TStruct>
+	struct DataColumnItemSelector<TItem TStruct::*>
+	{
+		typedef TItem Item;	//?
 	};
 
 	template<typename TStruct, typename TCode>
@@ -561,7 +567,9 @@ private:
 	typedef internal::DataColumnInfoBase<TStruct, DataColumnCodeOffset> ColumnInfoBase;
 
 public:
-	using typename ColumnInfoBase::Struct;
+	typedef TStruct Struct;
+	//using typename ColumnInfoBase::Struct;	// vs2017
+
 	using typename ColumnInfoBase::Code;
 
 	template<typename Item>
