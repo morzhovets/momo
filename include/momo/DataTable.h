@@ -1368,6 +1368,12 @@ private:
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
+	template<typename Result, typename RowFilter>	// vs2015
+	Result pvSelect(const Equalities<>& /*equals*/, const RowFilter& rowFilter) const
+	{
+		return pvSelect<Result>(rowFilter);
+	}
+
 	template<typename Result, typename... Items, typename RowFilter>
 	Result pvSelect(const Equalities<Items...>& equals, const RowFilter& rowFilter) const
 	{
