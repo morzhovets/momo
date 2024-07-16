@@ -754,11 +754,9 @@ public:
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter = EmptyRowFilter,
-		typename... Items>
+	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	ConstSelection> Select(const RowFilter& rowFilter = RowFilter(),
-		Equality<Items>... equals) const
+	ConstSelection> Select(const RowFilter& rowFilter, Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(rowFilter, equals...);
 	}
@@ -766,7 +764,7 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	ConstSelection> Select(Equalities<Items...> equals,
+	ConstSelection> Select(Equalities<Items...> equals = {},
 		const RowFilter& rowFilter = RowFilter()) const
 	{
 		return pvSelect<Selection>(equals, rowFilter);
@@ -779,10 +777,9 @@ public:
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter = EmptyRowFilter,
-		typename... Items>
+	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	Selection> Select(const RowFilter& rowFilter = RowFilter(), Equality<Items>... equals)
+	Selection> Select(const RowFilter& rowFilter, Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(rowFilter, equals...);
 	}
@@ -790,7 +787,7 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	Selection> Select(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter())
+	Selection> Select(Equalities<Items...> equals = {}, const RowFilter& rowFilter = RowFilter())
 	{
 		return pvSelect<Selection>(equals, rowFilter);
 	}
@@ -802,10 +799,9 @@ public:
 		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter = EmptyRowFilter,
-		typename... Items>
+	template<typename RowFilter, typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	size_t> SelectCount(const RowFilter& rowFilter = RowFilter(), Equality<Items>... equals) const
+	size_t> SelectCount(const RowFilter& rowFilter, Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(rowFilter, equals...);
 	}
@@ -813,7 +809,7 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	size_t> SelectCount(Equalities<Items...> equals,
+	size_t> SelectCount(Equalities<Items...> equals = {},
 		const RowFilter& rowFilter = RowFilter()) const
 	{
 		return pvSelect<size_t>(equals, rowFilter);
