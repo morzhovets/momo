@@ -552,7 +552,7 @@ public:
 
 	template<typename Item>
 	static DataEquality<Column<Item>> MakeEquality(
-		const Column<Item>& column, const Item& item) noexcept
+		const Column<Item>& column, const internal::Identity<Item>& item) noexcept
 	{
 		return DataEquality<Column<Item>>(column, item);
 	}
@@ -615,7 +615,7 @@ public:
 
 	template<typename Item>
 	static DataEquality<Column<Item>> MakeEquality(
-		const Column<Item>& column, const Item& item) noexcept
+		const Column<Item>& column, const internal::Identity<Item>& item) noexcept
 	{
 		return DataEquality<Column<Item>>(column, item);
 	}
