@@ -407,13 +407,7 @@ public:
 	typedef TCode Code;
 
 	typedef DataColumn BaseColumn;
-
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
-
-	typedef DataEquality<DataColumn> Equality;
-
-	template<typename ItemArg>
-	using Assignment = DataAssignment<DataColumn, ItemArg>;
 
 public:
 	constexpr explicit DataColumn(const char* name) noexcept
@@ -460,15 +454,15 @@ public:
 		return false;
 	}
 
-	Equality operator==(const Item& item) const noexcept
+	DataEquality<DataColumn> operator==(const Item& item) const noexcept
 	{
-		return Equality(*this, item);
+		return DataEquality<DataColumn>(*this, item);
 	}
 
 	template<typename ItemArg>
-	Assignment<ItemArg> operator=(ItemArg&& itemArg) const noexcept
+	DataAssignment<DataColumn, ItemArg> operator=(ItemArg&& itemArg) const noexcept
 	{
-		return Assignment<ItemArg>(*this, std::forward<ItemArg>(itemArg));
+		return DataAssignment<DataColumn, ItemArg>(*this, std::forward<ItemArg>(itemArg));
 	}
 
 private:
@@ -556,6 +550,20 @@ public:
 		ColumnInfoBase::template ptVisit<DataColumnInfo>(item, ptrVisitor);
 	}
 
+	template<typename Item>
+	static DataEquality<Column<Item>> MakeEquality(
+		const Column<Item>& column, const Item& item) noexcept
+	{
+		return DataEquality<Column<Item>>(column, item);
+	}
+
+	template<typename Item, typename ItemArg>
+	static DataAssignment<Column<Item>, ItemArg> MakeAssignment(
+		const Column<Item>& column, ItemArg&& itemArg) noexcept
+	{
+		return DataAssignment<Column<Item>, ItemArg>(column, std::forward<ItemArg>(itemArg));
+	}
+
 private:
 	const char* mName;
 };
@@ -603,6 +611,20 @@ public:
 	void Visit(void* item, const PtrVisitor& ptrVisitor) const
 	{
 		ColumnInfoBase::template ptVisit<DataColumnInfoNative>(item, ptrVisitor);
+	}
+
+	template<typename Item>
+	static DataEquality<Column<Item>> MakeEquality(
+		const Column<Item>& column, const Item& item) noexcept
+	{
+		return DataEquality<Column<Item>>(column, item);
+	}
+
+	template<typename Item, typename ItemArg>
+	static DataAssignment<Column<Item>, ItemArg> MakeAssignment(
+		const Column<Item>& column, ItemArg&& itemArg) noexcept
+	{
+		return DataAssignment<Column<Item>, ItemArg>(column, std::forward<ItemArg>(itemArg));
 	}
 };
 
