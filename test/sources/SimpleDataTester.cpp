@@ -25,8 +25,10 @@ namespace
 {
 	typedef momo::DataStructDefault<int, double, std::string> BaseStruct;
 
-	struct Struct : public BaseStruct
+	struct Struct
 	{
+		typedef std::tuple<int, double, std::string> VisitableItems;
+
 		int intStruct;
 		double dblStruct;
 		std::string strStruct;
@@ -62,6 +64,18 @@ private:
 public:
 	static void TestAll()
 	{
+		{
+			std::cout << "momo::DataColumnListNative (-RowNumber): " << std::flush;
+			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfoNative<Struct>,
+				momo::MemManagerDict<>> DataColumnList;
+			DataColumnList columnList;
+			columnList.SetMutable(&Struct::dblStruct);
+			columnList.PrepareForVisitors(&Struct::intStruct, &Struct::dblStruct, &Struct::strStruct);
+			momo::DataTable<DataColumnList> table(std::move(columnList));
+			TestData<false, true>(table, &Struct::intStruct, &Struct::dblStruct, &Struct::strStruct);
+			std::cout << "ok" << std::endl;
+		}
+
 		{
 			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
@@ -122,7 +136,8 @@ public:
 		}
 	}
 
-	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	template<bool dynamic, bool native = false,
+		typename Table, typename IntCol, typename DblCol, typename StrCol>
 	static void TestData(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
@@ -145,10 +160,22 @@ public:
 
 		for (size_t i = 0; i < count / 2; ++i)
 		{
-			if (i % 2 == 0)
-				table.AddRow(intCol = static_cast<int>(i));
-			else
-				table.TryAddRow(intCol = static_cast<int>(i));
+			bool added = false;
+#if defined(__cpp_if_constexpr)
+			if constexpr (!native)
+			{
+				if (i % 2 == 1)
+					added = !!table.TryAddRow(intCol = static_cast<int>(i));
+			}
+#endif
+			if (!added)
+			{
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+				table.AddRow(momo::DataAssignment(intCol, static_cast<int>(i)));
+#else
+				table.AddRow(ColumnInfo::MakeAssignment(intCol, static_cast<int>(i)));
+#endif
+			}
 		}
 
 		for (size_t i = count / 2; i < count; ++i)
@@ -157,7 +184,7 @@ public:
 
 			auto voidVisitor = [i, &intCol] (void* item, ColumnInfo columnInfo)
 			{
-				if (columnInfo.GetCode() == intCol.GetCode())
+				if (columnInfo.GetCode() == ColumnInfo::GetCode(intCol))
 					*static_cast<int*>(item) = static_cast<int>(i);
 			};
 			row.VisitPointers(voidVisitor);
@@ -235,19 +262,30 @@ public:
 		assert(table.TryAddRow(table.NewRow(table[0])).uniqueHashIndex == keyIndex);
 
 		assert(table.TryUpdateRow(0, table.NewRow(table[1])).uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(0, table.NewRow(table[0])).uniqueHashIndex
-			== momo::DataUniqueHashIndex::empty);
+		assert(table.TryUpdateRow(0, table.NewRow(table[0])));
 
-		assert(table.TryUpdateRow(table[0], strCol, std::string("1")).uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(table[0], strCol,
-			static_cast<const std::string&>(std::string("0"))).uniqueHashIndex == momo::DataUniqueHashIndex::empty);
+		assert(table.TryUpdateRow(table[0], strCol, "1").uniqueHashIndex == keyIndex);
+		assert(table.TryUpdateRow(table[0], strCol, static_cast<const std::string&>(std::string("0"))));
 
 		for (size_t i = 0; i < count2; ++i)
 		{
-			if (i % 2 == 0)
-				table.InsertRow(count, intCol = static_cast<int>(count + i));
-			else
-				table.TryInsertRow(count, intCol = static_cast<int>(count + i));
+			int v = static_cast<int>(count + i);
+			bool added = false;
+#if defined(__cpp_if_constexpr)
+			if constexpr (!native)
+			{
+				if (i % 2 == 1)
+					added = !!table.TryInsertRow(count, intCol = v);
+			}
+#endif
+			if (!added)
+			{
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+				table.InsertRow(count, momo::DataAssignment(intCol, v));
+#else
+				table.InsertRow(count, ColumnInfo::MakeAssignment(intCol, v));
+#endif
+			}
 		}
 		assert(table.GetCount() == count + count2);
 
@@ -273,37 +311,60 @@ public:
 		assert(table.Select().GetCount() == count);
 		assert(ctable.Select().GetCount() == count);
 
-		assert(table.SelectCount(strCol == "0", intCol == 1) == 1);
-		assert(table.Select(intCol == 0, strCol == "1").GetCount() == 1);
-		assert(ctable.Select(strCol == "1", intCol == 0).GetCount() == 1);
+		assert(table.SelectCount(momo::DataEquality<>().And(dblCol, 0.0)) == 1);
+		assert(table.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
+		assert(ctable.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
 
-		assert(table.SelectCount(emptyFilter, strCol == "0") == count / 2);
-		assert(table.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
-		assert(ctable.Select(emptyFilter, strCol == "1").GetCount() == count / 2);
+		assert(table.SelectCount(
+			ColumnInfo::MakeEquality(strCol, "0"), ColumnInfo::MakeEquality(intCol, 1)) == 1);
+		assert(table.Select(
+			ColumnInfo::MakeEquality(intCol, 0), ColumnInfo::MakeEquality(strCol, "1")).GetCount() == 1);
+		assert(ctable.Select(
+			ColumnInfo::MakeEquality(strCol, "1"), ColumnInfo::MakeEquality(intCol, 0)).GetCount() == 1);
 
-		assert(table.SelectCount(dblCol == 0.0) == 1);
-		assert(table.Select(dblCol == 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0).GetCount() == 1);
+		assert(table.SelectCount(
+			momo::DataEquality<>().And(strCol, "0").And(intCol, 1).And(dblCol, 1.0)) == 1);
+		assert(table.Select(
+			momo::DataEquality<>().And(intCol, 0).And(dblCol, 0.5).And(strCol, "1")).GetCount() == 1);
+		assert(ctable.Select(
+			momo::DataEquality<>().And(strCol, "1").And(dblCol, 0.5).And(intCol, 0)).GetCount() == 1);
 
-		assert(table.SelectCount(dblCol == 0.0, strCol == "0") == 1);
-		assert(table.Select(strCol == "0", dblCol == 1.0).GetCount() == 1);
-		assert(ctable.Select(dblCol == 1.0, strCol == "1").GetCount() == 0);
+		assert(table.SelectCount(emptyFilter, momo::DataEquality<>().And(strCol, "0")) == count / 2);
+		assert(table.Select(emptyFilter, momo::DataEquality<>().And(strCol, "1")).GetCount() == count / 2);
+		assert(ctable.Select(emptyFilter, momo::DataEquality<>().And(strCol, "1")).GetCount() == count / 2);
 
-		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
-		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
+		assert(table.SelectCount(momo::DataEquality<>().And(dblCol, 0.0).And(strCol, "0"),
+			emptyFilter) == 1);
+		assert(table.Select(momo::DataEquality<>().And(strCol, "0").And(dblCol, 1.0),
+			emptyFilter).GetCount() == 1);
+		assert(ctable.Select(momo::DataEquality<>().And(dblCol, 1.0).And(strCol, "1"),
+			emptyFilter).GetCount() == 0);
 
-		assert(table.FindByUniqueHash(keyIndex, intCol == 0, strCol == "1")->Get(strCol) == "1");
-		assert((*ctable.FindByUniqueHash(keyIndex, strCol == "1", intCol == 0))[strCol] == "1");
+		assert(table.FindByUniqueHash(keyIndex,
+			ColumnInfo::MakeEquality(intCol, 0), ColumnInfo::MakeEquality(strCol, "1"))->Get(strCol) == "1");
+		assert((*ctable.FindByUniqueHash(keyIndex,
+			ColumnInfo::MakeEquality(strCol, "1"), ColumnInfo::MakeEquality(intCol, 0)))[strCol] == "1");
+
+		assert(table.FindByUniqueHash(
+			momo::DataEquality<>().And(intCol, 0).And(strCol, "1"), keyIndex)->Get(strCol) == "1");
+		assert((*ctable.FindByUniqueHash(
+			momo::DataEquality<>().And(strCol, "1").And(intCol, 0), keyIndex))[strCol] == "1");
 
 		assert(table.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
+			ColumnInfo::MakeEquality(strCol, "1")).GetCount() == count / 2);
 		assert(ctable.FindByMultiHash(momo::DataMultiHashIndex::empty,
-			strCol == "1").GetCount() == count / 2);
+			ColumnInfo::MakeEquality(strCol, "1")).GetCount() == count / 2);
+
+		assert(table.FindByMultiHash(momo::DataEquality<>().And(strCol, "1")).GetCount() == count / 2);
+		assert(ctable.FindByMultiHash(momo::DataEquality<>().And(strCol, "1")).GetCount() == count / 2);
+
+		pvTestDataNative<native>(table, intCol, dblCol, strCol);
 
 		{
 			typename Table::RowHashPointer hashPointer;
 			typename Table::RowHashPointer::Iterator begin;
-			hashPointer = table.FindByUniqueHash(keyIndex, strCol == "0", intCol == 0);
+			hashPointer = table.FindByUniqueHash(
+				momo::DataEquality<>().And(strCol, "0").And(intCol, 0), keyIndex);
 			assert(static_cast<bool>(hashPointer));
 			begin = hashPointer.GetBegin();
 			assert(begin < hashPointer.GetEnd());
@@ -312,7 +373,7 @@ public:
 		{
 			typename Table::RowHashBounds hashBounds;
 			typename Table::RowHashBounds::Iterator begin;
-			hashBounds = table.FindByMultiHash(momo::DataMultiHashIndex::empty, strCol == "0");
+			hashBounds = table.FindByMultiHash(momo::DataEquality<>().And(strCol, "0"));
 			begin = hashBounds.GetBegin();
 			assert(begin < hashBounds.GetEnd());
 			assert(hashBounds[0][strCol] == "0");
@@ -361,7 +422,7 @@ public:
 		}
 
 		{
-			Selection selection = table.Select(strCol == "1");
+			Selection selection = table.Select(momo::DataEquality<>().And(strCol, "1"));
 			assert(selection.GetCount() == count / 2);
 			for (auto row : selection)
 				assert(row[strCol] == "1");
@@ -383,14 +444,14 @@ public:
 		{
 			Selection selection = table.Select().Sort(strCol);
 
-			assert(selection.GetLowerBound(strCol == "") == 0);
-			assert(selection.GetUpperBound(strCol == "") == 0);
-			assert(selection.GetLowerBound(strCol == "0") == 0);
-			assert(selection.GetUpperBound(strCol == "0") == count / 2);
-			assert(selection.GetLowerBound(strCol == "1") == count / 2);
-			assert(selection.GetUpperBound(strCol == "1") == count);
-			assert(selection.GetLowerBound(strCol == "2") == count);
-			assert(selection.GetUpperBound(strCol == "2") == count);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "")) == 0);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "")) == 0);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "0")) == 0);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "0")) == count / 2);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "1")) == count / 2);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "1")) == count);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "2")) == count);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "2")) == count);
 
 			selection.Reserve(selection.GetCount() * 2);
 			selection.Assign(selection.GetBegin(), selection.GetEnd());
@@ -425,7 +486,7 @@ public:
 			assert(selection.GetCount() == count / 2);
 		}
 
-		pvTestData<dynamic>(ctable, intCol, dblCol, strCol);
+		pvTestDataDynamic<dynamic>(table, intCol, dblCol, strCol);
 
 		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
 			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
@@ -447,12 +508,36 @@ public:
 	}
 
 private:
+	template<bool native, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	static typename std::enable_if<native, void>::type pvTestDataNative(Table& /*table*/,
+		const IntCol& /*intCol*/, const DblCol& /*dblCol*/, const StrCol& /*strCol*/)
+	{
+	}
+
+	template<bool native, typename Table, typename IntCol, typename DblCol, typename StrCol>
+	static typename std::enable_if<!native, void>::type pvTestDataNative(Table& table,
+		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
+	{
+		const Table& ctable = table;
+
+		assert(table.SelectCount(strCol == "0" && intCol == 1 && dblCol == 1.0) == 1);
+		assert(table.Select(intCol == 0 && dblCol == 0.5 && strCol == "1").GetCount() == 1);
+		assert(ctable.Select(strCol == "1" && dblCol == 0.5 && intCol == 0).GetCount() == 1);
+
+		auto keyIndex = ctable.GetUniqueHashIndex(intCol, strCol);
+
+		assert((*table.FindByUniqueHash(keyIndex, table.NewRow(strCol = "1", intCol = 0)))[intCol] == 0);
+		assert(ctable.FindByUniqueHash(keyIndex, table.NewRow(intCol = 0, strCol = "1"))->Get(intCol) == 0);
+	}
+
 	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<dynamic, void>::type pvTestData(const Table& ctable,
+	static typename std::enable_if<dynamic, void>::type pvTestDataDynamic(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename Table::ColumnList ColumnList;
 		typedef typename Table::ConstRowReference ConstRowReference;
+
+		const Table& ctable = table;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		size_t count = ctable.GetCount();
@@ -468,11 +553,13 @@ private:
 	}
 
 	template<bool dynamic, typename Table, typename IntCol, typename DblCol, typename StrCol>
-	static typename std::enable_if<!dynamic, void>::type pvTestData(const Table& ctable,
+	static typename std::enable_if<!dynamic, void>::type pvTestDataDynamic(Table& table,
 		const IntCol& intCol, const DblCol& dblCol, const StrCol& strCol)
 	{
 		typedef typename Table::ColumnList ColumnList;
 		typedef typename Table::ConstRowReference ConstRowReference;
+
+		const Table& ctable = table;
 
 		auto strFilter = [&strCol] (ConstRowReference rowRef) { return rowRef[strCol] == "0"; };
 		size_t count = ctable.GetCount();
@@ -481,6 +568,18 @@ private:
 		assert(ctable.Project(ColumnList(), strFilter, dblCol, intCol).GetCount() == count / 2);
 		assert(ctable.ProjectDistinct(ColumnList(), strCol).GetCount() == 2);
 		assert(ctable.ProjectDistinct(ColumnList(), strFilter, strCol).GetCount() == 1);
+
+		{
+#if defined(__cpp_designated_initializers)
+			auto row = table.NewRow({ .intStruct = 1, .dblStruct = 3.5, .strStruct = "2" });
+#else
+			auto row = table.NewRow({ /*.intStruct =*/ 1, /*.dblStruct =*/ 3.5, /*.strStruct =*/ "2" });
+#endif
+
+			assert(row->intStruct == 1);
+			assert(row->dblStruct == 3.5);
+			assert(row->strStruct == "2");
+		}
 	}
 };
 
