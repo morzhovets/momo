@@ -170,7 +170,7 @@ public:
 #endif
 			if (!added)
 			{
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
+#if defined(MOMO_HAS_DEDUCTION_GUIDES)
 				table.AddRow(momo::DataAssignment(intCol, static_cast<int>(i)));
 #else
 				table.AddRow(ColumnInfo::MakeAssignment(intCol, static_cast<int>(i)));
@@ -189,8 +189,7 @@ public:
 			};
 			row.VisitPointers(voidVisitor);
 
-#ifndef MOMO_DISABLE_TYPE_INFO
-#if defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
+#if !defined(MOMO_DISABLE_TYPE_INFO) && defined(__cpp_generic_lambdas) && defined(__cpp_if_constexpr)
 			auto refVisitor = [i] (auto& item)
 			{
 				typedef std::decay_t<decltype(item)> Item;
@@ -208,7 +207,6 @@ public:
 			};
 			row.VisitPointers(ptrVisitor);
 			std::as_const(row).VisitPointers(ptrVisitor);
-#endif
 #endif
 
 			Row row2 = table.NewRow();
@@ -280,7 +278,7 @@ public:
 #endif
 			if (!added)
 			{
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
+#if defined(MOMO_HAS_DEDUCTION_GUIDES)
 				table.InsertRow(count, momo::DataAssignment(intCol, v));
 #else
 				table.InsertRow(count, ColumnInfo::MakeAssignment(intCol, v));
@@ -381,8 +379,7 @@ public:
 
 		assert(table.MakeMutableReference(ctable[0]).GetRaw() == table[0].GetRaw());
 
-#ifndef MOMO_DISABLE_TYPE_INFO
-#if defined(__cpp_generic_lambdas)
+#if !defined(MOMO_DISABLE_TYPE_INFO) && defined(__cpp_generic_lambdas)
 		{
 			std::stringstream sstream;
 			auto visitor = [&sstream] (const auto& item, auto columnInfo)
@@ -393,7 +390,6 @@ public:
 			ctable[0].VisitReferences(visitor);
 			assert(sstream.str() == "00");
 		}
-#endif
 #endif
 
 		{

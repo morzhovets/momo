@@ -18,30 +18,28 @@
 
 namespace sample_data1
 {
-	using Table = momo::DataTable<>;
-
-	template<typename Item>
-	using Column = Table::Column<Item>;
-
 #if defined(__cpp_inline_variables)	// C++17
-	inline constexpr Column<int> intCol("intCol");
-	inline constexpr Column<double> dblCol("dblCol");
-	inline constexpr Column<std::string> strCol("strCol");
+	inline constexpr momo::DataColumn<int> intCol("intCol");
+	inline constexpr momo::DataColumn<double> dblCol("dblCol");
+	inline constexpr momo::DataColumn<std::string> strCol("strCol");
 #else
-	constexpr Column<int> intCol("intCol");
-	constexpr Column<double> dblCol("dblCol");
-	constexpr Column<std::string> strCol("strCol");
-
-	//struct Cols	// inlined constants in C++11/14
-	//{
-	//	static constexpr Column<int> intCol{"intCol"};
-	//	static constexpr Column<double> dblCol{"dblCol"};
-	//	static constexpr Column<std::string> strCol{"strCol"};
-	//};
+	constexpr momo::DataColumn<int> intCol("intCol");
+	constexpr momo::DataColumn<double> dblCol("dblCol");
+	constexpr momo::DataColumn<std::string> strCol("strCol");
 #endif
 }
 
 namespace sample_data2
+{
+	struct Struct
+	{
+		int intCol;
+		double dblCol;
+		std::string strCol;
+	};
+}
+
+namespace sample_data3
 {
 	using Table = momo::DataTable<>;
 	using ConstRowReference = Table::ConstRowReference;
@@ -60,7 +58,7 @@ namespace sample_data2
 #endif
 }
 
-namespace sample_data3
+namespace sample_data4
 {
 	using Struct = momo::DataStructDefault<int, double, std::string>;
 	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
@@ -80,25 +78,15 @@ namespace sample_data3
 #endif
 }
 
-namespace sample_data4
+namespace sample_data5
 {
 	struct Struct
 	{
-		int intCol;
-		double dblCol;
-		std::string strCol;
+		// initialize fields to avoid Wmissing-field-initializers
+		std::string strCol{};
+		int intCol{};
+		double dblCol{};
 	};
 
-	using ColumnList = momo::DataColumnListStatic<Struct>;
-	using Table = momo::DataTable<ColumnList>;
-
-#if defined(__cpp_inline_variables)	// C++17
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	inline MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
-#else
-	MOMO_DATA_COLUMN_STRUCT(Struct, intCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, dblCol);
-	MOMO_DATA_COLUMN_STRUCT(Struct, strCol);
-#endif
+	using Table = momo::DataTableNative<Struct>;
 }
