@@ -825,15 +825,15 @@ public:
 		return pvFindByUniqueHash(uniqueHashIndex, row);
 	}
 
-	template<typename Item, typename... Items>
-	ConstRowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+	template<typename... Items>
+	ConstRowHashPointer FindByUniqueHash(Equalities<Items...> equals,
 		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty) const
 	{
 		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
 	}
 
-	template<typename Item, typename... Items>
-	RowHashPointer FindByUniqueHash(Equalities<Item, Items...> equals,
+	template<typename... Items>
+	RowHashPointer FindByUniqueHash(Equalities<Items...> equals,
 		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty)
 	{
 		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
@@ -853,15 +853,15 @@ public:
 		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equal, equals...);
 	}
 
-	template<typename Item, typename... Items>
-	ConstRowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+	template<typename... Items>
+	ConstRowHashBounds FindByMultiHash(Equalities<Items...> equals,
 		MultiHashIndex multiHashIndex = MultiHashIndex::empty) const
 	{
 		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
 	}
 
-	template<typename Item, typename... Items>
-	RowHashBounds FindByMultiHash(Equalities<Item, Items...> equals,
+	template<typename... Items>
+	RowHashBounds FindByMultiHash(Equalities<Items...> equals,
 		MultiHashIndex multiHashIndex = MultiHashIndex::empty)
 	{
 		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
@@ -1541,6 +1541,7 @@ private:
 	template<typename RowBoundsProxy, typename... Items, typename Index>
 	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index) const
 	{
+		MOMO_STATIC_ASSERT(sizeof...(Items) > 0);
 		return pvFindByHash<RowBoundsProxy>(equals, index,
 			typename internal::SequenceMaker<sizeof...(Items)>::Sequence());
 	}
@@ -1549,7 +1550,8 @@ private:
 	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index,
 		internal::Sequence<sequence...>) const
 	{
-		return pvFindByHash<RowBoundsProxy>(index, equals.template Get<sequence>()...);
+		return pvFindByHash<RowBoundsProxy>(index, internal::Sequence<sequence...>(),
+			equals.template Get<sequence>()...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items,
