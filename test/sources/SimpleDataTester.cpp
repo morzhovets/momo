@@ -313,6 +313,7 @@ public:
 		assert(table.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
 		assert(ctable.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
 
+		// deprecated funtions
 		assert(table.SelectCount(
 			ColumnInfo::MakeEquality(strCol, "0"), ColumnInfo::MakeEquality(intCol, 1)) == 1);
 		assert(table.Select(

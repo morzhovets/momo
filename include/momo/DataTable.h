@@ -748,17 +748,25 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) != 1),
-	ConstSelection> Select(Equality<Items>... equals) const
+	internal::EnableIf<(sizeof...(Items) > 1),
+	ConstSelection> Select(Equality<Items>... equals) const MOMO_DEPRECATED
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	ConstSelection> Select(const RowFilter& rowFilter, Equality<Items>... equals) const
+	ConstSelection> Select(const RowFilter& rowFilter = RowFilter()) const
 	{
-		return pvSelect<Selection>(rowFilter, equals...);
+		return pvSelect<Selection>(rowFilter);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	ConstSelection> Select(const RowFilter& rowFilter, Equality<Item> equal,
+		Equality<Items>... equals) const
+	{
+		return pvSelect<Selection>(rowFilter, equal, equals...);
 	}
 
 	template<typename RowFilter = EmptyRowFilter,
@@ -770,17 +778,25 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) != 1),
-	Selection> Select(Equality<Items>... equals)
+	internal::EnableIf<(sizeof...(Items) > 1),
+	Selection> Select(Equality<Items>... equals) MOMO_DEPRECATED
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	Selection> Select(const RowFilter& rowFilter, Equality<Items>... equals)
+	Selection> Select(const RowFilter& rowFilter = RowFilter())
 	{
-		return pvSelect<Selection>(rowFilter, equals...);
+		return pvSelect<Selection>(rowFilter);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	Selection> Select(const RowFilter& rowFilter, Equality<Item> equal,
+		Equality<Items>... equals)
+	{
+		return pvSelect<Selection>(rowFilter, equal, equals...);
 	}
 
 	template<typename RowFilter = EmptyRowFilter,
@@ -792,17 +808,25 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) != 1),
-	size_t> SelectCount(Equality<Items>... equals) const
+	internal::EnableIf<(sizeof...(Items) > 1),
+	size_t> SelectCount(Equality<Items>... equals) const MOMO_DEPRECATED
 	{
 		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
 
-	template<typename RowFilter, typename... Items>
+	template<typename RowFilter = EmptyRowFilter>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	size_t> SelectCount(const RowFilter& rowFilter, Equality<Items>... equals) const
+	size_t> SelectCount(const RowFilter& rowFilter = RowFilter()) const
 	{
-		return pvSelect<size_t>(rowFilter, equals...);
+		return pvSelect<size_t>(rowFilter);
+	}
+
+	template<typename RowFilter, typename Item, typename... Items>
+	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
+	size_t> SelectCount(const RowFilter& rowFilter, Equality<Item> equal,
+		Equality<Items>... equals) const
+	{
+		return pvSelect<size_t>(rowFilter, equal, equals...);
 	}
 
 	template<typename RowFilter = EmptyRowFilter,
