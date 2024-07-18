@@ -82,11 +82,11 @@ namespace sample_data5
 {
 	struct Struct
 	{
-		// initialize fields to avoid Wmissing-field-initializers
-		std::string strCol{};
-		int intCol{};
-		double dblCol{};
+		int intCol;
+		double dblCol;
+		std::string strCol;
 	};
 
 	using Table = momo::DataTableNative<Struct>;
+	using ColumnInfo = Table::ColumnList::ColumnInfo;
 }

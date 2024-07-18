@@ -135,7 +135,7 @@ namespace sample_data2
 
 		{
 			// select by conditions
-#if defined(MOMO_HAS_DEDUCTION_GUIDES)
+#if defined(MOMO_HAS_DEDUCTION_GUIDES)	// C++17
 			auto selection = table.Select(
 				momo::DataEquality(&Struct::intCol, 1).And(&Struct::dblCol, 1.5));
 #else
@@ -259,7 +259,7 @@ namespace sample_data4
 		table.AddRow(intCol = 2, dblCol = 0.5, strCol = "a");
 		table.InsertRow(0, intCol = 1, dblCol = 1.5, strCol = "b");	// at position 0
 
-#if !defined(MOMO_DISABLE_TYPE_INFO) && defined(__cpp_generic_lambdas)
+#if !defined(MOMO_DISABLE_TYPE_INFO) && defined(__cpp_generic_lambdas)	// C++14
 		for (auto row : table)
 		{
 			row.VisitReferences([&output] (auto& item) { output << item << " "; });
@@ -290,13 +290,13 @@ namespace sample_data5
 /*
 	struct Struct
 	{
-		// initialize fields to avoid Wmissing-field-initializers
-		std::string strCol{};
-		int intCol{};
-		double dblCol{};
+		int intCol;
+		double dblCol;
+		std::string strCol;
 	};
 
 	using Table = momo::DataTableNative<Struct>;
+	using ColumnInfo = Table::ColumnList::ColumnInfo;
 */
 	void Sample(std::ostream& output)
 	{
@@ -304,17 +304,23 @@ namespace sample_data5
 		Table table;
 
 #if defined(__cpp_designated_initializers)	// C++20
-		table.AddRow(table.NewRow({ .strCol = "a", .intCol = 1, .dblCol = 1.5 }));
-		table.AddRow(table.NewRow({ .strCol = "a", .intCol = 2 }));
+		table.AddRow(table.NewRow({ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
 #else
-		table.AddRow(table.NewRow({ /*.strCol =*/ "a", /*.intCol =*/ 1, /*.dblCol =*/ 1.5 }));
-		table.AddRow(table.NewRow({ /*.strCol =*/ "a", /*.intCol =*/ 2 }));
+		table.AddRow(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 1.5, /*.strCol =*/ "a" }));
+#endif
+
+#if defined(MOMO_HAS_DEDUCTION_GUIDES)	// C++17
+		table.AddRow(momo::DataAssignment(&Struct::strCol, "a"),
+			momo::DataAssignment(&Struct::intCol, 2));
+#else
+		table.AddRow(ColumnInfo::MakeAssignment(&Struct::strCol, "a"),
+			ColumnInfo::MakeAssignment(&Struct::intCol, 2));
 #endif
 
 		for (auto row : table)
-			output << row->strCol << " " << row->intCol << " " << row->dblCol << std::endl;
-		// a 1 1.5
-		// a 2 0
+			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
+		// 1 1.5 a
+		// 2 0 a
 
 		auto uniqueIndex = table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
 		auto multiIndex = table.AddMultiHashIndex(&Struct::strCol);
@@ -349,7 +355,7 @@ static int sampleData = []
 	std::string res2 = "!\n2\n0.5\n1 1.5 b\n2 2.5 a\n1\nb\na\nb\n";
 	std::string res3 = "2\n1\n1\n1\n0\n";
 	std::string res4 = "0.5\n";
-	std::string res5 = "a 1 1.5\na 2 0\n1.5\n2\n";
+	std::string res5 = "1 1.5 a\n2 0 a\n1.5\n2\n";
 #if !defined(MOMO_DISABLE_TYPE_INFO)
 	res3 = "1 1.5 a \n2 2.5 a \n" + res3;
 #endif
