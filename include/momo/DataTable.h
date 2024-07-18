@@ -748,7 +748,7 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
+	internal::EnableIf<(sizeof...(Items) != 1),
 	ConstSelection> Select(Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
@@ -764,14 +764,13 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	ConstSelection> Select(Equalities<Items...> equals = {},
-		const RowFilter& rowFilter = RowFilter()) const
+	ConstSelection> Select(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter()) const
 	{
 		return pvSelect<Selection>(equals, rowFilter);
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
+	internal::EnableIf<(sizeof...(Items) != 1),
 	Selection> Select(Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
@@ -787,13 +786,13 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	Selection> Select(Equalities<Items...> equals = {}, const RowFilter& rowFilter = RowFilter())
+	Selection> Select(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter())
 	{
 		return pvSelect<Selection>(equals, rowFilter);
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
+	internal::EnableIf<(sizeof...(Items) != 1),
 	size_t> SelectCount(Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(EmptyRowFilter(), equals...);
@@ -809,8 +808,7 @@ public:
 	template<typename RowFilter = EmptyRowFilter,
 		typename... Items>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
-	size_t> SelectCount(Equalities<Items...> equals = {},
-		const RowFilter& rowFilter = RowFilter()) const
+	size_t> SelectCount(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter()) const
 	{
 		return pvSelect<size_t>(equals, rowFilter);
 	}
@@ -1366,12 +1364,6 @@ private:
 		MemManager memManager = GetMemManager();
 		return SelectionProxy(&GetColumnList(), typename SelectionProxy::Raws(std::move(memManager)),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
-	}
-
-	template<typename Result, typename RowFilter>	// vs2015
-	Result pvSelect(const Equalities<>& /*equals*/, const RowFilter& rowFilter) const
-	{
-		return pvSelect<Result>(rowFilter);
 	}
 
 	template<typename Result, typename... Items, typename RowFilter>
