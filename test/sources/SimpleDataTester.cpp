@@ -136,6 +136,7 @@ public:
 		typedef typename Table::ConstSelection ConstSelection;
 		typedef typename Table::Selection Selection;
 		typedef typename Table::ConstIterator ConstIterator;
+		typedef typename Table::ColumnList::ColumnInfo ColumnInfo;
 
 		static const size_t count = 1024;
 		static const size_t count2 = 12;
@@ -150,9 +151,16 @@ public:
 		for (size_t i = 0; i < count / 2; ++i)
 		{
 			if (native || i % 2 == 0)
-				table.AddRow(momo::DataAssignment(intCol, static_cast<int>(i)));
+			{
+				if (i % 4 == 0)
+					table.AddRow(momo::DataAssignment(intCol, static_cast<int>(i)));
+				else
+					table.AddRow(ColumnInfo::MakeAssignment(intCol, static_cast<int>(i)));
+			}
 			else if constexpr (!native)
+			{
 				table.TryAddRow(intCol = static_cast<int>(i));
+			}
 		}
 
 		for (size_t i = count / 2; i < count; ++i)
@@ -246,9 +254,16 @@ public:
 		{
 			int v = static_cast<int>(count + i);
 			if (native || i % 2 == 0)
-				table.InsertRow(count, momo::DataAssignment(intCol, v));
+			{
+				if (i % 4 == 0)
+					table.InsertRow(count, momo::DataAssignment(intCol, v));
+				else
+					table.InsertRow(count, ColumnInfo::MakeAssignment(intCol, v));
+			}
 			else if constexpr (!native)
+			{
 				table.TryInsertRow(count, intCol = v);
+			}
 		}
 		assert(table.GetCount() == count + count2);
 
@@ -413,14 +428,14 @@ public:
 		{
 			Selection selection = table.Select().Sort(strCol);
 
-			assert(selection.GetLowerBound(momo::DataEquality(strCol, "")) == 0);
-			assert(selection.GetUpperBound(momo::DataEquality(strCol, "")) == 0);
-			assert(selection.GetLowerBound(momo::DataEquality(strCol, "0")) == 0);
-			assert(selection.GetUpperBound(momo::DataEquality(strCol, "0")) == count / 2);
-			assert(selection.GetLowerBound(momo::DataEquality(strCol, "1")) == count / 2);
-			assert(selection.GetUpperBound(momo::DataEquality(strCol, "1")) == count);
-			assert(selection.GetLowerBound(momo::DataEquality(strCol, "2")) == count);
-			assert(selection.GetUpperBound(momo::DataEquality(strCol, "2")) == count);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "")) == 0);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "")) == 0);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "0")) == 0);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "0")) == count / 2);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "1")) == count / 2);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "1")) == count);
+			assert(selection.GetLowerBound(ColumnInfo::MakeEquality(strCol, "2")) == count);
+			assert(selection.GetUpperBound(ColumnInfo::MakeEquality(strCol, "2")) == count);
 
 			selection.Reserve(selection.GetCount() * 2);
 			selection.Assign(selection.GetBegin(), selection.GetEnd());

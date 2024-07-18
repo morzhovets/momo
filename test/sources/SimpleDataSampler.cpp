@@ -102,7 +102,7 @@ namespace sample_data2
 			auto row = table.NewRow();
 			row->intCol = 2;
 			row->dblCol = 2.5;
-			table.TryAddRow(std::move(row));	// strCol = ""
+			table.AddRow(std::move(row));	// strCol = ""
 		}
 
 		if (!table.TryAddRow(momo::DataAssignment(&Struct::intCol, 2)))
