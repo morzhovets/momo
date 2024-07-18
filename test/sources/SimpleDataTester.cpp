@@ -294,13 +294,6 @@ public:
 		assert(ctable.Select(momo::DataEquality(dblCol, 1.0)).GetCount() == 1);
 
 		assert(table.SelectCount(
-			momo::DataEquality(strCol, "0"), momo::DataEquality(intCol, 1)) == 1);
-		assert(table.Select(
-			momo::DataEquality(intCol, 0), momo::DataEquality(strCol, "1")).GetCount() == 1);
-		assert(ctable.Select(
-			momo::DataEquality(strCol, "1"), momo::DataEquality(intCol, 0)).GetCount() == 1);
-
-		assert(table.SelectCount(
 			momo::DataEquality(strCol, "0").And(intCol, 1).And(dblCol, 1.0)) == 1);
 		assert(table.Select(
 			momo::DataEquality(intCol, 0).And(dblCol, 0.5).And(strCol, "1")).GetCount() == 1);

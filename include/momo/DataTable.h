@@ -756,13 +756,6 @@ public:
 		return pvSelectEmpty();
 	}
 
-	template<typename... Items>
-	requires (sizeof...(Items) > 1)
-	ConstSelection Select(Equality<Items>... equals) const
-	{
-		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equals...);
-	}
-
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	ConstSelection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals) const
@@ -777,13 +770,6 @@ public:
 		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
 	}
 
-	template<typename... Items>
-	requires (sizeof...(Items) > 1)
-	Selection Select(Equality<Items>... equals)
-	{
-		return pvSelect<Selection>(FastCopyableFunctor(EmptyRowFilter()), equals...);
-	}
-
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	Selection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals)
@@ -796,13 +782,6 @@ public:
 	Selection Select(Equalities<Items...> equals, RowFilter rowFilter = RowFilter())
 	{
 		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
-	}
-
-	template<typename... Items>
-	requires (sizeof...(Items) > 1)
-	size_t SelectCount(Equality<Items>... equals) const
-	{
-		return pvSelect<size_t>(FastCopyableFunctor(EmptyRowFilter()), equals...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
