@@ -12,6 +12,7 @@
     concept conceptDataTraits
     class DataTraits
     class DataTable
+    class DataTableStatic
     class DataTableNative
 
 \**********************************************************/
@@ -1535,6 +1536,10 @@ private:
 	Raws mRaws;
 	Indexes mIndexes;
 };
+
+template<conceptDataStructWithMembers TStruct,
+	conceptDataTraits TDataTraits = DataTraits>
+using DataTableStatic = DataTable<DataColumnListStatic<TStruct>, TDataTraits>;
 
 template<conceptDataStructWithMembers TStruct,
 	conceptDataTraits TDataTraits = DataTraits>
