@@ -11,6 +11,7 @@
   namespace momo:
     class DataTraits
     class DataTable
+    class DataTableStatic
     class DataTableNative
 
 \**********************************************************/
@@ -1645,6 +1646,10 @@ private:
 	RawMemPool mRawMemPool;
 	Indexes mIndexes;
 };
+
+template<typename TStruct,
+	typename TDataTraits = DataTraits>
+using DataTableStatic = DataTable<DataColumnListStatic<TStruct>, TDataTraits>;
 
 template<typename TStruct,
 	typename TDataTraits = DataTraits>
