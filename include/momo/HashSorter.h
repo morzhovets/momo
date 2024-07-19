@@ -25,7 +25,7 @@ namespace momo
 class HashSorter
 {
 public:
-	typedef size_t HashFuncResult;	//?
+	typedef size_t HashCode;
 
 	template<typename Iterator>
 	struct Swapper
@@ -70,7 +70,7 @@ private:
 		}
 
 		template<typename Iterator>
-		HashFuncResult operator()(Iterator iter) const
+		HashCode operator()(Iterator iter) const
 		{
 			return mHashFunc(*iter);
 		}
@@ -89,12 +89,12 @@ private:
 		{
 		}
 
-		HashFuncResult operator()(Iterator iter) const
+		HashCode operator()(Iterator iter) const
 		{
 			return mHashBegin[iter - mBegin];
 		}
 
-		HashFuncResult operator()(std::reverse_iterator<Iterator> iter) const
+		HashCode operator()(std::reverse_iterator<Iterator> iter) const
 		{
 			return mHashBegin[iter.base() - 1 - mBegin];
 		}
@@ -164,7 +164,7 @@ public:
 	template<typename Iterator, typename HashIterator,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvFind(begin, count, item, itemHash,
@@ -186,7 +186,7 @@ public:
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count,
 		HashIterator hashBegin, const typename std::iterator_traits<Iterator>::value_type& item,
-		HashFuncResult itemHash, const EqualFunc& equalFunc = EqualFunc())
+		HashCode itemHash, const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvGetBounds(begin, count, item, itemHash,
 			IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin), equalFunc);
@@ -229,10 +229,10 @@ private:
 		const EqualFunc& equalFunc)
 	{
 		size_t prevIndex = 0;
-		HashFuncResult prevHash = iterHashFunc(begin);
+		HashCode prevHash = iterHashFunc(begin);
 		for (size_t i = 1; i < count; ++i)
 		{
-			HashFuncResult hash = iterHashFunc(SMath::Next(begin, i));
+			HashCode hash = iterHashFunc(SMath::Next(begin, i));
 			if (hash < prevHash)
 				return false;
 			if (hash != prevHash)
@@ -264,7 +264,7 @@ private:
 
 	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
 	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
 		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, iterHashFunc);
@@ -282,7 +282,7 @@ private:
 
 	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
 	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
 		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
 	{
 		auto res = pvFindHash(begin, count, itemHash, iterHashFunc);
@@ -313,7 +313,7 @@ private:
 
 	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
 	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashFuncResult itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
 		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;
@@ -339,7 +339,7 @@ private:
 
 	template<typename Iterator, typename IterHashFunc>
 	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
-		HashFuncResult itemHash, const IterHashFunc& iterHashFunc)
+		HashCode itemHash, const IterHashFunc& iterHashFunc)
 	{
 		auto iterComparer = [itemHash, &iterHashFunc] (Iterator iter)
 			{ return pvCompare(iterHashFunc(iter), itemHash); };
@@ -349,7 +349,7 @@ private:
 		size_t step = pvGetStepCount(count);
 		while (true)
 		{
-			HashFuncResult middleHash = iterHashFunc(SMath::Next(begin, middleIndex));
+			HashCode middleHash = iterHashFunc(SMath::Next(begin, middleIndex));
 			if (middleHash < itemHash)
 			{
 				leftIndex = middleIndex + 1;
@@ -430,17 +430,17 @@ private:
 		return (count < 1 << 6) ? 0 : (count < 1 << 12) ? 1 : (count < 1 << 22) ? 2 : 3;
 	}
 
-	static int pvCompare(HashFuncResult value1, HashFuncResult value2) noexcept
+	static int pvCompare(HashCode value1, HashCode value2) noexcept
 	{
 		return (value1 < value2) ? -1 : int{value1 != value2};
 	}
 
-	static size_t pvMultShift(HashFuncResult value1, size_t value2) noexcept
+	static size_t pvMultShift(HashCode value1, size_t value2) noexcept
 	{
-		MOMO_STATIC_ASSERT(sizeof(HashFuncResult) >= sizeof(size_t));
-		static const size_t halfSize = 4 * sizeof(HashFuncResult);
-		static const HashFuncResult halfMask = (HashFuncResult{1} << halfSize) - 1;
-		HashFuncResult res = (value1 >> halfSize) * (value2 >> halfSize)
+		MOMO_STATIC_ASSERT(sizeof(HashCode) >= sizeof(size_t));
+		static const size_t halfSize = 4 * sizeof(HashCode);
+		static const HashCode halfMask = (HashCode{1} << halfSize) - 1;
+		HashCode res = (value1 >> halfSize) * (value2 >> halfSize)
 			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)
 			+ (((value2 >> halfSize) * (value1 & halfMask)) >> halfSize);
 		return static_cast<size_t>(res);
