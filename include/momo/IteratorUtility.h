@@ -150,7 +150,9 @@ namespace internal
 	struct InsertResult
 	{
 	public:
-		explicit InsertResult() noexcept
+		InsertResult() noexcept
+			: position(),
+			inserted(false)
 		{
 		}
 
@@ -166,9 +168,7 @@ namespace internal
 		{
 		}
 
-		~InsertResult() noexcept
-		{
-		}
+		~InsertResult() = default;
 
 		InsertResult& operator=(const InsertResult& insRes) noexcept
 		{
