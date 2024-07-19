@@ -337,7 +337,13 @@ private:
 	};
 
 public:
-	explicit DataTable(ColumnList&& columnList = ColumnList())
+	explicit DataTable()
+		: DataTable(ColumnList())
+	{
+		MOMO_STATIC_ASSERT(!std::is_void<Raw>::value);
+	}
+
+	explicit DataTable(ColumnList&& columnList)
 		: mCrew(std::move(columnList)),
 		mRaws(MemManagerPtr(GetMemManager())),
 		mRawMemPool(pvCreateRawMemPool()),
