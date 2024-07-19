@@ -162,7 +162,7 @@ private:
 
 		Data(const Data&) = delete;
 
-		~Data() noexcept = default;
+		~Data() = default;
 
 		void Swap(Data& data) noexcept
 		{
