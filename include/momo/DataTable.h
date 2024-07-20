@@ -755,8 +755,8 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
-	ConstSelection> Select(Equality<Items>... equals) const MOMO_DEPRECATED
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	ConstSelection> Select(Equality<Items>... equals) const
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
@@ -785,8 +785,8 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
-	Selection> Select(Equality<Items>... equals) MOMO_DEPRECATED
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	Selection> Select(Equality<Items>... equals)
 	{
 		return pvSelect<Selection>(EmptyRowFilter(), equals...);
 	}
@@ -815,8 +815,8 @@ public:
 	}
 
 	template<typename... Items>
-	internal::EnableIf<(sizeof...(Items) > 1),
-	size_t> SelectCount(Equality<Items>... equals) const MOMO_DEPRECATED
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	size_t> SelectCount(Equality<Items>... equals) const
 	{
 		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
