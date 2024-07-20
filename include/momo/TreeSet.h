@@ -242,7 +242,7 @@ public:
 	All `TreeSet` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
-	2. Function `Remove` receiving predicate have basic exception safety.
+	2. Function `Remove` receiving predicate has basic exception safety.
 	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
