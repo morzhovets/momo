@@ -324,7 +324,7 @@ private:
 		{
 			Node* newNode;
 			size_t newItemIndex;
-			size_t splitIndex;
+			size_t splitItemIndex;
 			Node* newNode1;
 			Node* newNode2;
 		};
@@ -387,16 +387,16 @@ private:
 			{
 				size_t itemCount = node->GetCount();
 				Node* newNode = splitRes.newNode1;
-				size_t newIndex = 0;
+				size_t newChildIndex = 0;
 				for (size_t i = 0; i <= itemCount; ++i)
 				{
 					if (i != newItemIndex)
-						newNode->SetChild(newIndex, node->GetChild(i));
-					newIndex += (i == newItemIndex) ? 2 : 1;
-					if (i == splitRes.splitIndex)
+						newNode->SetChild(newChildIndex, node->GetChild(i));
+					newChildIndex += (i == newItemIndex) ? 2 : 1;
+					if (i == splitRes.splitItemIndex)
 					{
 						newNode = splitRes.newNode2;
-						newIndex = 0;
+						newChildIndex = 0;
 					}
 				}
 			}
@@ -440,26 +440,28 @@ private:
 			bool isLeaf = node->IsLeaf();
 			mOldNodes.AddBack(node);
 			size_t itemCount = node->GetCount();
-			size_t splitIndex = treeTraits.GetSplitItemIndex(itemCount, newItemIndex);
-			MOMO_ASSERT(splitIndex < itemCount);
-			if (newItemIndex <= splitIndex)
+			size_t splitItemIndex = treeTraits.GetSplitItemIndex(itemCount, newItemIndex);
+			MOMO_ASSERT(splitItemIndex < itemCount);
+			if (newItemIndex <= splitItemIndex)
 			{
-				Node* newNode1 = CreateNode(isLeaf, splitIndex + 1);
-				Node* newNode2 = CreateNode(isLeaf, itemCount - splitIndex - 1);
+				Node* newNode1 = CreateNode(isLeaf, splitItemIndex + 1);
+				Node* newNode2 = CreateNode(isLeaf, itemCount - splitItemIndex - 1);
 				AddSegment(node, 0, newNode1, 0, newItemIndex);
-				AddSegment(node, newItemIndex, newNode1, newItemIndex + 1, splitIndex - newItemIndex);
-				AddSegment(node, splitIndex + 1, newNode2, 0, itemCount - splitIndex - 1);
-				return { newNode1, newItemIndex, splitIndex, newNode1, newNode2 };
+				AddSegment(node, newItemIndex, newNode1, newItemIndex + 1,
+					splitItemIndex - newItemIndex);
+				AddSegment(node, splitItemIndex + 1, newNode2, 0, itemCount - splitItemIndex - 1);
+				return { newNode1, newItemIndex, splitItemIndex, newNode1, newNode2 };
 			}
 			else
 			{
-				Node* newNode1 = CreateNode(isLeaf, splitIndex);
-				Node* newNode2 = CreateNode(isLeaf, itemCount - splitIndex);
-				AddSegment(node, 0, newNode1, 0, splitIndex);
-				AddSegment(node, splitIndex + 1, newNode2, 0, newItemIndex - splitIndex - 1);
-				AddSegment(node, newItemIndex, newNode2, newItemIndex - splitIndex,
+				Node* newNode1 = CreateNode(isLeaf, splitItemIndex);
+				Node* newNode2 = CreateNode(isLeaf, itemCount - splitItemIndex);
+				AddSegment(node, 0, newNode1, 0, splitItemIndex);
+				AddSegment(node, splitItemIndex + 1, newNode2, 0, newItemIndex - splitItemIndex - 1);
+				AddSegment(node, newItemIndex, newNode2, newItemIndex - splitItemIndex,
 					itemCount - newItemIndex);
-				return { newNode2, newItemIndex - splitIndex - 1, splitIndex, newNode1, newNode2 };
+				return { newNode2, newItemIndex - splitItemIndex - 1, splitItemIndex,
+					newNode1, newNode2 };
 			}
 		}
 
@@ -1322,27 +1324,27 @@ private:
 		leafItemIndex = splitRes.newItemIndex;
 		while (true)
 		{
-			size_t childSplitIndex = splitRes.splitIndex;
+			size_t childSplitItemIndex = splitRes.splitItemIndex;
 			Node* childNode = node;
 			node = node->GetParent();
 			if (node == nullptr)
 			{
 				node = relocator.CreateNode(false, 0);
 				itemIndex = 0;
-				relocator.AddSegment(childNode, childSplitIndex, node, 0, 1);
+				relocator.AddSegment(childNode, childSplitItemIndex, node, 0, 1);
 				break;
 			}
 			size_t itemCount = node->GetCount();
 			itemIndex = node->GetChildIndex(childNode);
 			if (itemCount < node->GetCapacity())
 			{
-				relocator.AddSegment(childNode, childSplitIndex, node, itemCount, 1);
+				relocator.AddSegment(childNode, childSplitItemIndex, node, itemCount, 1);
 				break;
 			}
 			Node* childNewNode1 = splitRes.newNode1;
 			Node* childNewNode2 = splitRes.newNode2;
 			splitRes = relocator.SplitNode(treeTraits, node, itemIndex);
-			relocator.AddSegment(childNode, childSplitIndex,
+			relocator.AddSegment(childNode, childSplitItemIndex,
 				splitRes.newNode, splitRes.newItemIndex, 1);
 			splitRes.newNode->SetChild(splitRes.newItemIndex, childNewNode1);
 			splitRes.newNode->SetChild(splitRes.newItemIndex + 1, childNewNode2);
