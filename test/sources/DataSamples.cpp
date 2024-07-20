@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/SimpleDataSampler.cpp
+  test/sources/DataSamples.cpp
 
 \**********************************************************/
 
@@ -14,14 +14,14 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "SimpleDataSampler.h"
+#include "DataSamples.h"
 
 #include <iostream>
 #include <sstream>
 
 namespace sample_data1
 {
-// Declarations in SimpleDataSampler.h
+// Declarations in DataSamples.h
 /*
 	inline constexpr momo::DataColumn<int> intCol("intCol");
 	inline constexpr momo::DataColumn<double> dblCol("dblCol");
@@ -79,7 +79,7 @@ namespace sample_data1
 
 namespace sample_data2
 {
-// Declarations in SimpleDataSampler.h
+// Declarations in DataSamples.h
 /*
 	struct Struct
 	{
@@ -147,7 +147,7 @@ namespace sample_data2
 
 namespace sample_data3
 {
-// Declarations in SimpleDataSampler.h
+// Declarations in DataSamples.h
 /*
 	using Table = momo::DataTable<>;
 
@@ -223,7 +223,7 @@ namespace sample_data3
 
 namespace sample_data4
 {
-// Declarations in SimpleDataSampler.h
+// Declarations in DataSamples.h
 /*
 	using Struct = momo::DataStructDefault<int, double, std::string>;
 	using ColumnList = momo::DataColumnList<momo::DataColumnTraits<Struct>>;
@@ -271,7 +271,7 @@ namespace sample_data4
 
 namespace sample_data5
 {
-// Declarations in SimpleDataSampler.h
+// Declarations in DataSamples.h
 /*
 	struct Struct
 	{

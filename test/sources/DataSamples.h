@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/SimpleDataSampler.h
+  test/sources/DataSamples.h
 
 \**********************************************************/
 

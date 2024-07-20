@@ -64,7 +64,7 @@ namely `HashSet`, `HashMap`, `HashMultiMap`, `TreeSet`, `TreeMap`, `Array`, `Seg
 
 `momo::DataTable` is similar to [`Boost.MultiIndex`](https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html),
 but its API looks like [`ADO.NET DataTable`](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable).
-Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sources/SimpleDataSampler.cpp).
+Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sources/DataSamples.cpp).
 
 #### Supported compilers
 
