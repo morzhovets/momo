@@ -545,7 +545,7 @@ public:
 	All `HashMultiMap` functions and constructors have strong exception
 	safety, but not the following cases:
 	1. Functions `Add` receiving many items have basic exception safety.
-	2. Function `Remove` receiving predicate have basic exception safety.
+	2. Function `Remove` receiving predicate has basic exception safety.
 	3. In case default `KeyValueTraits`: If function `Add`, `AddVar` or
 	`AddCrt` receiving argument `Key&& key` throws exception,
 	this argument may be changed.
