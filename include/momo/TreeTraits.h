@@ -51,6 +51,20 @@ namespace internal
 		: public std::true_type
 	{
 	};
+
+	template<typename TreeTraits, typename ItemTraits,
+		typename = void>
+	struct TreeTraitsNodeSelector
+	{
+		MOMO_DEPRECATED typedef typename TreeTraits::TreeNode::template Node<ItemTraits> Node;
+	};
+
+	template<typename TreeTraits, typename ItemTraits>
+	struct TreeTraitsNodeSelector<TreeTraits, ItemTraits,
+		Void<typename TreeTraits::template Node<ItemTraits>>>
+	{
+		typedef typename TreeTraits::template Node<ItemTraits> Node;
+	};
 }
 
 template<typename Key>
@@ -72,6 +86,9 @@ public:
 
 	static const bool multiKey = tMultiKey;
 	static const bool useLinearSearch = tUseLinearSearch;
+
+	template<typename ItemTraits>
+	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::TreeTraitsIsValidKeyArg<Key, KeyArg>;
@@ -114,6 +131,9 @@ public:
 
 	static const bool useLinearSearch =
 		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
+
+	template<typename ItemTraits>
+	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;

@@ -311,8 +311,7 @@ private:
 
 	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
-	typedef typename TreeTraits::TreeNode TreeNode;
-	typedef typename TreeNode::template Node<NodeItemTraits> Node;
+	typedef typename internal::TreeTraitsNodeSelector<TreeTraits, NodeItemTraits>::Node Node;
 
 	typedef typename Node::Params NodeParams;
 
