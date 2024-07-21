@@ -54,9 +54,14 @@ public:
 	template<typename Item>
 	static int Compare(const Item& item1, const Item& item2)
 	{
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		std::weak_ordering cmp = std::compare_weak_order_fallback(item1, item2);
+		return (cmp < 0) ? -1 : (cmp > 0) ? 1 : 0;
+#else
 		if (std::less<Item>()(item1, item2))
 			return -1;
 		return (item1 == item2) ? 0 : 1;
+#endif
 	}
 
 	template<typename Iterator, typename LessFunc, typename MemManager>
