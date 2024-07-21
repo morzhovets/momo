@@ -477,10 +477,7 @@ private:
 
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
-	static const bool useHashCodePartGetter = !HashTraits::isFastNothrowHashable;
-
-	typedef typename HashTraits::HashBucket HashBucket;
-	typedef typename HashBucket::template Bucket<BucketItemTraits, useHashCodePartGetter> Bucket;
+	typedef typename internal::HashTraitsBucketSelector<HashTraits, BucketItemTraits>::Bucket Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 

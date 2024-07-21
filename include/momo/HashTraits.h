@@ -70,6 +70,21 @@ namespace internal
 		: public std::true_type
 	{
 	};
+
+	template<typename HashTraits, typename ItemTraits,
+		typename = void>
+	struct HashTraitsBucketSelector
+	{
+		MOMO_DEPRECATED typedef typename HashTraits::HashBucket
+			::template Bucket<ItemTraits, !HashTraits::isFastNothrowHashable> Bucket;
+	};
+
+	template<typename HashTraits, typename ItemTraits>
+	struct HashTraitsBucketSelector<HashTraits, ItemTraits,
+		Void<typename HashTraits::template Bucket<ItemTraits>>>
+	{
+		typedef typename HashTraits::template Bucket<ItemTraits> Bucket;
+	};
 }
 
 template<typename Key>
@@ -114,11 +129,14 @@ public:
 	typedef THashBucket HashBucket;
 	typedef TKeyArgBase KeyArgBase;
 
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
+
+	template<typename ItemTraits>
+	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+
 	template<typename KeyArg>
 	using IsValidKeyArg = typename std::conditional<std::is_same<KeyArgBase, Key>::value,
 		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>::type;	//?
-
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
 
 public:
 	explicit HashTraits() noexcept
@@ -182,12 +200,15 @@ public:
 	typedef TEqualFunc EqualFunc;
 	typedef THashBucket HashBucket;
 
-	template<typename KeyArg>
-	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc>;
-
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
 		&& (std::is_same<HashFunc, HashCoder<Key>>::value
 		|| std::is_same<HashFunc, std::hash<Key>>::value);
+
+	template<typename ItemTraits>
+	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+
+	template<typename KeyArg>
+	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<HashFunc, EqualFunc>;
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
