@@ -23,8 +23,10 @@ Classes are designed in close conformity with the standard C++23 **including exc
 
 - All iterators and references to items will become invalid after each addition or removal of the item and should not be used.
 
-- In `map` and `unordered_map` type `reference` is not the same as `value_type&`, so `for (auto& p : map)`
-is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+- In `map` and `unordered_map` type `reference` is a pair of references
+(same as in [std::flat_map](https://en.cppreference.com/w/cpp/container/flat_map)),
+so `for (auto& p : map)` is illegal, but `for (auto p : map)` or `for (const auto& p : map)`
+or `for (auto&& p : map)` is allowed.
 
 #### The main ideas
 
@@ -36,8 +38,9 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 
 #### Usage
 
-Just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/master/include/momo)
-in your source code. This folder contains **only header files**.
+This library is **header-only** and has zero dependencies.
+So you can just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/master/include/momo)
+into your source code. 
 
 Classes `set/map` and `unordered_set/map` are located in subfolder
 [stdish](https://github.com/morzhovets/momo/tree/master/include/momo/stdish), namespace `momo::stdish`.
