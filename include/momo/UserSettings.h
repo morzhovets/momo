@@ -32,7 +32,14 @@
 
 // If your program does not use exceptions, define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
+#if defined(__GNUC__) || defined(__clang__)
+// false if Object has copy constructor and no move constructor, works in GCC and Clang
+#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
+	(!std::is_constructible_v<Object, momo::internal::ConvertibleToReferences<Object>>)
+#else
+// logic from `std::vector`
 #define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible_v<Object>)
+#endif
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable_v<Object>)

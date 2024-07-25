@@ -45,6 +45,13 @@ namespace internal
 		: public std::true_type
 	{
 	};
+
+	template<typename Object>
+	struct ConvertibleToReferences
+	{
+		operator const Object&();
+		operator Object&&();
+	};
 }
 
 template<conceptObject Object>
