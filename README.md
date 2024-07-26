@@ -15,7 +15,7 @@ As for the operation speed, these containers are also better than the standard o
 [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16),
 [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the standard C++23 **including exception safety guarantees**.
+Classes are designed in close conformity with the standard C++23 including exception safety guarantees.
 
 #### Deviations from the standard
 
@@ -40,7 +40,7 @@ or `for (auto&& p : map)` is allowed.
 
 This library is **header-only** and has zero dependencies.
 So you can just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/master/include/momo)
-into your source code. 
+into your source code.
 
 Classes `set/map` and `unordered_set/map` are located in subfolder
 [stdish](https://github.com/morzhovets/momo/tree/master/include/momo/stdish), namespace `momo::stdish`.
