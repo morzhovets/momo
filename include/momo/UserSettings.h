@@ -30,7 +30,7 @@
 // Disable use of `typeid` operator
 //#define MOMO_DISABLE_TYPE_INFO
 
-// Control of the use of the move constructor in cases where no exceptions should be thrown.
+// This macro controls the move constructor usage when no exceptions should be thrown.
 // By default, we can use the move constructor even if it is not marked as `noexcept`.
 // If your program does not use exceptions at all, you can define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.

@@ -103,7 +103,7 @@ public:
 
 	static const bool isNothrowRelocatable = isRelocatable
 		&& (isTriviallyRelocatable || std::is_nothrow_move_constructible_v<Object>
-			|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object));
+			|| (MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object)));
 
 public:
 	template<internal::conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,

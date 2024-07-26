@@ -77,4 +77,4 @@ static_assert(!momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::i
 static_assert(momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 #endif
 
-}
+} // namespace
