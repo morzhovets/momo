@@ -40,6 +40,13 @@ namespace internal
 		: public std::true_type
 	{
 	};
+
+	template<typename Object>
+	struct ConvertibleToReferences
+	{
+		operator const Object&();
+		operator Object&&();
+	};
 }
 
 template<typename Object>
@@ -81,7 +88,8 @@ public:
 
 	static const bool isNothrowRelocatable = isTriviallyRelocatable
 		|| std::is_nothrow_move_constructible<Object>::value
-		|| MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object);
+		|| (std::is_move_constructible<Object>::value
+			&& (MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object)));
 
 public:
 	static void Relocate(MemManager* memManager, Object& srcObject,

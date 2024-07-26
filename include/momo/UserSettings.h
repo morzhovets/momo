@@ -40,9 +40,18 @@
 // Disable use of `typeid` operator
 //#define MOMO_DISABLE_TYPE_INFO
 
-// If your program does not use exceptions, define it as `true`.
+// Control of the use of the move constructor in cases where no exceptions should be thrown.
+// By default, we can use the move constructor even if it is not marked as `noexcept`.
+// If your program does not use exceptions at all, you can define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
+#if defined(__GNUC__) || defined(__clang__)
+// `false` if Object has copy constructor and no move constructor, works in GCC and Clang
+#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
+	(!std::is_constructible<Object, momo::internal::ConvertibleToReferences<Object>>::value)
+#else
+// Logic from `std::vector`
 #define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible<Object>::value)
+#endif
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivial<Object>::value)
