@@ -14,8 +14,8 @@ As for the operation speed, these containers are also better than the standard o
 [benchmark of ordered containers](https://morzhovets.github.io/tree_gcc_ubuntu16),
 [benchmark sources](https://github.com/morzhovets/hash-table-shootout)).
 
-Classes are designed in close conformity with the standard C++20 **including exception safety guarantees**.
-Compiler must support C++11.
+Classes are designed in close conformity with the standard C++20 including exception safety guarantees.
+**The compiler only needs to support C++11**.
 
 #### Deviations from the standard
 
@@ -23,8 +23,10 @@ Compiler must support C++11.
 
 - All iterators and references to items will become invalid after each addition or removal of the item and should not be used.
 
-- In `map` and `unordered_map` type `reference` is not the same as `value_type&`, so `for (auto& p : map)`
-is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+- In `map` and `unordered_map` type `reference` is a pair of references
+(same as in [std::flat_map](https://en.cppreference.com/w/cpp/container/flat_map)),
+so `for (auto& p : map)` is illegal, but `for (auto p : map)` or `for (const auto& p : map)`
+or `for (auto&& p : map)` is allowed.
 
 #### The main ideas
 
@@ -36,8 +38,9 @@ is illegal, but `for (auto p : map)` or `for (const auto& p : map)` or `for (aut
 
 #### Usage
 
-Just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo)
-in your source code. This folder contains **only header files**.
+This library is **header-only** and has zero dependencies.
+So you can just copy the folder [include/momo](https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo)
+into your source code.
 
 Classes `set/map` and `unordered_set/map` are located in subfolder
 [stdish](https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo/stdish), namespace `momo::stdish`.
@@ -72,10 +75,10 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/te
 
 - MS Visual C++ (19.0+, Visual Studio 2015+)
 
-- GCC (4.9+) with -std=c++11
+- GCC (4.9+)
 
-- Clang (3.6+) with -std=c++11
+- Clang (3.6+)
 
-- Apple Clang (8.1+, Xcode 8.3+) with -std=c++11
+- Apple Clang (8.1+, Xcode 8.3+)
 
-- Intel C++ with -std=c++11
+- Intel C++
