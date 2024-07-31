@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+#ifdef TEST_SIMPLE_OBJECT
+
 #include "../../include/momo/ObjectManager.h"
 
 namespace
@@ -78,3 +80,5 @@ MOMO_STATIC_ASSERT((momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefaul
 #endif
 
 } // namespace
+
+#endif // TEST_SIMPLE_OBJECT
