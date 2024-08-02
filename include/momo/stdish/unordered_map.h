@@ -965,7 +965,7 @@ private:
 			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
 		return { IteratorProxy(resPos), true };
 	}
-#endif
+#endif // MOMO_USE_UNORDERED_HINT_ITERATORS
 
 	template<typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(RKey&& key, MappedArg&& mappedArg)

@@ -27,16 +27,16 @@
 #include "details/HashBucketOpen8.h"
 
 #ifdef MOMO_INCLUDE_OLD_HASH_BUCKETS
-#include "details/HashBucketLim4.h"
-#include "details/HashBucketLimP.h"
-#include "details/HashBucketLimP1.h"
-#include "details/HashBucketUnlimP.h"
-#include "details/HashBucketOne.h"
-#include "details/HashBucketOpenN1.h"
+# include "details/HashBucketLim4.h"
+# include "details/HashBucketLimP.h"
+# include "details/HashBucketLimP1.h"
+# include "details/HashBucketUnlimP.h"
+# include "details/HashBucketOne.h"
+# include "details/HashBucketOpenN1.h"
 #endif
 
 #ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
-#include <string_view>
+# include <string_view>
 #endif
 
 namespace momo

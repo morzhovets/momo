@@ -19,7 +19,7 @@
 #include "HashBucketOpenN1.h"
 
 #ifdef MOMO_USE_SSE2
-#include <emmintrin.h>
+# include <emmintrin.h>
 #endif
 
 namespace momo

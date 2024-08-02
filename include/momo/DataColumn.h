@@ -38,7 +38,7 @@
 #include "HashSet.h"
 
 #ifndef MOMO_DISABLE_TYPE_INFO
-#include <typeinfo>
+# include <typeinfo>
 #endif
 
 #define MOMO_DATA_COLUMN_STRUCT(Struct, name) \

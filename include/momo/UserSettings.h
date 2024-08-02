@@ -36,11 +36,11 @@
 // On the contrary, for strong safety it can be defined as `false`.
 #if defined(__GNUC__) || defined(__clang__)
 // `false` if Object has copy constructor and no move constructor, works in GCC and Clang
-#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
+# define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
 	(!std::is_constructible_v<Object, momo::internal::ConvertibleToReferences<Object>>)
 #else
 // Logic from `std::vector`
-#define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible_v<Object>)
+# define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) (!std::is_copy_constructible_v<Object>)
 #endif
 
 // Using `memcpy` for relocate
@@ -65,9 +65,9 @@
 
 // Checking iterators for invalidation
 #ifdef NDEBUG
-#define MOMO_CHECK_ITERATOR_VERSION (checkMode != CheckMode::assertion)
+# define MOMO_CHECK_ITERATOR_VERSION (checkMode != CheckMode::assertion)
 #else
-#define MOMO_CHECK_ITERATOR_VERSION true
+# define MOMO_CHECK_ITERATOR_VERSION true
 #endif
 
 // Default bucket type in hash tables
@@ -95,36 +95,36 @@
 
 // Inlining
 #if defined(_MSC_VER)
-#define MOMO_FORCEINLINE __forceinline
-#define MOMO_NOINLINE __declspec(noinline)
+# define MOMO_FORCEINLINE __forceinline
+# define MOMO_NOINLINE __declspec(noinline)
 #elif defined(__GNUC__) || defined(__clang__)
-#define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
-#define MOMO_NOINLINE __attribute__((__noinline__))
+# define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
+# define MOMO_NOINLINE __attribute__((__noinline__))
 #else
-#define MOMO_FORCEINLINE inline
-#define MOMO_NOINLINE
+# define MOMO_FORCEINLINE inline
+# define MOMO_NOINLINE
 #endif
 
 // Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
-#if defined(_M_X64) /*|| _M_IX86_FP == 2*/
-#define MOMO_USE_SSE2
-#endif
+# if defined(_M_X64) /*|| _M_IX86_FP == 2*/
+#  define MOMO_USE_SSE2
+# endif
 #else
-#ifdef __SSE2__
-#define MOMO_USE_SSE2
-#endif
+# ifdef __SSE2__
+#  define MOMO_USE_SSE2
+# endif
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
-#define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
+# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 #endif
 
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR reinterpret_cast<uintptr_t>(static_cast<void*>(nullptr))
 #if defined(__clang__)
-#undef MOMO_NULL_UINTPTR
-#define MOMO_NULL_UINTPTR uintptr_t{0}
+# undef MOMO_NULL_UINTPTR
+# define MOMO_NULL_UINTPTR uintptr_t{0}
 #endif
 
 // One more pointer which doesn't point to anything but is not equal to `nullptr`

@@ -50,7 +50,7 @@
 #include "Utility.h"
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
-#include <Windows.h>
+# include <Windows.h>
 #endif
 
 namespace momo
@@ -216,7 +216,7 @@ public:
 		return newPtr == ptr;
 	}
 };
-#endif
+#endif // MOMO_USE_MEM_MANAGER_WIN
 
 //! `MemManagerStdByte` uses `ByteAllocator::allocate` and `deallocate`
 template<internal::conceptByteAllocator TByteAllocator>
@@ -346,7 +346,7 @@ private:
 		return byteAllocator;
 	}
 };
-#endif
+#endif // MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
 
 namespace internal
 {

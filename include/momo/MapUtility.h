@@ -1361,7 +1361,7 @@ namespace internal
 			return ValueReferenceProxy<KeyReference>(map, pos,
 				std::forward<KeyReference>(keyRef));
 		}
-#else
+#else // MOMO_USE_SAFE_MAP_BRACKETS
 	public:
 		template<typename KeyReference>
 		using ValueReference = Value&;
@@ -1381,7 +1381,7 @@ namespace internal
 			return map.AddCrt(pos, std::forward<KeyReference>(keyRef),
 				std::move(valueCreator))->value;
 		}
-#endif
+#endif // MOMO_USE_SAFE_MAP_BRACKETS
 	};
 
 	template<bool tAllowKeyValue = true>
