@@ -842,7 +842,7 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
 
-#endif
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 } // namespace stdish
 

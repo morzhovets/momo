@@ -20,7 +20,7 @@
 #include "HashBucketOpenN1.h"
 
 #ifdef MOMO_USE_SSE2
-#include <emmintrin.h>
+# include <emmintrin.h>
 #endif
 
 namespace momo
@@ -149,11 +149,11 @@ public:
 	}
 };
 
-#else
+#else // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
 
 typedef HashBucketOpen2N2<3> HashBucketOpen8;
 
-#endif
+#endif // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
 
 } // namespace momo
 

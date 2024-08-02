@@ -945,7 +945,7 @@ private:
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
 		return { IteratorProxy(resPos), true };
 	}
-#endif
+#endif // MOMO_USE_UNORDERED_HINT_ITERATORS
 
 	template<typename Iterator>
 	void pvInsert(Iterator first, Iterator last, std::true_type /*isMapArgIterator*/)
@@ -1086,7 +1086,7 @@ MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
 
-#endif
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 } // namespace stdish
 

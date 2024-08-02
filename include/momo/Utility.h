@@ -37,7 +37,7 @@
 #include <initializer_list>
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-#include <compare>
+# include <compare>
 #endif
 
 #define MOMO_FRIEND_SWAP(Object) \
