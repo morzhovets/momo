@@ -184,7 +184,7 @@
 # if __has_cpp_attribute(nodiscard)
 #  define MOMO_NODISCARD [[nodiscard]]
 #  if defined(__clang__) && __cplusplus < 201703L
-#   undef MOMO_NODISCARD
+#   undef MOMO_NODISCARD	// avoid Clang warning
 #  endif
 # endif
 #endif
@@ -195,6 +195,9 @@
 #ifdef __has_cpp_attribute
 # if __has_cpp_attribute(deprecated)
 #  define MOMO_DEPRECATED [[deprecated]]
+#  if defined(__clang__) && __cplusplus < 201402L
+#   undef MOMO_DEPRECATED	// avoid Clang warning
+#  endif
 # endif
 #endif
 #ifndef MOMO_DEPRECATED
