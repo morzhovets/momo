@@ -15,36 +15,36 @@
 #undef NDEBUG
 
 #if defined(__clang__)
-#define TEST_CLANG
+# define TEST_CLANG
 #elif defined(__GNUC__)	// && !defined(__clang__)
-#define TEST_GCC
+# define TEST_GCC
 #elif defined(_MSC_VER)	// && !defined(__clang__)
-#define TEST_MSVC
+# define TEST_MSVC
 #endif
 
 #ifndef TEST_DISABLE_ALL
 
 #ifndef TEST_DISABLE_SIMPLE
-#define TEST_SIMPLE_ARRAY
-#define TEST_SIMPLE_HASH
-#define TEST_SIMPLE_TREE
-#define TEST_SIMPLE_DATA
-#define TEST_SIMPLE_HASH_SORT
-#define TEST_SIMPLE_MEM_POOL
-#define TEST_SIMPLE_OBJECT
+# define TEST_SIMPLE_ARRAY
+# define TEST_SIMPLE_HASH
+# define TEST_SIMPLE_TREE
+# define TEST_SIMPLE_DATA
+# define TEST_SIMPLE_HASH_SORT
+# define TEST_SIMPLE_MEM_POOL
+# define TEST_SIMPLE_OBJECT
 #endif
 
 #ifndef TEST_DISABLE_LIBCXX
-#define TEST_LIBCXX_ARRAY
-#define TEST_LIBCXX_HASH_SET
-#define TEST_LIBCXX_HASH_MAP
-#define TEST_LIBCXX_HASH_MULTI_MAP
-#define TEST_LIBCXX_TREE_SET
-#define TEST_LIBCXX_TREE_MAP
+# define TEST_LIBCXX_ARRAY
+# define TEST_LIBCXX_HASH_SET
+# define TEST_LIBCXX_HASH_MAP
+# define TEST_LIBCXX_HASH_MULTI_MAP
+# define TEST_LIBCXX_TREE_SET
+# define TEST_LIBCXX_TREE_MAP
 #endif
 
 #if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
-#undef TEST_LIBCXX_TREE_MAP
+# undef TEST_LIBCXX_TREE_MAP
 #endif
 
 //#define TEST_LIBCXX_NEW

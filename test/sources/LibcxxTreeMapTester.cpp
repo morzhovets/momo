@@ -19,7 +19,7 @@
 #include "../../include/momo/stdish/map.h"
 
 #ifdef TEST_LIBCXX_NEW
-#include "../../include/momo/stdish/vector.h"
+# include "../../include/momo/stdish/vector.h"
 #endif
 
 namespace libcxx_test_tree_map

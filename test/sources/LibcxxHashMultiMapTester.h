@@ -17,7 +17,7 @@
 #include "../../include/momo/stdish/unordered_multimap.h"
 
 #ifdef TEST_LIBCXX_NEW
-#include "../../include/momo/stdish/set.h"
+# include "../../include/momo/stdish/set.h"
 #endif
 
 namespace

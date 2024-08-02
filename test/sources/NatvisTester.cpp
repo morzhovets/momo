@@ -24,7 +24,7 @@
 #include "../../include/momo/DataTable.h"
 
 #ifdef TEST_MSVC
-#pragma warning (disable: 4307)	// integral constant overflow
+# pragma warning (disable: 4307)	// integral constant overflow
 #endif
 
 static int testNatvis = []

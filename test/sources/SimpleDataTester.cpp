@@ -39,8 +39,8 @@ namespace
 	MOMO_DATA_COLUMN_STRUCT(Struct, strStruct);
 
 #ifdef TEST_MSVC
-#pragma warning (push)
-#pragma warning (disable: 4307)	// integral constant overflow
+# pragma warning (push)
+# pragma warning (disable: 4307)	// integral constant overflow
 #endif
 
 	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, int, intString);
@@ -48,7 +48,7 @@ namespace
 	MOMO_DATA_COLUMN_STRING_TAG(BaseStruct, std::string, strString);
 
 #ifdef TEST_MSVC
-#pragma warning (pop)
+# pragma warning (pop)
 #endif
 }
 
