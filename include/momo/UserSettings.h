@@ -192,6 +192,13 @@
 # define MOMO_NODISCARD
 #endif
 
-#define MOMO_DEPRECATED //[[deprecated]]
+#ifdef __has_cpp_attribute
+# if __has_cpp_attribute(deprecated)
+#  define MOMO_DEPRECATED [[deprecated]]
+# endif
+#endif
+#ifndef MOMO_DEPRECATED
+# define MOMO_DEPRECATED
+#endif
 
 #endif // MOMO_INCLUDE_GUARD_USER_SETTINGS
