@@ -546,11 +546,6 @@ public:
 		return res.rowReference;
 	}
 
-	MOMO_DEPRECATED RowReference AddRow(Row&& row)
-	{
-		return Add(std::move(row));
-	}
-
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	RowReference AddRow(Assignment<Item, ItemArg> assign, Assignment<Items, ItemArgs>... assigns)
 	{
@@ -571,11 +566,6 @@ public:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	MOMO_DEPRECATED TryResult TryAddRow(Row&& row)
-	{
-		return TryAdd(std::move(row));
-	}
-
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	TryResult TryAddRow(Assignment<Item, ItemArg> assign, Assignment<Items, ItemArgs>... assigns)
 	{
@@ -588,11 +578,6 @@ public:
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
-	}
-
-	MOMO_DEPRECATED RowReference InsertRow(size_t rowNumber, Row&& row)
-	{
-		return Insert(rowNumber, std::move(row));
 	}
 
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
@@ -615,60 +600,11 @@ public:
 		return res;
 	}
 
-	MOMO_DEPRECATED TryResult TryInsertRow(size_t rowNumber, Row&& row)
-	{
-		return TryInsert(rowNumber, std::move(row));
-	}
-
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	TryResult TryInsertRow(size_t rowNumber, Assignment<Item, ItemArg> assign,
 		Assignment<Items, ItemArgs>... assigns)
 	{
 		return TryInsert(rowNumber, pvNewRow(assign, assigns...));
-	}
-
-	void Remove(ConstRowReference rowRef)
-	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		pvDestroyRaw(pvExtractRaw(rowRef));
-	}
-
-	void Remove(size_t rowNumber, bool keepRowOrder = true)
-	{
-		MOMO_CHECK(rowNumber < GetCount());
-		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
-	}
-
-	MOMO_DEPRECATED void RemoveRow(ConstRowReference rowRef)
-	{
-		Remove(rowRef);
-	}
-
-	MOMO_DEPRECATED void RemoveRow(size_t rowNumber, bool keepRowOrder = true)
-	{
-		Remove(rowNumber, keepRowOrder);
-	}
-
-	Row Extract(ConstRowReference rowRef)
-	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return pvMakeRow(pvExtractRaw(rowRef));
-	}
-
-	Row Extract(size_t rowNumber, bool keepRowOrder = true)
-	{
-		MOMO_CHECK(rowNumber < GetCount());
-		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
-	}
-
-	MOMO_DEPRECATED Row ExtractRow(ConstRowReference rowRef)
-	{
-		return Extract(rowRef);
-	}
-
-	MOMO_DEPRECATED Row ExtractRow(size_t rowNumber, bool keepRowOrder = true)
-	{
-		return Extract(rowNumber, keepRowOrder);
 	}
 
 	RowReference Update(size_t rowNumber, Row&& row)
@@ -697,25 +633,6 @@ public:
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
-	}
-
-	MOMO_DEPRECATED RowReference UpdateRow(size_t rowNumber, Row&& row)
-	{
-		return Update(rowNumber, std::move(row));
-	}
-
-	template<typename Item>
-	MOMO_DEPRECATED RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
-		internal::Identity<Item>&& newItem)
-	{
-		return Update(rowRef, column, std::move(newItem));
-	}
-
-	template<typename Item>
-	MOMO_DEPRECATED RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
-		const internal::Identity<Item>& newItem)
-	{
-		return Update(rowRef, column, newItem);
 	}
 
 	TryResult TryUpdate(size_t rowNumber, Row&& row)
@@ -747,35 +664,10 @@ public:
 		return pvTryUpdate(rowRef, column, newItem);
 	}
 
-	MOMO_DEPRECATED TryResult TryUpdateRow(size_t rowNumber, Row&& row)
-	{
-		return TryUpdate(rowNumber, std::move(row));
-	}
-
-	template<typename Item>
-	MOMO_DEPRECATED TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
-		internal::Identity<Item>&& newItem)
-	{
-		return TryUpdate(rowRef, column, std::move(newItem));
-	}
-
-	template<typename Item>
-	MOMO_DEPRECATED TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
-		const internal::Identity<Item>& newItem)
-	{
-		return TryUpdate(rowRef, column, newItem);
-	}
-
 	template<typename RowIterator>
 	void Assign(RowIterator begin, RowIterator end)
 	{
 		pvAssign(begin, end);
-	}
-
-	template<typename RowIterator>
-	MOMO_DEPRECATED void AssignRows(RowIterator begin, RowIterator end)
-	{
-		Assign(begin, end);
 	}
 
 	template<typename RowIterator>
@@ -793,16 +685,28 @@ public:
 		return initCount - GetCount();
 	}
 
-	template<typename RowIterator>
-	MOMO_DEPRECATED void RemoveRows(RowIterator begin, RowIterator end)
+	void Remove(ConstRowReference rowRef)
 	{
-		return Remove(begin, end);
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		pvDestroyRaw(pvExtractRaw(rowRef));
 	}
 
-	template<typename RowFilter>
-	MOMO_DEPRECATED size_t RemoveRows(const RowFilter& rowFilter)
+	void Remove(size_t rowNumber, bool keepRowOrder = true)
 	{
-		return Remove(rowFilter);
+		MOMO_CHECK(rowNumber < GetCount());
+		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
+	}
+
+	Row Extract(ConstRowReference rowRef)
+	{
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		return pvMakeRow(pvExtractRaw(rowRef));
+	}
+
+	Row Extract(size_t rowNumber, bool keepRowOrder = true)
+	{
+		MOMO_CHECK(rowNumber < GetCount());
+		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
 	template<typename Item, typename... Items>
@@ -856,13 +760,6 @@ public:
 		return pvSelectEmpty();
 	}
 
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	ConstSelection> Select(Equality<Items>... equals) const
-	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
-	}
-
 	template<typename RowFilter = EmptyRowFilter>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 	ConstSelection> Select(const RowFilter& rowFilter = RowFilter()) const
@@ -886,13 +783,6 @@ public:
 		return pvSelect<Selection>(equals, rowFilter);
 	}
 
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	Selection> Select(Equality<Items>... equals)
-	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
-	}
-
 	template<typename RowFilter = EmptyRowFilter>
 	internal::EnableIf<internal::IsInvocable<const RowFilter&, bool, ConstRowReference>::value,
 	Selection> Select(const RowFilter& rowFilter = RowFilter())
@@ -914,13 +804,6 @@ public:
 	Selection> Select(Equalities<Items...> equals, const RowFilter& rowFilter = RowFilter())
 	{
 		return pvSelect<Selection>(equals, rowFilter);
-	}
-
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	size_t> SelectCount(Equality<Items>... equals) const
-	{
-		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
 
 	template<typename RowFilter = EmptyRowFilter>
@@ -1048,6 +931,123 @@ public:
 		rowRef.GetRaw();	// check
 		Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
 		return pvMakeRowReference(raw);
+	}
+
+	MOMO_DEPRECATED RowReference AddRow(Row&& row)
+	{
+		return Add(std::move(row));
+	}
+
+	MOMO_DEPRECATED TryResult TryAddRow(Row&& row)
+	{
+		return TryAdd(std::move(row));
+	}
+
+	MOMO_DEPRECATED RowReference InsertRow(size_t rowNumber, Row&& row)
+	{
+		return Insert(rowNumber, std::move(row));
+	}
+
+	MOMO_DEPRECATED TryResult TryInsertRow(size_t rowNumber, Row&& row)
+	{
+		return TryInsert(rowNumber, std::move(row));
+	}
+
+	MOMO_DEPRECATED RowReference UpdateRow(size_t rowNumber, Row&& row)
+	{
+		return Update(rowNumber, std::move(row));
+	}
+
+	template<typename Item>
+	MOMO_DEPRECATED RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		internal::Identity<Item>&& newItem)
+	{
+		return Update(rowRef, column, std::move(newItem));
+	}
+
+	template<typename Item>
+	MOMO_DEPRECATED RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		const internal::Identity<Item>& newItem)
+	{
+		return Update(rowRef, column, newItem);
+	}
+
+	MOMO_DEPRECATED TryResult TryUpdateRow(size_t rowNumber, Row&& row)
+	{
+		return TryUpdate(rowNumber, std::move(row));
+	}
+
+	template<typename Item>
+	MOMO_DEPRECATED TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		internal::Identity<Item>&& newItem)
+	{
+		return TryUpdate(rowRef, column, std::move(newItem));
+	}
+
+	template<typename Item>
+	MOMO_DEPRECATED TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+		const internal::Identity<Item>& newItem)
+	{
+		return TryUpdate(rowRef, column, newItem);
+	}
+
+	template<typename RowIterator>
+	MOMO_DEPRECATED void AssignRows(RowIterator begin, RowIterator end)
+	{
+		Assign(begin, end);
+	}
+
+	template<typename RowIterator>
+	MOMO_DEPRECATED void RemoveRows(RowIterator begin, RowIterator end)
+	{
+		return Remove(begin, end);
+	}
+
+	template<typename RowFilter>
+	MOMO_DEPRECATED size_t RemoveRows(const RowFilter& rowFilter)
+	{
+		return Remove(rowFilter);
+	}
+
+	MOMO_DEPRECATED void RemoveRow(ConstRowReference rowRef)
+	{
+		Remove(rowRef);
+	}
+
+	MOMO_DEPRECATED void RemoveRow(size_t rowNumber, bool keepRowOrder = true)
+	{
+		Remove(rowNumber, keepRowOrder);
+	}
+
+	MOMO_DEPRECATED Row ExtractRow(ConstRowReference rowRef)
+	{
+		return Extract(rowRef);
+	}
+
+	MOMO_DEPRECATED Row ExtractRow(size_t rowNumber, bool keepRowOrder = true)
+	{
+		return Extract(rowNumber, keepRowOrder);
+	}
+
+	template<typename... Items>
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	ConstSelection> Select(Equality<Items>... equals) const
+	{
+		return pvSelect<Selection>(EmptyRowFilter(), equals...);
+	}
+
+	template<typename... Items>
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	Selection> Select(Equality<Items>... equals)
+	{
+		return pvSelect<Selection>(EmptyRowFilter(), equals...);
+	}
+
+	template<typename... Items>
+	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
+	size_t> SelectCount(Equality<Items>... equals) const
+	{
+		return pvSelect<size_t>(EmptyRowFilter(), equals...);
 	}
 
 private:
