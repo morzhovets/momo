@@ -605,30 +605,6 @@ public:
 		return TryInsert(rowNumber, pvNewRow(assign, assigns...));
 	}
 
-	void Remove(ConstRowReference rowRef)
-	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		pvDestroyRaw(pvExtractRaw(rowRef));
-	}
-
-	void Remove(size_t rowNumber, bool keepRowOrder = true)
-	{
-		MOMO_CHECK(rowNumber < GetCount());
-		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
-	}
-
-	Row Extract(ConstRowReference rowRef)
-	{
-		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
-		return pvMakeRow(pvExtractRaw(rowRef));
-	}
-
-	Row Extract(size_t rowNumber, bool keepRowOrder = true)
-	{
-		MOMO_CHECK(rowNumber < GetCount());
-		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
-	}
-
 	RowReference Update(size_t rowNumber, Row&& row)
 	{
 		TryResult res = TryUpdate(rowNumber, std::move(row));
@@ -704,6 +680,30 @@ public:
 		size_t initCount = GetCount();
 		pvRemove(FastCopyableFunctor<RowFilter>(rowFilter));
 		return initCount - GetCount();
+	}
+
+	void Remove(ConstRowReference rowRef)
+	{
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		pvDestroyRaw(pvExtractRaw(rowRef));
+	}
+
+	void Remove(size_t rowNumber, bool keepRowOrder = true)
+	{
+		MOMO_CHECK(rowNumber < GetCount());
+		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
+	}
+
+	Row Extract(ConstRowReference rowRef)
+	{
+		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
+		return pvMakeRow(pvExtractRaw(rowRef));
+	}
+
+	Row Extract(size_t rowNumber, bool keepRowOrder = true)
+	{
+		MOMO_CHECK(rowNumber < GetCount());
+		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
 	template<typename Item, typename... Items>
