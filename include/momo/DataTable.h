@@ -536,9 +536,9 @@ public:
 		return pvMakeRow(pvImportRaw(rowRef.GetColumnList(), rowRef.GetRaw()));
 	}
 
-	RowReference AddRow(Row&& row)
+	RowReference Add(Row&& row)
 	{
-		TryResult res = TryAddRow(std::move(row));
+		TryResult res = TryAdd(std::move(row));
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
@@ -547,10 +547,10 @@ public:
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	RowReference AddRow(Assignment<Item, ItemArg> assign, Assignment<Items, ItemArgs>... assigns)
 	{
-		return AddRow(pvNewRow(assign, assigns...));
+		return Add(pvNewRow(assign, assigns...));
 	}
 
-	TryResult TryAddRow(Row&& row)
+	TryResult TryAdd(Row&& row)
 	{
 		MOMO_CHECK(&row.GetColumnList() == &GetColumnList());
 		mRaws.Reserve(mRaws.GetCount() + 1);
@@ -567,12 +567,12 @@ public:
 	template<typename Item, typename ItemArg, typename... Items, typename... ItemArgs>
 	TryResult TryAddRow(Assignment<Item, ItemArg> assign, Assignment<Items, ItemArgs>... assigns)
 	{
-		return TryAddRow(pvNewRow(assign, assigns...));
+		return TryAdd(pvNewRow(assign, assigns...));
 	}
 
-	RowReference InsertRow(size_t rowNumber, Row&& row)
+	RowReference Insert(size_t rowNumber, Row&& row)
 	{
-		TryResult res = TryInsertRow(rowNumber, std::move(row));
+		TryResult res = TryInsert(rowNumber, std::move(row));
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
@@ -582,13 +582,13 @@ public:
 	RowReference InsertRow(size_t rowNumber, Assignment<Item, ItemArg> assign,
 		Assignment<Items, ItemArgs>... assigns)
 	{
-		return InsertRow(rowNumber, pvNewRow(assign, assigns...));
+		return Insert(rowNumber, pvNewRow(assign, assigns...));
 	}
 
-	TryResult TryInsertRow(size_t rowNumber, Row&& row)
+	TryResult TryInsert(size_t rowNumber, Row&& row)
 	{
 		MOMO_CHECK(rowNumber <= GetCount());
-		TryResult res = TryAddRow(std::move(row));
+		TryResult res = TryAdd(std::move(row));
 		if (res)
 		{
 			std::rotate(internal::UIntMath<>::Next(mRaws.GetBegin(), rowNumber),
@@ -602,62 +602,62 @@ public:
 	TryResult TryInsertRow(size_t rowNumber, Assignment<Item, ItemArg> assign,
 		Assignment<Items, ItemArgs>... assigns)
 	{
-		return TryInsertRow(rowNumber, pvNewRow(assign, assigns...));
+		return TryInsert(rowNumber, pvNewRow(assign, assigns...));
 	}
 
-	void RemoveRow(ConstRowReference rowRef)
+	void Remove(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 		pvDestroyRaw(pvExtractRaw(rowRef));
 	}
 
-	void RemoveRow(size_t rowNumber, bool keepRowOrder = true)
+	void Remove(size_t rowNumber, bool keepRowOrder = true)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
 		pvDestroyRaw(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
-	Row ExtractRow(ConstRowReference rowRef)
+	Row Extract(ConstRowReference rowRef)
 	{
 		MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 		return pvMakeRow(pvExtractRaw(rowRef));
 	}
 
-	Row ExtractRow(size_t rowNumber, bool keepRowOrder = true)
+	Row Extract(size_t rowNumber, bool keepRowOrder = true)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
 		return pvMakeRow(pvExtractRaw(rowNumber, keepRowOrder));
 	}
 
-	RowReference UpdateRow(size_t rowNumber, Row&& row)
+	RowReference Update(size_t rowNumber, Row&& row)
 	{
-		TryResult res = TryUpdateRow(rowNumber, std::move(row));
+		TryResult res = TryUpdate(rowNumber, std::move(row));
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+	RowReference Update(ConstRowReference rowRef, const Column<Item>& column,
 		std::type_identity_t<Item>&& newItem)
 	{
-		TryResult res = pvTryUpdateRow(rowRef, column, std::move(newItem));
+		TryResult res = pvTryUpdate(rowRef, column, std::move(newItem));
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
 
 	template<typename Item>
-	RowReference UpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+	RowReference Update(ConstRowReference rowRef, const Column<Item>& column,
 		const std::type_identity_t<Item>& newItem)
 	{
-		TryResult res = pvTryUpdateRow(rowRef, column, newItem);
+		TryResult res = pvTryUpdate(rowRef, column, newItem);
 		if (!res)
 			throw UniqueIndexViolation(res);
 		return res.rowReference;
 	}
 
-	TryResult TryUpdateRow(size_t rowNumber, Row&& row)
+	TryResult TryUpdate(size_t rowNumber, Row&& row)
 	{
 		MOMO_CHECK(rowNumber < GetCount());
 		Raw*& raw = mRaws[rowNumber];
@@ -673,36 +673,36 @@ public:
 	}
 
 	template<typename Item>
-	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+	TryResult TryUpdate(ConstRowReference rowRef, const Column<Item>& column,
 		std::type_identity_t<Item>&& newItem)
 	{
-		return pvTryUpdateRow(rowRef, column, std::move(newItem));
+		return pvTryUpdate(rowRef, column, std::move(newItem));
 	}
 
 	template<typename Item>
-	TryResult TryUpdateRow(ConstRowReference rowRef, const Column<Item>& column,
+	TryResult TryUpdate(ConstRowReference rowRef, const Column<Item>& column,
 		const std::type_identity_t<Item>& newItem)
 	{
-		return pvTryUpdateRow(rowRef, column, newItem);
+		return pvTryUpdate(rowRef, column, newItem);
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void AssignRows(RowIterator begin, RowIterator end)
+	void Assign(RowIterator begin, RowIterator end)
 	{
-		pvAssignRows(begin, end);
+		pvAssign(begin, end);
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void RemoveRows(RowIterator begin, RowIterator end)
+	void Remove(RowIterator begin, RowIterator end)
 	{
-		pvRemoveRows(begin, end);
+		pvRemove(begin, end);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter>
-	size_t RemoveRows(RowFilter rowFilter)
+	size_t Remove(RowFilter rowFilter)
 	{
 		size_t initCount = GetCount();
-		pvRemoveRows(FastCopyableFunctor<RowFilter>(rowFilter));
+		pvRemove(FastCopyableFunctor<RowFilter>(rowFilter));
 		return initCount - GetCount();
 	}
 
@@ -1082,7 +1082,7 @@ private:
 	}
 
 	template<typename Item, typename RItem>
-	TryResult pvTryUpdateRow(ConstRowReference rowRef, const Column<Item>& column, RItem&& newItem)
+	TryResult pvTryUpdate(ConstRowReference rowRef, const Column<Item>& column, RItem&& newItem)
 	{
 		const ColumnList& columnList = GetColumnList();
 		MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -1100,7 +1100,7 @@ private:
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvAssignRows(RowIterator begin, RowIterator end)
+	void pvAssign(RowIterator begin, RowIterator end)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
@@ -1140,7 +1140,7 @@ private:
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvAssignRows(RowIterator begin, RowIterator end)
+	void pvAssign(RowIterator begin, RowIterator end)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
@@ -1172,7 +1172,7 @@ private:
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvRemoveRows(RowIterator begin, RowIterator end)
+	void pvRemove(RowIterator begin, RowIterator end)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
@@ -1195,7 +1195,7 @@ private:
 	}
 
 	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvRemoveRows(RowIterator begin, RowIterator end)
+	void pvRemove(RowIterator begin, RowIterator end)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
@@ -1212,7 +1212,7 @@ private:
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter>
-	void pvRemoveRows(FastCopyableFunctor<RowFilter> rowFilter)
+	void pvRemove(FastCopyableFunctor<RowFilter> rowFilter)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
@@ -1234,7 +1234,7 @@ private:
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter>
-	void pvRemoveRows(FastCopyableFunctor<RowFilter> rowFilter)
+	void pvRemove(FastCopyableFunctor<RowFilter> rowFilter)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
