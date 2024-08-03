@@ -329,8 +329,8 @@ namespace internal
 
 		typedef size_t (*HashFunc)(Raw*, const size_t*);
 		typedef bool (*EqualFunc)(Raw*, Raw*, const size_t*);
-		typedef size_t (*HashMixedFunc)(HashMixedKey<>, const size_t*);
-		typedef bool (*EqualMixedFunc)(HashMixedKey<>, Raw*, const size_t*);
+		typedef size_t (*HashMixedFunc)(const HashMixedKey<>&, const size_t*);
+		typedef bool (*EqualMixedFunc)(const HashMixedKey<>&, Raw*, const size_t*);
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
@@ -385,7 +385,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			size_t GetHashCode(HashMixedKey<Item> key) const
+			size_t GetHashCode(const HashMixedKey<Item>& key) const
 			{
 				return mHashMixedFunc({ key.raw, key.offset, key.item }, mOffsets.GetItems());
 			}
@@ -404,7 +404,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			bool IsEqual(HashMixedKey<Item> key1, Raw* key2) const
+			bool IsEqual(const HashMixedKey<Item>& key1, Raw* key2) const
 			{
 				return mEqualMixedFunc({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
@@ -512,7 +512,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			Raw* Add(HashMixedKey<Item> hashMixedKey)
+			Raw* Add(const HashMixedKey<Item>& hashMixedKey)
 			{
 				MOMO_ASSERT(!mPositionAdd);
 				Position pos = mHashSet.Find(hashMixedKey);
@@ -667,7 +667,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			void Add(HashMixedKey<Item> hashMixedKey)
+			void Add(const HashMixedKey<Item>& hashMixedKey)
 			{
 				MOMO_ASSERT(!mKeyIteratorAdd);
 				KeyIterator keyIter = mHashMultiMap.Find(hashMixedKey);
@@ -678,7 +678,7 @@ namespace internal
 				}
 				else
 				{
-					auto keyCreator = [hashMixedKey] (Raw** newRaw)
+					auto keyCreator = [&hashMixedKey] (Raw** newRaw)
 						{ *newRaw = hashMixedKey.raw; };
 					mKeyIteratorAdd = mHashMultiMap.AddKeyCrt(keyIter, keyCreator);
 				}
@@ -1299,9 +1299,9 @@ namespace internal
 				{ return pvGetHashCode<void, Items...>(key, offsets); };
 			auto equalFunc = [] (Raw* key1, Raw* key2, const size_t* offsets)
 				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
-			auto hashMixedFunc = [] (HashMixedKey<> key, const size_t* offsets)
+			auto hashMixedFunc = [] (const HashMixedKey<>& key, const size_t* offsets)
 				{ return pvGetHashCode<void, Items...>(key, offsets); };
-			auto equalMixedFunc = [] (HashMixedKey<> key1, Raw* key2, const size_t* offsets)
+			auto equalMixedFunc = [] (const HashMixedKey<>& key1, Raw* key2, const size_t* offsets)
 				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
 			HashTraits hashTraits(hashFunc, equalFunc, hashMixedFunc, equalMixedFunc,
@@ -1359,7 +1359,7 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		static size_t pvGetHashCode(HashMixedKey<> key, const size_t* offsets)
+		static size_t pvGetHashCode(const HashMixedKey<>& key, const size_t* offsets)
 		{
 			size_t offset = *offsets;
 			const Item& item = (offset != key.offset)
@@ -1371,7 +1371,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		static size_t pvGetHashCode(HashMixedKey<> /*key*/, const size_t* /*offsets*/) noexcept
+		static size_t pvGetHashCode(const HashMixedKey<>& /*key*/, const size_t* /*offsets*/) noexcept
 		{
 			return 0;
 		}
@@ -1411,7 +1411,7 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		static bool pvIsEqual(HashMixedKey<> key1, Raw* key2, const size_t* offsets)
+		static bool pvIsEqual(const HashMixedKey<>& key1, Raw* key2, const size_t* offsets)
 		{
 			size_t offset = *offsets;
 			const Item& item1 = (offset != key1.offset)
@@ -1423,7 +1423,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		static bool pvIsEqual(HashMixedKey<> /*key1*/, Raw* /*key2*/,
+		static bool pvIsEqual(const HashMixedKey<>& /*key1*/, Raw* /*key2*/,
 			const size_t* /*offsets*/) noexcept
 		{
 			return true;
