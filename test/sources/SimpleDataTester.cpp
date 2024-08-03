@@ -218,7 +218,7 @@ public:
 			Row row2 = table.NewRow();
 			row2 = std::move(row);
 			assert(static_cast<const Row&>(row2)[intCol] == static_cast<int>(i));
-			table.AddRow(std::move(row2));
+			table.Add(std::move(row2));
 		}
 
 		table.AddMultiHashIndex(intCol);
@@ -245,16 +245,16 @@ public:
 			Row row = table.NewRow(table[i]);
 			row[intCol] = static_cast<int>(i) / 2;
 			row[strCol] = (i % 2 == 0) ? "1" : "2";
-			table.UpdateRow(i, table.NewRow(row));
+			table.Update(i, table.NewRow(row));
 		}
 
 		for (size_t i = 0; i < count; i += 2)
-			table.UpdateRow(table[i], strCol, "0");
+			table.Update(table[i], strCol, "0");
 
 		for (size_t i = 1; i < count; i += 2)
 		{
 			std::string s1 = "1";
-			table.UpdateRow(table[i], strCol, s1);
+			table.Update(table[i], strCol, s1);
 		}
 
 		for (size_t i = 0; i < count; ++i)
@@ -263,13 +263,13 @@ public:
 		assert(table.GetUniqueHashIndex(intCol, strCol) == keyIndex);
 		assert(table.GetMultiHashIndex(intCol) != momo::DataMultiHashIndex::empty);
 		
-		assert(table.TryAddRow(table.NewRow(table[0])).uniqueHashIndex == keyIndex);
+		assert(table.TryAdd(table.NewRow(table[0])).uniqueHashIndex == keyIndex);
 
-		assert(table.TryUpdateRow(0, table.NewRow(table[1])).uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(0, table.NewRow(table[0])));
+		assert(table.TryUpdate(0, table.NewRow(table[1])).uniqueHashIndex == keyIndex);
+		assert(table.TryUpdate(0, table.NewRow(table[0])));
 
-		assert(table.TryUpdateRow(table[0], strCol, "1").uniqueHashIndex == keyIndex);
-		assert(table.TryUpdateRow(table[0], strCol, static_cast<const std::string&>(std::string("0"))));
+		assert(table.TryUpdate(table[0], strCol, "1").uniqueHashIndex == keyIndex);
+		assert(table.TryUpdate(table[0], strCol, static_cast<const std::string&>(std::string("0"))));
 
 		for (size_t i = 0; i < count2; ++i)
 		{
@@ -296,12 +296,12 @@ public:
 		MOMO_STATIC_ASSERT(count2 % 6 == 0);
 		for (size_t i = 0; i < count2 / 6; ++i)
 		{
-			table.RemoveRow(count, false);
-			table.RemoveRow(count, true);
-			table.RemoveRow(table[count]);
-			table.ExtractRow(count, false);
-			table.ExtractRow(count, true);
-			table.ExtractRow(table[count]);
+			table.Remove(count, false);
+			table.Remove(count, true);
+			table.Remove(table[count]);
+			table.Extract(count, false);
+			table.Extract(count, true);
+			table.Extract(table[count]);
 		}
 		assert(table.GetCount() == count);
 
@@ -492,14 +492,14 @@ public:
 
 		pvTestDataDynamic<dynamic>(table, intCol, dblCol, strCol);
 
-		table.AssignRows(std::reverse_iterator<ConstIterator>(table.GetEnd()),
+		table.Assign(std::reverse_iterator<ConstIterator>(table.GetEnd()),
 			std::reverse_iterator<ConstIterator>(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 2)));
 		assert(table.GetCount() == count / 2);
 
-		assert(table.RemoveRows(strFilter) == count / 4);
+		assert(table.Remove(strFilter) == count / 4);
 		assert(table.GetCount() == count / 4);
 
-		table.RemoveRows(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
+		table.Remove(momo::internal::UIntMath<>::Next(table.GetBegin(), count / 8), table.GetEnd());
 		assert(table.GetCount() == count / 8);
 
 		for (size_t i = 0; i < count / 8; ++i)

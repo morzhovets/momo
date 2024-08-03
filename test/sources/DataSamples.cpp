@@ -53,9 +53,9 @@ namespace sample_data1
 		// `table[0][dblCol]` returns `const double&`
 		output << table[0][dblCol] << std::endl;	// 0.5
 
-		// after adding the row can be modified by function `UpdateRow`
-		table.UpdateRow(table[0], dblCol, 1.5);
-		table.UpdateRow(table[1], strCol, "a");
+		// after adding the row can be modified by function `Update`
+		table.Update(table[0], dblCol, 1.5);
+		table.Update(table[1], strCol, "a");
 
 		for (auto row : table)
 			output << row[intCol] << " " << row[dblCol] << " " << row[strCol] << std::endl;
@@ -101,19 +101,19 @@ namespace sample_data2
 		table.AddUniqueHashIndex(&Struct::strCol, &Struct::intCol);
 
 #if defined(__cpp_designated_initializers)	// C++20
-		table.AddRow(table.NewRow({ .intCol = 1, .dblCol = 0.5, .strCol = "b" }));
+		table.Add(table.NewRow({ .intCol = 1, .dblCol = 0.5, .strCol = "b" }));
 #else
-		table.AddRow(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 0.5, /*.strCol =*/ "b" }));
+		table.Add(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 0.5, /*.strCol =*/ "b" }));
 #endif
 
 		{
 			auto row = table.NewRow();
 			row->intCol = 2;
 			row->dblCol = 2.5;
-			table.AddRow(std::move(row));	// strCol = ""
+			table.Add(std::move(row));	// strCol = ""
 		}
 
-		if (!table.TryAddRow(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 4.5, /*.strCol =*/ "b" })))
+		if (!table.TryAdd(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 4.5, /*.strCol =*/ "b" })))
 		{
 			// not added because of unique index (intCol == 1, strCol == "b")
 			output << "!" << std::endl;	// !
@@ -124,9 +124,9 @@ namespace sample_data2
 		// `table[0]->dblCol` has type `const double&`
 		output << table[0]->dblCol << std::endl;	// 0.5
 
-		// after adding the row can be modified by function `UpdateRow`
-		table.UpdateRow(table[0], &Struct::dblCol, 1.5);
-		table.UpdateRow(table[1], &Struct::strCol, "a");
+		// after adding the row can be modified by function `Update`
+		table.Update(table[0], &Struct::dblCol, 1.5);
+		table.Update(table[1], &Struct::strCol, "a");
 
 		for (auto row : table)
 			output << row->intCol << " " << row->dblCol << " " << row->strCol << std::endl;
@@ -183,13 +183,13 @@ namespace sample_data3
 		{
 			auto row = table.NewRow(intCol = 1, strCol = "a");
 			row[dblCol] = 1.5;
-			table.AddRow(std::move(row));
+			table.Add(std::move(row));
 		}
 		{
 			auto row = table.NewRow(table[0]);	// copy previous row
 			row[intCol] = 2;
 			row[dblCol] = 2.5;
-			table.AddRow(std::move(row));	// strCol = "a"
+			table.Add(std::move(row));	// strCol = "a"
 		}
 
 #if !defined(MOMO_DISABLE_TYPE_INFO)
@@ -227,11 +227,11 @@ namespace sample_data3
 				[] (ConstRowReference row) { return row[dblCol] > 2.0; });	// slow select
 			output << selection.GetCount() << std::endl;	// 1
 
-			table.RemoveRows(selection.GetBegin(), selection.GetEnd());
+			table.Remove(selection.GetBegin(), selection.GetEnd());
 			output << table.GetCount() << std::endl;	// 1
 		}
 
-		table.RemoveRows([] (ConstRowReference row) { return row[dblCol] > 1.0; });
+		table.Remove([] (ConstRowReference row) { return row[dblCol] > 1.0; });
 		output << table.GetCount() << std::endl;	// 0
 	}
 }
@@ -279,7 +279,7 @@ namespace sample_data4
 		// intCol=2 dblCol=0.5 strCol=a 
 #endif
 
-		table.RemoveRow(table[0]);
+		table.Remove(table[0]);
 		output << table[0][dblCol] << std::endl;	// 0.5
 	}
 }
@@ -304,9 +304,9 @@ namespace sample_data5
 		Table table;
 
 #if defined(__cpp_designated_initializers)	// C++20
-		table.AddRow(table.NewRow({ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
+		table.Add(table.NewRow({ .intCol = 1, .dblCol = 1.5, .strCol = "a" }));
 #else
-		table.AddRow(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 1.5, /*.strCol =*/ "a" }));
+		table.Add(table.NewRow({ /*.intCol =*/ 1, /*.dblCol =*/ 1.5, /*.strCol =*/ "a" }));
 #endif
 
 #if defined(MOMO_HAS_DEDUCTION_GUIDES)	// C++17
