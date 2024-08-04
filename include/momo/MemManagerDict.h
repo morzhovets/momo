@@ -14,7 +14,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_MEM_MANAGER_DICT
+#define MOMO_INCLUDE_GUARD_MEM_MANAGER_DICT
 
 #include "MemManager.h"
 #include "TreeMap.h"
@@ -129,3 +130,5 @@ private:
 };
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_MEM_MANAGER_DICT
