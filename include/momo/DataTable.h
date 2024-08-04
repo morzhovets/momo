@@ -1047,7 +1047,7 @@ public:
 	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
 	size_t> SelectCount(Equality<Items>... equals) const
 	{
-		return Select(EmptyRowFilter(), equals...);
+		return SelectCount(EmptyRowFilter(), equals...);
 	}
 
 private:
