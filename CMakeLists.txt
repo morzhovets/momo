@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(momo
-  VERSION 3.8
+  VERSION 3.9
   HOMEPAGE_URL "https://github.com/morzhovets/momo"
   LANGUAGES CXX)
 
