@@ -15,7 +15,7 @@
 #ifdef TEST_SIMPLE_DATA
 
 #if defined(TEST_MSVC) && _MSC_VER < 1939
-#pragma warning (disable: 4307)	// integral constant overflow
+# pragma warning (disable: 4307)	// integral constant overflow
 #endif
 
 #include "DataSamples.h"
