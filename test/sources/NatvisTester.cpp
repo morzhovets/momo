@@ -23,10 +23,6 @@
 #include "../../include/momo/TreeMap.h"
 #include "../../include/momo/DataTable.h"
 
-#ifdef TEST_MSVC
-# pragma warning (disable: 4307)	// integral constant overflow
-#endif
-
 static int testNatvis = []
 {
 	momo::Array<int> ar;
@@ -42,8 +38,11 @@ static int testNatvis = []
 		momo::TreeNode<32, 4, momo::MemPoolParams<8>, false>>> tsetc;
 	momo::TreeMap<int, int> tmap;
 
-	MOMO_DATA_COLUMN_STRING(int, intCol);
-	momo::DataTable<> dt(intCol);
+	struct Struct
+	{
+		int value;
+	};
+	momo::DataTableNative<Struct> dt;
 
 	for (int i = 0; i < 50; ++i)
 	{
@@ -60,10 +59,10 @@ static int testNatvis = []
 		tset.Insert(key);
 		tsetc.Insert(key);
 		tmap.Insert(key, i);
-		dt.AddRow(intCol = key);
+		dt.Add(dt.NewRow({ /*.value =*/ i }));
 	}
 
-	momo::DataTable<>::Selection sel = dt.Select();
+	auto sel = dt.Select();
 
 	return 0;
 }();
