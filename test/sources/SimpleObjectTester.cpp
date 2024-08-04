@@ -55,7 +55,7 @@ MOMO_STATIC_ASSERT((!momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>:
 
 struct ObjectMove
 {
-	ObjectMove(const ObjectMove&&)
+	ObjectMove(ObjectMove&&)
 	{
 	}
 };
