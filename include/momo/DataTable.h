@@ -1000,7 +1000,7 @@ public:
 	template<typename RowIterator>
 	MOMO_DEPRECATED void RemoveRows(RowIterator begin, RowIterator end)
 	{
-		return Remove(begin, end);
+		Remove(begin, end);
 	}
 
 	template<typename RowFilter>
@@ -1033,21 +1033,21 @@ public:
 	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
 	ConstSelection> Select(Equality<Items>... equals) const
 	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
+		return Select(EmptyRowFilter(), equals...);
 	}
 
 	template<typename... Items>
 	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
 	Selection> Select(Equality<Items>... equals)
 	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
+		return Select(EmptyRowFilter(), equals...);
 	}
 
 	template<typename... Items>
 	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
 	size_t> SelectCount(Equality<Items>... equals) const
 	{
-		return pvSelect<size_t>(EmptyRowFilter(), equals...);
+		return Select(EmptyRowFilter(), equals...);
 	}
 
 private:
