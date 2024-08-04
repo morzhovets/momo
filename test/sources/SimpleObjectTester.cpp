@@ -55,7 +55,7 @@ static_assert(!momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>::isNot
 
 struct ObjectMove
 {
-	ObjectMove(const ObjectMove&&)
+	ObjectMove(ObjectMove&&)
 	{
 	}
 };
